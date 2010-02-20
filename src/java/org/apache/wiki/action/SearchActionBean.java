@@ -36,6 +36,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.ui.stripes.EventResolution;
 import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
@@ -45,20 +46,20 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
 @UrlBinding( "/Search.jsp" )
 public class SearchActionBean extends AbstractActionBean
 {
-    private static Logger log = LoggerFactory.getLogger("JSPWikiSearch");
+    private static Logger log = LoggerFactory.getLogger( "JSPWikiSearch" );
 
     public static final Collection<SearchResult> NO_RESULTS = Collections.emptyList();
-    
+
     private Collection<SearchResult> m_results = NO_RESULTS;
 
     private String m_query = null;
 
     private int m_maxItems = 20;
-    
+
     private int m_start = 0;
-    
+
     private boolean m_details = false;
-    
+
     /**
      * Enumeration of the search scope options.
      */
@@ -75,36 +76,37 @@ public class SearchActionBean extends AbstractActionBean
         /** Attachment contents only. */
         ATTACHMENTS
     }
-    
+
     public boolean getDetails()
     {
         return m_details;
     }
-    
+
     /**
      * Sets the search results so that details for each result are displayed.
+     * 
      * @param details whether details should be displayed
      */
     public void setDetails( boolean details )
     {
         m_details = details;
     }
-    
+
     public int getMaxItems()
     {
         return m_maxItems;
     }
-    
+
     public void setMaxItems( int maxItems )
     {
         m_maxItems = maxItems;
     }
-    
+
     public int getStart()
     {
         return m_start;
     }
-    
+
     public void setStart( int start )
     {
         m_start = start;
@@ -129,23 +131,25 @@ public class SearchActionBean extends AbstractActionBean
     {
         return m_results;
     }
-    
+
     /**
-     * Performs a search and returns the results as a list. For a given WikiPage to
-     * be included in the results, the user must have permission to view it.
-     * If the underlying providers encounter an abnormal IOException or other error,
-     * it will be added to the ActionBeanContext's validation messages collection.
+     * Performs a search and returns the results as a list. For a given WikiPage
+     * to be included in the results, the user must have permission to view it.
+     * If the underlying providers encounter an abnormal IOException or other
+     * error, it will be added to the ActionBeanContext's validation messages
+     * collection.
+     * 
      * @param query the query
      * @return the results
      */
     private List<SearchResult> doSearch( String query )
     {
-        log.info("Searching with query '"+ query + "'.");
+        log.info( "Searching with query '" + query + "'." );
         WikiEngine engine = getContext().getEngine();
         AuthorizationManager mgr = engine.getAuthorizationManager();
-        
+
         //
-        //  Filter down to only those that we actually have a permission to view
+        // Filter down to only those that we actually have a permission to view
         //
         List<SearchResult> filteredResults = new ArrayList<SearchResult>();
         try
@@ -156,15 +160,15 @@ public class SearchActionBean extends AbstractActionBean
                 WikiPage page = result.getPage();
                 PagePermission permission = new PagePermission( page, PagePermission.VIEW_ACTION );
                 try
-                {            
+                {
                     if( mgr.checkPermission( getContext().getWikiSession(), permission ) )
                     {
                         filteredResults.add( result );
                     }
                 }
-                catch( Exception e ) 
-                { 
-                    log.error( "Searching for page " + page, e ); 
+                catch( Exception e )
+                {
+                    log.error( "Searching for page " + page, e );
                 }
             }
         }
@@ -189,10 +193,9 @@ public class SearchActionBean extends AbstractActionBean
     }
 
     /**
-     * Searches the wiki using the query string set for this
-     * ActionBean. Search results are made available to callers via the
-     * {@link #getResults()} method (and EL expression
-     * <code>$wikiActionBean.results</code>).
+     * Searches the wiki using the query string set for this ActionBean. Search
+     * results are made available to callers via the {@link #getResults()}
+     * method (and EL expression <code>$wikiActionBean.results</code>).
      * 
      * @return always returns a {@link ForwardResolution} to the template JSP
      *         <code>/Search.jsp</code>.
@@ -205,19 +208,48 @@ public class SearchActionBean extends AbstractActionBean
         m_results = m_query == null ? NO_RESULTS : doSearch( m_query );
         return new TemplateResolution( "Search.jsp" );
     }
-    
+
     /**
-     * Using AJAX, searches a specified wiki space using the query string set for this
-     * ActionBean. Results are streamed back to the client as an array of JSON-encoded
-     * SearchResult objects.
+     * Using AJAX, searches a specified wiki space using the query string set
+     * for this ActionBean. Results are streamed back to the client as an array
+     * of JSON-encoded SearchResult objects.
      * 
      * @return always returns a {@link JavaScriptResolution} containing the
-     * results; this may be a zero-length array
+     *         results; this may be a zero-length array
      */
     @HandlesEvent( "ajaxSearch" )
     public Resolution ajaxSearch()
     {
         m_results = m_query == null ? NO_RESULTS : doSearch( m_query );
         return new JavaScriptResolution( m_results );
+    }
+
+    /**
+     * AJAX event method that provides quick-search used in {@code SearchBox.jsp}.
+     * 
+     * @return a {@link EventResolution} containing HTML to be inserted into an
+     *         element.
+     */
+    @HandlesEvent( "quickSearch" )
+    public Resolution quickSearch()
+    {
+        m_results = m_query == null ? NO_RESULTS : doSearch( m_query );
+        String html = null;
+        StringBuilder b = new StringBuilder();
+        if( m_results.size() > 0 )
+        {
+            b.append( "<ul>" );
+            for( SearchResult result : m_results )
+            {
+                String url = getContext().getViewURL( result.getPage().getName() );
+                b.append( "<li>" );
+                b.append( "<a href=\"" + url + "\">" + result.getPage().getName() + "</a>" );
+                b.append( " <span class=\"small\">(" + result.getScore() + ")</span>" );
+                b.append( "</li>" );
+            }
+            b.append( "</ul>" );
+            html = b.toString();
+        }
+        return new EventResolution( getContext(), html, true );
     }
 }

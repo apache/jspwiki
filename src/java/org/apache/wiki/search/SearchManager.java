@@ -23,7 +23,6 @@ package org.apache.wiki.search;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
@@ -36,10 +35,7 @@ import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.InternalModule;
-import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.rpc.RPCCallable;
-import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -87,118 +83,6 @@ public class SearchManager
     }
 
     /**
-     *  Provides a JSON RPC API to the JSPWiki Search Engine.
-     */
-    public class JSONSearch implements RPCCallable
-    {
-        /**
-         *  Provides a list of suggestions to use for a page name.
-         *  Currently the algorithm just looks into the value parameter,
-         *  and returns all page names from that.
-         *
-         *  @param wikiName the page name
-         *  @param maxLength maximum number of suggestions
-         *  @return the suggestions
-         */
-        public List<String> getSuggestions( String wikiName, int maxLength )
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            List<String> list = new ArrayList<String>(maxLength);
-
-            if( wikiName.length() > 0 )
-            {
-                
-                // split pagename and attachment filename
-                String filename = "";
-                int pos = wikiName.indexOf("/");
-                if( pos >= 0 ) 
-                {
-                    filename = wikiName.substring( pos ).toLowerCase();
-                    wikiName = wikiName.substring( 0, pos );
-                }
-                
-                String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
-
-                String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
-
-                Set<String> allPages;
-                try
-                {
-                    allPages = m_engine.getReferenceManager().findCreated();
-                }
-                catch( ProviderException e )
-                {
-                    // FIXME: THis is probably not very smart.
-                    allPages = new TreeSet<String>();
-                }
-
-                int counter = 0;
-                for( Iterator<String> i = allPages.iterator(); i.hasNext() && counter < maxLength; )
-                {
-                    String p = i.next();
-                    String pp = p.toLowerCase();
-                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) )
-                    {
-                        list.add( p );
-                        counter++;
-                    }
-                }
-            }
-
-            sw.stop();
-            if( log.isDebugEnabled() ) log.debug("Suggestion request for "+wikiName+" done in "+sw);
-            return list;
-        }
-
-        /**
-         *  Performs a full search of pages.
-         *
-         *  @param searchString The query string
-         *  @param maxLength How many hits to return
-         *  @return the pages found
-         */
-        public List<HashMap<String,Object>> findPages( String searchString, int maxLength )
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
-
-            List<HashMap<String,Object>> list = new ArrayList<HashMap<String,Object>>(maxLength);
-
-            if( searchString.length() > 0 )
-            {
-                try
-                {
-                    Collection<SearchResult> c;
-
-                    if( m_searchProvider instanceof LuceneSearchProvider )
-                        c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
-                    else
-                        c = m_searchProvider.findPages( searchString );
-
-                    int count = 0;
-                    for( Iterator<SearchResult> i = c.iterator(); i.hasNext() && count < maxLength; count++ )
-                    {
-                        SearchResult sr = i.next();
-                        HashMap<String,Object> hm = new HashMap<String,Object>();
-                        hm.put( "page", sr.getPage().getName() );
-                        hm.put( "score", sr.getScore() );
-                        list.add( hm );
-                    }
-                }
-                catch(Exception e)
-                {
-                    log.info("AJAX search failed; ",e);
-                }
-            }
-
-            sw.stop();
-            if( log.isDebugEnabled() ) log.debug("AJAX search complete in "+sw);
-            return list;
-        }
-    }
-
-    /**
      *  This particular method starts off indexing and all sorts of various activities,
      *  so you need to run this last, after things are done.
      *
@@ -216,8 +100,6 @@ public class SearchManager
         // Make sure we catch any page add/save/rename events
         WikiEventManager.addWikiEventListener( engine.getContentManager(), this );
 
-        JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
-        
         try
         {
             m_searchProvider.initialize(engine, properties);
