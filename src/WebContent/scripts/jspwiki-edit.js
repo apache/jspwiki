@@ -57,7 +57,8 @@ var WikiEdit =
 		//should always run first, but seems not guaranteed on ie so let's do this for sure
 		Wiki.initialize();
 
-		var txta = $('wikiText'),
+    // Snip-editing is deliberately disabled, for now, because it causes duplication in post contents.
+		var txta = $('wikiTexts'),
 			self = this,
 			snipe,
 			config,
@@ -159,28 +160,6 @@ var WikiEdit =
 		});
 		configFn();
 
-		/*
-			Initialize the preview layout buttons: tile-vert or tile-horz
-		*/
-		tileBtns = $$('.tHORZ','.tVERT');
-		tileFn = function(tile){
-
-			prefs.set('previewLayout',tile);
-			tileBtns.each(function(el){
-				el[( el.get('text')==tile ) ? 'hide': 'show']();
-			});
-
-			tile = (tile=='tile-vert') ? 'size1of1':'size1of2';
-			$('editor-content').getChildren().each(function(el){
-				el.removeClass('size1of1').removeClass('size1of2').addClass(tile);
-			});
-		};
-		tileBtns.each( function(el){
-			el.addEvent( 'click',function(){ tileFn(this.get('text')); });
-		});
-		tileFn( prefs.get('previewLayout')||'tile-vert' );
-
-
 		//add a localized hover title to the resize drag-bar
 		//CHECK !v1.2.3.
 		document.getElement('.editor-container .resize-bar').set('title', 'edit.resize'.localize());
@@ -189,8 +168,6 @@ var WikiEdit =
 		// cursor = -2 (all) or 0..n (section# - first section is 0)
 		tocCursor = location.search.match(/[&?]section=(\d+)/);
 		snipe.selectTocItem( tocCursor ? tocCursor[1].toInt() : -2 );
-
-		self.initializePreview( snipe );
 	},
 
 	/*
@@ -525,75 +502,7 @@ var WikiEdit =
 		};
 
 		return result;
-	},
-
-	/*
-	Function: initializePreview
-		Initialize textarea preview functionality.
-		When #autopreview checkbox is checked, bind the
-		[refreshPreview] handler to the {{preview}} event
-		of the textarea.
-
-		Finally, send periodically the preview event.
-	*/
-	initializePreview: function( snipe ){
-
-		var autopreview = 'autopreview',
-			self = this,
-			prefs = Wiki.prefs,
-			refreshFn = self.refreshPreview.bind(self);
-
-		$(autopreview)
-			.set('checked', prefs.get(autopreview) || false)
-			.addEvent('click', function(){
-				prefs.set(autopreview, this.checked);
-				refreshFn();
-			})
-			.fireEvent('click');
-
-		refreshFn.periodical(3000);
-		$(snipe).addEvent('change',refreshFn);
-    },
-
-
-	/*
-	Function: refreshPreview
-		Make AJAX call to the backend to convert the contents of the textarea
-		(wiki markup) to HTML.
-
-	*/
-	refreshPreview: function(){
-
-    	var	self = this,
-    		snipe = self.snipEditor,
-    		text = snipe.get('textarea').getValue(),
-    		page = Wiki.PageName,
-    		preview = $('livepreview'),
-    		spin = $('previewspin');
-
-
-		if( !$('autopreview').checked ){
-
-			if( self.previewcache ){
-				preview.empty();
-				self.previewcache = null;
-			}
-
-		} else if( self.previewcache != text ){
-
-			self.previewcache = text;
-
-			new Request.HTML({
-				url:Wiki.BaseUrl + "/Edit.action?ajaxPreview=&page=" + page,
-				data: 'wikiText=' + encodeURIComponent( text ),
-				update: preview,
-				onRequest: function(){ spin.show(); },
-				onComplete: function(){ spin.hide(); Wiki.renderPage(preview, page); }
-			}).send();
-
-		}
 	}
-
 }
 
 /*
@@ -608,7 +517,7 @@ window.addEvent('domready', function(){ WikiEdit.initialize() } );
 Class: SnipEditor
 	The SnipEditor class enriches a TEXTAREA object with many capabilities,
 	including tab-autocompletion, auto-indentation, smart typing pairs, suggestion
-	popups, live-preview, textarea resizing, toggle buttons etc.
+	popups, textarea resizing, toggle buttons etc.
 	The configuration of the snip-editor is done through Snippet objects.
 	See [getSnippet] for more info on how to define snippets.
 
