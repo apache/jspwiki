@@ -36,7 +36,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.api.WikiException;
 import org.apache.wiki.providers.ProviderException;
 
 /**
