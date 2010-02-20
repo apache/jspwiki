@@ -1,3 +1,34 @@
+2010-02-20 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-207
+
+        * Fixed 2 failing Scandic page-name URL generation tests. Page names are now
+        encoded as UTF-8. Also patched Group- PageName- and PrincipalTypeConverter
+        to ensure that incoming parameters are properly decoded, which they
+        were not before. Added a Scandic page-name test to ViewActionBeanTest.
+
+        * [JSPWIKI-510] Restored AJAX quicksearch. It now respects page ACLs, too.
+        Moved the AJAX "suggestions" method to (new) EditDialogActionBean,
+        which is a placeholder for now. Removed JSON global bridge from
+        SearchManager.
+
+        * [JSPWIKI-635] Disabled the snip-editor feature that was interfering
+        with editor form submission and causing double postings. This is a crude
+        hack until Dirk is able to look at the root cause more closely. :)
+
+        * [JSPWIKI-180] Removed ISO-8859-1 support from ExternalDiffProvider,
+        WikiEngine, AbstractFileProvider, TestEngine and a few tests.
+
+        * Fixed multiple bugs in Preferences and Preferences.jsp. Asserted names
+        were not being set when "save prefs" button was pushed. PreferencesLocalePicker
+        was not correctly matching incoming browser Locales to those available on
+        the server. Time zones were not correctly being set. Preferences also had
+        a static-method fetish, which was unnatural. It has been refactored
+        completely and thoroughly.
+
+        * [JSPWIKI-382] Removed posteditor. Moved Stripes AJAX function to
+        jspwiki-common.js. Light cleanup of unneeded functions in prefs/edit JS.
+
 2010-02-14 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-206
