@@ -35,7 +35,6 @@
   <s:layout-component name="script">
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/dialog.js' />"></script>
-    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/stripes-support.js' />"></script>
   </s:layout-component>
 
   <s:layout-component name="content">
@@ -43,7 +42,7 @@
     
       <%-- View tab --%>
       <wiki:Tab id="view" titleKey="view.tab" accesskey="v"
-        onclick="Stripes.executeEvent('editform', 'preview', 'previewContent');">
+        onclick="Stripes.submitFormEvent('editform', 'preview', 'previewContent', null);">
         <div class="information">
           <fmt:message key="preview.info" />
         </div>

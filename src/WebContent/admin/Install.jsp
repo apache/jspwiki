@@ -37,7 +37,6 @@
     <title><fmt:message key="install.title" /></title>
     <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css" />' />
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js' />"></script>
-    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/stripes-support.js' />"></script>
   </head>
   <body class="view">
     <div id="wikibody">
@@ -156,7 +155,7 @@
                   <s:checkbox name="properties.jspwiki.ldap_ssl" />
                   <div class="description"><fmt:message key="ldap.ssl.description" /></div>
                 </div>
-                <s:button name="testLdapConnection" onclick="Stripes.executeEvent(form, this.name, 'ldapConnResults');" />
+                <s:button name="testLdapConnection" onclick="Stripes.submitFormEvent(form, this.name, 'ldapConnResults', null);" />
                 <div class="description" id="ldapConnResults"></div>
                 <!-- LDAP authentication settings and test button -->
                 <div>
@@ -171,7 +170,7 @@
                   <s:errors field="bindPassword" />
                   <div class="description"><fmt:message key="ldap.bindPassword.description" /></div>
                 </div>
-                <s:button name="testLdapAuthentication" onclick="Stripes.executeEvent(form, this.name, 'ldapAuthResults');" />
+                <s:button name="testLdapAuthentication" onclick="Stripes.submitFormEvent(form, this.name, 'ldapAuthResults', null);" />
                 <div class="description" id="ldapAuthResults"></div>
                 <!-- LDAP user database settings and test button -->
                 <div>
@@ -180,7 +179,7 @@
                   <s:errors field="properties.jspwiki.ldap_userBase" />
                   <div class="description"><fmt:message key="ldap.userBase.description" /></div>
                 </div>
-                <s:button name="testLdapUsers" onclick="Stripes.executeEvent(form, this.name, 'ldapUserResults');" />
+                <s:button name="testLdapUsers" onclick="Stripes.submitFormEvent(form, this.name, 'ldapUserResults', null);" />
                 <div class="description" id="ldapUserResults"></div>
                 <!-- LDAP authorizer settings and test button -->
                 <div>
@@ -189,7 +188,7 @@
                   <s:errors field="properties.jspwiki.ldap_roleBase" />
                   <div class="description"><fmt:message key="ldap.roleBase.description" /></div>
                 </div>
-                <s:button name="testLdapRoles" onclick="Stripes.executeEvent(form, this.name, 'ldapRoleResults');" />
+                <s:button name="testLdapRoles" onclick="Stripes.submitFormEvent(form, this.name, 'ldapRoleResults', null);" />
                 <div class="description" id="ldapRoleResults"></div>
               </div>
               
