@@ -132,7 +132,8 @@ public abstract class AbstractFilteredPlugin
     public void initialize( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
-        m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+        Preferences prefs = Preferences.getPreferences( context.getHttpRequest() );
+        m_dateFormat = prefs.getDateFormat( TimeFormat.DATETIME );
         m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
         if( m_maxwidth < 0 ) m_maxwidth = 0;

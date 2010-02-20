@@ -36,6 +36,7 @@ import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.rpc.json.JSONRPCManager;
 
 

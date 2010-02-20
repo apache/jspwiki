@@ -24,7 +24,6 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page errorPage="/Error.jsp" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
   <s:layout-component name="script">
@@ -49,7 +48,7 @@
             <wiki:UserCheck status="notauthenticated">
               <div>
                 <s:label for="assertedName" />
-                <s:text id="assertedName" name="assertedName" size="20"><wiki:UserProfile property='wikiname' /></s:text>
+                <s:text id="assertedName" name="assertedName" size="20" />
                 <s:errors field="assertedName" />
                 <div class="description">
                   <fmt:message key="prefs.assertedname.description">
@@ -86,17 +85,17 @@
             <div>
               <s:label for="skin" />
               <s:select id="skin" name="skin">
-                <s:options-collection collection="${skins}" />
+                <s:options-collection collection="${prefs.availableSkins}" />
               </s:select>
               <s:errors field="skin" />
             </div>
             
             <%-- Locale --%>
-            <c:if test='${not empty locales}'>
+            <c:if test='${not empty prefs.availableLocales}'>
               <div>
                 <s:label for="locale" />
                 <s:select name="locale">
-                  <s:options-map map="${locales}" />
+                  <s:options-map map="${prefs.availableLocales}" />
                 </s:select>
                 <s:errors field="locale" />
               </div>
@@ -115,7 +114,7 @@
             <div>
               <s:label for="timeFormat" />
               <s:select id="timeFormat" name="timeFormat">
-                <s:options-map map="${timeformats}" />
+                <s:options-map map="${prefs.availableTimeFormats}" />
               </s:select>
               <s:errors field="timeFormat" />
             </div>
@@ -124,7 +123,9 @@
             <div>
               <s:label for="timeZone" />
               <s:select id="timeZone" name="timeZone">
-                <s:options-map map="${timezones}" />
+                <c:forEach var="item" items="${prefs.availableTimeZones}" >
+                  <s:option value="${item}" formatType="id" ><s:format value="${item}" /></s:option>
+                </c:forEach>
               </s:select>
               <s:errors field="timeZone" />
             </div>

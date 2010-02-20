@@ -342,19 +342,16 @@ public class TemplateManager extends ModuleManager
      * whether there is anything actually in the directories, it just lists
      * them. This may change in the future.
      * 
-     * @param request the HTTP request
+     * @param servletContext the servlet context
      * @param template The template to search
      * @return Set of Strings with the skin names.
      * @since 2.3.26
      */
     @SuppressWarnings( "unchecked" )
-    public Set listSkins( HttpServletRequest request, String template )
+    public Set<String> listSkins( ServletContext servletContext, String template )
     {
         String place = makeFullJSPName( template, SKIN_DIRECTORY );
-
-        ServletContext sContext = request.getSession().getServletContext();
-
-        Set<String> skinSet = sContext.getResourcePaths( place );
+        Set<String> skinSet = servletContext.getResourcePaths( place );
         TreeSet<String> resultSet = new TreeSet<String>();
 
         if( log.isDebugEnabled() )

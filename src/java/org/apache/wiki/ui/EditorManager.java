@@ -195,7 +195,8 @@ public class EditorManager extends ModuleManager
         String editor = null;
 
         // User has set an editor in preferences
-        editor = Preferences.getPreference( context, Preferences.PREFS_EDITOR  );
+        Preferences prefs = Preferences.getPreferences( context.getHttpRequest() );
+        editor = (String)prefs.get( Preferences.PREFS_EDITOR  );
 
         /* FIXME: actual default 'editor' property is read by the Preferences class */
         if (editor == null)

@@ -822,7 +822,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         Node node = null;
         try
         {
-            node = (Node) cm.getCurrentSession().getItem( jcrNode );
+            node = (Node) s.getItem( jcrNode );
         }
         catch( PathNotFoundException e )
         {
@@ -859,15 +859,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             
             // There seems to be a bug in Priha that causes property files to bloat,
             // so we remove the property first, then re-add it
-            p.remove();
-            s.save();
+//            p.remove();
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
         catch( PathNotFoundException e )
         {
             node.setProperty( property, new String[] { newValue } );
         }
-        s.save();
     }
 
     /**
@@ -1006,7 +1004,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         
         // Retrieve (or create) the destination node for the page
         ContentManager cm = m_engine.getContentManager();
-        Session s = cm.getCurrentSession();
         Node node = null;
         try
         {
@@ -1033,15 +1030,12 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                     newValues.add( valueString );
                 }
             }
-            /*
             if( newValues.size() == 0 )
             {
                 // There seems to be a bug in Priha that causes property files to bloat,
                 // so we remove the property first, then re-add it
                 p.remove();
-                s.save();
             }
-            */
         }
         catch( PathNotFoundException e )
         {
@@ -1053,7 +1047,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         {
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
-//        s.save();
     }
     
     /**
@@ -1271,8 +1264,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
         // Remove the saved page from the 'uncreated' list
         removeFromProperty( NOT_CREATED, PROPERTY_NOT_CREATED, source.toString() );
-
-        s.save();
     }
 
     /**

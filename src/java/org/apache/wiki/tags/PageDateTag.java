@@ -20,9 +20,9 @@
  */
 package org.apache.wiki.tags;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.preferences.Preferences;
@@ -83,12 +83,15 @@ public class PageDateTag
             if( d != null )
             {
                 SimpleDateFormat fmt;
-                
                 if( m_format == null )
-                    fmt = Preferences.getDateFormat( m_wikiContext, TimeFormat.DATETIME );
+                {
+                    Preferences prefs = Preferences.getPreferences( m_wikiContext.getHttpRequest() );
+                    fmt = prefs.getDateFormat( TimeFormat.DATETIME );
+                }
                 else
+                {
                     fmt = new SimpleDateFormat( m_format );
-
+                }
                 pageContext.getOut().write( fmt.format( d ) );
             }
             else

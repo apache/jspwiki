@@ -319,9 +319,6 @@ public class WikiInterceptor implements Interceptor
         // Stash the WikiContext
         WikiContextFactory.saveContext( request, actionBean.getContext() );
 
-        // Set up user preferences
-        Preferences.setupPreferences( request );
-
         if( log.isDebugEnabled() )
         {
             log.debug( "WikiInterceptor resolved ActionBean: " + actionBean );

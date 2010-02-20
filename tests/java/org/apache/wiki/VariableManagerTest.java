@@ -215,7 +215,8 @@ public class VariableManagerTest extends TestCase
     {
         // test for default dateformat
         //
-        String defaultDateFormat = Preferences.getDateFormat( m_context, TimeFormat.DATETIME ).format( new Date() );
+        Preferences prefs = Preferences.getPreferences( m_context.getHttpRequest() );
+        String defaultDateFormat = prefs.getDateFormat( TimeFormat.DATETIME ).format( new Date() );
 
         String res = m_variableManager.expandVariables( m_context, ">>>>>{$timestamp}<<<<<" );
         assertEquals( ">>>>>" + defaultDateFormat + "<<<<<", res );

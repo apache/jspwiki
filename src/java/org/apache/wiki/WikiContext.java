@@ -117,7 +117,7 @@ public interface WikiContext
     public static final String    VIEW_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "view" ).getRequestContext();
 
     /** User is editing preferences */
-    public static final String    PREFS    = HandlerInfo.getHandlerInfo( UserPreferencesActionBean.class, "createAssertedName" ).getRequestContext();
+    public static final String    PREFS    = HandlerInfo.getHandlerInfo( UserPreferencesActionBean.class, "save" ).getRequestContext();
 
     /** User is renaming a page. */
     public static final String    RENAME   = HandlerInfo.getHandlerInfo( RenameActionBean.class, "rename" ).getRequestContext();

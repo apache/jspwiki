@@ -185,7 +185,8 @@ public class WeblogPlugin
 
         if( ( params.get(PARAM_ENTRYFORMAT)) == null )
         {
-            entryFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+            Preferences prefs = Preferences.getPreferences( context.getHttpRequest() );
+            entryFormat = prefs.getDateFormat( TimeFormat.DATETIME );
         }
         else
         {

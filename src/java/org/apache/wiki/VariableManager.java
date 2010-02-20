@@ -348,7 +348,8 @@ public class VariableManager
                 if( numTokens == 1 )
                 {
                     // no (format) param was given, return the user default
-                    return Preferences.getDateFormat( context, TimeFormat.DATETIME ).format( new Date() );
+                    Preferences prefs = Preferences.getPreferences( req );
+                    return prefs.getDateFormat( TimeFormat.DATETIME ).format( new Date() );
                 }
 
                 if( numTokens >= 2 )

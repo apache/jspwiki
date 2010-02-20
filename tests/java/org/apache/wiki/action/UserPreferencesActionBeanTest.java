@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.action;
 
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.servlet.http.Cookie;
@@ -29,6 +30,7 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.action.UserPreferencesActionBean;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.login.CookieAssertionLoginModule;
+import org.apache.wiki.preferences.Preferences;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -63,7 +65,7 @@ public class UserPreferencesActionBeanTest extends TestCase
     }
     
 
-    public void testCreateAssertedName() throws Exception
+    public void testSave() throws Exception
     {
         MockRoundtrip trip;
         UserPreferencesActionBean bean;
@@ -71,17 +73,44 @@ public class UserPreferencesActionBeanTest extends TestCase
         // Create session; set 'assertion' param; verify it got saved
         trip = m_engine.guestTrip( "/UserPreferences.jsp" );
         trip.setParameter( "assertedName", "MyAssertedIdentity" );
-        trip.execute( "createAssertedName" );
+        trip.setParameter( "editor", "plain" );
+        trip.setParameter( "locale", Locale.GERMANY.toString() );
+        trip.setParameter( "orientation", Preferences.Orientation.RIGHT.name() );
+        trip.setParameter( "sectionEditing", "true" );
+        trip.setParameter( "skin", "Smart" );
+        trip.setParameter( "timeFormat", "YYYY dd-mm" );
+        trip.setParameter( "timeZone", Preferences.AVAILABLE_TIME_ZONES.get( 1 ).getID() );
+        trip.execute( "save" );
         bean = trip.getActionBean( UserPreferencesActionBean.class );
         assertEquals( "/Wiki.jsp", trip.getDestination() );
 
         // Verify that the asserted name cookie is present in the Response
         MockHttpServletResponse response = (MockHttpServletResponse) bean.getContext().getResponse();
         Cookie[] cookies = response.getCookies();
-        assertEquals( 1, cookies.length );
-        Cookie cookie = cookies[0];
-        assertEquals( CookieAssertionLoginModule.PREFS_COOKIE_NAME, cookie.getName() );
-        assertEquals( "MyAssertedIdentity", cookie.getValue() );
+        assertEquals( 8, cookies.length );
+        boolean foundCookie = false;
+        for ( Cookie cookie : response.getCookies() )
+        {
+            if ( CookieAssertionLoginModule.PREFS_COOKIE_NAME.equals( cookie.getName() ) )
+            {
+                if ( "MyAssertedIdentity".equals( cookie.getValue() ) )
+                {
+                    foundCookie = true;
+                    break;
+                }
+            }
+        }
+        assertTrue( foundCookie );
+        
+        // Verify that the Preference objects were set properly
+        Preferences prefs = Preferences.getPreferences( trip.getRequest() );
+        assertEquals( "plain", prefs.get( Preferences.PREFS_EDITOR ) );
+        assertEquals( Locale.GERMANY, prefs.get( Preferences.PREFS_LOCALE ) );
+        assertEquals( Preferences.Orientation.RIGHT, prefs.get( Preferences.PREFS_ORIENTATION ) );
+        assertEquals( true, prefs.get( Preferences.PREFS_SECTION_EDITING ) );
+        assertEquals( "Smart", prefs.get( Preferences.PREFS_SKIN ) );
+        assertEquals( "YYYY dd-mm", prefs.get( Preferences.PREFS_TIME_FORMAT ) );
+        assertEquals( Preferences.AVAILABLE_TIME_ZONES.get( 1 ), prefs.get( Preferences.PREFS_TIME_ZONE ) );
     }
 
     public void testCreateAssertedNameAfterLogin() throws Exception
@@ -98,15 +127,29 @@ public class UserPreferencesActionBeanTest extends TestCase
 
         // Set 'assertion' param; verify redirect to front page
         trip.setParameter( "assertedName", "MyAssertedIdentity" );
-        trip.execute( "createAssertedName" );
+        trip.setParameter( "editor", "plain" );
+        trip.setParameter( "locale", Locale.GERMANY.toString() );
+        trip.setParameter( "orientation", Preferences.Orientation.RIGHT.name() );
+        trip.setParameter( "sectionEditing", "true" );
+        trip.setParameter( "skin", "Smart" );
+        trip.setParameter( "timeFormat", "YYYY dd-mm" );
+        trip.setParameter( "timeZone", Preferences.AVAILABLE_TIME_ZONES.get( 1 ).getID() );
+        trip.execute( "save" );
         bean = trip.getActionBean( UserPreferencesActionBean.class );
         assertEquals( "/Wiki.jsp", trip.getDestination() );
 
         // Verify that the asserted name cookie is NOT present in the Response
         // (authenticated users cannot set the assertion cookie)
         MockHttpServletResponse response = (MockHttpServletResponse) bean.getContext().getResponse();
-        Cookie[] cookies = response.getCookies();
-        assertEquals( 0, cookies.length );
+        boolean foundCookie = false;
+        for ( Cookie cookie : response.getCookies() )
+        {
+            if ( CookieAssertionLoginModule.PREFS_COOKIE_NAME.equals( cookie.getName() ) )
+            {
+                foundCookie = true;
+            }
+        }
+        assertFalse( foundCookie );
     }
 
     public void testClearAssertedName() throws Exception

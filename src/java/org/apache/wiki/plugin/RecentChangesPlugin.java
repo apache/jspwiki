@@ -238,8 +238,6 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
         return "";
     }
 
-    
-
     // TODO: Ideally the default behavior should be to return the default format for the default
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
@@ -247,35 +245,31 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
     private DateFormat getTimeFormat( WikiContext context, Map<String,Object> params )
     {
         String formatString = get(params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT);
-
         if ("".equals(formatString.trim()))
-            return Preferences.getDateFormat( context, TimeFormat.TIME );
-
+        {
+            Preferences prefs = Preferences.getPreferences( context.getHttpRequest() );
+            return prefs.getDateFormat( TimeFormat.TIME );
+        }
         return new SimpleDateFormat(formatString);
     }
-
-
 
     private DateFormat getDateFormat( WikiContext context, Map<String,Object> params )
     {
         String formatString = get(params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT);
-
         if ("".equals(formatString.trim()))
-            return Preferences.getDateFormat( context, TimeFormat.DATE );
-
+        {
+            Preferences prefs = Preferences.getPreferences( context.getHttpRequest() );
+            return prefs.getDateFormat( TimeFormat.DATE );
+        }
         return new SimpleDateFormat(formatString);
 
     }
-
-
 
     private String get(Map<String,Object> params, String defaultValue, String paramName)
     {
         String value = (String) params.get(paramName);
         return null == value ? defaultValue : value;
     }
-
-    
 }
 
 

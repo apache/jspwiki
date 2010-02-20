@@ -460,7 +460,8 @@ public class EditActionBean extends AbstractPageActionBean
                         signature = "["+m_author+"|"+link+"]";
                     }
                     Calendar cal = Calendar.getInstance();
-                    SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
+                    Preferences prefs = Preferences.getPreferences( request );
+                    SimpleDateFormat fmt = prefs.getDateFormat( TimeFormat.DATETIME);
                     pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
                 }
                 engine.saveText( wikiContext, pageText.toString() );
