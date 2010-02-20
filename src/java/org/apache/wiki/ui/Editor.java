@@ -29,9 +29,9 @@ import org.apache.wiki.WikiContext;
  */
 public class Editor
 {
-    private String m_editorName;
-    private WikiContext m_wikiContext;
-    private EditorManager m_editorManager;
+    private final String m_editorName;
+    private final WikiContext m_wikiContext;
+    private final EditorManager m_editorManager;
 
     public Editor( WikiContext wikiContext, String editorName )
     {
@@ -65,7 +65,7 @@ public class Editor
     }
 
     /**
-     *  Convinience method which returns XHTML for an option element.
+     *  Convenience method which returns XHTML for an option element.
      * @return "selected='selected'", if this editor is selected.
      */
     public String isSelected( )
@@ -80,7 +80,8 @@ public class Editor
 
     public String isSelected( String ifSelected, String ifNotSelected )
     {
-        if ( m_editorName.equals(m_editorManager.getEditorName(m_wikiContext) ) )
+        String preferredEditor = m_editorManager.getEditorName(m_wikiContext);
+        if ( m_editorName.equals( preferredEditor ) )
         {
             return ifSelected;
         }
