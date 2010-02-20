@@ -174,8 +174,7 @@ public class Preferences implements Map<String, Object>
     private final Collection<ValidationError> m_errors;
 
     /**
-     * List of time zones, used by
-     * {@link #getAvailableTimeZones(HttpServletRequest)}.
+     * List of time zones
      */
     public static final List<TimeZone> AVAILABLE_TIME_ZONES;
 

@@ -34,7 +34,7 @@ import org.apache.wiki.preferences.Preferences;
 
 /**
  * This is a simple Stripes LocalePicker which uses
- * {@link Preferences#getLocale(HttpServletRequest)} to determine the request
+ * {@link Preferences#getPreferences(HttpServletRequest)} to determine the request
  * Locale.
  */
 public class PreferencesLocalePicker implements LocalePicker
