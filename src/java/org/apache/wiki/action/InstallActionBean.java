@@ -494,10 +494,6 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         {
             jspwiki.put( CONFIG_WORK_DIR, System.getProperty( "java.io.tmpdir" ) );
         }
-        if( !jspwiki.containsKey( PropertiesMap.escapedKey( WikiEngine.PROP_ENCODING ) ) )
-        {
-            jspwiki.put( PropertiesMap.escapedKey( WikiEngine.PROP_ENCODING ), "UTF-8" );
-        }
         if( !jspwiki.containsKey( CONFIG_LDAP_SSL ) )
         {
             jspwiki.put( CONFIG_LDAP_SSL, "false" );
