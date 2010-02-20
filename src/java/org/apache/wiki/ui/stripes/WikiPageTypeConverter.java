@@ -20,7 +20,9 @@
  */
 package org.apache.wiki.ui.stripes;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -31,6 +33,7 @@ import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.TypeConverter;
 import net.sourceforge.stripes.validation.ValidationError;
 
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
@@ -74,6 +77,20 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         Configuration config = StripesFilter.getConfiguration();
         WikiEngine engine = WikiEngine.getInstance( config.getServletContext(), null );
         WikiPage page = null;
+        
+        // Decode the page name
+        try
+        {
+            String decodedName = URLDecoder.decode( pageName, "UTF-8" );
+            if ( decodedName != null )
+            {
+                pageName = decodedName;
+            }
+        }
+        catch( UnsupportedEncodingException e1 )
+        {
+            throw new InternalWikiException( "Impossible! UTF-8 must be supported." );
+        }
         
         // Is this a special page?
         URI uri = engine.getSpecialPageReference( pageName );

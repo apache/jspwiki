@@ -20,6 +20,8 @@
  */
 package org.apache.wiki.ui.stripes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -29,6 +31,7 @@ import net.sourceforge.stripes.validation.LocalizableError;
 import net.sourceforge.stripes.validation.TypeConverter;
 import net.sourceforge.stripes.validation.ValidationError;
 
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -71,6 +74,21 @@ public class GroupTypeConverter implements TypeConverter<Group>
         Configuration config = StripesFilter.getConfiguration();
         WikiEngine engine = WikiEngine.getInstance( config.getServletContext(), null );
         GroupManager mgr = engine.getGroupManager();
+
+        // Decode the group name
+        try
+        {
+            String decodedName = URLDecoder.decode( groupName, "UTF-8" );
+            if ( decodedName != null )
+            {
+                groupName = decodedName;
+            }
+        }
+        catch( UnsupportedEncodingException e1 )
+        {
+            throw new InternalWikiException( "Impossible! UTF-8 must be supported." );
+        }
+
         Group group = null;
         try
         {

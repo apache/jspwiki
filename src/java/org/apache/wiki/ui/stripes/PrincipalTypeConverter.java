@@ -20,10 +20,13 @@
  */
 package org.apache.wiki.ui.stripes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Locale;
 
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.auth.WikiPrincipal;
 
 import net.sourceforge.stripes.validation.TypeConverter;
@@ -57,6 +60,20 @@ public class PrincipalTypeConverter implements TypeConverter<Principal>
      */
     public Principal convert( String principalName, Class<? extends Principal> targetType, Collection<ValidationError> errors )
     {
+        // Decode the principal name
+        try
+        {
+            String decodedName = URLDecoder.decode( principalName, "UTF-8" );
+            if ( decodedName != null )
+            {
+                principalName = decodedName;
+            }
+        }
+        catch( UnsupportedEncodingException e1 )
+        {
+            throw new InternalWikiException( "Impossible! UTF-8 must be supported." );
+        }
+        
         return new WikiPrincipal( principalName );
     }
 

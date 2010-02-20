@@ -22,6 +22,7 @@ package org.apache.wiki.parser;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -504,10 +505,11 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void testCCLinkWithScandics() throws Exception
     {
         newPage("\u00c4itiSy\u00f6\u00d6ljy\u00e4");
+        String encodedName = URLEncoder.encode("\u00c4itiSy\u00f6\u00d6ljy\u00e4", "UTF-8");
 
         String src = "Onko t\u00e4m\u00e4 hyperlinkki: \u00c4itiSy\u00f6\u00d6ljy\u00e4?";
 
-        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
+        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/Wiki.jsp?page=" + encodedName + "\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
                       translate(src) );
     }
 
@@ -825,10 +827,11 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void testScandicPagename1() throws Exception
     {
         String src = "Link [\u00C5\u00E4Test]";
+        String encodedName = URLEncoder.encode( "\u00C5\u00E4Test", "UTF-8" );
 
         newPage("\u00C5\u00E4Test"); // FIXME: Should be capital
 
-        assertEquals("Link <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>",
+        assertEquals("Link <a class=\"wikipage\" href=\"/Wiki.jsp?page=" + encodedName +"\">\u00c5\u00e4Test</a>",
                      translate(src));
     }
 
@@ -898,7 +901,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "[{$encoding}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
                      "In UNIX, the file(1) command can be used.";
 
-        assertEquals( "<p>ISO-8859-1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+        assertEquals( "<p>UTF-8\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
                       "<p>In UNIX, the file(1) command can be used.</p>",
                       translate(src) );
     }

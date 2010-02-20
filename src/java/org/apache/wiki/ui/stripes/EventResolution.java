@@ -15,9 +15,22 @@ import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
 /**
- * Resolution that returns, in JavaScript object notation format, an arbitrary
- * Object result, along with the ActionBeanContext's messages and validation
- * errors.
+ * <p>
+ * Resolution that returns an {@code eval}-able set of JavaScript statements
+ * that builds a variable containing the result of an AJAX call. The object is
+ * called {@code eventResponse} and contains the call results, the
+ * ActionBeanContext messages and validation errors. It has four properties:
+ * </p>
+ * <ul>
+ * <li>{@code results} - the Object that contains the results of the AJAX call.
+ * This can be just about anything that
+ * {@link net.sourceforge.stripes.ajax.JavaScriptBuilder} can encode.</li>
+ * <li>{@code fieldErrors} - any field-level errors</li>
+ * <li>{@code globalErrors} - any global errors</li>
+ * <li>{@code messages} - any messages</li>
+ * <li>{@code isHtml} - whether the results should be treated as HTML (for
+ * example, to inject directly into a {@code div})</li>
+ * </ul>
  */
 public class EventResolution implements Resolution
 {
@@ -38,7 +51,7 @@ public class EventResolution implements Resolution
          * 
          * @param context the ActionBeanContext that supplies the messages and
          *            validation errors.
-         * @param rootObject
+         * @param rootObject the Object to be encoded
          * @param isHtml whether the results should be interpreted as HTML
          */
         public Result( ActionBeanContext context, Object rootObject, boolean isHtml )
@@ -133,15 +146,15 @@ public class EventResolution implements Resolution
 
     /**
      * Converts the ActionBean messges, validation errors and root object passed
-     * in to a series of JavaScript statements that reconstruct the {@link Result}
-     * object in JavaScript, and store the object under the variable name
-     * {@code eventResponse}.
+     * in to a series of JavaScript statements that reconstruct the
+     * {@link Result} object in JavaScript, and store the object under the
+     * variable name {@code eventResponse}.
      */
     public void execute( HttpServletRequest request, HttpServletResponse response ) throws Exception
     {
-        response.setContentType("text/javascript");
+        response.setContentType( "text/javascript" );
         m_builder.setRootVariableName( "eventResponse" );
-        m_builder.build(response.getWriter());
+        m_builder.build( response.getWriter() );
         response.flushBuffer();
     }
 }
