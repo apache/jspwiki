@@ -1,3 +1,9 @@
+2010-02-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.4-svn-9
+
+        * JSPWIKI-637: Fix for zh_CN translation, thanks to David Gao.
+
 2010-01-31  Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-8
