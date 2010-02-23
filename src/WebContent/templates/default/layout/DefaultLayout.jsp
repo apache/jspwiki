@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <%--
     JSPWiki - a JSP-based WikiWiki clone.
 
@@ -22,6 +24,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<%@ page import="org.apache.wiki.Release" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%--
@@ -42,6 +45,8 @@
                                 functions. Default=blank
           jsfunction          : JavaScript functions. Default=blank
           headMetaRobots      : Search engine options. Default=noindex,nofollow
+          pageTitle           : The title for the JSP, which will be rendered
+                                at the top of the page body. Default=wiki: pagename
           content             : The page contents. Default=blank
 
      2) DefaultLayout injects additional JSPs that are meant to be
@@ -52,32 +57,26 @@
 
 --%>
 <s:layout-definition>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>
-    <%--
-
-         Title: by default, use the "view page" title
-    --%>
-    <s:layout-component name="headTitle">
-      <fmt:message key="view.title.view">
-        <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
-        <fmt:param><wiki:PageName/></fmt:param>
-      </fmt:message>
-    </s:layout-component>
+      <%--
+  
+           Title: by default, use the "view page" title
+      --%>
+      <s:layout-component name="headTitle">
+        <fmt:message key="view.title.view">
+          <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
+          <fmt:param><wiki:PageName/></fmt:param>
+        </fmt:message>
+      </s:layout-component>
     </title>
     <%--
 
          CSS stylesheets
     --%>
-    <link rel="stylesheet" media="screen, projection, print" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css' />" />
-    <%-- put this at the top, to avoid double load when not yet cached --%>
-    <%-- FIXME : @media print is included in jspwiki.css
-    <link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format='url' templatefile='jspwiki_print.css' />" />
-    --%>
-    <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki_print.css' />" title="Print friendly" />
-    <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css' />" title="Standard" />
+    <s:url value="${templates['jspwiki.css']}" var="css" />
+    <link rel="stylesheet" media="screen, projection, print" type="text/css" href="${css}" />
+    <link rel="alternate stylesheet" type="text/css" href="${css}" title="Standard" />
     <s:layout-component name="stylesheet" />
     <s:layout-component name="inlinecss" />
     <%--
@@ -87,9 +86,8 @@
     <link rel="search" href="<wiki:LinkTo format='url' page='FindPage' />" title='Search ${wikiEngine.applicationName}' />
     <link rel="help" href="<wiki:LinkTo format='url' page='TextFormattingRules' />" title="Help" />
     <link rel="start" href="<wiki:LinkTo format='url' page='${wikiEngine.frontPage}' />" title="Front page" />
-    <link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico' />" />
-    <%-- ie6 needs next line --%>
-    <link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='favicon.ico' />" />
+    <s:url value="${templates['images/favicon.ico']}" var="favicon" />
+    <link rel="shortcut icon" type="image/x-icon" href="${favicon}" />
     <%--
 
          Support for the universal edit button
@@ -153,25 +151,54 @@
          Search engines: by default, page is not indexed or followed
     --%>
     <s:layout-component name="headMetaRobots">
-    <meta name="robots" content="noindex,nofollow" />
+      <meta name="robots" content="noindex,nofollow" />
     </s:layout-component>
     <%--
 
          RSS Feed discovery
     --%>
     <wiki:FeedDiscovery/>
-
-    <jsp:include page="${templates['layout/LocalHeader.jsp']}" />
-
-
   </head>
 
+  <%--
+       Body content
+  --%>
   <body class="${wikiContext.requestContext}">
 
     <div id="wikibody" class="${prefs.Orientation}">
 
-      <jsp:include page="${templates['layout/Header.jsp']}" />
+      <%--
+            Local header
+      --%>
+      <div id="localHeader">
+        <jsp:include page="${templates['layout/LocalHeader.jsp']}" />
+      </div>
+    
+      <%--
+            Header
+      --%>
+      <div id="header">
+        <div class="titlebox"><wiki:InsertPage page="TitleBox" /></div>
+        <div class="applicationlogo" >
+          <c:set var="frontPageTitle"><fmt:message key='actions.home.title' ><fmt:param><c:out value='${wikiEngine.frontPage}' /></fmt:param></fmt:message></c:set>
+          <s:link beanclass="org.apache.wiki.action.ViewActionBean" title="${frontPageTitle}"><fmt:message key="actions.home" /></s:link>
+        </div>
+        <div class="companylogo"></div>
+        <div class="pagename">
+          <s:layout-component name="pageTitle">
+            <wiki:PageName/>
+          </s:layout-component>
+        </div>
+        <jsp:include page="${templates['layout/UserBox.jsp']}" />
+        <div class="searchbox">
+          <jsp:include page="${templates['layout/SearchBox.jsp']}" />
+        </div>
+        <div class="breadcrumbs"><fmt:message key="header.yourtrail" /><wiki:Breadcrumbs/></div>
+      </div>
 
+      <%--
+            Page content
+      --%>
       <div id="content">
         <div id="page">
           <jsp:include page="${templates['layout/PageActionsTop.jsp']}" />
@@ -182,7 +209,23 @@
       	<div class="clearbox"></div>
       </div>
 
-      <jsp:include page="${templates['layout/Footer.jsp']}" />
+      <%--
+            Footer
+      --%>
+      <div id="footer">
+        <div class="applicationlogo" >
+          <c:set var="frontPageTitle"><fmt:message key='actions.home.title' ><fmt:param><c:out value='${wikiEngine.frontPage}' /></fmt:param></fmt:message></c:set>
+          <s:link beanclass="org.apache.wiki.action.ViewActionBean" title="${frontPageTitle}"><fmt:message key="actions.home" /></s:link>
+        </div>
+        <div class="companylogo"></div>
+        <div class="copyright"><wiki:InsertPage page="CopyrightNotice" /></div>
+        <div class="wikiversion">
+          <%=Release.APPNAME%> v<%=Release.getVersionString()%>
+        </div>
+        <div class="rssfeed">
+          <wiki:RSSImageLink title="Aggregate the RSS feed" />
+        </div>
+      </div>
 
     </div>
   </body>

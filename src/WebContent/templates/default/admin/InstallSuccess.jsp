@@ -18,26 +18,22 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ page import="org.apache.wiki.*"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s"%>
 <%@ page errorPage="/Error.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title><fmt:message key="install.title" /></title>
-    <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css" />' />
-  </head>
-  <body class="view">
-    <div id="wikibody">
-      <div id="page">
-        <div id="pagecontent">
-          <h1><fmt:message key="install.success" /></h1>
-          <p><fmt:message key="install.success.description" /></p>
-          <s:link beanclass="org.apache.wiki.action.ViewActionBean"><fmt:message key="install.success.clickhere" /></s:link>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
+<s:layout-render name="${templates['layout/StaticLayout.jsp']}">
+
+  <s:layout-component name="headTitle">
+    <fmt:message key="install.title" />
+  </s:layout-component>
+
+  <s:layout-component name="pageTitle">
+    <fmt:message key="install.title" />
+  </s:layout-component>
+
+  <s:layout-component name="content">
+    <p><fmt:message key="install.success.description" /></p>
+    <s:link beanclass="org.apache.wiki.action.ViewActionBean"><fmt:message key="install.success.clickhere" /></s:link>
+  </s:layout-component>
+  
+</s:layout-render>

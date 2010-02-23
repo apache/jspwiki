@@ -22,8 +22,16 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page errorPage="/Error.jsp" %>
-<s:useActionBean beanclass="org.apache.wiki.action.AdminActionBean" event="view" id="admin" executeResolution="true" />
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
+
+  <s:layout-component name="headTitle">
+    JSPWiki Administration
+  </s:layout-component>
+  
+  <s:layout-component name="pageTitle">
+    JSPWiki Administration
+  </s:layout-component>
+
   <s:layout-component name="content">
     <h1>JSPWiki Administration</h1>
     <div class="information">Not all things can be configured here.  Some things need to be configured

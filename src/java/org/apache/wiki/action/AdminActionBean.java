@@ -9,15 +9,15 @@ import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.SecurityVerifier;
-import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.ui.admin.AdminBean;
-import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.util.TextUtil;
 
 /**
  * Administrative actions, including {@link AdminBean} execution and security
  * configuration.
  */
+@UrlBinding( "/admin/Admin.jsp" )
 public class AdminActionBean extends AbstractActionBean
 {
     private AdminBean m_bean = null;
@@ -46,7 +46,7 @@ public class AdminActionBean extends AbstractActionBean
             };
         }
         m_securityVerifier = new SecurityVerifier( engine, getContext().getWikiSession() );
-        return new ForwardResolution( "/admin/SecurityConfig.jsp" );
+        return new TemplateResolution( "admin/Security.jsp" ).addParameter( "tab", "security" );
     }
 
     /**
@@ -136,6 +136,6 @@ public class AdminActionBean extends AbstractActionBean
             };
         }
         m_bean.doPost( getContext() );
-        return new ForwardResolution( "/admin/Admin.jsp" );
+        return new TemplateResolution( "admin/Admin.jsp" ).addParameter( "tab", "admin" );
     }
 }
