@@ -77,7 +77,7 @@ public class AsirraCaptchaTest extends TestCase
 
     /**
      * Does a live HTTP GET to Asirra and confirms that we can still extract valid session IDs and challenges.
-     * @throws Exception
+     * @throws Exception if the Asirra service cannot be contacted
      */
     public void testGetChallengeResponse() throws Exception
     {

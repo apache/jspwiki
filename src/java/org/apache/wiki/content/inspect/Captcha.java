@@ -5,4 +5,10 @@ package org.apache.wiki.content.inspect;
  */
 public interface Captcha extends Challenge
 {
+    /**
+     * Returns {@code true} if the CAPTCHA is operational. If not operational,
+     * CAPTCHA testing will not be performed.
+     * @return the result
+     */
+    public boolean isEnabled();
 }

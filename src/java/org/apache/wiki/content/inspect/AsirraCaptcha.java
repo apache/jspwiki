@@ -1,6 +1,8 @@
 package org.apache.wiki.content.inspect;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -162,13 +164,23 @@ public class AsirraCaptcha implements Captcha
 
     private static final String SESSION_ID_PARAM = "asirra_session_id";
 
+    private boolean m_enabled = false;
+
     /**
      * The URL used to obtain challenge responses, not including the random
      * number suffix.
      */
     protected static final String CHALLENGE_URL = "http://challenge.asirra.com/cgi/Asirra?action=CreateSession";
 
+    /**
+     * The URL used to verify correct answers, not including the random number suffix.
+     */
     protected static final String CHECK_URL = "http://challenge.asirra.com/cgi/Asirra?action=ScoreResponse";
+
+    /**
+     * The URL used to determine whether this CAPTCHA should be enabled.
+     */
+    protected static final String SERVICE_URL = "http://challenge.asirra.com/";
 
     private static Logger log = LoggerFactory.getLogger( AsirraCaptcha.class );
 
@@ -347,5 +359,30 @@ public class AsirraCaptcha implements Captcha
      */
     public void initialize( InspectionPlan config )
     {
+        try
+        {
+            URL url = new URL( SERVICE_URL );
+            url.openConnection();
+            m_enabled = true;
+        }
+        catch( MalformedURLException e )
+        {
+            // Should not happen
+        }
+        catch( IOException e )
+        {
+            // Couldn't connect
+            log.info( "Asirra CAPTCHA service not available. Disabling..." );
+        }
+    }
+
+    /**
+     * Returns {@code true} if the Asirra CAPTHCA service can be reached.
+     * If the service cannot be contacted, for example because no network
+     * interface is available, this method returns {@code false}.
+     */
+    public boolean isEnabled()
+    {
+        return m_enabled;
     }
 }

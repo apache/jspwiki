@@ -53,15 +53,16 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  * </p>
  * <p>
  * This tag has one optional; attribute, {@code challenge}. If supplied, a
- * {@link Challenge} will be rendered in the format specified. The value {@code
- * captcha} indicates that a CAPTCHA will be rendered using the CAPTCHA object
- * configured for the WikiEngine. The value {@code password} indicates that the
- * user must supply their password. The password option is only available if the
+ * {@link Challenge} will be rendered in the format specified. The value
+ * {@code captcha} indicates that a CAPTCHA will be rendered using the
+ * {@link org.apache.wiki.content.inspect.Captcha} object configured for the
+ * WikiEngine, if it is enabled. The value {@code password} indicates that the user
+ * must supply their password. The password option is only available if the
  * user is already logged in, and JSPWiki is using built-in authentication. If
  * container authentication is used or if the user is not logged in, the {@code
  * password} will be ignored. If {@code challenge} is not supplied, a CAPTCHA
  * will be generated on-demand if {@link SpamInterceptor} determined that the
- * ActionBean contains spam.
+ * ActionBean contains spam, <em>unless</em> the CAPTCHA is disabled.
  * </p>
  * <p>
  * This tag must be added as a child of an existing &lt;form&gt; or
@@ -228,6 +229,7 @@ public class SpamProtectTag extends WikiTagBase
         SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( engine );
         WikiActionBeanContext actionBeanContext = m_wikiActionBean.getContext();
         String challengeContent = null;
+        boolean writeCaptcha = false;
 
         switch( m_challenge )
         {
@@ -236,22 +238,34 @@ public class SpamProtectTag extends WikiTagBase
                 break;
             }
             case CAPTCHA_PRESENTED: {
-                Captcha captcha = plan.getCaptcha();
-                challengeContent = captcha.formContent( actionBeanContext );
+                writeCaptcha = true;
                 break;
             }
             case CHALLENGE_NOT_PRESENTED: {
                 if( isSpamDetected( actionBeanContext ) )
                 {
                     m_challenge = Challenge.State.CAPTCHA_PRESENTED;
-                    Captcha captcha = plan.getCaptcha();
-                    challengeContent = captcha.formContent( actionBeanContext );
+                    writeCaptcha = true;
                 }
                 break;
             }
         }
+        
+        // Only generate CAPTCHA if it is actually functioning
+        Captcha captcha = plan.getCaptcha();
+        if ( writeCaptcha )
+        {
+            if ( captcha.isEnabled() )
+            {
+                challengeContent = captcha.formContent( actionBeanContext );
+            }
+            else
+            {
+                m_challenge = Challenge.State.CHALLENGE_NOT_PRESENTED;
+            }
+        }
 
-        // Always output the Challenge request parameter
+        // Always output the Challenge request parameter, for all values
         JspWriter out = getPageContext().getOut();
         out.write( "<input name=\"" + SpamInterceptor.CHALLENGE_REQUEST_PARAM + "\" type=\"hidden\" value=\""
                    + CryptoUtil.encrypt( String.valueOf( m_challenge.name() ) ) + "\" />\n" );
