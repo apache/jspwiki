@@ -743,7 +743,7 @@ img.outlink {
 }
 a.external {
 	padding-right:6px;
-	background:transparent url(../../images/out.png) no-repeat center right;
+	background:transparent url(images/out.png) no-repeat center right;
 }
 /* FIXME
 a.external {
@@ -765,7 +765,7 @@ a.createpage{
 a.infolink {
 	margin-left:3px;
 	padding-right:16px;
-	background:transparent url(../../images/attachment_small.png) no-repeat center right;
+	background:transparent url(images/attachment_small.png) no-repeat center right;
 }
 a.infolink img {
 	display:none;
@@ -1241,7 +1241,7 @@ DOM structure:
 	width:64px;
 	margin:0 auto;/* center logo, in case the width of the parent block is larger */
 	text-indent:-1000px;/* hide link text*/
-	background:url(../../images/jspwiki_logo.png) -64px 0 no-repeat;
+	background:url(images/jspwiki_logo.png) -64px 0 no-repeat;
 }
 .applicationlogo a:hover {
 	background-position:0 0;

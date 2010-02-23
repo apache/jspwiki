@@ -69,9 +69,9 @@
             </fmt:message></h4>
             <p>
               <fmt:message key="find.externalsearch" />
-              <a class="external" href="http://www.google.com/search?q=<c:out value='${wikiActionBean.query}' />" title="Google Search '<c:out value='${wikiActionBean.query}' />'" target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
+              <a class="external" href="http://www.google.com/search?q=<c:out value='${wikiActionBean.query}' />" title="Google Search '<c:out value='${wikiActionBean.query}' />'" target="_blank">Google</a><img class="outlink" src="${templates['images/out.png']}" alt="" />
               |     
-              <a class="external" href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${wikiActionBean.query}' />" title="Wikipedia Search '<c:out value='${wikiActionBean.query}' />'" target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
+              <a class="external" href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${wikiActionBean.query}' />" title="Wikipedia Search '<c:out value='${wikiActionBean.query}' />'" target="_blank">Wikipedia</a><img class="outlink" src="${templates['images/out.png']}" alt="" />
             </p>
         
             <wiki:SetPagination start="${wikiActionBean.start}" total="${fn:length(wikiActionBean.results)}"

@@ -212,7 +212,7 @@
    <!-- Error pages -->
    <error-page>
      <error-code>403</error-code>
-     <location>/error/Forbidden.html</location>
+     <location>/templates/default/Forbidden.jsp</location>
    </error-page>
 
    <!--  REMOVE ME TO ENABLE JDBC DATABASE

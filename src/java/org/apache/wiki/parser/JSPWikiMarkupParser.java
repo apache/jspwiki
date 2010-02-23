@@ -55,6 +55,7 @@ import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.plugin.WikiPlugin;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.RegExpUtil;
 import org.apache.wiki.util.StringTransmutator;
 import org.apache.wiki.util.TextUtil;
@@ -370,6 +371,8 @@ public class JSPWikiMarkupParser
                                                          PROP_USERELNOFOLLOW,
                                                          m_useRelNofollow );
 
+        m_resources = TemplateManager.getResourceResolver( m_engine.getServletContext() );
+
         if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
             disableAccessRules();
@@ -620,7 +623,7 @@ public class JSPWikiMarkupParser
                                                     link );
 
                 String imglink = m_context.getURL( WikiContext.NONE,
-                                                   "images/attachment_small.png" );
+                                                   m_resources.get( "images/attachment_small.png" ) );
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
@@ -1305,7 +1308,7 @@ public class JSPWikiMarkupParser
         {
             if( m_outlinkImageURL == null )
             {
-                m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
+                m_outlinkImageURL = m_resources.get( OUTLINK_IMAGE );
             }
 
             el = new Element("img").setAttribute("class", "outlink");
@@ -2031,6 +2034,9 @@ public class JSPWikiMarkupParser
     private boolean m_restartbold   = false;
 
     private boolean m_newLine;
+
+    /** Resolves requests for template resources */
+    private Map<String,String> m_resources = null;
 
     /**
      *  Starts a block level element, therefore closing

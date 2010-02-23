@@ -18,9 +18,18 @@
     specific language governing permissions and limitations
     under the License.  
  -->
- <html>
-  <body>
-    <h3>Forbidden</h3>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s"%>
+<s:layout-render name="${templates['layout/StaticLayout.jsp']}">
+
+  <s:layout-component name="headTitle">
+    Forbidden
+  </s:layout-component>
+
+  <s:layout-component name="pageTitle">
+    Forbidden
+  </s:layout-component>
+
+  <s:layout-component name="content">
     <p>
       <strong>Sorry, but you are not allowed to do that.</strong>
     </p>
@@ -38,5 +47,6 @@
       JSPWiki to block access, too.
     </p>
     <p><a href=".">Better luck next time.</a></p>
-  </body>
-</html>
+  </s:layout-component>
+  
+</s:layout-render>

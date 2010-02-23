@@ -35,6 +35,7 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -157,11 +158,10 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                         {
                             linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
                             linkel.setClass("infolink");
-                            linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
-
+                            String src = TemplateManager.getResourceResolver( m_engine.getServletContext() ).get( "attachment_small.png" );
+                            linkel.addElement( new img().setSrc( src ) );
                             col.addElement( linkel );
                         }
-
                     
                         row.addElement(col);
                         rt.addElement(row);
