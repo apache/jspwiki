@@ -1,3 +1,40 @@
+2010-02-23 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-208
+
+        * Useful tweaks to the AJAX-related Stripes JavaScript. The
+        client-side JavaScript now injects validation errors and messages
+        that were generated server-side by an EventResolution, using the same
+        prefixes and headers defined in CoreResources for "normal" JSP
+        validation errors and messages. Generation of an EventResolution
+        for AJAX methods that generate errors is automatic when the
+        event method is annotated with @AjaxEvent. Practically speaking,
+        what it means is this: to call an Stripes method via Ajax, just
+        annotate the method with @AjaxEvent. Then, client-side scripts
+        need only call the JavaScript function Stripes.submitFormEvent().
+        The rest is MAGIC.
+
+        * Captcha interface gains an isEnabled() method to allow
+        SpamProtect tag to check whether the CAPTCHA is operational
+        before generating output. This is required in stand-alone or
+        testing scenarios where an outbound network connection cannot
+        be assumed.
+
+        * Moved the admin-related JSPs to the templates directory.
+        Added a new layout JSP, StaticLayout.jsp, that is used with
+        template JSPs that do not need dynamic content, such as
+        Install.jsp. Among other things, this allows admin-related
+        JSPs to look more like ordinary pages, and use the same CSS.
+
+        * Tweaked TemplateManager to make the "resource resolver" initialize
+        safely even when the WikiEngine does not. This means the 'templates'
+        JSTL scripting variable can be used everywhere, for example in
+        Install.jsp, Error.jsp or any pages that must load safely.
+        
+        * Moved all images in top-level /images directory to template
+        /images dir, and made code/JSP changes to make sure they can
+        be "found" as needed by the TemplateManager resource resolver.
+
 2010-02-20 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-207

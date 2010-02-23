@@ -41,41 +41,41 @@
           <th class="changenote"><fmt:message key="info.changenote" /></th>
         </tr>
 
-        <c:forEach var="att" items="${wikiActionBean.attachments}" >
+        <c:forEach var="attachment" items="${wikiActionBean.attachments}" >
           <tr>
           	<%-- The 'title' attribute is used to sort empty cells --%>
-            <td title="${att.contentType}">
-              <div class="${fn:replace(att.contentType,'/','-')}">&nbsp;</div>
+            <td title="${attachment.contentType}">
+              <div class="${fn:replace(attachment.contentType,'/','-')}">&nbsp;</div>
             </td>
-            <td title="${att.name}">
+            <td title="${attachment.name}">
               <s:link beanclass="org.apache.wiki.action.AttachmentActionBean" event="download">
-                <s:param name="page" value="${att.path}" />
-                ${wiki:shorten(att.name,30)}
+                <s:param name="page" value="${attachment.path}" />
+                ${wiki:shorten(attachment.name,30)}
               </s:link>
             </td>
             <td style="white-space:nowrap;text-align:right;">
-              <fmt:formatNumber value="${att.size div 1000}" maxFractionDigits="1" minFractionDigits="1" />&nbsp;<fmt:message key="info.kilobytes" />
+              <fmt:formatNumber value="${attachment.size div 1000}" maxFractionDigits="1" minFractionDigits="1" />&nbsp;<fmt:message key="info.kilobytes" />
             </td>
-            <c:set var="attTitle"><fmt:message key="attach.moreinfo.title" /></c:set>
+            <c:set var="attachmentTitle"><fmt:message key="attach.moreinfo.title" /></c:set>
             <td style="text-align:center;">
-              <s:link beanclass="org.apache.wiki.action.ViewActionBean" event="info" title="${attTitle}">
-                <s:param name="page" value="${att.path}" />
-                ${att.version}
+              <s:link beanclass="org.apache.wiki.action.ViewActionBean" event="info" title="${attachmentTitle}">
+                <s:param name="page" value="${attachment.path}" />
+                ${attachment.version}
               </s:link>
             </td>
-      	    <td jspwiki:sortvalue="${wiki:iso8601date(att.lastModified)}">
-        	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
+      	    <td jspwiki:sortvalue="${wiki:iso8601date(attachment.lastModified)}">
+        	    <fmt:formatDate value="${attachment.lastModified}" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
         	</td>
             <td style="white-space:nowrap;" ><wiki:Author/></td>
             <wiki:Permission permission="delete">
               <td>
                 <s:form beanclass="org.apache.wiki.action.DeleteActionBean">
-                  <s:param name="page" value="${att.path}" />
+                  <s:param name="page" value="${attachment.path}" />
                   <s:submit name="delete"><fmt:message key="attach.delete" /></s:submit>
                 </s:form>
               </td>
             </wiki:Permission>
-            <td class="changenote"><c:out value="${att.changeNote}"/></td>
+            <td class="changenote"><c:out value="${attachment.changeNote}"/></td>
           </tr>
         </c:forEach>
 
