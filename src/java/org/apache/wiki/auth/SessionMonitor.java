@@ -36,8 +36,8 @@ import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
-import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.rpc.json.JSONRPCManager;
+import org.apache.wiki.ui.TemplateManager;
 
 
 
@@ -294,20 +294,20 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
     {
         HttpSession session = event.getSession();
         
+        // Stash 'templates' attribute for scripting
+        ServletContext servletContext = session.getServletContext();
+        session.setAttribute( "templates", TemplateManager.getResourceResolver( servletContext ) );
+
         JSONRPCManager.sessionCreated(session);
         
         // Go get the WikiEngine; note that m_engine is NOT set
         // yet because this method is called by the container,
         // and it has no knowledge of getInstance(WikiEngine).
-        ServletContext servletContext = session.getServletContext();
         WikiEngine engine = WikiEngine.getInstance( servletContext, null );
         if ( m_engine == null )
         {
             m_engine = engine;
         }
-        
-        // Stash 'templates' attribute for scripting
-        session.setAttribute( "templates", engine.getTemplateManager().getTemplateResources() );
         
         // Stash the WikiEngine and WikiSession for scripting
         session.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, engine );

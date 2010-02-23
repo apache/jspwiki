@@ -1,11 +1,11 @@
 package org.apache.wiki.ui.stripes;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.stripes.action.OnwardResolution;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.TemplateManager;
@@ -37,12 +37,11 @@ public class TemplateResolution extends OnwardResolution<TemplateResolution>
     public void execute( HttpServletRequest request, HttpServletResponse response ) throws Exception
     {
         // Figure out what the resolved template path should be
-        WikiEngine engine = WikiEngine.getInstance( request.getSession().getServletContext(), null );
-        TemplateManager templates = engine.getTemplateManager();
-        String path = templates.getTemplateResources().get( getPath() );
+        ServletContext servletContext = request.getSession().getServletContext();
+        String path = TemplateManager.getResourceResolver( servletContext ).get( getPath() );
         if( path == null )
         {
-            path = "/templates/default/" + getPath();
+            path = "/templates/" + TemplateManager.DEFAULT_TEMPLATE + "/" + getPath();
         }
         setPath( path );
 

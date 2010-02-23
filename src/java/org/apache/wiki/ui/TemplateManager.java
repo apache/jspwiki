@@ -49,6 +49,13 @@ public class TemplateManager extends ModuleManager
     private static final String SKIN_DIRECTORY = "skins";
 
     /**
+     * Attribute name for the resource resolver map returned by
+     * {@link #getResourceResolver(ServletContext)}. Stored in the
+     * servlet context as an attribute.
+     */
+    private static final String RESOURCE_RESOLVER = "resourceResolver";
+
+    /**
      * Requests a JavaScript function to be called during window.onload. Value
      * is {@value}.
      */
@@ -104,14 +111,7 @@ public class TemplateManager extends ModuleManager
     private static final List<WikiModuleInfo> EMPTY_MODULE_LIST = Collections.emptyList();
 
     /**
-     * Map that resolves resource requests relative to the templates directory
-     * with the actual resources.
-     * @see #getTemplateResources()
-     */
-    private Map<String,String> m_resources = Collections.emptyMap();
-    
-    /**
-     * Resolves requests for resources relative to the
+     * <p>Resolves requests for resources relative to the
      * <code>templates/<var>template</var></code> path to the actual resources,
      * where <var>template</var> is the configured template returned by
      * {@link WikiEngine#getTemplateDir()}, for example <code>default</code>.
@@ -124,11 +124,46 @@ public class TemplateManager extends ModuleManager
      * <code>/templates/default/FindContent.jsp</code>. It is also possible
      * for certain keys to return <code>null</code>. The map itself is
      * immutable.
+     * </p>
+     * <p>The resource resolver is guaranteed to initialize if the ServletContext
+     * is active, even if the WikiEngine cannot initialize for some reason.
+     * If the WikiEngine does not initialize, the default template
+     * {@link #DEFAULT_TEMPLATE} will be used for all resource requests.</p>
+     * @param servletContext the servlet context
      * @return the unmodifiable map
      */
-    public Map<String,String> getTemplateResources()
+    @SuppressWarnings("unchecked")
+    public static Map<String,String> getResourceResolver( ServletContext context )
     {
-        return m_resources;
+        Map<String,String> resolver = (Map<String,String>)context.getAttribute( RESOURCE_RESOLVER );
+        if ( resolver == null )
+        {
+            // Get the WikiEngine template (or use the default if not available)
+            String template = null;
+            try
+            {
+                WikiEngine engine = WikiEngine.getInstance( context, null );
+                template = engine.getTemplateDir();
+            }
+            catch ( Exception e )
+            {
+                // WikiEngine didn't init!
+            }
+            if ( template == null )
+            {
+                template = DEFAULT_TEMPLATE;
+            }
+            
+            // Add all of the resources the template contains
+            resolver = new HashMap<String,String>();
+            addResources( context, resolver, "/" + DIRECTORY + "/" + template + "/", null );
+            
+            // Add resources the template does not contain, but default does
+            addResources( context, resolver, "/" + DIRECTORY + "/" + DEFAULT_TEMPLATE + "/", null );
+            resolver = Collections.unmodifiableMap( resolver );
+            context.setAttribute( RESOURCE_RESOLVER, resolver );
+        }
+        return resolver;
     }
     
     /**
@@ -141,7 +176,7 @@ public class TemplateManager extends ModuleManager
     {
         super( engine );
         m_engine = engine;
-        initTemplateResources( engine.getTemplateDir() );
+        getResourceResolver( engine.getServletContext() );
     }
 
     /**
@@ -600,26 +635,6 @@ public class TemplateManager extends ModuleManager
     }
     
     /**
-     * Initializes the template resources resolver map so that requests
-     * for a particular resource will be found regardless of whether the
-     * template contains that resource, or the default template does.
-     * @param template the template whose resources provide the defaults
-     */
-    private void initTemplateResources( String template )
-    {
-        Map<String,String> resolver = new HashMap<String,String>();
-        
-        // Add all of the resources the template contains
-        addResources( resolver, "/" + DIRECTORY + "/" + template + "/", null );
-        
-        // Add resources the template does not contain, but default does
-        addResources( resolver, "/" + DIRECTORY + "/" + DEFAULT_TEMPLATE + "/", null );
-
-        // We're done! Make the map immutable
-        m_resources = Collections.unmodifiableMap( resolver );
-    }
-
-    /**
      * Adds all of the resources under a specified path prefix to the
      * resource resolver map, with the "short name" of the path as the
      * key, and the full path as the value. The short name is the portion
@@ -627,17 +642,17 @@ public class TemplateManager extends ModuleManager
      * has already been added to the resource map, it will not be added
      * again. Any resources ending in {@code /} (i.e., a directory path)
      * will be processed recursively.
+     * @param context the servlet context
      * @param resolver the resource resolver map
      * @param prefix the path prefix that the search initiates from
      * @param dir the directory to search relative to the path prefix. If not
      * supplied, the path prefix directory itself will be searched
      */
     @SuppressWarnings("unchecked")
-    private void addResources( Map<String,String> resolver, String prefix, String dir )
+    private static void addResources( ServletContext context, Map<String,String> resolver, String prefix, String dir )
     {
-        ServletContext servletContext = m_engine.getServletContext();
         String searchPath = dir == null ? prefix : prefix + dir;
-        Set<String> resources = servletContext.getResourcePaths( searchPath );
+        Set<String> resources = context.getResourcePaths( searchPath );
         if ( resources != null )
         {
             for ( String resource : resources )
@@ -647,7 +662,7 @@ public class TemplateManager extends ModuleManager
                 // Directory: process these entries too
                 if ( shortName.endsWith( "/" ) )
                 {
-                    addResources( resolver, prefix, shortName );
+                    addResources( context, resolver, prefix, shortName );
                 }
 
                 // Regular resource: add it if we don't have it already
