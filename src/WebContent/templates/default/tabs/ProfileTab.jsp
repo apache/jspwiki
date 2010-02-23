@@ -121,7 +121,6 @@
     <%-- Spam protection: password confirmation or CAPTCHA --%>
     <wiki:UserCheck status="notAuthenticated">
       <div>
-        <s:label for="captcha" />
         <wiki:SpamProtect challenge="captcha" />
       </div>
     </wiki:UserCheck>
