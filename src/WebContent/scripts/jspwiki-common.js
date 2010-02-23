@@ -1915,8 +1915,8 @@ var Collapsible =
 	render: function(page, name){
 		page = $(page); if(!page) return;
 
-		var cookie = Wiki.Context.test(/view|edit|comment/) ? "JSPWiki"+name : "";
-		//var cookie = "";  //activate this line if you want to deactivatie cookie handling
+		//var cookie = Wiki.Context.test(/view|edit|comment/) ? "JSPWiki"+name : "";
+		var cookie = "";  //activate this line if you want to deactivatie cookie handling
 
 		if(!this.bullet) {
 			this.bullet = new Element('div',{'class':'collapseBullet'}).set('html','&bull;');
@@ -2929,15 +2929,18 @@ var Stripes = {
                 event method must return an EventResolution, the response
                 for which will be eval'ed and be assigned to the variable
                 'eventResponse.' See org.apache.wiki.ui.stripes.EventResolution.
-    divTarget - if the 'eventResponse' variable returned by the AJAX call
-                has an 'html' property whose boolean value is true,
-                the results will be injected into this target div.
+    divTarget - if the 'callback' function is not supplied, the results returned
+                by the AJAX call will be injected into this target div as a
+                single string that includes the HTML representation of any Stripes
+                messages or validation errors prepended, plus the result object(s).
+                The entire string will be wrapped in a <div> whose class is
+                "eventResponse".
     callback -  a callback function to invoke. The 'eventResponse' variable
-                will be passed to this function. It contains the response
-                object, which can be any primitive type, an array, map
+                will be passed to this function as a parameter. It contains the
+                response object, which can be any primitive type, an array, map
                 or anything supported by net.sourceforge.stripes.ajax.JavaScriptBuilder.
-                It also contains a list of validation errors messages and
-                the 'html' boolean property.
+                It also contains two properties that contain HTML representations of
+                any errors or Stripes messages set server-side.
   */
   submitFormEvent: function( formName, event, divTarget, callback ){
     var form = $(formName);
@@ -2949,12 +2952,17 @@ var Stripes = {
       method: 'post',
       evalResponse: true,
       onComplete: function(response) {
-        // If HTML response, put results into the div
-        if (eventResponse.html) {
+        // If no custom callback function supplied, put results into the div
+        if (!callback) {
+          var newContent = '<div class="eventResponse">';
+          if (eventResponse.errors) { newContent += eventResponse.errors; }
+          if (eventResponse.messages) { newContent += eventResponse.messages; }
+          if (eventResponse.results) { newContent += eventResponse.results; }
+          newContent += "</div>";
           $(divTarget).empty();
-          $(divTarget).set('html',eventResponse.results);
+          $(divTarget).set('html',newContent);
         }
-        // Call the callback function
+        // Otherwise, call the callback function
         if (callback) {
           callback(eventResponse);
         }

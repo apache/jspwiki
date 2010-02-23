@@ -107,6 +107,7 @@ public class EditActionBean extends AbstractPageActionBean
      * @return always returns a {@link EventResolution} containing the
      * results
      */
+    @AjaxEvent
     @HandlesEvent( "preview" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "preview" )
@@ -123,7 +124,7 @@ public class EditActionBean extends AbstractPageActionBean
         String result = renderer.getHTML( context, doc );
 
         // Return an EventResolution
-        Resolution r = new EventResolution( context, result, true );
+        Resolution r = new EventResolution( context, result );
         return r;
     }
 

@@ -80,6 +80,6 @@ public class EditDialogActionBean extends AbstractActionBean
             log.debug("Suggestion request for "+wikiName+" done in "+sw );
         }
         
-        return new EventResolution( getContext(), list, false );
+        return new EventResolution( getContext(), list );
     }
 }
