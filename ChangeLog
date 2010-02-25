@@ -13,7 +13,7 @@
         annotate the method with @AjaxEvent. Then, client-side scripts
         need only call the JavaScript function Stripes.submitFormEvent().
         The rest is MAGIC.
-
+ 
         * Captcha interface gains an isEnabled() method to allow
         SpamProtect tag to check whether the CAPTCHA is operational
         before generating output. This is required in stand-alone or
