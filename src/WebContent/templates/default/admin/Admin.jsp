@@ -21,7 +21,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
-<%@ page errorPage="/Error.jsp" %>
+<%@ page errorPage="${templates['Error.jsp']}" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
   <s:layout-component name="headTitle">
@@ -39,9 +39,12 @@
     
       <wiki:TabbedSection defaultTab="${param['tab']}">
       
-        <wiki:Tab id="users" title="Users">
-          <jsp:include page="admin/UserManagement.jsp" />
+        <wiki:Tab id="security" title="Security">
+          <jsp:include page="${templates['admin/tabs/Security.jsp']}" />
         </wiki:Tab>
+
+        <wiki:Tab id="users" title="Users"
+          beanclass="org.apache.wiki.action.AdministerProfilesActionBean" />
           
         <wiki:Tab id="groups" title="Groups">
           <div>

@@ -21,34 +21,40 @@
 
 package org.apache.wiki.action;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.wiki.auth.NoSuchPrincipalException;
-import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.auth.user.UserProfile;
-import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.validation.EmailTypeConverter;
 import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidateNestedProperties;
 
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.permissions.AllPermission;
+import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.log.Logger;
+import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.TemplateResolution;
+import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 /**
  * Manages the administration of UserProfiles, from the Administer Profiles
  * page. Receives a List of UserProfiles, which may include a new profile, and
  * persists the changes. Also receives an Array of Strings (login names) for
  * UserProfiles that are to be deleted, and deletes them.
- * 
  */
-@UrlBinding( "/AdministerProfiles.jsp" )
+@UrlBinding( "/admin/Users.jsp" )
 public class AdministerProfilesActionBean extends AbstractActionBean
 {
+    private static Logger log = LoggerFactory.getLogger( AdministerProfilesActionBean.class );
 
     private String[] m_deleteLoginNames;
 
-    private List<UserProfile> m_profiles;
+    private List<UserProfile> m_users;
 
     @ValidateNestedProperties( { @Validate( field = "loginName", required = true, minlength = 3, maxlength = 50 ),
                                 @Validate( field = "password", required = true, minlength = 6, maxlength = 128 ),
@@ -65,32 +71,31 @@ public class AdministerProfilesActionBean extends AbstractActionBean
         m_deleteLoginNames = deleteLoginNames;
     }
 
-    public List<UserProfile> getUserProfiles()
+    public List<UserProfile> getUsers()
     {
-        return m_profiles;
+        return m_users;
     }
 
-    public void setUserProfiles( List<UserProfile> profiles )
+    public void setUsers( List<UserProfile> profiles )
     {
-        this.m_profiles = profiles;
+        this.m_users = profiles;
     }
 
-    @DefaultHandler
     @HandlesEvent( "save" )
-    @WikiRequestContext("adminProfiles")
+    @WikiRequestContext( "adminProfiles" )
     public Resolution saveChanges() throws WikiSecurityException
     {
         UserDatabase db = super.getContext().getEngine().getUserManager().getUserDatabase();
 
         // Apply any changes to existing profiles (and create new ones)
-        for( UserProfile profile : m_profiles )
+        for( UserProfile users : m_users )
         {
 
             // Look up profile; create new if not found
             UserProfile existingProfile;
             try
             {
-                existingProfile = db.findByLoginName( profile.getLoginName() );
+                existingProfile = db.findByLoginName( users.getLoginName() );
             }
             catch( NoSuchPrincipalException e )
             {
@@ -98,12 +103,12 @@ public class AdministerProfilesActionBean extends AbstractActionBean
             }
 
             // Make changes to things that have changed
-            existingProfile.setLoginName( profile.getLoginName() );
-            existingProfile.setFullname( profile.getFullname() );
-            existingProfile.setEmail( profile.getEmail() );
-            if( profile.getPassword() != null && profile.getPassword().length() > 0 )
+            existingProfile.setLoginName( users.getLoginName() );
+            existingProfile.setFullname( users.getFullname() );
+            existingProfile.setEmail( users.getEmail() );
+            if( users.getPassword() != null && users.getPassword().length() > 0 )
             {
-                existingProfile.setPassword( profile.getPassword() );
+                existingProfile.setPassword( users.getPassword() );
             }
             db.save( existingProfile );
         }
@@ -123,7 +128,41 @@ public class AdministerProfilesActionBean extends AbstractActionBean
                 }
             }
         }
+        return new TemplateResolution( "admin/Admin.jsp").addParameter( "tab", "users" );
+    }
 
-        return new RedirectResolution( AdministerProfilesActionBean.class );
+    /**
+     * Retrieves the active set of users, then returns a TemplateResolution to
+     * the display JSP {@code admin/Admin.jsp}, the {@code users} tab.
+     * 
+     * @return the resolution
+     */
+    @DefaultHandler
+    @DontValidate
+    @HandlesEvent( "view" )
+    @HandlerPermission( permissionClass = AllPermission.class, target = "*" )
+    public Resolution view() throws WikiSecurityException
+    {
+        // Populate the user list
+        UserDatabase db = getContext().getEngine().getUserManager().getUserDatabase();
+        Principal[] wikiNames = db.getWikiNames();
+        m_users = new ArrayList<UserProfile>();
+        for ( Principal wikiName : wikiNames )
+        {
+            try
+            {
+                UserProfile user = db.findByWikiName( wikiName.getName() );
+                m_users.add( user );
+            }
+            catch ( NoSuchPrincipalException e )
+            {
+                // Should not happen
+                log.error( "Could not find user with wikiName = "
+                           + wikiName.getName() + ". Is the database corrupted? " );
+            }
+        }
+        
+        // Forward to the template JSP
+        return new TemplateResolution( "admin/Admin.jsp").addParameter( "tab", "users" );
     }
 }

@@ -1,5 +1,15 @@
 2010-02-23 Andrew Jaquith <ajaquith AT apache DOT org>
 
+        * 3.0.0-svn-209
+
+        * Moved top-level Error.jsp into the templates directory.
+
+        * Slight tweaks to the admin pages, which are being re-organized.
+        Security config is now one of the tabs on Admin.jsp. User
+        management partially re-worked but not yet functional.
+
+2010-02-23 Andrew Jaquith <ajaquith AT apache DOT org>
+
         * 3.0.0-svn-208
 
         * Useful tweaks to the AJAX-related Stripes JavaScript. The

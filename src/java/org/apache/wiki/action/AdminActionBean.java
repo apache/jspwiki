@@ -9,7 +9,9 @@ import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.SecurityVerifier;
+import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.ui.admin.AdminBean;
+import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.util.TextUtil;
 
@@ -32,6 +34,7 @@ public class AdminActionBean extends AbstractActionBean
      * @return the resolution
      */
     @HandlesEvent( "security" )
+    @HandlerPermission( permissionClass = AllPermission.class, target = "*" )
     public Resolution security()
     {
         WikiEngine engine = getContext().getEngine();
@@ -93,13 +96,15 @@ public class AdminActionBean extends AbstractActionBean
     }
 
     /**
-     * If the admin UI is enabled, forwards the user to {@code /admin/Admin.jsp}
-     * .
+     * If the admin UI is enabled, this method executes
+     * {@link AdminBean#doPost(org.apache.wiki.WikiContext)} for the current
+     * AdminBean and forwards the user to the template JSP {@code /admin/Admin.jsp}.
      * 
      * @return the resolution
      */
     @DefaultHandler
     @HandlesEvent( "view" )
+    @HandlerPermission( permissionClass = AllPermission.class, target = "*" )
     public Resolution view()
     {
         if( !isAdminUiEnabled() )
@@ -112,30 +117,6 @@ public class AdminActionBean extends AbstractActionBean
                 }
             };
         }
-        return new ForwardResolution( "/admin/Admin.jsp" );
-    }
-
-    /**
-     * If the admin UI is enabled, this method executes
-     * {@link AdminBean#doPost(org.apache.wiki.WikiContext)} for the current
-     * AdminBean and forwards the user to {@code /admin/Admin.jsp}.
-     * 
-     * @return the resolution
-     */
-    @HandlesEvent( "admin" )
-    public Resolution admin()
-    {
-        if( !isAdminUiEnabled() )
-        {
-            return new StreamingResolution( "text/html" ) {
-                public void stream( HttpServletResponse response ) throws Exception
-                {
-                    PrintWriter out = response.getWriter();
-                    out.print( "<html><body><p>Admin UI is disabled.</p></body></html>" );
-                }
-            };
-        }
-        m_bean.doPost( getContext() );
-        return new TemplateResolution( "admin/Admin.jsp" ).addParameter( "tab", "admin" );
+        return new TemplateResolution( "admin/Admin.jsp" ).addParameter( "tab", "security" );
     }
 }
