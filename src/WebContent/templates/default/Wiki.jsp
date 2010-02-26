@@ -28,7 +28,7 @@
 <%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ page errorPage="/Error.jsp" %>
+<%@ page errorPage="${templates['Error.jsp']}" %>
 <%
 	WikiContext c = WikiContextFactory.findContext( pageContext );
   WikiPage p = c.getPage();

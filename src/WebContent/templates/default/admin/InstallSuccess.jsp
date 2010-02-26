@@ -20,7 +20,7 @@
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s"%>
-<%@ page errorPage="/Error.jsp" %>
+<%@ page errorPage="${templates['Error.jsp']}" %>
 <s:layout-render name="${templates['layout/StaticLayout.jsp']}">
 
   <s:layout-component name="headTitle">

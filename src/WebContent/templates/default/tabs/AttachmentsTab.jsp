@@ -23,7 +23,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<%@ page errorPage="/Error.jsp" %>
+<%@ page errorPage="${templates['Error.jsp']}" %>
 <%-- Show existing attachments --%>
 <wiki:HasAttachments>
   <h3><fmt:message key="attach.list" /></h3>

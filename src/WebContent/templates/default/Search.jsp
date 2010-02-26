@@ -29,7 +29,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
-<%@ page errorPage="/Error.jsp" %>
+<%@ page errorPage="${templates['Error.jsp']}" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <wiki:TabbedSection>
