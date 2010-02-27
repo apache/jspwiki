@@ -52,7 +52,7 @@ public class PageNameTag
             }
             else
             {
-                pageContext.getOut().print( engine.beautifyTitle( page.getPath() ) );
+                pageContext.getOut().print( engine.beautifyTitle( page.getName() ) );
             }
         }
 
