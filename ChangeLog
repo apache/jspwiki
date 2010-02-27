@@ -1,3 +1,10 @@
+2010-01-06 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-210
+        
+        * fixed a couple of Plugin unit tests (support for wiki spaces is
+          not yet there), only the ReferringPagesPlugin still fails.
+        
 2010-02-23 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-209

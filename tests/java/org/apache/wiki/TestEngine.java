@@ -365,6 +365,9 @@ public class TestEngine extends WikiEngine
         try
         {
             page = getPage( pageName );
+            
+            if ( page == null ) throw new PageNotFoundException(pageName);
+
         }
         catch ( PageNotFoundException e )
         { 

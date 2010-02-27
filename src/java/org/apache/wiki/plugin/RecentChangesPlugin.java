@@ -108,7 +108,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
 
         // FIXME: Should really have a since date on the getRecentChanges
         // method.
-        List<WikiPage>   changes = engine.getRecentChanges( context.getPage().getWiki() );
+        List<WikiPage>   changes = engine.getRecentChanges( null );
         super.initialize( context, params );
         changes = super.filterCollection( changes );
 
@@ -145,7 +145,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                         String link = context.getURL( pageref.isAttachment() ? WikiContext.ATTACH : WikiContext.VIEW, 
                                                       pageref.getName() ) ;
                     
-                        a linkel = new a(link,engine.beautifyTitle(pageref.getPath()));
+                        a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
                     
                         tr row = new tr();
                     

@@ -109,14 +109,14 @@ public class ReferredPagesPluginTest extends TestCase
     public void testReferredPageParmInclude() throws Exception
     {
         m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "IPointToTwoPages" ) );
-        String expected = "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[Main:SomeBodyPointsToMe.*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n";
+        String expected = "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[SomeBodyPointsToMe.*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n";
 
         String res = m_manager.execute( m_context,
                                       "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe*'}" );
         assertEquals( expected, res );
         
         res = m_manager.execute( m_context,
-                                      "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='Main:SomeBodyPointsToMe*'}" );
+                                      "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe*'}" );
         assertEquals( expected, res );
     }
     

@@ -181,7 +181,8 @@ public abstract class AbstractFilteredPlugin
 
                 for( int i = 0; i < ptrns.length; i++ )
                 {
-                    String pattern = sanitizePattern( ptrns[i] );
+                    String pattern = ptrns[i];
+//                    String pattern = sanitizePattern( ptrns[i] );
                     m_exclude[i] = Pattern
                         .compile( RegExpUtil.globToPerl5( pattern.toCharArray(),
                                                                         RegExpUtil.DEFAULT_MASK ) );
@@ -208,7 +209,8 @@ public abstract class AbstractFilteredPlugin
 
                 for( int i = 0; i < ptrns.length; i++ )
                 {
-                    String pattern = sanitizePattern( ptrns[i] );
+                    String pattern = ptrns[i] ;
+//                    String pattern = sanitizePattern( ptrns[i] );
                     m_include[i] = Pattern
                         .compile( RegExpUtil.globToPerl5( pattern.toCharArray(),
                                                                         RegExpUtil.DEFAULT_MASK ) );
@@ -309,11 +311,11 @@ public abstract class AbstractFilteredPlugin
     {
         if( item instanceof WikiPage )
         {
-            return ((WikiPage) item).getPath().toString();
+            return ((WikiPage) item).getName();
         }
         else if ( item instanceof WikiPath )
         {
-            return ((WikiPath) item).toString();
+            return ((WikiPath) item).getName();
         }
         else if ( item instanceof String )
         {
@@ -479,7 +481,7 @@ public abstract class AbstractFilteredPlugin
         //
         while( it.hasNext() && ( (count < maxItems) || ( maxItems == ALL_ITEMS ) ) )
         {
-            WikiPath link = it.next();
+            String link = it.next().getName();
 
             if( count > 0 )
             {
@@ -490,8 +492,7 @@ public abstract class AbstractFilteredPlugin
             markup.append( m_before );
 
             // Make a Wiki markup link. See TranslatorReader.
-            String page = ContentManager.DEFAULT_SPACE.equals( link.getSpace() ) ? link.getPath() : link.toString();
-            markup.append( "[" + m_engine.beautifyTitle( link ) + "|" + page + "]" );
+            markup.append( "[" + m_engine.beautifyTitle( link ) + "|" + link + "]" );
             count++;
         }
 

@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 import org.apache.wiki.*;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.ReferenceManager;
 import org.apache.wiki.content.WikiPath;
@@ -102,11 +101,6 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         String includePattern = filterString( m_include );
         String excludePattern = filterString( m_exclude );
 
-        log.debug( "Fetching referred pages for "+ rootname +
-                   " with a depth of "+ m_depth +
-                   " with include pattern of "+ includePattern +
-                   " with exclude pattern of "+ excludePattern );
-
         //
         // do the actual work
         //
@@ -116,12 +110,10 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
                        "] format["+(m_formatCompact ? "compact" : "full") +
                        (m_formatSort ? " sort" : "") + "]";
 
-        WikiPath root = WikiPath.valueOf( rootname );
-        String rootString = ContentManager.DEFAULT_SPACE.equals( root.getSpace() ) ? root.getPath() : root.toString();
         m_result.append("<div class=\"ReferredPagesPlugin\">\n");
         m_result.append("<a class=\"wikipage\" href=\""+ href +
                         "\" title=\"" + title +
-                        "\">" + rootString + "</a>\n");
+                        "\">" + rootname + "</a>\n");
         m_exists.add(WikiPath.valueOf( rootname ) );
 
         // pre compile all needed patterns
@@ -203,7 +195,7 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
                         isUL = true; m_result.append("<ul>\n");
                     }
 
-                    m_result.append("<li> " + link + " </li>\n");
+                    m_result.append("<li> " + link.getName() + " </li>\n");
 
                     getReferredPages( context, link, depth );  // recursive
                 }
@@ -215,9 +207,8 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
                     isUL = true; m_result.append("<ul>\n");
                 }
 
-                String href = context.getURL(WikiContext.VIEW,link.toString());
-                String linkString = ContentManager.DEFAULT_SPACE.equals( link.getSpace() ) ? link.getPath() : link.toString();
-                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+linkString+"</a></li>\n" );
+                String href = context.getURL(WikiContext.VIEW,link.getName());
+                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link.getName()+"</a></li>\n" );
                 m_exists.add( link );
 
                 getReferredPages( context, link, depth );

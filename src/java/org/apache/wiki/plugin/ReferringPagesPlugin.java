@@ -105,10 +105,6 @@ public class ReferringPagesPlugin
             {
                 extras = rb.getString("referringpagesplugin.more");
             }
-            
-            if( log.isDebugEnabled() )
-                log.debug( "Fetching referring pages for "+page.getName()+
-                           " with a max of "+items);
         
             if( links != null && links.size() > 0 )
             {

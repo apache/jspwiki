@@ -27,7 +27,6 @@ import org.apache.ecs.xhtml.span;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -60,7 +59,7 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
         indexDiv.setClass( "header" );
         try
         {
-            List<WikiPage> pages = context.getEngine().getContentManager().getAllPages( ContentManager.DEFAULT_SPACE  );
+            List<WikiPage> pages = context.getEngine().getContentManager().getAllPages( null );
             pages = super.filterCollection( pages );
             Collections.sort( pages );
             
