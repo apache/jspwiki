@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
@@ -47,7 +47,7 @@
             <wiki:Param name="page" value="${wikiActionBean.page.name}" />
           </wiki:Tab>
         </wiki:Permission>
-          
+
         <%-- Attachments tab --%>
         <wiki:Tab id="attachments" accesskey="a"
           title="${wiki:attachmentsTitle(request.Locale, wikiActionBean.attachments)}">
@@ -66,10 +66,14 @@
                     <td colspan="2"><s:errors field="newAttachments" /></td>
                   </tr>
                   <tr>
+                    <td><s:label for="attachfile" name="attach.add.selectfile" /></td>
+                    <td><s:file name="newAttachments[0]" id="attachfile0" /></td>
+<%--
                     <td><s:label for="attachfile0" name="attach.add.selectfile" /></td>
                     <td><s:file name="newAttachments[0]" id="attachfile0" /><br/>
                       <s:file name="newAttachments[1]" id="attachfile1" /><br/>
                       <s:file name="newAttachments[2]" id="attachfile2" /></td>
+--%>
                   </tr>
                   <tr>
                     <td><s:label for="attachnote" name="attach.add.changenote" /></td>
@@ -92,7 +96,7 @@
 
         <%-- Info tab --%>
         <wiki:Tab id="info" titleKey="info.tab" accesskey="i">
-        
+
           <%-- Rename page --%>
           <wiki:Permission permission="rename">
             <s:form beanclass="org.apache.wiki.action.RenameActionBean" class="wikiform" id="renameform" method="post" acceptcharset="UTF-8" >
@@ -106,7 +110,7 @@
               </p>
             </s:form>
           </wiki:Permission>
-          
+
           <%-- Delete page --%>
           <wiki:Permission permission="delete">
             <s:form beanclass="org.apache.wiki.action.DeleteActionBean" class="wikiform" id="deleteForm" method="post" acceptcharset="UTF-8">
@@ -116,7 +120,7 @@
               </p>
             </s:form>
           </wiki:Permission>
-          
+
           <%-- Referring pages, previous versions --%>
           <jsp:include page="${'tabs/PageInfoTab.jsp'}" />
 

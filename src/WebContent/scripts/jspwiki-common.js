@@ -30,9 +30,16 @@ Since:
 	v.2.6.0
 
 Dependencies:
-	Based on http://mootools.net/ v1.11
+	Based on http://mootools.net/ v1.2.4
+	* mootools-core.js : v1.2.4
+	* mootools-more.js : v1.2.4.4
+		including:
+		Fx.Accordion, Drag, Drag.Move, Color, Hash.Cookie, Tips
+
+
 	*	Core, Class,  Native, Element(ex. Dimensions), Window,
 	*	Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
+
 
 Core JS Routines:
 	*	[Wiki] object (page parms, UserPrefs and setting focus)
@@ -48,7 +55,7 @@ Core Wiki plugins, implementing JSPWiki Dynamic Styles:
 	*	[TabbedSection] including all accordion variants
 	*	[Colors], [GraphBar]
 	*	[Collapsible] list and box
-	*	[TableAdds] with %%sortable, %%tablefilter (excel like column filters) and %%zebra-table
+	*	[TablePlugin] with %%sortable, %%tablefilter (excel like column filters) and %%zebra-table
 	* 	[Popup] DOM based popup, replacing alert(), prompt(), confirm()
 
 */
@@ -82,8 +89,8 @@ String.implement({
 		Truncate a string to a maximum length
 
 	Arguments:
-		size - maximum length of the string
-		elips - (optional) the elips indicates when the string was truncacted (defaults to '...')
+		size - maximum length of the string, excluding the length of the elips
+		elips - (optional) the elips replaces the truncated part (defaults to '...')
 
 	Example:
 	> "this is a long string".trunc(7); //returns "this is..."
@@ -210,7 +217,7 @@ Element.implement({
 	/*
 	Function: addHover
 		Shortcut function to add 'hover' css class to an element.
-		This allow to support hover effects on all elements, also in IE.
+		This allows to support hover effects on all elements, also in IE.
 
 	Arguments
 		clazz - (optional) hover class-name, default is {{hover}}
@@ -350,17 +357,19 @@ var Observer = new Class({
 			el = self.element,
 			value = el.value;
 
-		if( self.value == value ) return;
-		self.clear();
-		self.value = value;
-		self.timeout = self.callback.delay(self.options.delay, null, [el]);
+		if( self.value != value ){
+			self.clear();
+			self.value = value;
+			self.timeout = self.callback.delay(self.options.delay, null, [el]);
+		}
 	},
 	clear: function(){
 		this.timeout = $clear(this.timeout);
 	},
 	stop: function(){
-		this.element.removeEvent(this.options.event, this.listener);
-		this.clear();
+		var self = this;
+		self.element.removeEvent(self.options.event, self.listener);
+		self.clear();
 	}
 });
 
@@ -386,20 +395,20 @@ Examples:
 		"javascript.imageInfo":"Image {0} of {1}"
 	}
 	(end)
-
 */
 var LocalizedStrings = LocalizedStrings || [];
 
 /*
 Function: localize
 	Localize a string; with or without parameters.
-	Uses the [LocalideString] global hash.
+	Uses the [LocalizedString] global hash.
 
 Examples:
 >	"moreInfo".localize() =="More";
 >	"imageInfo".localize(2,4); => "Image {0} of {1}" becomes "Image 2 of 4"
 
 */
+
 String.implement({
 	localize: function(){
 		var s = LocalizedStrings["javascript."+this] || "???"+this+"???",
@@ -483,6 +492,7 @@ var Wiki = {
 
 		//FIXME
 		self.makeMenuFx('morebutton', 'morepopup');
+
 		self.addEditLinks();
 
 		self.renderPage( $('page'), self.PageName);
@@ -504,17 +514,25 @@ var Wiki = {
 		SearchBox.initialize();
 
 		//fixme;
-		// HighlightWord( $('pagecontent'), self.prefs.get('PrevQuery') )
-		// self.prefs.set('PrevQuery','');
-		HighlightWord.initialize();
+		HighlightWord( $('pagecontent'), self.prefs.get('PrevQuery') )
+		self.prefs.set('PrevQuery','');
+		//HighlightWord.initialize();
+
 		self.setFocus();
 
+		//support multiple file uploads
+		new FileUpload( $('attachfile0'), {
+			max:5,
+			pattern:"0",
+			delBtn:new Element('a',{ 'class':'delete tool' })
+		});
 	},
 
 	/*
 	Function: getSections
 		Returns the list of all section headers, excluding the header of the
 		Table Of Contents.
+
 	*/
 	getSections: function(){
 		return $$('#pagecontent *[id^=section]').filter(
@@ -536,7 +554,7 @@ var Wiki = {
 		//return alert(msg); //standard js
 
 		this.dialog
-			.setBody( new Element('p').set('html',msg) )
+			.setBody( new Element('p',{ html:msg }) )
 			.setButtons({ Ok:Class.empty })
 			.show();
 	},
@@ -555,7 +573,7 @@ var Wiki = {
 		//return callback( confirm(msg) ); //standard js
 
 		this.dialog
-			.setBody( new Element('p').set('html',msg) )
+			.setBody( new Element('p', { html:msg}) )
 			.setButtons({
 				Ok:function(){ callback(true); },
 				Cancel:function(){ callback(false); }
@@ -583,7 +601,7 @@ var Wiki = {
 		var input;
 
 		this.dialog.setBody([
-				new Element('p').set('html',msg),
+				new Element('p',{ html:msg }),
 				new Element('form').adopt(
 					input = new Element('input',{
 						name:'prompt',
@@ -667,12 +685,11 @@ var Wiki = {
 		Remove all not-allowed chars from a *candidate* pagename.
 		Trim repeated whitespace, allow letters, digits and
 		following punctuation chars: ()&+,-=._$
-		Ref com.ecyrd.jspwiki.parser.MarkupParser.cleanPageName()
+		Ref. org.apache.wiki.parser.MarkupParser.cleanPageName()
 	*/
 	cleanPageName: function(p){
 
-		return p.trim().replace(/\s+/g,' ')
-				.replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
+		return p.clean().replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
 
 	},
 
@@ -789,26 +806,25 @@ var Wiki = {
 
 	/*
 	Property: splitbar
-		Add a toggle bar next to the main page content block, to
-		show/hide the favorites block with a click of the mouse.
-		The open/close status is saved in the Wiki.prefs cookie.
-		When the user hovers the mouse over the toggle bar, an arrow
-		image is shown to indicate the collapsable effect.
+		Add a splitbar next to the main page, to allow to toggle the
+		main page to fullscreen mode.
+		The status of the fullscreen mode is saved in the UserPreferences cookie.
+		When the user hovers the mouse over the splitbar, the cursor changes
+		to an arrow to indicate the collapsable effect.
 
-	Note:
-		The toggle bar has css-id 'collapseFavs'.
-		The toggle bar gets a .hover class when the mouse hovers over it.
-		The mouse-pointer image has css-id 'collapseFavsPointer'.
-		The DOM body gets a .fav-slide class when the favorites are collapsed (hidden)
+		* the splitbar has css class {{.splitbar}}.
+		* the splitbar toggles the  {{.hover}} css class (ie compat)
+		* the DOM body toggles the {{.fullscreen}} css class
 
 
 	DOM structure:
+		Based on css-only approach
 	(start code)
 	<div id='content'>
 		<div id='page'>
+			<a class='splitbar'></a> <== injected splitbar
 			<div class='tabmenu'> ... </div>
 			<div class='tabs'>
-				<div class='splitbar'></div> <== injected splitbar
 				<div id='pagecontent'> ... </div>
 				<div id='attach'> ... </div>
 				<div id='info'> ... </div>
@@ -817,110 +833,85 @@ var Wiki = {
 		<div id='favorites'> ... </div>
 	</div>
 	(end)
+
+	Alternative:
+		Alternative solution aims at showing the favorites menu on mouse-hover;
+		overlayed of the #page block.
+
+		Make favorites: position:absolute; hidden behind #page  (check width)
+		...
 	*/
 	splitbar: function(){
 
-		//inject toggle block :: can be done at server already
-		var splitbar = 'splitbar',
-			pref = 'hidefav',
-			body = $E('body'),
-			pointer = new Element('div', {'id':'splitPointer'}).inject(body),
-			pointerFn = function(e){
-				this.addClass('hover');
-				pointer.setStyles({ left:$('page').getPosition().x, top: (e.pageY || e.clientY) }).show();
-			};
+		var self = this,
+			splitbar = 'splitbar',
+			pref = 'fullscreen',
+			body = $(document.body),
+			page = $('page');
 
 		// The cookie is not saved to the server's Preferences automatically, (HTTP GET)
 		// so the body class will not be set yet.
 		// Should better move server side, for faster rendering. wf-stripes
-		body.addClass( Wiki.prefs.get( pref )||'' );
+		body.addClass( self.prefs.get( pref )||'' );
 
-		new Element('div',{
+		var split = new Element('a',{
 			'class':splitbar,
-			'events':{
-				'click': function(){
+			title:'Click to toggle the sidebar'.localize(),
+			events:{
+				click: function(){
 					body.toggleClass( pref );
-					Wiki.prefs.set( pref, body.hasClass(pref) ? pref:'' );
+					self.prefs.set( pref, body.hasClass(pref) ? pref:'' );
+
+					if( body.hasClass(pref) ){
+						new Element('div',{'id':'dummyPage'}).injectAfter(page);
+					} else {
+						if($('dummyPage')) $('dummyPage').destroy();
+					}
+
 				},
-				'mouseenter': pointerFn,
-				'mousemove': pointerFn,
-				'mouseleave': function(){ this.removeClass('hover'); pointer.hide() }
-			}
-		}).injectTop( $('page') );
+				mouseenter: function(e){
+					var f = $('favorites');
+					//f.injectAfter(split);
+					//f.setStyle('top', f.getParent().getCoordinates().top);
 
-	},
-
-	addCollapsableFavs: function(){
-
-		var body = $('wikibody'),
-			$pref = 'fav-slide',
-			pref = Wiki.prefs.get('ToggleFav'),
-			tabs = $E('#page .tabs');
-
-		if( !tabs ) return;
-
-		// The cookie is not saved to the server's Preferences automatically,
-		// so the body class will not be set yet.
-		// Should better move server side, for faster rendering. wf-stripes
-		(pref==$pref) ? body.addClass($pref) : body.removeClass($pref);
-
-		/* Be careful.
-		   The .tabs block can not be made relative, cause then the .tabmenu doesn't
-		   stack properly with the .tabs block.
-		   Therefore, insert a relative DIV container to contain the clickable vertical bar.
-		   TODO: needs probably another IE hack ;-)
-		 */
-
-		tabs = new Element('div', {
-			'styles': {
-				'position':'relative',
-				'padding': tabs.getStyle('padding') // take over padding from original .tabs
-			}
-		}).wrapContent(tabs.setStyle('padding','0'));
-
-		var pointer = new Element('div', {'id':'collapseFavsPointer'}).hide().inject(body),
-			movePointer = function(e){
-				this.addClass('hover');
-				pointer.setStyles({ left:this.getPosition().x, top: (e.pageY || e.clientY) }).show();
-			};
-
-		new Element('div', {
-			'id':'collapseFavs',
-			'events': {
-				'click': function(){
-					body.toggleClass($pref);
-					Wiki.prefs.set('ToggleFav', body.hasClass($pref) ? $pref:'' );
 				},
-				'mouseenter': movePointer,
-				'mousemove': movePointer,
-				'mouseleave': function(){
-					this.removeClass('hover');
-					pointer.hide();
+				mouseleave: function(e){
+					var f = $('favorites');
+					//f.setStyle('top','auto');
+					//page.getParent().adopt(f);
 				}
 			}
-		}).injectTop(tabs);
+		}).addHover().injectTop( page );
 
 	},
 
-	// fixme: should move server side
+	/*
+	Function: addEditLinks
+		Add [[Edit] links to the section headers.
+
+	Fixme:
+		Should move server side
+	*/
 	addEditLinks: function(){
 
-
-//fixme: SectionEditing is not properly saved when updating userprefs !
-//alert(this.prefs.keys()+"\n"+this.prefs.values());
-
-		if( $("previewcontent") || !this.allowEdit || this.prefs.get('SectionEditing') != 'on') return;
-
-		var url = this.EditUrl;
-		url = url + (url.contains('?') ? '&' : '?') + 'section=';
-
-		var aa = new Element('a',{'class':'editsection'}).set('html','quick.edit'.localize()),
+		var self = this,
+			url = self.EditUrl,
+			link = new Element('a',{
+				'class':'editsection',
+				html:'quick.edit'.localize()
+			}),
 			i = 0;
 
-		this.getSections().each( function(el){
-			el.adopt(aa.set({'href':url + i++ }).clone());
-		});
+		if( self.Context!="preview" && self.allowEdit && self.prefs.get('SectionEditing') ){
 
+			url = url + (url.contains('?') ? '&' : '?') + 'section=';
+
+			self.getSections().each( function(el){
+				el.adopt(link.set({'href':url + i++ }).clone());
+			});
+		}
+
+		link.dispose();
 	},
 
 	/*
@@ -1024,65 +1015,102 @@ var Wiki = {
 
 /*
 Plugin: WikiSlimbox
+	Injects clickable slimbox links, after each target links inside a
+	%%slimbox container. The clickable slimbox link will popup
+	a modal window with a rich media viewer.
+	When multiple links are found, 'next' and 'previous' links
+	will allow to scroll through all links.
 
 Credits:
-	Inspired by Slimbox by Christophe Bleys. (see http://www.digitalia.be/software/slimbox)
+	Uses
 
 Example:
-	> %%slimbox [...] %%
-	> %%slimbox-img  [some-image.jpg] %%
-	> %%slimbox-ajax [some-page links] %%
+	> %%slimbox [any supported link] %%
+	> %%slimbox-images [links to .jpg .gif .jpeg .bmp .xxx] %%
+	> %%slimbox-media [links to  youtube, google-video, ...] %%
+	> %%slimbox-wikipage [wiki page links] %%
+	> %%slimbox-external [external links] %%
+	> %%slimbox-wikipage-external [external links] %%
+	> %%slimbox-480-300  [viewer size at 480px width x 300px height] %%
+
+DOM structure:
+	(start code)
+	<div class='"slimbox">
+		<a href="url1" class="attachment" >Image link</a>
+		<img src="url2 class="inline" />
+	</div>
+	(end)
+
+	becomes
+
+	(start code)
+	<div class='slimbox'>
+		<a href="url1" class="attachment">Image link</a>
+		<a href="url1" rel="slimbox" class="slimbox">&raquo;</a>
+
+		<a href="url2" class="attachment"/>url2</a>
+		<a href="url2" rel="slimbox" class="slimbox">&raquo;</a>
+	</div>
+	(end)
+
+	Notice how embedded images are converted back to html links. (<a>)
 */
 Wiki.registerPlugin( function(page,name){
-	var i = 0,
-		lnk = new Element('a',{'class':'slimbox'}).set('html','&raquo;');
 
+	var slimboxbtn = new Element('a',{'class':'slimboxbtn', html:'&raquo;'}),
+		options = {
+			//closeText: "<span class='accesskey'>C</span>lose".localize(),
+			//nextText: "<span class='accesskey'>P</span>revious".localize(),
+			//prevText: "<span class='accesskey'>P</span>revious".localize(),
+			//counterText: "({x} of {y})".localize()
+			closeText: "slimbox.close".localize(),
+			nextText: "slimbox.next".localize(),
+			prevText: "slimbox.previous".localize(),
+			counterText: "slimbox.info".localize("{x}","{y}"),
+			errorText: "slimbox.error".localize()
+		};
 
-	page.getElements('*[class^=slimbox]').each(function(slim){
-		var group = 'lightbox'+ i++,
-			parm = slim.className.split('-')[1] || 'img ajax',
-			filter = [];
-		if(parm.test('img')) filter.extend(['img.inline', 'a.attachment']);
-		if(parm.test('ajax')) filter.extend(['a.wikipage', 'a.external']);
+	page.getElements('div[class^=slimbox],span[class^=slimbox],a[class^=slimbox]').each(function( slim ){
 
-		slim.getElements(filter.join(',')).each(function(el){
-			var href = el.src||el.href,
-				rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
+		var parm = slim.className.split(' ')[0],
+			filter = 'img, a',
+			elements = [], urls = [], url, href;
 
-			if((rel=='img') && !href.test('(.bmp|.gif|.png|.jpg|.jpeg)(\\?.*)?$','i')) return;
+		if(parm.contains('-image')) filter="img, a.attachment";
+		if(parm.contains('-external')) filter="a.external";
+		if(parm.contains('-wikipage')) filter="a.wikipage";
 
-			lnk.clone().setProperties({
-				'href':href,
-				'rel':group+' '+rel,
-				'title':el.alt||el.get('text')
-			}).injectAfter(el);//.injectBefore(el);
+		slim.getElements( filter ).each( function(el){
 
-			//if(el.src) el.replaces(new Element('a',{
-			//	'class':'attachment',
-			//	'href':el.src
-			//}).set('html',el.alt||el.get('text')));
+			url = el.src || el.href;
+			title = el.alt || el.get('text');
 
-			if(el.src) new Element('a',{
-				'class':'attachment',
-				href:el.src,
-				html:el.alt||el.get('text')
-			}).replaces(el);
+			//skip jspwiki inserted icon for external links
+			if( el.src && el.src.test(/images\/out.png$/) ) return;
+			if( el.src && el.src.test(/images\/attachment_small.png$/) ) return;
 
+			if( el.hasClass('createpage')) return; //skip links to create new pages
+			if( el.hasClass('infolink')) return; //skip links to create new pages
+			if( (parm.contains('-image')) && !Slimbox.isImage(url) ) return;
+			if( (parm.contains('-media')) && !Slimbox.isMedia(url) ) return;
+
+			urls.push([ url, title ]);
+
+			//insert slimbox clickable button
+			elements.push( slimboxbtn.clone()
+				.set({ href:url, title:title }).injectAfter(el)
+			);
+
+			//replace embedded jspwiki images by links.
+			if(el.src)
+				new Element('a',{ 'class':'attachment', href:url, html:title }).replaces(el);
 		});
+
+		$$(elements).addEvent('click', function(){ return Slimbox.open(urls, elements.indexOf(this), options) });
+
 	});
-
-return; //FIXME
-	//if(i) Lightbox.init();
-	/* TODO: new slimbox invocation code, based on Slimbox v1.7 */
-	$$(document.links).filter(function(el) {
-		return el.rel && el.rel.test(/^lightbox/i);
-	}).slimbox({/* Put custom options here */}, null, function(el) {
-		return (this == el) || ((this.rel.length > 8) && (this.rel == el.rel));
-	});
-
-
+	slimboxbtn.destroy(); //clean-up
 })
-
 
 
 /*
@@ -1324,9 +1352,10 @@ var SearchBox = {
 				// xss vulnerability JSPWIKI-384
 				el = el.stripScripts();
 				new Element('a',{
-					'href':'#',
+					href:'#',
+					html:el,
 					'events': {'click':function(){ q.value = el; q.form.submit(); }}
-					}).set('html',el).inject( new Element('li').inject(ul) );
+					}).inject( new Element('li').inject(ul) );
 			});
 		//}
 	},
@@ -1389,11 +1418,10 @@ var SearchBox = {
 				//FIXME: stripes generates a whole web-page iso of page fragment with searchresults.
 				//var x = $E('#searchResult2',$('searchResult2'));
 				var res = $('searchResult2');
-			console.log(res.innerHTML);
 				res.replaces( res );
 				//res.replaces( res.getElement('#searchResult2') );
-				GraphBar.render($('searchResult2'));
 				Wiki.prefs.set('PrevQuery', q2);
+				new GraphBar($('searchResult2'));
 			}
 		});
 		location.hash = '#'+q2+":"+$('start').value;  /* push the query into the url history */
@@ -1426,9 +1454,25 @@ var SearchBox = {
 		$('searchTarget').set('html','('+qv+') :');
 		$('searchSpin').show();
 
-    Stripes.submitFormEvent('searchForm', 'quickSearch', 'searchOutput', null);
-		$('searchSpin').hide();
-		Wiki.locatemenu( $('query'), $('searchboxMenu') );
+		Wiki.jsonrpc('search.findPages', [qv,20], function(result){
+				$('searchSpin').hide();
+				if(!result.list) return;
+				var frag = new Element('ul');
+
+				result.list.each(function(el){
+					new Element('li').adopt(
+						new Element('a',{'href':Wiki.toUrl(el.map.page), html:el.map.page }),
+						new Element('span',{'class':'small', html:" ("+el.map.score+")" })
+					).inject(frag);
+				});
+				$('searchOutput').empty().adopt(frag);
+				Wiki.locatemenu( $('query'), $('searchboxMenu') );
+		});
+
+	//fixme ??
+    //Stripes.submitFormEvent('searchForm', 'quickSearch', 'searchOutput', null);
+	//	$('searchSpin').hide();
+	//	Wiki.locatemenu( $('query'), $('searchboxMenu') );
 	} ,
 
 	/* navigate to url, after smart pagename handling */
@@ -1919,7 +1963,7 @@ var Collapsible =
 		var cookie = "";  //activate this line if you want to deactivatie cookie handling
 
 		if(!this.bullet) {
-			this.bullet = new Element('div',{'class':'collapseBullet'}).set('html','&bull;');
+			this.bullet = new Element('div',{'class':'collapseBullet', html:'&bull;' });
 		}
 
 		this.pims.push({
@@ -2084,18 +2128,17 @@ Wiki.registerPlugin( function(page,name){
 		var legend = el.className.split('-')[1];
   		if( legend ){
   			new Element('fieldset',{'class':'commentbox'}).adopt(
-  				new Element('legend').set('html', legend.deCamelize() )
+  				new Element('legend',{ html: legend.deCamelize() })
   			).wrapContent(el).injectBefore(el);
   			el.dispose();
   		}
 	});
 
-
 });
 
 
 /*
-Class: TableAdds
+Class: TablePlugin
 	Add support for sorting, filtering and zebra-striping of tables.
 	TODO: add support for row-grouping
 	TODO: add support for check-box filtering (ref excel like)
@@ -2103,7 +2146,7 @@ Class: TableAdds
 Credit:
 	Filters inspired by http://www.codeproject.com/jscript/filter.asp
 */
-var TableAdds = new Class({
+var TablePlugin = new Class({
 
 	Implements: Options,
 
@@ -2119,19 +2162,18 @@ var TableAdds = new Class({
 		}
 	},
 
-
 	initialize: function( table, options ){
 
 		if( table.rows.length < 3 ) return null;
 		table = $(table);
 
-		var self = table.TableAdds;  //max one TableAdds instance per table
+		var self = table.TablePlugin;  //max one TablePlugin instance per table
 		if( !self) {
 			this.table = table;
 			this.head = $A(table.rows[0].cells).filter(function(el){
 							return el.get('tag')=='th';
 						});
-			table.TableAdds = self = this;
+			table.TablePlugin = self = this;
 		}
 		self.setOptions(options);
 		options = self.options;
@@ -2143,7 +2185,7 @@ var TableAdds = new Class({
 					'class': 'sort',
 					title: options.title.sort,
 					events: {
-						'click': self.sort.bind(self,[i])
+						click: self.sort.bind(self,[i])
 					}
 				});
 			});
@@ -2155,8 +2197,8 @@ var TableAdds = new Class({
 				th.adopt( new Element('select',{
 					'class':'filter',
 					events: {
-						'click': function(e){ new Event(e).stopPropagation() },
-						'change': self.filter.bind(self,[i])
+						click: function(e){ new Event(e).stopPropagation() },
+						change: self.filter.bind(self,[i])
 					}
 				}) );
 			});
@@ -2226,8 +2268,6 @@ var TableAdds = new Class({
 		rows.each( function(r){ frag.appendChild(r); });
 		this.table.appendChild(frag);
 
-		//var zebra = this.zebra;
-		//if( zebra ) zebra();
 		$try( this.zebra );
 	},
 
@@ -2335,8 +2375,7 @@ var TableAdds = new Class({
 
 		},this);
 
-		var zebra = this.zebra;
-		if( zebra ) zebra();
+		$try( this.zebra );
 	},
 
 	/*
@@ -2494,14 +2533,14 @@ var TableAdds = new Class({
 });
 
 /*
-Script: TableAdds
-	Register a wiki page renderer, invoking the TableAdds class
+Script: TablePlugin
+	Register a wiki page renderer, invoking the TablePlugin class
 	where needed.
 
 Table sorting:
 	All tables inside a JSPWiki {{%%sortable}} style are retrieved and processed.
 	An onclick() handler is added to each column header which points to the
-	heart of the javascript: the [TableAdds.sort] function.
+	heart of the javascript: the [TablePlugin.sort] function.
 
 Table filtering:
 	Add excel like filter dropdowns to all tables inside a JSPWiki {{%%filtertable}} style.
@@ -2518,7 +2557,6 @@ Odd/Even coloring of tables (zebra style):
 */
 Wiki.registerPlugin( function(page, name){
 
-
 	var title = {
 		all: "filter.all".localize(),
 		sort: "sort.click".localize(),
@@ -2526,18 +2564,18 @@ Wiki.registerPlugin( function(page, name){
 		descending: "sort.descending".localize()
 	};
 
-	page.getElements('.sortable table').each( function(table){
-		new TableAdds(table, {sort:true, title: title});
+	page.getElements('div.sortable table').each( function(table){
+		new TablePlugin(table, {sort:true, title: title});
 	});
 
-	page.getElements('.table-filter table').each( function(table){
-		new TableAdds(table, {filter:true, title: title});
+	page.getElements('div.table-filter table').each( function(table){
+		new TablePlugin(table, {filter:true, title: title});
 	});
 
-	page.getElements('*[class^=zebra]').each( function(el){
+	page.getElements('div[class^=zebra]').each( function(el){
 		var parms = el.className.split('-').splice(1);
 		el.getElements('table').each(function(table){
-			new TableAdds(table, {zebra: parms});
+			new TablePlugin(table, {zebra: parms});
 		});
 	});
 
@@ -2547,51 +2585,66 @@ Wiki.registerPlugin( function(page, name){
 /*
 Class: Categories
 	Turn wikipage links into AJAXed popups.
+
+DOM structure:
+(start code)
+	<span>
+		<a href=".." class="wikipage categoryLink">category-page></a>
+		<div class="categoryPopup">
+			<p><a href=".." class="wikipage categoryLink">category-page</a></p>
+			<ul>
+			  <li><a>..</a></li>
+			</ul>
+		</div>
+	</span>
+(end)
 */
-var Categories =
-{
-	render: function(page, name){
+Wiki.registerPlugin( function(page, name){
 
-		page.getElements('.category a.wikipage').each(function(link){
+	page.getElements('.category a.wikipage').each(function(link){
 
-			var page = Wiki.toPageName(link.href);
-			if(!page) return;
+		var pagename = Wiki.toPageName(link.href);
+		if(!pagename) return;
 
-			var wrap = new Element('span').injectBefore(link).adopt(link),
-				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap).fade('hide');
+		var wrap = new Element('span').wraps(link),
+			popup = new Element('div',{'class':'categoryPopup'}).inject(wrap).fade('hide');
 
-			link.addClass('categoryLink')
-				.set({ href:'#', title: "category.title".localize(page) })
-				.addEvent('click', function(event){
+		link.set({ 'class':'categoryLink', title:'category.title'.localize(pagename) })
+			.addEvent('click', function(event){
 
-				event.stop();  //dont jump to top of page ;-)
-				new Request.HTML({
-					url:Wiki.BaseUrl + '/View.action?ajaxCategories=',
-					data: '&page=' + page,
-					update: popup,
-					onComplete: function(){
-						link.set('title', '')
-							.removeEvent('click');
-						wrap.addEvents({
-							'mouseover': function(){ popup.fade(0.9) },
-							'mouseout': function(){ popup.fade(0) }
-						});
-						popup.setStyles({
-							left: link.getPosition().x,
-							top: link.getPosition().y+16
-						}).fade(0.9).getElements('li,div.categoryTitle').addHover();
-					}
-				}).send();
+			event.stop();  //dont jump to top of page
 
-			});
+			new Request.HTML({
+				url: Wiki.BaseUrl + 'Wiki.jsp?ajaxCategories&page='+pagename,
+				update: popup,
+				onComplete: function(){
+
+					link.set('title', '').removeEvent('click');
+
+					wrap.addEvents({
+						mouseover: function(){ popup.fade(0.9) },
+						mouseout: function(){ popup.fade(0) }
+					});
+
+					var pp = link.getPosition();
+					popup.grab( new Element('p').adopt(link.clone()),'top' )
+						 .setStyles({ left: pp.x, top: pp.y+16 })
+						 .fade(0.9)
+						 .getElements('li,p').addHover();
+				}
+			}).send();
+
 		});
-	}
-}
-Wiki.registerPlugin( Categories );
+	});
+
+});
 
 
 /*
 Class: HighlightWord
+	Highlight any word or phrase of a previously search query.
+	The query can be passed in as a parameter or will be read
+	from the documents referrer url.
 
 Credit:
 	Inspired by http://www.kryogenix.org/code/browser/searchhi/
@@ -2601,61 +2654,213 @@ History:
 	- Modified 20030227 by sgala@hisitech.com to skip words
 	  with "-" and cut %2B (+) preceding pages
 	- Refactored for JSPWiki -- now based on regexp
+
 */
-var HighlightWord =
-{
-	initialize: function (){
-		var q = Wiki.prefs.get('PrevQuery');
-		Wiki.prefs.set('PrevQuery', '');
+function HighlightWord( node, query ){
 
-		if( !q && document.referrer.test("(?:\\?|&)(?:q|query)=([^&]*)","g") ) q = RegExp.$1;
+	var words, reMatch,
 
-		if( q ){
-			var words = decodeURIComponent(q).stripScripts(); //xss vulnerability
-			words = words.replace( /\+/g, " " );
-			words = words.replace( /\s+-\S+/g, "" );
-			words = words.replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ); //escape metachars
-			words = words.trim().split(/\s+/).join("|");
+		//recursive node processing function
+		walkDomTree = function(node){
 
-			this.reMatch = new RegExp( "(" + words + ")" , "gi");
+		if( node ){
 
-			this.walkDomTree( $("pagecontent") );
+			//process all children
+			for( var nn=null, n = node.firstChild; n ; n = nn ){
+				// prefetch nextSibling cause the tree will be modified
+				nn = n. nextSibling;
+				walkDomTree(n);
+			}
+
+			// continue on text-nodes, not yet highlighted
+			if( node.nodeType == 3 ){
+
+				var s = $getText( node );
+
+				s = s.replace(/</g,'&lt;'); // pre text elements may contain <xml> element
+
+				if( reMatch.test( s ) ){
+
+					var tmp = new Element('span',{
+							html: s.replace( reMatch, "<span class='searchword'>$1</span>")
+						}),
+						f = document.createDocumentFragment();
+
+					while( tmp.firstChild ) f.appendChild( tmp.firstChild );
+
+					node.parentNode.replaceChild( f, node );
+
+					tmp.dispose();
+				}
+			}
+		}
+	};
+
+	if( !query && document.referrer.test("(?:\\?|&)(?:q|query)=([^&]*)","g") ) query = RegExp.$1;
+
+	if( query ){
+
+		words = decodeURIComponent(query).stripScripts(); //xss vulnerability
+		words = words.replace( /\+/g, " " );
+		words = words.replace( /\s+-\S+/g, "" );
+		words = words.replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ); //escape metachars
+		words = words.trim().split(/\s+/).join("|");
+
+		reMatch = new RegExp( "(" + words + ")" , "gi");
+
+		walkDomTree( node );
+
+	}
+
+};
+
+
+/*
+Class: FileUpload
+	Plugin to modify a basic HTML form to upload multiple files.
+
+	The script works by hiding the file input element when a file is selected,
+	then immediately replacing it with a new, empty one.
+	Although ideally the extra elements would be hidden using the CSS setting
+	'display:none', this causes Safari to ignore the element completely when
+	the form is submitted. So instead, elements are moved to a position
+	off-screen.
+	On submit, any remaining empty file input element is removed.
+
+
+Credit:
+	Inspired by MultiUpload by Stickman, http://the-stickman.com
+	Rewritten for JSPWiki.
+
+Arguments:
+	input - DOM input element
+	options - optional, see options below
+
+Options:
+	max - maximum number of files to upload, 0 means no limit.
+	pattern - pattern string to add file-number to the name and id attributes
+		of the input element. The default pattern is '{0}'
+		Eg: <input name=file{0}>  will be changed to file0, file1, file2.
+	delBtn -
+	id - (optional) Base ID attribute for all input fields, eg. file{Ø}
+		Default takes the ID of the main input element
+	name - (optional) Base name attribute for all input fields, eg. file{Ø}
+		Default takes the name of the main input element
+
+DOM Structure:
+	(start code)
+	<ul class="fileupload'>
+		<li>
+			<input type="file" disabled="" name="file0" id=""/>
+		</li>
+		<li>
+			<a class="delete"/>
+			<span>file-name-1</span>
+			<input type="file" name="file1" id="" style="position:absolute;left:-1000px;"/>
+		</li>
+		<li>
+			<a class="delete"/>
+			<span>file-name-2</span>
+			<input type="file" name="file2" id="" style="position:absolute;left:-1000px;"/>
+		</li>
+	</ul>
+	(end)
+
+Example:
+>		new FileUpload( $('uploadform'), {
+>			max:3,
+>			delBtn:new Element('a',{ 'class':'delete tool' })
+>		});
+
+*/
+var FileUpload = new Class({
+
+	Implements: [Options],
+
+	options:{
+		max: 0,
+		pattern: '{0}'
+		//delBtn:new Element('a')
+	},
+
+	initialize: function(input, options){
+
+		var self = this;
+
+		if( input && (input.get('tag') == 'input') && (input.get('type') == 'file') ){
+
+			self.setOptions(options);
+
+			var options = self.options,
+				ul = self.ul = new Element('ul',{'class':'fileupload'}).injectAfter(input);
+
+			if( input.id ) options.id = input.id;
+			if( input.name ) options.name = input.name;
+			if( !options.delBtn ) options.delBtn = new Element('a');
+			self.addLI( input );
+
+			input.form.addEvent('submit', function(){
+				//ul.getFirst().getFirst().disabled=true;
+				//ul.getFirst().destroy();
+			});
 		}
 	},
 
-	/*
-	Function: walkDomTree
-		Recursive tree walk to match all text nodes
-	*/
-	walkDomTree: function( node ){
+	addLI: function( input ){
 
-		if( !node ) return;
+		var self = this;
 
-		for( var nn=null, n = node.firstChild; n ; n = nn ){
-			// prefetch nextSibling cause the tree will be modified
-			nn = n. nextSibling;
-			this.walkDomTree(n);
+		input.addEvent('change', self.add.pass(input,self) );
+		new Element('li').grab( input ).injectTop( self.ul );
+		self.setID();
+	},
+
+	setID: function(){
+
+		var options = this.options,
+			pattern = options.pattern;
+
+		this.ul.getElements('input').each( function(item, index){
+
+			item.name = options.name.replace( pattern, index );
+			item.id = options.id.replace( pattern, index );
+
+		});
+	},
+
+	add: function( input ){
+
+		var self = this,
+			options = self.options,
+			max = options.max,
+			count = self.ul.getChildren().length;
+
+		if( max == 0 || count <= max ){
+
+			input
+				.setStyles({ position:'absolute', left:'-999px'}) //hide
+				.getParent().adopt(
+
+					options.delBtn.clone()
+						.addEvent('click', self.remove.pass(input, self)),
+
+					new Element('span', {
+						text: input.value.replace(/.*[\\\/]/, '')
+					})
+				);
+
+			self.addLI( new Element('input',{type:'file', disabled: count == max}) );
 		}
+	},
 
-		// continue on text-nodes, not yet highlighted, with a word match
-		if( node.nodeType != 3 ) return;
-		if( node.parentNode.className == "searchword" ) return;
-		var s = node.innerText || node.textContent || '';
+	remove: function( input ){
 
-		s = s.replace(/</g,'&lt;'); // pre text elements may contain <xml> element
-
-		if( this.reMatch.test( s ) ){
-			var tmp = new Element('span',{
-				'html': s.replace(this.reMatch,"<span class='searchword'>$1</span>")
-				}),
-				f = document.createDocumentFragment();
-
-			while( tmp.firstChild ) f.appendChild( tmp.firstChild );
-
-			node.parentNode.replaceChild( f, node );
-		}
+		input.getParent().destroy(); //remove list item
+		this.setID();
+		this.ul.getFirst().getFirst().disabled = false;
 	}
-}
+});
+
 
 /*
 Class: Dialog
@@ -2918,7 +3123,7 @@ var Stripes = {
   /*
   Function: submitFormEvent
     Submits a form to its parent ActionBean URL, using a supplied event.
-    
+
   Arguments:
     formName -  ID of the form to submit. It will be submitted to the
                 action URL supplied by the form element itself. We assume

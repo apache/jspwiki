@@ -1,3 +1,33 @@
+2010-02-28 Dirk Frederickx <brushed@apache.org>
+
+        * v3.0.0-svn-211 : line up with latest template/stripes changes
+
+        * JSPWIKI-429:  Upgrade of Slimbox (viewer for attachments), 
+          and adjust it to v3.X of JSPWiki. Various media formats are now
+          supported so you can view youtube or facebook videos, other
+          wikipages, or even external web-pages.
+          Still working on a use as inline media viewer. (iso popup viewer)
+
+        * JSPWIKI-431 Multi-file upload is now supported with Stripes backend.
+          (improved gui)
+          You can add or remove files (upto 5) before you press the upload 
+          button. All attachments are uploaded with the same change note.
+
+        * JSPWIKI-362 - (still experimental) Added an wysiwyg editor to JSPWiki,
+          based on mooeditable. (MIT license) 
+          This is a light-weight editor, based on mootools. 
+          Future extensions will improve integration with JSPWiki
+          e.g. adding ajax based suggestion-menu, attachment previews, etc...
+          Interaction with Stripes back-end needs more work. 
+
+        * Fixed and simplified the %%category style to work with the stripes
+          ViewActionBean.ajaxCategories(). This replaces the AJAXCategories.jsp.
+
+        * Upgrade to mootools-core to 1.2.4, mootools-more to 1.2.4.4
+
+        * Updated %%prettify style, adding line numbers to code-blocks.
+
+
 2010-01-06 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-210

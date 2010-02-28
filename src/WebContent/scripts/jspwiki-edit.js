@@ -57,8 +57,9 @@ var WikiEdit =
 		//should always run first, but seems not guaranteed on ie so let's do this for sure
 		Wiki.initialize();
 
+		var txta = $('wikiText'), //editorarea v2.8
     // Snip-editing is deliberately disabled, for now, because it causes duplication in post contents.
-		var txta = $('wikiTexts'),
+	//	var txta = $('wikiTexts'),
 			self = this,
 			snipe,
 			config,
@@ -67,6 +68,7 @@ var WikiEdit =
 			tileBtns, tileFn,
  			height = prefs.get('EditorSize');
 
+		if(!txta) return;
 		/*
 			Install an onbeforeunload handler.
 
@@ -145,10 +147,10 @@ var WikiEdit =
 			Initialize the configuration dialog and link it to the buttons
 		*/
 		configFn = function(){
-			snipe.set('directsnips', $('smartpairs').checked ? self.directSnippets : {})
-				.set('tabcompletion', $('tabcompletion').checked == true );
+			snipe.set('directsnips', $('smartPairs').checked ? self.directSnippets : {})
+				.set('tabcompletion', $('tabCompletion').checked == true );
 		};
-		['smartpairs', 'tabcompletion'].each( function(id){
+		['smartPairs', 'tabCompletion'].each( function(id){
 			var element = $(id);
 			if( element ){
 				element.setProperty( 'checked', prefs.get(id) || false )
@@ -265,8 +267,6 @@ var WikiEdit =
 		- link-text
 		- wiki-page or url
 		- description:title
-
-
 
 		- target: _blank --new-- window yes or no
 */
@@ -502,6 +502,73 @@ var WikiEdit =
 		};
 
 		return result;
+	},
+
+	/*
+	Function: initializePreview
+		Initialize textarea preview functionality.
+		When #autopreview checkbox is checked, bind the
+		[refreshPreview] handler to the {{preview}} event
+		of the textarea.
+
+		Finally, send periodically the preview event.
+	*/
+	initializePreview: function( snipe ){
+
+		var livePreview = 'livePreviewOn',
+			self = this,
+			prefs = Wiki.prefs,
+			refreshFn = self.refreshPreview.bind(self);
+
+		$(livePreview)
+			.set('checked', prefs.get(livePreview) || false)
+			.addEvent('click', function(){
+				prefs.set(livePreview, this.checked);
+				refreshFn();
+			})
+			.fireEvent('click');
+
+		refreshFn.periodical(3000);
+		$(snipe).addEvent('change',refreshFn);
+    },
+
+
+	/*
+	Function: refreshPreview
+		Make AJAX call to the backend to convert the contents of the textarea
+		(wiki markup) to HTML.
+
+	*/
+	refreshPreview: function(){
+
+    	var	self = this,
+    		snipe = self.snipEditor,
+    		text = snipe.get('textarea').getValue(),
+    		page = Wiki.PageName,
+    		preview = $('livePreview'),
+    		spin = $('previewSpin');
+
+
+		if( !$('livePreviewOn').checked ){
+
+			if( self.previewcache ){
+				preview.empty();
+				self.previewcache = null;
+			}
+
+		} else if( self.previewcache != text ){
+
+			self.previewcache = text;
+
+			new Request.HTML({
+				url:Wiki.BaseUrl + "Edit.action?ajaxPreview&page=" + page,
+				data: 'wikiText=' + encodeURIComponent( text ),
+				update: preview,
+				onRequest: function(){ spin.show(); },
+				onComplete: function(){ spin.hide(); Wiki.renderPage(preview, page); }
+			}).send();
+
+		}
 	}
 }
 
@@ -2468,7 +2535,7 @@ var UndoRedo = new Class({
 	*/
 	onUndo: function(e){
 
-		if(e) new Event(e).stop();
+		if(e) e.stop();
 
 		if(this.undo.length > 0){
 			this.redo.push( this.obj.getState() );
@@ -2485,7 +2552,7 @@ var UndoRedo = new Class({
 	*/
 	onRedo: function(e){
 
-		if(e) new Event(e).stop();
+		if(e) e.stop();
 
 		if(this.redo.length > 0){
 			this.undo.push( this.obj.getState() );

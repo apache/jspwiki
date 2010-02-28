@@ -1,18 +1,51 @@
 //MooTools More, <http://mootools.net/more>. Copyright (c) 2006-2009 Aaron Newton <http://clientcide.com/>, Valerio Proietti <http://mad4milk.net> & the MooTools team <http://mootools.net/developers>, MIT Style License.
 
+/*
+---
+
+script: More.js
+
+description: MooTools More
+
+license: MIT-style license
+
+authors:
+- Guillermo Rauch
+- Thomas Aylott
+- Scott Kyle
+
+requires:
+- core:1.2.4/MooTools
+
+provides: [MooTools.More]
+
+...
+*/
+
 MooTools.More = {
-	'version': '1.2.3.1'
+	'version': '1.2.4.4',
+	'build': '6f6057dc645fdb7547689183b2311063bd653ddf'
 };
 
 /*
-Script: Fx.Elements.js
-	Effect to change any number of CSS properties of any number of Elements.
+---
 
-	License:
-		MIT-style license.
+script: Fx.Elements.js
 
-	Authors:
-		Valerio Proietti
+description: Effect to change any number of CSS properties of any number of Elements.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Fx.CSS
+- /MooTools.More
+
+provides: [Fx.Elements]
+
+...
 */
 
 Fx.Elements = new Class({
@@ -58,42 +91,58 @@ Fx.Elements = new Class({
 });
 
 /*
-Script: Fx.Accordion.js
-	An Fx.Elements extension which allows you to easily create accordion type controls.
+---
 
-	License:
-		MIT-style license.
+script: Fx.Accordion.js
 
-	Authors:
-		Valerio Proietti
+description: An Fx.Elements extension which allows you to easily create accordion type controls.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Element.Event
+- /Fx.Elements
+
+provides: [Fx.Accordion]
+
+...
 */
 
-var Accordion = Fx.Accordion = new Class({
+Fx.Accordion = new Class({
 
 	Extends: Fx.Elements,
 
 	options: {/*
 		onActive: $empty(toggler, section),
-		onBackground: $empty(toggler, section),*/
+		onBackground: $empty(toggler, section),
+		fixedHeight: false,
+		fixedWidth: false,
+		*/
 		display: 0,
 		show: false,
 		height: true,
 		width: false,
 		opacity: true,
-		fixedHeight: false,
-		fixedWidth: false,
-		wait: false,
 		alwaysHide: false,
 		trigger: 'click',
-		initialDisplayFx: true
+		initialDisplayFx: true,
+		returnHeightToAuto: true
 	},
 
 	initialize: function(){
-		var params = Array.link(arguments, {'container': Element.type, 'options': Object.type, 'togglers': $defined, 'elements': $defined});
+		var params = Array.link(arguments, {
+			'container': Element.type, //deprecated
+			'options': Object.type,
+			'togglers': $defined,
+			'elements': $defined
+		});
 		this.parent(params.elements, params.options);
 		this.togglers = $$(params.togglers);
-		this.container = document.id(params.container);
 		this.previous = -1;
+		this.internalChain = new Chain();
 		if (this.options.alwaysHide) this.options.wait = true;
 		if ($chk(this.options.show)){
 			this.options.display = false;
@@ -115,7 +164,9 @@ var Accordion = Fx.Accordion = new Class({
 				for (var fx in this.effects) el.setStyle(fx, 0);
 			}
 		}, this);
-		if ($chk(this.options.display)) this.display(this.options.display, this.options.initialDisplayFx);
+		if ($chk(this.options.display) || this.options.initialDisplayFx === false) this.display(this.options.display, this.options.initialDisplayFx);
+		if (this.options.fixedHeight !== false) this.options.returnHeightToAuto = false;
+		this.addEvent('complete', this.internalChain.callChain.bind(this.internalChain));
 	},
 
 	addSection: function(toggler, element){
@@ -125,7 +176,9 @@ var Accordion = Fx.Accordion = new Class({
 		this.togglers.include(toggler);
 		this.elements.include(element);
 		var idx = this.togglers.indexOf(toggler);
-		toggler.addEvent(this.options.trigger, this.display.bind(this, idx));
+		var displayer = this.display.bind(this, idx);
+		toggler.store('accordion:display', displayer);
+		toggler.addEvent(this.options.trigger, displayer);
 		if (this.options.height) element.setStyles({'padding-top': 0, 'border-top': 'none', 'padding-bottom': 0, 'border-bottom': 'none'});
 		if (this.options.width) element.setStyles({'padding-left': 0, 'border-left': 'none', 'padding-right': 0, 'border-right': 'none'});
 		element.fullOpacity = 1;
@@ -138,34 +191,104 @@ var Accordion = Fx.Accordion = new Class({
 		return this;
 	},
 
+	detach: function(){
+		this.togglers.each(function(toggler) {
+			toggler.removeEvent(this.options.trigger, toggler.retrieve('accordion:display'));
+		}, this);
+	},
+
 	display: function(index, useFx){
+		if (!this.check(index, useFx)) return this;
 		useFx = $pick(useFx, true);
+		if (this.options.returnHeightToAuto){
+			var prev = this.elements[this.previous];
+			if (prev && !this.selfHidden){
+				for (var fx in this.effects){
+					prev.setStyle(fx, prev[this.effects[fx]]);
+				}
+			}
+		}
 		index = ($type(index) == 'element') ? this.elements.indexOf(index) : index;
 		if ((this.timer && this.options.wait) || (index === this.previous && !this.options.alwaysHide)) return this;
 		this.previous = index;
 		var obj = {};
 		this.elements.each(function(el, i){
 			obj[i] = {};
-			var hide = (i != index) || (this.options.alwaysHide && (el.offsetHeight > 0));
+			var hide;
+			if (i != index){
+				hide = true;
+			} else if (this.options.alwaysHide && ((el.offsetHeight > 0 && this.options.height) || el.offsetWidth > 0 && this.options.width)){
+				hide = true;
+				this.selfHidden = true;
+			}
 			this.fireEvent(hide ? 'background' : 'active', [this.togglers[i], el]);
 			for (var fx in this.effects) obj[i][fx] = hide ? 0 : el[this.effects[fx]];
 		}, this);
+		this.internalChain.chain(function(){
+			if (this.options.returnHeightToAuto && !this.selfHidden){
+				var el = this.elements[index];
+				if (el) el.setStyle('height', 'auto');
+			};
+		}.bind(this));
 		return useFx ? this.start(obj) : this.set(obj);
 	}
 
 });
 
 /*
-Script: Drag.js
-	The base Drag Class. Can be used to drag and resize Elements using mouse events.
+	Compatibility with 1.2.0
+*/
+var Accordion = new Class({
 
-	License:
-		MIT-style license.
+	Extends: Fx.Accordion,
 
-	Authors:
-		Valerio Proietti
-		Tom Occhinno
-		Jan Kassens
+	initialize: function(){
+		this.parent.apply(this, arguments);
+		var params = Array.link(arguments, {'container': Element.type});
+		this.container = params.container;
+	},
+
+	addSection: function(toggler, element, pos){
+		toggler = document.id(toggler);
+		element = document.id(element);
+		var test = this.togglers.contains(toggler);
+		var len = this.togglers.length;
+		if (len && (!test || pos)){
+			pos = $pick(pos, len - 1);
+			toggler.inject(this.togglers[pos], 'before');
+			element.inject(toggler, 'after');
+		} else if (this.container && !test){
+			toggler.inject(this.container);
+			element.inject(this.container);
+		}
+		return this.parent.apply(this, arguments);
+	}
+
+});
+
+/*
+---
+
+script: Drag.js
+
+description: The base Drag Class. Can be used to drag and resize Elements using mouse events.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Tom Occhinno
+- Jan Kassens
+
+requires:
+- core:1.2.4/Events
+- core:1.2.4/Options
+- core:1.2.4/Element.Event
+- core:1.2.4/Element.Style
+- /MooTools.More
+
+provides: [Drag]
+
 */
 
 var Drag = new Class({
@@ -187,6 +310,7 @@ var Drag = new Class({
 		handle: false,
 		invert: false,
 		preventDefault: false,
+		stopPropagation: false,
 		modifiers: {x: 'left', y: 'top'}
 	},
 
@@ -224,7 +348,9 @@ var Drag = new Class({
 	},
 
 	start: function(event){
+		if (event.rightClick) return;
 		if (this.options.preventDefault) event.preventDefault();
+		if (this.options.stopPropagation) event.stopPropagation();
 		this.mouse.start = event.page;
 		this.fireEvent('beforeStart', this.element);
 		var limit = this.options.limit;
@@ -274,8 +400,11 @@ var Drag = new Class({
 				}
 			}
 			if (this.options.grid[z]) this.value.now[z] -= ((this.value.now[z] - (this.limit[z][0]||0)) % this.options.grid[z]);
-			if (this.options.style) this.element.setStyle(this.options.modifiers[z], this.value.now[z] + this.options.unit);
-			else this.element[this.options.modifiers[z]] = this.value.now[z];
+			if (this.options.style) {
+				this.element.setStyle(this.options.modifiers[z], this.value.now[z] + this.options.unit);
+			} else {
+				this.element[this.options.modifiers[z]] = this.value.now[z];
+			}
 		}
 		this.fireEvent('drag', [this.element, event]);
 	},
@@ -312,16 +441,29 @@ Element.implement({
 
 
 /*
-Script: Drag.Move.js
-	A Drag extension that provides support for the constraining of draggables to containers and droppables.
+---
 
-	License:
-		MIT-style license.
+script: Drag.Move.js
 
-	Authors:
-		Valerio Proietti
-		Tom Occhinno
-		Jan Kassens*/
+description: A Drag extension that provides support for the constraining of draggables to containers and droppables.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Tom Occhinno
+- Jan Kassens
+- Aaron Newton
+- Scott Kyle
+
+requires:
+- core:1.2.4/Element.Dimensions
+- /Drag
+
+provides: [Drag.Move]
+
+...
+*/
 
 Drag.Move = new Class({
 
@@ -340,14 +482,20 @@ Drag.Move = new Class({
 
 	initialize: function(element, options){
 		this.parent(element, options);
+		element = this.element;
+		
 		this.droppables = $$(this.options.droppables);
 		this.container = document.id(this.options.container);
-		if (this.container && $type(this.container) != 'element') this.container = document.id(this.container.getDocument().body);
-
-		var position = this.element.getStyle('position');
-		if (position=='static') position = 'absolute';
-		if ([this.element.getStyle('left'), this.element.getStyle('top')].contains('auto')) this.element.position(this.element.getPosition(this.element.offsetParent));
-		this.element.setStyle('position', position);
+		
+		if (this.container && $type(this.container) != 'element')
+			this.container = document.id(this.container.getDocument().body);
+		
+		var styles = element.getStyles('left', 'top', 'position');
+		if (styles.left == 'auto' || styles.top == 'auto')
+			element.setPosition(element.getPosition(element.getOffsetParent()));
+		
+		if (styles.position == 'static')
+			element.setStyle('position', 'absolute');
 
 		this.addEvent('start', this.checkDroppables, true);
 
@@ -355,41 +503,80 @@ Drag.Move = new Class({
 	},
 
 	start: function(event){
-		if (this.container){
-			var ccoo = this.container.getCoordinates(this.element.getOffsetParent()), cbs = {}, ems = {};
-
-			['top', 'right', 'bottom', 'left'].each(function(pad){
-				cbs[pad] = this.container.getStyle('border-' + pad).toInt();
-				ems[pad] = this.element.getStyle('margin-' + pad).toInt();
-			}, this);
-
-			var width = this.element.offsetWidth + ems.left + ems.right;
-			var height = this.element.offsetHeight + ems.top + ems.bottom;
-
-			if (this.options.includeMargins) {
-				$each(ems, function(value, key) {
-					ems[key] = 0;
-				});
-			}
-			if (this.container == this.element.getOffsetParent()) {
-				this.options.limit = {
-					x: [0 - ems.left, ccoo.right - cbs.left - cbs.right - width + ems.right],
-					y: [0 - ems.top, ccoo.bottom - cbs.top - cbs.bottom - height + ems.bottom]
-				};
-			} else {
-				this.options.limit = {
-					x: [ccoo.left + cbs.left - ems.left, ccoo.right - cbs.right - width + ems.right],
-					y: [ccoo.top + cbs.top - ems.top, ccoo.bottom - cbs.bottom - height + ems.bottom]
-				};
-			}
-
-		}
+		if (this.container) this.options.limit = this.calculateLimit();
+		
 		if (this.options.precalculate){
-			this.positions = this.droppables.map(function(el) {
+			this.positions = this.droppables.map(function(el){
 				return el.getCoordinates();
 			});
 		}
+		
 		this.parent(event);
+	},
+	
+	calculateLimit: function(){
+		var offsetParent = this.element.getOffsetParent(),
+			containerCoordinates = this.container.getCoordinates(offsetParent),
+			containerBorder = {},
+			elementMargin = {},
+			elementBorder = {},
+			containerMargin = {},
+			offsetParentPadding = {};
+
+		['top', 'right', 'bottom', 'left'].each(function(pad){
+			containerBorder[pad] = this.container.getStyle('border-' + pad).toInt();
+			elementBorder[pad] = this.element.getStyle('border-' + pad).toInt();
+			elementMargin[pad] = this.element.getStyle('margin-' + pad).toInt();
+			containerMargin[pad] = this.container.getStyle('margin-' + pad).toInt();
+			offsetParentPadding[pad] = offsetParent.getStyle('padding-' + pad).toInt();
+		}, this);
+
+		var width = this.element.offsetWidth + elementMargin.left + elementMargin.right,
+			height = this.element.offsetHeight + elementMargin.top + elementMargin.bottom,
+			left = 0,
+			top = 0,
+			right = containerCoordinates.right - containerBorder.right - width,
+			bottom = containerCoordinates.bottom - containerBorder.bottom - height;
+
+		if (this.options.includeMargins){
+			left += elementMargin.left;
+			top += elementMargin.top;
+		} else {
+			right += elementMargin.right;
+			bottom += elementMargin.bottom;
+		}
+		
+		if (this.element.getStyle('position') == 'relative'){
+			var coords = this.element.getCoordinates(offsetParent);
+			coords.left -= this.element.getStyle('left').toInt();
+			coords.top -= this.element.getStyle('top').toInt();
+			
+			left += containerBorder.left - coords.left;
+			top += containerBorder.top - coords.top;
+			right += elementMargin.left - coords.left;
+			bottom += elementMargin.top - coords.top;
+			
+			if (this.container != offsetParent){
+				left += containerMargin.left + offsetParentPadding.left;
+				top += (Browser.Engine.trident4 ? 0 : containerMargin.top) + offsetParentPadding.top;
+			}
+		} else {
+			left -= elementMargin.left;
+			top -= elementMargin.top;
+			
+			if (this.container == offsetParent){
+				right -= containerBorder.left;
+				bottom -= containerBorder.top;
+			} else {
+				left += containerCoordinates.left + containerBorder.left;
+				top += containerCoordinates.top + containerBorder.top;
+			}
+		}
+		
+		return {
+			x: [left, right],
+			y: [top, bottom]
+		};
 	},
 
 	checkAgainst: function(el, i){
@@ -433,14 +620,28 @@ Element.implement({
 
 
 /*
-Script: Color.js
-	Class for creating and manipulating colors in JavaScript. Supports HSB -> RGB Conversions and vice versa.
+---
 
-	License:
-		MIT-style license.
+script: Color.js
 
-	Authors:
-		Valerio Proietti
+description: Class for creating and manipulating colors in JavaScript. Supports HSB -> RGB Conversions and vice versa.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Array
+- core:1.2.4/String
+- core:1.2.4/Number
+- core:1.2.4/Hash
+- core:1.2.4/Function
+- core:1.2.4/$util
+
+provides: [Color]
+
+...
 */
 
 var Color = new Native({
@@ -518,15 +719,16 @@ var $HEX = function(hex){
 Array.implement({
 
 	rgbToHsb: function(){
-		var red = this[0], green = this[1], blue = this[2];
-		var hue, saturation, brightness;
-		var max = Math.max(red, green, blue), min = Math.min(red, green, blue);
+		var red = this[0],
+				green = this[1],
+				blue = this[2],
+				hue = 0;
+		var max = Math.max(red, green, blue),
+				min = Math.min(red, green, blue);
 		var delta = max - min;
-		brightness = max / 255;
-		saturation = (max != 0) ? delta / max : 0;
-		if (saturation == 0){
-			hue = 0;
-		} else {
+		var brightness = max / 255,
+				saturation = (max != 0) ? delta / max : 0;
+		if(saturation != 0) {
 			var rr = (max - red) / delta;
 			var gr = (max - green) / delta;
 			var br = (max - blue) / delta;
@@ -579,15 +781,26 @@ String.implement({
 
 
 /*
-Script: Hash.Cookie.js
-	Class for creating, reading, and deleting Cookies in JSON format.
+---
 
-	License:
-		MIT-style license.
+script: Hash.Cookie.js
 
-	Authors:
-		Valerio Proietti
-		Aaron Newton
+description: Class for creating, reading, and deleting Cookies in JSON format.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Aaron Newton
+
+requires:
+- core:1.2.4/Cookie
+- core:1.2.4/JSON
+- /MooTools.More
+
+provides: [Hash.Cookie]
+
+...
 */
 
 Hash.Cookie = new Class({
@@ -627,55 +840,77 @@ Hash.each(Hash.prototype, function(method, name){
 });
 
 /*
-Script: Tips.js
-	Class for creating nice tips that follow the mouse cursor when hovering an element.
+---
 
-	License:
-		MIT-style license.
+script: Tips.js
 
-	Authors:
-		Valerio Proietti
-		Christoph Pojer
+description: Class for creating nice tips that follow the mouse cursor when hovering an element.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Christoph Pojer
+
+requires:
+- core:1.2.4/Options
+- core:1.2.4/Events
+- core:1.2.4/Element.Event
+- core:1.2.4/Element.Style
+- core:1.2.4/Element.Dimensions
+- /MooTools.More
+
+provides: [Tips]
+
+...
 */
 
-var Tips = new Class({
+(function(){
+
+var read = function(option, element){
+	return (option) ? ($type(option) == 'function' ? option(element) : element.get(option)) : '';
+};
+
+this.Tips = new Class({
 
 	Implements: [Events, Options],
 
 	options: {
-		onShow: function(tip){
-			tip.setStyle('visibility', 'visible');
+		/*
+		onAttach: $empty(element),
+		onDetach: $empty(element),
+		*/
+		onShow: function(){
+			this.tip.setStyle('display', 'block');
 		},
-		onHide: function(tip){
-			tip.setStyle('visibility', 'hidden');
+		onHide: function(){
+			this.tip.setStyle('display', 'none');
 		},
 		title: 'title',
-		text: function(el){
-			return el.get('rel') || el.get('href');
+		text: function(element){
+			return element.get('rel') || element.get('href');
 		},
 		showDelay: 100,
 		hideDelay: 100,
-		className: null,
+		className: 'tip-wrap',
 		offset: {x: 16, y: 16},
+		windowPadding: {x:0, y:0},
 		fixed: false
 	},
 
 	initialize: function(){
 		var params = Array.link(arguments, {options: Object.type, elements: $defined});
-		if (params.options && params.options.offsets) params.options.offset = params.options.offsets;
 		this.setOptions(params.options);
-		this.container = new Element('div', {'class': 'tip'});
-		this.tip = this.getTip();
-
 		if (params.elements) this.attach(params.elements);
+		this.container = new Element('div', {'class': 'tip'});
 	},
 
-	getTip: function(){
-		return new Element('div', {
+	toElement: function(){
+		if (this.tip) return this.tip;
+
+		return this.tip = new Element('div', {
 			'class': this.options.className,
 			styles: {
-				visibility: 'hidden',
-				display: 'none',
 				position: 'absolute',
 				top: 0,
 				left: 0
@@ -688,81 +923,90 @@ var Tips = new Class({
 	},
 
 	attach: function(elements){
-		var read = function(option, element){
-			if (option == null) return '';
-			return $type(option) == 'function' ? option(element) : element.get(option);
-		};
 		$$(elements).each(function(element){
-			var title = read(this.options.title, element);
+			var title = read(this.options.title, element),
+				text = read(this.options.text, element);
+			
 			element.erase('title').store('tip:native', title).retrieve('tip:title', title);
-			element.retrieve('tip:text', read(this.options.text, element));
-
+			element.retrieve('tip:text', text);
+			this.fireEvent('attach', [element]);
+			
 			var events = ['enter', 'leave'];
 			if (!this.options.fixed) events.push('move');
-
+			
 			events.each(function(value){
-				element.addEvent('mouse' + value, element.retrieve('tip:' + value, this['element' + value.capitalize()].bindWithEvent(this, element)));
+				var event = element.retrieve('tip:' + value);
+				if (!event) event = this['element' + value.capitalize()].bindWithEvent(this, element);
+				
+				element.store('tip:' + value, event).addEvent('mouse' + value, event);
 			}, this);
 		}, this);
-
+		
 		return this;
 	},
 
 	detach: function(elements){
 		$$(elements).each(function(element){
 			['enter', 'leave', 'move'].each(function(value){
-				element.removeEvent('mouse' + value, element.retrieve('tip:' + value) || $empty);
+				element.removeEvent('mouse' + value, element.retrieve('tip:' + value)).eliminate('tip:' + value);
 			});
-
-			element.eliminate('tip:enter').eliminate('tip:leave').eliminate('tip:move');
-
-			if ($type(this.options.title) == 'string' && this.options.title == 'title'){
+			
+			this.fireEvent('detach', [element]);
+			
+			if (this.options.title == 'title'){ // This is necessary to check if we can revert the title
 				var original = element.retrieve('tip:native');
 				if (original) element.set('title', original);
 			}
 		}, this);
-
+		
 		return this;
 	},
 
 	elementEnter: function(event, element){
-		$A(this.container.childNodes).each(Element.dispose);
-
+		this.container.empty();
+		
 		['title', 'text'].each(function(value){
 			var content = element.retrieve('tip:' + value);
-			if (!content) return;
-
-			this[value + 'Element'] = new Element('div', {'class': 'tip-' + value}).inject(this.container);
-			this.fill(this[value + 'Element'], content);
+			if (content) this.fill(new Element('div', {'class': 'tip-' + value}).inject(this.container), content);
 		}, this);
-
-		this.timer = $clear(this.timer);
-		this.timer = this.show.delay(this.options.showDelay, this, element);
-		this.tip.setStyle('display', 'block');
-		this.position((!this.options.fixed) ? event : {page: element.getPosition()});
+		
+		$clear(this.timer);
+		this.timer = (function(){
+			this.show(this, element);
+			this.position((this.options.fixed) ? {page: element.getPosition()} : event);
+		}).delay(this.options.showDelay, this);
 	},
 
 	elementLeave: function(event, element){
 		$clear(this.timer);
-		this.tip.setStyle('display', 'none');
 		this.timer = this.hide.delay(this.options.hideDelay, this, element);
+		this.fireForParent(event, element);
 	},
 
-	elementMove: function(event){
+	fireForParent: function(event, element){
+		element = element.getParent();
+		if (!element || element == document.body) return;
+		if (element.retrieve('tip:enter')) element.fireEvent('mouseenter', event);
+		else this.fireForParent(event, element);
+	},
+
+	elementMove: function(event, element){
 		this.position(event);
 	},
 
 	position: function(event){
+		if (!this.tip) document.id(this);
+
 		var size = window.getSize(), scroll = window.getScroll(),
 			tip = {x: this.tip.offsetWidth, y: this.tip.offsetHeight},
 			props = {x: 'left', y: 'top'},
 			obj = {};
-
+		
 		for (var z in props){
 			obj[props[z]] = event.page[z] + this.options.offset[z];
-			if ((obj[props[z]] + tip[z] - scroll[z]) > size[z]) obj[props[z]] = event.page[z] - this.options.offset[z] - tip[z];
+			if ((obj[props[z]] + tip[z] - scroll[z]) > size[z] - this.options.windowPadding[z]) obj[props[z]] = event.page[z] - this.options.offset[z] - tip[z];
 		}
-
+		
 		this.tip.setStyles(obj);
 	},
 
@@ -771,12 +1015,16 @@ var Tips = new Class({
 		else element.adopt(contents);
 	},
 
-	show: function(el){
-		this.fireEvent('show', [this.tip, el]);
+	show: function(element){
+		if (!this.tip) document.id(this);
+		this.fireEvent('show', [this.tip, element]);
 	},
 
-	hide: function(el){
-		this.fireEvent('hide', [this.tip, el]);
+	hide: function(element){
+		if (!this.tip) document.id(this);
+		this.fireEvent('hide', [this.tip, element]);
 	}
 
 });
+
+})();

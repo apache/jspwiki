@@ -62,6 +62,7 @@ public class ViewActionBean extends AbstractPageActionBean
     private static final Logger log = LoggerFactory.getLogger( ViewActionBean.class );
 
     private String m_renameTo = null;
+    private String m_wikiPage = null;
 
     private int m_version = WikiProvider.LATEST_VERSION; 
 
@@ -84,24 +85,18 @@ public class ViewActionBean extends AbstractPageActionBean
             public void stream( HttpServletResponse response ) throws IOException
             {
                 WikiContext context = getContext();
-                WikiPage page = getPage();
                 Writer out = response.getWriter();
-                out.write( "<div class='categoryTitle'>");
-                out.write( context.getViewURL( page.getName() ) );
-                out.write( "</div>" );
-                out.write( "<div class='categoryText'>");
                 PluginManager mgr = context.getEngine().getPluginManager();
                 String result;
                 try
                 {
-                    result = mgr.execute( context, "{ReferringPagesPlugin,page="+page.getName()+",max=20,before='*',after='\n'}" );
+                    result = mgr.execute( context, "{ReferringPagesPlugin,page="+getPage().getName()+",max=20,before='*',after='\\n'}" );
                 }
                 catch (PluginException e)
                 {
                     result = e.getMessage();
                 }
                 out.write( result );
-                out.write( "</div>" );
             }
         };
         return r;

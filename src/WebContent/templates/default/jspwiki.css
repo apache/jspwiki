@@ -66,6 +66,8 @@ Color scheme:
 	- error (light pink) : #ffe0e0/.#ERROR#./
 	- diff inserted lines: #9f9/.#DIFFADD#./
 	- diff deleted lines: #f93/.#DIFFDEL#./
+	- slimbox overlay color: #000/.#SLIMBOX-OVERLAY#./
+	- slimbox main backgroun: #fff/.#SLIMBOX#./
 
 History:
 	* April 07, based on BrushedTemplate, v2.6/v2.8
@@ -133,11 +135,11 @@ Note:
 
 DOM structure:
 (start code)
-<body class="view|edit|comment hidefav">
+<body class="view|edit|comment fullscreen">
 <div id="wikibody" class="<empty>|fav-right">
   <div id="header"> ................ </div>
   <div id="content">
-    <div id="main">
+    <div id="page">
       <div id="actionsTop"> ........ </div>
       ... page content goes here ...
       <div id="actionsBottom"> ..... </div>
@@ -150,7 +152,7 @@ DOM structure:
 
 */
 
-/*DEBUG./
+/*DEBUG
 #header,#content,#footer { border:1px solid red; }
 #page,#favorites, .applicationlogo, .breadcrumbs, .userbox, .searchbox, .titlebox { border:1px solid lime; }
 #previewcontent, #info, #pagecontent, #attach, #findcontent { border:1px solid pink; }
@@ -175,15 +177,18 @@ DOM structure:
 }
 .fav-right #page {
 	float:left;
-	xxmargin:0 10px 0 0; /*replace by split-handle ? */
+	_margin-left:auto;
 	_margin-right:-3px;/* ie hack - three pixel text jog */
 }
-.hidefav #page, .hidefav .fav-right #page {
+body.fullscreen #page, body.fullscreen .fav-right #page {
 	width:auto;
 	float:none;
 }
-.hidefav #favorites {
-	width:20%;
+body.fullscreen #favorites {
+	xposition:relative;
+	xtop:0;
+	xbackground:white;
+	xz-index:5;
 }
 .fav-right #header .applicationlogo {
 	right:2em;
@@ -461,6 +466,9 @@ code, tt, .pre, pre {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	line-height:1.1;
 	border:1px solid #ddd/*#BORDER#*/;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	padding:0 0.25em;
 }
 pre {
 	clear:both;
@@ -624,8 +632,8 @@ Section: ReusableStyles
 	clear:both;
 	margin:1em 0;
 	padding:1em 32px;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
 }
 td .information, td .warning, td .error {
 	margin:0; /* make sure to fill the table cell with the background color*/
@@ -677,6 +685,20 @@ Style: Attachments
 #upload {
 	float:left;
 }
+ul.fileupload {
+	margin:0;
+	padding:0;
+}
+.fileupload li {
+	list-style:none;
+	padding:0.5em 0;
+}
+.fileupload .delete {
+	float:left;
+	display:block;
+    background-image:url("images/delete.png");
+    cursor:pointer;
+}
 #progressbar {
 	float:left;
 	margin-left:1em;
@@ -703,6 +725,7 @@ Section: JSPs
 /*
 Style: AttachmentTab
 	Add attachment icons per type of attachement.
+	Ref. http://www.w3schools.com/media/media_mimeref.asp
 
 DOM structure
 >	<div class="mime image-gif"> ... </div>
@@ -742,21 +765,19 @@ img.outlink {
 	display:none;
 }
 a.external {
-	padding-right:6px;
+	/*padding-right:6px;
 	background:transparent url(images/out.png) no-repeat center right;
-}
-/* FIXME
-a.external {
 	padding-right:18px;
-	background:transparent url(images/extern.gif) no-repeat center right;
+	background:transparent url(images/extern.gif) no-repeat center right;*/
 }
 a.external[href^='mailto:'] {
 	padding-right:20px;
 	background:transparent url(images/email.png) no-repeat center right;
 }
-a.createpage{
+/*
+a.createpage {
 	padding-right:20px;
-	background:transparent url(images/pencil.png) no-repeat center right;
+	background:transparent url(images/pencil.png) no-repeat center right ;
 }
 */
 /* fixme
@@ -986,7 +1007,7 @@ Style: Plain Editor
 }
 .resize-bar {
     background:#ddd/*#BORDER#*/ url(images/resize-horizontal.gif) top center;
-	cursor:s-resize; /* css3 row-resize */
+	cursor:row-resize; /*ns-resize;*/ /* css3 row-resize */
     font-size:1px;
 	height:6px;
     line-height:6px;
@@ -1074,45 +1095,56 @@ DOM Structure:
 */
 #favorites {
 	overflow:hidden; /*avoid overflow for wide content of leftmenu or leftmenufooter */
-	padding-top:1.75em;
+	padding:1.75em 0.5em 0.5em 0.5em;
 }
 
 #page {
 	position:relative;
-	padding:0 0 0 16px;
+	padding:0 1em;
 }
-.fav-right #page {
-	padding:0 16px 0 0;
-}
-#page .splitbar {
+#page a.splitbar {
 	position:absolute;
-	width:4px;
-	top:1.75em; /* 1.5line-height + ?0.25 */
-	left:12px;
-	bottom:2em; /* 1.5line-height + 0.5margin-bottom */
-	background:#f9f9f9/*#COMMENT#*/;
-	xxborder-top:1px solid #f9f9f9/*#COMMENT#*/;
-	cursor:pointer;
+	width:1em;
+	top:1.75em; /* tabmenu height = 1.5line-height + ?0.25 */
+	bottom:1.75em; /* page-bottom height = 1.5line-height + 0.5margin-bottom */
+	left:0;
+	cursor:w-resize; /*col-resize*/
+	z-index:5;
+}
+.fullscreen #page .splitbar {
+	cursor:e-resize;
 }
 .fav-right #page .splitbar {
 	left:auto;
-	right:12px;
+	right:0;
+	cursor:e-resize;
 }
-#page .splitbar.hover {
-	background:#eee;
+.fav-right .fullscreen #page .splitbar {
+	cursor:w-resize;
 }
-#splitPointer, .hidefav .fav-right #splitPointer {
+/* if needed, overwrite standard :hover treatment
+a.splitbar:hover{
+	background-color:#adf4ff;
+}
+*/
+
+/*
+FIXME: can be removed, when cursor:x-resize is supported by the browser
+   Check IE7/IE6
+
+#splitPointer, .fullscreen .fav-right #splitPointer {
 	position:absolute;
-	width:4px;
-	height:12px;
+	width:5px;
+	height:#1px;
 	background:url(images/arrleft.gif) top left no-repeat;
-	margin-top:-16px;
+	margin-top:-5px;
 	z-index:5;
 }
-.hidefav #splitPointer, .fav-right #splitPointer {
+.fullscreen #splitPointer, .fav-right #splitPointer {
 	background-image:url(images/arrright.gif);
-}
 
+
+*/
 
 .wikiversion, .rssfeed {
 	font-size:90%;
@@ -1398,8 +1430,9 @@ DOM Structure:
 
 #hiddenmorepopup {
 	display:none;
-	border:1px solid #ddd/*#BORDER#*/;
+	xborder:1px solid #ddd/*#BORDER#*/;
 }
+/* replace by .more class ??*/
 #hiddenmorepopup ul {
 	list-style:none;
 	margin:0;
@@ -1471,8 +1504,8 @@ Styles: Buttons
 	  so the majority of visible styles are applied to two inner {{span}}.
 
 DOM structure
->	<a class=".btn"><span><span>...</span></span></a>
->	<button class=".btn"><span><span>...</span></span></button>
+>	<a class="btn"><span><span>...</span></span></a>
+>	<button class="btn"><span><span>...</span></span></button>
 
 Credit:
 	http://stopdesign.com/eg/buttons/3.0/code.html
@@ -1612,10 +1645,9 @@ Style: spin
 
 */
 .spin {
-	background:url(images/spin.gif) no-repeat;
+	background:url(images/spin.gif) no-repeat center;
 	height:16px;
-	text-indent:20px;
-	xmargin:0 0.5em;
+	text-indent:20px; /* shift optional text inside spin element */
 }
 
 /*
@@ -2277,7 +2309,7 @@ overwrite the style set by the mootools animation routines.
 	color:blue;
 	font:bold small Monaco, "Courier New", Courier, monospace;
 	width:1.2em;
-	height:1em;
+	line-height:1.2em;
 }
 .collapseOpen, .collapseClose {
 	cursor:pointer;
@@ -2333,183 +2365,171 @@ select.filter {
 
 /*
 Style: SLIMBOX
-	SLIMBOX is the attachment viewer etc.
+	SLIMBOX is a modal viewer for images, video, wikipages
+	and external sites (iframe)
 
 Credit:
-	Todo
+	Inspired by Slimbox by Christophe Bleys.
+	(see http://www.digitalia.be/software/slimbox)
+	and the mediaboxAdvanced by John Einselen
+	(see http://iaian7.com/webcode/mediaboxAdvanced)
+
+DOM Structure:
+	DOM structure of the JSPWiki Slimbox viewer.
+	(start code)
+	<div id="lbOverlay"></div>
+	<div id="lbCenter"  class="or spin">
+		<div id="lbImage">
+			<!-- img or iframe element is inserted here -->
+		</div>
+	</div>
+	<div id="lbBottomContainer">
+		<div id="lbBottom">
+			<a id="lbCloseLink"/>
+			<a id="lbNextLink"/>
+			<a id="lbPrevLink"/>
+			<div id="lbCaption">
+			<div id="lbNumber">
+		</div>
+	</div>
+	(end)
 
 */
-a.slimbox {
-	font-weight:bold;
-	font-size:1.3em;
-	padding:0 0.25em;
+.slimboxbtn {
+	padding:0 0.5em;
 	color:transparent;
-	background: url(images/slimbox.gif) no-repeat center;
+	background: transparent url(images/slimbox.gif) no-repeat center;
 }
-a.slimbox:visited, a.slimbox:active, a.slimbox:link {
-	text-decoration:none;
-	border:none;
-}
-a.slimbox:hover {
-	background-color:#ddd/*#HOVER#*/;
-}
-
 #lbOverlay {
-	position:absolute;
-	left:0;
+	position:fixed;
+	_position:absolute;
+	z-index:99;
 	top:0;
+	left:0;
 	width:100%;
-	background-color:#000;
+	height:100%;/**/
+	background-color:#000;/*#SLIMBOX-OVERLAY#*/
 	cursor:pointer;
-
-}
-#lbCenter, #lbBottomContainer {
-	position:absolute;
-	left:50%;
-	overflow:hidden;
-	font: 90% Verdana, Helvetica, sans-serif;
-	color:#666;
-	line-height:1.5;
-	text-align:left;
-}
-#lbBottomContainer {
-	padding:0 12px;
 }
 #lbCenter {
-	padding:12px 12px 0 12px;
+	position:absolute;
+	z-index:99;/**/
+	padding:10px;
+	/*left:50%;*/
+	background-color:rgba(0,0,0,0.85);
+	padding-bottom:3em; /* placeholder for lbBottomContainer */
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	-moz-box-shadow:0 10px 40px rgba(0,0,0,0.5);
+	-webkit-box-shadow:0 10px 40px rgba(0,0,0,0.5);
 }
-#lbCenter a {
-	outline:none;
-}
-.lbLoading {
-	background:#fff url(images/spin.gif) no-repeat center;
+#lbBottomContainer {
+	position:absolute;
+	z-index:99;/**/
+	padding:1em;
+	/*left:50%;*/
+	overflow:hidden;_overflow:visible;_zoom:1;/*FIXME ?? inherit .line*/
 }
 #lbImage {
-	border:10px solid #fff;
-	border-top-width:1.4em;
-	background-color:#fff;
-	background-repeat:no-repeat;
+	/*position:absolute;*/
+	top:0;
+	left:0;
+	background-repeat:no-repeat; /* needed in case image is smaller the minimal window size */
 	background-position:center center;
-	position:relative;
 }
 #lbBottom {
-	border:10px solid #fff;
-	border-top-style:none;
-	background-color:#fff;
+	color: #999; /*#SLIMBOX-TEXT#*/
+	line-height: 1.5;
+	text-align: left;
+}
+#lbBottom * {
+	padding:0.5em;
+	white-space:nowrap;
+	/*overflow:hidden;*/
 }
 #lbBottom div {
-	white-space:nowrap;
-	overflow:hidden;
+	float:left;
 }
-#lbCaption, #lbPrevLink, #lbNextLink {
+#lbBottom a {
+	display:block;
+	float:right;
+	color:inherit;
+	font-weight:bold;
+	outline:none;
+	text-decoration:none;
+	cursor:pointer;
+}
+#lbBottom a:hover {
+	color:white !important;
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+}
+/*
+#lbNumber {
+}
+*/
+#lbCaption {
 	font-weight:bold;
 }
-#lbPrevLink {
-	padding-right:1em;
-}
-#lbNextLink {
-	padding-left:1em;
-}
-#lbCloseLink {
-	display:block;
-	position:absolute;
-	width:28px;
-	height:28px;
-	top:0;
-	right:0;
-	background:url(images/slimbox_close.png) no-repeat;
-	z-index:10;
-}
-/* gif icons for ie */
-* html #lbCloseLink {
-	background:url(images/slimbox_close.gif) 4px 12px no-repeat;
-}
-* html #lbCloseLink:hover {
-	background-image:url(images/slimbox_close_hover.gif);
-}
 
-#lbBottomContainer *:visited, #lbBottomContainer *:active, #lbBottomContainer *:link,
-#lbCenter *:visited, #lbCenter *:active, #lbCenter *:link {
-	text-decoration:none;
-	border-bottom:none;
-}
 
 
 /*
 Style: Category
+
+DOM structure:
+(start code)
+	<span>
+		<a href=".." class="wikipage categoryLink">category-page></a>
+		<div class="categoryPopup">
+			<p><a href=".." class="wikipage categoryLink">category-page</a></p>
+			<ul>
+			  <li><a>..</a></li>
+			</ul>
+		</div>
+	</span>
+(end)
 */
 .categoryLink {
 	border-bottom:2px solid #545454;
 	text-decoration:none;
 }
 .categoryPopup {
-	color:white;
 	z-index:100;
-	font-size:90%;
-	margin-top:2px;
 	position:absolute;
 	z-index:10;
 	background-color:rgba(0,0,0,0.7);
 	-moz-border-radius:10px;
-	-webkit-border-radius:5px;
-	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+	-webkit-border-radius:10px;
+	-webkit-box-shadow:0 0 10px rgba(0, 0, 0, 0.5);
+	_width:240px; /* IEx: width of the tip.png background image */
 }
-/* ie6 hack */
-* html .categoryPopup {
-	width:240px;
-}
-/* ie7 hack */
-*:first-child+html .categoryPopup {
-	width:240px;
-}
-.categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
+.categoryPopup a {
 	color:white;
 	text-decoration:none;
 }
-.categoryTitle {
-	padding:4px;
+.categoryPopup p {
+	margin:0;
+	padding:0.25em 10px;
 	font-weight:bold;
+	_background:url(images/tip.png) top left;
 }
-/* ie6 hack */
-* html .categoryTitle {
-	background:url(images/tip.png) top left;
-}
-/* ie7 hack */
-*:first-child+html .categoryTitle {
-	background:url(images/tip.png) top left;
-}
-.categoryText {
-	padding:4px 0;
-}
-/* ie6 hack */
-* html .categoryText {
-	background:url(images/tip.png) bottom right;
-}
-/* ie7 hack */
-*:first-child+html .categoryText {
-	background:url(images/tip.png) bottom right;
-}
-.categoryText ul {
+div.categoryPopup ul {
+	margin:0;
+	padding:0;
+	_background:url(images/tip.png) bottom right;
 	list-style:none;
-	margin:0 !important;
-	padding:0 !important;
 }
-.categoryText li {
+div.categoryPopup li {
 	display:block;
-	padding:0 8px;
+	padding:0.15em 10px;
 }
 .categoryPopup .hover {
 	background-color:rgba(0,0,0,0.5);
 	-moz-border-radius:10px;
-	-webkit-border-radius:5px;
-}
-/* ie6 hack */
-* html .categoryPopup .hover {
-	background-color:black;
-}
-/* ie7 hack */
-*:first-child+html .categoryPopup .hover {
-	background-color:black;
+	-webkit-border-radius:10px;
+	_background-color:black;
 }
 
 
@@ -2549,6 +2569,19 @@ DOM structure:
 .atn { color: #606; }
 .atv { color: #080; }
 .dec { color: #606; }
+
+/* linenumbers */
+.prettylines {
+	float:left;
+	margin:0;
+	color:#aaa;
+	text-align:right;
+	background:none;
+	border-color:transparent;
+}
+.prettyprint {
+	clear:right;
+}
 
 @media print {
   .str {color: #060; }
@@ -2797,7 +2830,7 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 	overflow-x:visible;
 }
 /* use !important to overwrite css style on following specified blocks */
-.pagename, #header, #footer, #page {
+/*.pagename, #header, #footer, #xpage {
 	width:100% !important;
 	margin:0 !important;
 	padding:0 !important;
@@ -2806,6 +2839,7 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 	position:static !important;
 	overflow:visible !important;
 }
+*/
 .pagename {
 	font-size:250%;
 	margin-bottom:1.5em;

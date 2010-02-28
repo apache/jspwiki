@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -45,7 +45,7 @@
           <tr>
           	<%-- The 'title' attribute is used to sort empty cells --%>
             <td title="${attachment.contentType}">
-              <div class="${fn:replace(attachment.contentType,'/','-')}">&nbsp;</div>
+              <div class="mime ${fn:replace(attachment.contentType,'/','-')}" />
             </td>
             <td title="${attachment.name}">
               <s:link beanclass="org.apache.wiki.action.AttachmentActionBean" event="download">
@@ -63,6 +63,11 @@
                 ${attachment.version}
               </s:link>
             </td>
+      	    <%-- FIXME
+      	         Needs to return date/time converted to msec, to allow numeric sorting
+      	         eg. attachment.lastModified.getTime() ...
+      	         A ISO8601DATE does not sort properly.
+      	    --%>
       	    <td jspwiki:sortvalue="${wiki:iso8601date(attachment.lastModified)}">
         	    <fmt:formatDate value="${attachment.lastModified}" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
         	</td>

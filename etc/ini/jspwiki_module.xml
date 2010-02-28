@@ -46,6 +46,14 @@
       <adminBean>org.apache.wiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
    </editor>
 -->
+   <editor name="Wysiwyg">
+      <author>Dirk Frederickx</author>
+      <script>scripts/wysiwyg/MooEditable.js</script>
+      <stylesheet>scripts/wysiwyg/MooEditable.css</stylesheet>
+      <path>editors/wysiwyg.jsp</path>
+      <minVersion>3.0</minVersion>
+   </editor>
+
    <plugin class="org.apache.wiki.plugin.IfPlugin">
       <author>Janne Jalkanen</author>
       <minVersion>2.4</minVersion>

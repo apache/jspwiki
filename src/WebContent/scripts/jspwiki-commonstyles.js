@@ -585,7 +585,15 @@ Wiki.registerPlugin( function(page, name){
 
 	if( els && els.length>0 ){
 
-		els.addClass('prettyprint');
+		els.addClass('prettyprint').each(function(el){
+
+			new Element('pre',{
+				'class':'prettylines',
+				html: el.innerHTML.trim().split('\n').map(function(line,i){ return i+1 }).join('\n')
+			}).injectBefore(el);
+
+		});
+
 		prettyPrint(page);
 
 	}
