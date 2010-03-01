@@ -33,3 +33,4 @@
      files in the "default" template, if it cannot locate an equivalent file in
      your defined template directory.
      --%>
+<%@ page errorPage="/Error.jsp" %>

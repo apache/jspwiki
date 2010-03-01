@@ -18,11 +18,12 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page errorPage="/Error.jsp" %>
 <h3>
   <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile" /></wiki:UserProfile>
   <wiki:UserProfile property="new"><fmt:message key="prefs.newprofile" /></wiki:UserProfile>

@@ -22,6 +22,7 @@
 --%>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.Release" %>
+<%@ page errorPage="/Error.jsp" %>
 <%--
      Minimal layout used for JSPs that don't need any dynamic content.
      Its structure is identical to DefaultLayout.jsp.

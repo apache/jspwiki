@@ -18,4 +18,4 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<jsp:forward page="Wiki.jsp" />
+<jsp:include page="${templates['Error.jsp']}" />

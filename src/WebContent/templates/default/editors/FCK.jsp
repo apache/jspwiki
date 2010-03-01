@@ -18,23 +18,23 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="java.util.Properties" %>
+<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ page import="org.apache.wiki.filters.*" %>
-<%@ page import="org.apache.wiki.api.WikiPage" %>
-<%@ page import="org.apache.commons.lang.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page errorPage="/Error.jsp" %>
 <%--
     This provides the FCK editor for JSPWiki.
 --%>
@@ -115,7 +115,6 @@
   <s:form beanclass="org.apache.wiki.action.EditActionBean"
               class="wikiform"
                  id="editform"
-             method="post"
       acceptcharset="UTF-8"
             enctype="application/x-www-form-urlencoded">
 

@@ -24,6 +24,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page errorPage="/Error.jsp" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
   <s:layout-component name="script">

@@ -26,10 +26,10 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
-<%@ page errorPage="${templates['Error.jsp']}" %>
+<%@ page errorPage="/Error.jsp" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <wiki:TabbedSection>

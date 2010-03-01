@@ -23,7 +23,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.auth.SecurityVerifier" %>
-<%@ page errorPage="${templates['Error.jsp']}" %>
+<%@ page errorPage="/Error.jsp" %>
 <h1>JSPWiki Security Configuration Verifier</h1>
 
 <p>This page examines JSPWiki's security configuration and tries to determine if it is working the way it should. Although JSPWiki comes configured with some reasonable default configuration settings out of the box, it's not always obvious what settings to change if you need to customize the security... and sooner or later, just about everyone does.</p>

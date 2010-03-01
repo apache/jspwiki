@@ -18,19 +18,20 @@
     specific language governing permissions and limitations
     under the License.
 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="org.apache.wiki.content.jcr.JCRWikiPage" %>
-<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page errorPage="/Error.jsp" %>
 <%
   WikiContext c = WikiContextFactory.findContext( pageContext );
   WikiPage wikiPage = c.getPage();

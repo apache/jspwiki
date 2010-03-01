@@ -18,8 +18,9 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ page errorPage="/Error.jsp" %>
 <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
   <div id='actionsBottom' class="pageactions"> 
     <wiki:PageExists>  

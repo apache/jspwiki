@@ -27,6 +27,7 @@
 <%@ page import="org.apache.wiki.Release" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page errorPage="/Error.jsp" %>
 <%--
      This file contains the default layout used by all JSPWiki 3 pages.
      The default layout contains the HTML doctype declaration, header,
@@ -114,7 +115,6 @@
     --%>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools-core.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools-more.js' />"></script>
-
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-slimbox.js' />"></script>
@@ -125,13 +125,8 @@
          JavaScript: localized strings and functions
     --%>
     <script type="text/javascript">//<![CDATA[
-    /* Localized javascript strings: LocalizedStrings[] */
-    <%-- DELETEME
     <s:layout-component name="jslocalizedstrings" />
     <s:layout-component name="jsfunction" />
-    --%>
-    <wiki:IncludeResources type="jslocalizedstrings"/>
-    <wiki:IncludeResources type="jsfunction"/>
     //]]></script>
     <%--
 

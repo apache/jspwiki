@@ -26,6 +26,7 @@
 <%@ page import="org.apache.wiki.action.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page errorPage="/Error.jsp" %>
 <%
     String postURL = "";
     WikiContext ctx = WikiContextFactory.findContext( pageContext );

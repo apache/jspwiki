@@ -22,6 +22,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<%@ page errorPage="/Error.jsp" %>
 <%--
         This is a plain editor for JSPWiki.
 --%>
@@ -30,7 +31,6 @@
   <s:form beanclass="org.apache.wiki.action.EditActionBean"
               class="wikiform"
                  id="editform"
-             method="post"
       acceptcharset="UTF-8"
             enctype="application/x-www-form-urlencoded">
 
@@ -175,7 +175,6 @@
       <s:submit name="save" />
       <s:submit name="cancel" />
     </p>
-
   </s:form>
 
 </div>

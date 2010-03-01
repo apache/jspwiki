@@ -19,6 +19,7 @@
     under the License.  
  -->
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s"%>
+<%@ page errorPage="/Error.jsp" %>
 <s:layout-render name="${templates['layout/StaticLayout.jsp']}">
 
   <s:layout-component name="headTitle">

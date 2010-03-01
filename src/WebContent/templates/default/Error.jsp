@@ -19,7 +19,7 @@
     under the License.  
 --%>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<%@ page isErrorPage="true" %>
+<%@ page errorPage="/Error.jsp" %>
 <s:useActionBean beanclass="org.apache.wiki.action.MessageActionBean" event="error" id="error" />
 <s:layout-render name="${templates['layout/StaticLayout.jsp']}">
 
