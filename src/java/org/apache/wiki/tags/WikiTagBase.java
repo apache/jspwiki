@@ -176,10 +176,12 @@ public abstract class WikiTagBase
     }
 
     /**
-     * {@inheritDoc}. The default implementation does nothing.
+     * {@inheritDoc}. The default implementation re-throws the Throwable.
+     * @param cause the Throwable exception that caused the error
      */
-    public void doCatch(Throwable arg0) throws Throwable
+    public void doCatch(Throwable cause ) throws Throwable
     {
+        throw cause;
     }
 
     /**
