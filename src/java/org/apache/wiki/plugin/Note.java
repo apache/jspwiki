@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -86,9 +87,7 @@ public class Note implements WikiPlugin
 
         commentImage = "images/"+commentImage;
         
-        String resource = engine.getTemplateManager().findResource( ctx, 
-                                                                    engine.getTemplateDir(), 
-                                                                    commentImage );
+        String resource = TemplateManager.getResourceResolver( engine.getServletContext() ).get( commentImage );
 
         return ctx.getURL( WikiContext.NONE, resource );
     }

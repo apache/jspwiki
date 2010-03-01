@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 
 import org.apache.wiki.*;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.ui.TemplateManager;
 
 
 /**
@@ -181,9 +182,7 @@ public class ContentTag
                 contentTemplate = beanName + "Content.jsp";
             }
             
-            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_wikiContext.getTemplate(),
-                                                                                  contentTemplate );
+            String page = TemplateManager.getResourceResolver( pageContext.getServletContext() ).get( contentTemplate );
             pageContext.include( page );
         }
         catch( ServletException e )

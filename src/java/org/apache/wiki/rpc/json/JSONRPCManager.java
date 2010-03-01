@@ -38,7 +38,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.RPCManager;
-import org.apache.wiki.ui.TemplateManager;
 import org.jabsorb.callback.InvocationCallback;
 import org.jabsorb.JSONRPCBridge;
 
@@ -149,15 +148,6 @@ public final class JSONRPCManager extends RPCManager
      */
     public static void requestJSON( WikiContext context )
     {
-        TemplateManager.addResourceRequest(context, 
-                                           TemplateManager.RESOURCE_SCRIPT, 
-                                           context.getURL(WikiContext.NONE,"scripts/json-rpc/jsonrpc.js"));        
-        
-        String jsonurl = context.getURL( WikiContext.NONE, "JSON-RPC" );
-        TemplateManager.addResourceRequest(context, 
-                                           TemplateManager.RESOURCE_JSFUNCTION, 
-                                           "jsonrpc = new JSONRpcClient(\""+jsonurl+"\");");
-        
         getBridge(context).registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
     }
     

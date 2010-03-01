@@ -1,3 +1,30 @@
+2010-02-28 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-212
+
+        * Exceptions caught by WikiTagBase (and subclass tags) are now
+        re-thrown so that they propagate upstream. Previously, doCatch()
+        was swallowing them, which made for "interesting" JSP debugging.
+
+        * Edit.jsp, Wiki.jsp, and PageInfo.jsp changed to put the
+        edit tab on the right. For editing, the live-preview feature was
+        moved to a new "Preview" tab, also on the right. The View tab
+        now simply displays the most recent save.
+
+        * The Error.jsp references were made consistent in all JSPs.
+        Rather than use JSTL syntax (which won't evaluate when used
+        with <% page errorPage %> tag), the references now all use
+        /Error.jsp, which itself jsp:includes the template JSP
+        Error.jsp using JSTL. This makes the error page customizable
+        per-template, but still very easy to use.
+
+        * Cleaned out all of the deadwood in TemplateManager.
+        Deprecated IncludeResourcesTag and RequestResourceTag. Resources
+        can (and should) be included directly in template JSPs.
+
+        * Small changes to Admin/AdministerProfiles action beans as part
+        of a gradual overhaul to the Admin JSPs, which are being Stripesed.
+
 2010-02-28 Dirk Frederickx <brushed@apache.org>
 
         * v3.0.0-svn-211 : line up with latest template/stripes changes
@@ -35,7 +62,7 @@
         * fixed a couple of Plugin unit tests (support for wiki spaces is
           not yet there), only the ReferringPagesPlugin still fails.
         
-2010-02-23 Andrew Jaquith <ajaquith AT apache DOT org>
+2010-02-27 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-209
 

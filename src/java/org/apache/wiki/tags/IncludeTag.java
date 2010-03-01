@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -72,10 +73,7 @@ public class IncludeTag
     {
         try
         {
-            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_wikiContext.getTemplate(),
-                                                                                  m_page );
-            
+            String page = TemplateManager.getResourceResolver( pageContext.getServletContext() ).get( m_page );
             if( page == null )
             {
                 pageContext.getOut().println("No template file called '"+TextUtil.replaceEntities(m_page)+"'");

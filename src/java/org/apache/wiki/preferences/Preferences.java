@@ -310,7 +310,7 @@ public class Preferences implements Map<String, Object>
         }
         else if( "availableSkins".equals( key ) )
         {
-            return m_engine.getTemplateManager().listSkins( m_engine.getServletContext(), m_engine.getTemplateDir() );
+            return m_engine.getTemplateManager().listSkins();
         }
         else if( "availableTimeFormats".equals( key ) )
         {

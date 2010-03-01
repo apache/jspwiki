@@ -20,21 +20,17 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.ui.TemplateManager;
-
 /**
- *  Provides easy access to TemplateManager.addResourceRequest().  You may use
- *  any of the request types defined there.
- *
- *  @see TemplateManager
+ *  <p>In JSPWiki 2.8, this tag provided a way to instruct JSPWiki to insert
+ *  resource requests into JSPs. <em>This tag has been deprecated because it
+ *  is unsafe.</em> The Stripes layout tags should be used instead. See the default
+ *  template {@code layout/DefaultLayout.jsp} for instructions on how
+ *  to include scripts and other resources in JSPs.</p>
  *  @deprecated use the Stripes <code>layout-component</code> tags instead
  */
 public class RequestResourceTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
-    private String m_type;
-    private String m_resource;
 
     /**
      *  {@inheritDoc}
@@ -43,7 +39,6 @@ public class RequestResourceTag extends WikiTagBase
     public void initTag()
     {
         super.initTag();
-        m_type = m_resource = null;
     }
     
     /**
@@ -52,57 +47,47 @@ public class RequestResourceTag extends WikiTagBase
     @Override
     public int doWikiStartTag() throws Exception
     {   
-        if( m_type != null && m_resource != null )
-        {
-            TemplateManager.addResourceRequest( m_wikiContext, m_type, m_resource );
-        }
-
         return SKIP_BODY;
     }
 
     /**
-     *  Returns the resource that is to be added.
+     *  Always returns the empty string.
      *  
      *  @return The resource name.
      */
     public String getResource()
     {
-        return m_resource;
+        return "";
     }
 
     /**
-     *  Sets the resource name to be added.
+     *  This method does nothing.
      *  
      *  @param r Resource identifier.
      */
     public void setResource(String r)
     {
-        m_resource = r;
+        // No-op.
     }
 
     /**
-     *  Get the resource type. 
+     *  Always returns the empty string.
      *  
      *  @return The type of the resource.
      */
     public String getType()
     {
-        return m_type;
+        return "";
     }
     
     /**
-     *  Set the type of the resource to be included.  For example, "script".  Please
-     *  see the TemplateManager class for more information about the different kinds
-     *  of types you can use.
-     *  
-     *  @see TemplateManager
+     *  This method does nothing.
      * 
      *  @param type The type to be set.
      */
 
     public void setType(String type)
     {
-        m_type = type;
     }
 
 }

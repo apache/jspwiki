@@ -20,41 +20,34 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.ui.TemplateManager;
 
 /**
- *  This tag is used to include any programmatic includes into the
- *  output stream.  Actually, what it does is that it simply emits a
- *  tiny marker into the stream, and then a ServletFilter will take
- *  care of the actual inclusion.
- *  
-*  @deprecated use the Stripes <code>layout-component</code> tags instead
+ *  <p>This tag is used to include any programmatic includes into the
+ *  output stream. In JSPWiki 2.8 and earlier, this tag emitted a
+ *  tiny marker into the stream which was replaced by ServletFilter.
+ *  <em>This tag has been deprecated because it is unsafe.</em> The
+ *  Stripes layout tags should be used instead. See the default
+ *  template {@code layout/DefaultLayout.jsp} for instructions on how
+ *  to include scripts and other resources in JSPs.</p>
+ *  @deprecated use the Stripes <code>layout-component</code> tags instead
  */
 public class IncludeResourcesTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
         
-    private String m_type;
-
     public void initTag()
     {
         super.initTag();
-        m_type = null;
     }
     
     public void setType( String type )
     {
-        m_type = type;
     }
     
     public int doWikiStartTag() throws Exception
     {
-        //String marker = m_wikiContext.getEngine().getTemplateManager().getMarker(m_wikiContext, m_type);
-        //String marker = TemplateManager.getMarker(pageContext, m_type);
-        String marker = TemplateManager.getMarker(m_wikiContext, m_type);
-
-        pageContext.getOut().println( marker );
-        
+        pageContext.getOut().println( "<!-- Please use the Stripes layout tags instead " +
+        		"of IncludeResourcesTag. See layout/DefaultLayout.jsp for instructions. -->" );
         return SKIP_BODY;
     }
 

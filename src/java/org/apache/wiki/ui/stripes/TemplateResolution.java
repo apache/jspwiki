@@ -22,6 +22,8 @@ public class TemplateResolution extends OnwardResolution<TemplateResolution>
 {
     private static final Logger LOG = LoggerFactory.getLogger( TemplateResolution.class ); 
     
+    private static final String DEFAULT_PATH_PREFIX = "/" + TemplateManager.TEMPLATE_DIR + "/" + TemplateManager.DEFAULT_TEMPLATE + "/";
+
     /**
      * Constructs a new TemplateResolution
      * 
@@ -41,7 +43,7 @@ public class TemplateResolution extends OnwardResolution<TemplateResolution>
         String path = TemplateManager.getResourceResolver( servletContext ).get( getPath() );
         if( path == null )
         {
-            path = "/templates/" + TemplateManager.DEFAULT_TEMPLATE + "/" + getPath();
+            path = DEFAULT_PATH_PREFIX + getPath();
         }
         setPath( path );
 

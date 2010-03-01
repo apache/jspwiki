@@ -73,9 +73,6 @@ public class EditorManager extends ModuleManager
     /** Known name for the plain wikimarkup editor. */
     public static final String       EDITOR_PLAIN    = "plain";
 
-    /** Known name for the preview editor component. */
-    public static final String       EDITOR_PREVIEW  = "preview";
-
     /** Known attribute name for storing the user edited text inside a HTTP parameter. */
     public static final String       REQ_EDITEDTEXT  = "_editedtext";
 
@@ -189,9 +186,6 @@ public class EditorManager extends ModuleManager
      */
     public String getEditorName( WikiContext context )
     {
-        if( context.getRequestContext().equals(WikiContext.PREVIEW) )
-            return EDITOR_PREVIEW;
-
         String editor = null;
 
         // User has set an editor in preferences

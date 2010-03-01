@@ -27,6 +27,7 @@ import javax.servlet.jsp.JspException;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.EditorManager;
+import org.apache.wiki.ui.TemplateManager;
 
 
 /**
@@ -58,10 +59,7 @@ public class EditorTag
         
         try
         {
-            String page = engine.getTemplateManager().findJSP( pageContext,
-                                                               m_wikiContext.getTemplate(),
-                                                               editorPath );
-            
+            String page = TemplateManager.getResourceResolver( pageContext.getServletContext() ).get( editorPath );
             if( page == null )
             {
                 //FIXME: should be I18N ...
