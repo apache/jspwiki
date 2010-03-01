@@ -21,6 +21,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<%@ page errorPage="/Error.jsp" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
   <%-- Page title should say Edit: + pagename --%>
@@ -41,21 +42,10 @@
     <wiki:TabbedSection defaultTab="edit">
     
       <%-- View tab --%>
-      <wiki:Tab id="view" titleKey="view.tab" accesskey="v"
-        onclick="Stripes.submitFormEvent('editform', 'preview', 'previewContent', null);">
-        <div class="information">
-          <fmt:message key="preview.info" />
-        </div>
-        <div id="previewContent">
-          Page contents go here.
-        </div>
+      <wiki:Tab id="view" titleKey="view.tab" accesskey="v">
+        <wiki:InsertPage/>
       </wiki:Tab>
 
-      <%-- Editor tab --%>
-      <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e">
-        <wiki:Editor/>
-      </wiki:Tab>
-      
       <%-- Attachments tab --%>
       <wiki:Tab id="attachments" accesskey="a"
         title="${wiki:attachmentsTitle(request.Locale, wikiActionBean.attachments)}">
@@ -65,6 +55,20 @@
       <%-- Info tab --%>
       <wiki:Tab id="info" titleKey="info.tab" accesskey="i">
         <jsp:include page="${templates['tabs/PageInfoTab.jsp']}" />
+      </wiki:Tab>
+
+      <%-- Editor tab --%>
+      <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e">
+        <wiki:Editor/>
+      </wiki:Tab>
+      
+      <%-- Preview tab --%>
+      <wiki:Tab id="preview" titleKey="preview.tab" accesskey="p"
+        onclick="Stripes.submitFormEvent('editform', 'preview', 'previewContent', null);">
+        <div class="information">
+          <fmt:message key="preview.info" />
+        </div>
+        <div id="previewContent"></div>
       </wiki:Tab>
 
       <%-- Help tab --%>

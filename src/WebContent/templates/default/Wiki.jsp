@@ -28,7 +28,7 @@
 <%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ page errorPage="${templates['Error.jsp']}" %>
+<%@ page errorPage="/Error.jsp" %>
 <%
 	WikiContext c = WikiContextFactory.findContext( pageContext );
   WikiPage p = c.getPage();
@@ -131,14 +131,6 @@ if( thisVersion == WikiProvider.LATEST_VERSION ) thisVersion = latestVersion; //
           </wiki:PageType>    
         </wiki:Tab>
 
-        <%-- Edit tab --%>
-        <wiki:Permission permission="edit">
-          <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e"
-            beanclass="org.apache.wiki.action.EditActionBean" event="edit">
-            <wiki:Param name="page" value="${wikiActionBean.page.name}" />
-          </wiki:Tab>
-        </wiki:Permission>
-
         <%-- Attachments tab --%>
         <wiki:Tab id="attachments" accesskey="a"
           title="${wiki:attachmentsTitle(request.Locale, wikiActionBean.attachments)}"
@@ -151,6 +143,15 @@ if( thisVersion == WikiProvider.LATEST_VERSION ) thisVersion = latestVersion; //
           beanclass="org.apache.wiki.action.ViewActionBean" event="info">
           <wiki:Param name="page" value="${wikiActionBean.page.name}" />
         </wiki:Tab>
+
+        <%-- Edit tab --%>
+        <wiki:Permission permission="edit">
+          <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e"
+            beanclass="org.apache.wiki.action.EditActionBean" event="edit">
+            <wiki:Param name="page" value="${wikiActionBean.page.name}" />
+          </wiki:Tab>
+        </wiki:Permission>
+
       </wiki:PageExists>
 
     </wiki:TabbedSection>

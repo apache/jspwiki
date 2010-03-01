@@ -21,6 +21,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<%@ page errorPage="/Error.jsp" %>
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <wiki:TabbedSection defaultTab="${param.tab}">
@@ -39,14 +40,6 @@
           beanclass="org.apache.wiki.action.ViewActionBean" event="view">
           <wiki:Param name="page" value="${wikiActionBean.page.name}" />
         </wiki:Tab>
-
-        <%-- Edit tab --%>
-        <wiki:Permission permission="edit">
-          <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e"
-            beanclass="org.apache.wiki.action.EditActionBean" event="edit">
-            <wiki:Param name="page" value="${wikiActionBean.page.name}" />
-          </wiki:Tab>
-        </wiki:Permission>
 
         <%-- Attachments tab --%>
         <wiki:Tab id="attachments" accesskey="a"
@@ -125,6 +118,15 @@
           <jsp:include page="${'tabs/PageInfoTab.jsp'}" />
 
         </wiki:Tab>
+
+        <%-- Edit tab --%>
+        <wiki:Permission permission="edit">
+          <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e"
+            beanclass="org.apache.wiki.action.EditActionBean" event="edit">
+            <wiki:Param name="page" value="${wikiActionBean.page.name}" />
+          </wiki:Tab>
+        </wiki:Permission>
+
       </wiki:PageExists>
     </wiki:TabbedSection>
   </s:layout-component>
