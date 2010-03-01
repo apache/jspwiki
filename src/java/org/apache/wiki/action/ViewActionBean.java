@@ -62,7 +62,6 @@ public class ViewActionBean extends AbstractPageActionBean
     private static final Logger log = LoggerFactory.getLogger( ViewActionBean.class );
 
     private String m_renameTo = null;
-    private String m_wikiPage = null;
 
     private int m_version = WikiProvider.LATEST_VERSION; 
 
