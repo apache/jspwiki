@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import net.sourceforge.stripes.action.*;
-import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.log.Logger;
@@ -44,18 +43,19 @@ public class MessageActionBean extends AbstractActionBean
     private Throwable m_realcause = null;
 
     /**
-     * Event that forwards control to /Error.jsp. It also traps the cause of the
-     * exception and logs the details.
+     * Event that forwards control to the template JSP {@code Error.jsp}.
+     * It also traps the cause of the exception and logs the details.
      * 
      * @return the forward resolution
      */
+    @DontValidate
     @HandlesEvent( "error" )
     @WikiRequestContext( "error" )
     public Resolution error()
     {
         WikiContext wikiContext = getContext();
         HttpServletRequest request = wikiContext.getHttpRequest();
-        String msg = "An unknown error was caught by Error.jsp";
+        String msg = "JSPWiki encountered an error.";
         Exception exception = (Exception) request.getAttribute( PageContext.EXCEPTION );
 
         if( exception != null )
@@ -63,7 +63,7 @@ public class MessageActionBean extends AbstractActionBean
             msg = exception.getMessage();
             if( msg == null || msg.length() == 0 )
             {
-                msg = "An unknown exception " + exception.getClass().getName() + " was caught.";
+                msg = "JSPWiki encountered a " + exception.getClass().getName() + " exception.";
             }
             setMessage( msg );
 
@@ -84,11 +84,11 @@ public class MessageActionBean extends AbstractActionBean
         }
         else
         {
-            m_realcause = new Exception( "Unknown general exception" );
+            m_realcause = new Exception( "Unknown cause." );
         }
 
         LOG.debug( "Error.jsp exception is: ", exception );
-        return new ForwardResolution( "/Error.jsp" );
+        return new TemplateResolution( "Error.jsp" );
     }
 
     /**
@@ -132,6 +132,7 @@ public class MessageActionBean extends AbstractActionBean
      * @return the forward resolution
      */
     @DefaultHandler
+    @DontValidate
     @HandlesEvent( "message" )
     @WikiRequestContext( "message" )
     public Resolution message()
@@ -146,7 +147,6 @@ public class MessageActionBean extends AbstractActionBean
      * 
      * @param message
      */
-    @Validate( required = false )
     public void setMessage( String message )
     {
         m_message = message;
@@ -156,5 +156,4 @@ public class MessageActionBean extends AbstractActionBean
             request.setAttribute( "message", m_message );
         }
     }
-
 }
