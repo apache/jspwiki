@@ -117,6 +117,10 @@ public class AdminActionBean extends AbstractActionBean
                 }
             };
         }
-        return new TemplateResolution( "admin/Admin.jsp" ).addParameter( "tab", "security" );
+        if ( getContext().getRequest().getParameter( "tab" ) == null )
+        {
+            return new TemplateResolution( "admin/Admin.jsp" ).addParameter( "tab", "security" );
+        }
+        return new TemplateResolution( "admin/Admin.jsp" );
     }
 }

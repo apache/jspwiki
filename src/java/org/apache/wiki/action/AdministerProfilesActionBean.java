@@ -163,6 +163,6 @@ public class AdministerProfilesActionBean extends AbstractActionBean
         }
         
         // Forward to the template JSP
-        return new TemplateResolution( "admin/Admin.jsp").addParameter( "tab", "users" );
+        return new TemplateResolution( "admin/Users.jsp").addParameter( "tab", "users" );
     }
 }
