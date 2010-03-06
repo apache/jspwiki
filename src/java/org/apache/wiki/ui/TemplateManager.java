@@ -308,7 +308,7 @@ public class TemplateManager extends ModuleManager
     @SuppressWarnings( "unchecked" )
     public Set<String> listSkins()
     {
-        String skinPath = TEMPLATE_DIR + "/" + SKIN_DIR;
+        String skinPath = "/" + TEMPLATE_DIR + "/" + m_engine.getTemplateDir() + "/" + SKIN_DIR;
         Set<String> skinSet = m_engine.getServletContext().getResourcePaths( skinPath );
         TreeSet<String> resultSet = new TreeSet<String>();
 
