@@ -37,13 +37,12 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.content.inspect.*;
-import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 
 /**
  * <p>
- * Tag that injects hidden {@link SpamFilter}-related parameters into the
+ * Tag that injects hidden spam filtering parameters into the
  * current form, which will be parsed and verified by {@link SpamInterceptor}
  * whenever the input is processed by an ActionBean event handler method
  * annotated with the {@link org.apache.wiki.ui.stripes.SpamProtect} annotation.

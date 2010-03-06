@@ -1558,7 +1558,6 @@ public class WikiEngine
     /**
      * Protected method that signals that the WikiEngine will be
      * shut down by the servlet container. It is called by
-     * {@link WikiServlet#destroy()} and
      * {@link SessionMonitor#contextDestroyed(javax.servlet.ServletContextEvent)}.
      * When this method is called, it fires a "shutdown"
      * WikiEngineEvent to all registered listeners.
@@ -1704,7 +1703,7 @@ public class WikiEngine
      *  @throws WikiException if the save operation encounters an error during the
      *  save operation. If the page-save operation requires approval, the exception will
      *  be of type {@link org.apache.wiki.workflow.DecisionRequiredException}. Individual
-     *  PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also
+     *  PageFilters, such as the {@link org.apache.wiki.filters.CreoleFilter} may also
      *  throw a {@link org.apache.wiki.filters.RedirectException}.
      *  @throws PageNotFoundException 
      */

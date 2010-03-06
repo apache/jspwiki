@@ -22,11 +22,9 @@ package org.apache.wiki.ui.stripes;
 
 import java.lang.annotation.*;
 
-import org.apache.wiki.filters.SpamFilter;
-
 /**
  * Annotation indicating that an event handler method should check that the user
- * has submitted a series of expected {@link SpamFilter}-related parameters
+ * has submitted a series of expected spam-filtering parameters
  * with the POST or GET. The SpamProtect annotation can be applied to
  * method targets. When annotating Stripes event handler
  * method, the {@link SpamInterceptor} will apply spam filtering heuristics to

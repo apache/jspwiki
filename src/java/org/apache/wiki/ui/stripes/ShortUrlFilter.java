@@ -32,7 +32,6 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.ViewActionBean;
-import org.apache.wiki.url.ShortURLConstructor;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -61,6 +60,15 @@ public class ShortUrlFilter implements Filter
     private boolean m_initialized = false;
 
     /**
+     *  This corresponds to your WikiServlet path.  By default, it is assumed to
+     *  be "wiki/", but you can set it to whatever you like - including an empty
+     *  name.
+     */
+    public static final String PROP_PREFIX = "jspwiki.shortURLConstructor.prefix";
+
+    private static final String DEFAULT_PREFIX = "wiki/";
+
+    /**
      * {@inheritDoc}
      */
     public void destroy()
@@ -72,7 +80,7 @@ public class ShortUrlFilter implements Filter
      * Examines the URI of the incoming request and redirects the user if it
      * matches the prefix of a "short URL." The short URL prefix is set in
      * <code>jspwiki.properties</code> via key
-     * {@link ShortURLConstructor#PROP_PREFIX}. The default is
+     * {@link ShortUrlFilter#PROP_PREFIX}. The default is
      * <code>/wiki/</code>, relative to the webapp context. If the URL
      * consists only of <code>/wiki</code> or <code>/wiki/</code>, the user
      * is redirected to {@link ViewActionBean} and its hander event
@@ -148,7 +156,7 @@ public class ShortUrlFilter implements Filter
         m_engine = engine;
 
         Properties props = engine.getWikiProperties();
-        m_urlPrefix = TextUtil.getStringProperty( props, ShortURLConstructor.PROP_PREFIX, null );
+        m_urlPrefix = TextUtil.getStringProperty( props, ShortUrlFilter.PROP_PREFIX, DEFAULT_PREFIX );
         if( m_urlPrefix == null )
         {
             m_urlPrefix = "wiki/";
