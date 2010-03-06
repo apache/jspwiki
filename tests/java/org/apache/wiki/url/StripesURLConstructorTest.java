@@ -26,20 +26,18 @@ package org.apache.wiki.url;
 
 import java.util.Properties;
 
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.WikiException;
-import org.apache.wiki.url.DefaultURLConstructor;
-import org.apache.wiki.url.ShortViewURLConstructor;
-import org.apache.wiki.url.URLConstructor;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.WikiException;
+import org.apache.wiki.ui.stripes.ShortUrlFilter;
 
-public class DefaultURLConstructorTest extends TestCase
+
+public class StripesURLConstructorTest extends TestCase
 {
     TestEngine testEngine;
 
@@ -60,10 +58,10 @@ public class DefaultURLConstructorTest extends TestCase
         throws WikiException
     {
         props.setProperty( WikiEngine.PROP_BASEURL, baseURL );
-        if( prefix != null ) props.setProperty( ShortViewURLConstructor.PROP_PREFIX, prefix );
+        if( prefix != null ) props.setProperty( ShortUrlFilter.PROP_PREFIX, prefix );
         
         testEngine = new TestEngine(props);
-        URLConstructor constr = new DefaultURLConstructor();
+        URLConstructor constr = new StripesURLConstructor();
         
         constr.initialize( testEngine, props );
         
@@ -168,6 +166,6 @@ public class DefaultURLConstructorTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( DefaultURLConstructorTest.class );
+        return new TestSuite( StripesURLConstructorTest.class );
     }
 }

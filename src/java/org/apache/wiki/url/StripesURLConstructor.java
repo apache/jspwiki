@@ -38,7 +38,6 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.AbstractPageActionBean;
-import org.apache.wiki.action.AttachmentActionBean;
 import org.apache.wiki.action.GroupActionBean;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -52,7 +51,7 @@ import org.apache.wiki.ui.stripes.HandlerInfo;
  * 
  * @since 2.2
  */
-public class StripesURLConstructor extends DefaultURLConstructor
+public class StripesURLConstructor implements URLConstructor
 {
     private static final Logger log = LoggerFactory.getLogger( StripesURLConstructor.class );
     
@@ -91,7 +90,6 @@ public class StripesURLConstructor extends DefaultURLConstructor
      *            be {@code null} if no parameters
      * @return the URL
      */
-    @Override
     public String makeURL( String context, String name, boolean absolute, String parameters )
     {
         // Lazily obtain the binding factory reference
@@ -104,7 +102,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
         String pathPrefix;
         UrlBuilder urlBuilder;
         boolean engineAbsolute = "absolute".equals( m_engine.getWikiProperties().getProperty( WikiEngine.PROP_REFSTYLE ) );
-        pathPrefix = ( absolute | engineAbsolute ) ? m_baseUrl + m_pathPrefix : m_pathPrefix ;
+        pathPrefix = ( absolute | engineAbsolute ) ? m_baseUrl : m_pathPrefix ;
         
         // Split up the parameters
         Map<String,String> params = splitParamString(parameters);
@@ -128,20 +126,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
             // Append the "name" parameter for page/group action beans (argh; we have to do stupid if/else tricks)
             if ( name != null )
             {
-                if( AttachmentActionBean.class.isAssignableFrom( beanClass ) )
-                {
-                    int slashAt = name.indexOf( '/' );
-                    if ( slashAt == -1 )
-                    {
-                        urlBuilder.addParameter( "page",name );
-                    }
-                    else
-                    {
-                        urlBuilder.addParameter( "page", name.substring( 0,  slashAt ) );
-                        urlBuilder.addParameter( "attachment", name.substring( slashAt + 1,  name.length() ) );
-                    }
-                }
-                else if( AbstractPageActionBean.class.isAssignableFrom( beanClass ) )
+                if( AbstractPageActionBean.class.isAssignableFrom( beanClass ) )
                 {
                     urlBuilder.addParameter( "page", name );
                 }
@@ -168,6 +153,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
         String url = pathPrefix + urlBuilder.toString();
         url = StringUtils.replace( url, "+", "%20" );
         url = StringUtils.replace( url, "%2F", "/" );
+        url = StringUtils.replace( url, "&amp%3B", "&amp;" ); // Fix double URL-encoding
 
         return url;
     }
@@ -177,8 +163,6 @@ public class StripesURLConstructor extends DefaultURLConstructor
      */
     public void initialize( WikiEngine engine, Properties properties )
     {
-        super.initialize( engine, properties );
-
         m_engine = engine;
         m_pathPrefix = getContextPath( engine );
         m_baseUrl = engine.getBaseURL();
@@ -189,6 +173,16 @@ public class StripesURLConstructor extends DefaultURLConstructor
         log.info( "StripesURLConstructor initialized." );
     }
 
+    /**
+     * Returns the webapp context portion of the base URL. This will be
+     * the substring of the base URL after the host, beginning with a slash
+     * and minus the trailing slash. For example, a base URL of
+     * {@code http://localhost:8080/JSPWiki/} has a context path of {@code /JSPWiki},
+     * while {@code http://localhost:8080/} has a context path of that is a
+     * zero-length string.
+     * @param engine the wiki engine
+     * @return the context path
+     */
     public static String getContextPath( WikiEngine engine )
     {
         // Initialize the path prefix for building URLs

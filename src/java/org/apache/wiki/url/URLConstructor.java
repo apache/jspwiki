@@ -21,8 +21,6 @@
 package org.apache.wiki.url;
 
 import java.util.Properties;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiEngine;
 
@@ -65,33 +63,4 @@ public interface URLConstructor
                            String name,
                            boolean absolute,
                            String parameters );
-
-    /**
-     *  Should parse the "page" parameter from the actual
-     *  request.  This is essentially the reverse of makeURL() - whenever a request 
-     *  constructed by calls to makeURL() is passed to this routine, it MUST be
-     *  able to parse the resource name (WikiPage, Attachment, other resource) from
-     *  the request.
-     *  
-     *  @param context In which request context the request was made (this should
-     *                 help in parsing)
-     *  @param request The HTTP request that was used when coming here
-     *  @param encoding The encoding with which the request was made (e.g., UTF-8).
-     *  @return This method must return the name of the resource.
-     *  @throws IOException If parsing failes
-     */
-    public String parsePage( String context,
-                             HttpServletRequest request,
-                             String encoding )
-        throws IOException;
-    
-    /**
-     *  Returns information which JSP page should continue handling
-     *  this type of request.
-     *  
-     * @param request The HTTP Request that was used to end up in this page.
-     * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name,
-     *         JSPWiki will figure out the page.
-     */
-    public String getForwardPage( HttpServletRequest request );
 }
