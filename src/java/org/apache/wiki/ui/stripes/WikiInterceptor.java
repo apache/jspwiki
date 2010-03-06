@@ -101,7 +101,7 @@ import org.slf4j.MDC;
  * to the Login page.
  * </p>
  */
-@Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.HandlerResolution, LifecycleStage.CustomValidation } )
+@Intercepts( { LifecycleStage.RequestInit, LifecycleStage.ActionBeanResolution, LifecycleStage.HandlerResolution, LifecycleStage.CustomValidation, LifecycleStage.RequestComplete } )
 public class WikiInterceptor implements Interceptor
 {
     /**
