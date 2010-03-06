@@ -62,6 +62,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.stripes.*;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
@@ -167,8 +168,9 @@ public class EditActionBean extends AbstractPageActionBean
 
     /**
      * Loads the page's current text, initializes the EditActionBean for
-     * editing, and forwards to the template JSP {@code Edit.jsp}.
-     * @return always returns a {@link ForwardResolution} to the template JSP
+     * editing, and forwards to the template JSP for the editor; for example,
+     * {@code editors/plain.jsp}.
+     * @return always returns a {@link ForwardResolution} to the editor JSP
      * @throws ProviderException if the page's current contents cannot
      * be retrieved
      */
@@ -183,7 +185,9 @@ public class EditActionBean extends AbstractPageActionBean
         
         // Init edit fields and forward to the display JSP
         initEditFields( "Editing" );
-        return new TemplateResolution( "Edit.jsp" );
+        WikiActionBeanContext context = getContext();
+        EditorManager editors = context.getEngine().getEditorManager();
+        return new TemplateResolution( editors.getEditorPath( context ) );
     }
 
     /**

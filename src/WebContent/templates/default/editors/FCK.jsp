@@ -50,142 +50,167 @@
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
  %>   
-<wiki:CheckRequestContext context="edit">
-  <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
-<%
-  String clone = request.getParameter( "clone" ); 
-  if( clone != null )
-  {
-    WikiPage p = engine.getPage( clone );
-    if( p != null )
-    {
-        AuthorizationManager mgr = engine.getAuthorizationManager();
-        PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
+<s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
-        try
-        {            
-          if( mgr.checkPermission( context.getWikiSession(), pp ) )
+  <%-- Page title should say Edit: + pagename --%>
+  <s:layout-component name="headTitle">
+    <fmt:message key="edit.title.edit">
+      <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
+      <fmt:param><wiki:PageName/></fmt:param>
+    </fmt:message>
+  </s:layout-component>
+
+  <%-- Add Javascript for plain editor --%>
+  <s:layout-component name="script">
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js' />"></script>
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/dialog.js' />"></script>
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/fckconfig.js' />"></script>
+  </s:layout-component>
+
+  <s:layout-component name="content">
+    <%-- FIXME: select CommentLayout or EditorLayout based on "comment" or "edit" event--%>
+    <s:layout-render name="${templates['layout/EditorLayout.jsp']}">
+      <s:layout-component name="editor">
+
+        <wiki:CheckRequestContext context="edit">
+          <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
+        <%
+          String clone = request.getParameter( "clone" ); 
+          if( clone != null )
           {
-            usertext = engine.getPureText( p );
+            WikiPage p = engine.getPage( clone );
+            if( p != null )
+            {
+                AuthorizationManager mgr = engine.getAuthorizationManager();
+                PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
+        
+                try
+                {            
+                  if( mgr.checkPermission( context.getWikiSession(), pp ) )
+                  {
+                    usertext = engine.getPureText( p );
+                  }
+                }
+                catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
+            }
           }
-        }
-        catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
-    }
-  }
-%>
-  </wiki:NoSuchPage>
-<%
-    if( usertext == null )
-    {
-        usertext = engine.getPureText( context.getPage() );
-    }%>
-</wiki:CheckRequestContext>
-<% if( usertext == null ) usertext = "";
+        %>
+          </wiki:NoSuchPage>
+        <%
+            if( usertext == null )
+            {
+                usertext = engine.getPureText( context.getPage() );
+            }%>
+        </wiki:CheckRequestContext>
+        <% if( usertext == null ) usertext = "";
+        
+           RenderingManager renderingManager = new RenderingManager();
+           
+           // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
+           Properties copyOfWikiProperties = new Properties();
+           copyOfWikiProperties.putAll( engine.getWikiProperties() );
+           copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
+           renderingManager.initialize( engine, copyOfWikiProperties );
+        	
+           String pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
+           
+           // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
+           // after the XHTML for FCK has been rendered.
+           context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
+           context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
+           wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
+           
+           String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
+           
+           String protocol = "http://";
+           if( request.isSecure() )
+           {
+               protocol = "https://";
+           }   
+        %>
 
-   RenderingManager renderingManager = new RenderingManager();
-   
-   // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-   Properties copyOfWikiProperties = new Properties();
-   copyOfWikiProperties.putAll( engine.getWikiProperties() );
-   copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
-   renderingManager.initialize( engine, copyOfWikiProperties );
-	
-   String pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
-   
-   // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
-   // after the XHTML for FCK has been rendered.
-   context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
-   context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
-   wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
-   
-   String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
-   
-   String protocol = "http://";
-   if( request.isSecure() )
-   {
-       protocol = "https://";
-   }   
-%>
-<div style="width:100%"> <%-- Required for IE6 on Windows --%>
-
-  <%-- Print any messages or validation errors --%>
-  <s:messages />
-  <s:errors />
-
-  <s:form beanclass="org.apache.wiki.action.EditActionBean"
-              class="wikiform"
-                 id="editform"
-      acceptcharset="UTF-8"
-            enctype="application/x-www-form-urlencoded">
-
-    <%-- If any conflicts, print the conflicting text here --%>
-    <c:if test="${not empty wikiActionBean.conflictText}">
-      <p>
-        <s:label for="conflictText" />
-        <s:textarea name="conflictText" readonly="true" />
-      </p>
-    </c:if>
-    
-    <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
-    <p id="submitbuttons">
-      <s:hidden name="page" />
-      <s:hidden name="startTime" />
-    </p>
-    
-    <script type="text/javascript">
-//<![CDATA[
-
-   var oFCKeditor = new FCKeditor( 'htmlPageText' );
-   oFCKeditor.BasePath = 'scripts/fckeditor/';
-   oFCKeditor.Value = '<%=pageAsHtml%>';
-   oFCKeditor.Width  = '100%';
-   oFCKeditor.Height = '450';
-   oFCKeditor.Config['CustomConfigurationsPath'] = '<%=request.getContextPath()%>/scripts/fckconfig.js';
-   oFCKeditor.Config['StylesXmlPath'] = '<%=request.getContextPath()%>/scripts/fckstyles.xml';
-   oFCKeditor.Config['TemplatesXmlPath'] = '<%=request.getContextPath()%>/scripts/fcktemplates.xml';
-   oFCKeditor.Config['BaseHref'] = '<%=protocol%><%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/';
-   oFCKeditor.Config['EditorAreaCSS'] = '<%=request.getContextPath()%>/templates/<%=templateDir%>/jspwiki.css';
-   oFCKeditor.Config['SmileyPath'] = oFCKeditor.Config['BaseHref'] + 'scripts/fckeditor/editor/images/smiley/msn/' ;
-   oFCKeditor.Create();
-
-//]]>
-    </script>
-    
-    <noscript>
-      <div class="error"><fmt:message key="editor.fck.noscript" /></div>
-    </noscript>
-    
-    <p>
-      <s:label for="changeNote" />
-      <s:text name="changeNote" size="50" maxlength="80" />
-    </p>
-    
-    <wiki:CheckRequestContext context="comment">
-      <fieldset>
-        <legend><fmt:message key="editor.commentsignature" /></legend>
-        <p><s:label for="author" accesskey="n" />&nbsp;<s:text name="author" /></p>
-        <p><s:label for="email" accesskey="m" />&nbsp;<s:text name="email" size="24" /></p>
-      </fieldset>
-    </wiki:CheckRequestContext>
-    
-    <p>
-      <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
-      <wiki:CheckRequestContext context='edit'>
-        <s:submit name="save" accesskey="s" title="${saveTitle}" />
-      </wiki:CheckRequestContext>
-      <wiki:CheckRequestContext context='comment'>
-        <s:submit name="comment" accesskey="s" title="${saveTitle}" />
-      </wiki:CheckRequestContext>
+        <%-- Print any messages or validation errors --%>
+        <s:messages />
+        <s:errors />
       
-      <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
-      <s:submit name="preview" accesskey="v" title="${previewTitle}" />
+        <s:form beanclass="org.apache.wiki.action.EditActionBean"
+                    class="wikiform"
+                        id="editform"
+            acceptcharset="UTF-8"
+                  enctype="application/x-www-form-urlencoded">
       
-      <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
-      <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
-    </p>
+          <%-- If any conflicts, print the conflicting text here --%>
+          <c:if test="${not empty wikiActionBean.conflictText}">
+            <p>
+              <s:label for="conflictText" />
+              <s:textarea name="conflictText" readonly="true" />
+            </p>
+          </c:if>
+          
+          <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
+          <p id="submitbuttons">
+            <s:hidden name="page" />
+            <s:hidden name="startTime" />
+          </p>
+          
+          <script type="text/javascript">
+      //<![CDATA[
+      
+          var oFCKeditor = new FCKeditor( 'htmlPageText' );
+          oFCKeditor.BasePath = 'scripts/fckeditor/';
+          oFCKeditor.Value = '<%=pageAsHtml%>';
+          oFCKeditor.Width  = '100%';
+          oFCKeditor.Height = '450';
+          oFCKeditor.Config['CustomConfigurationsPath'] = '<%=request.getContextPath()%>/scripts/fckconfig.js';
+          oFCKeditor.Config['StylesXmlPath'] = '<%=request.getContextPath()%>/scripts/fckstyles.xml';
+          oFCKeditor.Config['TemplatesXmlPath'] = '<%=request.getContextPath()%>/scripts/fcktemplates.xml';
+          oFCKeditor.Config['BaseHref'] = '<%=protocol%><%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/';
+          oFCKeditor.Config['EditorAreaCSS'] = '<%=request.getContextPath()%>/templates/<%=templateDir%>/jspwiki.css';
+          oFCKeditor.Config['SmileyPath'] = oFCKeditor.Config['BaseHref'] + 'scripts/fckeditor/editor/images/smiley/msn/' ;
+          oFCKeditor.Create();
+      
+      //]]>
+          </script>
+          
+          <noscript>
+            <div class="error"><fmt:message key="editor.fck.noscript" /></div>
+          </noscript>
+          
+          <p>
+            <s:label for="changeNote" />
+            <s:text name="changeNote" size="50" maxlength="80" />
+          </p>
+          
+          <wiki:CheckRequestContext context="comment">
+            <fieldset>
+              <legend><fmt:message key="editor.commentsignature" /></legend>
+              <p><s:label for="author" accesskey="n" />&nbsp;<s:text name="author" /></p>
+              <p><s:label for="email" accesskey="m" />&nbsp;<s:text name="email" size="24" /></p>
+            </fieldset>
+          </wiki:CheckRequestContext>
+          
+          <p>
+            <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
+            <wiki:CheckRequestContext context='edit'>
+              <s:submit name="save" accesskey="s" title="${saveTitle}" />
+            </wiki:CheckRequestContext>
+            <wiki:CheckRequestContext context='comment'>
+              <s:submit name="comment" accesskey="s" title="${saveTitle}" />
+            </wiki:CheckRequestContext>
+            
+            <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
+            <s:submit name="preview" accesskey="v" title="${previewTitle}" />
+            
+            <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
+            <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
+          </p>
+      
+          <%-- Spam detection fields --%>
+          <wiki:SpamProtect />
+        </s:form>
 
-    <%-- Spam detection fields --%>
-    <wiki:SpamProtect />
-  </s:form>
-
-</div>
+      </s:layout-component>
+    </s:layout-render>
+  </s:layout-component>
+  
+</s:layout-render>

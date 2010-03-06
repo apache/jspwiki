@@ -1,3 +1,30 @@
+2010-03-03 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-213
+
+        * Removed old URLConstructors. Fixed bug in StripesUrlContructor
+        that caused it to exhibit slightly behavior different different
+        behavior than DefaultUrlContructor. It now generates URLs identically.
+        Method parsePage() was removed from UrlContructor's interface spec.
+        (The only URLConstructor implementation is StripesUrlConstructor,
+        anyway, it doesn't need to do any page-param parsing because the
+        framework takes care of it.)
+
+        * Removed WikiServlet. All of its functionality had been previously
+        moved elsewhere, and it was not being used in web.xml either.
+        Also removed SpamFilter; the content-inspection package essentially
+        replaces it (and is far more flexible).
+
+        * Fixed bug that popped up in Preferences.jsp regarding skin listings.
+
+        * Slightly changed how EditActionBean.edit() works. It now forwards
+        directly to the editor JSPs. These JSPs now render EditorLayout.jsp,
+        which allows each editor to load its own resources (per mailing
+        list discussion). Edit.jsp's contents essentially morph into
+        EditorLayout.jsp.
+
+        * Fixed bug that caused ReferenceManager tests to fail.
+
 2010-02-28 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-212
