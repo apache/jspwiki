@@ -1333,15 +1333,7 @@ public class ContentManager implements WikiEventListener
             catch( PageNotFoundException e )
             {
                 // Doesn't exist? No problem. Time to make one.
-                try
-                {
-                    page = engine.getContentManager().addPage( name, ContentManager.JSPWIKI_CONTENT_TYPE );
-                }
-                catch( PageAlreadyExistsException pae )
-                {
-                    // This should never happen, but it if does, throw a big honking exception
-                    throw new WikiException( "We were just told the page didn't exist. Now it does? Explain that please...", pae );
-                }
+                page = engine.getContentManager().addPage( name, getJCRPath( name), ContentManager.JSPWIKI_CONTENT_TYPE );
             }
             
             // Retrieve the page ACL, author, attributes, modified-date, name and new text from the workflow
@@ -1512,10 +1504,10 @@ public class ContentManager implements WikiEventListener
     {
         String spaceName;
         String spacePath;
-        
+
         spaceName = wikiName.getSpace().toLowerCase();
         spacePath = wikiName.getPath().toLowerCase();
-               
+
         return "/"+JCR_PAGES_NODE+"/"+spaceName+"/"+spacePath;
     }
 
@@ -1645,10 +1637,8 @@ public class ContentManager implements WikiEventListener
         try
         {
             Session session = m_sessionManager.getSession();
-        
             Node nd = session.getRootNode().getNode( getJCRPath(path) );
-            JCRWikiPage page = new JCRWikiPage(m_engine, nd);
-            
+            JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
             return page;
         }
         catch( PathNotFoundException e )
@@ -1658,10 +1648,6 @@ public class ContentManager implements WikiEventListener
         catch( RepositoryException e )
         {
             throw new ProviderException( "Unable to get a page", e );
-        }
-        catch( WikiException e )
-        {
-            throw new ProviderException("Unable to get a  page",e);
         }
     }
 
