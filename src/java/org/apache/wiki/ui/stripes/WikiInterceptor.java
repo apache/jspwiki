@@ -23,6 +23,7 @@ package org.apache.wiki.ui.stripes;
 
 import java.lang.reflect.Method;
 import java.security.Permission;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -46,6 +47,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.ui.TemplateManager;
 import org.slf4j.MDC;
 
 /**
@@ -274,8 +276,10 @@ public class WikiInterceptor implements Interceptor
      * <code>null</code>. After the action bean is injected, downstream classes
      * like WikiTagBase can use it. The attribute can also be accessed as variables
      * using the JSP Expression Language (example: <code>${wikiActionBean}</code>).
-     * User preferences are also set up.
-     * 
+     * User preferences are also set up. In addition, the HttpSession attribute
+     * {@value TemplateManager#TEMPLATE_JAVASCRIPT_STRINGS} is set to the value
+     * of the localized JavaScript string array as described in
+     * {@link TemplateManager#getTemplateJSStrings(javax.servlet.http.HttpSession, Locale)}.
      * @param context the execution context
      * @return a Resolution if the
      *         {@link net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
@@ -320,6 +324,10 @@ public class WikiInterceptor implements Interceptor
 
         // Stash the WikiContext
         WikiContextFactory.saveContext( request, actionBean.getContext() );
+
+        // Stash the JS localized strings
+        String templateString = TemplateManager.getTemplateJSStrings( request.getSession(), request.getLocale() );
+        request.getSession().setAttribute( TemplateManager.TEMPLATE_JAVASCRIPT_STRINGS, templateString );
 
         if( log.isDebugEnabled() )
         {

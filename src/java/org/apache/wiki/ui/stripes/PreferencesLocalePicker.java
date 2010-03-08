@@ -31,6 +31,7 @@ import net.sourceforge.stripes.localization.LocalePicker;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.ui.TemplateManager;
 
 /**
  * This is a simple Stripes LocalePicker which uses
@@ -89,16 +90,23 @@ public class PreferencesLocalePicker implements LocalePicker
         }
 
         // See if we can match the user's locale against one we support
-        Locale match = isSupported( locale.getLanguage(), locale.getCountry(), locale.getVariant() );
-        if( match == null )
+        Locale match;
+        Locale closestMatch = isSupported( locale.getLanguage(), null, null );
+        if( closestMatch != null )
         {
-            match = isSupported( locale.getLanguage(), locale.getCountry(), null );
-            if( match == null )
+            match = closestMatch;
+            closestMatch = isSupported( locale.getLanguage(), locale.getCountry(), null );
+            if( closestMatch != null )
             {
-                match = isSupported( locale.getLanguage(), null, null );
+                match = closestMatch;
+                closestMatch = isSupported( locale.getLanguage(), locale.getCountry(), locale.getVariant() );
+                if ( closestMatch != null )
+                {
+                    match = closestMatch;
+                }
             }
         }
-        if( match == null )
+        else
         {
             // If we can't, use the WikiEngine's default locale
             WikiEngine engine = WikiEngine.getInstance( request.getSession().getServletContext(), null );
@@ -110,6 +118,7 @@ public class PreferencesLocalePicker implements LocalePicker
         // Set the preferred locale in Prefs
         Preferences prefs = Preferences.getPreferences( request );
         prefs.put( Preferences.PREFS_LOCALE, match );
+        
         return match;
     }
 

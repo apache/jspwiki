@@ -119,16 +119,16 @@ public class JCRWikiPage
      *  a temporary storage for workflows.
      *  
      *  @param engine a reference to the {@link org.apache.wiki.WikiEngine}
-     *  @param name the {@link org.apache.wiki.content.WikiPath}
+     *  @param path the {@link org.apache.wiki.content.WikiPath}
      *  @param node the JCR {@link javax.jcr.Node}
      *  @throws RepositoryException If the page cannot be located.
      */
-    public JCRWikiPage(WikiEngine engine, WikiPath name, Node node) 
+    public JCRWikiPage(WikiEngine engine, WikiPath path, Node node) 
         throws RepositoryException
     {
         m_engine  = engine;
         m_jcrPath = node.getPath();
-        m_path    = name;
+        m_path    = path;
     }
     
     /**

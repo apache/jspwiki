@@ -1,3 +1,12 @@
+2010-03-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-214
+
+        * Fixed feature that was broken: localized strings needed by
+        Dirk's JavaScript works again. The code has also been refactored
+        slightly so that it cached rather than having to continually
+        hit the disk looking for resource bundles on every request.
+
 2010-03-03 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-213

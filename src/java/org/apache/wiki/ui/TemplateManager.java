@@ -24,16 +24,21 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.event.WikiEngineEvent;
+import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.preferences.Preferences;
 
 
 /**
@@ -52,6 +57,12 @@ public class TemplateManager extends ModuleManager
      * servlet context as an attribute.
      */
     private static final String RESOURCE_RESOLVER = "resourceResolver";
+
+    /**
+     * Attribute name for the localized JavaScript template strings. Stored in the
+     * servlet context as an attribute.
+     */
+    public static final String TEMPLATE_JAVASCRIPT_STRINGS = "templateJsStrings";
 
     /** The default directory for template resources. Value is {@value}. */
     public static final String TEMPLATE_DIR = "templates";
@@ -80,6 +91,9 @@ public class TemplateManager extends ModuleManager
      * even if the WikiEngine cannot initialize for some reason.
      * If the WikiEngine does not initialize, the default template
      * {@link #DEFAULT_TEMPLATE} will be used for all resource requests.</p>
+     * <p>Note that because the resource resolver is stashed as a ServletContext
+     * attribute, it is (effectively) lazily initialized once per ServletContext.
+     * The stashed resolver is 
      * @param servletContext the servlet context
      * @return the unmodifiable map
      */
@@ -115,6 +129,71 @@ public class TemplateManager extends ModuleManager
             context.setAttribute( RESOURCE_RESOLVER, resolver );
         }
         return resolver;
+    }
+    
+    /**
+     * Returns all message keys and values for all keys prefixed with
+     * {@code javascript} from the {@code templates/default*.properties}
+     * resource bundle files. The return value is a JavaScript snippet that
+     * defines the LocalizedStings array. This method does not depend on
+     * WikiEngine initialization. Assuming that the resource bundle is
+     * available on the classpath, it will return non-null String even if
+     * the WikiEngine does not initialize.
+     * 
+     * @param session the HTTP session
+     * @param locale the Locale for which localized strings are sought
+     * @return JavaScript snippet which defines the LocalizedStrings array
+    */
+    @SuppressWarnings("unchecked")
+    public static String getTemplateJSStrings( HttpSession session, Locale locale )
+    {
+        // If not Locale we support, bail now
+        if ( !Preferences.AVAILABLE_LOCALES.containsKey( locale ) )
+        {
+            // This is probably not the way we should do it.
+            return "";
+        }
+        
+        // Retrieve the ServletContext stash
+        ServletContext context = session.getServletContext();
+        Map<Locale,String> templateStrings = (Map<Locale,String>)context.getAttribute( TEMPLATE_JAVASCRIPT_STRINGS );
+        if ( templateStrings == null )
+        {
+            templateStrings = new HashMap<Locale,String>();
+            context.setAttribute( TEMPLATE_JAVASCRIPT_STRINGS, templateStrings );
+        }
+        
+        // Retrieve the JavaScript string for the Locale we want
+        String templateString = templateStrings.get( locale );
+        if ( templateString == null )
+        {
+            // Not built yet; go do that now/
+            StringBuilder sb = new StringBuilder();
+            sb.append( "var LocalizedStrings = {\n" );
+            ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.TEMPLATES_BUNDLE, locale );
+
+            boolean first = true;
+            for( Enumeration<String> en = rb.getKeys(); en.hasMoreElements(); )
+            {
+                String key = en.nextElement();
+                if( key.startsWith( "javascript" ) )
+                {
+                    if( first )
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sb.append( ",\n" );
+                    }
+                    sb.append( "\"" + key + "\":\"" + rb.getString( key ) + "\"" );
+                }
+            }
+            sb.append( "\n};\n" );
+            templateString = sb.toString();
+            templateStrings.put( locale, templateString );
+        }
+        return templateString;
     }
     
     /**
@@ -160,7 +239,7 @@ public class TemplateManager extends ModuleManager
             }
         }
     }
-    
+
     /**
      * Tries to locate a given resource from the template directory, relative to
      * the root of the JSPWiki webapp context (for example, relative to
@@ -226,6 +305,29 @@ public class TemplateManager extends ModuleManager
         super( engine );
         m_engine = engine;
         getResourceResolver( engine.getServletContext() );
+    }
+
+    /**
+     * Listens for the WikiEngine shutdown event, and
+     * when received, flushes the stashed localized JavaScript strings
+     * and the resource resolver.
+     * 
+     * @param event The wiki event to inspect.
+     */
+    public void actionPerformed( WikiEvent event )
+    {
+
+        if( event instanceof WikiEngineEvent )
+        {
+            if( event.getType() == WikiEngineEvent.SHUTDOWN )
+            {
+                if ( m_engine != null )
+                {
+                    m_engine.getServletContext().removeAttribute( RESOURCE_RESOLVER );
+                    m_engine.getServletContext().removeAttribute( TEMPLATE_JAVASCRIPT_STRINGS );
+                }
+            }
+        }
     }
 
     /**
@@ -337,7 +439,7 @@ public class TemplateManager extends ModuleManager
 
         return resultSet;
     }
-    
+
     /**
      * Returns an empty collection, since at the moment the TemplateManager does
      * not manage any modules.
