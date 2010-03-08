@@ -125,7 +125,7 @@
          JavaScript: localized strings and functions
     --%>
     <script type="text/javascript">//<![CDATA[
-    <s:layout-component name="jslocalizedstrings" />
+    ${templateJsStrings}
     <s:layout-component name="jsfunction" />
     //]]></script>
     <%--
