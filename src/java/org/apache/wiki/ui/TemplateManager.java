@@ -94,7 +94,7 @@ public class TemplateManager extends ModuleManager
      * <p>Note that because the resource resolver is stashed as a ServletContext
      * attribute, it is (effectively) lazily initialized once per ServletContext.
      * The stashed resolver is 
-     * @param servletContext the servlet context
+     * @param context the servlet context
      * @return the unmodifiable map
      */
     @SuppressWarnings("unchecked")
@@ -335,7 +335,7 @@ public class TemplateManager extends ModuleManager
      * current context or by the absolute name.
      * 
      * @param pageContext the JSP PageContext
-     * @param name The name of the JSP page to look for (e.g {@code Wiki.jsp})
+     * @param name The name of the JSP page to look for (e.g {@code Wiki.jsp})
      * @return The context path to the resource
      * @deprecated use {@link #getResourceResolver(ServletContext)} instead
      */
@@ -402,8 +402,6 @@ public class TemplateManager extends ModuleManager
      * Note that this method does not check whether there is anything
      * actually in the directories, it just lists them.
      * 
-     * @param servletContext the servlet context
-     * @param template The template to search
      * @return Set of Strings with the skin names.
      * @since 2.3.26
      */

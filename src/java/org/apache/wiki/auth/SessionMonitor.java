@@ -280,7 +280,7 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
      * a new HTTP session. These session attributes are injected:</p>
      * <ul>
      *   <li>{@code templates} - the template resource resolver map, returned
-     *   by {@link org.apache.wiki.ui.TemplateManager#getTemplateResources()}</li>
+     *   by {@link org.apache.wiki.ui.TemplateManager#getResourceResolver(ServletContext)}</li>
      *   <li>{@code wikiEngine} - the {@link org.apache.wiki.WikiEngine}</li>
      *   <li>{@code wikiSession} - the {@link org.apache.wiki.WikiSession}</li>
      * </ul>

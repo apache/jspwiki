@@ -277,7 +277,7 @@ public class WikiInterceptor implements Interceptor
      * like WikiTagBase can use it. The attribute can also be accessed as variables
      * using the JSP Expression Language (example: <code>${wikiActionBean}</code>).
      * User preferences are also set up. In addition, the HttpSession attribute
-     * {@value TemplateManager#TEMPLATE_JAVASCRIPT_STRINGS} is set to the value
+     * {@link TemplateManager#TEMPLATE_JAVASCRIPT_STRINGS} is set to the value
      * of the localized JavaScript string array as described in
      * {@link TemplateManager#getTemplateJSStrings(javax.servlet.http.HttpSession, Locale)}.
      * @param context the execution context
