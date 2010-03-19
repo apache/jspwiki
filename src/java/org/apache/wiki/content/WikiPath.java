@@ -51,6 +51,8 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
 
     private final String m_stringRepresentation;
 
+    private final String m_insensitiveString;
+
     /**
      * Create a WikiPath from a space and a path.
      * 
@@ -81,6 +83,7 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
         }
         m_space = space == null ? ContentManager.DEFAULT_SPACE : space;
         m_stringRepresentation = m_space + ":" + m_path;
+        m_insensitiveString = m_stringRepresentation.toLowerCase();
     }
 
     /**
@@ -190,15 +193,14 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
 
     /**
      * The hashcode of the WikiPath is exactly the same as the hashcode of its
-     * String representation. This is to fulfil the general contract of
+     * String representation. This is to fulfill the general contract of
      * equals().
      * 
      * @return {@inheritDoc}
      */
-    // FIXME: Slow, since it creates a new String every time.
     public int hashCode()
     {
-        return m_stringRepresentation.toLowerCase().hashCode();
+        return m_insensitiveString.hashCode();
     }
 
     /**
@@ -210,7 +212,7 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
     // FIXME: Slow, since it creates a new String every time.
     public int compareTo( WikiPath o )
     {
-        return toString().toLowerCase().compareTo( o.toString().toLowerCase() );
+        return m_insensitiveString.compareTo( o.m_insensitiveString );
     }
 
     /**
@@ -227,12 +229,11 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
         if( o instanceof WikiPath )
         {
             WikiPath n = (WikiPath) o;
-
-            return m_space.equalsIgnoreCase( n.m_space ) && m_path.equalsIgnoreCase( n.m_path );
+            return m_insensitiveString.equals( n.m_insensitiveString );
         }
         else if( o instanceof String )
         {
-            return toString().equalsIgnoreCase( (String)o );
+            return m_insensitiveString.equals( ((String)o).toLowerCase() );
         }
         return false;
     }
