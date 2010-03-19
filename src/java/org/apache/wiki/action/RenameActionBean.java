@@ -77,8 +77,6 @@ public class RenameActionBean extends AbstractPageActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( RenameActionBean.class );
 
-    private boolean m_changeReferences = false;
-    
     private String m_renameTo = null;
 
     /**
@@ -90,17 +88,6 @@ public class RenameActionBean extends AbstractPageActionBean
     public String getRenameTo()
     {
         return m_renameTo;
-    }
-
-    /**
-     * Returns <code>true</code> if the rename operation should also change
-     * references to/from the page; <code>false</code> otherwise.
-     * 
-     * @return the result
-     */
-    public boolean isChangeReferences()
-    {
-        return m_changeReferences;
     }
 
     /**
@@ -122,25 +109,12 @@ public class RenameActionBean extends AbstractPageActionBean
         log.info( "Page rename request for page '" + renameFrom + "' to new name '" + m_renameTo + "' from "
                   + request.getRemoteAddr() + " by " + request.getRemoteUser() );
         PageRenamer renamer = engine.getPageRenamer();
-        String renamedTo = renamer.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
+        String renamedTo = renamer.renamePage( getContext(), renameFrom, m_renameTo );
         
         BreadcrumbsTag.deleteFromBreadCrumb( request, renameFrom );
         log.info( "Page successfully renamed to '" + renamedTo + "'" );
         
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", renamedTo );
-    }
-
-    /**
-     * Tells JSPWiki to change references to/from the page when the
-     * {@link #rename()} handler is executed. If not supplied, defaults to
-     * <code>false</code>.
-     * 
-     * @param changeReferences the decision
-     */
-    @Validate( required = false )
-    public void setChangeReferences( boolean changeReferences )
-    {
-        m_changeReferences = changeReferences;
     }
 
     /**

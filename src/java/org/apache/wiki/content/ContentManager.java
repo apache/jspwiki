@@ -41,7 +41,6 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -55,6 +54,7 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.content.WikiPathResolver.PathRoot;
 import org.apache.wiki.content.jcr.JCRWikiPage;
 import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.event.*;
@@ -118,8 +118,8 @@ public class ContentManager implements WikiEventListener
     private static final String JCR_DEFAULT_SPACE = "pages/"+DEFAULT_SPACE.toLowerCase();
 
     private static final String JCR_PAGES_NODE = "pages";
-    private static final String JCR_PAGES_PATH = "/"+JCR_PAGES_NODE+"/";
-    
+    static final String JCR_PAGES_PATH = "/"+JCR_PAGES_NODE+"/";
+
     private static final long serialVersionUID = 2L;
     
     /** Workflow attribute for storing the ACL. */
@@ -328,13 +328,11 @@ public class ContentManager implements WikiEventListener
         //
         //  Create the proper namespaces
         //
-            
         session.getWorkspace().getNamespaceRegistry().registerNamespace( "wiki", NS_JSPWIKI );
-            
         Node root = session.getRootNode();
         
         //
-        // Create main page directory
+        // Create page and unsaved-page directories
         //
         if( !root.hasNode( JCR_PAGES_NODE ) )
         {
@@ -344,7 +342,6 @@ public class ContentManager implements WikiEventListener
         //
         //  Make sure at least the default "Main" wikispace exists.
         //
-            
         if( !hasSpace( session, JCR_DEFAULT_SPACE ) )
         {
             createSpace( session, DEFAULT_SPACE );
@@ -352,6 +349,8 @@ public class ContentManager implements WikiEventListener
             
         session.save();
 
+        // Clear the path cache
+        WikiPathResolver.getInstance( this ).clear();
     }
     
     /**
@@ -383,10 +382,10 @@ public class ContentManager implements WikiEventListener
     private void createSpace( Session s, String spaceName ) throws RepositoryException
     {
         String path = JCR_PAGES_NODE+"/"+spaceName.toLowerCase();
-        
         if( !s.itemExists( "/"+path ) )
         {
-            s.getRootNode().addNode( path );
+            Node space = s.getRootNode().addNode( path );
+            space.setProperty( JCRWikiPage.ATTR_TITLE, spaceName );
         }
     }
     
@@ -400,6 +399,17 @@ public class ContentManager implements WikiEventListener
         m_sessionManager.releaseSession();
     }
     
+    /**
+     * Returns a new Session, typically for creating Nodes without interfering
+     * with the current thread's session. Callers <em>must</em> call
+     * {@link Session#logout()} as soon as possible.
+     * @return the SessionManager
+     */
+    protected Session temporarySession() throws RepositoryException
+    {
+        return m_sessionManager.newSession();
+    }
+
     /**
      *  Creates a new version of the given page.
      *  
@@ -500,34 +510,51 @@ public class ContentManager implements WikiEventListener
      */
     public void save( WikiPage page ) throws RepositoryException
     {
+        Session session = getCurrentSession();
         WikiPath path = page.getPath();
-        Node nd = getJCRNode( getJCRPath( path ) );
+        Node nd;
+        boolean isNotCreatedPage = false;
+        try
+        {
+            nd = session.getRootNode().getNode( WikiPathResolver.getJCRPath( path, PathRoot.PAGES ) );
+        }
+        catch ( PathNotFoundException e )
+        {
+            nd = session.getRootNode().getNode( WikiPathResolver.getJCRPath( path, PathRoot.NOT_CREATED ) );
+            isNotCreatedPage = true;
+        }
 
         int version = page.getVersion();
 
         Calendar timestamp = Calendar.getInstance();
         if( isNew( nd ) )
         {
+            // Not created page: move to pages tree and copy over attributes
+            if ( isNotCreatedPage )
+            {
+                String newPath = WikiPathResolver.getJCRPath( path, PathRoot.PAGES );
+                getCurrentSession().move( nd.getPath(), newPath );
+                WikiPathResolver.getInstance( this ).remove( path ); // Old UUID is no good any more
+                nd = session.getRootNode().getNode( newPath );
+            }
+            
             nd.setProperty( JCRWikiPage.ATTR_VERSION, 1 );
             nd.setProperty( JCRWikiPage.ATTR_CREATED, timestamp );
             nd.setProperty( JCRWikiPage.LAST_MODIFIED, timestamp );
+            session.save();
             
-            // New node, so nothing to check in
-            nd.getParent().save();
+            page = new JCRWikiPage( m_engine, path, nd );
         }
         else
         {
             // First, check in the old node, then set version for the new one
-            
-            checkin( getJCRPath( path ), version );
-                        
+            checkin( WikiPathResolver.getJCRPath( path, PathRoot.PAGES ), version );
             nd.setProperty( JCRWikiPage.ATTR_VERSION, version+1 );
             nd.setProperty( JCRWikiPage.LAST_MODIFIED, timestamp );
-            
             nd.save();
         }
         
-        fireEvent( ContentEvent.NODE_SAVED, page.getPath(), NO_ARGS );
+        fireEvent( ContentEvent.NODE_SAVED, path, NO_ARGS );
     }
     
     /**
@@ -560,6 +587,7 @@ public class ContentManager implements WikiEventListener
                     Method m = jcrRepoClass.getMethod( "shutdown" );
                     m.invoke( m_repository );
                 }
+                WikiPathResolver.getInstance( this ).clear();
             }
             catch( ClassNotFoundException e )
             {
@@ -877,7 +905,7 @@ public class ContentManager implements WikiEventListener
 
         try
         {
-            Node base = getJCRNode( getJCRPath(path) );
+            Node base = getJCRNode( WikiPathResolver.getJCRPath( path, PathRoot.PAGES ) );
             
             if( base.hasNode( WIKI_VERSIONS ) )
             {
@@ -886,12 +914,11 @@ public class ContentManager implements WikiEventListener
                 for( NodeIterator ni = versionHistory.getNodes(); ni.hasNext(); )
                 {
                     Node v = ni.nextNode();
-
-                    result.add( new JCRWikiPage(m_engine,path,v) );
+                    result.add( new JCRWikiPage( m_engine, path, v ) );
                 }
             }
             
-            result.add( new JCRWikiPage(m_engine,base) );
+            result.add( new JCRWikiPage( m_engine, base ) );
         }
         catch( RepositoryException e )
         {
@@ -941,8 +968,7 @@ public class ContentManager implements WikiEventListener
     
     /**
      *  Returns <code>true</code> if a given page exists (any version). 
-     *  In order for
-     *  this method to return <code>true</code>, the JCR node
+     *  In order for this method to return <code>true</code>, the JCR node
      *  representing the page must exist, and it must also have been
      *  previously saved (that is, not "new").
      *  
@@ -962,7 +988,7 @@ public class ContentManager implements WikiEventListener
         }
         
         // Find the JCR node
-        String jcrPath = getJCRPath( wikiPath ); 
+        String jcrPath = WikiPathResolver.getJCRPath( wikiPath, PathRoot.PAGES ); 
         Node node = null;
         try
         {
@@ -1002,7 +1028,7 @@ public class ContentManager implements WikiEventListener
         }
 
         // Find the JCR node
-        String jcrPath = getJCRPath( wikiPath ); 
+        String jcrPath = WikiPathResolver.getJCRPath( wikiPath, PathRoot.PAGES ); 
         Node node = null;
         try
         {
@@ -1140,6 +1166,23 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
+     * JCR node properties that must be preserved when moving pages to the
+     * "uncreated" tree.
+     */
+    private static final List<String> MANDATORY_PROPERTIES;
+    static
+    {
+        List<String> props = new ArrayList<String>();
+        props.add( JCRWikiPage.ATTR_TITLE );
+        props.add( JCRWikiPage.CONTENT_TYPE );
+        props.add( ReferenceManager.PROPERTY_REFERRED_BY );
+        props.add( "jcr:mixinTypes" );
+        props.add( "jcr:primaryType" );
+        props.add( "jcr:uuid" );
+        MANDATORY_PROPERTIES = Collections.unmodifiableList( props );
+    }
+
+    /**
      *  Deletes an entire page, all versions, all traces.  If the page did not
      *  exist, will just exit quietly and return false.
      *  
@@ -1147,21 +1190,52 @@ public class ContentManager implements WikiEventListener
      *  @return True, if the page was found and deleted; false, if the page did not exist in the first place
      *  @throws ProviderException If the backend fails or the page is illegal.
      */
-    
     public boolean deletePage( WikiPage page )
         throws ProviderException
     {
-        fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getPath(), NO_ARGS );
+        WikiPath path = page.getPath();
+        fireEvent( ContentEvent.NODE_DELETE_REQUEST, path, NO_ARGS );
 
         try
         {
             Node nd = ((JCRWikiPage)page).getJCRNode();
+
+            // If inbound referrers, move to "uncreated" tree and delete most properties
+            List<WikiPath> referrers = page.getReferredBy();
+            int outsideReferrers = referrers.size();
+            for ( WikiPath referrer: referrers )
+            {
+                if ( referrer.equals( path ) ) outsideReferrers--;
+            }
+            if ( outsideReferrers > 0 )
+            {
+                String uncreatedPath = WikiPathResolver.getJCRPath( path, PathRoot.NOT_CREATED );
+                getCurrentSession().move( nd.getPath(), uncreatedPath );
+                PropertyIterator props = nd.getProperties();
+                while ( props.hasNext() )
+                {
+                    Property prop = props.nextProperty();
+                    if ( !MANDATORY_PROPERTIES.contains( prop.getName() ) )
+                    {
+                        prop.remove();
+                    }
+                }
+                NodeIterator nodes = nd.getNodes();
+                while ( nodes.hasNext() )
+                {
+                    nodes.nextNode().remove();
+                }
+                getCurrentSession().save();
+            }
             
-            // Remove the node itself.
-            nd.remove();
+            // Otherwise, just remove the node
+            else
+            {
+                nd.remove();
+                nd.getParent().save();
+            }
             
-            nd.getParent().save();
-            
+            WikiPathResolver.getInstance( this ).remove( path );
             fireEvent( ContentEvent.NODE_DELETED, page.getPath(), NO_ARGS );
             
             return true;
@@ -1324,16 +1398,24 @@ public class ContentManager implements WikiEventListener
             // Fetch the page that was being saved
             Workflow workflow = getWorkflow();
             WikiEngine engine = workflow.getWorkflowManager().getEngine();
-            WikiPath name = (WikiPath)workflow.getAttribute( PRESAVE_PAGE_NAME );
+            WikiPath path = (WikiPath)workflow.getAttribute( PRESAVE_PAGE_NAME );
             JCRWikiPage page;
             try
             {
-                page = engine.getContentManager().getPage( name );
+                page = engine.getContentManager().getPage( path );
             }
             catch( PageNotFoundException e )
             {
                 // Doesn't exist? No problem. Time to make one.
-                page = engine.getContentManager().addPage( name, getJCRPath( name), ContentManager.JSPWIKI_CONTENT_TYPE );
+                try
+                {
+                    page = engine.getContentManager().addPage( path, ContentManager.JSPWIKI_CONTENT_TYPE );
+                }
+                catch( PageAlreadyExistsException e1 )
+                {
+                    // This should never happen
+                    throw new InternalWikiException( "We were just told the page didn't exist. And now it does? Explain, please." );
+                }
             }
             
             // Retrieve the page ACL, author, attributes, modified-date, name and new text from the workflow
@@ -1382,14 +1464,12 @@ public class ContentManager implements WikiEventListener
      *  @param context The current context.
      *  @param renameFrom The name from which to rename.
      *  @param renameTo The new name.
-     *  @param changeReferrers If true, also changes all the referrers.
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
     public String renamePage( WikiContext context, 
                               String renameFrom, 
-                              String renameTo, 
-                              boolean changeReferrers )
+                              String renameTo )
         throws WikiException
     {
         //
@@ -1417,22 +1497,8 @@ public class ContentManager implements WikiEventListener
         //  Preconditions: "from" page must exist, and "to" page must NOT exist.
         //
         WikiEngine engine = context.getEngine();
-        WikiPath fromPage = WikiPath.valueOf( renameFrom );
-        WikiPath toPage = WikiPath.valueOf( renameTo );
-        
-        // TODO: This is unnecessary; move() should throw an exception
-//        if ( !engine.pageExists( fromPage.toString() ) )
-//        {
-//            // TODO: Should localize this
-//            throw new WikiException("Cannot rename: source page '"+fromPage.toString() + "' does not exist." );
-//        }
-//        
-        // TODO: Unnecessary, move() will check this
-//        if ( engine.pageExists( toPage.toString() ) )
-//        {
-//            // TODO: Should localize this
-//            throw new WikiException("Cannot rename: destination page '"+toPage.toString() + "' already exists." );
-//        }
+        WikiPath fromPath = WikiPath.valueOf( renameFrom );
+        WikiPath toPath = WikiPath.valueOf( renameTo );
         
         //
         //  Do the actual rename by changing from the frompage to the topage, including
@@ -1440,8 +1506,10 @@ public class ContentManager implements WikiEventListener
         //
         try
         {
-            getCurrentSession().move( getJCRPath( fromPage ), getJCRPath( toPage ) );
+            getCurrentSession().move( WikiPathResolver.getJCRPath( fromPath, PathRoot.PAGES ), WikiPathResolver.getJCRPath( toPath, PathRoot.PAGES ) );
             getCurrentSession().save();
+            WikiPathResolver.getInstance( this ).remove( fromPath );
+            WikiPathResolver.getInstance( this ).remove( toPath );
         }
         catch( RepositoryException e )
         {
@@ -1452,22 +1520,23 @@ public class ContentManager implements WikiEventListener
         WikiPage page;
         try
         {
-            page = engine.getPage( toPage );
-            if ( engine.pageExists( fromPage.toString() ) )
+            page = engine.getPage( toPath );
+            if ( engine.pageExists( fromPath.toString() ) )
             {
-                throw new InternalWikiException( "Rename failed: fromPage " + fromPage + " still exists after move!" );
+                throw new InternalWikiException( "Rename failed: fromPage " + fromPath + " still exists after move!" );
             }
         }
         catch ( PageNotFoundException e )
         {
-            throw new InternalWikiException( "Rename failed: toPage " + toPage + " not found after move!" );
+            throw new InternalWikiException( "Rename failed: toPage " + toPath + " not found after move!" );
         }
-        page.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
+        page.setAttribute( WikiPage.CHANGENOTE, fromPath.toString() + " ==> " + toPath.toString() );
         page.setAuthor( context.getCurrentUser().getName() );
         page.setAttribute( JCRWikiPage.ATTR_TITLE, renameTo );
         
         // Tell everyone we moved the page
-        fireEvent( ContentEvent.NODE_RENAMED, toPage, fromPage, Boolean.valueOf( changeReferrers ) );
+        fireEvent( ContentEvent.NODE_RENAMED, toPath, fromPath );
+        page.save();
         
         //
         //  Done, return the new name.
@@ -1495,54 +1564,12 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     *  Evaluates a WikiName in the context of the current page request.
-     *  
-     *  @param wikiName The WikiName.
-     *  @return A full JCR path
-     */
-    public static String getJCRPath( WikiPath wikiName )
-    {
-        String spaceName;
-        String spacePath;
-
-        spaceName = wikiName.getSpace().toLowerCase();
-        spacePath = wikiName.getPath().toLowerCase();
-
-        return "/"+JCR_PAGES_NODE+"/"+spaceName+"/"+spacePath;
-    }
-
-    /**
-     *  Evaluates a WikiName in the context of the current page request.
-     *  
-     *  @param jcrpath The JCR Path used to get the {@link WikiPath}
-     *  @return The {@link WikiPath} for the requested jcr path
-     *  @throws ProviderException If the backend fails.
-     */
-    // FIXME: Should be protected - fix once WikiPage moves to content-package
-    public static WikiPath getWikiPath( String jcrpath ) throws ProviderException
-    {
-        if( jcrpath.startsWith("/"+JCR_PAGES_NODE+"/") )
-        {
-            String wikiPath = jcrpath.substring( ("/"+JCR_PAGES_NODE+"/").length() );
-
-            int firstSlash = wikiPath.indexOf( '/' );
-            
-            if( firstSlash != -1 )
-            {
-                return new WikiPath(wikiPath.substring( 0, firstSlash ), 
-                                    wikiPath.substring( firstSlash+1 ) );
-            }
-        }
-        
-        throw new ProviderException("This is not a valid JSPWiki JCR path: "+jcrpath);
-    }
-    
-    /**
      *  Adds new content to the repository without saving it. To update,
      *  get a page, modify it, then store it back using save(). If a JCR
      *  Node with the same path already exists but has not previously been
      *  saved, it is retained inside the WikiPage that is returned,
-     *  instead of creating a new one.
+     *  instead of creating a new one. The JCR node is determined by
+     *  calling {@link WikiPathResolver#getJCRPath(WikiPath, PathRoot)}.
      *  
      *  @param path the WikiPath for the page
      *  @param contentType the type of content
@@ -1552,56 +1579,52 @@ public class ContentManager implements WikiEventListener
      */
     public JCRWikiPage addPage( WikiPath path, String contentType ) throws PageAlreadyExistsException, ProviderException
     {
-        return addPage( path, getJCRPath(path), contentType );
-    }
-
-    /**
-     *  Add new content to the repository to a particular JCR path,
-     *  without saving it. If a JCR Node with the same path already exists
-     *  but has not previously been saved, it is retained inside the WikiPage
-     *  that is returned, instead of creating a new one.
-     *  
-     *  @param path the WikiPath for the page
-     *  @param jcrPath the JCR path for the page
-     *  @param contentType the type of content
-     *  @return the {@link JCRWikiPage} 
-     *  @throws ProviderException if the backend fails
-     */
-    private JCRWikiPage addPage( WikiPath path, String jcrPath, String contentType ) 
-        throws ProviderException
-    {
         checkValidContentType( contentType );
         
+        Node nd = null;
         try
         {
-            // Is there an unsaved node already?
+            // Is there a page waiting in the "uncreated" branch?
             Session session = m_sessionManager.getSession();
-            Node nd = null;
             try
             {
+                String jcrPath = WikiPathResolver.getJCRPath( path, PathRoot.NOT_CREATED );
                 nd = session.getRootNode().getNode( jcrPath );
-                if ( !isNew( nd ) )
-                {
-                    nd = null;
-                }
             }
+
+            // See if there's an unsaved one in the regular "pages" branch
             catch ( PathNotFoundException e )
             {
-                // No worries
+                try
+                {
+                    String jcrPath = WikiPathResolver.getJCRPath( path, PathRoot.PAGES );
+                    nd = session.getRootNode().getNode( jcrPath );
+                    if ( !isNew( nd ) )
+                    {
+                        nd = null;
+                    }
+                }
+                catch ( PathNotFoundException e2 )
+                {
+                    // No page exists anywhere!
+                }
             }
             
-            // Create a new node from scratch
+            // If no node exists, create one from scratch
             if ( nd == null )
             {
+                String jcrPath = WikiPathResolver.getJCRPath( path, PathRoot.PAGES );
                 nd = session.getRootNode().addNode( jcrPath );
                 nd.addMixin( "mix:referenceable" );
                 nd.setProperty( JCRWikiPage.CONTENT_TYPE, contentType );
             }
             
+            // Force the title attribute to whatever our path dictates
             nd.setProperty( JCRWikiPage.ATTR_TITLE, path.getName() );
             
             // Return the new WikiPage containing the new/re-used Node
-            JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
+            WikiPathResolver.getInstance( this ).remove( path );
+            JCRWikiPage page = new JCRWikiPage( m_engine, path, nd );
             return page;
         }
         catch( RepositoryException e )
@@ -1637,8 +1660,8 @@ public class ContentManager implements WikiEventListener
         try
         {
             Session session = m_sessionManager.getSession();
-            Node nd = session.getRootNode().getNode( getJCRPath(path) );
-            JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
+            String jcrPath = WikiPathResolver.getJCRPath( path, PathRoot.PAGES );
+            JCRWikiPage page = new JCRWikiPage(m_engine, path, (Node)session.getItem( jcrPath ) );
             return page;
         }
         catch( PathNotFoundException e )
@@ -1666,7 +1689,7 @@ public class ContentManager implements WikiEventListener
         {
             Session session = m_sessionManager.getSession();
         
-            Node original = session.getRootNode().getNode( getJCRPath(path) );
+            Node original = session.getRootNode().getNode( WikiPathResolver.getJCRPath( path, PathRoot.PAGES ) );
             
             Property p = original.getProperty( "wiki:version" );
             
@@ -1824,7 +1847,7 @@ public class ContentManager implements WikiEventListener
      *  <p>
      *  Based on Hibernate ThreadLocal best practices.
      */
-    private class JCRSessionManager
+    protected class JCRSessionManager
     {
         /** the per thread session **/
         private final ThreadLocal<Session> m_currentSession = new ThreadLocal<Session>();
@@ -1933,37 +1956,11 @@ public class ContentManager implements WikiEventListener
      *  @param jcrPath An absolute JCR path.
      *  @return A JCR Node
      *  @throws RepositoryException If the Node cannot be found or something else fails.
+     *  FIXME: this should probably be package-private or protected
      */
     public Node getJCRNode( String jcrPath ) throws RepositoryException
     {
         return (Node)m_sessionManager.getSession().getItem( jcrPath );
-    }
-
-    /**
-     *  Creates a JCR Node including all of its parents from a given JCR Path.
-     *  If the Node already exists, returns it.
-     *  
-     *  @param jcrPath An absolute or relative path. If relative, it's interpreted
-     *                 as relative to the workspace root node.
-     *  @return A valid JCR Node
-     *  @throws RepositoryException If the creation fails for some reason
-     */
-    public Node createJCRNode( String jcrPath ) throws RepositoryException
-    {
-        String[] components = StringUtils.split( jcrPath, "/" );
-        
-        Node current = getCurrentSession().getRootNode();
-
-        for( int i = 0; i < components.length; i++ )
-        {
-            if( !current.hasNode( components[i] ) )
-            {
-                current.addNode( components[i] );
-            }
-            current = current.getNode( components[i] );
-        }
-        
-        return current;
     }
 
     /**

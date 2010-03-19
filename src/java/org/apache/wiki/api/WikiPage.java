@@ -260,11 +260,20 @@ public interface WikiPage extends Comparable<WikiPage>
     public void setContent( InputStream in ) throws ProviderException;
 
     /**
+     *  Returns a collection of all the WikiNames that refer to this page.
+     *  
+     *  @return a collection of WikiNames. May be an empty collection if this
+     *          no other pages refer to this page
+     *  @throws ProviderException If the references cannot be fetched
+     */
+    public List<WikiPath> getReferredBy() throws ProviderException;
+
+    /**
      *  Returns a collection of all the WikiNames that this page refers to.
      *  
-     *  @return A collection of WikiNames. May be an empty collection if this
-     *          page refers to no other pages.
-     *  @throws ProviderException If the references cannot be fetched.
+     *  @return a collection of WikiNames. May be an empty collection if this
+     *          page refers to no other pages
+     *  @throws ProviderException If the references cannot be fetched
      */
     public List<WikiPath> getRefersTo() throws ProviderException;
     

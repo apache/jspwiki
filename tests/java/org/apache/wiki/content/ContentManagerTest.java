@@ -33,6 +33,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.WikiPathResolver.PathRoot;
 import org.apache.wiki.providers.ProviderException;
 
 import stress.Benchmark;
@@ -40,7 +41,7 @@ import stress.Benchmark;
 
 public class ContentManagerTest extends TestCase
 {
-    ContentManager m_mgr;
+    ContentManager m_cm;
     TestEngine     m_engine;
     
     @Override
@@ -53,7 +54,7 @@ public class ContentManagerTest extends TestCase
         
         m_engine = new TestEngine(props);
         
-        m_mgr = m_engine.getContentManager();
+        m_cm = m_engine.getContentManager();
     }
 
     @Override
@@ -61,9 +62,9 @@ public class ContentManagerTest extends TestCase
     {
         try
         {
-            WikiPage p = m_mgr.getPage( WikiPath.valueOf("Main:TestPage") );
+            WikiPage p = m_cm.getPage( WikiPath.valueOf("Main:TestPage") );
             
-            if( p != null ) m_mgr.deletePage( p );
+            if( p != null ) m_cm.deletePage( p );
         }
         catch ( PageNotFoundException e )
         {
@@ -78,21 +79,21 @@ public class ContentManagerTest extends TestCase
 
     public void testContentManagerGet() throws WikiException
     {
-        assertNotNull(m_mgr);
+        assertNotNull(m_cm);
     }
     
     public void testBasicGet() throws Exception
     {
         String content = "Test Content";
-        WikiPage page = m_mgr.addPage( WikiPath.valueOf("Main:TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_cm.addPage( WikiPath.valueOf("Main:TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         assertNotNull("WikiPage create", page);
         
         page.setContent( content );
         
-        m_mgr.save( page );
+        m_cm.save( page );
         
-        WikiPage page2 = m_mgr.getPage( WikiPath.valueOf("Main:TestPage") );
+        WikiPage page2 = m_cm.getPage( WikiPath.valueOf("Main:TestPage") );
         
         assertNotNull( "page2", page2 );
         
@@ -103,15 +104,15 @@ public class ContentManagerTest extends TestCase
     public void testBasicGetDefaultSpace() throws Exception
     {
         String content = "Test Content";
-        WikiPage page = m_mgr.addPage( WikiPath.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_cm.addPage( WikiPath.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         assertNotNull("WikiPage create", page);
         
         page.setContent( content );
         
-        m_mgr.save( page );
+        m_cm.save( page );
         
-        WikiPage page2 = m_mgr.getPage( WikiPath.valueOf("TestPage") );
+        WikiPage page2 = m_cm.getPage( WikiPath.valueOf("TestPage") );
         
         assertNotNull( "page2", page2 );
         
@@ -121,22 +122,22 @@ public class ContentManagerTest extends TestCase
     
     public void testPaths() throws Exception
     {
-        assertEquals( "One", "/pages/main/mainpage", ContentManager.getJCRPath( WikiPath.valueOf("Main:MainPage") ) );
-        
-        assertEquals( "Back", WikiPath.valueOf("Main:MainPage"), ContentManager.getWikiPath( "/pages/main/mainpage" ) );
+        assertEquals( "One", "/pages/main/mainpage", WikiPathResolver.getJCRPath( WikiPath.valueOf("Main:MainPage"), PathRoot.PAGES ) );
+        WikiPathResolver cache = WikiPathResolver.getInstance( m_cm );
+        assertEquals( "Back", WikiPath.valueOf("Main:MainPage"), cache.getWikiPath( "/pages/main/mainpage", PathRoot.PAGES ) );
     }
     
     public void getAllPages() throws Exception
     {
         m_engine.emptyRepository();
-        Collection<WikiPage> allPages = m_mgr.getAllPages( ContentManager.DEFAULT_SPACE );
+        Collection<WikiPage> allPages = m_cm.getAllPages( ContentManager.DEFAULT_SPACE );
         assertEquals( 0, allPages.size() );
 
         // Add 2 pages to space Main
         m_engine.saveText( "Test1", "This is a test." );
         m_engine.saveText( "Test2", "This is a test." );
 
-        allPages = m_mgr.getAllPages( null );
+        allPages = m_cm.getAllPages( null );
         assertEquals( 2, allPages.size() );
     }
 
@@ -146,25 +147,25 @@ public class ContentManagerTest extends TestCase
 
         // Save a new page
         m_engine.saveText( path.toString(), "This is the first version" );
-        assertTrue( m_mgr.pageExists( path, WikiProvider.LATEST_VERSION ) );
-        assertTrue( m_mgr.pageExists( path, 1 ) );
+        assertTrue( m_cm.pageExists( path, WikiProvider.LATEST_VERSION ) );
+        assertTrue( m_cm.pageExists( path, 1 ) );
 
         // Save another version
         m_engine.saveText( path.toString(), "This is the second version" );
-        assertTrue( m_mgr.pageExists( path, WikiProvider.LATEST_VERSION ) );
-        assertTrue( m_mgr.pageExists( path, 2 ) );
-        assertTrue( m_mgr.pageExists( path, 1 ) );
+        assertTrue( m_cm.pageExists( path, WikiProvider.LATEST_VERSION ) );
+        assertTrue( m_cm.pageExists( path, 2 ) );
+        assertTrue( m_cm.pageExists( path, 1 ) );
 
         m_engine.deletePage( path.toString() );
         
-        assertFalse( m_mgr.pageExists( path ) );
+        assertFalse( m_cm.pageExists( path ) );
     }
 
     public void testVersions() throws Exception
     {
         String content = "Test Content";
 
-        WikiPage page = m_mgr.addPage( WikiPath.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_cm.addPage( WikiPath.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
 
         page.setContent( content );
         
@@ -180,7 +181,7 @@ public class ContentManagerTest extends TestCase
         
         assertEquals( "origpage version", 3, page.getVersion() );
         
-        WikiPage p2 = m_mgr.getPage( WikiPath.valueOf("TestPage") );
+        WikiPage p2 = m_cm.getPage( WikiPath.valueOf("TestPage") );
         
         assertEquals( "fetched page version", 3, p2.getVersion() );
         
@@ -190,7 +191,7 @@ public class ContentManagerTest extends TestCase
         
         // Test get version
 
-        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), 1 );
+        p2 = m_cm.getPage( WikiPath.valueOf("TestPage"), 1 );
         
         assertEquals( "v1 content", "Test Content", p2.getContentAsString() );
         assertEquals( "v1 version", 1, p2.getVersion() );
@@ -198,17 +199,17 @@ public class ContentManagerTest extends TestCase
         assertFalse( "content", page.getContentAsString().equals(p2.getContentAsString()));
         assertFalse( "uuid", page.getAttribute( "jcr:uuid" ).equals( p2.getAttribute( "jcr:uuid" )));
         
-        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), 2 );
+        p2 = m_cm.getPage( WikiPath.valueOf("TestPage"), 2 );
         
         assertEquals( "v2 content", "New Test Content", p2.getContentAsString() );
         assertEquals( "v2 version", 2, p2.getVersion() );
 
-        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), 3 );
+        p2 = m_cm.getPage( WikiPath.valueOf("TestPage"), 3 );
         
         assertEquals( "v3 content", "Even newer Test Content", p2.getContentAsString() );
         assertEquals( "v3 version", 3, p2.getVersion() );
 
-        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), -1 );
+        p2 = m_cm.getPage( WikiPath.valueOf("TestPage"), -1 );
         
         assertEquals( "v3 content", "Even newer Test Content", p2.getContentAsString() );
         assertEquals( "v3 version", 3, p2.getVersion() );
@@ -225,7 +226,7 @@ public class ContentManagerTest extends TestCase
     
     public void testZillionVersions() throws Exception
     {
-        WikiPage p = m_mgr.addPage( WikiPath.valueOf( "TestPage" ), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage p = m_cm.addPage( WikiPath.valueOf( "TestPage" ), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         Benchmark b = new Benchmark();
         b.start();
@@ -238,17 +239,17 @@ public class ContentManagerTest extends TestCase
         
         p = m_engine.getPage( "TestPage", 100 );
         assertEquals( "content 100","Test 100", p.getContentAsString() );
-        assertEquals( "content 100/2", p.getContentAsString(), m_engine.getPureText( p ) );
+        assertEquals( "content 100/2", p.getContentAsString(), p.getContentAsString() );
         assertEquals( "version 100", 100, p.getVersion() );
         
         p = m_engine.getPage( "TestPage", 1 );
         assertEquals( "content 1","Test 1", p.getContentAsString() );
-        assertEquals( "content 1/2", p.getContentAsString(), m_engine.getPureText( p ) );
+        assertEquals( "content 1/2", p.getContentAsString(), p.getContentAsString() );
         assertEquals( "version 1", 1, p.getVersion() );
         
         p = m_engine.getPage( "TestPage", 51 );
         assertEquals( "content 51","Test 51", p.getContentAsString() );
-        assertEquals( "content 51/2", p.getContentAsString(), m_engine.getPureText( p ) );
+        assertEquals( "content 51/2", p.getContentAsString(), p.getContentAsString() );
         assertEquals( "version 51", 51, p.getVersion() );
     }
     

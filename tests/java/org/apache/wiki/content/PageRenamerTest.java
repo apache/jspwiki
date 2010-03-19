@@ -104,8 +104,8 @@ public class PageRenamerTest extends TestCase
         
         Set<String> pages = m_engine.getReferenceManager().findCreated();
         
-        assertTrue( "FooRename does not exist", pages.contains( "Main:FooRename".toLowerCase() ) );
-        assertFalse( "SimpleRename exists", pages.contains( "Main:SimpleRename".toLowerCase() ) );
+        assertTrue( "FooRename does not exist", pages.contains( "Main:FooRename" ) );
+        assertFalse( "SimpleRename exists", pages.contains( "Main:SimpleRename" ) );
         assertEquals( "wrong list size", pageCount+1, pages.size() );
         m_engine.deletePage( "Main:FooRename" );
     }
@@ -123,7 +123,7 @@ public class PageRenamerTest extends TestCase
         m_engine.renamePage(context, "ReferrerChange", "FooReferrerChange", true);
         
         // Verify that reference to ReferrerChange was renamed
-        String data = m_engine.getPureText("ReferrerChange2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPage( "ReferrerChange2" ).getContentAsString();
         assertEquals( "no rename", "[FooReferrerChange]", data.trim() );
         
         Collection<WikiPath> refs = findReferrers("ReferrerChange");
@@ -147,7 +147,7 @@ public class PageRenamerTest extends TestCase
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPage("TestPage2").getContentAsString();
      
         assertEquals( "no rename", "FooTest", data.trim() );
         Collection<WikiPath> refs = findReferrers("TestPage");
@@ -171,7 +171,7 @@ public class PageRenamerTest extends TestCase
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPage( "TestPage2" ).getContentAsString();
      
         assertEquals( "no rename", "[FooTest#heading1]", data.trim() );
         Collection<WikiPath> refs = findReferrers("TestPage");
@@ -195,7 +195,7 @@ public class PageRenamerTest extends TestCase
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPage( "TestPage2" ).getContentAsString();
      
         assertEquals( "no rename", 
                       "[FooTest] [FooTest] [linktext|FooTest] FooTest [linktext|FooTest] [FooTest#Anchor] [FooTest] FooTest [FooTest]", 
@@ -222,7 +222,7 @@ public class PageRenamerTest extends TestCase
      
         m_engine.renamePage(context, "Test", "TestPage", true);
         
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION );
+        String data = m_engine.getPage( "TestPage2" ).getContentAsString();
         
         assertEquals( "wrong data", "[TestPage] [TestPage#anchor] test Test [TestPage] [link|TestPage] [link|TestPage]", data.trim() );
     }
@@ -241,7 +241,7 @@ public class PageRenamerTest extends TestCase
  
         m_engine.renamePage(context, "TestPage", "RenamedTest", true);
  
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPage( "TestPage2" ).getContentAsString();
  
         assertEquals( "no rename", 
                       "[RenamedTest/foo.txt] [linktext|RenamedTest/bar.jpg]", 
@@ -335,7 +335,7 @@ public class PageRenamerTest extends TestCase
                      "[cdauth/attach.txt] [link|cdauth/attach.txt] [cdauth|cdauth/attach.txt]";
         
         String dst = "[CdauthNew/attach.txt] [link|CdauthNew/attach.txt] [cdauth|CdauthNew/attach.txt]"+
-                     "[CDauth/attach.txt] [link|CDauth/attach.txt] [cdauth|CDauth/attach.txt]"+
+                     "[CdauthNew/attach.txt] [link|CdauthNew/attach.txt] [cdauth|CdauthNew/attach.txt]"+
                      "[CdauthNew/attach.txt] [link|CdauthNew/attach.txt] [cdauth|CdauthNew/attach.txt]";
         
         m_engine.saveText( "Cdauth", "xxx" );

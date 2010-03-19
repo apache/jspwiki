@@ -26,11 +26,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.jcr.*;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.WikiPathResolver.PathRoot;
+import org.apache.wiki.content.jcr.JCRWikiPage;
 import org.apache.wiki.event.*;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
@@ -57,14 +63,15 @@ import org.apache.wiki.util.TextUtil;
  * {@value #REFERENCES_ROOT}, where each node represents the page that is being
  * linked to (<em>i.e,</em> a page link named in wiki markup). The
  * multi-valued property named {@value #PROPERTY_REFERRED_BY} stores the source
- * of the link.
+ * of the link. The links that are stored are the UUIDs of the node, <em>not
+ * the name or WikiPath</em>.
  * </p>
  * <p>
  * To ensure that ReferenceManager operates as efficiently as possible, page
  * references are recalculated only when changes to pages are made: that is,
- * when they are saved, renamed or deleted. ReferenceManager listens for the
- * events {@link ContentEvent#NODE_SAVED}, {@link ContentEvent#NODE_RENAMED}
- * and {@link ContentEvent#NODE_DELETE_REQUEST}. When one of these events is
+ * when they are saved or deleted. ReferenceManager listens for the events
+ * {@link ContentEvent#NODE_SAVED}, {@link ContentEvent#NODE_RENAMED} and
+ * {@link ContentEvent#NODE_DELETE_REQUEST}. When one of these events is
  * detected, ReferenceManager updates the inbound and outbound link references as
  * required. The end result of these choices means that ReferenceManager is
  * relatively fast at reading references, but a bit slower at updating them.
@@ -74,10 +81,10 @@ import org.apache.wiki.util.TextUtil;
  * <p>
  * In addition to keeping track of links between pages, ReferenceManager also
  * keeps two other lists up to date: the names of pages that are referenced by a
- * WikiPage but haven't been created yet (uncreated); and the names of pages
+ * WikiPage but haven't been created yet (uncreated); and the UUIDs of pages
  * that have been created but not linked to by any other others (unreferenced).
- * These lists are updated whenever wiki pages are saved, renamed or deleted.
- * The JCR paths for uncreated and unreferenced pages are in
+ * These lists are updated whenever wiki pages are saved or deleted.
+ * Uncreated and unreferenced page information is stored in JCR paths
  * {@link #NOT_CREATED} and {@link #NOT_REFERENCED}, respectively.
  * </p>
  * <p>
@@ -92,8 +99,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 4L;
 
-    private static final String PROPERTY_NOT_CREATED = "notCreated";
-
     private static final String PROPERTY_NOT_REFERENCED = "notReferenced";
 
     private static final String[] NO_VALUES = new String[0];
@@ -107,18 +112,9 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
     protected static final String PROPERTY_REFERS_TO = "wiki:refersTo";
 
-    /**
-     * JCR path path prefix for inbound "referredby" links, used by
-     * {@link #addReferredBy(WikiPath, WikiPath)}. Absolute path whose prefix is
-     * {@link #REFERENCES_ROOT}.
-     */
-    protected static final String REFERRED_BY = REFERENCES_ROOT + "/wiki:referrers";
-
     protected static final String NOT_REFERENCED = REFERENCES_ROOT + "/wiki:notReferenced";
 
     protected static final String NOT_CREATED = REFERENCES_ROOT + "/wiki:notCreated";
-
-    protected static final String[] REFERENCES_METADATA = { REFERRED_BY, NOT_REFERENCED, NOT_CREATED };
 
     /**
      * Replaces camelcase links.
@@ -161,7 +157,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
     /**
      * This method does a correct replacement of a single link, taking into
-     * account anchors and attachments.
+     * account anchors.
      */
     private static String renameLink( String original, String from, String newlink )
     {
@@ -178,16 +174,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         reallink = MarkupParser.cleanLink( reallink );
         oldStyleRealLink = MarkupParser.wikifyLink( reallink );
 
-        // WikiPage realPage = context.getEngine().getPage( reallink );
-        // WikiPage p2 = context.getEngine().getPage( from );
-
-        // System.out.println(" "+reallink+" :: "+ from);
-        // System.out.println(" "+p+" :: "+p2);
-
         //
         // Yes, these point to the same page.
         //
-        if( reallink.equals( from ) || original.equals( from ) || oldStyleRealLink.equals( from ) )
+        if( reallink.equalsIgnoreCase( from ) || original.equalsIgnoreCase( from ) 
+            || oldStyleRealLink.equalsIgnoreCase( from ) )
         {
             //
             // if the original contains blanks, then we should introduce a link,
@@ -199,7 +190,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                 return original + "|" + newlink;
             }
 
-            return newlink + ((hash > 0) ? original.substring( hash ) : "") + ((slash > 0) ? original.substring( slash ) : "");
+            return newlink + ((hash > 0) ? original.substring( hash ) : "");
         }
 
         return original;
@@ -295,6 +286,8 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     private WikiEngine m_engine;
 
     private ContentManager m_cm;
+    
+    private WikiPathResolver m_pathCache;
 
     private boolean m_camelCase = false;
 
@@ -323,107 +316,80 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             return;
         }
 
+        // We perform an action if the WikiPage was previously saved in the JCR
         WikiPath path = ((WikiPageEvent) event).getPath();
-        if( !isWikiPage( path ) )
+        if( !m_engine.pageExists( path.toString() ) )
         {
             return;
         }
 
         try
         {
+            Session session = m_cm.getCurrentSession();
+            JCRWikiPage page = m_cm.getPage( path );
+            String uuid = page.getJCRNode().getUUID();
+
             switch( event.getType() )
             {
                 // ========= page saved ==============================
 
                 // If page was saved, update all references
                 case (ContentEvent.NODE_SAVED ): {
-                    path = resolvePage( path );
 
-                    // Get new linked pages, and set refersTo/referencedBy links
-                    List<WikiPath> referenced = extractLinks( path );
-                    setLinks( path, referenced );
+                    // Remove refersTo/referencedBy links
+                    String[] destinations = getFromProperty( page.getJCRNode().getPath(), PROPERTY_REFERS_TO );
+                    for ( String destination : destinations )
+                    {
+                        removeReferral( uuid, destination );
+                    }
+                    
+                    // For current version, set refersTo/referencedBy links
+                    List<String> toUuids = extractLinks( page );
+                    for ( String destination : toUuids )
+                    {
+                        addReferral( uuid, destination );
+                        session.save();
+                    }
+                    
+                    // If no refs to this page, make it Unreferenced
+                    String[] fromUuids = getFromProperty( page.getJCRNode().getPath(), PROPERTY_REFERRED_BY );
+                    if ( fromUuids.length == 0 )
+                    {
+                        addToProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, uuid );
+                    }
 
-                    m_cm.getCurrentSession().save();
+                    session.save();
                     break;
                 }
 
-                    // ========= page deleted ==============================
+                // ========= page delete request =====================
 
-                    // If page was deleted, remove all references to it/from it
+                // Before deleting pages, remove all references to it/from it
                 case (ContentEvent.NODE_DELETE_REQUEST ): {
-                    path = resolvePage( path );
 
-                    // Remove the links from deleted page to its referenced
-                    // pages
-                    removeLinks( path );
+                    // Get referral destinations, and remove refersTo/referencedBy links
+                    Node node = page.getJCRNode();
+                    String[] destinations = getFromProperty( node.getPath(), PROPERTY_REFERS_TO );
+                    for ( String destination : destinations )
+                    {
+                        removeReferral( uuid, destination );
+                    }
 
-                    m_cm.getCurrentSession().save();
+                    // Always remove old page from Unreferenced list
+                    removeFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, uuid );
+                    
+                    session.save();
                     break;
                 }
 
-                    // ========= page renamed ==============================
+                // ========= page renamed ============================
 
                 case (ContentEvent.NODE_RENAMED ): {
-                    WikiPath toPage = path;
-                    WikiPath fromPage = (WikiPath) ((WikiPageEvent) event).getArgs()[0];
-                    Boolean changeReferrers = (Boolean) ((WikiPageEvent) event).getArgs()[1];
-                    List<WikiPath> referrers = getReferredBy( fromPage );
-                    
-                    // Find all pages the old page referred to,
-                    // and remove the inbound links to those pages by the old page
-                    for ( WikiPath ref : getRefersTo( toPage ) )
-                    {
-                        ref = resolvePage( ref );
-                        String jcrPath = getReferredByJCRNode( ref );
-                        removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, fromPage.toString() );
-                    }
 
-                    // Delete all references to the old page name
-                    removeLinks( fromPage );
-                    removeLinks( toPage );
-                    setLinks( toPage, extractLinks( toPage ) );
-
-                    // In every referrer, replace all references to the old page with the new one
-                    if( changeReferrers )
-                    {
-                        ContentManager cm = m_engine.getContentManager();
-                        for( WikiPath referrer : referrers )
-                        {
-                            // In case the page was just changed from under us, let's do this
-                            // small kludge.
-                            if( referrer.equals( fromPage ) )
-                            {
-                                referrer = toPage;
-                            }
-
-                            try
-                            {
-                                WikiPage p = cm.getPage( referrer );
-
-                                String sourceText = m_engine.getPureText( p );
-
-                                String newText = renameLinks( sourceText, fromPage.getPath(), toPage.getPath() );
-
-                                if( m_camelCase )
-                                    newText = renameCamelCaseLinks( newText, fromPage.getPath(), toPage.getPath() );
-
-                                if( !sourceText.equals( newText ) )
-                                {
-                                    p.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
-                                    p.setContent( newText );
-                                    // TODO: do we want to set the author here? (We used to...)
-//                                    cm.save( p );
-                                    setLinks( path, extractLinks( toPage ) );
-                                }
-                            }
-                            catch( PageNotFoundException e )
-                            {
-                                // Just continue
-                            }
-                        }
-                    }
-
-                    m_cm.getCurrentSession().save();
+                    // Change the wiki markup in every page that refers to this one
+                    WikiPath oldPath = (WikiPath) ((WikiPageEvent) event).getArgs()[0];
+                    changeWikiReferences( page, oldPath.getPath() );
+                    session.save();
                     break;
                 }
             }
@@ -442,6 +408,64 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         }
     }
 
+    /**
+     * Replaces all references to a WikiPage from its previous WikiPath value, recursively.
+     * @param page the WikiPage whose referrers should be changed
+     * @param oldPath the WikiPath that the WikiPage was previously located at
+     * @throws ProviderException
+     * @throws RepositoryException
+     */
+    private void changeWikiReferences( JCRWikiPage page, String oldPath ) throws ProviderException, RepositoryException
+    {
+        String newPath = page.getPath().getPath();
+        Node node = page.getJCRNode();
+        
+        // Get referrers for this Node
+        String[] destinations = getFromProperty( node.getPath(), PROPERTY_REFERRED_BY );
+        
+        // In every referrer, replace all references to the old path with the new one
+        for( String destination : destinations )
+        {
+            try
+            {
+                WikiPath referrer = m_pathCache.getByUUID( destination );
+                WikiPage p = m_cm.getPage( referrer );
+
+                String sourceText = p.getContentAsString();
+                String newText = renameLinks( sourceText, oldPath, newPath );
+
+                if( m_camelCase )
+                    newText = renameCamelCaseLinks( newText, oldPath, newPath );
+
+                if( !sourceText.equals( newText ) )
+                {
+                    p.setAttribute( WikiPage.CHANGENOTE, oldPath + " ==> " + newPath );
+                    p.setContent( newText );
+                    // TODO: do we want to set the author here? (We used to...)
+                }
+            }
+            catch( PageNotFoundException e )
+            {
+                // Just continue
+            }
+        }
+        
+        // Process any sub-pages or attachments
+        if ( !page.isAttachment() )
+        {
+            NodeIterator children = node.getNodes();
+            while ( children.hasNext() )
+            {
+                node = children.nextNode();
+                WikiPathResolver cache = WikiPathResolver.getInstance( m_cm );
+                WikiPath path = cache.getWikiPath( node.getPath(), PathRoot.PAGES );
+                page = new JCRWikiPage( m_engine, path, node );
+                String oldChildPath = oldPath + "/" + path.getName();
+                changeWikiReferences( page, oldChildPath );
+            }
+        }
+    }
+    
     /**
      * Returns a list of all pages that the ReferenceManager knows about. This
      * should be roughly equivalent to PageManager.getAllPages(), but without
@@ -501,7 +525,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
     /**
      * <p>
-     * Returns a list of Strings representing pages that are referenced in wiki
+     * Returns a list of WikiPaths representing pages that are referenced in wiki
      * markup, but have not yet been created. Each non-existent page name is
      * shown only once - we don't return information on who referred to it.
      * </p>
@@ -511,11 +535,20 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     public List<WikiPath> findUncreated() throws RepositoryException
     {
-        String[] linkStrings = getFromProperty( NOT_CREATED, PROPERTY_NOT_CREATED );
+        Session session = m_cm.getCurrentSession();
+        QueryManager mgr = session.getWorkspace().getQueryManager();
+        String uncreated = "/jcr:root"+WikiPathResolver.PathRoot.NOT_CREATED.path()+"/*";
+        Query q = mgr.createQuery( uncreated, Query.XPATH );
+        QueryResult qr = q.execute();
         List<WikiPath> links = new ArrayList<WikiPath>();
-        for( String link : linkStrings )
+        for( NodeIterator ni = qr.getNodes(); ni.hasNext(); )
         {
-            links.add( WikiPath.valueOf( link  ) );
+            Node nd = ni.nextNode();
+            if( nd.getDepth() > 3 )
+            {
+                String uuid = nd.getUUID();
+                links.add( m_pathCache.getByUUID( uuid ) );
+            }
         }
         return links;
     }
@@ -532,11 +565,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     public List<WikiPath> findUnreferenced() throws RepositoryException
     {
-        String[] linkStrings = getFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED );
+        String[] uuids = getFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED );
         List<WikiPath> links = new ArrayList<WikiPath>();
-        for( String link : linkStrings )
+        for( String uuid : uuids )
         {
-            links.add( WikiPath.valueOf( link ) );
+            links.add( m_pathCache.getByUUID( uuid ) );
         }
         return links;
     }
@@ -564,27 +597,28 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         
         try
         {
-            String jcrPath = getReferredByJCRNode( destination );
-
             // Get 'referred-by' links for this Node
-            String[] links = getFromProperty( jcrPath, PROPERTY_REFERRED_BY );
+            Node node = m_cm.getCurrentSession().getNodeByUUID( getSafeNodeByUUID( destination ) );
+            String[] uuids = getFromProperty( node.getPath(), PROPERTY_REFERRED_BY );
             List<WikiPath> referrers = new ArrayList<WikiPath>();
-            for( String link : links )
+            for( String uuid : uuids )
             {
-                referrers.add( WikiPath.valueOf( link ) );
+                referrers.add( m_pathCache.getByUUID( uuid ) );
             }
 
-            // Get 'referred-by' links for any child Nodes
+            // Get 'referred-by' links for any child Nodes, recursively
             try
             {
-                NodeIterator children = m_cm.getJCRNode( jcrPath ).getNodes();
-                int childPathOffset = (REFERRED_BY + "/" + destination.getSpace() + "/").length();
+                NodeIterator children = node.getNodes();
                 while( children.hasNext() )
                 {
                     Node child = children.nextNode();
-                    String childPathString = destination.getSpace() + ":" + child.getPath().substring( childPathOffset );
-                    WikiPath childPath = WikiPath.valueOf( childPathString );
-                    referrers.addAll( getReferredBy( childPath ) );
+                    if ( child.getPrimaryNodeType().isMixin() )
+                    {
+                        String uuid = child.getUUID();
+                        WikiPath childPath = m_pathCache.getByUUID( uuid );
+                        referrers.addAll( getReferredBy( childPath ) );
+                    }
                 }
             }
             catch ( PathNotFoundException e )
@@ -626,12 +660,12 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
         try
         {
-            String jcrPath = ContentManager.getJCRPath( source );
-            String[] links = getFromProperty( jcrPath, PROPERTY_REFERS_TO );
+            String jcrPath = WikiPathResolver.getJCRPath( source, PathRoot.PAGES );
+            String[] uuids = getFromProperty( jcrPath, PROPERTY_REFERS_TO );
             List<WikiPath> refersTo = new ArrayList<WikiPath>();
-            for( String link : links )
+            for( String uuid : uuids )
             {
-                refersTo.add( WikiPath.valueOf( link ) );
+                refersTo.add( m_pathCache.getByUUID( uuid ) );
             }
             return refersTo;
         }
@@ -654,14 +688,21 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     {
         m_engine = engine;
         m_cm = engine.getContentManager();
+        m_pathCache = WikiPathResolver.getInstance( m_cm );
 
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(), WikiEngine.PROP_MATCHPLURALS,
                                                              m_matchEnglishPlurals );
 
         m_camelCase = TextUtil.getBooleanProperty( m_engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, false );
+        
+        // Do we need to re-build the references database?
         try
         {
-            initReferenceMetadata();
+            Node root = m_cm.getCurrentSession().getRootNode();
+            if ( !root.hasNode( REFERENCES_ROOT ) || !root.hasNode( NOT_REFERENCED ) )
+            {
+                rebuild();
+            }
         }
         catch( RepositoryException e )
         {
@@ -676,70 +717,43 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
     /**
      * Rebuilds the internal references database by parsing every wiki page.
+     * Verifies that the JCR nodes for storing references exist, and creates
+     * then if they do not. If any nodes are added, they are saved using the
+     * current JCR {@link Session} before returning.
      * 
      * @throws RepositoryException
      * @throws LoginException
      */
     public void rebuild() throws RepositoryException
     {
-        // Remove all of the 'referencedBy' inbound links
         ContentManager cm = m_engine.getContentManager();
         Session s = cm.getCurrentSession();
 
+        // Remove all of the references subtrees
         if( s.getRootNode().hasNode( REFERENCES_ROOT ) )
         {
-            for( String ref : REFERENCES_METADATA )
-            {
-                if( s.getRootNode().hasNode( ref ) )
-                {
-                    Node nd = s.getRootNode().getNode( ref );
-                    nd.remove();
-                }
-            }
-            s.getRootNode().getNode( REFERENCES_ROOT ).remove();
+            Node nd = s.getRootNode().getNode( REFERENCES_ROOT );
+            nd.remove();
         }
-        s.save();
 
-        initReferenceMetadata();
-
-        // TODO: we should actually parse the pages
-    }
-
-    /**
-     * Builds and returns the path used to store the ReferredBy data
-     */
-    private String getReferredByJCRNode( WikiPath path )
-    {
-        if ( path == null )
-        {
-            throw new IllegalArgumentException( "Path cannot be null!" );
-        }
-        return REFERRED_BY + "/" + path.getSpace() + "/" + path.getPath();
-    }
-
-    /**
-     * Verifies that the JCR nodes for storing references exist, and creates
-     * then if they do not. If any nodes are added, they are saved using the
-     * current JCR {@link Session} before returning.
-     */
-    private void initReferenceMetadata() throws RepositoryException
-    {
-        ContentManager cm = m_engine.getContentManager();
-        Session s = cm.getCurrentSession();
+        // Re-add the references subtree
         if( !s.getRootNode().hasNode( REFERENCES_ROOT ) )
         {
             s.getRootNode().addNode( REFERENCES_ROOT );
         }
-        for( String ref : REFERENCES_METADATA )
+        if( !s.getRootNode().hasNode( NOT_REFERENCED ) )
         {
-            if( !s.getRootNode().hasNode( ref ) )
-            {
-                s.getRootNode().addNode( ref );
-            }
+            s.getRootNode().addNode( NOT_REFERENCED );
+        }
+        if( !s.getRootNode().hasNode( NOT_CREATED ) )
+        {
+            s.getRootNode().addNode( NOT_CREATED );
         }
         s.save();
-    }
 
+        // TODO: we should actually parse the pages
+    }
+    
     /**
      * Returns a resolved WikiPath, taking into account plural variants as
      * determined by {@link WikiEngine#getFinalPageName(WikiPath)}. For
@@ -768,67 +782,108 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     }
 
     /**
-     * Adds a "referredBy" inbound link to a page from a source page that links
-     * to it. That is, for the destination page, a "referredBy" entry is made
-     * that contains the name of the source page. Neither the source or
-     * destination pages need exist. Modifications to the underlying JCR node
-     * that contains the link are saved by the current JCR {@link Session}.
-     * 
-     * @param page the page that is the destination for the link
-     * @param from the page that originates the link
-     * @throws RepositoryException if the underlying JCR node and property
-     *             cannot be retrieved
+     * Adds a referrral link from one wiki page to another. This adds the UUID of
+     * {@code to} to the {@code refersTo} attribute of {@code from}. It
+     * adds a reciprocal reverse link to {@code to} by adding to its 
+     * {@code referredBy} attribute the UUID of {@code from}.
+     * @param the UUID of the page that refers to another
+     * @param to the UIUD that {@code from} refers to
+     * @throws RepositoryException 
+     * @throws LoginException 
+     * @throws RepositoryException if the the JCR cannot obtain a Session,
+     * retrieve either Node from the repository, or add required
+     * properties to them
      */
-    protected void addReferredBy( WikiPath page, WikiPath from ) throws RepositoryException
+    protected void addReferral( String from, String to ) throws RepositoryException
     {
-        if ( page == null || from == null )
+        Session session = m_cm.getCurrentSession();
+        Node fromNode = session.getNodeByUUID( from );
+        Node toNode = session.getNodeByUUID( to );
+        addToProperty( fromNode.getPath(), PROPERTY_REFERS_TO, to );
+        addToProperty( toNode.getPath(), PROPERTY_REFERRED_BY, from );
+        removeFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, to );
+    }
+    
+    /**
+     * Removes a referral link from one wiki page to another.
+     * This removes the UUID of {@code to} from the {@code refersTo}
+     * attribute of {@code from}. It removes a reciprocal reverse link
+     * from {@code to} by removing to its {@code referredBy} attribute
+     * the UUID of {@code from}.
+     * @param the UUID of the page that refers to another
+     * @param to the UIUD that {@code from} refers to
+     * @throws RepositoryException if the the JCR cannot obtain a Session,
+     * retrieve either Node from the repository, or add required
+     * properties to them
+     */
+    protected void removeReferral( String from, String to ) throws RepositoryException
+    {
+        Session session = m_cm.getCurrentSession();
+        Node fromNode = session.getNodeByUUID( from );
+        removeFromProperty( fromNode.getPath(), PROPERTY_REFERS_TO, to );
+        Node toNode;
+        try
         {
-            throw new IllegalArgumentException( "Page and from cannot be null!" );
+            // Remove the incoming referrer from the target node
+            toNode = session.getNodeByUUID( to );
+            removeFromProperty( toNode.getPath(), PROPERTY_REFERRED_BY, from );
+            
+            // If no other nodes refer to the target, it becomes Unreferenced
+            String[] referrals = getFromProperty( toNode.getPath(), PROPERTY_REFERRED_BY );
+            if ( referrals.length == 0 )
+            {
+                addToProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, to );
+            }
         }
-        
-        // Make sure the 'referredBy' root exists
-        initReferenceMetadata();
-
-        // Set the inverse 'referredBy' link for the destination (referred by
-        // the source)
-        String jcrPath = getReferredByJCRNode( page );
-        addToProperty( jcrPath, PROPERTY_REFERRED_BY, from.toString(), true );
+        catch ( ItemNotFoundException e )
+        {
+            // If 'toNode' doesn't exist, that's probably a bug, but one we can work around.
+        }
     }
 
     /**
      * Adds a single String value to a given JCR node and
-     * {@link javax.jcr.Property}. The property is assumed to return an array
-     * of {@link javax.jcr.Value} objects. The node is created if it does not
-     * exist. Modifications to the underlying JCR nodes are saved by the
-     * current JCR {@link Session}.
+     * {@link javax.jcr.Property}. If the JCR node does not exist,
+     * is is created with all path components converted to lower case.
+     * The property is assumed to return an array of{@link javax.jcr.Value} objects. Modifications to the underlying
+     * JCR nodes are <em>not</em> saved by the current JCR {@link Session}.
+     * If the value already exists in the property, it is not added again.
      * 
-     * @param jcrNode the JCR path to the node
+     * @param jcrPath the JCR path to the node. Note that all WikiPath-style components
+     * <em>must</em> be in lower-case.
      * @param property the property to add to
      * @param newValue the value to add
-     * @param addAgain whether the value should be added again if it already
-     *            exists in the list
      */
-    protected void addToProperty( String jcrNode, String property, String newValue, boolean addAgain ) throws RepositoryException
+    protected void addToProperty( String jcrPath, String property, String newValue ) throws RepositoryException
     {
-        if ( jcrNode == null || property == null || newValue == null )
+        if ( jcrPath == null || property == null || newValue == null )
         {
             throw new IllegalArgumentException( "jcrNode, property and newValue cannot be null!" );
         }
-        checkValueString( newValue );
         
         // Retrieve (or create) the destination node for the page
-        ContentManager cm = m_engine.getContentManager();
-        Session s = cm.getCurrentSession();
+        Session session = m_cm.getCurrentSession();
         Node node = null;
         try
         {
-            node = (Node) s.getItem( jcrNode );
+            node = (Node) session.getItem( jcrPath );
         }
         catch( PathNotFoundException e )
         {
-            if( !s.itemExists( jcrNode ) )
+            String[] components = StringUtils.split( jcrPath, "/" );
+            node = session.getRootNode();
+            for( int i = 0; i < components.length; i++ )
             {
-                node = cm.createJCRNode( jcrNode );
+                Node parent = node;
+                try
+                {
+                    node = node.getNode( components[i] );
+                }
+                catch ( PathNotFoundException e2 )
+                {
+                    node = node.addNode( components[i] );
+                    parent.save();
+                }
             }
         }
 
@@ -836,13 +891,12 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         List<String> newValues = new ArrayList<String>();
         try
         {
-            boolean notFound = true;
             Property p = node.getProperty( property );
+            boolean notFound = true;
             Value[] values = p.getValues();
             for( int i = 0; i < values.length; i++ )
             {
                 String valueString = values[i].getString();
-                checkValueString( valueString );
                 if( valueString != null && valueString.length() > 0 )
                 {
                     newValues.add( valueString );
@@ -852,44 +906,41 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                     }
                 }
             }
-            if( notFound || addAgain )
+            if( notFound )
             {
                 newValues.add( newValue );
             }
             
-            // There seems to be a bug in Priha that causes property files to bloat,
-            // so we remove the property first, then re-add it
-//            p.remove();
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
         catch( PathNotFoundException e )
         {
             node.setProperty( property, new String[] { newValue } );
         }
+        node.save();
     }
 
     /**
      * Reads a WikiPage full of data from a String and returns all links
-     * internal to this Wiki in a Collection. Links are "resolved"; that is,
+     * internal to this Wiki as a list of UUIDs. Links are "resolved"; that is,
      * page resolution is performed to ensure that plural references resolve to
      * the correct page. The links returned by this method will not contain any
      * duplicates, even if the original page markup linked to the same page more
      * than once.
      * 
-     * @param path the of the WikiPage to scan
+     * @param page the WikiPage to scan
      * @return a Collection of Strings
      * @throws ProviderException if the page contents cannot be retrieved, or if
      *             MarkupParser canot parse the document
      */
-    protected List<WikiPath> extractLinks( WikiPath path ) throws PageNotFoundException, ProviderException
+    protected List<String> extractLinks( JCRWikiPage page ) throws PageNotFoundException, ProviderException, RepositoryException
     {
-        if ( path == null )
+        if ( page == null )
         {
             throw new IllegalArgumentException( "Path cannot be null!" );
         }
         
         // Set up a streamlined parser to collect links
-        WikiPage page = m_engine.getPage( path );
         LinkCollector pageLinks = new LinkCollector();
         LinkCollector attachmentLinks = new LinkCollector();
         String pagedata = page.getContentAsString();
@@ -911,25 +962,98 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         }
 
         // Return a WikiPath for each link
-        ArrayList<WikiPath> links = new ArrayList<WikiPath>();
+        ArrayList<String> links = new ArrayList<String>();
         for( String s : pageLinks.getLinks() )
         {
             WikiPath finalPath = resolvePage( WikiPath.valueOf( s ) );
-            if( !links.contains( finalPath ) )
+            String uuid = getSafeNodeByUUID( finalPath );
+            if( !links.contains( uuid ) )
             {
-                links.add( finalPath );
+                links.add( uuid );
             }
         }
         for( String s : attachmentLinks.getLinks() )
         {
             WikiPath finalPath = resolvePage( WikiPath.valueOf( s ) );
-            if( !links.contains( finalPath ) )
+            String uuid = getSafeNodeByUUID( finalPath );
+            if( !links.contains( uuid ) )
             {
-                links.add( finalPath );
+                links.add( uuid );
             }
         }
 
         return links;
+    }
+    
+    /**
+     * Retrieves the UUID of the JCR node that represents a page or
+     * or attachment WikiPath. The node does not have to exist; if it doesn't,
+     * a new node (and its parents, if necessary) will be created in the
+     * "uncreated" tree branch.
+     * @param path the WikiPath, which is assumed to be in the correct case
+     * @return the UUID of the newly created node
+     * @throws PathNotFoundException
+     * @throws RepositoryException
+     */
+    protected String getSafeNodeByUUID( WikiPath path ) throws PathNotFoundException, RepositoryException
+    {
+        // See if the "uncreated" node has already been created
+        try
+        {
+            return WikiPathResolver.getInstance( m_cm ).getUUID( path );
+        }
+        catch ( ItemNotFoundException e )
+        {
+            // Not found! Time to create a new node
+        }
+        
+        // See if the "uncreated" node exists already
+        Node nd = null;
+        String jcrPath = WikiPathResolver.getJCRPath( path, PathRoot.NOT_CREATED );
+        Session session = m_cm.getCurrentSession();
+        try
+        {
+            nd = session.getRootNode().getNode( jcrPath );
+        }
+        catch( PathNotFoundException e )
+        {
+        }
+
+        // Create the "uncreated" node and all its parents
+        if( nd == null )
+        {
+            Node currentNode = session.getRootNode().getNode( ReferenceManager.NOT_CREATED );
+            String space = path.getSpace();
+
+            // Create the space node if needed
+            if( !currentNode.hasNode( space.toLowerCase() ) )
+            {
+                nd = currentNode.addNode( space.toLowerCase() );
+                nd.addMixin( "mix:referenceable" );
+                nd.setProperty( JCRWikiPage.CONTENT_TYPE, ContentManager.JSPWIKI_CONTENT_TYPE );
+                nd.setProperty( JCRWikiPage.ATTR_TITLE, space );
+            }
+            currentNode = currentNode.getNode( space.toLowerCase() );
+
+            // Create all of the child path nodes if needed
+            String[] pathComponents = path.getPath().split( "/" );
+            for( String pathComponent : pathComponents )
+            {
+                if( !currentNode.hasNode( pathComponent.toLowerCase() ) )
+                {
+                    nd = currentNode.addNode( pathComponent.toLowerCase() );
+                    nd.addMixin( "mix:referenceable" );
+                    nd.setProperty( JCRWikiPage.CONTENT_TYPE, ContentManager.JSPWIKI_CONTENT_TYPE );
+                    nd.setProperty( JCRWikiPage.ATTR_TITLE, pathComponent );
+                }
+                currentNode = currentNode.getNode( pathComponent.toLowerCase() );
+            }
+            session.save();
+            nd = session.getRootNode().getNode( jcrPath );
+        }
+        WikiPathResolver cache = WikiPathResolver.getInstance( m_cm );
+        cache.add( path, nd.getUUID() );
+        return nd.getUUID();
     }
 
     /**
@@ -938,13 +1062,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      * of {@link javax.jcr.Value} objects. If the node does not exist, a
      * zero-length array is returned.
      * 
-     * @param jcrNode the JCR path to the node
+     * @param jcrPath the JCR path to the node. Note that the path is case-sensitive.
      * @param property the property to read
      * @throws RepositoryException
      */
-    protected String[] getFromProperty( String jcrNode, String property ) throws RepositoryException
+    protected String[] getFromProperty( String jcrPath, String property ) throws RepositoryException
     {
-        if ( jcrNode == null || property == null )
+        if ( jcrPath == null || property == null )
         {
             throw new IllegalArgumentException( "jcrNode and property cannot be null!" );
         }
@@ -954,7 +1078,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         Node node = null;
         try
         {
-            node = (Node) cm.getCurrentSession().getItem( jcrNode );
+            node = (Node) cm.getCurrentSession().getItem( jcrPath );
         }
         catch( PathNotFoundException e )
         {
@@ -970,7 +1094,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             stringValues = new String[values.length];
             for( int i = 0; i < values.length; i++ )
             {
-                checkValueString( values[i].getString() );
                 stringValues[i] = values[i].getString();
             }
         }
@@ -987,27 +1110,26 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      * {@link javax.jcr.Property}. The property is assumed to return an array
      * of {@link javax.jcr.Value} objects. The node is <em>not</em> created if it does not
      * exist because by definition the property is already removed! Modifications to the
-     * underlying JCR node are saved by the current JCR {@link Session}.
+     * underlying JCR Node are saved by the current JCR {@link Session}.
      * 
-     * @param jcrNode the JCR path to the node
+     * @param jcrPath the JCR path to the node. Note that the path is case-sensitive.
      * @param property the property to add to
      * @param value the value to remove. All occurrences of the matching value
      *            will be removed.
      */
-    protected void removeFromProperty( String jcrNode, String property, String value ) throws RepositoryException
+    protected void removeFromProperty( String jcrPath, String property, String value ) throws RepositoryException
     {
-        if ( jcrNode == null || property == null || value == null )
+        if ( jcrPath == null || property == null || value == null )
         {
             throw new IllegalArgumentException( "jcrNode, property and value cannot be null!" );
         }
-        checkValueString( value );
         
         // Retrieve (or create) the destination node for the page
         ContentManager cm = m_engine.getContentManager();
         Node node = null;
         try
         {
-            node = (Node) cm.getCurrentSession().getItem( jcrNode );
+            node = (Node) cm.getCurrentSession().getItem( jcrPath );
         }
         catch( PathNotFoundException e )
         {
@@ -1024,18 +1146,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             for( int i = 0; i < values.length; i++ )
             {
                 String valueString = values[i].getString();
-                checkValueString( valueString );
                 if( valueString != null && valueString.length() > 0 && !value.equals( valueString ) )
                 {
                     newValues.add( valueString );
                 }
             }
-            if( newValues.size() == 0 )
-            {
-                // There seems to be a bug in Priha that causes property files to bloat,
-                // so we remove the property first, then re-add it
-                p.remove();
-            }
+            p.remove();
+            p.save(); // Needed to persist the removal of the original values
         }
         catch( PathNotFoundException e )
         {
@@ -1047,260 +1164,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         {
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
-    }
-    
-    /**
-     * Determines whether the WIkiPage at a specified path is in fact a page. If the WikiPage
-     * at the specified path does not exist, it is not a page. If the WikiPage is an attachment,
-     * it is not a page. The WikiPage at a the specified path is only a page if it exists, and
-     * is not an attachment.
-     */
-    private boolean isWikiPage( WikiPath path )
-    {
-        if ( path == null ) return false;
-        try
-        {
-            WikiPage page = m_cm.getPage( path );
-            return !page.isAttachment();
-        }
-        catch ( Exception e )
-        {
-            return false;
-        }
-    }
-    
-    /**
-     * Strictly for troubleshooting: we look for a non-Roman value in the string and throw an exception.
-     * @param v
-     */
-    private void checkValueString( String v )
-    {
-        int ch = 0;
-        boolean highChar = false;
-        for ( int i = 0; i < v.length(); i++ )
-        {
-            ch = v.charAt( i );
-            if ( ch < 32 || ch > 127 )
-            {
-                highChar = true;
-                break;
-//                throw new IllegalStateException( "Bad character in string " + v +", char='" + (char)ch + "' int=" + ch );
-            }
-        }
-        if ( highChar )
-        {
-            System.out.println( "non Roman value detected in String " + v );
-//            Thread.dumpStack();
-        }
-    }
-
-    /**
-     * <p>
-     * Removes all links between a source page and one or more destination
-     * pages, and vice-versa. The source page must exist, although the
-     * destinations may not. Modifications to the underlying JCR nodes are
-     * saved by the current JCR {@link Session}.
-     * </p>
-     * <p>
-     * In addition to setting the inbound and outbound links, this method also
-     * updates the unreferenced/uncreated lists.
-     * </p>
-     * 
-     * @param page Name of the page to remove from the maps.
-     * @throws PageNotFoundException if the source page does not exist
-     * @throws ProviderException
-     * @throws RepositoryException if the links cannot be reset
-     */
-    protected void removeLinks( WikiPath page ) throws ProviderException, RepositoryException
-    {
-        if ( page == null )
-        {
-            throw new IllegalArgumentException( "Page cannot be null!" );
-        }
-        
-        // Get old linked pages; add to 'unreferenced list' if needed
-        List<WikiPath> referenced = getRefersTo( page );
-        for( WikiPath ref : referenced )
-        {
-            ref = resolvePage( ref );
-            List<WikiPath> referredBy = getReferredBy( ref );
-
-            // Is 'page' the last inbound link for the destination?
-            boolean unreferenced = referredBy.size() == 0 || (referredBy.size() == 1 && referredBy.contains( page ));
-            if( unreferenced )
-            {
-                addToProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, ref.toString(), false );
-            }
-            else
-            {
-                removeFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, ref.toString() );
-            }
-        }
-
-        // Remove all inbound links TO the page
-        // Let's pretend B and C ---> A
-
-        // First, remove all inbound links from B & C to A
-        String jcrPath = getReferredByJCRNode( page );
-        List<WikiPath> inboundLinks = getReferredBy( page );
-        for( WikiPath source : inboundLinks )
-        {
-            removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, source.toString() );
-        }
-
-        // Remove all outbound links FROM the page
-        // Let's pretend A ---> B and C
-
-        // Remove all inbound links from B &C to A
-        List<WikiPath> outboundLinks = getRefersTo( page );
-        for( WikiPath destination : outboundLinks )
-        {
-            jcrPath = ContentManager.getJCRPath( page );
-            removeFromProperty( jcrPath, PROPERTY_REFERS_TO, destination.toString() );
-
-            jcrPath = ContentManager.getJCRPath( destination );
-            removeFromProperty( jcrPath, PROPERTY_REFERS_TO, page.toString() );
-
-            jcrPath = getReferredByJCRNode( destination );
-            removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, page.toString() );
-        }
-
-        // Remove the deleted page from the 'uncreated' and
-        // 'unreferenced' lists
-        removeFromProperty( NOT_CREATED, PROPERTY_NOT_CREATED, page.toString() );
-        removeFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, page.toString() );
-    }
-
-    /**
-     * <p>
-     * Sets links between a WikiPage (source) and a list of pages it links to
-     * (destinations). The source page must exist, but the destination paths
-     * need not. In the source WikiPage, existing outbound <code>refersTo</code>
-     * links for the page are replaced. For all destination pages the page
-     * previously linked to, these pages' inbound <code>referredBy</code>
-     * links are also replaced.
-     * </p>
-     * <p>
-     * In addition to setting the inbound and outbound links, this method also
-     * updates the unreferenced/uncreated lists.
-     * </p>
-     * <p>
-     * Use this method when a new page has been saved, to a) set up its
-     * references and b) notify the referred pages of the references.
-     * Modifications to the underlying JCR nodes are not saved by the current
-     * JCR {@link Session}. Callers should call {@link Session#save()} to
-     * ensure any changes are persisted.
-     * </p>
-     * 
-     * @param source path of the page whose links should be updated
-     * @param destinations the paths the page should link to
-     * @throws ProviderException
-     * @throws RepositoryException
-     */
-    protected void setLinks( WikiPath source, List<WikiPath> destinations ) throws ProviderException, RepositoryException
-    {
-        if ( source == null || destinations == null )
-        {
-            throw new IllegalArgumentException( "Source and destinations cannot be null!" );
-        }
-
-        Session s = m_cm.getCurrentSession();
-
-        // Get old linked pages, and add to 'unreferenced list' if needed
-        List<WikiPath> referenced = getRefersTo( source );
-        for( WikiPath ref : referenced )
-        {
-            ref = resolvePage( ref );
-            List<WikiPath> referredBy = getReferredBy( ref );
-            boolean unreferenced = referredBy.size() == 0 || (referredBy.size() == 1 && referredBy.contains( source ));
-            if( unreferenced )
-            {
-                addToProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, ref.toString(), false );
-            }
-        }
-
-        // First, find all the current outbound links
-        List<WikiPath> oldDestinations = getRefersTo( source );
-        for( WikiPath oldDestination : oldDestinations )
-        {
-            String jcrPath = getReferredByJCRNode( oldDestination );
-            removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, source.toString() );
-        }
-
-        // Set the new outbound links
-        setRefersTo( source, destinations );
-
-        // Set the new referredBy links
-        for( WikiPath destination : destinations )
-        {
-            addReferredBy( destination, source );
-        }
-
-        // Is the page itself referenced by any other pages?
-        if( getReferredBy( source ).size() == 0 )
-        {
-            addToProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, source.toString(), false );
-        }
-        else
-        {
-            removeFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, source.toString() );
-        }
-
-        // Subtract each destination link from the 'unreferenced' list; possibly
-        // subtract from 'uncreated'
-        for( WikiPath ref : destinations )
-        {
-            ref = resolvePage( ref );
-            removeFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED, ref.toString() );
-            if( m_cm.pageExists( ref ) )
-            {
-                removeFromProperty( NOT_CREATED, PROPERTY_NOT_CREATED, ref.toString() );
-            }
-            else
-            {
-                addToProperty( NOT_CREATED, PROPERTY_NOT_CREATED, ref.toString(), false );
-            }
-        }
-
-        // Remove the saved page from the 'uncreated' list
-        removeFromProperty( NOT_CREATED, PROPERTY_NOT_CREATED, source.toString() );
-    }
-
-    /**
-     * Sets the "refersTo" outbound links between a source page and multiple
-     * destination pages. The source page must exist, although the destination
-     * pages need not. Modifications to the underlying JCR nodes are <em>not</em> saved
-     * by the current JCR {@link Session}. Callers should call
-     * {@link Session#save()} to ensure any changes are persisted.
-     * 
-     * @param source the page that originates the link
-     * @param destinations the pages that the source page links to. These are
-     *            expected to have been previously resolved
-     * @throws RepositoryException if the underlying JCR node cannot be
-     *             retrieved
-     */
-    protected void setRefersTo( WikiPath source, List<WikiPath> destinations ) throws ProviderException, RepositoryException
-    {
-        if ( source == null || destinations == null )
-        {
-            throw new IllegalArgumentException( "Source and destinations cannot be null!" );
-        }
-        
-        if( !m_cm.pageExists( source ) )
-        {
-            return;
-        }
-
-        // Transform the destination paths into a String array
-        String[] destinationStrings = new String[destinations.size()];
-        for( int i = 0; i < destinations.size(); i++ )
-        {
-            destinationStrings[i] = destinations.get( i ).toString();
-        }
-
-        // Retrieve the JCR node and add the 'refersTo' links
-        ContentManager cm = m_engine.getContentManager();
-        Node nd = cm.getJCRNode( ContentManager.getJCRPath( source ) );
-        nd.setProperty( PROPERTY_REFERS_TO, destinationStrings );
+        node.save();
     }
 }

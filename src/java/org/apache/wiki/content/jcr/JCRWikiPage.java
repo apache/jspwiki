@@ -28,13 +28,16 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.WikiPathResolver;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.content.WikiPathResolver.PathRoot;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -95,11 +98,11 @@ public class JCRWikiPage
     {
         m_engine  = engine;
         m_path    = path;
-        m_jcrPath = ContentManager.getJCRPath( path );
+        m_jcrPath = WikiPathResolver.getJCRPath( path, PathRoot.PAGES );
     }
 
     /**
-     *  Creates a JCRWikiPage using the default path.
+     *  Creates a JCRWikiPage using the default page path.
      *  
      *  @param engine a reference to the {@link org.apache.wiki.WikiEngine}
      *  @param node the JCR {@link javax.jcr.Node}
@@ -109,7 +112,7 @@ public class JCRWikiPage
     public JCRWikiPage(WikiEngine engine, Node node)
         throws RepositoryException, ProviderException
     {
-        this( engine, ContentManager.getWikiPath( node.getPath() ), node );
+        this( engine, WikiPathResolver.getInstance( engine.getContentManager() ).getWikiPath( node.getPath(), PathRoot.PAGES ), node );
     }
         
     /**
@@ -504,10 +507,22 @@ public class JCRWikiPage
 
     /**
      * {@inheritDoc}
+     * If the WikiPage cannot be cloned, an {@link InternalWikiException} is
+     * thrown
+     * @throws InternalWikiException if the backing JCR Node cannot be retrieved
      */
     public Object clone()
     {
-        JCRWikiPage p = new JCRWikiPage( m_engine, m_path );
+        JCRWikiPage p;
+        try
+        {
+            p = new JCRWikiPage( m_engine, m_path, getJCRNode() );
+        }
+        catch( RepositoryException e )
+        {
+            e.printStackTrace();
+            throw new InternalWikiException( e.getMessage(), e );
+        }
             
         return p;
     }
@@ -592,6 +607,14 @@ public class JCRWikiPage
         return m_engine.getReferenceManager().getReferredBy( m_path );
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    public List<WikiPath> getReferredBy() throws ProviderException
+    {
+        return m_engine.getReferenceManager().getReferredBy( m_path );
+    }
+
     /**
      *  {@inheritDoc}
      */

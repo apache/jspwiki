@@ -1,3 +1,28 @@
+2010-03-19 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-215
+
+        * Re-wrote ReferenceManager (again) to use JCR UUIDs internally
+        to track references between pages. This change means that the
+        nagging PageRenamer unit test failures are now fixed. RefManager
+        is also considerably simpler for rename cases, although some of
+        that is offset by slight added complexity in ContentManager for
+        add and delete cases.
+
+        * New singleton-per-wiki class WikiPathResolver, part of the
+        org.apache.content package, caches UUIDs and WikiPaths. It also
+        constructs canonical WikiPaths that based on WikiPage ATTR_TITLE
+        attributes from the JCR. This ensures consistent naming. These
+        too are cached. The caching is primitive and *should* use EHcache,
+        but doesn't yet. It *probably* makes sense to move logic from
+        WikiEngine.getFinalPageName (and related code) here, but that
+        wasn't a goal for this checkin.
+
+        * As of this build, we have just 2 failing unit tests: one
+        XML-RPC test and one DefaultAclManager test. I will add more
+        RefManager tests to exercise UUID-based references more thoroughly
+        (although the coverage is decent now as it is).
+
 2010-03-08 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-214

@@ -2294,8 +2294,11 @@ public class WikiEngine
      *                          place.
      * @param renameFrom        Name of the source page.
      * @param renameTo          Name of the destination page.
-     * @param changeReferrers   If true, then changes any referring links
-     *                          to point to the renamed page.
+     * @param changeReferrers   In previous versions of JSPWiki, this parameter
+     *                          indicated whether any referring links to the
+     *                          renamed page should be changed also. In 3.0,
+     *                          this parameter is ignored, and always assumed to
+     *                          be {@code true}
      *
      * @return The name of the page that the source was renamed to.
      *
@@ -2308,7 +2311,7 @@ public class WikiEngine
                               boolean changeReferrers)
         throws WikiException
     {
-        return m_contentManager.renamePage(context, renameFrom, renameTo, changeReferrers);
+        return m_contentManager.renamePage(context, renameFrom, renameTo );
     }
 
     /**

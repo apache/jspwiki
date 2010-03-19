@@ -40,17 +40,15 @@ public class PageRenamer
      *  @param context The current context.
      *  @param renameFrom The name from which to rename.
      *  @param renameTo The new name.
-     *  @param changeReferrers If true, also changes all the referrers.
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
     public String renamePage( WikiContext context, 
                               String renameFrom, 
-                              String renameTo, 
-                              boolean changeReferrers )
+                              String renameTo )
         throws WikiException
     {
         ContentManager cm = context.getEngine().getContentManager();
-        return cm.renamePage( context, renameFrom, renameTo, changeReferrers );
+        return cm.renamePage( context, renameFrom, renameTo );
     }
 }

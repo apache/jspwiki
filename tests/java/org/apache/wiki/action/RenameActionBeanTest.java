@@ -158,7 +158,7 @@ public class RenameActionBeanTest extends TestCase
         ValidationErrors errors;
         String referringText;
         
-        // Try renaming to 'TestRenamed' with missing 'changeReferences' param. Referee should not change.
+        // Try renaming to 'TestRenamed'. Referee should change to new name.
         trip = m_engine.authenticatedTrip( Users.ADMIN,Users.ADMIN_PASS, RenameActionBean.class );
         trip.setParameter("page", "Test");
         trip.setParameter("renameTo", "TestRenamed");
@@ -168,54 +168,8 @@ public class RenameActionBeanTest extends TestCase
         assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
         assertFalse( m_engine.pageExists( "Test" ) );
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
-        referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
-        assertFalse( referringText.contains("[TestRenamed]"));
-    }
-    
-    public void testRenameReferencesChangeRefsFalse() throws Exception {
-        MockRoundtrip trip;
-        ValidationErrors errors;
-        String referringText;
-        
-        // Try renaming to 'TestRenamed' with 'changeReferences' = 'false'. Referee should not change.
-        m_engine.saveText("Test", "This is a test.");
-        m_engine.saveText("ReferstoTest", "This page refers to [Test].");
-        trip = m_engine.authenticatedTrip( Users.ADMIN,Users.ADMIN_PASS, RenameActionBean.class );
-        trip.setParameter("page", "Test");
-        trip.setParameter("renameTo", "TestRenamed");
-        trip.setParameter("changeReferences", "false");
-        trip.execute("rename");
-         errors = trip.getValidationErrors();
-        assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
-        assertFalse( m_engine.pageExists( "Test" ) );
-        assertTrue( m_engine.pageExists( "TestRenamed" ) );
-        referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
-        assertFalse( referringText.contains("[TestRenamed]"));
-        m_engine.deletePage( "TestRenamed" );
-    }
-        
-    public void testRenameReferencesChangeRefsTrue() throws Exception {
-        MockRoundtrip trip;
-        ValidationErrors errors;
-        String referringText;
-        
-        // Try renaming to 'TestRenamed' with 'changeReferences' = 'true'. NOW, referee should change!
-        m_engine.saveText("Test", "This is a test.");
-        m_engine.saveText("ReferstoTest", "This page refers to [Test].");
-        trip = m_engine.authenticatedTrip( Users.ADMIN,Users.ADMIN_PASS, RenameActionBean.class );
-        trip.setParameter("page", "Test");
-        trip.setParameter("renameTo", "TestRenamed");
-        trip.setParameter("changeReferences", "true");
-        trip.execute("rename");
-        errors = trip.getValidationErrors();
-        assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
-        assertFalse( m_engine.pageExists( "Test" ) );
-        assertTrue( m_engine.pageExists( "TestRenamed" ) );
-        referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
+        referringText = m_engine.getPage("ReferstoTest").getContentAsString();
         assertTrue( referringText.contains("[TestRenamed]"));
-        m_engine.deletePage( "TestRenamed" );
     }
     
     public void testRenameToSameName() throws Exception {
