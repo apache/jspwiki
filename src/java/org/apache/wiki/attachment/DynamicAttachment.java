@@ -90,7 +90,7 @@ public class DynamicAttachment extends JCRWikiPage implements Attachment
                              String fileName,
                              DynamicAttachmentProvider provider)
     {
-        super(engine, WikiPath.valueOf( parentPage ).resolve( fileName ) );
+        super( engine, WikiPath.valueOf( parentPage ).resolve( fileName ) );
         m_provider = provider;
     }
 

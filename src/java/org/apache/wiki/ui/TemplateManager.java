@@ -93,7 +93,6 @@ public class TemplateManager extends ModuleManager
      * {@link #DEFAULT_TEMPLATE} will be used for all resource requests.</p>
      * <p>Note that because the resource resolver is stashed as a ServletContext
      * attribute, it is (effectively) lazily initialized once per ServletContext.
-     * The stashed resolver is 
      * @param context the servlet context
      * @return the unmodifiable map
      */

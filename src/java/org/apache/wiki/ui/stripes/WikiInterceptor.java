@@ -30,6 +30,7 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import net.sourceforge.stripes.action.ActionBean;
@@ -142,6 +143,11 @@ public class WikiInterceptor implements Interceptor
         {
             case RequestInit: {
                 HttpServletRequest request = context.getActionBeanContext().getRequest();
+                HttpServletResponse response = context.getActionBeanContext().getResponse();
+
+                // Add Microsoft security headers: see http://blogs.msdn.com/ie/archive/2009/01/27/ie8-security-part-vii-clickjacking-defenses.aspx
+                response.addHeader( "X-FRAME-OPTIONS", "DENY" );
+
                 WikiEngine engine = ((WikiActionBeanContext) context.getActionBeanContext()).getEngine();
                 MDC.put( engine.getApplicationName() + ":" + request.getRequestURI(), "WikiInterceptor" );
                 break;

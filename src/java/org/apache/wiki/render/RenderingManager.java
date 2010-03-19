@@ -366,8 +366,8 @@ public class RenderingManager implements WikiEventListener, InternalModule
                     Collection<WikiPath> referringPages = m_engine.getReferenceManager().getReferredBy(pageName);
 
                     //
-                    //  Flush also those pages that refer to this page (if an nonexistant page
-                    //  appears; we need to flush the HTML that refers to the now-existant page
+                    //  Flush also those pages that refer to this page (if an non-existent page
+                    //  appears; we need to flush the HTML that refers to the now-existent page
                     //
                     if( referringPages != null )
                     {
