@@ -1643,11 +1643,18 @@ Style: spin
 	Reusable spin class to show rotating icon to indicate background processing,
 	or loading of ajax content.
 
+	The icon (background image) is positioned at the right-hand side of the
+	enclosing element.
+
+Example:
+>	<span class='spin'>(type ahead)</span>
+
 */
 .spin {
-	background:url(images/spin.gif) no-repeat center;
-	height:16px;
-	text-indent:20px; /* shift optional text inside spin element */
+	background:url(images/spin.gif) no-repeat 0% 50%;
+	padding-right:16px;
+	xxheight:16px;
+	xxtext-indent:20px; /* shift optional text inside spin element */
 }
 
 /*

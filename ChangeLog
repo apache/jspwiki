@@ -1,3 +1,31 @@
+2010-03-21 Dirk Frederickx <brushed@apache.org>
+
+        * v3.0.0-svn-216 : AJAX/JSON fixes.
+
+        * EventResolution now returns a static JSON object iso of 
+          JavaScriptResolution.  JSON objects are more safe (no eval)
+          but assume that the converted java beans are acyclical.
+          (which is ok in our case)
+          The overall AJAX/JSON handling is still work in progress.
+        
+        * The client javascript is updated accordingly,
+          with a simplified Stripes.submitFormEvent()
+
+        * The Preview functionality is now working through JSON objects.
+        
+        * I'm still working on the quick-navigation search functionality.
+          For now, it is broken: the SearchActionBean.quickSearch() 
+          needs to some update to use the new json format.
+          
+        * Fixed the AttachmentTab so slimbox preview of attachments is 
+          working again.
+          
+        * Fixed the section edit links.
+        
+        * Fixed the section handling routines. Apparently the element with 
+          ID="pagecontent" was removed.
+
+          
 2010-03-19 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-215

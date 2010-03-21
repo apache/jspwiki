@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Message;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.ajax.JavaScriptBuilder;
+
+import org.json.JSONObject;
+
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.tag.ErrorsTag;
 import net.sourceforge.stripes.tag.MessagesTag;
@@ -219,7 +221,7 @@ public class EventResolution implements Resolution
         }
     }
 
-    private final JavaScriptBuilder m_builder;
+    private final JSONObject m_jsonobject;
     
     /**
      * Constructs a new EventResolution for a supplied ActionBeanContext and
@@ -231,7 +233,10 @@ public class EventResolution implements Resolution
      */
     public EventResolution( ActionBeanContext context, Object... objects )
     {
-        m_builder = new JavaScriptBuilder( new Result( context, objects ) );
+
+        //FIXME: returning JSON object iso JavascriptResolution
+        m_jsonobject = new JSONObject( new Result(context, objects) );
+        
     }
 
     /**
@@ -242,9 +247,12 @@ public class EventResolution implements Resolution
      */
     public void execute( HttpServletRequest request, HttpServletResponse response ) throws Exception
     {
-        response.setContentType( "text/javascript" );
-        m_builder.setRootVariableName( "eventResponse" );
-        m_builder.build( response.getWriter() );
+        
+        response.setContentType( "application/json" );
+
+        m_jsonobject.write( response.getWriter() );
+        
         response.flushBuffer();
+
     }
 }

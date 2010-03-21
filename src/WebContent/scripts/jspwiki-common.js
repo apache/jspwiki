@@ -164,7 +164,7 @@ Element.implement({
 	/*
 	Function: hide
 		Hide the element: set 'display' style to 'none'.
-		Ref. mootools.1.2.3
+		Ref. mootools.1.2.4
 
 	Returns:
 		(element) - This Element
@@ -177,16 +177,16 @@ Element.implement({
 		var d;
 		try {
 			// IE fails here if the element is not in the dom
-			if ((d = this.getStyle('display')) == 'none') d = null;
+			d = this.getStyle('display');
 		} catch(e){}
 
-		return this.store('originalDisplay', d || 'block').setStyle('display', 'none');
+		return this.store('originalDisplay', d || '').setStyle('display', 'none');
 	},
 
 	/*
 	Function: show
 		Show the element: set 'display' style to '' (default display style)
-		Ref. mootools.1.2.3
+		Ref. mootools.1.2.4
 
 	Returns:
 		(element) - This Element
@@ -196,7 +196,8 @@ Element.implement({
 	*/
 	show: function(display) {
 		//return this.setStyle('display','');
-		return this.setStyle('display', display || this.retrieve('originalDisplay') || 'block');
+		display = display || this.retrieve('originalDisplay') || 'block';
+		return this.setStyle('display', (display == 'none') ? 'block' : display);
 	},
 
 	/*
@@ -464,7 +465,7 @@ var Wiki = {
 			$E('div.tabmenu').id="toptabmenu";
         }
 
-		// read all meta elements starting with wiki
+		// read all meta elements prefixed with 'wiki'
 		$$('meta').each( function(el){
 			var n = el.get('name') || '';
 			if( n.indexOf('wiki') == 0 ) this[n.substr(4)] = el.get('content');
@@ -478,7 +479,9 @@ var Wiki = {
 
 		self.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:self.BasePath, duration:20});
 
-		self.allowEdit = !!$E('a.edit'); //deduct permission level
+		//FIXME: temporary fixes for v3.0.0  - check for final 'edit' marker
+		//self.allowEdit = !!$E('a.edit'); //deduct permission level
+		self.allowEdit = !!$('menu-edit'); //deduct permission level
 		self.url = null;
 		self.parseHash.periodical(500);
 
@@ -535,7 +538,10 @@ var Wiki = {
 
 	*/
 	getSections: function(){
-		return $$('#pagecontent *[id^=section]').filter(
+
+		//fixme: #pagecontent seems to be removed in v3.0.0 ??
+		// temporary using #view.
+		return $$('#view *[id^=section]').filter(
 			function(item){ return(item.id != 'section-TOC') }
 		);
 	},
@@ -648,7 +654,7 @@ var Wiki = {
 	/*
 	Function: setFocus
 		Set the focus of certain form elements, depending on the context of the page.
-		Protect agains IE6: you can't set the focus on invisible elements.
+		Protect against IE6: you can't set the focus on invisible elements.
 	*/
 	setFocus: function(){
 		/* plain.jsp,   login.jsp,   prefs/profile, prefs/prefs, find */
@@ -1451,28 +1457,73 @@ var SearchBox = {
 			$('searchOutput').empty();
 			return;
 		}
-		$('searchTarget').set('html','('+qv+') :');
-		$('searchSpin').show();
+		$('searchTarget').set({'class':'spin', html:'('+qv+') :'});
 
-		Wiki.jsonrpc('search.findPages', [qv,20], function(result){
-				$('searchSpin').hide();
-				if(!result.list) return;
+		//Wiki.jsonrpc('search.findPages', [qv,20], function(result){
+		Stripes.submitFormEvent('searchForm', 'quickSearch', 'searchOutput', function(response){
+
+			$('searchTarget').removeClass('spin');
+
+			if(response.results){
+				//fixme: take json as input, not html
+				$('searchOutput').empty().set('html',response.results);
+				//alert(JSON.encode(response.results));
+
+
+				var ul = $('searchOutput'),
+					editurl = Wiki.EditUrl,
+					edit = new Element('a',{
+						'class':'editsection',
+						html:'quick.edit'.localize()
+					}),
+					clone = new Element('a',{
+						'class':'editsection',
+						html:'[clone]'	//'quick.clone'.localize()
+					});
+
+				//check first element
+				//if not equal to input: input page does not exist
+				//Create link with New Page and
+				//add clone links to the suggested pages ??? NOK
+				//alert(editurl);
+				ul.getElements('li').each(function(el){
+					var url = el.getFirst().get('href');
+					//var editurl =
+					//alert(url);
+					el.adopt(
+						edit.set('href', url ).clone(),
+						clone.set('href', url ).clone()
+					)
+				});
+				edit.dispose();
+				clone.dispose();
+
+				/*
+				<li>
+					<a href="view page">page</a>
+					<span class="score">(n)</span>
+					<a class="editsection" href="edit page">[Edit]</a>
+					<a class="editsection" href="clone page">[Clone]</a>
+				</li>
+
+
+
+
+				*/
+/*
 				var frag = new Element('ul');
-
-				result.list.each(function(el){
+				response.results.list.each(function(el){
 					new Element('li').adopt(
 						new Element('a',{'href':Wiki.toUrl(el.map.page), html:el.map.page }),
 						new Element('span',{'class':'small', html:" ("+el.map.score+")" })
 					).inject(frag);
 				});
 				$('searchOutput').empty().adopt(frag);
-				Wiki.locatemenu( $('query'), $('searchboxMenu') );
-		});
+*/
 
-	//fixme ??
-    //Stripes.submitFormEvent('searchForm', 'quickSearch', 'searchOutput', null);
-	//	$('searchSpin').hide();
-	//	Wiki.locatemenu( $('query'), $('searchboxMenu') );
+				Wiki.locatemenu( $('query'), $('searchboxMenu') );
+			}
+		});
 	} ,
 
 	/* navigate to url, after smart pagename handling */
@@ -3115,66 +3166,84 @@ var Dialog = new Class({
 
 });
 
+
 /*
 Class: Stripes
 	The main javascript class to support AJAX calls to Stripes ActionBeans.
 */
 var Stripes = {
-  /*
-  Function: submitFormEvent
-    Submits a form to its parent ActionBean URL, using a supplied event.
 
-  Arguments:
-    formName -  ID of the form to submit. It will be submitted to the
-                action URL supplied by the form element itself. We assume
-                this is a Stripes ActionBean URL; for example, this URL
-                is likely to be generated by a s:form tag.
-    event -     the Stripes event handler to invoke. Its name should match
-                an event named in a @HandlesEvent method annotation. The
-                event method must return an EventResolution, the response
-                for which will be eval'ed and be assigned to the variable
-                'eventResponse.' See org.apache.wiki.ui.stripes.EventResolution.
-    divTarget - if the 'callback' function is not supplied, the results returned
-                by the AJAX call will be injected into this target div as a
-                single string that includes the HTML representation of any Stripes
-                messages or validation errors prepended, plus the result object(s).
-                The entire string will be wrapped in a <div> whose class is
-                "eventResponse".
-    callback -  a callback function to invoke. The 'eventResponse' variable
-                will be passed to this function as a parameter. It contains the
-                response object, which can be any primitive type, an array, map
-                or anything supported by net.sourceforge.stripes.ajax.JavaScriptBuilder.
-                It also contains two properties that contain HTML representations of
-                any errors or Stripes messages set server-side.
-  */
-  submitFormEvent: function( formName, event, divTarget, callback ){
-    var form = $(formName);
-    var url = form.action;
-    var params = event + "=&" + form.toQueryString();
-    var request = new Request( {
-      url: url,
-      data: params,
-      method: 'post',
-      evalResponse: true,
-      onComplete: function(response) {
-        // If no custom callback function supplied, put results into the div
-        if (!callback) {
-          var newContent = '<div class="eventResponse">';
-          if (eventResponse.errors) { newContent += eventResponse.errors; }
-          if (eventResponse.messages) { newContent += eventResponse.messages; }
-          if (eventResponse.results) { newContent += eventResponse.results; }
-          newContent += "</div>";
-          $(divTarget).empty();
-          $(divTarget).set('html',newContent);
-        }
-        // Otherwise, call the callback function
-        if (callback) {
-          callback(eventResponse);
-        }
-      }
-    });
-    request.send();
-  }
+	/*
+	Function: submitFormEvent
+    	Submits a form to its parent ActionBean URL, using a supplied event.
+
+	Arguments:
+		formName - ID of the form to submit. It will be submitted to the
+			action URL supplied by the form element itself. We assume
+			this is a Stripes ActionBean URL; for example, this URL
+			is likely to be generated by a s:form tag.
+		event - the Stripes event handler to invoke. Its name should match
+			an event named in a @HandlesEvent method annotation. The
+			event method must return an EventResolution, the response
+			for which will be eval'ed and be assigned to the variable
+			'eventResponse.' See org.apache.wiki.ui.stripes.EventResolution.
+		divTarget - if the 'callback' function is not supplied, the results returned
+			by the AJAX call will be injected into this target div as a
+			single string that includes the HTML representation of any Stripes
+			messages or validation errors prepended, plus the result object(s).
+			The entire string will be wrapped in a <div> whose class is
+			"eventResponse".
+		callback -  a callback function to invoke. The 'eventResponse' variable
+			will be passed to this function as a parameter. It contains the
+			response object, which can be any primitive type, an array, map.
+			or anything supported by org.json.JSONObject.
+			It also contains two properties that contain HTML representations of
+			any errors or Stripes messages set server-side.
+
+			The returned object looks like this:
+
+			(start code)
+			{
+				"class":"class org.apache.wiki.ui.stripes.EventResolution$Result",
+				"results":"...",
+				"errors":"...",
+				"messages":"..."
+			}
+			(end)
+
+	*/
+    submitFormEvent: function( formName, event, divTarget, callback ){
+
+    	var form = $(formName);
+
+    	new Request.JSON({
+    		url: form.action,
+    		data: event + "=&" + form.toQueryString(),
+
+    		onComplete: function( response ){
+
+				// If no custom callback function supplied, put results into the div
+		        // Otherwise, call the callback function
+        		if( $type(callback)=='function' ){
+
+          			callback( response, divTarget );
+
+        		} else {
+
+          			$(divTarget).empty().adopt(
+			          	new Element('div',{
+			          		'class':'eventResponse',
+			          		html: ['results','errors','messages'].map( function(item){
+		            			return response[item] || '';
+		            		})
+			          	})
+          			);
+
+		        } /* end if */
+	        } /* onComplete */
+    	}).send();
+
+  	}
 }
 
 

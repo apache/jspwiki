@@ -237,6 +237,13 @@ public class SearchActionBean extends AbstractActionBean
     public Resolution quickSearch()
     {
         m_results = m_query == null ? NO_RESULTS : doSearch( m_query );
+ 
+        //FIXME: casting m_results (bean) to 'Object' type seems NOK.
+        //   So, for now, still using manual conversion to html
+        //   iso straight translation to json object.
+        //
+        //return new EventResolution( getContext(), m_results );
+
         String html = null;
         StringBuilder b = new StringBuilder();
         if( m_results.size() > 0 )
@@ -254,5 +261,6 @@ public class SearchActionBean extends AbstractActionBean
             html = b.toString();
         }
         return new EventResolution( getContext(), html );
+        
     }
 }

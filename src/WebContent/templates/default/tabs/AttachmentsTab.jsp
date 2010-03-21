@@ -28,7 +28,7 @@
 <wiki:HasAttachments>
   <h3><fmt:message key="attach.list" /></h3>
   <div class="zebra-table">
-    <div class="slimbox-img sortable">
+    <div class="slimbox-image sortable">
       <table class="wikitable">
         <tr>
           <th><fmt:message key="info.attachment.type" /></th>
@@ -48,7 +48,7 @@
               <div class="mime ${fn:replace(attachment.contentType,'/','-')}" />
             </td>
             <td title="${attachment.name}">
-              <s:link beanclass="org.apache.wiki.action.AttachmentActionBean" event="download">
+              <s:link beanclass="org.apache.wiki.action.AttachmentActionBean" class="attachment">
                 <s:param name="page" value="${attachment.path}" />
                 ${wiki:shorten(attachment.name,30)}
               </s:link>

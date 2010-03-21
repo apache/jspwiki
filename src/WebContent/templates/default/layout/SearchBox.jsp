@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -24,7 +24,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page errorPage="/Error.jsp" %>
 <%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
-<%-- Powered by jswpwiki-common.js//SearchBox --%>
+<%-- Powered by jspwiki-common.js//SearchBox --%>
 
 <s:form beanclass="org.apache.wiki.action.SearchActionBean" class="wikiform" id="searchForm" acceptcharset="UTF-8">
 
@@ -32,7 +32,7 @@
   <s:text onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
          onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
             name="query" id="query"
-            size="20" 
+            size="20"
        accesskey="f"><fmt:message key='sbox.search.submit'/></s:text>
   <s:submit name="search" id="searchSubmit" title="${goTitle}" value="${goTitle}" />
 
@@ -44,7 +44,7 @@
       <a href="#" id='quickEdit' class='btn'
       onclick="SearchBox.navigate( '<s:url beanclass="org.apache.wiki.action.EditActionBean"><s:param name="page" value="Main"/></s:url>','<fmt:message key="sbox.edit.title"/>' );"
         title="<fmt:message key="sbox.edit.title"/>"><span><span><fmt:message key="sbox.edit"/></span></span></a>
-      <a href="#" id='quickClone' class='btn'	
+      <a href="#" id='quickClone' class='btn'
       onclick="return SearchBox.navigate( '<s:url beanclass="org.apache.wiki.action.EditActionBean"><s:param name="page" value="Main"/></s:url>', '<fmt:message key="sbox.clone.title"/>', true );"
         title="<fmt:message key="sbox.clone.title"/>"><span><span><fmt:message key="sbox.clone"/></span></span></a>
       <a href="#" id="advancedSearch" class='btn'
@@ -54,7 +54,6 @@
     <div id="searchResult">
 	  <fmt:message key='sbox.search.result' />
       <span id="searchTarget"><fmt:message key='sbox.search.target' /></span>
-      <span id="searchSpin" class="spin" style="position:absolute;display:none;"></span>
 	  <div id="searchOutput"></div>
     </div>
     <div id="recentSearches" style="display:none;">
