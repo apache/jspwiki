@@ -11,7 +11,7 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.ui.stripes.EventResolution;
+import org.apache.wiki.ui.stripes.AjaxResolution;
 
 public class EditDialogActionBean extends AbstractActionBean
 {
@@ -24,7 +24,7 @@ public class EditDialogActionBean extends AbstractActionBean
      *
      *  @param wikiName the page name
      *  @param maxLength maximum number of suggestions
-     *  @return an EventResolution containing the suggestions as a JavaScript array of Strings
+     *  @return an AjaxResolution containing the suggestions as a JavaScript array of Strings
      */
     @DefaultHandler
     @HandlesEvent( "suggestions" )
@@ -80,6 +80,6 @@ public class EditDialogActionBean extends AbstractActionBean
             log.debug("Suggestion request for "+wikiName+" done in "+sw );
         }
         
-        return new EventResolution( getContext(), list );
+        return new AjaxResolution( getContext(), list );
     }
 }

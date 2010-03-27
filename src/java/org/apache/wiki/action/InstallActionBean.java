@@ -625,7 +625,7 @@ public class InstallActionBean extends AbstractActionBean
 
     /**
      * AJAX event method that tests LDAP authentication based on the bind-user
-     * settings, returning an {@link EventResolution} whose response object is
+     * settings, returning an {@link AjaxResolution} whose response object is
      * an array of strings.
      * 
      * @return the results
@@ -643,7 +643,7 @@ public class InstallActionBean extends AbstractActionBean
 
     /**
      * AJAX event method that tests the connection to the LDAP server, returning
-     * an {@link EventResolution} whose response object is
+     * an {@link AjaxResolution} whose response object is
      * an array of strings.
      * 
      * @return the results
@@ -669,12 +669,12 @@ public class InstallActionBean extends AbstractActionBean
                 errors.addGlobalError( new SimpleError( " Cause: " + e.getCause().getMessage() ) );
             }
         }
-        return new EventResolution( getContext() );
+        return new AjaxResolution( getContext() );
     }
 
     /**
      * AJAX event method that tests the LDAP role lookups based on the
-     * configured user base, returning an {@link EventResolution}
+     * configured user base, returning an {@link AjaxResolution}
      * whose response object is an array of strings.
      * 
      * @return the results
@@ -713,12 +713,12 @@ public class InstallActionBean extends AbstractActionBean
                 errors.addGlobalError( new SimpleError( " Cause: " + e.getCause().getMessage() ) );
             }
         }
-        return new EventResolution( getContext() );
+        return new AjaxResolution( getContext() );
     }
 
     /**
      * AJAX event method that tests the LDAP user lookups based on the
-     * configured user base, returning an {@link EventResolution} whose
+     * configured user base, returning an {@link AjaxResolution} whose
      * response object is an array of strings.
      * 
      * @return the results
@@ -762,7 +762,7 @@ public class InstallActionBean extends AbstractActionBean
                 errors.addGlobalError( new SimpleError( " Cause: " + e.getCause().getMessage() ) );
             }
         }
-        return new EventResolution( getContext() );
+        return new AjaxResolution( getContext() );
     }
 
     /**

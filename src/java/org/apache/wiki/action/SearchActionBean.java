@@ -37,7 +37,7 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.ui.stripes.AjaxEvent;
-import org.apache.wiki.ui.stripes.EventResolution;
+import org.apache.wiki.ui.stripes.AjaxResolution;
 import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
@@ -215,7 +215,7 @@ public class SearchActionBean extends AbstractActionBean
      * for this ActionBean. Results are streamed back to the client as an array
      * of JSON-encoded SearchResult objects.
      * 
-     * @return always returns an {@link EventResolution} containing the
+     * @return always returns an {@link AjaxResolution} containing the
      *         results; this may be a zero-length array
      */
     @AjaxEvent
@@ -229,7 +229,7 @@ public class SearchActionBean extends AbstractActionBean
     /**
      * AJAX event method that provides quick-search used in {@code SearchBox.jsp}.
      * 
-     * @return a {@link EventResolution} containing HTML to be inserted into an
+     * @return an {@link AjaxResolution} containing HTML to be inserted into an
      *         element.
      */
     @AjaxEvent
@@ -242,7 +242,7 @@ public class SearchActionBean extends AbstractActionBean
         //   So, for now, still using manual conversion to html
         //   iso straight translation to json object.
         //
-        //return new EventResolution( getContext(), m_results );
+        //return new AjaxResolution( getContext(), m_results );
 
         String html = null;
         StringBuilder b = new StringBuilder();
@@ -260,7 +260,6 @@ public class SearchActionBean extends AbstractActionBean
             b.append( "</ul>" );
             html = b.toString();
         }
-        return new EventResolution( getContext(), html );
-        
+        return new AjaxResolution( getContext(), html );
     }
 }

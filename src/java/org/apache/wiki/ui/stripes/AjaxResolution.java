@@ -11,26 +11,23 @@ import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Message;
 import net.sourceforge.stripes.action.Resolution;
-
-import org.json.JSONObject;
-
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.tag.ErrorsTag;
 import net.sourceforge.stripes.tag.MessagesTag;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
+import org.json.JSONObject;
+
 /**
  * <p>
- * Resolution that returns an {@code eval}-able set of JavaScript statements
- * that builds a variable containing the result of an AJAX call. The object is
- * called {@code eventResponse} and contains the call results, the
- * ActionBeanContext messages and validation errors. It has four properties:
+ * Resolution that returns a JSON-encoded object that contains the call results, the
+ * ActionBeanContext messages and validation errors. It has three properties:
  * </p>
  * <ul>
  * <li>{@code results} - the Object (or an array of Objects) that represents
  * the results of the AJAX call. The object or objects can be just about anything that
- * {@link net.sourceforge.stripes.ajax.JavaScriptBuilder} can encode.
+ * {@link org.json.JSONObject} can encode.
  * It is most commonly a single HTML string.</li>
  * <li>{@code errors} - any global or field-level errors, as an HTML string. If
  * no errors, this property will be {@code null}</li>
@@ -50,7 +47,7 @@ import net.sourceforge.stripes.validation.ValidationErrors;
  * stripes.messages.afterMessage} and {@code stripes.messages.footer} are used.
  * </p>
  */
-public class EventResolution implements Resolution
+public class AjaxResolution implements Resolution
 {
     /**
      * Lightweight class that represents the result of an AJAX call, including
@@ -62,16 +59,16 @@ public class EventResolution implements Resolution
 
         private final String m_messages;
 
-        private final Object m_rootObject;
+        private final Object m_result;
 
         /**
-         * Constructs a new EventResolution.
+         * Constructs a new AjaxResolution.
          * 
          * @param context the ActionBeanContext that supplies the messages and
          *            validation errors.
-         * @param objects zero or more Objects to be returned
+         * @param object a JavaBean, String or Map object to be returned
          */
-        public Result( ActionBeanContext context, Object... objects )
+        public Result( ActionBeanContext context, Object object )
         {
             super();
 
@@ -81,19 +78,8 @@ public class EventResolution implements Resolution
             // Set the validation errors
             m_errors = context.getValidationErrors().size() > 0 ? generateErrors( context ) : null;
 
-            // Set the root object
-            if ( objects.length == 1 )
-            {
-                m_rootObject = objects[0];
-            }
-            else if ( objects.length > 0 )
-            {
-                m_rootObject = objects;
-            }
-            else
-            {
-                m_rootObject = null;
-            }
+            // Set the result object
+            m_result = object;
         }
 
         /**
@@ -122,11 +108,11 @@ public class EventResolution implements Resolution
          * was passed, that object will be returned. Otherwise, an array of
          * objects will be returned.
          * 
-         * @return the root object; {@code null}, one object, or an array of objects
+         * @return the result object, with will always be a JavaBean, String, or Map
          */
         public Object getResults()
         {
-            return m_rootObject;
+            return m_result;
         }
 
         /**
@@ -224,35 +210,41 @@ public class EventResolution implements Resolution
     private final JSONObject m_jsonobject;
     
     /**
-     * Constructs a new EventResolution for a supplied ActionBeanContext and
-     * result objects.
+     * Constructs a new AjaxResolution for a supplied ActionBeanContext and
+     * {@code null} result object. The ActionBean messages, validation errors and result
+     * object are wrapped with a {@link Result} object. This constructor is
+     * used when returning messages or validation errors only, without a response
+     * body.
      * @param context the ActionBeanContext
-     * @param objects zero, one or more objects that represent the result
-     * of an {@link org.apache.wiki.ui.stripes.AjaxEvent}-annotated
-     * event method
      */
-    public EventResolution( ActionBeanContext context, Object... objects )
+    public AjaxResolution( ActionBeanContext context )
     {
-
-        //FIXME: returning JSON object iso JavascriptResolution
-        m_jsonobject = new JSONObject( new Result(context, objects) );
-        
+        this( context, null );
     }
 
     /**
-     * Converts the ActionBean messges, validation errors and root object passed
-     * in to a series of JavaScript statements that reconstruct the
-     * {@link Result} object in JavaScript, and store the object under the
-     * variable name {@code eventResponse}.
+     * Constructs a new AjaxResolution for a supplied ActionBeanContext and
+     * result object. The ActionBean messages, validation errors and result
+     * object are wrapped with a {@link Result} object.
+     * @param context the ActionBeanContext
+     * @param object a JavaBean, String or Map that represents the result
+     * of an {@link org.apache.wiki.ui.stripes.AjaxEvent}-annotated
+     * event method
+     */
+    public AjaxResolution( ActionBeanContext context, Object object )
+    {
+        m_jsonobject = new JSONObject( new Result( context, object ) );
+    }
+
+    /**
+     * Converts the {@link Result} object that represents the ActionBean messages,
+     * validation errors and result passed in the constructor
+     * into a JSON-encoded object.
      */
     public void execute( HttpServletRequest request, HttpServletResponse response ) throws Exception
     {
-        
         response.setContentType( "application/json" );
-
         m_jsonobject.write( response.getWriter() );
-        
         response.flushBuffer();
-
     }
 }

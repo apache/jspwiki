@@ -355,7 +355,7 @@ public class WikiInterceptor implements Interceptor
      * <p>
      * To ensure that AJAX-related validation errors are handled correctly, if the
      * current event method is annotated with {@link org.apache.wiki.ui.stripes.AjaxEvent},
-     * an {@link org.apache.wiki.ui.stripes.EventResolution} will be returned
+     * an {@link org.apache.wiki.ui.stripes.AjaxResolution} will be returned
      * if one or more validation errors were generated earlier in the lifecycle.
      * </p>
      * <p>
@@ -397,7 +397,7 @@ public class WikiInterceptor implements Interceptor
         Method handler = context.getHandler();
         if ( handler.getAnnotation( AjaxEvent.class ) != null && errors.size() > 0 )
         {
-            return new EventResolution( actionBeanContext );
+            return new AjaxResolution( actionBeanContext );
         }
 
         // Get the event handler method

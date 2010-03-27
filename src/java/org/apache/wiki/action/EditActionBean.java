@@ -101,11 +101,11 @@ public class EditActionBean extends AbstractPageActionBean
     private long m_startTime = -1;
 
     /**
-     * AJAX event handler that returns an {@link EventResolution} containing
+     * AJAX event handler that returns an {@link AjaxResolution} containing
      * a preview of the page contents, as submitted by the {@code wikiText}
      * field.
      * 
-     * @return always returns a {@link EventResolution} containing the
+     * @return always returns an {@link AjaxResolution} containing the
      * results
      */
     @AjaxEvent
@@ -124,8 +124,8 @@ public class EditActionBean extends AbstractPageActionBean
         // Get the text directly from the RenderingManager, without caching
         String result = renderer.getHTML( context, doc );
 
-        // Return an EventResolution
-        Resolution r = new EventResolution( context, result );
+        // Return an AjaxResolution
+        Resolution r = new AjaxResolution( context, result );
         return r;
     }
 
