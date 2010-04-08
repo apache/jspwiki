@@ -1,3 +1,9 @@
+2010-04-08  Harry Metske <metskem@apache.org>
+
+        * 2.8.4-svn-10
+        
+        * JSPWIKI-644: NPE after page externally modified, reported by Fabian Haupt.
+
 2010-02-21  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.4-svn-9

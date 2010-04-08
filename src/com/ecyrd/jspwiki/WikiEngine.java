@@ -1640,7 +1640,7 @@ public class WikiEngine
             StopWatch sw = new StopWatch();
             sw.start();
 
-            if( runFilters )
+            if( runFilters && m_filterManager != null )
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
             MarkupParser mp = m_renderingManager.getParser( context, pagedata );
@@ -1659,7 +1659,7 @@ public class WikiEngine
             {
                 result = m_renderingManager.getHTML( context, doc );
 
-                if( runFilters )
+                if( runFilters && m_filterManager != null )
                     result = m_filterManager.doPostTranslateFiltering( context, result );
             }
 
