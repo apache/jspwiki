@@ -1,3 +1,10 @@
+2010-04-23  Dirk Frederickx <brushed@apache.org>
+
+        * 2.8.4-svn-11
+        
+        * JSPWIKI-627: Login and MyPrefs buttons not properly aligned
+        in Chrome and Safari.
+
 2010-04-08  Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-10

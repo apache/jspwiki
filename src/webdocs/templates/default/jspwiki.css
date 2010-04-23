@@ -886,6 +886,7 @@ label[for="edittoc"] {
 .userbox {
 	overflow:hidden;
 	padding:0.5em 0;
+	white-space:nowrap;
 }
 #favorites .userbox a.action, #favorites .userbox .username {
 	float:left;
@@ -1079,7 +1080,6 @@ a.action.logout {
 	line-height:normal;
 	border:1px solid #ddd;
 	background:#f9f9f9;
-	white-space:nowrap;
 }
 a.action.edit, a.action.more {
 	margin-left:4px;
@@ -1632,6 +1632,19 @@ div.collapse li {
 .collapse .collapsebody, .collapsebox .collapse .collapsebody {
 	padding-left:1.5em;
 }
+
+/*
+Make sure to print collapsed items as it they were not collapsed.
+This requires some smart 'specific' css selector rules, in order to
+overwrite the style set by the mootools animation routines.
+*/
+@media print {
+.collapse .collapsebody ul, .collapsebox div.collapsebody  {
+	height:auto !important;
+}
+}
+
+
 /* ie7 hack */
 *:first-child+html .collapse .collapsebody,
 *:first-child+html .collapsebox .collapse .collapsebody {
