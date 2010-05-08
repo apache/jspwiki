@@ -99,7 +99,7 @@ Observations
 
 UserDatabaseLoginModule will be the only remaining JAAS LoginModule, unless substituted by the admin at runtime
 Recommended strategy & config:
-loginModule.class=(class name). This class MUST have a zero-argument constructor (as noted in LoginModule API). Default value will be com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule.
+loginModule.class=(class name). This class MUST have a zero-argument constructor (as noted in LoginModule API). Default value will be org.apache.wiki.auth.login.UserDatabaseLoginModule.
 Other parameters will be loaded into an options Map. Params may be specified this way:
 loginModule.options.param1=value1
 loginModule.options.param2=value2

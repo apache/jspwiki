@@ -53,6 +53,13 @@ public class UserPreferencesActionBean extends AbstractActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( "JSPWiki" );
 
+    /* 
+     * not start with a blank or colon :   ^[^( |:)]
+     * no colons                                 :  [^:]*  
+     * Stripes requires a constant expression, so here is the combination of the above :  
+     */
+    private static final String VALID_USER_PATTERN = "^[^( |:)][^:]*" ;
+    
     private String m_assertedName = null;
 
     private String m_editor = null;
@@ -242,7 +249,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @param name the asserted name
      */
-    @Validate( required = false, on = "save", minlength = 1, maxlength = 128 )
+    @Validate( required = false, on = "save", minlength = 1, maxlength = 128 , mask=VALID_USER_PATTERN)
     public void setAssertedName( String name )
     {
         m_assertedName = name;

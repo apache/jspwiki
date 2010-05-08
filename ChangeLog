@@ -1,3 +1,9 @@
+2010-05-08  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-218
+        
+        * JSPWIKI-392 and JSPWIKI-442 invalid asserted usernames
+        
 2010-03-27 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-217
