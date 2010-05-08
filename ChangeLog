@@ -6,7 +6,7 @@
         
         * JSPWIKI-649 CachingProvider.deleteVersion leaves a stale m_historyCache
         
-        * 2010-04-23  Dirk Frederickx <brushed@apache.org>
+2010-04-23  Dirk Frederickx <brushed@apache.org>
 
         * 2.8.4-svn-11
         
