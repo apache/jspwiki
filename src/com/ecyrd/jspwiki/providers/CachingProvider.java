@@ -815,10 +815,10 @@ public class CachingProvider
             {
                 m_cache.removeEntry( pageName );
                 m_textCache.removeEntry( pageName );
-                m_historyCache.removeEntry( pageName );
             }
 
             m_provider.deleteVersion( pageName, version );
+            m_historyCache.removeEntry( pageName );
         }
     }
 

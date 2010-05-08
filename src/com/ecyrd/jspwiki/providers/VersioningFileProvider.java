@@ -670,6 +670,11 @@ public class VersioningFileProvider
 
     /**
      *  {@inheritDoc}
+     *  
+     *  Deleting versions has never really worked,
+     *  JSPWiki assumes that version histories are "not gappy". 
+     *  Using deleteVersion() is definitely not recommended.
+     *  
      */
     public void deleteVersion( String page, int version )
         throws ProviderException

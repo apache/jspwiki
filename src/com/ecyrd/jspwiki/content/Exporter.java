@@ -73,8 +73,8 @@ public class Exporter
     /**
      *  Create a new wiki exporter.
      *  
-     *  @param engine The WikiEngine to export
      *  @param outStream The stream to which the XML data should be written.
+     *  @param verbose use verbosity or not
      * 
      *  @throws UnsupportedEncodingException If your platform does not support UTF-8
      */

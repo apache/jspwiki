@@ -22,11 +22,14 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 /**
  *  Returns the current user name, or empty, if the user has not been
@@ -34,21 +37,34 @@ import com.ecyrd.jspwiki.TextUtil;
  *
  *  @since 2.0
  */
-public class UserNameTag
-    extends WikiTagBase
+public class UserNameTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
-    public final int doWikiStartTag()
-        throws IOException
+
+    private static String notStartWithBlankOrColon = "^[^( |:)]";
+
+    private static String noColons = "[^:]*";
+
+    private static final Pattern VALID_USER_NAME_PATTERN = Pattern.compile(notStartWithBlankOrColon + noColons);
+
+    public final int doWikiStartTag() throws IOException
     {
         WikiEngine engine = this.m_wikiContext.getEngine();
-        WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
+        WikiSession wikiSession = WikiSession.getWikiSession(engine, (HttpServletRequest) pageContext.getRequest());
         Principal user = wikiSession.getUserPrincipal();
 
-        if( user != null )
+        if (user != null)
         {
-            pageContext.getOut().print( TextUtil.replaceEntities( user.getName() ) );
+            if (VALID_USER_NAME_PATTERN.matcher(user.getName()).matches())
+            {
+                pageContext.getOut().print(TextUtil.replaceEntities(user.getName()));
+            }
+            else
+            {
+                pageContext.getOut().print(
+                                           m_wikiContext.getBundle(InternationalizationManager.CORE_BUNDLE)
+                                               .getString("security.user.fullname.invalid"));
+            }
         }
 
         return SKIP_BODY;

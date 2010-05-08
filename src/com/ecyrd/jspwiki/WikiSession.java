@@ -438,7 +438,6 @@ public final class WikiSession implements WikiEventListener
      * GroupManager. This method adds Principals to the private Subject managed
      * by the WikiSession.
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
-     * {@inheritDoc}
      */
     public final void actionPerformed( WikiEvent event )
     {
