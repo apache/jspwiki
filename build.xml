@@ -95,7 +95,7 @@
 
   <!-- Define a temporary directory, based on the system temporary directory,
        the user name, and the project name (defined above) -->
-  <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${ant.project.name}" />
+  <property name="tmpdir" value="${basedir}/build/tmp" />
 
   <!-- The following three properties define the location of the
        test sources, the location of the test .class files and the
@@ -572,6 +572,7 @@
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
      <copy file="LICENSE" todir="${install.fulldir}" />
+ 	 <copy file="${warfile}" todir="${install.fulldir}" />
 
      <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
