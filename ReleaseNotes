@@ -1,13 +1,10 @@
 
 Welcome to the stable version of JSPWiki 2.8!
 
-JSPWiki 2.8.3 is a security and stability update to 2.8.x-series.  All users
+JSPWiki 2.8.4 is a security and stability update to 2.8.x-series.  All users
 are encouraged to upgrade.
 
-The full log of any issues fixed can be found at:
-https://issues.apache.org/jira/secure/IssueNavigator.jspa?reset=true&pid=12310732&fixfor=12313766
-
-This is the first major version of JSPWiki which is released completely under
+This is the second major version of JSPWiki which is released completely under
 the Apache License.  This is done as a part of the transition to the
 Apache Incubation.
 
@@ -15,6 +12,16 @@ However, this is NOT an Apache release - JSPWiki 3.0 will be the first
 official Apache release.
 
 Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+UPDATES SINCE 2.8.3
+===================
+
+The full list is available in the ChangeLog file.  Highlights include
+
+* Improvements in JCR Export
+
+* Numerous minor bug fixes
+
 
 UPDATES SINCE 2.8.2
 ===================
