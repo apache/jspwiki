@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
@@ -605,7 +605,7 @@ public final class AuthenticationManager
         {
             try
             {
-                return defaultFile.toURL();
+                return defaultFile.toURI().toURL();
             }
             catch ( MalformedURLException e)
             {
@@ -616,29 +616,43 @@ public final class AuthenticationManager
         }
 
         // Ok, the absolute path didn't work; try other methods
-        ClassLoader cl = AuthenticationManager.class.getClassLoader();
 
-        URL path = cl.getResource("/WEB-INF/"+name);
-
-        if( path == null )
-            path = cl.getResource("/"+name);
-
-        if( path == null )
-            path = cl.getResource(name);
-
-        if( path == null && engine.getServletContext() != null )
+        URL path = null;
+        
+        if( engine.getServletContext() != null )
         {
             try
             {
-                path = engine.getServletContext().getResource("/WEB-INF/"+name);
+                //  create a tmp file of the policy loaded as an InputStream and return the URL to it
+                //  
+                InputStream is = engine.getServletContext().getResourceAsStream("/WEB-INF/" + name);
+                File tmpFile = File.createTempFile("temp." + name, "");
+                tmpFile.deleteOnExit();
+
+                OutputStream os = new FileOutputStream(tmpFile);
+
+                byte[] buff = new byte[1024];
+
+                while (is.read(buff) != -1)
+                {
+                    os.write(buff);
+                }
+
+                os.close();
+
+                path = tmpFile.toURI().toURL();
+
             }
             catch( MalformedURLException e )
             {
                 // This should never happen unless I screw up
                 log.fatal("Your code is b0rked.  You are a bad person.");
             }
+            catch (IOException e)
+            {
+               log.error("failed to load security policy from " + name + ",stacktrace follows", e);
+            }
         }
-
         return path;
     }
 

@@ -412,6 +412,7 @@ public final class AuthorizationManager
             if (policyURL != null) 
             {
                 File policyFile = new File( policyURL.getPath() );
+                log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
                 m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
                 m_localPolicy.refresh();
                 log.info( "Initialized default security policy: " + policyFile.getAbsolutePath() );

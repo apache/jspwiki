@@ -1,3 +1,9 @@
+2010-05-09  Harry Metske <metskem@apache.org>
+
+        * 2.8.4-svn-13
+        
+        * JSPWIKI-646 JSPWiki cannot run without unpacking the war file
+        
 2010-05-08  Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-12

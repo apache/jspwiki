@@ -347,6 +347,7 @@ public class WikiEngine
             catch( Exception e )
             {
                 context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
+                log.error( "ERROR: Failed to create a Wiki engine, stacktrace follows " , e);
                 throw new InternalWikiException( "No wiki engine, check logs." );
             }
 
