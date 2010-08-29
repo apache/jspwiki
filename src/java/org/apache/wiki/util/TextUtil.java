@@ -32,7 +32,6 @@ import org.apache.wiki.InternalWikiException;
 /**
  *  Contains a number of static utility methods.
  */
-// FIXME3.0: Move to the "util" package
 public final class TextUtil
 {
     static final String   HEX_DIGITS = "0123456789ABCDEF";
@@ -419,7 +418,7 @@ public final class TextUtil
                                           String key,
                                           int defVal )
     {
-        String val = props.getProperty( key );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
 
         return parseIntParameter( val, defVal );
     }
@@ -439,13 +438,12 @@ public final class TextUtil
      *
      *  @since 2.0.11
      */
-    public static boolean getBooleanProperty( Properties props,
-                                              String key,
-                                              boolean defval )
+    public static boolean getBooleanProperty( Properties props, String key, boolean defval )
     {
-        String val = props.getProperty( key );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
 
-        if( val == null ) return defval;
+        if( val == null )
+            return defval;
 
         return isPositive( val );
     }
@@ -465,7 +463,7 @@ public final class TextUtil
                                             String key,
                                             String defval )
     {
-        String val = props.getProperty( key );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
 
         if( val == null ) return defval;
 
@@ -699,7 +697,7 @@ public final class TextUtil
     /**
      *  Gets the given section (separated with "----") from the page text.
      *  Note that the first section is always #1.  If a page has no section markers,
-     *  them there is only a single section, #1.
+     *  then there is only a single section, #1.
      *
      *  @param pagedata WikiText to parse.
      *  @param section  Which section to get.
