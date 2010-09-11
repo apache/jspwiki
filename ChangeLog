@@ -1,8 +1,12 @@
-2010-05-16  Harry Metske <metskem@apache.org>
+2010-08-29  Harry Metske <metskem@apache.org>
 
-        * 2.8.4-svn-13
+        * 2.8.5-svn-1
         
-        * JSPWIKI-646 JSPWiki cannot run without unpacking the war file
+        * JSPWIKI-669 Support external properties in WikiEngine (idea from John McKinney)
+          You can now override individual properties in jspwiki.properties using standard
+          Java System properties.
+          
+       * fixed the jspwiki.policy file name lookup in AuthenticationManager
         
 2010-05-08  Harry Metske <metskem@apache.org>
 

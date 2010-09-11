@@ -625,8 +625,8 @@ public final class AuthenticationManager
             {
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
                 //  
-                InputStream is = engine.getServletContext().getResourceAsStream("/WEB-INF/" + name);
-                File tmpFile = File.createTempFile("temp." + name, "");
+                InputStream is = engine.getServletContext().getResourceAsStream( name );
+                File tmpFile = File.createTempFile( "temp." + name, "" );
                 tmpFile.deleteOnExit();
 
                 OutputStream os = new FileOutputStream(tmpFile);

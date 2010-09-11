@@ -416,7 +416,7 @@ public final class TextUtil
                                           String key,
                                           int defVal )
     {
-        String val = props.getProperty( key );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
 
         return parseIntParameter( val, defVal );
     }
@@ -436,13 +436,12 @@ public final class TextUtil
      *
      *  @since 2.0.11
      */
-    public static boolean getBooleanProperty( Properties props,
-                                              String key,
-                                              boolean defval )
+    public static boolean getBooleanProperty( Properties props, String key, boolean defval )
     {
-        String val = props.getProperty( key );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
 
-        if( val == null ) return defval;
+        if( val == null )
+            return defval;
 
         return isPositive( val );
     }
@@ -462,7 +461,7 @@ public final class TextUtil
                                             String key,
                                             String defval )
     {
-        String val = props.getProperty( key );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
 
         if( val == null ) return defval;
 
