@@ -3,7 +3,7 @@
 * [Derniers changements|RecentChanges]
 * [WikiEtiquette]
 
-* [Rechercher une page|FindPage]
+* [Rechercher une page|Search]
 * [Pages orphelines|UnusedPages]
 * [Pages non définies|UndefinedPages]
 * [Index des pages|PageIndex]

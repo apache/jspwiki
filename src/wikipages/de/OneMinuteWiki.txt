@@ -4,7 +4,7 @@ WikiWiki ist hawaiianisch und bedeutet "schnell". Die ursprüngliche Idee des Wi
 
 Wiki ist einfach. Das ist gut! Ein Wiki kann aber auch sehr schnell sehr komplex werden, was ebenfalls gut ist!
 
-Jeder kann darin stöbern. Alles was man braucht ist ein Web-Browser, der ein Minimum an HTML unterstützt. Um Seiten zu suchen, gehe auf die Seite [Suche|FindPage] oder tippe deine Anfrage einfach nur in die Box in der rechten oberen Ecke.
+Jeder kann darin stöbern. Alles was man braucht ist ein Web-Browser, der ein Minimum an HTML unterstützt. Um Seiten zu suchen, gehe auf die Seite [Suche|Search] oder tippe deine Anfrage einfach nur in die Box in der rechten oberen Ecke.
 
 !Inhalte
 

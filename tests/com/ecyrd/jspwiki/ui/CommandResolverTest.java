@@ -142,9 +142,9 @@ public class CommandResolverTest extends TestCase
         assertEquals( "%uEdit.jsp?page=%n", a.getURLPattern() );
         assertEquals( page, a.getTarget() );
         
-        // Passing an EDIT request with page=FindPage yields FIND action, *not* edit
-        request.setContextPath( "/Edit.jsp?page=FindPage" );
-        request.getParameterMap().put( "page", new String[]{ "FindPage" } );
+        // Passing an EDIT request with page=Search yields FIND action, *not* edit
+        request.setContextPath( "/Edit.jsp?page=Search" );
+        request.getParameterMap().put( "page", new String[]{ "Search" } );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertEquals( WikiCommand.FIND, a );
         assertEquals( "FindContent.jsp", a.getContentTemplate() );
@@ -210,10 +210,10 @@ public class CommandResolverTest extends TestCase
         url = resolver.getSpecialPageReference( "RecentChanges" );
         assertEquals( "http://localhost/RecentChanges.jsp", url );
         
-        url = resolver.getSpecialPageReference( "FindPage" );
+        url = resolver.getSpecialPageReference( "Search" );
         assertEquals( "http://localhost/Search.jsp", url );
         
-        url = resolver.getSpecialPageReference( "FindPage" );
+        url = resolver.getSpecialPageReference( "Search" );
         assertEquals( "http://localhost/Search.jsp", url );
         
         // UserPrefs doesn't exist in our test properties

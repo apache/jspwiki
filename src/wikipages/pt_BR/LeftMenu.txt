@@ -6,7 +6,7 @@
 * [Recursos Humanos|RecursosHumanos]
 * [Tecnologia|Tecnologia]
 <hr>
-* [Encontrar Páginas|FindPage]
+* [Encontrar Páginas|Search]
 * [Páginas não usadas|UnusedPages]
 * [Páginas não definidas|UndefinedPages]
 * [Índice de Páginas|PageIndex]

@@ -4,7 +4,7 @@
 * [Cambiamenti recenti | Recent Changes]
 * [WikiEtiquette]
 
-* [Trova le pagine|FindPage]
+* [Trova le pagine|Search]
 * [Pagine non usate|UnusedPages]
 * [Pagine non definite|UndefinedPages]
 * [Indice | Page Index]

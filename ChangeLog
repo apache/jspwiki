@@ -1,3 +1,10 @@
+2010-09-30  Harry Metske <metskem@apache.org>
+
+        * 2.8.5-svn-2
+        
+        * JSPWIKI-664 SpecialPage renamed, but wikipages not changed.
+        Changed all references to "FindPage" into "Search" .
+
 2010-08-29  Harry Metske <metskem@apache.org>
 
         * 2.8.5-svn-1

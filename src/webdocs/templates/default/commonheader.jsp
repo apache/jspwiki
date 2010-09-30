@@ -63,7 +63,7 @@
 //]]></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
-<link rel="search" href="<wiki:LinkTo format='url' page='FindPage'/>"
+<link rel="search" href="<wiki:LinkTo format='url' page='Search'/>"
     title='Search <wiki:Variable var="ApplicationName" />' />
 <link rel="help"   href="<wiki:LinkTo format='url' page='TextFormattingRules'/>"
     title="Help" />
