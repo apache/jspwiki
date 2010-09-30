@@ -844,12 +844,12 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     public void testParagraph2() throws Exception
     {
-        String src = "[WikiEtiquette]\r\n\r\n[Find page]";
+        String src = "[WikiEtiquette]\r\n\r\n[Search]";
 
         newPage( "WikiEtiquette" );
 
         assertEquals( "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>"+
-                      "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
+                      "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=Search\">Search</a></p>", translate(src) );
     }
 
     public void testParagraph3() throws Exception
@@ -862,16 +862,16 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     public void testParagraph4() throws Exception
     {
-        String src = "\r\n[Recent Changes]\\\\\r\n[WikiEtiquette]\r\n\r\n[Find pages|FindPage]\\\\\r\n[Unused pages|UnusedPages]";
+        String src = "\r\n[Recent Changes]\\\\\r\n[WikiEtiquette]\r\n\r\n[Find pages|Search]\\\\\r\n[Unused pages|UnusedPages]";
 
         newPage("WikiEtiquette");
         newPage("RecentChanges");
-        newPage("FindPage");
+        newPage("Search");
         newPage("UnusedPages");
 
         assertEquals( "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=RecentChanges\">Recent Changes</a><br />\n"+
                       "<a class=\"wikipage\" href=\"/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>\n"+
-                      "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=FindPage\">Find pages</a><br />\n"+
+                      "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=Search\">Find pages</a><br />\n"+
                       "<a class=\"wikipage\" href=\"/Wiki.jsp?page=UnusedPages\">Unused pages</a></p>",
                       translate(src) );
     }

@@ -59,7 +59,7 @@ public class SpecialPageNameResolverTest extends TestCase
         uri = resolver.getSpecialPageURI( "RecentChanges" );
         assertEquals( "/RecentChanges.jsp", uri.toString() );
         
-        uri = resolver.getSpecialPageURI( "FindPage" );
+        uri = resolver.getSpecialPageURI( "Search" );
         assertEquals( "/Search.jsp", uri.toString() );
         
         // UserPrefs doesn't exist in our test properties

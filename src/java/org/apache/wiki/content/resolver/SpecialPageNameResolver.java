@@ -72,8 +72,8 @@ public class SpecialPageNameResolver extends PageNameResolver
     /**
      * Determines whether a "page" exists by examining the list of special pages
      * and querying the page manager. The WikiPath will be tried with its qualifying
-     * space, and without. This means that if the value of {@code page} is "Main:FindPage",
-     * special pages called "FindPage" or "Main:FindPage" would match.
+     * space, and without. This means that if the value of {@code page} is "Main:Search",
+     * special pages called "Search" or "Main:Search" would match.
      * 
      * @param page the page to seek
      * @return <code>true</code> if the page exists, <code>false</code>

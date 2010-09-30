@@ -84,7 +84,7 @@
 
          Links to favicon and common pages
     --%>
-    <link rel="search" href="<wiki:LinkTo format='url' page='FindPage' />" title='Search ${wikiEngine.applicationName}' />
+    <link rel="search" href="<wiki:LinkTo format='url' page='Search' />" title='Search ${wikiEngine.applicationName}' />
     <link rel="help" href="<wiki:LinkTo format='url' page='TextFormattingRules' />" title="Help" />
     <link rel="start" href="<wiki:LinkTo format='url' page='${wikiEngine.frontPage}' />" title="Front page" />
     <s:url value="${templates['images/favicon.ico']}" var="favicon" />

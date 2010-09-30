@@ -96,12 +96,12 @@ public class ViewActionBeanTest extends TestCase
     }
     
     public void testSpecialPage() throws Exception {
-        // Make sure no special page FindPage actually exists
-        m_engine.deletePage( "FindPage" );
+        // Make sure no special page Search actually exists
+        m_engine.deletePage( "Search" );
         
         // Execute the request with a 'special page' reference
         MockRoundtrip trip = m_engine.guestTrip( "/Wiki.jsp");
-        trip.addParameter( "page","FindPage" );
+        trip.addParameter( "page","Search" );
         trip.execute("view");
 
         // ...we should get a dummy page for the 'page' property

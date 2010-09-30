@@ -84,13 +84,13 @@ public class EditActionBeanTest extends TestCase
 
     public void testEditSpecialPage() throws Exception
     {
-        // Make sure no special page FindPage actually exists
-        m_engine.deletePage( "FindPage" );
+        // Make sure no special page Search actually exists
+        m_engine.deletePage( "Search" );
 
         // Try editing the 'special page'
         MockRoundtrip trip = m_engine.guestTrip( "/Edit.jsp" );
         String startTime = String.valueOf( System.currentTimeMillis() );
-        trip.addParameter( "page", "FindPage" );
+        trip.addParameter( "page", "Search" );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
         trip.addParameter( "wikiText", "This is the edited text" );
         trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );

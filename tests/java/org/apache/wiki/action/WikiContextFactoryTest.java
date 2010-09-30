@@ -145,11 +145,11 @@ public class WikiContextFactoryTest extends TestCase
         assertEquals( WikiContext.EDIT, context.getRequestContext() );
         assertEquals( page, context.getPage() );
         
-        // Passing a VIEW request with page=FindPage yields an ordinary page name, not a special page or JSP
+        // Passing a VIEW request with page=Search yields an ordinary page name, not a special page or JSP
         // FIXME: this won't work because WikiActionBeanResolver doesn't keep a cache of URLBindings 
         request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Wiki.jsp");
         request.setSession( session );
-        request.getParameterMap().put( "page", new String[]{"FindPage"} );
+        request.getParameterMap().put( "page", new String[]{"Search"} );
         context = resolver.newContext( request, response, WikiContext.VIEW );
         assertEquals( WikiContext.VIEW, context.getRequestContext() );
         
