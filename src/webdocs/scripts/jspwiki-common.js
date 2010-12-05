@@ -299,7 +299,7 @@ var Wiki = {
 	//allow letters, digits and punctuation chars: ()&+,-=._$
 	cleanLink: function(p){
 		return p.trim().replace(/\s+/g,' ')
-				.replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
+				.replace(/[^0-9A-Za-z\u00C0-\u1FFF\u2800-\uFFFD()&+,-=._$ ]/g, '');
 	},
 
 	changeOrientation: function(){
@@ -799,7 +799,7 @@ var TabbedSection = {
 		this.addClass('activetab');
 
 		tabs.getChildren().addClass('hidetab');
-		tabs.getElementById(this.id.substr(5)).removeClass('hidetab');
+		tabs.getElement( '#'+ this.id.substr(5)).removeClass('hidetab');
 	}
 
 }
@@ -1051,7 +1051,8 @@ var GraphBar =
 				isProgress = false,	// progress bar
 				isHorizontal = true,// horizontal or vertical orientation
 				parms = g.className.substr(9).split('-'),
-				barName = parms.shift(); //first param is optional barName
+				barName = parms.shift(), //first param is optional barName
+				size,bars,barData,border;
 
 			parms.each(function(p){
 				p = p.toLowerCase();
@@ -1069,16 +1070,16 @@ var GraphBar =
 			if( !color2 && color1) color2 = (isGauge || isProgress) ? color1.invert() : color1;
 
 			if( lbound > ubound ) { var m = ubound; ubound=lbound; ubound=m; }
-			var size = ubound-lbound;
+			size = ubound-lbound;
 
-			var bars = $ES('.gBar'+barName, g); //collect all gBar elements
+			bars = $ES('.gBar'+barName, g); //collect all gBar elements
 			if( (bars.length==0) && barName && (barName!="")){  // check table data
 				bars = this.getTableValues(g, barName);
 			}
 			if( !bars ) return;
 
-			var barData = this.parseBarData( bars, lbound, size ),
-				border = (isHorizontal ? 'borderLeft' : 'borderBottom');
+			barData = this.parseBarData( bars, lbound, size );
+			border = (isHorizontal ? 'borderLeft' : 'borderBottom');
 
 			bars.each(function(b,j){
 				var bar1 = $H().set(border+'Width',barData[j]),
@@ -1134,12 +1135,14 @@ var GraphBar =
 		nodes.each(function(n,i){
 			var s = n.getText();
 			barData.push(s);
-			if(num) num = !isNaN(parseFloat( s.match(Number.REparsefloat) ) );
-			if(date) date = !isNaN(Date.parse(s));
+			num &= !isNaN(s.toFloat());
+			/* chrome accepts numbers as valid Dates !! */
+			date &= !isNaN(Date.parse(s)) && s.test(/[^\d]/);
 		});
+
 		barData = barData.map(function(b){
-			if(date)     { b = new Date(Date.parse(b) ).valueOf();  }
-			else if(num) { b = parseFloat( b.match(Number.REparsefloat) ); }
+			if(date){ b = new Date(Date.parse(b) ).valueOf();  }
+			else if(num){ b = parseFloat( b.match(Number.REparsefloat) ); }
 
 			maxValue = Math.max(maxValue, b);
 			minValue = Math.min(minValue, b);
@@ -1398,7 +1401,8 @@ var Sortable =
 			v = v.clean().toLowerCase();
 
 			if(num)  num  = !isNaN(parseFloat(v));
-			if(date) date = !isNaN(Date.parse(v));
+			/* chrome accepts numbers as valid Dates !! */
+			if(date) date = !isNaN(Date.parse(v)) && v.test(/[^\d]/);
 			if(ip4)  ip4  = v.test(/(?:\\d{1,3}\\.){3}\\d{1,3}/); //169.169.0.1
 			if(euro) euro = v.test(/^[£$€][0-9.,]+/);
 			if(kmgt) kmgt = v.test(/(?:[0-9.,]+)\s*(?:[kmgt])b/);  //2 MB, 4GB, 1.2kb, 8Tb

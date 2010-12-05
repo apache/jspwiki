@@ -168,7 +168,7 @@
 	<%--
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions"/></wiki:CheckVersion>
 	--%>
-    
+
     <%-- if( itemcount > 1 ) { --%>
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
@@ -222,7 +222,7 @@
          <td class="changenote">
            <%
               String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
-              changeNote = (changeNote != null) ? changeNote : "" ;
+              changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
            %>
            <%= changeNote %>
          </td>
@@ -378,7 +378,7 @@
       <%
          String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
          if( changeNote != null ) {
-             changeNote = changeNote;
+             changeNote = TextUtil.replaceEntities(changeNote);
          %><%=changeNote%><%
          }
       %>
