@@ -1,3 +1,13 @@
+2010-12-05 Dirk Frederickx <brushed@apache.org>
+
+        * v3.0.0-svn-222
+
+        * JSPWIKI-667: Fixed Scorebar issue in Google Chrome. (workaround js error)
+        
+        * JSPWIKI-675: Fixed Unicode support in quickEdit (javascript regexp)
+
+        * JSPWIKI-674: Fixed support for nested tabbed sections
+
 2010-09-30  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-221

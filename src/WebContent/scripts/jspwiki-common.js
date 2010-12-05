@@ -18,6 +18,8 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*jslint forin: true, onevar: true, nomen: true, plusplus: true, immed: true */
+/* global console, document, navigator, setTimeout, window */
 
 /*
 Script: jspwiki-common.js
@@ -517,7 +519,7 @@ var Wiki = {
 		SearchBox.initialize();
 
 		//fixme;
-		HighlightWord( $('pagecontent'), self.prefs.get('PrevQuery') )
+		HighlightWord( $('pagecontent'), self.prefs.get('PrevQuery') );
 		self.prefs.set('PrevQuery','');
 		//HighlightWord.initialize();
 
@@ -575,7 +577,7 @@ var Wiki = {
 	Example:
 	> Wiki.confirm("sometext", callback-function(true/false) );
 	*/
-	confirm: function(msg, callack){
+	confirm: function(msg, callback){
 		//return callback( confirm(msg) ); //standard js
 
 		this.dialog
@@ -695,7 +697,7 @@ var Wiki = {
 	*/
 	cleanPageName: function(p){
 
-		return p.clean().replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
+		return p.clean().replace(/[^0-9A-Za-z\u00C0-\u1FFF\u2800-\uFFFD()&+,-=._$ ]/g, '');
 
 	},
 
@@ -1015,7 +1017,7 @@ var Wiki = {
 		}
 	}
 
-}
+} ;
 
 
 
@@ -1301,15 +1303,16 @@ var TabbedSection = {
 
 		//skip possible relative wrapper element
 		var rel = tabs.getFirst();
-		if(rel.getStyle('position')=='relative') tabs = rel;
+		if(rel.getStyle('position')=='relative'){ tabs = rel; }
 
 		tabs.getChildren().addClass('hidetab');
 
 		//fixme: id needs to be unique , should not be the TAB name
-		tabs.getElementById( this.id.slice(5) ).removeClass('hidetab');
+		tabs.getElement( '#'+ this.id.substr(5)).removeClass('hidetab');
+
 	}
 
-}
+};
 Wiki.registerPlugin( TabbedSection );
 //FIXME: convert to class
 //Wiki.registerPlugin( function(page,name){
@@ -1720,7 +1723,7 @@ return new Class({
 	}
 });
 
-})()
+})();
 
 /*
 Class: GraphBar
@@ -1939,7 +1942,8 @@ var GraphBar = new Class({
 			var v = n.get('text');
 			barData.push(v);
 			num &= !isNaN(v.toFloat());
-			ddd &= !isNaN(Date.parse(v));
+			/* chrome accepts numbers as valid Dates !! */
+			ddd &= !isNaN(Date.parse(v)) && v.test(/[^\d]/);
 		});
 
 		barData = barData.map(function(b){
@@ -1951,7 +1955,7 @@ var GraphBar = new Class({
 			return b;
 		});
 
-		if(maxValue==minValue) maxValue=minValue+1; /* avoid div by 0 */
+		if(maxValue==minValue){ maxValue=minValue+1; }/* avoid div by 0 */
 		size = size/(maxValue-minValue);
 
 		return barData.map(function(b){
@@ -1970,7 +1974,7 @@ var GraphBar = new Class({
 	getTableValues: function(node, fieldName){
 
 		var table = node.getElement('table');
-		if(!table) return false;
+		if(!table){ return false; }
 		var tlen = table.rows.length, h, l, r, result, i;
 
 		if( tlen > 1 ){ /* check for COLUMN based table */
@@ -2515,7 +2519,9 @@ var TablePlugin = new Class({
 
 				num &= v.test(/\d+/);
 				flt &= !isNaN(v.toFloat());
-				ddd &= !isNaN(Date.parse(v));
+				/* chrome accepts numbers as valid Dates !! */
+				/* so make sure non-digit chars are present */
+				ddd &= !isNaN(Date.parse(v))  && v.test(/[^\d]/);
 				ip4 &= v.test(/(?:\d{1,3}\.){3}\d{1,3}/); //169.169.0.1
 				euro &= v.test(/^[£$€][\d.,]+/);
 				kmgt &= v.test(/(?:[\d.,]+)\s*(?:[kmgt])b/); //2 MB, 4GB, 1.2kb, 8Tb
@@ -3244,7 +3250,7 @@ var Stripes = {
     	}).send();
 
   	}
-}
+};
 
 
 /*
