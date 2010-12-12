@@ -1,3 +1,9 @@
+2010-12-12  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-223
+        
+        * JSPWIKI-671: WikiPageRenameEvent not fired during page rename.
+
 2010-12-05 Dirk Frederickx <brushed@apache.org>
 
         * v3.0.0-svn-222

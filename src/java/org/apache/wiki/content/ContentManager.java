@@ -1467,9 +1467,9 @@ public class ContentManager implements WikiEventListener
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-    public String renamePage( WikiContext context, 
-                              String renameFrom, 
-                              String renameTo )
+    public String renamePage( final WikiContext context, 
+                              final String renameFrom, 
+                              final String renameTo )
         throws WikiException
     {
         //
@@ -1487,8 +1487,8 @@ public class ContentManager implements WikiEventListener
         //
         //  Clean up the "to" -name so that it does not contain anything illegal
         //
-        renameTo = MarkupParser.cleanLink( renameTo.trim() );
-        if( renameTo.equals(renameFrom) )
+        String renameToClean = MarkupParser.cleanLink( renameTo.trim() );
+        if( renameToClean.equals(renameFrom) )
         {
             throw new WikiException( "You cannot rename the page to itself" );
         }
@@ -1498,7 +1498,7 @@ public class ContentManager implements WikiEventListener
         //
         WikiEngine engine = context.getEngine();
         WikiPath fromPath = WikiPath.valueOf( renameFrom );
-        WikiPath toPath = WikiPath.valueOf( renameTo );
+        WikiPath toPath = WikiPath.valueOf( renameToClean );
         
         //
         //  Do the actual rename by changing from the frompage to the topage, including
@@ -1532,16 +1532,20 @@ public class ContentManager implements WikiEventListener
         }
         page.setAttribute( WikiPage.CHANGENOTE, fromPath.toString() + " ==> " + toPath.toString() );
         page.setAuthor( context.getCurrentUser().getName() );
-        page.setAttribute( JCRWikiPage.ATTR_TITLE, renameTo );
+        page.setAttribute( JCRWikiPage.ATTR_TITLE, renameToClean );
         
         // Tell everyone we moved the page
         fireEvent( ContentEvent.NODE_RENAMED, toPath, fromPath );
         page.save();
-        
+
+
+        // Currently not used internally by JSPWiki itself, but you can use it for something else.
+        WikiEventManager.fireEvent( this, new WikiPageRenameEvent( this, fromPath, toPath ) );
+
         //
         //  Done, return the new name.
         //
-        return renameTo;
+        return renameToClean;
     }
 
     // events processing .......................................................
