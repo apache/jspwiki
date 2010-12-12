@@ -30,6 +30,8 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiPageRenameEvent;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -58,10 +60,10 @@ public class PageRenamer
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-    public String renamePage( WikiContext context, 
-                              String renameFrom, 
-                              String renameTo, 
-                              boolean changeReferrers )
+    public String renamePage(final WikiContext context, 
+                              final String renameFrom, 
+                              final String renameTo, 
+                              final boolean changeReferrers )
         throws WikiException
     {
         //
@@ -80,9 +82,9 @@ public class PageRenamer
         //  Clean up the "to" -name so that it does not contain anything illegal
         //
         
-        renameTo = MarkupParser.cleanLink( renameTo.trim() );
+        String renameToClean = MarkupParser.cleanLink( renameTo.trim() );
         
-        if( renameTo.equals(renameFrom) )
+        if( renameToClean.equals(renameFrom) )
         {
             throw new WikiException( "You cannot rename the page to itself" );
         }
@@ -98,11 +100,11 @@ public class PageRenamer
             throw new WikiException("No such page "+renameFrom);
         }
         
-        WikiPage toPage = engine.getPage( renameTo );
+        WikiPage toPage = engine.getPage( renameToClean );
         
         if( toPage != null )
         {
-            throw new WikiException("Page already exists "+renameTo);
+            throw new WikiException( "Page already exists " + renameToClean );
         }
         
         //
@@ -120,11 +122,11 @@ public class PageRenamer
         //  all of the attachments
         //
         
-        engine.getPageManager().getProvider().movePage( renameFrom, renameTo );
+        engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
         
         if( engine.getAttachmentManager().attachmentsEnabled() )
         {
-            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
+            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
 
         //
@@ -132,7 +134,7 @@ public class PageRenamer
         //  to the repo with no actual change.
         //
         
-        toPage = engine.getPage( renameTo );
+        toPage = engine.getPage( renameToClean );
         
         if( toPage == null ) throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
 
@@ -161,17 +163,20 @@ public class PageRenamer
         //
         engine.getSearchManager().reindexPage(toPage);
         
+        @SuppressWarnings( "unchecked" )
         Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( toPage );
         for (Attachment att:attachments)
         {
             engine.getSearchManager().reindexPage(att);
         }
 
+        // Currently not used internally by JSPWiki itself, but you can use it for something else.
+        WikiEventManager.fireEvent( this, new WikiPageRenameEvent( this, renameFrom, renameToClean ) );
 
         //
         //  Done, return the new name.
         //
-        return renameTo;
+        return renameToClean;
     }
 
     /**
@@ -182,7 +187,6 @@ public class PageRenamer
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    @SuppressWarnings("unchecked")
     private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<String>referrers )
     {
         WikiEngine engine = context.getEngine();
@@ -233,15 +237,18 @@ public class PageRenamer
     {
         Set<String> referrers = new TreeSet<String>();
         
+        @SuppressWarnings( "unchecked" )
         Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
         if( r != null ) referrers.addAll( r );
         
         try
         {
+            @SuppressWarnings( "unchecked" )
             Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
 
             for( Attachment att : attachments  )
             {
+                @SuppressWarnings( "unchecked" )
                 Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
 
                 if( c != null ) referrers.addAll(c);
