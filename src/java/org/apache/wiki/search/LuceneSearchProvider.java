@@ -88,6 +88,11 @@ public class LuceneSearchProvider implements SearchProvider
      *  Number of page updates before we optimize the index.
      */
     public static final int LUCENE_OPTIMIZE_COUNT      = 10;
+    /** These attachment file suffixes will be indexed. */
+    public static final String[] SEARCHABLE_FILE_SUFFIXES = new String[] { ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm",
+                                                                          ".xhtml", ".java", ".c", ".cpp", ".php", ".asm", ".sh",
+                                                                          ".properties", ".kml", ".gpx", ".loc" };
+
     protected static final String LUCENE_ID            = "id";
     protected static final String LUCENE_PAGE_CONTENTS = "contents";
     protected static final String LUCENE_AUTHOR        = "author";
@@ -313,10 +318,16 @@ public class LuceneSearchProvider implements SearchProvider
 
         String filename = att.getFileName();
 
-        if(filename.endsWith(".txt") ||
-           filename.endsWith(".xml") ||
-           filename.endsWith(".ini") ||
-           filename.endsWith(".html"))
+        boolean searchSuffix = false;
+        for( String suffix : SEARCHABLE_FILE_SUFFIXES )
+        {
+            if( filename.endsWith( suffix ) )
+            {
+                searchSuffix = true;
+            }
+        }
+
+        if( searchSuffix )
         {
             InputStream attStream;
 

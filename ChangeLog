@@ -1,3 +1,11 @@
+2011-01-24  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-224
+        
+        * Extended the list of lucene searchable file suffixes, we now do 
+           ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm", ".xhtml", ".java", ".c", ".cpp",
+            ".php", ".asm", ".sh",  ".properties", ".kml", ".gpx", ".loc"
+
 2010-12-12  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-223
