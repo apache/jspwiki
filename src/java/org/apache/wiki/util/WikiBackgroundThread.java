@@ -403,7 +403,7 @@ public abstract class WikiBackgroundThread implements WikiEventListener
         {
             if ( m_engine.get() != null )
             {
-                m_log.info( "Running " + m_name + "." );
+                m_log.debug( "Running " + m_name + "." );
                 backgroundTask();
             }
         }
