@@ -667,6 +667,10 @@ public class ContentManager implements WikiEventListener
     public List<WikiPage> getAllPages( String space )
         throws ProviderException
     {
+        if( space != null ) { // WikiPathResolver lower-cases JCR paths
+            space = space.toLowerCase();
+        }
+        
         List<WikiPage> results = new ArrayList<WikiPage>();
         try
         {

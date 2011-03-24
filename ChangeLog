@@ -1,3 +1,11 @@
+2011-03-24  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-225
+        
+        * JSPWIKI-636: fixed RPCHandlerTest.testRecentChanges(). JCR Paths are always lower-cased,
+        and ContentManager.getAllPages( String space ) didn't lower-case it's parameter in order to 
+        make a JCR path-based query. One test failure remaining.
+
 2011-01-24  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-224
@@ -886,7 +894,7 @@
         * Comment.jsp receives the Stripes treatment (initial checkin;
         not fully tested yet).
 
-2009-10-09 Juan Pablo Santos <juanpablo.santos@gmail.com>
+2009-10-09 Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * updated es translation (no version bump).
 
@@ -2791,7 +2799,7 @@
 
         * Merged from 2.8: [JSPWIKI-416]: French translation and corepages from Olivier Descout
 
-2008-11-05  Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-11-05  Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * [JSPWIKI-407]: updated es translation; fixed some HTML entities left behind.
         
@@ -2922,7 +2930,7 @@
         
         * added Dutch corepages
 
-2008-09-24  Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-09-24  Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * 2.8.0-beta-10
         
@@ -2999,7 +3007,7 @@
         
         * Few small fixes on the Accordion style.
  
-2008-09-02  Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-09-02  Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * Updated spanish translation (CoreResources_es + default_es properties)
         
@@ -3781,7 +3789,7 @@
         
         * Miscellaneous and varied Java 5 enhancements (such as for-loops).
 
-2008-05-22 Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-05-22 Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * 2.7.0-svn-28
         
@@ -3951,7 +3959,7 @@
         
         * Also updated several files to the Apache license.
 
-2008-04-15 Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-04-15 Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * 2.7.0-svn-13
         
@@ -4174,7 +4182,7 @@
         includes a few notes on how to write Selenium tests so that they
         will run automatically via the Ant "webtests" target.
 
-2008-03-18  Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-03-18  Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * 2.6.2-rc-3
         
@@ -4196,7 +4204,7 @@
         
         * Updated Finnish localization.
 
-2008-03-14  Juan Pablo Santos <juanpablo.santos@gmail.com>
+2008-03-14  Juan Pablo Santos <juanpablo AT apache DOT org>
 
         * 2.6.2-svn-7
         
@@ -4400,7 +4408,7 @@
             newgroup.exists=Group {0} already exists. Try another name.
 
 
-2008-01-24  Juan Pablo Santos (juanpablo.santos@gmail.com)
+2008-01-24  Juan Pablo Santos (juanpablo AT apache DOT org)
         
         * Updated spanish translation with missing entry keys. Switched HTML
         entities to Latin1 equivalent.
