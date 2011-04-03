@@ -1,3 +1,9 @@
+2011-04-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-226
+        
+        * fixed JSPWIKI-688 (Poor performance of CreoleToJSPWikiTranslator), thanks to Jelmer Kuperus.
+        
 2011-03-24  Juan Pablo Santos (juanpablo AT apache DOT org)
         
         * 3.0.0-svn-225
