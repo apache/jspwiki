@@ -1,3 +1,9 @@
+2011-04-03  Harry Metske <metskem@apache.org>
+
+        * 2.8.5-svn-6
+        
+        * fixed JSPWIKI-688 (Poor performance of CreoleToJSPWikiTranslator), thanks to Jelmer Kuperus.
+        
 2011-01-24  Harry Metske <metskem@apache.org>
 
         * 2.8.5-svn-5

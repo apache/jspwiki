@@ -148,7 +148,7 @@ public class CreoleToJSPWikiTranslator
 
     private static final String JSPWIKI_IMAGE_X = "[{\u2016 src='$1' caption='$4' \u2015}]";
 
-    private static final String CREOLE_LINK_IMAG_X = "\\[\\[(.*?)\\|\\{\\{(.*?)((\\|)(.*?)){0,1}((\\|)(.*?)){0,1}\\}\\}\\]\\]";
+    private static final String CREOLE_LINK_IMAG_X = "\\[\\[([^|]*)\\|\\{\\{([^|]*)((\\|)([^|]*)){0,1}((\\|)([^}]*)){0,1}\\}\\}\\]\\]";
 
     private static final String JSPWIKI_LINK_IMAGE_X = "[{\u2016 src='$2' link='$1' caption='$5' \u2015}]";
 

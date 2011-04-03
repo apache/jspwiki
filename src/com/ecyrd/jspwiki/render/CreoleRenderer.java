@@ -84,8 +84,6 @@ public class CreoleRenderer extends WikiRenderer
     /**
      *  Creates a new Creole Renderer.
      *  
-     *  @param ctx {@inheritDoc}
-     *  @param doc {@inheritDoc}
      */
     public CreoleRenderer( WikiContext ctx, WikiDocument doc )
     {
