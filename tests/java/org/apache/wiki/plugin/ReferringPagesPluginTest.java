@@ -22,6 +22,7 @@
 package org.apache.wiki.plugin;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -198,7 +199,7 @@ public class ReferringPagesPluginTest extends TestCase
         
         String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
         // the date should be parseable:
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz");
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz", new Locale( "" ) ); // Locale fixed in TestEngine:174
         df.parse(dateString);
 
         // test if the proper exception is thrown:

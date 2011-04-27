@@ -22,10 +22,7 @@
 package org.apache.wiki.action;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -342,6 +339,7 @@ public final class WikiContextFactory
         {
             request = new MockHttpServletRequest( m_mockContextPath, "/Wiki.jsp" );
             MockHttpSession session = new MockHttpSession( m_engine.getServletContext() );
+            ((MockHttpServletRequest) request).addLocale( new Locale("") );
             ((MockHttpServletRequest) request).setSession( session );
         }
 

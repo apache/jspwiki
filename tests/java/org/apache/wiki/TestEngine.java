@@ -171,6 +171,7 @@ public class TestEngine extends WikiEngine
     public MockHttpServletRequest newHttpRequest( String path )
     {
         MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
+        request.addLocale( new Locale( "" ) );
         request.setSession( new MockHttpSession( this.getServletContext() ) );
         return request;
     }

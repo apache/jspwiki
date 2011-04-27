@@ -1,3 +1,15 @@
+2011-04-27  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-227
+        
+        * JSPWIKI-636: fixed DefaultAclManagerTest.testPrintAcl(). Saving pages involves calling 
+        RenderingManager.getRenderedDocument(), which can return cached or non-cached WikiDocuments. In  
+        the first case, ACLs were not associated to current WikiPage, whereas in the second one yes
+        (DefaultAclManager.parseAcl() is called as part of MarkupParser.parse()). 
+        
+        * JSPWIKI-636: 27 tests where locale-dependant (test assertions assumed english locale), so
+        TestEngine and WikiContextFactory enforce it when building mock requests.
+
 2011-04-03  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-226

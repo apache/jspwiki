@@ -1448,13 +1448,20 @@ public class ContentManager implements WikiEventListener
             {
                 WikiContext context = engine.getWikiContextFactory().newViewContext( page );
                 engine.getPage( page.getName() );
-                engine.textToHTML( context, text );
+                engine.textToHTML( context, text ); // may use cached HTML; in that case, ACLs don't get associated to WikiPage
+                // force re-parsing of ACLs, and set them in the page, if any
+                engine.getRenderingManager().getParser( context, text ).parse();
                 engine.getFilterManager().doPostSaveFiltering( context, text );
             }
             catch( PageNotFoundException e )
             {
                 e.printStackTrace();
                 throw new WikiException( e.getMessage(), e );
+            }
+            catch ( IOException ioe ) 
+            {
+                log.error( "unable to parse", ioe );
+                throw new WikiException( ioe.getMessage(), ioe );
             }
             return Outcome.STEP_COMPLETE;
         }
