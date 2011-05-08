@@ -1,3 +1,15 @@
+2011-05-08  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-228
+        
+        * fixed JSPWIKI-689 (InstallActionBean does not create admin user), most code
+          taken from JSPWiki 2.8.
+        
+        * On Install.jsp I also moved the logdir and workdir fields from Advanced to Basic,
+           since they are required fields.
+           
+         * Removed unmappable characters from CreoleToJSPWikiTranslatorTest (causing compile warnings)
+        
 2011-04-27  Juan Pablo Santos (juanpablo AT apache DOT org)
         
         * 3.0.0-svn-227

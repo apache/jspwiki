@@ -48,7 +48,12 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.LdapConfig;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.authorize.Group;
+import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.LdapAuthorizer;
 import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
 import org.apache.wiki.auth.user.LdapUserDatabase;
@@ -61,6 +66,7 @@ import org.apache.wiki.util.CryptoUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 import org.freshcookies.security.Keychain;
+
 
 @HttpCache( allow = false )
 public class InstallActionBean extends AbstractActionBean
@@ -308,6 +314,12 @@ public class InstallActionBean extends AbstractActionBean
         }
     }
 
+    public static final String PROP_ADMIN_ID = "admin";
+
+    public static final String PROP_ADMIN_NAME = "Administrator";
+
+    public static final String PROP_ADMIN_GROUP = "Admin";
+
     public static final String PROP_ADMIN_PASSWORD_HASH = "admin.passwordHash";
 
     private static final String CONFIG_LOG_FILE = "log4j_appender_FileLog_File";
@@ -536,8 +548,7 @@ public class InstallActionBean extends AbstractActionBean
             jspwiki.put( CONFIG_AUTHORIZER, WebContainerAuthorizer.class.getName() );
         }
 
-        // Hash the admin password
-        String passwordHash = CryptoUtil.getSaltedPassword( m_adminPassword.getBytes() );
+        String passwordHash = createAdminUser();
         jspwiki.put( CONFIG_ADMIN_PASSWORD_HASH, passwordHash );
 
         // Save the keychain
@@ -563,6 +574,46 @@ public class InstallActionBean extends AbstractActionBean
         return new TemplateResolution( "admin/InstallSuccess.jsp" );
     }
 
+    private String createAdminUser() throws NoSuchAlgorithmException, WikiSecurityException
+    {
+        // Hash the admin password
+        String passwordHash = CryptoUtil.getSaltedPassword( m_adminPassword.getBytes() );
+
+        // See if the admin user exists already
+        UserManager userMgr = getContext().getEngine().getUserManager();
+        UserDatabase userDb = userMgr.getUserDatabase();
+
+        try
+        {
+            userDb.findByLoginName( PROP_ADMIN_ID );
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            // The admin user apparently did not exist, so create it
+            UserProfile profile = userDb.newProfile();
+            profile.setLoginName( PROP_ADMIN_ID );
+            profile.setFullname( PROP_ADMIN_NAME );
+            profile.setPassword( m_adminPassword );
+            userDb.save( profile );
+        }
+
+        // Create a new admin group
+        GroupManager groupMgr = getContext().getEngine().getGroupManager();
+        Group group = null;
+        try
+        {
+            group = groupMgr.getGroup( PROP_ADMIN_GROUP );
+            group.add( new WikiPrincipal( PROP_ADMIN_NAME ) );
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            group = groupMgr.parseGroup( PROP_ADMIN_GROUP, PROP_ADMIN_NAME, true );
+        }
+        groupMgr.setGroup( getContext().getWikiSession(), group );
+
+        return passwordHash;
+    }
+    
     /**
      * Sets the admin password. Must be 16 characters or more.
      * 
