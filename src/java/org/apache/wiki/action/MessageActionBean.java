@@ -105,7 +105,7 @@ public class MessageActionBean extends AbstractActionBean
     }
 
     /**
-     * If the {@code error} event method is executed, returns the Exception that
+     * If the {@code error} event method is executed, returns the Throwable that
      * caused the error.
      * 
      * @return the Exception, or {@code null}
@@ -113,6 +113,17 @@ public class MessageActionBean extends AbstractActionBean
     public Throwable getRealCause()
     {
         return m_realcause;
+    }
+    
+    /**
+     * If the {@code error} event method is executed, returns the class in which the
+     * exception occured.
+     * 
+     * @return the {@link Class}, or {@code null}
+     */
+    public Class<? extends Throwable> getRealCauseClass()
+    {
+        return m_realcause.getClass();
     }
 
     /**

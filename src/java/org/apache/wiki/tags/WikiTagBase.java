@@ -136,7 +136,7 @@ public abstract class WikiTagBase
         catch( Exception e )
         {
             log.error( "Tag failed", e );
-            throw new JspException( "Tag failed, check logs: "+e.getMessage() );
+            throw new JspException( "Tag failed, check logs: " + ((e.getMessage() == null) ? e : e.getMessage()) );
         }
     }
 

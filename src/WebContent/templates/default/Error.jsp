@@ -19,7 +19,6 @@
     under the License.  
 --%>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<%@ page errorPage="/Error.jsp" %>
 <s:useActionBean beanclass="org.apache.wiki.action.MessageActionBean" event="error" id="error" />
 <s:layout-render name="${templates['layout/StaticLayout.jsp']}">
 
@@ -37,7 +36,7 @@
       <dt><b>Error</b></dt>
       <dd>${error.message}</dd>      
       <dt><b>Cause</b></dt>
-      <dd>${error.realCause.class.name}</dd>
+      <dd>${error.realCauseClass.name}</dd>
       <dt><b>Detailed message</b></dt>
       <dd>${error.realCause.message}</dd>
       <dt><b>Place where detected</b></dt>

@@ -35,7 +35,7 @@ import org.apache.wiki.api.WikiException;
 public class PageRenamer
 {
     /**
-     *  Renames a page. Delegates to {@link ContentManager#renamePage(WikiContext, String, String, boolean)}.
+     *  Renames a page. Delegates to {@link ContentManager#renamePage(WikiContext, String, String)}.
      *  
      *  @param context The current context.
      *  @param renameFrom The name from which to rename.

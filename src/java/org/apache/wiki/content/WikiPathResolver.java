@@ -62,7 +62,7 @@ public class WikiPathResolver
          * Returns the JCR path prefix; will always start and end with a slash
          * (/);
          * 
-         * @return
+         * @return the JCR path prefix.
          */
         public String path()
         {

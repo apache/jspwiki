@@ -786,7 +786,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      * {@code to} to the {@code refersTo} attribute of {@code from}. It
      * adds a reciprocal reverse link to {@code to} by adding to its 
      * {@code referredBy} attribute the UUID of {@code from}.
-     * @param the UUID of the page that refers to another
+     * @param from the UUID of the page that refers to another
      * @param to the UIUD that {@code from} refers to
      * @throws RepositoryException 
      * @throws LoginException 
@@ -810,7 +810,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      * attribute of {@code from}. It removes a reciprocal reverse link
      * from {@code to} by removing to its {@code referredBy} attribute
      * the UUID of {@code from}.
-     * @param the UUID of the page that refers to another
+     * @param from the UUID of the page that refers to another
      * @param to the UIUD that {@code from} refers to
      * @throws RepositoryException if the the JCR cannot obtain a Session,
      * retrieve either Node from the repository, or add required
