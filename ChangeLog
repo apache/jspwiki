@@ -1,3 +1,11 @@
+2011-05-13  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-230
+        
+        * JSPWIKI-691: Navigation to ./admin/Admin.jsp with a non-authorized user redirects to a blank ./Message.jsp. 
+        
+        * JSPWIKI-695: Change note gets sticked upon several revisions.
+
 2011-05-09  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-229
