@@ -191,6 +191,75 @@ public class EditActionBeanTest extends TestCase
         // Delete the test page
         m_engine.deletePage( pageName );
     }
+    
+    public void testEditChangeNote() throws Exception
+    {
+
+        String pageName = "EditChangeNote" + System.currentTimeMillis();
+
+        m_engine.saveText( pageName, "This is a test." );
+        WikiPage page = m_engine.getPage( pageName );
+        assertNotNull( "Did not save page " + pageName + "!", page );
+
+        // Set up the marked-up page
+        MockRoundtrip trip = m_engine.guestTrip( "/Edit.jsp" );
+        trip.setParameter( "page", pageName );
+        String startTime = String.valueOf( System.currentTimeMillis() );
+        trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
+        trip.addParameter( "wikiText", "Edited text" );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
+        trip.addParameter( "changenote", "first changenote" );
+        TestEngine.addSpamProtectParams( trip );
+        trip.execute( "save" );
+
+        // ...we should automatically see the test page bound to the ActionBean
+        EditActionBean bean = trip.getActionBean( EditActionBean.class );
+        ValidationErrors errors = trip.getValidationErrors();
+        assertEquals( 0, errors.size() );
+        assertEquals( page, bean.getPage() );
+        assertEquals( "first changenote", page.getChangeNote() );
+
+        // ...and the destination should be the Wiki action bean
+        assertEquals( "/Wiki.jsp?view=&page=" + pageName, trip.getDestination() );
+        
+        // One more edit, without changenote
+        trip = m_engine.guestTrip( "/Edit.jsp" );
+        trip.setParameter( "page", pageName );
+        startTime = String.valueOf( System.currentTimeMillis() );
+        trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
+        trip.addParameter( "wikiText", "This is the third revision." );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
+        TestEngine.addSpamProtectParams( trip );
+        trip.execute( "save" );
+        
+        // ...empty changenote
+        bean = trip.getActionBean( EditActionBean.class );
+        errors = trip.getValidationErrors();
+        assertEquals( 0, errors.size() );
+        assertEquals( page, bean.getPage() );
+        assertEquals( "", page.getChangeNote() );
+        
+        // One more edit, new changenote
+        trip = m_engine.guestTrip( "/Edit.jsp" );
+        trip.setParameter( "page", pageName );
+        startTime = String.valueOf( System.currentTimeMillis() );
+        trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
+        trip.addParameter( "wikiText", "This is the third revision." );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
+        trip.addParameter( "changenote", "second changenote" );
+        TestEngine.addSpamProtectParams( trip );
+        trip.execute( "save" );
+        
+        // ...second changenote
+        bean = trip.getActionBean( EditActionBean.class );
+        errors = trip.getValidationErrors();
+        assertEquals( 0, errors.size() );
+        assertEquals( page, bean.getPage() );
+        assertEquals( "second changenote", page.getChangeNote() );
+
+        // Delete the test page
+        m_engine.deletePage( pageName );
+    }
 
     public static Test suite()
     {

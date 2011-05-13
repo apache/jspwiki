@@ -438,6 +438,10 @@ public class EditActionBean extends AbstractPageActionBean
         if( m_changenote != null )
         {
             page.setAttribute( WikiPage.CHANGENOTE, m_changenote );
+        } 
+        else 
+        {
+            page.setAttribute( WikiPage.CHANGENOTE, "" );
         }
 
         // If this is an append, add it to the page.
