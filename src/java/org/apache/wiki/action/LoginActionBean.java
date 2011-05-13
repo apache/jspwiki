@@ -209,15 +209,13 @@ public class LoginActionBean extends AbstractActionBean
     @WikiRequestContext( "login" )
     public Resolution view()
     {
-        ValidationErrors errors = getContext().getValidationErrors();
-
         // If user got here and is already authenticated, it means
         // they just aren't allowed access to what they asked for.
         // Weepy tears and hankies all 'round.
         if( getContext().getWikiSession().isAuthenticated() )
         {
-            errors.addGlobalError( new LocalizableError( "login.error.noaccess" ) );
-            return new RedirectResolution( MessageActionBean.class );
+            String accessDenied = new LocalizableError( "login.error.noaccess" ).getMessage( getContext().getRequest().getLocale() );
+            return new ForwardResolution( MessageActionBean.class ).addParameter( "message", accessDenied );
         }
 
         if( getContext().getEngine().getAuthenticationManager().isContainerAuthenticated() )
