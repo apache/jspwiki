@@ -97,7 +97,7 @@
 
         * 3.0.0-svn-220
         
-        * JSPWIKI-669 Support external properties in WikiEngine (idea from John McKinney)
+        * JSPWIKI-660 Support external properties in WikiEngine (idea from John McKinney)
           You can now override individual properties in jspwiki.properties using standard
           Java System properties.
 
