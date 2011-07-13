@@ -461,15 +461,20 @@
   </target>
 
   <!-- Defines a compression macro for the JS/CSS bits we want to transform
-         into something that saves a bit of space. -->
+       into something that saves a bit of space. 
+       
+       The inputstring="" is required because Ant messes up the input streams
+       for any later exec() invocations otherwise (like running gpg signing).
+    -->
     
   <macrodef name="compressjs">
     <attribute name="src"/>
     <attribute name="args" default=""/>   
     <sequential>
       <java jar="${tests}/lib/yuicompressor-2.4.2.jar"
-        output="${tmpdir}/compress/webdocs/@{src}"
-        fork="true">
+            output="${tmpdir}/compress/webdocs/@{src}"
+            fork="true"
+            inputstring="">
         <arg line="'${code.web}/@{src}' @{args}" />
       </java>
     </sequential>
@@ -529,23 +534,23 @@
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
 
     <compressjs src="/templates/default/jspwiki.css"
-      			args="--line-break 0" />
+                args="--line-break 0" />
     
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
-   	<compressjs src="/templates/default/skins/OrderedList/skin.css"
-      			args="--line-break 0" />
+    <compressjs src="/templates/default/skins/OrderedList/skin.css"
+                args="--line-break 0" />
 
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
-   	<compressjs src="/templates/default/skins/PlainVanilla/skin.css"
-      			args="--line-break 0" />
+    <compressjs src="/templates/default/skins/PlainVanilla/skin.css"
+                args="--line-break 0" />
 
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
     <compressjs src="/templates/default/skins/PlainVanilla 1024x768/skin.css"
-      			args="--line-break 0" />
+                args="--line-break 0" />
 
-   	<mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
+    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
     <compressjs src="/templates/default/skins/Smart/skin.css"
-      			args="--line-break 0" />
+                args="--line-break 0" />
   </target>
 
   <!--
@@ -670,6 +675,36 @@
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
      </zip>
 
+  </target>
+
+  <!-- Nabbed from solr -->
+  <macrodef name="sign-artifact" description="Signs the artifact">
+    <attribute name="input.file"/>
+    <attribute name="output.file" default="@{input.file}.asc"/>
+    <sequential>
+      <echo>Signing @{input.file} Sig File: @{output.file}</echo>
+
+      <exec executable="gpg">
+        <arg value="--armor"/>
+        <arg value="--output"/>
+        <arg value="@{output.file}"/>
+        <arg value="--detach-sig"/>
+        <arg value="@{input.file}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <!-- Generates signatures and MD5 hashes for the release artifacts. -->
+  <target name="signeddist" depends="dist">
+
+     <checksum>
+       <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+     </checksum>
+
+     <sequential>
+       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip" />
+       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" />
+     </sequential>
   </target>
 
   <!-- ============================================================== -->
