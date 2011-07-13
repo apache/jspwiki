@@ -595,7 +595,7 @@
 		</fileset>
   	</move>
   	
-    <zip zipfile="${release.dir}/${ant.project.name}-src.zip" 
+    <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" 
     	 basedir="${tmpdir}" 
     	 includes="${ant.project.name}-${jspwiki.version}/**"/>
 
@@ -666,7 +666,7 @@
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
      <copy file="LICENSE" todir="${install.fulldir}" />
 
-     <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
+     <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
      </zip>
 
