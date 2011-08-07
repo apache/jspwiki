@@ -639,16 +639,6 @@
   </tag>
 
   <tag>
-    <name>RSSUserlandLink</name>
-    <tagclass>org.apache.wiki.tags.RSSCoffeeCupLinkTag</tagclass>
-    <bodycontent>empty</bodycontent>
-    <attribute>
-       <name>title</name>
-       <rtexprvalue>true</rtexprvalue>
-    </attribute>
-  </tag>
-
-  <tag>
     <name>SearchResultIterator</name>
     <tagclass>org.apache.wiki.tags.SearchResultIteratorTag</tagclass>
     <teiclass>org.apache.wiki.tags.SearchResultIteratorInfo</teiclass>

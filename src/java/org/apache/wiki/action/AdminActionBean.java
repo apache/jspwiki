@@ -38,7 +38,7 @@ public class AdminActionBean extends AbstractActionBean
     public Resolution security()
     {
         WikiEngine engine = getContext().getEngine();
-        if( TextUtil.isPositive( engine.getWikiProperties().getProperty( "jspwiki-x.securityconfig.enable" ) ) )
+        if( !TextUtil.isPositive( engine.getWikiProperties().getProperty( "jspwiki-x.securityconfig.enable" ) ) )
         {
             return new StreamingResolution( "text/html" ) {
                 public void stream( HttpServletResponse response ) throws Exception
@@ -49,7 +49,7 @@ public class AdminActionBean extends AbstractActionBean
             };
         }
         m_securityVerifier = new SecurityVerifier( engine, getContext().getWikiSession() );
-        return new TemplateResolution( "admin/Security.jsp" ).addParameter( "tab", "security" );
+        return new TemplateResolution( "admin/tabs/Security.jsp" ).addParameter( "tab", "security" );
     }
 
     /**

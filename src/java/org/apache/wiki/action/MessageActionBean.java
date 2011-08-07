@@ -36,7 +36,7 @@ import org.apache.wiki.util.FileUtil;
 @UrlBinding( "/Message.jsp" )
 public class MessageActionBean extends AbstractActionBean
 {
-    private static final Logger LOG = LoggerFactory.getLogger( "JSPWiki" );
+    private static final Logger LOG = LoggerFactory.getLogger( MessageActionBean.class );
 
     private String m_message = null;
 
