@@ -1,3 +1,9 @@
+2011-08-07  Harry Metske <metskem@apache.org>
+
+        * 2.8.5-svn-7
+        
+        * fixed JSPWIKI-699 (JBoss complaining about jspwiki.tld and oscache.tld).
+        
 2011-04-03  Harry Metske <metskem@apache.org>
 
         * 2.8.5-svn-6

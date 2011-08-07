@@ -621,16 +621,6 @@
   </tag>
 
   <tag>
-    <name>RSSUserlandLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.RSSCoffeeCupLinkTag</tagclass>
-    <bodycontent>empty</bodycontent>
-    <attribute>
-       <name>title</name>
-       <rtexprvalue>true</rtexprvalue>
-    </attribute>
-  </tag>
-
-  <tag>
     <name>SearchResultIterator</name>
     <tagclass>com.ecyrd.jspwiki.tags.SearchResultIteratorTag</tagclass>
     <teiclass>com.ecyrd.jspwiki.tags.SearchResultIteratorInfo</teiclass>
