@@ -31,6 +31,19 @@ as well as very detailed access control and security integration using JAAS.
 
 The license file can be found in LICENSE.
 
+
+    DISCLAIMER
+
+    Apache JSPWiki is an effort undergoing incubation at The Apache Software
+    Foundation (ASF), sponsored by the Apache Incubator.
+    Incubation is required of all newly accepted projects until a further
+    review indicates that the infrastructure, communications, and decision
+    making process have stabilized in a manner consistent with other successful
+    ASF projects. While incubation status is not necessarily a reflection of
+    the completeness or stability of the code, it does indicate that the
+    project has yet to be fully endorsed by the ASF.
+
+
 Pre-requirements
 ----------------
 
@@ -76,10 +89,10 @@ engine.  Just do the following:
    container)
 
 2) After you've installed the engine and checked that it works, you just
-  make a subdirectory under $TOMCAT_HOME/webapps/.
-  For example, if you want your application to be called 'wiki', just create a directory
-  called 'wiki', then extract all files from the war file into that
-  directory, preserving the directory structure.
+   make a subdirectory under $TOMCAT_HOME/webapps/.
+   For example, if you want your application to be called 'wiki', just create
+   a directory called 'wiki', then extract all files from the war file into
+   that directory, preserving the directory structure.
 
 3) Point your browser at http://<myhost>/JSPWiki/Install.jsp
    (Or, if you renamed it in the previous phase, use something like
