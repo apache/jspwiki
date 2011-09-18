@@ -46,6 +46,15 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
  */
 public class SessionMonitor implements HttpSessionListener
 {
+    static
+    {
+        // check for security manager active (JSPWiki does not run if a security manager is active)
+        if( System.getSecurityManager() != null )
+        {
+            throw new RuntimeException( "FATAL ERROR: An active Java Security Manager was found, JSPWiki will not work !!" );
+        }
+    }
+
     private static Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
