@@ -1,3 +1,9 @@
+2011-09-18  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-232
+        
+        * fixed JSPWIKI-705 (Log a clear hint to a running security manager).
+
 2011-08-21  Florian Holeczek <florianh@apache.org>
 
         * fixed JSPWIKI-701 (Website must display disclaimer text)

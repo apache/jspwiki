@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.action.WikiContextFactory;
@@ -51,6 +52,15 @@ import org.apache.wiki.ui.TemplateManager;
  */
 public class SessionMonitor implements HttpSessionListener, ServletContextListener, WikiEventListener
 {
+    static
+    {
+        // check for security manager active (JSPWiki does not run if a security manager is active)
+        if( System.getSecurityManager() != null )
+        {
+            throw new InternalWikiException( "FATAL ERROR: An active Java Security Manager was found, JSPWiki will not work !!" );
+        }
+    }
+
     private static Logger log = LoggerFactory.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
