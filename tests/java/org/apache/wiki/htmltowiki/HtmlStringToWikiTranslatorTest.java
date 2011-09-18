@@ -75,6 +75,11 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
 
        assertEquals( "[AugumentedWikiLinks|AugumentedWikiLinks|title='my \"custom\" title' target='_blank']", html2wiki
                      .translate( "<a class=\"wikipage\" href=\"Wiki.jsp?page=AugumentedWikiLinks\" target=\"_blank\" title=\"my 'custom' title\">AugumentedWikiLinks</a>" ) );
+       
+       // footnote links
+       assertEquals( "[23]", html2wiki.translate( "<a class=\"footnoteref\" href=\"#ref-PageName-23\">[23]</a>" ) );
+       assertEquals( "[something|23]", html2wiki.translate( "<a class=\"footnoteref\" href=\"#ref-PageName-23\">[something]</a>" ) );
+       
     }
     
     public void testTable() throws Exception

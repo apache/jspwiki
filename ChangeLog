@@ -1,5 +1,14 @@
 2011-09-18  Harry Metske <metskem@apache.org>
 
+        * 3.0.0-svn-233
+        
+        * JSPWIKI-391: FCK editor ruins the anchors inside the page
+        
+        * JSPWIKI-493: FCK editor adds newlines before and after text 
+        formatted as "code"
+
+2011-09-18  Harry Metske <metskem@apache.org>
+
         * 3.0.0-svn-232
         
         * fixed JSPWIKI-705 (Log a clear hint to a running security manager).
