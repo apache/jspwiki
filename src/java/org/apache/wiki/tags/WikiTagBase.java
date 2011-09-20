@@ -202,7 +202,7 @@ public abstract class WikiTagBase
      */
     public void setId(String id)
     {
-		m_id = ( TextUtil.replaceEntities( id ) );
+		m_id = TextUtil.replaceEntities( id );
 	}
 
 }

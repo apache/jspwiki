@@ -65,7 +65,7 @@ abstract class AbstractActionBean implements WikiActionBean
      */
     public final void setContext( ActionBeanContext context )
     {
-        m_context = ((WikiActionBeanContext) context);
+        m_context = (WikiActionBeanContext) context;
     }
 
 }

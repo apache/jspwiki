@@ -83,7 +83,7 @@ public class UtilJ2eeCompat
      */
     public static boolean useOutputStream( String serverInfo, Boolean boolInitialize )
     {
-        if( (useOutputStreamValue == null) | (boolInitialize) )
+        if( (useOutputStreamValue == null) | boolInitialize )
         {
             initCompatibilityOptions( serverInfo );
         }

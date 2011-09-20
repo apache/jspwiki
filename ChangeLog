@@ -1,3 +1,9 @@
+2011-09-20  Florian Holeczek <florianh@apache.org>
+
+        * no version bump
+        * modified jspwiki-checkstyle.xml to be compatible with CheckStyle 5.x
+        * corrected a few things CheckStyle was nagging about
+
 2011-09-18  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-233
