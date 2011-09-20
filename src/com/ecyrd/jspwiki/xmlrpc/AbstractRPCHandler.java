@@ -86,9 +86,8 @@ public abstract class AbstractRPCHandler
         // Transform UTC into local time.
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
-        cal.add( Calendar.MILLISECOND, 
-                 (cal.get( Calendar.ZONE_OFFSET ) + 
-                  (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
+        cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) + 
+                  (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {

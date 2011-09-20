@@ -375,7 +375,7 @@ public class Exporter
         exportPageFooter();  
     }
     
-    private static final String getParam(String s[], String p, String defaultParam)
+    private static final String getParam(String[] s, String p, String defaultParam)
     {
         if( s.length < 2 ) return defaultParam;
         

@@ -618,8 +618,8 @@ public class AttachmentManager
         // If file name ends with .jsp or .jspf, the user is being naughty!
         if( filename.toLowerCase().endsWith( ".jsp" ) || filename.toLowerCase().endsWith(".jspf") )
         {
-            log.info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this" +
-            		" can trigger unwanted security side effects, so we're preventing it." );
+            log.info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this " +
+                      "can trigger unwanted security side effects, so we're preventing it." );
             //
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.unwanted.file"  );

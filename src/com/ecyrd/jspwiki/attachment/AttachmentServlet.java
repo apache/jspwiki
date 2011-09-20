@@ -810,9 +810,12 @@ public class AttachmentServlet
                 att.setAttribute( WikiPage.CHANGENOTE, changenote );
             }
             
-            try {
-            m_engine.getAttachmentManager().storeAttachment( att, data );
-            } catch (ProviderException pe) {
+            try
+            {
+                m_engine.getAttachmentManager().storeAttachment( att, data );
+            }
+            catch( ProviderException pe )
+            {
                 // this is a kludge, the exception that is caught here contains the i18n key
                 // here we have the context available, so we can internationalize it properly :
                 throw new ProviderException( context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( pe.getMessage() ) );
