@@ -101,3 +101,5 @@ use the WikiPage.isAttachment() method to test for this condition instead.
 * Dummy page names like "__PAGEHERE__" and "#$%" in JavaScript and JSPs have
 been replaced with "Main". They were throwing PageNotFoundExceptions. It's
 probable that Stripes will eliminate the need to do this, anyway.
+
+* Running with a security manager isn't yet supported (see JSPWIKI-129).
