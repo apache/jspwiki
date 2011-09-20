@@ -92,9 +92,9 @@ partially:
 KNOWN PROBLEMS
 ==============
 
-* WebDav does not yet support the new
-  authentication/permissions scheme.  Therefore, if you have very
-  sensitive data in your wiki, you might not want to enable it.
+* WebDAV does not yet support the new authentication/permissions scheme.
+  Therefore, if you have very sensitive data in your wiki, you might not want
+  to enable it.
 
 * Not all old plugins work.  Specifically any plugins, which construct 
   new WikiPages will fail because of the constructor has been changed.
@@ -107,3 +107,5 @@ KNOWN PROBLEMS
 
 * The ShortURLConstructor does not work reliably.  Please use
   ShortViewURLConstructor, or Apache mod_rewrite.
+
+* Running with a security manager isn't yet supported (see JSPWIKI-129).
