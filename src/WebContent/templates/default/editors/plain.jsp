@@ -144,7 +144,7 @@
                 actually edits stuff. --%>
           <div id="editor-content" class="line" style="clear:both;">
       
-            <div class="unit size1of2">
+            <div class="unit" style="width:98%;">
               <div class="editor-container">
               <%-- js-insert: <div id="snipetoc"><ul>...</ul></div> --%>
               <s:textarea id="wikiText" name="wikiText" class="editor" rows="20" cols="80" />

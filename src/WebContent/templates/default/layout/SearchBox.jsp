@@ -28,14 +28,16 @@
 
 <s:form beanclass="org.apache.wiki.action.SearchActionBean" class="wikiform" id="searchForm" acceptcharset="UTF-8">
 
-  <c:set var="goTitle" scope="page"><fmt:message key="find.submit.go"/></c:set>
+  <span style="position:relative">
+  <c:set var="goTitle" scope="page"><fmt:message key="sbox.go"/></c:set>
   <s:text onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
-         onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
-            name="query" id="query"
-            size="20"
-       accesskey="f"><fmt:message key='sbox.search.submit'/></s:text>
-  <s:submit name="search" id="searchSubmit" title="${goTitle}" value="${goTitle}" />
-
+          onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
+          name="query" id="query"
+          size="20"
+          accesskey="f"><fmt:message key='sbox.search.submit'/></s:text>
+  <button name="search" id="searchSubmit" title="${goTitle}" value="${goTitle}" type="submit" ></button>
+  </span>
+  
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
       <a href="#" id='quickView' class='btn'
