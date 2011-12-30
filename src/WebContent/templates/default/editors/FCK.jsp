@@ -48,7 +48,6 @@
     wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
     
     String usertext = EditorManager.getEditedText(pageContext);
-    TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
  %>   
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
