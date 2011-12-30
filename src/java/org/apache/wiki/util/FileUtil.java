@@ -40,6 +40,9 @@ public final class FileUtil
 {
     /** Size of the buffer used when copying large chunks of data. */
     private static final int      BUFFER_SIZE = 4096;
+    
+    /** class logger. */
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      *  Private constructor prevents instantiation.
@@ -117,8 +120,6 @@ public final class FileUtil
                InterruptedException
     {
         StringBuilder result = new StringBuilder();
-
-        Logger log = LoggerFactory.getLogger(FileUtil.class);
         log.info("Running simple command "+command+" in "+directory);
 
         Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
@@ -298,6 +299,43 @@ public final class FileUtil
                 log.error("Not able to close the stream while reading contents.");
             }
         }
+    }
+    
+    /**
+     * Retrieves the contents of a text file.
+     * 
+     * @param fileName file (path) name
+     * @return the contents of the text file or a blank String if there is any kind of error.
+     */
+    public static String getContentFrom( String fileName ) 
+    {
+        String str = "";
+        BufferedReader in = null;
+        try 
+        {
+            in = new BufferedReader( new FileReader( fileName ) );
+            str = readContents( in );
+        } 
+        catch ( IOException ioe ) 
+        {
+            log.error( ioe.getMessage(), ioe );
+            str = "";
+        } 
+        finally 
+        {
+            try
+            {
+                if( in != null ) 
+                {
+                    in.close();
+                }
+            }
+            catch( IOException ioe )
+            {
+                log.error( ioe.getMessage(), ioe );
+            }
+        }
+        return str;
     }
 
     /**

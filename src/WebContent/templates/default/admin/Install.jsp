@@ -69,6 +69,12 @@
           <s:errors field="properties.priha.priha_provider_defaultProvider_directory" />
           <div class="description"><fmt:message key="install.pageDir.description" /></div>
         </div>
+        <div>
+          <s:label for="properties.jspwiki.default_set_of_pages_directory" />
+          <s:text name="properties.jspwiki.default_set_of_pages_directory" size="50" />
+          <s:errors field="properties.jspwiki.default_set_of_pages_directory" />
+          <div class="description"><fmt:message key="install.initialPageDir.description" /></div>
+        </div>
         
         <!-- Advanced settings: security, logging/work directories -->
         <h3><fmt:message key="install.advanced" /></h3>

@@ -60,6 +60,9 @@ import org.apache.wiki.auth.user.LdapUserDatabase;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.apache.wiki.migration.MigrationManager;
+import org.apache.wiki.migration.DefaultJSPWikiPagesLoader;
+import org.apache.wiki.migration.MigrationVO;
 import org.apache.wiki.ui.stripes.*;
 import org.apache.wiki.util.CommentedProperties;
 import org.apache.wiki.util.CryptoUtil;
@@ -69,6 +72,7 @@ import org.freshcookies.security.Keychain;
 
 
 @HttpCache( allow = false )
+@UrlBinding( "/Install.jsp" )
 public class InstallActionBean extends AbstractActionBean
 {
     /**
@@ -328,6 +332,8 @@ public class InstallActionBean extends AbstractActionBean
 
     private static final String CONFIG_PAGE_DIR = "priha_provider_defaultProvider_directory";
 
+    private static final String CONFIG_INITIAL_PAGES_DIR = "default_set_of_pages_directory";
+
     private static final String CONFIG_USERDATABASE = "jspwiki_userdatabase";
 
     private static final String CONFIG_AUTHORIZER = "jspwiki_authorizer";
@@ -498,6 +504,11 @@ public class InstallActionBean extends AbstractActionBean
             String pageDir = sanitizeDir( System.getProperty( "java.io.tmpdir" ) ) + "priha/fileprovider";
             priha.put( CONFIG_PAGE_DIR, pageDir );
         }
+        if ( !jspwiki.containsKey( CONFIG_INITIAL_PAGES_DIR ) )
+        {
+            String pageDir = sanitizeDir( System.getProperty( "java.io.tmpdir" ) ) + "corepages";
+            jspwiki.put( CONFIG_INITIAL_PAGES_DIR, pageDir );
+        }
 
         return null;
     }
@@ -532,11 +543,14 @@ public class InstallActionBean extends AbstractActionBean
         PropertiesMap<String, String> jspwiki = m_properties.get( "jspwiki" );
         jspwiki.put( CONFIG_BASE_URL, sanitizeURL( jspwiki.get( CONFIG_BASE_URL ) ) );
         jspwiki.put( CONFIG_WORK_DIR, sanitizeDir( jspwiki.get( CONFIG_WORK_DIR ) ) );
+        String defaultDirOfWikiPages = sanitizeDir( jspwiki.get( CONFIG_INITIAL_PAGES_DIR ) );
+        jspwiki.remove( CONFIG_INITIAL_PAGES_DIR ); // we don't want it in the final jspwiki.properties file
+        
         PropertiesMap<String, String> log4j = m_properties.get( "log4j" );
         log4j.put( CONFIG_LOG_FILE, sanitizeDir( m_logDirectory ) + "jspwiki.log" );
         PropertiesMap<String, String> priha = m_properties.get( "priha" );
         priha.put( CONFIG_PAGE_DIR, sanitizeDir( priha.get( CONFIG_PAGE_DIR ) ) );
-
+        
         // Set the correct userdatabase and authorizer
         String userdatabase = jspwiki.get( CONFIG_USERDATABASE );
         if( LdapUserDatabase.class.getName().equals( userdatabase ) )
@@ -564,11 +578,15 @@ public class InstallActionBean extends AbstractActionBean
         log4j.store();
         priha.store();
 
+        // Load default set of wiki pages
+        WikiEngine engine = getContext().getEngine();
+        MigrationManager m = new DefaultJSPWikiPagesLoader();
+        m.migrate( engine, new MigrationVO().setRepoDir( defaultDirOfWikiPages ) );
+        
         // Flush the WikiSession
         getContext().getWikiSession().invalidate();
 
         // Restart the WikiEngine
-        WikiEngine engine = getContext().getEngine();
         engine.restart();
 
         return new TemplateResolution( "admin/InstallSuccess.jsp" );

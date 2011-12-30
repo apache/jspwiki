@@ -1,3 +1,13 @@
+2011-12-30  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-234
+        
+        * fixed JSPWIKI-690: default set of pages for 3.0
+        
+        * fixed JSPWIKI-692: FCK.jsp uses TemplateManager.addResourceRequest, which does not exist anymore
+        
+        * most of JSPWIKI-693 (style issues) fixed
+        
 2011-09-20  Florian Holeczek <florianh@apache.org>
 
         * no version bump

@@ -718,6 +718,7 @@
       <fileset dir="${tests}/etc">
         <include name="CommentedPropertiesTest.properties" />
         <include name="log4j.properties" />
+      	<include name="migration/testrepo/**/*" />
       </fileset>
     </copy>
         
