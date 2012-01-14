@@ -67,7 +67,7 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
     {
         String src = "This is **bold\nand still bold**.";
 
-        assertEquals("This is __bold" + System.getProperty("line.separator") + "and still bold__.", translate(src));
+        assertEquals("This is __bold\nand still bold__.", translate(src));
     }
 
     public void testBoldAcrossLineParagraphs() throws Exception

@@ -1,7 +1,8 @@
 
 package com.ecyrd.jspwiki;
-import java.util.Properties;
 import java.io.*;
+import java.util.Locale;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,10 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.providers.AbstractFileProvider;
+import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
+import com.ecyrd.jspwiki.providers.FileSystemProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Simple test engine that always assumes pages are found.
@@ -116,6 +120,7 @@ public class TestEngine extends WikiEngine
     {
         MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
         request.setSession( new MockHttpSession( this.getServletContext() ) );
+        request.addLocale( new Locale( "" ) );
         return request;
     }
     

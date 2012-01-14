@@ -4,6 +4,9 @@ package com.ecyrd.jspwiki.providers;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
+
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.*;
 
 /**
@@ -20,6 +23,8 @@ public class RCSFileProviderTest extends TestCase
     Properties props = new Properties();
 
     TestEngine engine;
+    
+    boolean isRcsInPath;
 
     public RCSFileProviderTest( String s )
     {
@@ -32,6 +37,37 @@ public class RCSFileProviderTest extends TestCase
         props.load( TestEngine.findTestProperties("/jspwiki_rcs.properties") );
 
         engine = new TestEngine(props);
+        
+        checkIfRCSIsInPath();
+    }
+    
+    /**
+     * if the RCS package isn't installed and in path, these tests will always fail, so we try to 
+     * run them selectively.
+     */
+    void checkIfRCSIsInPath() 
+    {
+        Process process = null;
+        final Logger log = Logger.getLogger(RCSFileProviderTest.class);
+        String cmd = "rlog --help";
+        try
+        {
+            process = Runtime.getRuntime().exec( cmd, null, new File( "." ) );
+            process.waitFor();
+            isRcsInPath = true;
+        }
+        catch( IOException ioe )
+        {
+            isRcsInPath = false;
+            log.info( "RCS must be installed and in path in order to execute the tests." );
+            log.info( "Hence, execution of RCSFileProviderTest will be disabled" );
+        }
+        catch( InterruptedException ie )
+        {
+            isRcsInPath = false;
+            log.info( "RCS must be installed and in path in order to execute the tests." );
+            log.info( "Hence, execution of RCSFileProviderTest will be disabled" );
+        }
     }
 
     /**
@@ -75,21 +111,24 @@ public class RCSFileProviderTest extends TestCase
     public void testMillionChanges()
         throws Exception
     {
-        String text = "";
-        String name = NAME1;
-        int    maxver = 100; // Save 100 versions.
-
-        for( int i = 0; i < maxver; i++ )
+        if( isRcsInPath ) 
         {
-            text = text + ".";
-            engine.saveText( name, text );
+            String text = "";
+            String name = NAME1;
+            int    maxver = 100; // Save 100 versions.
+
+            for( int i = 0; i < maxver; i++ )
+            {
+                text = text + ".";
+                engine.saveText( name, text );
+            }
+
+            WikiPage pageinfo = engine.getPage( NAME1 );
+
+            assertEquals( "wrong version", maxver, pageinfo.getVersion() );
+            // +2 comes from \r\n at the end of each file.
+            assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
         }
-
-        WikiPage pageinfo = engine.getPage( NAME1 );
-
-        assertEquals( "wrong version", maxver, pageinfo.getVersion() );
-        // +2 comes from \r\n at the end of each file.
-        assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
     }
 
     /**
@@ -99,138 +138,162 @@ public class RCSFileProviderTest extends TestCase
     public void testMigration()
         throws IOException
     {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        if( isRcsInPath )
+        {
+            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            
+            File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        Writer out = new FileWriter( f );
-        FileUtil.copyContents( new StringReader("foobar"), out );
-        out.close();
+            Writer out = new FileWriter( f );
+            FileUtil.copyContents( new StringReader("foobar"), out );
+            out.close();
 
-        String res = engine.getText( NAME1 );
+            String res = engine.getText( NAME1 );
 
-        assertEquals( "latest did not work", "foobar", res );
+            assertEquals( "latest did not work", "foobar", res );
 
-        res = engine.getText( NAME1, 1 ); // Should be the first version.
+            res = engine.getText( NAME1, 1 ); // Should be the first version.
 
-        assertEquals( "fetch by direct version did not work", "foobar", res );
+            assertEquals( "fetch by direct version did not work", "foobar", res );
+        }
     }
 
     public void testGetByVersion()
         throws Exception
     {
-        String text = "diddo\r\n";
+        if( isRcsInPath ) 
+        {
+            String text = "diddo\r\n";
 
-        engine.saveText( NAME1, text );
+            engine.saveText( NAME1, text );
 
-        WikiPage page = engine.getPage( NAME1, 1 );
-       
-        assertEquals( "name", NAME1, page.getName() );
-        assertEquals( "version", 1, page.getVersion() );
+            WikiPage page = engine.getPage( NAME1, 1 );
+           
+            assertEquals( "name", NAME1, page.getName() );
+            assertEquals( "version", 1, page.getVersion() );
+        }
+        
     }
 
     public void testGetByLatestVersion()
         throws Exception
     {
-        String text = "diddo\r\n";
+        if( isRcsInPath ) 
+        {
+            String text = "diddo\r\n";
 
-        engine.saveText( NAME1, text );
+            engine.saveText( NAME1, text );
 
-        WikiPage page = engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
-       
-        assertEquals( "name", NAME1, page.getName() );
-        assertEquals( "version", 1, page.getVersion() );
+            WikiPage page = engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
+           
+            assertEquals( "name", NAME1, page.getName() );
+            assertEquals( "version", 1, page.getVersion() );
+        }
     }
 
     public void testDelete()
         throws Exception
     {
-        engine.saveText( NAME1, "v1" );
-        engine.saveText( NAME1, "v2" );
-        engine.saveText( NAME1, "v3" );
+        if( isRcsInPath )
+        {
+            engine.saveText( NAME1, "v1" );
+            engine.saveText( NAME1, "v2" );
+            engine.saveText( NAME1, "v3" );
 
-        PageManager mgr = engine.getPageManager();
-        WikiPageProvider provider = mgr.getProvider();
+            PageManager mgr = engine.getPageManager();
+            WikiPageProvider provider = mgr.getProvider();
 
-        provider.deletePage( NAME1 );
+            provider.deletePage( NAME1 );
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+            File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        assertFalse( "file exists", f.exists() );
+            assertFalse( "file exists", f.exists() );
 
-        f = new File( files+File.separator+"RCS", NAME1+FileSystemProvider.FILE_EXT+",v" );
+            f = new File( files+File.separator+"RCS", NAME1+FileSystemProvider.FILE_EXT+",v" );
 
-        assertFalse( "RCS file exists", f.exists() );
+            assertFalse( "RCS file exists", f.exists() );
+        }
     }
 
     public void testDeleteVersion()
         throws Exception
     {
-        engine.saveText( NAME1, "v1\r\n" );
-        engine.saveText( NAME1, "v2\r\n" );
-        engine.saveText( NAME1, "v3\r\n" );
-
-        PageManager mgr = engine.getPageManager();
-        WikiPageProvider provider = mgr.getProvider();
-
-        provider.deleteVersion( NAME1, 2 );
-
-        List l = provider.getVersionHistory( NAME1 );
-
-        assertEquals( "wrong # of versions", 2, l.size() );
-
-        assertEquals( "v1", "v1\r\n", provider.getPageText( NAME1, 1 ) );
-        assertEquals( "v3", "v3\r\n", provider.getPageText( NAME1, 3 ) );
-
-        try
+        if( isRcsInPath ) 
         {
-            provider.getPageText( NAME1, 2 );
-            fail( "v2" );
-        }
-        catch( NoSuchVersionException e )
-        {
-            // This is expected
+            engine.saveText( NAME1, "v1\r\n" );
+            engine.saveText( NAME1, "v2\r\n" );
+            engine.saveText( NAME1, "v3\r\n" );
+
+            PageManager mgr = engine.getPageManager();
+            WikiPageProvider provider = mgr.getProvider();
+
+            provider.deleteVersion( NAME1, 2 );
+
+            List l = provider.getVersionHistory( NAME1 );
+
+            assertEquals( "wrong # of versions", 2, l.size() );
+
+            assertEquals( "v1", "v1\r\n", provider.getPageText( NAME1, 1 ) );
+            assertEquals( "v3", "v3\r\n", provider.getPageText( NAME1, 3 ) );
+
+            try
+            {
+                provider.getPageText( NAME1, 2 );
+                fail( "v2" );
+            }
+            catch( NoSuchVersionException e )
+            {
+                // This is expected
+            }
         }
     }
 
     public void testChangeNote()
         throws Exception
     {
-        WikiPage p = new WikiPage( engine, NAME1 );
-        p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
-        WikiContext context = new WikiContext(engine,p);
-        
-        engine.saveText( context, "test" );
-        
-        WikiPage p2 = engine.getPage( NAME1 );
-        
-        assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+        if( isRcsInPath )
+        {
+            WikiPage p = new WikiPage( engine, NAME1 );
+            p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
+            WikiContext context = new WikiContext(engine,p);
+            
+            engine.saveText( context, "test" );
+            
+            WikiPage p2 = engine.getPage( NAME1 );
+            
+            assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+        }
     }
 
     public void testChangeNoteOldVersion()
         throws Exception
     {
-        WikiPage p = new WikiPage( engine, NAME1 );
-        WikiContext context = new WikiContext(engine,p);
+        if( isRcsInPath )
+        {
+            WikiPage p = new WikiPage( engine, NAME1 );
+            WikiContext context = new WikiContext(engine,p);
 
-        context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
-        engine.saveText( context, "test" );
-        
-        context.getPage().setAttribute(WikiPage.CHANGENOTE, "Change 2" );
-        engine.saveText( context, "test2" );
+            context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
+            engine.saveText( context, "test" );
+            
+            context.getPage().setAttribute(WikiPage.CHANGENOTE, "Change 2" );
+            engine.saveText( context, "test2" );
 
-        WikiPage p2 = engine.getPage( NAME1, 1 );
-        
-        assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+            WikiPage p2 = engine.getPage( NAME1, 1 );
+            
+            assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
 
-        WikiPage p3 = engine.getPage( NAME1, 2 );
-        
-        assertEquals( "Change 2", p3.getAttribute(WikiPage.CHANGENOTE) );
+            WikiPage p3 = engine.getPage( NAME1, 2 );
+            
+            assertEquals( "Change 2", p3.getAttribute(WikiPage.CHANGENOTE) );
+        }
     }
+    
     public static Test suite()
     {
         return new TestSuite( RCSFileProviderTest.class );
     }
+    
 }

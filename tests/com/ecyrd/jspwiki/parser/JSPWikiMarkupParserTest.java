@@ -101,7 +101,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( e, p );
+        WikiContext context = new WikiContext( e, testEngine.newHttpRequest(), p );
         JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context,
                                                           new BufferedReader( new StringReader(src)) );
 

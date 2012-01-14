@@ -41,7 +41,7 @@ public class ReferringPagesPluginTest extends TestCase
         engine.saveText( "Foobar6", "Reference to [TestPage]." );
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
-        context = new WikiContext( engine, new WikiPage(engine,"TestPage") );
+        context = new WikiContext( engine, engine.newHttpRequest(), new WikiPage(engine,"TestPage") );
         manager = new PluginManager( engine, props );
     }
 
@@ -182,7 +182,7 @@ public class ReferringPagesPluginTest extends TestCase
         
         String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
         // the date should be parseable:
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz");
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz", engine.newHttpRequest().getLocale());
         df.parse(dateString);
 
         // test if the proper exception is thrown:

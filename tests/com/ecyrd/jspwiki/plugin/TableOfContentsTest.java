@@ -7,7 +7,10 @@ package com.ecyrd.jspwiki.plugin;
 import java.util.Properties;
 
 import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -44,6 +47,23 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.deletePage( "Test" );
     }
+    
+    /**
+     * TableOfContents plugin produces some i18n text, so we enforce english locale in order to
+     * be able to compare properly to assertion texts.
+     * 
+     * @param pagename name of the page.
+     * @return (english) contents corresponding to the given page name. 
+     */
+    String getI18nHTML( String pagename ) 
+    {
+        WikiPage page = testEngine.getPage( pagename, WikiPageProvider.LATEST_VERSION );
+        WikiContext context = new WikiContext( testEngine,
+                                               testEngine.newHttpRequest(),
+                                               page );
+        context.setRequestContext( WikiContext.NONE );
+        return testEngine.getHTML( context, page );
+    }
 
     public void testHeadingVariables()
         throws Exception
@@ -52,7 +72,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -71,7 +91,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -96,7 +116,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -131,7 +151,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -168,7 +188,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -198,7 +218,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         assertTrue( res.indexOf("Table of Contents") != -1 );
     }
@@ -210,7 +230,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
         
         assertTrue( "<i>", res.indexOf("<i>") == -1 ); // Check that there is no HTML left
         assertTrue( "</i>", res.indexOf("</i>") == -1 ); // Check that there is no HTML left
@@ -223,7 +243,7 @@ public class TableOfContentsTest extends TestCase
         
         testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = getI18nHTML( "Test" );
 
         assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
         assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );

@@ -1,3 +1,10 @@
+2012-01-14  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+        * no version bump
+        * corrected failing unit tests: 17 of them were locale dependant (test assertions assumed 
+          english locale), so TestEngine enforces it when building mock requests
+        * RCSFileProvider tests are executed only if RCS is detected in path.
+
 2011-09-20  Florian Holeczek <florianh@apache.org>
 
         * no version bump
