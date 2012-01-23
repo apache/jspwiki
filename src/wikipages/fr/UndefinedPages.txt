@@ -1,5 +1,0 @@
-!!!Pages non définies
-
-Voici les pages référencées qui ne sont pas définies :
-
-[{UndefinedPagesPlugin max=400 before='#' after='\n'}]

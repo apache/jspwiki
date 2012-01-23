@@ -1,8 +1,0 @@
-[Derniers changements|Recent Changes]\\
-[Index des pages|Page Index]\\
-[A propos|About]\\
-[Infos système|SystemInfo]\\
-
-[Pages orphelines|UnusedPages]\\
-[Pages non définies|UndefinedPages]\\
-

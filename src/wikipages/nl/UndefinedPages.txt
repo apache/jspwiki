@@ -1,5 +1,0 @@
-Hier zijn de pagina's die nog niet zijn gemaakt. Waarom maak je er niet een paar ?
-
-[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
-
-(Terug naar [Main]).

@@ -1,3 +1,0 @@
-%%center
-[Bienvenido|TitleBox] a [JSPWiki|About]
-/%

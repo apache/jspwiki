@@ -1,5 +1,0 @@
-Questo è un elenco alfabetico di tutte le pagine di questo Wiki.
-
-----
-
-[{INSERT IndexPlugin exclude='SandBox-*'}]
