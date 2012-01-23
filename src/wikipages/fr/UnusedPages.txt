@@ -1,0 +1,5 @@
+!!!Pages orphelines
+
+Voici la liste des pages qui ne sont référencées par aucune autre page :
+
+[{UnusedPagesPlugin}]

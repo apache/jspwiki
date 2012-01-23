@@ -1,0 +1,26 @@
+You can use meta-characters in the 'Search For' field:
+
+|.      |any character except newline    |+      |one or more times
+|*      |zero or more times              |?      |zero or one time
+|{n}    |match exact n times             |{n,m}  |at least n, at most m times
+|~|    |pipe: {{a~|b}} matches a or b  | -     |hyphen, match a range of chars
+|^      |beginning of a line             |$      |end of a line
+|[[...] |one of the char's of a set      |[[^...] |negated character set
+|\b     |word boundary                   |\B     |word non boundary
+|\d     |numeral [[0-9]                  |\D     |non numeral [[^0-9]
+|\s     |single white space              |\S     |single non white space 
+|\w     |[[A-Za-z0-9_]                   |\W     |[[^A-Za-z0-9_]
+|(...)  |grouping are stored as $1..$9   |\.     |escape a meta char
+
+The 'Replace with' field can use $1..$9  as a backreference to parentheses of 'Search for' field.
+----
+Example:\\
+
+Search for __/abc|def/__ will match the word 'abc' or the word 'def'\\
+Search for  __/bwiki/b__ will match the word 'wiki' but not the word 'jspwiki'.\\
+Search for __^[[IVXMDCL]+\.__ will match any combination of roman numeral char's followed by a period\\
+Search for __/(-?\d+)(\d{3})/__ and replace with __$1,$2__ to insert commas in large integers. 
+
+This is the [EditFindAndReplaceHelp] page. 
+[More info on regular expressions|http://www.regular-expressions.info/javascript.html]
+and [RegExp Sandbox|http://www.regular-expressions.info/javascriptexample.html]\\

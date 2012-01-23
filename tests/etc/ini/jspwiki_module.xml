@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is a part of the JSPWiki plugin test suite. 
+-->
+<modules>
+    <plugin class="SamplePlugin2">
+        <author>Janne Jalkanen</author>
+        <script>foo2.js</script>
+        <stylesheet>foo2.css</stylesheet>
+        <alias>samplealias2</alias>
+    </plugin>
+    <plugin class="com.ecyrd.jspwiki.plugin.SamplePlugin">
+        <author>Janne Jalkanen</author>
+        <script>foo.js</script>
+        <stylesheet>foo.css</stylesheet>
+        <alias>samplealias</alias>
+    </plugin>
+</modules>

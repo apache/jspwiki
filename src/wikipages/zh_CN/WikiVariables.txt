@@ -1,0 +1,57 @@
+JSPWiki 有许多可以在运行时嵌入在页面中的变量。请参阅[文本格式化规则]了解如何使用。快速示例：
+
+{{{
+[{$jspwikiversion}]
+}}}
+
+!applicationname
+
+这是此 Wiki 的名字。是管理员在 "jspwiki.properties" 中设置的。此 Wiki 名为 ''[{$applicationname}]''。
+
+!baseurl
+
+此 Wiki 的基本 URL。例如：''[{$baseurl}]''。
+* 奇怪的是，尾部斜杠似乎可以工作，尽管已经在属性文件中定义了尾部斜杠，在我们的设置中（Windows 2000，Apache 2，Tomcat 5.5，JSPWiki 2.2.28）尾部斜杠被删掉了。-- G. Hagedorn，2005年10月
+
+!encoding
+
+描述了此 Wiki 中使用的字符编码。UTF-8 编码意味着 Wiki 可以接受任何字符，包括中文、日文等等。而 ISO-8859-1 表示只支持西欧语言。本 Wiki 使用了 ''[{$encoding}]'' 编码。
+
+!inlinedimages
+
+让您知道那些图像类型可以直接显示在页面中。例如：''[{$inlinedimages}]''。
+
+!interwikilinks
+
+为支持的 InterWiki 链接编写 HTML 代码。例如：\\ ''[{$interwikilinks}]''。
+
+!jspwikiversion
+
+插入 JSPWiki 引擎的版本号。例如，此版本为 ''[{$jspwikiversion}]''。
+
+!uptime
+
+插入自从上次 Wiki 重新启动 以来到现在的运行时间。本 Wiki 已经运行了 ''[{$uptime}]''。
+
+!pagename
+
+插入当前页面名。示例：此页面名为 ''[{$pagename}]''。
+
+!pageprovider
+
+当前的 PageProvider。示例：''[{$pageprovider}]''。
+
+!pageproviderdescription
+
+关于当前使用的页面提供程序的详细的 HTML 描述。示例：''[{$pageproviderdescription}]''。
+
+!totalpages
+
+此 Wiki 中可用的总页面数。示例：''[{$totalpages}]''。
+
+!插入 JSPWiki 属性
+
+您也可以通过直接使用属性名来访问 JSPWiki 中的一些属性（当然这些属性要站点维护人员定义过才行）。请参考 [SystemInfo] 获取示例。
+注意，出于安全考虑一些属性可能不能访问。
+
+

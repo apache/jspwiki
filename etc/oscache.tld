@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+    <tlib-version>1.6</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>oscache</short-name>
+    <uri>http://www.opensymphony.com/oscache</uri>
+    <display-name>OSCache Tag Library</display-name>
+    <description>OSCache - see http://www.opensymphony.com/oscache</description>
+
+    <tag>
+        <name>cache</name>
+        <tag-class>com.opensymphony.oscache.web.tag.CacheTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>A tag to cache post-processed JSP contents</description>
+
+        <attribute>
+            <name>time</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>duration</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>cron</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>refreshpolicyclass</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>refreshpolicyparam</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>scope</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>refresh</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>mode</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>key</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>groups</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>language</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>usecached</name>
+        <tag-class>com.opensymphony.oscache.web.tag.UseCachedTag</tag-class>
+        <description>A tag to tell the cache to use the cached version</description>
+
+        <attribute>
+            <name>use</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>flush</name>
+        <tag-class>com.opensymphony.oscache.web.tag.FlushTag</tag-class>
+        <description>A tag to flush the cache</description>
+
+        <attribute>
+            <name>scope</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>key</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>group</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>language</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>pattern</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>addgroup</name>
+        <tag-class>com.opensymphony.oscache.web.tag.GroupTag</tag-class>
+        <description>A tag to add a group to an ancestor cache tag</description>
+        <attribute>
+            <name>group</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>addgroups</name>
+        <tag-class>com.opensymphony.oscache.web.tag.GroupsTag</tag-class>
+        <description>A tag to add a comma-delimited list of groups to an ancestor cache tag</description>
+        <attribute>
+            <name>groups</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+</taglib>
