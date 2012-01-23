@@ -1,0 +1,34 @@
+This document describes how to set up OpenLDAP with a sample dataset to support
+the LdapAuthorizerTest and LdapLoginModuleTest unit tests. It assumes that OpenLDAP
+is installed on your system and that config files are stored in /etc/openldap.
+OpenLDAP runs on most Unix-like systems. Mac OS X 10.6 Snow Leopard has OpenLDAP installed
+out of the box. The out-of-the-box OS X setup was what this document was written
+to work with. Your mileage may vary.
+
+First-time setup
+1) Test that conf file is ok
+/usr/libexec/slapd -d -1 -f etc/ldap/slapd.conf -Tt -u
+
+2) Start slapd; bind to localhost and run as user 'arj'
+/usr/libexec/slapd -f etc/ldap/slapd.conf -h "ldap://127.0.0.1:4890/" -d -1 -u arj
+
+3) Add user file (connection with password "test")
+ldapadd -x -h 127.0.0.1 -p 4890 -D "cn=Manager,dc=jspwiki,dc=org" -w test -f etc/ldap/test.ldif
+
+4) Verify users were added
+ldapsearch -x -h 127.0.0.1 -p 4890 -D "cn=Manager,dc=jspwiki,dc=org" -w test -b 'dc=jspwiki,dc=org'
+ldapsearch -x -h 127.0.0.1 -p 4890 -b 'ou=people,dc=jspwiki,dc=org'
+ldapsearch -x -h 127.0.0.1 -p 4890 -b 'ou=roles,dc=jspwiki,dc=org'
+ldapsearch -x -h 127.0.0.1 -p 4890 -b 'dc=jspwiki,dc=org' '(objectClass=groupOfUniqueNames)'
+ldapsearch -x -h 127.0.0.1 -p 4890 -b 'dc=jspwiki,dc=org' '(uniqueMember=uid\3Dadmin,ou\3Dpeople,dc\3Djspwiki,dc\3Dorg)'
+ldapsearch -x -h 127.0.0.1 -p 4890 -b 'dc=jspwiki,dc=org' '(&(objectClass=groupOfUniqueNames)(uniqueMember=uid\3Dadmin,ou\3Dpeople,dc\3Djspwiki,dc\3Dorg))'
+
+Default search is "sub": the current DN + all children, recursively
+-LLL       suppress comments
+-s uid     sort by uid
+| grep dn  handy pipe to list just the dns
+
+Tips
+http://www.grennan.com/ldap-HOWTO.html
+
+The Codec class is designed to create ASN.1 BitStrings. It's a crap implementation but is fine for our purposes here.

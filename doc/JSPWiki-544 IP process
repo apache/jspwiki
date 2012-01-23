@@ -1,0 +1,78 @@
+The source code for JSPWiki is all Apache 2.0-licensed. 
+The Apache Software Foundation owns all rights source code, configuration files, and related intellectual property. 
+The only exception to this are bundled third-party libraries, whose rights remain those of their respective owners.
+
+JSPWiki originated outside Apache as an independent project led by Janne Jalkanen. 
+After admission into the Incubator program, the project team took the following steps to ensure that 
+the old JSPWiki codebase was cleansed of potential IP issues and that all IP rights were assigned to Apache. 
+
+The project team:
+
+1 Identified the authors of all code in the JSPWiki codebase
+2 Secured licensing agreements from every author
+3 Re-wrote or removed any code associated with an author who could or would not submit a licensing agreement
+4 Verified that the licensing agreements associated with bundled third-party JARs were Apache-compatible
+5 Removed or replaced third-party resources for which licenses were not Apache-compatible
+
+Details for the process the team used for each step follows.
+
+
+1. Idenfication of all authors of JSPWiki code
+
+In August 2007, Janne Jalkanen identified all authors, as designated by @author tags in the code. 
+The authors include 6 core developers: 
+Janne Jalkanen, Andrew Jaquith, Erik Bunn, Murray Altheim, Dirk Frederickx and Christoph Sauer. 
+In addition, analysis identified 16 other developers who had contributed code. The Unix grep command was used to find authors.
+
+The complete list of contributors are: 
+Kees Kuip, John Volkar, Alain Ravet, Chuck Smith, Henning Schmiedehausen, Ken Liu, Sebastian Baltes, Hanno Eichelberger,
+ Arent-Jan Banck, David Au, Scott Hurlbert, Dan Frankowski, Torsten Hildebrandt, Steffen Schramm, Janne Jalkanen, Murray Altheim, 
+Christoph Sauer, Erik Bunn, BaseN corporation, Juanpablo Santos Rodriguez, Andrew Jaquith, and Dirk Frederickx.
+
+
+2. Secured licensing agreements from every author.
+
+All of the authors identified in Step 1 were asked to submit an Individual Contributor License Agreement (ICLA) or 
+a Software Grant (SG) agreement, depending on whether they wished to stay involved with the project. 
+This process began in August 2007. As of 9 May 2009, ICLAs or SGs had been secured from 21 of the 22 authors. 
+The one developer that did not submit a CLA was Alain Ravet. 
+All other authors submitted CLAs or SGs; their status can be verified at http://people.apache.org/~jim/committers.html.
+One component was written by various contributors that could not be tracked.
+
+3. Re-wrote or removed any code associated with an author who could or would not submit a licensing agreement
+
+As noted, only one author of code in the JSPWiki code based did not submit a CLA. 
+Alain Ravet was the author of a single class, IndexPlugin. 
+Janne Jalkanen re-wrote this class from scratch and checked it in 14 June 2008 (see JIRA issue JSPWIKI-246). 
+The other component was PageRenamer, which was written by various contributors that did have a CLA on file, since 
+PageRenamer was completely rewritten by Janne Jalkanen (see JIRA issue JSPWIKI-251).
+
+4. Verified that the licensing agreements associated with 3rd party resources were Apache-compatible
+
+JSPWiki uses 46 third-party JARs, several scripts and a few third-party icons. 
+These works are licensed into two categories: (A) Apache-authorized licenses licenses; (B) Reciprocal licenses. 
+JSPWiki uses no excluded licenses such as GPL and LGPL, per Apache's policy as described at http://www.apache.org/legal/3party.html.
+
+Category A licenses are for those libraries and resources that are Apache-authorized, including Apache 2.0 and MIT licenses. 
+In the list of JARs below, the license requirements of all Apache-licensed JARs and resources are fufilled by the 
+LICENSE document in the top-level directory.
+
+Category B licenses may only be included in within an Apache product if the inclusion is appropriately 
+labeled: CDDL 1.0, CPL 1.0, EPL 1.0, IPL 1.0, MPL 1.0, MPL 1.1, SPL 1.0. 
+To comply with the licensing terms for these works, license files (prefixed LICENSE.) were added to the doc/ top-level project directory.
+
+The Apache 2.0 license for JSPWiki and the full list of third-party software used is contained in the top-level LICENSE file. 
+This file also lists references to appropriate third-party licenses in addition than the Apache 2.0 license.
+
+5. Removed or replaced third-party resources for which licenses were not Apache-compatible
+
+When third-party dependencies and licenses were being analyzed, the JSPWiki development team identified several 
+non-compatible JARs which were replaced or removed. These included:
+- jug-lgpl.jar, an LGPL UUID generator. This was removed in favor of a JDK-based solution.
+- WikiWizard.jar, a graphical wiki text editor. This feature was removed and not replaced.
+- MultiPartRequest.jar, an LGPL-licensed multi-party MIME request parser from Jason Pell. 
+This was replaced by Apache commons-fileupload-1.2.1.jar.
+
+One included JavaScript resource, posteditor.js, contains a single reference in its header to a "MIT-style license." 
+Because this is not exactly an MIT license, the posteditor.js script will be re-written prior to the alpha release.
+

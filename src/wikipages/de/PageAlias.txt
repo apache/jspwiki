@@ -1,0 +1,15 @@
+Manchmal ist es nützlich festlegen zu können, dass mit einer Seite ''wirklich'' eine andere Seite gemeint ist. Beispielsweise könnte man eine Seite namens "PageAlias" haben, die aber ebenfalls unter "Alias" erreichbar sein sollte. Für diesen Zweck kann man einen Seitenalias benutzen:
+
+Füge folgende Zeile in die Seite "[Alias]" ein (Die Beispielseite existiert bereits und führt dich daher sofort zurück auf diese!):
+
+{{{
+[{SET alias='PageAlias'}]
+}}}
+
+Jedesmal wenn jemand die Seite "Alias" aufruft, wird er automatisch auf die vorliegende Seite "PageAlias" umgeleitet.
+
+Seitenaliase sind beispielsweise auch sehr hilfreich bei der Benutzung unregelmäßiger Pluralformen. JSPWiki erkennt zwar einfache englische Pluralformen, bei denen nur ein 's' angehängt wird (sofern diese Option aktiviert wurde). Allerdings ist es nicht klug genug, unregelmäßige Formen zu erkennen.
+
+!Bearbeiten von Alias-/Umleitungsseiten
+
+Logischerweise kann man nicht einfach auf den "Bearbeiten"-Link klicken, um eine solche Seite bearbeiten zu können, da man beim Aufruf der Aliasseite sofort auf die Zielseite weitergeleitet wurde. Man kann allerdings die Aliasseite direkt bearbeiten, indem man einfach {{Edit.jsp?page=''Aliasseite''}} hinter die Basis-URL schreibt und diesen Link dann aufruft.

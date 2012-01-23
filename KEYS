@@ -1,0 +1,178 @@
+# 
+#    JSPWiki - a JSP-based WikiWiki clone.
+#
+#    Licensed to the Apache Software Foundation (ASF) under one
+#    or more contributor license agreements.  See the NOTICE file
+#    distributed with this work for additional information
+#    regarding copyright ownership.  The ASF licenses this file
+#    to you under the Apache License, Version 2.0 (the
+#    "License"); you may not use this file except in compliance
+#    with the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing,
+#    software distributed under the License is distributed on an
+#    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#    KIND, either express or implied.  See the License for the
+#    specific language governing permissions and limitations
+#    under the License.  
+#
+############################################################################
+
+This file contains the PGP keys of various developers.
+
+Users: pgp < KEYS
+       gpg --import KEYS
+Developers: 
+        pgp -kxa <your name> and append it to this file.
+        (pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+        (gpg --list-sigs <your name>
+             && gpg --armor --export <your name>) >> this file.
+
+
+pub   1024D/13BE2497 2007-12-11
+uid                  Janne Jalkanen <Janne.Jalkanen@iki.fi>
+sig 3        13BE2497 2007-12-11  Janne Jalkanen <Janne.Jalkanen@iki.fi>
+uid                  Janne Jalkanen <jalkanen@apache.org>
+sig 3        13BE2497 2007-12-11  Janne Jalkanen <Janne.Jalkanen@iki.fi>
+uid                  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+sig 3        13BE2497 2007-12-11  Janne Jalkanen <Janne.Jalkanen@iki.fi>
+sub   4096g/6654F31F 2007-12-11
+sig          13BE2497 2007-12-11  Janne Jalkanen <Janne.Jalkanen@iki.fi>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.7 (Darwin)
+
+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
+=zvWP
+-----END PGP PUBLIC KEY BLOCK-----
+
+pub   1024D/C1281CDC 2008-08-22
+uid                  Harry Metske <harry.metske@gmail.com>
+uid                  Harry Metske <metskem@apache.org>
+sub   2048g/2143C3AC 2008-08-22
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+mQGiBEiuciURBACCRpSYDNC9Yqf+Pr5AOkwjJpRNpxmqc8ElyT72N0OlU85MlW/8
+YP1TbSJMtD+71Z5/5rVBbLuCeLSsZiAwDp99YMUGPpvuzgOkCiqrlkE5AdkVtq4i
+WOSHE5HIycq552vE+oO4pi0w9o4Ev/itOu4f3HGl9iKu6gbPYxpAZYauhwCgjA+4
+uOW2Kivp1WOU5iwKVhLKAxUD/0sd8sV7gWBBm+DOBiSlNh0pOoMrUIAgNszQ646Q
+0Ej36yOzaU2WLsGF7vcTZmAz1uYQ1VCxFskqzbiJ8TOJso3lxYtqt2wvqYqnKjPh
+eTzGmbWBexRiTqOar2p5Mufo1t5T99piZ0k58g+5gTXRdLyNo/xsgamVfSVVinVI
+FNlAA/4nTklbXet+hIXknwjhMl54bNzCL43j5CHDV8ysP/iTVTlLgBOajNA7oo55
+zlCZeOJORCEmiFRRbUPiGPWHynFtX5ehPGqPU/yCGA5Aw70guv9Z6vOxVIgBWRFl
+kgEZpWSa+bZXTJMI/E/a4jS599Ox/L/JpOQUAUubLQhJSaarJrQhSGFycnkgTWV0
+c2tlIDxtZXRza2VtQGFwYWNoZS5vcmc+iGAEExECACAFAkiudIcCGwMGCwkIBwMC
+BBUCCAMEFgIDAQIeAQIXgAAKCRCVXr6owSgc3HkhAJ974IZDHirpjtougOQ6MzDy
+HDbCZwCfY95xdULr7woqS3726EjgIzt83ki0JUhhcnJ5IE1ldHNrZSA8aGFycnku
+bWV0c2tlQGdtYWlsLmNvbT6IYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+AheABQJIrnUlAhkBAAoJEJVevqjBKBzcZkcAn1YzUkAED/o2C24v+zGSUlQ6o64V
+AJ0fdQ06ywCApD9lP/sEpuHRBhe4RrkCDQRIrnI5EAgA9kqmIMJQQ+vpx41jur/k
+n0dt23347SQVS7tsPZ5x4Y0J/4WzTcmn4sMEsWjTtiDa2cP/V35keVjSp4jGAaA2
+tOIAOo5na4GIdTBKvovanrx8LX44fV1jH+sSDmcUuLREIMR4RXzc5BPmeCYjWEA8
+yf4Pk5WouHUZoKhprC/RKfCoVAAVAypGPOzjJNAaxf/lDMhlfhJIPNnHye2Lpi2R
+yJvFeqnOMjjqneUkL+DVHThSp8YcmBmEB5c/NVD7v++hxnoawP8QQg7lYEsjjF86
+M2wvUSG9ar4JlYCZgpkP0qI3CnXmo+pudk9lQMMBNpVeeDn6xI7mny+U8q30WpiA
+ewADBggAgSkI8nZw6KGCmHRw9vS1C+uMz6O1n1NX0BPOzt751ecYO9F2uSFU10Db
+1rU1N1nEjLrvFSwvL/qatK7Z8LamvaR/gJ7CTvCnP6wq8qaLJgQrgnlCGx824dey
+7/4yBfzCwcXK8sLIJatXO7h5iaxGrcipovSeJ2HRmKHJA0jU3qS5i+JQyTyHs3Tc
+wxE/P/wb/IO7QRe08Y/a54pAyoGBSKAkpPfDBFfLr2s53p0u1iGsDlDBJXDIcG7d
+z9zUq+AokaVZ+/WfhiH5hRg2OqQrbM6fsKG6lrpU/Pufa5wxEWffayKqNJ5GGf7j
+miuwNNeINrOR68tF+G+kEZUs0C0+W4hJBBgRAgAJBQJIrnI5AhsMAAoJEJVevqjB
+KBzciR0AoIBnTYzCbqv2x17gFExsYoTPRY8iAJ4rdu/lVVtNiGM3TMThzy3/EOUt
+Rw==
+=dBz2
+-----END PGP PUBLIC KEY BLOCK-----
+
+pub   1024D/21A3459A 2009-08-11
+uid                  Florian Holeczek <florian@holeczek.de>
+sig 3        21A3459A 2009-08-16  Florian Holeczek <florian@holeczek.de>
+sig 3        19F92918 2009-08-11  Stefan Seelmann <mail@stefan-seelmann.de>
+uid                  Florian Holeczek <florian@bnv-gz.de>
+sig 3        21A3459A 2009-08-11  Florian Holeczek <florian@holeczek.de>
+uid                  Florian Holeczek <florianh@apache.org>
+sig 3        21A3459A 2009-08-11  Florian Holeczek <florian@holeczek.de>
+sig 3        19F92918 2009-08-11  Stefan Seelmann <mail@stefan-seelmann.de>
+sub   4096R/376BFC33 2009-08-11
+sig          21A3459A 2009-08-11  Florian Holeczek <florian@holeczek.de>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.9 (MingW32)
+
+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
+=wxBK
+-----END PGP PUBLIC KEY BLOCK-----

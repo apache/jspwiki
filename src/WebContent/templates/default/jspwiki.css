@@ -1,0 +1,2888 @@
+/*!
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Stylesheet: JSPWiki
+	This is the default JSPWiki stylesheet.
+	It provides the default plain look-n-feel for JSPWiki.
+
+	Skin stylesheets can add or override skin specific styles.
+
+	Checkout jspwiki-print.css for print specific styles.
+
+License:
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Browser Support:
+	A-grade browsers are supported: FF2+, FF3+, Safari3.2+, IE7, IE8
+	(ref. http://developer.yahoo.com/yui/articles/gbs/)
+
+	Browser specific hacks are avoided as much as possible.
+	However, specific treatment for IEx browsers is sometimes needed.
+	In order to work-around some of the browser limitations,
+	the JSPWiki stylesheets use following inline css-hacks.
+
+	> /. IE6 and below ./
+	> * html <css-selector> { <css-attribute>:<css-value> }
+	> <css-selector> { _<css-attribute>:<css-value> }
+	>
+	> /. IE7 and below: ./
+	> *:first-child+html <css-selector> { <css-attribute>:<css-value> }
+	> <css-selector> { *<css-attribute>:<css-value> }
+
+Color scheme:
+	All color-references in this stylesheet have #COLOR-MARKERS#
+	to make it more easy for a global lookup or replacement.
+	From css3 on, variables could be used instead.
+
+	- code, comment, weblogentries, (light grey) : #f9f9f9/.#COMMENT#./
+	- font color for input, textarea form element : #007/.#INPUT#./
+	- table header(darker grey) : #d7d7d7/.#TH#./
+	- borders, for tables, tabs, ... : #ddd/.#BORDER#./
+	- hover color :  #eee/.#HOVER#./
+	- cursor (higlight in item lists) :  #eee/.#CURSOR#./
+	- resize bar :  #f9f9f9/.#RIBBON#./
+	- soft fonts (toolbar): #999/.#SOFTFONT#./;
+	- mark search results, searchbars (amber) : #f93/.#MARK#./
+	- information (light blue) : #e0e0ff/.#INFO#./
+	- warning (light yellow) : #ffff80/.#WARNING#./
+	- error (light pink) : #ffe0e0/.#ERROR#./
+	- diff inserted lines: #9f9/.#DIFFADD#./
+	- diff deleted lines: #f93/.#DIFFDEL#./
+	- slimbox overlay color: #000/.#SLIMBOX-OVERLAY#./
+	- slimbox main backgroun: #fff/.#SLIMBOX#./
+
+History:
+	* April 07, based on BrushedTemplate, v2.6/v2.8
+	* Q1 2009, refactoring for v3.x,
+	  including documentation (Natural Docs),
+	  simplified css by enhancing modularity and reuse.
+	  (inspired on the work of Object Oriented CSS, by Nicole Sullivan
+	  http://wiki.github.com/stubbornella/oocss)
+
+*/
+
+
+/*
+Section: Grid
+	"Grids are used to break any space into fractions, they can be nested and stacked.
+	A unit can contain another line or it can contain other objects directly.
+	The sum of the fractional sizes of all children of one line should be equal to one.
+	Grids control width, content controls height."
+
+Credit:
+	http://wiki.github.com/stubbornella/oocss.
+*/
+/* **************** GRIDS ***************** */
+.line, .lastUnit {overflow: hidden;_overflow:visible;_zoom:1; }
+.unit{float:left;_zoom:1;}
+.unitExt{float:right;}
+.size1of1{float:none;}
+.size1of2{width:50%;}
+.size1of3{width:33.33333%;}
+.size2of3{width:66.66666%;}
+.size1of4{width:25%;}
+.size3of4{width:75%;}
+.size1of5{width:20%;}
+.size2of5{width:40%;}
+.size3of5{width:60%;}
+.size4of5{width:80%;}
+.lastUnit{float:none;_position:relative; _left:-3px; _margin-right: -3px;width:auto;}
+
+/* extending grids to allow a unit that takes the width of its content */
+.media{width:auto;}
+
+
+/*
+Section: Main
+	This section determines the main page layout of the JSPWiki design.
+
+	Using these blocks, you can build pages which have a header, footer,
+	main page content and left or right positioned favorites columns.
+	The default PlainVanilla layout is fully liquid, taking up all the screen space.
+	Alternative PlanVanilla skins are available with fixed width.
+
+Note:
+	Fluid layouts (default) keep the width of the #wikibody set on auto.
+	Set the width of the #wikibody to a fixed value for fixed layouts.
+
+	You can change the amount of space given to the main page by changing the
+	width of the #main. The size of the #sidebar will adjust automatically
+	to fill the size of the #content block.
+
+	The #main block appears first in the flow of the document, to make sure
+	this info is rendered first.
+
+	The orientation of the layout is changed by toggling the ''.fav-right''
+	class on the #wikibody element.
+
+DOM structure:
+(start code)
+<body class="view|edit|comment fullscreen">
+<div id="wikibody" class="<empty>|fav-right">
+  <div id="header"> ................ </div>
+  <div id="content">
+    <div id="page">
+      <div id="actionsTop"> ........ </div>
+      ... page content goes here ...
+      <div id="actionsBottom"> ..... </div>
+    </div>
+    <div id="favorites"> ........... </div>
+  </div>
+  <div id="footer"> ................ </div>
+</div>
+(end)
+
+*/
+
+/*DEBUG
+#header,#content,#footer { border:1px solid red; }
+#page,#favorites, .applicationlogo, .breadcrumbs, .userbox, .searchbox, .titlebox { border:1px solid lime; }
+#previewcontent, #info, #pagecontent, #attach, #findcontent { border:1px solid pink; }
+/*DEBUG*/
+
+#wikibody {
+	margin:1em 2em; /* fluid width - fit to the size of the window */
+/*	margin:0 auto; width:950px; _text-align:left;  /.fixed width./ */
+}
+#header, .header, #content, #page, #footer, .footer {
+	overflow:hidden;
+	_overflow:visible;
+	_zoom:1;
+}
+#content {
+	margin:1em 0;
+}
+#page {
+	width:80%;
+	float:right;
+	_margin-left:-3px;/* ie hack - three pixel text jog */
+}
+.fav-right #page {
+	float:left;
+	_margin-left:auto;
+	_margin-right:-3px;/* ie hack - three pixel text jog */
+}
+body.fullscreen #page, body.fullscreen .fav-right #page {
+	width:auto;
+	float:none;
+}
+body.fullscreen #favorites {
+	xposition:relative;
+	xtop:0;
+	xbackground:white;
+	xz-index:5;
+}
+.fav-right #header .applicationlogo {
+	right:2em;
+}
+
+
+/*
+Global: Reset
+	Contains the global css reset,
+	inspired by http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+	and yui reset.
+
+	Also contains the global setting of the font/size. (typography of the site)
+*/
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin:0;
+	padding:0;
+	border:0;
+	outline:none;
+	/* vertical-align:baseline; seems to give printing errors in FF */
+}
+/* remember to define focus styles! */
+:focus {
+	outline:0;
+}
+body {
+	color:#000;
+	background:#fff;
+	margin:0;
+	/*font: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;*/
+	/*font:13px/1.231 arial,helvetica,clean,sans-serif;*/
+	font:76%/140% Verdana,Arial,Helvetica,sans-serif;
+	_font-size:small;
+	_font:x-small;
+}
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+	empty-cells:show;
+}
+h1, h2, h3, h4, p, blockquote, label, ul, ol, dl, hr, .hr, .quote {
+	margin:0.5em 0;
+	page-break-after:avoid;
+}
+tr, ul, ol, dl {
+	page-break-inside:avoid;
+}
+
+th, td {
+	padding:0.25em 0.5em;
+}
+b, i {
+	color:inherit;
+}
+/*
+Horizontal rulers:
+	Consistent styling of horizontal rulers.
+	More info at http://www.sovavsiti.cz/css/hr.html.
+
+	The {{.hr}} class can be used to insert HRs in context were
+	the standard HR tag (---- jspwiki markup) has semantic meaning.
+	EG: in the %%columns dynamic style, the ---- ruler is used to
+	separate differnt columns. You can still show horizontal rules
+	by using the {{.hr}} class.
+*/
+hr, .hr {
+	display:block;
+	border:0;
+	background-color:#ddd/*#BORDER#*/;
+	color:#ddd/*#BORDER#*/; /*needed for ie*/
+	height:2px;
+}
+.hr hr {
+	display:none;
+}
+br, hr, .hr, .clearbox {
+	clear:both;
+}
+
+/*
+Headings:
+	The headings h2, h3 and h4 get a {{clear:left}} so they can appear
+	side by side with .commentbox-es.
+
+	The {{.editsection}} and {{hashlink}} define the styling of the
+	[[Edit] and # hash-hover link on each heading.
+
+DOM structure:
+>	<h2 id="section-...">Header-Title
+>	<a class="hashlink" href="...">#</a>
+>	<a class="editsection href="...&section=0">[Edit]</a>
+>	</h2>
+
+*/
+h2, h3, h4 {
+	clear:left;
+	margin:1em 0 0.5em 0;
+	padding:0.25em 0;
+	line-height:1.2;
+}
+h2 { font-size: 150%; }
+h2 .editsection, h2 .hashlink { font-size: 67%; }
+h3 { font-size: 132%; }
+h3 .editsection, h3 .hashlink { font-size: 76%; }
+h4 { font-size: 116%; }
+h4 .editsection, h4 .hashlink { font-size: 86%; }
+
+a.editsection, a.hashlink {
+	font-weight:normal;
+	line-height:1.2;
+	padding:0.25em;
+	text-decoration:none;
+	color:#ccc;
+}
+a.editsection:hover, a.hashlink:hover {
+	background-color:#ddd/*#HOVER#*/;
+	color:blue !important;
+}
+h2:hover .editsection, h3:hover .editsection, h4:hover .editsection,
+h2:hover .hashlink, h3:hover .hashlink, h4:hover .hashlink {
+	color:#999;/*#SOFTFONT#*/
+}
+
+
+/*
+Lists and bullets:
+
+*/
+ul ul, ol ol {
+	margin:0;
+}
+ul,ol {
+	padding-left:3em;
+}
+dl dt {
+	font-weight:bold;
+}
+dl dd {
+	margin-left:2em;
+}
+
+
+/*
+Forms:
+	Including Labels, form-values and form-help.
+
+	Also the general formatting of fieldset, legends is defined here.
+*/
+.wikiform {
+}
+.wikiform tr {
+	vertical-align:middle;
+}
+.wikiform td {
+}
+.formvalue {
+	font-weight:bold;
+}
+.formhelp {
+	font-style:italic;
+	margin:0.5em 0;
+}
+textarea, input[type=text], input[type=password] {
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	padding:1px 3px;
+	border:1px inset #ddd/*#BORDER#*/;
+	/*color:#007/.#INPUT#./;*/
+}
+
+input, textarea, select {
+	font-family:inherit;
+	font-size:inherit;
+	*font-size:100%;
+	font-weight:inherit;
+}
+
+legend, label {
+	font-weight:bold;
+	white-space:nowrap;
+	padding-right:0.5em;
+}
+fieldset {
+	margin:0.5em 0;
+	padding:0.5em;
+	border:1px solid #ddd/*#BORDER#*/;
+}
+.wikiform input[type='submit'],
+.wikiform input[type='button'],
+.wikiform input[type='file'],
+.wikiform button {
+	cursor:pointer;
+}
+.wikiform option {
+	padding:0 0.25em;
+}
+
+/*
+Style: formcontainer
+	Support table-less forms.
+	Elements can simply be laid out as {{<label><input|select>}}
+	and they will be placed into a pseudo-2-column layout without
+    the need for using tables. If a "description" for the form element
+    is needed, a div with class="description" can be added immediately
+    after the input or select tags.
+
+TODO: refactor other wiki-forms to become table-less.
+*/
+div.formcontainer {
+	width:100%;
+	margin:1em;
+}
+div.formcontainer div {
+	padding:0.2em 0;
+	vertical-align:top;
+}
+div.formcontainer label {
+	font-weight:bold;
+	width:13em;
+	float:left;
+	margin:0em 0.25em 0 0.25em;
+}
+div.formcontainer input,
+dir.formcontainer select {
+	margin: 0.25em 0 0.25em 14em;
+}
+/* FIXME: does not work in ie ? */
+div.formcontainer label+input,
+div.formcontainer label+select {
+	margin:0;
+}
+div.formcontainer * div.description {
+	margin-left:14em;
+}
+/* fixme : better reuse the warning css class */
+div.formcontainer * div.description.warning{
+	background:#ffff80;
+}
+/* FIXME: does not work in ie ? */
+div.formcontainer input[type='submit']{
+	margin:0;
+}
+label.error{
+	background:none;
+	color:#c00;
+}
+input.error{
+	background:#ffe0e0;
+}
+
+
+
+
+/*
+PRE and xflow:
+	Pre-formatted text and code blocks.
+
+	pre - preformatted block
+	.pre - preformatted inline block
+	tt - teletype, monospace inline block
+
+	The ''.xflow'' class ensures a browser compatible overflow of wide content.
+	By default the page height depends on the content, the width should not
+	go beyond the width of the display. So, if needed, add a horizontal scroll bar.
+	Does have some IE specific hacks.
+
+	Applicable to preformatted blocks (pre, tt, code), and the main page content
+	elements such as #pagecontent, #findcontent, #info, #attach, ...
+
+*/
+code, tt, .pre, pre {
+	font:110% Monaco, "Courier New", Courier, monospace;
+	line-height:1.1;
+	border:1px solid #ddd/*#BORDER#*/;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	padding:0 0.25em;
+}
+pre {
+	clear:both;
+	margin:1em 1.5em;
+	padding:0.5em;
+	background:#f9f9f9/*#COMMENT#*/;
+	/*
+	border:1px dashed #0000aa;
+	color:#000077;
+	background:#ffffee;
+	margin:1em 0;
+	*/
+}
+.pre, pre {
+	white-space:pre;
+	_margin:1em auto;  /*FIXME: otherwise funny effect on more menu ugh */
+}
+
+#previewcontent, #info, #pagecontent, #attach, #findcontent,.fragment,.diffbody,
+.pre, pre,
+.xflow {
+	overflow-y:hidden; /*safari only ??*/
+	_width:100%;
+	_padding-bottom:1.5em; /*take scrollbar into account on ie ugh*/
+}
+
+/*
+Links:
+	The reusable {{.hover}} class provides generic support for
+	mouse-hover styling on any DOM element. (IE only supports :hover on <a>)
+
+>	a:link { ... }
+>	a:hover { ... }
+>	a:focus { ... }
+>	a:visited { ... }
+>	a:active { ... }
+
+>	a.wikipage
+>	a.external
+>	a.interwiki
+*/
+a {
+	color:blue;
+}
+.hover {
+	background-color:#ddd/*#HOVER#*/;
+}
+a.createpage {
+	color:red;
+	xtext-decoration:none;
+	xborder-bottom:1px dashed red;
+}
+a.feed {
+	background-image:url(../../images/jspwiki-strip.gif);
+	background-repeat:no-repeat;
+	background-position:0 0;
+	text-indent:16px;
+	margin:0 0.5em;
+	width:16px;
+	height:16px;
+	text-decoration:none;
+	overflow:hidden;
+	display:block;
+	float:right;
+}
+/* switch to gif for better ie rendering, but selectors nok in ie6 (fine in ie7?) */
+/*a.infolink {
+	background-image:url("../../images/jspwiki-strip.gif");
+	background-repeat:no-repeat;
+	background-position:right -16px;
+	padding-right:16px;
+	line-height:16px !important;
+	height:16px;
+	overflow:hidden;
+}
+a.infolink img {
+	display:none;
+}*/
+
+/*
+Footnotes:
+
+*/
+.footnoteref {
+	vertical-align:super;
+	font-size:85%;
+}
+.footnote {
+	vertical-align:super;
+	color:#04A;
+}
+
+/*
+Style: Images
+
+>	img.inline
+>	img.outlink
+>	img.attlink
+*/
+img {
+	border:0;
+	/* max-width:99%; FIXME ff ok to fit in parent */
+}
+
+/*
+Section: ReusableStyles
+	Various reusable css classes for small text, sub- and super-text,
+	strike-through formatting, centered text, quotes, ....
+
+	The standard error, warning and information boxes are defined here as well.
+*/
+.small {
+	font-size:85%;
+}
+.sub {
+	font-size:85%;
+	vertical-align:sub;
+}
+.sup {
+	font-size:85%;
+	vertical-align:super;
+}
+.strike {
+	text-decoration:line-through;
+}
+.center {
+	text-align:center;
+}
+.center table {
+	margin:0.5em auto;
+	text-align:left;
+}
+.quote {
+	font:12px/1.5 Georgia, 'Times New Roman', serif;
+	border-left:0.5em solid #bbb/*#BORDER#*/;
+	padding-left:1em;
+	display:block;
+}
+.page-break	{
+	display:block;
+	height:2px;
+	/*background:url(page-break.jpg) 0 center repeat-x; */
+	border-top:2px dashed #bbb/*#BORDER#*/;
+	margin:1em 0;
+}
+.ltr {
+	direction:ltr;
+}
+.rtl {
+	direction:rtl;
+}
+.hide, .invisible/* used by the TASKS plugin */ {
+	display:none;
+}
+
+.additinfo {
+	background-color:#e0e0ff/*#INFO#*/;
+}
+.diffnote, .information, .warning, .error {
+	display:block;
+	clear:both;
+	margin:1em 0;
+	padding:1em 32px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+td .information, td .warning, td .error {
+	margin:0; /* make sure to fill the table cell with the background color*/
+}
+.diffnote, .information {
+	background:#e0e0ff/*#INFO#*/ url(images/information.gif) 8px 1em no-repeat;
+}
+.warning {
+	background:#ffff80/*#WARNING*/ url(images/exclamation.gif) 8px 1em no-repeat;
+}
+.error {
+	background:#ffe0e0/*#ERROR#*/ url(images/error.gif) 8px 1em no-repeat;
+	color:#c00;
+}
+
+/*
+Style: Tables
+*/
+table {
+	margin:0.5em 0;
+}
+.wikitable tr {
+	vertical-align:top;
+}
+.wikitable th {
+	border:1px solid #ddd/*#BORDER#*/;
+	background:#eee/*#TH#*/;
+	vertical-align:top;
+}
+.wikitable td {
+	border:1px solid #ddd/*#BORDER#*/;
+	vertical-align:top;
+	text-align:left;
+	/*word-wrap:break-word;*/
+}
+.zebra-table tr.odd td {
+	background:#eee/*#ODDROW#*/;
+}
+.wikitable * td.split {
+	border-top:1px solid #d9d9d9;
+} /* CHECK */
+
+/*
+Style: Attachments
+*/
+#attach {
+}
+/* upload submit button */
+#upload {
+	float:left;
+}
+ul.fileupload {
+	margin:0;
+	padding:0;
+}
+.fileupload li {
+	list-style:none;
+	padding:0.5em 0;
+}
+.fileupload .delete {
+	float:left;
+	display:block;
+    background-image:url("images/delete.png");
+    cursor:pointer;
+}
+#progressbar {
+	float:left;
+	margin-left:1em;
+	width:30em;
+	border:2px solid #ddd/*#BORDER#*/;
+	visibility:hidden;
+}
+#progressbar .ajaxprogress {
+	background:url(images/progress.gif) repeat-x;
+	height:18px;
+	text-align:center;
+	width:0;
+}
+/*
+Section: JSPs
+	This section contains the styles related to specific JSPs
+	See: [AttachmentTab], [CommentContent], [ConflictContent],
+	[DiffContent], [Favorites], [FindContent]
+
+	See also: [EditContent], [Header], [Footer]
+
+*/
+
+/*
+Style: AttachmentTab
+	Add attachment icons per type of attachement.
+	Ref. http://www.w3schools.com/media/media_mimeref.asp
+
+DOM structure
+>	<div class="mime image-gif"> ... </div>
+
+*/
+.mime {
+	height:16px;
+	padding-left:18px;
+	background:url(images/attach-strip.png) no-repeat;
+}
+.image-gif { background-position:0 -112px;	}
+.image-png { background-position:0 -112px;	}
+.image-bmp { background-position:0 -112px;	}
+.image-jpg { background-position:0 -112px;	}
+.image-jpeg { background-position:0 -112px;	}
+.text-plain { background-position:0 -16px;	}
+.text-html { background-position:0 -16px;	}
+.application-zip	{ background-position:0 -128px;	}
+/*.att-img.jar	{ background-position:0 -128px;	}*/
+.application-x-tar { background-position:0 -128px;	}
+.application-pdf { background-position:0 -80px;	}
+.application-msword { background-position:0 -32px;	}
+.application-vnd.ms-excel { background-position:0 -48px;	}
+.application-vnd.ms-powerpoint { background-position:0 -64px;	}
+.application-x-shockwave-flash { background-position:0 -96px;	}
+.audio-mpeg	{ background-position:0 -144px;	}
+.video.quicktime { background-position:0 -160px;	}
+.video-x-ms-wmv { background-position:0 -144px;	}
+
+/*
+Experimental:
+	Add icons to attachment and external links.
+	Overwrite the hard-code image links of the wiki-engine and add
+	''skinnable'' icons through css.
+*/
+img.outlink {
+	display:none;
+}
+a.external {
+	/*padding-right:6px;
+	background:transparent url(images/out.png) no-repeat center right;
+	padding-right:18px;
+	background:transparent url(images/extern.gif) no-repeat center right;*/
+}
+a.external[href^='mailto:'] {
+	padding-right:20px;
+	background:transparent url(images/email.png) no-repeat center right;
+}
+/*
+a.createpage {
+	padding-right:20px;
+	background:transparent url(images/pencil.png) no-repeat center right ;
+}
+*/
+/* fixme
+    add the attachment_small.png to the attachment strip
+*/
+a.infolink {
+	margin-left:3px;
+	padding-right:16px;
+	background:transparent url(images/attachment_small.png) no-repeat center right;
+}
+a.infolink img {
+	display:none;
+}
+/*
+a.infolink[href$='.doc'] {
+	background:transparent url(images/attach-strip.png) no-repeat center right;
+	background-position:0 -32px;
+}
+a.infolink[href$='.pdf'] {
+	background:transparent url(images/attach-strip.png) no-repeat center right;
+	background-position:0 -80px;
+}
+*/
+
+
+
+/*
+Style: CommentContent
+
+>#commentcontent
+*/
+
+/*
+Style: ConflictContent
+
+>#conflict
+>#conflictother
+>#conflictown
+*/
+
+/*
+Style: DiffContent
+	Covers the css classes for the DIFF Providers:Traditional and External
+
+>	#diffcontent
+*/
+.diffbody {
+	padding:1em;
+	font:110% Monaco, "Courier New", Courier, monospace;
+	line-height:1;
+}
+/* .diffnote equals .information */
+.diffadd {
+	background:#9f9;/*#DIFFADD#*/
+}
+.diffrem {
+	background:#f93/*#DIFFDEL#*/;
+}
+.diff {
+	background:#fff;
+}
+
+/*
+Style: Contextual diff provider
+
+*/
+.diff-wikitext {
+	font:110% Monaco, "Courier New", Courier, monospace;
+	line-height:1;
+	overflow:auto;
+}
+.diff-insertion {
+	background:#9f9;/*#DIFFADD#*/
+	text-decoration:none;
+	color:black;
+}
+.diff-deletion {
+	background:#f93/*#DIFFDEL#*/;
+	text-decoration:line-through;
+	color:black;
+}
+.diff-nextprev {
+	vertical-align:super;
+	text-decoration:none;
+}
+
+
+/*
+Section: Editors
+	Covers the Edit.jsp, EditContent.jsp and CommentContent.jsp.
+
+>	body.edit
+>	body.comment
+>	#edithelp
+>	#editcontent
+*/
+
+/*
+Style: Plain Editor
+	See plain.jsp
+*/
+#toolbar {
+	color:#555/*#SOFTFONT#*/;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	margin:0.5em 0;
+	background:#f9f9f9/*#RIBBON#*/;
+	border:1px solid #ddd/*#BORDER#*/;
+}
+#toolbar fieldset {
+	border-color:#ddd/*#BORDER#*/;
+	padding:0.25em;
+	margin-left:0.5em;
+	float:left;
+}
+#toolbar legend {
+	line-height:0.9;
+	padding:0 0.25em;
+	font-weight:normal;
+}
+/*
+#toolbuttons, #toolextra, #searchbar {
+	margin-left:1em;
+	clear:both;
+}
+#tools span {
+	float:left;
+	display:block;
+	padding:0.25em 0;
+	margin-right:1em;
+}
+#toolbuttons span {
+	border:1px solid #ddd/.#BORDER#./;
+}
+*/
+.tool {
+	float:left;
+	margin:2px;
+	display:block;
+	background:url("images/editor-strip.gif") no-repeat;
+	height:16px;
+	width:16px;
+	text-indent:20px;
+	overflow:hidden;
+}
+.tool:hover {
+	background-color:#ddd/*#HOVER#*/;
+	xxborder-color:#ddd/*#HOVER#*/;
+}
+.tool.disabled:hover {
+	background-color:transparent !important;
+	border-color:transparent !important;
+	cursor:default !important;
+}
+/* FIXME */
+.tool .dropmenu {
+	background:transparent url("images/dropmenu.gif") no-repeat 115% 50%;
+	margin-right:5px;
+}
+
+.tool.tH1 		{ background-position:0 -192px; }
+.tool.tH2 		{ background-position:0 -208px; }
+.tool.tH3 		{ background-position:0 -224px; }
+.tool.tB  		{ background-position:0 -176px; }
+.tool.tI  		{ background-position:0 -256px; }
+.tool.tLink   	{ background-position:0 -48px; }
+.tool.tMONO   	{ background-position:0 -160px; }
+.tool.tPRE   	{ background-position:0 -64px; }
+.tool.tCODE   	{ background-position:0 -80px; }
+.tool.tHR 		{ background-position:0 -240px; }
+.tool.tBR 		{ background-position:0 -112px; }
+.tool.tDL 		{ background-position:0 -272px; }
+/*.tool.tSUP		{ background-position:0 -336px; }*/
+/*.tool.tSUB		{ background-position:0 -320px; }*/
+/*.tool.tSTRIKE 	{ background-position:0 -304px; }*/
+/*
+.tool.tUL 		{ background-position:0 -256px; }
+.tool.tOL 		{ background-position:0 -272px; }
+.tool.tLEFT   	{ background-position:0 -288px; }
+.tool.tCENTER 	{ background-position:0 -304px; }
+.tool.tRIGHT  	{ background-position:0 -320px; }
+.tool.tJUST   	{ background-position:0 -336px; }
+*/
+/*.tool.tQUOTE  	{ background-position:0 -272px; }*/
+.tool.tIMG		{ background-position:0 -96px; }
+.tool.tTABLE  	{ background-position:0 -144px; }
+.tool.tTOC		{ background-position:0 -32px; }
+.tool.tTAB		{ background-position:0 -128px; }
+
+.tool.tUNDO		{ background-image:url("images/undo.gif"); width:16px !important; }
+.tool.tREDO		{ background-image:url("images/redo.gif"); width:16px !important; }
+.tool.tUNDO.disabled { background-image:url("undo-disabled.gif"); }
+.tool.tREDO.disabled { background-image:url("/images/redo-disabled.gif"); }
+.tool.tSEARCH	{ background-image:url("images/find.png"); width:16px !important; }
+.tool.tCONFIG	{ background-image:url("images/cog.png"); }
+/*.tool.tSIGN		{ background-position:0 -288px; }*/
+.tool.tSIGN		{ background-image:url("images/vcard.png"); }
+.tool.tCHAR		{ background-image:url("images/text_letter_omega.png"); background-position:0 0;}
+.tool.tACL		{ background-image:url("images/key.png"); }
+.tool.tCSS		{ background-image:url("images/paintbrush.png"); }
+.tool.tFONT		{ background-image:url("images/font.png");  }
+.tool.tCOLOR	{ background-image:url("images/color_wheel.png");  }
+
+.tool.tPLUGIN	{ background-image:url("images/plugin.png");  }
+
+.tool.tHORZ	{ background-image:url("images/application_tile_horizontal.png"); }
+.tool.tVERT { background-image:url("images/application_tile_vertical.png");  }
+
+/*
+#tbDOREPLACE { background-image:url("images/doreplace.png") !important;  }
+*/
+#findDialog {
+	padding:0 0.5em;
+}
+.size1of1 .editor-container {
+	width:99%; /* save some space for the scroll bar of the textarea */
+}
+.size1of2 .editor-container {
+	width:96%; /* save some space for the scroll bar of the textarea */
+}
+
+.editor {
+	font:110% Monaco, "Courier New", Courier, monospace;
+	padding:4px 4px 4px 8px;
+	width:100%;
+	resize:none; /*resizing done through js*/
+}
+.resize-bar {
+    background:#ddd/*#BORDER#*/ url(images/resize-horizontal.gif) top center;
+	cursor:row-resize; /*ns-resize;*/ /* css3 row-resize */
+    font-size:1px;
+	height:6px;
+    line-height:6px;
+    overflow:hidden;
+}
+#previewspin {
+	position:absolute;
+	z-index:10;
+	right:20%;
+}
+/* #livepreview */
+#livepreview {
+	padding:0.5em;
+}
+/* ie6 hack ensure moremenu remains properly aligned */
+* html #wikiText {
+	padding:4px 0;
+}
+/*ie7 hack */
+*:first-child+html #wikiText {
+	padding:4px 0;
+}
+#commentcontent, #editcontent {
+	width:100%;
+}
+
+/*
+Style: SnipEditor
+	activeSnip - background on the textarea to indicate active TAB handling
+	snieptoc - dynamic table of contents
+*/
+.activeSnip {
+	background:#eee url(images/universal-diag.png);
+}
+#snipetoc {
+	position:absolute;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	overflow:auto;
+	color:#fff;
+	background-color:rgba(0,0,0,0.7)/*##*/;
+	*background:url(images/tip.png) top left; /*ie6,ie7*/
+}
+#snipetoc.hidden {
+	width:6px;
+	overflow:hidden;
+	background-color:#ddd/*#BORDER#*/;
+}
+#snipetoc ul {
+	list-style:none;
+	margin-left:6px;
+	padding:0.25em;
+}
+#snipetoc a {
+	color:white;
+	font-weight:normal;
+	display:block;
+	padding:0 0.5em;
+	cursor:pointer;
+	overflow:hidden;
+	white-space:nowrap;
+}
+#snipetoc a:hover, #snipetoc .cursor {
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	background-color:rgba(0,0,0,0.5) !important;
+	*background-color:black !important;	 /* ie hack */
+}
+
+/*
+Style: Favorites
+
+Note:
+	FIXME
+	Use faux columns to create equal size floated elements.
+	Implies a background image on the container element ???
+
+	Use border to obtain same height of tab-contents. CHECK/FIXME
+
+DOM Structure:
+(start code)
+	todo
+
+(end)
+*/
+#favorites {
+	overflow:hidden; /*avoid overflow for wide content of leftmenu or leftmenufooter */
+	padding:1.75em 0.5em 0.5em 0.5em;
+}
+
+#page {
+	position:relative;
+	padding:0 1em;
+}
+#page a.splitbar {
+	position:absolute;
+	width:1em;
+	top:1.75em; /* tabmenu height = 1.5line-height + ?0.25 */
+	bottom:1.75em; /* page-bottom height = 1.5line-height + 0.5margin-bottom */
+	left:0;
+	cursor:w-resize; /*col-resize*/
+	z-index:5;
+}
+.fullscreen #page .splitbar {
+	cursor:e-resize;
+}
+.fav-right #page .splitbar {
+	left:auto;
+	right:0;
+	cursor:e-resize;
+}
+.fav-right .fullscreen #page .splitbar {
+	cursor:w-resize;
+}
+/* if needed, overwrite standard :hover treatment
+a.splitbar:hover{
+	background-color:#adf4ff;
+}
+*/
+
+/*
+FIXME: can be removed, when cursor:x-resize is supported by the browser
+   Check IE7/IE6
+
+#splitPointer, .fullscreen .fav-right #splitPointer {
+	position:absolute;
+	width:5px;
+	height:#1px;
+	background:url(images/arrleft.gif) top left no-repeat;
+	margin-top:-5px;
+	z-index:5;
+}
+.fullscreen #splitPointer, .fav-right #splitPointer {
+	background-image:url(images/arrright.gif);
+
+
+*/
+
+.wikiversion, .rssfeed {
+	font-size:90%;
+	padding:0.25em;
+	text-align:center;
+}
+
+/*
+Style: FindContent
+*/
+#details, #scope {
+	margin-left:2em;
+}
+.gBar {
+}
+.graphBar {
+	padding:0;
+	color:white;
+	border-color:#f93/*#MARK#*/;
+	border-left-style:solid;
+	border-bottom-style:solid;
+}
+/* search detail fragment */
+#searchResult2 .pre {
+	padding:0.5em;
+}
+/* search detail fragment pieces are concatenated by an ... ellips char. */
+.ellipsis {
+	font-weight:bold;
+}
+.nosearchresult {
+	font-style:italic;
+}
+/* For the search_highlight.js.  This style defines the how the words that have
+   been found look like.  If you look for "thingy", you will get these following
+   in the results.
+   <span class="searchword">thingy</span>
+ */
+.searchword, .searchmatch {
+	background-color:#f93/*#MARK#*/;
+	color:black;
+	text-decoration:inherit;
+}
+.cursor {
+	background-color:#ddd/*#CURSOR#*/;
+}
+
+/*
+Style: Footer
+	See Footer.jsp, [Header]
+
+	opplicationlogo - JSPWiki-logo, styling 100% through css,
+		with a background image and link to the FrontPage. By default hidden.
+	companylogo - Secondary logo. By default hidden.
+	copyright - (optional), contains the [[CopyrightNotice] when present.
+	wikiversion - Wiki Version 'JSPWiki v2.8.x-svn-xx. By default hidden
+	rssfeed - link to the JSPWiki RSS-feed link when rssfeeds are activated.
+
+	See also [Header]
+
+DOM Structure:
+(start code)
+<div id="footer" >
+  <div class="applicationlogo"> ... </div>
+  <div class="companylogo"> ....... </div>
+  <div id="copyright"> ............ </div>
+  <div class="wikiversion"> ....... </div>
+  <div class="rssfeed"> ........... </div>
+</div>
+(end)
+*/
+#footer .applicationlogo,
+#footer .companylogo,
+#footer .wikiversion,
+#footer .rssfeed {
+	display:none;
+}
+.copyright {
+	padding:1em 0.25em;
+	font-size:90%;
+	text-align:center;
+	color:#555;/*#COPYRIGHT#*/
+}
+
+
+/*
+Section: Header
+	See Header.jsp, [SearchBox], UserBox.jsp, [Footer]
+
+	titlebox - Horizontal block at the top of the header, which you can use
+		to put web-site messages, alerts, new-flashes etc. It contains the
+		content of thee [TitleBox] page.
+	opplicationlogo - (float:left) JSPWiki-logo, styling 100% through css,
+		with a background image. It also includes a hover effect to swap the image.
+	companylogo - Secondary logo. By default hidden.
+	userbox - (float:right) User information box. See [Userbox]
+	pagename - Name of the wiki page
+	searchbox - (float:right) Quick Navigation box
+	breadcrumbs - Horizontal block showing links to previously visited pages.
+
+DOM structure:
+(start code)
+<div id="header" >
+  <div class="titlebox"> .......... </div>
+  <div class="applicationlogo"> ... </div>
+  <div class="companylogo"> ....... </div>
+
+  <div class="userbox"> ...........
+    <span class="username anonymous|asserted|authenticated"> .. </span>
+    <a class="btn login|logout"> .. </a>
+    <a class="btn prefs"> .. </a>
+  </div>
+  <div class="pagename"> .......... </div>
+  <div class="search-box"> ........ </div>
+  <div class="breadcrumbs"> ....... </div>
+</div>
+
+(end)
+*/
+#header .applicationlogo {
+	float:left;
+}
+.applicationlogo a {
+	display:block;
+	height:64px;
+	width:64px;
+	margin:0 auto;/* center logo, in case the width of the parent block is larger */
+	text-indent:-1000px;/* hide link text*/
+	background:url(images/jspwiki_logo.png) -64px 0 no-repeat;
+}
+.applicationlogo a:hover {
+	background-position:0 0;
+}
+.companylogo {
+	display:none; /* not used */
+}
+.pagename {
+	float:left;
+	font-size:175%;
+	line-height:64px; /* same height as the application-logo */
+	font-weight:bold;
+}
+.userbox {
+	float:right;
+	padding:0.5em 0;
+}
+.username {
+	margin:0.5em;
+	font-style:italic;
+}
+/*
+.username.anonymous { .. }
+.username.asserted { .. }
+.username.authenticated { ..}
+*/
+.searchbox {
+	float:right;
+	clear:right; /* put under the .userbox */
+}
+.breadcrumbs {
+	clear:both;
+	font-size:90%;
+	padding:0.5em;
+}
+
+
+/*
+Style: Content Blocks
+	See PageContent.jsp, InfoContent.jsp, ...
+
+DOM Structure:
+(start code)
+<div class="tabmenu"> ...... </div>
+<div class="tabs">
+  <div id="pagecontent"> ... </div>
+  <div id="attach"> ........ </div>
+  <div id="info"> .......... </div>
+</div>
+(end)
+
+>	#info
+>	#incomingLinks
+>	#outgoingLinks
+*/
+
+
+/*
+Style: Pagination.
+	Reusable pagination ribbon for search results and version history tables.
+*/
+.pagination {
+	padding:0.5em;
+	background:#f9f9f9/*#RIBBON#*/;
+	border:1px solid #ddd/*#BORDER#*/;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	line-height:1.2;
+}
+.pagination a, .pagination .cursor {
+	padding:0.5em;
+}
+/* FIXME fall back to cursor and hover standards */
+.pagination a:hover {
+	background-color:#ddd/*#HOVER#*/;
+}
+td.changenote {
+	font-style:italic;
+}
+th.changenote, td.changenote {
+	width:30%;
+	overflow:hidden;
+}
+#info th select {
+	display:block;
+}
+
+/*
+Style: PageActions
+	See PageActionsTop.jsp, PageActionsBottom.jsp, [Content]
+
+DOM Structure:
+(start code)
+<div id="actionsTop" class="pageactions">
+  <ul>
+    <li><a class="action edit" href="..."> ... </a></li>
+    <li id="morebutton"><a class="action more" href=".."> ... </a></li>
+  </ul>
+</div>
+
+<div id="pagebody"> ... </div>
+
+<div id="actionsBottom" class="pageactions">
+  <ul>
+    <li> ... page-information links ... </li>
+    <li><a class="feed"> ... </a></li>
+    <li><a class="action quick2top" href="#top"> ...</a></li>
+  </ul>
+</div>
+(end)
+*/
+#actionsTop	{
+	z-index:10;
+	_margin-top:1px; /*CHECKME IE*/
+}
+/*#actionsBottom { ... } */
+.pageactions {
+	line-height:1.5;
+	float:right;
+}
+.pageactions ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+.pageactions li {
+	display:block;
+	white-space:nowrap;
+	float:left;
+}
+/* drop down more--menu */
+.pageactions li ul {
+	position:absolute;
+	background:white;
+	border:2px solid #ddd/*#BORDER#*/;
+	left:0; /* right:2.5em; */
+	xz-index:10;
+}
+.pageactions li ul li {
+	display:block;
+	float:none;
+}
+.pageactions li ul li.separator {
+	border-top:2px solid #ddd/*#BORDER#*/;
+}
+/* nested UL */
+.pageactions li ul ul {
+	position:static;
+	left:auto;
+	border:none;
+}
+
+
+
+#hiddenmorepopup {
+	display:none;
+	xborder:1px solid #ddd/*#BORDER#*/;
+}
+/* replace by .more class ??*/
+#hiddenmorepopup ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+
+}
+
+#morebutton ul a,
+.xxpageactions li a {
+	padding:0.25em 0.5em;
+	text-decoration:none;
+	cursor:pointer;
+}
+a.action {
+	display:block;
+}
+a.action:hover, .pageactions li ul ul li:hover {
+	background-color:#ddd/*#HOVER#*/ !important;
+}
+/*#xxsearchTools a.action, .xxuserbox a.action, */
+/* edit and more button should fit with Tabbed section */
+a.action.edit, a.action.more {
+	padding:0.25em 0.5em;
+	text-decoration:none;
+	line-height:normal;
+	border:1px solid #ddd/*#BORDER#*/;
+	background:#f9f9f9/*#COMMENT#*/;
+	white-space:nowrap;
+}
+a.action.edit, a.action.more {
+	margin-left:4px;
+	border-bottom:none;
+}
+a.action.more {
+	padding-right:1.5em;
+	background: #f9f9f9/*#COMMENT#*/ url(images/arrdownsmall.gif) 95% center no-repeat;
+}
+.quick2top {
+ 	overflow:hidden;
+ 	margin:0 0 0 2px;
+	padding:0;
+	text-indent:20px;
+ 	width:20px;
+ 	background:url(images/arrup.gif) no-repeat 3px 3px;
+}
+
+/*
+Styles: Buttons
+	Pretty styling of buttons, with a 1px radius without corner images.
+	The gradient requires an image. Ideally, the <button> element should be used
+	(instead of <a>) for semantic and accessibility reasons. Note that the hover
+	state will not work on button elements for IE6 and lower without using
+	JavaScript to detect a mouseOver event.
+
+
+	Reasons for 2 nested spans:
+	* The inner {{span}} creates the top and bottom borders.
+	  Because {{button}} and {{a}} are inline elements,
+	  top/bottom borders and padding do not affect the height of parent elements
+	  (such as the outer {{span}}). So with the same top/bottom padding
+	  of both {{span}} elements, the left/right borders of the outer
+	  {{span}} stop short of the top/bottom borders of the inner
+	  {{span}}.
+	* The outer {{span}} is necessary to fix bugs in Gecko-based browsers
+	  and in IE (separate issues for both). Gecko browsers add an extra 3px of
+	  padding inside {{button}} elements which can't be eliminated.
+	  Without the outer span, top/bottom and left/right borders wouldn't connect.
+	  IE just has trouble styling {{button}}s and nested elements inside them,
+	  so the majority of visible styles are applied to two inner {{span}}.
+
+DOM structure
+>	<a class="btn"><span><span>...</span></span></a>
+>	<button class="btn"><span><span>...</span></span></button>
+
+Credit:
+	http://stopdesign.com/eg/buttons/3.0/code.html
+*/
+.btn {
+	display:inline-block;
+	background:none;
+	margin:0;
+	padding:3px 0;
+	border-width:0;
+	overflow:visible;
+	/*font:100%/1.2 Arial,Sans-serif;*/
+	text-decoration:none;
+	color:#333;
+}
+* html button.btn {
+	padding-bottom:1px;
+}
+/* Immediately below is a temporary hack to serve the
+	following margin values only to Gecko browsers
+	Gecko browsers add an extra 3px of left/right
+	padding to button elements which can't be overriden.
+	Thus, we use -3px of left/right margin to overcome this.
+*/
+html:not([lang*=""]) button.btn {
+	margin:0 -3px; /* -3px ? needs -5px when buttons have whitespace inbetween */
+}
+.btn span {
+	background:#ddd/*#BORDER#*/ url(images/bg-button.gif) repeat-x 0 0;
+	margin:0;
+	padding:3px 0;
+	border-left:1px solid #bbb;
+	border-right:1px solid #aaa;
+	_padding-top:0; /*ie6 hack */
+}
+/*
+* html .btn span {
+	padding-top:0;
+}
+*/
+.btn span span {
+	position:relative;
+	padding:3px .4em;
+	border-width:0;
+	border-top:1px solid #bbb;
+	border-bottom:1px solid #aaa;
+	white-space:nowrap;
+}
+.btn span span span {
+	border:none;
+	margin:0;
+	padding:0;
+}
+
+/* pill classes only needed if using pill style buttons ( LEFT | CENTER | RIGHT ) */
+button.pill-l span {
+	border-right-width:0;
+}
+button.pill-l span span {
+	border-right:1px solid #bbb;
+}
+button.pill-c span {
+	border-right-style:none;
+	border-left-color:#fff;
+}
+button.pill-c span span {
+	border-right:1px solid #bbb;
+}
+button.pill-r span {
+	border-left-color:#fff;
+}
+
+/* only needed if implementing separate hover/focus/active state for buttons */
+.btn:hover span, .btn:hover span span, .btn:focus span, .btn:focus span span {
+	cursor:pointer; /* important for any clickable/pressable element */
+	border-color:#9cf !important;
+	color:#000;
+}
+.btn:active span {
+	background-position:0 -400px;
+	outline:none;
+}
+.btn:focus, .btn:active {
+	outline:none; /* doesn't seem to be respected for <button>, only <a> */
+}
+
+/* use if one button should be the 'primary' button */
+.primary {
+	font-weight:bold;
+	color:#000;
+}
+
+
+/*
+Style: Popup
+	Popup dialog box
+	FIXME
+*/
+.popup ul {
+	position:absolute;
+	background:white;
+	border:2px solid #ddd/*#BORDER#*/;
+	padding:0.25em;
+	margin:0;
+	left:0;
+	z-index:15;
+	list-style:none;
+}
+.popup li a {
+	display:block;
+	line-height:1.5;
+	white-space:nowrap;
+	cursor:pointer;
+}
+.popup a:hover {
+	background-color:#ddd/*#HOVER#*/ !important;
+}
+
+/*
+Style: PreviewContent
+
+>	#previewcontent
+*/
+.previewcontent {
+	background-image:url(images/preview.gif);
+}
+
+/*
+Style: PreferencesContent, LoginContent, GroupContent
+
+*/
+
+/*
+Style: spin
+	Reusable spin class to show rotating icon to indicate background processing,
+	or loading of ajax content.
+
+	The icon (background image) is positioned at the right-hand side of the
+	enclosing element.
+
+Example:
+>	<span class='spin'>(type ahead)</span>
+
+*/
+.spin {
+	background:url(images/spin.gif) no-repeat 0% 50%;
+	padding-right:16px;
+	xxheight:16px;
+	xxtext-indent:20px; /* shift optional text inside spin element */
+}
+
+/*
+Style: SearchBox
+	See SearchBox.jsp.
+
+
+DOM structure:
+(start code)
+<form id="searchForm">
+
+  <input id="query" />
+  <button type="submit" id="searchSubmit" value=".."></button>
+
+  <div id="searchboxMenu" style='visibility:hidden;'>
+    <div id="searchTools">
+      <a id='quickView' class='btn'><span><span>...</span></span></a>
+      <a id='quickEdit' class='btn'><span><span>...</span></span></a>
+      <a id='quickClone' class='btn'><span><span>...</span></span></a>
+      <a id="advancedSearch" class='btn'><span><span>...</span></span></a>
+    </div>
+    <div id="searchResult">
+	  <fmt:message key='sbox.search.result' />
+      <span id="searchTarget">...</span>
+      <span id="searchSpin" class="spin" style="position:absolute;display:none;"></span>
+	  <div id="searchOutput"></div>
+    </div>
+    <div id="recentSearches" style="display:none;">
+      <fmt:message key="sbox.recentsearches" />
+      <span><a id="recentClear">...</a></span>
+    </div>
+  </div>
+
+</form>
+(end)
+*/
+#query {
+	width:164px;
+	padding:2px 22px 2px 2px;
+	vertical-align: middle;
+	color:#555;
+	float:left;/* ensure the searchSubmit button appear on the same horizontal line */
+}
+#searchSubmit {
+	position:absolute;
+    top:5px;
+	right:3px;
+
+	margin:0;
+	padding:0;
+	width:16px;
+	height:16px;
+	border:none;
+	background: url(images/search.gif) no-repeat center;
+	/*overflow:hidden;*/
+}
+#searchboxMenu {
+	position:absolute;
+	background:white;
+	border:2px solid #ddd/*#BORDER#*/;
+	padding:0.25em;
+	left:0;
+	z-index:15;
+	_white-space:nowrap;  /*ie6: ensure box has proper width ugh! */
+}
+#searchboxMenu ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+#searchboxMenu li {
+	padding:0 0.5em;
+}
+
+#searchTools a:hover, #searchboxMenu li:hover {
+	background:#ddd/*#HOVER#*/;
+}
+#searchboxMenu div {
+	margin:0.5em 0;
+}
+#searchTools {
+	text-align:left;
+}
+
+
+/*
+Style: ViewTemplate.jsp
+
+>	body.view
+*/
+
+
+/*
+Section: Plugins
+	Stylesheet definitions for plain vanilla JSPWiki Plugins, including:
+	[ImagePlugin], [IndexPlugin], [TableOfContentsPlugin], [WeblogPlugins],
+	[RecentChangesPlugin]
+*/
+
+
+/*
+Style: ImagePlugin
+
+DOM Structure:
+	(start code)
+	<table border="0" class="imageplugin" align="left|right|center">
+		<tr><td><img src="img.jpg" height="200px" width="200px" /></td></tr>
+	</table>
+	(end)
+*/
+.imageplugin {
+	margin:.5em 0;
+}
+.imageplugin[align="left"]{
+	margin-right:0.5em;
+}
+.imageplugin[align="right"]{
+	margin-left:0.5em;
+}
+.imageplugin img {
+	border:0;
+}
+.imageplugin caption {
+	font-size:90%;
+}
+.imageplugin * {
+	padding:0;
+	margin:0;
+}
+
+/*
+Style: IndexPlugin
+
+DOM structure:
+
+*/
+.index .header {
+	padding:4px;
+	background:#f9f9f9/*#COMMENT#*/;
+	border:1px solid #ddd/*#BORDER#*/;
+	text-align:center;
+	font-size:1.4em;
+}
+.index .body {
+    margin-top: 0.5ex;
+}
+.index .section {
+	color:red;
+	font-size:1.4em;
+	display: block;
+	border-bottom: 2px solid silver;
+	margin-top:1.5ex;
+}
+
+/*
+Style: TableOfContentsPlugin
+
+Note:
+	When a TOC plugin is invoked multiple times, only the first one renders the TOC.
+	All subsequent invocations just render a link to the toc.
+	This link (a.toc) has little use; so we just want to hide it :-)
+
+	Typical use-case: have a LeftMenu with a call of the TOC plugin.
+	The table-of-contents of the wiki-page will be inserted in the leftmenu
+	unless the TOC is already present in the rendered wiki-page.
+
+DOM structure:
+
+*/
+.toc {
+	width:60%;
+	float:left;
+	clear:left;
+}
+#favorites .toc {
+	width:100%;
+}
+.toc h4 {
+	font-size:1.4em;
+}
+.toc ul {
+	padding-left:0;
+	list-style:none;
+}
+.toc li {
+	margin-left:1em;
+	padding-left:0;
+}
+.toc li.toclevel-1 {
+	margin-left:0.5em;
+}
+.toc li.toclevel-2 {
+	margin-left:1.5em;
+}
+.toc li.toclevel-3 {
+	margin-left:2.5em;
+}
+a.toc {
+	display:none;
+}
+
+
+/*
+Style: WeblogPlugins
+	Styling of weblogs and weblogarchive plugins
+
+DOM structure:
+
+*/
+.weblog {
+	margin:0 2em;
+	clear:both;
+}
+.weblogentry {
+	margin:0.5em 0;
+}
+.weblogentryheading {
+	padding:0.25em 0.5em;
+	font-size:90%;
+	background:#e0e0e0;
+	float:right;
+}
+.weblogentrytitle {
+	padding:0.25em 0.5em;
+	font-size:120%;
+	line-height:1.2;
+	font-weight:bold;
+	background:#e0e0e0;
+}
+.weblogentrybody {
+	margin-left:0.5em;
+	clear:both;
+}
+.weblogentryfooter {
+	font-size:90%;
+	padding:0.25em 0.5em;
+	border-bottom:3px solid #e0e0e0;
+	clear:both;
+}
+.weblogarchive {
+}
+.weblogarchive ul {
+}
+.weblogarchive li {
+	margin-left:1em;
+	display:block;
+	list-style-type:none;
+}
+.archiveyear {
+	font-weight:bold;
+	text-decoration:none;
+	margin-left:0 !important;
+}
+.archiveyear:after {
+	content:" AD"
+}
+
+.weblogcommentstitle {
+	background:#e0e0e0;
+	margin:1em 0.5em 0 0.5em;
+	padding:0.5em;
+	font-weight:bold;
+	font-size:120%;
+	line-height:1.1;
+}
+.weblogcomments {
+	background:#f9f9f9/*#COMMENT#*/;
+	margin:0 0.5em 1em 0.5em;
+	padding:1em;
+}
+
+
+/*
+Style: RecentChangesPlugin
+
+DOM structure:
+*/
+.recentchanges {
+	table-layout:fixed;  /* render faster */
+}
+.recentchanges .changenote {
+	font-style:italic;
+}
+.recentchanges td {
+	vertical-align:top;
+	border-bottom:1px solid #f9f9f9/*#COMMENT#*/;
+}
+.recentchanges .date {
+	vertical-align:bottom;
+	border-top:1.5em solid white;
+	background-color:#f9f9f9/*#COMMENT#*/ !important;
+	border-bottom:none;
+}
+.recentchanges tr.odd td {
+	background-color:transparent;
+}
+
+
+/*
+Section: Taglibs
+	Stylesheet definitions for some of the JSP-tags shipped with JSPWiki.
+*/
+
+/*
+Style: CalendarTag
+
+DOM structure:
+
+*/
+div.calendar {
+	border:1px solid black;
+}
+table.calendar {
+}
+table.calendar td {
+	text-align:center;
+}
+table.calendar td.othermonth {
+	color:#707070;
+}
+table.calendar td.link {
+	background:#f9f9f9/*#COMMENT#*/;
+}
+table.calendar tr.month {
+}
+table.calendar tr.weekdays {
+	color:red;
+}
+
+/*
+Section: DynamicStyles
+	Dynamic styles are more powerful styles, powered by some JavaScript and
+	advanced css. They can add substantial visual experience to your wikipages,
+	though the structure of your pages and wiki markup remain unchanged.
+	Actually, the pages are still fully accessbile on browsers with javascript
+	turned off.
+
+	[TabbedSection], [Accordion], [Columns], [Tips], [CollapsibleLists],
+	[CollapsibleBox], [SortableTables], [SLIMBOX], [Category], [Prettify],
+	[CommentBox]
+
+	More dynamic styles
+	[Coverflow],
+*/
+
+
+/*
+Style: Commentbox
+	Left floating comment box, with or without caption.
+
+WIKI Markup:
+> %%commentbox ... /%
+> %%ocmmentbox-CaptionText ... /%
+
+DOM structure:
+>	<div class="commentbox"> ... </div>
+>	<fieldset class="commentbox">
+>		<legend>CaptionText</legend>
+>		....
+>	</fieldset>
+
+*/
+.commentbox {
+	display:block;
+	float:right;
+	clear:right;
+	width:35%;
+	overflow:hidden;
+	border:1px solid #ddd/*#BORDER#*/;
+	background:#f9f9f9/*#COMMENT#*/;
+	padding:0.5em;
+	margin-left:0.5em;
+	font-size:95%;
+}
+
+
+/*
+Style: TabbedSections
+
+	FIXME: check jquery tabs-css for simplification
+
+Note:
+ Use absolute position trick to avoid page bump when inserting tabmenu
+ - "tabs" surrounds the actual tab-content :only border right-bottom-left
+ - "tabmenu" visualises the actuals tabs :border-bottom to close the tabs box
+ - "tabmenu a" for the actual tabs :border left-top-right to draw the tab
+Note:
+	margin-left -2px to compensate border-width ico you want adjacent tabs
+          increase/decrease margin-left to create space between the tabs
+   "active" is the active tab  :border-bottom --white-- to 'reopen' the tabmenu border
+   "alerttab" is a --red-- tab used in edit mode for msg like lock etc.
+
+DOM structure:
+
+*/
+.accesskey {
+	text-decoration:underline;
+}
+.hidetab {
+	display:none;
+}
+.tabs {
+	clear:both;
+	padding:0.5em;
+	border:1px solid #ddd/*#BORDER#*/;
+	margin-bottom:0.5em;
+}
+.tabmenu {
+	padding:0 1em;
+	font-weight:bold;
+	xoverflow:hidden; /* ensure floats are enclosed */
+}
+/* nested tabs should not allow floated stuff to appear next to the tabmenu - ugh */
+.tabs .tabmenu {
+	clear:both;
+}
+
+/* ie6 and lower */
+* html .tabmenu {
+	border:1px solid white;
+}
+/*ie7 hack */
+*:first-child+html .tabmenu {
+	border:1px solid white;
+}
+
+.tabmenu a {
+	float:left;
+	margin:0 0 -1px -1px;
+	padding:0.25em 0.5em;
+	border:1px solid #ddd/*#BORDER#*/;
+	color:gray;
+	background:#f9f9f9/*#COMMENT#*/;
+	text-decoration:none;
+	cursor:pointer;
+	white-space:nowrap;
+	line-height:normal;
+}
+.tabmenu a:hover {
+	background:#ddd/*#HOVER#*/;
+}
+.tabmenu a.activetab {
+	color:black;
+	background:transparent;
+	border-bottom:1px solid white;
+	cursor:default;
+}
+
+
+/*
+Style: Accordion
+
+DOM structure:
+*/
+.accordion, .tabbedAccordion {
+	clear:both;
+	border:1px solid #ddd/*#BORDER#*/;
+	margin-bottom:0.5em;
+}
+.accordion .toggle {
+	border: 2px solid #f9f9f9/*#COMMENT#*/;
+	background:#f9f9f9/*#COMMENT#*/;
+	cursor:pointer;
+	font-weight:bold;
+	line-height:1.4;
+	padding:0.25em 1em 0.25em 0;
+}
+.accordion .toggle:hover, .menu .toggle:hover {
+	background:#ddd/*#HOVER#*/;
+}
+.accordion .tab {
+	padding:0 1em;
+}
+.menu {
+    clear:both; /* check out */
+	color:gray;
+	font-weight:bold;
+}
+.menu.top {
+	margin-left:0.5em; /* small left indent of first toggle */
+}
+.menu.left {
+	float:left;
+	margin-top:0.5em; /* small top indent of first toggle */
+}
+.menu.right {
+	float:right;
+	margin-top:0.5em; /* small top indent of first toggle */
+}
+.menu .toggle {
+	background:#f9f9f9/*#COMMENT#*/;
+	border:1px solid #ddd/*#BORDER#*/;
+	cursor:pointer;
+	padding:0.25em 0.5em;
+}
+.menu.top .toggle {
+	float:left;
+	margin:0 0 -1px -1px; /* adjacent toggle will stick: let 1px border overlap.*/
+	display:inline;
+}
+.menu.left .toggle {
+	margin:0 -1px -1px 0; /* adjacent toggle will stick: let 1px border overlap.*/
+}
+.menu.right .toggle {
+	margin:0 0 -1px -1px; /* adjacent toggle will stick: let 1px border overlap.*/
+}
+.menu .toggle.active {
+	background:transparent;
+	cursor:default;
+	color:black;
+}
+.menu.top .toggle.active {
+	border-bottom:1px solid white;
+}
+.menu.left .toggle.active {
+	border-right:1px solid white;
+}
+.menu.right .toggle.active {
+	border-left:1px solid white;
+}
+.tabbedAccordion {
+	padding:0.5em;
+}
+.leftAccordion, .rightAccordion {
+	margin-bottom:0.5em;
+}
+.leftAccordion .tab, .rightAccordion .tab {
+	border:1px solid #ddd/*#BORDER#*/ !important;
+	margin:0 0 -2px 0; /* trick :: -2px to reveal top and bottom borders the tabs */
+	padding:0.25em 0.5em;
+}
+
+/* ie only hack no needed ? */
+* html .menu {
+	margin-top:1px;
+}
+
+
+/* margin is not compatible with scrollHeigth used by accordion - replace it by padding */
+/*
+.tab h1, .tab h2, .tab h3, .tab h4,
+.tab p, .tab pre, .tab blockquote, .tab label,
+.tab ul, .tab ol, .tab dl, .xxtab hr {
+	margin:0 auto;
+	padding-top:0.5em;
+	padding-bottom:0.5em;
+}
+*/
+
+/*
+Style: Columns
+
+Wiki-markup:
+>	%%columns ... /%
+
+DOM structure:
+
+*/
+.columns {
+	*width:100%; /*ie6,ie7 hack*/
+}
+.columns .col {
+	float:left;
+	padding:0 0.5em 0.5em 0;
+}
+/*ie6 and lower hack ./
+* html .columns {
+	width:100%;
+}
+/*ie7 hack ./
+*:first-child+html .columns {
+	width:100%;
+}
+*/
+
+/*
+Style: Tips
+
+Wiki-markup:
+> %%tip ... /%
+> %%tip-TipCaption ... /%
+
+DOM structure:
+(start code)
+<span class="tip anchor">Tip Caption</span>
+
+<div style="...show/hide...">
+	<div class="tip-top">
+	<div class="tip">
+		<div class="tip-title"> Tip Caption </div>
+		<div class="tip-text"> ...tip-body... </div>
+	</div>
+	<div class="tip-bottom">
+</div>
+(end)
+*/
+.tip-anchor {
+	border-bottom:2px solid #545454;
+	cursor:pointer;
+}
+.tip {
+	width:auto;
+	_width:240px;
+	padding:0.5em 1em;
+	z-index:100;
+	font-size:90%;
+	color:white;
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+}
+.tip-title {
+	font-weight:bold;
+	_background:url(images/tip.png) top left;
+}
+.tip .wikitable th {
+	background:none;
+}
+.tip a {
+	color: white !important;
+}
+
+
+/*
+Style: CollapsibleLists
+
+DOM structure:
+*/
+div.collapse ul, div.collapse ol {
+	margin:0;
+	padding:0;
+}
+div.collapse li {
+	list-style-type:none;
+}
+.collapse .collapsebody, .collapsebox .collapsebody {
+	padding-left:1.5em;
+	_float:left; /* ie6, ie7 hack */
+	_padding-left:0.5em; /* ie6, ie7 hack */
+}
+/*
+Make sure to print collapsed items as it they were not collapsed.
+This requires some smart 'specific' css selector rules, in order to
+overwrite the style set by the mootools animation routines.
+*/
+@media print {
+.collapse .collapsebody ul, .collapsebox div.collapsebody  {
+	height:auto !important;
+}
+}
+
+/* collapse icons */
+.collapseBullet, .collapseOpen, .collapseClose {
+	clear:left;
+	float:left;
+	text-align:center;
+	text-decoration:none;
+	color:blue;
+	font:bold small Monaco, "Courier New", Courier, monospace;
+	width:1.2em;
+	line-height:1.2em;
+}
+.collapseOpen, .collapseClose {
+	cursor:pointer;
+}
+
+/*
+Style: CollapsibleBox
+
+DOM structure:
+*/
+.collapsebox {
+    clear:right; /* avoid clash with intern floated bullet */
+	border:1px solid #ddd/*#BORDER#*/;
+	margin:0 0 0.5em 0;
+}
+.collapsetitle {
+	margin:0;
+	padding:0.25em 0;
+	border: 2px solid white;
+}
+.collapsebox .collapsebody {
+	padding:0 0.5em;
+}
+
+/*
+Style: SortableTables
+
+Wiki markup:
+
+DOM structure:
+*/
+.sortable .sortAscending, .sortable .sortDescending, .sortable .sort {
+	background-repeat:no-repeat;
+	background-position:2px 4px;
+	cursor:pointer;
+	padding-left:11px;
+}
+.sortable .sort {
+	background-image:url(images/sortable.gif);
+}
+.sortable .sortAscending {
+	background-image:url(images/sorted_down.gif);
+	background-position:2px 6px;
+}
+.sortable .sortDescending {
+	background-image:url(images/sorted_up.gif);
+	background-position:2px 0px;
+}
+select.filter {
+	display:block;
+}
+
+
+/*
+Style: SLIMBOX
+	SLIMBOX is a modal viewer for images, video, wikipages
+	and external sites (iframe)
+
+Credit:
+	Inspired by Slimbox by Christophe Bleys.
+	(see http://www.digitalia.be/software/slimbox)
+	and the mediaboxAdvanced by John Einselen
+	(see http://iaian7.com/webcode/mediaboxAdvanced)
+
+DOM Structure:
+	DOM structure of the JSPWiki Slimbox viewer.
+	(start code)
+	<div id="lbOverlay"></div>
+	<div id="lbCenter"  class="or spin">
+		<div id="lbImage">
+			<!-- img or iframe element is inserted here -->
+		</div>
+	</div>
+	<div id="lbBottomContainer">
+		<div id="lbBottom">
+			<a id="lbCloseLink"/>
+			<a id="lbNextLink"/>
+			<a id="lbPrevLink"/>
+			<div id="lbCaption">
+			<div id="lbNumber">
+		</div>
+	</div>
+	(end)
+
+*/
+.slimboxbtn {
+	padding:0 0.5em;
+	color:transparent;
+	background: transparent url(images/slimbox.gif) no-repeat center;
+}
+#lbOverlay {
+	position:fixed;
+	_position:absolute;
+	z-index:99;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;/**/
+	background-color:#000;/*#SLIMBOX-OVERLAY#*/
+	cursor:pointer;
+}
+#lbCenter {
+	position:absolute;
+	z-index:99;/**/
+	padding:10px;
+	/*left:50%;*/
+	background-color:rgba(0,0,0,0.85);
+	padding-bottom:3em; /* placeholder for lbBottomContainer */
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	-moz-box-shadow:0 10px 40px rgba(0,0,0,0.5);
+	-webkit-box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+#lbBottomContainer {
+	position:absolute;
+	z-index:99;/**/
+	padding:1em;
+	/*left:50%;*/
+	overflow:hidden;_overflow:visible;_zoom:1;/*FIXME ?? inherit .line*/
+}
+#lbImage {
+	/*position:absolute;*/
+	top:0;
+	left:0;
+	background-repeat:no-repeat; /* needed in case image is smaller the minimal window size */
+	background-position:center center;
+}
+#lbBottom {
+	color: #999; /*#SLIMBOX-TEXT#*/
+	line-height: 1.5;
+	text-align: left;
+}
+#lbBottom * {
+	padding:0.5em;
+	white-space:nowrap;
+	/*overflow:hidden;*/
+}
+#lbBottom div {
+	float:left;
+}
+#lbBottom a {
+	display:block;
+	float:right;
+	color:inherit;
+	font-weight:bold;
+	outline:none;
+	text-decoration:none;
+	cursor:pointer;
+}
+#lbBottom a:hover {
+	color:white !important;
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+}
+/*
+#lbNumber {
+}
+*/
+#lbCaption {
+	font-weight:bold;
+}
+
+
+
+/*
+Style: Category
+
+DOM structure:
+(start code)
+	<span>
+		<a href=".." class="wikipage categoryLink">category-page></a>
+		<div class="categoryPopup">
+			<p><a href=".." class="wikipage categoryLink">category-page</a></p>
+			<ul>
+			  <li><a>..</a></li>
+			</ul>
+		</div>
+	</span>
+(end)
+*/
+.categoryLink {
+	border-bottom:2px solid #545454;
+	text-decoration:none;
+}
+.categoryPopup {
+	z-index:100;
+	position:absolute;
+	z-index:10;
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	-webkit-box-shadow:0 0 10px rgba(0, 0, 0, 0.5);
+	_width:240px; /* IEx: width of the tip.png background image */
+}
+.categoryPopup a {
+	color:white;
+	text-decoration:none;
+}
+.categoryPopup p {
+	margin:0;
+	padding:0.25em 10px;
+	font-weight:bold;
+	_background:url(images/tip.png) top left;
+}
+div.categoryPopup ul {
+	margin:0;
+	padding:0;
+	_background:url(images/tip.png) bottom right;
+	list-style:none;
+}
+div.categoryPopup li {
+	display:block;
+	padding:0.15em 10px;
+}
+.categoryPopup .hover {
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	_background-color:black;
+}
+
+
+/*
+Style: Prettify
+	Pretty printing styles for the code-coloring PRE blocks.
+	Used with prettify.js.
+
+	CSS classes used to style specific elements:
+	.str - string literal
+	.kwd - keyword
+	.com - comment
+	.typ - type
+	.lit - literal value
+	.pun - punctuation string
+	.pln - plain
+	.tag - sgml tag
+	.atn - sgml attribute name
+	.atv - sgml attribute value
+	.dec - markup declaration such as a DOCTYPE
+
+Credit:
+	http://code.google.com/p/google-code-prettify/
+
+DOM structure:
+>	<pre class="prettyprint"> ... </pre>
+
+*/
+.str { color: #489a1b; /*080*/ }
+.kwd { color: #1b609a; /*008*/ }
+.com { color: #888; /*800*/ }
+.typ { color: #666; }
+.lit { color: #066; }
+.pun { color: #660; }
+.pln { color: #000; }
+.tag { color: #008; }
+.atn { color: #606; }
+.atv { color: #080; }
+.dec { color: #606; }
+
+/* linenumbers */
+.prettylines {
+	float:left;
+	margin:0;
+	color:#aaa;
+	text-align:right;
+	background:none;
+	border-color:transparent;
+}
+.prettyprint {
+	clear:right;
+}
+
+@media print {
+  .str {color: #060; }
+  .kwd {color: #006; font-weight: bold; }
+  .com {color: #600; font-style: italic; }
+  .typ {color: #404; font-weight: bold; }
+  .lit {color: #044; }
+  .pun {color: #440; }
+  .pln {color: #000; }
+  .tag {color: #006; font-weight: bold; }
+  .atn {color: #404; }
+  .atv {color: #060; }
+}
+
+
+/*
+Section: dialog
+	CSSdefs for the Mootools dialog plugin
+
+DOM structure:
+*/
+.dialog {
+	position:absolute;
+	font:11px/1.5 Lucida Grande, Arial, Helvetica, Sans-Serif;
+	color:white;
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+	z-index:100;
+}
+/* CHECK IExxx
+/* ie6 hack ./ * html .newlogo {
+	background:url(../../templates/default/images/tip.png) top left;
+}
+/* ie7 hack ./ *:first-child+html #snipetoc .newlogo {
+	background:url(../../templates/default/images/tip.png) top left;
+}
+*/
+.dialog .caption {
+	text-align:center;
+	padding:5px;
+	font-size:110%;
+	white-space:nowrap;
+	background-color:rgba(255,255,255,0.1);
+}
+.dialog .caption a.closer {
+	color:inherit !important;
+	float:right;
+	margin-left:1em;
+	cursor:pointer;
+	-moz-user-select:none;
+	-khtml-user-select:none;
+	user-select:none;
+}
+
+.dialog .body {
+	-moz-user-select:none;
+	-khtml-user-select:none;
+	user-select:none;
+	padding:5px;
+}
+.dialog .resize {
+	float: right;
+	background:url('images/resize.gif') no-repeat;
+	top: -13px;
+	right: 3px;
+	position: relative;
+	height: 14px;
+	width: 14px;
+	cursor: se-resize
+}
+.dialog .buttons {
+	text-align:center;
+	padding: 0 0 5px 0;
+	xxbackground-color:rgba(255,255,255,0.1);
+}
+
+
+/*
+Style: SelectionDialog
+
+*/
+.selectionDialog .body ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+.selectionDialog .body li {
+	padding:0.25em 0.5em;
+	cursor:pointer;
+	white-space:nowrap;
+}
+.selectionDialog .hover {
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
+}
+/* ie6 hack */ * html .selectionDialog .hover {
+	background-color:black;
+}
+/* ie7 hack */ *:first-child+html .selectionDialog .hover {
+	background-color:black;
+}
+
+/*
+Style: fontDialog
+*/
+.fontDialog li {
+	font-size:110%;
+}
+
+/*
+Style: charsDialog
+*/
+.charsDialog td {
+	font-size:110%;
+	font-weight:bold;
+	text-align:center;
+	cursor:pointer;
+	padding:0.25em 0.5em;
+}
+.charsDialog table {
+	border-collapse:collapse;
+	border-spacing:0;
+	empty-cells:show;
+}
+.charsDialog td:hover {
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	background:rgba(255,255,255,0.7);
+	color:rgba(0,0,0,0.7);
+}
+.charsDialog {
+	*background:url(images/tip.png) top left;/*IE hack*/
+}
+/*
+/* ie6 hack ./ * html .charsDialog,
+/* ie7 hack ./ *:first-child+html .charsDialog {
+}
+*/
+
+/*
+Style: ColorDialog
+*/
+.colorDialog {
+	padding-bottom:8px;
+	/*border:1px solid #111; */
+	width:148px;
+	height:155px;
+}
+.colorDialog .caption {
+	background-color:transparent;
+}
+.colorDialog .caption span {
+	padding:0 40px 0 5px;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	color:black;
+	background-color:white;
+	cursor:text;
+	float:left;
+	font:110% Monaco, "Courier New", Courier, monospace;
+}
+.colorDialog .body {
+	margin:22px 10px 0 10px; /*32-10(padding caption)=22*/
+	padding:0;
+	width:128px;
+	height:128px;
+	cursor:crosshair;
+}
+.colorDialog .cursor {
+	background:url('./cursor.gif') no-repeat;
+	position:absolute;
+	height:9px;
+	width:9px;
+	z-index:101;
+}
+.colorDialog .body img {
+	height:100%;
+	width:100%;
+	position:relative;
+	top:-8px;
+	left:-1px;
+}
+
+/*
+Style: CAPTCHA tables and images
+*/
+table.asirraCaptcha * img {
+  width: 125px;
+}
+table.asirraCaptcha * td {
+  background:#f9f9f9;border:1px solid #ddd;padding:1em;
+}
+
+/*
+Section: Print-media
+	CSS rule to improve page rendering during printing.
+	Printing is focused on the page-content; surrounding blocks
+	like the favorites side-bar, login-sections, search box,
+	menu dropdowns etc. are hidden.
+
+	Tabbed sections are all printed sequentially.
+
+*/
+@media print {
+
+.applicationlogo, .companylogo, .titlebox, .userbox,
+.searchbox, .breadcrumbs, .pageactions, .quicklinks,
+#actionsTop, #actionsBottom, #favorites,
+#addattachment, #findhelp,
+a.editsection, a.hashlink,
+.collapsebox .collapseOpen, .collapsebox .collapseClose,
+.table-filter .filterrow,
+.tabmenu {
+	display:none;
+}
+#attachments, #addcomment,
+/*#pagelinks,*/
+#pagecontent, #editcontent, #previewcontent, #diffcontent, #infocontent,
+#findquery, #userPrefs,
+#pagecontent .tabmenu {
+	display:block;
+	visibility:visible;
+}
+tt,pre {
+	overflow:visible;
+}
+
+/* Show links as normal text (maybe show urls at the bottom of the page) */
+a {
+	text-decoration:none;
+}
+/*print href of each link
+a:after 		{ content:attr(href); color:grey;
+          		  font-family:"Courier New", Courier, mono; font-size:8pt; }
+*/
+
+/* Give the content what it deserves. */
+html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
+	overflow:visible;
+}
+/* ie to check */
+* html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
+	overflow-x:visible;
+}
+/* use !important to overwrite css style on following specified blocks */
+/*.pagename, #header, #footer, #xpage {
+	width:100% !important;
+	margin:0 !important;
+	padding:0 !important;
+	float:none !important;
+	clear:both !important;
+	position:static !important;
+	overflow:visible !important;
+}
+*/
+.pagename {
+	font-size:250%;
+	margin-bottom:1.5em;
+	padding-bottom:0.5em;
+	border-bottom:3px solid #555;
+	color:#555;
+}
+/* hidden tabs are made visible during print
+ * e.g. when printing a page, also the attachment list gets printed
+ */
+.hidetab {
+	display:block;
+	margin:1em 0;
+}
+.tabs {
+	border:none;
+}
+/* todo : open all accordion sections */
+a.slimbox {
+	display:none;
+}
+/* ff bug : avoid floats during printing */
+.commentbox {
+	float:none;
+}
+/*
+Style: Page-break
+	Force a new page with ths explicit %%page-break style.
+	FIXME
+*/
+.page-break {
+	height:0;
+	page-break-before:always;
+	margin:0;
+	xborder-top:none;
+}
+
+
+} /* end of @media print */

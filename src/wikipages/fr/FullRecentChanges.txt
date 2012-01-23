@@ -1,0 +1,3 @@
+Voici la liste complète de tous les changements. La page des [derniers changements|RecentChanges] en propose une liste beaucoup plus courte.
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin}]

@@ -1,0 +1,114 @@
+# Define top-level entry
+dn: dc=jspwiki,dc=org
+objectClass: organization
+objectClass: dcObject
+objectClass: top
+dc: jspwiki
+o: jspwiki
+
+# Define an entry to contain people
+# searches for users are based on this entry
+dn: ou=people,dc=jspwiki,dc=org
+objectClass: organizationalUnit
+ou: people
+
+# User Janne Jalkanen
+dn: uid=janne,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '101101110111110111110011111001111000110011111001111001110111110111110100111001111001110000110110110001110000110001110100'B
+uid: janne
+sn: Jalkanen
+cn: Janne Jalkanen
+mail: janne@ecyrd.com
+userPassword: {SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==
+
+# User user
+dn: uid=user,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '11001111000101100001100011110001110101111000110110101101110001110101110000111001101011011101001100011110010110001110110111100011001011001101100100101101110110110001110100110001110011011011011000101110001101111100110110011110100'B
+uid: user
+sn: User
+cn: Test User
+mail: user@example.com
+userPassword: {SSHA}EW9VbybtKrg2qSM2VTdewF4h6rGc1+2tp8zjfw==
+
+# User Administrator
+dn: uid=admin,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '11000101101111100110110011011010011001001100001110011010110111001011001011110001100110101101110100111001110001110110101101110000111011111000011001110110111000111000101100110110010111001011101001101111110011101101100011110010110101'B
+uid: admin
+sn: Administrator
+cn: Administrator
+mail: admin@locahost
+userPassword: {SSHA}6YNKYMwXICUf5pMvYUZumgbFCxZMT2njtUQtJw==
+
+# User Alice
+dn: uid=Alice,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '11100111100011001011001101100001101011110001100101011011100011110001111000111001001011011101001100001110001110001101101110000111010011010111000110110111011011100111000111000111100011110001101011110011100101101001100010111000'B
+uid: Alice
+sn: Alice
+cn: Alice
+mail: alice@example.com
+userPassword: {SSHA}3V4zI5W6mT+x5NIHKI2KFQIYBdnAYKNOE9Aj+Q==
+
+# User Bob
+dn: uid=Bob,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '11100111001101100101111001110001011010111000011100001011011100101110100110010011011110110111010011001101100100111000101101111000110010011001101101001011011101111100110110010110010011000011011011011011000111101001110011100100110001'B
+uid: Bob
+sn: Bob
+cn: Bob
+mail: bob@example.com
+userPassword: {SSHA}NP3aAmiwK0gHywTe4qbY6klKDqnZ+F9ym9YiLg==
+
+# User Charlie
+dn: uid=Charlie,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '1100101101001100110110000110010011011111011111010110110111000011100011010011000110110111010011001101101011110011011011100010111001110110110100101101110011110011110000110101110000111000101110001100011110001011001101100110110010'B
+uid: Charlie
+sn: Charlie
+cn: Charlie
+mail: charlie@example.com
+userPassword: {SSHA}wn81B14F9axtTVYsipQKC2OWQHlc6EcpMSe58Q==
+
+# User Fred Flintstone
+dn: uid=Fred,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '1100101100011110011011001011100010110111110101110101101101111001110110110011110101101101110100111001110001111000101011011100010111001110010110011101101110111110010110010011000111100101101001100011110001110001111000011101111100001'B
+uid: Fred
+givenName: Fred
+sn: Flintstone
+cn: Flintstone, Fred
+mail: fred@example.com
+userPassword: {SSHA}iDeE9dysPUE28SWd6yeIqiIj9sIVyiMM7VnMKQ==
+
+# User Biff
+dn: uid=Biff,ou=people,dc=jspwiki,dc=org 
+objectClass: inetOrgPerson
+x500UniqueIdentifier: '110000111001011000011000011001111010111001011101101011011100101100001110010111001001011011101001100010110110110100101101110001011001011101101100101011011100101110001100001110101110001111000110100110000111000111100110110001110001'B
+uid: Biff
+sn: Biff
+cn: Biff
+mail: biff@example.com
+userPassword: {SSHA}xKAIienaZZHhKTGCNv5Li6lzeemaSs6ZYXTHFQ==
+
+
+# Define an entry to contain LDAP roles.
+# Searches for roles by LdapAuthorizer
+dn: ou=roles,dc=jspwiki,dc=org
+objectClass: organizationalUnit
+ou: roles
+
+# Define the "Admin" role
+dn: cn=Admin,ou=roles,dc=jspwiki,dc=org
+objectClass: groupOfUniqueNames
+cn: Admin
+uniqueMember: uid=admin,ou=people,dc=jspwiki,dc=org
+
+# Define the "Role1" role
+dn: cn=role1,ou=roles,dc=jspwiki,dc=org
+objectClass: groupOfUniqueNames
+cn: Role1
+uniqueMember: uid=Fred,ou=people,dc=jspwiki,dc=org
+uniqueMember: uid=Biff,ou=people,dc=jspwiki,dc=org

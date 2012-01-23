@@ -1,0 +1,128 @@
+# 
+#    JSPWiki - a JSP-based WikiWiki clone.
+#
+#    Licensed to the Apache Software Foundation (ASF) under one
+#    or more contributor license agreements.  See the NOTICE file
+#    distributed with this work for additional information
+#    regarding copyright ownership.  The ASF licenses this file
+#    to you under the Apache License, Version 2.0 (the
+#    "License"); you may not use this file except in compliance
+#    with the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing,
+#    software distributed under the License is distributed on an
+#    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#    KIND, either express or implied.  See the License for the
+#    specific language governing permissions and limitations
+#    under the License.  
+#
+############################################################################
+
+How to translate JSPWiki to your language and get away with it?
+===============================================================
+
+JSPWiki translations are in three files, all located in the 
+src/WebContent/WEB-INF/classes directory.
+
+The files are:
+
+* CoreResources.properties - this is the main file for JSPWiki core components
+  (e.g. errors, and that sort of stuff)
+  
+* templates/default.properties - this is the property file for the default template.
+  All other template localizations go into this one as well.
+  
+* plugin/PluginResources.properties - the file where all the JSPWiki core plugins
+  (that is, the ones that ship with JSPWiki) get their translations from.
+  
+You will need to provide all three files.  In addition - if you are very enterprising -
+you can also provide an extra translation (but this is strictly optional):
+the corepages.  They are located under src/wikipages/<language>.
+
+The following is a simple tutorial for creating the files.  However, if you are
+computationally adept, it's a much nicer idea to just copy the default template
+files by hand and send us a patch.
+
+Step 1
+------
+
+Create the necessary template files by running
+
+% ant i18n-create-template
+
+This will ask your language code (e.g. "se" if you wish to make a Swedish translation).
+This code is the standard ISO two-letter language code for your language.  If you want,
+you can also make a language variant version (e.g. "en_AU" for Australian English).
+
+The files will be saved in your current directory, under "i18n_templates/JSPWiki_<language>/"
+
+Step 2
+------
+
+Translate the files.  Do not forget that the property files MUST be in ISO-Latin-1,
+so you may need to use the native2ascii tool to munge the files first.
+
+Step 3
+------
+
+Test the files.  Create a JAR file with
+
+% ant i18n-jar-template
+
+Which will create a build/JSPWiki_se.jar, which you can then put into the classpath of
+a live JSPWiki installation to check.
+
+Please try to be thorough.
+
+Step 4
+------
+
+Contribute the translation back to JSPWiki.  Please go to the Apache issue tracker at
+
+https://issues.apache.org/jira/browse/JSPWIKI
+
+and create a new ticket; then attach the JAR file to the ticket.  Please have a 
+separate zip/JAR file for your wikipages translation; makes them easier to keep
+track of them.  Of course, if you know how, adding a patch is even better!
+
+REMEMBER TO TELL WHICH VERSION OF JSPWIKI YOUR TRANSLATION WAS MADE FOR!
+
+Note: we don't necessarily take in translations for older versions.
+
+Step 5
+------
+
+The most important step of all: Please, please, PLEASE maintain your translation!  Even
+though JSPWiki development is multilingual, we don't know all the languages, so sooner
+or later your translation will be obsolete.
+
+However, we have a nifty tool for checking what needs to be updated in a translation!
+Run
+
+% ant i18n-check
+
+And it will tell you what is obsolete, and what you will need to update.
+
+If you see something that is not up to date or plain wrong, please go again to the 
+Apache issue tracker at
+
+https://issues.apache.org/jira/browse/JSPWIKI
+
+Open a ticket, and attach a patch for your translation. Again, REMEMBER TO TELL WHICH
+VERSION OF JSPWIKI!
+
+Doing a patch is easy - if you use Eclipse, just right-click on the project, and choose
+"Team->Create Patch".  Then attach the patch file to the JIRA issue.
+
+If you have trouble creating a patch, then you can upload the changed files themselves,
+but with two caveats
+
+1) please say that you don't know how to create a patch, and
+2) this is OK only for language translations.
+
+Step 6
+------
+
+Have a cup of coffee and relax.  Relaxations are very important, says Zathras.

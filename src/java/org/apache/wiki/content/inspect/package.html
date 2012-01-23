@@ -1,0 +1,91 @@
+<html>
+<body>
+<p>Inspection classes that allow content to be analyzed and scored
+on a variety of topics, such as whether a proposed page change contains
+spam. Content may be scored by initializing an {@link
+org.apache.wiki.content.inspect.Inspection} object and then calling the
+{@link
+org.apache.wiki.content.inspect.Inspection#inspect(Change...)}
+method. The Inspection's {@code inspect} method, in turn, iterates
+through a variety of previously-configured {@link
+org.apache.wiki.content.inspect.Inspector} objects and calls the {@link
+org.apache.wiki.content.inspect.Inspector#inspect(Inspection,Change)}
+method for each one. The Inspector is free to perform whatever
+evaluations it wishes. Upon exit, each Inspector's {@code inspect}
+method is expected to return an array of {@link
+org.apache.wiki.content.inspect.Finding} objects that contains the results of
+the inspection.</p>
+<p>Every Inspection is configured with an {@link
+org.apache.wiki.content.inspect.InspectionPlan} which identifies which
+Inspectors to run, and the weights to assign to each Inspector's
+results.</p>
+<h3>How to use the classes in this package</h3>
+<p>The key classes in this package are:</p>
+<ul>
+	<li>The {@link
+	org.apache.wiki.content.inspect.Inspection} is the core class in this
+	package. It implements the Gang-of-Four "strategy" pattern and is
+	itself quite lightweight. It is initialized by constructing a new
+	Inspection object and supplying the current WikiContext and a
+	previously configured {@link
+	org.apache.wiki.content.inspect.InspectionPlan} that defines the
+	Inspector objects that conduct the inspection. The Inspection maintains
+	an internal floating-point score for each Topic. A Topic score is
+	incremented or decremented based on the results of {@code
+	Inspection.inspect()} as described below. The float value for a Topic
+	score can be retrieved at any time by calling {@link
+	org.apache.wiki.content.inspect.Inspection getScore(Topic)}. The
+	initial value is always {@code 0f}.</li>
+	<li>{@link
+	org.apache.wiki.content.inspect.InspectionPlan} keeps references to the
+	WikiEngine, the configured Inspectors and other shared-state objects
+	needed by Inspections and Inspectors. The InspectionPlan is normally
+	initialized just once, as part of the WikiEngine startup. Inspectors
+	are added by calling {@link
+	org.apache.wiki.content.inspect.InspectionPlan#addInspector(Inspector,float)},
+	where the float parameter indicates the weight that should be given to
+	pass/fail results returned by the Inspector's {@code inspect} method.
+	The InspectionPlan persists between HTTP requests and keeps a reference
+	to the {@link org.apache.wiki.content.inspect.ReputationManager}.</li>
+	<li>The {@link
+	org.apache.wiki.content.inspect.Topic} is an concept being analyzed
+	during the Inspection. The "spam" topic, for example, is {@link
+	org.apache.wiki.content.inspect.Topic#SPAM}.
+	<li>The {@link
+	org.apache.wiki.content.inspect.Inspector} interface specifies how to
+	implement a particular strategy for inspecting content. The Inspector
+	has just one primary method: {@link
+	org.apache.wiki.content.inspect.Inspector#inspect(Inspection, Change)}
+	which returns an array of Findings. Each Finding is constructed with the {@link
+	org.apache.wiki.content.inspect.Topic} that the finding applies to,
+	plus the {@link org.apache.wiki.content.inspect.Finding.Result}
+	indicates whether the inspection for the Topic passed or failed.
+	Inspectors are intended to be instantiated just once, and are
+	initialized via the method {@link
+	org.apache.wiki.content.inspect.Inspector#initialize(InspectionPlan)}.
+	The InspectionPlan parameter can be used to obtain references to the
+	ReputationManager, WikiEngine,and WikiEngine Properties. Inspectors are
+	meant to be re-used and should not keep state between invocations of <code>inspect</code>.
+	Examples of Inspector implementations include the {@link
+	org.apache.wiki.content.inspect.ChangeRateInspector} (which determines
+	whether the current user has made too many recent changes) and the
+	{@link org.apache.wiki.content.inspect.LinkCountInspector} (which
+	counts links).</li>
+	<li>{@link
+	org.apache.wiki.content.inspect.Finding} objects supply instructions to
+	the parent Inspection object to increment, decrement or reset the score
+	for a particular topic. Each Finding is constructed with a topic (for
+	example, Topic.SPAM), a {@link
+	org.apache.wiki.content.inspect.Finding.Result} type that indicates
+	whether the test passed (which increases the score), failed (which
+	decreases it) or has no effect. An optional String message passed to
+	the constructor provides context for the change.</li>
+	<li>The {@link
+	org.apache.wiki.content.inspect.ReputationManager} tracks the IP
+	addresses of hosts that have modified content recently, along with the
+	changes they have made. Callers (such as Inspectors) can add a host to
+	the list of recent modifications by calling {@link
+	org.apache.wiki.content.inspect.ReputationManager#addModifier(javax.servlet.http.HttpServletRequest,Change)}.</li>
+</ul>
+</body>
+</html>

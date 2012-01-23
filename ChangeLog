@@ -1,0 +1,4786 @@
+2011-12-30  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-234
+        
+        * fixed JSPWIKI-690: default set of pages for 3.0
+        
+        * fixed JSPWIKI-692: FCK.jsp uses TemplateManager.addResourceRequest, which does not exist anymore
+        
+        * most of JSPWIKI-693 (style issues) fixed
+        
+2011-09-20  Florian Holeczek <florianh@apache.org>
+
+        * no version bump
+        * modified jspwiki-checkstyle.xml to be compatible with CheckStyle 5.x
+        * corrected a few things CheckStyle was nagging about
+
+2011-09-18  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-233
+        
+        * JSPWIKI-391: FCK editor ruins the anchors inside the page
+        
+        * JSPWIKI-493: FCK editor adds newlines before and after text 
+        formatted as "code"
+
+2011-09-18  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-232
+        
+        * fixed JSPWIKI-705 (Log a clear hint to a running security manager).
+
+2011-08-21  Florian Holeczek <florianh@apache.org>
+
+        * fixed JSPWIKI-701 (Website must display disclaimer text)
+        * no version bump
+
+2011-08-07  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-231
+        
+        * fixed JSPWIKI-699 (JBoss complaining about jspwiki.tld and oscache.tld).
+        * a few minor Stripes bugs
+        
+2011-07-13  Janne Jalkanen (jalkanen@apache.org)
+        
+        * 3.0.0-incubating-230
+        
+        * El firsto releaso attempto.
+
+2011-05-13  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-230
+        
+        * JSPWIKI-691: Navigation to ./admin/Admin.jsp with a non-authorized user redirects to a blank ./Message.jsp. 
+        
+        * JSPWIKI-695: Change note gets sticked upon several revisions.
+
+2011-05-09  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-229
+        
+        * WikiTagBase sometimes tried to getMessage() on a null exception, added an extra check on that.
+        
+        * JavaDoc fixes
+        
+        * Error.jsp was is own error page causing endless loops, removed the errorPage tag.
+        
+        * Error.jsp was using  ${error.realCause.class.name} causing :
+           javax.el.ELException: The identifier [class] is not a valid Java identifier as required by 
+           section 1.19 of the EL specification (Identifier ::= Java language identifier). 
+           This check can be disabled by setting the system property org.apache.el.parser.SKIP_IDENTIFIER_CHECK to true.
+           
+           An extra getter was added on the MessageActionBean to circumvent this.
+           We should now at least get clearer error messages.
+        
+2011-05-08  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-228
+        
+        * fixed JSPWIKI-689 (InstallActionBean does not create admin user), most code
+          taken from JSPWiki 2.8.
+        
+        * On Install.jsp I also moved the logdir and workdir fields from Advanced to Basic,
+           since they are required fields.
+           
+         * Removed unmappable characters from CreoleToJSPWikiTranslatorTest (causing compile warnings)
+        
+2011-04-27  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-227
+        
+        * JSPWIKI-636: fixed DefaultAclManagerTest.testPrintAcl(). Saving pages involves calling 
+        RenderingManager.getRenderedDocument(), which can return cached or non-cached WikiDocuments. In  
+        the first case, ACLs were not associated to current WikiPage, whereas in the second one yes
+        (DefaultAclManager.parseAcl() is called as part of MarkupParser.parse()). 
+        
+        * JSPWIKI-636: 27 tests where locale-dependant (test assertions assumed english locale), so
+        TestEngine and WikiContextFactory enforce it when building mock requests.
+
+2011-04-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-226
+        
+        * fixed JSPWIKI-688 (Poor performance of CreoleToJSPWikiTranslator), thanks to Jelmer Kuperus.
+        
+2011-03-24  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 3.0.0-svn-225
+        
+        * JSPWIKI-636: fixed RPCHandlerTest.testRecentChanges(). JCR Paths are always lower-cased,
+        and ContentManager.getAllPages( String space ) didn't lower-case it's parameter in order to 
+        make a JCR path-based query. One test failure remaining.
+
+2011-01-24  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-224
+        
+        * Extended the list of lucene searchable file suffixes, we now do 
+           ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm", ".xhtml", ".java", ".c", ".cpp",
+            ".php", ".asm", ".sh",  ".properties", ".kml", ".gpx", ".loc"
+
+2010-12-12  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-223
+        
+        * JSPWIKI-671: WikiPageRenameEvent not fired during page rename.
+
+2010-12-05 Dirk Frederickx <brushed@apache.org>
+
+        * v3.0.0-svn-222
+
+        * JSPWIKI-667: Fixed Scorebar issue in Google Chrome. (workaround js error)
+        
+        * JSPWIKI-675: Fixed Unicode support in quickEdit (javascript regexp)
+
+        * JSPWIKI-674: Fixed support for nested tabbed sections
+
+2010-09-30  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-221
+        
+        * JSPWIKI-664 SpecialPage renamed, but wikipages not changed.
+        Changed all references to "FindPage" into "Search" .
+
+2010-08-29  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-220
+        
+        * JSPWIKI-660 Support external properties in WikiEngine (idea from John McKinney)
+          You can now override individual properties in jspwiki.properties using standard
+          Java System properties.
+
+2010-05-16  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-219
+        
+        * JSPWIKI-646 JSPWiki cannot run without unpacking the war file
+        
+2010-05-08  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-218
+        
+        * JSPWIKI-392 and JSPWIKI-442 invalid asserted usernames
+        
+2010-03-27 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-217
+
+        * Renamed EventResolution to AjaxResolution (I had made changes
+        similar to AJAX/JSON to his, independently).
+
+2010-03-21 Dirk Frederickx <brushed@apache.org>
+
+        * v3.0.0-svn-216 : AJAX/JSON fixes.
+
+        * EventResolution now returns a static JSON object iso of 
+          JavaScriptResolution.  JSON objects are more safe (no eval)
+          but assume that the converted java beans are acyclical.
+          (which is ok in our case)
+          The overall AJAX/JSON handling is still work in progress.
+        
+        * The client javascript is updated accordingly,
+          with a simplified Stripes.submitFormEvent()
+
+        * The Preview functionality is now working through JSON objects.
+        
+        * I'm still working on the quick-navigation search functionality.
+          For now, it is broken: the SearchActionBean.quickSearch() 
+          needs to some update to use the new json format.
+          
+        * Fixed the AttachmentTab so slimbox preview of attachments is 
+          working again.
+          
+        * Fixed the section edit links.
+        
+        * Fixed the section handling routines. Apparently the element with 
+          ID="pagecontent" was removed.
+
+          
+2010-03-19 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-215
+
+        * Re-wrote ReferenceManager (again) to use JCR UUIDs internally
+        to track references between pages. This change means that the
+        nagging PageRenamer unit test failures are now fixed. RefManager
+        is also considerably simpler for rename cases, although some of
+        that is offset by slight added complexity in ContentManager for
+        add and delete cases.
+
+        * New singleton-per-wiki class WikiPathResolver, part of the
+        org.apache.content package, caches UUIDs and WikiPaths. It also
+        constructs canonical WikiPaths that based on WikiPage ATTR_TITLE
+        attributes from the JCR. This ensures consistent naming. These
+        too are cached. The caching is primitive and *should* use EHcache,
+        but doesn't yet. It *probably* makes sense to move logic from
+        WikiEngine.getFinalPageName (and related code) here, but that
+        wasn't a goal for this checkin.
+
+        * As of this build, we have just 2 failing unit tests: one
+        XML-RPC test and one DefaultAclManager test. I will add more
+        RefManager tests to exercise UUID-based references more thoroughly
+        (although the coverage is decent now as it is).
+
+2010-03-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-214
+
+        * Fixed feature that was broken: localized strings needed by
+        Dirk's JavaScript works again. The code has also been refactored
+        slightly so that it cached rather than having to continually
+        hit the disk looking for resource bundles on every request.
+
+2010-03-03 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-213
+
+        * Removed old URLConstructors. Fixed bug in StripesUrlContructor
+        that caused it to exhibit slightly behavior different different
+        behavior than DefaultUrlContructor. It now generates URLs identically.
+        Method parsePage() was removed from UrlContructor's interface spec.
+        (The only URLConstructor implementation is StripesUrlConstructor,
+        anyway, it doesn't need to do any page-param parsing because the
+        framework takes care of it.)
+
+        * Removed WikiServlet. All of its functionality had been previously
+        moved elsewhere, and it was not being used in web.xml either.
+        Also removed SpamFilter; the content-inspection package essentially
+        replaces it (and is far more flexible).
+
+        * Fixed bug that popped up in Preferences.jsp regarding skin listings.
+
+        * Slightly changed how EditActionBean.edit() works. It now forwards
+        directly to the editor JSPs. These JSPs now render EditorLayout.jsp,
+        which allows each editor to load its own resources (per mailing
+        list discussion). Edit.jsp's contents essentially morph into
+        EditorLayout.jsp.
+
+        * Fixed bug that caused ReferenceManager tests to fail.
+
+2010-02-28 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-212
+
+        * Exceptions caught by WikiTagBase (and subclass tags) are now
+        re-thrown so that they propagate upstream. Previously, doCatch()
+        was swallowing them, which made for "interesting" JSP debugging.
+
+        * Edit.jsp, Wiki.jsp, and PageInfo.jsp changed to put the
+        edit tab on the right. For editing, the live-preview feature was
+        moved to a new "Preview" tab, also on the right. The View tab
+        now simply displays the most recent save.
+
+        * The Error.jsp references were made consistent in all JSPs.
+        Rather than use JSTL syntax (which won't evaluate when used
+        with <% page errorPage %> tag), the references now all use
+        /Error.jsp, which itself jsp:includes the template JSP
+        Error.jsp using JSTL. This makes the error page customizable
+        per-template, but still very easy to use.
+
+        * Cleaned out all of the deadwood in TemplateManager.
+        Deprecated IncludeResourcesTag and RequestResourceTag. Resources
+        can (and should) be included directly in template JSPs.
+
+        * Small changes to Admin/AdministerProfiles action beans as part
+        of a gradual overhaul to the Admin JSPs, which are being Stripesed.
+
+2010-02-28 Dirk Frederickx <brushed@apache.org>
+
+        * v3.0.0-svn-211 : line up with latest template/stripes changes
+
+        * JSPWIKI-429:  Upgrade of Slimbox (viewer for attachments), 
+          and adjust it to v3.X of JSPWiki. Various media formats are now
+          supported so you can view youtube or facebook videos, other
+          wikipages, or even external web-pages.
+          Still working on a use as inline media viewer. (iso popup viewer)
+
+        * JSPWIKI-431 Multi-file upload is now supported with Stripes backend.
+          (improved gui)
+          You can add or remove files (upto 5) before you press the upload 
+          button. All attachments are uploaded with the same change note.
+
+        * JSPWIKI-362 - (still experimental) Added an wysiwyg editor to JSPWiki,
+          based on mooeditable. (MIT license) 
+          This is a light-weight editor, based on mootools. 
+          Future extensions will improve integration with JSPWiki
+          e.g. adding ajax based suggestion-menu, attachment previews, etc...
+          Interaction with Stripes back-end needs more work. 
+
+        * Fixed and simplified the %%category style to work with the stripes
+          ViewActionBean.ajaxCategories(). This replaces the AJAXCategories.jsp.
+
+        * Upgrade to mootools-core to 1.2.4, mootools-more to 1.2.4.4
+
+        * Updated %%prettify style, adding line numbers to code-blocks.
+
+
+2010-01-06 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-210
+        
+        * fixed a couple of Plugin unit tests (support for wiki spaces is
+          not yet there), only the ReferringPagesPlugin still fails.
+        
+2010-02-27 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-209
+
+        * Moved top-level Error.jsp into the templates directory.
+
+        * Slight tweaks to the admin pages, which are being re-organized.
+        Security config is now one of the tabs on Admin.jsp. User
+        management partially re-worked but not yet functional.
+
+2010-02-23 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-208
+
+        * Useful tweaks to the AJAX-related Stripes JavaScript. The
+        client-side JavaScript now injects validation errors and messages
+        that were generated server-side by an EventResolution, using the same
+        prefixes and headers defined in CoreResources for "normal" JSP
+        validation errors and messages. Generation of an EventResolution
+        for AJAX methods that generate errors is automatic when the
+        event method is annotated with @AjaxEvent. Practically speaking,
+        what it means is this: to call an Stripes method via Ajax, just
+        annotate the method with @AjaxEvent. Then, client-side scripts
+        need only call the JavaScript function Stripes.submitFormEvent().
+        The rest is MAGIC.
+ 
+        * Captcha interface gains an isEnabled() method to allow
+        SpamProtect tag to check whether the CAPTCHA is operational
+        before generating output. This is required in stand-alone or
+        testing scenarios where an outbound network connection cannot
+        be assumed.
+
+        * Moved the admin-related JSPs to the templates directory.
+        Added a new layout JSP, StaticLayout.jsp, that is used with
+        template JSPs that do not need dynamic content, such as
+        Install.jsp. Among other things, this allows admin-related
+        JSPs to look more like ordinary pages, and use the same CSS.
+
+        * Tweaked TemplateManager to make the "resource resolver" initialize
+        safely even when the WikiEngine does not. This means the 'templates'
+        JSTL scripting variable can be used everywhere, for example in
+        Install.jsp, Error.jsp or any pages that must load safely.
+        
+        * Moved all images in top-level /images directory to template
+        /images dir, and made code/JSP changes to make sure they can
+        be "found" as needed by the TemplateManager resource resolver.
+
+2010-02-20 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-207
+
+        * Fixed 2 failing Scandic page-name URL generation tests. Page names are now
+        encoded as UTF-8. Also patched Group- PageName- and PrincipalTypeConverter
+        to ensure that incoming parameters are properly decoded, which they
+        were not before. Added a Scandic page-name test to ViewActionBeanTest.
+
+        * [JSPWIKI-510] Restored AJAX quicksearch. It now respects page ACLs, too.
+        Moved the AJAX "suggestions" method to (new) EditDialogActionBean,
+        which is a placeholder for now. Removed JSON global bridge from
+        SearchManager.
+
+        * [JSPWIKI-635] Disabled the snip-editor feature that was interfering
+        with editor form submission and causing double postings. This is a crude
+        hack until Dirk is able to look at the root cause more closely. :)
+
+        * [JSPWIKI-180] Removed ISO-8859-1 support from ExternalDiffProvider,
+        WikiEngine, AbstractFileProvider, TestEngine and a few tests.
+
+        * Fixed multiple bugs in Preferences and Preferences.jsp. Asserted names
+        were not being set when "save prefs" button was pushed. PreferencesLocalePicker
+        was not correctly matching incoming browser Locales to those available on
+        the server. Time zones were not correctly being set. Preferences also had
+        a static-method fetish, which was unnatural. It has been refactored
+        completely and thoroughly.
+
+        * [JSPWIKI-382] Removed posteditor. Moved Stripes AJAX function to
+        jspwiki-common.js. Light cleanup of unneeded functions in prefs/edit JS.
+
+2010-02-14 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-206
+
+        * Fixed bug in TemplateResolution that prevented some JSPs from resolving.
+
+        * Installed StripesURLContructor as the default (and only) URL constructor.
+        URLs are constructed according to the @UrlBinding annotations in the
+        ActionBeans. Because of the checkins svn-201 through -203, the generated
+        URLs are identical to the ones previously generated by DefaultURLConstructor
+        (with one or two exceptions are previously noted). In the Beta timeframe,
+        the FileBasedActionResolver will allow URL bindings to be externalized.
+        The other URLConstructors will be removed before Beta... but not today.
+
+        * Changed a few classes that depend on Stripes to use "lazy
+        initialization." WikiContextFactory and StripesURLConstructor
+        must lazily initialize because they depend on StripesFilter
+        being initialized first. Cleaned up TestEngine also: it now
+        initializes a full mock Stripes filter stack at startup.
+        
+        * Eliminated WikiRuntimeConfiguration: it is no longer needed
+        because WikiEngine can easily be obtained without needing
+        a special Stripes config class. Less classes are always better.
+        
+        * Renamed ShortUrlRedirectFilter to ShortUrlFilter.
+
+2010-02-12 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-205
+        
+        * Introduced TemplateResolution, which forwards the user to
+        the appropriate resource in /templates/<template>. It replaces
+        the use of ForwardResolution in most of the ActionBeans.
+        For example, to forward to a template JSP ("display JSP"),
+        you'd do this: new TemplateResolution( "PageInfo.jsp" ).
+        JSPWiki will figure out where the template JSP actually
+        is, and forward to the correct path.
+        
+        * Fixed some minor bugs and a few failing unit tests.
+        
+        * Removed two unnecessary JARs: jsp-api.jar and servlet-api.jar.
+        These don't seem to be needed, but please re-add them if I
+        am mistaken.
+
+2010-02-07 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-204
+
+        * Refactored WikiBackgroundThread to operate as listeners
+        for JMX timer events. Because they are no longer true threads
+        they don't keep chewing up heap if context shutdown for some
+        reason isn't normal.
+
+        * Fixed some small bugs in SessionMonitor and Preferences.
+
+        * Replaced the last few wiki:include tags with jsp:include,
+        and deprecated WikiIncludeTag.
+
+2010-02-04 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-203
+
+        * [JSPWIKI-578] Eliminated the remaining top-level JSPs
+        except for Error.jsp. Minor tweaks to the
+        templates/default directory; the layout JSP and
+        related JSPs are in their own layout/subdirectory.
+
+2010-02-02 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-202
+
+        * [JSPWIKI-578] Eliminated top-level JSPs for Edit.jsp,
+        Preview.jsp, CreateProfile.jsp, Login.jsp, LoginForm.jsp,
+        LostPassword.jsp, and UserPreferences.jsp and consolidated
+        the markup into the template JSPs.
+
+        * Preview is now a tab, and its contents refresh automatically
+        when it is clicked based on the editor's contents.
+        This replaces "live" or "sneak" preview. It looks good
+        and works well. Related: a new EventResolution class
+        now exists to help events methods return AJAX that
+        stripes-support.js understands.
+        
+        * TabbedSectionTag gains an onclick() attribute that
+        passes contents through to the underlying <div>. This
+        feature is super-useful and enables the new preview
+        functionality. Refactored TabTag to make it simpler.
+
+        * Moved injection of JSTL variables ${wikiEngine}
+        and ${wikiSession} to SessionMonitor, so that they
+        are always present even if Stripes isn't involved.
+
+        * Fixed a bug in TemplateManager that was preventing
+        resources underneath the top-level templates directory
+        from being found.
+
+2010-01-30 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-201 aka the JSP Consolidation Checkin
+
+        * [JSPWIKI-578] Eliminated top-level JSPs for Wiki.jsp,
+        PageInfo.jsp, Diff.jsp, Delete.jsp and Attachments.jsp.
+        The relevant ActionBeans are still bound to these URLs
+        (except PageInfo.jsp), but there are no longer physical
+        JSPs for these top-level paths. The template JSPs in
+        /templates/default now contain all of the formatting
+        and markup and are mostly HTML and JSTL. At the moment,
+        ActionBeans all forward to to hard-wired template JSP
+        paths in /templates/default. A "TemplateResolution"
+        class that makes forwards dynamic based on the current
+        template will come a little later.
+
+        * Added convenience accessors getHistory() and
+        getAttachments() to AbstractPageActionBean so that
+        subclasses can inherit them. This also means template JSPs
+        now have easy JSTL access to page history and attachments.
+
+        * Added option to PageTimeComparator to allow descending
+        order sorts, used by AbstractPageActionBean. Also replaced
+        several spurious uses of the default constructor that
+        should have used the static instance instead.
+
+        * Fixed bug in AttachmentActionBean that prevented the
+        size of uploaded attachments from being seen.
+
+        * Fixed bug in DeleteActionBean that prevented attachments
+        from being deleted properly.
+
+        * Fixed bug in EditActionBean that prevented the author from
+        being correctly set when the user was already authenticated.
+
+        * Added methods getCreated() and getChangeNote() to WikiPage
+        and JCRWikiPage. Fixed bug in ContentManager that was
+        preventing creation and modification times from being
+        correctly set upon save.
+
+        * Added new JspFunctions class for convenient "short formatting"
+        of file names, ISO8601 date formatting, and the attachments
+        tab name (localized). These replace scriptlet code formerly
+        located in the old top-level Wiki.jsp and elsewhere. For example,
+        to output an ISO8601 date, JSPs can simply use a JSTL expression
+        like this: "${wiki:iso8601date(att.lastModified)}".
+
+        * TabTag now accepts two new attributes, which can be used
+        in place of the "url" attribute: "beanclass" and "event".
+        These are used to specify ActionBean names and event, and
+        are used in the same manner as <stripes:link>. TabTag
+        also now accepts child <wiki:param> tags to make this easier.
+
+2010-01-21 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-200
+
+        * WikiServletFilter's sole remaining function (checking for
+        cookie and container authentication) was moved into
+        WikiInterceptor and WikiContextFactory. WikiServletFilter
+        was removed.
+
+        * Moved ErrorActionBean functions into MessageActionBean.
+        
+        * The admin/Admin.jsp JSP receives the Stripes treatment, but
+        badly. It doesn't work and will need to be fixed.
+        
+        * All top-level JSPs have now been converted to Stripes
+        ActionBeans. No scriptlet code remains. Some scriptlets
+        remain in the template JSPs, but that is ok. ViewTemplate.jsp
+        and EditTemplate.jsp are removed.
+
+2010-01-17 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-199
+
+        * SecurityConfig gets the Stripes treatment. Minor
+        tweaks to SecurityVerifier to make it JSTL-friendly.
+        SecurityConfig logic moves to AdminActionBean.
+        Minor licensing doc tweaks per [JSPWIKI-544].
+
+2010-01-09 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-198
+
+        * Checked in PasswordChallenge, which renders the
+        input for the <SpamProtect challenge="password">
+        option. CAPTCHA added to CreateProfile.jsp.
+
+2010-01-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-197
+
+        * Minor renaming of a few content-inspection types
+        and methods. Added default weights for the content
+        inspectors to jspwiki.properties. Removed the listener
+        code from the Inspection class. The code was good
+        and it worked nicely, but it is no longer needed due
+        to the way we integrate CAPTCHA now. We can always
+        add listeners back if we have to, but in the
+        meantime: a simpler API is a better API.
+
+2010-01-06 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-196
+        
+        * got rid of a bunch of JavaDoc warnings
+        
+        * minor tweaks to build.xml (JSPWIKI-620), webtests
+          don't work yet => future work
+        
+2010-01-06 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-195
+
+        * Minor refactoring to content-inspection package to
+        better support multi-field inspections.
+
+        * Second of three CAPTCHA checkins. CAPTCHA is now treated
+        as a form validation problem. By default, CAPTCHA is
+        now dynamic, and is displayed only when the content
+        inspector says a form POST contains spam. Added i18n
+        support for Asirra.
+        
+        * Minor changes to SpamProtectTag. Now accepts a
+        "challenge" attribute, which can have the value
+        "captcha" or "password," which will cause a challenge
+        of that type to always be rendered, even on first
+        display. (We will use this for new user account
+        registration, for example.)
+        
+        * I plan one or two more checkins to the content-inspection
+        and CAPTCHA code: to remove some over-engineered stuff,
+        provide a configuration UI, implement a password
+        challenge, and clean up a few things.
+
+2009-12-27 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-194
+        
+        * upgrade priha 0.6.1 => 0.7.0-alpha
+
+2009-12-21 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-193
+
+        * CAPTCHA has been re-written. It has been integrated into
+        the new content-inspection system and is pluggable. ActionBean
+        event handler methods that need CAPTCHA can simply add
+        (1) a @SpamProtect annotation to the method declaration
+        anf (2) a <wiki:SpamProtect/> tag inside the corresponding
+        JSP <s:form> or <form> elements. Unlike the old Captcha.jsp
+        (which is eliminated), the new system adds CAPTCHA elements
+        right onto the form that is being protected (via the
+        SpamProtect tag). The new Captcha interface specifies the
+        contract that implementations must fulfill. One CAPTCHA
+        implementation is provided, AsirraCaptcha. ReCaptcha is
+        likely, and will come later. More polish (i18n, CSS, JSP
+        formatting, Install configuration) is is needed, but the
+        current checkin works now, and will get us started. I intend
+        to add dynamic CAPTCHA at a later point (e.g., less
+        trustworthy users always get a CAPTCHA to start, etc).
+
+2009-12-15 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-192
+        
+        * JSPWIKI-618: Allow Administrators to override attachment.maxsize  (reported by Jurgen Weber)
+
+2009-12-11 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-191.
+
+        * Workflow/WorkflowContent.jsp received the Stripes treatment.
+        All logic moved to WorkflowActionBean.
+        
+        * Fixed some dumb license header issues.
+
+2009-12-10 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-190. Unit test fixes. Back up to 97.3% pass rate.
+        Page-renaming, references and related plugins are still messed up,
+        but the stuff I messed up a few checkins ago is fixed. 
+
+2009-12-03 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-189
+        
+        * JSPWIKI-616: WikiPageEvent now takes in a WikiPath instead of
+        String.
+
+        * 3.0.0-svn-188
+        
+        * Fixed ContentManager.checkin() to use a separate Session for
+        copying - it had an off-by-one error when storing the old version.
+        This fixes quite a few tests...
+        
+2009-12-01 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-187
+        
+        * Bug fix: ContentManager.deleteVersion() no longer restores
+        the page (as empty) after deletion.  Oops.  (Technically,
+        JCRWikiPage.getJCRNode() was creating the page instead of throwing
+        an exception.)
+        
+        * Deprecated WikiEngine.getPureText() [use WikiPage.getContentAsString()
+        instead.]
+        
+        * ContentManager.deleteVersion() fires a NODE_SAVED instead of NODE_DELETED,
+        since deletion implies removal of the entire page.
+        
+2009-11-28 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-186
+        
+        * ContentManager.isNew() was checking if ATTR_CREATED exists
+        after it had ensured it had one to determine whether page is new
+        or not. Oops.
+        
+        * More fixes to ContentManager.checkin() and save() as it was
+        accidentally creating old pages with wrong version numbers, which
+        in turn caused deletions to fail in some places.
+        
+2009-11-27 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-185
+
+        * Significantly re-worked GroupActionBean and related JSPs.
+        Event handlers save and saveNew were combined. Message keys
+        were moved and/or renamed to make the *GroupContent.jsp pages
+        simpler.
+
+        * NewBlogEntry.jsp received the Stripes treatment; its logic
+        moved to EditActionBean.blog().
+        
+        * rss.jsp received the Stripes treatment; its logic moved
+        to RSSActionBean.rss(). ** not fully tested yet **.
+        SisterSites.jsp logic also moved to RSSActionBean.sisterSites().
+        
+        * Default template AJAXCategories.jsp logic moved to
+        ViewActionBean.ajaxCategories(). AJAXPreview.jsp logic moved
+        to EditActionBean.ajaxPreview(). Script files jspwiki-common.js
+        and jspwiki-edit.js were slightly tweaked.
+        ** not fully tested yet **
+        
+        * LineDelimitedTypeConverter was changed to handle linefeeds
+        and comma-delimited text strings equally. So far, only
+        EditGroup.jsp uses this feature.
+        
+        * The trunk is still more broken that it should be.
+
+2009-11-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-184
+        
+        * wiki:title was not properly copied upon rename operation.
+        
+        * checkin() did not properly bump the version number when saving,
+        resulting in versions being in the history, but all with version 0.
+        
+2009-11-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-183
+        
+        * Added wiki:title attribute to carry the case correctly so
+        that we're no longer relying on the WikiPath for the title.
+        
+        * Sped up ReferenceManager by insisting not calling save() on
+        every occasion.  We still should probably not call save() at all
+        and do it at the end of any event handling.
+        
+2009-11-25 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-182 aka "the Thanksgiving Turkey build"
+
+        * EditActionBean received significant tweaks. Page-conflict
+        logic got stuffed into EditActionBean, and PageModifiedActionBean
+        went down the gullet as a result. Commenting is now fully baked;
+        it now uses Stripes.
+        
+        * Diff.jsp received the Stripes treatment.
+
+        * SisterSites received the Stripes treatment. We didn't need
+        to do it just yet. It's all just gravy at this point in the release cycle.
+
+        * Fans of bad wordplay are invited to blow cranberries
+        -- I mean, rasberries -- in my general direction.
+
+
+2009-11-24 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-181
+        
+        * Added first iteration of import code, which works with 2.8.4-svn-3. Known
+        problems: Attachments are not yet imported. Existence of ACLs breaks code.
+        
+        * WikiPath is now case-insensitive in equals() to support proper wikipage
+        case-insensitiveness.
+
+2009-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-180
+        
+         * JSPWIKI-612: fix UserManagement.jsp 's option in user select box 
+         (I like to add the name of the person who discovered this bug, but
+         the codepage ISO8859-1 doesn't allow that)
+       
+2009-11-14 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-179
+        
+        * JSPWIKI-608, EditActionBean should not warn for page.lock after preview
+        
+        * some CoreResources files had no value for assertedName, causing a weird Preferences page
+        
+2009-11-14 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-178
+        
+        * placeholders in edit.locked i18n key were not properly numbered in some languages
+        
+        * EditActionBean's property changeNote changed to changenote (Stripes could't find it)
+        
+        * EditActionBean now uses it's own setters for member vars.
+        
+        * minor typo in ChangeRateInspector 
+        
+2009-11-03 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-177
+
+        * Fixed bug causing concatenation of edited page text.
+        Root cause: over-eager use of flash-scope in EditActionBean.
+        Upgraded Stripes to 1.6-beta.
+
+2009-11-01 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-176
+
+        * Fixed bug in ContentManager.pageExists() that caused tests
+        for version 1 of pages to fail if there had been no other
+        versions saved yet. Shockingly, we had never tested for this
+        condition before. As a result, webapp page-viewing actions
+        now work again. Related: added versioning to ViewActionBean,
+        which hadn't been added previously because the versioning
+        code hadn't stabilized until recently.
+
+2009-10-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * Priha 0.6.0, no other changes.  This new version functions
+        correctly also on case-insensitive file systems.
+        
+2009-10-27 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-175
+
+        * Tweaked the svn:ignore property for the etc/ and tests/etc/
+        directories. This should allow the trunk .xml files to
+        update working copies properly.
+
+        * Fixed Janne's slightly dodgy LDAP-server-existence-checking
+        code. ;)  Tweaked unit test names and order to match the command
+        line (ant tests) version. Removed redundant 2nd execution of
+        TextUtilTest inside its package's AllTests class, and added
+        in the ui.stripes.AllTests suite. These two changes mean that
+        all 3 test methods: guitests, tests, and Eclipse all report
+        1024 tests. Eclipse tests show a classpath error in
+        HtmlStringToWikiTranslatorTest that is throwing 14 errors.
+        I'm too tired at this point to fix this. Other than that,
+        we are cleaner than Janne's baby's bottom after a diaper change.
+        That is to say, not perfect but perfectly presentable.
+        
+        * Now, on to the JSP and War issues...
+
+2009-10-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-174
+
+        * Added code to test harness to check for existence of LDAP server
+        before trying to execute tests.
+        
+        * Introduced JSPWikiTestBase which testcases should extend if
+        they wish to throw NotExecutableExceptions.
+        
+2009-10-26 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-173
+
+        * Fixed single last unit test bug. Although LDAP tests won't work
+        if a test LDAP server isn't running, all other unit tests run
+        100% clean. This is the first time that has happened in at
+        least a year. Test times: 7 minutes 51 seconds for 1024 tests.
+
+        * Added Ant script to start OpenLDAP test fixture if
+        available.
+
+        * Fixed JCRWikiPage bug that was causing JCR exceptions when
+        attributes were not set. 
+
+2009-10-25 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-172
+
+        * Upgraded Priha to 0.5.5. Fixed several unit tests that broke as
+        a result. Note that Priha is now *extremely* sensitive to incomplete
+        shutdowns of JCR, particularly in unit tests. Unit tests *must*
+        be very sure to call WikiEngine.shutdown() every time a WikiEngine
+        is started up. Also, removed XML schema (not needed any more).
+
+2009-10-25 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-171
+
+        * Additional build.xml tweaks to fix broken WAR builds.
+
+2009-10-24 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-170
+        
+        * Restructured "tests" Ant target so that all test fixtures used
+        during the tests itself are now in build/tests. The original files
+        used to construct the fixtures stay in tests/etc, but nothing in
+        tests/etc are used when running the tests. The build/tests dir
+        contains classes, classpath (copied from tests/etc), db (copied
+        from etc/db), priha (the test page repository), reports (for
+        JUnit test results) and workdir. The logfile for tests is now
+        build/tests/jspwiki.log. In addition to these changes,
+        the Ant tasks "init" and "tests-init" are now hooked into the
+        Eclipse "clean" and "build project" commands as external builders.
+        These ensure that the same test fixtures are set up if run from
+        Eclipse.
+        
+2009-10-17 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-169
+
+        * Reverted previous fix to lone failing JSPWikiMarkupParserTest
+        and added checks into ContentManager.addPage() that recycles
+        Nodes that haven't been saved yet. This fixes the edge-case
+        bug that the failing test uncovered: a caller that created
+        a particular WikiPage twice via addPage() -- without calling
+        WikiPage.save() in between invocations -- created a
+        same-named-sibling (SNS) in JCR. Instead of doing this, we
+        simply re-use this Node in the returned WikiPage. 
+
+2009-10-17 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-168
+        
+        * All but three tests running, 99.71%. The last three seem to be Priha-related.
+        
+2009-10-14 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-167
+        
+        * All unit tests except four run successfully. These all relate
+        to page-renaming, and should yield after a bit more gentle persuasion.
+
+2009-10-14 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-166
+
+        * We are getting damned close to a nice clean build. 98%+
+
+2009-10-14 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-165
+        
+        * A bunch of (nl) i18n work.
+        
+2009-10-13 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-164
+
+        * Additional unit test fixes. Pass rate is now over 97% when LDAP test
+        harness running. Checked in Priha 0.5.2.
+
+2009-10-13 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-163
+        
+        TestEngine.emptyWorkdir() was only emptying the workdir if the
+        workdir contains a file called "refmgr.ser" (dunno why), causing the 
+        PageViewPluginTest to fail.
+        Got rid of a bunch of error messages in the log by adding 
+        engine.shutdown() statements to testcases.
+        Still a lot Stripes messages "..Configuration object cannot be located.."
+        remaining.
+        
+2009-10-11 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-162
+
+        * Many unit test fixes. Minor tweaks to Inspector classes.
+        Implemented ContentManager.pageExists() for versions; the
+        lack of this feature was causing several tests to fail.
+        When LDAP test harness is running, overall test scores
+        are back up to 96%.
+        
+        * Comment.jsp receives the Stripes treatment (initial checkin;
+        not fully tested yet).
+
+2009-10-09 Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * updated es translation (no version bump).
+
+2009-10-07 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-161
+        
+        * First checkin of new content-inspection package, designed to
+        refactor SpamFilter functions into a series of stacked Inspector
+        classes that can analyze and score content in multiple ways,
+        including for spam detection. See the package.html and Javadocs
+        for detailed descriptions on the API design. These features will
+        be used by ANY and ALL ActionBeans to allow for spam filtering
+        via the @SpamProtect annotation and SpamProtect JSP tag. Three
+        notable limitations of this checkin: 1) no CAPTCHA integration
+        yet; 2) Comment.jsp is temporarily broken; 3) User registration
+        not hooked into content inspection just yet. All will be addressed
+        soon.
+        
+        * Plain editor and related bundle messages slightly refactored to
+        make the JSP markup more concise and logical. Certain JavaScript
+        hooks are broken; I'll need to work with Dirk to fix this.
+        
+        * Bug fix: Ant schema-checking no longer requires a web connection
+        because we include all the needed schema in the local build. Yay!
+        
+        * General Javadoc and minor test tweaks.
+        
+2009-09-27 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-160 - fixed illegal char in jspwiki-common.js.
+        Failed on yui compressor.
+
+2009-09-26 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-159
+        
+        * added a few missing i18n keys (English and Dutch)
+        
+        * removed invalid char from WikiPageFormatter causing compile warnings
+        
+        * typo in CheckVersionTag
+        
+        * upgrade priha 0.1.32 => 0.3.2
+        
+2009-09-26 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-158 - upgrade mootools library
+
+        * Upgraded the mootools library to the latest stable version v1.2.3.
+        JSPWiki now includes the mootools-core.js and a selection of the
+        mootools-more.js. 
+        All js routines were updated.  But expect some stuff still to be broken.
+
+        * JSPWIKI-600: javascript error on getCoordinates()
+        Now OK with mootools v1.2.3
+        
+        * JSPWIKI-591: # sign behind headlines is now hidden on the printed wiki page
+
+        * Added unit test on Javascript.
+        The JSSPec unit tests were ported to the Jasmine
+        testing framework (http://github.com/pivotal/jasmine)
+        with a *compatible* MIT license.
+        Simply open /tests/javascript/jasmine-runner.html to execute the tests.
+
+        * The print css stylesheet is now included in the standard jspwiki.css
+        (@media print) to reduce download time.
+
+        * All javascript handlers are removed from the JSP's. (unobtrusive js)
+        All submit/click handlers are not installed from the javascript
+       at the time of the page-load.
+
+       * Aligned the javascript names of the UserPreferences cookies with 
+       the new names used by the org.apache.wiki.preferences class.
+       Cookie handling seems not yet 100% ok.
+       
+       * Several tweaks on AttachementInfoTab.jsp and AttachmentTab.jsp.
+       
+       * Few small tweaks on Preferences and EditorManager on the handling of the
+       UserPreferences. However, still several bugs to be fixed.
+
+
+2009-09-16 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-157
+        
+        * JSPWIKI-601: lastModified dates were not shown in page versions, replaced 
+        prefs.DateFormat with prefs.TimeFormat on multiple places.
+        Also attachment created dates were not shown (attachments don't have
+        a lastModified date, but a created Date).
+
+2009-09-12 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-156
+        
+        * JSPWIKI-595: Fixed EditActionBean to set the ChangeNote
+        when saving a page.
+        
+        * Fixed a bunch of JavaDoc errors and CheckStyle warnings
+        
+        * Added more error logging to JCRWikiPage
+        
+2009-09-13 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-155
+
+        * Fixed bug preventing re-init of Priha repository after installation.
+        "Instant install" using Priha for JCR, and LDAP or XML for auth/user
+        storage now works as expected.
+
+        * The "superuser" (su) feature has been implemented. This user can do anything,
+        and can log in even when the UserManager is not working. The password is
+        hashed and stored in jspwiki.properties.
+
+        * Fixed WikiSession/SessionMonitor caching problem that was preventing
+        logins after "instant install" WikiEngine restarts.
+
+        * Fixed bug in JCRWikiPage preventing attachments from being listed.
+        Attachment uploads and downloads work again.
+        
+        * Fixed Parser/Renderer bug that made them allergic to WikiContexts that
+        do not have "pages" (e.g., UserPreferences). Because WikiContexts are
+        *not* guaranteed to have pages in 3.0, this was important to fix.
+        Fixed related bug in TranslateTag; we now render the body content by calling
+        RenderingManager directly, rather than inefficiently channeling it through
+        WikiEngine (and looking up nonexistent cached documents, etc.).
+
+        * Fiddly tweaks to make bunches of compiler warnings/verification errors
+        go away.
+
+        * Upgraded Stripes to 1.5.2-beta, which fixes an important layout bug.
+        Added a WikiPageFormatter class that will render WikiPage objects passed
+        to Stripes tags as the page name, rather than contents of toString().
+        
+        * SearchBox and a few other JSPs received the Stripes forms-tag treatment.
+
+2009-09-12 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-154
+        
+        * JSPWIKI-598: Fixed EditActionBean to also release the PageLock
+        after saving a page.
+        * Fixed a few checkstyle warnings 
+        
+2009-09-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-153
+
+        * Fixing a few stray bugs, and a bit of tidying up: resource
+        bundles, comments, method names, etc.
+        
+2009-09-07 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-152
+
+        * [JSPWIKI-599]: fixed NPEs in DefaultWikiContext.
+
+        * Fixed bug in CommentedProperties.
+
+        * Install.jsp received the Stripes treatment and moved to
+        admin/Installer.jsp. Key new features include the ability to
+        configure and test LDAP user/role lookups dynamically via
+        AJAX. Additional security configuration enhancements
+        are planned, for example JavaMail live config/testing.
+        InstallActionBean also features "instant setup" --
+        changes can be applied WITHOUT restarting the webapp.
+
+        * On a related note, WikiEngine gains a new method restart()
+        which does what you'd imagine. InstallActionBean relies
+        on restart() to make "instant setup" possible.
+
+        * As a result of the new install process, certain
+        non-public functions moved from WikiServletFilter into
+        WikiInterceptor.
+        
+        * Fixed small bugs in Ldap support code and
+        added sample keychain to tests/etc.
+
+2009-09-06 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-151
+        
+        * JSPWIKI-597: Upgrade yuicompressor from 2.3.3 to 2.4.2 to solve 
+        RuntimeExceptions when using OpenJDK.
+
+2009-08-30 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-150
+        
+        * Introduced the new PageViewPlugin written by Andre van Dalen.
+        This plugin counts page views and presents the statistics on page views
+        See http://www.jspwiki.org/wiki/PageViewPlugin for the complete
+        documentation.
+        A bit of i18n work for the translators too.....
+        
+        * a bit less verbosity in ReferenceManager.checkValueString(), 
+        we now only dump the illegal page name instead of dumping a stacktrace.
+        
+2009-08-30 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-149 - align with 2.8.3-svn-16
+                
+        * JSPWIKI-577: tabbed sections with many tabs with long names will float the 
+        tabs to a next line. Fixed the 'jumping' behavior of clicking this wide tabs,
+        which was caused by a superfluous bottom-border css style.
+
+        * Open/Close of collapsible boxes is now only possible by clicking the +/- icon.
+        Any clicks on the header-bar will not change the status of the 
+        collapsible box anymore. E.G. in the Info tab, when looking at page 
+        differences between 2 versions, you can now click the version drop-downs
+        without changing the status of the collapsible box.
+
+        * Implemented the standard css overflow treatment of the 'diff' body. Horizontal 
+        scroll-bars will only be shown when looking at wide content.
+        This is the same overflow treatment as the page content.
+
+2009-08-25 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-148
+        
+        * JSPWIKI-580: Fixing the quirky handling of the textarea selection range
+        in IEx browsers.
+        
+
+2009-08-23 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-147
+        
+        * removed author check from PluginManagerTest (as a result
+          of removing author field from ModuleDate)
+          
+        * get rid of annoying compile warnings about "unmappable character
+          for encoding UTF8" in ReferenceManagerTest, now using 
+          Unicode escape sequences 
+
+2009-08-23 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-146
+        
+        * JSPWIKI-589 Removed all @author tags from source files
+          and added contributor names to README
+          
+2009-08-23 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-145
+          
+        * corrected propname in build.properties : 
+           war.compile.jsps => compile.jsps
+           
+        * added dummy SimpleCredentials login to ContentManager.newSession()
+          this is required since priha 0.1.25 (not sure if this is the 
+          right place/approach but at least we can run our JUnit tests again,
+          although still many tests fail (92.15%))
+          
+        * upgrade priha : 0.1.30 => 0.1.32
+
+2009-08-19 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-144
+
+        * LDAP support for user databases, authentication and authorization
+        has landed in the trunk. It has been tested with Active Directory
+        and OpenLDAP, and is customizable for other LDAP servers. See
+        jspwiki.properties for more details. Note that a user-accessible
+        way of configuring the "Keychain" for storing bind DN passwords
+        is still not available, but will be coming soon in a revamped
+        installer screen. LdapLoginModule was removed, because it's actually
+        much cleaner to use the UserDatabaseLoginModule instead.
+
+2009-08-19 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-143
+        
+        * upgrade priha : 0.1.22 => 0.1.30
+        
+        * recovered ChangeLog
+
+2009-08-19 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-142
+
+        * JSPWIKI-576. Styles of section [Edit] links fixed for IE.
+
+        * JSPWIKI-585: Scrollbars on wide-pages fixed for FF and Safari (overflow-y:hidden) and IE.
+        
+        * JSPWIKI-383, JSPWIKI-481: Support redirecting back to special pages suchs as 
+        the Search page, Workflow page.
+        
+2009-08-16 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-141
+        
+        * got rid of a bunch of Javadoc and compile warnings
+        
+        * added an extra error(String, Throwable) method to the Logger interface.
+          When we switched to the varargs interfaces we lost the (log4j) 
+          option to automagically dump the stacktrace with the exception.
+          WikiEngine's initialize method now uses this new method, so we 
+          can better diagnose problems with new features and things like
+          JackRabbit.
+
+2009-08-15 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-140
+
+        * Checked in LdapUserDatabase, and refactorings to other LDAP
+        classes. The LdapUserDatabase is read-only. ProfileTab will
+        respect this and will print, rather than allow edits to, user
+        profile information as a result. Any UserDatabase can now be
+        flagged as "read-only" (via jspwiki.properties) to achieve
+        the same effect. 
+
+2009-08-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-139
+
+        * Checked in revised LdapLoginModule and LdapAuthorizer. Notable new
+        features include provisional support for Active Directory, which
+        "mostly" works. I also added the ability to bind to LDAP with a
+        specified identity. To to this, we use a new feature of
+        freshcookies-security called a "keychain" that stores the binding
+        DN in an password-locked, triple-DES encrypted file. The keychain
+        is available via AuthenticationManager.getKeychain() and can be
+        used for storage of anything sensitive. The keychain is NOT required
+        to be unlocked at startup time (although obviously LDAP binds will
+        fail). We will provide the ability for the admin to unlock the
+        keychain via the web UI in a future build.  
+
+2009-07-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-138
+        
+        * fixed two minor JUnit tests (DenouncePlugin and CommentedProperties)
+          the last one by removing the license from test.properties (should be OK)
+          
+        * removed OSCache reference from SisterSites.jsp
+
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-137
+        
+        * Switched from OSCache to EhCache to provide better performance
+        (and remove one extra JAR from the distro).  RenderingManagerTest
+        performance goes up 50%...
+
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-136
+        
+        * Improved LoggerFactory not to fail horribly when the SLF4J
+        bridge classes were missing.
+        
+        * Installed default priha and log4j config files to WEB-INF/classes
+        
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-135
+        
+        * Moved some classes from the top-level package to better places.
+        For example, JCRWikiPage => org.apache.wiki.content.jcr; 
+        ReferenceManager => org.apache.wiki.content.
+        
+        * PageNameResolvers now have their own package under .content.
+        
+        * Also moved around some test classes to their proper packages.
+        
+2009-07-23 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-134
+        
+        * First LDAP support classes checked in. We support an LdapLoginModule
+        and LdapAuthorizer. Both are configured via jspwiki.properties
+        and should be considered experimental. Significant limitations at the
+        moment include the assumption that role searches are done ONLY via
+        anonymous bind. We support OpenLDAP, but not Active Directory (yet).
+        The LdapUserDatabase implementation won't come for a while, either.
+
+2009-07-22 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-133
+        
+        * First implementation of versioning implemented.  Almost all
+        of the WikiEngine unit tests now run, though some of the old ones
+        were removed.  Please see doc/README - JCR Changes.txt for details
+        about the versioning implementation.
+        
+2009-06-07 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-132
+        
+        * JSPWIKI-545: Fixed hopefully the last of the RAT issues.
+        
+        * Removed generation of jspwiki_rcs and jspwiki_vers.properties
+        from unit tests, since they are no longer used.
+        
+2009-06-21 Dirk Frederickx <brushed AT apache DOT org>
+
+        * 3.0.0-svn-131
+        
+        * Fixed Quick Navigation drop down menu position.
+        
+        * Fixed the overflow handling of wide pages. (eg pages with wide
+        preformatted content or wide images)
+
+        * Fixed the location of the favicon.ico.
+        
+        * Fixed the insertion of 'jslocalizationstring' and 'jsfunction',
+        which were missing from the DefaultLayout.jsp.
+        
+        * Fixed the formatting of the search detail fragments in FindContent.jsp.
+
+2009-06-14 Dirk Frederickx <brushed AT apache DOT org>
+
+        * 3.0.0-svn-130
+        
+        * Checked in new versions of jspwiki-common.js, jpswiki-edit.js 
+        and jspwiki.css. 
+        Extensive documentation has been added to the javascript and css
+        files, although not complete yet.
+        The jspwiki-edit.js has been updated to replace posteditor.js. Expect
+        still some loose ends though.  The plain editor has a new simplified
+        toolbar, but this is still work in progress.
+        
+        * Updated the js ajax routines to better fit with new the stripes approach.
+        FindContents.jsp is now dynamically updating search results.
+        The jsonrpc javascript is still unchanged.
+
+
+2009-06-11 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-129
+        
+        * JSPWIKI-545: Fixed a number of RAT issues again. I guess we
+        are done now, please check.
+        
+2009-06-07 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * Search.jsp migrated to Stripes. SearchActionBean now provides
+        searching logic, including an ajaxSearch() method that filters
+        results correctly (this is not hooked up to the client JavaScript
+        yet, but it should be straightforward to do). Still some i18n
+        cleanup to do.
+
+        * Cleanup of a few stray unneeded annotations and imports, and
+        Java-fived a few other classes and JSPs.
+
+        * listTimezones/TimeFormats/Locales code moved to Preferences,
+        where it belongs. All of these were only called by one method
+        anyway, so this was a safe thing to do.
+
+        * Added method TemplateManager.getTemplateResources() that returns
+        a Map that resolves requests for -- wait for it -- template
+        resources. This Map is injected into the HttpSession as the
+        attribute 'templates'. That means that JSPs can now use EL
+        expressions like this: ${templates['FindContent.jsp']}, which returns
+        the relative path to the correct content JSP. The current template
+        takes precedence, followed by the default template. The Map is
+        initialized at wiki startup, so it is very efficient.
+        In the future, wiki:IncludeTag will be refactored to use this Map.
+
+        * Changed all instances of the stripes: prefix in the JSPs to s:.
+
+        * Fixed bug in BreadCrumbs tag that was causing non-WikiPage contexts
+        to appear as page "Main". These contexts are now omitted. Fixed
+        related bug where non-WikiPage contexts were causing NPEs in certain
+        tags, like FeedDiscovery and PermissionTag.
+
+        * Added doc/JSON Changes.txt that documents important information
+        about how AJAX calls will change in 3.0.
+
+2009-06-07 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-127
+        
+        * JSPWIKI-545: Fixed a number of RAT issues (2), more needed still.
+        
+2009-06-07 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-126
+        
+        * JSPWIKI-545: Fixed a number of RAT issues.
+        
+2009-06-07 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-125
+
+        * JSPWIKI-568  jspwiki.propertyfile cannot be defined as system property
+        You can now specify a Java System Property jspwiki.propertyfile to specify
+        the location of jspwiki.properties (thanks to Piotr Tarnowski) 
+
+2009-06-03 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-124
+
+        * JSPWIKI-569  added Brazilian Portuguese translation, thanks to Paulo Amaral 
+
+2009-05-30 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-123
+
+        * JSPWIKI-565  add missing package.html files
+        
+        * moved WikiRPCHandler from org.apache.wiki.xmlrpc to
+        org.apache.wiki.rpc (as indicated by the FIXME)
+        
+        * moved/reorged HexUtils from org.apache.catalina.util to
+        org.apache.wiki.util. (org.apache.catalina.util removed)
+        
+        * fixed a few errors in the NL translation
+        
+2009-05-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-122
+
+        * JSPWIKI-564  Comment Editor populated by Preview from another wikipage,
+        reported by Jeff Allen.
+        The Comment.jsp now always clears the EDITED_TEXT from the session.
+
+2009-05-23  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-121
+        Minor javadoc corrections and one JUnit test fix
+        
+2009-05-23  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-120
+
+        * Minor enhancement to JCRWikiPage: now implements
+        getContentAsStream(). Also, Javadocs and field m_name
+        tweaked to reflect WikiName-->WikiPath renaming.
+        The method getContentType() was pulled up from Attachment
+        into the WikiPage interface to prevent need to special-case.
+
+        * Major refactoring of attachment handling. AttachmentServlet
+        has been removed in favor of AttachmentActionBean. The Stripes
+        DynamicMappingFilter was added to ensure that /attach URLs are
+        mapped correctly. Upload URLs are slightly different, but
+        download URLs remain the same (and in fact are now path-aware, so
+        they support spaces and subpages). AttachmentServlet will be
+        removed from the code entirely once AttachmentActionBean is
+        better road-tested.
+
+        * Major refactoring of the IteratorTag and its subclasses.
+        The new versions are much, much simpler, have zero redundant
+        code and are easily extensible. As part of this refactoring,
+        direct manipulation of WikiContext state via request attribute
+        WikiTagBase.ATTR_CONTEXT is now officially discouraged; use
+        WikiContextFactory.saveContext() and
+        WikiContextFactory.findContext() instead. Added Javadocs.
+
+        * ReferenceManager: fixed bug where attachments were being
+        scanned for wiki links.
+
+        * Fixed bug in WikiActionBeanContext that prevented the correct
+        WikiContext from being restored during iteration.
+
+        * WikiPath gains a helpful method, getName(), which returns just
+        the portion of the path after the last slash. It works just
+        like File.getName(). Reformatted the class also, with JavaDocs
+        now fully reflecting rename of WikiName-->WikiPath.
+
+        * Fixed bug in build.xml where JSP-precompiled WARs were not
+        being built correctly.
+
+2009-05-18  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-119
+
+        * Reverted WikiPage.save() so that this method is no longer
+        deprecated. Added documentation requiring implementations
+        to delegate to ContentManager.save() so that events are
+        fired correctly.
+
+        * Added experimental FileBasedActionResolver, which allows
+        arbitrary ActionBean URL bindings to be specified in an
+        external file. This will allow fully customized URL binding schemes
+        to be defined without hard-coding them in the ActionBean
+        classes themselves. Currently the configuration file is
+        hard-coded as WEB-INF/urlpattern.properties. This restriction
+        will be loosened later. FileBasedActionResolver is turned
+        off by default.
+
+        * Added experimental ShortUrlRedirectFilter, which intercepts
+        URLs written in the "short URL" scheme and redirects them
+        to the correct ActionBean URLs. When used in conjunction with
+        FileBasedActionResolver, it allows backwards compatibility to
+        be preserved with "permalink" short URLs for viewing, while
+        freeing up implementors to specify their own completely
+        customized URL schemes. This filter is turned off by default.
+        So that it can be more easily turned on and off, this may be
+        refactored into a Stripes Interceptor later. But for now, it's a
+        filter. Murray, this one's for you.
+        
+        * Supplemental tweaks for JSPWIKI-534.
+
+2009-05-17  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-118
+        
+        * JSPWIKI-534 WikiServletFilter now lazily initializes, so that the
+           StripesFilter always init's first. 
+           This was necessary for running in Jetty.
+           
+        * included jasper-runtime-*.jar in the copy-step for preparation in
+           running the webtests.
+           The webtests still don't work, something selenium-specific that I
+           could not find yet. 
+
+2009-05-15  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-117
+        
+        * moved BreadcrumbsTrail code from AbstractPageActionBean 
+           to BreadcrumbsTag. This is an intermediate improvement, 
+           the definite solution is described in JSPWIKI-533 
+
+2009-05-15  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-116
+        
+        * Fixed the first PageRenamerTest, which was both expecting page
+        names in old format, as well as checking assertNull() on getPage()
+        instead of catching PageNotFoundException.  Page renaming
+        now actually works, though the tests still need to be fixed.
+
+2009-05-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-115
+
+        * Reviewed and partially applied the remainder of Greg Kable's patches
+        [JSPWIKI-528]. The changes to ContentManager, WikiEngine and several
+        plugins go further than those specified in the patch, and eliminate the
+        wrapping/unwrapping in AbstractFilteredPlugin.filterCollection. Notable
+        changes include use of Lists in preference to SortedSets, plus the use
+        of Collections.sort(). To do this, WikiPage now extends
+        Comparable<WikiPage>, as does JCRWikiPage. To allow pages to be
+        returned efficiently in a specified order, ContentManager now has a
+        method getAllPages(String,Comparator<WikiPage>).
+
+2009-05-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * Priha 0.1.16 to address some encoding issues with our unit
+        tests (no version bump).
+
+2009-05-09  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-114
+
+        * JSPWIKI-528, applied Greg's patches jspwiki-528-Weblog.patch and 
+           jspwiki-528-workflow.Step.patch.
+           
+        * minor javadoc in ContentManager
+        
+        * fixed PluginManagerTest
+
+2009-05-07  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-113
+
+        * Fixed various plugins that were broken, particularly AbstractFilteredPlugin
+        which did not know now to handle page names without spaces. We treat
+        this as meaning the default space. Minor method signature changes from
+        Collection to List in WikiEngine and ContentManager. Pass rate is now
+        95.5%, not counting the JCR Property-related file issue noted in build 110.
+
+2009-05-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-112
+        
+        * Minor refactoring of pageExists() in WikiEngine, PageManager (legacy)
+        and ContentManager to clarify that a page "exists" if it is present
+        in the JCR and it has also been previously saved. Previously, we did not
+        consider persistence, only if the page existed in memory in the JCR.
+        Page-renaming code in ContentManager is now JCR-optimized (even
+        though the renaming tests still all fail).
+        
+        * Fixed NPE in JCRWikiPage.getLastModified().
+        
+        * Fixed bug in AuthenticationManager that was causing cookie authentication
+        to fail.
+        
+        * Fixed bug in RPCHandler and test code that was causing a test to fail.
+        
+2009-05-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-111
+
+        * Fixed AuthenticationManager bug that prevented cookie authentication from
+        working.
+        
+        * Fixed bug in WikiEngine.pageExists that caused pages to be reported as
+        "existing" when they had been added to the JCR repository but not yet saved.
+        WikiEngine.pageExists now checks to see if has actually been saved,
+        whereas ContentManager does not.
+        
+        * Re-wrrote ContentManager.renamePage to use JCR. Sadly, Priha does
+        not support Workspace.move(). If it did, maybe the renaming tests would
+        all work?
+        
+2009-05-04  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-110
+        
+        * Encountered problem with new ReferenceManager (probably related to Priha)
+        that causes heap exhaustion. ReferenceManager includes a few (temporary)
+        diagnostics for this. It also changes the method signatures for getRefersTo
+        and getReferredBy to return lists of WikiPath. Several plugins were changed
+        to accommodate this.
+        
+        * Added method WikiEngine.beautify(WikiPath), which works identically to
+        the String version, except that those paths who are prefixed with the default
+        space name (plus a colon) are rendered without the space name. WikiEngine
+        also gains a method getSpaces(), which today only returns the default space.
+        In the future this will be configurable.
+        
+        * To prevent wiki paths that have space prefixes from being interpreted as
+        inter-wiki links,  JSPWikiMarkupParser prioritizes these first. This means that
+        wiki space names can't be the same as those for an interwiki prefixes.
+        (Which is ok: when you think about it, an outside wiki is really just a space
+        managed by someone else.) This fix was needed prevent various unit tests
+        from bombing.
+        
+2009-05-03  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-109
+
+        * Second commit of ReferenceManager. All unit tests now pass, although certain
+        behaviors are slightly different than in the past. In particular, the WikiPaths
+        passed to getReferredBy() and getRefersTo() are NOT resolved; they are assumed
+        to be correct. This was an unnecessary optimization that, in practice, was not
+        needed. Overall pass rate over 93%.
+        
+        * Relocated unit test results from to build/tests. This keeps the tests dir
+        nice and clean.
+        
+        * Minor Javadoc tweaks.
+
+2009-05-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-108
+
+        * Major re-write of ReferenceManager. The refactoring included moving little-used
+        WikiEngine.scanWikiLinks() to ReferenceManager.extractLinks(). This method should
+        never have been in WikiEngine to begin with. ReferenceManager is also completely
+        "unhooked" from FilterManager/PageEvent events, and instead listens to (new)
+        ContentEvents that are emitted when JCR events happen. This is much, much cleaner
+        and will allow PageRenamer to be eliminated Real Soon Now (and moved to
+        ContentManager, where it belongs). SearchManager is similarly unhooked from
+        FilterManager and listens for ContentEvents. Among other things, this also means that
+        saved pages won't be indexed twice. 10 failing unit tests remain in ReferenceManager,
+        and a few bugs still need to be pounded out. I will make one more major checkin of
+        ReferenceManager, soon, to fix remaining tests. Overall passrate is now nearly 93%.
+        
+        * Fixed subtle bug in JCRWikiPage that was causing isAttachment() to incorrectly
+        report its status. Also, JCRWikiPage no longer manages its own references (now
+        handled by ReferenceManager) or saves itself to the JCR (it delegates to
+        ContentManager, so that ContentEvent creation can be guaranteed).
+        
+        * Added varargs to WikiEvent and subclasses, so that arbitrary numbers of
+        arguments can be supplied with events.
+
+2009-04-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-107
+        
+        * JSPWIKI-528: Three patches from Greg Kable to rationalize the use
+        of Collections in the APIs.
+        
+2009-04-26  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-106
+
+        * fixed IndexPlugin, it no longer uses ReferenceManager.findCreated()
+           fixed RecentChangesPluginTest and a few JUnit tests in WikiEngineTest
+           JUnit Test success rate now 90.58 % (not committed changes to other plugins yet)
+
+2009-04-25  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-105
+        
+        * Many unit test fixes, including many to JSPWikiMarkupParser. About 90% of tests pass now.
+        WikiPath is now truly immutable. DefaultURLConstructor omits the space name from pages if
+        in the main space, and colons are no longer URLencoded. Fixed bug in ContentManager that
+        was preventing page ACLs from being changed correctly if a user's name changed.
+        
+2009-04-23  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-104
+
+        * JSPWIKI-523 Change TableOfContentsPlugin so it generates (more) relative links
+        so it properly displays when used in EditHelpPage (reported by Stefan Bohn.
+        
+        * Added two (dummy) methods to TestJDBCDataSource so it also compiles with JDK 6
+        
+2009-04-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-103
+        
+        * Fixed bug in JCRWikiPage.isAttachment() that caused non-existent pages
+        to be erroneously treated as attachments.
+        
+        * Fixed NPE in VariableManager.
+        
+        * Fixed bug in WikiEngine.getFinalPageName() that was causing
+        page lookups to fail horribly. Made PageNameResolver implementations
+        consistent in terms of how they treat page variants that are not found.
+        
+        * Fixed bug where the WikiPage references stored by WikiActionBeanContext
+        and the underlying WikiContext were not synchronized. As a result,
+        AbstractPageActionBean's m_page field is now private.
+        
+        * Massive refactoring to EditActionBean, and related spam-protection
+        classes. Bug-fix to ContentManager's page-save task.
+        Editing actually works again! More fixes coming later.
+        
+        * WikiPageTypeConverter's behavior changed. Unless the string
+        passed to convert() is a special page, WikiPageTypeConverter is
+        now guaranteed to return a WikiPage (which may or may not be
+        persisted in the repository). SpecialPage names still cause
+        the converter to return null, by design. The result of this
+        change is that editing/viewing functions don't "break" if
+        the page doesn't exist.
+        
+        * Fixed bug in InsertPageTag caused by recent introduction of
+        PageNotFoundException, that was causing content not to be properly
+        inserted. Fixed bugs with similar cause in LinkTag.
+        
+        * Fixed NPE in PermissionTag.
+        
+        * The @SpamProtect annotation and SpamProtect tag are now fully
+        functional. Any JSP that submits to a WikiActionBean whose handler
+        method is annotated with @SpamProtect receives the protection
+        automatically, thanks to SpamInterceptor and collaborating
+        SpamFilter. All that is needed is to add the tag
+        <wiki:SpamProtect /> as a child element to the <form>
+        or <s:form> elements. The same three-way check used in the
+        old Edit.jsp is still done: random "trap" parameter; random
+        "token" parameter; UTF-8 check parameter. To help ActionBean
+        unit test classes run with protected handler events, the
+        static method TestEngine.addSpamProtectParams(MockRoundtrip)
+        was created.
+
+2009-04-16  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-102
+        
+        * Improved enhanced-for loops and generics throughout.
+        Fixed some tag and Stripes errors that were preventing the WAR
+        from running. RPC classes and search providers now propagate
+        exceptions for page fetching and reindexing.
+
+2009-04-13  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-101
+        
+        * At Andrew's suggestion, WikiName is now called WikiPath. Also changed
+        relevant methods in WikiPage.
+        
+        * Small build configuration changes since not all XML was validating.
+        
+        * Replaced all "instanceof Attachment" calls with WikiPage.isAttachment()
+        calls.
+        
+2009-04-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-100
+        
+        * Moved PageTimeComparator, PropertyReader and StringTransmutator
+        to the util package.
+        
+        * Moved PageLock to org.apache.wiki.content.lock package.
+        
+2009-04-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-99
+        
+        * Lots of generics improvements.
+        
+        * [JSPWIKI-473] Fixed bug that was causing role checks using custom
+        Authorizers to fail. AuthenticationManager was not calling
+        Authorizer.isInRole(WikiSession, Principal), as it should have.
+        In addition to fixing the bug, we also now include a special test case
+        to verify that custom Authorizers work properly. Thanks to Steve
+        Dahl for reporting this issue. (This was forward-ported from 2.8.)
+
+2009-04-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-98
+
+        * Refactored various exception-throwing code bits to use the extended
+        constructors for WikiException/WikiSecurityException/ProviderException
+        to provide for better logging and debugging.
+
+        * Added support in WikiCallbackHandler for HttpRequestCallback and
+        WikiEngineCallback. This means LoginModules used for JSPWiki integrated
+        (custom) authentication can now access the WikiEngine and the HTTP request.
+        Thanks to Lou Peters and many, many others for bringing this issue to my
+        attention. Please test this function! This change has been forward-ported from
+        2.8.3. 
+        
+        * As a result of the additional callback support for LoginModules used with
+        integrated authentication, AuthenticationManager gains a new method,
+        login(WikiSession,HttpServletRequest,String,String). Please use this instead
+        of login(WikiSession,String,String), which is now deprecated. This change
+        has been forward-ported from 2.8.3.
+
+2009-04-05  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-97
+        
+        * added the tests.stress.disabled property to build.properties, and minor tweak
+           to build.xml. You now have the option to skip the stress tests while running
+           the JUnit tests. 
+
+2009-04-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-96
+
+        * [JSPWIKI-304] Changed all Workflow signatures so that all attribute
+        values are now Serializable. This has required some minor changes
+        to WikiPage get/setAttribute, such that these must also be
+        Serializable too. In practice this is not a problem, because all
+        attributes passed to WikiContext were always Strings anyway. The
+        net effect of this change is that we can now make workflows
+        persistent across engine restarts! (Coming later...)
+        
+        * Eliminated nearly every reference to PageManager with
+        ContentManager in the code, plus or minus about two references.
+        JSPs not checked yet.
+        
+        * Changed DefaultAclManager to extract and store ACLs parsed
+        from markup, as it should be. We will need a JSP-tier GUI
+        for manipulating the ACL separately. (Coming later...)
+        
+        * Fixed bug in HandlerInfo that was preventing evaluation
+        of permissions when <null> pages were set. 
+
+2009-04-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-95
+        
+        * Added the custom PreferencesLocalePicker to help Stripes pick
+        the right locale.
+
+2009-04-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-94
+        
+        * Got tired of the relative mess on page name resolving (as we were
+        doing this in quite a few places) and delegated the task to PageNameResolver class
+        (and its subclasses).  The name resolving is managed by the WikiEngine.
+        
+        * Moved a number of methods from WikiContextFactory to the respective
+        PageNameResolver classes.
+        
+        * Added SpecialPageNameResolver (with some special handling) and
+        EnglishPluralPageNameResolver.
+        
+2009-04-05  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-93
+        
+        * added some code to Watchdog so that the stacktrace is dumped in case of 
+           a timeout, we dump stacktraces of all threads if the debuglevel is
+           INFO or higher
+        * got rid of some javadoc errors
+
+2009-04-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-92
+        
+        * Fixed JCRWikiPage.getChildren(). Now you can kinda deploy
+        JSPWiki, but it's useless since if the main page is missing,
+        everything just breaks down.
+        
+2009-03-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-91
+        
+        * Continued fixing ReferenceManager.  The API of ReferenceManager
+        is changing slightly to use WikiNames instead of Strings to reflect
+        the new multi-wiki capabilities.  This needs some fixes to tests as
+        well.
+        
+        * WikiName.equals() enhanced to manage also String comparisons.
+        
+2009-03-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-90
+
+        * Refactored ReferenceManager to use JCR repository.  It does
+        not quite work yet, but it's a start.
+        
+        * Minor refactorings to remove dependencies on PageManager. 
+        
+        * Minor fixes to unit tests to improve pass rate.
+
+2009-03-29  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-89
+        
+        * JSPWIKI-487 don't show deleted and renamed pages in the breadcrumbs
+           reported by Bruno Peeters
+           
+2009-03-28  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-88
+        
+        * Added WikiEngine.release() to make sure that JCR Sessions can
+        be released properly at the end of requests to prevent them from
+        growing uncontrollably.
+        
+        * Removed some obsolete methods from WikiPage.
+        
+        * Cleaned up AbstractFileProvider
+        
+2009-03-28  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-87
+        
+        * tried to make the webtests running again:
+           - removed some remaining DAV stuff from web.xml
+           - correct parameters to log statements in WikiEngine, ClassUtil
+           - build.xml: selenium-server-1.0-beta1.jar => selenium-server-1.0b2.jar
+             and some more cleanup
+           - AdminBeanManager got an extra try catch block for AccessControlException
+             for some reason this exception is thrown when running webtests in jetty
+           - provide a null check in StripesURLConstructor (it looks like initing the Servlet filters
+             in Jetty is different than in Tomcat for example, this is bit of kludge, we should not be
+             dependent on the order of filter initing)             
+        
+2009-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-86
+
+        * Fixed bug in XMLUserDatabase that was preventing UIDs from being
+        saved, which generated tons of NPEs afterwards. Added unit tests
+        to check for correct saving of UIDs. Tightened input filtering on
+        user profile fields to prohibit more characters. [Forward-ported
+        from 2.8.2-svn-14].
+        
+2009-03-18  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-85
+        
+        * Lots of unit test and bug fixes.
+        
+2009-03-17  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-84
+
+        * PageNotFoundExceptions are now caught and thrown just
+        about everywhere they should be, plus or minus whatever
+        errors I made in the (very fast) process of refactoring.
+        Generally speaking: all method signatures that find and
+        return WikiPages *and* whose page/attachment parameters
+        are Strings now throw PageNotFoundExceptions.
+
+        * Stripes jar upgraded to r1.5.1.
+
+        * Many changes to EditActionBean and JSPs. Initial checkin
+        of SpamProtect annotation and matching JSP tag. This will
+        be refined in future checkins. NO unit tests yet.
+        
+        * JCRWikiPage.equals() is no longer commented out. The lack
+        of a functioning equals() method was hosing LOTS of unit
+        tests.
+
+2009-03-15  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-83
+        
+        * The WikiEngine interface now also properly propagates
+        PageNotFoundException upwards so that it's actually useful
+        for other components.  This meant quite a few small changes
+        and tweaks around the code, not all of which might make sense.
+        Please check your code for FIXME tags added by me if there's
+        something special you want to do in the error situation.
+        
+2009-03-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-82
+        
+        * Fixed issue in ContentManager.getPage() not properly
+        catching exceptions.
+        
+        * ContentManager now throws a PageNotFoundException when
+        a page cannot be found, instead of returning null. This is
+        to reduce the amount of NPEs that might otherwise appear.
+
+2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-81
+        
+        * Checked in Stripsified Edit.jsp. Spam detection does NOT
+        work yet. Attachment uploading now supports up to 5 uploads
+        courtesy of Stripes. AttachmentServlet's days are
+        numbered. Merged Janne's JCR checkins into my new code; some
+        inconsistencies still need to be ironed out. "Sneak preview"
+        has hereby been renamed "live preview".
+
+2009-03-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-80
+        
+        * JSPWIKI-421 Migrated AttachmentManager to use ContentManager.
+        
+        * Attachment is now an interface
+        
+        * Commented out quite a lot of test code which was directly
+        instantiating Attachment - these needs to be fixed.
+        
+        * Removed BasicAttachmentProvider and CachingAttachmentProvider.
+        
+2009-03-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-79
+        
+        * Removed most PageProviders and related tests as obsolete.
+
+2009-03-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-78
+        
+        * JSPWIKI-421: First commit. PageManager removed from use;
+        AttachmentManager not yet migrated.
+
+2009-03-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-77
+        
+        * Get rid of all javadoc warnings
+        
+        * added  forkmode="once" maxmemory="512m" to build.xml's tests target
+        
+2009-03-02  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-76
+        
+        * JSPWIKI-513 Remove DAV support
+        
+2009-02-27  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-75
+        
+        * JSPWIKI-414 - denounce plugin localized, the denouncetext is now in PluginResources.properties
+        
+2009-02-26  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-74
+        
+        * localized messages in all plugin
+        
+        * updated Dutch translation
+        
+        * reformatted the IfPlugin
+        
+        * added a few strong typing
+        
+        * fixed the TranslationsCheck (location of i18n files were changed)
+        
+2009-02-25  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-73
+        
+        * JSPWIKI-505 - New Plugin: InterWikiLinksPlugin, thanks to Wouter Van daele
+        
+        * strong typing for some Collections returned by WikiEngine and a few others
+
+2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-72
+        
+        * Re-wrote TabbedSectionTab and TabTag so that they operate
+        across included or nested JSPs.
+
+        * Significant rework on the view-page JSP Wiki.jsp and
+        related tabs. The attachments tab now has its own JSP
+        (Attachments.jsp); Upload.jsp was deleted. InfoContent.jsp
+        was deleted and split into 2 sub-pages; PageInfoTab.jsp
+        (for wikipages) and AttachmentInfoTab (for attachments).
+        These last 2 names may change. Uploading, for now, is
+        disabled but will be restored in my next checkin, with
+        (get this) multi-file upload.
+        
+        * Fixed omitted line in test properties files for rcs/vers
+        that was preventing GroupManager from starting.
+
+        * Moved contents of CommentActionBean into EditActionBean;
+        moderate nips/tucks on 5 ActionBean classes.
+
+2009-02-19  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-71
+        
+        * JSPWIKI-508 - Simplified Chinese translation updated, thanks to David Gao
+
+2009-02-15  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-70
+        
+        * JSPWIKI-503 - InsertPage plugin carries dashes from section
+         breaks into output, thanks to Jonathan Sobel
+         Also added an extra JUnit test for this.
+        
+2009-02-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-69
+        
+        * JSPWIKI-500: SpamFilter no longer calls Akismet on deletions.
+
+2009-02-14  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-68
+        solved java.util.MissingResourceException: Could not find an error message with key: common.nopage
+	               at net.sourceforge.stripes.validation.LocalizableError.getMessageTemplate(LocalizableError.java:109)
+        by running Andrew's wonderfull BundleMigrator with the options :
+        "copy src/WebContent/WEB-INF/classes/templates/default common.nopage \
+         src/WebContent/WEB-INF/classes/CoreResources" 
+
+2009-02-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-67
+        
+        * Re-worked build.xml so that nearly all built artifacts, including
+        for tests and webtests, are now produced in the "build" directory.
+        Minor additional tweaks to prevent test classes from being included
+        in JSPWiki.jar, which was messing up webapp tests. Added priha.properties
+        to the WAR. Webtests are still broken, but less so than before.
+        Upgraded Selenium-RC to 1.0b2; if webtests can be actually made
+        to work, at least we will now be able to use them with Firefox 3.
+        
+        * Happy Valentine's Day! Make sure to hug the one you love today. 
+
+2009-02-14  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-66
+        
+        * moved contents of etc/i18n to src/WebContent/WEB-INF/classes,
+           deleted etc/i18n
+        * moved src/java/org/apache/wiki/plugin/denounce.properties and 
+           src/java/org/apache/wiki/filters/profanity.properties
+           to
+           src/WebContent/WEB-INF/classes/DenouncePlugin.properties and
+           src/WebContent/WEB-INF/classes/ProfanityFilter.properties
+        * minor accompanying tweak to build.xml
+
+2009-02-09  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-65
+        
+        * JSPWIKI-496 RecentChanges plugin should filter pages.
+        The IndexPlugin, RecentChangesPlugin and ReferredPagesPlugin have been
+        refactored, they are now all subclasses of AbstractFilteredPlugin.
+        The AbstractFilteredPlugin is the new name for the old AbstractReferralPlugin.
+        As a result, you should now use Glob expressions instead of
+        Regular expressions for all plugins (ReferredPages and IndexPlugin were previously
+        using Regular Expressions, if you use the include/exclude parameters for those
+        plugins, you should convert them to Glob expressions.)
+        
+        * Added a new JUnit test for RecentChangesPlugin
+        
+        * Changed the build.xml (removed the copy of etc/dtd, which was deleted earlier)
+        
+        * added etc/i18n to the classpath and changed project setting "Allow output folders
+        as source folders", this makes it possible to run individual JUnit tests again.
+        Also profanity.properties and denounce.properties can now be found again during 
+        JUnit tests (saves a lot of stacktraces in stdout)
+
+2009-02-06  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-64
+        
+        * JSPWIKI-477 Renamed pages are no longer in the Lucene index
+        * deletion of the ./lib directory
+        * deletion of the ./etc/dtd directory (containing web-app_2_3.dtd)
+        * more tweaks to build.xml
+               no duplicates in the warfile anymore now 
+               take the web.xml that has been filled with compiled jsp stuff
+               but still more improvements necessary
+               (should we have a priha.properties in WEB-INF/classes ?)
+
+2009-02-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-63
+
+        * CommentedProperties no longer Unicode-escapes 8859-1 characters
+        between 161 and 255 decimal (aka accented Latin, plus umlauts galore).
+        This commit also includes the first test run of BundleMigrator, which has
+        had the effect of changing the formatting of the i18n files slightly.
+
+2009-02-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-62
+        
+        * Additional tweaks to CommentedProperties, and fixes to 4 more failing unit tests.
+       Removed some erroneous linebreaks in the Russian version of default.properties.
+
+2009-02-04  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-61
+        
+        * Fixed a few failing unit tests; tweaked build.xml so tests run again.
+
+2009-01-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-60
+        
+        * [JSPWIKI-38] Packages renamed to the "org.apache.wiki" -hierarchy.
+        Certain documentation files like UPGRADING were not touched - they need
+        to be checked for 3.0 anyway.
+
+2009-01-30  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-59
+
+        * Minor tweaks to Eclipse project so that tests run.
+
+        * Improvements to CommentedProperties. Seems to mostly
+        work now, although opportunities for cosmetic improvements
+        remain.
+
+2009-01-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-58
+        
+        * Rather massive restructuring of the codebase; makes JSPWiki into
+        an Eclipse WTP project (tested on Ganymede; don't forget to run "ant init" first!)
+        
+        Modifications are:
+          - src now contains all of the source code.  Subdir "java" contains all
+            Java source code
+          - the old src/webdocs is now src/WebContent, and also contains the former
+            /lib and most of /etc/ - essentially everything that will be deployed
+            inside the webapp dir.
+          - tests also now live in tests/java/
+          - builds are done to build/classes
+       
+        Build.xml has been modified for basic compile cycle + tests, but the more
+        exotic things like precompiled jsps were not changed yet due to sudden
+        exhaustion.
+        
+        * Minor changes to ContentManager API; it is no longer dependent on
+        having a WikiContext.
+        
+2009-01-29  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-57
+        
+        * JSPWIKI-460 - Add current time stamp to WikiVariables, offering 2
+         
+2009-01-27  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-56
+
+        * Checked in BundleMigrator, which makes it easier to move, rename,
+        or delete resource bundle messages across a range of property files
+        with a single command. This necessitated changes to CommentedProperties,
+        because it was not properly parsing multi-line messages.
+
+2009-01-23  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-55
+        
+        * JSPWIKI-472, userdatabase.xml corrupted on EBCDIC platforms by CryptoUtil
+        
+2009-01-19 Florian Holeczek <florianh@apache.org>
+
+        * 3.0.0-svn-54
+
+        * reflecting latest localization changes for German
+
+2009-01-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-53
+        
+        * [JSPWIKI-421] Trying to keep up with the changes in the 
+        trunk was simply getting too much, so I went ahead and committed 
+        a part of the JCR code in what I hope to be non-invasive.  None of 
+        the old code yet uses the ContentManager; this is just in preparation 
+        for the meat.  However, it should highlight the WikiPage<->WikiContext
+        creation problem.
+        
+2009-01-13  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-52
+        
+        * moved a few messages to CoreResources
+        
+        * added missing Apache copyright templates
+        
+        * a few typos
+        
+2009-01-13  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-51
+        
+        * JSPWIKI-468, remove keystore check from SecurityVerifier
+
+2009-01-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-50
+
+        * Localized UserDatabaseLoginModule so that it throws errors in the
+        user's correct Locale.
+
+        * Changed the stop-the-presses RuntimeExceptions thrown by
+        AdminBeanManager to an (milder) error that is logged. Halting the
+        WikiEngine was proving to be too aggressive in test situations.
+
+        * Fixed b0rked jspwiki.css.
+
+2009-01-12 Florian Holeczek <florianh@apache.org>
+
+        * 3.0.0-svn-49
+
+        * localization updates for German, cosmetic changes for English
+
+2009-01-11  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-48
+        
+        * Minor corrections to build.xml:
+           - replace all hardcoded "tests" with ${tests.src}
+           - renamed jar-jsp task to jar-compiled-jsps
+           - also add commons-el*.jar to WEB-INF/lib in war task
+           - also delete this file in war-init task an make this delete quite
+           - replaced deprecated warfile parm with destfile
+
+2009-01-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-47
+
+        * Header.jsp, PageActions*.jsp, UserBox.jsp, Footer.jsp refactored to use
+        Stripes tags. i18n messages have been renamed and moved to CoreResources.
+        SisterSites.jsp and rss.jsp now reference the oscache TLD buy URI, making
+        the need to copy it into the webapp unnecessary.
+
+        * Ant scripts now pre-compile JSPs when indicated by build.properties. This
+        is optional.  JSPs are compiled using the Jasper 5.5 jars supplied with our test
+        libs. The jasper-runtime jar is copied into WEB-INF/lib so that the JSPs will run.
+        Also, the Ant 'war' task now verifies web.xml against the servlet 2.4 schema
+        before compiling. Lastly, old crufty targets like Jar-signing and war-tomcat
+        are gone.
+
+2009-01-05  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-46
+        
+        * JSPWIKI-460 - Add current time stamp to WikiVariables (requested by NicolaFischer)
+        
+2009-01-05  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-45
+        
+        * JSPWIKI-466 - FileSystemProviderTest r�cksichtslos empties java.io.tmpdir
+        
+2009-01-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-44
+        
+        * JSPWIKI-458 - IndexPlugin now has a new showAttachments parameter
+        
+2009-01-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-43
+        
+        * JSPWIKI-452 - The LoggerFactory is now also multi-wiki-per-JVM capable
+        Fixed a lot JUnit tests, mostly adding a m_engine.shutdown() to the tearDown()
+        
+        Removed the NPE checks from LoggerImpl, the NPE's were a result of stopping
+        the webapp before stopping the background threads, this has been solved by
+        invoking engine.shutdown() from the SessionMonitor (thanks to Andrew).
+        
+        Cleanup of AdminBeanManager and WikiEngine
+
+2009-01-02  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-42
+
+        * [JSPWIKI-464] The LoginException thrown by the AuthenticationManager
+        is now properly handled by the LoginActionBean (instead of showing the 
+        default localized login.error message).
+
+2008-12-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-41
+
+        * Group.jsp, DeleteGroup.jsp, EditGroup.jsp and content JSPs refactored to use
+        Stripes tags. GroupTab.jsp eliminated from Preferences screen. We will re-do this,
+        later. Separated Login/create profile/lost password into separate JSPs (was causing
+        havoc with form submits).
+
+        * [JSPWIKI-452]. JMX beans now register themselves using the wiki name as part of
+        the MBean name, which means more than 1 webapp can co-exist.
+
+        * [JSPWIKI-351] Stripes-related labels, field names and validation errors moved to
+        CoreResources i18n files, and removed from templates/default. Message keys
+        were renamed to match Stripes field names where practical.
+
+        * [JSPWIKI-464] AuthenticationManager now handles LoginExceptions more
+        gracefully and propagates them to the original caller instead of wrapping
+        them in WikiSecurityExceptions.
+
+        * Bug fix: Fixed potential NPEs in LoggerImpl.
+
+        * Bug fix: SessionMonitor now calls WikiEngine.shutdown() when the webapp context
+        is unloaded. It didn't before, which meant containers would accumulate threads
+        and eventually exhaust memory.
+        
+        * Bug fix: TemplateManager.listLocales() was replaced with a new implementation
+        that does not assume resources are loaded from JARs. This was blowing up
+        Stripes unit tests when they ran in Eclipse. Now, we brute-force all possible
+        locales by calling the (safer) ClassLoader.getResource() with permuted
+        CoreResources_*.properties file names. Absurdly simple and foolproof.
+        
+        * Bug fix: to prevent potential name clashes, removed API version of WikiContext
+        until we figure out what we're doing. In the interim, there should be only one.
+        
+        * Bug fix: exclusion of log4j.jar from Eclipse classpath was causing IDE-run
+        unit tests to crash and burn. Re-added.
+        
+        * Happy New Year everyone!
+
+2008-12-28  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-40
+
+        * JSPWIKI-459 PluginIndexPlugin
+
+2008-12-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-39
+
+        * GroupActionBean finished, with unit tests. JSPs not yet. Fixed most of
+        the ActionBean unit tests that were failing elsewhere in the .action
+        package; down to just 4. Significant overhaul of the .action package.html Javadoc.
+
+2008-12-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-38
+        
+        * Second step in refactoring WikiPage: WikiPage is now a part
+        of the API package, and all internal methods are using that now.
+        
+        * This is the Winter Solstice build (only two more hours to go and
+        then things start going for the better again).
+        
+2008-12-20 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-37
+        
+        * JSPWIKI-291 Replace ORO regexp library with Java 5 regexps
+
+2008-12-20  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-36
+
+        * Fixed some failing unit tests due to prefs refactoring.
+
+2008-12-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-35
+        
+        * First step in refactoring WikiPage into a proper interface.  The WikiPage
+        constructors are now deprecated, and most of the code now uses 
+        WikiEngine.createPage().  Also, the WikiPage class is now an interface,
+        though it still retains some methods which should not be in the interface.
+        
+        * Also created a WikiContextFactory.newViewContext(WikiPage) to get rid
+        of all the null arguments.
+
+2008-12-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-34
+        
+        * Migrated UserPreferences.jsp and related; completely overhauled Preferences
+        code so that it is much simpler, and leverages Stripes. UserPreferences.jsp and
+        the collaborating UserPreferencesActionBean, in particular, are excellent
+        examples of what the JSPs will look like when we are done migrating everything.
+        A few bugs remain. Removed jspwiki & stripes TLDs from WEB-INF; they are
+        both in their respective jars' META-INF directories now.
+
+2008-12-19 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-33
+        
+        * JSPWIKI-451 Russian translation, thanks to Andrew Rikhlivsky
+
+2008-12-17  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-32
+        
+        * Further refinements to Stripes-related JSPs. Refactoring of Login/Profile/View
+        ActionBeans. Introduction of Stripes layout system, which makes templating
+        somewhat easier (but at the moment all Stripes JSPs are  hardwired to 'default'). 
+        
+2008-12-11 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-31
+        
+        * JSPWIKI-451 Fix the copyright templates on all test cases
+        
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-29
+
+        * Lots of work on user preferences/profile JSPs and ActionBeans; LostPassword.jsp
+        has been assimilated into LoginActionBean. <rubs hands gleefully> Muhuhahaha!
+
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-29
+
+        * Additional improvements, bug fixes to Stripes-related code.
+        Wiki.jsp and PageInfo.jsp completely migrated to Stripes.
+
+        * TemplateManager gains a new (fairly volatile) method that
+        returns a ForwardResolution to content template pages.
+        
+        * TabTag gains a much-needed 'titleKey' property, making the
+        need to embed i18n-related scriptlets in JSPs unnecessary.
+        Please use this in preference to the 'title' property.
+
+2008-12-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-28
+        
+        * Brought in the WikiName class, which should now be used
+        instead of Strings to denote page names internally wherever
+        possible.
+        
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-27
+
+        * Improvements to JSPs and special page handling. JSPs are still
+        not quite working yet, but the webapp does run, and without too
+        many errors.
+
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-26
+
+        * Small tweaks to JspMigrator to look for, and fix, JSP page import directives
+        for TextUtil, FileUtil and SearchResult (these have moved). Fixed JspMigrator
+        Ant task ("migrate") so that it runs. Minor JSP tweaks so they compile again.
+
+2008-12-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-25
+
+        * Fixed failing unit tests (plus or minus a few). Minor refinements
+        to WikiContext.createContext().
+
+2008-12-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-24
+        
+        * Did a mass change of StringBuffer => StringBuilder.  It's
+        faster and in most cases a drop-in replacement.  Noticed that
+        StringBuffer.append() was taking quite a bit of time...
+        
+2008-12-04 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-23
+        
+        * implemented the unregisterAllLoggerMBeans method in the LoggerFactory
+        
+        * added some more robustness to LoggerFactory
+        
+        * made the LoggerImpl Serializable
+        
+        * added a note to the ReleaseNotes
+        
+2008-12-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-22
+        
+        * Moved WikiException, FilterException & PluginException to the 
+        org.apache.jspwiki.api package.  This is a part of the overall 
+        transition to have a stable API.
+
+        * [JSPWIKI-291] Added patch from Thomas Engelschmidt to replace ORO
+        regexp library with Java built-in regexps for DenouncePlugin, as well
+        as DenouncePluginTest.  Thanks!
+
+        * Moved FileUtil and TextUtil to com.ecyrd.jspwiki.util (where they
+        should've been in the first place)
+        
+        * Moved QueryItem, SearchMatcher, SearchResult and SearchResultComparator
+        to the search-package.
+        
+        * TranslatorReader is now gone for good.  R.I.P.
+
+2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-21
+
+        * Split .action package: ActionBeans (only) remain in .action, while
+        Stripes support classes move to .ui.stripes. Also, the JSP migrator
+        code moves to package .ui.migrator. Many Javadoc tweaks also.
+        
+2008-12-02  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-20
+
+        * [JSPWIKI-444] Wysiwyg editors (such as FCK) no longer duplicate
+        the permalink anchors.
+
+2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-19
+
+        * Fixed JSPs so that they compile. They still don't work, though.
+
+2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-18
+
+        * Checked in the Stripes code (about 220 classes, tests, JSPs
+        and other files). All code compiles clean, but the JSPs do NOT
+        work at the moment. Unit tests run clean except for some
+        stray failing Stripes-related unit tests. See the file
+        doc/README - Stripes Migration for some (repeat, SOME) details
+        of what it all means. I'll sort out the JSP issues later this
+        week.
+
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-17
+        
+        * Logging package now implements an varargs interface for
+        faster and more flexible logging.  Please see Logger javadocs
+        for further information.
+        
+2008-11-30 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-16
+        
+        * JSPWIKI-447: InstantiationException in PluginManager
+        sneaked in an example log4j override in log4j.properties
+        WatchDog did not have it's Logger final.
+         
+2008-11-30 Florian Holeczek <florianh@apache.org>
+
+        * 3.0.0-svn-15
+
+        * german localization update for resources introduced in JSPWIKI-318
+
+2008-11-30 Florian Holeczek <florianh@apache.org>
+
+        * corrected a copy & paste error in the newly introduced log4j.properties
+
+2008-11-29  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 3.0.0-svn-14 
+        
+        * [JSPWIKI-288] CSS fix for the rendering of hash-links.
+        
+        * [JSPWIKI-318] You can now show/hide the left-menu, with a click
+          of the mouse. The status of the left-menu is saved in the 
+          user-pref cookie.
+          
+          New localization resources:
+          javascript.favorites.hide=Click to hide the Favorites
+          javascript.favorites.show=Chick to show the Favorites
+          
+          * [JSPWIKI-429] The Slimbox icon has been changed to a magnifying 
+          glass. If you don't know what this is, check out the attachement
+          tab. Clicking the slimbox icon provides you with a sneak preview 
+          of images like png, gif, jpg.
+
+2008-11-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-13
+        
+        * JSPWIKI-376: move from log4j to slf4j
+        3 new classes in the new package com.ecyrd.jspwiki.log
+        - LoggerFactory
+        - Logger (interface)
+        - LoggerImpl
+        The LoggerFactory also takes care of registering DynamicMBeans if log4j is used 
+        as the underlying logging implementation.
+        Log4j remains the default implementation (Stripes still needs it too) 
+        Changes to 34 JSP's
+        Changes to 135 Java classes
+        Additions to WEB-INF/lib : slf4j-log4j12-1.5.6.jar, jul-to-slf4j-1.5.6.jar, jcl-over-slf4j-1.5.6.jar
+        Removals from .classpath: commons-logging-api.jar, log4j-1.2.14.jar
+        Additions to .classpath : slf4j-api-1.5.6.jar, jul-to-slf4j-1.5.6.jar
+        Move log4j config statements from jspwiki.properties to log4j.properties
+        Changes to build.xml (include org.apache.jspwiki in javadoc gen)
+        A few other minor changes.
+          
+        
+2008-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-12
+        
+        * JSPWIKI-440: Plesk installation of war files.
+        JSPWiki (in most cases) fails to install from an unmodified download because
+        the pageDir points to a directory that cannot be created, changed a couple of default
+        values in build.properties.
+        
+        * JSPWIKI-424 The famous trailing slash in baseURL
+        Now also fixed in Installer and DefaultURLConstructor.
+        
+2008-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-11
+        
+        * JSPWIKI-407: applied zh_CN patch from Hubert Chang
+        
+2008-11-20  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 3.0.0-svn-10  -- merged from 2.8.1-svn-12
+        
+        * [JSPWIKI-381] fixed a bug with periodicially refreshed sneak-preview
+        while in section-edit mode. When section-edit was active,
+        linefeeds were inserted at every sneak-prev refresh.
+        
+        * [JSPWIKI-384] Filter js-scripts from input fields and cookies.
+        (xss vulnerability)
+        
+        * Added 800x600 plain-vanilla skin
+        
+2008-11-18 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-9
+        
+        * JSPWIKI-439: German localization by Florian Holeczek
+ 
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-8
+        
+        * [JSPWIKI-428]: WeblogPlugin was not properly finding the page title
+        due to misshapen regexp.
+        
+2008-11-13 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-7
+        
+        * JSPWIKI-407: added Italian corepages and update to it resources, thanks to Luca
+ 
+2008-11-10 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-6
+        
+        * JSPWIKI-424: Enforce (autofix) baseURL property to end with trailing slash, reported by John Volkar
+
+2008-11-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-5
+        
+        * Stripes-1.5 resides now in lib instead of tests/lib.  Yay!
+        
+        * JSPWIKI-423: Plugins and filters now use annotations instead of
+        jspwiki_module.xml.  Editors still do it the old way, though. 
+        jspwiki_module.xml still is used to optionally locate the packages,
+        through "<module package="org.mycompany"/>".  Please see PluginManager
+        for documentation.
+        
+2008-11-10 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-4
+        
+        * JSPWIKI-276: jsonrpc replaced by jabsorb, reported by Jorge Ferrer.
+        
+          Note that web.xml had changes, the package name com.metaparadigm.jsonrpc has been
+          changed to org.jabsorb.
+        
+2008-11-09 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-3
+        
+        * JSPWIKI-415: Favorites not displayed properly when blank in userName, reported by Trevor Harrison
+          also i18n'ed the InsertPlugin as the fix for JSPWIKI-415 was there.
+          Added 2 JUnit tests for InsertPage plugin
+        
+2008-11-08 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-2
+        
+        * JSPWIKI-407: applied de patch from FLorian
+        
+2008-11-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-1
+
+        * Merged from the 2.8 branch:
+        
+        * JSPWIKI-345
+
+        * Added doc/Translating.txt as a guide for people who want to create
+        translations.  
+        
+        * Added ant "i18n-check" target as an interface
+        to TranslationsCheck (no need to get geeky running a Java class).
+        
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged from 2.8: [JSPWIKI-416]: French translation and corepages from Olivier Descout
+
+2008-11-05  Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * [JSPWIKI-407]: updated es translation; fixed some HTML entities left behind.
+        
+2008-11-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged in from 2.8: JSPWIKI-411 & JSPWIKI-381.
+
+2008-11-03  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged in changes from 2.8:
+
+        * JSPWIKI-408: Hide wide-content on left-menu and leftmenu-footer.
+        
+        * JSPWIKI-403: Pagination links now show a pointer cursor at hover.
+
+2008-11-03  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged changes from 2.8: JSPWIKI-407.
+
+2008-11-02  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged changes from 2.8 branch: JSPWIKI-288, JSPWIKI-406,
+		JSPWIKI-348, JSPWIKI-389, JSPWIKI-138
+
+2008-10-26  Janne Jalkanen <jalkanen@apache.org>
+
+        * Added the 3.0 API definition interfaces from the SVN.
+
+2008-10-17  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged fixes from 2.8.0 branch
+
+        * JSPWIKI-400: Chinese core pages were corrupted.
+
+2008-10-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-21
+        
+        * [JSPWIKI-398] Pages with spaces in them caused erratic rename
+        behaviour by renaming all the links on the page.
+
+2008-10-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-20
+
+        * [JSPWIKI-313] ShortURLConstructor was not creating URLs for the LOGIN
+        context correctly. We now check for this context specifically.
+
+2008-10-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-19
+
+        * [JSPWiki-342] Resolved issue by removing outdated doc files.
+
+        * [JSPWIKI-345] Added unit tests for testing single user policies. Confirmed bug
+        and workaround but did not fix root cause (freshcookies-security bug).
+
+2008-10-06  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-18
+
+        * [JSPWIKI-395] One more xhtml issue in plain.jsp. Not what you'd expected ;-)
+ 
+         
+2008-10-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-17
+
+        * [JSPWIKI-395] Few fixes to improve xhtml compliance.
+        (txs to the wonderful tools of Andrew ;-)
+        
+
+2008-10-05  Harry Metske <harry.metske@gmail.com>
+
+        * Updated LICENSE and NOTICE file quite a couple of resources (most of them Apache licensed)
+        
+        * a few minor updates to Compiling.txt, UPGRADING and ReleaseNotes
+
+2008-10-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * Updated LICENSE and NOTICE file for javascript related resources. (no version step-up)
+
+2008-10-01  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-16
+
+        * [JSPWIKI-386] Custom LoginModules were not being configured correctly.
+        Thanks to Peter Hormanns for reporting this.
+
+2008-10-01  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-15
+        
+        * [JSPWIKI-327] Few more tweaks to stabilize the 'back' button handling after a search.
+        
+        
+2008-09-30  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-14
+        
+        * [JSPWIKI-327] Going back to the search page now remembers the last search query.
+        The query and selected pagination-page is stored in the #hash of the url.
+        
+        
+2008-09-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * Oops, Dutch corepages had overwritten the English corepages,
+        so restored both English ones and created a dir for Dutch.
+
+2008-09-29  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-13
+        
+        * [JSPWIKI-385] Header lines are now cleared 'left' so that comment-boxes 
+        can appear side by side with !!!header lines. 
+        
+        * [JSPWIKI-380] Fix backspace handling of the plain editor.
+
+2008-09-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-12
+        
+        * [JSPWIKI-387] Fixed a number of quotes on Install.jsp.
+
+2008-09-27  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.0-beta-11
+        
+        * added Dutch corepages
+
+2008-09-24  Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * 2.8.0-beta-10
+        
+        * added spanish corepages
+        
+        * [JSPWIKI 343] Go through all built-in wikipages and make sure all of the 
+        documentation in those is ok for 2.8.0. Applied only for en and es corepages.
+        
+2008-09-24  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-9
+        
+        * [JSPWIKI-368] Fixed issue with multiple preferences cookies
+        appearing if the web app was installed to the root.  Thanks
+        to Florian for finding this!
+
+2008-09-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-8
+        
+        * [JSPWIKI-373] Fixed issue with sign button giving a fixed date.
+        Unfortunately the format is fixed.  Thanks to Stefan Bohn for 
+        a fix.
+
+2008-09-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-7
+        
+        * [JSPWIKI-379] TranslateTag now properly does a deep
+        clone of the WikiContext, so that you no longer can get
+        ACLs instantiated just by previewing a page.
+        
+2008-09-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-6
+        
+        * [JSPWIKI-231] Brought Italian and Chinese translations up to
+        par.
+        
+        * Added Chinese corepages, thanks to David Gao.
+
+2008-09-18  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.0-beta-5  JSPWIKI-231: update the latest de localisation, patch from Florian
+
+2008-09-18  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.0-beta-4  JSPWIKI-263: DOC change to the README file
+        
+2008-09-18  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-3
+        
+        * One lonely Javadoc tweak.
+
+2008-09-18  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-2
+        
+        * Fixed the failing unit tests for PageRenamer.
+        
+2008-09-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-1
+
+2008-09-03 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-37
+        
+        * [JSPWIKI-369] SneakPreview was broken when no SectionEdit was turned off.
+
+        * [JSPWIKI-370] Remove 'vertical-align' css rule to prevent printing errors,
+        as reported by Terry Steichen.
+        
+        * Few small fixes on the Accordion style.
+ 
+2008-09-02  Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * Updated spanish translation (CoreResources_es + default_es properties)
+        
+2008-08-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-36
+        
+        * [JSPWIKI-366]: changenote was lost in commenting previews. Also, FCK
+        was not showing the changenote field.
+        
+2008-08-31  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-35
+        
+        * JSPWIKI-364:  Info tab presents null string to user (reported by Florian)
+        
+2008-08-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-34
+        
+        * Commenting now uses the changenote field properly (and we got rid
+        of the "Comment by XXX" -functionality.  Therefore, "comment.by" i18n field
+        is now unused.
+        
+        * Renaming now uses symbols instead of English text to put in the changenote
+        field.
+        
+2008-08-30  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-33
+        
+        * JSPWIKI-231: update the latest de localisation patch from Florian
+        and quite a few corrections to the nl localisation
+        
+        * Found during debugging that Lucene Indexer was using a bit 
+        agressive interval of 1 second for Emptying index queue, lowered to 5 seconds
+        Combined with a few textual corrections in WikiBackgroundThread 
+
+2008-08-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-32
+        
+        * JSPWIKI-27: ReferenceManager was not serializing properly when there
+        was no page metadata, therefore inadvertently loading old data whenever
+        the wiki was restarted. 
+        
+        * JSPWIKI-333: Thanks to Florian's patch, this annoying language selection
+        thing should now be fixed.
+        
+        * Fixed Finnish localization.
+        
+        * The suggestion box no longer keeps suggesting wikipages if you start
+        inserting a plugin or a variable.
+        
+        * JSPWIKI-354: Fixed issue with fallback to default template not working.
+        
+2008-08-30 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-31
+        
+        * [JSPWIKI-346] Rename errors are now displayed inside a page-info in screen,
+        above the rename section.  Some localization updates are needed.
+
+        New resource:
+            prefs.errorprefix.rename=Could not rename the page:&nbsp;
+
+        And the CoreResources rename.* items are updated to remove the text
+        "Click "back" on your browser and change the new name.".
+        (done for default and .nl properties)
+
+        * [JSPWIKI-289] The edit SuggestionMenu (plain editor only) now also allows 
+        to enter a '/' to get a list of attachment links. Moreover, when you open a new link with 
+        a '[', by default jspwiki displays the list of attachments of the current page.
+ 
+
+2008-08-25 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-30 
+
+        * [JSPWIKI-329] Pagination link for All-entries fixed. Added comments to
+        InfoContent.jsp to clear-out obscure pagination counting logic.
+ 
+        * [JSPWIKI-357], [JSPWIKI-358] Wrong section counting when a page contains a TOC.
+
+        * [JSPWIKI-359] Popup when editing page from Quick Navigation Field should only
+        appear when no pagename was entered in input field.
+        
+
+2008-08-24  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-29
+
+        * Changed method signature for UserProfile.get/setUid() to use Strings rather
+        than long integers. Test and XML/JDBC UserDatabase implementations changed
+        also. This change was made for forward compatibility with JCR storage in  3.0. 
+
+2008-08-24 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-28 
+
+        * [JSPWIKI-355] Fixing section-editing bug reported by Harry.
+        
+        * Saving user-preferences was broken in PreferencesTab.jsp
+        
+
+2008-08-24  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-27
+        
+        * added my GPG key to KEYS
+        
+        * minor corrections/additions to UPGRADING
+        
+        * minor corrections/additions to the selenium readme.txt
+        
+        * added ${java.home}/../lib/tools.jar to path.tests, set jspwiki.login.throttling=false and some other comments in build.xml
+        
+        * added firefox-2 browser option (as extra comment) to build.properties
+        
+        * added new simple ViewPageSource selenium test
+        
+        * get rid of compile warning in WikiPage and WysiwygEditingRenderer and GroupManager
+        
+        * compile error in InputValidatorTest
+        
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-26 
+
+        * [JSPWIKI-333] Fixed side-impact in GroupManager due to new 
+        InputValidator constructor.  
+        
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-25  Template fixes (mainly section editing)
+
+        * The Section-Editing user preference can now also be set via the
+        default_jspwiki.properties. By default the preference is turned off.
+        
+                jspwiki.defaultprefs.template.sectionediting =on
+        
+        * Small fix to avoid section-editing [edit] link on table of contents titles.
+        
+        * [JSPWIKI-350] Section-Editing needs to be suppressed in a comment context.
+        
+        * The change-note input field is suppressed in a comment context as JSPWiki
+        auto-generates the change-note for comments. Also added localization in Comment.jsp
+        Added new resource to CoreResources.properties.
+        
+                comment.by=Comment by {0}
+                
+        * [JSPWIKI-329] Pagination links on the version history were still not correct
+        when number of version equals a multiple of 20. Oops.
+        
+        * [JSPWIKI-309] Various updates of the OrderedList skin, including section editing.
+      
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-24
+
+        * [JSPWIKI-333] Language selection/deselection was not working correctly
+        for some error messages. Refactored the input-validator to use correct locale.
+
+
+2008-08-20  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-23
+
+        * Changed Stripes test jar to the released 1.5 version (congrats to Tim
+        and the team).
+
+2008-08-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-22
+        
+        * JSPWIKI-27: Managed to duplicate this pesky bug from way old times.
+        Looks like this was caused by a misread of the OSCache javadocs -
+        but I am not sure if the fix causes new problems.
+        
+        * JSPWIKI-353: Fixed wrong i18n key in PluginManager which showed
+        up if the plugin threw an exception.
+        
+        * JSPWIKI-352: Fixed a long-standing bug with ACLs being leaked
+        from one page to another if the InsertPageTag was used.
+        
+        * Added a KEYS file to the top-level dir.  It would be a good idea
+        if all committers added their current GPG keys to it.
+        
+2008-08-18  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-21
+        
+        * [JSPWIKI-349] updated (German) corepages, credits to Florian again
+        
+2008-08-17  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-20
+        
+        * [JSPWIKI-340] updated (english) corepages and README, mostly editorial changes, 
+           a brief summary :
+        - Java 5.0 is now a requirement for compiling (instead 1.4.2)
+        - Servlet API 2.2 is mentioned, is this still enough ? (I haven't checked)
+        - Removed dead link to tjworld.net/help/kb/0001_iis6-Tomcat5-JK2.html#conConnector
+        - Removed links to JSPWiki 2.2 ,  2.3 and 2.4 documentation
+
+2008-08-16  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-19
+        
+        * JSPWIKI-315: Fixed issues with upper/lowercase filtering in 
+        AttachmentManager
+        
+        * JSPWIKI-325: Patch from Harry to sort out plugin parameters and their 
+        javadocs.
+        
+        * JSPWIKI-307: Pages with & in their names were not being parsed properly 
+        in links.
+
+2008-08-15  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-18
+        
+        * [JSPWIKI-339] added German core pages, many thanks to Florian again !
+
+2008-08-14  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-17
+        
+        * [JSPWIKI-238] PageRenamer now correctly handles links containing blanks
+          Added an additional JUnit test for this, there is stil one failing JUnit test however (attachment handling).
+          PageRenamer still needs improvement.
+        
+2008-08-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-16
+
+        * Fixed invalidateSession() method in WikiSession, which was not quite
+        fully invalidating sessions.
+
+2008-08-12 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-15
+
+        * [JSPWIKI-334] IE6/IE7 javascript bug causes section editor to crash.
+        JS is now running fine, but the Section Overview box still needs some CSS
+        fixes. Ongoing.
+        Note: Section Editing only works with the plain editor.
+        
+ 
+        * [JSPWIKI-337] Missing localization in WorkflowContent.jsp.
+
+2008-08-12  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-14
+        
+        * [JSPWIKI-231] updated de translation, thanks to Florian
+        
+        * fix for  [JSPWIKI-300] required some extra changes to the JUnit test for the TableOfContents Plugin
+
+2008-08-12 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-13
+
+        * [JSPWIKI-329] Pagination link was still not correct for the block 21-40.
+        Amazing catch from Harry and Florian - txs !
+ 
+ 
+2008-08-12  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-12
+
+        * Refactored TestEngine so that MockRountrips and other heavier sessions are
+        lazily initialized. Also added a property to AuthenticationManager that allows
+        login throttling to be switched off (for example, during unit tests). The
+        effect of these two changes cuts unit test times [on my machine] from 25 minutes
+        down to about 4.5.
+
+        * Removed reference to Stripes MockServletContext in WebContainerAuthorizer.
+        It should not have been there.
+
+2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-11 - various smaller fixes in the default template
+
+        * [JSPWIKI-302] Added the clone function to FCK.jsp. 
+        Also added permission checking on the inclusion of the cloned-page.
+
+        * [JSPWIKI-307] Redirection from UserPreferences.jsp doesn't work if "&" is included 
+        in the original page name. 
+
+        * [JSPWIKI-300] You can now also add a TableOfContents to your the LeftMenu (or Footer or ...) 
+        Although a table of contents is only rendered once on a page; multiple invocations of 
+        the plugin will now render an in-page link (#section-TOC) instead of a plain useless text.
+
+        * [JSPWIKI-306] Rendering of rounded corners has been fixed. 
+        However, the skin "PlainVanilla 1024x768" has been updated not to use the rounder-corners style anymore.
+        This style is not considered part of core jspwiki. (will probably be removed in the future) 
+        You can still use it for now (or reactivate it in the skin.js file of the skin)
+
+        * Fixed the Left/Right orientation of Favorites block (with Left Menu) 
+        for the Edit and Attachment Upload screens.
+
+        * Made some final fixes and improvements to the SECTION editing feature. 
+        It has now become a user-preference, which is by default off. (this preference is only 
+        compatible with the plain editor) With section-editing on, you will get [edit] links 
+        at each header which allows you to directly edit a particular section of a page. 
+        In edting mode, a section overview box is shown in the left-menu allowing to switch 
+        between various page section or look at the whole page.
+        
+        New localisation resources:
+          javascript.sectionediting.label=Section Overview
+          prefs.user.sectionediting=Section Editing
+          prefs.user.sectionediting.text=Enable section editing via ...
+
+        * Some minor improvements on the Accordion style to improve consistent look & feel. 
+        Now also the accordion toggles show a blue +/- icon to indicate clickable regions. 
+        Also added a %%leftAccordion and %%rightAccordion style, similar to book-tabs.
+
+        * [JSPWIKI-329] the consistency and correctness of the pagination links has been improved
+        in the Page Info screens. Now every block (also the first 1..20) show 20 items; 
+        the link titles also match with the presented block. 
+        The page size are now represented in kB, similar as attachment sizes.
+        
+
+2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-10
+
+        * [JSPWIKI-333] Language cookie is now set to default browser setting 
+        when initializing the Preferences. Previously this was not required as long as the  
+        user preferences were not modified by the user. Don't know why this stopped working.
+        
+
+2008-08-11  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-319: added extra checking on Attchment Change Notes
+
+2008-08-10  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-9
+        
+        * JSPWIKI-320: removed all httpRequest.setCharacterEncoding() calls (except in WikiServletFilter)
+        because they were called too late, reported by Clay Atkins
+        
+2008-08-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-8
+        
+        * JSPWIKI-316: fixed SecurityConfig.jsp so that it compiles, and added
+        some sensible checks for the new JAAS scheme.
+
+        * Fixed NPE in RSSImageLinkTag, which erroneously assumes that RSSGenerator
+        is always available. However, it might not be if RSS feeds are disabled.
+        
+        * Fixed broken Ant 'war-tomcat' target.
+
+2008-08-03  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-7
+
+		* JSPWiki-231: added Italian localisation, thanks to Luca Gilardoni
+		
+		* changed the schemaLocation in web.xml, reported by Thomas van der Pol
+        
+2008-08-01  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-321: remove unmappable chars from 4 sources (causing warnings during build)
+
+        * JSPWIKI-312: small patch to build.xml, quotes around arguments of compressjs,
+          reported by Florian Holeczek.
+
+2008-07-31  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-317: Fixed InvalidDiff in ExternalDiffProvider, thanks to Jan Spitalnik.
+
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-6
+
+        * JSPWIKI-326: Fixed NPE in ProfanityFilter.
+
+2008-07-16  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-5
+        
+        * JSPWIKI-315: added extra checks to AttachmentServlet.
+        
+2008-07-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-4
+        
+        * Fixed a number of failing unit tests, and also included
+        Creole tests.
+
+2008-07-03  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-3
+
+        * Added top-level text document UPGRADING which summarizes
+        considerations for upgrading from 2.4 and 2.6. This needs more
+        work, especially from the web-tier crew (Dirk et al).
+        
+        * Made most of the workflow package, except for the
+        set/getAttributes methods in the Workflow class, serializable. In the 3.0
+        timeframe, the rest of the package will be made serializable, too.
+        
+        * Added Ant target 'api-diff' which allows arbitrary diffing against
+        previous JSPWiki.jar artifacts. It prints a nicely formatted HTML page
+        describing public API differences. The report file is
+        tests/reports/API-changes.html.
+        
+        * Upgraded Stripes jar (used in test cases) to 1.5-RC1.
+
+2008-07-02  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-2.  Yes, the last version number was an 
+        anxious mistake.  It's really 2.7 alpha, not 2.8 alpha.
+        
+        * JSPWIKI-61: Added patch from David Au to add FCK 2.6.1
+        support.  Please see the following page to enable it:
+        
+        http://www.jspwiki.org/wiki/HowToManuallyIntegrateFCKEditor
+
+2008-06-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-alpha-1
+
+        * 2.7.0-svn-52
+        
+        * JSPWIKI-299: Deleting an attachment from a page which
+        had been recently renamed caused an NPE.  Reported by Harry
+        Metske.
+
+2008-06-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * Moved all pages from wikipages under wikipages/en, and
+        tweaked the build process accordingly.  Also created a basic
+        Finnish translation of the CorePages.  The build process
+        now creates jspwiki_corepages_en.zip and _fi.zip.
+
+2008-06-19  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-51
+        
+        * JSPWIKI-231: Updated de i18n.
+        
+2008-06-25 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-50
+
+        * [JSPWIKI-295] Sub tabs on the Admin.jsp didn't work because the
+        corresponding tag ID's were containing dot's.
+        
+2008-06-22 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-49
+
+        * [JSPWIKI-141] I18 properties also fixed in EditGroupContent.jsp
+        
+        * Included latest favicon.ico of Florian and Harry
+
+2008-06-19  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-48
+        
+        * WikiWizard removed due to it being LGPL.  The following files
+        were removed
+           * webdocs/applets/wikiwizard.jar
+           * webdocs/applets/WiWi-INF/
+           * webdocs/scripts/jspwiki-wikiwizard.js
+           * src/com/ecyrd/jspwiki/ui/admin/beans/WikiWizardAdminBean  
+           
+        * [JSPWIKI-231]: Updated de, zh_CN and nl.  Thanks to Florian
+        Holeczek, Harry Metske and David Gao!
+        
+2008-06-19 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * No version bump
+
+        * [JSPWIKI-295] Fixed Tabs in Admin.jsp
+
+2008-06-19  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-47
+        
+        * Added support for the Universal Edit Button - 
+        universaleditbutton.org.  About 3 mins before launch, even...
+
+2008-06-17 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-46 
+
+        * [JSPWIKI-293] added editor.plain.sneakpreview.title resource
+
+        * [JSPWIKI-294] Faulty i18n in editor toolbar
+        
+        * [JSPWIKI-280] Scroll bar problem in IE7
+        
+2008-06-15  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-45
+        
+        * JSPWIKI-208: RSS images are now hidden if RSS is disabled.
+        
+        * Moved "info.rsspagefeed.title" key from default.properties
+        to CoreResources and renamed to "rss.title".
+
+        * Updated Finnish translation.
+        
+        * JSPWIKI-231: Updated Dutch and German translations.
+
+2008-06-15 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-44 
+        
+        * Small fixes to plain.jsp to increase ie6 compatibilty.
+        Hide the 'tab-completion' and 'smart typing pairs' from IE browsers.
+
+        Added the i18n resource 
+           editor.plain.toobar=Toolbar
+
+        * Several IE7 fixes of the category and suggestion popup css.
+
+        * Change the attachement icon to .gif (iso png), so it gets properly rendered on ie6.
+        Added a transparent .ico file. (thanks Harry)
+
+2008-06-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-43
+        
+        * JSPWIKI-145: jspwiki.applicationName is now cleaned to be a
+        proper WikiName.  This is probably a good idea...
+        
+2008-06-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-42
+        
+        * JSPWIKI-185: There should be no more NPEs upon startup.  Improved
+        logging as well as added a few null checks.
+        
+        * Fix: It was impossible to add new users due to an overzealous null check
+        in XMLUserDatabase.
+        
+        * Improved our notification in case you have not yet installed JSPWiki.  Incidentally,
+        we're using baseURL to check whether the install process is done, and because of this,
+        setting baseURL becomes mandatory.
+        
+        * JSPWIKI-246: All new (and faster) IndexPlugin as the old one couldn't be
+        converted to Apache.
+        
+        * Updated Finnish translation.
+        
+        * Added etc/ini/default_jspwiki.properties to hold all sorts of stuff that
+        you normally want to enable in jspwiki.properties, but most people don't
+        really want to touch.
+        
+        * JSPWIKI-57: Should resolve NotSerializableExceptions when container
+        goes up or down.
+        
+        * JSPWIKI-292: Comment.jsp didn't compile.  Oops!  Thanks to Harry Metske
+        for the patch.
+        
+2008-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-41  Many template fixes, added ajaxed edit preview, improved IE6/IE7 compat.
+        
+        * Fixed [JSPWIKI-275] Incoming and Outgoing link box doesn't work properly anymore. 
+        
+        * Several fixes of section edit: [JSPWIKI-235], [JSPWIKI-209]
+
+        * [JSPWIKI-278] highlight search queries was handled badly when PRE sections 
+        contained HTML elements.
+
+        * [JSPWIKI-280] IE7 had the same scroll bar problem as previously with IE6.  
+        Added IE7 specific CSS selector to support IE7. 
+
+        * Fixed [JSPWIKI-259] IE rendering bug for nested collapsable boxes in IE7
+        
+        * [JSPWIKI-269] Improved handling of collapsible lists, even when a template 
+        would not use TabbedSections. The handling of dynamic styles was refactored 
+        to make them less intrusive.
+
+        * Fixed [JSPWIKi-285]  Groups.jsp has unterminated string constant.
+        Delete resource (not used anymore):
+        #group.areyousure=....
+
+
+        * An AJAX driven sneak-preview has been added to the plain editor. (by default off)
+        The user can have immediate feedback of how the wiki-markup is rendered by means of 
+        a preview box just below the editor textarea. The preview section is refreshed whenever 
+        the user clicks outside the textarea.
+        
+        * The handling of the plain editor suggestion popup is now also working on IE. 
+        Put the mouse inside a [wiki-link] to see the automatic expansion; 
+        select a item of the suggestion list and click to insert the link in the editor textarea.
+        This also works for attachement links. See [JSPWIKI-289] 
+
+        Update i18n resources:
+        #editor.plain.editassist=Edit Assist
+        #editor.plain.editassist.title=Toggle Edit Assist buttons
+        editor.plain.sneakpreview=Sneak Preview
+
+        * The rendering of popup boxes for e.g. link-suggestion-box, %%tips, %%category. has been improved.
+
+        * Frequently used icons merged in single 'strip' gifs to improve download speed.
+
+        * Refactored 'jspwiki-common.js', which now only contains the core javascript. (8K compressed)
+        The additional dynamic styles have been moved to 'jspwiki-commonstyles.js'. (12K compressed) 
+
+        * Clean up of OrderList and Smart skin.   
+        
+        * Added a few default.nl.properties updates (eg [JSPWIKI-206])
+
+
+2008-06-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-40
+        
+        * Removed TestHttpServletRequest, TestHttpServletResponse,
+        TestHttpSession, TestFilterChain, TestFilterConfig,
+        TestServletContext in favor of the much-superior Stripes
+        mock objects. TestEngine was retrofitted with the Stripes
+        mocks and all unit tests were also changed. In particular,
+        take note of the TestEngine.newHttpRequest() factory method,
+        which should be used to create test request objects.
+        
+        * Trimmed some unncessary web unit test classes that were
+        left behind as crutches in case Selenium didn't work out. 
+        
+        * Upgraded Selenium-RC jars to 1.0-beta1. Selenium still
+        does not work with FireFox 3, unfortunately. :(
+        
+2008-06-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-39
+        
+        * JSPWIKI-191: Favorites.jsp no longer leaks LeftMenu contents
+        to unauthorized viewers in UserPreferences.jsp.  Thanks to
+        Sergio Gelato.
+        
+        * JSPWIKI-253: VotePlugin and Vote.jsp are now gone, as they
+        were pretty much useless.
+        
+        * JSPWIKI-206: A no-results search could also fail due to 
+        missing permissions.  Updated default.properties / find.noresult
+        i18n key to explain better.  Finnish and English updated.
+        
+2008-06-11  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-38
+        
+        * Web unit tests refactored (yet again) to use an embedded
+        Jetty server. This replaces the need to use a separate Tomcat
+        server, and *should* always work without any configuration of
+        any kind. Please tests this via the Ant 'webtests' target!
+        Note that this checkin introduces the TestContainer class, which
+        with a little modification (later, please!) could easily be
+        used as a stand-alone server. Refactorings are welcome; in
+        the meantime, TestContainer should be considered volatile.
+        Note also that the Rename Profile web unit tests for the
+        container scenarios currently fails; all others run successfully.
+        
+        * Minor tightening of Map API for Serializer methods; the
+        keys are now Strings rather than Serializable. This is a
+        dev branch, remember!
+        
+        * Added Stripes jar in preparation for replacement of
+        TestRequest/Response mock objects.
+
+2008-06-09  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-37
+        
+        * JSPWIKI-290: ReferenceManager was not updating the page
+        references correctly after a rename.  Fix by Harry Metske.
+        
+        * Fixed also a number of miscallaneous FindBugs issues.
+
+2008-06-09  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-36
+        
+        * JSPWIKI-14: checkPermissions code in MetaWeblogHandler is now
+        functional.
+        
+        * JSPWIKI-228: Added patch from Alexander Chow to fix a problem
+        where multiple headings with the same text were producing illegal
+        XML through duplicated ID attributes.
+        
+        * JSPWIKI-274: Was fixed already in svn-31.
+        
+        * JSPWIKI-286: Fixed a couple of typos in Finnish localization.
+        
+        * JSPWIKI-285: Group.jsp had a wrong quote char in English,
+        Dutch and German translations.
+
+2008-06-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-35
+        
+        * JSPWIKI-283: Ooops.  Copy != Cut.
+        
+2008-06-07  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-34
+        
+        * JSPWIKI-265: All referrer changes (according to unit tests anyway)
+        work now.
+        
+        * JSPWIKI-30 should now also be resolved.
+        
+        * JSPWIKI-27: I have a suspicion that implementing WikiPage.equals()
+        has caused some interesting issues with attributes being leaked from
+        old versions.  Removed equals() for now.
+        
+        * Some JSPWikiMarkupParser speed optimizations by changing all
+        StringBuffers to StringBuilders.
+
+2008-06-07 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-33
+        
+        * Added favicon.ico, and updated the jspwiki.properties to support *.ico
+
+2008-06-01  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-32
+
+        * Password hashes were generated in platform native encoding
+        instead of UTF-8.  Oops.
+        
+        * In general, there have been massive upgrades of Javadocs.
+
+2008-05-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-31
+        
+        * Oops, wrong regexp: AttachmentServlet now *really* cleans up
+        the filename.
+        
+        * Added some sanity checks to hopefully address an issue that
+        Jim Willeke was having with the parser crashing at odd places. 
+
+2008-05-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-30
+        
+        * AttachmentServlet now cleans the uploaded file name, since some
+        browsers send the full path as well.
+        
+2008-05-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-29
+        
+        * Checked in three new features for UserProfile and the UserDatabase
+        classes. First, profiles can now store arbitrary Serializable objects
+        via a new method in UserProfile, getAttributes, that returns a
+        Map<Serializable,Serializable> that can be directly manipulated.
+        Arbitrary attributes such as user preferences can be added to the
+        profile and be guaranteed to be persisted on save. Second, the
+        UserProfile now has two methods setLockExpiry(Date)/getLockExpiry
+        that allow callers to disable user profiles. These are NOT enforced
+        in AuthenticationManager yet. Third, user profile now have a 'uid'
+        field that stores a long value for uniquely identifying users.
+        Existing profiles without UIDs are automatically upgraded when
+        they are loaded by a findBy___() method. The default XML/JDBC
+        UserDatabase implementations have been enhanced to support all
+        of these new features. If you have custom UserDatabase
+        implementations, you should take a look at the new code.
+        
+        * Miscellaneous and varied Java 5 enhancements (such as for-loops).
+
+2008-05-22 Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * 2.7.0-svn-28
+        
+        * [JSPWIKI-25].  Creating empty pages should not be possible (default
+        behaviour). Can be changed by setting jspwiki.allowCreationOfEmptyPages
+        to true in jspwiki.properties.
+        
+        * <i18n-create-template> target in build.xml was creating a wrong i18n 
+        directory structure.
+
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-27
+        
+        * [JSPWIKI-44].  AuthenticationManager now remembers the last logins
+        and slows down repeated access attempts, to a maximum of 20 seconds.
+
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-26
+
+        * [JSPWIKI-236]: Fixed localization for the different login/edit
+        help pages missing.    
+        
+        * [JSPWIKI-170]: Fixed a few places where the author was appearing
+        as "unknown".
+        
+        Added new i18n key in CoreResources, updated English and Finnish:
+        
+           * common.unknownauthor
+           
+        * [JSPWIKI-151]: If sending a password succeeds, it is no longer reported
+        as an error.
+        
+2008-05-18  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-25
+        
+        * Temporary remove hideable favorites menu as it is incompatible with FCK.
+        Final fix to commit later.  The FCK-Editor is now again fully working.
+        (Reported by Florian Holeczek)  JSPWIKI-209
+        
+        * Fixing various IE7 incompatibilities (jspwiki.css)
+        Reported by Gavin Goldsmith. 
+        
+
+2008-05-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-24
+
+        * [JSPWIKI-20] Passwords are now salted and hashed per RFC 2307.
+        Every password is salted with a 8-byte random salt.
+
+        * The sort-of-secret "share container user accounts with
+        JDBCUserDatabase" option has been permanently removed, and
+        will not be replaced. This was previously added to make it easier
+        for users to add themselves to JDBC-based container realms.
+        However, the switch to salted passwords precludes the continued
+        use of this option. So it's gone and won't come back.
+
+        * Added a new class CryptoUtil that allows admins to generate
+        SSHA password hashes (and verify an existing password given
+        a supplied hash) at the command line. See the Javadoc
+        for com.ecyrd.jspwiki.util.CryptoUtil for details.
+
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-23
+        
+        * [JSPWIKI-265] Referrers are now changed, though the
+        functionality is still a bit broken in places.
+        
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-22
+        
+        * [JSPWIKI-260] ReferringPagesPlugin now creates the "more"
+        link URL properly.  This also impacts the localization of
+        the "referringpagesplugin.more" in PluginResources.
+        
+        * Moved plugin resources from etc/i18n/com/ecyrd/jspwiki/plugin 
+        to etc/i18n/plugin.  Can't remember who suggested this.  Also
+        cleaned build.xml to make sure the plugin files are created
+        properly.  Can't remember who suggested this, neither can
+        I seem to find the JIRA issue...
+        
+        * [JSPWIKI-224] TranslatorReader now is just a proxy to the
+        JSPWikiMarkupParser.  It will be finally gone in 3.0.
+        
+        * [JSPWIKI-183] PageRenamer no longer chokes if attachments
+        are turned off.  Reported by Luca Gilardoni.
+        
+        * [JSPWIKI-234] Added ISO8601 time formats to default patterns.
+        
+2008-05-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-21
+        
+        * Logincookies are now written with UTF-8 instead of platform
+        default encoding.  This should fix issues with users with non-ASCII
+        chars sometimes having the wrong UID when their session expires.
+
+2008-05-09  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-20
+        
+        * [JSPWIKI-251]: Removed the old com.ecyrd.jspwiki.PageRenamer
+        and replaced it with com.ecyrd.jspwiki.content.PageRenamer, which
+        is fully Apache-licensed.
+        
+        Unfortunately, the new PageRenamer does not support changing
+        referring pages yet, error messages are not localized properly,
+        etc.  So this is a considerable functionality downgrade until
+        we can get a better version made.  Patches gladly accepted!
+
+2008-05-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-19
+        
+        * [JSPWIKI-50] Improved performance of RecentChangesPlugin by 
+        adding better caching to the CachingAttachmentProvider.  Thanks
+        to Harry Metske!
+
+2008-05-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-18
+
+        * [JSPWIKI-239] jspwiki.cookieAuthorization.expiry is now called
+        jspwiki.cookieAuthentication.expiry, because that is correct.  Thanks
+        to Florian!
+
+        * 2.7.0-svn-17
+        
+        * Removed JUG UUID generation libraries to favour the Java
+        built-in ones.
+        
+2008-04-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-16
+        
+        * Moved the rest of the PluginResources class into etc/i18n, as
+        their old place was confusing people.
+        
+        * [JSPWIKI-243], [JSPWIKI-244], [JSPWIKI-242], [JSPWIKI-241] Fixed
+        a number of issues with plugins not using the proper date/time from
+        the locale/preferences.
+        
+        * [JSPWIKI-245] Removed PluginResources / common.dateformat, and
+        created three new time/date format resources in CoreResources:
+           * common.dateformat
+           * common.timeformat
+           * common.datetimeformat
+
+        * 2.7.0-svn-15
+        
+        * [JSPWIKI-5] FileSystemProvider now properly mangles names of pages which
+        start with a dot.  This is done in a fully backwards compatible manner,
+        so no changes to the repo is needed.
+        
+        * [JSPWIKI-100] Added two new parameters to ReferringPagesPlugin,
+        UnusedPagesPlugin, ReferredPagesPlugin, and UndefinedPagesPlugin:
+        show and showLastModified.  Thanks to Harry Metske for the patch!
+
+        * 2.7.0-svn-14
+        
+        * [JSPWIKI-165] Patch from Tomasz Szymko to help in nested bullet lists.
+        
+        * Also updated several files to the Apache license.
+
+2008-04-15 Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * 2.7.0-svn-13
+        
+        * [JSPWIKI-178] Patch from Jorge Ferrer to keep the order of search (WEB-INF
+        then classpath then file system) of filters.xml.
+        
+        * [JSPWIKI-231] Updated es translation and applied patches from Florian 
+        Holeczek (de translation) and Harry Metske (nl translation).
+        
+        * ProfanityFilter minor improvement: profanities are read from a file 
+        instead of being hard-coded strings.
+
+2008-04-13  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-12
+        
+        * [JSPWIKI-10] Patch from Harry Metske to make sure 
+        VersioningFileProvider and AbstractFileProvider check for
+        proper permissions.
+
+2008-04-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-11
+        
+        * Improved restart time at the expense of more disk being
+        used and the first startup taking a bit longer.
+        
+        * Acl implementation, permissions and our Principals now
+        implement Serializable.  It could be used to improve startup
+        time even further, but it will be useful for the future.
+        
+2008-04-10  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-10 - Javascript fixes for IE
+        
+        * [JSPWIKI-235] Bugfixes for Section edit handling in IE
+        
+        * Bugfixes for hide/show Favorites menu on mouse-click/hover.
+        
+
+2008-04-09  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-9
+        
+        * [JSPWIKI-233] Bugfix PreferencesTab.jsp
+
+        * [JSPWIKI-232] Localization of (All) in the Edit Section dropdown.
+        Also added localization to the language dropdown
+
+        * [JSPWIKI-234] Added IS8601 date/time pattern to default prefs in JSPWiki.properties
+
+        * Bugfix IE javascript crash on mouse-over handler
+
+2008-04-09  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-8
+        
+        * [JSPWIKI-115]: Refactored VariableManager to use Reflection.
+        Thanks to Stephen Solka.
+        
+        * [JSPWIKI-219]: Building now works if your username has a space.
+        
+        * [JSPWIKI-222]: Gone are the evil files which lurked into our
+        distro file...  
+        
+        * Hacking attempts at manipulating the version parameter no longer 
+        cause a slew of email to the admin...
+
+2008-04-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-7
+        
+        * [JSPWIKI-56] Replaced MultiPartLibrary with Apache Commons
+        FileUpload library, as MultiPartLibrary was LGPL.
+
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-6
+        
+        * [JSPWIKI-233] Bugfix PreferencesTab.jsp
+        
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-5
+        
+        * [JSPWIKI-230] Make TimeZone configuration more user-friendly. Adjusted all jsp time-formatting
+        to take timezone setting into account. 
+        
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * Commit related JIRA id's
+        
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-4
+        
+        * Refactored JS to support the Edit Suggestion box, so it's now fully based on mootools.
+        The entries in the suggestion box are now clickable: the page or attachment link will be
+        inserted in the textarea. Also the handling of the | bar inside a link has been improved.
+
+        * [JSPWiki-200] The length of the entries in the Edit Suggestion are truncated to avoid
+        overlap with the main body of the edit area.
+
+        * The build script has been updated to use the YUI compressor. It now compresses both 
+        javascript and css files. (this replaces the Dojo compressor, which only handled js)
+ 
+        * In the UserPreferences you can now select the preferred language. 
+        The default language is based on the user's browsers setting, but a dropdown allows you to 
+        select any of the installed languages.
+        The PreferencesTab.jsp has been refactored, with help of Juan Pablo Santos Rodriguez.
+        All java handling has been moved to TemplateManager.java and Preferences.java.
+        
+        New i18n resources (already added for .en and .nl) 
+            prefs.user.language=Select Language
+            prefs.user.timezone.server=[SERVER]
+            prefs.user.language.default=[DEFAULT]
+
+        * Added an are-you-sure prompt to the UserPreferences.jsp when leaving the page without saving.
+
+            javascript.prefs.areyousure=Without clicking the Save User Preferences button, \
+                 your changes will be lost. Are you sure you want to exit this page?
+
+        * [JSPWIKI-226] "View Page Source" now also displays 'non-latest' page versions
+
+        * Suppress the 'ViewPageSource' in the more menu when the page doesn't exist yet.
+
+        Added missing i18n resource
+            actions.rawpage.title=View Page Source
+
+        * Improved the implementation of the 'more menu' to resolve the intermediate screen glitch. 
+        When javascript is off, the more menu will now be displayed at the top of the Favorites block,
+        when javascript is on, the more menu becomes a mouse-hovered drop-down.
+        
+
+        * In the user-preferences, you can position the favorites menu Left or Right.
+        Now it is also possible to make the Favorites menu hidden, allowing the body of the page
+        to fith the full with of the screen. This should benefit narrow (mobile) devices.
+        The favorites menu is still reachable via a mouse-hovered menu.
+
+        Added i18n resources:
+             javascript.favs.show="Click to show Favorites"
+             javascript.favs.hide="Click to hide Favorites"
+
+        * The javascript initialization parameters have been changed to XHTML META tabs 
+        to reduce xss vulnerability. (commonheader.jsp)
+        Now username's with embedded single quotes do not crash the js anymore.
+
+        * [JSPWIKI-209] Section editing has been added. (feature original in the BrushedTemplate)
+        When a page is editable, each section header gets an additional [edit] label.
+        In edit mode, a section drop-down has been added which allows to filter the text-area to the
+        section of interest.
+
+        Added i18n resources:
+              javascript.quick.edit=[Edit]
+              javascript.quick.edit.title=Edit section: {0}
+              edit.sections=Sections
+
+        * [JSPWIKI-193] Flawed login.loginhelpmissing text in en, de, nl locales. 
+        Fixed for .en, .nl, .de was already fixed. 
+
+
+2008-03-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-3
+        
+        * [JSPWIKI-225] Added patch from Harry Metske to fix a problem
+        with password not being shown during installation.
+        
+        * [JSPWIKI-227] Added patch from Harry Metske to fix problem
+        with installation translation in English and Dutch.
+        
+        * [JSPWIKI-203] Counter plugin now supports both hiding results
+        as well as "start" and "increment" options.  Patch mostly from
+        Harry Metske.
+        
+2008-03-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-2
+
+        * Changed Ant build script to use 1.5 sources and targets.
+
+        * Re-factored the authentication subsystem to remove the need
+        for JAAS configuration files. WEB-INF/jspwiki.jaas goes away,
+        as does the need for PolicyLoader. Also, responsibilities for web
+        authentication move to WikiServletFilter. Authentication is now
+        configured via jspwiki.properties -- see that file for details.
+        WikiSession API change: getLoginContext() vanishes.
+
+        * The auth.login.*LoginModule classes are mildly re-factored to
+        remove any need to have knowledge of how to (or why) to inject
+        JSPWiki Role principals. Responsibility for injecting Roles moves
+        to WikiSession. JSPWiki can use ANY LoginModule for custom
+        authentication now.
+
+        * To support the auth refactoring, we introduce several *temporary*
+        new servlet mock objects for unit testing: TestFilterChain, TestFilterConfig,
+        TestHttpServletResponse, and TestServletContext. These are "temporary" 
+        because they will be replaced by Stripes mock objects later in the
+        2.7 release cycle.
+
+2008-03-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-1
+        
+        * Removed JDK 1.4 dependency in AdminBeanManager.
+        
+        * Switched copyright in Release.java to ASF.  Please use
+        this file as your reference when changing the boilerplate.
+
+2008-03-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2
+
+2008-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-rc-4
+
+        * Fixed failing Selenium web unit tests so that they run correctly,
+        with two exceptions. See tests/etc/selenium/readme.txt; this file
+        includes a few notes on how to write Selenium tests so that they
+        will run automatically via the Ant "webtests" target.
+
+2008-03-18  Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * 2.6.2-rc-3
+        
+        * [JSPWIKI-214].  Table with id asirra_KnobsTable had two unlocalized 
+        strings, added to CoreResources.properties. Detected by Florian Holeczek. 
+        
+        * [JSPWIKI-215].  Added patches to en, nl, fi and es translations to fix
+        a case where HTML markup was being shown.   Detected by Florian Holeczek.
+        
+        * [JSPWIKI-210].  Updated German localization (still thanks to Florian!)
+        
+2008-03-16  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2-rc-2
+        
+        * Updated Dutch localization, courtesy of Harry Metske.
+        
+        * 2.6.2-rc-1
+        
+        * Updated Finnish localization.
+
+2008-03-14  Juan Pablo Santos <juanpablo AT apache DOT org>
+
+        * 2.6.2-svn-7
+        
+        * [JSPWIKI-93] and [JSPWIKI-160]. Cleaned up corepages.   
+        
+        * i18n of Captcha.jsp & Install.jsp, added 50 new items to 
+        CoreResources.properties. 
+        
+2008-03-13  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2-svn-6
+        
+        * [JSPWIKI-162].  Attachments can no longer created if the parent
+        page does not exist.
+        
+        * Fixes issue with renaming a non-existant page would destroy the Main
+        page.
+        
+        * [JSPWIKI-188].  Added patch from Florian Holeczek to improve
+        logging of MailUtil.
+        
+        * [JSPWIKI-189].  Added a patch from Florian to improve configurability
+        of MailUtil.
+
+2008-03-08  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-svn-5
+        
+        * Tweaks to Javadoc so that they build cleanly. No functionality changes.
+
+2008-03-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2-svn-4
+        
+        * [JSPWIKI-154].  Removed double entries from CoreResources and made
+        sure everyone uses it.
+        
+        * [JSPWIKI-201].  Added simplified Chinese from David Gao.  Thanks!
+        
+        * [JSPWIKI-161].  Added TranslationCheck from Florian Holeczek.  Removed
+        the MissingTranslations tool, as TranslationCheck does all it did.
+
+2008-3-01  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * Minor stylesheet updates (no version bump)
+        
+        * Leading digits for ordered lists were cut off because padding value was too small.
+        (detected by Florian Holeczek)
+ 
+        * Long headings which break into two or more lines had insufficient line-height, so
+        they were "squeezed into one another"  (detected by Florian Holeczek)
+               
+
+2008-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-svn-3
+        
+        * Reverted the JSP changes from my last commit so that existing 2.6 deployments
+        don't need to reconfigure web.xml. That commit removed the fmt:setBundle tag
+        because of the addition of a servlet config parameter in web.xml. The web.xml
+        modifications remain, however, so that any new JSPs won't need to use setBundle.
+        For 2.8, we will remove the setBundle tags entirely.
+
+2008-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-svn-2
+
+        * [JSPWIKI-195]: Superfluous WEB-INF/i18n directory created during war build.
+        Also, several unneeded JARs were also being included.
+
+        * Eliminated the need to hard-code <fmr:setBundle> tags in JSPs by setting
+        the web.xml <comtext-param> javax.servlet.jsp.jstl.fmt.localizationContext
+        so that it points to templates.default. Removed the setBundle tags from
+        all JSPs.
+
+2008-02-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2-svn-1
+        
+        * [JSPWIKI-171]: Patch for FCK editor and comment problem from
+        David Au.
+        
+        * [JSPWIKI-169]: Fix to allow mail sender from JNDI in addition
+        to property file.  Thanks to Dave Wolf.
+        
+        * [JSPWIKI-177]: Completely overhauled German translation, thanks
+        to Florian Holeczek.
+
+2008-02-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1 release.
+
+2008-02-03 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-rc-4
+
+        * Dozens of localization fixes for nl [JSPWiki-176] Excellent review by Harry Metske. 
+        Many Thanks!
+        
+2008-02-03 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * Small fixes on Dutch localization (nl)  No version update
+        
+        
+2008-02-02 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * Added DUTCH localization (nl)
+        
+
+2008-02-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-rc-3
+        
+        * [JSPWIKI-123]: Added German date formats to jspwiki.properties, thanks
+        to Florian Holeczek
+        
+        * [JSPWIKI-173]: Oops, we had a detection routine for illegal XML chars,
+        but unfortunately it was outputting the same illegal chars to the as an
+        error...
+
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.1-rc-2
+
+        * Changed default tests/etc/groupdatabase.xml and tests/etc/userdatabase.xml
+        so that they use the platform-independent date formats for creation/modification
+        datestamps. Also, fixed a bug in XMLUserDatabase that caused "old" date formats
+        to not be converted on startup. Thanks to Harry Metske for reporting this issue.
+
+        * Tiny tweak to Eclipse classpath so that class files are put in build/ and tests/build. 
+
+2008-01-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-rc-1
+        
+        * [JSPWIKI-166]: Added a default mail sender to ward off an evil NPE.  
+        I have a suspicion that things still don't work as documented, but 
+        at least there is no NPE anymore.
+
+2008-01-27 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-11
+
+        * [JSPWiki-137] : Toggle workflow details now also works on FF
+        
+        * [JSPWiki-123] : The set of user-preference timeformats added to 
+        jspwiki.properties.tmpl iso jspwiki.properties.
+
+        
+2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * [JSPWiki-147] : Slimbox labels were forgotten. (credit Tomasz Szymko)
+        Added a new item to default.properties:
+
+            javascript.slimbox.close=Close &#215;
+            javascript.slimbox.close.title=Close [Esc]
+
+
+2008-01-26  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * [JSPWIKI-146]: We now properly catch the exceptions generated during
+        download to avoid dumb error messages.
+        
+        * [JSPWIKI-102]: Added patch from Harry Metske to fix JNDI mail sending.
+        
+        * [JSPWIKI-153]: German translation was still talking about usernames
+        upon password recovery.
+        
+        * [JSPWIKI-157]: CoreResources had strings which were not showing
+        up properly, but had HTML entities.  Fixed en, fi, de and es.
+        
+        * Updated Finnish localization.
+
+2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-10  -- various small i18n issues 
+
+        * [JSPWiki-123] : The set of user-preference timeformats moved to the 
+        jspwiki.properties, such that the administrator can easily choose timeformats,
+        if needed even localize them.
+
+        * [JSPWiki-137] Toggle details button is now working and i18n'ized in Workflow page
+        Added a new item to default.properties:
+
+            workflow.creatUserProfile=New user profile <strong>{2}</strong>
+
+        * [JSPWiki-144] : LoginHelp links to LoginPageHelp in l10n variable
+        Added LoginPageHelp to Core wiki pages (copied from jspwiki.org)
+
+        * [JSPWiki-147] : Category title label was not i18N
+        Added a new item to default.properties:
+
+            javascript.category.title=Click to show category [{0}] ...
+
+        * [JSPWiki-149] : Edit Group and Delete Group did not fit well in the gui.
+        Refactored the EditGroupcontent.jsp and GroupContent.jsp to make the gui more consistent.
+  
+        * [JSPWIKI-163] Error message when creating a new group to be I18N
+        Added a new item to CoreResources.properties:
+
+            newgroup.exists=Group {0} already exists. Try another name.
+
+
+2008-01-24  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * Updated spanish translation with missing entry keys. Switched HTML
+        entities to Latin1 equivalent.
+
+2008-01-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-9
+        
+        * [JSPWIKI-142]: Typo in default.properties.  Thanks to Florian! (And
+        probably the fastest bug fix in JSPWiki history...)
+        
+        * [JSPWIKI-59]: ReferringPagesPlugin would create the wrong "more..."
+        link in fi and de localizations.  Fixed and upgraded en and es localizations.
+
+2008-01-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-8
+
+        * Oops, there was a JDK 1.5 dependency in AttachmentServlet.  Fixed,
+        should again work on 1.4.
+        
+        * [JSPWIKI-136]: WorkflowContent.jsp had a couple of untranslated strings;
+        updated English and Finnish translations.  Reported by Tomasz Szymko.
+        
+        * [JSPWIKI-135]: ConflictContent had an untranslated string.  Reported by
+        Tomasz Szymko (whose name I am *so* going to misspell one day).
+        
+        * [JSPWIKI-133]: GroupContent.jsp had an untranslated string.  Reported by
+        Tomasz Szymko.
+        
+        * [JSPWIKI-134]: EditGroupContent.jsp had a couple of untranslated strings.
+        Reported by Tomasz Szymko.
+        
+        * [JSPWIKI-132]: FindContent had an untranslated string.  Reported by
+        Tomasz Szymko.
+        
+        * [JSPWIKI-131]: Changed "authenticated" to "authorized" in all built-in
+        localizations.  Thanks to Fabian Haupt for en, de and es.
+        
+        * [JSPWIKI-114]: Fixed issue with VariableManager not checking the parent
+        page for variables in case the InsertPage plugin was used.  Thanks to
+        Stephen Solka!
+        
+        * [JSPWIKI-118]: Fixed issue with FCK editor not saving all metadata.  Thanks
+        to David Au for the fix!
+        
+        New i18n keys in i18n/templates/default.properties:
+           * workflow.details
+           * workflow.details.title
+           * conflict.oops.title
+           * find.tab.help
+           
+
+2008-01-12 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-7
+        
+        * [JSPWIKI-128] fixed various issues in the  printing style sheet.
+        Validation of IE is pending.
+
+        
+2008-01-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-6
+        
+        * [JSPWIKI-95]: Links to anchors with blanks work now.  This introduces
+        a tiny, very tiny compatibility issue with links to headings changing
+        case in some cases.  Reported by Jügen Weber.
+        
+        * [JSPWIKI-125]: FilterManager now checks for version compatibility 
+        of PageFilters by looking into the ini/jspwiki_module.xml.  This was a 
+        surprisingly big change.  I would very much like to move to annotations
+        in 3.0... Reported by Florian Holeczek.
+
+        * [JSPWIKI-124]: Turns out that using de_DE as the language name
+        is not a good idea, as it really works only when you define Deutsch (Deutschland)
+        as your language - all other German-speaking folks would see Englisch...
+        Reported by Goran Karlic.
+
+        * added stress/MassiveRepositoryTest.
+
+2008-01-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * Fixed a number of Eclipse warnings.  No version bump, no
+        functionality change.
+
+2008-01-05 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * No version bump - small fix of exception in Footer.jsp
+
+2008-01-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-5
+
+        * [JSPWIKI-108]: Fixed EditPageHelp.txt which had an extra pipe char.
+
+        * [JSPWIKI-106]: Password recovery emails are now sent with UTF-8 encoding.
+
+        * [JSPWIKI-113]: Patch from Harry Metske to make sure the JNDI factory is
+        only checked once when sending email.
+
+        * [JSPWIKI-119]: URI detector now detects properly ~ and % characters.
+
+2008-01-03 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-4
+
+        * Improving robustness of Wiki.getPageName(url) which was dying on unexpected url formats.
+
+
+2008-01-02  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-3
+
+        * [JSPWIKI-49] Fixed handling of the Editor choice as part of the user preferences.
+        When restarting the browser, also the preferred editor setting is recovered.
+        Still 2 properties exist to set the default Editor choice (both are kept for bw compat)
+        You can choose either one.
+          jspwiki.editor=plain
+          jspwiki.defaultprefs.template.editor =plain    (=> preferred)
+
+        * All WEBTESTs are now converted to Selenium. They run manually -- still need to verify
+        the automatic run via ant.
+
+        * The MORE dropdown is now also available during Login, UserPreferences and Find screens.
+        This makes all common links (stored in MoreMenu) more easily accessible.
+
+        * Minor JS refactorings on handling color for GraphBars and ZebraTables.
+
+        * Minor JS refactorings to better support Category styles for IE.
+
+        * Both JSPWiki logo's (shaded and not-shaded image) have been merged in a single .png
+        to resolve image flicker at mouse-hover. (especially on ie)
+
+
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.1-cvs-2
+
+        * [JSPWIKI-116] Under certain circumstances, calls to
+        UserManager.getUserDatabase() are made before the user database is
+        actually initialized, resulting in NPEs. To resolve, we simply replaced
+        internal references to m_userDatabase with getUserDatabase(),
+        which lazily initializes the database if it has not already happened.
+
+2007-12-25  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-1
+
+        * Added SpamFilter.isValidUserProfile() and corresponding checks
+        to allow also user registrations to be spam-checked.
+
+2007-12-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.0!  Woot!
+
+        * Removed JSPWikiToCreoleTranslator (the class was empty and unused)
+        in an effort to clean the code base a bit for release.
+
+        * Added some warnings to CreoleFilter & CreoleToJSPWikiTranslator
+        to make sure people understand they are experimental features.  Also
+        removed WikiCreole from "new features" list.
+
+        * Fixed a number of failing unit tests for Creole by removing a lot of
+        line separator management code.  As far as I can tell, it was all
+        unnecessary and by accident didn't fail only on Windows.
+
+        * Improved javadocs, removing a number of Checkstyle errors.
+
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.0 RC5
+
+        * Checked a new version of web.xml that I inadvertently missed
+        in RC3. This resolves [JSPWIKI-92], for real this time. Sorry!
+
+        * Resolved [JSPWIKI-33] by removing all external class dependencies
+        in WikiBackgroundThread (other than JSPWiki.jar classes). Also
+        changed the default webtests-teardown task in Ant so that web unit
+        tests are taken down unless the 'webtests.keepup' property is set.
+
+        * Replaced jug-lgpl with the Apache-licensed version [JSPWIKI-41].
+
+        * The Ant war/test war tasks were not always properly excluding
+        test-related jars, such as Selenium. This was causing webapps to
+        fail to load in some cases. These jars have now been moved to tests/lib.
+
+        * Adjusted the README file in lib to reflect reality.
+
+2007-12-10  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.6.1 RC4
+
+        * (I am really not sure if I am numbering right here, since
+           I fixed a bug, should the revision number not be incremented
+           as well, according to [JSPWIKI:VersioningProposal]?)
+
+        * Fixed Bug in CreoleFilter: When you used the signature
+          markup from creole (--~~~~), plugin syntax did not get properly
+          translated back into creole markup, so even if you
+          typed in <<Plugin>>, it was later displayed in the source
+          as [{Plugin}]
+
+        * Added some missing linebreaks in translation
+
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.1 RC3
+
+        * Fixed Ant script compatibility issue reported in [JSPWIKI-109].
+        JSPWiki's 'war-tomcat'  and 'webtests' tasks now work correctly
+        when running under Tomcat 5.5 *and* 6.0.
+
+        * Fixed a compatibility bug that was preventing JSPWiki from
+        starting in an older version of Resin [ JSPWIKI-92]. This issue surfaced
+        three bugs: web.xml's <description> and <display-name> elements
+        were in the wrong order; an unneeded SAX parser feature was being
+        set in WebContainerAuthorizer; and (most egregiously) TabTag
+        overrode a superclass method, setId(), when it should not have.
+        TabTag's implementation has been "pulled up" to WikiTagBase, and it
+        now delegates properly to the superclass. In addition, as a bonus,
+        all "id" attributes for custom JSPWiki tags are now immunized from
+        cross-site scripting injection.
+
+2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.0 RC2
+
+        * Changed versioning scheme
+
+2007-12-16  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.6.2 RC1
+
+        * [JSPWIKI-101]: Fixed, TOC plugin did not call filter
+
+        * Improved MissingTranslations utility, now outputs sorted list
+          of diff properties.
+
+        * Added missing german translations
+
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.1 RC1
+
+        * Ripped-and-replaced web unit tests and replaced with Selenium.
+        Selenium test directory structure replaced with a patched
+        selenium-server-0.9.2.jar. Web tests are yet not at parity
+        with old (failing) JWebUnit tests, they are pretty good for
+        a start. Many thanks to Dirk to figuring out the minor patches
+        we needed to get Selenium to work nicely with Mootools.
+
+        * Removed all traces of JMeter, HttpUnit and JWebUnit
+        (as much as I could find, anyway).
+
+        * Re-based Selenium tests to tests/etc/selenium/tests.
+
+        * If you want to try developing your own web tests, check out
+        Selenium IDE, a FireFox plugin that records user actions
+        and generates tests scripts.
+
+2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.0 RC1
+
+        * [JSPWIKI-55]: Added patch from David Au to fix pages
+        with spaces.
+
+        * [JSPWIKI-62]: Added patch from David Au to fix ShortURLConstructor
+        and plain.jsp.

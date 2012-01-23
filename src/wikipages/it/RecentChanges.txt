@@ -1,0 +1,5 @@
+Questi sono i cambiamenti fatti negli ultimi 30 giorni. Selezionate [FullRecentChanges] per una lista completa dai cambiamenti.
+
+Questo server assume la time zone [{INSERT CurrentTimePlugin format=zzzz}] e l'orario qui risulta [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

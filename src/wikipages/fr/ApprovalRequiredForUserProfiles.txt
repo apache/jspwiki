@@ -1,0 +1,6 @@
+Les profils des nouveaux utilisateurs doivent être approuvés avant de devenir
+visibles. Votre demande a été soumise, et sera soit approuvée, soit rejetée.
+
+Si vous avez fourni une adresse e-mail, un des administrateurs du Wiki vous
+informera lorsque votre compte sera approuvé. Vous pouvez aussi attendre un peu
+avant de voir si vous pouvez vous identifier.

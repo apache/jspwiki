@@ -1,0 +1,7 @@
+[WikiNames] 一般是使用 ~InterCapping，也称为 ~CamelCase，这种书写方式以大写开头，而且在 Wiki 链接词语中至少有另一个大写字母。这使得内部超链接的创建相当容易。
+
+然而，在此 [WikiWiki] 中，[links] 使用 [[link] 标注来书写，主要是因为原来的链接 ~InterCapping 样式有时候有些让人迷惑。如果看一下上面的 URL，名字还是符合 [WikiWiki] 标准。
+
+名称是被''挤压的''，例如，[[This is a link] 成为 [[ThisIsALink]。然而，下划线和句点是保留的，所以您可以有这样的链接：[[This_is_a_link]，或者 [[This.Is.A.Link]。除了 '_' 和 '.' 之外的所有非字母数字字符会被删掉，也就是说，所有这些字符不是字母或者数字，所以 [[John's page] 变为 [[JohnsPage]。这样可以让您输入正常句子，而后这些句子转成链接，比如谈论 [Wiki etiquette]。
+
+WikiName 不能是数字。数字名字是用于[脚注|TextFormattingRules]。

@@ -1,0 +1,103 @@
+# 
+#    JSPWiki - a JSP-based WikiWiki clone.
+#
+#    Licensed to the Apache Software Foundation (ASF) under one
+#    or more contributor license agreements.  See the NOTICE file
+#    distributed with this work for additional information
+#    regarding copyright ownership.  The ASF licenses this file
+#    to you under the Apache License, Version 2.0 (the
+#    "License"); you may not use this file except in compliance
+#    with the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing,
+#    software distributed under the License is distributed on an
+#    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#    KIND, either express or implied.  See the License for the
+#    specific language governing permissions and limitations
+#    under the License.  
+#
+############################################################################
+
+1. WikiContext changes to an interface. This means that:
+   a. WikiContext can no longer be instantiated directly
+   b. WikiContext.setLocale() does not work
+
+
+A. WikiContext can no longer be instantiated directly.
+
+Guidance: use WikiContextFactory to create WikiContext objects. WikiContextFactory contains two methods for this purpose, newViewContext() (for VIEW contexts), and newContext() (for other contexts, including VIEW). WikiContextFactory can be obtained via the getWikiContextFactory() method of WikiEngine. Thus, to create WikiContexts, change:
+
+ WikiContext ctx = new WikiContext( m_engine, page );
+ context.setRequestContext( WikiContext.VIEW );
+ 
+to this:
+ 
+ WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );
+
+or:
+
+ (example goes here)
+
+For WikiContexts that are not VIEW contexts, setting the request context after creation via WikiContext.setRequestContext() is discouraged. The request context should instead be passed to the factory method newContext.
+
+
+B. Static method WikiContext.setLocale() is no longer available.
+
+Guidance: replace WikiContext.getLocale() with WikiContextFactory.getLocale(). For example, change:
+
+ WikiContext.getLocale(m_context);
+
+to this:
+
+ WikiContextFactory.getLocale(m_context);
+
+
+C. Static WikiContext.findContext() is no longer available.
+
+Guidance: replace WikiContext.findContext() with WikiContextFactory.findContext(). For example, change:
+
+ WikiContext ctx = WikiContext.findContext(pageContext);
+
+to this:
+
+ WikiContext ctx = WikiContextFactory.findContext(pageContext);
+
+
+2. Obsolete and otherwise crufty methods have been eliminated from WikiContext. 
+
+Because of the elimination of the Command interface in favor of Stripes ActionBeans, the following methods in WikiContext have been eliminated also:
+- getName(). Guidance: replace wikiContext.getName() with wikiContext().getPage().getName()
+
+
+3. Class Diffs
+
+DefaultAclManager: 1 change
+HTMLPageDavItem: 1 change
+TraditionalDiffProvider: 2 changes
+RedirectException: 7 changes (refactor to add Resolution interface)
+SpamFilter: 2 changes
+JSPWikiMarkupParser: 5 changes
+Preferences: 3 changes
+CachingProvider: 1 change
+AtomAPIServlet: 2 changes
+RSSGenerator: 3 changes
+TemplateManager: 2 changes
+WikiJSPFilter: 6 changes
+DefaultURLConstructor: 4 changes (including pulling back in the JSP mappings)
+WikiContext: 67 changes
+WikiEngine: 22 changes -- getRedirectURL, changes CommandResolver to WikiContextFactory
+WikiPage: 1 change -- adds qualified name
+MetaWeblogHandler: 1 change
+RPCHandler: 1 change
+RPCHandlerUTF8: 1 change
+ContentTag: 2 changes -- calculates template name based on ActionBean; can be over-ridden with 'contentTemplate' variable
+EditorIteratorTag: 2 changes
+IteratorTag: 2 changes
+MessagesTag: retrofitted to return Stripes Validation errors also, if any are found
+PageNameTag: 1 change
+PermissionTag: 6 changes (elimination of Command)
+SearchResultInterator: 3 changes
+TabTag: 2 changes
+WikiTagBase: 12 changes -- extends StripesTagSupport
