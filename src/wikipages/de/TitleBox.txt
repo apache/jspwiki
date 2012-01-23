@@ -1,3 +1,0 @@
-%%center
-[Willkommen|TitleBox] bei [{$applicationname}]!
-%%

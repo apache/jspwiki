@@ -1,3 +1,0 @@
-Estas são todas as alterações feitas à essas páginas.  Uma lista bem menor está disponível em [Mudanças Recentes|RecentChanges].
-
-[{INSERT org.apache.wiki.plugin.RecentChangesPlugin}]

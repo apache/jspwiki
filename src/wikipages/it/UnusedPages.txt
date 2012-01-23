@@ -1,3 +1,0 @@
-Queste sono le pagine non collegate a nessun'altra pagina (escluse quelle create automaticamente).
-
-[{INSERT org.apache.wiki.plugin.UnusedPagesPlugin}]
