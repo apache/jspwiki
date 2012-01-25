@@ -16,7 +16,7 @@
       <path>editors/plain.jsp</path>
       <minVersion>2.4</minVersion>
       <maxVersion>2.8</maxVersion>
-      <adminBean>com.ecyrd.jspwiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
+      <adminBean>org.apache.wiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
 <!-- 
    <editor name="WikiWizard">
@@ -24,21 +24,21 @@
       <path>editors/WikiWizard.jsp</path>
       <minVersion>2.4</minVersion>
       <maxVersion>2.8</maxVersion>
-      <adminBean>com.ecyrd.jspwiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
+      <adminBean>org.apache.wiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
    </editor>
 -->
-   <plugin class="com.ecyrd.jspwiki.plugin.IfPlugin">
+   <plugin class="org.apache.wiki.plugin.IfPlugin">
       <author>Janne Jalkanen</author>
       <minVersion>2.4</minVersion>
       <alias>If</alias>
    </plugin>
 
-   <plugin class="com.ecyrd.jspwiki.plugin.Note">
+   <plugin class="org.apache.wiki.plugin.Note">
       <author>Janne Jalkanen</author>
       <minVersion>2.4</minVersion>
    </plugin>
 
-   <filter class="com.ecyrd.jspwiki.filters.SpamFilter">
+   <filter class="org.apache.wiki.filters.SpamFilter">
       <author>Janne Jalkanen</author>
       <minVersion>2.6</minVersion>
    </filter>

@@ -1,9 +1,9 @@
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag" %>
-<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag.FixedQueue" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
+<%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.attachment.Attachment" %>
+<%@ page import="org.apache.wiki.attachment.Attachment" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 

@@ -2,4 +2,4 @@ Estas são as alterações feitas à essas páginas nos últimos 30 dias. Cheque a pág
 
 Este servidor está em [{INSERT CurrentTimePlugin format=zzzz}] e a hora aqui é [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
 
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

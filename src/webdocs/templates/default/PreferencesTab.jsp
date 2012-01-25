@@ -1,12 +1,12 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.lang.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.jar.*" %>
 
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.preferences.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.preferences.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

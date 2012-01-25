@@ -1,7 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.admin.*" %>
-<%@page import="com.ecyrd.jspwiki.ui.TemplateManager"%>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.ui.admin.*" %>
+<%@page import="org.apache.wiki.ui.TemplateManager"%>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>

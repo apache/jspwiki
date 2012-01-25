@@ -1,9 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%! 

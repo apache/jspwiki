@@ -57,7 +57,7 @@ To get JSPWiki build from within Eclipse, here are a few guidelines:
 Directory structure
 ===================
 
-'src' contains the source code (under com/ecyrd/jspwiki).
+'src' contains the source code (under org.apache.wiki).
 
 'src/webdocs' contains all the files that are published in the final
 webapps directory, including all of the deployment files under

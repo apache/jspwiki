@@ -1,8 +1,8 @@
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
+<%@ page import="org.apache.wiki.auth.authorize.Group" %>
+<%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 

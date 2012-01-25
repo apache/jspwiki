@@ -1,7 +1,7 @@
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.admin.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.rpc.json.*" %>
+<%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -66,7 +66,7 @@ function addNew()
     onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
-     <input type="hidden" name='bean' value='com.ecyrd.jspwiki.ui.admin.beans.UserBean'/>
+     <input type="hidden" name='bean' value='org.apache.wiki.ui.admin.beans.UserBean'/>
      <input type="hidden" id="loginid" name="loginid" value="" />
      <table>
      <tr>

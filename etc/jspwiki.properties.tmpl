@@ -39,7 +39,7 @@ jspwiki.baseURL=
 #    VersioningFileProvider - for simple, non-RCS based versioning storage.
 #
 #  Note that if you're upgrading from JSPWiki 1.x, then you need to remove the
-#  "com.ecyrd.jspwiki." part from the beginning of the path.
+#  "org.apache.wiki." part from the beginning of the path.
 #
 jspwiki.pageProvider = FileSystemProvider
 
@@ -352,7 +352,7 @@ jspwiki.specialPage.Workflow = Workflow.jsp
 #
 #  jspwiki.plugin.searchPath = org.myorganisation.jspwiki.myplugins,com.foobar.myplugins
 #
-#  The default path is "com.ecyrd.jspwiki.plugin", and it will be always
+#  The default path is "org.apache.wiki.plugin", and it will be always
 #  the last item on the path.  This allows you to override JSPWiki default
 #  plugins.  Note that you are only adding to the path, not replacing it (ie.
 #  the default path is never removed.)
@@ -460,14 +460,14 @@ jspwiki.plugin.searchPath =
 #  If you do not wish to use container-managed authentication, you can use JSPWiki's
 #  own custom authentication system. This uses a JAAS LoginModule (supplied below)
 #  to log in the user. You can use any JAAS LoginModule you want.
-#  The default class is com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule,
+#  The default class is org.apache.wiki.auth.login.UserDatabaseLoginModule,
 #  which compares the supplied username and hashed password with the values stored
 #  in the configured UserDatabase (see USER DATABASE below).
 #
 #  Supply the JAAS LoginModule class used for custom authentication here.
 #  The implementation MUST have a zero-argument constructor (as noted in the
 #  javax.security.auth.spi.LoginModule Javadocs).
-jspwiki.loginModule.class = com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule
+jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 
 #
 # JAAS LoginContext parameters used to initialize the LoginModule. Note that 'param1'
@@ -531,7 +531,7 @@ jspwiki.loginModule.class = com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule
 #  <auth-constraint>/<role-name> elements. However, you can use another
 #  Authorizer if you wish; specify that class here.
 
-jspwiki.authorizer = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
+jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
 
 #  B) GROUPS
 #  As an additional source of authorization, users can belong to discretionary
@@ -539,7 +539,7 @@ jspwiki.authorizer = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
 #  GroupDatabase. The default group database uses an XML file for persistent
 #  storage. Override with your own GroupDatabase implementation with this property:
 
-jspwiki.groupdatabase = com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase
+jspwiki.groupdatabase = org.apache.wiki.auth.authorize.XMLGroupDatabase
 
 #  The default group database implementation stores member lists
 #  in an XML file. The location of this file should be in a secure directory
@@ -559,7 +559,7 @@ jspwiki.groupdatabase = com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase
 #  uses an XML file for persistent storage.
 #  Override with your own UserDatabase implementation with this property:
 
-jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
+jspwiki.userdatabase = org.apache.wiki.auth.user.XMLUserDatabase
 
 #  The default user database implementation stores usernames and passwords
 #  in an XML file. Passwords are SHA-1 hashed. The location of this file
@@ -579,7 +579,7 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 # See the online AuthenticationAndAuthorization2.3 docs for details on
 # how to configure it.
 
-#jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.JDBCUserDatabase
+#jspwiki.userdatabase = org.apache.wiki.auth.user.JDBCUserDatabase
 
 #  If your JSPWiki user database shares login information with your
 #  web container's authentication realm, you can configure JSPWiki to
@@ -596,7 +596,7 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 #  markup. For example: "[{ALLOW edit Charlie}]". If using a custom
 #  ACL manager, specify the AclManager implementation class here:
 
-jspwiki.aclManager = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
+jspwiki.aclManager = org.apache.wiki.auth.acl.DefaultAclManager
 
 #############################################################################
 #
@@ -702,8 +702,8 @@ jspwiki.rss.channelLanguage = en-us
 #
 #  JDBC Configuration. Tells JSPWiki which tables and columns to map
 #  to for the JDBCUserDatabase and JDBCGroupDatabase. For more info, see the
-#  JavaDoc for classes com.ecyrd.jspwiki.auth.user.JDBCUserDatabase and
-#  com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase.
+#  JavaDoc for classes org.apache.wiki.auth.user.JDBCUserDatabase and
+#  org.apache.wiki.auth.authorize.JDBCGroupDatabase.
 #
 jspwiki.userdatabase.datasource=jdbc/UserDatabase
 jspwiki.userdatabase.table=users
@@ -752,7 +752,7 @@ mail.from = @mail.from@
 #     You will need to configure your container to provide a JavaMail
 #     resource factory. See your container documentation, or check our
 #     fairly complete documentation (with examples for Tomcat) in
-#     the JavaDocs for com.ecyrd.jspwiki.util.MailUtil.
+#     the JavaDocs for org.apache.wiki.util.MailUtil.
 #
 #  JNDI resource name. The commented-out value is the default.
 #jspwiki.mail.jndiname = mail/Session

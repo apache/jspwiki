@@ -1,9 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
-<%@ page import="com.ecyrd.jspwiki.attachment.*" %>
-<%@ page import="com.ecyrd.jspwiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.attachment.*" %>
+<%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

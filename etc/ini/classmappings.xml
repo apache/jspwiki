@@ -28,7 +28,7 @@
   
 <classmappings>
   <mapping>
-    <requestedClass>com.ecyrd.jspwiki.render.RenderingManager</requestedClass>
-    <mappedClass>com.ecyrd.jspwiki.render.RenderingManager</mappedClass>
+    <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>
+    <mappedClass>org.apache.wiki.render.RenderingManager</mappedClass>
   </mapping>
 </classmappings>

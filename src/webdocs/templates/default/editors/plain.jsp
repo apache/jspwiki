@@ -1,13 +1,13 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.*" %>
-<%@ page import="com.ecyrd.jspwiki.filters.SpamFilter" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.rpc.*" %>
-<%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.tags.*" %>
+<%@ page import="org.apache.wiki.filters.SpamFilter" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.rpc.*" %>
+<%@ page import="org.apache.wiki.rpc.json.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <fmt:setLocale value="${prefs.Language}" />

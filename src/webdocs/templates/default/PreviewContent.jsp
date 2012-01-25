@@ -1,5 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />

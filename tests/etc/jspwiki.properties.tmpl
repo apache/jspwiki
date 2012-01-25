@@ -7,7 +7,7 @@
 #    RCSFileProvider for simple RCS-based file storage
 #    FileSystemProvider for simple pure file storage with no version information
 #
-jspwiki.pageProvider = com.ecyrd.jspwiki.providers.FileSystemProvider
+jspwiki.pageProvider = org.apache.wiki.providers.FileSystemProvider
 
 jspwiki.usePageCache = true
 #
@@ -33,7 +33,7 @@ jspwiki.filterConfig = @tests.filter@
 jspwiki.baseURL = http://localhost/
 jspwiki.referenceStyle = relative
 jspwiki.searchProvider = BasicSearchProvider
-jspwiki.authorizer=com.ecyrd.jspwiki.TestAuthorizer
+jspwiki.authorizer=org.apache.wiki.TestAuthorizer
 
 #
 #  Special page references.
@@ -71,11 +71,11 @@ jspwiki.translatorReader.inlinePattern.3 = http://images.com/*
 # Security: use standard providers for user/group auth, user management
 # and ACLs. Use a test userdatabase for storing users.
 #
-jspwiki.aclManager          = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
-#jspwiki.authorizer          = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
-jspwiki.groupdatabase = com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase
+jspwiki.aclManager          = org.apache.wiki.auth.acl.DefaultAclManager
+#jspwiki.authorizer          = org.apache.wiki.auth.authorize.WebContainerAuthorizer
+jspwiki.groupdatabase = org.apache.wiki.auth.authorize.XMLGroupDatabase
 jspwiki.xmlGroupDatabaseFile = tests/etc/groupdatabase.xml
-jspwiki.userdatabase        = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
+jspwiki.userdatabase        = org.apache.wiki.auth.user.XMLUserDatabase
 jspwiki.xmlUserDatabaseFile = tests/etc/userdatabase.xml
 jspwiki.admin.user = admin
 
@@ -120,7 +120,7 @@ jspwiki.groupdatabase.modifier=modifier
 #
 #  Log everything into a file.
 log4j.rootCategory=INFO,FileLog
-# log4j.logger.com.ecyrd.jspwiki=INFO, FileLog
+# log4j.logger.org.apache.wiki=INFO, FileLog
 log4j.logger.org.mortbay=INFO, TestContainerLog
 log4j.logger.SecurityLog=INFO, SecurityAppender
 

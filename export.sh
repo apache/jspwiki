@@ -9,4 +9,4 @@ do
     CP=$i:${CP}
 done
 
-java -classpath $CP com.ecyrd.jspwiki.content.Exporter $@
+java -classpath $CP org.apache.wiki.content.Exporter $@

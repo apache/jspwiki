@@ -2,9 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
-<%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.auth.PrincipalComparator" %>
+<%@ page import="org.apache.wiki.auth.authorize.Group" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>

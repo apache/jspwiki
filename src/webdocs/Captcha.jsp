@@ -1,9 +1,9 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>

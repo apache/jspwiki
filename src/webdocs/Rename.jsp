@@ -1,7 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag" %>
-<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag.FixedQueue" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
+<%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

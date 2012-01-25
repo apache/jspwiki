@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<%@ page import="java.util.*,com.ecyrd.jspwiki.*" %>
+<%@ page import="java.util.*,org.apache.wiki.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
-<%@ page import="com.ecyrd.jspwiki.rss.*" %>
-<%@ page import="com.ecyrd.jspwiki.util.*" %>
+<%@ page import="org.apache.wiki.rss.*" %>
+<%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="com.opensymphony.oscache.base.*" %>
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 
@@ -73,7 +73,7 @@
     
     if( mode.equals("blog") )
     {
-        com.ecyrd.jspwiki.plugin.WeblogPlugin plug = new com.ecyrd.jspwiki.plugin.WeblogPlugin();
+        org.apache.wiki.plugin.WeblogPlugin plug = new com.ecyrd.jspwiki.plugin.WeblogPlugin();
         changed = plug.findBlogEntries(wiki.getPageManager(), 
                                        wikipage.getName(),
                                        new Date(0L),

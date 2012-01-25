@@ -1,15 +1,15 @@
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "All" {
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
+grant principal org.apache.wiki.auth.authorize.Role "All" {
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "login";
 };
 
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
+grant principal org.apache.wiki.auth.authorize.Role "Authenticated" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "view";
 };
 
-grant principal com.ecyrd.jspwiki.auth.WikiPrincipal "Janne Jalkanen" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,delete";
+grant principal org.apache.wiki.auth.WikiPrincipal "Janne Jalkanen" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "edit,delete";
 };
 
 grant principal "Bob" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,delete";
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "edit,delete";
 };

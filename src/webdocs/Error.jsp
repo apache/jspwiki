@@ -1,6 +1,6 @@
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
     Logger log = Logger.getLogger("JSPWiki"); 

@@ -1,14 +1,14 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="java.net.URLEncoder" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>

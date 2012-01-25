@@ -294,7 +294,7 @@ var Wiki = {
 		return (res ? res[1] : false);
 	},
 
-	//ref com.ecyrd.jspwiki.parser.MarkupParser.cleanLink()
+	//ref org.apache.wiki.parser.MarkupParser.cleanLink()
 	//trim repeated whitespace
 	//allow letters, digits and punctuation chars: ()&+,-=._$
 	cleanLink: function(p){

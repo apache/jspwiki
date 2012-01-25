@@ -30,11 +30,11 @@
 // If that seems too loose for your needs, you can restrict page-viewing
 // privileges by moving the PagePermission 'view' grant to one of the other blocks.
 
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "All" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
+grant principal org.apache.wiki.auth.authorize.Role "All" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "view";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "login";
 };
 
 
@@ -45,9 +45,9 @@ grant principal com.ecyrd.jspwiki.auth.authorize.Role "All" {
 // lines containing the "edit" and "createPages" permissions; this will make
 // the wiki read-only for anonymous users.
 
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
+grant principal org.apache.wiki.auth.authorize.Role "Anonymous" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "edit";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "createPages";
 };
 
 
@@ -55,10 +55,10 @@ grant principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
 // be someone (via their cookie) to create, edit and comment on all pages.
 // They can also view the membership list of groups.
 
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
-    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:*", "view";
+grant principal org.apache.wiki.auth.authorize.Role "Asserted" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "edit";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "createPages";
+    permission org.apache.wiki.auth.permissions.GroupPermission "*:*", "view";
 };
 
 
@@ -67,11 +67,11 @@ grant principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
 // wiki groups; and rename existing pages. Authenticated users can also
 // edit groups they are members of.
 
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "modify,rename";
-    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:*", "view";
-    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:<groupmember>", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
+grant principal org.apache.wiki.auth.authorize.Role "Authenticated" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "modify,rename";
+    permission org.apache.wiki.auth.permissions.GroupPermission "*:*", "view";
+    permission org.apache.wiki.auth.permissions.GroupPermission "*:<groupmember>", "edit";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
 };
 
 
@@ -83,9 +83,9 @@ grant principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
 // the wiki group "Admin" (stored by default in wiki page GroupAdmin)
 // and the container role "Admin" (managed by the web container).
 
-grant principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
-    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "*";
+grant principal org.apache.wiki.auth.GroupPrincipal "Admin" {
+    permission org.apache.wiki.auth.permissions.AllPermission "*";
 };
-grant principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" {
-    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "*";
+grant principal org.apache.wiki.auth.authorize.Role "Admin" {
+    permission org.apache.wiki.auth.permissions.AllPermission "*";
 };

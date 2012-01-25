@@ -1,13 +1,13 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="java.util.Properties"%>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
-<%@ page import="com.ecyrd.jspwiki.render.*" %>
-<%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.filters.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.render.*" %>
+<%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

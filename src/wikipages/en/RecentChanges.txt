@@ -2,4 +2,4 @@ These are the changes made to these pages during the last 30 days.  Check the [F
 
 This server lives on [{INSERT CurrentTimePlugin format=zzzz}] and the time here is [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
 
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

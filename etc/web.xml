@@ -39,11 +39,11 @@
 
    <filter>
       <filter-name>WikiServletFilter</filter-name>
-      <filter-class>com.ecyrd.jspwiki.ui.WikiServletFilter</filter-class>
+      <filter-class>org.apache.wiki.ui.WikiServletFilter</filter-class>
    </filter>
    <filter>
       <filter-name>WikiJSPFilter</filter-name>
-      <filter-class>com.ecyrd.jspwiki.ui.WikiJSPFilter</filter-class>
+      <filter-class>org.apache.wiki.ui.WikiJSPFilter</filter-class>
    </filter>
 
    <filter-mapping>
@@ -83,7 +83,7 @@
        HttpSessionListener used for managing WikiSession's.
      -->
    <listener>
-      <listener-class>com.ecyrd.jspwiki.auth.SessionMonitor</listener-class>
+      <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
    </listener>
    
    <!--
@@ -94,10 +94,10 @@
      -->
    <servlet>
        <servlet-name>XMLRPC</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.xmlrpc.RPCServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>       
        <init-param>
            <param-name>handler</param-name>
-           <param-value>com.ecyrd.jspwiki.xmlrpc.RPCHandler</param-value>
+           <param-value>org.apache.wiki.xmlrpc.RPCHandler</param-value>
        </init-param>
 
        <init-param>
@@ -112,10 +112,10 @@
 
    <servlet>
        <servlet-name>XMLRPC-UTF8</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.xmlrpc.RPCServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>       
        <init-param>
            <param-name>handler</param-name>
-           <param-value>com.ecyrd.jspwiki.xmlrpc.RPCHandlerUTF8</param-value>
+           <param-value>org.apache.wiki.xmlrpc.RPCHandlerUTF8</param-value>
        </init-param>
 
        <init-param>
@@ -133,19 +133,19 @@
    <!-- Atom Publishing Protocol -->
    <servlet>
        <servlet-name>ATOM</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.rpc.atom.AtomAPIServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.rpc.atom.AtomAPIServlet</servlet-class>       
    </servlet>
 
    <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
    <servlet>
        <servlet-name>WikiServlet</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.WikiServlet</servlet-class>       
        <load-on-startup>1</load-on-startup>
    </servlet>
 
    <servlet>
        <servlet-name>DAVServlet</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.dav.WikiDavServlet</servlet-class>
+       <servlet-class>org.apache.wiki.dav.WikiDavServlet</servlet-class>
    </servlet>
 
    <!--
@@ -154,7 +154,7 @@
 
    <servlet>
        <servlet-name>AttachmentServlet</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.attachment.AttachmentServlet</servlet-class>
+       <servlet-class>org.apache.wiki.attachment.AttachmentServlet</servlet-class>
    </servlet>
 
    <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->

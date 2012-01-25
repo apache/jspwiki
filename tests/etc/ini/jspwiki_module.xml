@@ -9,7 +9,7 @@
         <stylesheet>foo2.css</stylesheet>
         <alias>samplealias2</alias>
     </plugin>
-    <plugin class="com.ecyrd.jspwiki.plugin.SamplePlugin">
+    <plugin class="org.apache.wiki.plugin.SamplePlugin">
         <author>Janne Jalkanen</author>
         <script>foo.js</script>
         <stylesheet>foo.css</stylesheet>

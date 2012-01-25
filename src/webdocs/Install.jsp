@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
-<%@ page import="com.ecyrd.jspwiki.ui.Installer" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
+<%@ page import="org.apache.wiki.ui.Installer" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>

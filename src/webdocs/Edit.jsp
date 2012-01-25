@@ -1,10 +1,10 @@
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.filters.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
-<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
+<%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 

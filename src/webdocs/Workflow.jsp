@@ -1,14 +1,14 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="com.ecyrd.jspwiki.WikiContext" %>
-<%@ page import="com.ecyrd.jspwiki.WikiSession" %>
-<%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.Decision" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.DecisionQueue" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.NoSuchOutcomeException" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.Outcome" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.Workflow" %>
+<%@ page import="org.apache.wiki.WikiContext" %>
+<%@ page import="org.apache.wiki.WikiSession" %>
+<%@ page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.wiki.workflow.Decision" %>
+<%@ page import="org.apache.wiki.workflow.DecisionQueue" %>
+<%@ page import="org.apache.wiki.workflow.NoSuchOutcomeException" %>
+<%@ page import="org.apache.wiki.workflow.Outcome" %>
+<%@ page import="org.apache.wiki.workflow.Workflow" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
