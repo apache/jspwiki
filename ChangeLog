@@ -1,5 +1,11 @@
 2012-01-25  Harry Metske <metskem@apache.org>
 
+        * 2.9.0-svn-1
+        
+        * release bump because of package rename
+        
+2012-01-25  Harry Metske <metskem@apache.org>
+
         * 2.8.5-svn-10
         
         * the decision was made to candidate 2.8 for graduation instead of 3.0, this is the first wave
