@@ -179,7 +179,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @param role the role to check
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
-     * @see org.apache.wiki.auth.Authorizer#isUserInRole(com.ecyrd.jspwiki.WikiSession, java.security.Principal)
+     * @see org.apache.wiki.auth.Authorizer#isUserInRole(org.apache.wiki.WikiSession, java.security.Principal)
      */
     public boolean isUserInRole( WikiSession session, Principal role )
     {

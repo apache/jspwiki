@@ -183,7 +183,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
+     * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
     public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
@@ -200,7 +200,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.auth.user.UserDatabase#save(com.ecyrd.jspwiki.auth.user.UserProfile)
+     * @see org.apache.wiki.auth.user.UserDatabase#save(org.apache.wiki.auth.user.UserProfile)
      */
     public abstract void save( UserProfile profile ) throws WikiSecurityException;
 

@@ -31,7 +31,7 @@ is an exception, doEndTag() is never called.</p>
 <p>The correct way to do reference cleaning is to implement the {@link javax.servlet.jsp.tagext.TryCatchFinally}
 interface, where the <code>doFinally()</code> method is called every time the tag
 has been finished with and prior to it being put back into the pool.  Most JSPWiki
-base tag classes {@link org.apache.wiki.tags.IteratorTag} and {@link com.ecyrd.jspwiki.tags.WikiTagBase}
+base tag classes {@link org.apache.wiki.tags.IteratorTag} and {@link org.apache.wiki.tags.WikiTagBase}
 implement the TryCatchFinally
 interface, which means that any class subclassed from them also allows has those methods.</p>
 

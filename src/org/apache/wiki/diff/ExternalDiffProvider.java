@@ -80,7 +80,7 @@ public class ExternalDiffProvider implements DiffProvider
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
+     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException, IOException

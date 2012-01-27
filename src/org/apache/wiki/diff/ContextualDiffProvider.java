@@ -105,7 +105,7 @@ public class ContextualDiffProvider implements DiffProvider
     }
 
     /**
-     * @see org.apache.wiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine,
+     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      *      
      * {@inheritDoc}

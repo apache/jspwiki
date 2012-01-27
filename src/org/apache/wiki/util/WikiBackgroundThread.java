@@ -65,7 +65,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * and, if detected, marks the thread for death.
      * 
      * @param event {@inheritDoc}
-     * @see org.apache.wiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
+     * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      */
     public final void actionPerformed( WikiEvent event )
     {

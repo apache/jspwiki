@@ -444,7 +444,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     }
 
     /**
-     * @see org.apache.wiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
+     * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
@@ -660,7 +660,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     }
 
     /**
-     * @see org.apache.wiki.auth.user.UserDatabase#save(com.ecyrd.jspwiki.auth.user.UserProfile)
+     * @see org.apache.wiki.auth.user.UserDatabase#save(org.apache.wiki.auth.user.UserProfile)
      */
     public void save( UserProfile profile ) throws WikiSecurityException
     {

@@ -69,7 +69,7 @@ public class DefaultAclManager implements AclManager
      * Initializes the AclManager with a supplied wiki engine and properties.
      * @param engine the wiki engine
      * @param props the initialization properties
-     * @see org.apache.wiki.auth.acl.AclManager#initialize(com.ecyrd.jspwiki.WikiEngine,
+     * @see org.apache.wiki.auth.acl.AclManager#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      */
     public void initialize( WikiEngine engine, Properties props )

@@ -705,7 +705,7 @@ public final class UserManager
     /**
      * Inner class that handles the actual profile save action. Instances
      * of this class are assumed to have been added to an approval workflow via
-     * {@link org.apache.wiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)};
+     * {@link org.apache.wiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, org.apache.wiki.workflow.Fact[], Task, String)};
      * they will not function correctly otherwise.
      *
      */

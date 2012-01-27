@@ -255,7 +255,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
      * Initializes the user database based on values from a Properties object.
      * The properties object must contain a file path to the XML database file
      * whose key is {@link #PROP_USERDATABASE}.
-     * @see org.apache.wiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
+     * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      * @throws NoRequiredPropertyException if the user database cannot be located, parsed, or opened
      */

@@ -327,7 +327,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     /**
      * Flushes the document cache in response to a POST_SAVE_BEGIN event.
      *
-     * @see org.apache.wiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
+     * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      * @param event {@inheritDoc}
      */
     @SuppressWarnings("deprecation")
