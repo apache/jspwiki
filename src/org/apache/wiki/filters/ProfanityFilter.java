@@ -35,7 +35,7 @@ import org.apache.wiki.WikiContext;
 /**
  *  This class is an example of how to have a simple filter.  It removes
  *  all nasty words located at <code>profanity.properties</code> file, inside 
- *  <code>org.apache.wiki/filters</code> package. The search of profanities
+ *  <code>org/apache/wiki/filters</code> package. The search of profanities
  *  is case unsensitive.
  *
  */
@@ -43,7 +43,7 @@ public class ProfanityFilter extends BasicPageFilter
 {
     private static Logger     log = Logger.getLogger(ProfanityFilter.class);
     
-    private static final String PROPERTYFILE = "org.apache.wiki/filters/profanity.properties";
+    private static final String PROPERTYFILE = "org/apache/wiki/filters/profanity.properties";
     private static String[] c_profanities = new String[0];
     
     static 

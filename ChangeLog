@@ -1,3 +1,9 @@
+2012-01-29  Florian Holeczek <florianh@apache.org>
+
+        * 2.9.0-svn-2
+        
+        * corrected some minor errors which emerged from package renaming
+
 2012-01-25  Harry Metske <metskem@apache.org>
 
         * 2.9.0-svn-1

@@ -38,7 +38,7 @@
     |   |___webdocs
     |   |   |___[all .jsp files]
     |   |
-    |   |___com
+    |   |___org
     |       |___[...and the rest of the source code files]
     |
     |___docs
@@ -46,7 +46,7 @@
     |___lib
     |
     |___tests
-        |___com
+        |___org
             |___[...and the rest of the test source code]
 
     $Id: build.xml,v 1.97 2007-12-22 22:00:31 jalkanen Exp $
@@ -129,7 +129,7 @@
        source distribution.  Normally, you shouldn't have to care about these.
    -->
   <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
-  <property name="svn.tag" value="branches/JSPWIKI_2_8_BRANCH" />
+  <property name="svn.tag" value="trunk" />
 
   <!-- And finally, the directory where the final .zip-file is put -->
   <property name="release.dir" value="releases" />
@@ -267,7 +267,7 @@
              breakiterator="true"
              windowtitle="${ant.project.name}">
       <packageset dir="${code.src}">
-        <include name="com/ecyrd/**" />
+        <include name="org/apache/wiki/**" />
       </packageset>
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
@@ -658,8 +658,8 @@
                 <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
-                <exclude name="org.apache.wiki/web/*.*" />
-                <exclude name="org.apache.wiki/TranslatorReaderTest*" />
+                <exclude name="org/apache/wiki/web/*.*" />
+                <exclude name="org/apache/wiki/TranslatorReaderTest*" />
            </fileset>
         </batchtest>
      </junit>
@@ -1455,7 +1455,7 @@ To automate the JAR signing processs, you can add the property
 	      description="Run this target to check whether a translation is up to date.">
 	  	 <input message="Please give the language you want to check translation for (e.g. fi, es, de)"
 	  			addproperty="check.language"/>
-	     <java classname="TranslationsCheck">
+	     <java classname="org.apache.wiki.TranslationsCheck">
 	       <classpath path="${tests.build}"/>
 	       <classpath path="${code.build}"/>
 	       <arg line="${check.language}"/>
