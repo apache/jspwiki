@@ -1,17 +1,25 @@
+Welcome to the stable version of JSPWiki 2.9!
 
-Welcome to the stable version of JSPWiki 2.8!
-
-JSPWiki 2.8.4 is a security and stability update to 2.8.x-series.  All users
-are encouraged to upgrade.
-
-This is the second major version of JSPWiki which is released completely under
-the Apache License.  This is done as a part of the transition to the
-Apache Incubation.
-
-However, this is NOT an Apache release - JSPWiki 3.0 will be the first
-official Apache release.
+JSPWiki 2.9  is the first version of JSPWiki which is released completely under
+the Apache License.
 
 Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+UPDATES SINCE 2.8.4
+===================
+
+The full list is available in the ChangeLog file.  Highlights include
+
+* The java packages have been renamed from com.ecyrd.jspwiki to org.apache.wiki.
+	
+
+* Support external properties in WikiEngine (idea from John McKinney)
+          You can now override individual properties in jspwiki.properties using standard
+          Java System properties.
+
+* Extended the list of lucene searchable file suffixes, we now do 
+           ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm", ".xhtml", ".java", ".c", ".cpp",
+            ".php", ".asm", ".sh",  ".properties", ".kml", ".gpx", ".loc"
 
 UPDATES SINCE 2.8.3
 ===================

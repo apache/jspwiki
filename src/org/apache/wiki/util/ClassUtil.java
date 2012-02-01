@@ -102,7 +102,7 @@ public final class ClassUtil
      *  attempt to find the class based on just the className parameter, but
      *  should that fail, will iterate through the "packages" -list, prefixes
      *  the package name to the className, and then tries to find the class
-     *  again.
+     *  again. If that still fails, we try the old (pre-2.9) com.ecyrd.jspwiki package.
      *
      *  @param packages A List of Strings, containing different package names.
      *  @param className The name of the class to find.
@@ -134,6 +134,18 @@ public final class ClassUtil
                     // This is okay, we go to the next package.
                 }
             }
+
+            // try the old (pre 2.9) package name for compatibility :
+            try
+            {
+                className = className.replaceFirst( "com\\.ecyrd\\.jspwiki", "org.apache.wiki" );
+                return loader.loadClass( className );
+            }
+            catch( ClassNotFoundException ex )
+            {
+                // This is okay, if we fail we throw our own CNFE..
+            }
+
         }
 
         throw new ClassNotFoundException("Class '"+className+"' not found in search path!");

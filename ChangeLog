@@ -1,3 +1,11 @@
+2012-02-01  Harry Metske <metskem@apache.org>
+
+        * 2.9.0-svn-3
+        
+        * fixed JSPWIKI-719 (plugin compatibility with com.ecyrd.jspwiki)
+        
+        * draft ReleaseNotes
+
 2012-01-29  Florian Holeczek <florianh@apache.org>
 
         * 2.9.0-svn-2
