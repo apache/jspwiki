@@ -580,6 +580,36 @@
 
   </target>
 
+  <!-- Nabbed from solr -->
+  <macrodef name="sign-artifact" description="Signs the artifact">
+    <attribute name="input.file"/>
+    <attribute name="output.file" default="@{input.file}.asc"/>
+    <sequential>
+      <echo>Signing @{input.file} Sig File: @{output.file}</echo>
+
+      <exec executable="gpg">
+        <arg value="--armor"/>
+        <arg value="--output"/>
+        <arg value="@{output.file}"/>
+        <arg value="--detach-sig"/>
+        <arg value="@{input.file}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <!-- Generates signatures and MD5 hashes for the release artifacts. -->
+  <target name="signeddist" depends="dist">
+
+     <checksum>
+       <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+     </checksum>
+
+     <sequential>
+       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip" />
+       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" />
+     </sequential>
+  </target>
+
   <!-- ============================================================== -->
 
   <!-- Running tests -->

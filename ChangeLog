@@ -1,3 +1,10 @@
+2012-01-14  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+        * 2.9.0-svn-4
+        
+        * taken back <signeddist/> goal from 3.0 branch in order to be able to accomplish 
+          JSPWIKI-557
+          
 2012-02-01  Harry Metske <metskem@apache.org>
 
         * 2.9.0-svn-3
