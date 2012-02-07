@@ -294,8 +294,7 @@
   </target>
 
   <!--  Builds the jar of all compiled class files -->
-
-  <target name="jar" depends="compile">
+  <target name="buildjar" unless="check_jar_has_been_built">
   	  <!-- This is unfortunately needed, since the default property files are not otherwise
   	       used. FIXME: Figure out a better way to do this in the future. -->
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
@@ -303,11 +302,19 @@
 	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
-         <fileset dir="${code.src}" includes="com/**/*.properties" />
+         <fileset dir="${code.src}" includes="org/**/*.properties" />
          <fileset dir="${code.src}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
       </jar>
+  </target>
+
+  <target name="jar" depends="compile">
+    <condition property="check_jar_has_been_built">
+      <available file="${jarfile}"/>
+    </condition>
+  	<antcall target="buildjar" /> <!-- needed to avoid circular references when invoking tests target -->
+    <antcall target="tests" />
   </target>
 
   <target name="jartests" depends="compiletests">
@@ -316,7 +323,7 @@
         <include name="**/*.class"/>
       </fileset>
       <fileset dir="${tests.src}">
-        <include name="com/**/*.properties"/>
+        <include name="org/**/*.properties"/>
       </fileset>
     </jar>
   </target>
@@ -673,9 +680,14 @@
 
        More info http://ant.apache.org/faq.html#delegating-classloader
    -->
-  <target name="tests" depends="jar,tests-init,jartests,tests-db-init"
+  <target name="tests" depends="tests-init,jartests,tests-db-init" unless="jspwiki.test.skip"
           description="Runs the JUnit tests.">
 
+    <condition property="check_jar_has_been_built"> <!-- build main jar if it has not been created yet; should -->
+      <available file="${jarfile}"/>                <!-- only happen if this target is invoked directly        -->
+    </condition>
+    <antcall target="buildjar" />
+    
     <junit printsummary="yes" haltonfailure="no" fork="yes">
         <classpath>
            <path refid="path.tests" />

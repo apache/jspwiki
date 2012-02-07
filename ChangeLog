@@ -1,4 +1,9 @@
-2012-01-14  Juan Pablo Santos (juanpablo AT apache DOT org)
+2012-02-07  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * tests are now part of the main build. Also, they can be desactivated through 
+          jspwiki.test.skip property (i.e.: ant clean dist -Djspwiki.test.skip=true)
+        
+2012-02-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
         * 2.9.0-svn-4
         
