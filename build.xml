@@ -688,7 +688,7 @@
     </condition>
     <antcall target="buildjar" />
     
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
+    <junit printsummary="yes" haltonfailure="no" fork="yes" failureproperty="test.failed">
         <classpath>
            <path refid="path.tests" />
         </classpath>
@@ -712,7 +712,8 @@
   	    </fileset>
   	    <report format="noframes" todir="${tests.src}" />
   	 </junitreport>
-
+     
+     <fail message="Test failure detected, check test results." if="test.failed" />
   </target>
 
   <target name="tests-auth" depends="jar,tests-init,jartests"
