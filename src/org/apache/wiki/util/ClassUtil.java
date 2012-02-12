@@ -196,53 +196,6 @@ public final class ClassUtil
     /**
      *  This method is used to locate and instantiate a mapped class.
      *  You may redefine anything in the resource file which is located in your classpath
-     *  under the name <code>ClassUtil.MAPPINGS ({@value #MAPPINGS})</code>.
-     *  <p>
-     *  This is an extremely powerful system, which allows you to remap many of
-     *  the JSPWiki core classes to your own class.  Please read the documentation
-     *  included in the default <code>{@value #MAPPINGS}</code> file to see
-     *  how this method works. 
-     *  
-     *  @param requestedClass The name of the class you wish to instantiate.
-     *  @param arg1 Argument for the constructor.
-     *  @return An instantiated Object.
-     *  @throws WikiException If the class cannot be found or instantiated.
-     *  @since 2.5.40
-     */
-    public static Object getMappedObject( String requestedClass, Object arg1 )
-        throws WikiException
-    {
-        Object[] initargs = { arg1 };
-        return getMappedObject(requestedClass, initargs );
-    }
-
-    /**
-     *  This method is used to locate and instantiate a mapped class.
-     *  You may redefine anything in the resource file which is located in your classpath
-     *  under the name <code>ClassUtil.MAPPINGS ({@value #MAPPINGS})</code>.
-     *  <p>
-     *  This is an extremely powerful system, which allows you to remap many of
-     *  the JSPWiki core classes to your own class.  Please read the documentation
-     *  included in the default <code>{@value #MAPPINGS}</code> file to see
-     *  how this method works. 
-     *  
-     *  @param requestedClass The name of the class you wish to instantiate.
-     *  @param arg1 Argument for the constructor
-     *  @param arg2 A second argument for the constructor
-     *  @return An instantiated Object.
-     *  @throws WikiException If the class cannot be found or instantiated.
-     *  @since 2.5.40
-     */
-    public static Object getMappedObject( String requestedClass, Object arg1, Object arg2 )
-        throws WikiException
-    {
-        Object[] initargs = { arg1, arg2 };
-        return getMappedObject(requestedClass, initargs );
-    }
-
-    /**
-     *  This method is used to locate and instantiate a mapped class.
-     *  You may redefine anything in the resource file which is located in your classpath
      *  under the name <code>{@value #MAPPINGS}</code>.
      *  <p>
      *  This is an extremely powerful system, which allows you to remap many of
@@ -259,7 +212,7 @@ public final class ClassUtil
      *  @throws WikiException If the class cannot be found or instantiated.  The error is logged.
      *  @since 2.5.40
      */
-    public static Object getMappedObject( String requestedClass, Object[] initargs )
+    public static Object getMappedObject( String requestedClass, Object... initargs )
         throws WikiException
     {
         try
@@ -333,7 +286,7 @@ public final class ClassUtil
      *  @return A Class object which you can then instantiate.
      *  @throws WikiException
      */
-    private static Class getMappedClass( String requestedClass )
+    private static Class< ? > getMappedClass( String requestedClass )
         throws WikiException
     {
         String mappedClass = c_classMappings.get( requestedClass );
@@ -345,7 +298,7 @@ public final class ClassUtil
         
         try
         {
-            Class cl = Class.forName(mappedClass);
+            Class< ? > cl = Class.forName(mappedClass);
             
             return cl;
         }

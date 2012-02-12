@@ -28,7 +28,79 @@
   
 <classmappings>
   <mapping>
+    <requestedClass>org.apache.wiki.PageManager</requestedClass>
+    <mappedClass>org.apache.wiki.PageManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ReferenceManager</requestedClass>
+    <mappedClass>org.apache.wiki.ReferenceManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.VariableManager</requestedClass>
+    <mappedClass>org.apache.wiki.VariableManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.attachment.AttachmentManager</requestedClass>
+    <mappedClass>org.apache.wiki.attachment.AttachmentManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.acl.DefaultAclManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.acl.DefaultAclManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.AuthenticationManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.AuthenticationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.AuthorizationManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.AuthorizationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.UserManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.UserManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.authorize.GroupManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.authorize.GroupManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.diff.DifferenceManager</requestedClass>
+    <mappedClass>org.apache.wiki.diff.DifferenceManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.filters.FilterManager</requestedClass>
+    <mappedClass>org.apache.wiki.filters.FilterManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>
+    <mappedClass>org.apache.wiki.i18n.InternationalizationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.plugin.PluginManager</requestedClass>
+    <mappedClass>org.apache.wiki.plugin.PluginManager</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>
     <mappedClass>org.apache.wiki.render.RenderingManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.search.SearchManager</requestedClass>
+    <mappedClass>org.apache.wiki.search.SearchManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ui.EditorManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.EditorManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ui.TemplateManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ui.admin.AdminBeanManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.admin.AdminBeanManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>
+    <mappedClass>org.apache.wiki.workflow.WorkflowManager</mappedClass>
   </mapping>
 </classmappings>

@@ -1,3 +1,11 @@
+2012-02-12  Juan Pablo Santos (juanpablo AT apache DOT org)
+        
+        * 2.9.0-svn-5
+        
+        * small refactor on ClassUtil.getMappedObject: it uses varargs so we can take away 
+          a couple of methods. Also /etc/ini/classmappings.xml file is fully populated with  
+          all ClassUtil.getMappedObject calls 
+        
 2012-02-07  Juan Pablo Santos (juanpablo AT apache DOT org)
         
         * tests are now part of the main build. Also, they can be desactivated through 
