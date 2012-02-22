@@ -624,6 +624,7 @@ public class BasicAttachmentProvider
         }
         catch( FileNotFoundException e )
         {
+            log.error( "Can't get attachment properties for " + att, e );
             return null;
         }
         catch( IOException e )
