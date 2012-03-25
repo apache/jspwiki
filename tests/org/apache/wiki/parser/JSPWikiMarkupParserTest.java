@@ -80,12 +80,12 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     private void deleteCreatedPages()
     {
-        for( Iterator i = created.iterator(); i.hasNext(); )
+        for( Iterator< String > i = created.iterator(); i.hasNext(); )
         {
-            String name = (String) i.next();
+            String name = i.next();
 
             TestEngine.deleteTestPage(name);
-            testEngine.deleteAttachments(name);
+            TestEngine.deleteAttachments(name);
         }
 
         created.clear();

@@ -50,7 +50,7 @@ public class AttachmentDavProviderTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        engine.deleteAttachments( "TestPage" );
+        TestEngine.deleteAttachments( "TestPage" );
         TestEngine.deleteTestPage("TestPage");
     }
 
