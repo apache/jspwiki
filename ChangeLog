@@ -1,3 +1,9 @@
+2012-04-14  Harry Metske <metskem@apache.org>
+
+       * 2.9.0-svn-8
+        
+        * fixed JSPWIKI-725 Return to original page attachments list after deleting one attachment
+        
 2012-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)
         
         * 2.9.0-svn-7
