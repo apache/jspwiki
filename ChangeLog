@@ -1,3 +1,9 @@
+2012-04-18  Harry Metske <metskem@apache.org>
+
+       * 2.8.5-svn-13
+        
+        * fixed JSPWIKI-726 drop the 2 case-sensitive tests in WikiEngineTest.testSpacedNames1
+        
 2012-04-14  Harry Metske <metskem@apache.org>
         
         * 2.8.5-svn-12

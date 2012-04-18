@@ -862,8 +862,6 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText("This is a test", "puppaa");
         
         assertEquals( "normal", "puppaa", m_engine.getText("This is a test").trim() );
-        assertEquals( "lowercase", "puppaa", m_engine.getText("this is a test").trim() );
-        assertEquals( "randomcase", "puppaa", m_engine.getText("ThiS Is a teSt").trim() );
     }
 
 
