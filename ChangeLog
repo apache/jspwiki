@@ -1,6 +1,10 @@
+2012-04-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.0-incubating-0, first ASF release candidate build.
+
 2012-04-18  Harry Metske <metskem@apache.org>
 
-       * 2.9.0-svn-8
+       * 2.9.0-svn-9
         
         * fixed JSPWIKI-726 drop the 2 case-sensitive tests in WikiEngineTest.testSpacedNames1
         
