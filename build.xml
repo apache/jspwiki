@@ -567,21 +567,31 @@
     </zip>
   </target>
 
+  <target name="version" depends="jar">
+    <java outputproperty="jspwiki.version" classname="org.apache.wiki.Release">
+      <classpath>
+        <pathelement location="build/JSPWiki.jar"/>
+      </classpath>
+    </java>
+  </target>
+
   <!-- Builds the entire distribution set.
 
        We build both the WAR-file and the source zip, then
        copy in some useful files and zip the whole thing
        into the release directory.
     -->
-  <target name="dist" depends="installinit,srczip,war,corepageszip,documentzip"
+  <target name="dist" depends="installinit,srczip,war,corepageszip,documentzip,version"
           description="Builds the entire distribution archive.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
      <copy file="LICENSE" todir="${install.fulldir}" />
- 	 <copy file="${warfile}" todir="${install.fulldir}" />
+     <copy file="${warfile}" todir="${install.fulldir}" />
 
-     <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
+     <move file="${release.dir}/${ant.project.name}-src.zip" tofile="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip"/>
+
+     <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
      </zip>
 
