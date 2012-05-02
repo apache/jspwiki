@@ -1338,7 +1338,7 @@ var Sortable =
 			$A(table.rows[0].cells).each(function(th){
 				th=$(th);
 				if(th.getTag()=='th'){
-					th.addEvent('click', this.sort.bind(this,[th]) )
+					th.addEvent('click', this.sort.bind(this,th) )
 						.addClass('sort')
 						.title=this.DefaultTitle;
 				}
