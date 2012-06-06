@@ -63,8 +63,8 @@
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     Properties properties = wiki.getWikiProperties();
-    String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-    String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+    String channelDescription = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+    String channelLanguage    = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
 
     //
     //  Now, list items.
@@ -73,7 +73,7 @@
     
     if( mode.equals("blog") )
     {
-        org.apache.wiki.plugin.WeblogPlugin plug = new com.ecyrd.jspwiki.plugin.WeblogPlugin();
+        org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
         changed = plug.findBlogEntries(wiki.getPageManager(), 
                                        wikipage.getName(),
                                        new Date(0L),

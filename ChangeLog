@@ -1,3 +1,7 @@
+2012-06-06  Harry Metske <metskem@apache.org>
+
+       * 2.9.0-incubating-2, fixed jsp compile error in rss.jsp ( we forgot one occurrence of com.ecyrd.jspwiki)
+
 2012-05-02  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.0-incubating-1, fixing JSPWIKI-683 Sortable Tables.
