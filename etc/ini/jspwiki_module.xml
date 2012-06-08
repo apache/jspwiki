@@ -15,7 +15,7 @@
       <author>Janne Jalkanen</author>
       <path>editors/plain.jsp</path>
       <minVersion>2.4</minVersion>
-      <maxVersion>2.8</maxVersion>
+      <maxVersion>2.9</maxVersion>
       <adminBean>org.apache.wiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
 <!-- 
