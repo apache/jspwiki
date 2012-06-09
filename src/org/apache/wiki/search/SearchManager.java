@@ -62,7 +62,7 @@ public class SearchManager
      */
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
-    private SearchProvider    m_searchProvider = null;
+    private SearchProvider    m_searchProvider;
 
     /**
      *  The name of the JSON object that manages search.

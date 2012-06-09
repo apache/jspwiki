@@ -1,3 +1,7 @@
+2012-06-08  Harry Metske <metskem@apache.org>
+
+       * 2.9.0-incubating-3, fixed JSPWIKI-729 Update Lucene to current version  3.6.0
+
 2012-06-06  Harry Metske <metskem@apache.org>
 
        * 2.9.0-incubating-2, fixed jsp compile error in rss.jsp ( we forgot one occurrence of com.ecyrd.jspwiki)

@@ -20,7 +20,6 @@
  */
 package org.apache.wiki.search;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -29,13 +28,13 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 
 public class SearchManagerTest extends TestCase
 {
+    private static final long SLEEP_TIME = 10000L;
     TestEngine m_engine;
     SearchManager m_mgr;
     
@@ -49,11 +48,7 @@ public class SearchManagerTest extends TestCase
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
 
-        String tmpdir = props.getProperty("jspwiki.workDir");
-        
-        assertNotNull(tmpdir);
-        // Empty the lucene work directory
-        TestEngine.deleteAll( new File(tmpdir, "lucene") );
+        TestEngine.emptyWorkDir();
         
         m_engine = new TestEngine( props );
         m_mgr = m_engine.getSearchManager();
@@ -81,7 +76,7 @@ public class SearchManagerTest extends TestCase
 
         Thread.yield();
 
-        Thread.sleep( 10000L ); // Should cover for both index and initial delay
+        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
         
         Collection res = m_mgr.findPages( "mankind" );
      
@@ -102,7 +97,7 @@ public class SearchManagerTest extends TestCase
         
         Thread.yield();
 
-        Thread.sleep( 10000L ); // Should cover for both index and initial delay
+        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
     
         Collection res = m_mgr.findPages( "mankind" );
  
@@ -128,7 +123,7 @@ public class SearchManagerTest extends TestCase
      
         Thread.yield();
 
-        Thread.sleep( 10000L ); // Should cover for both index and initial delay
+        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
  
         Collection res = m_mgr.findPages( "mankind" );
 
@@ -151,7 +146,7 @@ public class SearchManagerTest extends TestCase
      
         Thread.yield();
 
-        Thread.sleep( 5000L ); // Should cover for both index and initial delay
+        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
  
         Collection res = m_mgr.findPages( "Test" );
 
@@ -170,7 +165,7 @@ public class SearchManagerTest extends TestCase
  
         Thread.yield();
 
-        Thread.sleep( 5000L ); // Should cover for both index and initial delay
+        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
 
         Collection res = m_mgr.findPages( "TestPage" );
 

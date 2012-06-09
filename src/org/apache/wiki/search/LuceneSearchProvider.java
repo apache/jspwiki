@@ -21,6 +21,7 @@
 package org.apache.wiki.search;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,23 +30,19 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -75,14 +72,10 @@ public class LuceneSearchProvider implements SearchProvider
     private static final String PROP_LUCENE_INDEXDELAY   = "jspwiki.lucene.indexdelay";
     private static final String PROP_LUCENE_INITIALDELAY = "jspwiki.lucene.initialdelay";
 
-    private String m_analyzerClass = "org.apache.lucene.analysis.standard.StandardAnalyzer";
+    private String m_analyzerClass = "org.apache.lucene.analysis.standard.ClassicAnalyzer";
 
     private static final String LUCENE_DIR             = "lucene";
 
-    /**
-     *  Number of page updates before we optimize the index.
-     */
-    public static final int LUCENE_OPTIMIZE_COUNT      = 10;
     /** These attachment file suffixes will be indexed. */
     public static final String[] SEARCHABLE_FILE_SUFFIXES = new String[] { ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm",
                                                                           ".xhtml", ".java", ".c", ".cpp", ".php", ".asm", ".sh",
@@ -94,8 +87,7 @@ public class LuceneSearchProvider implements SearchProvider
     protected static final String LUCENE_ATTACHMENTS   = "attachment";
     protected static final String LUCENE_PAGE_NAME     = "name";
 
-    private String           m_luceneDirectory = null;
-    private int              m_updateCount = 0;
+    private String           m_luceneDirectory;
     protected Vector<Object[]> m_updates = new Vector<Object[]>(); // Vector because multi-threaded.
 
     /** Maximum number of fragments from search matches. */
@@ -195,22 +187,13 @@ public class LuceneSearchProvider implements SearchProvider
 
                 log.info("Starting Lucene reindexing, this can take a couple minutes...");
 
-                //
-                //  Do lock recovery, in case JSPWiki was shut down forcibly
-                //
-                Directory luceneDir = FSDirectory.getDirectory(dir,false);
-
-                if( IndexReader.isLocked(luceneDir) )
-                {
-                    log.info("JSPWiki was shut down while Lucene was indexing - unlocking now.");
-                    IndexReader.unlock( luceneDir );
-                }
-
+                Directory luceneDir = new SimpleFSDirectory(dir, null);
+                
                 try
                 {
-                    writer = new IndexWriter( m_luceneDirectory,
-                                              getLuceneAnalyzer(),
-                                              true );
+                    IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer());
+                    writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
+                    writer = new IndexWriter( luceneDir, writerConfig);
                     Collection allPages = m_engine.getPageManager().getAllPages();
 
                     for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
@@ -236,8 +219,7 @@ public class LuceneSearchProvider implements SearchProvider
                         
                         try
                         {
-                            String text = getAttachmentContent( att.getName(),
-                                                                WikiProvider.LATEST_VERSION );
+                            String text = getAttachmentContent( att.getName(), WikiProvider.LATEST_VERSION );
                             luceneIndexPage( att, text, writer );
                         }
                         catch( IOException e )
@@ -246,7 +228,6 @@ public class LuceneSearchProvider implements SearchProvider
                         }
                     }
 
-                    writer.optimize();
                 }
                 finally
                 {
@@ -254,12 +235,13 @@ public class LuceneSearchProvider implements SearchProvider
                     {
                         if( writer != null ) writer.close();
                     }
-                    catch( IOException e ) {}
+                    catch( IOException e ) 
+                    {
+                    }
                 }
 
                 Date end = new Date();
-                log.info("Full Lucene index finished in " +
-                         (end.getTime() - start.getTime()) + " milliseconds.");
+                log.info( "Full Lucene index finished in " + (end.getTime() - start.getTime()) + " milliseconds." );
             }
             else
             {
@@ -278,10 +260,6 @@ public class LuceneSearchProvider implements SearchProvider
         {
             log.error("Problem reading pages while creating Lucene index (JSPWiki won't start.)", e);
             throw new IllegalArgumentException("unable to create Lucene index");
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.error("Illegal Analyzer specified:",e);
         }
         catch( Exception e )
         {
@@ -390,14 +368,11 @@ public class LuceneSearchProvider implements SearchProvider
             pageRemoved(page);
 
             // Now add back the new version.
-            writer = new IndexWriter(m_luceneDirectory, getLuceneAnalyzer(), false);
+            Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer());
+            writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND);
+            writer = new IndexWriter(luceneDir, writerConfig);
             luceneIndexPage(page, text, writer);
-            m_updateCount++;
-            if( m_updateCount >= LUCENE_OPTIMIZE_COUNT )
-            {
-                writer.optimize();
-                m_updateCount = 0;
-            }
         }
         catch ( IOException e )
         {
@@ -420,14 +395,21 @@ public class LuceneSearchProvider implements SearchProvider
     }
 
 
-    private Analyzer getLuceneAnalyzer()
-        throws ClassNotFoundException,
-               InstantiationException,
-               IllegalAccessException
+    private Analyzer getLuceneAnalyzer() throws ProviderException
     {
-        Class clazz = ClassUtil.findClass( "", m_analyzerClass );
-        Analyzer analyzer = (Analyzer)clazz.newInstance();
-        return analyzer;
+        try
+        {
+            Class clazz = ClassUtil.findClass( "", m_analyzerClass );
+            Constructor constructor = clazz.getConstructor( Version.LUCENE_36.getClass() );
+            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_36 );
+            return analyzer;
+        }
+        catch( Exception e )
+        {
+            String msg = "Could not get LuceneAnalyzer class " + m_analyzerClass + ", reason: ";
+            log.error( msg, e );
+            throw new ProviderException( msg + e );
+        }
     }
 
     /**
@@ -450,12 +432,12 @@ public class LuceneSearchProvider implements SearchProvider
         if( text == null ) return doc;
 
         // Raw name is the keyword we'll use to refer to this document for updates.
-        Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED);
+        Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED);
         doc.add( field );
 
         // Body text.  It is stored in the doc for search contexts.
         field = new Field(LUCENE_PAGE_CONTENTS, text,
-                          Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                          Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
@@ -465,7 +447,7 @@ public class LuceneSearchProvider implements SearchProvider
 
         field = new Field(LUCENE_PAGE_NAME,
                           TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle,
-                          Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                          Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
         doc.add( field );
 
         // Allow searching by authorname
@@ -473,7 +455,7 @@ public class LuceneSearchProvider implements SearchProvider
         if( page.getAuthor() != null )
         {
             field = new Field(LUCENE_AUTHOR, page.getAuthor(),
-                              Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                              Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
             doc.add( field );
         }
 
@@ -489,7 +471,7 @@ public class LuceneSearchProvider implements SearchProvider
                 attachmentNames += att.getName() + ";";
             }
             field = new Field(LUCENE_ATTACHMENTS, attachmentNames,
-                              Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                              Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
             doc.add( field );
 
         }
@@ -508,16 +490,30 @@ public class LuceneSearchProvider implements SearchProvider
      */
     public void pageRemoved( WikiPage page )
     {
+        IndexWriter writer = null;
         try
         {
-            // Must first remove existing version of page.
-            IndexReader reader = IndexReader.open(m_luceneDirectory);
-            reader.deleteDocuments(new Term(LUCENE_ID, page.getName()));
-            reader.close();
+            Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer());
+            writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND);
+            writer = new IndexWriter( luceneDir, writerConfig);
+            Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
+            writer.deleteDocuments( query );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
+            log.error("Unable to remove page '" + page.getName() + "' from Lucene index", e);
+        }
+        finally
+        {
+            try
+            {
+                if( writer != null ) writer.close();
+            }
+            catch( IOException e )
+            {
+                log.error( e );
+            }
         }
     }
 
@@ -582,14 +578,14 @@ public class LuceneSearchProvider implements SearchProvider
     public Collection findPages( String query, int flags )
         throws ProviderException
     {
-        Searcher  searcher = null;
+        IndexSearcher  searcher = null;
         ArrayList<SearchResult> list = null;
         Highlighter highlighter = null;
 
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
-            QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+            QueryParser qp = new MultiFieldQueryParser(Version.LUCENE_36, queryfields, getLuceneAnalyzer() );
 
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
@@ -603,7 +599,10 @@ public class LuceneSearchProvider implements SearchProvider
 
             try
             {
-                searcher = new IndexSearcher(m_luceneDirectory);
+                File dir = new File(m_luceneDirectory);
+                Directory luceneDir = new SimpleFSDirectory(dir, null);
+                IndexReader reader = IndexReader.open( luceneDir);
+                searcher = new IndexSearcher(reader);
             }
             catch( Exception ex )
             {
@@ -611,12 +610,13 @@ public class LuceneSearchProvider implements SearchProvider
                 return null;
             }
 
-            Hits hits = searcher.search(luceneQuery);
+            ScoreDoc[] hits = searcher.search(luceneQuery, MAX_FRAGMENTS).scoreDocs;
 
-            list = new ArrayList<SearchResult>(hits.length());
-            for ( int curr = 0; curr < hits.length(); curr++ )
+            list = new ArrayList<SearchResult>(hits.length);
+            for ( int curr = 0; curr < hits.length; curr++ )
             {
-                Document doc = hits.doc(curr);
+                int docID = hits[curr].doc;
+                Document doc = searcher.doc( docID );
                 String pageName = doc.get(LUCENE_ID);
                 WikiPage page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
 
@@ -628,7 +628,7 @@ public class LuceneSearchProvider implements SearchProvider
                         // When the search-results are cleaned up this can be enabled again.
                     }
 
-                    int score = (int)(hits.score(curr) * 100);
+                    int score = (int)(hits[curr].score * 100);
 
 
                     // Get highlighted search contexts
@@ -639,8 +639,7 @@ public class LuceneSearchProvider implements SearchProvider
                     {
                         TokenStream tokenStream = getLuceneAnalyzer()
                         .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
-                        fragments = highlighter.getBestFragments(tokenStream,
-                                                                 text, MAX_FRAGMENTS);
+                        fragments = highlighter.getBestFragments(tokenStream, text, MAX_FRAGMENTS);
 
                     }
 
@@ -658,23 +657,15 @@ public class LuceneSearchProvider implements SearchProvider
         {
             log.error("Failed during lucene search",e);
         }
-        catch( InstantiationException e )
-        {
-            log.error("Unable to get a Lucene analyzer",e);
-        }
-        catch( IllegalAccessException e )
-        {
-            log.error("Unable to get a Lucene analyzer",e);
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.error("Specified Lucene analyzer does not exist",e);
-        }
         catch( ParseException e )
         {
-            log.info("Broken query; cannot parse",e);
+            log.info("Broken query; cannot parse query ",e);
 
             throw new ProviderException("You have entered a query Lucene cannot process: "+e.getMessage());
+        }
+        catch( InvalidTokenOffsetsException e )
+        {
+            log.error("Tokens are incompatible with provided text ",e);
         }
         finally
         {
@@ -685,7 +676,9 @@ public class LuceneSearchProvider implements SearchProvider
                     searcher.close();
                 }
                 catch( IOException e )
-                {}
+                {
+                    log.error( e );
+                }
             }
         }
 
