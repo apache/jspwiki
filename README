@@ -40,7 +40,7 @@ Okay, so you wanna Wiki?  You'll need the following things:
 REQUIRED:
 
 * A JSP engine that supports Servlet API 2.3.  I recommend Tomcat from
-  http://jakarta.apache.org/tomcat for a really easy installation.
+  http://tomcat.apache.org for a really easy installation.
   Tomcat 5.x or later is supported.
 
 * Some previous administration experience...  If you've ever installed
