@@ -104,6 +104,9 @@
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
+	
+  <!-- dir holding optional libs -->
+  <property name="libs.opt" value="${tests.build}/libs-opt" />
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
@@ -158,6 +161,7 @@
      </fileset>
      <fileset dir="tests/lib">
         <include name="*.jar" />
+        <exclude name="maven-ant-tasks-2.1.3.jar" />
      </fileset>
      <pathelement path="${tests.src}/etc" />
   </path>
@@ -1549,6 +1553,108 @@ To automate the JAR signing processs, you can add the property
        out="${tests.reports}/API-changes.html"
        style="${dependencyfinder.dir}/etc/DiffToHTML.xsl">
      </xslt>
+  </target>
+	
+  <target name="optional-dependencies-download" xmlns:artifact="urn:maven-artifact-ant">
+  	<mkdir dir="${libs.opt}" />
+    <!-- bootstrap maven ant asks -->
+    <path id="path.maven.ant.tasks">
+      <pathelement location="tests/lib/maven-ant-tasks-2.1.3.jar" />
+    </path>
+  	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" 
+  	         uri="urn:maven-artifact-ant" 
+  	         classpathref="path.maven.ant.tasks" /> 
+  	
+    <!-- download optional dependencies -->
+  	<artifact:localRepository id="local.repository" path="${libs.opt}"/>
+  		
+  	<artifact:dependencies pathId="cobertura.classpath">
+  	  <dependency groupId="net.sourceforge.cobertura" artifactId="cobertura" version="1.9.4.1" scope="compile" />
+  	  <remoteRepository id="central" url="http://repo.maven.apache.org/maven2/" />
+  	  <localRepository refid="local.repository"/>
+  	</artifact:dependencies>
+  	
+  	<artifact:dependencies pathId="sonar.classpath">
+      <dependency groupId="org.codehaus.sonar-plugins" artifactId="sonar-ant-task" version="1.4" scope="compile" />
+      <remoteRepository id="central" url="http://repo.maven.apache.org/maven2/" />
+  	  <localRepository refid="local.repository"/>
+    </artifact:dependencies>
+  </target>  
+
+  <target name="coverage-tests" depends="optional-dependencies-download,compile,tests">
+  	<path id="path.optional">
+      <fileset dir="${libs.opt}">
+        <include name="**/*.jar" />
+      </fileset>
+    </path>
+    <!-- bootstrap cobertura ant-tasks -->
+  	<taskdef classpathref="path.optional" resource="tasks.properties" />
+  	<cobertura-instrument todir="${tests.build}/instrumented-classes" 
+    	                  datafile="${tests.build}/cobertura.ser">
+      <fileset dir="${code.build}">
+        <include name="**/*.class"/>
+      </fileset>
+    </cobertura-instrument>
+  	<junit haltonfailure="no" fork="yes">
+      <classpath>
+        <path location="${tests.build}/instrumented-classes" />
+        <path refid="path.tests" />
+        <path refid="path.optional" />
+      </classpath>
+      <formatter type="xml" />
+      <sysproperty key="jspwiki.tests.auth" value="true" />
+      <batchtest todir="${tests.reports}">
+        <fileset dir="${tests.src}">
+          <include name="**/*Test.java" />
+          <exclude name="**/AllTest*java" />
+          <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
+          <exclude name="org/apache/wiki/web/*.*" />
+          <exclude name="org/apache/wiki/TranslatorReaderTest*" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  
+  <target name="coverage-reports" depends="coverage-tests,version">
+  	<cobertura-report srcdir="${code.src}" destdir="${tests.build}/cobertura" />
+  </target>
+  
+  <target name="sonar" depends="coverage-tests">
+  	<path id="path.optional">
+  	  <fileset dir="${libs.opt}">
+  	    <include name="**/*.jar" />
+  	  </fileset>
+  	</path>
+  	<!-- bootstrap sonar ant tasks -->
+    <typedef resource="org/sonar/ant/antlib.xml" 
+             uri="antlib:org.sonar.ant" 
+             classpathref="path.optional" />
+  	
+    <!-- list of mandatories Sonar properties -->
+    <property name="sonar.sources" value="${code.src}" />
+ 
+    <!-- list of optional Sonar properties -->
+    <property name="sonar.binaries" value="${tests.build}" />
+    <property name="sonar.tests" value="${tests.src}" />
+    
+    <!-- list of advanced properties -->
+    <property name="sonar.surefire.reportsPath" value="./tests/reports" />
+  	<property name="sonar.cobertura.reportPath" value="${tests.build}/cobertura/coverage.xml" />
+    <property name="sonar.dynamicAnalysis" value="reuseReports" />
+    
+    <!-- other interesting properties that can be overriden -->
+    <!-- <property name="sonar.jdbc.driverClassName" value="org.apache.derby.jdbc.ClientDriver" /> -->
+    <!-- <property name="sonar.jdbc.username" value="sonar" /> -->
+    <!-- <property name="sonar.jdbc.password" value="sonar" /> -->
+    <!-- <property name="sonar.jdbc.url" value="jdbc:derby://localhost:1527/sonar" /> -->
+    <!-- <property name="sonar.host.url" value="http://localhost:9000" /> -->
+  	
+  	<!-- Sonar needs an xml type cobertura report -->
+  	<cobertura-report format="xml" 
+  	                  srcdir="${code.src}" 
+  	                  destdir="${tests.build}/cobertura" />
+    
+    <sonar:sonar key="org.apache.jspwiki:jspwiki" version="${jspwiki.version}" xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
 
 </project>

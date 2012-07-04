@@ -237,6 +237,7 @@ xmlrpc.jar									LICENSE
 
 TEST LIBRARY								LICENSE FILE
 ===================================================================================
+maven-ant-tasks-2.1.3                       LICENSE
 commons-el-1.0.jar							LICENSE
 custom_rhino.jar							doc/LICENSE.mpl
 hsqldb.jar									doc/LICENSE.hsqldb
