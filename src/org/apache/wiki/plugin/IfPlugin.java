@@ -210,7 +210,10 @@ public class IfPlugin implements WikiPlugin
             boolean invert = false;
             if( groupList[i].startsWith("!") )
             {
-                gname = groupList[i].substring(1);
+                if( groupList[i].length() > 1 ) 
+                {
+                    gname = groupList[i].substring( 1 );
+                }
                 invert = true;
             }
 
@@ -225,19 +228,20 @@ public class IfPlugin implements WikiPlugin
     {
         if( user == null || context.getCurrentUser() == null ) return false;
 
-        String userToCheck = user;
         String[] list = StringUtils.split(user,'|');
         boolean include = false;
 
         for( int i = 0; i < list.length; i++ )
         {
+            String userToCheck = list[i];
             boolean invert = false;
             if( list[i].startsWith("!") )
             {
                 invert = true;
                 // strip !
-                if(  user.length() > 1 ) {
-                    userToCheck = user.substring( 1 );
+                if(  user.length() > 1 ) 
+                {
+                    userToCheck = list[i].substring( 1 );
                 }
             }
 
@@ -251,18 +255,25 @@ public class IfPlugin implements WikiPlugin
     {
         if( ipaddr == null || context.getHttpRequest() == null ) return false;
 
+        
         String[] list = StringUtils.split(ipaddr,'|');
         boolean include = false;
 
         for( int i = 0; i < list.length; i++ )
         {
+            String ipaddrToCheck = list[i];
             boolean invert = false;
             if( list[i].startsWith("!") )
             {
                 invert = true;
+                // strip !
+                if(  list[i].length() > 1 ) 
+                {
+                    ipaddrToCheck = list[i].substring( 1 );
+                }
             }
 
-            include |= ipaddr.equals( context.getHttpRequest().getRemoteAddr() ) ^ invert;
+            include |= ipaddrToCheck.equals( context.getHttpRequest().getRemoteAddr() ) ^ invert;
         }
         return include;
     }

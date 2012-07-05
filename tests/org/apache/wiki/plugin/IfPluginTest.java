@@ -97,6 +97,46 @@ public class IfPluginTest extends TestCase
         assertEquals( expected, res );
     }
     
+    /**
+     * Checks that IP address is granted.
+     * 
+     * @throws WikiException test failing.
+     */
+    public void testIfPluginIPAllowed() throws WikiException 
+    {
+        String src = "[{IfPlugin ip='127.0.0.1'\n" +
+                     "\n" +
+                     "Content visible for 127.0.0.1}]";
+        String expected = "<p>Content visible for 127.0.0.1</p>\n";
+        
+        testEngine.saveText( "Test", src );
+        WikiPage page = testEngine.getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        WikiContext context = getJanneBasedWikiContextFor( page );
+        
+        String res = testEngine.getHTML( context, page );
+        assertEquals( expected, res );
+    }
+    
+    /**
+     * Checks that IP address is granted.
+     * 
+     * @throws WikiException test failing.
+     */
+    public void testIfPluginIPNotAllowed() throws WikiException 
+    {
+        String src = "[{IfPlugin ip='!127.0.0.1'\n" +
+                     "\n" +
+                     "Content NOT visible for 127.0.0.1}]";
+        String expected = "\n";
+        
+        testEngine.saveText( "Test", src );
+        WikiPage page = testEngine.getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        WikiContext context = getJanneBasedWikiContextFor( page );
+        
+        String res = testEngine.getHTML( context, page );
+        assertEquals( expected, res );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( IfPluginTest.class );
