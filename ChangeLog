@@ -1,4 +1,8 @@
-2012-04-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+2012-06-05  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.0-incubating-5, fixed JSPWIKI-737 IfPlugin negation doesn't work
+
+2012-06-04  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.0-incubating-4, added support for cobertura reports and Sonar integration.
 

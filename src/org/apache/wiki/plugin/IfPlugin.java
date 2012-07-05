@@ -225,6 +225,7 @@ public class IfPlugin implements WikiPlugin
     {
         if( user == null || context.getCurrentUser() == null ) return false;
 
+        String userToCheck = user;
         String[] list = StringUtils.split(user,'|');
         boolean include = false;
 
@@ -234,9 +235,13 @@ public class IfPlugin implements WikiPlugin
             if( list[i].startsWith("!") )
             {
                 invert = true;
+                // strip !
+                if(  user.length() > 1 ) {
+                    userToCheck = user.substring( 1 );
+                }
             }
 
-            include |= user.equals( context.getCurrentUser().getName() ) ^ invert;
+            include |= userToCheck.equals( context.getCurrentUser().getName() ) ^ invert;
         }
         return include;
     }
