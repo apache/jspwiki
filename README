@@ -73,7 +73,7 @@ check out the "Install" section below.
 Since JSPWiki 2.1.153, JSPWiki comes with a really simple installation
 engine.  Just do the following:
 
-1) Install Tomcat from http://jakarta.apache.org/ (or any other servlet
+1) Install Tomcat from http://tomcat.apache.org/ (or any other servlet
    container)
 
 2) After you've installed the engine and checked that it works, you just
@@ -100,7 +100,7 @@ Advanced Installation
 ---------------------
 
 First, install a JSP engine and a web server.  You can download Tomcat
-from http://jakarta.apache.org/tomcat/.  This software was built
+from http://tomcat.apache.org.  This software was built
 originally on top of Tomcat 5.5, but probably most other versions
 work, too, and most other JSP containers.
 

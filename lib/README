@@ -70,24 +70,24 @@ activation.jar
 
 commons-codec-1.3.jar
       Jakarta Commons Codec, version 1.3
-      http://jakarta.apache.org/commons/codec/
+      http://commons.apache.org/codec/
 
 commons-httpclient-3.0.1.jar
       Jakarta Commons HttpClient library, version 3.0.1
       http://jakarta.apache.org/commons/httpclient/
 
 commons-lang-2.3.jar
-      Jakarta commons lang, version 2.3
-			http://jakarta.apache.org/commons/lang/	
+      Apache commons lang, version 2.3
+			http://commons.apache.org/lang/
 
 commons-logging-api.jar
-      Jakarta commons logging, version 1.0.4
-			http://jakarta.apache.org/commons/logging/
+      Apache commons logging, version 1.0.4
+			http://commons.apache.org/logging/
 
 jakarta-taglibs-standard-1.1.2.jar
 jakarta-taglibs-jstl-1.1.2.jar
-      Apache Jakarta Standard/JSTL Taglibs, version 1.1.2
-      http://jakarta.apache.org/taglibs/
+      Apache TomcatStandard/JSTL Taglibs, version 1.1.2
+      http://tomcat.apache.org/taglibs
 
 jaxen.jar
       Java XPath Engine, version 1.1b6.
