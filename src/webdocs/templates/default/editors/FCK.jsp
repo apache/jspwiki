@@ -26,8 +26,9 @@
     wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
     
     String usertext = EditorManager.getEditedText(pageContext);
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,"scripts/fckeditor/fckeditor.js" );
- %>   
+    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, 
+   		context.getURL( WikiContext.NONE, "scripts/fckeditor/fckeditor.js" ) ); %>   
+
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%

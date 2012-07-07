@@ -1,3 +1,13 @@
+2012-07-07  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.9.0-incubating-6
+       
+       * Fixing JSPWIKI-733 Box rounded corners missing in Firefox 13 for PlainVanilla skin elements etc.
+         Add unprefixed border-radius and box-shadow to jspwiki.css. 
+         (ref. https://bugzilla.mozilla.org/show_bug.cgi?id=693510   Gecko 2.0 dropped support for -moz-prefix.)
+       
+       * Fixing JSPWIKI-734 ShortURLConstructor causes Syntax Error when loading jspwiki-edit.js
+
 2012-06-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.0-incubating-5, fixed JSPWIKI-737 IfPlugin negation doesn't work

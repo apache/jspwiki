@@ -782,7 +782,9 @@ label[for="edittoc"] {
 	background-color:rgba(0,0,0,0.7);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
+	border-radius:10px;
 	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+	box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 	z-index:10;
 	font-size:85%;
 	overflow:hidden;
@@ -809,6 +811,7 @@ label[for="edittoc"] {
 	background-color:rgba(0,0,0,0.5);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
+	border-radius:10px;
 }
 /* ie6 hack */
 * html #findSuggestionMenu .hover {
@@ -1586,7 +1589,9 @@ table.calendar tr.weekdays {
 	background-color:rgba(0,0,0,0.7);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
+	border-radius:10px;
 	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+	-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 }
 .tip-title {
 	font-weight:bold;
@@ -1817,7 +1822,9 @@ a.slimbox:hover {
 	background-color:rgba(0,0,0,0.7);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
+	border-radius:10px;
 	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+	box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 }
 /* ie6 hack */
 * html .categoryPopup {
@@ -1867,6 +1874,7 @@ a.slimbox:hover {
 	background-color:rgba(0,0,0,0.5);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
+	border-radius:10px;
 }
 /* ie6 hack */
 * html .categoryPopup .hover {
