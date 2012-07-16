@@ -1,3 +1,8 @@
+2012-07-16  Florian Holeczek (florianh AT apache DOT org)
+
+       * no version bump
+       * synchronized windows to unix build files
+
 2012-07-07  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.0-incubating-6
