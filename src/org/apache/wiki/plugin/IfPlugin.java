@@ -32,8 +32,12 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiProvider;
 
 /**
- *  The IfPlugin allows parts of a WikiPage to be executed conditionally.
+ *  The IfPlugin allows parts of a WikiPage to be executed conditionally, and is intended as a flexible way
+ *  of customizing a page depending on certain conditions. Do not use it as a security mechanism to conditionally
+ *  hide content from users (use page ACLs for that).
+ *  
  *  You can also use shorthand "If" to run it.
+ *  
  *  Parameters:
  *  <ul>
  *    <li><b>group</b> - A "|" -separated list of group names.
