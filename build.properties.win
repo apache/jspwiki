@@ -42,7 +42,7 @@ jks.password = jspwiki
 #  JDBC testing properties
 #
 jdbc.driver.id=hsql
-jdbc.driver.jar=tests/lib/hsqldb.jar
+jdbc.driver.jar=tests/lib/hsqldb-1.8.0.jar
 jdbc.driver.class=org.hsqldb.jdbcDriver
 jdbc.driver.url=jdbc:hsqldb:hsql://localhost/jspwiki
 jdbc.admin.id=SA

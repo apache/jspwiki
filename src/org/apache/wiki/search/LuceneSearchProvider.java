@@ -41,6 +41,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.wiki.*;
@@ -191,9 +192,7 @@ public class LuceneSearchProvider implements SearchProvider
                 
                 try
                 {
-                    IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer());
-                    writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
-                    writer = new IndexWriter( luceneDir, writerConfig);
+                    writer = getIndexWriter( luceneDir );
                     Collection allPages = m_engine.getPageManager().getAllPages();
 
                     for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
@@ -231,13 +230,7 @@ public class LuceneSearchProvider implements SearchProvider
                 }
                 finally
                 {
-                    try
-                    {
-                        if( writer != null ) writer.close();
-                    }
-                    catch( IOException e ) 
-                    {
-                    }
+                    close( writer );
                 }
 
                 Date end = new Date();
@@ -363,32 +356,32 @@ public class LuceneSearchProvider implements SearchProvider
 
         log.debug("Updating Lucene index for page '" + page.getName() + "'...");
 
+        Directory luceneDir = null;
         try
         {
-            pageRemoved(page);
+            pageRemoved( page );
 
             // Now add back the new version.
-            Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
-            IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer());
-            writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND);
-            writer = new IndexWriter(luceneDir, writerConfig);
-            luceneIndexPage(page, text, writer);
+            luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            writer = getIndexWriter( luceneDir );
+            
+            luceneIndexPage( page, text, writer );
         }
         catch ( IOException e )
         {
             log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
+            System.out.println( "ioe: " + e.getMessage() );
+            // reindexPage( page );
         }
         catch( Exception e )
         {
             log.error("Unexpected Lucene exception - please check configuration!",e);
+            System.out.println( "e: " + e.getMessage() );
+            // reindexPage( page );
         }
         finally
         {
-            try
-            {
-                if( writer != null ) writer.close();
-            }
-            catch( IOException e ) {}
+            close( writer );
         }
 
         log.debug("Done updating Lucene index for page '" + page.getName() + "'.");
@@ -494,26 +487,45 @@ public class LuceneSearchProvider implements SearchProvider
         try
         {
             Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
-            IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer());
-            writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND);
-            writer = new IndexWriter( luceneDir, writerConfig);
+            writer = getIndexWriter( luceneDir );
             Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
         }
         catch ( Exception e )
         {
             log.error("Unable to remove page '" + page.getName() + "' from Lucene index", e);
+            System.out.println( m_luceneDirectory + "pre: " + e.getMessage() );
         }
         finally
         {
-            try
+            close( writer );
+        }
+    }
+    
+    IndexWriter getIndexWriter( Directory luceneDir ) throws CorruptIndexException, 
+            LockObtainFailedException, IOException, ProviderException 
+    {
+        IndexWriter writer = null;
+        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer() );
+        writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
+        writer = new IndexWriter( luceneDir, writerConfig );
+        
+        // writer.setInfoStream( System.out );
+        return writer;
+    }
+    
+    void close( IndexWriter writer ) 
+    {
+        try
+        {
+            if( writer != null ) 
             {
-                if( writer != null ) writer.close();
+                writer.close( true );
             }
-            catch( IOException e )
-            {
-                log.error( e );
-            }
+        }
+        catch( IOException e )
+        {
+            log.error( e );
         }
     }
 

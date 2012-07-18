@@ -1,3 +1,11 @@
+2012-07-18  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * 2.9.0-incubating-7
+       
+       * JSPWIKI-738: Dependencies should not be distributed with source archive
+       
+       * Small refactor in LuceneSearchProvider
+
 2012-07-16  Florian Holeczek (florianh AT apache DOT org)
 
        * no version bump
