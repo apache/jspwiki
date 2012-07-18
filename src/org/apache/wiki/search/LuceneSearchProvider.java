@@ -370,13 +370,11 @@ public class LuceneSearchProvider implements SearchProvider
         catch ( IOException e )
         {
             log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
-            System.out.println( "ioe: " + e.getMessage() );
             // reindexPage( page );
         }
         catch( Exception e )
         {
             log.error("Unexpected Lucene exception - please check configuration!",e);
-            System.out.println( "e: " + e.getMessage() );
             // reindexPage( page );
         }
         finally
@@ -494,7 +492,6 @@ public class LuceneSearchProvider implements SearchProvider
         catch ( Exception e )
         {
             log.error("Unable to remove page '" + page.getName() + "' from Lucene index", e);
-            System.out.println( m_luceneDirectory + "pre: " + e.getMessage() );
         }
         finally
         {
