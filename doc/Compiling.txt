@@ -11,9 +11,11 @@ Requirements
 You'll need the following programs:
 
 - J2SDK 5.0 (I use the one from Sun Microsystems; I haven't tested any others.)
-- Jakarta Ant 1.5 (available from http://ant.apache.org)
+- Apache Ant 1.6 (available from http://ant.apache.org)
 - Servlet API 2.4 (servlet.jar, available from Sun Microsystems.)
-- JUnit 3.7 (from www.junit.org, required for running tests)
+- JUnit 3.8.2 (from www.junit.org, required for running tests)
+
+You'll also need Internet access in order to download JSPWiki's dependencies.
 
 
 Building
@@ -31,7 +33,7 @@ ant javadoc: builds the javadocs into doc/javadoc
 ant compile: just the basic compile, thankyouverymuch
 ant tests  : runs JUnit tests.
 ant jar    : builds the JSPWiki.jar into build/
-ant war  : builds the JSPWiki.war that can be deployed to your webcontainer
+ant war    : builds the JSPWiki.war that can be deployed to your webcontainer
 
 You can customize your compilation by changing the contents of the
 build.properties file, or better yet, make your own compilation
@@ -52,6 +54,7 @@ To get JSPWiki build from within Eclipse, here are a few guidelines:
 - then the sources should be compiled correctly
 - to run a build, switch to the Ant View and add the build.xml buildfile
 - then you can choose the Ant target by double clicking on it
+- the Ant "init" target must be called at least once in order to download the required dependencies
     
 
 Directory structure

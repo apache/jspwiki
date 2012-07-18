@@ -2,28 +2,28 @@
 <classpath>
 	<classpathentry excluding="**/package.html|images/|webdocs/|wikipages/" kind="src" output="build" path="src"/>
 	<classpathentry excluding="etc/|build/|reports/|lib/" kind="src" output="tests/build" path="tests"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
-	<classpathentry kind="lib" path="lib/ecs.jar"/>
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/ecs-1.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
 	<classpathentry kind="lib" path="lib/jsonrpc-1.0.jar" sourcepath="/Users/jalkanen/Java/json-rpc-java-1.0/src"/>
-	<classpathentry kind="lib" path="lib/xmlrpc.jar" sourcepath="/Users/jalkanen/Java/xmlrpc-2.0.1/xmlrpc-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
+	<classpathentry kind="lib" path="lib/xmlrpc-2.0.1.jar" sourcepath="/Users/jalkanen/Java/xmlrpc-2.0.1/xmlrpc-2.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jrcs-diff-0.2.jar"/>
 	<classpathentry kind="lib" path="tests/lib/xercesImpl-2.6.2.jar"/>
-	<classpathentry kind="lib" path="lib/sandler.jar"/>
-	<classpathentry kind="lib" path="lib/oscache.jar" sourcepath="/Users/jalkanen/Java/oscache-2.2/src/java"/>
-	<classpathentry kind="lib" path="lib/oro.jar"/>
-	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry kind="lib" path="lib/sandler-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/oscache-2.3.jar" sourcepath="/Users/jalkanen/Java/oscache-2.3/src/java"/>
+	<classpathentry kind="lib" path="lib/oro-2.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml-0.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-3.6.0.jar"/>
-	<classpathentry kind="lib" path="tests/lib/junit.jar"/>
+	<classpathentry kind="lib" path="tests/lib/junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
-	<classpathentry kind="lib" path="lib/jaxen.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-6.jar"/>
 	<classpathentry kind="lib" path="tests/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-highlighter-3.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/mail.jar"/>
-	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="etc/i18n"/>
 	<classpathentry kind="lib" path="lib/freshcookies-security-0.60.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
@@ -32,13 +32,13 @@
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="tests/lib/commons-el-1.0.jar"/>
-	<classpathentry kind="lib" path="tests/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="tests/lib/hsqldb-1.8.0.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jasper-compiler-5.5.25.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jasper-runtime-5.5.25.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-jmx-5.1.14.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-plus-5.1.14.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-servlet-5.1.14.jar"/>
-	<classpathentry kind="lib" path="tests/lib/stripes-1.5.jar"/>
+	<classpathentry kind="lib" path="tests/lib/stripes-1.5.7.jar"/>
 	<classpathentry kind="lib" path="tests/lib/selenium-server-1.0-beta1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="classes"/>
