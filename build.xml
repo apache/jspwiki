@@ -146,7 +146,7 @@
        add all the jar files in the "lib" -directory. -->
   <path id="path.base">
      <pathelement path="${code.build}" />
-     <fileset dir="lib">
+     <fileset dir="${libs.main}">
         <include name="*.jar" />
      </fileset>
   </path>
@@ -158,10 +158,10 @@
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
 	<pathelement location="${java.home}/../lib/tools.jar" />
-     <fileset dir="lib">
+     <fileset dir="${libs.main}">
         <include name="*.jar" />
      </fileset>
-     <fileset dir="tests/lib">
+     <fileset dir="${libs.tests}">
         <include name="*.jar" />
         <exclude name="maven-ant-tasks-2.1.3.jar" />
      </fileset>
@@ -465,9 +465,9 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+       <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
        <lib file="${jarfile}" />
-       <lib file="tests/lib/stripes*.jar" />
+       <lib file="${libs.tests}/stripes*.jar" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc">
          <include name="dtd/**" />
@@ -983,7 +983,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the libraries -->
       <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
-        <fileset dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+        <fileset dir="lib" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar" />
         <fileset file="${jarfile}"/>
         <fileset file="${jdbc.driver.jar}"/>
       </copy>
