@@ -1,3 +1,9 @@
+2012-07-20  Florian Holeczek (florianh AT apache DOT org)
+
+       * 2.9.0-incubating-8
+       
+       * Several fixes and improvements for quite some localization resources. Special thanks go to Christophe Dupriez!
+
 2012-07-18  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * 2.9.0-incubating-7
