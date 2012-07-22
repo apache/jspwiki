@@ -11,15 +11,15 @@ UPDATES SINCE 2.8.4
 The full list is available in the ChangeLog file.  Highlights include
 
 * The java packages have been renamed from com.ecyrd.jspwiki to org.apache.wiki.
-	
 
 * Support external properties in WikiEngine (idea from John McKinney)
           You can now override individual properties in jspwiki.properties using standard
           Java System properties.
 
-* Extended the list of lucene searchable file suffixes, we now do 
+* Extended the list of file suffixes indexable for the integrated Lucene search engine. We now do 
            ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm", ".xhtml", ".java", ".c", ".cpp",
             ".php", ".asm", ".sh",  ".properties", ".kml", ".gpx", ".loc"
+
 
 UPDATES SINCE 2.8.3
 ===================

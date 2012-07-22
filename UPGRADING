@@ -1,30 +1,43 @@
-Upgrading JSPWiki from 2.8.0 to 2.8.1
+Upgrading JSPWiki from 2.8.x to 2.9.0
 -------------------------------------
 
-1. Backup your old configuration files:
+1. Shut down your web container
+
+2. Backup your old configuration files:
    * jspwiki.properties
    * filters.xml
    * web.xml
    
-2. Backup any modifications or custom templates you may have done
+3. Backup any modifications or customizations you may have done
 
-3. Unzip JSPWiki.war to a new directory
+4. Unzip JSPWiki.war to a new directory
 
-4. Copy your old modified files on top of the newly installed copy
-
-5. Replace your old installed copy with the new version.
-
-6. Empty any temporary directories your web container might have
-   (e.g. $CATALINA_HOME/work)
+5. JSPWiki's Java package names have changed from com.ecyrd.jspwiki to
+   org.apache.wiki.
    
-7. Restart container.
+   In case your backed up files do contain the old package names or are, in
+   case of binaries, built upon previous versions of JSPWiki, you will most
+   probably have to adapt these files to the new package names.
+   
+   NOTE: The mandatory files jspwiki.properties and web.xml are affected, you
+         will have to patch them!
+
+   Finished patching, copy the patched files and any further of your old
+   modified files on top of the newly installed copy of JSPWiki.
+   
+6. Replace your old installed copy with the new version.
+
+7. Empty any temporary directories your web container might have
+   (e.g. $CATALINA_HOME/work and $CATALINA_HOME/temp)
+   
+8. Restart your web container
 
 There is no need to empty the JSPWiki work directory or modify
-any preferences or settings.
+any preferences or settings (apart from the package name change in 5.).
 
 If you've deployed JSPWiki already as a WAR file, then you can
 just reinstall JSPWiki.war using the new version.  Just make
-sure you have backed up your configuration files first!
+sure you have backed up and adapted your configuration files first!
 
 
 Upgrading JSPWiki from older versions to any version of 2.8

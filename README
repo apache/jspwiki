@@ -39,9 +39,9 @@ Okay, so you wanna Wiki?  You'll need the following things:
 
 REQUIRED:
 
-* A JSP engine that supports Servlet API 2.3.  I recommend Tomcat from
-  http://tomcat.apache.org for a really easy installation.
-  Tomcat 5.x or later is supported.
+* A JSP engine that supports Servlet API 2.4.  We recommend Tomcat from
+  http://tomcat.apache.org/ for a really easy installation.
+  Tomcat 5.5.x or later is supported.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
@@ -76,11 +76,11 @@ engine.  Just do the following:
 1) Install Tomcat from http://tomcat.apache.org/ (or any other servlet
    container)
 
-2) After you've installed the engine and checked that it works, you just
-  make a subdirectory under $TOMCAT_HOME/webapps/.
-  For example, if you want your application to be called 'wiki', just create a directory
-  called 'wiki', then extract all files from the war file into that
-  directory, preserving the directory structure.
+2) After you've installed the engine and checked that it works, you just make a
+   subdirectory under $TOMCAT_HOME/webapps/.
+   For example, if you want your application to be called 'wiki', just create a
+   directory called 'wiki', then extract all files from the war file into that
+   directory, preserving the directory structure.
 
 3) Point your browser at http://<myhost>/JSPWiki/Install.jsp
    (Or, if you renamed it in the previous phase, use something like

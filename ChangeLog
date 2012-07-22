@@ -1,3 +1,11 @@
+2012-07-22  Florian Holeczek (florianh AT apache DOT org)
+
+       * 2.9.0-incubating-9
+       
+       * JSPWIKI-731: replaced some occurences of www.jspwiki.org by jspwiki.apache.org (XML namespaces)
+       
+       * some updates to release documentation
+
 2012-07-20  Florian Holeczek (florianh AT apache DOT org)
 
        * 2.9.0-incubating-8

@@ -88,7 +88,7 @@ public final class PropertyReader
 
     /**
      *  Loads the webapp properties based on servlet context information, 
-     *  or (if absent) based on teh Java System Property PARAM_PROPERTYFILE .
+     *  or (if absent) based on the Java System Property PARAM_PROPERTYFILE .
      *  Returns a Properties object containing the settings, or null if unable
      *  to load it. (The default file is WEB-INF/jspwiki.properties, and can
      *  be overridden by setting PARAM_PROPERTYFILE in the server or webapp
