@@ -97,7 +97,18 @@ public class HsqlDbUtils
             lock.delete();
         }
         
-        Thread.sleep( 5000L );
+        for( long l = 0; l < 50; l++ ) 
+        {
+            if( lock.exists() ) 
+            {
+                Thread.sleep( 200L );
+            }
+            else 
+            {
+                break;
+            }
+        }
+        
         
         if( lock.exists() ) 
         {
