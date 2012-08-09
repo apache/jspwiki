@@ -41,12 +41,14 @@ import org.apache.wiki.auth.WikiSecurityException;
  */
 public class JDBCGroupDatabaseTest extends TestCase
 {
+    private HsqlDbUtils       m_hu   = new HsqlDbUtils();
+    
     private Connection        m_conn = null;
 
-    private JDBCGroupDatabase m_db  = null;
+    private JDBCGroupDatabase m_db   = null;
 
     private String            m_wiki;
-
+    
     /**
      * @see junit.framework.TestCase#setUp()
      */
@@ -54,6 +56,7 @@ public class JDBCGroupDatabaseTest extends TestCase
     {
         super.setUp();
 
+        m_hu.setUp();
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         WikiEngine engine = new TestEngine( props );
@@ -93,6 +96,7 @@ public class JDBCGroupDatabaseTest extends TestCase
         {
             m_conn.close();
         }
+        m_hu.tearDown();
     }
 
     public void testDelete() throws WikiException

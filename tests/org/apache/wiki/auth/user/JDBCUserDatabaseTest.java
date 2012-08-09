@@ -36,6 +36,7 @@ import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 
+import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.TestJDBCDataSource;
 import org.apache.wiki.TestJNDIContext;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -46,6 +47,8 @@ import org.apache.wiki.util.CryptoUtil;
  */
 public class JDBCUserDatabaseTest extends TestCase
 {
+    private HsqlDbUtils      m_hu   = new HsqlDbUtils();
+    
     private JDBCUserDatabase m_db   = null;
     
     private static final String TEST_ATTRIBUTES = "rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4";
@@ -82,6 +85,7 @@ public class JDBCUserDatabaseTest extends TestCase
     {
         super.setUp();
 
+        m_hu.setUp();
         // Set up the mock JNDI initial context
         TestJNDIContext.initialize();
         Context initCtx = new InitialContext();
@@ -121,6 +125,13 @@ public class JDBCUserDatabaseTest extends TestCase
 
             throw (SQLException) e.fillInStackTrace();
         }
+    }
+    
+    @Override
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_hu.tearDown();
     }
 
     public void testDeleteByLoginName() throws WikiSecurityException

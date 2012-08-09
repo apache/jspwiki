@@ -254,7 +254,7 @@
      	<!-- tests dependencies  -->
      	<get-element to-file="${libs.tests}/commons-el-1.0.jar" url="${central.url}/commons-el/commons-el/1.0/commons-el-1.0.jar" />
         <get-element to-file="${libs.tests}/custom_rhino-0.4.3.jar" url="${central.url}/org/dojotoolkit/custom_rhino/0.4.3/custom_rhino-0.4.3.jar" />
-        <get-element to-file="${libs.tests}/hsqldb-1.8.0.jar" url="${svn.repository}/libs/${libs.tests}/hsqldb-1.8.0.jar" />
+     	<get-element to-file="${libs.tests}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
         <get-element to-file="${libs.tests}/jasper-compiler-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-compiler-5.5.25.jar" />
         <get-element to-file="${libs.tests}/jasper-runtime-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-runtime-5.5.25.jar" />
         <get-element to-file="${libs.tests}/jetty-jmx-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-jmx-5.1.14.jar" />
@@ -1429,7 +1429,7 @@ To automate the JAR signing processs, you can add the property
        for details and examples.
   -->
 
-  <target name="tests-db-init" depends="db-properties,hsql-init,db-setup"/>
+  <target name="tests-db-init" depends="db-properties"/>
 
   <target name="db-properties" depends="init" if="jdbc.driver.id">
     <!-- Load the JDBC props we need to do table maintenance -->
@@ -1500,16 +1500,6 @@ To automate the JAR signing processs, you can add the property
     <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
   </target>
 
-  <target name="db-setup" depends="db-properties,hsql-init" if="db.props.exist">
-    <echo message="Setting up the database tables." />
-    <exec-sql file="${userdb.setup}" />
-  </target>
-
-  <target name="db-teardown" depends="db-properties,hsql-init" if="db.props.exist">
-    <echo message="Tearing down the database tables." />
-    <exec-sql file="${userdb.teardown}" />
-  </target>
-
   <!-- Some convenience macrodefs -->
   <macrodef name="check-property">
     <attribute name="prop"/>
@@ -1526,65 +1516,6 @@ To automate the JAR signing processs, you can add the property
       <fail unless="@{prop}" message="Couldn't find @{file}!" />
     </sequential>
   </macrodef>
-
-  <macrodef name="exec-sql">
-    <attribute name="file" />
-    <sequential>
-      <sql driver="${jdbc.driver.class}"
-        classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
-        userid="${jdbc.admin.id}" password="${jdbc.admin.password}"
-        src="@{file}" onerror="continue" autocommit="true" />
-    </sequential>
-  </macrodef>
-
-  <!-- ============================================================== -->
-
-  <!-- Hypersonic embedded database startup/shutdown (for testing JDBC) -->
-
-  <!-- Special "init" target for Hypersonic -->
-  <target name="hsql-init" depends="hsql-check-start,hsql-start" />
-
-  <target name="hsql-check-start" depends="db-properties">
-    <echo message="Checking to see if Hypersonic JDBC server is running already." />
-    <property file="tests/etc/db/hsql/server.properties" prefix="hsql" />
-    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from tests/etc/db/hsql/server.properties</fail>
-    <condition property="hsql.up">
-      <socket server="localhost" port="${hsql.server.port}" />
-    </condition>
-  </target>
-
-  <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
-    description="Starts the Hypersonic database for testing.">
-    <echo message="Starting up Hypersonic JDBC server on localhost." />
-    <delete file="tests/etc/db/hsql/jspwiki.lck"/>
-    <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
-      dir="tests/etc/db/hsql">
-      <classpath>
-        <pathelement location="${jdbc.driver.jar}" />
-      </classpath>
-    </java>
-    <sleep seconds="5" />
-    <available file="tests/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
-    <fail unless="hsql.up">Hypersonic didn't appear to start up properly. You can start it manually from the command line as follows:
-   cd tests/etc/db/hsql
-   java -cp ${jdbc.driver.jar} org.hsqldb.Server
-    </fail>
-    <echo message="Done." />
-  </target>
-
-  <target name="hsql-stop" depends="hsql-check-start" if="hsql.up"
-    description="Shuts down the Hypersonic database, if it's up.">
-    <echo message="Shutting down Hypersonic JDBC server on localhost." />
-    <sql driver="${jdbc.driver.class}"
-      classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
-      onerror="continue" autocommit="true"
-      userid="${jdbc.admin.id}" password="${jdbc.admin.password}">
-      SHUTDOWN
-    </sql>
-    <!-- The lock file should be deleted automatically, but just in case... -->
-    <delete file="tests/etc/db/hsql/jspwiki.lck" />
-    <echo message="Done." />
-  </target>
 
   <!-- ============================================================== -->
   <target name="i18n-create-template" description="Creates a given directory structure with all the needed files to make an i18n jar">
