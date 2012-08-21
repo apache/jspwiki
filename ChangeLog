@@ -1,3 +1,26 @@
+2012-08-09  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * 2.9.0-incubating-10
+       
+       * ant clean target cleans all generated files
+       
+       * junit reports are generated inside of ${tests.report} instead of inside ${tests.src}
+       
+       * dependencies are downloaded from Central repo whenever is possible, in order to avoid 
+         the maintenance of a libraries' svn directory.
+      
+       * ${libs.opt} set to tests/libs-opt in order to avoid downloading of opt files every time a 
+         clean is made
+         
+       * maven-ant-tasks aren't used to download opt-libs anymore
+       
+       * HSQL connections are handled inside the appropiate unit tests in order to ensure HSQL 
+         server shutdown. Hypersonic is updated to 1.8.10 
+      
+       * added clean-deps target to remove all lib's directories. Useful to remove old jars
+         if the dependencies get updated. This target need to be run at least once to
+         ensure that old jars don't remain in classpath
+              
 2012-07-22  Florian Holeczek (florianh AT apache DOT org)
 
        * 2.9.0-incubating-9

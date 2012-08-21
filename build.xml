@@ -108,7 +108,9 @@
   <!-- dirs holding libs -->
   <property name="libs.main" value="lib" />
   <property name="libs.tests" value="tests/lib" />
-  <property name="libs.opt" value="${tests.build}/libs-opt" />
+  <property name="libs.opt" value="tests/libs-opt" />
+	
+  <property name="central.url" value="http://repo.maven.apache.org/maven2" />
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
@@ -157,17 +159,25 @@
   <path id="path.tests">
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
-	<pathelement location="${java.home}/../lib/tools.jar" />
+     <pathelement location="${java.home}/../lib/tools.jar" />
      <fileset dir="${libs.main}">
         <include name="*.jar" />
      </fileset>
      <fileset dir="${libs.tests}">
         <include name="*.jar" />
-        <exclude name="maven-ant-tasks-2.1.3.jar" />
      </fileset>
      <pathelement path="${tests.src}/etc" />
   </path>
 
+  <!-- Path holding (L)GPL jars and their dependencies -->
+  <path id="path.optional">
+    <fileset dir="${libs.opt}">
+      <include name="*.jar" />
+    </fileset>
+    <path refid="path.base" />
+    <path refid="path.tests" />
+  </path>
+    
   <!-- The prefix to use when reading environment variables -->
   <property environment="env" />
 
@@ -185,66 +195,87 @@
      <mkdir dir="${@tests.pagedir@}" />
      <mkdir dir="${libs.main}" />
      <mkdir dir="${libs.tests}" />
-     <antcall target="download-deps" />
+     <mkdir dir="${libs.opt}" />
+     <download-deps />
   </target>
   
   <target name="test-file-exists">
-     <echo message="Testing  for ${download-file}" level="debug"/>
-     <available file="${download-file}" property="exists" />
+     <echo message="Testing  for ${download-to-file}" level="debug"/>
+     <available file="${download-to-file}" property="exists" />
   </target>
-    
+	    
   <target name="download-lib" unless="exists" depends="test-file-exists">
-     <get src="${svn.repository}/libs/${download-file}" dest="${download-file}" />
+    <get src="${download-url}" dest="${download-to-file}" />
   </target>
   
-  <target name="download-deps">
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/activation-1.1.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/akismet-java-1.02.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/commons-codec-1.3.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/commons-fileupload-1.2.1.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/commons-httpclient-3.0.1.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/commons-io-1.4.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/commons-lang-2.6.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/commons-logging-api-1.0.4.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/ecs-1.4.2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/freshcookies-security-0.60.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jakarta-tablibs-standard-1.1.2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jakarta-taglibs-jstl-1.1.2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jaxen-1.1-beta-6.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jdom-1.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jrcs-diff-0.2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jsonrpc-1.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/jsp-api-2.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/log4j-1.2.14.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/lucene-core-3.6.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/lucene-highlighter-3.6.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/lucene-memory-3.6.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/mail-1.4.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/nekohtml-0.9.4.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/oro-2.0.7.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/oscache-2.3.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/sandler-0.5.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/servlet-api-2.4.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.main}/xmlrpc-2.0.1.jar"/></antcall>
-     
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/commons-el-1.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/custom_rhino-0.4.3.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/hsqldb-1.8.0.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/jasper-compiler-5.5.25.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/jasper-runtime-5.5.25.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/jetty-jmx-5.1.14.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/jetty-plus-5.1.14.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/jetty-servlet-5.1.14.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/junit-3.8.2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/maven-ant-tasks-2.1.3.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/selenium-java-client-driver-1.0-beta1.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/selenium-server-1.0-beta1.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/stripes-1.5.7.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/xercesImpl-2.6.2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/xml-apis-1.0.b2.jar"/></antcall>
-     <antcall target="download-lib"><param name="download-file" value="${libs.tests}/yuicompressor-2.4.2.jar"/></antcall>
-  </target>
+  <macrodef name="get-element">
+    <attribute name="to-file" />
+    <attribute name="url" />
+    <sequential>
+       <antcall target="download-lib">
+          <param name="download-to-file" value="@{to-file}"/>
+       	  <param name="download-url" value="@{url}" />
+       </antcall>
+    </sequential>
+  </macrodef>
 
+  <macrodef name="download-deps">
+     <sequential>
+     	<!-- main dependencies  -->
+     	<get-element to-file="${libs.main}/activation-1.1.jar" url="${central.url}/javax/activation/activation/1.1/activation-1.1.jar" />
+     	<get-element to-file="${libs.main}/akismet-java-1.02.jar" url="${svn.repository}/libs/${libs.main}/akismet-java-1.02.jar" />
+        <get-element to-file="${libs.main}/commons-codec-1.3.jar" url="${central.url}/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" />
+        <get-element to-file="${libs.main}/commons-fileupload-1.2.1.jar" url="${central.url}/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar" />
+        <get-element to-file="${libs.main}/commons-httpclient-3.0.1.jar" url="${central.url}/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar" />
+        <get-element to-file="${libs.main}/commons-io-1.4.jar" url="${central.url}/commons-io/commons-io/1.4/commons-io-1.4.jar" />
+        <get-element to-file="${libs.main}/commons-lang-2.6.jar" url="${central.url}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" />
+        <get-element to-file="${libs.main}/commons-logging-api-1.0.4.jar" url="${central.url}/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4.jar" />
+        <get-element to-file="${libs.main}/ecs-1.4.2.jar" url="${central.url}/ecs/ecs/1.4.2/ecs-1.4.2.jar" />
+        <get-element to-file="${libs.main}/freshcookies-security-0.60.jar" url="${svn.repository}/libs/${libs.main}/freshcookies-security-0.60.jar" />
+        <get-element to-file="${libs.main}/jakarta-tablibs-standard-1.1.2.jar" url="${svn.repository}/libs/${libs.main}/jakarta-tablibs-standard-1.1.2.jar" />
+        <get-element to-file="${libs.main}/jakarta-taglibs-jstl-1.1.2.jar" url="${svn.repository}/libs/${libs.main}/jakarta-taglibs-jstl-1.1.2.jar" />
+        <get-element to-file="${libs.main}/jaxen-1.1-beta-6.jar" url="${central.url}/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar" />
+        <get-element to-file="${libs.main}/jdom-1.0.jar" url="${central.url}/jdom/jdom/1.0/jdom-1.0.jar" />
+        <get-element to-file="${libs.main}/jrcs-diff-0.2.jar" url="${svn.repository}/libs/${libs.main}/jrcs-diff-0.2.jar" />
+        <get-element to-file="${libs.main}/jsonrpc-1.0.jar" url="${svn.repository}/libs/${libs.main}/jsonrpc-1.0.jar" />
+        <get-element to-file="${libs.main}/jsp-api-2.0.jar" url="${central.url}/javax/servlet/jsp/jsp-api/2.0/jsp-api-2.0.jar" />
+        <get-element to-file="${libs.main}/log4j-1.2.14.jar" url="${central.url}/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
+        <get-element to-file="${libs.main}/lucene-core-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar" />
+        <get-element to-file="${libs.main}/lucene-highlighter-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-highlighter/3.6.0/lucene-highlighter-3.6.0.jar" />
+        <get-element to-file="${libs.main}/lucene-memory-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-memory/3.6.0/lucene-memory-3.6.0.jar" />
+        <get-element to-file="${libs.main}/mail-1.4.jar" url="${central.url}/javax/mail/mail/1.4/mail-1.4.jar" />
+        <get-element to-file="${libs.main}/nekohtml-0.9.4.jar" url="${central.url}/nekohtml/nekohtml/0.9.4/nekohtml-0.9.4.jar" />
+        <get-element to-file="${libs.main}/oro-2.0.7.jar" url="${central.url}/oro/oro/2.0.7/oro-2.0.7.jar" />
+        <get-element to-file="${libs.main}/oscache-2.3.jar" url="${central.url}/opensymphony/oscache/2.3/oscache-2.3.jar" />
+        <get-element to-file="${libs.main}/sandler-0.5.jar" url="${svn.repository}/libs/${libs.main}/sandler-0.5.jar" />
+        <get-element to-file="${libs.main}/servlet-api-2.4.jar" url="${central.url}/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" />
+        <get-element to-file="${libs.main}/xmlrpc-2.0.1.jar" url="${central.url}/xmlrpc/xmlrpc/2.0.1/xmlrpc-2.0.1.jar" />
+     
+     	<!-- tests dependencies  -->
+     	<get-element to-file="${libs.tests}/commons-el-1.0.jar" url="${central.url}/commons-el/commons-el/1.0/commons-el-1.0.jar" />
+        <get-element to-file="${libs.tests}/custom_rhino-0.4.3.jar" url="${central.url}/org/dojotoolkit/custom_rhino/0.4.3/custom_rhino-0.4.3.jar" />
+     	<get-element to-file="${libs.tests}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
+        <get-element to-file="${libs.tests}/jasper-compiler-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-compiler-5.5.25.jar" />
+        <get-element to-file="${libs.tests}/jasper-runtime-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-runtime-5.5.25.jar" />
+        <get-element to-file="${libs.tests}/jetty-jmx-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-jmx-5.1.14.jar" />
+        <get-element to-file="${libs.tests}/jetty-plus-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-plus-5.1.14.jar" />
+        <get-element to-file="${libs.tests}/jetty-servlet-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-servlet-5.1.14.jar" />
+        <get-element to-file="${libs.tests}/junit-3.8.2.jar" url="${central.url}/junit/junit/3.8.2/junit-3.8.2.jar" />
+        <get-element to-file="${libs.tests}/selenium-java-client-driver-1.0-beta1.jar" url="${svn.repository}/libs/${libs.tests}/selenium-java-client-driver-1.0-beta1.jar" />
+        <get-element to-file="${libs.tests}/selenium-server-1.0-beta1.jar" url="${svn.repository}/libs/${libs.tests}/selenium-server-1.0-beta1.jar" />
+        <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
+        <get-element to-file="${libs.tests}/xercesImpl-2.6.2.jar" url="${central.url}/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar" />
+        <get-element to-file="${libs.tests}/xml-apis-1.0.b2.jar" url="${central.url}/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" />
+        <get-element to-file="${libs.tests}/yuicompressor-2.4.2.jar" url="${central.url}/com/yahoo/platform/yui/yuicompressor/2.4.2/yuicompressor-2.4.2.jar" />
+     	
+     	<!-- other dependencies ((L)GPL dependencies and jars needed by these) -->
+     	<get-element to-file="${libs.opt}/cobertura-1.9.4.1.jar" url="${central.url}/net/sourceforge/cobertura/cobertura/1.9.4.1/cobertura-1.9.4.1.jar" />
+     	<get-element to-file="${libs.opt}/asm-3.0.jar" url="${central.url}/asm/asm/3.0/asm-3.0.jar" />
+     	<get-element to-file="${libs.opt}/asm-tree-3.0.jar" url="${central.url}/asm/asm-tree/3.0/asm-tree-3.0.jar" />
+     	<get-element to-file="${libs.opt}/sonar-ant-task-1.4.jar" url="${central.url}/org/codehaus/sonar-plugins/sonar-ant-task/1.4/sonar-ant-task-1.4.jar" />
+     </sequential>
+  </macrodef>
+  
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
@@ -264,17 +295,34 @@
   <!-- Removes the build directory and the tests build directory -->
   <target name="clean"
           description="Cleans away all generated files.">
-    <delete dir="${tests.build}" />
+  	<delete dir="${tests.build}" />
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
-    <delete file="etc/jspwiki.properties" />
+  	<delete dir="${docs.javadoc}" />
+  	<delete file="etc/jspwiki.properties" />
+    <delete file="etc/i18n/CoreResources_en.properties" />
+    <delete file="etc/i18n/plugin/PluginResources_en.properties" />
+    <delete file="etc/i18n/templates/default_en.properties" />
+    <delete file="tests/etc/groupdatabase.xml" />
+    <delete file="tests/etc/userdatabase.xml" />
     <delete file="tests/etc/jspwiki.properties" />
     <delete file="tests/etc/jspwiki_rcs.properties" />
     <delete file="tests/etc/jspwiki_vers.properties" />
+    <delete dir="tests/etc/db" />
+    <delete dir="tests/etc/WEB-INF/dtd" />
+    <delete file="tests/etc/WEB-INF/web.xml" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
     </delete>
+  </target>
+	
+  <!-- Removes all lib directories -->
+  <target name="clean-deps"
+          description="Cleans away all downloaded files.">
+    <delete dir="${libs.main}" />
+    <delete dir="${libs.tests}" />
+    <delete dir="${libs.opt}" />
   </target>
 
   <!-- ============================================================== -->
@@ -784,11 +832,11 @@
         </batchtest>
      </junit>
 
-  	 <junitreport todir="${tests.src}">
+  	 <junitreport todir="${tests.reports}">
   	    <fileset dir="${tests.reports}">
   	       <include name="**/TEST-*.xml" />
   	    </fileset>
-  	    <report format="noframes" todir="${tests.src}" />
+  	    <report format="noframes" todir="${tests.reports}" />
   	 </junitreport>
      
      <fail message="Test failure detected, check test results." if="test.failed" />
@@ -1381,7 +1429,7 @@ To automate the JAR signing processs, you can add the property
        for details and examples.
   -->
 
-  <target name="tests-db-init" depends="db-properties,hsql-init,db-setup"/>
+  <target name="tests-db-init" depends="db-properties"/>
 
   <target name="db-properties" depends="init" if="jdbc.driver.id">
     <!-- Load the JDBC props we need to do table maintenance -->
@@ -1452,16 +1500,6 @@ To automate the JAR signing processs, you can add the property
     <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
   </target>
 
-  <target name="db-setup" depends="db-properties,hsql-init" if="db.props.exist">
-    <echo message="Setting up the database tables." />
-    <exec-sql file="${userdb.setup}" />
-  </target>
-
-  <target name="db-teardown" depends="db-properties,hsql-init" if="db.props.exist">
-    <echo message="Tearing down the database tables." />
-    <exec-sql file="${userdb.teardown}" />
-  </target>
-
   <!-- Some convenience macrodefs -->
   <macrodef name="check-property">
     <attribute name="prop"/>
@@ -1478,65 +1516,6 @@ To automate the JAR signing processs, you can add the property
       <fail unless="@{prop}" message="Couldn't find @{file}!" />
     </sequential>
   </macrodef>
-
-  <macrodef name="exec-sql">
-    <attribute name="file" />
-    <sequential>
-      <sql driver="${jdbc.driver.class}"
-        classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
-        userid="${jdbc.admin.id}" password="${jdbc.admin.password}"
-        src="@{file}" onerror="continue" autocommit="true" />
-    </sequential>
-  </macrodef>
-
-  <!-- ============================================================== -->
-
-  <!-- Hypersonic embedded database startup/shutdown (for testing JDBC) -->
-
-  <!-- Special "init" target for Hypersonic -->
-  <target name="hsql-init" depends="hsql-check-start,hsql-start" />
-
-  <target name="hsql-check-start" depends="db-properties">
-    <echo message="Checking to see if Hypersonic JDBC server is running already." />
-    <property file="tests/etc/db/hsql/server.properties" prefix="hsql" />
-    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from tests/etc/db/hsql/server.properties</fail>
-    <condition property="hsql.up">
-      <socket server="localhost" port="${hsql.server.port}" />
-    </condition>
-  </target>
-
-  <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
-    description="Starts the Hypersonic database for testing.">
-    <echo message="Starting up Hypersonic JDBC server on localhost." />
-    <delete file="tests/etc/db/hsql/jspwiki.lck"/>
-    <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
-      dir="tests/etc/db/hsql">
-      <classpath>
-        <pathelement location="${jdbc.driver.jar}" />
-      </classpath>
-    </java>
-    <sleep seconds="5" />
-    <available file="tests/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
-    <fail unless="hsql.up">Hypersonic didn't appear to start up properly. You can start it manually from the command line as follows:
-   cd tests/etc/db/hsql
-   java -cp ${jdbc.driver.jar} org.hsqldb.Server
-    </fail>
-    <echo message="Done." />
-  </target>
-
-  <target name="hsql-stop" depends="hsql-check-start" if="hsql.up"
-    description="Shuts down the Hypersonic database, if it's up.">
-    <echo message="Shutting down Hypersonic JDBC server on localhost." />
-    <sql driver="${jdbc.driver.class}"
-      classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
-      onerror="continue" autocommit="true"
-      userid="${jdbc.admin.id}" password="${jdbc.admin.password}">
-      SHUTDOWN
-    </sql>
-    <!-- The lock file should be deleted automatically, but just in case... -->
-    <delete file="tests/etc/db/hsql/jspwiki.lck" />
-    <echo message="Done." />
-  </target>
 
   <!-- ============================================================== -->
   <target name="i18n-create-template" description="Creates a given directory structure with all the needed files to make an i18n jar">
@@ -1617,39 +1596,8 @@ To automate the JAR signing processs, you can add the property
      </xslt>
   </target>
 	
-  <target name="optional-dependencies-download" xmlns:artifact="urn:maven-artifact-ant">
-  	<mkdir dir="${libs.opt}" />
-    <!-- bootstrap maven ant asks -->
-    <path id="path.maven.ant.tasks">
-      <pathelement location="tests/lib/maven-ant-tasks-2.1.3.jar" />
-    </path>
-  	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" 
-  	         uri="urn:maven-artifact-ant" 
-  	         classpathref="path.maven.ant.tasks" /> 
-  	
-    <!-- download optional dependencies -->
-  	<artifact:localRepository id="local.repository" path="${libs.opt}"/>
-  		
-  	<artifact:dependencies pathId="cobertura.classpath">
-  	  <dependency groupId="net.sourceforge.cobertura" artifactId="cobertura" version="1.9.4.1" scope="compile" />
-  	  <remoteRepository id="central" url="http://repo.maven.apache.org/maven2/" />
-  	  <localRepository refid="local.repository"/>
-  	</artifact:dependencies>
-  	
-  	<artifact:dependencies pathId="sonar.classpath">
-      <dependency groupId="org.codehaus.sonar-plugins" artifactId="sonar-ant-task" version="1.4" scope="compile" />
-      <remoteRepository id="central" url="http://repo.maven.apache.org/maven2/" />
-  	  <localRepository refid="local.repository"/>
-    </artifact:dependencies>
-  </target>  
-
-  <target name="coverage-tests" depends="optional-dependencies-download,compile,tests">
-  	<path id="path.optional">
-      <fileset dir="${libs.opt}">
-        <include name="**/*.jar" />
-      </fileset>
-    </path>
-    <!-- bootstrap cobertura ant-tasks -->
+  <target name="coverage-tests" depends="compile,tests">
+  	<!-- bootstrap cobertura ant-tasks -->
   	<taskdef classpathref="path.optional" resource="tasks.properties" />
   	<cobertura-instrument todir="${tests.build}/instrumented-classes" 
     	                  datafile="${tests.build}/cobertura.ser">
@@ -1660,7 +1608,6 @@ To automate the JAR signing processs, you can add the property
   	<junit haltonfailure="no" fork="yes">
       <classpath>
         <path location="${tests.build}/instrumented-classes" />
-        <path refid="path.tests" />
         <path refid="path.optional" />
       </classpath>
       <formatter type="xml" />
@@ -1682,11 +1629,6 @@ To automate the JAR signing processs, you can add the property
   </target>
   
   <target name="sonar" depends="coverage-tests">
-  	<path id="path.optional">
-  	  <fileset dir="${libs.opt}">
-  	    <include name="**/*.jar" />
-  	  </fileset>
-  	</path>
   	<!-- bootstrap sonar ant tasks -->
     <typedef resource="org/sonar/ant/antlib.xml" 
              uri="antlib:org.sonar.ant" 
