@@ -697,7 +697,7 @@
        copy in some useful files and zip the whole thing
        into the release directory.
     -->
-  <target name="dist" depends="installinit,srczip,war,corepageszip,documentzip,version"
+  <target name="dist" depends="clean-deps,installinit,srczip,war,corepageszip,documentzip,version"
           description="Builds the entire distribution archive.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
