@@ -232,12 +232,12 @@
         <get-element to-file="${libs.main}/commons-logging-api-1.0.4.jar" url="${central.url}/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4.jar" />
         <get-element to-file="${libs.main}/ecs-1.4.2.jar" url="${central.url}/ecs/ecs/1.4.2/ecs-1.4.2.jar" />
         <get-element to-file="${libs.main}/freshcookies-security-0.60.jar" url="${svn.repository}/libs/${libs.main}/freshcookies-security-0.60.jar" />
-        <get-element to-file="${libs.main}/jakarta-tablibs-standard-1.1.2.jar" url="${svn.repository}/libs/${libs.main}/jakarta-tablibs-standard-1.1.2.jar" />
-        <get-element to-file="${libs.main}/jakarta-taglibs-jstl-1.1.2.jar" url="${svn.repository}/libs/${libs.main}/jakarta-taglibs-jstl-1.1.2.jar" />
+        <get-element to-file="${libs.main}/standard-1.1.2.jar" url="${central.url}/taglibs/standard/1.1.2/standard-1.1.2.jar" />
+        <get-element to-file="${libs.main}/jstl-1.1.2.jar" url="${central.url}/jstl/jstl/1.1.2/jstl-1.1.2.jar" />
         <get-element to-file="${libs.main}/jaxen-1.1-beta-6.jar" url="${central.url}/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar" />
         <get-element to-file="${libs.main}/jdom-1.0.jar" url="${central.url}/jdom/jdom/1.0/jdom-1.0.jar" />
         <get-element to-file="${libs.main}/jrcs-diff-0.2.jar" url="${svn.repository}/libs/${libs.main}/jrcs-diff-0.2.jar" />
-        <get-element to-file="${libs.main}/jsonrpc-1.0.jar" url="${svn.repository}/libs/${libs.main}/jsonrpc-1.0.jar" />
+        <get-element to-file="${libs.main}/jsonrpc-1.0.jar" url="${central.url}/com/metaparadigm/json-rpc/1.0/json-rpc-1.0.jar" />
         <get-element to-file="${libs.main}/jsp-api-2.0.jar" url="${central.url}/javax/servlet/jsp/jsp-api/2.0/jsp-api-2.0.jar" />
         <get-element to-file="${libs.main}/log4j-1.2.14.jar" url="${central.url}/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
         <get-element to-file="${libs.main}/lucene-core-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar" />
