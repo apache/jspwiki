@@ -1,6 +1,8 @@
 2012-09-06  Juan Pablo Santos (juanpablo AT apache DOT org)
        
-       * no version bump
+       * 2.9.0-incubating-11
+       
+       * upgraded jrcs-diff to 0.4.2, as part of JSPWIKI-746
        
        * JSPWIKI-747: Dependencies currently unavailable at Central repo
 

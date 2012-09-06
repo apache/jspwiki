@@ -29,17 +29,22 @@ import javax.servlet.jsp.PageContext;
 
 import net.sf.akismet.Akismet;
 
-import org.apache.commons.jrcs.diff.*;
-import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.EditorManager;
+import org.suigeneris.jrcs.diff.Diff;
+import org.suigeneris.jrcs.diff.DifferentiationFailedException;
+import org.suigeneris.jrcs.diff.Revision;
+import org.suigeneris.jrcs.diff.delta.AddDelta;
+import org.suigeneris.jrcs.diff.delta.ChangeDelta;
+import org.suigeneris.jrcs.diff.delta.DeleteDelta;
+import org.suigeneris.jrcs.diff.delta.Delta;
+import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
 /**
  *  This is Herb, the JSPWiki spamfilter that can also do choke modifications.
