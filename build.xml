@@ -223,15 +223,19 @@
      <sequential>
      	<!-- main dependencies  -->
      	<get-element to-file="${libs.main}/activation-1.1.jar" url="${central.url}/javax/activation/activation/1.1/activation-1.1.jar" />
-     	<get-element to-file="${libs.main}/akismet-java-1.02.jar" url="${svn.repository}/libs/${libs.main}/akismet-java-1.02.jar" />
+     	<get-element to-file="${libs.main}/akismet-java-1.02.jar" url="${central.url}/net/sourceforge/akismet-java/1.02/akismet-java-1.02.jar" />
         <get-element to-file="${libs.main}/commons-codec-1.3.jar" url="${central.url}/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" />
-        <get-element to-file="${libs.main}/commons-fileupload-1.2.1.jar" url="${central.url}/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar" />
-        <get-element to-file="${libs.main}/commons-httpclient-3.0.1.jar" url="${central.url}/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar" />
+        <get-element to-file="${libs.main}/commons-fileupload-1.2.1.jar" 
+                     url="${central.url}/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar" />
+        <get-element to-file="${libs.main}/commons-httpclient-3.0.1.jar" 
+                     url="${central.url}/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar" />
         <get-element to-file="${libs.main}/commons-io-1.4.jar" url="${central.url}/commons-io/commons-io/1.4/commons-io-1.4.jar" />
         <get-element to-file="${libs.main}/commons-lang-2.6.jar" url="${central.url}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" />
-        <get-element to-file="${libs.main}/commons-logging-api-1.0.4.jar" url="${central.url}/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4.jar" />
+        <get-element to-file="${libs.main}/commons-logging-api-1.0.4.jar" 
+                     url="${central.url}/commons-logging/commons-logging-api/1.0.4/commons-logging-api-1.0.4.jar" />
         <get-element to-file="${libs.main}/ecs-1.4.2.jar" url="${central.url}/ecs/ecs/1.4.2/ecs-1.4.2.jar" />
-        <get-element to-file="${libs.main}/freshcookies-security-0.60.jar" url="${svn.repository}/libs/${libs.main}/freshcookies-security-0.60.jar" />
+        <get-element to-file="${libs.main}/freshcookies-security-0.60.jar" 
+                     url="${central.url}/org/freshcookies/freshcookies-security/0.60/freshcookies-security-0.60.jar" />
         <get-element to-file="${libs.main}/standard-1.1.2.jar" url="${central.url}/taglibs/standard/1.1.2/standard-1.1.2.jar" />
         <get-element to-file="${libs.main}/jstl-1.1.2.jar" url="${central.url}/jstl/jstl/1.1.2/jstl-1.1.2.jar" />
         <get-element to-file="${libs.main}/jaxen-1.1-beta-6.jar" url="${central.url}/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar" />
@@ -241,13 +245,15 @@
         <get-element to-file="${libs.main}/jsp-api-2.0.jar" url="${central.url}/javax/servlet/jsp/jsp-api/2.0/jsp-api-2.0.jar" />
         <get-element to-file="${libs.main}/log4j-1.2.14.jar" url="${central.url}/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
         <get-element to-file="${libs.main}/lucene-core-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar" />
-        <get-element to-file="${libs.main}/lucene-highlighter-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-highlighter/3.6.0/lucene-highlighter-3.6.0.jar" />
-        <get-element to-file="${libs.main}/lucene-memory-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-memory/3.6.0/lucene-memory-3.6.0.jar" />
+        <get-element to-file="${libs.main}/lucene-highlighter-3.6.0.jar" 
+                     url="${central.url}/org/apache/lucene/lucene-highlighter/3.6.0/lucene-highlighter-3.6.0.jar" />
+        <get-element to-file="${libs.main}/lucene-memory-3.6.0.jar" 
+                     url="${central.url}/org/apache/lucene/lucene-memory/3.6.0/lucene-memory-3.6.0.jar" />
         <get-element to-file="${libs.main}/mail-1.4.jar" url="${central.url}/javax/mail/mail/1.4/mail-1.4.jar" />
         <get-element to-file="${libs.main}/nekohtml-0.9.4.jar" url="${central.url}/nekohtml/nekohtml/0.9.4/nekohtml-0.9.4.jar" />
         <get-element to-file="${libs.main}/oro-2.0.7.jar" url="${central.url}/oro/oro/2.0.7/oro-2.0.7.jar" />
         <get-element to-file="${libs.main}/oscache-2.3.jar" url="${central.url}/opensymphony/oscache/2.3/oscache-2.3.jar" />
-        <get-element to-file="${libs.main}/sandler-0.5.jar" url="${svn.repository}/libs/${libs.main}/sandler-0.5.jar" />
+        <get-element to-file="${libs.main}/sandler-0.5.jar" url="${central.url}/net/sourceforge/sandler/0.5/sandler-0.5.jar" />
         <get-element to-file="${libs.main}/servlet-api-2.4.jar" url="${central.url}/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" />
         <get-element to-file="${libs.main}/xmlrpc-2.0.1.jar" url="${central.url}/xmlrpc/xmlrpc/2.0.1/xmlrpc-2.0.1.jar" />
      
