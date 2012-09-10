@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
 import javax.sql.DataSource;
 
 import junit.framework.TestCase;
@@ -65,7 +66,14 @@ public class JDBCGroupDatabaseTest extends TestCase
         // Set up the mock JNDI initial context
         TestJNDIContext.initialize();
         Context initCtx = new InitialContext();
-        initCtx.bind( "java:comp/env", new TestJNDIContext() );
+        try
+        {
+            initCtx.bind( "java:comp/env", new TestJNDIContext() );
+        }
+        catch( NameAlreadyBoundException e )
+        {
+            // ignore
+        }
         Context ctx = (Context) initCtx.lookup( "java:comp/env" );
         DataSource ds = new TestJDBCDataSource( new File( "build.properties" ) );
         ctx.bind( JDBCGroupDatabase.DEFAULT_GROUPDB_DATASOURCE, ds );

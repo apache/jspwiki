@@ -1,3 +1,11 @@
+2012-09-10   Harry Metske <metskem@apache.org>
+       
+       * 2.9.0-incubating-12
+       
+       * rewrote TestContainer to jetty version 7
+       
+       * upgraded to selenium-server-standalone-2.25.0.jar 
+
 2012-09-06  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * 2.9.0-incubating-11

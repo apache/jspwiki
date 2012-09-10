@@ -117,9 +117,8 @@
   <property name="webtests.reports"  value="${basedir}/tests/reports/selenium" />
   <property name="webtests.build"    value="tests/build/webtests" />
   <property name="webtests.port"     value="10024" />
-  <property name="webtests.shutdown" value="19041" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
-  <property name="selenium-rc.jar"   value="tests/lib/selenium-server-1.0-beta1.jar" />
+  <property name="selenium-rc.jar"   value="tests/lib/selenium-server-standalone-2.25.0.jar" />
 
   <!-- The place where the javadocs are created -->
 
@@ -264,12 +263,9 @@
      	<get-element to-file="${libs.tests}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
         <get-element to-file="${libs.tests}/jasper-compiler-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-compiler-5.5.25.jar" />
         <get-element to-file="${libs.tests}/jasper-runtime-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-runtime-5.5.25.jar" />
-        <get-element to-file="${libs.tests}/jetty-jmx-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-jmx-5.1.14.jar" />
-        <get-element to-file="${libs.tests}/jetty-plus-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-plus-5.1.14.jar" />
-        <get-element to-file="${libs.tests}/jetty-servlet-5.1.14.jar" url="${svn.repository}/libs/${libs.tests}/jetty-servlet-5.1.14.jar" />
+        <get-element to-file="${libs.tests}/jetty-all-7.6.5.v20120716.jar" url="${svn.repository}/libs/${libs.tests}/jetty-all-7.6.5.v20120716.jar" />
         <get-element to-file="${libs.tests}/junit-3.8.2.jar" url="${central.url}/junit/junit/3.8.2/junit-3.8.2.jar" />
-        <get-element to-file="${libs.tests}/selenium-java-client-driver-1.0-beta1.jar" url="${svn.repository}/libs/${libs.tests}/selenium-java-client-driver-1.0-beta1.jar" />
-        <get-element to-file="${libs.tests}/selenium-server-1.0-beta1.jar" url="${svn.repository}/libs/${libs.tests}/selenium-server-1.0-beta1.jar" />
+        <get-element to-file="${libs.tests}/selenium-server-standalone-2.25.0.jar" url="${svn.repository}/libs/${libs.tests}/selenium-server-standalone-2.25.0.jar" />
         <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
         <get-element to-file="${libs.tests}/xercesImpl-2.6.2.jar" url="${central.url}/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar" />
         <get-element to-file="${libs.tests}/xml-apis-1.0.b2.jar" url="${central.url}/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" />
@@ -437,6 +433,7 @@
       <available file="${jarfile}"/>
     </condition>
   	<antcall target="buildjar" /> <!-- needed to avoid circular references when invoking tests target -->
+  	<!-- comment out the following line if you only want to run the webtests and not the normal tests -->
     <antcall target="tests" />
   </target>
 
@@ -1066,15 +1063,20 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
   <macrodef name="webtest-exec">
     <attribute name="context"/>
     <sequential>
-      <!-- If already running, shut down the embedded Jetty server by pinging the shutdown port -->
+      <!-- If already running, shut down the embedded Jetty server by sending the shutdown command -->
       <echo message="Shutting down Jetty (if it is up)."/>
-      <get src="http://localhost:${webtests.shutdown}/" dest="${webtests.temp}/shutdown.log"
+      <get src="http://localhost:${webtests.port}/GO_AWAY/" dest="${webtests.temp}/shutdown.log"
         ignoreerrors="true" verbose="true" />
-      <sleep seconds="2"/>
+      <sleep seconds="3"/>
 
       <!-- Start Jetty with our test context -->
       <echo message="Starting Jetty."/>
-      <java classname="org.apache.wiki.web.TestContainer" fork="true" spawn="true">
+        <java classname="org.apache.wiki.web.StreamRedirector" fork="true" spawn="true">
+        <!--java classname="org.apache.wiki.web.TestContainer" fork="true" spawn="true"-->
+        <arg value="org.apache.wiki.web.TestContainer"/>
+        <arg value="/tmp/jetty-redirectedoutput.log"/>
+      	<!--jvmarg value="-Dlog4j.debug=yesplease"/-->  <!-- to enable log4j debugging-->
+      	<jvmarg value="-Dorg.eclipse.jetty.LEVEL=info"/>  <!-- to enable jetty debugging-->
         <classpath>
            <path refid="path.tests" />
         </classpath>
