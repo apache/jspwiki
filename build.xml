@@ -261,15 +261,20 @@
      	<get-element to-file="${libs.tests}/commons-el-1.0.jar" url="${central.url}/commons-el/commons-el/1.0/commons-el-1.0.jar" />
         <get-element to-file="${libs.tests}/custom_rhino-0.4.3.jar" url="${central.url}/org/dojotoolkit/custom_rhino/0.4.3/custom_rhino-0.4.3.jar" />
      	<get-element to-file="${libs.tests}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
-        <get-element to-file="${libs.tests}/jasper-compiler-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-compiler-5.5.25.jar" />
-        <get-element to-file="${libs.tests}/jasper-runtime-5.5.25.jar" url="${svn.repository}/libs/${libs.tests}/jasper-runtime-5.5.25.jar" />
-        <get-element to-file="${libs.tests}/jetty-all-7.6.5.v20120716.jar" url="${svn.repository}/libs/${libs.tests}/jetty-all-7.6.5.v20120716.jar" />
+        <get-element to-file="${libs.tests}/jasper-compiler-5.5.23.jar" 
+                     url="${central.url}/tomcat/jasper-compiler/5.5.23/jasper-compiler-5.5.23.jar" />
+        <get-element to-file="${libs.tests}/jasper-runtime-5.5.23.jar" 
+                     url="${central.url}/tomcat/jasper-runtime/5.5.23/jasper-runtime-5.5.23.jar" />
+        <get-element to-file="${libs.tests}/jetty-all-7.6.7.v20120910.jar" 
+                     url="${central.url}/org/eclipse/jetty/aggregate/jetty-all/7.6.7.v20120910/jetty-all-7.6.7.v20120910.jar" />
         <get-element to-file="${libs.tests}/junit-3.8.2.jar" url="${central.url}/junit/junit/3.8.2/junit-3.8.2.jar" />
-        <get-element to-file="${libs.tests}/selenium-server-standalone-2.25.0.jar" url="${svn.repository}/libs/${libs.tests}/selenium-server-standalone-2.25.0.jar" />
+        <get-element to-file="${libs.tests}/selenium-server-standalone-2.25.0.jar" 
+                     url="http://selenium.googlecode.com/files/selenium-server-standalone-2.25.0.jar" />
         <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
         <get-element to-file="${libs.tests}/xercesImpl-2.6.2.jar" url="${central.url}/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar" />
         <get-element to-file="${libs.tests}/xml-apis-1.0.b2.jar" url="${central.url}/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" />
-        <get-element to-file="${libs.tests}/yuicompressor-2.4.2.jar" url="${central.url}/com/yahoo/platform/yui/yuicompressor/2.4.2/yuicompressor-2.4.2.jar" />
+        <get-element to-file="${libs.tests}/yuicompressor-2.4.2.jar" 
+                     url="${central.url}/com/yahoo/platform/yui/yuicompressor/2.4.2/yuicompressor-2.4.2.jar" />
      	
      	<!-- other dependencies ((L)GPL dependencies and jars needed by these) -->
      	<get-element to-file="${libs.opt}/cobertura-1.9.4.1.jar" url="${central.url}/net/sourceforge/cobertura/cobertura/1.9.4.1/cobertura-1.9.4.1.jar" />
@@ -1240,8 +1245,8 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         <exclude name="web.xml" />
         <exclude name="lib/*" />
       </webinf>
-      <lib dir="${war}/WEB-INF/lib" excludes="servlet-api.jar,j2ee.jar"/>
-      <lib dir="${code.build}" includes="jsp.jar" />
+      <lib dir="${war}/WEB-INF/lib" excludes="servlet-api-2.4.jar,j2ee.jar"/>
+      <lib dir="${code.build}" includes="jsp-api-2.0.jar" />
       <fileset dir="${war}">
         <exclude name="WEB-INF/**" />
         <exclude name="**/*.jsp" />
