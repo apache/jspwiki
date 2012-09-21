@@ -1,3 +1,33 @@
+2012-09-18  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * tomcat jars downgraded to 5.5.23 so they can be downloaded from Central. Completes JSPWIKI-746
+         and therefore closes JSPWIKI-744
+         
+       * jetty upgraded to 7.6.7.v20120910 and selenium-server downloaded from their site, to avoid 
+         downloading anything from svn.apache.org during build time
+
+2012-09-10   Harry Metske <metskem@apache.org>
+       
+       * 2.9.0-incubating-12
+       
+       * rewrote TestContainer to jetty version 7
+       
+       * upgraded to selenium-server-standalone-2.25.0.jar 
+
+2012-09-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * 2.9.0-incubating-11
+       
+       * upgraded jrcs-diff to 0.4.2, as part of JSPWIKI-746
+       
+       * JSPWIKI-747: Dependencies currently unavailable at Central repo
+
+2012-08-29  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * no version bump
+       
+       * JSPWIKI-745: Dependencies currently downloadable from Central repo
+       
 2012-08-09  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * 2.9.0-incubating-10
@@ -15,10 +45,10 @@
        * maven-ant-tasks aren't used to download opt-libs anymore
        
        * HSQL connections are handled inside the appropiate unit tests in order to ensure HSQL 
-         server shutdown. Hypersonic is updated to 1.8.10 
+         server shutdown. Hypersonic is updated to 1.8.0.10 
       
        * added clean-deps target to remove all lib's directories. Useful to remove old jars
-         if the dependencies get updated. This target need to be run at least once to
+         if the dependencies get updated. This target needs to be run at least once to
          ensure that old jars don't remain in classpath
               
 2012-07-22  Florian Holeczek (florianh AT apache DOT org)

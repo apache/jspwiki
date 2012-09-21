@@ -29,15 +29,21 @@ import java.text.NumberFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.commons.jrcs.diff.*;
-import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.suigeneris.jrcs.diff.Diff;
+import org.suigeneris.jrcs.diff.DifferentiationFailedException;
+import org.suigeneris.jrcs.diff.Revision;
+import org.suigeneris.jrcs.diff.RevisionVisitor;
+import org.suigeneris.jrcs.diff.delta.AddDelta;
+import org.suigeneris.jrcs.diff.delta.ChangeDelta;
+import org.suigeneris.jrcs.diff.delta.Chunk;
+import org.suigeneris.jrcs.diff.delta.DeleteDelta;
+import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
 
 /**

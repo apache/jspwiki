@@ -23,31 +23,39 @@ package org.apache.wiki.web;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.hsqldb.jdbc.jdbcDataSource;
-import org.mortbay.http.*;
-import org.mortbay.http.handler.SecurityHandler;
-import org.mortbay.jetty.plus.DefaultDataSourceService;
-import org.mortbay.jetty.plus.Server;
-import org.mortbay.jetty.servlet.WebApplicationContext;
-import org.mortbay.jndi.ContextFactory;
-import org.mortbay.jndi.InitialContextFactory;
-import org.mortbay.jndi.NamingContext;
-import org.mortbay.jndi.Util;
-import org.mortbay.util.Password;
-
 import org.apache.wiki.auth.Users;
+import org.eclipse.jetty.jndi.InitialContextFactory;
+import org.eclipse.jetty.jndi.NamingContext;
+import org.eclipse.jetty.plus.jndi.Resource;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.util.security.Password;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.hsqldb.jdbc.jdbcDataSource;
+
 
 /**
  * Lightweight wrapper that starts and stops an embedded Jetty server on a
  * hard-coded port {@link #HTTP_PORT}. The server can be shut down by sending a
- * request to the shutdown port, which is hard-coded to {@link #SHUTDOWN_PORT}.
+ * request containing the hard-coded string {@link #SHUTDOWN_CMD}.
  */
 public class TestContainer
 {
@@ -58,25 +66,18 @@ public class TestContainer
      */
     public static final int HTTP_PORT = 10024;
 
-    /**
-     * High port that listens for shutdown requests.
-     */
-    public static final int SHUTDOWN_PORT = 19041;
+    public static final String SHUTDOWN_CMD = "/GO_AWAY";
     
     public static final String INITIAL_CONTEXT_FACTORY = "java.naming.factory.initial";
-
-    // Minimum and maximum number of jetty threads
-    public static final int MIN_JETTY_THREADS = 1;
-
-    public static final int MAX_JETTY_THREADS = 1024;
-
-    public static final int DEFAULT_JETTY_THREADS = 512;
-
-    /** Number of jetty threads for the server. */
-    private static int jettyThreads = DEFAULT_JETTY_THREADS;
+    public static final String INITIAL_CONTEXT_FACTORY_JETTY = "org.eclipse.jetty.jndi.InitialContextFactory";
 
     private static final Logger log = Logger.getLogger( TestContainer.class );
+    
+    private static Resource userDB = null;        
+    private static Resource groupDB = null;        
 
+    private static ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
+    
     /**
      * Starts up a test server for a particular web application on the specified
      * port (or default if no port was specified).
@@ -101,14 +102,12 @@ public class TestContainer
         {
             String context = app.getKey();
             String path = app.getValue();
-            log.info( "Adding context " + context + " at path " + path );
+            log.error( "Adding context " + context + " at path " + path );
             container.addWebApp( context, path );
         }
 
-        // Create the DataSource service
-        DefaultDataSourceService dss = new DefaultDataSourceService();
-        dss.setName( "DataSourceService" );
-
+        handlerCollection.addHandler( new DefaultHandler() );
+        
         // Create the connection pool
         jdbcDataSource cpds = new jdbcDataSource();
         cpds.setDatabase( "jdbc:hsqldb:hsql://localhost/jspwiki" );
@@ -117,31 +116,42 @@ public class TestContainer
         cpds.setPassword( null );
 
         // Configure and bind DataSource to JNDI for user database
-        dss.addDataSource( "jdbc/UserDatabase", cpds );
-        container.server.addService( dss );
-        dss.getDataSource( "jdbc/UserDatabase" );
+        userDB = new Resource( "jdbc/UserDatabase", cpds );
+        log.error( "Configured datasource " + userDB);
         
         // Configure and bind DataSource to JNDI for group database
-        dss.addDataSource( "jdbc/GroupDatabase", cpds );
-        container.server.addService( dss );
-        dss.getDataSource( "jdbc/GroupDatabase" );
-        
-        System.out.println( "Configured datasources." );
+        groupDB = new Resource( "jdbc/GroupDatabase", cpds );        
+        log.error( "Configured datasource " + groupDB);
 
+        
         // Start the server
         try
         {
-            System.out.println( "Starting up test container." );
+            log.error( "Starting up test container." );
+            container.server.setHandler( handlerCollection );
+            Handler[] currentHandlers = container.server.getHandlers();
+            log.error( "dumping current handlers" );
+            for( Handler handler : currentHandlers )
+            {
+                if( handler instanceof HandlerCollection )
+                {
+                    Handler[] collection = ((HandlerCollection) handler).getHandlers();
+                    for( Handler h : collection )
+                    {
+                        log.error( "handler: " + h );
+                    }
+                }
+            }
             container.start();
         }
         catch( Throwable t )
         {
+            // userDB.unbindENC();
+            // groupDB.unbindENC();
             t.printStackTrace();
-            System.err.println( t.getMessage() );
+            log.error( t.getMessage() );
             System.exit( 1 );
         }
-        System.out.println( "Started." );
-
     }
 
     private static Map<String, String> extractApps( String[] args )
@@ -195,11 +205,12 @@ public class TestContainer
         String contextFactoryClass = System.getProperty( INITIAL_CONTEXT_FACTORY );
         if ( contextFactoryClass == null )
         {
-            System.setProperty( INITIAL_CONTEXT_FACTORY, "org.mortbay.jndi.InitialContextFactory" );
-            ContextFactory.setNameParser( new InitialContextFactory.DefaultParser() );
-            log.info( "No JNDI context factory found; using org.mortbay.jndi.InitialContextFactory." );
+            System.setProperty( INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_JETTY );
+//            ContextFactory.setNameParser( new InitialContextFactory.DefaultParser() );
+            log.error( "No JNDI context factory found; using org.eclipse.jndi.InitialContextFactory." );
+            contextFactoryClass = INITIAL_CONTEXT_FACTORY_JETTY;
         }
-        log.info( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
+        log.error( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
         
         // Bind the "java:comp" namespace if not bound already
         Context initCtx = new InitialContext();
@@ -209,67 +220,56 @@ public class TestContainer
         }
         catch ( NameNotFoundException e )
         {
-            Util.bind( initCtx, "java:comp", new NamingContext() );
-            NamingContext compCtx = (NamingContext) initCtx.lookup( "java:comp" );
-            compCtx.setNameParser( new InitialContextFactory.DefaultParser() );
-            log.info( "No JNDI java:comp namespace found; creating it," );
-            // Context envCtx = compCtx.createSubcontext( "env" );
-            // System.out.println( envCtx );
+            initCtx.bind( "java:comp", new NamingContext(new Hashtable<String, Object>(), "java:comp", null, new InitialContextFactory.DefaultParser()) );
+            log.error( "No JNDI java:comp namespace found; creating it," );
         }
         log.info( "Initialized JNDI java:comp namespace.=" + contextFactoryClass );
         
         // Initialize new Jetty server
         log.info( "Creating new test container." );
-        System.setProperty( "org.mortbay.xml.XmlParser.NotValidating", "true" );
+        System.setProperty( "org.eclipse.xml.XmlParser.NotValidating", "true" );
         server = new Server();
         server.setStopAtShutdown( true );
         
         // Create HTTP listener
-        SocketListener listener = new SocketListener();
-        listener.setHost( "localhost" );
-        listener.setMaxIdleTimeMs( 60000 );
-        listener.setMaxThreads( jettyThreads );
-        listener.setPort( HTTP_PORT );
-        server.addListener( listener );
-        log.info( "...added HTTP listener for port " + HTTP_PORT );
+        SocketConnector connector = new SocketConnector();
+        connector.setHost( "localhost" );
+        connector.setPort( HTTP_PORT );
+        connector.setMaxIdleTime( 60000 );
 
-        // Create shutdown listener
-        listener = new SocketListener();
-        listener.setHost( "localhost" );
-        listener.setMaxThreads( jettyThreads );
-        listener.setPort( SHUTDOWN_PORT );
-        listener.setHttpHandler( new ShutdownHandler() );
-        server.addListener( listener );
-        log.info( "...added shutdown listener for port " + SHUTDOWN_PORT );
-        
-        // Set the default users and roles for the realm (note that realm name *must* match web.xml <realm-name>
-        HashUserRealm realm = new HashUserRealm( "JSPWikiRealm" );
-        realm.put( Users.ADMIN, new Password( Users.ADMIN_PASS ) );
-        realm.addUserToRole( Users.ADMIN, "Authenticated" );
-        realm.addUserToRole( Users.ADMIN, "Admin" );
-        realm.put( Users.JANNE, new Password( Users.JANNE_PASS ) );
-        realm.addUserToRole( Users.JANNE, "Authenticated" );
-        server.addRealm( realm );
-    }
+        server.setConnectors( new Connector[] {connector} );
+        log.info( "added HTTP listener for port " + HTTP_PORT );
+
+        // add the shutdown handler
+        ContextHandler shutDownContextHandler = new ContextHandler(SHUTDOWN_CMD);
+        shutDownContextHandler.setHandler( new ShutdownHandler());
+        handlerCollection.addHandler( shutDownContextHandler );
+     }
 
     /**
      * Configures a test web application
      * 
      * @param m_context the name of the web m_context; must start with "/"
      * @param path the file path for the WAR file, or expanded WAR directory
-     * @return the configured web application
      * @throws IOException
      */
-    public WebApplicationContext addWebApp( String context, String path ) throws IOException
+    public void addWebApp( String context, String path ) throws IOException
     {
-        WebApplicationContext webapp = server.addWebApplication( context, path );
-        log.info( "Adding test webapp " + context + " for path " + path );
+        // Set the default users and roles for the realm (note that realm name *must* match web.xml <realm-name>
+        HashLoginService loginService = new HashLoginService( "JSPWikiRealm" );
+        loginService.putUser( Users.ADMIN, new Password(Users.ADMIN_PASS), new String[] {"Authenticated", "Admin"} );
+        loginService.putUser( Users.JANNE, new Password(Users.JANNE_PASS), new String[] {"Authenticated"} );
 
-        // Add a security handler for any constraints enabled by web.xml
-        SecurityHandler sh = new SecurityHandler();
-        webapp.addHandler( sh );
+        WebAppContext webAppContext = new WebAppContext(path, context);
 
-        return webapp;
+        // Add a security handler.
+        SecurityHandler csh = new ConstraintSecurityHandler();
+        csh.setLoginService( loginService );
+        webAppContext.setSecurityHandler( csh );
+
+        log.error( "Adding webapp " + context + " for path " + path );
+        handlerCollection.addHandler( webAppContext );
+
     }
 
     /**
@@ -277,8 +277,9 @@ public class TestContainer
      */
     public void start() throws Exception
     {
-        System.setProperty( "org.mortbay.http.HttpRequest.maxFormContentSize", "0" );
+        System.setProperty( "org.eclipse.http.HttpRequest.maxFormContentSize", "0" );
         server.start();
+        log.error("jetty server started");
     }
 
     /**
@@ -289,88 +290,34 @@ public class TestContainer
         try
         {
             server.stop();
+            log.error("jetty server stopped");
         }
-        catch( InterruptedException ex )
+        catch( Exception ex )
         {
             throw new RuntimeException( ex );
         }
     }
-
+    
+    
+    
     /**
-     * HTTP Handler that shuts down the Jetty server if a request is received on
-     * the shutdown port..
+     * Handler that shuts down the Jetty server if a request is received containing the shutdown string {@link TestContainer#SHUTDOWN_CMD} .
      */
-    public static final class ShutdownHandler implements HttpHandler
+
+    public static final class ShutdownHandler extends AbstractHandler
     {
-        private static final long serialVersionUID = -7785141243907081919L;
 
-        private HttpContext m_context;
-
-        /**
-         * Returns the HttpContext used to initialize this handler.
-         */
-        public HttpContext getHttpContext()
+        public void handle( String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response )
+                                                                                                                          throws IOException,
+                                                                                                                              ServletException
         {
-            return m_context;
-        }
-
-        /**
-         * No-op method that always returns a generic description of the
-         * shutdown handler.
-         */
-        public String getName()
-        {
-            return "Shutdown HTTP handler.";
-        }
-
-        /**
-         * Intercepts the HTTP request and shuts down the server instantly.
-         */
-        public void handle( String arg0, String arg1, HttpRequest arg2, HttpResponse arg3 ) throws HttpException, IOException
-        {
-        	System.exit(0);
-//            System.err.println( "Shutdown request detected." );
-//            try
-//            {
-//                m_server.stop( false );
-//            }
-//            catch( InterruptedException e )
-//            {
-//                e.printStackTrace();
-//                throw new HttpException( HttpResponse.__500_Internal_Server_Error, e.getMessage() );
-//            }
-        }
-
-        /**
-         * No-op method that sets a reference to the HttpContext supplied to the
-         * initialize method.
-         */
-        public void initialize( HttpContext context )
-        {
-            m_context = context;
-        }
-
-        /**
-         * No-op method that always returns <code>true</code>.
-         */
-        public boolean isStarted()
-        {
-            return true;
-        }
-
-        /**
-         * No-op method that does nothing.
-         */
-        public void start() throws Exception
-        {
-        }
-
-        /**
-         * No-op method that does nothing.
-         */
-        public void stop() throws InterruptedException
-        {
+            if( request.getRequestURI().indexOf( SHUTDOWN_CMD ) != -1 )
+            {
+                log.error( "stop cmd received, shutting down server" );
+                System.exit( 0 );
+            } else {
+                log.error("ignoring request " + request.getRequestURI());
+            }
         }
     }
-
 }

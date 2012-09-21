@@ -27,14 +27,17 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.commons.jrcs.diff.*;
-import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.suigeneris.jrcs.diff.Diff;
+import org.suigeneris.jrcs.diff.DifferentiationFailedException;
+import org.suigeneris.jrcs.diff.Revision;
+import org.suigeneris.jrcs.diff.RevisionVisitor;
+import org.suigeneris.jrcs.diff.delta.*;
+import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
 /**
  * A seriously better diff provider, which highlights changes word-by-word using
