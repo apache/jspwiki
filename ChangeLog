@@ -1,3 +1,8 @@
+2012-09-23  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * upgraded Yui compressor to 2.4.7, 2.4.2 from Central is broken. Thanks to Peter Hormanns
+         for noticing.
+       
 2012-09-18  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * tomcat jars downgraded to 5.5.23 so they can be downloaded from Central. Completes JSPWIKI-746

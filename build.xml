@@ -273,8 +273,8 @@
         <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
         <get-element to-file="${libs.tests}/xercesImpl-2.6.2.jar" url="${central.url}/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar" />
         <get-element to-file="${libs.tests}/xml-apis-1.0.b2.jar" url="${central.url}/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" />
-        <get-element to-file="${libs.tests}/yuicompressor-2.4.2.jar" 
-                     url="${central.url}/com/yahoo/platform/yui/yuicompressor/2.4.2/yuicompressor-2.4.2.jar" />
+        <get-element to-file="${libs.tests}/yuicompressor-2.4.7.jar" 
+                     url="${central.url}/com/yahoo/platform/yui/yuicompressor/2.4.7/yuicompressor-2.4.7.jar" />
      	
      	<!-- other dependencies ((L)GPL dependencies and jars needed by these) -->
      	<get-element to-file="${libs.opt}/cobertura-1.9.4.1.jar" url="${central.url}/net/sourceforge/cobertura/cobertura/1.9.4.1/cobertura-1.9.4.1.jar" />
@@ -555,7 +555,7 @@
         <attribute name="src"/>
         <attribute name="args" default=""/>   
         <sequential>
-            <java jar="tests/lib/yuicompressor-2.4.2.jar"
+            <java jar="tests/lib/yuicompressor-2.4.7.jar"
                   output="${tmpdir}/compress/@{src}"
                   fork="true">
                 <arg line="'${code.src}/@{src}' @{args}" />
