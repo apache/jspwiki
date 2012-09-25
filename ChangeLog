@@ -1,3 +1,9 @@
+2012-09-25  Florian Holeczek (florianh AT apache DOT org)
+
+       * no version bump
+
+       * minor update to LICENSE file (YUI Compressor version number)
+
 2012-09-23  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * upgraded Yui compressor to 2.4.7, 2.4.2 from Central is broken. Thanks to Peter Hormanns
