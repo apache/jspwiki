@@ -1,6 +1,4 @@
 /* 
-    JSPWiki - a JSP-based WikiWiki clone.
-
     Copyright (C) 2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     Licensed to the Apache Software Foundation (ASF) under one

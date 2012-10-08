@@ -1,6 +1,9 @@
 2012-10-08  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * Added rat-report task. It requires at least Apache Ant 1.7.1, though.
+       
+       * .java files now conform strictly to Apache License Header (cfr. with 
+         http://s.apache.org/EDd).
 
 2012-09-25  Florian Holeczek (florianh AT apache DOT org)
 
