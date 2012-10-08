@@ -104,6 +104,7 @@
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
+  <property name="doc.rat" value="doc/rat" />
 	
   <!-- dirs holding libs -->
   <property name="libs.main" value="lib" />
@@ -318,6 +319,7 @@
     <delete file="tests/etc/jspwiki_vers.properties" />
     <delete dir="tests/etc/db" />
     <delete dir="tests/etc/WEB-INF/dtd" />
+    <delete dir="${doc.rat}" />
     <delete file="tests/etc/WEB-INF/web.xml" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
@@ -1673,6 +1675,38 @@ To automate the JAR signing processs, you can add the property
   	                  destdir="${tests.build}/cobertura" />
     
     <sonar:sonar key="org.apache.jspwiki:jspwiki" version="${jspwiki.version}" xmlns:sonar="antlib:org.sonar.ant"/>
+  </target>
+  
+  <target name="rat-report">
+    <mkdir dir="${doc.rat}/lib" />
+    <get-element to-file="${doc.rat}/lib/apache-rat-tasks-0.8.jar" 
+                 url="${central.url}/org/apache/rat/apache-rat-tasks/0.8/apache-rat-tasks-0.8.jar" />
+    <get-element to-file="${doc.rat}/lib/apache-rat-core-0.8.jar" 
+                 url="${central.url}/org/apache/rat/apache-rat-core/0.8/apache-rat-core-0.8.jar" />
+    <get-element to-file="${doc.rat}/lib/commons-cli-1.2.jar" 
+                 url="${central.url}/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" />
+    <get-element to-file="${doc.rat}/lib/commons-collections-3.2.jar" 
+                 url="${central.url}/commons-collections/commons-collections/3.2/commons-collections-3.2.jar" />
+    <get-element to-file="${doc.rat}/lib/commons-lang-2.1.jar" url="${central.url}/commons-lang/commons-lang/2.1/commons-lang-2.1.jar" />
+    <get-element to-file="${doc.rat}/lib/commons-compress-1.0.jar" 
+                 url="${central.url}/org/apache/commons/commons-compress/1.0/commons-compress-1.0.jar" />
+    <get-element to-file="${doc.rat}/lib/commons-io-1.4.jar" url="${central.url}/commons-io/commons-io/1.4/commons-io-1.4.jar" />
+    
+    <path id="rat.libs.path">
+      <fileset dir="${doc.rat}/lib">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+    <taskdef resource="org/apache/rat/anttasks/antlib.xml">
+      <classpath refid="rat.libs.path" />
+    </taskdef>
+    
+    <report reportFile="${doc.rat}/rat.txt" addLicenseHeaders="true">
+      <fileset dir="src/org"/>
+      <fileset dir="src/webdocs" excludes="**/*.js">
+      </fileset>
+      <fileset dir="tests/org"/>
+    </report>
   </target>
 
 </project>
