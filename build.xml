@@ -1703,8 +1703,8 @@ To automate the JAR signing processs, you can add the property
     
     <report reportFile="${doc.rat}/rat.txt" addLicenseHeaders="true">
       <fileset dir="src/org"/>
-      <fileset dir="src/webdocs" excludes="**/*.js">
-      </fileset>
+      <fileset dir="src/webdocs" 
+               excludes="**/SilkIconSet-readme.txt,**/fckconfig.js,**/mootools.js,**/posteditor.js" />
       <fileset dir="tests/org"/>
     </report>
   </target>
