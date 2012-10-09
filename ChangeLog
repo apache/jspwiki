@@ -1,6 +1,6 @@
 2012-10-09  Juan Pablo Santos (juanpablo AT apache DOT org)
        
-       * added Apache License Header to .jsp files (cfr. with http://s.apache.org/EDd).
+       * added Apache License Header to .jsp and .html files (cfr. with http://s.apache.org/EDd).
 
 2012-10-08  Juan Pablo Santos (juanpablo AT apache DOT org)
        
