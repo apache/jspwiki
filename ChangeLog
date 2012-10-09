@@ -1,3 +1,7 @@
+2012-10-09  Juan Pablo Santos (juanpablo AT apache DOT org)
+       
+       * added Apache License Header to .jsp files (cfr. with http://s.apache.org/EDd).
+
 2012-10-08  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * Added rat-report task. It requires at least Apache Ant 1.7.1, though.
