@@ -11,7 +11,7 @@ Requirements
 You'll need the following programs:
 
 - J2SDK 5.0 (I use the one from Sun Microsystems; I haven't tested any others.)
-- Apache Ant 1.6 (available from http://ant.apache.org)
+- Apache Ant 1.7.1 (available from http://ant.apache.org)
 - Servlet API 2.4 (servlet.jar, available from Sun Microsystems.)
 - JUnit 3.8.2 (from www.junit.org, required for running tests)
 
