@@ -19,11 +19,13 @@ support and/or code.  There are also a number of other people who have
 generously given their time, and you can find hopefully all of their
 names in the ChangeLog.
 
-SilkIconSet (C) Mark James.
+SilkIconSet (C) Mark James. http://www.famfamfam.com/lab/icons/silk/
 
-OSCache Copyright (c) 2001 The OpenSymphony Group. All rights reserved.
+OSCache Copyright (c) 2001 The OpenSymphony Group, licensed under the OpenSymphony 
+Software License 1.1 http://opensymphony.com/webwork/license.action
 
-Jaxen  Copyright 2003 (C) The Werken Company. All Rights Reserved.
+Jaxen  Copyright 2003 (C) The Werken Company. Licensed under Jaxen license 
+http://jaxen.codehaus.org/license.html
 
 HSQLDB Copyright (c) 2001-2005, The HSQL Development Group
 
@@ -45,10 +47,18 @@ Selenium (C) OpenQA.org
 
 Prettify Copyright (C) 2006 Google Inc.
 
-posteditor by Daniel Mota aka IceBeat, (see http://icebeat.bitacoras.com)
+posteditor.js by Daniel Mota aka IceBeat, (see http://icebeat.bitacoras.com/mootools/posteditor/), 
+licensed under the terms of the MIT license http://opensource.org/licenses/mit-license.php
 
 Slimbox, adapted for JSPWiki, original by Christophe Bleys. (see http://www.digitalia.be/software/slimbox) 
 
-Servlet-api Copyright 1997-2008 Sun Microsystems, Inc. All rights reserved.
+Servlet-api Copyright 1997-2008 Sun Microsystems, Inc, licensed under CDDL 1.0: 
+http://opensource.org/licenses/cddl-1.0
 
 search_highlight.js  Copyright (c) 2002  Stuart Langridge
+
+fckconfig.js Copyright (C) 2003-2008 Frederico Caldeira Knabben licensed under 
+the terms of Mozilla Public License Version 2.0 http://http://www.mozilla.org/MPL/2.0
+
+mootools.js Copyright (c) 2006 Valerio Proietti, <http://mad4milk.net>, licensed 
+under the terms of the MIT license http://opensource.org/licenses/mit-license.php
