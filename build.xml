@@ -1,6 +1,4 @@
 <!--
-    JSPWiki - a JSP-based WikiWiki clone.
-
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -702,14 +700,14 @@
     </java>
   </target>
 
-  <!-- Builds the entire distribution set.
+  <!-- Builds the entire distribution artifacts without checksums and signatures.
 
        We build both the WAR-file and the source zip, then
        copy in some useful files and zip the whole thing
        into the release directory.
     -->
   <target name="dist" depends="clean-deps,installinit,srczip,war,corepageszip,documentzip,version"
-          description="Builds the entire distribution archive.">
+          description="Builds the entire distribution artifacts without checksums and signatures.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
@@ -725,12 +723,11 @@
   </target>
 
   <!-- Nabbed from solr -->
-  <macrodef name="sign-artifact" description="Signs the artifact">
+  <macrodef name="sign-artifact" description="Signs an artifact.">
     <attribute name="input.file"/>
     <attribute name="output.file" default="@{input.file}.asc"/>
     <sequential>
       <echo>Signing @{input.file} Sig File: @{output.file}</echo>
-
       <exec executable="gpg">
         <arg value="--armor"/>
         <arg value="--output"/>
@@ -741,17 +738,22 @@
     </sequential>
   </macrodef>
 
-  <!-- Generates signatures and MD5 hashes for the release artifacts. -->
-  <target name="signeddist" depends="dist">
+  <!-- Generate signatures and checksums for the release artifacts. -->
+  <target name="signeddist" depends="dist" description="Generate signatures and checksums for the release artifacts.">
 
-     <checksum>
-       <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
-     </checksum>
+  	<echo>Generating checksums for the release artifacts.</echo>
+    <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" forceoverwrite="yes">
+      <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+    </checksum>
+    <checksum algorithm="SHA-512" fileext=".sha" format="MD5SUM" forceoverwrite="yes">
+      <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+    </checksum>
 
-     <sequential>
-       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip" />
-       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" />
-     </sequential>
+  	<sequential>
+      <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip" />
+      <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" />
+    </sequential>
+
   </target>
 
   <!-- ============================================================== -->
