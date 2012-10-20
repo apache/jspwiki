@@ -1,3 +1,7 @@
+2012-10-20  Florian Holeczek (florianh AT apache DOT org)
+
+       * some fixes for JSPWIKI-749 and CheckStyle version 5.6
+
 2012-10-09  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * added Apache License Header to files which were missing it 
