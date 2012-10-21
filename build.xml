@@ -302,10 +302,12 @@
   <!-- Removes the build directory and the tests build directory -->
   <target name="clean"
           description="Cleans away all generated files.">
+    <delete file="cobertura.ser" />
   	<delete dir="${tests.build}" />
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
   	<delete dir="${docs.javadoc}" />
+    <delete dir="${doc.rat}" />
   	<delete file="etc/jspwiki.properties" />
     <delete file="etc/i18n/CoreResources_en.properties" />
     <delete file="etc/i18n/plugin/PluginResources_en.properties" />
@@ -317,7 +319,6 @@
     <delete file="tests/etc/jspwiki_vers.properties" />
     <delete dir="tests/etc/db" />
     <delete dir="tests/etc/WEB-INF/dtd" />
-    <delete dir="${doc.rat}" />
     <delete file="tests/etc/WEB-INF/web.xml" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
@@ -1615,10 +1616,12 @@ To automate the JAR signing processs, you can add the property
   </target>
 	
   <target name="coverage-tests" depends="compile,tests">
+  	<!-- delete previous info, if any -->
+    <delete file="cobertura.ser" />
+    <delete dir="${tests.build}/instrumented-classes" />
   	<!-- bootstrap cobertura ant-tasks -->
-  	<taskdef classpathref="path.optional" resource="tasks.properties" />
-  	<cobertura-instrument todir="${tests.build}/instrumented-classes" 
-    	                  datafile="${tests.build}/cobertura.ser">
+    <taskdef classpathref="path.optional" resource="tasks.properties" />
+  	<cobertura-instrument todir="${tests.build}/instrumented-classes">
       <fileset dir="${code.build}">
         <include name="**/*.class"/>
       </fileset>
