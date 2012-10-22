@@ -762,7 +762,7 @@
 
   <!-- Running tests -->
 
-  <target name="tests-init" depends="mkpropertyfile">
+  <target name="tests-init" depends="init">
       <!-- Build up the /etc directory for testing -->
       <delete file="tests/etc/userdatabase.xml" />
       <delete file="tests/etc/userdatabase.xml.old" />
