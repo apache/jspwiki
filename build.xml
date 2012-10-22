@@ -633,7 +633,7 @@
   	</exec>
   	
     <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
-        <zipfileset dir="${install.src}" />
+        <zipfileset dir="${install.src}" prefix="${ant.project.name}-src" />
     </zip>
 
   </target>
@@ -689,12 +689,13 @@
           description="Creates JSPWiki documentation zipfile">
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
-        <zipfileset dir="doc" prefix="doc" />
-        <zipfileset dir="src/wikipages" prefix="doc/wikipages" excludes="**/.??*"/>
+        <zipfileset dir="doc" prefix="doc" excludes="rat/**" />
+        <zipfileset dir="src/wikipages" prefix="doc/wikipages" excludes="**/.??*" />
     </zip>
   </target>
 
-  <target name="version" depends="jar">
+  <target name="version" depends="jar"
+          description="Reads the current code base's version string.">
     <java outputproperty="jspwiki.version" classname="org.apache.wiki.Release">
       <classpath>
         <pathelement location="build/JSPWiki.jar"/>
@@ -710,17 +711,22 @@
     -->
   <target name="dist" depends="clean-deps,installinit,srczip,war,corepageszip,documentzip,version"
           description="Builds the entire distribution artifacts without checksums and signatures.">
-     <copy file="README" todir="${install.fulldir}" />
-     <copy file="ChangeLog" todir="${install.fulldir}" />
-     <copy file="ReleaseNotes" todir="${install.fulldir}" />
-     <copy file="LICENSE" todir="${install.fulldir}" />
-     <copy file="${warfile}" todir="${install.fulldir}" />
 
-     <move file="${release.dir}/${ant.project.name}-src.zip" tofile="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip"/>
+    <!-- binary distribution -->
+    <copy file="ChangeLog"    todir="${install.fulldir}" />
+    <copy file="LICENSE"      todir="${install.fulldir}" />
+    <copy file="NOTICE"       todir="${install.fulldir}" />
+    <copy file="README"       todir="${install.fulldir}" />
+    <copy file="ReleaseNotes" todir="${install.fulldir}" />
+    <copy file="UPGRADING"    todir="${install.fulldir}" />
+    <copy file="${warfile}"   todir="${install.fulldir}" />
+    <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
+      <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}-bin" />
+    </zip>
 
-     <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
-        <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
-     </zip>
+    <!-- source distribution -->
+    <move file="${release.dir}/${ant.project.name}-src.zip"
+        tofile="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip"/>
 
   </target>
 
@@ -740,7 +746,7 @@
     </sequential>
   </macrodef>
 
-  <!-- Generate signatures and checksums for the release artifacts. -->
+  <!-- Generate signatures and checksums for the distribution artifacts. -->
   <target name="signeddist" depends="dist" description="Generate signatures and checksums for the release artifacts.">
 
   	<echo>Generating checksums for the release artifacts.</echo>

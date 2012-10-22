@@ -1,16 +1,6 @@
 
-
-                        JSPWiki documentation
-                        =====================
-
-What is it?
------------
-
-JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java
-and JSP.  A WikiWiki is a web site which allows anyone to participate
-in its development.  JSPWiki supports all the traditional wiki features,
-as well as very detailed access control and security integration using JAAS. 
-
+Apache JSPWiki 2.9.0-incubating - Documentation
+===============================================
 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -28,9 +18,19 @@ as well as very detailed access control and security integration using JAAS.
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.  
-    
 
 The license file can be found in LICENSE.
+
+
+What is JSPWiki?
+----------------
+
+JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java
+and JSP.  A WikiWiki is a web site which allows anyone to participate
+in its development.  JSPWiki supports all the traditional wiki features,
+as well as very detailed access control and security integration using JAAS. 
+
+
 
 Pre-requirements
 ----------------

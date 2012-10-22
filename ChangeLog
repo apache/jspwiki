@@ -1,5 +1,9 @@
 2012-10-22  Florian Holeczek (florianh AT apache DOT org)
 
+       * several small fixes and improvements related to building and licensing stuff
+
+2012-10-22  Florian Holeczek (florianh AT apache DOT org)
+
        * 2.9.0-incubating-13
        
        * fixed CommentedPropertiesTest, which broke because of the recent license header changes
