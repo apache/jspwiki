@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -1682,7 +1683,7 @@ To automate the JAR signing processs, you can add the property
     <sonar:sonar key="org.apache.jspwiki:jspwiki" version="${jspwiki.version}" xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
   
-  <target name="rat-report">
+  <target name="rat-report" description="Generate an Apache Rat report.">
     <mkdir dir="${doc.rat}/lib" />
     <get-element to-file="${doc.rat}/lib/apache-rat-tasks-0.8.jar" 
                  url="${central.url}/org/apache/rat/apache-rat-tasks/0.8/apache-rat-tasks-0.8.jar" />
@@ -1705,12 +1706,36 @@ To automate the JAR signing processs, you can add the property
     <taskdef resource="org/apache/rat/anttasks/antlib.xml">
       <classpath refid="rat.libs.path" />
     </taskdef>
-    
-    <report reportFile="${doc.rat}/rat.txt" addLicenseHeaders="true">
+
+  	<!-- If you want the RAT run to automatically add license headers where needed, set addLicenseHeaders="true".
+  	     However, afterwards, you will have to manually double-check every single modified file regarding the
+  	     ASF Source Header and Copyright Notice Policy!
+  	     Exclusions and their reasons:
+  	     - .* and .*/** are automatically created configuration files
+  	     - doc/LICENSE.* are third-party licenses
+  	     - ${code.src}/wikipages/** are default wiki pages for use in JSPWiki installations
+  	     - all others are directories which contain generated output and third-party binary libraries
+  	-->
+    <report reportFile="${doc.rat}/rat-report.txt" addLicenseHeaders="false">
+        <fileset dir="."
+        	excludes=".*, .*/**,
+        	doc/LICENSE.*,
+        	${code.src}/wikipages/**,
+        	${code.build}/**,
+        	${tests.build}/**,
+        	${tests.reports}/**,
+        	${doc.rat}/**,
+        	${libs.main}/**,
+        	${libs.tests}/**,
+        	${libs.opt}/**,
+        	${docs.javadoc}/**,
+        	${release.dir}/**" />
+<!--
       <fileset dir="src/org"/>
       <fileset dir="src/webdocs" 
                excludes="**/SilkIconSet-readme.txt,**/fckconfig.js,**/mootools.js,**/posteditor.js" />
       <fileset dir="tests/org"/>
+      -->
     </report>
   </target>
 

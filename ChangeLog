@@ -1,3 +1,9 @@
+2012-10-22  Florian Holeczek (florianh AT apache DOT org)
+
+       * adjusted Ant target "rat-report"
+
+       * added license headers to further files
+
 2012-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)
        
        * ensure correct information on cobertura reports.
