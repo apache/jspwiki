@@ -24,11 +24,13 @@ The license file can be found in LICENSE.
 
 Welcome to the stable version of Apache JSPWiki 2.9.0-incubating!
 
-Apache JSPWiki 2.9.0-incubating is the first JSPWiki which is not only released completely under
-the Apache License 2.0, but which is also an official Apache release from within the Apache Incubator.
+Apache JSPWiki 2.9.0-incubating is the first JSPWiki which is not only released
+completely under the Apache License 2.0, but which is also an official Apache
+release from within the Apache Incubator.
 
 
 Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
 
 UPDATES SINCE 2.8.4
 ===================
@@ -38,12 +40,13 @@ The full list is available in the ChangeLog file.  Highlights include
 * The java packages have been renamed from com.ecyrd.jspwiki to org.apache.wiki.
 
 * Support external properties in WikiEngine (idea from John McKinney)
-          You can now override individual properties in jspwiki.properties using standard
-          Java System properties.
+          You can now override individual properties in jspwiki.properties using
+          standard Java System properties.
 
-* Extended the list of file suffixes indexable for the integrated Lucene search engine. We now do 
-           ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm", ".xhtml", ".java", ".c", ".cpp",
-            ".php", ".asm", ".sh",  ".properties", ".kml", ".gpx", ".loc"
+* Extended the list of file suffixes indexable for the integrated Lucene search
+          engine. We now do ".txt", ".ini", ".xml", ".html", "htm", ".mm",
+          ".htm", ".xhtml", ".java", ".c", ".cpp", ".php", ".asm", ".sh",
+          ".properties", ".kml", ".gpx", ".loc"
 
 
 UPDATES SINCE 2.8.3
