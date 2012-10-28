@@ -58,10 +58,18 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 
 /**
- * Counts the number of times each page has been viewed. Parameters:
- * count=yes|no show=none|count|list entries=max number of list entries
- * min=minimum page count to be listed sort=name|count Default values are
- * show=none and sort=name.
+ * This plugin counts the number of times a page has been viewed.<br/>
+ * Parameters:
+ * <ul>
+ * <li>count=yes|no</li>
+ * <li>show=none|count|list</li>
+ * <li>entries=maximum number of list entries to be returned</li>
+ * <li>min=minimum page count to be listed</li>
+ * <li>max=maximum page count to be listed</li>
+ * <li>sort=name|count</li>
+ * </ul>
+ * Default values:<br/>
+ * <code>show=none  sort=name</code>
  * 
  * @since 2.8
  */
@@ -108,7 +116,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
     /** Constant for comma-separated list separator. */
     private static final String STR_COMMA = ",";
 
-    /** Constant for no-op glob exression. */
+    /** Constant for no-op glob expression. */
     private static final String STR_GLOBSTAR = "*";
 
     /** Constant for file storage. */
@@ -286,7 +294,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
         /**
          * Count a page hit, present a pages' counter or output a list of
-         * pagecounts.
+         * page counts.
          * 
          * @param context the wiki context
          * @param params the plugin parameters
@@ -451,7 +459,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                             Entry entry = (Entry) iter.next();
                             String name = (String) entry.getKey();
 
-                            // check minimum count
+                            // check minimum/maximum count
                             final int value = ((Counter) entry.getValue()).getValue();
                             boolean use = min <= value && value <= max;
 
@@ -542,7 +550,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         }
 
         /**
-         * Adjust ofsset skipping whitespace.
+         * Adjust offset skipping whitespace.
          * 
          * @param offset The offset in value to adjust.
          * @param value String in which offset points.
@@ -575,24 +583,18 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         {
             if( m_counters != null && m_storage != null )
             {
-
-                    log.warn( "loadCounters" );
+                log.info( "Loading counters." );
                 synchronized( this )
                 {
-
                     InputStream fis = null;
-
                     try
                     {
                         fis = new FileInputStream( new File( m_workDir, COUNTER_PAGE ) );
-
                         m_storage.load( fis );
-
                     }
                     catch( IOException ioe )
                     {
-                        log.error( "loadCounters: Can't load page counter store: " + ioe.getMessage() + " , will create a new one" );
-
+                        log.error( "Can't load page counter store: " + ioe.getMessage() + " , will create a new one!" );
                     }
                     finally
                     {
@@ -605,7 +607,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                         }
                         catch( Exception ignore )
                         {
-                            /** ignore */
+                            /* ignore */
                         }
                     }
 
@@ -618,9 +620,8 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
                         m_counters.put( (String) entry.getKey(), new Counter( (String) entry.getValue() ) );
                     }
-
-                
-                        log.info( "loadCounters: counters.size=" + m_counters.size() );
+                    
+                    log.info( "Loaded " + m_counters.size() + " counter values." );
                 }
             }
         }
@@ -633,12 +634,10 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         {
             if( m_counters != null && m_storage != null && m_dirty )
             {
+                log.info( "Storing " + m_counters.size() + " counter values." );
 
-                    log.info( "storeCounters: counters.size=" + m_counters.size() );
-                    
                 synchronized( this )
                 {
-
                     OutputStream fos = null;
 
                     // Write out the collection of counters
@@ -650,12 +649,10 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                         fos.flush();
 
                         m_dirty = false;
-
                     }
                     catch( IOException ioe )
                     {
-                        log.error( "storeCounters: Can't store counters: " + ioe.getMessage() );
-
+                        log.error( "Couldn't store counters values: " + ioe.getMessage() );
                     }
                     finally
                     {
@@ -668,7 +665,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                         }
                         catch( Exception ignore )
                         {
-                            /** ignore */
+                            /* ignore */
                         }
                     }
                 }
@@ -678,7 +675,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         /**
          * Is the given thread still current?
          * 
-         * @return boolean <code>true</code> iff the thread is still the current
+         * @return boolean <code>true</code> if the thread is still the current
          *         background thread.
          * @param thrd
          */
@@ -688,6 +685,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         }
 
     }
+
 
     /**
      * Counter for page hits collection.
@@ -706,13 +704,12 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         }
 
         /**
-         * Create and initialise a new counter.
+         * Create and initialize a new counter.
          * 
          * @param value Count value.
          */
         public Counter( String value )
         {
-
             setValue( value );
         }
 
@@ -731,7 +728,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          */
         public int getValue()
         {
-
             return m_count;
         }
 

@@ -39,6 +39,27 @@ public class PageViewPluginTest extends TestCase
 
     PluginManager manager;
 
+    /*
+     * Constructor is part of a workaround for execution ordering of the tests
+     */
+    public PageViewPluginTest ( String testName )
+    {
+        super( testName );
+    }
+
+    /*
+     * Second part of the workaround for execution ordering of the tests
+     */
+    public static Test suite()
+    {
+        TestSuite ts = new TestSuite();
+        ts.addTest( new PageViewPluginTest( "testShowCountsBasic" ) );
+        ts.addTest( new PageViewPluginTest( "testShowCountsExclude" ) );
+        ts.addTest( new PageViewPluginTest( "testShowCountsSorted" ) );
+        ts.addTest( new PageViewPluginTest( "testShowCountEntries" ) );
+        return ts;
+    }
+
     public void setUp() throws Exception
     {
         props.load( TestEngine.findTestProperties() );
@@ -188,9 +209,4 @@ public class PageViewPluginTest extends TestCase
         TestEngine.deleteTestPage( "TestPage04" );
     }
 
-
-    public static Test suite()
-    {
-        return new TestSuite( PageViewPluginTest.class );
-    }
 }
