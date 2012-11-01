@@ -35,7 +35,9 @@ Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
 UPDATES SINCE 2.8.4
 ===================
 
-The full list is available in the ChangeLog file.  Highlights include
+Details are available in the ChangeLog file or via our issue tracker.
+
+Highlights include:
 
 * The java packages have been renamed from com.ecyrd.jspwiki to org.apache.wiki.
 
