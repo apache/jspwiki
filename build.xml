@@ -753,7 +753,10 @@
     <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" forceoverwrite="yes">
       <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
     </checksum>
-    <checksum algorithm="SHA-512" fileext=".sha" format="MD5SUM" forceoverwrite="yes">
+    <checksum algorithm="SHA" fileext=".sha1" format="MD5SUM" forceoverwrite="yes">
+      <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+    </checksum>
+    <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM" forceoverwrite="yes">
       <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
     </checksum>
 
