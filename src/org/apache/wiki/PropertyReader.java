@@ -75,7 +75,7 @@ public final class PropertyReader
       "jspwiki.specialPage.EditProfile",     "UserPreferences.jsp",
       "jspwiki.specialPage.Preferences",     "UserPreferences.jsp",
       "jspwiki.specialPage.Search",          "Search.jsp",
-      "jspwiki.specialPage.Search",        "Search.jsp"};
+      "jspwiki.specialPage.FindPage",        "FindPage.jsp"};
 
 
     /**
