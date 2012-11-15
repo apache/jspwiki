@@ -23,6 +23,7 @@ import java.net.ConnectException;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
+import javax.net.ssl.SSLHandshakeException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -122,6 +123,14 @@ public class MailUtilTest extends TestCase
                 // This can occur if you do not have a SMTP server set up.  We just log this
                 // and don't fail.
                 System.out.println("I could not test whether mail sending works, since I could not connect to your SMTP server.");
+                System.out.println("Reason: "+e.getMessage());
+                return;
+            }
+            if( e.getCause() instanceof SSLHandshakeException )
+            {
+                // This can occur if you do not have the required cert in the JVM's keystore.  We just log this
+                // and don't fail.
+                System.out.println("I could not test whether mail sending works, since I don't have the required cert in my keystore.");
                 System.out.println("Reason: "+e.getMessage());
                 return;
             }
