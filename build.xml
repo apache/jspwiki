@@ -280,7 +280,7 @@
      	<get-element to-file="${libs.opt}/cobertura-1.9.4.1.jar" url="${central.url}/net/sourceforge/cobertura/cobertura/1.9.4.1/cobertura-1.9.4.1.jar" />
      	<get-element to-file="${libs.opt}/asm-3.0.jar" url="${central.url}/asm/asm/3.0/asm-3.0.jar" />
      	<get-element to-file="${libs.opt}/asm-tree-3.0.jar" url="${central.url}/asm/asm-tree/3.0/asm-tree-3.0.jar" />
-     	<get-element to-file="${libs.opt}/sonar-ant-task-1.4.jar" url="${central.url}/org/codehaus/sonar-plugins/sonar-ant-task/1.4/sonar-ant-task-1.4.jar" />
+     	<get-element to-file="${libs.opt}/sonar-ant-task-2.0.jar" url="${central.url}/org/codehaus/sonar-plugins/sonar-ant-task/2.0/sonar-ant-task-2.0.jar" />
      </sequential>
   </macrodef>
   
@@ -1659,23 +1659,32 @@ To automate the JAR signing processs, you can add the property
   	<cobertura-report srcdir="${code.src}" destdir="${tests.build}/cobertura" />
   </target>
   
-  <target name="sonar" depends="coverage-tests">
+  <target name="sonar" depends="coverage-tests,version">
   	<!-- bootstrap sonar ant tasks -->
     <typedef resource="org/sonar/ant/antlib.xml" 
              uri="antlib:org.sonar.ant" 
              classpathref="path.optional" />
   	
-    <!-- list of mandatories Sonar properties -->
+    <!-- list of Sonar project configuration properties -->
+    <property name="sonar.projectKey" value="org.apache.jspwiki:jspwiki" />
+    <property name="sonar.projectName" value="Apache JSPWiki (incubating)" />
+    <property name="sonar.projectVersion" value="${jspwiki.version}" />
     <property name="sonar.sources" value="${code.src}" />
- 
+    <property name="sonar.scm.url" value="scm:svn:http://svn.apache.org/repos/asf/incubator/jspwiki/trunk/" />
+    
     <!-- list of optional Sonar properties -->
-    <property name="sonar.binaries" value="${tests.build}" />
+    <property name="sonar.binaries" value="${code.build}" />
     <property name="sonar.tests" value="${tests.src}" />
     
     <!-- list of advanced properties -->
+    <property name="sonar.core.codeCoveragePlugin" value="cobertura"/>
     <property name="sonar.surefire.reportsPath" value="./tests/reports" />
   	<property name="sonar.cobertura.reportPath" value="${tests.build}/cobertura/coverage.xml" />
     <property name="sonar.dynamicAnalysis" value="reuseReports" />
+    
+    <!-- Used by PMD only -->
+    <property name="sonar.java.source" value="1.5" />
+    <property name="sonar.java.target" value="1.5" />
     
     <!-- other interesting properties that can be overriden -->
     <!-- <property name="sonar.jdbc.driverClassName" value="org.apache.derby.jdbc.ClientDriver" /> -->
@@ -1689,7 +1698,7 @@ To automate the JAR signing processs, you can add the property
   	                  srcdir="${code.src}" 
   	                  destdir="${tests.build}/cobertura" />
     
-    <sonar:sonar key="org.apache.jspwiki:jspwiki" version="${jspwiki.version}" xmlns:sonar="antlib:org.sonar.ant"/>
+    <sonar:sonar xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
   
   <target name="rat-report" description="Generate an Apache Rat report.">
