@@ -891,20 +891,6 @@
         </fileset>
         <report format="noframes" todir="${tests.src}" />
      </junitreport>
-
-  </target>
-
-  <target name="guitests" depends="jar,tests-init,jartests,tests-db-init"
-          description="Runs the tests in a pretty window.">
-
-     <java classname="junit.swingui.TestRunner" fork="yes" maxmemory="512m">
-        <classpath>
-           <path refid="path.tests" />
-        </classpath>
-        <sysproperty key="jspwiki.tests.auth" value="true" />
-        <arg value="org.apache.wiki.AllTests" />
-     </java>
-
   </target>
 
   <!-- This target runs web unit tests using Selenium. These tests run
