@@ -35,7 +35,7 @@ public class RecentChangesPluginTest extends TestCase
 {
 Properties props = new Properties();
 
-TestEngine engine;
+TestEngine testEngine;
 
 WikiContext context;
 
@@ -45,20 +45,20 @@ public void setUp() throws Exception
 {
     props.load( TestEngine.findTestProperties() );
 
-    engine = new TestEngine( props );
+    testEngine = new TestEngine( props );
 
-    engine.saveText( "TestPage01", "Some Text for testing 01" );
-    engine.saveText( "TestPage02", "Some Text for testing 02" );
-    engine.saveText( "TestPage03", "Some Text for testing 03" );
+    testEngine.saveText( "TestPage01", "Some Text for testing 01" );
+    testEngine.saveText( "TestPage02", "Some Text for testing 02" );
+    testEngine.saveText( "TestPage03", "Some Text for testing 03" );
 
-    manager = new PluginManager( engine, props );
+    manager = new PluginManager( testEngine, props );
 }
 
 public void tearDown()
 {
-    TestEngine.deleteTestPage( "TestPage01" );
-    TestEngine.deleteTestPage( "TestPage02" );
-    TestEngine.deleteTestPage( "TestPage03" );
+    testEngine.deleteTestPage( "TestPage01" );
+    testEngine.deleteTestPage( "TestPage02" );
+    testEngine.deleteTestPage( "TestPage03" );
     
     TestEngine.emptyWorkDir();
 }
@@ -70,7 +70,7 @@ public void tearDown()
  */
 public void testSimple() throws Exception
 {
-    context = new WikiContext( engine, new WikiPage(engine,"TestPage01") );
+    context = new WikiContext( testEngine, new WikiPage(testEngine,"TestPage01") );
 
     String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}" );
 
@@ -90,7 +90,7 @@ public void testSimple() throws Exception
  */
 public void testParmInClude() throws Exception
 {
-    context = new WikiContext( engine, new WikiPage(engine,"TestPage02") );
+    context = new WikiContext( testEngine, new WikiPage(testEngine,"TestPage02") );
 
     String res = manager.execute( context,
                                   "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
@@ -109,7 +109,7 @@ public void testParmInClude() throws Exception
  */
 public void testParmExClude() throws Exception
 {
-    context = new WikiContext( engine, new WikiPage(engine,"TestPage03") );
+    context = new WikiContext( testEngine, new WikiPage(testEngine,"TestPage03") );
 
     String res = manager.execute( context,
                                   "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );

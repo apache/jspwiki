@@ -73,8 +73,8 @@ public class AttachmentManagerTest extends TestCase
 
     public void tearDown()
     {
-        TestEngine.deleteTestPage( NAME1 );
-        TestEngine.deleteTestPage( NAMEU );
+        m_engine.deleteTestPage( NAME1 );
+        m_engine.deleteTestPage( NAMEU );
 
         TestEngine.deleteAttachments(NAME1);
         TestEngine.deleteAttachments(NAMEU);

@@ -34,29 +34,29 @@ import org.apache.wiki.parser.WikiDocument;
 
 public class WysiwygEditingRendererTest extends TestCase
 {
-    protected TestEngine m_testEngine;
+    protected TestEngine testEngine;
 
     protected void setUp() throws Exception
     {
         Properties props = new Properties();
         props.load(TestEngine.findTestProperties());
-        m_testEngine = new TestEngine(props);
+        testEngine = new TestEngine(props);
         super.setUp();
 
-        m_testEngine.saveText( "WysiwygEditingRendererTest", "test page" );
-        m_testEngine.saveText( "This Pagename Has Spaces", "This Pagename Has Spaces" );
+        testEngine.saveText( "WysiwygEditingRendererTest", "test page" );
+        testEngine.saveText( "This Pagename Has Spaces", "This Pagename Has Spaces" );
     }
 
     public void tearDown()
     {
-        TestEngine.deleteTestPage( "WysiwygEditingRendererTest" );
-        TestEngine.deleteTestPage( "This Pagename Has Spaces" );
+        testEngine.deleteTestPage( "WysiwygEditingRendererTest" );
+        testEngine.deleteTestPage( "This Pagename Has Spaces" );
     }
 
     private String render(String s) throws IOException
     {
-        WikiPage dummyPage = new WikiPage(m_testEngine,"TestPage");
-        WikiContext ctx = new WikiContext(m_testEngine,dummyPage);
+        WikiPage dummyPage = new WikiPage(testEngine,"TestPage");
+        WikiContext ctx = new WikiContext(testEngine,dummyPage);
 
         StringReader in = new StringReader(s);
 

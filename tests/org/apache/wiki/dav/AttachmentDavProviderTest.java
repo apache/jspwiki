@@ -49,7 +49,7 @@ public class AttachmentDavProviderTest extends TestCase
     protected void tearDown() throws Exception
     {
         TestEngine.deleteAttachments( "TestPage" );
-        TestEngine.deleteTestPage("TestPage");
+        engine.deleteTestPage("TestPage");
     }
 
     public void testGetPageURL()

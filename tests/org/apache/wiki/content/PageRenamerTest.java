@@ -50,22 +50,22 @@ public class PageRenamerTest extends TestCase
     {
         super.tearDown();
         
-        TestEngine.deleteTestPage("TestPage");
-        TestEngine.deleteTestPage("TestPage2");
-        TestEngine.deleteTestPage("FooTest");
-        TestEngine.deleteTestPage("Test");
-        TestEngine.deleteTestPage("CdauthNew");
-        TestEngine.deleteTestPage("Cdauth");
-        TestEngine.deleteTestPage("TestPageReferring");
-        TestEngine.deleteTestPage("TestPageReferredNew");
-        TestEngine.deleteTestPage("Main");
-        TestEngine.deleteTestPage("Main8887");
-        TestEngine.deleteTestPage("TestPage1234");
-        TestEngine.deleteTestPage("TestPageReferred");
-        TestEngine.deleteTestPage("RenameTest");
-        TestEngine.deleteTestPage("Link one");
-        TestEngine.deleteTestPage("Link uno");
-        TestEngine.deleteTestPage("Link two");
+        m_engine.deleteTestPage("TestPage");
+        m_engine.deleteTestPage("TestPage2");
+        m_engine.deleteTestPage("FooTest");
+        m_engine.deleteTestPage("Test");
+        m_engine.deleteTestPage("CdauthNew");
+        m_engine.deleteTestPage("Cdauth");
+        m_engine.deleteTestPage("TestPageReferring");
+        m_engine.deleteTestPage("TestPageReferredNew");
+        m_engine.deleteTestPage("Main");
+        m_engine.deleteTestPage("Main8887");
+        m_engine.deleteTestPage("TestPage1234");
+        m_engine.deleteTestPage("TestPageReferred");
+        m_engine.deleteTestPage("RenameTest");
+        m_engine.deleteTestPage("Link one");
+        m_engine.deleteTestPage("Link uno");
+        m_engine.deleteTestPage("Link two");
 
         TestEngine.emptyWorkDir();
     }

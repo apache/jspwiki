@@ -59,9 +59,9 @@ public class PageViewPluginTest extends TestCase
 
     public void tearDown()
     {
-        testEngine.nonStaticDeleteTestPage( "TestPage01" );
-        testEngine.nonStaticDeleteTestPage( "TestPage02" );
-        testEngine.nonStaticDeleteTestPage( "PageViews" );
+        testEngine.deleteTestPage( "TestPage01" );
+        testEngine.deleteTestPage( "TestPage02" );
+        testEngine.deleteTestPage( "PageViews" );
         TestEngine.emptyWorkDir();
     }
 
@@ -121,7 +121,7 @@ public class PageViewPluginTest extends TestCase
         // this page should not have been shown:
         assertFalse( result.contains( "Test Page Excluded" ) );
 
-        testEngine.nonStaticDeleteTestPage( "TestPageExcluded" );
+        testEngine.deleteTestPage( "TestPageExcluded" );
     }
 
     public void testShowCountsSorted() throws Exception
@@ -189,8 +189,8 @@ public class PageViewPluginTest extends TestCase
 
         assertFalse( result.contains( "Test Page 04" ) );
         
-        testEngine.nonStaticDeleteTestPage( "TestPage03" );
-        testEngine.nonStaticDeleteTestPage( "TestPage04" );
+        testEngine.deleteTestPage( "TestPage03" );
+        testEngine.deleteTestPage( "TestPage04" );
     }
 
 }

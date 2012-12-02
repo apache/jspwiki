@@ -82,7 +82,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         {
             String name = i.next();
 
-            TestEngine.deleteTestPage(name);
+            testEngine.deleteTestPage(name);
             TestEngine.deleteAttachments(name);
         }
 

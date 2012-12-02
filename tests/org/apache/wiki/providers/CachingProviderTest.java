@@ -33,6 +33,8 @@ import org.apache.wiki.*;
 
 public class CachingProviderTest extends TestCase
 {
+    protected TestEngine testEngine;
+
     public CachingProviderTest( String s )
     {
         super( s );
@@ -44,15 +46,15 @@ public class CachingProviderTest extends TestCase
         TestEngine.emptyWorkDir();
 
         Properties props2 = new Properties();
-
         props2.load( TestEngine.findTestProperties() );
+        testEngine = new TestEngine(props2);
         PropertyConfigurator.configure(props2);
     }
 
     public void tearDown()
     {
         TestEngine.emptyWorkDir();
-        TestEngine.deleteTestPage("Testi");
+        testEngine.deleteTestPage("Testi");
     }
 
     /**

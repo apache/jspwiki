@@ -32,7 +32,7 @@ import org.apache.wiki.WikiPage;
 public class UndefinedPagesPluginTest extends TestCase
 {
     Properties props = new Properties();
-    TestEngine engine;
+    TestEngine testEngine;
     WikiContext context;
     PluginManager manager;
 
@@ -46,36 +46,36 @@ public class UndefinedPagesPluginTest extends TestCase
     {
         props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine(props);
+        testEngine = new TestEngine(props);
 
-        engine.saveText( "TestPage", "Reference to [Foobar]." );
-        engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
+        testEngine.saveText( "TestPage", "Reference to [Foobar]." );
+        testEngine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
-        context = new WikiContext( engine, new WikiPage(engine, "TestPage") );
-        manager = new PluginManager( engine, props );
+        context = new WikiContext( testEngine, new WikiPage(testEngine, "TestPage") );
+        manager = new PluginManager( testEngine, props );
     }
 
     public void tearDown()
     {
-        TestEngine.deleteTestPage( "TestPage" );
-        TestEngine.deleteTestPage( "Foobar" );
+        testEngine.deleteTestPage( "TestPage" );
+        testEngine.deleteTestPage( "Foobar" );
         TestEngine.emptyWorkDir();
     }
 
     private String wikitize( String s )
     {
-        return engine.textToHTML( context, s );
+        return testEngine.textToHTML( context, s );
     }
 
     /**
      *  Tests that only correct undefined links are found.
      *  We also check against plural forms here, which should not
-     *  be listed as non-existant.
+     *  be listed as non-existent.
      */
     public void testSimpleUndefined()
         throws Exception
     {
-        WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
+        WikiContext context2 = new WikiContext( testEngine, new WikiPage(testEngine, "Foobar") );
 
         String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin");

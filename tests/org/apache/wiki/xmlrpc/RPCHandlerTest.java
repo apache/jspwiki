@@ -54,7 +54,7 @@ public class RPCHandlerTest extends TestCase
 
     public void tearDown()
     {
-        TestEngine.deleteTestPage( NAME1 );
+        m_engine.deleteTestPage( NAME1 );
         TestEngine.deleteAttachments( NAME1 );
         TestEngine.emptyWorkDir();
     }

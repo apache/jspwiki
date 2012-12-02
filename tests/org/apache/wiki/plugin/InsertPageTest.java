@@ -40,11 +40,11 @@ public class InsertPageTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "ThisPage" );
-        TestEngine.deleteTestPage( "ThisPage2" );
-        TestEngine.deleteTestPage( "Test_Page" );
-        TestEngine.deleteTestPage( "TestPage" );
-        TestEngine.deleteTestPage( "Test Page" );
+        testEngine.deleteTestPage( "ThisPage" );
+        testEngine.deleteTestPage( "ThisPage2" );
+        testEngine.deleteTestPage( "Test_Page" );
+        testEngine.deleteTestPage( "TestPage" );
+        testEngine.deleteTestPage( "Test Page" );
     }
 
     public void testRecursive() throws Exception

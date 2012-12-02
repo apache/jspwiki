@@ -94,8 +94,8 @@ public class BasicAttachmentProviderTest extends TestCase
 
     public void tearDown()
     {
-        TestEngine.deleteTestPage( NAME1 );
-        TestEngine.deleteTestPage( NAME2 );
+        m_engine.deleteTestPage( NAME1 );
+        m_engine.deleteTestPage( NAME2 );
 
         String tmpfiles = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 

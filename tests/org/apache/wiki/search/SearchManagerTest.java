@@ -57,7 +57,7 @@ public class SearchManagerTest extends TestCase
     {
         super.tearDown();
         
-        TestEngine.deleteTestPage("TestPage");
+        m_engine.deleteTestPage("TestPage");
     }
 
     public void testDefaultProvider()

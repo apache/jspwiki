@@ -47,7 +47,7 @@ public class RawPagesDavProviderTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage("TestPage");
+        engine.deleteTestPage("TestPage");
     }
 
     public void testGetPageURL()
