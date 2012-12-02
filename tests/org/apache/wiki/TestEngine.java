@@ -36,6 +36,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
@@ -246,6 +247,38 @@ public class TestEngine extends WikiEngine
                 f.delete();
             
             deleteAttachments( name );
+        }
+        catch( Exception e )
+        {
+            log.error("Couldn't delete "+name, e );
+        }
+    }
+
+    /**
+     *  Removes a page, but not any auxiliary information.  Works only
+     *  with FileSystemProvider.
+     */
+    public void nonStaticDeleteTestPage( String name )
+    {
+        Properties properties = new Properties();
+
+        try
+        {
+            properties.load( findTestProperties() );
+            String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+            File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
+
+            f.delete();
+
+            // Remove the property file, too
+            f = new File( files, mangleName(name)+".properties" );
+
+            if( f.exists() )
+                f.delete();
+            
+            deleteAttachments( name );
+            firePageEvent( WikiPageEvent.PAGE_DELETED, name );
         }
         catch( Exception e )
         {

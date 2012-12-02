@@ -48,6 +48,7 @@ import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.filters.FilterException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -2182,6 +2183,7 @@ public class WikiEngine
                     }
                 }
                 m_pageManager.deletePage( p );
+                firePageEvent( WikiPageEvent.PAGE_DELETED, pageName );
             }
         }
     }
@@ -2407,6 +2409,18 @@ public class WikiEngine
         if ( WikiEventManager.isListening(this) )
         {
             WikiEventManager.fireEvent(this,new WikiEngineEvent(this,type));
+        }
+    }
+
+    /**
+     * Fires a WikiPageEvent to all registered listeners.
+     * @param type  the event type
+     */
+    protected final void firePageEvent( int type, String pageName )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiPageEvent(this,type,pageName));
         }
     }
 

@@ -39,25 +39,9 @@ public class PageViewPluginTest extends TestCase
 
     PluginManager manager;
 
-    /*
-     * Constructor is part of a workaround for execution ordering of the tests
-     */
-    public PageViewPluginTest ( String testName )
-    {
-        super( testName );
-    }
-
-    /*
-     * Second part of the workaround for execution ordering of the tests
-     */
     public static Test suite()
     {
-        TestSuite ts = new TestSuite();
-        ts.addTest( new PageViewPluginTest( "testShowCountsBasic" ) );
-        ts.addTest( new PageViewPluginTest( "testShowCountsExclude" ) );
-        ts.addTest( new PageViewPluginTest( "testShowCountsSorted" ) );
-        ts.addTest( new PageViewPluginTest( "testShowCountEntries" ) );
-        return ts;
+        return new TestSuite( PageViewPluginTest.class );
     }
 
     public void setUp() throws Exception
@@ -75,9 +59,9 @@ public class PageViewPluginTest extends TestCase
 
     public void tearDown()
     {
-        TestEngine.deleteTestPage( "TestPage01" );
-        TestEngine.deleteTestPage( "TestPage02" );
-        TestEngine.deleteTestPage( "PageViews" );
+        testEngine.nonStaticDeleteTestPage( "TestPage01" );
+        testEngine.nonStaticDeleteTestPage( "TestPage02" );
+        testEngine.nonStaticDeleteTestPage( "PageViews" );
         TestEngine.emptyWorkDir();
     }
 
@@ -137,7 +121,7 @@ public class PageViewPluginTest extends TestCase
         // this page should not have been shown:
         assertFalse( result.contains( "Test Page Excluded" ) );
 
-        TestEngine.deleteTestPage( "TestPageExcluded" );
+        testEngine.nonStaticDeleteTestPage( "TestPageExcluded" );
     }
 
     public void testShowCountsSorted() throws Exception
@@ -205,8 +189,8 @@ public class PageViewPluginTest extends TestCase
 
         assertFalse( result.contains( "Test Page 04" ) );
         
-        TestEngine.deleteTestPage( "TestPage03" );
-        TestEngine.deleteTestPage( "TestPage04" );
+        testEngine.nonStaticDeleteTestPage( "TestPage03" );
+        testEngine.nonStaticDeleteTestPage( "TestPage04" );
     }
 
 }

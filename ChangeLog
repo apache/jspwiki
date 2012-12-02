@@ -1,4 +1,10 @@
-2012-11-22  Florian Holeczek (florianh AT apache DOT org)
+2012-12-02   Harry Metske <metskem@apache.org>
+       
+       * 2.9.1-svn-1
+       
+       * fixed JSPWIKI-665 Page View Plugin and page renames and deletions (thanks to Glen Mazza)
+       
+ 2012-11-22  Florian Holeczek (florianh AT apache DOT org)
 
        * version switch to 2.9.1-svn-0
 

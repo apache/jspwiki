@@ -42,6 +42,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.plugin.InitializablePlugin;
 import org.apache.wiki.plugin.PluginException;
 import org.apache.wiki.plugin.PluginManager;
@@ -139,11 +140,9 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         {
             if( c_singleton == null )
             {
-
                 c_singleton = new PageViewManager(  );
-
-                c_singleton.initialize( engine );
             }
+            c_singleton.initialize( engine );
         }
     }
 
@@ -289,6 +288,12 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                     log.info( "Detected wiki engine shutdown" );
                     handleShutdown();
                 }
+            } 
+            else if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )
+            {
+                 String pageName = ((WikiPageEvent) event).getPageName();
+                 m_storage.remove(pageName);
+                 m_counters.remove(pageName);
             }
         }
 
