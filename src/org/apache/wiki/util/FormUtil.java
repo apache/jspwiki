@@ -84,7 +84,7 @@ public final class FormUtil
      * @return ArrayList, containing the values corresponding to the
      *          keyPrefix, in order.
      */
-    public static ArrayList getNumberedValues( Map params, String keyPrefix )
+    public static List getNumberedValues( Map params, String keyPrefix )
     {
         ArrayList<Object> rval = new ArrayList<Object>();
         if( params == null || 
@@ -133,8 +133,8 @@ public final class FormUtil
      * @param filterPrefix the prefix
      * @return the Map containing parsed key/value pairs
      */
-    public static Map requestToMap( HttpServletRequest req, 
-                                    String filterPrefix )
+    public static Map< String, String > requestToMap( HttpServletRequest req, 
+                                                      String filterPrefix )
     {
         HashMap<String,String> params = new HashMap<String,String>();
         

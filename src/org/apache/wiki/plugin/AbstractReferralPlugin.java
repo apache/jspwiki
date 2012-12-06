@@ -60,8 +60,7 @@ import org.apache.wiki.util.comparators.LocaleComparator;
  *  </ul>
  *  
  */
-public abstract class AbstractReferralPlugin
-    implements WikiPlugin
+public abstract class AbstractReferralPlugin implements WikiPlugin
 {
     private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
 
@@ -127,15 +126,15 @@ public abstract class AbstractReferralPlugin
      * @throws PluginException if any of the plugin parameters are malformed
      */
     // FIXME: The compiled pattern strings should really be cached somehow.
-    public void initialize( WikiContext context, Map params )
+    public void initialize( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
         m_engine = context.getEngine();
-        m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
+        m_maxwidth = TextUtil.parseIntParameter( params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
         if( m_maxwidth < 0 ) m_maxwidth = 0;
 
-        String s = (String) params.get( PARAM_SEPARATOR );
+        String s = params.get( PARAM_SEPARATOR );
 
         if( s != null )
         {
@@ -146,21 +145,21 @@ public abstract class AbstractReferralPlugin
             m_after = "";
         }
 
-        s = (String) params.get( PARAM_BEFORE );
+        s = params.get( PARAM_BEFORE );
 
         if( s != null )
         {
             m_before = s;
         }
 
-        s = (String) params.get( PARAM_AFTER );
+        s = params.get( PARAM_AFTER );
 
         if( s != null )
         {
             m_after = s;
         }
 
-        s = (String) params.get( PARAM_EXCLUDE );
+        s = params.get( PARAM_EXCLUDE );
 
         if( s != null )
         {
@@ -184,7 +183,7 @@ public abstract class AbstractReferralPlugin
         }
 
         // TODO: Cut-n-paste, refactor
-        s = (String) params.get( PARAM_INCLUDE );
+        s = params.get( PARAM_INCLUDE );
 
         if( s != null )
         {
@@ -208,7 +207,7 @@ public abstract class AbstractReferralPlugin
         }
 
         // log.debug( "Requested maximum width is "+m_maxwidth );
-        s = (String) params.get(PARAM_SHOW);
+        s = params.get(PARAM_SHOW);
 
         if( s != null )
         {
@@ -218,7 +217,7 @@ public abstract class AbstractReferralPlugin
             }
         }
 
-        s = (String) params.get( PARAM_LASTMODIFIED );
+        s = params.get( PARAM_LASTMODIFIED );
 
         if( s != null )
         {
@@ -451,9 +450,9 @@ public abstract class AbstractReferralPlugin
     /**
      * Helper method to initialize the comparator for this page.
      */
-    private void initSorter( WikiContext context, Map params )
+    private void initSorter( WikiContext context, Map<String, String> params )
     {
-        String order = (String) params.get( PARAM_SORTORDER );
+        String order = params.get( PARAM_SORTORDER );
         if( order == null || order.length() == 0 )
         {
             // Use the configured comparator

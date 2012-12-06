@@ -128,11 +128,11 @@ public class Denounce implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
-        String link = (String) params.get( PARAM_LINK );
-        String text = (String) params.get( PARAM_TEXT );
+        String link = params.get( PARAM_LINK );
+        String text = params.get( PARAM_TEXT );
         boolean linkAllowed = true;
 
         if( link == null )

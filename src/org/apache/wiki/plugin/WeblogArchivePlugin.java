@@ -18,12 +18,15 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.providers.ProviderException;
-import org.apache.log4j.Logger;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.providers.ProviderException;
 
 /**
  *  Creates a list of all weblog entries on a monthly basis.
@@ -47,7 +50,7 @@ public class WeblogArchivePlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
@@ -55,7 +58,7 @@ public class WeblogArchivePlugin implements WikiPlugin
         //
         //  Parameters
         //
-        String weblogName = (String) params.get( PARAM_PAGE );
+        String weblogName = params.get( PARAM_PAGE );
 
         if( weblogName == null ) weblogName = context.getPage().getName();
         

@@ -18,11 +18,16 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
-import org.apache.wiki.*;
-
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.log4j.Logger;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
 
 /**
  *  Displays the pages referring to the current page.
@@ -62,11 +67,11 @@ public class ReferringPagesPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        String pageName = (String)params.get( PARAM_PAGE );
+        String pageName = params.get( PARAM_PAGE );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         
         StringBuffer result = new StringBuffer( 256 );
@@ -85,8 +90,8 @@ public class ReferringPagesPlugin
 
             super.initialize( context, params );
 
-            int items = TextUtil.parseIntParameter( (String)params.get( PARAM_MAX ), ALL_ITEMS );
-            String extras = (String)params.get( PARAM_EXTRAS );
+            int items = TextUtil.parseIntParameter( params.get( PARAM_MAX ), ALL_ITEMS );
+            String extras = params.get( PARAM_EXTRAS );
             if( extras == null )
             {
                 extras = rb.getString("referringpagesplugin.more");

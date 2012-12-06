@@ -160,7 +160,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params ) throws PluginException
+    public String execute( WikiContext context, Map<String, String> params ) throws PluginException
     {
 
         PageViewManager manager = c_singleton;
@@ -306,7 +306,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          * @return String Wiki page snippet
          * @throws PluginException Malformed pattern parameter.
          */
-        public String execute( WikiContext context, Map params ) throws PluginException
+        public String execute( WikiContext context, Map<String, String> params ) throws PluginException
         {
             WikiEngine engine = context.getEngine();
             WikiPage page = context.getPage();
@@ -316,16 +316,16 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
             {
                 // get parameters
                 String pagename = page.getName();
-                String count = (String) params.get( PARAM_COUNT );
-                String show = (String) params.get( PARAM_SHOW );
-                int entries = TextUtil.parseIntParameter( (String) params.get( PARAM_MAX_ENTRIES ), Integer.MAX_VALUE );
-                final int max = TextUtil.parseIntParameter( (String) params.get( PARAM_MAX_COUNT ), Integer.MAX_VALUE );
-                final int min = TextUtil.parseIntParameter( (String) params.get( PARAM_MIN_COUNT ), Integer.MIN_VALUE );
-                String sort = (String) params.get( PARAM_SORT );
-                String body = (String) params.get( PluginManager.PARAM_BODY );
-                Pattern[] exclude = compileGlobs( PARAM_EXCLUDE, (String) params.get( PARAM_EXCLUDE ) );
-                Pattern[] include = compileGlobs( PARAM_INCLUDE, (String) params.get( PARAM_INCLUDE ) );
-                Pattern[] refer = compileGlobs( PARAM_REFER, (String) params.get( PARAM_REFER ) );
+                String count = params.get( PARAM_COUNT );
+                String show = params.get( PARAM_SHOW );
+                int entries = TextUtil.parseIntParameter( params.get( PARAM_MAX_ENTRIES ), Integer.MAX_VALUE );
+                final int max = TextUtil.parseIntParameter( params.get( PARAM_MAX_COUNT ), Integer.MAX_VALUE );
+                final int min = TextUtil.parseIntParameter( params.get( PARAM_MIN_COUNT ), Integer.MIN_VALUE );
+                String sort = params.get( PARAM_SORT );
+                String body = params.get( PluginManager.PARAM_BODY );
+                Pattern[] exclude = compileGlobs( PARAM_EXCLUDE, params.get( PARAM_EXCLUDE ) );
+                Pattern[] include = compileGlobs( PARAM_INCLUDE, params.get( PARAM_INCLUDE ) );
+                Pattern[] refer = compileGlobs( PARAM_REFER, params.get( PARAM_REFER ) );
                 PatternMatcher matcher = (null != exclude || null != include || null != refer) ? new Perl5Matcher() : null;
                 boolean increment = false;
 

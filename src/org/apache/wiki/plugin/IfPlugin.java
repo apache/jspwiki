@@ -132,11 +132,10 @@ public class IfPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute(WikiContext context, Map params) throws PluginException
+    public String execute(WikiContext context, Map<String, String> params) throws PluginException
     {
-        return ifInclude(context,params)
-                ? context.getEngine().textToHTML(
-                        context,(String)params.get(PluginManager.PARAM_BODY) )
+        return ifInclude( context,params )
+                ? context.getEngine().textToHTML( context, params.get( PluginManager.PARAM_BODY ) )
                 : "" ;
     }
 
@@ -152,18 +151,18 @@ public class IfPlugin implements WikiPlugin
      * @throws PluginException If something goes wrong
      * @return True, if the condition holds.
      */
-    public static boolean ifInclude( WikiContext context, Map params ) throws PluginException
+    public static boolean ifInclude( WikiContext context, Map<String, String> params ) throws PluginException
     {
         boolean include = false;
 
-        String group    = (String)params.get(PARAM_GROUP);
-        String user     = (String)params.get(PARAM_USER);
-        String ip       = (String)params.get(PARAM_IP);
-        String page     = (String)params.get(PARAM_PAGE);
-        String contains = (String)params.get(PARAM_CONTAINS);
-        String var      = (String)params.get(PARAM_VAR);
-        String is       = (String)params.get(PARAM_IS);
-        String exists   = (String)params.get(PARAM_EXISTS);
+        String group    = params.get( PARAM_GROUP );
+        String user     = params.get( PARAM_USER );
+        String ip       = params.get( PARAM_IP );
+        String page     = params.get( PARAM_PAGE );
+        String contains = params.get( PARAM_CONTAINS );
+        String var      = params.get( PARAM_VAR );
+        String is       = params.get( PARAM_IS );
+        String exists   = params.get( PARAM_EXISTS );
 
         include |= checkGroup(context, group);
         include |= checkUser(context, user);

@@ -22,7 +22,6 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-
 import org.apache.wiki.*;
 
 
@@ -80,7 +79,7 @@ public class ReferredPagesPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         m_engine = context.getEngine();
@@ -89,21 +88,21 @@ public class ReferredPagesPlugin implements WikiPlugin
         if( page == null ) return "";
 
         // parse parameters
-        String rootname = (String)params.get( PARAM_ROOT );
+        String rootname = params.get( PARAM_ROOT );
         if( rootname == null ) rootname = page.getName() ;
 
-        String format = (String)params.get( PARAM_FORMAT );
+        String format = params.get( PARAM_FORMAT );
         if( format == null) format = "";
         if( format.indexOf( "full" ) >=0 ) m_formatCompact = false ;
         if( format.indexOf( "sort" ) >=0 ) m_formatSort    = true  ;
 
-        m_depth = TextUtil.parseIntParameter( (String)params.get( PARAM_DEPTH ), MIN_DEPTH );
+        m_depth = TextUtil.parseIntParameter( params.get( PARAM_DEPTH ), MIN_DEPTH );
         if( m_depth > MAX_DEPTH )  m_depth = MAX_DEPTH;
 
-        String includePattern = (String) params.get(PARAM_INCLUDE);
+        String includePattern = params.get(PARAM_INCLUDE);
         if( includePattern == null ) includePattern = ".*";
 
-        String excludePattern = (String) params.get(PARAM_EXCLUDE);
+        String excludePattern = params.get(PARAM_EXCLUDE);
         if( excludePattern == null ) excludePattern = "^$";
 
         log.debug( "Fetching referred pages for "+ rootname +

@@ -58,9 +58,9 @@ public class Note implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute(WikiContext context, Map params) throws PluginException
+    public String execute(WikiContext context, Map<String, String> params) throws PluginException
     {
-        String commandline = (String) params.get(PluginManager.PARAM_CMDLINE);
+        String commandline = params.get(PluginManager.PARAM_CMDLINE);
         if (commandline == null || commandline.length() == 0)
         {
             return "Unable to obtain plugin command line from parameter'" + PluginManager.PARAM_CMDLINE + "'"; // I18N

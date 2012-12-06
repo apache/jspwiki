@@ -18,12 +18,17 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.auth.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.providers.ProviderException;
-
-import java.util.*;
 
 /**
  *  Inserts page contents.  Muchos thanks to Scott Hurlbert for the initial code.
@@ -67,21 +72,19 @@ public class InsertPage
      *  {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
 
         StringBuffer res = new StringBuffer();
 
-        String clazz        = (String) params.get( PARAM_CLASS );
-        String includedPage = (String) params.get( PARAM_PAGENAME );
-        String style        = (String) params.get( PARAM_STYLE );
-        String defaultstr   = (String) params.get( PARAM_DEFAULT );
-        int    section      = TextUtil.parseIntParameter((String) params.get( PARAM_SECTION ), 
-                                                         -1 );
-        int    maxlen       = TextUtil.parseIntParameter((String) params.get( PARAM_MAXLENGTH ),
-                                                         -1 );
+        String clazz        = params.get( PARAM_CLASS );
+        String includedPage = params.get( PARAM_PAGENAME );
+        String style        = params.get( PARAM_STYLE );
+        String defaultstr   = params.get( PARAM_DEFAULT );
+        int    section      = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
+        int    maxlen       = TextUtil.parseIntParameter(params.get( PARAM_MAXLENGTH ), -1 );
 
         if( style == null ) style = DEFAULT_STYLE;
 

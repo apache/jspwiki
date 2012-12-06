@@ -27,7 +27,7 @@ import org.apache.wiki.WikiContext;
  *  should implement this interface.
  *
  */
-public interface WikiPlugin
+public interface WikiPlugin 
 {
     /**
      *  Name of the default plugin resource bundle.
@@ -57,6 +57,6 @@ public interface WikiPlugin
      *  @throws PluginException In case anything goes wrong.
      */
 
-    public String execute( WikiContext context, Map params )
+    String execute( WikiContext context, Map<String, String> params )
         throws PluginException;
 }

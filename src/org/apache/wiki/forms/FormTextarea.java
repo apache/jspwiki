@@ -18,14 +18,15 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.*;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.textarea;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.plugin.PluginException;
+import org.apache.wiki.plugin.WikiPlugin;
 
 /**
  *  Creates a Form text area element.   You may specify the size of the textarea
@@ -33,8 +34,7 @@ import org.apache.ecs.xhtml.textarea;
  *  and height of the area.
  *  
  */
-public class FormTextarea
-    extends FormElement
+public class FormTextarea extends FormElement
 {
     /** Parameter name for setting the rows value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ROWS = "rows";
@@ -45,12 +45,12 @@ public class FormTextarea
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
-        Map previousValues = null;
+        Map< String, String > previousValues = null;
         ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         if( info != null )
@@ -64,7 +64,7 @@ public class FormTextarea
 
         if( previousValues == null )
         {
-            previousValues = new HashMap();
+            previousValues = new HashMap< String, String >();
         }
 
         ConcreteElement field = null;
@@ -78,12 +78,12 @@ public class FormTextarea
         return "";
     }
 
-    private textarea buildTextArea( Map params, Map previousValues, ResourceBundle rb )
+    private textarea buildTextArea( Map< String, String > params, Map< String, String > previousValues, ResourceBundle rb )
         throws PluginException
     {
-        String inputName = (String)params.get( PARAM_INPUTNAME );
-        String rows = (String)params.get( PARAM_ROWS );
-        String cols = (String)params.get( PARAM_COLS );
+        String inputName = params.get( PARAM_INPUTNAME );
+        String rows = params.get( PARAM_ROWS );
+        String cols = params.get( PARAM_COLS );
 
         if( inputName == null )
             throw new PluginException( rb.getString( "formtextarea.namemissing" ) );
@@ -96,14 +96,14 @@ public class FormTextarea
 
         if( previousValues != null )
         {
-            String oldValue = (String)previousValues.get( inputName );
+            String oldValue = previousValues.get( inputName );
             if( oldValue != null )
             {
                 field.addElement( oldValue );
             }
             else
             {
-                oldValue = (String)params.get( PARAM_VALUE );
+                oldValue = params.get( PARAM_VALUE );
                 if( oldValue != null ) field.addElement( oldValue );
             }
         }

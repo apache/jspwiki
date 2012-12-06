@@ -36,18 +36,17 @@ import org.apache.wiki.preferences.Preferences.TimeFormat;
  *  @since 1.7.8
  *  @see java.text.SimpleDateFormat
  */
-public class CurrentTimePlugin
-    implements WikiPlugin
+public class CurrentTimePlugin implements WikiPlugin
 {
     // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
-        String formatString = (String)params.get("format");
+        String formatString = params.get("format");
         
         try
         {

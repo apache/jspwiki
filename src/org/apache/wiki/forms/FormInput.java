@@ -18,13 +18,15 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.*;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.ecs.xhtml.input;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.plugin.PluginException;
+import org.apache.wiki.plugin.WikiPlugin;
 
 /**
  *  Creates a simple input text field.
@@ -43,13 +45,13 @@ public class FormInput
      * 
      * {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
-        String inputName  = (String)params.get( PARAM_INPUTNAME );
-        String inputValue = (String)params.get( PARAM_VALUE );
-        String inputType  = (String)params.get( PARAM_TYPE );
-        String size       = (String)params.get( PARAM_SIZE );
+        String inputName  = params.get( PARAM_INPUTNAME );
+        String inputValue = params.get( PARAM_VALUE );
+        String inputType  = params.get( PARAM_TYPE );
+        String size       = params.get( PARAM_SIZE );
         ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         if( inputName == null )
@@ -59,7 +61,7 @@ public class FormInput
 
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
-        Map previousValues = null;
+        Map< String, String > previousValues = null;
         if( info != null )
         {
             if( info.hide() )
@@ -71,7 +73,7 @@ public class FormInput
 
         if( previousValues == null )
         {
-            previousValues = new HashMap();
+            previousValues = new HashMap< String, String >();
         }
 
         // In order to isolate posted form elements into their own
@@ -81,11 +83,11 @@ public class FormInput
                                  HANDLERPARAM_PREFIX + inputName, 
                                  inputValue );
 
-        String checked = (String)params.get("checked");
+        String checked = params.get("checked");
         field.setChecked( TextUtil.isPositive(checked)
                           || "checked".equalsIgnoreCase(checked) );
         
-        String oldValue = (String)previousValues.get( inputName );
+        String oldValue = previousValues.get( inputName );
         if( oldValue != null )
         {
             field.setValue( oldValue );

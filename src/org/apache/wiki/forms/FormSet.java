@@ -18,9 +18,12 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.*;
-import org.apache.wiki.plugin.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.plugin.PluginException;
+import org.apache.wiki.plugin.WikiPlugin;
 
 /**
  * FormSet is a companion WikiPlugin for Form. 
@@ -59,11 +62,10 @@ public class FormSet
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
-        String formName = (String)params.get( FormElement.PARAM_FORM );
+        String formName = params.get( FormElement.PARAM_FORM );
         if( formName == null || formName.trim().length() == 0 )
         {
             return "";
@@ -84,7 +86,7 @@ public class FormSet
         //  modify the original param string.
         //
         info.setName( formName );
-        HashMap hm = new HashMap();
+        Map< String, String > hm = new HashMap< String, String >();
         hm.putAll( params );
         
         hm.remove( FormElement.PARAM_FORM );

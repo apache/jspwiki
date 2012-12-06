@@ -48,7 +48,7 @@ public class FormInfo
     private String m_handler;
     private String m_result;
     private String m_error;
-    private Map<?, ?> m_submission;
+    private Map<String, String> m_submission;
 
     /**
      *  Creates a new FormInfo with status == OK.
@@ -203,10 +203,9 @@ public class FormInfo
      * Copies the given values into the handler parameter map using Map.putAll().
      * @param val parameter name-value pairs for a Form handler WikiPlugin
      */
-    @SuppressWarnings("unchecked")
-    public void setSubmission( Map val )
+    public void setSubmission( Map< String, String > val )
     {
-        m_submission = new HashMap();
+        m_submission = new HashMap< String, String >();
         m_submission.putAll( val );
     }
 
@@ -214,11 +213,10 @@ public class FormInfo
      * Adds the given values into the handler parameter map.
      * @param val parameter name-value pairs for a Form handler WikiPlugin
      */
-    @SuppressWarnings("unchecked")
-    public void addSubmission( Map val )
+    public void addSubmission( Map< String, String > val )
     {
         if( m_submission == null )
-            m_submission = new HashMap();
+            m_submission = new HashMap< String, String >();
         m_submission.putAll( val );
     }
 
@@ -230,7 +228,7 @@ public class FormInfo
      *
      * @return Handler parameter name-value pairs.
      */
-    public Map getSubmission()
+    public Map< String, String > getSubmission()
     {
         return m_submission;
     }

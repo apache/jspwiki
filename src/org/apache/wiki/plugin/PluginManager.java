@@ -27,17 +27,16 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
-
 import org.apache.wiki.*;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.util.ClassUtil;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -285,7 +284,7 @@ public class PluginManager extends ModuleManager
     /**
      *  Outputs a HTML-formatted version of a stack trace.
      */
-    private String stackTrace( Map params, Throwable t )
+    private String stackTrace( Map< String, String > params, Throwable t )
     {
         div d = new div();
         d.setClass("debug");
@@ -296,10 +295,10 @@ public class PluginManager extends ModuleManager
         d.addElement( new b( "Parameters to the plugin" ) );
 
         ul list = new ul();
-        for( Iterator i = params.entrySet().iterator(); i.hasNext(); )
+        for( Iterator<Map.Entry< String, String > > i = params.entrySet().iterator(); i.hasNext(); )
         {
-            Map.Entry e = (Map.Entry) i.next();
-            String key = (String)e.getKey();
+            Map.Entry< String, String > e = i.next();
+            String key = e.getKey();
 
             list.addElement(new li( key+"'='"+e.getValue() ) );
         }
@@ -329,7 +328,7 @@ public class PluginManager extends ModuleManager
      */
     public String execute( WikiContext context,
                            String classname,
-                           Map params )
+                           Map< String, String > params )
         throws PluginException
     {
         if( !m_pluginsEnabled )
@@ -341,7 +340,7 @@ public class PluginManager extends ModuleManager
         {
             WikiPlugin plugin;
 
-            boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
+            boolean debug = TextUtil.isPositive( params.get( PARAM_DEBUG ) );
 
             WikiPluginInfo pluginInfo = m_pluginClassMap.get(classname);
 
@@ -438,10 +437,10 @@ public class PluginManager extends ModuleManager
      *
      * @throws IOException If the parsing fails.
      */
-    public Map parseArgs( String argstring )
+    public Map<String, String> parseArgs( String argstring )
         throws IOException
     {
-        HashMap<String, Object> arglist = new HashMap<String, Object>();
+        HashMap<String, String> arglist = new HashMap<String, String>();
 
         //
         //  Protection against funny users.
@@ -579,7 +578,7 @@ public class PluginManager extends ModuleManager
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
-                Map arglist     = parseArgs( args );
+                Map<String, String> arglist  = parseArgs( args );
 
                 return execute( context, plugin, arglist );
             }
@@ -612,7 +611,6 @@ public class PluginManager extends ModuleManager
      *  @return A DOM element
      *  @throws PluginException If plugin invocation is faulty
      */
-   @SuppressWarnings("unchecked")
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
@@ -628,13 +626,13 @@ public class PluginManager extends ModuleManager
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
-                Map<String, Object> arglist = parseArgs( args );
+                Map<String, String> arglist = parseArgs( args );
 
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
                 if ( pos != -1 )
                 {
                     int end = pos + commandline.length() + 2;
-                    int[] bounds = new int[] { pos, end };
+                    String bounds = pos + "|" + end;
                     arglist.put( PARAM_BOUNDS, bounds );
                 }
 
@@ -1019,7 +1017,7 @@ public class PluginManager extends ModuleManager
 
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         Object[] args = { content.getPluginName() };
-        Map params = content.getParameters();
+        Map<String, String> params = content.getParameters();
         try
         {
             WikiPlugin plugin;

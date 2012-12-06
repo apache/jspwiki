@@ -18,9 +18,11 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
+import java.util.Collection;
+import java.util.Map;
 
-import java.util.*;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.WikiContext;
 
 /**
  *  Plugin that enumerates the pages in the wiki that have not yet been defined.
@@ -38,8 +40,7 @@ public class UndefinedPagesPlugin
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();

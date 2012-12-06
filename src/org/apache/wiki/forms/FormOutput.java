@@ -53,8 +53,7 @@ public class FormOutput
      * @return {@inheritDoc}
      * @throws {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
         //
@@ -70,9 +69,9 @@ public class FormOutput
         // The submitted form MUST have parameter 'formname' equal to the name
         // parameter of this Form plugin.
 
-        String formName   = (String)params.get( PARAM_FORM );
+        String formName   = params.get( PARAM_FORM );
         String submitForm = ctx.getHttpParameter( PARAM_FORMNAMEHIDDEN );
-        String populator  = (String)params.get( PARAM_POPULATE );
+        String populator  = params.get( PARAM_POPULATE );
 
         if( submitForm == null || formName == null || 
             !formName.equals( submitForm ) )
@@ -86,7 +85,7 @@ public class FormOutput
             // If population was allowed, we should first  
         }
 
-        String handler = (String)params.get( PARAM_HANDLER );
+        String handler = params.get( PARAM_HANDLER );
         if( handler == null || handler.length() == 0 )
         {
             Object[] args = { PARAM_HANDLER };
@@ -112,15 +111,15 @@ public class FormOutput
 
         // Sift out all extra parameters, leaving only those submitted
         // in the HTML FORM.
-        Map handlerParams = FormUtil.requestToMap( ctx.getHttpRequest(), 
-                                                   HANDLERPARAM_PREFIX );
+        Map< String, String > handlerParams = FormUtil.requestToMap( ctx.getHttpRequest(), 
+                                                                     HANDLERPARAM_PREFIX );
         // Previous submission info may be available from FormSet
         // plugin - add, don't replace.
         info.addSubmission( handlerParams );
 
         // Pass the _body parameter from FormOutput on to the handler
-        info.getSubmission().put(PluginManager.PARAM_BODY, 
-                                 params.get(PluginManager.PARAM_BODY)); 
+        info.getSubmission().put( PluginManager.PARAM_BODY, 
+                                  params.get(PluginManager.PARAM_BODY)); 
 
         String handlerOutput = null;
         String error = null;

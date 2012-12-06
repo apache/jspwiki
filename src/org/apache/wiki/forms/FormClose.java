@@ -18,11 +18,12 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.*;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.plugin.PluginException;
 import org.apache.wiki.plugin.WikiPlugin;
-
-import java.util.*;
 
 /**
  *  Closes a WikiForm.
@@ -37,7 +38,7 @@ public class FormClose
      * 
      * {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
         StringBuffer tags = new StringBuffer();

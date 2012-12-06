@@ -22,6 +22,21 @@ Apache JSPWiki 2.9.0-incubating - Upgrading Notes
 The license file can be found in LICENSE.
 
 
+
+Upgrading JSPWiki to 2.9.1
+--------------------------
+
+Beginning with JSPWiki-2.9.1-svn-3, generics have been added to WikiPlugin's execute() signature, 
+which now looks like:
+
+String execute( WikiContext context, Map<String, String> params ) throws PluginException;
+
+Internally this Map was always constructed and expected to be used as <String, String>, except for
+the special _bounds parameter, which was constructed internally as an int[pos, end]. This parameter 
+is built now as a String and has the form of "pos|end". Other than that, this change of signature
+shouldn't affect your custom plugins.
+
+
 Upgrading JSPWiki from 2.8.x to 2.9.0
 -------------------------------------
 

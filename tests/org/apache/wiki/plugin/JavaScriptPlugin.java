@@ -18,9 +18,10 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
+import java.util.Map;
 
-import java.util.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 
 /**
  *  Implements a simple plugin that just returns a piece of Javascript
@@ -28,12 +29,11 @@ import java.util.*;
  *  Parameters: text - text to return.
  *
  */
-public class JavaScriptPlugin
-    implements WikiPlugin, InitializablePlugin
+public class JavaScriptPlugin implements WikiPlugin, InitializablePlugin
 {
     protected static boolean c_inited = false;
     
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map< String, String > params )
         throws PluginException
     {
         return "<script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n";

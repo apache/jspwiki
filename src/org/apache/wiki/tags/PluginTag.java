@@ -90,7 +90,6 @@ public class PluginTag
         return EVAL_BODY_BUFFERED;
     }
 
-    @SuppressWarnings("unchecked")
     private String executePlugin( String plugin, String args, String body )
         throws PluginException, IOException
     {

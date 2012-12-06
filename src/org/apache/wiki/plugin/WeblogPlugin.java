@@ -21,20 +21,11 @@ package org.apache.wiki.plugin;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -151,7 +142,7 @@ public class WeblogPlugin
      *  {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         Calendar   startTime;
@@ -170,14 +161,14 @@ public class WeblogPlugin
         int     maxEntries;
         String  weblogName;
 
-        if( (weblogName = (String) params.get(PARAM_PAGE)) == null )
+        if( (weblogName = params.get(PARAM_PAGE)) == null )
         {
             weblogName = context.getPage().getName();
         }
 
         if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null )
         {
-            days = (String) params.get( PARAM_DAYS );
+            days = params.get( PARAM_DAYS );
         }
 
         if( ( params.get(PARAM_ENTRYFORMAT)) == null )
@@ -186,7 +177,7 @@ public class WeblogPlugin
         }
         else
         {
-            entryFormat = new SimpleDateFormat( (String)params.get(PARAM_ENTRYFORMAT) );
+            entryFormat = new SimpleDateFormat( params.get(PARAM_ENTRYFORMAT) );
         }
 
         if( days != null )
@@ -202,17 +193,17 @@ public class WeblogPlugin
         }
 
 
-        if( (startDay = (String)params.get(PARAM_STARTDATE)) == null )
+        if( (startDay = params.get(PARAM_STARTDATE)) == null )
         {
             startDay = context.getHttpParameter( "weblog."+PARAM_STARTDATE );
         }
 
-        if( TextUtil.isPositive( (String)params.get(PARAM_ALLOWCOMMENTS) ) )
+        if( TextUtil.isPositive( params.get(PARAM_ALLOWCOMMENTS) ) )
         {
             hasComments = true;
         }
 
-        maxEntries = TextUtil.parseIntParameter( (String)params.get(PARAM_MAXENTRIES),
+        maxEntries = TextUtil.parseIntParameter( params.get(PARAM_MAXENTRIES),
                                                  Integer.MAX_VALUE );
 
         //
@@ -502,7 +493,7 @@ public class WeblogPlugin
      *  Mark us as being a real weblog. 
      *  {@inheritDoc}
      */
-    public void executeParser(PluginContent element, WikiContext context, Map params)
+    public void executeParser(PluginContent element, WikiContext context, Map<String, String> params)
     {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }

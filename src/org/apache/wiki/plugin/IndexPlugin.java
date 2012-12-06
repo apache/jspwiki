@@ -25,7 +25,6 @@ import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.providers.ProviderException;
 
@@ -47,10 +46,10 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params ) throws PluginException
+    public String execute( WikiContext context, Map<String, String> params ) throws PluginException
     {
-        String include = (String)params.get( PARAM_INCLUDE );
-        String exclude = (String)params.get( PARAM_EXCLUDE );
+        String include = params.get( PARAM_INCLUDE );
+        String exclude = params.get( PARAM_EXCLUDE );
         
         List<String> pages;
         div masterDiv = new div();

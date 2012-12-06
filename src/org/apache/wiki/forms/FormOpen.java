@@ -74,23 +74,23 @@ public class FormOpen
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
         ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-        String formName = (String)params.get( PARAM_FORM );
+        String formName = params.get( PARAM_FORM );
         if( formName == null )
         {
             Object[] args = { PARAM_FORM };
             throw new PluginException( MessageFormat.format( rb.getString( "formopen.missingparam" ), args ) );
         }
-        String hide     = (String)params.get( PARAM_HIDEFORM );
+        String hide     = params.get( PARAM_HIDEFORM );
         String sourcePage = ctx.getPage().getName();
-        String submitServlet = (String)params.get( PARAM_SUBMITHANDLER );
+        String submitServlet = params.get( PARAM_SUBMITHANDLER );
         if( submitServlet == null )
             submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
 
-        String method = (String)params.get( PARAM_METHOD );
+        String method = params.get( PARAM_METHOD );
         if( method == null ) method="post";
 
         if( !(method.equalsIgnoreCase("get") || method.equalsIgnoreCase("post")) )

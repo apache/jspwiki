@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.providers.ProviderException;
-import org.apache.log4j.Logger;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.apache.wiki.*;
+import org.apache.wiki.providers.ProviderException;
 
 /**
  *  Builds a simple weblog.
@@ -83,12 +83,12 @@ public class WeblogEntryPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         
-        String weblogName = (String)params.get( PARAM_BLOGNAME );
+        String weblogName = params.get( PARAM_BLOGNAME );
         if( weblogName == null )
         {
             weblogName = context.getPage().getName();
@@ -97,7 +97,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         
         StringBuffer sb = new StringBuffer();
 
-        String entryText = (String) params.get(PARAM_ENTRYTEXT);
+        String entryText = params.get(PARAM_ENTRYTEXT);
         if( entryText == null ) 
             entryText = rb.getString("weblogentryplugin.newentry");
         

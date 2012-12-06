@@ -53,11 +53,11 @@ public class SessionsPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
-        String prop = (String) params.get( PARAM_PROP );
+        String prop = params.get( PARAM_PROP );
         
         if ( "users".equals( prop ) )
         {
@@ -93,8 +93,7 @@ public class SessionsPlugin
                 }
                 else
                 {
-                    // first time we see this entry, add entry to HashMap with
-                    // value 1
+                    // first time we see this entry, add entry to HashMap with value 1
                     distinctPrincipals.put(principalName, 1);
                 }
             }

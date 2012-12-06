@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -66,14 +65,14 @@ public class Search implements WikiPlugin
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params ) throws PluginException
+    public String execute( WikiContext context, Map<String, String> params ) throws PluginException
     {
         int maxItems = Integer.MAX_VALUE;
         Collection results = null;
         
-        String queryString = (String)params.get( PARAM_QUERY );
-        String set         = (String)params.get( PARAM_SET );
-        String max         = (String)params.get( PARAM_MAX );
+        String queryString = params.get( PARAM_QUERY );
+        String set         = params.get( PARAM_SET );
+        String max         = params.get( PARAM_MAX );
         
         if( set == null ) set = DEFAULT_SETNAME;
         if( max != null ) maxItems = Integer.parseInt( max );

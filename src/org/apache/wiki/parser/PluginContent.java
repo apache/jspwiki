@@ -58,7 +58,7 @@ public class PluginContent extends Text
     private static final long serialVersionUID = 1L;
 
     private String                m_pluginName;
-    private Map<String,Object>    m_params;
+    private Map<String,String>    m_params;
     
     /**
      *  Creates a new DOM element with the given plugin name and a map of parameters.
@@ -66,8 +66,7 @@ public class PluginContent extends Text
      *  @param pluginName The FQN of a plugin.
      *  @param parameters A Map of parameters.
      */
-    @SuppressWarnings("unchecked")
-    public PluginContent( String pluginName, Map parameters )
+    public PluginContent( String pluginName, Map<String, String> parameters )
     {
         m_pluginName = pluginName;
         m_params     = parameters;
@@ -99,7 +98,7 @@ public class PluginContent extends Text
      *  
      *  @return The parameter map.
      */
-    public Map getParameters()
+    public Map<String, String> getParameters()
     {
         return m_params;
     }
@@ -163,7 +162,7 @@ public class PluginContent extends Text
                 result = PLUGIN_START + m_pluginName + SPACE;            
             
                 // convert newlines to <br> in case the plugin has a body.
-                String cmdLine = ( (String)m_params.get( CMDLINE ) ).replaceAll( LINEBREAK, ELEMENT_BR );
+                String cmdLine = ( m_params.get( CMDLINE ) ).replaceAll( LINEBREAK, ELEMENT_BR );
             
                 result = result + cmdLine + PLUGIN_END;
             }
@@ -174,21 +173,16 @@ public class PluginContent extends Text
 
                 WikiEngine engine = context.getEngine();
             
-                HashMap<String,Object> parsedParams = new HashMap<String,Object>();
+                Map<String,String> parsedParams = new HashMap<String,String>();
             
                 //
                 //  Parse any variable instances from the string
                 //
-                for( Map.Entry e : m_params.entrySet() )
+                for( Map.Entry<String, String> e : m_params.entrySet() )
                 {
-                    Object val = e.getValue();
-                
-                    if( val instanceof String )
-                    {
-                        val = engine.getVariableManager().expandVariables( context, (String)val );
-                    }
-                
-                    parsedParams.put( (String)e.getKey(), val );
+                    String val = e.getValue();
+                    val = engine.getVariableManager().expandVariables( context, val );
+                    parsedParams.put( e.getKey(), val );
                 }
             
                 result = engine.getPluginManager().execute( context,

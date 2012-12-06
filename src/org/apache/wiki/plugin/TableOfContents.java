@@ -18,15 +18,16 @@
  */
 package org.apache.wiki.plugin;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
-
-import java.util.*;
-import java.io.StringReader;
-import java.io.IOException;
 
 /**
  *  Provides a table of contents. 
@@ -140,7 +141,7 @@ public class TableOfContents
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
@@ -156,7 +157,7 @@ public class TableOfContents
         sb.append("<div class=\"toc\">\n");
         sb.append("<div class=\"collapsebox\">\n");
 
-        String title = (String) params.get(PARAM_TITLE);
+        String title = params.get(PARAM_TITLE);
         sb.append("<h4 id=\"section-TOC\">");
         if( title != null )
         {
@@ -174,7 +175,7 @@ public class TableOfContents
         m_usingNumberedList = false;
         if (params.containsKey(PARAM_NUMBERED))
         {
-            String numbered = (String)params.get(PARAM_NUMBERED);
+            String numbered = params.get(PARAM_NUMBERED);
             if (numbered.equalsIgnoreCase("true"))
             {
                 m_usingNumberedList = true;
@@ -189,7 +190,7 @@ public class TableOfContents
         if (m_usingNumberedList)
         {
             int start = 0;
-            String startStr = (String)params.get(PARAM_START);
+            String startStr = params.get(PARAM_START);
             if ((startStr != null) && (startStr.matches("^\\d+$")))
             {
                 start = Integer.parseInt(startStr);
@@ -201,7 +202,7 @@ public class TableOfContents
             if (m_level1Index < 0) m_level1Index = 0;
             m_level2Index = 0;
             m_level3Index = 0;
-            m_prefix = (String)params.get(PARAM_PREFIX);
+            m_prefix = params.get(PARAM_PREFIX);
             if (m_prefix == null) m_prefix = "";
             m_lastLevel = Heading.HEADING_LARGE;
         }

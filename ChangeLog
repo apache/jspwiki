@@ -1,3 +1,10 @@
+2012-12-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-3
+       
+       * Added generics to WikiPlugin.execute( WikiContext, Map< String, String > ) 
+       and propagated the change to all plugins. Cfr. with UPGRADING document for details.
+       
 2012-12-02   Harry Metske <metskem@apache.org>
        
        * 2.9.1-svn-2

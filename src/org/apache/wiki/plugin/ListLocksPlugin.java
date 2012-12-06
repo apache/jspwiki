@@ -18,10 +18,15 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.preferences.Preferences;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-import java.util.*;
+import org.apache.wiki.PageLock;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  This is a plugin for the administrator: It allows him to see in a single
@@ -37,7 +42,7 @@ public class ListLocksPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         StringBuffer result = new StringBuffer();

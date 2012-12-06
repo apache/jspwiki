@@ -43,6 +43,5 @@ public interface InitializablePlugin
      *  @throws PluginException If something goes wrong.
      */
 
-    public void initialize( WikiEngine engine )
-        throws PluginException;
+    void initialize( WikiEngine engine ) throws PluginException;
 }

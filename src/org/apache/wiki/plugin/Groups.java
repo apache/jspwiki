@@ -46,7 +46,7 @@ public class Groups
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         // Retrieve groups, and sort by name

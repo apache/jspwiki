@@ -18,15 +18,16 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.*;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.option;
 import org.apache.ecs.xhtml.select;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.plugin.PluginException;
+import org.apache.wiki.plugin.WikiPlugin;
 
 /**
  *  Creates a Form select field.
@@ -38,14 +39,14 @@ public class FormSelect
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
 
         ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-        Map previousValues = null;
+        Map< String, String > previousValues = null;
         
         if( info != null )
         {
@@ -58,7 +59,7 @@ public class FormSelect
 
         if( previousValues == null )
         {
-            previousValues = new HashMap();
+            previousValues = new HashMap< String, String >();
         }
 
         ConcreteElement field = null;
@@ -76,34 +77,34 @@ public class FormSelect
     /**
      * Builds a Select element.
      */
-    private select buildSelect( Map pluginParams, Map ctxValues, ResourceBundle rb )
+    private select buildSelect( Map< String, String > pluginParams, Map< String, String > ctxValues, ResourceBundle rb )
         throws PluginException
     {
-        String inputName = (String)pluginParams.get( PARAM_INPUTNAME );
+        String inputName = pluginParams.get( PARAM_INPUTNAME );
         if( inputName == null )
         {
             throw new PluginException( rb.getString( "formselect.namemissing" ) );
         }
     
-        String inputValue = (String)pluginParams.get( PARAM_VALUE );
-        String previousValue = (String)ctxValues.get( inputName );
+        String inputValue = pluginParams.get( PARAM_VALUE );
+        String previousValue = ctxValues.get( inputName );
         //
         // We provide several ways to override the separator, in case
         // some input application the default value.
         //
-        String optionSeparator = (String)pluginParams.get( "separator" );
+        String optionSeparator = pluginParams.get( "separator" );
         if( optionSeparator == null )
-            optionSeparator = (String)ctxValues.get( "separator." + inputName);
+            optionSeparator = ctxValues.get( "separator." + inputName);
         if( optionSeparator == null )
-            optionSeparator = (String)ctxValues.get( "select.separator" );
+            optionSeparator = ctxValues.get( "select.separator" );
         if( optionSeparator == null )
             optionSeparator = ";";
         
-        String optionSelector = (String)pluginParams.get( "selector" );
+        String optionSelector = pluginParams.get( "selector" );
         if( optionSelector == null )
-            optionSelector = (String)ctxValues.get( "selector." + inputName );
+            optionSelector = ctxValues.get( "selector." + inputName );
         if( optionSelector == null )
-            optionSelector = (String)ctxValues.get( "select.selector" );
+            optionSelector = ctxValues.get( "select.selector" );
         if( optionSelector == null )
             optionSelector = "*";
         if( optionSelector.equals( optionSeparator ) )

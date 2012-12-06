@@ -18,10 +18,13 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.*;
-import org.apache.wiki.*;
-import org.apache.wiki.attachment.AttachmentManager;
+import java.util.Map;
+
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.ProviderException;
 
 /**
@@ -79,15 +82,15 @@ public class Image
      *  This method is used to clean away things like quotation marks which
      *  a malicious user could use to stop processing and insert javascript.
      */
-    private static final String getCleanParameter( Map params, String paramId )
+    private static final String getCleanParameter( Map<String, String> params, String paramId )
     {
-        return TextUtil.replaceEntities( (String) params.get( paramId ) );
+        return TextUtil.replaceEntities( params.get( paramId ) );
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();

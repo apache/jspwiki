@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.plugin.WikiPlugin;
 
 /**
@@ -61,7 +61,7 @@ public abstract class FormElement
     /** Plugin parameter, mandatory in open/output: name of the form. */
     public static final String PARAM_FORM       = "form";
     /** Plugin parameter, mandatory in input elements: name of an element. */
-    public static final String PARAM_INPUTNAME       = "name";
+    public static final String PARAM_INPUTNAME  = "name";
     /** Plugin parameter, optional: default value for an input. */
     public static final String PARAM_VALUE      = "value";
     /** Experimental: hide the form if it was submitted successfully. */ 
@@ -101,6 +101,6 @@ public abstract class FormElement
      */
     protected FormInfo getFormInfo( WikiContext ctx )
     {
-        return (FormInfo)ctx.getVariable( FORM_VALUES_CARRIER );
+        return ( FormInfo )ctx.getVariable( FORM_VALUES_CARRIER );
     }
 }

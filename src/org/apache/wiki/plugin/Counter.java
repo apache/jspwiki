@@ -55,14 +55,14 @@ public class Counter
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         //
         //  First, determine which kind of name we use to store in
         //  the WikiContext.
         //
-        String  countername = (String)params.get(  PARAM_NAME);
+        String  countername = params.get(  PARAM_NAME);
 
         if( countername == null ) 
         {
@@ -87,7 +87,7 @@ public class Counter
         //  Check if we need to reset this
         //
         
-        String start = (String)params.get( PARAM_START );
+        String start = params.get( PARAM_START );
         
         if( start != null )
         {
@@ -98,13 +98,13 @@ public class Counter
             //
             //  Determine how much to increment
             //
-            Object incrementObj = params.get( PARAM_INCREMENT );
+            String incrementObj = params.get( PARAM_INCREMENT );
         
             int increment = DEFAULT_INCREMENT;
         
             if (incrementObj != null) 
             {
-                increment = (new Integer((String)incrementObj)).intValue();
+                increment = ( Integer.valueOf( incrementObj ) ).intValue();
             }
 
             val = val + increment;
@@ -115,13 +115,13 @@ public class Counter
         //
         // check if we want to hide the result (just count, don't show result on the page
         //
-        Object showObj = params.get(PARAM_SHOW_RESULT);
+        String showObj = params.get(PARAM_SHOW_RESULT);
         
         boolean show = DEFAULT_SHOW_RESULT;
         
         if( showObj != null ) 
         {
-            show = TextUtil.isPositive( (String) showObj );
+            show = TextUtil.isPositive( showObj );
         }
         
         if( show )

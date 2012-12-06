@@ -18,8 +18,13 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.
@@ -44,7 +49,7 @@ public class UnusedPagesPlugin
      *  {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
@@ -52,7 +57,7 @@ public class UnusedPagesPlugin
         //
         // filter out attachments if "excludeattachments" was requested:
         //
-        String prop = (String) params.get( PARAM_EXCLUDEATTS );
+        String prop = params.get( PARAM_EXCLUDEATTS );
         if( TextUtil.isPositive(prop) ) 
         {
             //  remove links to attachments (recognizable by a slash in it)

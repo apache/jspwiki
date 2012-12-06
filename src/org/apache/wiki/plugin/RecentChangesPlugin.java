@@ -24,7 +24,6 @@ import java.util.*;
 
 import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -74,10 +73,10 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
-        int since = TextUtil.parseIntParameter( (String) params.get( "since" ), DEFAULT_DAYS );
+        int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
         int      spacing  = 4;
         boolean  showAuthor = true;
         boolean  showChangenote = true;
@@ -101,8 +100,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
 
         log.debug("Calculating recent changes from "+sincedate.getTime());
 
-        // FIXME: Should really have a since date on the getRecentChanges
-        // method.
+        // FIXME: Should really have a since date on the getRecentChanges method.
         Collection   changes = engine.getRecentChanges();
         super.initialize( context, params );
         changes = super.filterCollection( changes );
@@ -237,7 +235,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
-    private DateFormat getTimeFormat( WikiContext context, Map params )
+    private DateFormat getTimeFormat( WikiContext context, Map<String, String> params )
     {
         String formatString = get(params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT);
 
@@ -249,7 +247,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
 
 
 
-    private DateFormat getDateFormat( WikiContext context, Map params )
+    private DateFormat getDateFormat( WikiContext context, Map<String, String> params )
     {
         String formatString = get(params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT);
 
@@ -262,9 +260,9 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
 
 
 
-    private String get(Map params, String defaultValue, String paramName)
+    private String get(Map<String, String> params, String defaultValue, String paramName)
     {
-        String value = (String) params.get(paramName);
+        String value = params.get(paramName);
         return null == value ? defaultValue : value;
     }
 
