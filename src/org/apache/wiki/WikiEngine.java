@@ -49,6 +49,7 @@ import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.filters.FilterException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -2278,7 +2279,9 @@ public class WikiEngine
                               boolean changeReferrers)
         throws WikiException
     {
-        return m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
+        String newPageName = m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
+        firePageRenameEvent(renameFrom, newPageName);
+        return newPageName;
     }
 
     /**
@@ -2421,6 +2424,19 @@ public class WikiEngine
         if ( WikiEventManager.isListening(this) )
         {
             WikiEventManager.fireEvent(this,new WikiPageEvent(this,type,pageName));
+        }
+    }
+
+    /**
+     * Fires a WikiPageRenameEvent to all registered listeners.
+     * @param oldName the former page name
+     * @param newName the new page name
+     */
+    protected final void firePageRenameEvent(String oldName, String newName )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiPageRenameEvent(this,oldName,newName));
         }
     }
 

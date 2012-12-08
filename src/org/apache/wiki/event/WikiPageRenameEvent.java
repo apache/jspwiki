@@ -86,7 +86,7 @@ public class WikiPageRenameEvent extends WikiPageEvent
      */
     public static boolean isValidType( int type )
     {
-        return type >= PAGE_LOCK && type <= PAGE_RENAMED;
+        return type == PAGE_RENAMED;
     }
 
 

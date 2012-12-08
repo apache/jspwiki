@@ -43,6 +43,7 @@ import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.plugin.InitializablePlugin;
 import org.apache.wiki.plugin.PluginException;
 import org.apache.wiki.plugin.PluginManager;
@@ -289,6 +290,17 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                     handleShutdown();
                 }
             } 
+            else if( (event instanceof WikiPageRenameEvent) && (event.getType() == WikiPageRenameEvent.PAGE_RENAMED) )
+            {
+                 String oldPageName = ((WikiPageRenameEvent) event).getOldPageName();
+                 String newPageName = ((WikiPageRenameEvent) event).getNewPageName();
+                 m_storage.remove(oldPageName);
+                 Counter oldCounter = m_counters.get( oldPageName );
+                 m_counters.put( newPageName, oldCounter );
+                 m_storage.setProperty( newPageName, oldCounter.toString() );
+                 m_counters.remove(oldPageName);
+                 m_dirty = true;
+            }
             else if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )
             {
                  String pageName = ((WikiPageEvent) event).getPageName();
@@ -406,6 +418,13 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                     else if( PARAM_COUNT.equals( show ) )
                     {
                         // show page count
+                        if( counter == null )
+                        {
+                            counter = new Counter();
+                            m_counters.put( pagename, counter );
+                            m_storage.setProperty( pagename, counter.toString() );
+                            m_dirty = true;
+                        }
                         result = counter.toString();
 
                     }
