@@ -863,7 +863,13 @@
   	    <report format="noframes" todir="${tests.reports}" />
   	 </junitreport>
      
-     <fail message="Test failure detected, check test results." if="test.failed" />
+     <antcall target="fail-build">
+       <param name="test.failed" value="@{test.failed}"/>
+     </antcall>
+  </target>
+	
+  <target name="fail-build" unless="continue_even_with_test_failures">
+  	<fail message="Test failure detected, check test results." if="test.failed" />
   </target>
 
   <target name="tests-auth" depends="jar,tests-init,jartests"
@@ -1644,20 +1650,22 @@ To automate the JAR signing processs, you can add the property
   <target name="coverage-reports" depends="coverage-tests,version">
   	<cobertura-report srcdir="${code.src}" destdir="${tests.build}/cobertura" />
   </target>
-  
-  <target name="sonar" depends="coverage-tests,version">
+	
+	
+	    
+  <target name="sonar-bootstrap" description="sonar ant task build configuration">
   	<!-- bootstrap sonar ant tasks -->
     <typedef resource="org/sonar/ant/antlib.xml" 
              uri="antlib:org.sonar.ant" 
              classpathref="path.optional" />
-  	
+  	    
     <!-- list of Sonar project configuration properties -->
     <property name="sonar.projectKey" value="org.apache.jspwiki:jspwiki" />
     <property name="sonar.projectName" value="Apache JSPWiki (incubating)" />
     <property name="sonar.projectVersion" value="${jspwiki.version}" />
     <property name="sonar.sources" value="${code.src}" />
     <property name="sonar.scm.url" value="scm:svn:http://svn.apache.org/repos/asf/incubator/jspwiki/trunk/" />
-    
+  	
     <!-- list of optional Sonar properties -->
     <property name="sonar.binaries" value="${code.build}" />
     <property name="sonar.tests" value="${tests.src}" />
@@ -1665,7 +1673,7 @@ To automate the JAR signing processs, you can add the property
     <!-- list of advanced properties -->
     <property name="sonar.core.codeCoveragePlugin" value="cobertura"/>
     <property name="sonar.surefire.reportsPath" value="./tests/reports" />
-  	<property name="sonar.cobertura.reportPath" value="${tests.build}/cobertura/coverage.xml" />
+    <property name="sonar.cobertura.reportPath" value="${tests.build}/cobertura/coverage.xml" />
     <property name="sonar.dynamicAnalysis" value="reuseReports" />
     
     <!-- Used by PMD only -->
@@ -1678,7 +1686,12 @@ To automate the JAR signing processs, you can add the property
     <!-- <property name="sonar.jdbc.password" value="sonar" /> -->
     <!-- <property name="sonar.jdbc.url" value="jdbc:derby://localhost:1527/sonar" /> -->
     <!-- <property name="sonar.host.url" value="http://localhost:9000" /> -->
-  	
+    
+    <!-- don't break the build if there are test failures -->
+  	<property name="continue_even_with_test_failures" value="true" />
+  </target>
+  
+  <target name="sonar" depends="sonar-bootstrap,coverage-tests,version">
   	<!-- Sonar needs an xml type cobertura report -->
   	<cobertura-report format="xml" 
   	                  srcdir="${code.src}" 

@@ -1,3 +1,9 @@
+2012-12-09  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * Sonar Ant task executed even if there are tests failures
+       
+       * When building jspwiki.properties, jspwiki.baseURL defaults to http://localhost:8080/JSPWiki/
+       
 2012-12-08  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-4
