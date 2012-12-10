@@ -1653,7 +1653,7 @@ To automate the JAR signing processs, you can add the property
 	
 	
 	    
-  <target name="sonar-bootstrap" description="sonar ant task build configuration">
+  <target name="sonar-bootstrap" depends="clean" description="sonar ant task build configuration">
   	<!-- bootstrap sonar ant tasks -->
     <typedef resource="org/sonar/ant/antlib.xml" 
              uri="antlib:org.sonar.ant" 
