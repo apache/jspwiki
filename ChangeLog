@@ -1,3 +1,9 @@
+2012-12-12  Harry Metske <metskem@apache.org>
+
+       * 2.8.5-svn-14
+        
+        * fixed JSPWIKI-742 NullPointerException in PriorityList (reported by Rakesh K. Cherukuri)
+
 2012-04-18  Harry Metske <metskem@apache.org>
 
        * 2.8.5-svn-13

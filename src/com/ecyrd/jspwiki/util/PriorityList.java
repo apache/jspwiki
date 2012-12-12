@@ -21,7 +21,7 @@
 package com.ecyrd.jspwiki.util;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *  Builds a simple, priority-based List implementation.  The list
@@ -32,11 +32,10 @@ import java.util.ArrayList;
  *  Priority is an integer, and the list is sorted in descending order
  *  (that is, 100 is before 10 is before 0 is before -40).
  */
-@SuppressWarnings("unchecked")
 public class PriorityList
     extends AbstractList
 {
-    private ArrayList<Object> m_elements = new ArrayList<Object>();
+    private CopyOnWriteArrayList<Item> m_elements = new CopyOnWriteArrayList<Item>();
 
     /**
      *  This is the default priority, which is used if no priority
@@ -57,7 +56,7 @@ public class PriorityList
 
         for( ; i < m_elements.size(); i++ )
         {
-            Item item = (Item) m_elements.get(i);
+            Item item = m_elements.get(i);
 
             if( item.m_priority < priority )
             {
@@ -93,7 +92,7 @@ public class PriorityList
      */
     public Object get( int index )
     {
-        return ((Item)m_elements.get( index )).m_object;
+        return m_elements.get( index ).m_object;
     }
 
     /**
