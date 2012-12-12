@@ -863,13 +863,13 @@
   	    <report format="noframes" todir="${tests.reports}" />
   	 </junitreport>
      
-     <antcall target="fail-build">
-       <param name="test.failed" value="@{test.failed}"/>
+     <antcall target="fail-build-if-junit-fails">
+       <param name="test.failed" value="${test.failed}"/>
      </antcall>
   </target>
 	
-  <target name="fail-build" unless="continue_even_with_test_failures">
-  	<fail message="Test failure detected, check test results." if="test.failed" />
+  <target name="fail-build-if-junit-fails" unless="continue_even_with_test_failures">
+  	<fail message="Test failure(s) detected, check test results." if="${test.failed}" />
   </target>
 
   <target name="tests-auth" depends="jar,tests-init,jartests"
