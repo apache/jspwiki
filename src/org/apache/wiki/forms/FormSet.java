@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  * FormSet is a companion WikiPlugin for Form. 

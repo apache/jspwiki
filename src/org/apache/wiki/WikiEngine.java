@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
+import org.apache.wiki.api.PluginManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -45,18 +45,13 @@ import org.apache.wiki.auth.acl.DefaultAclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
-import org.apache.wiki.event.WikiEngineEvent;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.event.WikiPageRenameEvent;
+import org.apache.wiki.event.*;
 import org.apache.wiki.filters.FilterException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
@@ -533,7 +528,7 @@ public class WikiEngine
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
-
+            
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
@@ -1991,13 +1986,16 @@ public class WikiEngine
 
     /**
      *  Returns the current plugin manager.
+     *  
+     *  In 2.10 the PluginManager will be returned instead of the generic
+     *  
      *  @since 1.6.1
      *  @return The current PluginManager instance
      */
-
-    public PluginManager getPluginManager()
+    @SuppressWarnings("unchecked")
+    public < T extends PluginManager > T getPluginManager()
     {
-        return m_pluginManager;
+        return (T)m_pluginManager;
     }
 
     /**

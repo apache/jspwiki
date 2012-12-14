@@ -31,20 +31,18 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
-import org.jdom.*;
-
 import org.apache.wiki.*;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.plugin.WikiPlugin;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
+import org.jdom.*;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
@@ -674,6 +672,22 @@ public class JSPWikiMarkupParser
     private static boolean isAccessRule( String link )
     {
         return link.startsWith("{ALLOW") || link.startsWith("{DENY");
+    }
+
+    /**
+     *  Returns true if the link is really command to insert
+     *  a plugin.
+     *  <P>
+     *  Currently we just check if the link starts with "{INSERT",
+     *  or just plain "{" but not "{$".
+     *
+     *  @param link Link text, i.e. the contents of text between [].
+     *  @return True, if this link seems to be a command to insert a plugin here.
+     */
+    public static boolean isPluginLink( String link )
+    {
+        return link.startsWith( "{INSERT" ) ||
+               ( link.startsWith( "{" ) && !link.startsWith( "{$" ) );
     }
 
     /**
@@ -1435,7 +1449,7 @@ public class JSPWikiMarkupParser
     {
         addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
     }
-
+    
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
@@ -1455,7 +1469,7 @@ public class JSPWikiMarkupParser
             return handleMetadata( linktext );
         }
 
-        if( PluginManager.isPluginLink( linktext ) )
+        if( isPluginLink( linktext ) )
         {
             try
             {
@@ -1480,8 +1494,7 @@ public class JSPWikiMarkupParser
                 if( !m_wysiwygEditorMode )
                 {
                     ResourceBundle rbPlugin = m_context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-                    Object[] args = { e.getMessage() };
-                    return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ), args ) ) );
+                    return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ), e.getMessage() ) ) );
                 }
             }
 

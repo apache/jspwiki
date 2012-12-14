@@ -24,10 +24,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.oro.text.regex.*;
-
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally, and is intended as a flexible way
@@ -135,7 +136,7 @@ public class IfPlugin implements WikiPlugin
     public String execute(WikiContext context, Map<String, String> params) throws PluginException
     {
         return ifInclude( context,params )
-                ? context.getEngine().textToHTML( context, params.get( PluginManager.PARAM_BODY ) )
+                ? context.getEngine().textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
                 : "" ;
     }
 

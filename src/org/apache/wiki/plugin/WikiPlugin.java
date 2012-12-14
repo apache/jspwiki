@@ -25,9 +25,11 @@ import org.apache.wiki.WikiContext;
 /**
  *  Defines an interface for plugins.  Any instance of a wiki plugin
  *  should implement this interface.
- *
+ * @deprecated will be removed in 2.10 scope. Consider using {@link org.apache.wiki.api.WikiPlugin} 
+ * instead
  */
-public interface WikiPlugin 
+@Deprecated
+public interface WikiPlugin extends org.apache.wiki.api.WikiPlugin
 {
     /**
      *  Name of the default plugin resource bundle.

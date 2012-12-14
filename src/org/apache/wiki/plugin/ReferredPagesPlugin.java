@@ -23,6 +23,8 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.*;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 
 /**

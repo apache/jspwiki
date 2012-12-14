@@ -31,7 +31,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.ProviderException;
 
-public class PluginManagerTest extends TestCase
+public class DefaultPluginManagerTest extends TestCase
 {
     public static final String NAME1 = "Test1";
 
@@ -41,9 +41,9 @@ public class PluginManagerTest extends TestCase
 
     WikiContext context;
 
-    PluginManager manager;
+    DefaultPluginManager manager;
 
-    public PluginManagerTest( String s )
+    public DefaultPluginManagerTest( String s )
     {
         super( s );
     }
@@ -55,7 +55,7 @@ public class PluginManagerTest extends TestCase
 
         engine = new TestEngine(props);
         context = new WikiContext( engine, new WikiPage(engine, "Testpage") );
-        manager = new PluginManager( engine, props );
+        manager = new DefaultPluginManager( engine, props );
     }
 
     public void tearDown() throws ProviderException
@@ -87,8 +87,8 @@ public class PluginManagerTest extends TestCase
     public void testSimpleInsertNoPackage2()
         throws Exception
     {
-        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo" );
-        PluginManager m = new PluginManager( engine, props );
+        props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
+        DefaultPluginManager m = new DefaultPluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin2 WHERE text=foobar}");
 
@@ -99,8 +99,8 @@ public class PluginManagerTest extends TestCase
     public void testSimpleInsertNoPackage3()
         throws Exception
     {
-        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo" );
-        PluginManager m = new PluginManager( engine, props );
+        props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
+        DefaultPluginManager m = new DefaultPluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin3 WHERE text=foobar}");
 
@@ -112,8 +112,8 @@ public class PluginManagerTest extends TestCase
     public void testSimpleInsertNoPackage4()
         throws Exception
     {
-        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
-        PluginManager m = new PluginManager( engine, props );
+        props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
+        DefaultPluginManager m = new DefaultPluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin WHERE text=foobar}");
 
@@ -218,6 +218,6 @@ public class PluginManagerTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( PluginManagerTest.class );
+        return new TestSuite( DefaultPluginManagerTest.class );
     }
 }

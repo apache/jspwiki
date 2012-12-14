@@ -23,13 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.jdom.Text;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.render.RenderingManager;
+import org.jdom.Text;
 
 /**
  *  Stores the contents of a plugin in a WikiDocument DOM tree.

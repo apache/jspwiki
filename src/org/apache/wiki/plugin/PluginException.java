@@ -18,14 +18,16 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiException;
 
 /**
  *  Provides a generic PluginException.  This is the kind of
- *  an exception that the plugins should throw.
+ *  an exception that the plugins should throw. 
+ *  @deprecated will be removed in 2.10 scope. Consider using 
+ *  {@link org.apache.wiki.api.exceptions.PluginException} instead
  */
+@Deprecated
 public class PluginException
-    extends WikiException
+    extends org.apache.wiki.api.exceptions.PluginException
 {
     private static final long serialVersionUID = 0L;
 
@@ -52,15 +54,5 @@ public class PluginException
     {
         super( message, original );
         m_throwable = original;
-    }
-
-    /**
-     *  Return the original exception.
-     *  
-     *  @return The original exception.
-     */
-    public Throwable getRootThrowable()
-    {
-        return m_throwable;
     }
 }

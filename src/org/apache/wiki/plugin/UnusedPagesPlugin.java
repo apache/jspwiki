@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.

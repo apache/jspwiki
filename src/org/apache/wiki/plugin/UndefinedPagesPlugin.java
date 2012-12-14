@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Plugin that enumerates the pages in the wiki that have not yet been defined.

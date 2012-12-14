@@ -40,7 +40,7 @@ public class AllTests extends TestCase
         suite.addTest( GroupsTest.suite() );
         suite.addTest( IfPluginTest.suite() );
         suite.addTest( InsertPageTest.suite() );
-        suite.addTest( PluginManagerTest.suite() );
+        suite.addTest( DefaultPluginManagerTest.suite() );
         suite.addTest( ReferringPagesPluginTest.suite() );
         suite.addTest( TableOfContentsTest.suite() );
         suite.addTest( UndefinedPagesPluginTest.suite() );

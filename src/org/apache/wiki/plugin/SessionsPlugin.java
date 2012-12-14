@@ -26,6 +26,8 @@ import java.util.Map;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  <p>Displays information about active wiki sessions. The parameter

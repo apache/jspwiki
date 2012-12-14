@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.plugin.DefaultPluginManager;
 import org.apache.wiki.util.FormUtil;
 
 /**
@@ -118,8 +118,8 @@ public class FormOutput
         info.addSubmission( handlerParams );
 
         // Pass the _body parameter from FormOutput on to the handler
-        info.getSubmission().put( PluginManager.PARAM_BODY, 
-                                  params.get(PluginManager.PARAM_BODY)); 
+        info.getSubmission().put( DefaultPluginManager.PARAM_BODY, 
+                                  params.get(DefaultPluginManager.PARAM_BODY)); 
 
         String handlerOutput = null;
         String error = null;

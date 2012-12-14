@@ -28,6 +28,8 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.providers.ProviderException;
 
 /**

@@ -35,7 +35,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
-import org.apache.wiki.plugin.PluginManager;
+import org.apache.wiki.plugin.DefaultPluginManager;
 import org.apache.wiki.preferences.Preferences;
 
 /**
@@ -154,11 +154,11 @@ public class EditorManager extends ModuleManager
                 }
                 catch( java.io.IOException e )
                 {
-                    log.error( "Couldn't load " + PluginManager.PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
+                    log.error( "Couldn't load " + DefaultPluginManager.PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
                 }
                 catch( JDOMException e )
                 {
-                    log.error( "Error parsing XML for plugin: "+PluginManager.PLUGIN_RESOURCE_LOCATION );
+                    log.error( "Error parsing XML for plugin: "+DefaultPluginManager.PLUGIN_RESOURCE_LOCATION );
                 }
             }
         }

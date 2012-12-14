@@ -26,8 +26,8 @@ import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.option;
 import org.apache.ecs.xhtml.select;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Creates a Form select field.

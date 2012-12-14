@@ -29,6 +29,8 @@ import junit.framework.TestSuite;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.PluginManager;
+import org.apache.wiki.api.exceptions.PluginException;
 
 public class ReferringPagesPluginTest extends TestCase
 {
@@ -60,7 +62,7 @@ public class ReferringPagesPluginTest extends TestCase
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
         context = new WikiContext( engine, engine.newHttpRequest(), new WikiPage(engine,"TestPage") );
-        manager = new PluginManager( engine, props );
+        manager = new DefaultPluginManager( engine, props );
     }
 
     public void tearDown()

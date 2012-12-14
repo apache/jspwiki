@@ -25,8 +25,8 @@ import java.util.ResourceBundle;
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.textarea;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.WikiPlugin;
 
 /**
  *  Creates a Form text area element.   You may specify the size of the textarea

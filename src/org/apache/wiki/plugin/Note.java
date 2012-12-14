@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  * Outputs an image with the supplied text as the <tt>title</tt> which is shown as a tooltip by
@@ -60,10 +62,10 @@ public class Note implements WikiPlugin
      */
     public String execute(WikiContext context, Map<String, String> params) throws PluginException
     {
-        String commandline = params.get(PluginManager.PARAM_CMDLINE);
+        String commandline = params.get(DefaultPluginManager.PARAM_CMDLINE);
         if (commandline == null || commandline.length() == 0)
         {
-            return "Unable to obtain plugin command line from parameter'" + PluginManager.PARAM_CMDLINE + "'"; // I18N
+            return "Unable to obtain plugin command line from parameter'" + DefaultPluginManager.PARAM_CMDLINE + "'"; // I18N
         }
 
         String commentImage = imageUrl(context);

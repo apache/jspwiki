@@ -18,46 +18,21 @@
  */
 package org.apache.wiki.plugin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.Map.Entry;
-
-import org.apache.wiki.ReferenceManager;
-import org.apache.wiki.TextUtil;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.event.WikiEngineEvent;
-import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.event.WikiPageRenameEvent;
-import org.apache.wiki.plugin.InitializablePlugin;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.plugin.WikiPlugin;
-import org.apache.wiki.util.WikiBackgroundThread;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.*;
+import org.apache.wiki.*;
+import org.apache.wiki.api.InitializablePlugin;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.event.*;
+import org.apache.wiki.util.WikiBackgroundThread;
 
 /**
  * This plugin counts the number of times a page has been viewed.<br/>
@@ -334,7 +309,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                 final int max = TextUtil.parseIntParameter( params.get( PARAM_MAX_COUNT ), Integer.MAX_VALUE );
                 final int min = TextUtil.parseIntParameter( params.get( PARAM_MIN_COUNT ), Integer.MIN_VALUE );
                 String sort = params.get( PARAM_SORT );
-                String body = params.get( PluginManager.PARAM_BODY );
+                String body = params.get( DefaultPluginManager.PARAM_BODY );
                 Pattern[] exclude = compileGlobs( PARAM_EXCLUDE, params.get( PARAM_EXCLUDE ) );
                 Pattern[] include = compileGlobs( PARAM_INCLUDE, params.get( PARAM_INCLUDE ) );
                 Pattern[] refer = compileGlobs( PARAM_REFER, params.get( PARAM_REFER ) );

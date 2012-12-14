@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Opens a WikiForm.

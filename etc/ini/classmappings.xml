@@ -96,8 +96,9 @@
     <mappedClass>org.apache.wiki.i18n.InternationalizationManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.plugin.PluginManager</requestedClass>
-    <mappedClass>org.apache.wiki.plugin.PluginManager</mappedClass>
+    <requestedClass>org.apache.wiki.api.PluginManager</requestedClass>
+    <mappedClass>org.apache.wiki.plugin.PluginManager</mappedClass> <!-- to be replaced in 2.10 -->
+    <!-- <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass> --> <!-- replacing the former in 2.10 -->
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>

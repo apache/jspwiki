@@ -20,16 +20,18 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.log4j.Logger;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
-
-import java.util.*;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Denounces a link by removing it from any search engine. 

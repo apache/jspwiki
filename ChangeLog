@@ -1,9 +1,16 @@
+2012-12-14  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-6
+        
+       * initial commit for JSPWiki API (cfr. JSPWIKI-303), mostly focused on plugin API. Check
+         UPGRADING document for details
+        
 2012-12-12  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-5
         
-        * fixed JSPWIKI-742 NullPointerException in PriorityList (reported by Rakesh K. Cherukuri)
-        * minor updates to build.xml to properly handle build failures (I am not an ant expert...)
+       * fixed JSPWIKI-742 NullPointerException in PriorityList (reported by Rakesh K. Cherukuri)
+       * minor updates to build.xml to properly handle build failures (I am not an ant expert...)
  
  2012-12-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 

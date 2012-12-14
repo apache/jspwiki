@@ -28,7 +28,7 @@ import org.apache.ecs.xhtml.*;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
+import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
 public class PluginBean extends SimpleAdminBean

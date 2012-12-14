@@ -20,13 +20,14 @@ package org.apache.wiki.plugin;
 
 import java.util.Properties;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.framework.Test;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.PluginManager;
 
 public class PageViewPluginTest extends TestCase
 
@@ -54,7 +55,7 @@ public class PageViewPluginTest extends TestCase
         testEngine.saveText( "TestPage01", "this is test page 01 [{PageViewPlugin}]" );
         testEngine.saveText( "TestPage02", "this is test page 02 [{PageViewPlugin}]" );
 
-        manager = new PluginManager( testEngine, props );
+        manager = new DefaultPluginManager( testEngine, props );
     }
 
     public void tearDown()

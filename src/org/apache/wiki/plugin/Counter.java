@@ -18,8 +18,12 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import java.util.*;
+import java.util.Map;
+
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Provides a page-specific counter, it is reset every time a page is rendered, so it is not usable as a hitcounter.
