@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/package.html|images/|webdocs/|wikipages/" kind="src" output="build" path="src"/>
+	<classpathentry including="ini/classmappings.xml" kind="src" path="etc"/>
 	<classpathentry excluding="build/|etc/|lib/|libs-opt/|reports/" kind="src" output="tests/build" path="tests"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
