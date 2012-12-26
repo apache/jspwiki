@@ -27,9 +27,9 @@ import java.util.List;
 import javax.management.*;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.PluginManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -173,18 +173,15 @@ public class AdminBeanManager implements WikiEventListener
             }
             catch (ClassNotFoundException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error( e.getMessage(), e );
             }
             catch (InstantiationException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error( e.getMessage(), e );
             }
             catch (IllegalAccessException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error( e.getMessage(), e );
             }
         }
 
@@ -208,7 +205,8 @@ public class AdminBeanManager implements WikiEventListener
             e.printStackTrace();
         }
         registerBeans( m_engine.getEditorManager().modules() );
-        registerBeans( m_engine.getPluginManager().modules() );
+        PluginManager pm = m_engine.getPluginManager();
+        registerBeans( pm.modules() );
     }
 
     /**

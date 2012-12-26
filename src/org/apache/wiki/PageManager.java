@@ -34,6 +34,7 @@ import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.*;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.ProviderException;
@@ -704,7 +705,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
             String saveText;
             try
             {
-                saveText = engine.getFilterManager().doPreSaveFiltering( m_context, m_proposedText );
+                FilterManager fm = engine.getFilterManager();
+                saveText = fm.doPreSaveFiltering( m_context, m_proposedText );
             }
             catch ( FilterException e )
             {
@@ -754,7 +756,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
             // Refresh the context for post save filtering.
             engine.getPage( page.getName() );
             engine.textToHTML( context, proposedText );
-            engine.getFilterManager().doPostSaveFiltering( context, proposedText );
+            FilterManager fm = engine.getFilterManager();
+            fm.doPostSaveFiltering( context, proposedText );
 
             return Outcome.STEP_COMPLETE;
         }

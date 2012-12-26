@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
@@ -217,8 +218,11 @@ public class TableOfContents
             
             try
             {
-                if( runFilters )
-                    wikiText = engine.getFilterManager().doPreTranslateFiltering( context, wikiText );
+                if( runFilters ) 
+                {
+                    FilterManager fm = engine.getFilterManager();
+                    wikiText = fm.doPreTranslateFiltering( context, wikiText );
+                }
             }
             catch(Exception e) 
             {

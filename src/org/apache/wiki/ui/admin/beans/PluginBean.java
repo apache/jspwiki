@@ -24,10 +24,10 @@ import java.util.Iterator;
 import javax.management.NotCompliantMBeanException;
 
 import org.apache.ecs.xhtml.*;
-
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.PluginManager;
 import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
@@ -63,7 +63,8 @@ public class PluginBean extends SimpleAdminBean
     @SuppressWarnings("unchecked")
     public String doGet(WikiContext context)
     {
-        Collection<WikiPluginInfo> plugins = m_engine.getPluginManager().modules();
+        PluginManager pm = m_engine.getPluginManager();
+        Collection<WikiPluginInfo> plugins = pm.modules();
 
         div root = new div();
 

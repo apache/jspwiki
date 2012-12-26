@@ -594,8 +594,8 @@ public class WikiEngine
             //
             //  Hook the different manager routines into the system.
             //
-            getFilterManager().addPageFilter(m_referenceManager, -1001 );
-            getFilterManager().addPageFilter(m_searchManager, -1002 );
+            m_filterManager.addPageFilter(m_referenceManager, -1001 );
+            m_filterManager.addPageFilter(m_searchManager, -1002 );
         }
 
         catch( RuntimeException e )

@@ -31,6 +31,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiException;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
 
@@ -250,7 +251,8 @@ public class ApprovalWorkflowTest extends TestCase
     public void testSaveWikiPageWithException() throws WikiException
     {
         // Add a PageFilter that rejects all save attempts
-        m_engine.getFilterManager().addPageFilter( new AbortFilter(), 0 );
+        FilterManager fm = m_engine.getFilterManager();
+        fm.addPageFilter( new AbortFilter(), 0 );
 
         // Create a sample test page and try to save it
         String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();

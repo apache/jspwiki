@@ -19,7 +19,8 @@
 
 package org.apache.wiki.event;
 
-import  org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.filters.FilterManager;
 
 /**
  *  A utility class that adds some JSPWiki-specific functionality to the
@@ -131,7 +132,8 @@ public class WikiEventUtils
                    || type == WikiPageEvent.POST_SAVE_BEGIN
                    || type == WikiPageEvent.POST_SAVE_END ) // attach to FilterManager
             {
-                WikiEventManager.addWikiEventListener( ((WikiEngine)client).getFilterManager(), listener );
+                FilterManager fm = ((WikiEngine)client).getFilterManager();
+                WikiEventManager.addWikiEventListener( fm, listener );
             }
             else //if (  type == WikiPageEvent.PRE_TRANSLATE
                  // || type == WikiPageEvent.POST_TRANSLATE

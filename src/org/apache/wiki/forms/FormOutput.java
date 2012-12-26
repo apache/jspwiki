@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.PluginManager;
 import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.plugin.DefaultPluginManager;
@@ -127,7 +128,8 @@ public class FormOutput
         {
             // The plugin _can_ modify the parameters, so we make sure
             // they stay with us.
-            handlerOutput = ctx.getEngine().getPluginManager().execute( ctx, handler, info.getSubmission() );
+            PluginManager pm = ctx.getEngine().getPluginManager();
+            handlerOutput = pm.execute( ctx, handler, info.getSubmission() );
             info.setResult( handlerOutput );
             info.setStatus( FormInfo.EXECUTED );
         }
