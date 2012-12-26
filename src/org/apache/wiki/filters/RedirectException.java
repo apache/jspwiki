@@ -23,13 +23,14 @@ package org.apache.wiki.filters;
  *  redirect the user elsewhere.
  *
  *  @since 2.1.112
+ *  @deprecated will be removed in 2.10 scope. Consider using 
+ *  {@link org.apache.wiki.api.exceptions.RedirectException} instead
  */
+@Deprecated
 public class RedirectException
-    extends FilterException
+    extends org.apache.wiki.api.exceptions.RedirectException
 {
     private static final long serialVersionUID = 0L;
-
-    private final String m_where;
 
     /**
      *  Constructs a new RedirectException.
@@ -39,18 +40,7 @@ public class RedirectException
      */
     public RedirectException( String msg, String redirect )
     {
-        super( msg );
-
-        m_where = redirect;
+        super( msg, redirect );
     }
 
-    /**
-     *  Get the URI for redirection.
-     *  
-     *  @return The URI given in the constructor.
-     */
-    public String getRedirect()
-    {
-        return m_where;
-    }
 }

@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.filters.BasicPageFilter;
 
 /**
  *  This class is an example of how to have a simple filter.  It removes

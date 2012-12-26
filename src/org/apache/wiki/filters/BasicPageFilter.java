@@ -29,10 +29,8 @@ import org.apache.wiki.WikiEngine;
  *  and implement only methods that you need.
  *
  */
-public class BasicPageFilter
-    implements PageFilter
+public class BasicPageFilter extends org.apache.wiki.api.filters.BasicPageFilter
 {
-    protected WikiEngine m_engine;
   
     /**
      *  If you override this, you should call super.initialize() first.
@@ -80,10 +78,4 @@ public class BasicPageFilter
     {
     }
     
-    /**
-     *  {@inheritDoc}
-     */
-    public void destroy( WikiEngine engine ) 
-    {
-    }
 }

@@ -40,8 +40,11 @@ import org.apache.wiki.WikiEngine;
  *  <p>
  *  As of 2.5.30, initialize() gains access to the WikiEngine.
  *
+ *  @deprecated will be removed in 2.10 scope. Consider using 
+ *  {@link org.apache.wiki.api.filters.PageFilter} instead
  */
-public interface PageFilter
+@Deprecated
+public interface PageFilter extends org.apache.wiki.api.filters.PageFilter
 {
     /**
      *  Is called whenever the a new PageFilter is instantiated and

@@ -31,6 +31,8 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.RedirectException;
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.providers.ProviderException;

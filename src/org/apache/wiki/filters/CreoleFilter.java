@@ -20,10 +20,11 @@ package org.apache.wiki.filters;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.filters.BasicPageFilter;
-import org.apache.wiki.filters.FilterException;
+import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
 
 /**
@@ -49,6 +50,9 @@ import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
 
 public class CreoleFilter extends BasicPageFilter 
 {
+    
+    private static final Logger log = Logger.getLogger(CreoleFilter.class);
+    
     /**
      *  {@inheritDoc}
      */
@@ -70,7 +74,7 @@ public class CreoleFilter extends BasicPageFilter
         }
         catch(Exception e )
         {
-            e.printStackTrace();
+            log.error( e.getMessage(), e );
             return e.getMessage();
         }
     }
@@ -78,7 +82,6 @@ public class CreoleFilter extends BasicPageFilter
     /**
      *  {@inheritDoc}
      */
-
     public String preTranslate(WikiContext wikiContext, String content)
         throws FilterException 
     {
@@ -86,11 +89,10 @@ public class CreoleFilter extends BasicPageFilter
         {
             Properties prop = wikiContext.getEngine().getWikiProperties();
             return new CreoleToJSPWikiTranslator().translate(prop ,content);
-            
         } 
         catch (Exception e) 
         {
-            e.printStackTrace();
+            log.error( e.getMessage(), e );
             return content
                    + "\n \n %%error \n"
                    + "[CreoleFilterError]: This page was not translated by the CreoleFilter due to "

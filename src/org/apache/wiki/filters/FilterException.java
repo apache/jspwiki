@@ -18,15 +18,17 @@
  */
 package org.apache.wiki.filters;
 
-import org.apache.wiki.WikiException;
 
 /**
  *  A generic PageFilter exception.
  *
  *  @since 2.1.112
+ *  @deprecated will be removed in 2.10 scope. Consider using 
+ *  {@link org.apache.wiki.api.exceptions.FilterException} instead
  */
+@Deprecated
 public class FilterException 
-    extends WikiException
+    extends org.apache.wiki.api.exceptions.FilterException
 {
     private static final long serialVersionUID = 0L;
     
