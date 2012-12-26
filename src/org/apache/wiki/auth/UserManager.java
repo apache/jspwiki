@@ -40,7 +40,7 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.filters.PageFilter;
+import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.rpc.RPCCallable;
@@ -469,7 +469,6 @@ public final class UserManager
      * @param context the current wiki context
      * @param profile the supplied UserProfile
      */
-    @SuppressWarnings("unchecked")
     public final void validateProfile( WikiContext context, UserProfile profile )
     {
         boolean isNew = profile.isNew();
@@ -480,7 +479,6 @@ public final class UserManager
         //
         //  Query the SpamFilter first
         //
-        
         List<PageFilter> ls = m_engine.getFilterManager().getFilterList();
         for( PageFilter pf : ls )
         {

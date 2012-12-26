@@ -19,8 +19,8 @@
 
 package org.apache.wiki.event;
 
-import org.apache.wiki.filters.BasicPageFilter;
-import org.apache.wiki.filters.FilterException;
+import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.exceptions.FilterException;
 
 import org.apache.wiki.WikiContext;
 import java.util.Properties;

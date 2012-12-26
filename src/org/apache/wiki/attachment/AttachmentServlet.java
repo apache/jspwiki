@@ -41,8 +41,8 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.dav.AttachmentDavProvider;
@@ -51,7 +51,6 @@ import org.apache.wiki.dav.DavProvider;
 import org.apache.wiki.dav.WebdavServlet;
 import org.apache.wiki.dav.methods.DavMethod;
 import org.apache.wiki.dav.methods.PropFindMethod;
-import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.progress.ProgressItem;

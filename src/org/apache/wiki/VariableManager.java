@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import org.apache.wiki.filters.PageFilter;
+import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
 
@@ -495,12 +495,11 @@ public class VariableManager
 
         public String getPagefilters()
         {
-            List filters = m_context.getEngine().getFilterManager().getFilterList();
+            List<PageFilter> filters = m_context.getEngine().getFilterManager().getFilterList();
             StringBuffer sb = new StringBuffer();
 
-            for (Iterator i = filters.iterator(); i.hasNext();)
+            for (PageFilter pf : filters )
             {
-                PageFilter pf = (PageFilter) i.next();
                 String f = pf.getClass().getName();
 
                 if( pf instanceof InternalModule )

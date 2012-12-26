@@ -88,8 +88,9 @@
     <mappedClass>org.apache.wiki.diff.DifferenceManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.filters.FilterManager</requestedClass>
-    <mappedClass>org.apache.wiki.filters.FilterManager</mappedClass>
+    <requestedClass>org.apache.wiki.api.filters.FilterManager</requestedClass>
+    <mappedClass>org.apache.wiki.filters.FilterManager</mappedClass> <!-- to be replaced in 2.10 -->
+    <!-- <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass> --> <!-- replacing the former in 2.10 -->
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>

@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.*;
+import org.apache.wiki.api.PluginManager;
 import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.attachment.Attachment;
@@ -1473,9 +1474,8 @@ public class JSPWikiMarkupParser
         {
             try
             {
-                PluginContent pluginContent = m_engine.getPluginManager().parsePluginLine( m_context,
-                                                                                           linktext,
-                                                                                           pos );
+                PluginManager pm = m_engine.getPluginManager();
+                PluginContent pluginContent = pm.parsePluginLine( m_context, linktext, pos );
                 //
                 //  This might sometimes fail, especially if there is something which looks
                 //  like a plugin invocation but is really not.

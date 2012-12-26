@@ -33,7 +33,7 @@ import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.*;
-import org.apache.wiki.filters.FilterException;
+import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.ProviderException;

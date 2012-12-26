@@ -23,14 +23,13 @@ import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.filters.BasicPageFilter;
-import org.apache.wiki.filters.FilterException;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;

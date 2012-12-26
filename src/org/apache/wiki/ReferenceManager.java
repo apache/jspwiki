@@ -31,7 +31,7 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
