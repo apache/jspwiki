@@ -267,14 +267,17 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
             } 
             else if( (event instanceof WikiPageRenameEvent) && (event.getType() == WikiPageRenameEvent.PAGE_RENAMED) )
             {
-                 String oldPageName = ((WikiPageRenameEvent) event).getOldPageName();
-                 String newPageName = ((WikiPageRenameEvent) event).getNewPageName();
-                 m_storage.remove(oldPageName);
-                 Counter oldCounter = m_counters.get( oldPageName );
-                 m_counters.put( newPageName, oldCounter );
-                 m_storage.setProperty( newPageName, oldCounter.toString() );
-                 m_counters.remove(oldPageName);
-                 m_dirty = true;
+                String oldPageName = ((WikiPageRenameEvent) event).getOldPageName();
+                String newPageName = ((WikiPageRenameEvent) event).getNewPageName();
+                Counter oldCounter = m_counters.get(oldPageName);
+                if ( oldCounter != null )
+                {
+                    m_storage.remove(oldPageName);
+                    m_counters.put(newPageName, oldCounter);
+                    m_storage.setProperty(newPageName, oldCounter.toString());
+                    m_counters.remove(oldPageName);
+                    m_dirty = true;
+                }
             }
             else if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )
             {

@@ -120,13 +120,22 @@ public class PageRenamer
         //  all of the attachments
         //
         
+        //  Remove references to attachments under old name
+        @SuppressWarnings( "unchecked" )
+        Collection<Attachment> attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
+        for (Attachment att:attachmentsOldName)
+        {
+            WikiPage fromAttPage = engine.getPage( att.getName() );
+            engine.getReferenceManager().pageRemoved( fromAttPage );
+        }
+
         engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
-        
+
         if( engine.getAttachmentManager().attachmentsEnabled() )
         {
             engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
-
+        
         //
         //  Add a comment to the page notifying what changed.  This adds a new revision
         //  to the repo with no actual change.
@@ -157,14 +166,17 @@ public class PageRenamer
         }
 
         //
-        //  re-index the page 
+        //  re-index the page including its attachments
         //
         engine.getSearchManager().reindexPage(toPage);
         
         @SuppressWarnings( "unchecked" )
-        Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( toPage );
-        for (Attachment att:attachments)
+        Collection<Attachment> attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
+        for (Attachment att:attachmentsNewName)
         {
+            WikiPage toAttPage = engine.getPage( att.getName() );
+            // add reference to attachment under new page name
+            engine.updateReferences( toAttPage );
             engine.getSearchManager().reindexPage(att);
         }
 
