@@ -48,7 +48,7 @@ Classes affected:
 api
  -> new package org.apache.wiki.api, which should compile without depending on other packages
 
-exceptions
+api.exceptions
  -> new package org.apache.wiki.api.exceptions with copies of the original Exceptions declared by
     the API methods
  -> to retain backwards compatibility, "old" exceptions will inherit new ones, also the former ones 
@@ -60,29 +60,49 @@ exceptions
         org.apache.wiki.api.exceptions.WikiException. It allows us to achieve compatibility with 
         2.9 derived source (regarding exceptions).
 
+org.apache.wiki.filters.FilterManager
+ -> new interface org.apache.wiki.api.filters.FilterManager
+ -> moved to org.apache.wiki.filters.DefaultFilterManager
+ -> WikiEngine.getFilterManager returns org.apache.wiki.api.filters.FilterManager
+
+org.apache.wiki.filters.BasicPageFilter
+ -> moved to new class org.apache.wiki.api.filter.BasicPageFilter
+ -> org.apache.wiki.filters.BasicPageFilter marked with @Deprecated + extends 
+    org.apache.wiki.api.filter.BasicPageFilter
+ 
+org.apache.wiki.filters.PageFilter
+ -> moved to new interface org.apache.wiki.api.filter.PageFilter
+ -> org.apache.wiki.filters.PageFilter marked with @Deprecated + extends 
+    org.apache.wiki.api.filter.PageFilter
+ -> all core wikifilters implementing the "old" interface now implement the new one
+
+org.apache.wiki.parser.PluginContent
+ -> getParameter returns String instead of Object (internally, it was returning a String)
+
 org.apache.wiki.plugin.PluginManager
- -> new interface org.apache.wiki.api.PluginManager
+ -> new interface org.apache.wiki.api.plugin.PluginManager
  -> moved to org.apache.wiki.plugin.DefaultPluginManager
  -> @Deprecated public static boolean isPluginLink( String link )
       * equivalent method on org.apache.wiki.parser.JSPWikiMarkupParser
- -> WikiEngine.getPluginManager returns org.apache.wiki.api.PluginManager
+ -> WikiEngine.getPluginManager returns org.apache.wiki.api.plugin.PluginManager
 
 org.apache.wiki.plugin.InitializablePlugin
- -> new interface org.apache.wiki.api.InitializablePlugin
+ -> new interface org.apache.wiki.api.plugin.InitializablePlugin
  -> all core wikiplugins and wikiforms implementing the "old" interface now implement the new one
  -> org.apache.wiki.plugin.InitializablePlugin marked with @Deprecated + extends
-    org.apache.wiki.api.InitializablePlugin
+    org.apache.wiki.api.plugin.InitializablePlugin
  
 org.apache.wiki.plugin.ParserStagePlugin
- -> new interface org.apache.wiki.api.ParserStagePlugin
+ -> new interface org.apache.wiki.api.plugins.ParserStagePlugin
  -> all core wikiplugins and wikiforms implementing the "old" interface now implement the new one
  -> org.apache.wiki.plugin.ParserStagePlugin marked with @Deprecated + extends
-    org.apache.wiki.api.ParserStagePlugin
+    org.apache.wiki.api.plugin.ParserStagePlugin
  
 org.apache.wiki.plugin.WikiPlugin
- -> new interface org.apache.wiki.api.WikiPlugin
+ -> new interface org.apache.wiki.api.plugins.WikiPlugin
  -> all core wikiplugins and wikiforms implement the new interface
- -> org.apache.wiki.plugin.WikiPlugin marked with @Deprecated + extends org.apache.wiki.api.WikiPlugin
+ -> org.apache.wiki.plugin.WikiPlugin marked with @Deprecated + extends 
+    org.apache.wiki.api.plugin.WikiPlugin
 
 
 Upgrading JSPWiki from 2.8.x to 2.9.0

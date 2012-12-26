@@ -1,3 +1,13 @@
+2012-12-26  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-8
+        
+       * Filters API, as part of JSPWiki API (cfr. JSPWIKI-303). Check UPGRADING document for 
+         details
+         
+       * explicit access to API interfaces to get rid of "<Object> cannot dereference error with 
+         generics" errors at builds.a.o (cfr. http://stackoverflow.com/q/4144623)
+       
 2012-12-26  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-7
