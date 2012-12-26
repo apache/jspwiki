@@ -30,10 +30,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *  Priority is an integer, and the list is sorted in descending order
  *  (that is, 100 is before 10 is before 0 is before -40).
  */
-public class PriorityList
-    extends AbstractList
+public class PriorityList<E>
+    extends AbstractList<E>
 {
-    private CopyOnWriteArrayList<Item> m_elements = new CopyOnWriteArrayList<Item>();
+    private CopyOnWriteArrayList<Item<E>> m_elements = new CopyOnWriteArrayList<Item<E>>();
 
     /**
      *  This is the default priority, which is used if no priority
@@ -48,7 +48,7 @@ public class PriorityList
      *  @param o Object to add.
      *  @param priority Priority.
      */
-    public void add( Object o, int priority )
+    public void add( E o, int priority )
     {
         int i = 0;
 
@@ -62,7 +62,7 @@ public class PriorityList
             }
         }
 
-        Item newItem = new Item();
+        Item<E> newItem = new Item<E>();
         newItem.m_priority = priority;
         newItem.m_object   = o;
 
@@ -75,7 +75,7 @@ public class PriorityList
      *  @param o Object to add.
      *  @return true, as per the general Collections.add contract.
      */
-    public boolean add( Object o )
+    public boolean add( E o )
     {
         add( o, DEFAULT_PRIORITY );
 
@@ -88,7 +88,7 @@ public class PriorityList
      *  @param index The index.
      *  @return The object at the list at the position "index".
      */
-    public Object get( int index )
+    public E get( int index )
     {
         return m_elements.get( index ).m_object;
     }
@@ -106,9 +106,9 @@ public class PriorityList
     /**
      *  Provides a holder for the priority-object 2-tuple.
      */
-    private static class Item
+    private static class Item<E>
     {
         public int     m_priority;
-        public Object  m_object;
+        public E       m_object;
     }
 }
