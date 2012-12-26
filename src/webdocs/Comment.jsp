@@ -18,10 +18,11 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
+<%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
