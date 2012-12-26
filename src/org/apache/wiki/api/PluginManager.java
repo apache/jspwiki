@@ -10,17 +10,36 @@ import org.apache.wiki.parser.PluginContent;
 
 public interface PluginManager
 {
-    /**
-     *  The property name defining which packages will be searched for properties.
-     */
-    public static final String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
+    /** The property name defining which packages will be searched for properties. */
+    static final String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
     
+    /** This is the default package to try in case the instantiation fails. */
+    static final String DEFAULT_PACKAGE = "org.apache.wiki.plugin";
+
+    /**
+     *  The name of the body content.  Current value is "_body".
+     */
+    static final String PARAM_BODY      = "_body";
+
+    /** The name of the command line content parameter. The value is "_cmdline". */
+    static final String PARAM_CMDLINE   = "_cmdline";
+
+    /**
+     *  The name of the parameter containing the start and end positions in the
+     *  read stream of the plugin text (stored as a two-element int[], start
+     *  and end resp.).
+     */
+    static final String PARAM_BOUNDS    = "_bounds";
+
+    /** A special name to be used in case you want to see debug output */
+    static final String PARAM_DEBUG     = "debug";
+
     /**
      * Enables or disables plugin execution.
      * 
      * @param enabled True, if plugins should be globally enabled; false, if disabled.
      */
-    public void enablePlugins( boolean enabled );
+    void enablePlugins( boolean enabled );
 
     /**
      * Returns plugin execution status. If false, plugins are not
@@ -29,7 +48,7 @@ public interface PluginManager
      * 
      * @return True, if plugins are enabled; false otherwise.
      */
-    public boolean pluginsEnabled();
+    boolean pluginsEnabled();
 
     /**
      *  Executes a plugin class in the given context.
@@ -49,9 +68,7 @@ public interface PluginManager
      *
      *  @since 2.0
      */
-    public String execute( WikiContext context,
-                           String classname,
-                           Map< String, String > params )
+    String execute( WikiContext context, String classname, Map< String, String > params )
         throws PluginException;
 
     /**
@@ -74,7 +91,7 @@ public interface PluginManager
      *
      * @throws IOException If the parsing fails.
      */
-    public Map<String, String> parseArgs( String argstring )
+    Map< String, String > parseArgs( String argstring )
         throws IOException;
 
     /**
@@ -93,8 +110,7 @@ public interface PluginManager
      *  
      *  @throws PluginException From the plugin itself, it propagates, waah!
      */
-    public String execute( WikiContext context,
-                           String commandline )
+    String execute( WikiContext context, String commandline )
         throws PluginException;
 
     /**
@@ -106,7 +122,7 @@ public interface PluginManager
      *  @return A DOM element
      *  @throws PluginException If plugin invocation is faulty
      */
-    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
+    PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException;
 
     /**
@@ -116,7 +132,7 @@ public interface PluginManager
      * 
      * @return A Collection of WikiModuleInfo instances.
      */
-    public Collection modules();
+    Collection modules();
 
     /**
      *  Executes parse stage, unless plugins are disabled.
@@ -125,7 +141,7 @@ public interface PluginManager
      *  @param context A WikiContext
      *  @throws PluginException If something goes wrong.
      */
-    public void executeParse(PluginContent content, WikiContext context)
+    void executeParse(PluginContent content, WikiContext context)
         throws PluginException;
     
 }

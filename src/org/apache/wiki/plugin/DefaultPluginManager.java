@@ -140,35 +140,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
     private static Logger log = Logger.getLogger( DefaultPluginManager.class );
 
-    /**
-     *  This is the default package to try in case the instantiation
-     *  fails.
-     */
-    public static final String DEFAULT_PACKAGE = "org.apache.wiki.plugin";
-
     private static final String DEFAULT_FORMS_PACKAGE = "org.apache.wiki.forms";
-
-    /**
-     *  The name of the body content.  Current value is "_body".
-     */
-    public static final String PARAM_BODY      = "_body";
-
-    /**
-     *  The name of the command line content parameter. The value is "_cmdline".
-     */
-    public static final String PARAM_CMDLINE   = "_cmdline";
-
-    /**
-     *  The name of the parameter containing the start and end positions in the
-     *  read stream of the plugin text (stored as a two-element int[], start
-     *  and end resp.).
-     */
-    public static final String PARAM_BOUNDS    = "_bounds";
-
-    /**
-     *  A special name to be used in case you want to see debug output
-     */
-    public static final String PARAM_DEBUG     = "debug";
 
     private ArrayList<String>  m_searchPath = new ArrayList<String>();
 
@@ -408,7 +380,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     public Map<String, String> parseArgs( String argstring )
         throws IOException
     {
-        HashMap<String, String> arglist = new HashMap<String, String>();
+        Map<String, String> arglist = new HashMap<String, String>();
 
         //
         //  Protection against funny users.
