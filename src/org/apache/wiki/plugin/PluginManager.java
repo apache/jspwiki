@@ -19,12 +19,16 @@
 package org.apache.wiki.plugin;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.parser.PluginContent;
 import org.jdom.Element;
 
 /**
@@ -127,6 +131,70 @@ public class PluginManager extends DefaultPluginManager
     public PluginManager( WikiEngine engine, Properties props )
     {
         super(engine, props);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @deprecated Remains because of old API compatobility; will be removed in 2.10 scope. 
+     * Consider using {@link DefaultPluginManager#execute(WikiContext, String, Map)} instead
+     */
+    @Deprecated
+    public String execute( WikiContext context,
+                           String classname,
+                           Map< String, String > params )
+        throws PluginException {
+        String str = null;
+        try
+        {
+            str = super.execute(context, classname, params);
+        }
+        catch (org.apache.wiki.api.exceptions.PluginException e)
+        {
+            throw new PluginException( e.getMessage(), e );
+        }
+        return str;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @deprecated Remains because of old API compatobility; will be removed in 2.10 scope. 
+     * Consider using {@link DefaultPluginManager#execute(WikiContext, String)} instead
+     */
+    @Deprecated
+    public String execute( WikiContext context,
+                           String commandline )
+        throws PluginException {
+        String str = null;
+        try
+        {
+            str = super.execute(context, commandline );
+        }
+        catch (org.apache.wiki.api.exceptions.PluginException e)
+        {
+            throw new PluginException( e.getMessage(), e );
+        }
+        return str;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @deprecated Remains because of old API compatobility; will be removed in 2.10 scope. 
+     * Consider using {@link DefaultPluginManager#parsePluginLine(WikiContext, String, int)} instead
+     */
+    @Deprecated
+    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
+        throws PluginException
+    {
+       PluginContent pc = null;
+       try
+       {
+           pc = super.parsePluginLine(context, commandline, pos );
+       }
+       catch (org.apache.wiki.api.exceptions.PluginException e)
+       {
+           throw new PluginException( e.getMessage(), e );
+       }
+       return pc;
     }
     
     /**
