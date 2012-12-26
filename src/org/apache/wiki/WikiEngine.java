@@ -35,6 +35,8 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.PluginManager;
+import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -46,8 +48,6 @@ import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.*;
-import org.apache.wiki.filters.FilterException;
-import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
@@ -1708,7 +1708,7 @@ public class WikiEngine
      *  save operation. If the page-save operation requires approval, the exception will
      *  be of type {@link org.apache.wiki.workflow.DecisionRequiredException}. Individual
      *  PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also
-     *  throw a {@link org.apache.wiki.filters.RedirectException}.
+     *  throw a {@link org.apache.wiki.api.exceptions.RedirectException}.
      */
     public void saveText( WikiContext context, String text )
         throws WikiException
@@ -2087,9 +2087,10 @@ public class WikiEngine
      *  @since 2.1.88
      *  @return The current FilterManager instance
      */
-    public FilterManager getFilterManager()
+    @SuppressWarnings("unchecked")
+    public < T extends FilterManager > T getFilterManager()
     {
-        return m_filterManager;
+        return (T)m_filterManager;
     }
 
     /**
