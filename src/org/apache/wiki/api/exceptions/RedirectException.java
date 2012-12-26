@@ -18,48 +18,39 @@
  */
 package org.apache.wiki.api.exceptions;
 
-
 /**
- *  Provides a generic PluginException.  This is the kind of
- *  an exception that the plugins should throw.
+ *  This exception may be thrown if a filter wants to reject something and
+ *  redirect the user elsewhere.
+ *
+ *  @since 2.1.112
  */
-public class PluginException
-    extends WikiException
+public class RedirectException
+    extends FilterException
 {
-    private static final long serialVersionUID = -289900047240960332L;
-
-    private final Throwable m_throwable;
+    private static final long serialVersionUID = 6626993875873941172L;
+    
+    private final String m_where;
 
     /**
-     *  Create a PluginException.
+     *  Constructs a new RedirectException.
      *  
-     *  @param message {@inheritDoc}
+     *  @param msg The message for the exception
+     *  @param redirect The redirect URI.
      */
-    public PluginException( String message )
+    public RedirectException( String msg, String redirect )
     {
-        super( message );
-        m_throwable = null;
+        super( msg );
+
+        m_where = redirect;
     }
 
     /**
-     *  Create a PluginException with the given original exception wrapped.
+     *  Get the URI for redirection.
      *  
-     *  @param message {@inheritDoc}
-     *  @param original The original exception.
+     *  @return The URI given in the constructor.
      */
-    public PluginException( String message, Throwable original )
+    public String getRedirect()
     {
-        super( message, original );
-        m_throwable = original;
-    }
-
-    /**
-     *  Return the original exception.
-     *  
-     *  @return The original exception.
-     */
-    public Throwable getRootThrowable()
-    {
-        return m_throwable;
+        return m_where;
     }
 }

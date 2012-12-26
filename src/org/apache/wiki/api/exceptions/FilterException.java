@@ -1,4 +1,4 @@
-/*
+/* 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,38 +14,30 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.     
+    under the License.  
  */
 package org.apache.wiki.api.exceptions;
 
+import org.apache.wiki.WikiException;
+
 /**
- *  A generic Wiki exception.
+ *  A generic PageFilter exception.
  *
- *  @since 2.0
+ *  @since 2.1.112
  */
-public class WikiException
-    extends org.apache.wiki.WikiException
+public class FilterException 
+    extends WikiException
 {
-    private static final long serialVersionUID = 3257290231723210803L;
+    
+    private static final long serialVersionUID = -490652869936406653L;
 
     /**
      *  Constructs an exception.
      *  
-     *  @param msg the message in the exception.
+     *  @param msg {@inheritDoc}
      */
-    public WikiException( String msg )
+    public FilterException( String msg )
     {
         super( msg );
-    }
-    
-    /**
-     *  Constructs an exception with a supplied cause.
-     *  
-     *  @param msg the message in the exception.
-     *  @param cause the cause of the exception
-     */
-    public WikiException( String msg, Throwable cause )
-    {
-        super( msg, cause );
     }
 }
