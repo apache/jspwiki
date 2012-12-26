@@ -57,7 +57,5 @@ public interface WikiPlugin
      *
      *  @throws PluginException In case anything goes wrong.
      */
-
-    String execute( WikiContext context, Map<String, String> params )
-        throws PluginException;
+    String execute( WikiContext context, Map< String, String > params ) throws PluginException;
 }

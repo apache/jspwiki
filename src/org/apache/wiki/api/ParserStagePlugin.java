@@ -29,6 +29,7 @@ import org.apache.wiki.parser.PluginContent;
  */
 public interface ParserStagePlugin
 {
+    
     /**
      *  Method which is executed during parsing.
      *  
@@ -36,5 +37,6 @@ public interface ParserStagePlugin
      *  @param context WikiContext, as usual.
      *  @param params  Parsed parameters for the plugin.
      */
-    public void executeParser( PluginContent element, WikiContext context, Map<String, String> params );
+    void executeParser( PluginContent element, WikiContext context, Map< String, String > params );
+    
 }
