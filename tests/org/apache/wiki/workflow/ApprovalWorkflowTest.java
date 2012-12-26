@@ -25,11 +25,14 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.wiki.*;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.filters.BasicPageFilter;
-import org.apache.wiki.filters.FilterException;
 
 public class ApprovalWorkflowTest extends TestCase
 {

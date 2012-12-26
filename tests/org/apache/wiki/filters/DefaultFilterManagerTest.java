@@ -19,20 +19,27 @@
 
 package org.apache.wiki.filters;
 
-import junit.framework.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
-import org.apache.log4j.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import org.apache.wiki.*;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.api.filters.FilterManager;
+import org.apache.wiki.api.filters.PageFilter;
 
-public class FilterManagerTest extends TestCase
+public class DefaultFilterManagerTest extends TestCase
 {
     Properties props = new Properties();
 
     TestEngine engine;
 
-    public FilterManagerTest( String s )
+    public DefaultFilterManagerTest( String s )
     {
         super( s );
     }
@@ -52,7 +59,7 @@ public class FilterManagerTest extends TestCase
     public void testInitFilters()
         throws Exception
     {
-        FilterManager m = new FilterManager( engine, props );
+        FilterManager m = new DefaultFilterManager( engine, props );
 
         List l = m.getFilterList();
 
@@ -71,7 +78,7 @@ public class FilterManagerTest extends TestCase
     public void testInitParams()
         throws Exception
     {
-        FilterManager m = new FilterManager( engine, props );
+        FilterManager m = new DefaultFilterManager( engine, props );
 
         List l = m.getFilterList();
 
@@ -88,7 +95,7 @@ public class FilterManagerTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( FilterManagerTest.class );
+        return new TestSuite( DefaultFilterManagerTest.class );
     }
 
 }

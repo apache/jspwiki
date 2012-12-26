@@ -32,7 +32,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("PageFilter tests");
 
-        suite.addTest( FilterManagerTest.suite() );
+        suite.addTest( DefaultFilterManagerTest.suite() );
 
         return suite;
     }
