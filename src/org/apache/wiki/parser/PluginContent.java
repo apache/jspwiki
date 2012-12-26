@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.PluginManager;
 import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.render.RenderingManager;
 import org.jdom.Text;
@@ -87,7 +88,7 @@ public class PluginContent extends Text
      *  @param name the name of the parameter.
      *  @return The value from the map, or null, if no such parameter exists.
      */
-    public Object getParameter( String name )
+    public String getParameter( String name )
     {
         return m_params.get(name);
     }
@@ -97,7 +98,7 @@ public class PluginContent extends Text
      *  
      *  @return The parameter map.
      */
-    public Map<String, String> getParameters()
+    public Map< String, String > getParameters()
     {
         return m_params;
     }
@@ -183,10 +184,8 @@ public class PluginContent extends Text
                     val = engine.getVariableManager().expandVariables( context, val );
                     parsedParams.put( e.getKey(), val );
                 }
-            
-                result = engine.getPluginManager().execute( context,
-                                                            m_pluginName,
-                                                            parsedParams );
+                PluginManager pm = engine.getPluginManager();
+                result = pm.execute( context, m_pluginName, parsedParams );
             }
         }
         catch( Exception e )
@@ -218,7 +217,8 @@ public class PluginContent extends Text
     public void executeParse(WikiContext context)
         throws PluginException
     {
-        context.getEngine().getPluginManager().executeParse( this, context );
+        PluginManager pm = context.getEngine().getPluginManager();
+        pm.executeParse( this, context );
     }
 
 }
