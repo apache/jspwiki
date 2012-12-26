@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
-import org.apache.wiki.api.ParserStagePlugin;
-import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.parser.PluginContent;

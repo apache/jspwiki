@@ -30,8 +30,8 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
  *  Denounces a link by removing it from any search engine. 

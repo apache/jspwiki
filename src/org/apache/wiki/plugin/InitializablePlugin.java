@@ -33,10 +33,10 @@ import org.apache.wiki.WikiEngine;
  *  @since 2.2
  *
  *  @deprecated will be removed in 2.10 scope. Consider using 
- *  {@link org.apache.wiki.api.InitializablePlugin} instead
+ *  {@link org.apache.wiki.api.plugin.InitializablePlugin} instead
  */
 @Deprecated
-public interface InitializablePlugin extends org.apache.wiki.api.InitializablePlugin
+public interface InitializablePlugin extends org.apache.wiki.api.plugin.InitializablePlugin
 {
     /**
      *  Called whenever the plugin is being instantiated for

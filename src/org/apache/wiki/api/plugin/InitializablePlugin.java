@@ -16,27 +16,30 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.api;
+package org.apache.wiki.api.plugin;
 
-import java.util.Map;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.parser.PluginContent;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
- *  Implements a Plugin interface for the parser stage.  Please see org.apache.wiki.api.PluginManager
- *  for further documentation.
+ *  If a plugin defines this interface, it is called exactly once
+ *  prior to the actual execute() routine.  If the plugin has its
+ *  own declaration in jspwiki_modules.xml, then it is called during
+ *  startup - otherwise it is called the first time the plugin is
+ *  encountered.
+ *  <p>
+ *  This method did not actually work until 2.5.30.  The method signature
+ *  has been changed in 2.6 to reflect the new operation.
  */
-public interface ParserStagePlugin
+public interface InitializablePlugin
 {
-    
     /**
-     *  Method which is executed during parsing.
+     *  Called whenever the plugin is being instantiated for
+     *  the first time.
      *  
-     *  @param element The JDOM element which has already been connected to the Document.
-     *  @param context WikiContext, as usual.
-     *  @param params  Parsed parameters for the plugin.
+     *  @param engine The WikiEngine.
+     *  @throws PluginException If something goes wrong.
      */
-    void executeParser( PluginContent element, WikiContext context, Map< String, String > params );
-    
+
+    void initialize( WikiEngine engine ) throws PluginException;
 }

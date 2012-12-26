@@ -27,7 +27,7 @@ import junit.framework.TestSuite;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.PluginManager;
+import org.apache.wiki.api.plugin.PluginManager;
 
 public class PageViewPluginTest extends TestCase
 

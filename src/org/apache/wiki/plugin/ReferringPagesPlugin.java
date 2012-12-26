@@ -28,8 +28,8 @@ import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
  *  Displays the pages referring to the current page.

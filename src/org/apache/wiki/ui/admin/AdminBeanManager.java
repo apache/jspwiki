@@ -29,7 +29,7 @@ import javax.management.*;
 import org.apache.log4j.Logger;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.PluginManager;
+import org.apache.wiki.api.plugin.PluginManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;

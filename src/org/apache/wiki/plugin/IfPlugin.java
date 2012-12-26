@@ -27,8 +27,8 @@ import org.apache.oro.text.regex.*;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally, and is intended as a flexible way

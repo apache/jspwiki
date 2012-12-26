@@ -29,10 +29,10 @@ import org.apache.wiki.parser.PluginContent;
  * 
  *  @since 2.5.30
  *  @deprecated will be removed in 2.10 scope. Consider using 
- *  {@link org.apache.wiki.api.ParserStagePlugin} instead
+ *  {@link org.apache.wiki.api.plugin.ParserStagePlugin} instead
  */
 @Deprecated
-public interface ParserStagePlugin extends org.apache.wiki.api.ParserStagePlugin
+public interface ParserStagePlugin extends org.apache.wiki.api.plugin.ParserStagePlugin
 {
     /**
      *  Method which is executed during parsing.

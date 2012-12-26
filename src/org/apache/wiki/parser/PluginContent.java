@@ -26,8 +26,8 @@ import java.util.ResourceBundle;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.PluginManager;
-import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.plugin.PluginManager;
+import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.render.RenderingManager;
 import org.jdom.Text;
 

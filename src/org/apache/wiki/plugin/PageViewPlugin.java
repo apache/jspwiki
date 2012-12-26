@@ -28,9 +28,9 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.*;
-import org.apache.wiki.api.InitializablePlugin;
-import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.InitializablePlugin;
+import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.event.*;
 import org.apache.wiki.util.WikiBackgroundThread;
 

@@ -1,4 +1,4 @@
-package org.apache.wiki.api;
+package org.apache.wiki.api.plugin;
 
 import java.io.IOException;
 import java.util.Collection;

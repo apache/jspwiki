@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.api;
+package org.apache.wiki.api.plugin;
 
 import java.util.Map;
 

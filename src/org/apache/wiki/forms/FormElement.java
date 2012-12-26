@@ -19,7 +19,7 @@
 package org.apache.wiki.forms;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.WikiPlugin;
+import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
  */

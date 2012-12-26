@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.WikiPlugin;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
  *  Provides a page-specific counter, it is reset every time a page is rendered, so it is not usable as a hitcounter.
