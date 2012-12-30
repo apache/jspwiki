@@ -68,9 +68,11 @@ public class TestContainer
     
     public static final String INITIAL_CONTEXT_FACTORY = "java.naming.factory.initial";
     public static final String INITIAL_CONTEXT_FACTORY_JETTY = "org.eclipse.jetty.jndi.InitialContextFactory";
+    public static final String JNDI_ENV_ROOT = "java:comp/env";
 
     private static final Logger log = Logger.getLogger( TestContainer.class );
-    
+
+    private static Context initCtx ;
     private static Resource userDB = null;        
     private static Resource groupDB = null;        
 
@@ -116,11 +118,12 @@ public class TestContainer
         // Configure and bind DataSource to JNDI for user database
         userDB = new Resource( "jdbc/UserDatabase", cpds );
         log.error( "Configured datasource " + userDB);
+        userDB.bindToENC("jdbc/UserDatabase");
         
         // Configure and bind DataSource to JNDI for group database
         groupDB = new Resource( "jdbc/GroupDatabase", cpds );        
         log.error( "Configured datasource " + groupDB);
-
+        userDB.bindToENC("jdbc/GroupDatabase");
         
         // Start the server
         try
@@ -210,18 +213,18 @@ public class TestContainer
         }
         log.error( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
         
-        // Bind the "java:comp" namespace if not bound already
-        Context initCtx = new InitialContext();
+        // Bind the "java:comp/env" namespace if not bound already
+        initCtx = new InitialContext();
         try 
         {
-            initCtx.lookup( "java:comp" );
+            initCtx.lookup( JNDI_ENV_ROOT );
         }
         catch ( NameNotFoundException e )
         {
-            initCtx.bind( "java:comp", new NamingContext(new Hashtable<String, Object>(), "java:comp", null, new InitialContextFactory.DefaultParser()) );
-            log.error( "No JNDI java:comp namespace found; creating it," );
+            initCtx.bind( JNDI_ENV_ROOT, new NamingContext(new Hashtable<String, Object>(), JNDI_ENV_ROOT, null, new InitialContextFactory.DefaultParser()) );
+            log.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
         }
-        log.info( "Initialized JNDI java:comp namespace.=" + contextFactoryClass );
+        log.info( "Initialized JNDI " + JNDI_ENV_ROOT + " namespace.=" + contextFactoryClass );
         
         // Initialize new Jetty server
         log.info( "Creating new test container." );

@@ -30,16 +30,14 @@ Here's a quick start to selenium web unit tests
 
     * Type 'ant webtests' from the command line
     
-    * You may find it useful to restart Tomcat before running webtests
-
-RUNNING SELENIUM TESTS IN FIREFOX
+RUNNING SELENIUM TESTS MANUALLY IN FIREFOX
 ---------------------------------
 
 Start Tomcat and deploy the test-custom WAR.
 
 Start the Selenium server...
 
-java -jar tests/lib/selenium-server-1.0-beta1.jar -interactive
+java -jar tests/lib/selenium-server-standalone-2.25.0.jar -interactive
 
 Open Firefox.
 Set the browser proxy to localhost:4444

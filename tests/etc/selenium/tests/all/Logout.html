@@ -33,7 +33,6 @@
 	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>			<td>loginurl</td></tr>
 	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
-	<tr><td>store</td>	<td>Janne\+Jalkanen</td>	<td>wikiname</td></tr>
 
 	<!-- Start at front page: try to log in -->
     <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
@@ -47,7 +46,7 @@
     <tr><td>verifyTextPresent</td>		<td>G&#8217;day</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>		<td>(authenticated)</td><td>&nbsp;</td></tr>
 
-    <tr><td>assertCookie</td>	<td>regex:JSPWikiAssertedName=${wikiname}</td>	<td></td></tr>
+    <tr><td>assertCookieByName</td>	<td>JSPWikiAssertedName</td>	<td>"Janne+Jalkanen"</td></tr>
 
     <!-- Log out; we should NOT see any asserted identities -->
     <tr><td>assertElementPresent</td>	<td>link=Log out</td>	<td></td></tr>
@@ -56,7 +55,7 @@
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
 
-    <tr><td>assertNotCookie</td>	<td>regex:JSPWikiAssertedName=${wikiname}</td>	<td></td></tr>
+    <tr><td>assertNotCookie</td>	<td>JSPWikiAssertedName</td>	<td></td></tr>
     
 	</tbody>
 </table>

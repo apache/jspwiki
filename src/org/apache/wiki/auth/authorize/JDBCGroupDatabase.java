@@ -520,9 +520,8 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( NamingException e )
         {
-            log.error( "JDBCGroupDatabase initialization error: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: "
-                                                                            + e.getMessage() );
+            log.error( "JDBCGroupDatabase initialization error: " + e );
+            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e);
         }
 
         // Test connection by doing a quickie select
@@ -536,9 +535,8 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( SQLException e )
         {
-            log.error( "JDBCGroupDatabase initialization error: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: "
-                                                                            + e.getMessage() );
+            log.error( "JDBCGroupDatabase initialization error: " + e );
+            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e );
         }
         finally
         {
@@ -566,9 +564,8 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( SQLException e )
         {
-            log.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: "
-                                                                            + e.getMessage() );
+            log.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e);
+            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e);
         }
         finally
         {
