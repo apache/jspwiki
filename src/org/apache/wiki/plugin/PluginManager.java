@@ -203,7 +203,7 @@ public class PluginManager extends DefaultPluginManager
      *
      *  @since
      *  @deprecated  will be removed in 2.10 scope. Consider using 
-     *  {@link DefaultPluginManager#WikiPluginInfo} instead.
+     *  {@link DefaultPluginManager.WikiPluginInfo} instead.
      */
     // FIXME: This class needs a better interface to return all sorts of possible
     //        information from the plugin XML.  In fact, it probably should have
