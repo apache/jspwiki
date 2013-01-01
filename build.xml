@@ -906,7 +906,7 @@
        - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
        These are the same as the test users in tests/org.apache.wiki.auth.Users.
   -->
-  <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,db-setup,war">
+  <target name="webtests" depends="jar,tests-init,jartests,war">
     <mkdir dir="${webtests.temp}" />
     <mkdir dir="${webtests.build}" />
   
@@ -1517,20 +1517,9 @@ To automate the JAR signing processs, you can add the property
 
     <!-- Set a flag that says all of our pre-conditions are met! -->
     <property name="db.props.exist" value="true" />
-    <echo message="All pre-conditions met for HSQLDB setup"/>
 
     <!-- Dump all of the JDBC properties where our test scripts can find them -->
     <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
-  </target>
-
-  <target name="db-setup" depends="db-properties,hsql-init" if="db.props.exist">
-    <echo message="Setting up the database tables." />
-    <exec-sql file="${userdb.setup}" />
-  </target>
-
-  <target name="db-teardown" depends="db-properties,hsql-init" if="db.props.exist">
-    <echo message="Tearing down the database tables." />
-    <exec-sql file="${userdb.teardown}" />
   </target>
 
   <!-- Some convenience macrodefs -->
@@ -1550,60 +1539,6 @@ To automate the JAR signing processs, you can add the property
     </sequential>
   </macrodef>
 
-  <macrodef name="exec-sql">
-    <attribute name="file" />
-    <sequential>
-      <sql driver="${jdbc.driver.class}"
-        classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
-        userid="${jdbc.admin.id}" password="${jdbc.admin.password}"
-        src="@{file}" onerror="continue" autocommit="true" />
-    </sequential>
-  </macrodef>
-
-  <!-- ============================================================== -->
-
-  <!-- Hypersonic embedded database startup/shutdown (for testing JDBC) -->
-
-  <!-- Special "init" target for Hypersonic -->
-  <target name="hsql-init" depends="hsql-check-start,hsql-start" />
-
-  <target name="hsql-check-start" depends="db-properties">
-    <echo message="Checking to see if Hypersonic JDBC server is running already." />
-    <property file="tests/etc/db/hsql/server.properties" prefix="hsql" />
-    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from tests/etc/db/hsql/server.properties</fail>
-    <condition property="hsql.up">
-      <socket server="localhost" port="${hsql.server.port}" />
-    </condition>
-  </target>
-
-  <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
-    description="Starts the Hypersonic database for testing.">
-    <echo message="Starting up Hypersonic JDBC server on localhost." />
-    <delete file="tests/etc/db/hsql/jspwiki.lck"/>
-    <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
-      dir="tests/etc/db/hsql">
-      <classpath>
-        <pathelement location="${jdbc.driver.jar}" />
-      </classpath>
-    </java>
-    <sleep seconds="3" />
-  </target>
-
-  <target name="hsql-stop" depends="hsql-check-start" if="hsql.up"
-    description="Shuts down the Hypersonic database, if it's up.">
-    <echo message="Shutting down Hypersonic JDBC server on localhost." />
-    <sql driver="${jdbc.driver.class}"
-      classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
-      onerror="continue" autocommit="true"
-      userid="${jdbc.admin.id}" password="${jdbc.admin.password}">
-      SHUTDOWN
-    </sql>
-    <!-- The lock file should be deleted automatically, but just in case... -->
-    <delete file="tests/etc/db/hsql/jspwiki.lck" />
-    <echo message="Done." />
-  </target>
-
-  
   <!-- ============================================================== -->
   <target name="i18n-create-template" description="Creates a given directory structure with all the needed files to make an i18n jar">
 	<input message="i18n template code to generate (ie: es_ES):" addproperty="i18n.template" />

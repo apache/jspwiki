@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.auth.Users;
 import org.eclipse.jetty.jndi.InitialContextFactory;
 import org.eclipse.jetty.jndi.NamingContext;
@@ -70,6 +71,8 @@ public class TestContainer
     public static final String INITIAL_CONTEXT_FACTORY_JETTY = "org.eclipse.jetty.jndi.InitialContextFactory";
     public static final String JNDI_ENV_ROOT = "java:comp/env";
 
+    private static HsqlDbUtils m_hu   = new HsqlDbUtils();
+
     private static final Logger log = Logger.getLogger( TestContainer.class );
 
     private static Context initCtx ;
@@ -107,7 +110,10 @@ public class TestContainer
         }
 
         handlerCollection.addHandler( new DefaultHandler() );
-        
+
+        // setup the hsqldb database engine
+        m_hu.setUp();
+
         // Create the connection pool
         jdbcDataSource cpds = new jdbcDataSource();
         cpds.setDatabase( "jdbc:hsqldb:hsql://localhost/jspwiki" );
@@ -250,7 +256,7 @@ public class TestContainer
     /**
      * Configures a test web application
      * 
-     * @param m_context the name of the web m_context; must start with "/"
+     * @param context the name of the web m_context; must start with "/"
      * @param path the file path for the WAR file, or expanded WAR directory
      * @throws IOException
      */
