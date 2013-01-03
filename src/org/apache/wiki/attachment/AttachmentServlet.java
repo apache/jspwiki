@@ -31,6 +31,7 @@ import java.util.Properties;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,12 +46,6 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.dav.AttachmentDavProvider;
-import org.apache.wiki.dav.DavPath;
-import org.apache.wiki.dav.DavProvider;
-import org.apache.wiki.dav.WebdavServlet;
-import org.apache.wiki.dav.methods.DavMethod;
-import org.apache.wiki.dav.methods.PropFindMethod;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.progress.ProgressItem;
@@ -69,13 +64,12 @@ import org.apache.wiki.util.HttpUtil;
  *
  *  @since 1.9.45.
  */
-public class AttachmentServlet
-    extends WebdavServlet
+public class AttachmentServlet extends HttpServlet
 {
     private static final int BUFFER_SIZE = 8192;
 
     private static final long serialVersionUID = 3257282552187531320L;
-
+    
     private WikiEngine m_engine;
     static Logger log = Logger.getLogger(AttachmentServlet.class.getName());
 
@@ -86,8 +80,6 @@ public class AttachmentServlet
     protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000;
 
     private String m_tmpDir;
-
-    private DavProvider m_attachmentProvider;
 
     /**
      *  The maximum size that an attachment can be.
@@ -111,17 +103,13 @@ public class AttachmentServlet
     /**
      *  Initializes the servlet from WikiEngine properties.
      *   
-     *  {@inheritDoc}
      */
     public void init( ServletConfig config )
         throws ServletException
     {
-        super.init( config );
-
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
 
-        m_attachmentProvider = new AttachmentDavProvider( m_engine );
         m_tmpDir         = m_engine.getWorkDir()+File.separator+"attach-tmp";
 
         m_maxSize        = TextUtil.getIntegerProperty( props,
@@ -182,25 +170,6 @@ public class AttachmentServlet
     }
 
     /**
-     *  Implements the PROPFIND method.
-     *  
-     *  @param req The servlet request
-     *  @param res The servlet response
-     *  @throws IOException If input/output fails
-     *  @throws ServletException If the servlet has issues
-     */
-    public void doPropFind( HttpServletRequest req, HttpServletResponse res )
-        throws IOException, ServletException
-    {
-        DavMethod dm = new PropFindMethod( m_attachmentProvider );
-
-        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
-
-        DavPath path = new DavPath( p );
-
-        dm.execute( req, res, path );
-    }
-    /**
      *  Implements the OPTIONS method.
      *  
      *  @param req The servlet request
@@ -209,7 +178,6 @@ public class AttachmentServlet
 
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
     {
-        res.setHeader( "DAV", "1" ); // We support only Class 1
         res.setHeader( "Allow", "GET, PUT, POST, OPTIONS, PROPFIND, PROPPATCH, MOVE, COPY, DELETE");
         res.setStatus( HttpServletResponse.SC_OK );
     }
@@ -218,7 +186,6 @@ public class AttachmentServlet
      *  Serves a GET with two parameters: 'wikiname' specifying the wikiname
      *  of the attachment, 'version' specifying the version indicator.
      *  
-     *  {@inheritDoc}
      */
 
     // FIXME: Messages would need to be localized somehow.
@@ -459,7 +426,6 @@ public class AttachmentServlet
      * for the parent file. The second, named 'content', is the binary
      * content of the file.
      * 
-     * {@inheritDoc}
      */
     public void doPost( HttpServletRequest  req, HttpServletResponse res )
         throws IOException, ServletException
@@ -477,53 +443,6 @@ public class AttachmentServlet
 
             req.getSession().setAttribute("msg", e.getMessage());
             res.sendRedirect( e.getRedirect() );
-        }
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    public void doPut( HttpServletRequest req, HttpServletResponse res )
-        throws IOException, ServletException
-    {
-        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
-
-        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
-        DavPath path = new DavPath( p );
-
-        try
-        {
-            InputStream data = req.getInputStream();
-
-            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
-
-            String wikipage = path.get( 0 );
-
-            errorPage = context.getURL( WikiContext.UPLOAD,
-                                        wikipage );
-
-            String changeNote = null; // FIXME: Does not quite work
-
-            boolean created = executeUpload( context, data,
-                                             path.getName(),
-                                             errorPage, wikipage,
-                                             changeNote,
-                                             req.getContentLength() );
-
-            if( created )
-                res.sendError( HttpServletResponse.SC_CREATED );
-            else
-                res.sendError( HttpServletResponse.SC_OK );
-        }
-        catch( ProviderException e )
-        {
-            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           e.getMessage() );
-        }
-        catch( RedirectException e )
-        {
-            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           e.getMessage() );
         }
     }
 

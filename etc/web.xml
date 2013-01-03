@@ -74,10 +74,6 @@
    </filter-mapping>
    <filter-mapping>
        <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/dav/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/RPCU/</url-pattern>
    </filter-mapping>
    <filter-mapping>
@@ -161,11 +157,6 @@
        <load-on-startup>1</load-on-startup>
    </servlet>
 
-   <servlet>
-       <servlet-name>DAVServlet</servlet-name>
-       <servlet-class>org.apache.wiki.dav.WikiDavServlet</servlet-class>
-   </servlet>
-
    <!--
        Attachment exchange handler.
      -->
@@ -213,13 +204,6 @@
        <servlet-name>WikiServlet</servlet-name>
        <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
-
-   <!-- Remove to enable WebDav. EXPERIMENTAL FEATURE!
-   <servlet-mapping>
-       <servlet-name>DAVServlet</servlet-name>
-       <url-pattern>/dav/*</url-pattern>
-   </servlet-mapping>
-   -->
    
    <servlet-mapping>
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>

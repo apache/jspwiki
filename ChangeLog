@@ -1,4 +1,10 @@
-201-01-01  Harry Metske <metskem@apache.org>
+2013-01-02  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-11
+       
+       * JSPWIKI-513 - Remove DAV support from JSPWiki
+
+2013-01-01  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-10
        
