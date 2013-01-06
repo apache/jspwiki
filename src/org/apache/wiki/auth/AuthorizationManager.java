@@ -28,14 +28,11 @@ import java.util.Properties;
 import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
-import org.freshcookies.security.policy.LocalPolicy;
-import org.freshcookies.security.policy.PolicyException;
-
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
@@ -48,6 +45,8 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.util.ClassUtil;
+import org.freshcookies.security.policy.LocalPolicy;
+import org.freshcookies.security.policy.PolicyException;
 
 /**
  * <p>Manages all access control and authorization; determines what authenticated

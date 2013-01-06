@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 
 /**

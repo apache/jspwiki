@@ -32,13 +32,10 @@ import javax.security.auth.spi.LoginModule;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.freshcookies.security.policy.PolicyReader;
-import org.jdom.JDOMException;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.*;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.GroupPermission;
@@ -46,6 +43,8 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+import org.freshcookies.security.policy.PolicyReader;
+import org.jdom.JDOMException;
 
 /**
  * Helper class for verifying JSPWiki's security configuration. Invoked by

@@ -19,23 +19,17 @@
 package org.apache.wiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.*;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
@@ -120,7 +114,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * Returns the current external {@link GroupDatabase} in use. This method
      * is guaranteed to return a properly-initialized GroupDatabase, unless
      * it could not be initialized. In that case, this method throws
-     * a {@link org.apache.wiki.WikiException}. The GroupDatabase
+     * a {@link org.apache.wiki.api.exceptions.WikiException}. The GroupDatabase
      * is lazily initialized.
      * @throws org.apache.wiki.auth.WikiSecurityException if the GroupDatabase could
      * not be initialized

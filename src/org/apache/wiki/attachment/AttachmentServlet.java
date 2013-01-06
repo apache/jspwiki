@@ -44,6 +44,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.RedirectException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.i18n.InternationalizationManager;

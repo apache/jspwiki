@@ -18,11 +18,15 @@
  */
 package org.apache.wiki;
 
+
 /**
  *  A generic Wiki exception.
  *
  *  @since 2.0
+ *  @deprecated will be removed in 2.10 scope. Consider using 
+ *  {@link org.apache.wiki.api.exceptions.WikiException} instead
  */
+@Deprecated
 public class WikiException
     extends Exception
 {

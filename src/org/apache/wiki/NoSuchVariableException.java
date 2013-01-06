@@ -18,6 +18,8 @@
  */
 package org.apache.wiki;
 
+import org.apache.wiki.api.exceptions.WikiException;
+
 /**
  *  Marks that no such variable was located.
  */

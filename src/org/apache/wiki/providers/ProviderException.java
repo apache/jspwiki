@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.providers;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  This exception represents the superclass of all exceptions that providers

@@ -35,6 +35,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.api.plugin.PluginManager;
 import org.apache.wiki.attachment.Attachment;

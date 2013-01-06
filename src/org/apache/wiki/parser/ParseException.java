@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.parser;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  This is an exception which gets thrown whenever the parser cannot

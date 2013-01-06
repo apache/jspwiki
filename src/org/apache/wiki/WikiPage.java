@@ -334,9 +334,9 @@ public class WikiPage
         {
             p.m_accessList = new AclImpl();
             
-            for( Enumeration entries = m_accessList.entries(); entries.hasMoreElements(); )
+            for( Enumeration< AclEntry > entries = m_accessList.entries(); entries.hasMoreElements(); )
             {
-                AclEntry e = (AclEntry)entries.nextElement();
+                AclEntry e = entries.nextElement();
             
                 p.m_accessList.addEntry( e );
             }

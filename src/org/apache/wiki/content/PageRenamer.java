@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageRenameEvent;

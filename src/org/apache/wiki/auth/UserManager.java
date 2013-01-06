@@ -29,8 +29,13 @@ import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.*;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.filters.FilterManager;
+import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.AbstractUserDatabase;
@@ -40,8 +45,6 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.api.filters.FilterManager;
-import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.rpc.RPCCallable;

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Indicates an authentication or authorization

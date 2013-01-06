@@ -25,7 +25,8 @@ import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
-
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
@@ -33,8 +34,6 @@ import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.*;
-import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.ProviderException;
@@ -703,15 +702,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
             // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
             String saveText;
-            try
-            {
-                FilterManager fm = engine.getFilterManager();
-                saveText = fm.doPreSaveFiltering( m_context, m_proposedText );
-            }
-            catch ( FilterException e )
-            {
-                throw e;
-            }
+            FilterManager fm = engine.getFilterManager();
+            saveText = fm.doPreSaveFiltering( m_context, m_proposedText );
 
             // Stash the wiki context, old and new text as workflow attributes
             workflow.setAttribute( PRESAVE_WIKI_CONTEXT, m_context );
@@ -836,7 +828,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
                         }
                         catch ( WikiSecurityException e )
                         {
-                            log.error( "Could not change page ACL for page " + page.getName() + ": " + e.getMessage() );
+                            log.error( "Could not change page ACL for page " + page.getName() + ": " + e.getMessage(), e );
                         }
                         pagesChanged++;
                     }
@@ -847,7 +839,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             catch ( ProviderException e )
             {
                 // Oooo! This is really bad...
-                log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage() );
+                log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage(), e );
             }
         }
     }
@@ -868,36 +860,36 @@ public class PageManager extends ModuleManager implements WikiEventListener
         boolean pageChanged = false;
         if ( acl != null )
         {
-            Enumeration entries = acl.entries();
+            Enumeration< AclEntry > entries      = acl.entries();
             Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
             Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
             while ( entries.hasMoreElements() )
             {
-                AclEntry entry = (AclEntry)entries.nextElement();
+                AclEntry entry = entries.nextElement();
                 if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) )
                 {
                     // Create new entry
                     AclEntry newEntry = new AclEntryImpl();
                     newEntry.setPrincipal( newPrincipal );
-                    Enumeration permissions = entry.permissions();
+                    Enumeration< Permission > permissions = entry.permissions();
                     while ( permissions.hasMoreElements() )
                     {
-                        Permission permission = (Permission)permissions.nextElement();
-                        newEntry.addPermission(permission);
+                        Permission permission = permissions.nextElement();
+                        newEntry.addPermission( permission );
                     }
                     pageChanged = true;
                     entriesToRemove.add( entry );
                     entriesToAdd.add( newEntry );
                 }
             }
-            for ( Iterator ix = entriesToRemove.iterator(); ix.hasNext(); )
+            for ( Iterator< AclEntry > ix = entriesToRemove.iterator(); ix.hasNext(); )
             {
-                AclEntry entry = (AclEntry)ix.next();
+                AclEntry entry = ix.next();
                 acl.removeEntry( entry );
             }
-            for ( Iterator ix = entriesToAdd.iterator(); ix.hasNext(); )
+            for ( Iterator< AclEntry > ix = entriesToAdd.iterator(); ix.hasNext(); )
             {
-                AclEntry entry = (AclEntry)ix.next();
+                AclEntry entry = ix.next();
                 acl.addEntry( entry );
             }
         }

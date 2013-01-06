@@ -18,6 +18,8 @@
  */
 package org.apache.wiki;
 
+import org.apache.wiki.api.exceptions.WikiException;
+
 /**
  *  Marks an erroneus jspwiki.properties file.  Certain properties
  *  have been marked as "required", and if you do not provide

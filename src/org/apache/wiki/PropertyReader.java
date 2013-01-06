@@ -26,6 +26,8 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
+import org.apache.wiki.api.exceptions.WikiException;
+
 /**
  * Property Reader for the WikiEngine. Reads the properties for the WikiEngine
  * and implements the feature of cascading properties and variable substitution,
