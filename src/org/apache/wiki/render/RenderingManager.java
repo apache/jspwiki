@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -143,7 +143,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
         Class[] rendererParams = { WikiContext.class, WikiDocument.class };
         try
         {
-            Class c = Class.forName( renderImplName );
+            Class< ? > c = Class.forName( renderImplName );
             m_rendererConstructor = c.getConstructor( rendererParams );
         }
         catch( ClassNotFoundException e )
