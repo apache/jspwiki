@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.api.exceptions;
 
-import org.apache.wiki.WikiException;
 
 /**
  *  A generic PageFilter exception.
