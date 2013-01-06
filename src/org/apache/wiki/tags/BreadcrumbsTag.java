@@ -120,6 +120,13 @@ public class BreadcrumbsTag extends WikiTagBase
         if( trail == null )
         {
             trail = new FixedQueue(m_maxQueueSize);
+        } else {
+            //  check if page still exists (could be deleted/renamed by another user)
+            for (int i = 0;i<trail.size();i++) {
+                if (!m_wikiContext.getEngine().pageExists(trail.get(i))) {
+                    trail.remove(i);
+                }
+            }
         }
 
         if (m_wikiContext.getRequestContext().equals(WikiContext.VIEW))
@@ -133,15 +140,12 @@ public class BreadcrumbsTag extends WikiTagBase
                 else
                 {
                     //
-                    // Don't add the page to the queue if the page was just
-                    // refreshed
+                    // Don't add the page to the queue if the page was just refreshed
                     //
                     if (!trail.getLast().equals(page))
                     {
                         trail.pushItem(page);
-                        log.debug("added page: " + page);
                     }
-                    log.debug("didn't add page because of refresh");
                 }
             }
             else
@@ -170,8 +174,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
-            out.print("<a class=\"" + linkclass + "\" href=\"" +
-                      m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
+            out.print("<a class=\"" + linkclass + "\" href=\"" + m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
 
             if( i < queueSize - 2 )
             {

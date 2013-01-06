@@ -1,5 +1,11 @@
 2013-01-06  Harry Metske <metskem@apache.org>
 
+       * 2.9.1-svn-13
+       
+		* fixed JSPWIKI-533  proper handling of page deletes and renames for the Breadcrumb trail 
+
+2013-01-06  Harry Metske <metskem@apache.org>
+
        * 2.9.1-svn-12
        
 		* fixed JSPWIKI-439 Localization of JSPWiki
