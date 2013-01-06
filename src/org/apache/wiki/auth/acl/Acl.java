@@ -64,22 +64,21 @@ public interface Acl
      * @return true on success, false if an entry of the same type (positive or
      *         negative) for the same principal is already present in this ACL
      */
-    public boolean addEntry( AclEntry entry );
+    boolean addEntry( AclEntry entry );
 
     /**
      * Returns an enumeration of the entries in this ACL. Each element in the
      * enumeration is of type AclEntry.
      * @return an enumeration of the entries in this ACL.
      */
-    @SuppressWarnings("unchecked")
-    public Enumeration entries();
+    Enumeration< AclEntry > entries();
 
     /**
      * Returns <code>true</code>, if this Acl is empty.
      * @return the result
      * @since 2.4.68
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /**
      * Returns all Principal objects assigned a given Permission in the access
@@ -89,7 +88,7 @@ public interface Acl
      * @param permission the permission to search for
      * @return an array of Principals posessing the permission
      */
-    public Principal[] findPrincipals( Permission permission );
+    Principal[] findPrincipals( Permission permission );
 
     /**
      * Returns an AclEntry for a supplied Principal, or <code>null</code> if
@@ -97,19 +96,19 @@ public interface Acl
      * @param principal the principal to search for
      * @return the AclEntry associated with the principal, or <code>null</code>
      */
-    public AclEntry getEntry( Principal principal );
+    AclEntry getEntry( Principal principal );
 
     /**
      * Removes an ACL entry from this ACL.
      * @param entry the ACL entry to be removed from this ACL
      * @return true on success, false if the entry is not part of this ACL
      */
-    public boolean removeEntry( AclEntry entry );
+    boolean removeEntry( AclEntry entry );
 
     /**
      * Returns a string representation of the contents of this Acl.
      * @return the string representation
      */
-    public String toString();
+    String toString();
 
 }

@@ -49,7 +49,6 @@ public class AclImpl implements Acl, Serializable
      * @param permission the permission to search for
      * @return an array of Principals possessing the permission
      */
-    @SuppressWarnings("unchecked")
     public Principal[] findPrincipals( Permission permission )
     {
         Vector<Principal> principals = new Vector<Principal>();
@@ -139,8 +138,7 @@ public class AclImpl implements Acl, Serializable
      * enumeration is of type AclEntry.
      * @return an enumeration of the entries in this ACL.
      */
-    @SuppressWarnings("unchecked")
-    public Enumeration entries()
+    public Enumeration< AclEntry > entries()
     {
         return m_entries.elements();
     }
@@ -168,7 +166,6 @@ public class AclImpl implements Acl, Serializable
      * Returns a string representation of the contents of this Acl.
      * @return the string representation
      */
-    @SuppressWarnings("unchecked")
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
