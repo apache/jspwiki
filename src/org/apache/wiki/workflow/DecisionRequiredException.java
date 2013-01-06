@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * Exception thrown when an activity -- that would otherwise complete silently --

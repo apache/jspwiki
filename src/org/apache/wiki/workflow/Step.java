@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * <p>

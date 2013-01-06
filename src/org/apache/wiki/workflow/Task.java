@@ -35,6 +35,8 @@ import java.security.Principal;
  */
 public abstract class Task extends AbstractStep
 {
+    private static final long serialVersionUID = 4630293957752430807L;
+    
     private Step m_successor = null;
 
     /**

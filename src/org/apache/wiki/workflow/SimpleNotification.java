@@ -20,7 +20,7 @@ package org.apache.wiki.workflow;
 
 import java.security.Principal;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * Decision subclass used for notifications that includes only one available Outcome:

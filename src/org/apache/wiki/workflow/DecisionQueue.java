@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.WikiSession;
 
 /**

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * <p>
@@ -54,6 +54,8 @@ import org.apache.wiki.WikiException;
  */
 public abstract class Decision extends AbstractStep
 {
+    private static final long serialVersionUID = -6835601038263238062L;
+
     private Principal m_actor;
 
     private int m_id;

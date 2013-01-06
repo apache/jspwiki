@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * Factory class that creates common Workflow instances such as a standard approval workflow.

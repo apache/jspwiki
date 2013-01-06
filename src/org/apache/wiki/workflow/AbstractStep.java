@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * Abstact superclass that provides a complete implementation of most
@@ -33,6 +33,8 @@ import org.apache.wiki.WikiException;
  */
 public abstract class AbstractStep implements Step
 {
+
+    private static final long serialVersionUID = 8635678679349653768L;
 
     /** Timestamp of when the step started. */
     private Date m_start;

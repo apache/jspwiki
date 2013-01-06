@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WorkflowEvent;
