@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.exceptions.WikiException;
+
 /**
- * Exception thrown when an attempt is made to find an Outcome that does not
- * exist.
- *
+ * Exception thrown when an attempt is made to find an Outcome that does not exist.
  */
-public class NoSuchOutcomeException extends Exception
+public class NoSuchOutcomeException extends WikiException
 {
 
     private static final long serialVersionUID = 1L;
