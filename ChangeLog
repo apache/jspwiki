@@ -1,14 +1,28 @@
+2013-01-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-14
+       
+       * Global use of org.apache.wiki.api.exceptions.WikiException instead of org.apache.wiki.WikiException, 
+         as part of JSPWiki API (cfr. JSPWIKI-303).
+       
+       * Corrected the displayed version of commons-httpclient, we are downloading 3.1, but it was 
+         named 3.0.1 (it is needed to either delete commons-httpclient-3.0.1.jar or run ant 
+         clean-deps to ensure that the old jar goes away)
+       
+       * Some minor refactors to expose generified collections at Acl and AclEntry, and adding 
+         missing serialVersionUID at org.apache.wiki.workflow
+
 2013-01-06  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-13
        
-		* fixed JSPWIKI-533  proper handling of page deletes and renames for the Breadcrumb trail 
+       * fixed JSPWIKI-533  proper handling of page deletes and renames for the Breadcrumb trail 
 
 2013-01-06  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-12
        
-		* fixed JSPWIKI-439 Localization of JSPWiki
+       * fixed JSPWIKI-439 Localization of JSPWiki
 
 2013-01-02  Harry Metske <metskem@apache.org>
 
