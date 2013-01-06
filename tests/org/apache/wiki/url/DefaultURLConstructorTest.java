@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 public class DefaultURLConstructorTest extends TestCase
 {

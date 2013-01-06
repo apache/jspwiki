@@ -32,6 +32,7 @@ import javax.sql.DataSource;
 import junit.framework.TestCase;
 
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;

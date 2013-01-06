@@ -28,8 +28,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.commons.lang.ArrayUtils;
-
-import org.apache.wiki.*;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.auth.authorize.Group;

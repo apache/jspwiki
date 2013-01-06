@@ -24,15 +24,15 @@ package org.apache.wiki.plugin;
 
 import java.util.Properties;
 
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiException;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.providers.WikiPageProvider;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.providers.WikiPageProvider;
 
 /**
  *

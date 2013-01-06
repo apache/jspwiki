@@ -30,7 +30,7 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.log4j.Logger;
-
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;

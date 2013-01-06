@@ -13,10 +13,17 @@
  */
 package org.apache.wiki;
 
-import junit.framework.*;
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.providers.FileSystemProvider;
 
 /**

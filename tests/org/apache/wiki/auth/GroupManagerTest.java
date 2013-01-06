@@ -21,16 +21,15 @@ package org.apache.wiki.auth;
 import java.security.Principal;
 import java.util.Properties;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.event.WikiSecurityEvent;

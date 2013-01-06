@@ -24,7 +24,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.apache.wiki.WikiException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 

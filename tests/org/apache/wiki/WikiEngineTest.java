@@ -19,12 +19,24 @@
 
 package org.apache.wiki;
 
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
 
-import org.apache.wiki.providers.*;
-import org.apache.wiki.attachment.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.providers.BasicAttachmentProvider;
+import org.apache.wiki.providers.CachingProvider;
+import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.providers.VerySimpleProvider;
 
 public class WikiEngineTest extends TestCase
 {

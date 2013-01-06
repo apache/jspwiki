@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 
 public class PageRenamerTest extends TestCase

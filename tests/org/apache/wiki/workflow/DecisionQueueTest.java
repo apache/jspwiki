@@ -25,8 +25,8 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 

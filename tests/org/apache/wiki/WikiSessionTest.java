@@ -31,11 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import net.sourceforge.stripes.mock.*;
 
 import org.apache.commons.lang.ArrayUtils;
-
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
