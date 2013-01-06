@@ -25,6 +25,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -74,7 +75,7 @@ public class SearchManager
      *  @throws WikiException If it cannot be instantiated.
      */
     public SearchManager( WikiEngine engine, Properties properties )
-        throws WikiException
+        throws FilterException
     {
         initialize( engine, properties );
 
@@ -208,13 +209,11 @@ public class SearchManager
         }
         catch (NoRequiredPropertyException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( e.getMessage(), e );
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( e.getMessage(), e );
         }
     }
 
