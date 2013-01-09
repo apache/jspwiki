@@ -181,18 +181,6 @@ public class PluginManager extends DefaultPluginManager
     }
     
     /**
-     * {@inheritDoc}
-     * @deprecated Remains because of old API compatobility; will be removed in 2.10 scope. 
-     * Consider using {@link DefaultPluginManager#parsePluginLine(WikiContext, String, int)} instead
-     */
-    @Deprecated
-    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
-        throws PluginException
-    {
-       return super.parsePluginLine(context, commandline, pos );
-    }
-    
-    /**
      *  Executes parse stage, unless plugins are disabled.
      *  
      *  @param content The content item.
