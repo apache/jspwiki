@@ -54,7 +54,7 @@ public class BasicAttachmentProviderTest extends TestCase
 
         m_engine  = new TestEngine(props);
 
-        TestEngine.deleteAll( new File(TestEngine.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR )) );
+        TestEngine.deleteAll( new File(TextUtil.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR )) );
         
         m_provider = new BasicAttachmentProvider();
         m_provider.initialize( m_engine, props );

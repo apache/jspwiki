@@ -29,12 +29,9 @@ import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.*;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
@@ -145,7 +142,7 @@ public final class UserManager
 
         try
         {
-            dbClassName = WikiEngine.getRequiredProperty( m_engine.getWikiProperties(),
+            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(),
                                                           PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);

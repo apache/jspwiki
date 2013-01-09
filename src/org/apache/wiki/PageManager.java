@@ -25,8 +25,8 @@ import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
@@ -148,7 +148,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         }
         else
         {
-            classname = WikiEngine.getRequiredProperty( props, PROP_PAGEPROVIDER );
+            classname = TextUtil.getRequiredProperty( props, PROP_PAGEPROVIDER );
         }
 
         try

@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import org.apache.wiki.api.filters.FilterManager;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;

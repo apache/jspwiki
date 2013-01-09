@@ -1,10 +1,11 @@
-package org.apache.wiki.api.filters;
+package org.apache.wiki.api.engine;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.filters.PageFilter;
 
 public interface FilterManager
 {

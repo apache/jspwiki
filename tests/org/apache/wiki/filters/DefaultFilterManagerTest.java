@@ -30,7 +30,7 @@ import junit.framework.TestSuite;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiException;
-import org.apache.wiki.api.filters.FilterManager;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 
 public class DefaultFilterManagerTest extends TestCase

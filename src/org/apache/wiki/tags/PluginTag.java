@@ -25,8 +25,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.PluginManager;
 
 /**
  *  Inserts any Wiki plugin.  The body of the tag becomes then

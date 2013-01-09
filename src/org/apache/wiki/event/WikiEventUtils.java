@@ -20,7 +20,7 @@
 package org.apache.wiki.event;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.filters.FilterManager;
+import org.apache.wiki.api.engine.FilterManager;
 
 /**
  *  A utility class that adds some JSPWiki-specific functionality to the

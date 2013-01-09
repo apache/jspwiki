@@ -91,7 +91,7 @@ import org.jdom.xpath.XPath;
  *  
  * FIXME: this class should be final in 2.10. It isn't right now because of compatibility reasons
  */
-public class DefaultFilterManager extends ModuleManager implements org.apache.wiki.api.filters.FilterManager
+public class DefaultFilterManager extends ModuleManager implements org.apache.wiki.api.engine.FilterManager
 {
     private PriorityList<PageFilter> m_pageFilters = new PriorityList<PageFilter>();
 

@@ -34,10 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.api.engine.FilterManager;
+import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.api.filters.FilterManager;
-import org.apache.wiki.api.plugin.PluginManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -712,29 +712,22 @@ public class WikiEngine
 
 
     /**
-     *  Throws an exception if a property is not found.
+     * Throws an exception if a property is not found.
      *
-     *  @param props A set of properties to search the key in.
-     *  @param key   The key to look for.
-     *  @return The required property
+     * @param props A set of properties to search the key in.
+     * @param key   The key to look for.
+     * @return The required property
      *
-     *  @throws NoRequiredPropertyException If the search key is not
-     *          in the property set.
+     * @throws NoRequiredPropertyException If the search key is not
+     *         in the property set.
+     * @deprecated will be removed in 2.10 scope. Consider using {@link TextUtil#getRequiredProperty(Properties, String)} 
+     * instead
      */
-
-    // FIXME: Should really be in some util file.
+    @Deprecated
     public static String getRequiredProperty( Properties props, String key )
         throws NoRequiredPropertyException
     {
-        String value = TextUtil.getStringProperty( props, key, null );
-
-        if( value == null )
-        {
-            throw new NoRequiredPropertyException( "Required property not found",
-                                                   key );
-        }
-
-        return value;
+        return TextUtil.getRequiredProperty( props, key );
     }
 
     /**

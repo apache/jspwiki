@@ -25,8 +25,8 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.filters.FilterManager;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
