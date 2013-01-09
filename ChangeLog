@@ -1,3 +1,6 @@
+2013-01-08 Glen Mazza (gmazza@apache.org)
+       * JSPWIKI-756 removed unused Xalan, Xerces, and Custom-Rhino JARs
+
 2013-01-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-14
