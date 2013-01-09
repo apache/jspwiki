@@ -23,11 +23,12 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
+
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.CacheEntry;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -46,7 +47,6 @@ import com.opensymphony.oscache.base.events.*;
 // FIXME: We probably clear the cache a bit too aggressively in places.
 // FIXME: Does not yet react well to external cache changes.  Should really use custom
 //        EntryRefreshPolicy for that.
-
 public class CachingAttachmentProvider
     implements WikiAttachmentProvider
 {

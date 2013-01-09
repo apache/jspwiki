@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.util.TextUtil;
 
 
 /**

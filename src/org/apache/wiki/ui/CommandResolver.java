@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
@@ -37,6 +36,7 @@ import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.url.URLConstructor;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * <p>Resolves special pages, JSPs and Commands on behalf of a

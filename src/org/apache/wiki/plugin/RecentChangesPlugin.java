@@ -24,7 +24,6 @@ import java.util.*;
 
 import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -34,6 +33,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Returns the Recent Changes in the wiki being a date-sorted list of page names.

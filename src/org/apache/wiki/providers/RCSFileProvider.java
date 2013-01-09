@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.*;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  This class implements a simple RCS file provider.  NOTE: You MUST

@@ -27,15 +27,16 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
 import org.suigeneris.jrcs.diff.Revision;
 import org.suigeneris.jrcs.diff.RevisionVisitor;
 import org.suigeneris.jrcs.diff.delta.*;
 import org.suigeneris.jrcs.diff.myers.MyersDiff;
+
 
 /**
  * A seriously better diff provider, which highlights changes word-by-word using
@@ -44,7 +45,6 @@ import org.suigeneris.jrcs.diff.myers.MyersDiff;
  * Suggested by John Volkar.
  *
  */
-
 public class ContextualDiffProvider implements DiffProvider
 {
 

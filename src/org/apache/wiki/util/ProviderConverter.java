@@ -24,7 +24,6 @@ import java.util.*;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.wiki.PageManager;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;

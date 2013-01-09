@@ -33,10 +33,10 @@ import org.json.JSONObject;
 
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.PropertyReader;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Represents an object which is used to store user preferences.

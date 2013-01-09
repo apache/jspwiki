@@ -36,6 +36,7 @@ import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  <p>Builds a simple weblog.

@@ -24,6 +24,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.

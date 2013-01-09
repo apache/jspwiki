@@ -23,10 +23,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.ecs.xhtml.input;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Creates a simple input text field.

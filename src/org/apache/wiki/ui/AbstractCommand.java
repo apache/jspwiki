@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.TextUtil;
+import org.apache.wiki.util.TextUtil;
 
 
 /**

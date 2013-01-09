@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
-import org.apache.wiki.TextUtil;
+import org.apache.wiki.util.TextUtil;
 
 
 /**

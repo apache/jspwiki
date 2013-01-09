@@ -27,11 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Implements the default URL constructor using links directly to the

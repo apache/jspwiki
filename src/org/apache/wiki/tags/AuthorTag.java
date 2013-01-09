@@ -22,11 +22,11 @@ import java.io.IOException;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Writes the author name of the current page, including a link to that page,

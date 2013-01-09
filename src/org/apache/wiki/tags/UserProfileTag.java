@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -37,6 +36,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * <p>

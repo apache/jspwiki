@@ -21,10 +21,8 @@ package org.apache.wiki.util;
 import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
-
-import org.apache.wiki.TextUtil;
+import java.util.Properties;
 
 /**
  * Extends {@link java.util.Properties} by providing support for comment

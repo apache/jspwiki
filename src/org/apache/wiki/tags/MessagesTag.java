@@ -20,8 +20,8 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * Returns or clears the current messages associated with the user's wiki

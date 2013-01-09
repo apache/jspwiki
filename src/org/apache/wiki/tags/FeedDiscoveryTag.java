@@ -20,12 +20,12 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.util.BlogUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Outputs links to all the site feeds and APIs this Wiki/blog supports.

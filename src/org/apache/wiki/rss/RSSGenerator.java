@@ -21,11 +21,11 @@ package org.apache.wiki.rss;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).

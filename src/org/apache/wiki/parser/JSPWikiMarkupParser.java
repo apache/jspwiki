@@ -43,6 +43,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.TextUtil;
 import org.jdom.*;
 
 /**

@@ -22,12 +22,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlrpc.XmlRpcException;
-
-import org.apache.wiki.*;
+import org.apache.wiki.LinkCollector;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.util.TextUtil;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  *  Provides handlers for all RPC routines.
@@ -36,7 +39,6 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
  */
 // We could use WikiEngine directly, but because of introspection it would
 // show just too many methods to be safe.
-
 public class RPCHandler
     extends AbstractRPCHandler
 {

@@ -48,10 +48,9 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
-import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.*;
 import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.WatchDog;
-import org.apache.wiki.util.WikiBackgroundThread;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Interface for the search providers that handle searching the Wiki

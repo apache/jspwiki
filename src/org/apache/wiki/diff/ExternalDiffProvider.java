@@ -27,10 +27,10 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * This DiffProvider allows external command line tools to be used to generate

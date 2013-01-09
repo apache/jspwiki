@@ -20,11 +20,11 @@ package org.apache.wiki.render;
 
 import java.io.IOException;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Provides an interface to the basic rendering engine.

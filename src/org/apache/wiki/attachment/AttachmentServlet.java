@@ -51,6 +51,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.TextUtil;
 
 
 /**

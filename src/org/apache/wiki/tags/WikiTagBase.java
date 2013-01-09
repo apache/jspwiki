@@ -25,8 +25,8 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.log4j.Logger;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Base class for JSPWiki tags.  You do not necessarily have
@@ -41,6 +41,8 @@ public abstract class WikiTagBase
     extends TagSupport
     implements TryCatchFinally
 {
+    private static final long serialVersionUID = -1409836349293777141L;
+
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
     static    Logger    log = Logger.getLogger( WikiTagBase.class );

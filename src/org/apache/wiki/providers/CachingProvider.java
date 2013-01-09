@@ -22,11 +22,12 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
+
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.base.events.*;

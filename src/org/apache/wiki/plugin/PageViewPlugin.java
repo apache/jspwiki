@@ -27,11 +27,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
-import org.apache.wiki.*;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.event.*;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.WikiBackgroundThread;
 
 /**

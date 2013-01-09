@@ -24,13 +24,17 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Provides a table of contents. 

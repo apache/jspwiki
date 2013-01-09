@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -39,6 +38,7 @@ import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.BlogUtil;
+import org.apache.wiki.util.TextUtil;
 import org.intabulas.sandler.Sandler;
 import org.intabulas.sandler.SyndicationFactory;
 import org.intabulas.sandler.elements.*;

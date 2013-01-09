@@ -21,11 +21,11 @@ package org.apache.wiki.ui.admin.beans;
 import javax.management.NotCompliantMBeanException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.management.SimpleMBean;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  This class is still experimental.

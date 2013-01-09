@@ -27,12 +27,12 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.NDC;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.url.DefaultURLConstructor;
 import org.apache.wiki.util.UtilJ2eeCompat;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.WatchDog;
 
 /**

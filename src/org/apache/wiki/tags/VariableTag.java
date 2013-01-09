@@ -22,9 +22,9 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.NoSuchVariableException;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Returns the value of an Wiki variable.

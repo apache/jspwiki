@@ -27,9 +27,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  This class is an example of how to have a simple filter.  It removes

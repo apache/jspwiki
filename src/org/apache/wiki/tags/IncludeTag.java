@@ -22,8 +22,8 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Includes an another JSP page, making sure that we actually pass

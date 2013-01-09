@@ -30,10 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * <p>

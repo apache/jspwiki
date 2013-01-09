@@ -29,10 +29,10 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
 import org.suigeneris.jrcs.diff.Revision;
@@ -48,7 +48,6 @@ import org.suigeneris.jrcs.diff.myers.MyersDiff;
  * This is the JSPWiki 'traditional' diff.  It uses an internal diff engine.
  * 
  */
-
 public class TraditionalDiffProvider implements DiffProvider
 {
     private static final Logger log = Logger.getLogger(TraditionalDiffProvider.class);

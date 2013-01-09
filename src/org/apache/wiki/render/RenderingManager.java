@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -40,6 +39,7 @@ import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.CachingProvider;
+import org.apache.wiki.util.TextUtil;
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 

@@ -19,8 +19,9 @@
 
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.*;
-import org.apache.wiki.TextUtil;
+import javax.servlet.jsp.JspTagException;
+
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Generates single tabbed page layout.

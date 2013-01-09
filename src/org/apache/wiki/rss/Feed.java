@@ -22,8 +22,8 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Represents an abstract feed.

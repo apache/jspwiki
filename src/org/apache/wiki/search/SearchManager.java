@@ -37,13 +37,13 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Manages searching the Wiki.
  *
  *  @since 2.2.21.
  */
-
 public class SearchManager
     extends BasicPageFilter
     implements InternalModule, WikiEventListener
