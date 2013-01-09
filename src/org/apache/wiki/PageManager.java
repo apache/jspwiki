@@ -40,6 +40,7 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.WikiBackgroundThread;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;

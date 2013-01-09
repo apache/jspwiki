@@ -18,6 +18,7 @@
  */
 
 package org.apache.wiki;
+
 import java.io.*;
 import java.util.Locale;
 import java.util.Properties;
@@ -42,6 +43,7 @@ import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Simple test engine that always assumes pages are found.

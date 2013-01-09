@@ -25,16 +25,16 @@ import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.util.TextUtil;
 
 /*
   BUGS

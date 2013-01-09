@@ -16,18 +16,20 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.util;
 
 import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
 import java.util.Properties;
+import java.util.Random;
+
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.NoRequiredPropertyException;
 
 
 /**
  *  Contains a number of static utility methods.
- *  @deprecated will be removed in 2.10 scope. Consider using {@link org.apache.wiki.util.TextUtil} 
- *  instead
  */
-@Deprecated
 public final class TextUtil
 {
     static final String   HEX_DIGITS = "0123456789ABCDEF";
@@ -164,7 +166,24 @@ public final class TextUtil
      */
     public static String urlEncodeUTF8( String text )
     {
-        return org.apache.wiki.util.TextUtil.urlEncodeUTF8( text );
+        // If text is null, just return an empty string
+        if ( text == null )
+        {
+            return "";
+        }
+
+        byte[] rs;
+
+        try
+        {
+            rs = text.getBytes("UTF-8");
+            return urlEncode( rs );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            throw new InternalWikiException("UTF-8 not supported!?!");
+        }
+
     }
 
     /**
@@ -176,7 +195,20 @@ public final class TextUtil
      */
     public static String urlDecodeUTF8( String utf8 )
     {
-        return org.apache.wiki.util.TextUtil.urlDecodeUTF8( utf8 );
+        String rs = null;
+
+        if( utf8 == null ) return null;
+
+        try
+        {
+            rs = urlDecode( utf8.getBytes("ISO-8859-1"), "UTF-8" );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            throw new InternalWikiException("UTF-8 or ISO-8859-1 not supported!?!");
+        }
+
+        return rs;
     }
 
     /**
@@ -192,7 +224,21 @@ public final class TextUtil
      */
     public static String urlEncode( String data, String encoding )
     {
-        return org.apache.wiki.util.TextUtil.urlEncode( data, encoding );
+        // Presumably, the same caveats apply as in FileSystemProvider.
+        // Don't see why it would be horribly kludgy, though.
+        if( "UTF-8".equals( encoding ) )
+        {
+            return TextUtil.urlEncodeUTF8( data );
+        }
+
+        try
+        {
+            return TextUtil.urlEncode( data.getBytes(encoding) );
+        }
+        catch (UnsupportedEncodingException uee)
+        {
+            throw new InternalWikiException("Could not encode String into" + encoding);
+        }
     }
 
     /**
@@ -212,7 +258,22 @@ public final class TextUtil
         throws UnsupportedEncodingException,
                IllegalArgumentException
     {
-        return org.apache.wiki.util.TextUtil.urlDecode( data, encoding );
+        // Presumably, the same caveats apply as in FileSystemProvider.
+        // Don't see why it would be horribly kludgy, though.
+        if( "UTF-8".equals( encoding ) )
+        {
+            return TextUtil.urlDecodeUTF8( data );
+        }
+
+        try
+        {
+            return TextUtil.urlDecode( data.getBytes(encoding), encoding );
+        }
+        catch (UnsupportedEncodingException uee)
+        {
+            throw new InternalWikiException("Could not decode String into" + encoding);
+        }
+
     }
 
     /**
@@ -226,7 +287,12 @@ public final class TextUtil
      */
     public static String replaceEntities( String src )
     {
-        return org.apache.wiki.util.TextUtil.replaceEntities( src );
+        src = replaceString( src, "&", "&amp;" );
+        src = replaceString( src, "<", "&lt;" );
+        src = replaceString( src, ">", "&gt;" );
+        src = replaceString( src, "\"", "&quot;" );
+
+        return src;
     }
 
     /**
@@ -239,7 +305,26 @@ public final class TextUtil
      */
     public static final String replaceString( String orig, String src, String dest )
     {
-        return org.apache.wiki.util.TextUtil.replaceString( orig, src, dest );
+        if ( orig == null ) return null;
+        if ( src == null || dest == null ) throw new NullPointerException();
+        if ( src.length() == 0 ) return orig;
+
+        StringBuffer res = new StringBuffer(orig.length()+20); // Pure guesswork
+        int start = 0;
+        int end = 0;
+        int last = 0;
+
+        while ( (start = orig.indexOf(src,end)) != -1 )
+        {
+            res.append( orig.substring( last, start ) );
+            res.append( dest );
+            end  = start+src.length();
+            last = start+src.length();
+        }
+
+        res.append( orig.substring( end ) );
+
+        return res.toString();
     }
 
     /**
@@ -253,7 +338,13 @@ public final class TextUtil
      */
     public static String replaceString( String orig, int start, int end, String text )
     {
-        return org.apache.wiki.util.TextUtil.replaceString( orig, start, end, text );
+        if( orig == null ) return null;
+
+        StringBuffer buf = new StringBuffer(orig);
+
+        buf.replace( start, end, text );
+
+        return buf.toString();
     }
     
     /**
@@ -266,7 +357,27 @@ public final class TextUtil
      */
     public static String replaceStringCaseUnsensitive( String orig, String src, String dest )
     {
-        return org.apache.wiki.util.TextUtil.replaceStringCaseUnsensitive( orig, src, dest );
+        if( orig == null ) return null;
+
+        StringBuffer res = new StringBuffer();
+        int start        = 0;
+        int end          = 0;
+        int last         = 0;
+        
+        String origCaseUnsn = orig.toLowerCase();
+        String srcCaseUnsn = src.toLowerCase();
+
+        while( (start = origCaseUnsn.indexOf(srcCaseUnsn, end)) != -1 )
+        {
+            res.append( orig.substring( last, start ) );
+            res.append( dest );
+            end  = start+src.length();
+            last = start+src.length();
+        }
+
+        res.append( orig.substring( end ) );
+
+        return res.toString();
     }
 
     /**
@@ -280,7 +391,15 @@ public final class TextUtil
 
     public static int parseIntParameter( String value, int defvalue )
     {
-        return org.apache.wiki.util.TextUtil.parseIntParameter( value, defvalue );
+        int val = defvalue;
+
+        try
+        {
+            val = Integer.parseInt( value.trim() );
+        }
+        catch( Exception e ) {}
+
+        return val;
     }
 
     /**
@@ -297,7 +416,9 @@ public final class TextUtil
                                           String key,
                                           int defVal )
     {
-        return org.apache.wiki.util.TextUtil.getIntegerProperty( props, key, defVal );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+
+        return parseIntParameter( val, defVal );
     }
 
     /**
@@ -317,7 +438,12 @@ public final class TextUtil
      */
     public static boolean getBooleanProperty( Properties props, String key, boolean defval )
     {
-        return org.apache.wiki.util.TextUtil.getBooleanProperty( props, key, defval );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+
+        if( val == null )
+            return defval;
+
+        return isPositive( val );
     }
 
     /**
@@ -335,7 +461,11 @@ public final class TextUtil
                                             String key,
                                             String defval )
     {
-        return org.apache.wiki.util.TextUtil.getStringProperty( props, key, defval );
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+
+        if( val == null ) return defval;
+
+        return val.trim();
     }
     
     /**
@@ -351,7 +481,15 @@ public final class TextUtil
     public static String getRequiredProperty( Properties props, String key )
         throws NoRequiredPropertyException
     {
-        return org.apache.wiki.util.TextUtil.getRequiredProperty( props, key );
+        String value = getStringProperty( props, key, null );
+
+        if( value == null )
+        {
+            throw new NoRequiredPropertyException( "Required property not found",
+                                                   key );
+        }
+
+        return value;
     }
 
     /**
@@ -366,7 +504,12 @@ public final class TextUtil
      */
     public static boolean isPositive( String val )
     {
-        return org.apache.wiki.util.TextUtil.isPositive( val );
+        if( val == null ) return false;
+
+        val = val.trim();
+
+        return val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
+                 val.equalsIgnoreCase("yes");
     }
 
     /**
@@ -387,7 +530,63 @@ public final class TextUtil
      */
     public static String normalizePostData( String postData )
     {
-        return org.apache.wiki.util.TextUtil.normalizePostData( postData );
+        StringBuffer sb = new StringBuffer();
+
+        for( int i = 0; i < postData.length(); i++ )
+        {
+            switch( postData.charAt(i) )
+            {
+              case 0x0a: // LF, UNIX
+                sb.append( "\r\n" );
+                break;
+
+              case 0x0d: // CR, either Mac or MSDOS
+                sb.append( "\r\n" );
+                // If it's MSDOS, skip the LF so that we don't add it again.
+                if( i < postData.length()-1 && postData.charAt(i+1) == 0x0a )
+                {
+                    i++;
+                }
+                break;
+
+              default:
+                sb.append( postData.charAt(i) );
+                break;
+            }
+        }
+
+        if( sb.length() < 2 || !sb.substring( sb.length()-2 ).equals("\r\n") )
+        {
+            sb.append( "\r\n" );
+        }
+
+        return sb.toString();
+    }
+
+    private static final int EOI   = 0;
+    private static final int LOWER = 1;
+    private static final int UPPER = 2;
+    private static final int DIGIT = 3;
+    private static final int OTHER = 4;
+    private static final Random RANDOM = new SecureRandom();
+
+    private static int getCharKind(int c)
+    {
+        if (c==-1)
+        {
+            return EOI;
+        }
+
+        char ch = (char) c;
+
+        if (Character.isLowerCase(ch))
+            return LOWER;
+        else if (Character.isUpperCase(ch))
+            return UPPER;
+        else if (Character.isDigit(ch))
+            return DIGIT;
+        else
+            return OTHER;
     }
 
     /**
@@ -399,7 +598,7 @@ public final class TextUtil
      */
     public static String beautifyString( String s )
     {
-        return org.apache.wiki.util.TextUtil.beautifyString( s );
+        return beautifyString( s, " " );
     }
 
     /**
@@ -413,7 +612,45 @@ public final class TextUtil
      */
     public static String beautifyString( String s, String space )
     {
-        return org.apache.wiki.util.TextUtil.beautifyString( s, " " );
+        StringBuffer result = new StringBuffer();
+
+        if( s == null || s.length() == 0 ) return "";
+
+        int cur     = s.charAt(0);
+        int curKind = getCharKind(cur);
+
+        int prevKind = LOWER;
+        int nextKind = -1;
+
+        int next = -1;
+        int nextPos = 1;
+
+        while( curKind != EOI )
+        {
+            next = (nextPos < s.length()) ? s.charAt(nextPos++) : -1;
+            nextKind = getCharKind( next );
+
+            if( (prevKind == UPPER) && (curKind == UPPER) && (nextKind == LOWER) )
+            {
+                result.append(space);
+                result.append((char) cur);
+            }
+            else
+            {
+                result.append((char) cur);
+                if( ( (curKind == UPPER) && (nextKind == DIGIT) )
+                    || ( (curKind == LOWER) && ((nextKind == DIGIT) || (nextKind == UPPER)) )
+                    || ( (curKind == DIGIT) && ((nextKind == UPPER) || (nextKind == LOWER)) ))
+                {
+                    result.append(space);
+                }
+            }
+            prevKind = curKind;
+            cur      = next;
+            curKind  = nextKind;
+        }
+
+        return result.toString();
     }
 
     /**
@@ -441,7 +678,17 @@ public final class TextUtil
     public static Properties createProperties( String[] values )
         throws IllegalArgumentException
     {
-        return org.apache.wiki.util.TextUtil.createProperties( values );
+        if( values.length % 2 != 0 )
+            throw new IllegalArgumentException( "One value is missing.");
+
+        Properties props = new Properties();
+
+        for( int i = 0; i < values.length; i += 2 )
+        {
+            props.setProperty( values[i], values[i+1] );
+        }
+
+        return props;
     }
 
     /**
@@ -451,9 +698,22 @@ public final class TextUtil
      *  @return int Number of counted sections.
      *  @since 2.1.86.
      */
+
     public static int countSections( String pagedata )
     {
-        return org.apache.wiki.util.TextUtil.countSections( pagedata );
+        int tags  = 0;
+        int start = 0;
+
+        while( (start = pagedata.indexOf("----",start)) != -1 )
+        {
+            tags++;
+            start+=4; // Skip this "----"
+        }
+
+        //
+        // The first section does not get the "----"
+        //
+        return pagedata.length() > 0 ? tags+1 : 0;
     }
 
     /**
@@ -470,7 +730,33 @@ public final class TextUtil
     public static String getSection( String pagedata, int section )
         throws IllegalArgumentException
     {
-        return org.apache.wiki.util.TextUtil.getSection( pagedata, section );
+        int tags  = 0;
+        int start = 0;
+        int previous = 0;
+
+        while( (start = pagedata.indexOf("----",start)) != -1 )
+        {
+            if( ++tags == section )
+            {
+                return pagedata.substring( previous, start );
+            }
+
+            start += 4; // Skip this "----"
+            // allow additional dashes, treat it as if it was a correct 4-dash
+            while (start < pagedata.length() && pagedata.charAt(start) == '-')
+            {
+                start++;
+            }
+
+            previous = start;
+        }
+
+        if( ++tags == section )
+        {
+            return pagedata.substring( previous );
+        }
+
+        throw new IllegalArgumentException("There is no section no. "+section+" on the page.");
     }
 
     /**
@@ -484,7 +770,14 @@ public final class TextUtil
      */
     public static String repeatString( String what, int times )
     {
-        return org.apache.wiki.util.TextUtil.repeatString( what, times );
+        StringBuffer sb = new StringBuffer();
+
+        for( int i = 0; i < times; i++ )
+        {
+            sb.append( what );
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -497,7 +790,34 @@ public final class TextUtil
      */
     public static String native2Ascii(String s)
     {
-        return org.apache.wiki.util.TextUtil.native2Ascii( s );
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < s.length(); i++)
+        {
+            char aChar = s.charAt(i);
+            if ((aChar < 0x0020) || (aChar > 0x007e))
+            {
+                sb.append('\\');
+                sb.append('u');
+                sb.append(toHex((aChar >> 12) & 0xF));
+                sb.append(toHex((aChar >>  8) & 0xF));
+                sb.append(toHex((aChar >>  4) & 0xF));
+                sb.append(toHex( aChar        & 0xF));
+            }
+            else
+            {
+                sb.append(aChar);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static char toHex(int nibble)
+    {
+        final char[] hexDigit =
+        {
+            '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+        };
+        return hexDigit[nibble & 0xF];
     }
 
     /**
@@ -511,7 +831,14 @@ public final class TextUtil
      */
     public static String toHexString( byte[] bytes )
     {
-        return org.apache.wiki.util.TextUtil.toHexString( bytes );
+        StringBuffer sb = new StringBuffer( bytes.length*2 );
+        for( int i = 0; i < bytes.length; i++ )
+        {
+            sb.append( toHex(bytes[i] >> 4) );
+            sb.append( toHex(bytes[i]) );
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -527,7 +854,18 @@ public final class TextUtil
 
     public static boolean isNumber( String s )
     {
-        return org.apache.wiki.util.TextUtil.isNumber( s );
+        if( s == null ) return false;
+
+        if( s.length() > 1 && s.charAt(0) == '-' )
+            s = s.substring(1);
+
+        for( int i = 0; i < s.length(); i++ )
+        {
+            if( !Character.isDigit(s.charAt(i)) )
+                return false;
+        }
+
+        return true;
     }
 
     /** Length of password. @see #generateRandomPassword() */
@@ -540,7 +878,16 @@ public final class TextUtil
      */
     public static String generateRandomPassword()
     {
-        return org.apache.wiki.util.TextUtil.generateRandomPassword();
-    }
+        // Pick from some letters that won't be easily mistaken for each
+        // other. So, for example, omit o O and 0, 1 l and L.
+        String letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
 
+        String pw = "";
+        for (int i=0; i<PASSWORD_LENGTH; i++)
+        {
+            int index = (int)(RANDOM.nextDouble()*letters.length());
+            pw += letters.substring(index, index+1);
+        }
+        return pw;
+    }
 }

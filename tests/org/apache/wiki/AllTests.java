@@ -66,7 +66,6 @@ public class AllTests extends TestCase
         suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( ReleaseTest.suite() );
-        suite.addTest( TextUtilTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
         // This is obsolete and not maintained anymore
         // suite.addTest( TranslatorReaderTest.suite() );

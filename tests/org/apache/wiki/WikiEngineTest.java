@@ -30,7 +30,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
@@ -38,7 +37,7 @@ import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
 import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.TextUtil;
+import org.apache.wiki.util.TextUtil;
 
 public class WikiEngineTest extends TestCase
 {

@@ -27,6 +27,7 @@ import java.util.*;
 import javax.servlet.ServletContext;
 
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * Property Reader for the WikiEngine. Reads the properties for the WikiEngine
