@@ -136,11 +136,9 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
      
         Thread.yield();
+        Collection res = waitForIndex( "Babylon" ); // wait until 2nd m_engine.saveText() takes effect
 
-        Thread.sleep( SLEEP_TIME * 50L ); // Should cover for both index and initial delay
-                                          // waitForIndex cannot be used here b/c it doesn't detect
-                                          // the second call to saveText
-        Collection res = m_mgr.findPages( "mankind" );
+        res = m_mgr.findPages( "mankind" ); // check for text present in 1st m_engine.saveText() but not in 2nd
 
         assertNotNull( "found results", res );
         assertEquals( "empty results", 0, res.size() );
