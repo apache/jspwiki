@@ -19,15 +19,11 @@
 package org.apache.wiki.providers;
 
 import java.io.*;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.Date;
-import java.util.TreeSet;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.*;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.*;
+import org.apache.wiki.util.FileUtil;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.

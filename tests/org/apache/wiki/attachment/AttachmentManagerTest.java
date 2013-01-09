@@ -21,11 +21,11 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.wiki.FileUtil;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.FileUtil;
 
 public class AttachmentManagerTest extends TestCase
 {

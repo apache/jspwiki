@@ -29,11 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.FileUtil;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
 
 /**

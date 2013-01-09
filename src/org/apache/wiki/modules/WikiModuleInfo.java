@@ -25,7 +25,7 @@ import java.net.URL;
 
 import org.jdom.Element;
 
-import org.apache.wiki.FileUtil;
+import org.apache.wiki.util.FileUtil;
 
 /**
  *  A WikiModule describes whatever JSPWiki plugin there is: it can be a plugin,

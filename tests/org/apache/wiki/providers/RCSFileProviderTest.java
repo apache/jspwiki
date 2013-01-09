@@ -19,13 +19,17 @@
 
 package org.apache.wiki.providers;
 
-import junit.framework.*;
 import java.io.*;
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
+import org.apache.wiki.util.FileUtil;
 
 /**
  *  Tests the RCSFileProvider.  If you are getting strange errors, please check that you

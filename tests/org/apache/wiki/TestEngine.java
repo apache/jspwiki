@@ -41,6 +41,7 @@ import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.FileUtil;
 
 /**
  *  Simple test engine that always assumes pages are found.

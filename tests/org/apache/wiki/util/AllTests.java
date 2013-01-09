@@ -19,8 +19,10 @@
 
 package org.apache.wiki.util;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import junit.framework.*;
 
 public class AllTests extends TestCase
 {
@@ -36,6 +38,7 @@ public class AllTests extends TestCase
         suite.addTest( ClassUtilTest.suite() );
         suite.addTest( CommentedPropertiesTest.suite() );
         suite.addTest( CryptoUtilTest.suite() );
+        suite.addTest( FileUtilTest.suite() );
         suite.addTest( org.apache.wiki.util.comparators.AllTests.suite() );
         suite.addTest( MailUtilTest.suite() );
         suite.addTest( PageSorterTest.suite() );

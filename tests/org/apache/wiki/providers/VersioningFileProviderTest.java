@@ -19,11 +19,20 @@
 
 package org.apache.wiki.providers;
 
-import junit.framework.*;
 import java.io.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
-import org.apache.wiki.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.wiki.PageManager;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.util.FileUtil;
 
 // FIXME: Should this thingy go directly to the VersioningFileProvider,
 //        or should it rely on the WikiEngine API?

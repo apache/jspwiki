@@ -19,12 +19,22 @@
 
 package org.apache.wiki.providers;
 
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.StringReader;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
-import org.apache.wiki.*;
-import org.apache.wiki.attachment.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.util.FileUtil;
 
 public class BasicAttachmentProviderTest extends TestCase
 {

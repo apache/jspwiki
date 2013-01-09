@@ -19,17 +19,20 @@
 
 package org.apache.wiki.providers;
 
-import junit.framework.*;
-
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.io.File;
 import java.io.StringReader;
-import java.util.*;
+import java.util.Properties;
 
-import org.apache.log4j.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import org.apache.wiki.*;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.util.FileUtil;
 
 public class CachingProviderTest extends TestCase
 {

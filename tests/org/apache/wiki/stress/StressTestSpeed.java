@@ -18,11 +18,16 @@
  */
 package org.apache.wiki.stress;
 
-import junit.framework.*;
 import java.io.*;
-import java.util.*;
-import org.apache.wiki.*;
-import org.apache.wiki.providers.*;
+import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.util.FileUtil;
 
 public final class StressTestSpeed extends TestCase
 {

@@ -19,25 +19,15 @@
 package org.apache.wiki;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
-
-import org.apache.log4j.Logger;
 
 /**
  *  Generic utilities related to file and stream handling.
+ *  @deprecated will be removed in 2.10 scope. Consider using {@link org.apache.wiki.util.FileUtil} 
+ *  instead
  */
-// FIXME3.0: This class will move to "util" directory in 3.0
+@Deprecated
 public final class FileUtil
 {
-    /** Size of the buffer used when copying large chunks of data. */
-    private static final int      BUFFER_SIZE = 4096;
-    private static final Logger   log         = Logger.getLogger(FileUtil.class);
-
     /**
      *  Private constructor prevents instantiation.
      */
@@ -58,28 +48,7 @@ public final class FileUtil
     public static File newTmpFile( String content, String encoding )
         throws IOException
     {
-        Writer out = null;
-        Reader in  = null;
-        File   f   = null;
-
-        try
-        {
-            f = File.createTempFile( "jspwiki", null );
-
-            in = new StringReader( content );
-
-            out = new OutputStreamWriter( new FileOutputStream( f ),
-                                          encoding );
-
-            copyContents( in, out );
-        }
-        finally
-        {
-            if( in  != null ) in.close();
-            if( out != null ) out.close();
-        }
-
-        return f;
+        return org.apache.wiki.util.FileUtil.newTmpFile( content, encoding );
     }
 
     /**
@@ -95,7 +64,7 @@ public final class FileUtil
     public static File newTmpFile( String content )
         throws IOException
     {
-        return newTmpFile( content, "ISO-8859-1" );
+        return org.apache.wiki.util.FileUtil.newTmpFile( content, "ISO-8859-1" );
     }
 
     /**
@@ -113,50 +82,7 @@ public final class FileUtil
         throws IOException,
                InterruptedException
     {
-        StringBuffer result = new StringBuffer();
-
-        log.info("Running simple command "+command+" in "+directory);
-
-        Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
-
-        BufferedReader stdout = null;
-        BufferedReader stderr = null;
-
-        try
-        {
-            stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
-            stderr = new BufferedReader( new InputStreamReader(process.getErrorStream()) );
-
-            String line;
-
-            while( (line = stdout.readLine()) != null )
-            {
-                result.append( line+"\n");
-            }
-
-            StringBuffer error = new StringBuffer();
-            while( (line = stderr.readLine()) != null )
-            {
-                error.append( line+"\n");
-            }
-
-            if( error.length() > 0 )
-            {
-                log.error("Command failed, error stream is: "+error);
-            }
-
-            process.waitFor();
-
-        }
-        finally
-        {
-            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
-            process.getInputStream().close();
-            if( stdout != null ) stdout.close();
-            if( stderr != null ) stderr.close();
-        }
-
-        return result.toString();
+        return org.apache.wiki.util.FileUtil.runSimpleCommand( command, directory );
     }
 
 
@@ -172,15 +98,7 @@ public final class FileUtil
     public static void copyContents( Reader in, Writer out )
         throws IOException
     {
-        char[] buf = new char[BUFFER_SIZE];
-        int bytesRead = 0;
-
-        while ((bytesRead = in.read(buf)) > 0)
-        {
-            out.write(buf, 0, bytesRead);
-        }
-
-        out.flush();
+        org.apache.wiki.util.FileUtil.copyContents( in, out );
     }
 
     /**
@@ -195,15 +113,7 @@ public final class FileUtil
     public static void copyContents( InputStream in, OutputStream out )
         throws IOException
     {
-        byte[] buf = new byte[BUFFER_SIZE];
-        int bytesRead = 0;
-
-        while ((bytesRead = in.read(buf)) > 0)
-        {
-            out.write(buf, 0, bytesRead);
-        }
-
-        out.flush();
+        org.apache.wiki.util.FileUtil.copyContents( in, out );
     }
 
     /**
@@ -221,44 +131,7 @@ public final class FileUtil
     public static String readContents( InputStream input, String encoding )
         throws IOException
     {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FileUtil.copyContents( input, out );
-
-        ByteBuffer     bbuf        = ByteBuffer.wrap( out.toByteArray() );
-
-        Charset        cset        = Charset.forName( encoding );
-        CharsetDecoder csetdecoder = cset.newDecoder();
-
-        csetdecoder.onMalformedInput( CodingErrorAction.REPORT );
-        csetdecoder.onUnmappableCharacter( CodingErrorAction.REPORT );
-
-        try
-        {
-            CharBuffer cbuf = csetdecoder.decode( bbuf );
-
-            return cbuf.toString();
-        }
-        catch( CharacterCodingException e )
-        {
-            Charset        latin1    = Charset.forName("ISO-8859-1");
-            CharsetDecoder l1decoder = latin1.newDecoder();
-
-            l1decoder.onMalformedInput( CodingErrorAction.REPORT );
-            l1decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
-
-            try
-            {
-                bbuf = ByteBuffer.wrap( out.toByteArray() );
-
-                CharBuffer cbuf = l1decoder.decode( bbuf );
-
-                return cbuf.toString();
-            }
-            catch( CharacterCodingException ex )
-            {
-                throw (CharacterCodingException) ex.fillInStackTrace();
-            }
-        }
+        return org.apache.wiki.util.FileUtil.readContents( input, encoding );
     }
 
     /**
@@ -272,27 +145,7 @@ public final class FileUtil
     public static String readContents( Reader in )
         throws IOException
     {
-        Writer out = null;
-
-        try
-        {
-            out = new StringWriter();
-
-            copyContents( in, out );
-
-            return out.toString();
-        }
-        finally
-        {
-            try
-            {
-                out.close();
-            }
-            catch( Exception e )
-            {
-                log.error("Not able to close the stream while reading contents.");
-            }
-        }
+        return org.apache.wiki.util.FileUtil.readContents( in );
     }
 
     /**
@@ -305,20 +158,7 @@ public final class FileUtil
      */
     public static String getThrowingMethod( Throwable t )
     {
-        StackTraceElement[] trace = t.getStackTrace();
-        StringBuffer sb = new StringBuffer();
-
-        if( trace == null || trace.length == 0 )
-        {
-            sb.append( "[Stack trace not available]" );
-        }
-        else
-        {
-            sb.append( trace[0].isNativeMethod() ? "native method" : "" );
-            sb.append( trace[0].getClassName() );
-            sb.append(".");
-            sb.append(trace[0].getMethodName()+"(), line "+trace[0].getLineNumber());
-        }
-        return sb.toString();
+        return org.apache.wiki.util.FileUtil.getThrowingMethod( t );
     }
+
 }

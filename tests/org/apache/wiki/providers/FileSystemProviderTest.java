@@ -19,13 +19,21 @@
 
 package org.apache.wiki.providers;
 
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
-import org.apache.log4j.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import org.apache.wiki.*;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.util.FileUtil;
 
 public class FileSystemProviderTest extends TestCase
 {

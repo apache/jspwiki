@@ -18,22 +18,15 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import java.util.Iterator;
-import java.text.SimpleDateFormat;
+import java.io.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-
 import org.apache.wiki.*;
+import org.apache.wiki.util.FileUtil;
 
 /**
  *  This class implements a simple RCS file provider.  NOTE: You MUST

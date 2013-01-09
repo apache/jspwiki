@@ -37,6 +37,7 @@ import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
+import org.apache.wiki.util.FileUtil;
 
 public class WikiEngineTest extends TestCase
 {

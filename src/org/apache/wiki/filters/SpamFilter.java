@@ -37,6 +37,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.EditorManager;
+import org.apache.wiki.util.FileUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
 import org.suigeneris.jrcs.diff.Revision;

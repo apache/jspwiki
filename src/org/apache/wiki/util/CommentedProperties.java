@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import org.apache.wiki.FileUtil;
 import org.apache.wiki.TextUtil;
 
 /**

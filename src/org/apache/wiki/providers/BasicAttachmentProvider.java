@@ -18,29 +18,15 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-
-import java.util.Collection;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Date;
-import java.util.List;
-import java.util.Collections;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.util.FileUtil;
 
 /**
  *  Provides basic, versioning attachments.

@@ -17,12 +17,20 @@
     under the License.  
  */
 
-package org.apache.wiki;
+package org.apache.wiki.util;
 
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
-import org.apache.log4j.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.TestEngine;
 
 public class FileUtilTest extends TestCase
 {
