@@ -38,6 +38,7 @@ import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.TextUtil;
 
 public class WikiEngineTest extends TestCase
 {
@@ -113,23 +114,6 @@ public class WikiEngineTest extends TestCase
         assertTrue( "isn't a dir", f.isDirectory() );
 
         f.delete();
-    }
-
-    public void testNonExistantDirProperty()
-        throws Exception
-    {
-        props.remove( FileSystemProvider.PROP_PAGEDIR );
-
-        try
-        {
-            new TestEngine( props );
-
-            fail( "Wiki did not warn about missing property." );
-        }
-        catch( WikiException e )
-        {
-            // This is okay.
-        }
     }
 
     /**
