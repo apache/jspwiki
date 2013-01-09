@@ -26,6 +26,7 @@
 <%@ page import="org.apache.wiki.auth.*"%>
 <%@ page import="org.apache.wiki.util.*"%>
 <%@ page import="org.apache.wiki.i18n.*"%>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="org.apache.wiki.tags.WikiTagBase"%>

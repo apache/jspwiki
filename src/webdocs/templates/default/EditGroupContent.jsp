@@ -24,6 +24,7 @@
 <%@ page import="org.apache.wiki.auth.PrincipalComparator" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>

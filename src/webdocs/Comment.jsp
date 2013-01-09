@@ -26,6 +26,7 @@
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>

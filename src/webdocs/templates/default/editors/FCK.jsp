@@ -26,6 +26,7 @@
 <%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

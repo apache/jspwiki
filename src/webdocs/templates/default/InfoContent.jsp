@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
