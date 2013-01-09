@@ -25,10 +25,10 @@ import java.util.Random;
 import junit.framework.TestCase;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.util.TextUtil;
 
 public class MassiveRepositoryTest extends TestCase
 {

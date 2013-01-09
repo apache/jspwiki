@@ -39,6 +39,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.stress.Benchmark;
+import org.apache.wiki.util.TextUtil;
 
 public class JSPWikiMarkupParserTest extends TestCase
 {

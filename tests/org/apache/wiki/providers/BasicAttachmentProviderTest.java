@@ -32,9 +32,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
 
 public class BasicAttachmentProviderTest extends TestCase
 {
