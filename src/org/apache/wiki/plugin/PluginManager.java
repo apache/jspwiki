@@ -19,14 +19,18 @@
 package org.apache.wiki.plugin;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.parser.PluginContent;
 import org.jdom.Element;
@@ -185,16 +189,39 @@ public class PluginManager extends DefaultPluginManager
     public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
-       PluginContent pc = null;
-       try
-       {
-           pc = super.parsePluginLine(context, commandline, pos );
-       }
-       catch (org.apache.wiki.api.exceptions.PluginException e)
-       {
-           throw new PluginException( e.getMessage(), e );
-       }
-       return pc;
+       return super.parsePluginLine(context, commandline, pos );
+    }
+    
+    /**
+     *  Executes parse stage, unless plugins are disabled.
+     *  
+     *  @param content The content item.
+     *  @param context A WikiContext
+     *  @throws PluginException If something goes wrong.
+     *  @deprecated Remains because of old API compatobility; will be removed in 2.10 scope. 
+     *  Consider using {@link PluginContent#executeParse(WikiContext)} instead
+     */
+    @Deprecated
+    public void executeParse(PluginContent content, WikiContext context)
+        throws PluginException
+    {
+        if( !pluginsEnabled() )
+            return;
+
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        Map<String, String> params = content.getParameters();
+        WikiPlugin plugin = newWikiPlugin( content.getPluginName(), rb );
+        try
+        {
+            if( plugin != null && plugin instanceof ParserStagePlugin )
+            {
+                ( ( ParserStagePlugin )plugin ).executeParser( content, context, params );
+            }
+        }
+        catch( ClassCastException e )
+        {
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notawikiplugin" ), content.getPluginName() ), e );
+        }
     }
     
     /**

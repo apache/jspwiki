@@ -67,6 +67,10 @@ org.apache.wiki.plugin.PluginManager
  -> moved to org.apache.wiki.plugin.DefaultPluginManager
  -> @Deprecated public static boolean isPluginLink( String link )
       * equivalent method on org.apache.wiki.parser.JSPWikiMarkupParser
+ -> @Deprecated public void executeParse(PluginContent content, WikiContext context)
+      * consider using PluginContent.executeParse(WikiContext) instead
+ -> WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public 
+    and part of the org.apache.wiki.api.engine.PluginManager API
  -> WikiEngine.getPluginManager returns org.apache.wiki.api.engine.PluginManager
 
 org.apache.wiki.plugin.InitializablePlugin

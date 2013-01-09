@@ -27,6 +27,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.render.RenderingManager;
 import org.jdom.Text;
@@ -214,11 +215,26 @@ public class PluginContent extends Text
      *  @param context The WikiContext
      *  @throws PluginException If something goes wrong.
      */
-    public void executeParse(WikiContext context)
+    public void executeParse( WikiContext context )
         throws PluginException
     {
         PluginManager pm = context.getEngine().getPluginManager();
-        pm.executeParse( this, context );
+        if( pm.pluginsEnabled() ) {
+            ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            Map<String, String> params = getParameters();
+            WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
+            try
+            {
+                if( plugin != null && plugin instanceof ParserStagePlugin )
+                {
+                    ( ( ParserStagePlugin )plugin ).executeParser( this, context, params );
+                }
+            }
+            catch( ClassCastException e )
+            {
+                throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notawikiplugin" ), getPluginName() ), e );
+            }
+        }
     }
 
 }

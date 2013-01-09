@@ -3,9 +3,11 @@ package org.apache.wiki.api.engine;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.parser.PluginContent;
 
 public interface PluginManager
@@ -133,15 +135,16 @@ public interface PluginManager
      * @return A Collection of WikiModuleInfo instances.
      */
     Collection modules();
-
+    
     /**
-     *  Executes parse stage, unless plugins are disabled.
-     *  
-     *  @param content The content item.
-     *  @param context A WikiContext
-     *  @throws PluginException If something goes wrong.
+     * Creates a {@link WikiPlugin}.
+     * 
+     * @param pluginName plugin's classname
+     * @param rb {@link ResourceBundle} with i18ned text for exceptions.
+     * @return a {@link WikiPlugin}.
+     * @throws PluginException if there is a problem building the {@link WikiPlugin}.
      */
-    void executeParse(PluginContent content, WikiContext context)
+    WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) 
         throws PluginException;
     
 }

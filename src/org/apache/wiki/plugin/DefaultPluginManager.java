@@ -943,35 +943,6 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     }
 
     /**
-     *  Executes parse stage, unless plugins are disabled.
-     *  
-     *  @param content The content item.
-     *  @param context A WikiContext
-     *  @throws PluginException If something goes wrong.
-     */
-    public void executeParse(PluginContent content, WikiContext context)
-        throws PluginException
-    {
-        if( !m_pluginsEnabled )
-            return;
-
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-        Map<String, String> params = content.getParameters();
-        WikiPlugin plugin = newWikiPlugin( content.getPluginName(), rb );
-        try
-        {
-            if( plugin != null && plugin instanceof ParserStagePlugin )
-            {
-                ( ( ParserStagePlugin )plugin ).executeParser( content, context, params );
-            }
-        }
-        catch( ClassCastException e )
-        {
-            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notawikiplugin" ), content.getPluginName() ), e );
-        }
-    }
-    
-    /**
      * Creates a {@link WikiPlugin}.
      * 
      * @param pluginName plugin's classname
@@ -979,7 +950,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      * @return a {@link WikiPlugin}.
      * @throws PluginException if there is a problem building the {@link WikiPlugin}.
      */
-    WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) 
+    public WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) 
         throws PluginException 
     {
         WikiPlugin plugin = null;
