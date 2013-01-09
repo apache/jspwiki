@@ -105,8 +105,7 @@ public class CachingAttachmentProvider
         //
         //  Find and initialize real provider.
         //
-        String classname = WikiEngine.getRequiredProperty( properties, 
-                                                           AttachmentManager.PROP_PROVIDER );
+        String classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
         
         try
         {            

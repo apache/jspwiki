@@ -20,6 +20,8 @@
 package org.apache.wiki;
 
 import junit.framework.*;
+
+import java.io.File;
 import java.util.*;
 
 public class TextUtilTest extends TestCase
@@ -368,6 +370,40 @@ public class TextUtilTest extends TestCase
         
         assertEquals( "foo", "this is a property", TextUtil.getStringProperty(props,"foo","") );
         assertEquals( "bar", 60, TextUtil.getIntegerProperty(props,"bar",0) );
+    }
+    
+    public void testGetRequiredProperty() throws Exception 
+    {
+        String[] vals = { "foo", " this is a property ", "bar", "60" };
+        Properties props = TextUtil.createProperties(vals);
+        assertEquals( "60", TextUtil.getRequiredProperty( props, "bar" ) );
+    }
+    
+    public void testGetRequiredPropertyNRPE() 
+    {
+        String[] vals = { "foo", " this is a property ", "bar", "60" };
+        Properties props = TextUtil.createProperties(vals);
+        try
+        {
+            TextUtil.getRequiredProperty( props, "ber" );
+            fail( "NoRequiredPropertyException should've been thrown!" );
+        }
+        catch (NoRequiredPropertyException nrpe) {}
+    }
+    
+    public void testGetStringProperty() 
+    {
+        String[] vals = { "foo", " this is a property " };
+        Properties props = TextUtil.createProperties(vals);
+        assertEquals( "this is a property", TextUtil.getStringProperty( props, "foo", "err" ) );
+    }
+    
+    public void testGetStringPropertyDefaultValue() 
+    {
+        String defaultValue = System.getProperty( "user.home" ) + File.separator + "jspwiki-files";
+        String[] vals = { "foo", " this is a property " };
+        Properties props = TextUtil.createProperties(vals);
+        assertEquals( defaultValue, TextUtil.getStringProperty( props, "bar", defaultValue ) );
     }
     
     public static Test suite()

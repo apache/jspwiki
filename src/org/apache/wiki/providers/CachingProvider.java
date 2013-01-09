@@ -163,8 +163,7 @@ public class CachingProvider
         //
         //  Find and initialize real provider.
         //
-        String classname = WikiEngine.getRequiredProperty( properties,
-                                                           PageManager.PROP_PAGEPROVIDER );
+        String classname = TextUtil.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
 
 
         try

@@ -465,6 +465,30 @@ public final class TextUtil
 
         return val.trim();
     }
+    
+    /**
+     *  Throws an exception if a property is not found.
+     *
+     *  @param props A set of properties to search the key in.
+     *  @param key   The key to look for.
+     *  @return The required property
+     *
+     *  @throws NoRequiredPropertyException If the search key is not
+     *          in the property set.
+     */
+    public static String getRequiredProperty( Properties props, String key )
+        throws NoRequiredPropertyException
+    {
+        String value = getStringProperty( props, key, null );
+
+        if( value == null )
+        {
+            throw new NoRequiredPropertyException( "Required property not found",
+                                                   key );
+        }
+
+        return value;
+    }
 
     /**
      *  Returns true, if the string "val" denotes a positive string.  Allowed
