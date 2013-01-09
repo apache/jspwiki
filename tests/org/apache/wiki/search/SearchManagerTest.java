@@ -32,7 +32,7 @@ import org.apache.wiki.WikiContext;
 
 public class SearchManagerTest extends TestCase
 {
-    private static final long SLEEP_TIME = 10000L;
+    private static final long SLEEP_TIME = 200L;
     TestEngine m_engine;
     SearchManager m_mgr;
     
@@ -66,6 +66,27 @@ public class SearchManagerTest extends TestCase
                       m_mgr.getSearchEngine().getClass().getName() );    
     }
     
+    /**
+     * Should cover for both index and initial delay
+     */
+    Collection waitForIndex( String text ) throws Exception
+    {
+        Collection res = null;
+        for( long l = 0; l < 50; l++ ) 
+        {
+            if( res == null || res.isEmpty() ) 
+            {
+                Thread.sleep( SLEEP_TIME );
+            }
+            else 
+            {
+                break;
+            }
+            res = m_mgr.findPages( text );
+        }
+        return res;
+    }
+    
     public void testSimpleSearch()
         throws Exception
     {
@@ -74,10 +95,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt);
 
         Thread.yield();
-
-        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
-        
-        Collection res = m_mgr.findPages( "mankind" );
+        Collection res = waitForIndex( "mankind" );
      
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -95,10 +113,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt + " 2");
         
         Thread.yield();
-
-        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
-    
-        Collection res = m_mgr.findPages( "mankind" );
+        Collection res = waitForIndex( "mankind" );
  
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -122,8 +137,9 @@ public class SearchManagerTest extends TestCase
      
         Thread.yield();
 
-        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
- 
+        Thread.sleep( SLEEP_TIME * 50L ); // Should cover for both index and initial delay
+                                          // waitForIndex cannot be used here b/c it doesn't detect
+                                          // the second call to saveText
         Collection res = m_mgr.findPages( "mankind" );
 
         assertNotNull( "found results", res );
@@ -144,10 +160,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt);
      
         Thread.yield();
-
-        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
- 
-        Collection res = m_mgr.findPages( "Test" );
+        Collection res = waitForIndex( "Test" );
 
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -163,10 +176,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt);
  
         Thread.yield();
-
-        Thread.sleep( SLEEP_TIME ); // Should cover for both index and initial delay
-
-        Collection res = m_mgr.findPages( "TestPage" );
+        Collection res = waitForIndex( "TestPage" );
 
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
