@@ -78,7 +78,8 @@ public abstract class AbstractFileProvider
                IOException, FileNotFoundException
     {
         log.debug("Initing FileSystemProvider");
-        m_pageDirectory = WikiEngine.getRequiredProperty( properties, PROP_PAGEDIR );
+        m_pageDirectory = TextUtil.getStringProperty( properties, PROP_PAGEDIR, 
+                                                      System.getProperty( "user.home" ) + File.separator + "jspwiki-files" );
 
         File f = new File(m_pageDirectory);
 
