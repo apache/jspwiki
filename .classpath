@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
 	<classpathentry kind="lib" path="lib/jsonrpc-1.0.jar" sourcepath="/Users/jalkanen/Java/json-rpc-java-1.0/src"/>
 	<classpathentry kind="lib" path="lib/xmlrpc-2.0.1.jar" sourcepath="/Users/jalkanen/Java/xmlrpc-2.0.1/xmlrpc-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="tests/lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/sandler-0.5.jar"/>
 	<classpathentry kind="lib" path="lib/oscache-2.3.jar" sourcepath="/Users/jalkanen/Java/oscache-2.3/src/java"/>
 	<classpathentry kind="lib" path="lib/oro-2.0.7.jar"/>
@@ -20,7 +19,6 @@
 	<classpathentry kind="lib" path="tests/lib/junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-6.jar"/>
-	<classpathentry kind="lib" path="tests/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-highlighter-3.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
