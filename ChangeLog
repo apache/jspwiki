@@ -1,3 +1,22 @@
+2013-01-XX  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-15
+       
+       * fixed JSPWIKI-757 Have default file direction location be in relative directory instead of 
+         hardcoded /p/dir1/dir2.If jspwiki.fileSystemProvider.pageDir in jspwiki.properties isn't
+         provided, it will default to ${user.home}/jspwiki-files
+         
+       * new API package org.apache.wiki.api.engine, intended to hold WikiEngine, its managers and
+         related classes. FilterManager and PluginManager moved there (cfr. JSPWIKI-155, JSPWIKI-303
+         and $SVN/trunk/doc/2.10-API.txt).
+       
+       * org.apache.wiki.FileUtil and org.apache.wiki.TextUtil Moved to equivalent classes under 
+         org.apache.wiki.util. Original classes marked with @Deprecated and forwarding to the new 
+         ones until 2.10
+ 
+       * deprecated WikiEngine.getRequiredProperty( props, key ) in favour of 
+         TextUtil.getRequiredProperty( props, key ). The former will be deleted in 2.10 scope
+
 2013-01-08 Glen Mazza (gmazza@apache.org)
        * JSPWIKI-756 removed unused Xalan, Xerces, and Custom-Rhino JARs
 
