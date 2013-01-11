@@ -258,7 +258,7 @@ public final class UserManager
      * the user will be automatically be logged in.
      * </p>
      * <p>
-     * When the user's profile is saved succcessfully, this method fires a
+     * When the user's profile is saved successfully, this method fires a
      * {@link WikiSecurityEvent#PROFILE_SAVE} event with the WikiSession as the
      * source and the UserProfile as target. For existing profiles, if the
      * user's full name changes, this method also fires a "name changed"
@@ -414,7 +414,7 @@ public final class UserManager
      * <code>email</code> or <code>password</code> parameter values differ
      * from those in the existing profile, the passed parameters override the
      * old values.</li> <li>For new profiles, the user-supplied
-     * <code>fullname</code parameter is always
+     * <code>fullname</code> parameter is always
      * used; for existing profiles the existing value is used, and whatever
      * value the user supplied is discarded. The wiki name is automatically
      * computed by taking the full name and extracting all whitespace.</li>
@@ -579,7 +579,7 @@ public final class UserManager
 
     /**
      * This is a database that gets used if nothing else is available. It does
-     * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
+     * nothing of note - it just mostly throws NoSuchPrincipalExceptions if
      * someone tries to log in.
      */
     public static class DummyUserDatabase extends AbstractUserDatabase

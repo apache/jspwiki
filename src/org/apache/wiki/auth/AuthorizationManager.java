@@ -134,7 +134,7 @@ public final class AuthorizationManager
      * Permission in the Acl: these will be role, group or user Principals, or
      * {@link org.apache.wiki.auth.acl.UnresolvedPrincipal}s (see below).
      * Then iterate through the Subject's Principal set and determine whether
-     * the user (Subject) posesses any one of these specified Roles or
+     * the user (Subject) possesses any one of these specified Roles or
      * Principals. The matching process delegates to
      * {@link #hasRoleOrPrincipal(WikiSession, Principal)}.
      * </ol>
@@ -263,7 +263,7 @@ public final class AuthorizationManager
      * supplied WikiSession contains a desired Role or GroupPrincipal.
      * The algorithm simply checks to see if the Subject possesses
      * the Role or GroupPrincipal it in its Principal set. Note that
-     * any user (anyonymous, asserted, authenticated) can possess
+     * any user (anonymous, asserted, authenticated) can possess
      * a built-in role. But a user <em>must</em> be authenticated to
      * possess a role other than one of the built-in ones.
      * We do this to prevent privilege escalation.</p>
@@ -275,7 +275,7 @@ public final class AuthorizationManager
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role or group principal) to look
-     *            for, which must be non-<cor>null</code>. If <code>null</code>,
+     *            for, which must be non-<code>null</code>. If <code>null</code>,
      *            the result of this method always returns <code>false</code>
      * @return <code>true</code> if the Subject supplied with the WikiContext
      *         posesses the Role or GroupPrincipal, <code>false</code> otherwise
@@ -294,7 +294,7 @@ public final class AuthorizationManager
             return session.hasPrincipal( principal );
         }
 
-        // Only authenticated users can posssess groups or custom roles
+        // Only authenticated users can possess groups or custom roles
         if ( session.isAuthenticated() && AuthenticationManager.isRolePrincipal( principal ) )
         {
             return session.hasPrincipal( principal );
@@ -534,7 +534,7 @@ public final class AuthorizationManager
      *       is absent (or present).
      * @param session the WikiSession whose permission status is being queried
      * @param permission the Permission the Subject must possess
-     * @return <code>true</code> if the Subject posesses the permission,
+     * @return <code>true</code> if the Subject possesses the permission,
      *         <code>false</code> otherwise
      */
     protected final boolean checkStaticPermission( final WikiSession session, final Permission permission )
