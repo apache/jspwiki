@@ -1390,21 +1390,14 @@ To automate the JAR signing processs, you can add the property
        in the JSPWiki base distribution. You can, of course, use your own
        JDBC-compliant database such as Postgresql.
 
-       Step 2: set up your database properties in build.properties, for example:
+       Step 2: If desired, modify the database properties in
+       tests/etc/jdbc.properties.impl.  The defaults given should be sufficient 
+       for JDBC testing using hsql on any developer's local machine.
 
-         jdbc.driver.id=hsql
-         jdbc.driver.jar=tests/lib/hsqldb.jar
-         jdbc.driver.class=org.hsqldb.jdbcDriver
-         jdbc.driver.url=jdbc:hsqldb:hsql://localhost/jspwiki
-         jdbc.admin.id=SA
-         jdbc.admin.password=
-         jdbc.user.id=jspwiki
-         jdbc.user.password=password
-
-       The 'jdbc.driver.id' property is important. Its presence tells
-       the Ant scripts to do JDBC testing. It also points to
-       he subdirectory in etc/db that contains our setup/teardown
-       scripts, which *must* contain these files at a minumum:
+       The 'jdbc.driver.id' property in this file (defaulted to hsql) is 
+       important. Its presence tells the Ant scripts to do JDBC testing. 
+       It also points to the subdirectory in etc/db that contains our 
+       setup/teardown scripts, which *must* contain these files at a minimum:
 
          userdb-setup.ddl
          userdb-teardown.ddl
@@ -1435,8 +1428,7 @@ To automate the JAR signing processs, you can add the property
        All of the preceding tells you how to test JSPWiki with JDBC support.
        Sounds great, but how do you *run* JSPWiki with it? Simple:
 
-       1) Configure the Jdbc.* properties in build.properties, as described
-          above
+       1) Configure the Jdbc.* properties in the build.properties file
        2) Configure table and column mappings in etc/jspwiki.properties.tmpl
        3) Configure your web container to create a JDBC DataSource
           (by default, the JNDI name is jdbc/UserDatabase)
@@ -1451,42 +1443,6 @@ To automate the JAR signing processs, you can add the property
   <target name="tests-db-init" depends="db-properties"/>
 
   <target name="db-properties" depends="init" if="jdbc.driver.id">
-    <!-- Load the JDBC props we need to do table maintenance -->
-    <check-property prop="jdbc.driver.jar" />
-    <check-property prop="jdbc.driver.class" />
-    <check-property prop="jdbc.driver.url" />
-    <check-property prop="jdbc.admin.id" />
-    <check-property prop="jdbc.admin.password" />
-
-    <!-- Here's a neat trick: import the JDBC runtime props from jspwiki.properties -->
-    <echo message="Getting JDBC runtime properties." />
-    <loadproperties srcFile="etc/jspwiki.properties">
-      <filterchain>
-        <linecontainsregexp>
-          <regexp pattern="^[jspwiki.userdatabase|jspwiki.groupdatabase]"/>
-        </linecontainsregexp>
-      </filterchain>
-    </loadproperties>
-    <check-property prop="jspwiki.userdatabase.datasource" />
-    <check-property prop="jspwiki.userdatabase.table" />
-    <check-property prop="jspwiki.userdatabase.email" />
-    <check-property prop="jspwiki.userdatabase.fullName" />
-    <check-property prop="jspwiki.userdatabase.loginName" />
-    <check-property prop="jspwiki.userdatabase.password" />
-    <check-property prop="jspwiki.userdatabase.wikiName" />
-    <check-property prop="jspwiki.userdatabase.created" />
-    <check-property prop="jspwiki.userdatabase.modified" />
-    <check-property prop="jspwiki.userdatabase.roleTable" />
-    <check-property prop="jspwiki.userdatabase.role" />
-    <check-property prop="jspwiki.groupdatabase.datasource" />
-    <check-property prop="jspwiki.groupdatabase.table" />
-    <check-property prop="jspwiki.groupdatabase.membertable" />
-    <check-property prop="jspwiki.groupdatabase.created" />
-    <check-property prop="jspwiki.groupdatabase.creator" />
-    <check-property prop="jspwiki.groupdatabase.name" />
-    <check-property prop="jspwiki.groupdatabase.member" />
-    <check-property prop="jspwiki.groupdatabase.modified" />
-    <check-property prop="jspwiki.groupdatabase.modifier" />
 
     <!-- Check for the presence of the database driver & script dir -->
     <check-file file="etc/db/${jdbc.driver.id}"      prop="db.scripts" />
@@ -1515,8 +1471,8 @@ To automate the JAR signing processs, you can add the property
     <!-- Set a flag that says all of our pre-conditions are met! -->
     <property name="db.props.exist" value="true" />
 
-    <!-- Dump all of the JDBC properties where our test scripts can find them -->
-    <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
+    <!-- Copying the testing jdbc.properties file -->
+    <copy file="${tests.src}/etc/jdbc.properties.tmpl" toFile="${tests.src}/etc/db/jdbc.properties" overwrite="true"/>
   </target>
 
   <!-- Some convenience macrodefs -->

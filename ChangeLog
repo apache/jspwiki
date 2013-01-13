@@ -1,3 +1,8 @@
+2013-01-12 Glen Mazza (gmazza@apache.org)
+
+       * Switched to a hardcoded jdbc.properties file for testing to simplify build.xml and future
+         Maven conversion. Updated the developing pom.xml in JSPWIKI-651.
+
 2013-01-10  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-16
