@@ -24,10 +24,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -36,6 +34,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.RPCManager;
 import org.apache.wiki.ui.TemplateManager;
+
 import com.metaparadigm.jsonrpc.InvocationCallback;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
 
@@ -56,7 +55,6 @@ import com.metaparadigm.jsonrpc.JSONRPCBridge;
 // FIXME: Must be mootool-ified.
 public final class JSONRPCManager extends RPCManager
 {
-    private static final String JSONRPCBRIDGE = "JSONRPCBridge";
     private static HashMap<String, CallbackContainer> c_globalObjects = new HashMap<String, CallbackContainer>();
     
     /** Prevent instantiation */
@@ -87,43 +85,6 @@ public final class JSONRPCManager extends RPCManager
     }
     
     /**
-     *  Finds this user's personal RPC Bridge.  If it does not exist, will
-     *  create one and put it in the context.  If there is no HTTP Request included,
-     *  returns the global bridge.
-     *  
-     *  @param context WikiContext to find the bridge in
-     *  @return A JSON RPC Bridge
-     */
-    // FIXME: Is returning the global bridge a potential security threat?
-    private static JSONRPCBridge getBridge( WikiContext context )
-    {
-        JSONRPCBridge bridge = null;
-        HttpServletRequest req = context.getHttpRequest();
-        
-        if( req != null )
-        {
-            HttpSession hs = req.getSession();
-            
-            if( hs != null )
-            {
-                bridge = (JSONRPCBridge)hs.getAttribute(JSONRPCBRIDGE);
-                
-                if( bridge == null )
-                {
-                    bridge = new JSONRPCBridge();
-                
-                    hs.setAttribute(JSONRPCBRIDGE, bridge);
-                }
-            }
-        }
-        
-        if( bridge == null) bridge = JSONRPCBridge.getGlobalBridge();
-        bridge.setDebug(false);
-        
-        return bridge;
-    }
-    
-    /**
      *  Registers a callable to JSON global bridge and requests JSON libraries to be added
      *  to the page.  
      *  
@@ -134,7 +95,7 @@ public final class JSONRPCManager extends RPCManager
     public static String registerJSONObject( WikiContext context, RPCCallable c )
     {
         String id = getId(c);
-        getBridge(context).registerObject( id, c );
+        JSONRPCBridge.getGlobalBridge().registerObject( id, c );
 
         requestJSON( context );
         return id;
@@ -155,7 +116,7 @@ public final class JSONRPCManager extends RPCManager
                                            TemplateManager.RESOURCE_JSFUNCTION, 
                                            "jsonrpc = new JSONRpcClient(\""+jsonurl+"\");");
         
-        getBridge(context).registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
+        JSONRPCBridge.getGlobalBridge().registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
     }
     
     /**
@@ -256,40 +217,6 @@ public final class JSONRPCManager extends RPCManager
         c_globalObjects.put( id, cc );
     }
 
-    /**
-     *  Is called whenever a session is created.  This method creates a new JSONRPCBridge
-     *  and adds it to the user session.  This is done because the global JSONRPCBridge
-     *  InvocationCallbacks are not called; only session locals.  This may be a bug
-     *  in JSON-RPC, or it may be a design feature...
-     *  <p>
-     *  The JSONRPCBridge object will go away once the session expires.
-     *  
-     *  @param session The HttpSession which was created.
-     */
-    public static void sessionCreated( HttpSession session )
-    {
-        JSONRPCBridge bridge = (JSONRPCBridge)session.getAttribute(JSONRPCBRIDGE);
-        
-        if( bridge == null )
-        {
-            bridge = new JSONRPCBridge();
-        
-            session.setAttribute( JSONRPCBRIDGE, bridge );
-        }
-
-        WikiJSONAccessor acc = new WikiJSONAccessor();
-        
-        bridge.registerCallback( acc, HttpServletRequest.class );
-        
-        for( Iterator i = c_globalObjects.values().iterator(); i.hasNext(); )
-        {
-            CallbackContainer cc = (CallbackContainer) i.next();
-       
-            bridge.registerObject( cc.m_id, cc.m_object );
-        }
-
-    }
-     
     /**
      *  Just stores the registered global method.
      *  

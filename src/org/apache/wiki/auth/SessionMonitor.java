@@ -32,7 +32,6 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.rpc.json.JSONRPCManager;
 
 /**
  *  <p>Manages WikiSession's for different WikiEngine's.</p>
@@ -248,9 +247,6 @@ public class SessionMonitor implements HttpSessionListener
      */
     public void sessionCreated( HttpSessionEvent se )
     {
-        HttpSession session = se.getSession();
-        
-        JSONRPCManager.sessionCreated(session);
     }
 
     /**

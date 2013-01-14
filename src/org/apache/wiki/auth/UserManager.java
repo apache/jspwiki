@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
@@ -818,9 +817,8 @@ public final class UserManager
      *  this gets reinstalled to the session when JSPWiki starts.  This means
      *  that it's not actually necessary to save anything.
      */
-    public static final class JSONUserModule implements RPCCallable, Serializable
+    public static final class JSONUserModule implements RPCCallable
     {
-        private static final long serialVersionUID = 1L;
         private volatile UserManager m_manager;
         
         /**

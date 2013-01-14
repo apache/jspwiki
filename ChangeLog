@@ -1,3 +1,11 @@
+2013-01-14  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-17
+       
+       * fixed JSPWIKI-659  NotSerializableException on Tomcat restart , UserManager not Serializable
+          We now no longer put JSONRPCBridge in the HttpSession. 
+          Long term solution is to migrate to jackson. 
+
 2013-01-12 Glen Mazza (gmazza@apache.org)
 
        * Switched to a hardcoded jdbc.properties file for testing to simplify build.xml and future
