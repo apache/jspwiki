@@ -62,8 +62,8 @@
     String cancel  = request.getParameter("cancel");
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
-    String author  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
-    String changenote = TextUtil.replaceEntities( findParam( pageContext, "changenote" ) );
+    String author  = findParam( pageContext, "author" );
+    String changenote = findParam( pageContext, "changenote" );
     String text    = EditorManager.getEditedText( pageContext );
     String link    = TextUtil.replaceEntities( findParam( pageContext, "link") );
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
@@ -159,7 +159,7 @@
 
         if( changenote != null && changenote.length() > 0 )
         {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, TextUtil.replaceEntities(changenote) );
         }
         else
         {

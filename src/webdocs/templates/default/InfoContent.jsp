@@ -242,7 +242,7 @@
          <td class="changenote">
            <%
               String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
-              changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
+              changeNote = (changeNote != null) ? changeNote : "" ;
            %>
            <%= changeNote %>
          </td>

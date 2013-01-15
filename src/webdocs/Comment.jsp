@@ -73,10 +73,10 @@
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
-    String author  = TextUtil.replaceEntities( request.getParameter("author") );
-    String link    = TextUtil.replaceEntities( request.getParameter("link") );
+    String author  = request.getParameter("author");
+    String link    = request.getParameter("link");
     String remember = request.getParameter("remember");
-    String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
+    String changenote = request.getParameter( "changenote" );
 
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
@@ -160,7 +160,7 @@
         modifiedPage.setAuthor( storedUser );
 
         if( changenote != null )
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, TextUtil.replaceEntities( changenote ) );
         else
             modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
         

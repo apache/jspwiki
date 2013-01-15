@@ -1,3 +1,9 @@
+2013-01-15  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-18
+       
+       * fixed JSPWIKI-712  Entities in ChangeNote should be decoded when "keep editing"
+
 2013-01-14  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-17
