@@ -35,6 +35,7 @@
 @tests.pagedir@=C:\\\\temp\\\\testrepository
 @tests.workdir@=C:\\\\temp\\\\testworkdir
 @tests.logfile@=C:\\\\temp\\\\jspwikitests.log
+@testcontainerlog@=tests\\\\build\\\\webtests\\\\testcontainer.log
 
 @tests.auth.filename=C:\\\\temp\\\\testrepository\\\\auth.txt
 @tests.filter@=tests/etc/filters.xml

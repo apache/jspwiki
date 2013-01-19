@@ -916,7 +916,6 @@
       <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.XMLGroupDatabase" />
       <entry key="jspwiki.referenceStyle" value="relative" />
       <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
-      <entry key="log4j.appender.TestContainerLog.File" value="${basedir}/${webtests.build}/testcontainer.log" />
       <entry key="jspwiki-x.securityconfig.enable" value="true" />
       <entry key="jspwiki.login.throttling" value="false" />
     </propertyfile>
