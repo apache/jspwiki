@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -44,15 +44,15 @@
     WikiPage wikiPage = context.getPage();
     String originalCCLOption = (String)wikiPage.getAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS );
     wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
-    
+
     String usertext = EditorManager.getEditedText(pageContext);
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, 
-   		context.getURL( WikiContext.NONE, "scripts/fckeditor/fckeditor.js" ) ); %>   
+    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
+   		context.getURL( WikiContext.NONE, "scripts/fckeditor/fckeditor.js" ) ); %>
 
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
-  String clone = request.getParameter( "clone" ); 
+  String clone = request.getParameter( "clone" );
   if( clone != null )
   {
     WikiPage p = engine.getPage( clone );
@@ -62,7 +62,7 @@
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try
-        {            
+        {
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
             usertext = engine.getPureText( p );
@@ -82,32 +82,32 @@
 <% if( usertext == null ) usertext = "";
 
    RenderingManager renderingManager = new RenderingManager();
-   
+
    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
    Properties copyOfWikiProperties = new Properties();
    copyOfWikiProperties.putAll( engine.getWikiProperties() );
    copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
    renderingManager.initialize( engine, copyOfWikiProperties );
-	
+
    String pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
-   
+
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for FCK has been rendered.
    context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
-   
+
    String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
-   
+
    String protocol = "http://";
    if( request.isSecure() )
    {
        protocol = "https://";
-   }   
+   }
 %>
 
-<form accept-charset="<wiki:ContentEncoding/>" method="post" 
-      action="<wiki:CheckRequestContext context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
+<form accept-charset="<wiki:ContentEncoding/>" method="post"
+      action="<wiki:CheckRequestContext context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
       name="editform" id="editform"
       enctype="application/x-www-form-urlencoded">
     <p>
@@ -142,21 +142,21 @@
 
    <p>
      <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
-     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
+     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="${changenote}"/>
    </p>
    <wiki:CheckRequestContext context="comment">
     <fieldset>
 	<legend><fmt:message key="editor.commentsignature"/></legend>
     <p>
     <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label>
-    <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
+    <input type="text" name="author" id="authorname" value="${author}" />
     <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
     <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
 	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
     <p>
     <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
-    <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
+    <input type="text" name="link" id="link" size="24" value="${link}" />
     </p>
     </fieldset>
   </wiki:CheckRequestContext>

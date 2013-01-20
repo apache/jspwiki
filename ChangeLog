@@ -1,3 +1,9 @@
+2013-01-20  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.9.1-svn-19
+       
+       * JSPWIKI-712, fixing entities encoding in change-note, author and link fields. 
+
 2013-01-15  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-18

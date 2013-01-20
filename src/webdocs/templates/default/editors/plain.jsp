@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
@@ -35,21 +35,21 @@
 <%--
         This is a plain editor for JSPWiki.
 --%>
-<% 
-   WikiContext context = WikiContext.findContext( pageContext ); 
+<%
+   WikiContext context = WikiContext.findContext( pageContext );
    WikiEngine engine = context.getEngine();
-   
-   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, 
+
+   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
    		context.getURL( WikiContext.NONE, "scripts/jspwiki-edit.js" ) );
-   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, 
+   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
    		context.getURL( WikiContext.NONE, "scripts/posteditor.js" ) );
-   		
+
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
-  String clone = request.getParameter( "clone" ); 
+  String clone = request.getParameter( "clone" );
   if( clone != null )
   {
     WikiPage p = engine.getPage( clone );
@@ -59,7 +59,7 @@
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try
-        {            
+        {
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
             usertext = engine.getPureText( p );
@@ -82,11 +82,11 @@
 
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 
-<form action="<wiki:CheckRequestContext 
-     context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext 
-     context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
+<form action="<wiki:CheckRequestContext
+     context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
+     context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
        class="wikiform"
-          id="editform" 
+          id="editform"
     onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
@@ -97,14 +97,14 @@
   <input name="action" type="hidden" value="save" />
   <%=SpamFilter.insertInputFields( pageContext )%>
   <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
-  <input type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>" 
+  <input type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>"
     accesskey="s"
         title="<fmt:message key='editor.plain.save.title'/>" />
-  <input type="submit" name="preview" value="<fmt:message key='editor.plain.preview.submit'/>" 
+  <input type="submit" name="preview" value="<fmt:message key='editor.plain.preview.submit'/>"
     accesskey="v"
         title="<fmt:message key='editor.plain.preview.title'/>" />
-  <input type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>" 
-    accesskey="q" 
+  <input type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>"
+    accesskey="q"
         title="<fmt:message key='editor.plain.cancel.title'/>" />
   </p>
     <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
@@ -122,13 +122,14 @@
     FIXME</td>
     </tr>
     </wiki:Permission>
---%>  
+--%>
     <tr>
     <td><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></td>
-    <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/></td>
+    <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="${changenote}"/></td>
+
     </tr>
   </table>
-  
+
   <div id="tools">
       <h4><fmt:message key='editor.plain.toolbar'/></h4>
       <div id="toolbuttons">
@@ -176,7 +177,7 @@
       </span>
       <span>
       <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>/>
-      <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>	  
+      <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>
       </span>
 	  </div>
 
@@ -205,8 +206,8 @@
   </div>
 
   <div>
-  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
-         class="editor" 
+  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"
+         class="editor"
           rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
   <div class="clearbox" ></div>
   </div>
@@ -216,13 +217,13 @@
 	<legend><fmt:message key="editor.commentsignature"/></legend>
     <p>
     <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label>
-    <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
+    <input type="text" name="author" id="authorname" value="${author}" />
     <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
     <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
     <p>
-    <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
-    <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
+	<label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
+    <input type="text" name="link" id="link" size="24" value="${link}" />
     </p>
     </fieldset>
   </wiki:CheckRequestContext>
@@ -231,7 +232,7 @@
 
 <div id="sneakpreviewheader">
   <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%> />
-  <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>	  
+  <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>
   <span id="previewSpin" class="spin" style="position:absolute;display:none;"></span>
 </div>
 <div id="sneakpreview" ></div>

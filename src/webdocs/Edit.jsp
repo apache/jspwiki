@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -62,8 +62,8 @@
     String cancel  = request.getParameter("cancel");
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
-    String author  = findParam( pageContext, "author" );
-    String changenote = findParam( pageContext, "changenote" );
+    String author  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
+    String changenote = TextUtil.replaceEntities( findParam( pageContext, "changenote" ) );
     String text    = EditorManager.getEditedText( pageContext );
     String link    = TextUtil.replaceEntities( findParam( pageContext, "link") );
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
@@ -112,12 +112,12 @@
         //
         //  Check for session expiry
         //
-        
+
         if( !SpamFilter.checkHash(wikiContext,pageContext) )
         {
             return;
         }
-        
+
         WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
@@ -159,7 +159,7 @@
 
         if( changenote != null && changenote.length() > 0 )
         {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, TextUtil.replaceEntities(changenote) );
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
         }
         else
         {
