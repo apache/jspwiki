@@ -129,6 +129,8 @@ public class UtilJ2eeCompat
         else if( serverInfo.indexOf( WEBLOGIC ) >= 0 )
         {
             log.info( WEBLOGIC + " detected" );
+            // use response.getOutputStream instead of response.getWriter
+            useStream = true;
         }
         else if( serverInfo.indexOf( GLASSFISH ) >= 0 )
         {

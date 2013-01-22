@@ -1,3 +1,8 @@
+2013-01-22 Glen Mazza
+
+       Fix for JSPWiki-396 (updated org/apache/wiki/util/UtilJ2eeCompat.java to
+       use streaming instead of char array-based output to WebLogic.
+
 2013-01-20  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.1-svn-19
