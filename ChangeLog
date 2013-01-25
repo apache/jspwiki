@@ -1,3 +1,8 @@
+2012-01-24 Glen Mazza
+
+       Minor tweak to testSerialization() in AclImplTest so it will work with both Maven and Ant 
+       running the test. 
+
 2013-01-22 Glen Mazza
 
        Fix for JSPWiki-396 (updated org/apache/wiki/util/UtilJ2eeCompat.java to
