@@ -246,8 +246,7 @@ public class AclImplTest extends TestCase
         ObjectInputStream in = new ObjectInputStream( new ByteArrayInputStream(stuff) );
         
         AclImpl newacl = (AclImpl) in.readObject();
-        
-        assert( newacl.equals(m_acl) );
+        assert( newacl.toString().equals(m_acl.toString()) );
     }
     
     public static Test suite()
