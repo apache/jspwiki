@@ -1,3 +1,7 @@
+2013-01-26  Glen Mazza
+       * Removed no longer needed StressTestRCSProvider.java,
+         returned StressTestVersioningProvider to JUnit tests in build.xml
+
 2013-01-26  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-20

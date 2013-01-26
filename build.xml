@@ -847,6 +847,7 @@
                 <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
+                <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
                 <exclude name="org/apache/wiki/web/*.*" />
                 <exclude name="org/apache/wiki/TranslatorReaderTest*" />
            </fileset>
