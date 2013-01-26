@@ -43,8 +43,11 @@ import org.apache.wiki.util.TextUtil;
  *  If you decide to dabble with the default commands, please make sure
  *  that you do not check the default archive suffix ",v".  File deletion
  *  depends on it.
+ *  
+ *  <p> @deprecated RCS support will be removed in 3.0.
  */
 // FIXME: Not all commands read their format from the property file yet.
+@Deprecated
 public class RCSFileProvider
     extends AbstractFileProvider
 {

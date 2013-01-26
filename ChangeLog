@@ -1,4 +1,10 @@
-2012-01-24 Glen Mazza
+2013-01-26  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-20
+       
+       * JSPWIKI-758 - deprecate RCS support.
+       
+2013-01-24 Glen Mazza
 
        Minor tweak to testSerialization() in AclImplTest so it will work with both Maven and Ant 
        running the test. 

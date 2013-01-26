@@ -41,6 +41,11 @@ shouldn't affect your custom plugins.
 The package org.apache.wiki.api aims to provide an API to give access to JSPWiki internals. Check
 doc/2.10-API.txt to see its packages, classes affected and to be removed when 2.10, etc.
 
+3. RCS Support deprecated
+
+2.9.1 will be the last JSPWiki version to support RCS as a Provider.
+In the next JSPWiki version, RCS support will be removed (JSPWIKI-758).
+ 
 
 Upgrading JSPWiki from 2.8.x to 2.9.0
 -------------------------------------
