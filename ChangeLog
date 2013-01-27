@@ -1,3 +1,12 @@
+2013-01-27  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.9.1-svn-21
+       
+       * JSPWIKI-712, fixing entities encoding in change-note, author and link fields. 
+         Part 2 : more fixes when adding page comments. (as pointed out by Harry)
+         
+       * Improved styling of form buttons, fixing presentation issues in Chrome.       
+
 2013-01-26  Glen Mazza
        * Removed no longer needed StressTestRCSProvider.java,
          returned StressTestVersioningProvider to JUnit tests in build.xml

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -42,14 +42,14 @@
 	String findParam( PageContext ctx, String key )
 	{
 	    ServletRequest req = ctx.getRequest();
-	
+
 	    String val = req.getParameter( key );
-	
+
 	    if( val == null )
 	    {
 	        val = (String)ctx.findAttribute( key );
 	    }
-	
+
 	    return val;
 	}
 %>
@@ -73,10 +73,10 @@
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
-    String author  = request.getParameter("author");
-    String link    = request.getParameter("link");
+    String author  = TextUtil.replaceEntities( request.getParameter("author") );
+    String link    = TextUtil.replaceEntities( request.getParameter("link") );
     String remember = request.getParameter("remember");
-    String changenote = request.getParameter( "changenote" );
+    String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
 
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
@@ -120,7 +120,7 @@
 
     if( changenote != null )
        session.setAttribute( "changenote", changenote );
-    
+
     //
     //  Branch
     //
@@ -139,12 +139,12 @@
         //  is the best place to show errors, though.
 
         String spamhash = request.getParameter( SpamFilter.getHashFieldName(request) );
-        
+
         if( !SpamFilter.checkHash(wikiContext,pageContext) )
         {
             return;
         }
-        
+
         //
         //  We expire ALL locks at this moment, simply because someone has
         //  already broken it.
@@ -160,10 +160,10 @@
         modifiedPage.setAuthor( storedUser );
 
         if( changenote != null )
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, TextUtil.replaceEntities( changenote ) );
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
         else
             modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
-        
+
         //
         //  Build comment part
         //
@@ -179,9 +179,9 @@
         {
             pageText.append( "\n\n----\n\n" );
         }
-        
+
         String commentText = EditorManager.getEditedText(pageContext);
-        
+
         //
         //  WYSIWYG editor sends us its greetings
         //
@@ -190,7 +190,7 @@
         {
         	commentText = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
         }
-        
+
         pageText.append( commentText );
 
         log.debug("Author name ="+author);

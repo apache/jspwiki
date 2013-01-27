@@ -289,11 +289,26 @@ fieldset {
 	padding:0.5em;
 	border:1px solid #ddd;
 }
-.wikiform input[type='submit'], .wikiform input[type='button'],.wikiform input[type='file'], .wikiform button {
-	cursor:pointer;
-}
 .wikiform input, .wikiform option {
-	padding:0 0.25em;
+	padding:0.5em;
+
+	color:#555;
+	border:1px solid #ddd;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+.wikiform input[type='submit'], .wikiform input[type='button'],.wikiform input[type='file'], .wikiform button, .btn {
+	display:inline-block;
+	cursor:pointer;
+
+	background: transparent;
+	background: -moz-linear-gradient(top,  transparent,  rgba(0,0,0,.1));
+	background: -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(0,0,0,.1)));
+	text-shadow:0 1px 0 rgba(255,255,255,.8);
+}
+.wikiform input[type='submit']:hover, .wikiform input[type='button']:hover,.wikiform input[type='file']:hover, .wikiform button:hover, .btn:hover {
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,.1)), to(transparent));
+	background: -moz-linear-gradient(top,  rgba(0,0,0,.1),  transparent);
 }
 
 /* +++ 240 Pre-formatted text blocks and code +++ */

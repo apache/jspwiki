@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page errorPage="/Error.jsp" %>
@@ -29,7 +29,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -52,8 +52,8 @@
   </div>
 </c:if>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>" 
-       class="wikiform" 
+<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
+       class="wikiform"
           id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />"
     onsubmit="WikiPreferences.savePrefs(); return Wiki.submitOnce(this);" >
@@ -61,7 +61,7 @@
 
   <tr>
   <td><label for="assertedName"><fmt:message key="prefs.assertedname"/></label></td>
-  <td> 
+  <td>
   <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='wikiname' />" />
   <%-- CHECK THIS
   <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='loginname'/>" />
@@ -96,16 +96,16 @@
   </select>
   </td>
   </tr>
-  
+
   <tr>
   <td><label for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label></td>
   <td>
-  <input id="prefSectionEditing" name="prefSectionEditing" 
+  <input id="prefSectionEditing" name="prefSectionEditing"
        type="checkbox" <c:if test='${"on" == prefs.SectionEditing}'>checked="checked"</c:if> ></input>
   <fmt:message key="prefs.user.sectionediting.text"/>
   </td>
   </tr>
-  
+
   <tr>
   <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>
   <td>
@@ -168,13 +168,13 @@
   <tr>
   <td><label for="prefShowQuickLinks">Show Quick Links</label></td>
   <td>
-  <input class='checkbox' type='checkbox' id='prefShowQuickLinks' name='prefShowQuickLinks' 
+  <input class='checkbox' type='checkbox' id='prefShowQuickLinks' name='prefShowQuickLinks'
          <c:if test='${"on" == prefs.SectionEdit}'>selected="selected"</c:if> />
-         <span class="quicklinks"><span 
-               class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span 
-               class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span 
-               class='quick2Edit'><a href='#' title='Edit this section'>&bull;</a></span><span 
-               class='quick2Next'><a href='#' title='Go to Next Section'>&rsaquo;</a></span><span 
+         <span class="quicklinks"><span
+               class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span
+               class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span
+               class='quick2Edit'><a href='#' title='Edit this section'>&bull;</a></span><span
+               class='quick2Next'><a href='#' title='Go to Next Section'>&rsaquo;</a></span><span
                class='quick2Bottom'><a href='#footer' title='Go to Bottom' >&raquo;</a></span></span>
   </td>
   </tr>
@@ -182,7 +182,7 @@
   <tr>
   <td><label for="prefShowCalendar">Show Calendar</label></td>
   <td>
-    <input class='checkbox' type='checkbox' id='prefShowCalendar' name='prefShowCalendar' 
+    <input class='checkbox' type='checkbox' id='prefShowCalendar' name='prefShowCalendar'
             <%= (prefShowCalendar.equals("yes") ? "checked='checked'": "") %> >
   </td>
   </tr>
@@ -190,7 +190,7 @@
  <tr>
   <td>&nbsp;</td>
   <td>
-    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" 
+    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>"
       accesskey="s" />
     <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
     <input type="hidden" name="action" value="setAssertedName" />
@@ -200,15 +200,16 @@
 
 </table>
 </form>
-  
+
 <!-- Clearing the 'asserted name' and other prefs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
 <h3><fmt:message key='prefs.clear.heading'/></h3>
 
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
+       class="wikiform"
           id="clearCookie"
-    onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );" 
+    onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );"
       method="post" accept-charset="<wiki:ContentEncoding />" >
   <div>
   <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit'/>" />
