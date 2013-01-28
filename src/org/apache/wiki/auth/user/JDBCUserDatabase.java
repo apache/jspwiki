@@ -595,7 +595,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             UserProfile otherProfile = findByLoginName( newName );
             if( otherProfile != null )
             {
-                throw new DuplicateUserException( "Cannot rename: the login name '" + newName + "' is already taken." );
+                throw new DuplicateUserException( "security.error.cannot.rename", newName );
             }
         }
         catch( NoSuchPrincipalException e )

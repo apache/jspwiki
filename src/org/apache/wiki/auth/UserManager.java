@@ -305,7 +305,7 @@ public final class UserManager
             otherProfile = getUserDatabase().findByLoginName( profile.getLoginName() );
             if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
             {
-                throw new DuplicateUserException( "The login name '" + profile.getLoginName() + "' is already taken." );
+                throw new DuplicateUserException( "security.error.login.taken", profile.getLoginName() );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -316,7 +316,7 @@ public final class UserManager
             otherProfile = getUserDatabase().findByFullName( profile.getFullname() );
             if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
             {
-                throw new DuplicateUserException( "The full name '" + profile.getFullname() + "' is already taken." );
+                throw new DuplicateUserException( "security.error.fullname.taken", profile.getFullname() );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -328,7 +328,7 @@ public final class UserManager
         {
             WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
             Principal submitter = session.getUserPrincipal();
-            Task completionTask = new SaveUserProfileTask( m_engine );
+            Task completionTask = new SaveUserProfileTask( m_engine, session.getLocale() );
 
             // Add user profile attribute as Facts for the approver (if required)
             boolean hasEmail = profile.getEmail() != null;
@@ -715,16 +715,28 @@ public final class UserManager
         private static final long serialVersionUID = 6994297086560480285L;
         private final UserDatabase m_db;
         private final WikiEngine m_engine;
+        private final Locale m_loc;
 
         /**
          * Constructs a new Task for saving a user profile.
          * @param engine the wiki engine
+         * @deprecated will be removed in 2.10 scope. Consider using {@link SaveUserProfileTask(WikiEngine, Locale)} instead
          */
+        @Deprecated
         public SaveUserProfileTask( WikiEngine engine )
         {
             super( SAVE_TASK_MESSAGE_KEY );
             m_engine = engine;
             m_db = engine.getUserManager().getUserDatabase();
+            m_loc = null;
+        }
+        
+        public SaveUserProfileTask( WikiEngine engine, Locale loc )
+        {
+            super( SAVE_TASK_MESSAGE_KEY );
+            m_engine = engine;
+            m_db = engine.getUserManager().getUserDatabase();
+            m_loc = loc;
         }
 
         /**
@@ -746,24 +758,27 @@ public final class UserManager
             {
                 try
                 {
+                    InternationalizationManager i18n = m_engine.getInternationalizationManager();
+                    i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, "", "" );
                     String app = m_engine.getApplicationName();
                     String to = profile.getEmail();
-                    String subject = "Welcome to " + app;
-                    String content = "Congratulations! Your new profile on "
-                        + app + " has been created. Your profile details are as follows: \n\n"
-                        + "Login name: " + profile.getLoginName() + "\n"
-                        + "Your name : " + profile.getFullname() + "\n"
-                        + "E-mail    : " + profile.getEmail() + "\n\n"
-                        + "If you forget your password, you can reset it at "
-                        + m_engine.getURL(WikiContext.LOGIN, null, null, true);
+                    String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, 
+                                               "notification.createUserProfile.accept.subject", app );
+                    
+                    String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, 
+                                               "notification.createUserProfile.accept.content", app, 
+                                               profile.getLoginName(), 
+                                               profile.getFullname(),
+                                               profile.getEmail(),
+                                               m_engine.getURL( WikiContext.LOGIN, null, null, true ) );
                     MailUtil.sendMessage( m_engine, to, subject, content);
                 }
                 catch ( AddressException e)
                 {
                 }
-                catch ( MessagingException e )
+                catch ( MessagingException me )
                 {
-                    log.error( "Could not send registration confirmation e-mail. Is the e-mail server running?" );
+                    log.error( "Could not send registration confirmation e-mail. Is the e-mail server running?", me );
                 }
             }
 

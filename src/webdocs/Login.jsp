@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule" %>
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
+<%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page import="org.apache.wiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -70,10 +71,13 @@
                 userMgr.setUserProfile( wikiSession, profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             }
-            catch( DuplicateUserException e )
+            catch( DuplicateUserException due )
             {
                 // User collision! (full name or wiki name already taken)
-                wikiSession.addMessage( "profile", e.getMessage() );
+                wikiSession.addMessage( "profile", wiki.getInternationalizationManager()
+                		                               .get( InternationalizationManager.CORE_BUNDLE,
+                		                            		 WikiContext.getLocale( wikiContext ), 
+                		                            		 due.getMessage(), due.getArgs() ) );
             }
             catch( DecisionRequiredException e )
             {
