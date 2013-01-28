@@ -88,46 +88,22 @@ public class HsqlDbUtils
      */
     public void start() throws Exception
     {
-        // pre-checks
-        File lock = new File( "tests/etc/db/hsql/jspwiki.lck" );
-        if( lock.exists() ) 
-        {
-            lock.delete();
-        }
-        
-        for( long l = 0; l < 50; l++ ) 
-        {
-            if( lock.exists() ) 
-            {
-                Thread.sleep( 200L );
-            }
-            else 
-            {
-                break;
-            }
-        }
-        
-        
-        if( lock.exists() ) 
-        {
-            throw new InternalWikiException( "Another HSQL server seems to be running" );
-        }
         
         // start Hypersonic server
         Properties hProps = loadPropertiesFrom( "tests/etc/db/hsql/server.properties" );
         
         hsqlServer = new Server();
+        // pre-checks
+        hsqlServer.checkRunning( false ); // throws RuntimeException if running
+        
+        // configure
         hsqlServer.setPort( Integer.valueOf( hProps.getProperty( "server.port" ) ) );
         hsqlServer.setDatabaseName( 0, hProps.getProperty( "server.dbname.0" ) );
         hsqlServer.setDatabasePath( 0, hProps.getProperty( "server.database.0" ) );
         hsqlServer.start();
         
         Class.forName( "org.hsqldb.jdbcDriver" );
-        
-        if( !lock.exists() ) 
-        {
-            throw new InternalWikiException( "Unable to start HSQL server, check logs" );
-        }
+        hsqlServer.checkRunning( true ); // throws RuntimeException if not running
     }
     
     /**
