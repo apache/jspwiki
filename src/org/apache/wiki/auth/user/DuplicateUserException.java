@@ -18,17 +18,26 @@
  */
 package org.apache.wiki.auth.user;
 
+import org.apache.wiki.api.exceptions.WikiI18nException;
+
+
 /**
- * Exception indicating that an identical user already exists in the user
- * database.
+ * Exception indicating that an identical user already exists in the user database.
+ * 
  * @since 2.3
  */
-public final class DuplicateUserException extends Exception
+public final class DuplicateUserException extends WikiI18nException
 {
     private static final long serialVersionUID = 3258125851953674032L;
 
     public DuplicateUserException( String message )
     {
-        super( message );
+        super( message, ( Object[] )null );
     }
+
+    public DuplicateUserException( String message, Object... args )
+    {
+        super( message, args );
+    }
+
 }
