@@ -199,9 +199,8 @@ public class PluginContent extends Text
             {
                 // log.info("Failed to execute plugin",e);
                 ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-                Object[] args = { e.getMessage() };
                 result = JSPWikiMarkupParser.makeError( 
-                                 MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), args ) ).getText();
+                                 MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), e.getMessage() ) ).getText();
             }
         }
         
