@@ -366,7 +366,7 @@ public final class UserManager
                 AuthenticationManager mgr = m_engine.getAuthenticationManager();
                 if ( newProfile && !mgr.isContainerAuthenticated() )
                 {
-                    mgr.login( session, profile.getLoginName(), profile.getPassword() );
+                    mgr.login( session, null, profile.getLoginName(), profile.getPassword() );
                 }
             }
             catch ( WikiException e )
@@ -720,7 +720,8 @@ public final class UserManager
         /**
          * Constructs a new Task for saving a user profile.
          * @param engine the wiki engine
-         * @deprecated will be removed in 2.10 scope. Consider using {@link SaveUserProfileTask(WikiEngine, Locale)} instead
+         * @deprecated will be removed in 2.10 scope. Consider using 
+         * {@link UserManager#SaveUserProfileTask(WikiEngine, Locale)} instead
          */
         @Deprecated
         public SaveUserProfileTask( WikiEngine engine )
