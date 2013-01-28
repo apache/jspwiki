@@ -59,6 +59,12 @@ org.apache.wiki.filters.PageFilter
     org.apache.wiki.api.filter.PageFilter
  -> all core wikifilters implementing the "old" interface now implement the new one
 
+org.apache.wiki.parser.JSPWikiMarkupParser
+ -> deprecated method public static Collection getImagePatterns( WikiEngine ) in favour of
+    WikiEngine.getAllInlinedImagePatterns()
+ -> deprecated constants DEFAULT_INLINEPATTERN and PROP_INLINEIMAGEPTRN. Consider using equivalent
+    ones from WikiEngine
+
 org.apache.wiki.parser.PluginContent
  -> getParameter returns String instead of Object (internally, it was returning a String)
 
