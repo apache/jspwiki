@@ -1,3 +1,19 @@
+2013-01-28  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-22
+       
+       * JSPWIKI-143: Unlocalized messages in user management
+       
+       * JSPWIKI-150: Unlocalized content at workflow's notification for creating a new user
+       
+       * Minor refactor to HsqlDbUtils init checks
+       
+       * deprecated 
+          -> JSPWikiMarkupParser.getImagePatterns( WikiEngine ) in favour of 
+             WikiEngine.getAllInlinedImagePatterns()
+          -> UserManager.SaveUserProfileTask( WikiEngine ) in favour of 
+             UserManager.SaveUserProfileTask( WikiEngine, Locale )
+
 2013-01-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.1-svn-21
@@ -56,12 +72,12 @@
 
        * 2.9.1-svn-16
          
-       * some additional changes regarding org.apache.wiki.api.engine.PluginManager (cfr. $SVN/trunk/doc/2.10-API.txt):  
+       * some additional changes regarding org.apache.wiki.api.engine.PluginManager (cfr. $SVN/trunk/doc/2.10-API.txt):
          -> @Deprecated public void executeParse(PluginContent content, WikiContext context)
               + consider using PluginContent.executeParse(WikiContext) instead
          -> WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public and part 
             of the org.apache.wiki.api.engine.PluginManager API
-       
+
 2013-01-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-15
