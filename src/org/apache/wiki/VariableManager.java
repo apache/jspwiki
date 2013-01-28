@@ -438,11 +438,11 @@ public class VariableManager
         {
             StringBuffer res = new StringBuffer();
 
-            for( Iterator i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+            for( Iterator<String> i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
 
-                String ptrn = (String) i.next();
+                String ptrn = i.next();
                 res.append(ptrn);
             }
 
