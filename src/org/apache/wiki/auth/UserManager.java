@@ -760,7 +760,6 @@ public final class UserManager
                 try
                 {
                     InternationalizationManager i18n = m_engine.getInternationalizationManager();
-                    i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, "", "" );
                     String app = m_engine.getApplicationName();
                     String to = profile.getEmail();
                     String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, 
