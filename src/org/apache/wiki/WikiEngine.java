@@ -50,7 +50,6 @@ import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.*;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.ProviderException;
@@ -99,9 +98,15 @@ public class WikiEngine
 
     /** Stores properties. */
     private Properties       m_properties;
+    
+    /** The default inlining pattern.  Currently "*.png" */
+    public static final String DEFAULT_INLINEPATTERN = "*.png";
 
     /** Property for application name */
-    public static final String PROP_APPNAME      = "jspwiki.applicationName";
+    public static final String PROP_APPNAME = "jspwiki.applicationName";
+    
+    /** This property defines the inline image pattern.  It's current value is {@value} */
+    public static final String PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
 
     /** Property start for any interwiki reference. */
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
@@ -1041,10 +1046,29 @@ public class WikiEngine
      *
      *  @return A Collection of Strings with a regexp pattern.
      */
-
-    public Collection getAllInlinedImagePatterns()
+    public Collection< String > getAllInlinedImagePatterns()
     {
-        return JSPWikiMarkupParser.getImagePatterns( this );
+        Properties props    = getWikiProperties();
+        ArrayList<String>  ptrnlist = new ArrayList<String>();
+
+        for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+        {
+            String name = (String) e.nextElement();
+
+            if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
+            {
+                String ptrn = TextUtil.getStringProperty( props, name, null );
+
+                ptrnlist.add( ptrn );
+            }
+        }
+
+        if( ptrnlist.size() == 0 )
+        {
+            ptrnlist.add( DEFAULT_INLINEPATTERN );
+        }
+
+        return ptrnlist;
     }
 
     /**

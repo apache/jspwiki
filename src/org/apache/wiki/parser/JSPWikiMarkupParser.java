@@ -123,7 +123,10 @@ public class JSPWikiMarkupParser
     /**
      *  This property defines the inline image pattern.  It's current value
      *  is jspwiki.translatorReader.inlinePattern
+     *  @deprecated will be removed in 2.10 scope. 
+     *  Consider using {@link WikiEngine#PROP_INLINEIMAGEPTRN} instead 
      */
+    @Deprecated
     public static final String     PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
 
     /** If true, consider CamelCase hyperlinks as well. */
@@ -175,7 +178,10 @@ public class JSPWikiMarkupParser
     
     /**
      *  The default inlining pattern.  Currently "*.png"
+     *  @deprecated will be removed in 2.10 scope. 
+     *  Consider using {@link WikiEngine#DEFAULT_INLINEPATTERN} instead 
      */
+    @Deprecated
     public static final String     DEFAULT_INLINEPATTERN = "*.png";
 
     /**
@@ -263,17 +269,17 @@ public class JSPWikiMarkupParser
         if( compiledpatterns == null )
         {
             compiledpatterns = new ArrayList<Pattern>(20);
-            Collection ptrns = getImagePatterns( m_engine );
+            Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
 
             //
             //  Make them into Regexp Patterns.  Unknown patterns
             //  are ignored.
             //
-            for( Iterator i = ptrns.iterator(); i.hasNext(); )
+            for( Iterator< String > i = ptrns.iterator(); i.hasNext(); )
             {
                 try
                 {
-                    compiledpatterns.add( compiler.compile( (String)i.next(),
+                    compiledpatterns.add( compiler.compile( i.next(),
                                                             GlobCompiler.DEFAULT_MASK|GlobCompiler.READ_ONLY_MASK ) );
                 }
                 catch( MalformedPatternException e )
@@ -389,32 +395,13 @@ public class JSPWikiMarkupParser
      *  @return Collection of Strings with patterns.
      *  
      *  @param engine The WikiEngine from which the patterns are read.
+     *  @deprecated will be removed in 2.10 scope. 
+     *  Consider using {@link WikiEngine#getAllInlinedImagePatterns()} instead 
      */
-
-    // FIXME: Does not belong here; should be elsewhere
+    @Deprecated
     public static Collection getImagePatterns( WikiEngine engine )
     {
-        Properties props    = engine.getWikiProperties();
-        ArrayList<String>  ptrnlist = new ArrayList<String>();
-
-        for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
-        {
-            String name = (String) e.nextElement();
-
-            if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
-            {
-                String ptrn = TextUtil.getStringProperty( props, name, null );
-
-                ptrnlist.add( ptrn );
-            }
-        }
-
-        if( ptrnlist.size() == 0 )
-        {
-            ptrnlist.add( DEFAULT_INLINEPATTERN );
-        }
-
-        return ptrnlist;
+        return engine.getAllInlinedImagePatterns();
     }
 
     /**
