@@ -27,6 +27,7 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.auth.*;
@@ -286,17 +287,13 @@ public final class WikiSession implements WikiEventListener
         {
             throw new IllegalArgumentException( "addMessage: topic cannot be null." );
         }
-        if ( message == null )
-        {
-            message = "";
-        }
         Set<String> messages = m_messages.get( topic );
         if (messages == null )
         {
             messages = new LinkedHashSet<String>();
             m_messages.put( topic, messages );
         }
-        messages.add( message );
+        messages.add( StringUtils.defaultString( message ) );
     }
 
     /**
