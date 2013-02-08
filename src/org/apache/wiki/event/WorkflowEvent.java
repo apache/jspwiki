@@ -109,7 +109,8 @@ public final class WorkflowEvent extends WikiEvent
         StringBuffer msg = new StringBuffer();
         msg.append("WorkflowEvent.");
         msg.append(eventName(getType()));
-        msg.append(" [source=" + getSrc().toString());
+        Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
+        msg.append(" [source=" + obj.toString());
         msg.append("]");
         return msg.toString();
     }

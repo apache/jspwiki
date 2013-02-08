@@ -210,7 +210,8 @@ public final class WikiSecurityEvent extends WikiEvent
         StringBuffer msg = new StringBuffer();
         msg.append( "WikiSecurityEvent." );
         msg.append(  eventName( getType() ) );
-        msg.append( " [source=" + getSrc().toString() );
+        Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
+        msg.append( " [source=" + obj.toString() );
         if( m_principal != null )
         {
             msg.append( ", princpal=" + m_principal.getClass().getName() );
