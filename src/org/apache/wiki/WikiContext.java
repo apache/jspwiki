@@ -795,10 +795,13 @@ public class WikiContext
      * @param response the http response
      * @return the result of the access check
      * @throws IOException In case something goes wrong
+     * @deprecated will be removed in 2.10 scope. Consider using {@link AuthorizationManager#hasAccess(HttpServletResponse)} 
+     * instead
      */
+    @Deprecated
     public boolean hasAccess( HttpServletResponse response ) throws IOException
     {
-        return hasAccess( response, true );
+        return m_engine.getAuthorizationManager().hasAccess( this, response, true );
     }
 
     /**
@@ -814,42 +817,13 @@ public class WikiContext
      * @param response The servlet response object
      * @param redirect If true, makes an automatic redirect to the response
      * @throws IOException If something goes wrong
+     * @deprecated will be removed in 2.10 scope. Consider using 
+     * {@link AuthorizationManager#hasAccess(HttpServletResponse, boolean)} instead
      */
+    @Deprecated
     public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException
     {
-        AuthorizationManager mgr = m_engine.getAuthorizationManager();
-        boolean allowed = mgr.checkPermission( m_session, requiredPermission() );
-        ResourceBundle rb = getBundle(InternationalizationManager.CORE_BUNDLE);
-
-        // Stash the wiki context
-        if( allowed )
-        {
-            if ( m_request != null && m_request.getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
-            {
-                m_request.setAttribute( WikiTagBase.ATTR_CONTEXT, this );
-            }
-        }
-
-        // If access not allowed, redirect
-        if( !allowed && redirect )
-        {
-            Principal currentUser  = m_session.getUserPrincipal();
-            if( m_session.isAuthenticated() )
-            {
-                log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
-                String pageurl = m_page.getName();
-                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess.logged"), getName()) );
-                response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
-            }
-            else
-            {
-                log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
-                String pageurl = m_page.getName();
-                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), getName()) );
-                response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
-            }
-        }
-        return allowed;
+        return m_engine.getAuthorizationManager().hasAccess( this, response, redirect );
     }
 
     /**

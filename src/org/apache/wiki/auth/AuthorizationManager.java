@@ -20,18 +20,20 @@ package org.apache.wiki.auth;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
@@ -44,6 +46,9 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
@@ -374,6 +379,79 @@ public final class AuthorizationManager
             }
         }
         return false;
+    }
+    
+    /**
+     * Checks whether the current user has access to the wiki context,
+     * by obtaining the required Permission ({@link WikiContext#requiredPermission()})
+     * and delegating the access check to {@link #checkPermission(WikiSession, Permission)}.
+     * If the user is allowed, this method returns <code>true</code>;
+     * <code>false</code> otherwise. If access is allowed,
+     * the wiki context will be added to the request as an attribute
+     * with the key name {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
+     * Note that this method will automatically redirect the user to
+     * a login or error page, as appropriate, if access fails. This is
+     * NOT guaranteed to be default behavior in the future.
+     * 
+     * @param context wiki context to check if it is accesible
+     * @param response the http response
+     * @return the result of the access check
+     * @throws IOException In case something goes wrong
+     */
+    public boolean hasAccess( WikiContext context, HttpServletResponse response ) throws IOException
+    {
+        return hasAccess( context, response, true );
+    }
+
+    /**
+     * Checks whether the current user has access to the wiki context (and
+     * optionally redirects if not), by obtaining the required Permission ({@link WikiContext#requiredPermission()})
+     * and delegating the access check to {@link #checkPermission(WikiSession, Permission)}.
+     * If the user is allowed, this method returns <code>true</code>;
+     * <code>false</code> otherwise. If access is allowed,
+     * the wiki context will be added to the request as attribute
+     * with the key name {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
+     * 
+     * @param context wiki context to check if it is accesible
+     * @param response The servlet response object
+     * @param redirect If true, makes an automatic redirect to the response
+     * @return the result of the access check
+     * @throws IOException If something goes wrong
+     */
+    public boolean hasAccess( WikiContext context, HttpServletResponse response, boolean redirect ) throws IOException
+    {
+        boolean allowed = checkPermission( context.getWikiSession(), context.requiredPermission() );
+        ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
+
+        // Stash the wiki context
+        if( allowed )
+        {
+            if ( context.getHttpRequest() != null && context.getHttpRequest().getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
+            {
+                context.getHttpRequest().setAttribute( WikiTagBase.ATTR_CONTEXT, context );
+            }
+        }
+
+        // If access not allowed, redirect
+        if( !allowed && redirect )
+        {
+            Principal currentUser  = context.getWikiSession().getUserPrincipal();
+            String pageurl = context.getPage().getName();
+            if( context.getWikiSession().isAuthenticated() )
+            {
+                log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + context.requiredPermission() + ")" );
+                context.getWikiSession().addMessage( 
+                               MessageFormat.format( rb.getString("security.error.noaccess.logged"), context.getName()) );
+            }
+            else
+            {
+                log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + context.requiredPermission() + ")");
+                context.getWikiSession().addMessage( 
+                               MessageFormat.format( rb.getString("security.error.noaccess"), context.getName()) );
+            }
+            response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
+        }
+        return allowed;
     }
 
     /**
