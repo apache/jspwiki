@@ -28,7 +28,7 @@
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
-<%@ page import="org.apache.wiki.preferences.*" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
@@ -43,7 +43,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     // Extract the user profile and action attributes
     UserManager userMgr = wiki.getUserManager();

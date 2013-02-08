@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.attachment.Attachment" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -34,7 +35,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 
     WikiPage wikipage      = wikiContext.getPage();

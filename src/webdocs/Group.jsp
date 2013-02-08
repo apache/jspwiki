@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
@@ -33,7 +34,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW_GROUP );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members
     WikiSession wikiSession = wikiContext.getWikiSession();

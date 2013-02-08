@@ -21,6 +21,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -34,7 +35,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 
     // Get the search results

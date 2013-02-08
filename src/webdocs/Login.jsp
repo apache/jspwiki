@@ -26,8 +26,9 @@
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
-<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.tags.WikiTagBase" %>
+<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -42,7 +43,7 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
-    ResourceBundle rb = wikiContext.getBundle("CoreResources");
+    ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
     // Set the redirect-page variable if one was passed as a parameter
     if( request.getParameter( "redirect" ) != null )
@@ -51,7 +52,7 @@
     }
     else
     {
-        wikiContext.setVariable( "redirect", wiki.getFrontPage());
+        wikiContext.setVariable( "redirect", wiki.getFrontPage() );
     }
 
     // Are we saving the profile?

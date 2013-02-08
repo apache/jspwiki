@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page import="org.apache.wiki.WikiSession" %>
 <%@ page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.workflow.Decision" %>
 <%@ page import="org.apache.wiki.workflow.DecisionQueue" %>
 <%@ page import="org.apache.wiki.workflow.NoSuchOutcomeException" %>
@@ -39,7 +40,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.WORKFLOW );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     // Extract the wiki session
     WikiSession wikiSession = wikiContext.getWikiSession();

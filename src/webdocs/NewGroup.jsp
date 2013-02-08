@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.util.*" %>
@@ -35,7 +36,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.CREATE_GROUP );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members and action attributes
     WikiSession wikiSession = wikiContext.getWikiSession();
@@ -63,10 +64,9 @@
             groupMgr.getGroup( group.getName() );
 
             // Oops! The group already exists. This is mischief!
-            ResourceBundle rb = wikiContext.getBundle("CoreResources");
-            Object[] args = { group.getName() };
+            ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources");
             wikiSession.addMessage( GroupManager.MESSAGES_KEY,
-                                    MessageFormat.format(rb.getString("newgroup.exists"),args));
+                                    MessageFormat.format(rb.getString("newgroup.exists"),group.getName()));
         }
         catch ( NoSuchPrincipalException e )
         {

@@ -20,6 +20,7 @@
 <%@ page import="java.util.*,org.apache.wiki.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
@@ -36,7 +37,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     Set allPages = wiki.getReferenceManager().findCreated();
     

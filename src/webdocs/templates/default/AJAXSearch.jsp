@@ -21,13 +21,14 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="java.net.URLEncoder" %>
-<%@ page import="org.apache.wiki.auth.*" %>
-<%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -46,7 +47,7 @@
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
   /* Create wiki context and check for authorization */
   WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
-  if(!wikiContext.hasAccess( response )) return;
+  if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
  
   String query = request.getParameter( "query");
 

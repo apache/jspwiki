@@ -26,6 +26,7 @@
 <%@ page import="org.apache.wiki.auth.*"%>
 <%@ page import="org.apache.wiki.util.*"%>
 <%@ page import="org.apache.wiki.i18n.*"%>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
@@ -123,7 +124,7 @@
         pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
 
-    ResourceBundle rb = wikiContext.getBundle( "CoreResources" );
+    ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
     WikiSession wikiSession = wikiContext.getWikiSession();
     String action = request.getParameter( "action" );

@@ -30,6 +30,7 @@
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.preferences.Preferences.TimeFormat" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
@@ -58,10 +59,10 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
-    if( !wikiContext.hasAccess( response ) ) return;
+    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
     String pagereq = wikiContext.getName();
 
-    ResourceBundle rb = wikiContext.getBundle("CoreResources");
+    ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
     WikiSession wikiSession = wikiContext.getWikiSession();
     String storedUser = wikiSession.getUserPrincipal().getName();
 

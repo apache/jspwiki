@@ -21,6 +21,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.Installer" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.util.ResourceBundle" %>
@@ -36,7 +37,7 @@
 WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
 // Create wiki context and check for authorization
 WikiContext wikiContext = wiki.createContext( request, WikiContext.INSTALL );
-if(!wikiContext.hasAccess( response )) return;
+if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
 
 Installer installer = new Installer( request, config );
 WikiSession wikiSession = wikiContext.getWikiSession();
@@ -45,7 +46,7 @@ WikiSession wikiSession = wikiContext.getWikiSession();
 installer.parseProperties();
 boolean validated = false;
 String password = null;
-ResourceBundle rb = wikiContext.getBundle("CoreResources");
+ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
 // If user hit "submit" button, validate and install them
 if( request.getParameter("submit") != null )

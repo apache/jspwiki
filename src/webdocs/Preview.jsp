@@ -20,6 +20,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.filters.*" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -32,7 +33,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREVIEW );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 
     pageContext.setAttribute( EditorManager.ATTR_EDITEDTEXT,

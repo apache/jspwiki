@@ -20,6 +20,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -37,14 +38,14 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
 	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
-    if(!wikiContext.hasAccess( response )) return;
+    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
 
     String renameFrom = wikiContext.getName();
     String renameTo = request.getParameter("renameto");
 
     boolean changeReferences = false;
 
-    ResourceBundle rb = wikiContext.getBundle("CoreResources");
+    ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
     if (request.getParameter("references") != null)
     {
@@ -86,13 +87,11 @@
         else if (e.getMessage().startsWith("Page already exists "))
         {
             log.info("Page rename request failed because new page name is already in use");
-            Object[] args = { renameTo };
-            wikiSession.addMessage("rename", MessageFormat.format(rb.getString("rename.exists"),args));
+            wikiSession.addMessage("rename", MessageFormat.format(rb.getString("rename.exists"),renameTo));
         }
         else
         {
-            Object[] args = { e.toString() };
-            wikiSession.addMessage("rename",  MessageFormat.format(rb.getString("rename.unknownerror"),args));
+            wikiSession.addMessage("rename",  MessageFormat.format(rb.getString("rename.unknownerror"),e.toString()));
         }
 
     }

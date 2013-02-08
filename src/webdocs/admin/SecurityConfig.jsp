@@ -22,6 +22,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%! 
@@ -35,7 +36,7 @@
 %>
 <%
   WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
-  if(!wikiContext.hasAccess( response )) return;
+  if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
 

@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -54,7 +55,7 @@
     }
     else
     {
-      creationAuthor = c.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" );
+      creationAuthor = Preferences.getBundle( c, InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" );
     }
   }
 
