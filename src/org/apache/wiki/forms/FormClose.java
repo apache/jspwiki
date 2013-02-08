@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  Closes a WikiForm.
@@ -51,7 +52,7 @@ public class FormClose
         {
             if( info.hide() )
             {
-                ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
                 return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
             }
         }

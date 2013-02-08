@@ -28,6 +28,7 @@ import org.apache.ecs.xhtml.select;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  Creates a Form select field.
@@ -45,7 +46,7 @@ public class FormSelect
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
 
-        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         Map< String, String > previousValues = null;
         
         if( info != null )
@@ -68,7 +69,9 @@ public class FormSelect
 
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
-            return field.toString(ctx.getEngine().getContentEncoding());
+        {
+            return field.toString( ctx.getEngine().getContentEncoding() );
+        }
         
         return "";
     }

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -59,9 +60,8 @@ public class UserNameTag extends WikiTagBase
             }
             else
             {
-                pageContext.getOut().print(
-                                           m_wikiContext.getBundle(InternationalizationManager.CORE_BUNDLE)
-                                               .getString("security.user.fullname.invalid"));
+                pageContext.getOut().print( Preferences.getBundle( m_wikiContext, InternationalizationManager.CORE_BUNDLE )
+                                                       .getString( "security.user.fullname.invalid" ) );
             }
         }
 

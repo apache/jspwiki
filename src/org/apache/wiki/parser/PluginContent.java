@@ -29,6 +29,7 @@ import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 import org.jdom.Text;
 
@@ -198,7 +199,7 @@ public class PluginContent extends Text
             else
             {
                 // log.info("Failed to execute plugin",e);
-                ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
                 result = JSPWikiMarkupParser.makeError( 
                                  MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), e.getMessage() ) ).getText();
             }
@@ -219,7 +220,7 @@ public class PluginContent extends Text
     {
         PluginManager pm = context.getEngine().getPluginManager();
         if( pm.pluginsEnabled() ) {
-            ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
             Map<String, String> params = getParameters();
             WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
             try

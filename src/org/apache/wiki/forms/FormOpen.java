@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  Opens a WikiForm.
@@ -77,12 +78,11 @@ public class FormOpen
     public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
-        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         String formName = params.get( PARAM_FORM );
         if( formName == null )
         {
-            Object[] args = { PARAM_FORM };
-            throw new PluginException( MessageFormat.format( rb.getString( "formopen.missingparam" ), args ) );
+            throw new PluginException( MessageFormat.format( rb.getString( "formopen.missingparam" ), PARAM_FORM ) );
         }
         String hide     = params.get( PARAM_HIDEFORM );
         String sourcePage = ctx.getPage().getName();

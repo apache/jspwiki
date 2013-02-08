@@ -201,7 +201,8 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                     }
                     else
                     {
-                        authorinfo.addElement( context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "common.unknownauthor" ) );
+                        authorinfo.addElement( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
+                                                          .getString( "common.unknownauthor" ) );
                     }
 
                     row.addElement( authorinfo );
@@ -253,10 +254,12 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     {
         String formatString = get(params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT);
 
-        if ("".equals(formatString.trim()))
+        if( "".equals(formatString.trim() ) )
+        {
             return Preferences.getDateFormat( context, TimeFormat.DATE );
+        }
 
-        return new SimpleDateFormat(formatString);
+        return new SimpleDateFormat( formatString );
 
     }
 

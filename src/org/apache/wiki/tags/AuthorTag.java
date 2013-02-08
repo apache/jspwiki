@@ -25,6 +25,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
@@ -72,7 +73,8 @@ public class AuthorTag
         }
         else
         {
-            pageContext.getOut().print( m_wikiContext.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" ));
+            pageContext.getOut().print( Preferences.getBundle( m_wikiContext, InternationalizationManager.CORE_BUNDLE )
+                                                   .getString( "common.unknownauthor" ) );
         }
 
         return SKIP_BODY;

@@ -34,6 +34,7 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -153,11 +154,13 @@ public class TableOfContents
     {
         WikiEngine engine = context.getEngine();
         WikiPage   page   = context.getPage();
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
+        {
             //return rb.getString("tableofcontents.title");
             return "<a href=\"#section-TOC\" class=\"toc\">"+rb.getString("tableofcontents.title")+"</a>";
+        }
 
         StringBuffer sb = new StringBuffer();
 

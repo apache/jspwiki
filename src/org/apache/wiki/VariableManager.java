@@ -31,6 +31,7 @@ import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
@@ -478,14 +479,14 @@ public class VariableManager
         public String getLoginstatus()
         {
             WikiSession session = m_context.getWikiSession();
-            return m_context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "varmgr." + session.getStatus());
+            return Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE ).getString( "varmgr." + session.getStatus());
         }
 
         public String getUsername()
         {
             Principal wup = m_context.getCurrentUser();
             
-            ResourceBundle rb = m_context.getBundle( InternationalizationManager.CORE_BUNDLE );
+            ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
             return wup != null ? wup.getName() : rb.getString( "varmgr.not.logged.in" );
         }
 

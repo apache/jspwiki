@@ -40,7 +40,7 @@ public class InternationalizationManager
     /** The name of the ResourceBundle which contains any and all JSPWiki default templates
      *  resource strings.  It's value is {@value}.
      */
-    public static final String DEF_TEMPLATE = "templates/default";
+    public static final String DEF_TEMPLATE = "templates.default";
     // public static final String JSPWIKI_BUNDLE = "jspwiki";
     // public static final String PLUGINS_BUNDLE = "plugins";
 
@@ -105,7 +105,7 @@ public class InternationalizationManager
      *  @param bundle Which bundle the string is in
      *  @param locale Locale to use - null for default
      *  @param key    Which key to use.
-     *  @param args parameters to insert n the String.
+     *  @param args parameters to insert in the String.
      *  @return A localized string (or from the default language, if not found)
      *  @throws MissingResourceException If the key cannot be located at all, even from the default locale.
      */

@@ -27,6 +27,7 @@ import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.plugin.DefaultPluginManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.FormUtil;
 
 /**
@@ -64,7 +65,7 @@ public class FormOutput
         {
             return "";
         }
-        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         
         // If we are NOT here due to this form being submitted, we do nothing.
         // The submitted form MUST have parameter 'formname' equal to the name
@@ -89,9 +90,8 @@ public class FormOutput
         String handler = params.get( PARAM_HANDLER );
         if( handler == null || handler.length() == 0 )
         {
-            Object[] args = { PARAM_HANDLER };
             // Need to print out an error here as this form is misconfigured
-            return "<p class=\"error\">" + MessageFormat.format( rb.getString( "formoutput.missingargument" ), args ) + "</p>";
+            return "<p class=\"error\">" + MessageFormat.format( rb.getString( "formoutput.missingargument" ), PARAM_HANDLER ) + "</p>";
         }
 
         String sourcePage = ctx.getPage().getName();

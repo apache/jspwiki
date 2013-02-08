@@ -32,6 +32,7 @@ import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
@@ -140,7 +141,7 @@ public class TraditionalDiffProvider implements DiffProvider
         {
             m_result = sb;
             m_context = ctx;
-            m_rb = ctx.getBundle( InternationalizationManager.CORE_BUNDLE );
+            m_rb = Preferences.getBundle( ctx, InternationalizationManager.CORE_BUNDLE );
         }
 
         public void visit(Revision rev)
@@ -182,7 +183,7 @@ public class TraditionalDiffProvider implements DiffProvider
             double[] choiceLimits = { 1, 2 };
             
             MessageFormat fmt = new MessageFormat("");
-            fmt.setLocale( WikiContext.getLocale(m_context) );
+            fmt.setLocale( Preferences.getLocale(m_context) );
             ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
             fmt.applyPattern( type );
             Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };

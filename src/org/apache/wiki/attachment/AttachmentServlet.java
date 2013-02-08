@@ -48,6 +48,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.util.HttpUtil;
@@ -650,7 +651,8 @@ public class AttachmentServlet extends HttpServlet
         {
             // this is a kludge, the exception that is caught here contains the i18n key
             // here we have the context available, so we can internationalize it properly :
-            throw new RedirectException(context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( e.getMessage() ), errorPage );
+            throw new RedirectException (Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
+                                                    .getString( e.getMessage() ), errorPage );
         }
         
         //
@@ -735,7 +737,8 @@ public class AttachmentServlet extends HttpServlet
             {
                 // this is a kludge, the exception that is caught here contains the i18n key
                 // here we have the context available, so we can internationalize it properly :
-                throw new ProviderException( context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( pe.getMessage() ) );
+                throw new ProviderException( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
+                                                        .getString( pe.getMessage() ) );
             }
 
             log.info( "User " + user + " uploaded attachment to " + parentPage +
@@ -743,8 +746,7 @@ public class AttachmentServlet extends HttpServlet
         }
         else
         {
-            throw new RedirectException("No permission to upload a file",
-                                        errorPage);
+            throw new RedirectException( "No permission to upload a file", errorPage );
         }
 
         return created;

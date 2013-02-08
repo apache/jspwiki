@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.providers.ProviderException;
 
 /**
@@ -88,7 +89,7 @@ public class WeblogEntryPlugin implements WikiPlugin
     public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         
         String weblogName = params.get( PARAM_BLOGNAME );
         if( weblogName == null )

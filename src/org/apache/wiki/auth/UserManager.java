@@ -46,6 +46,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.ui.InputValidator;
@@ -478,7 +479,7 @@ public final class UserManager
         boolean isNew = profile.isNew();
         WikiSession session = context.getWikiSession();
         InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
-        ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
+        ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         //
         //  Query the SpamFilter first

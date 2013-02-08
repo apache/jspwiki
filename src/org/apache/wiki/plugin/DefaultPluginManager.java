@@ -37,6 +37,7 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.parser.PluginContent;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -312,7 +313,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         if( !m_pluginsEnabled )
             return "";
 
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         boolean debug = TextUtil.isPositive( params.get( PARAM_DEBUG ) );
         try
         {
@@ -505,9 +506,11 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         throws PluginException
     {
         if( !m_pluginsEnabled )
+        {
             return "";
+        }
 
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         PatternMatcher matcher = new Perl5Matcher();
 
         try

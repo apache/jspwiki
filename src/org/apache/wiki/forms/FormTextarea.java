@@ -27,6 +27,7 @@ import org.apache.ecs.xhtml.textarea;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  Creates a Form text area element.   You may specify the size of the textarea
@@ -51,7 +52,7 @@ public class FormTextarea extends FormElement
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
         Map< String, String > previousValues = null;
-        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         if( info != null )
         {

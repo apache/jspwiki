@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
@@ -687,7 +688,7 @@ public class TemplateManager
 
         sb.append( "var LocalizedStrings = {\n");
 
-        ResourceBundle rb = context.getBundle("templates.default");
+        ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.DEF_TEMPLATE );
 
         boolean first = true;
 

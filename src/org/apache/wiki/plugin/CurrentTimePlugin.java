@@ -55,9 +55,13 @@ public class CurrentTimePlugin implements WikiPlugin
             SimpleDateFormat fmt;
             
             if( formatString != null )
+            {
                 fmt = new SimpleDateFormat( formatString );
+            }
             else
+            {
                 fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+            }
 
             Date d = new Date();  // Now.
 
@@ -65,7 +69,7 @@ public class CurrentTimePlugin implements WikiPlugin
         }
         catch( IllegalArgumentException e )
         {
-            ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
             
             throw new PluginException( rb.getString("currenttimeplugin.badformat") + e.getMessage() );
         }

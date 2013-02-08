@@ -26,6 +26,7 @@ import org.apache.ecs.xhtml.input;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -52,7 +53,7 @@ public class FormInput
         String inputValue = params.get( PARAM_VALUE );
         String inputType  = params.get( PARAM_TYPE );
         String size       = params.get( PARAM_SIZE );
-        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         if( inputName == null )
             throw new PluginException( rb.getString( "forminput.namemissing" ) );

@@ -51,7 +51,7 @@ public class ListLocksPlugin
 
         PageManager mgr = context.getEngine().getPageManager();
         List locks = mgr.getActiveLocks();
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         result.append("<table class=\"wikitable\">\n");
         result.append("<tr>\n");

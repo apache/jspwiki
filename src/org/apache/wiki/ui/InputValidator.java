@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.wiki.*;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  * Provides basic validation services for HTTP parameters. Three standard
@@ -102,11 +103,10 @@ public final class InputValidator
     {
         if ( isBlank( input ) )
         {
-            ResourceBundle rb = m_context.getBundle( InternationalizationManager.CORE_BUNDLE );
+            ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
             
-            Object[] args = { label };
             m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.cantbenull"),
-                                                                args ) );
+                                                                label ) );
             return false;
         }
         return validate( input, label, type ) && !isBlank( input );
@@ -131,7 +131,7 @@ public final class InputValidator
             return true;
         }
 
-        ResourceBundle rb = m_context.getBundle( InternationalizationManager.CORE_BUNDLE );
+        ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
 
         // Otherwise, see if it matches the pattern for the target type
         Matcher matcher;

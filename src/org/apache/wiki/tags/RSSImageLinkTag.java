@@ -27,6 +27,7 @@ import javax.servlet.jsp.JspWriter;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.rss.RSSGenerator;
 
 /**
@@ -91,7 +92,7 @@ public class RSSImageLinkTag
     {
         WikiEngine engine = m_wikiContext.getEngine();
         JspWriter out = pageContext.getOut();
-        ResourceBundle rb = m_wikiContext.getBundle( InternationalizationManager.CORE_BUNDLE );
+        ResourceBundle rb = Preferences.getBundle( m_wikiContext, InternationalizationManager.CORE_BUNDLE );
 
         if( engine.getRSSGenerator() != null && engine.getRSSGenerator().isEnabled() )
         {

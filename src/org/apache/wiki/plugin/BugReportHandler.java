@@ -34,6 +34,7 @@ import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.preferences.Preferences;
 
 /**
  *  Provides a handler for bug reports.  Still under construction.
@@ -77,7 +78,7 @@ public class BugReportHandler
         String    version;
         String    submitter = null;
         SimpleDateFormat format = new SimpleDateFormat( DEFAULT_DATEFORMAT );
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         title       = params.get( PARAM_TITLE );
         description = params.get( PARAM_DESCRIPTION );

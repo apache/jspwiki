@@ -33,6 +33,7 @@ import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.parser.PluginContent;
+import org.apache.wiki.preferences.Preferences;
 import org.jdom.Element;
 
 /**
@@ -196,7 +197,7 @@ public class PluginManager extends DefaultPluginManager
         if( !pluginsEnabled() )
             return;
 
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         Map<String, String> params = content.getParameters();
         WikiPlugin plugin = newWikiPlugin( content.getPluginName(), rb );
         try

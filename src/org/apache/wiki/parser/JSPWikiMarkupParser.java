@@ -40,6 +40,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
@@ -505,8 +506,7 @@ public class JSPWikiMarkupParser
         {
             type = EMPTY;
         }
-        ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
-        Object[] args = { link };
+        ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
 
         switch(type)
         {
@@ -516,7 +516,7 @@ public class JSPWikiMarkupParser
 
             case EDIT:
                 el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" );
-                el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), args ) );
+                el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), link ) );
                 break;
 
             case EMPTY:
@@ -1421,9 +1421,8 @@ public class JSPWikiMarkupParser
         }
         catch( Exception e )
         {
-            ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
-            Object[] args = { link };
-            return makeError( MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), args ) );
+            ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+            return makeError( MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), link ) );
         }
 
         return m_currentElement;
@@ -1444,7 +1443,7 @@ public class JSPWikiMarkupParser
      */
     private Element handleHyperlinks( String linktext, int pos )
     {
-        ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+        ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
         
         StringBuilder sb = new StringBuilder(linktext.length()+80);
 
@@ -1481,7 +1480,7 @@ public class JSPWikiMarkupParser
                 //log.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode )
                 {
-                    ResourceBundle rbPlugin = m_context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                    ResourceBundle rbPlugin = Preferences.getBundle( m_context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
                     return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ), e.getMessage() ) ) );
                 }
             }
@@ -2391,7 +2390,7 @@ public class JSPWikiMarkupParser
                 if( style != null && style.indexOf("javascript:") != -1 )
                 {
                     log.debug("Attempt to output javascript within CSS:"+style);
-                    ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+                    ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
                     return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
                 }
             }
@@ -2400,9 +2399,8 @@ public class JSPWikiMarkupParser
                 //
                 //  If there are unknown entities, we don't want the parser to stop.
                 //
-                ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
-                Object[] args = { e.getMessage() };
-                String msg = MessageFormat.format( rb.getString( "markupparser.error.parserfailure"), args );
+                ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+                String msg = MessageFormat.format( rb.getString( "markupparser.error.parserfailure"), e.getMessage() );
                 return addElement( makeError( msg ) );
             }
 
