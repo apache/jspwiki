@@ -10,6 +10,9 @@
              AuthorizationManager#hasAccess( HttpServletResponse )
           -> WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of 
              AuthorizationManager#hasAccess( HttpServletResponse, boolean )
+             
+       * Added latest pom.xml from JSPWIKI-651 - Convert JSPWiki to a Maven project. Check associated
+         JIRA for details
 
 2013-01-28  Harry Metske <metskem@apache.org>
 
