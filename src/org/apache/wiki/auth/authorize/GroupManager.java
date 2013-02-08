@@ -693,7 +693,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         WikiSecurityEvent se = (WikiSecurityEvent)event;
         if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
         {
-            WikiSession session = (WikiSession)se.getSource();
+            WikiSession session = se.getSrc();
             UserProfile[] profiles = (UserProfile[])se.getTarget();
             Principal[] oldPrincipals = new Principal[] {
                 new WikiPrincipal( profiles[0].getLoginName() ),

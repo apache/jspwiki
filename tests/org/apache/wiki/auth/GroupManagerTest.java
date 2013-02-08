@@ -196,7 +196,7 @@ public class GroupManagerTest extends TestCase
         WikiSecurityEvent[] events = m_trap.events();
         assertEquals( 1, events.length );
         event = events[0];
-        assertEquals( m_groupMgr, event.getSource() );
+        assertEquals( m_groupMgr, event.getSrc() );
         assertEquals( WikiSecurityEvent.GROUP_ADD, event.getType() );
         assertEquals( group, event.getTarget() );
 

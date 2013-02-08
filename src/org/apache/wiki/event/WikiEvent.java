@@ -54,6 +54,17 @@ public abstract class WikiEvent extends EventObject
         m_when = System.currentTimeMillis();
         setType( type );
     }
+    
+    /**
+     * Convenience method that returns the typed object to which the event applied.
+     * 
+     * @return the typed object to which the event applied.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getSrc()
+    {
+        return (T) super.getSource();
+    }
 
 
     /**

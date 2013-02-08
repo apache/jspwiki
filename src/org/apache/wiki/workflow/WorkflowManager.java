@@ -276,7 +276,7 @@ public class WorkflowManager implements WikiEventListener
     {
         if (event instanceof WorkflowEvent)
         {
-            Workflow workflow = (Workflow) event.getSource();
+            Workflow workflow = event.getSrc();
             switch ( event.getType() )
             {
                 case WorkflowEvent.ABORTED:

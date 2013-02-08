@@ -52,7 +52,10 @@ org.apache.wiki.WikiEngine
 org.apache.wiki.FileUtil and org.apache.wiki.TextUtil
  -> Moved to org.apache.wiki.util.FileUtil and org.apache.wiki.util.TextUtil respectively
  -> original classes marked with @Deprecated and forwarding to the new ones until 2.10
-       
+
+org.apache.wiki.event.WorkflowEvent
+ -> @Deprecated getWorkflow() in favour of the generified WikiEvent#getSrc()
+
 org.apache.wiki.filters.FilterManager
  -> new interface org.apache.wiki.api.engine.FilterManager
  -> moved to org.apache.wiki.filters.DefaultFilterManager

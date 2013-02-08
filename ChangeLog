@@ -2,14 +2,17 @@
 
        * 2.9.1-svn-24
        
-       * Decoupled Preferences from WikiContext, effectively meaning that the following methods are 
-         now deprecated
+       * Decoupled (for 2.10 scope) Preferences from WikiContext, effectively meaning that the following 
+         methods are now deprecated
           -> WikiContext#getBundle( String ) in favour of Preferences#getBundle( WikiContext, String )
           -> WikiContext#getLocale( WikiContext ) in favour of Preferences#getLocale( WikiContext )
           -> WikiContext#hasAccess( HttpServletResponse ) in favour of 
              AuthorizationManager#hasAccess( HttpServletResponse )
           -> WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of 
              AuthorizationManager#hasAccess( HttpServletResponse, boolean )
+             
+       * Decoupled (for 2.10 scope) org.apache.wiki.event from org.apache.wiki.workflow, by deprecating
+          -> WorkflowEvent#getWorkflow() in favour of WikiEvent#getSrc()
              
        * Added latest pom.xml from JSPWIKI-651 - Convert JSPWiki to a Maven project. Check associated
          JIRA for details

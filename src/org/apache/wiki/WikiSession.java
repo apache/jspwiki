@@ -545,7 +545,7 @@ public final class WikiSession implements WikiEventListener
                     }
                     case WikiSecurityEvent.PROFILE_SAVE:
                     {
-                        WikiSession source = (WikiSession)e.getSource();
+                        WikiSession source = e.getSrc();
                         if ( this.equals( source ) )
                         {
                             injectUserProfilePrincipals();  // Add principals for the user profile
@@ -556,7 +556,7 @@ public final class WikiSession implements WikiEventListener
                     case WikiSecurityEvent.PROFILE_NAME_CHANGED:
                     {
                         // Refresh user principals based on new user profile
-                        WikiSession source = (WikiSession)e.getSource();
+                        WikiSession source = e.getSrc();
                         if ( this.equals( source ) && m_status == AUTHENTICATED )
                         {
                             // To prepare for refresh, set the new full name as the primary principal

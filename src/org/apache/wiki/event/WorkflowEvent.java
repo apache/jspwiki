@@ -91,10 +91,12 @@ public final class WorkflowEvent extends WikiEvent
      * Convenience method that returns the Workflow to which the event applied.
      * 
      * @return the Workflow
+     * @deprecated will be removed in 2.10 scope. Consider using {@link WikiEvent#getSrc()} instead
      */
+    @Deprecated
     public final Workflow getWorkflow()
     {
-        return (Workflow) super.getSource();
+        return (Workflow) super.getSrc();
     }
 
     /**
@@ -107,7 +109,7 @@ public final class WorkflowEvent extends WikiEvent
         StringBuffer msg = new StringBuffer();
         msg.append("WorkflowEvent.");
         msg.append(eventName(getType()));
-        msg.append(" [source=" + getSource().toString());
+        msg.append(" [source=" + getSrc().toString());
         msg.append("]");
         return msg.toString();
     }
