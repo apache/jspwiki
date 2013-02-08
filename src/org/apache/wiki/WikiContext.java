@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,14 +33,16 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.auth.*;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.*;
-import org.apache.wiki.preferences.Preferences;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -829,19 +834,18 @@ public class WikiContext
         if( !allowed && redirect )
         {
             Principal currentUser  = m_session.getUserPrincipal();
-            Object[] arguments = { getName() };
             if( m_session.isAuthenticated() )
             {
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
                 String pageurl = m_page.getName();
-                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess.logged"), arguments) );
+                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess.logged"), getName()) );
                 response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_page.getName();
-                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), arguments) );
+                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), getName()) );
                 response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
         }
@@ -960,7 +964,10 @@ public class WikiContext
      *  @param bundle The name of the bundle you are looking for.
      *  @return A resource bundle object
      *  @throws MissingResourceException If the bundle cannot be found
+     *  @deprecated will be removed in 2.10 scope. Consider using 
+     *  {@link Preferences#getBundle(WikiContext,String)} instead.
      */
+    @Deprecated
     // FIXME: This method should really cache the ResourceBundles or something...
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
@@ -977,15 +984,13 @@ public class WikiContext
      *
      *  @return A valid locale object
      *  @param context The WikiContext
+     *  @deprecated will be removed in 2.10 scope. Consider using {@link Preferences#getLocale(WikiContext)} 
+     * instead
      */
+    @Deprecated
     public static Locale getLocale( WikiContext context )
     {
         return Preferences.getLocale( context );
-/*
-        HttpServletRequest request = context.getHttpRequest();
-        return ( request != null )
-                ? request.getLocale() : Locale.getDefault();
-*/
     }
 
 }

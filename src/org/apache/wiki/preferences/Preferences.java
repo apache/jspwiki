@@ -29,14 +29,13 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.PropertyReader;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
+import org.json.JSONObject;
 
 /**
  *  Represents an object which is used to store user preferences.
@@ -202,16 +201,16 @@ public class Preferences
      * @return a Locale object.
      * @since 2.8
      */
-    public static Locale getLocale(WikiContext context)
+    public static Locale getLocale( WikiContext context )
     {
         Locale loc = null;
         
-        String langSetting = Preferences.getPreference( context, "Language" );
+        String langSetting = getPreference( context, "Language" );
         
         //
         // parse language and construct valid Locale object
         //
-        if( langSetting != null)
+        if( langSetting != null )
         {
             String language = "";
             String country  = "";
@@ -231,7 +230,7 @@ public class Preferences
         }
         
         // otherwise try to find out the browser's preferred language setting, or use the JVM's default
-        if( loc == null)
+        if( loc == null )
         {    
             HttpServletRequest request = context.getHttpRequest();
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
@@ -239,6 +238,24 @@ public class Preferences
 
         //log.info( "using locale "+loc.toString() );
         return loc;
+    }
+    
+    /**
+     *  Locates the i18n ResourceBundle given.  This method interprets
+     *  the request locale, and uses that to figure out which language the
+     *  user wants.
+     *  @see org.apache.wiki.i18n.InternationalizationManager
+     *  @param context {@link WikiContext} holding the user's locale
+     *  @param bundle  The name of the bundle you are looking for.
+     *  @return A localized string (or from the default language, if not found)
+     *  @throws MissingResourceException If the bundle cannot be found
+     */
+    public static ResourceBundle getBundle( WikiContext context, String bundle ) 
+        throws MissingResourceException 
+    {
+        Locale loc = getLocale( context );
+        InternationalizationManager i18n = context.getEngine().getInternationalizationManager();
+        return i18n.getBundle( bundle, loc );
     }
 
     /**
@@ -254,8 +271,8 @@ public class Preferences
     public static SimpleDateFormat getDateFormat( WikiContext context, TimeFormat tf )
     {
         InternationalizationManager imgr = context.getEngine().getInternationalizationManager();
-        Locale clientLocale = Preferences.getLocale( context );
-        String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
+        Locale clientLocale = getLocale( context );
+        String prefTimeZone = getPreference( context, "TimeZone" );
         String prefDateFormat;
         
         log.debug("Checking for preferences...");
@@ -263,7 +280,7 @@ public class Preferences
         switch( tf )
         {
             case DATETIME:
-                prefDateFormat = Preferences.getPreference( context, "DateFormat" );
+                prefDateFormat = getPreference( context, "DateFormat" );
                 log.debug("Preferences fmt = "+prefDateFormat);
                 if( prefDateFormat == null ) 
                 {
