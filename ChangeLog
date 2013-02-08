@@ -1,3 +1,16 @@
+2013-02-08  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-24
+       
+       * Decoupled Preferences from WikiContext, effectively meaning that the following methods are 
+         now deprecated
+          -> WikiContext#getBundle( String ) in favour of Preferences#getBundle( WikiContext, String )
+          -> WikiContext#getLocale( WikiContext ) in favour of Preferences#getLocale( WikiContext )
+          -> WikiContext#hasAccess( HttpServletResponse ) in favour of 
+             AuthorizationManager#hasAccess( HttpServletResponse )
+          -> WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of 
+             AuthorizationManager#hasAccess( HttpServletResponse, boolean )
+
 2013-01-28  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-23

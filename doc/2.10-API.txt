@@ -35,6 +35,16 @@ api.plugin
  -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
        in 2.10 timeframe
 
+org.apache.wiki.WikiContext
+ -> @Deprecated WikiContext.getBundle( String ) in favour of  
+    Preferences.getBundle( String )
+ -> @Deprecated WikiContext.getLocale( WikiContext ) in favour of  
+    Preferences.getLocale( WikiContext )
+ -> @Deprecated WikiContext.hasAccess( HttpServletResponse ) in favour of
+    AuthorizationManager.hasAccess( HttpServletResponse )
+ -> @Deprecated WikiContext.hasAccess( HttpServletResponse, boolean ) in favour of
+    AuthorizationManager.hasAccess( HttpServletResponse, boolean )
+    
 org.apache.wiki.WikiEngine
  -> @Deprecated WikiEngine.getRequiredProperty( props, key ) in favour of  
     TextUtil.getRequiredProperty( props, key )
