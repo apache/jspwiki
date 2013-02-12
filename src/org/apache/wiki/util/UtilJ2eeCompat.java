@@ -101,6 +101,8 @@ public class UtilJ2eeCompat
         if( serverInfo.indexOf( RESIN ) >= 0 )
         {
             log.info( RESIN + " detected" );
+            // use response.getOutputStream instead of response.getWriter
+            useStream = true;
         }
         else if( serverInfo.indexOf( REX_IP ) >= 0 )
         {

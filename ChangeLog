@@ -1,3 +1,10 @@
+2013-02-12  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-25
+       
+       * JSPWIKI-759 Resin 4 Compatibility (thanks to Paul Cowan)
+       * build.xml tweak: shut down the Jetty test server after the last webtest
+
 2013-02-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-24

@@ -963,7 +963,11 @@
     <webtest-exec context="test-custom-jdbc" />
     <webtest-exec context="test-container-jdbc" />
     <webtest-exec context="test-custom-absolute" />  
-    
+  	
+    <!-- Shut down the embedded Jetty server by sending the shutdown command -->
+    <echo message="Shutting down Jetty (if it is up)."/>
+    <get src="http://localhost:${webtests.port}/GO_AWAY/" dest="${webtests.temp}/shutdown.log" ignoreerrors="true" verbose="true" />
+
     <echo>The web unit tests have finished. You can find the test reports in ${webtests.reports}.
     
 If all of the tests ran successfully, the reports will all be "green."</echo>
@@ -1075,8 +1079,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <sequential>
       <!-- If already running, shut down the embedded Jetty server by sending the shutdown command -->
       <echo message="Shutting down Jetty (if it is up)."/>
-      <get src="http://localhost:${webtests.port}/GO_AWAY/" dest="${webtests.temp}/shutdown.log"
-        ignoreerrors="true" verbose="true" />
+      <get src="http://localhost:${webtests.port}/GO_AWAY/" dest="${webtests.temp}/shutdown.log" ignoreerrors="true" verbose="true" />
       <sleep seconds="3"/>
 
       <!-- Start Jetty with our test context -->

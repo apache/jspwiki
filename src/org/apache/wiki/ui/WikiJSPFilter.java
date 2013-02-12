@@ -126,7 +126,18 @@ public class WikiJSPFilter extends WikiServletFilter
                 // response.setContentLength(r.length());
                 // response.setContentType(encoding);
                 
-                response.getWriter().write(r);
+                if (m_useOutputStream) 
+                {
+                    OutputStreamWriter out = new OutputStreamWriter(response.getOutputStream(), 
+                                                                    response.getCharacterEncoding());
+                    out.write(r);
+                    out.flush();
+                    out.close();
+                }
+                else 
+                {
+                    response.getWriter().write(r);
+                }
             
                 // Clean up the UI messages and loggers
                 if( wikiContext != null )
@@ -248,6 +259,8 @@ public class WikiJSPFilter extends WikiServletFilter
         extends HttpServletResponseWrapper
     {
         private CharArrayWriter m_output;
+        private MyServletOutputStream m_servletOut;
+        private PrintWriter m_writer;
       
         /** 
          *  How large the initial buffer should be.  This should be tuned to achieve
@@ -259,6 +272,8 @@ public class WikiJSPFilter extends WikiServletFilter
         {
             super(r);
             m_output = new CharArrayWriter( INIT_BUFFER_SIZE );
+            m_servletOut = new MyServletOutputStream(m_output);
+            m_writer = new PrintWriter(m_servletOut, true);
         }
 
         /**
@@ -267,15 +282,21 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         public PrintWriter getWriter()
         {
-            return new PrintWriter( m_output );
+            return m_writer;
         }
 
         public ServletOutputStream getOutputStream()
         {
-            return new MyServletOutputStream( m_output );
+            return m_servletOut;
+        }
+        
+        public void flushBuffer() throws IOException
+        {
+            m_writer.flush();
+            super.flushBuffer();
         }
 
-        static class MyServletOutputStream extends ServletOutputStream
+        class MyServletOutputStream extends ServletOutputStream
         {
             CharArrayWriter m_buffer;
 
@@ -285,11 +306,11 @@ public class WikiJSPFilter extends WikiServletFilter
                 m_buffer = aCharArrayWriter;
             }
 
-            public void write(int aInt)
+            @Override
+            public void write(int aInt) throws IOException
             {
                 m_buffer.write( aInt );
             }
-
         }
         
         /**
@@ -297,6 +318,16 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         public String toString()
         {
+            try
+            {
+                flushBuffer();
+            }
+            catch( IOException e )
+            {
+                log.error( MyServletResponseWrapper.class + " toString() flushBuffer() Failed", e );
+                return null;
+            }
+            
             return m_output.toString();
         }
     }
@@ -308,8 +339,11 @@ public class WikiJSPFilter extends WikiServletFilter
     private static class ByteArrayResponseWrapper
         extends HttpServletResponseWrapper
     {
-        private ByteArrayOutputStream m_output;
         private HttpServletResponse m_response;
+        
+        private ByteArrayOutputStream m_output;
+        private MyServletOutputStream m_servletOut;
+        private PrintWriter m_writer;
       
         /** 
          *  How large the initial buffer should be.  This should be tuned to achieve
@@ -321,6 +355,8 @@ public class WikiJSPFilter extends WikiServletFilter
         {
             super(r);
             m_output = new ByteArrayOutputStream( INIT_BUFFER_SIZE );
+            m_servletOut = new MyServletOutputStream(m_output);
+            m_writer = new PrintWriter(m_servletOut, true);
             m_response = r;
         }
         
@@ -330,25 +366,32 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         public PrintWriter getWriter()
         {
-            return new PrintWriter( getOutputStream(), true );
+            return m_writer;
         }
 
         public ServletOutputStream getOutputStream()
         {
-            return new MyServletOutputStream( m_output );
+            return m_servletOut;
+        }
+        
+        public void flushBuffer() throws IOException
+        {
+            m_writer.flush();
+            super.flushBuffer();
         }
 
-        static class MyServletOutputStream extends ServletOutputStream
+        class MyServletOutputStream extends ServletOutputStream
         {
-            private DataOutputStream m_stream;
+            private OutputStream m_stream;
 
             public MyServletOutputStream( OutputStream aOutput )
             {
                 super();
-                m_stream = new DataOutputStream( aOutput );
+                m_stream = aOutput;
             }
 
-            public void write( int aInt ) throws IOException
+            @Override
+            public void write(int aInt) throws IOException
             {
                 m_stream.write( aInt );
             }
@@ -361,11 +404,17 @@ public class WikiJSPFilter extends WikiServletFilter
         {
             try
             {
+                flushBuffer();
                 return m_output.toString( m_response.getCharacterEncoding() );
             }
             catch( UnsupportedEncodingException e )
             {
                 log.error( ByteArrayResponseWrapper.class + " Unsupported Encoding", e );
+                return null;
+            }
+            catch( IOException e )
+            {
+                log.error( ByteArrayResponseWrapper.class + " toString() Flush Failed", e );
                 return null;
             }
         }
