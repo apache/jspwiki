@@ -108,7 +108,7 @@ public class UserManagerTest extends TestCase
       String newLogin     = "RenamedLogin" + now;
       String newName      = "Renamed User " + now;
       UserProfile profile = m_db.newProfile();
-      profile.setEmail( "testuser@testville.com" );
+      profile.setEmail( "testuser@example.com" );
       profile.setLoginName( oldLogin );
       profile.setFullname ( oldName );
       profile.setPassword ( "password" );
@@ -150,7 +150,7 @@ public class UserManagerTest extends TestCase
       
       // Setup Step 4: change the user name in the profile and see what happens
       profile = m_db.newProfile();
-      profile.setEmail    ( "testuser@testville.com" );
+      profile.setEmail    ( "testuser@example.com" );
       profile.setLoginName( oldLogin );
       profile.setFullname ( newName );
       profile.setPassword ( "password" );
@@ -209,7 +209,7 @@ public class UserManagerTest extends TestCase
       
       // Setup Step 8: re-save the profile with the new login name
       profile = m_db.newProfile();
-      profile.setEmail    ( "testuser@testville.com" );
+      profile.setEmail    ( "testuser@example.com" );
       profile.setLoginName( newLogin );
       profile.setFullname ( oldName );
       profile.setPassword ( "password" );
@@ -266,7 +266,7 @@ public class UserManagerTest extends TestCase
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
       UserProfile profile = m_db.newProfile();
-      profile.setEmail( "testuser@testville.com" );
+      profile.setEmail( "testuser@example.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
@@ -293,7 +293,7 @@ public class UserManagerTest extends TestCase
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
       UserProfile profile = m_db.newProfile();
-      profile.setEmail( "testuser@testville.com" );
+      profile.setEmail( "testuser@example.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
@@ -347,7 +347,7 @@ public class UserManagerTest extends TestCase
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
       UserProfile profile = m_db.newProfile();
-      profile.setEmail( "testuser@testville.com" );
+      profile.setEmail( "testuser@example.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
@@ -395,7 +395,7 @@ public class UserManagerTest extends TestCase
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
       UserProfile profile = m_db.newProfile();
-      profile.setEmail( "testuser@testville.com" );
+      profile.setEmail( "testuser@example.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");

@@ -1,3 +1,9 @@
+2013-02-14  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-26
+
+       * changed test email addresses testville.com to example.com (reported by Tony Stevenson from infra)
+
 2013-02-12  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-25

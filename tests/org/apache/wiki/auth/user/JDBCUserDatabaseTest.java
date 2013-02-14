@@ -148,7 +148,7 @@ public class JDBCUserDatabaseTest extends TestCase
         // Create a new user with random name
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
-        profile.setEmail("testuser@testville.com");
+        profile.setEmail("testuser@example.com");
         profile.setLoginName( loginName );
         profile.setFullname( "FullName"+loginName );
         profile.setPassword("password");
