@@ -65,7 +65,7 @@ public class XMLUserDatabaseTest extends TestCase
       // Create a new user with random name
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
       UserProfile profile = m_db.newProfile();
-      profile.setEmail("testuser@example.com");
+      profile.setEmail("jspwiki.tests@mailinator.com");
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword("password");
@@ -288,7 +288,7 @@ public class XMLUserDatabaseTest extends TestCase
 
       // Create new user & verify it saved ok
       UserProfile profile = m_db.newProfile();
-      profile.setEmail( "renamed@example.com" );
+      profile.setEmail( "renamed@mailinator.com" );
       profile.setFullname( "Renamed User" );
       profile.setLoginName( "olduser" );
       profile.setPassword( "password" );
@@ -323,7 +323,7 @@ public class XMLUserDatabaseTest extends TestCase
 
       // The new profile should be found, and its properties should match the old ones
       profile = m_db.findByLoginName( "renameduser" );
-      assertEquals( "renamed@example.com", profile.getEmail() );
+      assertEquals( "renamed@mailinator.com", profile.getEmail() );
       assertEquals( "Renamed User", profile.getFullname() );
       assertEquals( "renameduser", profile.getLoginName() );
       assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
@@ -337,12 +337,12 @@ public class XMLUserDatabaseTest extends TestCase
       try
       {
           UserProfile profile = m_db.newProfile();
-          profile.setEmail("user@example.com");
+          profile.setEmail("jspwiki.tests@mailinator.com");
           profile.setLoginName("user");
           profile.setPassword("password");
           m_db.save(profile);
-          profile = m_db.findByEmail("user@example.com");
-          assertEquals("user@example.com", profile.getEmail());
+          profile = m_db.findByEmail("jspwiki.tests@mailinator.com");
+          assertEquals("jspwiki.tests@mailinator.com", profile.getEmail());
           assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
           
           // Make sure we can find it by uid

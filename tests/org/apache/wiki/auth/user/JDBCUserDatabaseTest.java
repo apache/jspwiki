@@ -73,7 +73,7 @@ public class JDBCUserDatabaseTest extends TestCase
         JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
         JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
         JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
-        "'-8629747547991531672'," + "'user@example.com'," + "'user'," +
+        "'-8629747547991531672'," + "'jspwiki.tests@mailinator.com'," + "'user'," +
         "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +
         "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
 
@@ -148,7 +148,7 @@ public class JDBCUserDatabaseTest extends TestCase
         // Create a new user with random name
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
-        profile.setEmail("testuser@example.com");
+        profile.setEmail("jspwiki.tests@mailinator.com");
         profile.setLoginName( loginName );
         profile.setFullname( "FullName"+loginName );
         profile.setPassword("password");
@@ -368,7 +368,7 @@ public class JDBCUserDatabaseTest extends TestCase
 
         // Create new user & verify it saved ok
         UserProfile profile = m_db.newProfile();
-        profile.setEmail( "renamed@example.com" );
+        profile.setEmail( "renamed@mailinator.com" );
         profile.setFullname( "Renamed User" );
         profile.setLoginName( "olduser" );
         profile.setPassword( "password" );
@@ -403,7 +403,7 @@ public class JDBCUserDatabaseTest extends TestCase
 
         // The new profile should be found, and its properties should match the old ones
         profile = m_db.findByLoginName( "renameduser" );
-        assertEquals( "renamed@example.com", profile.getEmail() );
+        assertEquals( "renamed@mailinator.com", profile.getEmail() );
         assertEquals( "Renamed User", profile.getFullname() );
         assertEquals( "renameduser", profile.getLoginName() );
         assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
@@ -418,13 +418,13 @@ public class JDBCUserDatabaseTest extends TestCase
         {
             // Overwrite existing user
             UserProfile profile = m_db.newProfile();
-            profile.setEmail( "user@example.com" );
+            profile.setEmail( "jspwiki.tests@mailinator.com" );
             profile.setFullname( "Test User" );
             profile.setLoginName( "user" );
             profile.setPassword( "password" );
             m_db.save( profile );
-            profile = m_db.findByEmail( "user@example.com" );
-            assertEquals( "user@example.com", profile.getEmail() );
+            profile = m_db.findByEmail( "jspwiki.tests@mailinator.com" );
+            assertEquals( "jspwiki.tests@mailinator.com", profile.getEmail() );
             assertEquals( "Test User", profile.getFullname() );
             assertEquals( "user", profile.getLoginName() );
             assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
@@ -435,13 +435,13 @@ public class JDBCUserDatabaseTest extends TestCase
 
             // Create new user
             profile = m_db.newProfile();
-            profile.setEmail( "user2@example.com" );
+            profile.setEmail( "jspwiki.tests2@mailinator.com" );
             profile.setFullname( "Test User 2" );
             profile.setLoginName( "user2" );
             profile.setPassword( "password" );
             m_db.save( profile );
-            profile = m_db.findByEmail( "user2@example.com" );
-            assertEquals( "user2@example.com", profile.getEmail() );
+            profile = m_db.findByEmail( "jspwiki.tests2@mailinator.com" );
+            assertEquals( "jspwiki.tests2@mailinator.com", profile.getEmail() );
             assertEquals( "Test User 2", profile.getFullname() );
             assertEquals( "user2", profile.getLoginName() );
             assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
