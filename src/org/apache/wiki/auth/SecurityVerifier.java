@@ -864,7 +864,7 @@ public final class SecurityVerifier
         try
         {
             UserProfile profile = db.newProfile();
-            profile.setEmail( "testjspwiki.tests@mailinator.com" );
+            profile.setEmail( "jspwiki.tests@mailinator.com" );
             profile.setLoginName( loginName );
             profile.setFullname( "FullName"+loginName );
             profile.setPassword( "password" );
