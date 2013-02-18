@@ -352,8 +352,8 @@
            debug="${debug}"
            optimize="${optimize}"
            deprecation="${deprecation}"
-           source="1.5"
-           target="1.5"
+           source="1.6"
+           target="1.6"
     	   includeantruntime="false"
            >
       <classpath refid="path.base" />
@@ -369,8 +369,8 @@
            destdir="${tests.build}"
            debug="true"
            deprecation="${deprecation}"
-           source="1.5"
-           target="1.5"
+           source="1.6"
+           target="1.6"
      	   includeantruntime="false"
            >
       <classpath refid="path.base" />
@@ -392,7 +392,7 @@
       <packageset dir="${code.src}">
         <include name="org/apache/wiki/**" />
       </packageset>
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
       <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
@@ -1634,8 +1634,8 @@ To automate the JAR signing processs, you can add the property
     <property name="sonar.dynamicAnalysis" value="reuseReports" />
     
     <!-- Used by PMD only -->
-    <property name="sonar.java.source" value="1.5" />
-    <property name="sonar.java.target" value="1.5" />
+    <property name="sonar.java.source" value="1.6" />
+    <property name="sonar.java.target" value="1.6" />
     
     <!-- other interesting properties that can be overriden -->
     <!-- <property name="sonar.jdbc.driverClassName" value="org.apache.derby.jdbc.ClientDriver" /> -->
