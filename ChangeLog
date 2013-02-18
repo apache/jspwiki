@@ -1,3 +1,11 @@
+2013-02-19  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-svn-28
+       
+       * JSPWIKI-762: Drop TranslatorReader
+       
+       * JSPWIKI-763: Requirement of at least Java 6 to build 
+       
 2013-02-15  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-27
