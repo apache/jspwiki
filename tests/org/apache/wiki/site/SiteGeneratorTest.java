@@ -123,10 +123,10 @@ public class SiteGeneratorTest extends TestCase
         String i18nFile = StringUtils.replace( file, ".properties", "_" + i18n + ".properties" );
         Map< String, Integer > diff = TranslationsCheck.diff( file, i18nFile );
         int dup = TranslationsCheck.detectDuplicates( i18nFile );
-        sb.append( "** " ).append( i18nFile ).append( "\n" )
-          .append( "*** Missing: " ).append( diff.get( "missing" ) ).append( "\n" )
-          .append( "*** Outdated: " ).append( diff.get( "outdated" ) ).append( "\n" )
-          .append( "*** Duplicated: " ).append( dup ).append( "\n" );
+        sb.append( "  * " ).append( i18nFile ).append( "\n" )
+          .append( "      * Missing: " ).append( diff.get( "missing" ) ).append( "\n" )
+          .append( "      * Outdated: " ).append( diff.get( "outdated" ) ).append( "\n" )
+          .append( "      * Duplicated: " ).append( dup ).append( "\n" );
         TranslationsCheck.clearDuplicates();
     }
     
@@ -169,7 +169,7 @@ public class SiteGeneratorTest extends TestCase
     {
         if( lineBeginsWithDate( line ) ) 
         {
-            sb.append( "##### " ).append( line ).append( "\n" );
+            sb.append( "#### " ).append( line ).append( "\n" );
         }
         else 
         {
