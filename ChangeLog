@@ -223,7 +223,7 @@
          
        * Plugin API moved to its own sub-package, org.apache.wiki.api.plugin
          
-       * explicit access to API interfaces to get rid of "<Object> cannot dereference error with 
+       * explicit access to API interfaces to get rid of "cannot dereference error with 
          generics" errors at builds.a.o (cfr. http://stackoverflow.com/q/4144623)
        
 2012-12-26  Harry Metske <metskem@apache.org>
