@@ -98,7 +98,7 @@ public class SiteGeneratorTest extends TestCase
      */
     void generateI18nStatusForGivenLocale( StringBuilder sb, String i18n )
     {
-        sb.append( "\n* *" ).append( i18n ).append( " locale*\n" );
+        sb.append( "\n### **" ).append( i18n ).append( " locale**\n" );
         try
         {
             generateI18nStatusFromFile( sb, i18n, I18N_CORE );
@@ -126,7 +126,7 @@ public class SiteGeneratorTest extends TestCase
         sb.append( "    * " ).append( i18nFile ).append( "\n" )
           .append( "        * Missing: " ).append( diff.get( "missing" ) ).append( "\n" )
           .append( "        * Outdated: " ).append( diff.get( "outdated" ) ).append( "\n" )
-          .append( "        * Duplicated: " ).append( dup ).append( "\n" );
+          .append( "        * Duplicated: " ).append( dup ).append( "\n\n" );
         TranslationsCheck.clearDuplicates();
     }
     
@@ -150,10 +150,7 @@ public class SiteGeneratorTest extends TestCase
             LOG.error( e.getMessage(), e );
         }
         
-        sb.append( "\n<div class=\"external\">\n\n" );
         append( links, sb );
-        sb.append( "\n</div>\n\n" );
-        
         write( file, sb.toString() );
     }
     
