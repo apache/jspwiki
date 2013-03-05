@@ -40,15 +40,15 @@
        
        * Decoupled (for 2.10 scope) Preferences from WikiContext, effectively meaning that the following 
          methods are now deprecated
-          - WikiContext#getBundle( String ) in favour of Preferences#getBundle( WikiContext, String )
-          - WikiContext#getLocale( WikiContext ) in favour of Preferences#getLocale( WikiContext )
-          - WikiContext#hasAccess( HttpServletResponse ) in favour of 
-            AuthorizationManager#hasAccess( HttpServletResponse )
-          - WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of 
-            AuthorizationManager#hasAccess( HttpServletResponse, boolean )
+           - WikiContext#getBundle( String ) in favour of Preferences#getBundle( WikiContext, String )
+           - WikiContext#getLocale( WikiContext ) in favour of Preferences#getLocale( WikiContext )
+           - WikiContext#hasAccess( HttpServletResponse ) in favour of 
+             AuthorizationManager#hasAccess( HttpServletResponse )
+           - WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of 
+             AuthorizationManager#hasAccess( HttpServletResponse, boolean )
              
        * Decoupled (for 2.10 scope) org.apache.wiki.event from org.apache.wiki.workflow, by deprecating
-          - WorkflowEvent#getWorkflow() in favour of WikiEvent#getSrc()
+           - WorkflowEvent#getWorkflow() in favour of WikiEvent#getSrc()
              
        * Added latest pom.xml from JSPWIKI-651 - Convert JSPWiki to a Maven project. Check associated
          JIRA for details
@@ -70,10 +70,10 @@
        * Minor refactor to HsqlDbUtils init checks
        
        * deprecated 
-          - JSPWikiMarkupParser.getImagePatterns( WikiEngine ) in favour of 
-            WikiEngine.getAllInlinedImagePatterns()
-          - UserManager.SaveUserProfileTask( WikiEngine ) in favour of 
-            UserManager.SaveUserProfileTask( WikiEngine, Locale )
+           - JSPWikiMarkupParser.getImagePatterns( WikiEngine ) in favour of 
+             WikiEngine.getAllInlinedImagePatterns()
+           - UserManager.SaveUserProfileTask( WikiEngine ) in favour of 
+             UserManager.SaveUserProfileTask( WikiEngine, Locale )
 
 2013-01-27  Dirk Frederickx (brushed AT apache DOT org)
 
@@ -134,10 +134,10 @@
        * 2.9.1-svn-16
          
        * some additional changes regarding org.apache.wiki.api.engine.PluginManager (cfr. $SVN/trunk/doc/2.10-API.txt):
-         - @Deprecated public void executeParse(PluginContent content, WikiContext context)
-             + consider using PluginContent.executeParse(WikiContext) instead
-         - WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public and part 
-           of the org.apache.wiki.api.engine.PluginManager API
+           - @Deprecated public void executeParse(PluginContent content, WikiContext context)
+               + consider using PluginContent.executeParse(WikiContext) instead
+           - WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public and part 
+             of the org.apache.wiki.api.engine.PluginManager API
 
 2013-01-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
@@ -208,11 +208,11 @@
        * repaired broken webtests, we now have one (documented) failing webtest (RenameProfile
          for container managed auth).
          Required fixes:
-         - TestContainer now binds the jdbc/UserDatabase jdbc/GroupDatabase in Jetty's namespace
-         - Logout webtest checks for the specific JSPWikiAssertedName cookie
-         - build.xml was missing a lot of tasks and macros, required to properly startup hsqldb (don't know how/why)
-         - JDBCGroupDatabase : NamingExceptions do not have a cause, we now log the exception itself
-         - removed the semicolon from the License in .ddl files (they cause syntax errors)
+           - TestContainer now binds the jdbc/UserDatabase jdbc/GroupDatabase in Jetty's namespace
+           - Logout webtest checks for the specific JSPWikiAssertedName cookie
+           - build.xml was missing a lot of tasks and macros, required to properly startup hsqldb (don't know how/why)
+           - JDBCGroupDatabase : NamingExceptions do not have a cause, we now log the exception itself
+           - removed the semicolon from the License in .ddl files (they cause syntax errors)
         
 2012-12-26  Juan Pablo Santos (juanpablo AT apache DOT org)
 
