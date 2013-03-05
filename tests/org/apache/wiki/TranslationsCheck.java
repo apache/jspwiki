@@ -108,8 +108,9 @@ public class TranslationsCheck
         		"Moving them to a special section in the file may be the better solution.");
     }
 
-    public static void diff(String source1, String source2) throws FileNotFoundException, IOException
+    public static Map< String, Integer > diff(String source1, String source2) throws FileNotFoundException, IOException
     {
+        int missing = 0, outdated = 0;
         // Standard Properties
         Properties p1 = new Properties();
         p1.load(new FileInputStream(new File(base + source1)));
@@ -126,14 +127,15 @@ public class TranslationsCheck
 
         System.out.println("Missing:");
         System.out.println("--------");
-        Iterator iter = sortedNames(p1).iterator();
+        Iterator< String > iter = sortedNames(p1).iterator();
         while (iter.hasNext())
         {
-            String name = (String) iter.next();
+            String name = iter.next();
             String value = p1.getProperty(name);
 
             if (p2.get(name) == null)
             {
+                missing++;
                 System.out.println(name + " = " + value);
             }
         }
@@ -144,18 +146,23 @@ public class TranslationsCheck
         iter = sortedNames(p2).iterator();
         while (iter.hasNext())
         {
-            String name = (String) iter.next();
+            String name = iter.next();
             String value = p2.getProperty(name);
 
             if (p1.get(name) == null)
             {
+                outdated++;
                 System.out.println(name + " = " + value);
             }
         }
         System.out.println();
+        Map< String, Integer > diff = new HashMap< String, Integer >( 2 );
+        diff.put( "missing", missing );
+        diff.put( "outdated", outdated );
+        return diff;
     }
 
-    private static List sortedNames(Properties p)
+    private static List<String> sortedNames(Properties p)
     {
         List<String> list = new ArrayList<String>();
         Enumeration iter = p.propertyNames();
@@ -168,7 +175,7 @@ public class TranslationsCheck
         return list;
     }
     
-    private static void detectDuplicates(String source) throws IOException
+    public static int detectDuplicates(String source) throws IOException
     {
         Properties p = new Properties();
         p.load(new FileInputStream(new File(base + source)));
@@ -181,6 +188,16 @@ public class TranslationsCheck
             if (!allProps.add(currentStr))
                 duplProps.add(currentStr);
         }
+        return duplProps.size();
+    }
+    
+    /**
+     * Allows reuse from {@link org.apache.wiki.site.SiteGeneratorTest}
+     */
+    public static void clearDuplicates() 
+    {
+        allProps.clear();
+        duplProps.clear();
     }
     
 }
