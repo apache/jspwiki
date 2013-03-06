@@ -140,7 +140,9 @@ public class SiteGeneratorTest extends TestCase
         List< String > links = new ArrayList< String >();
         try 
         {
-            for( String line : FileUtils.readLines( new File( "./ChangeLog") ) ) 
+            @SuppressWarnings({ "unchecked", "cast" })
+            List< String > lines = ( List< String > )FileUtils.readLines( new File( "./ChangeLog") );
+            for( String line : lines ) 
             {
                 parseChangeLogLine( line, sb, links );
             }

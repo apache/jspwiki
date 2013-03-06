@@ -5,6 +5,7 @@
 	<classpathentry excluding="build/|etc/|lib/|libs-opt/|reports/" kind="src" output="tests/build" path="tests"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/ecs-1.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
