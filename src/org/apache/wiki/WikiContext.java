@@ -795,7 +795,7 @@ public class WikiContext
      * @param response the http response
      * @return the result of the access check
      * @throws IOException In case something goes wrong
-     * @deprecated will be removed in 2.10 scope. Consider using {@link AuthorizationManager#hasAccess(HttpServletResponse)} 
+     * @deprecated will be removed in 2.10 scope. Consider using {@link AuthorizationManager#hasAccess(WikiContext, HttpServletResponse)} 
      * instead
      */
     @Deprecated
@@ -818,7 +818,7 @@ public class WikiContext
      * @param redirect If true, makes an automatic redirect to the response
      * @throws IOException If something goes wrong
      * @deprecated will be removed in 2.10 scope. Consider using 
-     * {@link AuthorizationManager#hasAccess(HttpServletResponse, boolean)} instead
+     * {@link AuthorizationManager#hasAccess(WikiContext, HttpServletResponse, boolean)} instead
      */
     @Deprecated
     public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException

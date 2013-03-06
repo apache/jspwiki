@@ -722,7 +722,7 @@ public final class UserManager
          * Constructs a new Task for saving a user profile.
          * @param engine the wiki engine
          * @deprecated will be removed in 2.10 scope. Consider using 
-         * {@link UserManager#SaveUserProfileTask(WikiEngine, Locale)} instead
+         * {@link UserManager.SaveUserProfileTask#UserManager.SaveUserProfileTask(WikiEngine, Locale)} instead
          */
         @Deprecated
         public SaveUserProfileTask( WikiEngine engine )
