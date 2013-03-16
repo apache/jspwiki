@@ -421,8 +421,8 @@ public class RCSFileProvider
         }
         catch( Exception e )
         {
-            log.error("RCS checkin failed",e);
-            ProviderException pe = new ProviderException("RCS checkin failed");
+            log.error("RCS checkin failed (Is RCS installed on computer?)",e);
+            ProviderException pe = new ProviderException("RCS checkin failed (Is RCS installed on computer?)");
             pe.initCause(e);
             throw pe;
         }
