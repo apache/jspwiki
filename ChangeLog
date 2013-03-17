@@ -1,3 +1,9 @@
+2013-03-17  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-30
+
+       * fixed JSPWIKI-765): lucene search returns 3 results at max, discovered by Dave Koelmeyer
+
 2013-03-6 Glen Mazza (glenmazza AT apache DOT org)
 
       * Upgraded Maven's tomcat plugin to latest version 2.1

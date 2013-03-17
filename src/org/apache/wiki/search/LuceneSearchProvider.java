@@ -33,10 +33,7 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
@@ -92,6 +89,9 @@ public class LuceneSearchProvider implements SearchProvider
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
 
+    /** The maximum number of hits to return from searches. */
+    public static final int MAX_SEARCH_HITS = 99999;
+    
     private static String c_punctuationSpaces = StringUtils.repeat(" ", MarkupParser.PUNCTUATION_CHARS_ALLOWED.length() );
 
     /**
@@ -617,7 +617,7 @@ public class LuceneSearchProvider implements SearchProvider
                 return null;
             }
 
-            ScoreDoc[] hits = searcher.search(luceneQuery, MAX_FRAGMENTS).scoreDocs;
+            ScoreDoc[] hits = searcher.search(luceneQuery, MAX_SEARCH_HITS).scoreDocs;
 
             list = new ArrayList<SearchResult>(hits.length);
             for ( int curr = 0; curr < hits.length; curr++ )
