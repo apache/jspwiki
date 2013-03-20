@@ -1,3 +1,10 @@
+2013-03-20  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-svn-31
+
+       * fixed JSPWIKI-766): quick search not working anymore
+       * "unfixed"  JSPWIKI-659 : NotSerializableException on Tomcat restart , UserManager not Serializable
+
 2013-03-17  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-30

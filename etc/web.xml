@@ -142,10 +142,6 @@
    <servlet>
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
        <servlet-class>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-class>
-       <init-param>
-           <param-name>auto-session-bridge</param-name>
-           <param-value>0</param-value>
-       </init-param>
    </servlet>
 
    <!-- Atom Publishing Protocol -->
