@@ -1,3 +1,7 @@
+2013-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * JSPWIKI-651: added m2e configuration to pom.xml
+       
 2013-03-20  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-31
