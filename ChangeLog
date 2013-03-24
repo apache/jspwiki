@@ -1,3 +1,9 @@
+2013-03-24 Glen Mazza (glenmazza AT apache DOT org)
+
+      * Removed empty src/applets folder
+
+      * More work on Maven WAR plugin configuration
+
 2013-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * JSPWIKI-651: added m2e configuration to pom.xml

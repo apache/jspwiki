@@ -205,7 +205,9 @@
 
 
     <build>
-        <finalName>JSPWiki</finalName>
+        <!-- below name temporary to distinguish from Ant JSPWiki -->
+        <finalName>MavenJSPWiki</finalName>
+        <!--finalName>JSPWiki</finalName-->
         <sourceDirectory>${basedir}/src</sourceDirectory>
         <testSourceDirectory>${basedir}/tests</testSourceDirectory>
         <resources>
@@ -353,6 +355,32 @@
                 <version>2.3</version>
                 <configuration>
                     <webXml>etc/web.xml</webXml>
+                    <webResources>
+                        <!--resource>
+                            <directory>etc</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                <include name="dtd/**" />
+                                <include name="commons-logging.properties" />
+                                <include name="jspwiki.policy" />
+                                <include name="jspwiki.properties" />
+                                <include name="*.tld" />
+                                <include name="userdatabase.xml" />
+                                <include name="groupdatabase.xml" />
+                                <include>geronimo-web.xml</include>
+                            </includes>
+                        </resource-->
+                        <resource>
+                            <directory>src/webdocs</directory>
+                            <includes>
+                                <include>admin/**</include>
+                                <include>error/**</include>
+                                <include>images/**</include>
+                                <include>*.jsp</include>
+                                <include>*.css</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                     <!--webResources>
                         <resource>
                             <directory>etc</directory>
