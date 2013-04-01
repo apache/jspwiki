@@ -1,3 +1,10 @@
+2013-04-01 Glen Mazza (glenmazza AT apache DOT org)
+
+      * Added YUICompressor Maven plugin into pom.xml to do the same compression
+        done by the Ant build script to CSS and JS files in webdocs/scripts and /templates
+
+      * Updated Maven WAR plugin to bring in the webdocs/scripts and /templates files.
+
 2013-03-24 Glen Mazza (glenmazza AT apache DOT org)
 
       * Removed empty src/applets folder

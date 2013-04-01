@@ -195,12 +195,6 @@
             <version>1.1-beta-6</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.yahoo.platform.yui</groupId>
-            <artifactId>yuicompressor</artifactId>
-            <version>2.4.7</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 
@@ -258,66 +252,66 @@
                     <url>http://localhost:8080/manager/text</url>
                     <path>/${project.build.finalName}</path>
                 </configuration>
-           </plugin>
-           <plugin>
-               <artifactId>maven-antrun-plugin</artifactId>
-               <version>1.7</version>
-               <executions>
-                   <execution>
-                       <phase>generate-resources</phase>
-                       <configuration>
-                           <target>
-                               <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
-                               <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
-                               <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
-                               <copy file="tests/etc/jspwiki.properties.tmpl" tofile="target/test-classes/jspwiki.properties" />
-                               <copy file="tests/etc/jspwiki_rcs.properties.tmpl" tofile="target/test-classes/jspwiki_rcs.properties" />
-                               <copy file="tests/etc/jspwiki_vers.properties.tmpl" tofile="target/test-classes/jspwiki_vers.properties" />
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
+                                <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
+                                <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
+                                <copy file="tests/etc/jspwiki.properties.tmpl" tofile="target/test-classes/jspwiki.properties" />
+                                <copy file="tests/etc/jspwiki_rcs.properties.tmpl" tofile="target/test-classes/jspwiki_rcs.properties" />
+                                <copy file="tests/etc/jspwiki_vers.properties.tmpl" tofile="target/test-classes/jspwiki_vers.properties" />
 
-                               <!-- Filter the properties files -->
-                               <replace file="etc/jspwiki.properties"
-                                        replacefilterfile="build.properties" />
-                               <replace file="target/test-classes/jspwiki.properties"
-                                        replacefilterfile="build.properties" />
-                               <replace file="target/test-classes/jspwiki_rcs.properties"
-                                        replacefilterfile="build.properties" />
-                               <replace file="target/test-classes/jspwiki_vers.properties"
-                                        replacefilterfile="build.properties" />
+                                <!-- Filter the properties files -->
+                                <replace file="etc/jspwiki.properties"
+                                         replacefilterfile="build.properties" />
+                                <replace file="target/test-classes/jspwiki.properties"
+                                         replacefilterfile="build.properties" />
+                                <replace file="target/test-classes/jspwiki_rcs.properties"
+                                         replacefilterfile="build.properties" />
+                                <replace file="target/test-classes/jspwiki_vers.properties"
+                                         replacefilterfile="build.properties" />
 
-                               <!-- Create web.xml files for testing -->
-                               <copy file="${basedir}/etc/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
+                                <!-- Create web.xml files for testing -->
+                                <copy file="${basedir}/etc/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
 
-                               <!-- For web unit tests, turn off SSL (self-signed certs b0rk
-                                    the tests) and enable JDBC refs -->
-                               <replace file="target/test-classes/WEB-INF/web.xml"
-                                       token="CONFIDENTIAL" value="NONE" />
-                               <replace file="target/test-classes/WEB-INF/web.xml"
-                                       token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
-                               <replace file="target/test-classes/WEB-INF/web.xml"
-                                       token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
+                                <!-- For web unit tests, turn off SSL (self-signed certs b0rk
+                                     the tests) and enable JDBC refs -->
+                                <replace file="target/test-classes/WEB-INF/web.xml"
+                                        token="CONFIDENTIAL" value="NONE" />
+                                <replace file="target/test-classes/WEB-INF/web.xml"
+                                        token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
+                                <replace file="target/test-classes/WEB-INF/web.xml"
+                                        token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
 
-                               <!-- For unit testing, turn on container auth -->
-                               <replace file="target/test-classes/WEB-INF/web.xml"
-                                       token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-                               <replace file="target/test-classes/WEB-INF/web.xml"
-                                       token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+                                <!-- For unit testing, turn on container auth -->
+                                <replace file="target/test-classes/WEB-INF/web.xml"
+                                        token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+                                <replace file="target/test-classes/WEB-INF/web.xml"
+                                        token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
 
-                               <!-- Copy the DTDs to the test WEB-INF -->
-                               <mkdir dir="target/test-classes/WEB-INF/dtd" />
-                               <copy toDir="target/test-classes/WEB-INF/dtd">
-                                  <fileset dir="${basedir}/etc/dtd/" />
-                               </copy>
-
-                               <!-- Copy the database configuration information -->
-                               <mkdir dir="tests/etc/db/hsql" />
-                               <copy file="tests/etc/jdbc.properties.tmpl" tofile="tests/etc/db/jdbc.properties" />
+                                <!-- Copy the DTDs to the test WEB-INF -->
+                                <mkdir dir="target/test-classes/WEB-INF/dtd" />
+                                <copy toDir="target/test-classes/WEB-INF/dtd">
+                                    <fileset dir="${basedir}/etc/dtd/" />
+                                </copy>
+ 
+                                <!-- Copy the database configuration information -->
+                                <mkdir dir="tests/etc/db/hsql" />
+                                <copy file="tests/etc/jdbc.properties.tmpl" tofile="tests/etc/db/jdbc.properties" />
                                 <!-- Bulk-copy the table setup/teardown scripts -->
                                 <copy toDir="tests/etc/db/hsql" overwrite="true">
-                                  <fileset dir="etc/db/hsql" />
-                                  <filterset>
-                                    <filtersfile file="target/test-classes/jspwiki.properties" />
-                                    <filtersfile file="build.properties" />
-                                  </filterset>
+                                    <fileset dir="etc/db/hsql" />
+                                    <filterset>
+                                        <filtersfile file="target/test-classes/jspwiki.properties" />
+                                        <filtersfile file="build.properties" />
+                                    </filterset>
                                 </copy>
                            </target>
                        </configuration>
@@ -326,7 +320,7 @@
                        </goals>
                    </execution>
                </executions>
-           </plugin>
+            </plugin>
             <!-- Surefire plugin (running unit tests):
                  http://maven.apache.org/surefire/maven-surefire-plugin/
                  
@@ -349,6 +343,65 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <!-- Compress certain CSS and JS files using the YUICompressor 
+                 TODO: See if all JS files can be compressed to simplify
+                 configuration (currently just using hardcoded subset in
+                 Ant file.) 
+            -->
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <executions>
+                    <execution>
+                        <id>compressJSfiles</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <nosuffix>true</nosuffix>
+                            <warSourceDirectory>${basedir}/src/webdocs</warSourceDirectory>
+                            <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
+                            <!-- Lots of warnings (300+) as YUICompressor is unhappy with our JS files -->
+                            <!--jswarn>false</jswarn-->
+                            <includes>
+                                <include>scripts/jspwiki-common.js</include>
+                                <include>scripts/jspwiki-edit.js</include>
+                                <include>scripts/jspwiki-prefs.js</include>
+                                <include>scripts/jspwiki-commonstyles.js</include>
+                                <include>scripts/prettify.js</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Separate execution for CSS files due to its different line-break setting 
+                             (https://github.com/yui/yuicompressor/blob/master/README.md) as configured
+                             in Ant.
+                             TODO: See if can compress all CSS files (using Ant subset)
+                             TODO: See if can have same line-break setting for JS and CSS to simplify
+                                   configuration
+                        -->
+                        <id>compressCSSfiles</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <nosuffix>true</nosuffix>
+                            <warSourceDirectory>${basedir}/src/webdocs</warSourceDirectory>
+                            <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
+                            <linebreakpos>0</linebreakpos>
+                            <includes>
+                                <include>templates/default/jspwiki.css</include>
+                                <include>templates/default/jspwiki_print.css</include>
+                                <include>templates/default/skins/OrderedList/skin.css</include>
+                                <include>templates/default/skins/PlainVanilla/skin.css</include>
+                                <include>templates/default/skins/PlainVanilla 1024x768/skin.css</include>
+                                <include>templates/default/skins/Smart/skin.css</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions> 
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
@@ -376,28 +429,32 @@
                                 <include>admin/**</include>
                                 <include>error/**</include>
                                 <include>images/**</include>
+                                <include>scripts/**</include>
+                                <include>templates/**</include>
                                 <include>*.jsp</include>
                                 <include>*.css</include>
                             </includes>
+                            <!-- Below excluded because YUICompressor's version of
+                                 the files will be used. -->
+                            <excludes>
+                                <exclude>scripts/jspwiki-common.js</exclude>
+                                <exclude>scripts/jspwiki-edit.js</exclude>
+                                <exclude>scripts/jspwiki-prefs.js</exclude>
+                                <exclude>scripts/jspwiki-commonstyles.js</exclude>
+                                <exclude>scripts/prettify.js</exclude>
+                                <exclude>templates/default/jspwiki.css</exclude>
+                                <exclude>templates/default/jspwiki_print.css</exclude>
+                                <exclude>templates/default/skins/OrderedList/skin.css</exclude>
+                                <exclude>templates/default/skins/PlainVanilla/skin.css</exclude>
+                                <exclude>templates/default/skins/PlainVanilla 1024x768/skin.css</exclude>
+                                <exclude>templates/default/skins/Smart/skin.css</exclude>
+                            </excludes>
+                        </resource>
+                        <!-- Output directory configured above with the YUICompressor Maven plugin -->
+                        <resource>
+                            <directory>${project.build.directory}/generated-sources/yuicompress</directory>
                         </resource>
                     </webResources>
-                    <!--webResources>
-                        <resource>
-                            <directory>etc</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <includes>
-                                <include name="dtd/**" />
-                                <include name="jsp/**" />
-                                <include name="commons-logging.properties" />
-                                <include name="jspwiki.policy" />
-                                <include name="jspwiki.properties" />
-                                <include name="*.tld" />
-                                <include name="userdatabase.xml" />
-                                <include name="groupdatabase.xml" />
-                                <include name="geronimo-web.xml" />
-                            </includes>
-                        </resource>
-                    </webResources-->
                 </configuration>
             </plugin>
         </plugins>
