@@ -237,7 +237,7 @@
                      url="${central.url}/org/freshcookies/freshcookies-security/0.60/freshcookies-security-0.60.jar" />
         <get-element to-file="${libs.main}/standard-1.1.2.jar" url="${central.url}/taglibs/standard/1.1.2/standard-1.1.2.jar" />
         <get-element to-file="${libs.main}/jstl-1.1.2.jar" url="${central.url}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" />
-        <get-element to-file="${libs.main}/jaxen-1.1-beta-6.jar" url="${central.url}/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar" />
+        <get-element to-file="${libs.main}/jaxen-1.1-beta-6.jar" url="${central.url}/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar"/>
         <get-element to-file="${libs.main}/jdom-1.0.jar" url="${central.url}/jdom/jdom/1.0/jdom-1.0.jar" />
         <get-element to-file="${libs.main}/jrcs-diff-0.4.2.jar" 
                      url="${central.url}/org/jvnet/hudson/org.suigeneris.jrcs.diff/0.4.2/org.suigeneris.jrcs.diff-0.4.2.jar" />
@@ -523,7 +523,7 @@
          webxml="etc/web.xml">
        <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
        <lib file="${jarfile}" />
-       <lib file="${libs.tests}/stripes*.jar" />
+       <!--lib file="${libs.tests}/stripes*.jar"/-->
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc">
          <include name="dtd/**" />

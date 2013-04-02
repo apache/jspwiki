@@ -1,3 +1,9 @@
+2013-04-02 Glen Mazza (glenmazza AT apache DOT org)
+
+      * Removed apparently unused stripes library from WAR created by build.xml
+
+      * Updated Maven WAR plugin to bring in WEB-INF artifacts: classes, JARs, etc.
+
 2013-04-01 Glen Mazza (glenmazza AT apache DOT org)
 
       * Added YUICompressor Maven plugin into pom.xml to do the same compression
