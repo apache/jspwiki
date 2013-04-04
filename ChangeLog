@@ -1,3 +1,8 @@
+2013-04-04 Glen Mazza (glenmazza AT apache DOT org)
+
+      * Updated pom.xml by removing Jaxen transitive dependencies and providing
+        comments on how to deploy via tomcat7:run-war and tomcat7:redeploy
+
 2013-04-02 Glen Mazza (glenmazza AT apache DOT org)
 
       * Removed apparently unused stripes library from WAR created by build.xml

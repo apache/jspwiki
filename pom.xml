@@ -159,6 +159,12 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1-beta-6</version>
+            <exclusions>
+               <exclusion>
+                 <groupId>*</groupId>
+                 <artifactId>*</artifactId>
+               </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.stripes</groupId>
@@ -201,7 +207,7 @@
 
     <build>
         <!-- below name temporary to distinguish from Ant JSPWiki -->
-        <finalName>MavenJSPWiki</finalName>
+        <finalName>JSPWiki</finalName>
         <!--finalName>JSPWiki</finalName-->
         <sourceDirectory>${basedir}/src</sourceDirectory>
         <testSourceDirectory>${basedir}/tests</testSourceDirectory>
@@ -244,6 +250,16 @@
                     <target>${jspwiki.jdk.version}</target>
                 </configuration>
             </plugin>
+            <!-- With below plugin can deploy to an embedded Tomcat instance via:
+                 mvn clean install tomcat7:run-war [-Dmaven.test.skip]
+                 ...or standalone by adding a <server/> entry "myTomcat":
+                 http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
+                 and running tomcat7:redeploy instead of run-war in 
+                 string above.
+
+                 Either way, JSPWiki URL will be
+                 http://localhost:8080/JSPWiki
+            -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
