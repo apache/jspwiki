@@ -1,26 +1,26 @@
 2013-04-04 Glen Mazza (glenmazza AT apache DOT org)
 
-      * Updated pom.xml by removing Jaxen transitive dependencies and providing
-        comments on how to deploy via tomcat7:run-war and tomcat7:redeploy
+       * Updated pom.xml by removing Jaxen transitive dependencies and providing
+         comments on how to deploy via tomcat7:run-war and tomcat7:redeploy
 
 2013-04-02 Glen Mazza (glenmazza AT apache DOT org)
 
-      * Removed apparently unused stripes library from WAR created by build.xml
+       * Removed apparently unused stripes library from WAR created by build.xml
 
-      * Updated Maven WAR plugin to bring in WEB-INF artifacts: classes, JARs, etc.
+       * Updated Maven WAR plugin to bring in WEB-INF artifacts: classes, JARs, etc.
 
 2013-04-01 Glen Mazza (glenmazza AT apache DOT org)
 
-      * Added YUICompressor Maven plugin into pom.xml to do the same compression
-        done by the Ant build script to CSS and JS files in webdocs/scripts and /templates
+       * Added YUICompressor Maven plugin into pom.xml to do the same compression
+         done by the Ant build script to CSS and JS files in webdocs/scripts and /templates
 
-      * Updated Maven WAR plugin to bring in the webdocs/scripts and /templates files.
+       * Updated Maven WAR plugin to bring in the webdocs/scripts and /templates files.
 
 2013-03-24 Glen Mazza (glenmazza AT apache DOT org)
 
-      * Removed empty src/applets folder
+       * Removed empty src/applets folder
 
-      * More work on Maven WAR plugin configuration
+       * More work on Maven WAR plugin configuration
 
 2013-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)
 
@@ -39,14 +39,14 @@
 
        * fixed JSPWIKI-765): lucene search returns 3 results at max, discovered by Dave Koelmeyer
 
-2013-03-6 Glen Mazza (glenmazza AT apache DOT org)
+2013-03-06 Glen Mazza (glenmazza AT apache DOT org)
 
-      * Upgraded Maven's tomcat plugin to latest version 2.1
+       * Upgraded Maven's tomcat plugin to latest version 2.1
 
-      * Placed in a more helpful error message in RCSFileProvider.java
-        to let newbies know RCS needs to be installed on their machine
+       * Placed in a more helpful error message in RCSFileProvider.java
+         to let newbies know RCS needs to be installed on their machine
 
-      * Updated location in build.xml and pom.xml for JSTL library.
+       * Updated location in build.xml and pom.xml for JSTL library.
 
 2013-02-19  Juan Pablo Santos (juanpablo AT apache DOT org)
 
