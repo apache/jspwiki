@@ -1,0 +1,47 @@
+Voici un rapide rappel des règles les plus courantes que vous avez votre disposition.
+Vous en trouverez une liste complète dans la page des [règles de formatage|TextFormattingRules].
+{{{
+(ligne vide)      Marque un saut de paragraphe.
+----              Ligne horizontale.
+[lien]            Crée un hyperlien vers "lien", où "lien" peut être soit un lien Wiki
+                  interne, soit un lien externe (http://).
+[texte|lien]      Crée un hyperlien dans lequel le texte de l'hyperlien est différent du
+                  lien de l'hyperlien.
+[lien#titre]      Saute à ce titre sur la page. Le titre doit ici est écrit en CamelCase.
+[texte|wiki:lien] Crée un hyperlien dans lequel le texte de l'hyperlien est différent du
+                  lien de l'hyperlien, et dans lequel l'hyperlien pointe vers un Wiki
+                  nommé. C'est ce qu'on appelle un lien interWiki.
+
+*                 Commence une liste à puces (l'étoile doit être en colonne 1). Utilisez
+                  plus d'étoiles (**, ***) pour des niveaux d'imbrication plus grands.
+#                 Commence une liste à numéros (le dièse doit être en colonne 1). Utilisez
+                  plus de dièses (##, ###) pour des niveaux d'imbrication plus grands.
+
+!, !!, !!!        Commence une ligne de titre. Plus il y a de points d'exclamation, plus
+                  c'est un gros titre (il y a 3 niveaux de titres possibles).
+
+__texte__         Met le texte en gras.
+''texte''         Met le texte en italique (notez qu'il s'agit de doubles apostrophes et
+                  non de guillemets (')).
+{{texte}}         Met le texte en police à taille fixe (de type Courier).
+;terme:déf        Définit le 'terme' avec la 'déf'-inition.
+                  Vous pouvez utiliser ceci avec un terme vide pour écrire un petit
+                  commentaire.
+\\                Saut de ligne forcé (à utiliser avec parcimonie).
+
+
+}}}               N'essayez pas d'utiliser HTML : ça ne marchera pas, tout simplement.
+
+Pour insérer des images, rendez-les accessibles sur le Web dans l'un des formats
+supportés par le wiki, et ils seront inclus automatiquement. Pour voir la liste des
+formats supportés, reportez vous aux [infos système|SystemInfo].
+
+Pour insérer un bloc de code, utilisez des accolades triples ('{') : ouvrantes pour
+démarrer le bloc de code, fermantes pour le terminer.
+
+Si vous voulez utilisez des crochets ({{[[]}}) dans la page sans créer d'hyperlien,
+insérez un double crochet ouvrant. Par exemple, le texte {{[[[Exemple sans lien]}}
+apparaîtra comme {{[[Exemple sans lien]}}.
+
+''(Vous vous demandez d'où vient ce texte ?  Il se trouve dans une page appelée
+[Edit Page Help], que vous pouvez éditer vous aussi !)''

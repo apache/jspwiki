@@ -1,0 +1,38 @@
+Hier sind einige Konfigurationseinstellungen und andere interessante Dinge über dieses Wiki gelistet. All diese Informationen sind auch über [WikiVariablen|JSPWiki:WikiVariables] zugänglich, falls du sie auf einer anderen Seite verwenden willst.
+
+| __Anwendungsname__                     | [{$applicationname}]
+| __Basisadresse__                       | [{$baseurl}]
+| __Version der JSPWiki-Engine__         | [{$jspwikiversion}] 
+| __Zeichenkodierung__                   | [{$encoding}]
+| __Anzahl enthaltener Seiten__          | [{$totalpages}]
+| __Anzahl aktiver Sitzungen__           | [{INSERT SessionsPlugin}]
+| __aktive Wiki-Benutzer__               | [{INSERT SessionsPlugin property=users}]
+| __aktuelle Betriebszeit__              | [{$uptime}]
+| __aktueller Page Provider__            | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __aktueller Attachment Provider__      | [{$jspwiki.attachmentProvider}]
+| __verfügbare InterWiki-Links__         | [{$interwikilinks}]
+| __Eingebettete Bilder sind__           | [{$inlinedimages}]
+| __zusätzlicher Suchpfad für Plugins__  | [{$pluginpath}]
+| __installierte Page Filter__           | [{$pagefilters}]
+
+!Benutzerschnittstelle
+
+| __Ist das Verschönern von Titeln aktiviert?__ | [{$jspwiki.breakTitleWithSpaces}]
+| __Ist die Erkennung der englischen Pluralform für Wikiseiten aktiviert?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Sind CamelCase-Links aktiviert?__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __Ist HTML in Wikiseiten erlaubt?__ | [{$jspwiki.translatorReader.allowHTML}]
+
+!RichSiteSummary (RSS)
+
+| __Werden RSS-Dateien erstellt?__        | [{$jspwiki.rss.generate}]
+| __Falls ja, wie lautet der Dateiname?__ | [{$jspwiki.rss.fileName}]
+| __Wie oft wird die RSS aktualisiert (in Sekunden)?__ |  [{$jspwiki.rss.interval}]
+
+!Benutzerinformationen
+
+| __Benutzername__ | [{$username}]
+| __Login-Status__ | [{$loginstatus}]
+
+!Momentan bearbeitete Seiten
+
+[{ListLocksPlugin}]

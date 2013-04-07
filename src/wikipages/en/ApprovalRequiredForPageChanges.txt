@@ -1,0 +1,3 @@
+Page edits require approval before they become active. Your request has been submitted and will approved or rejected.
+
+You can check on the status of your request by logging in (if you aren't already) and clicking on the "Workflow" link.

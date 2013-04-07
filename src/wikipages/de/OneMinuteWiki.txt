@@ -1,0 +1,21 @@
+!!Hey! Und willkommen im Wiki!
+
+WikiWiki ist hawaiianisch und bedeutet "schnell". Die ursprüngliche Idee des WikiWikiWeb, kurz Wiki, war es, eine kollaborative, schnelle und dauerhafte Plattform zur Verfügung zu stellen. Ein Wiki betont Inhalt, komfortable Bedienung und einfachen Zugang anstatt guten Aussehens.
+
+Wiki ist einfach. Das ist gut! Ein Wiki kann aber auch sehr schnell sehr komplex werden, was ebenfalls gut ist!
+
+Jeder kann darin stöbern. Alles was man braucht ist ein Web-Browser, der ein Minimum an HTML unterstützt. Um Seiten zu suchen, gehe auf die Seite [Suche|Search] oder tippe deine Anfrage einfach nur in die Box in der rechten oberen Ecke.
+
+!Inhalte
+
+Jeder kann dazu beitragen, sogar anonym. Das bedeutet in der Tat, dass jeder auch Beiträge anderer Leute überschreiben und sogar komplette Seiten löschen kann, aber überraschenderweise [funktioniert Wiki|WikiWikiWeb:WhyWikiWorks] in der Praxis wirklich.
+
+Wikis verwenden eine eigene Syntax für die Formatierung der Inhalte. Diese ist deutlich einfacher als HTML und ignoriert praktisch alle Formatierungsangelegenheiten - man gibt einfach Text ein und das Wiki wandelt diesen in HTML um, wenn man ihn speichert. Weitere Informationen hierzu gibt es in den [Formatierungsregeln|TextFormattingRules].
+
+Beim Schreiben kannst (und sollst) du Hyperlinks erzeugen, einfach indem du die Worte in eckige Klammern setzt [[genau so]. Wenn es die verlinkte Seite noch nicht gibt, wird der Name rot und unterstrichen gezeigt, genau so: [DieseSeiteGibtEsNicht] (bitte mach dieses Beispiel nicht kaputt, indem du die Seite erzeugst).
+
+WikiNamen, die Leerzeichen oder Unterstriche enthalten, werden zusammengeschrumpft und groß geschrieben, sodass [[Das ist ein Link] zu [[DasIstEinLink] wird.
+
+!Einige Konzepte und Grundlagen
+
+Im Laufe der Zeit haben sich einige interessante Konzepte entwickelt, die helfen zu verstehen, warum Wiki funktioniert: Dazu gehören der [WikiGärtner|JSPWiki:WikiGardener] und [WikiGnom|JSPWiki:WikiGnome], aber sei bitte kein [WikiTroll|JSPWiki:WikiTroll] :-)

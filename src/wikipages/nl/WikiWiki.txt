@@ -1,0 +1,5 @@
+WikiWiki is Hawaiiaans voor &quot;vlug&quot;.
+~ViteVite is Frans voor &quot;vlugvlug&quot;.
+Wiki heeft ook een backronym - Wat ik weet is
+
+Een complete lijst van andere Wiki engines is beschikbaar op de [originele Wiki|http://c2.com/cgi/wiki?WikiEngines] van Ward Cunningham.

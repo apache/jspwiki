@@ -1,0 +1,5 @@
+Voici les changements effectués sur ces pages durant ces 30 derniers jours. Vérifiez [tous les changements|FullRecentChanges] pour la liste intégrale de toutes les modifications de pages.
+
+Ce serveur tourne sur le fuseau horaire «[{INSERT CurrentTimePlugin format=zzzz}]» et il est [{INSERT CurrentTimePlugin format='HH:mm \', le\' dd-MMM-yyyy'}].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

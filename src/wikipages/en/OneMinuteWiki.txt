@@ -1,0 +1,11 @@
+!Hiya!  And welcome to Wiki!
+
+WikiWiki is Hawaiian and means "quick".  The original idea of WikiWiki was to create a collaborative, fast environment which would still be persistent.
+
+Anyone can contribute, even anonymously.  Yes, you can delete what other people said, and even delete whole pages, but surprisingly, wiki [does work|WikiWikiWeb:WhyWikiWorks].
+
+When editing, you can easily create (and you should create) hyperlinks by just putting the word in square brackets, [[like this].  If the page you are referring to does not exist, the resulting page will show the name underlined, with a following question mark.  Like this: [ThisPageDoesNotExist].  (Please don't foil this example by creating that page...)
+
+WikiNames that contain spaces or underscores are crushed together and capitalized, so that [[This is a link] becomes [[ThisIsALink].
+
+Wiki is and should be simple.  This is why there is no need for complex HTML.  You can get some effects, such as __bold text__ and ''italics'', but nothing very complex.  Layout is the problem of the Wiki itself.  There is more information in [TextFormattingRules].

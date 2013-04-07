@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements. See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership. The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License. You may obtain a copy of the License at
+ 
+  http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied. See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<!--
+    Checkstyle-Configuration: JSPWiki Coding Style
+    Description: none
+-->
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <module name="TreeWalker">
+        <!-- Fields should always start with "m_" -->
+        <module name="MemberName">
+            <property name="format" value="^m_[a-z][a-zA-Z0-9]*$"/>
+        </module>
+        <!-- Static variables shall start with "c_" (except for "log") -->
+        <module name="StaticVariableName">
+            <property name="format" value="^log$|^c_[a-z][a-zA-Z0-9]*$"/>
+        </module>
+        <module name="LeftCurly">
+            <property name="option" value="nl"/>
+        </module>
+        <module name="RightCurly">
+            <property name="option" value="alone"/>
+        </module>
+        <module name="AvoidNestedBlocks">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="ConstantName">
+            <property name="format" value="^log|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+        <module name="MethodName"/>
+        <module name="PackageName"/>
+        <module name="ParameterName"/>
+        <module name="TypeName"/>
+        <module name="LocalVariableName"/>
+        <module name="ModifierOrder"/>
+        <module name="CovariantEquals"/>
+        <module name="DefaultComesLast"/>
+        <!-- This has been removed in Checkstyle 5.6, see http://checkstyle.sourceforge.net/releasenotes.html
+            <module name="DoubleCheckedLocking"/>
+        -->
+        <module name="EqualsHashCode"/>
+        <module name="ExplicitInitialization"/>
+        <module name="FallThrough"/>
+        <module name="HiddenField"/>
+        <module name="IllegalInstantiation"/>
+        <module name="IllegalThrows"/>
+        <module name="InnerAssignment">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="JUnitTestCase"/>
+        <module name="MagicNumber">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="MissingSwitchDefault"/>
+        <module name="ModifiedControlVariable">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="PackageDeclaration"/>
+        <module name="ParameterAssignment">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="StringLiteralEquality"/>
+        <module name="SuperClone"/>
+        <module name="SuperFinalize"/>
+        <module name="UnnecessaryParentheses"/>
+        <module name="DesignForExtension">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="FinalClass"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="InterfaceIsType"/>
+        <module name="MutableException"/>
+        <module name="ArrayTypeStyle"/>
+        <module name="UncommentedMain">
+            <property name="excludedClasses" value="^.*Release$"/>
+        </module>
+        <module name="UpperEll"/>
+        <!-- This is not supported anymore by Checkstyle 5.x. Isn't really needed anyway, so commenting it out.
+            <module name="j2ee.FinalStatic"/>
+        -->
+        <module name="JavadocType">
+            <property name="scope" value="package"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="scope" value="public"/>
+        </module>
+        <module name="JavadocMethod">
+            <property name="scope" value="protected"/>
+        </module>
+    </module>
+    <!-- @author tags should not be used -->
+    <module name="RegexpSingleline">
+        <property name="format" value="^.*@author.*$"/>
+    </module>
+    <!-- Ensure ASF preamble -->
+    <module name="RegexpMultiline">
+        <property name="format" value="Licensed to the Apache Software Foundation"/>
+        <property name="minimum" value="1"/>
+        <property name="maximum" value="5"/>
+    </module>
+    <module name="FileTabCharacter"/>
+    <module name="NewlineAtEndOfFile"/>
+    <!-- Every Java package should have its Javadoc file -->    
+    <module name="JavadocPackage"/>
+</module>
+

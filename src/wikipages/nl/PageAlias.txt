@@ -1,0 +1,17 @@
+Soms is het handig om een pagina echt naar iets anders te laten wijzen.
+Bijvoorbeeld, als je een pagina hebt met de naam "Page Aliases", maar je wilt die ook beschikbaar hebben onder de naam "Aliases". In zo'n geval kun je een "page alias"  gebruiken.
+
+Zet het volgende op de pagina "[PageAliases]" : (We hebben een voorbeeld pagina, dus als je er op klikt, kom je weer hier terug.)
+
+{{{
+[{SET alias='PageAlias'}]
+}}}
+
+Iedere keer als iemand de pagina  "[PageAliases]" bekijkt, wordt ie automatisch doorgestuurd naar deze pagina.
+Dit is heel handig als je wat ongebruikelijke meervoud namen wil gebruiken  bijvoorbeeld.  
+Normaal zal JSPWiki Engelse meervouds pagina namen goed herkennen, maar hij kan bepaalde vormen niet herkennen, zoals "aliases". 
+
+! Het wijzigen van de alias/redirect pagina's
+
+Je kunt natuurlijk niet op de "Edit this page"-link klikken, want dan wordt je steeds geredirect als je de pagina wilt bekijken.   
+Maar je kunt ook de pagina direct wijzigen door in te tikken   {{Edit.jsp?page=''pagename''}} achter de base URL. Of wat ook kan is een InterWikiRef definiëren voor het editen, de default staat op "Edit" (i.e., [[Edit Aliases Page|Edit:Aliases])

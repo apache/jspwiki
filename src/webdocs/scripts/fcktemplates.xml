@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+
+<Templates imagesBasePath="fck_template/images/">
+
+    <Template title="Section Headings Template">
+        <Description>
+        Insert a page template that includes a table of contents and several section headings.
+        Typically, you would use this on a new or blank page.
+        </Description>
+        <Html>
+            <![CDATA[
+                <p>[{TableOfContents numbered='true' }]</p>
+                <p><span style="color:red">You will want to rename the section titles and delete any subsections that you don't need.</span></p>
+
+                <h2>Title of Section 1</h2>
+                <p>Section 1 Intro (if any)</p>
+                <h3>Title of Section 1.1</h3>
+                <p>Section 1.1 content here</p>
+                <h3>Title of Section 1.2</h3>
+                <p>Section 1.2 content here</p>
+                <h3>Title of Section 1.3</h3>
+                <p>Section 1.3 content here</p>
+
+                <p>&nbsp;</p>
+                <h2>Title of Section 2</h2>
+                <p>Section 2 Intro (if any)</p>
+                <h3>Title of Section 2.1</h3>
+                <p>Section 2.1 content here</p>
+                <h3>Title of Section 2.2</h3>
+                <p>Section 2.2 content here</p>
+                <h3>Title of Section 2.3</h3>
+                <p>Section 2.3 content here</p>
+
+                <p>&nbsp;</p>
+                <h2>Title of Section 3</h2>
+                <p>Section 3 Intro (if any)</p>
+                <h3>Title of Section 3.1</h3>
+                <p>Section 3.1 content here</p>
+                <h3>Title of Section 3.2</h3>
+                <p>Section 3.2 content here</p>
+                <h3>Title of Section 3.3</h3>
+                <p>Section 3.3 content here</p>
+            ]]>
+        </Html>
+    </Template>
+
+    <Template title="Sortable Table">
+        <Description>
+        Insert a new table that can be sorted when you click on its column headers.
+        </Description>
+        <Html>
+            <![CDATA[
+                <div class="sortable">
+                    <table border="1" class="wikitable">
+                        <tbody>
+                            <tr class="odd">
+                                <th class="sortAscending">header1</th>
+                                <th class="sort">header2</th>
+                                <th class="sort">header3</th>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            ]]>
+        </Html>
+    </Template>
+
+        <Template title="Zebra Table">
+        <Description>
+        Insert a new table that has alternating background colors for each row.
+        </Description>
+        <Html>
+            <![CDATA[
+                <div class="zebra-table">
+                    <table border="1" class="wikitable">
+                        <tbody>
+                            <tr class="odd">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="odd">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="odd">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="odd">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>                            
+                        </tbody>
+                    </table>
+                </div>
+            ]]>
+        </Html>
+    </Template>
+
+    <Template title="Table of Contents Plugin">
+        <Description>
+        This plugin will automatically generate a table of contents
+        that provides links to all headings on your page. Put this at the top of your page.
+        </Description>
+        <Html>
+            <![CDATA[
+                [{TableOfContents numbered='true' }]
+            ]]>
+        </Html>
+    </Template>
+
+    <Template title="Insert Page Plugin">
+        <Description>
+            This plugin will insert a copy of another page into the current page.
+            You'll have to specify the name of the page to insert.
+        </Description>
+        <Html>
+            <![CDATA[
+                [{InsertPage page='name-of-page-to-insert' }]
+            ]]>
+        </Html>
+    </Template>
+
+    <Template title="Current Time Plugin">
+        <Description>
+        This plugin will display the current date and local time of the server when the page is viewed.
+        </Description>
+        <Html>
+            <![CDATA[
+                The current date and local time on this server is [{CurrentTimePlugin format='MMMM dd, yyyy hh:mm a z' }].
+            ]]>
+        </Html>
+    </Template>
+
+</Templates>

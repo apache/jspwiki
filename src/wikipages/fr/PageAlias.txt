@@ -1,0 +1,24 @@
+Il est parfois utile de disposer de pages dont les noms sont synonymes, et dont le
+contenu soit toujousr le même. Par exemple, vous pourriez vouloir avoir une page
+nommée "Page Aliases", et vous pouvez vouloir que les gens puissent l'ouvrir avec
+le nom "Aliases". Dans ce cas, vous pouvez utiliser les "alias de page".
+
+Entrez ce qui suit dans la page "[PageAliases]" :
+{{{
+[{SET alias='PageAlias'}]
+}}}
+
+Chaque fois que quelqu'un ouvrira la page "[PageAliases]", il sera automatiquement
+redirigé vers cette page. Ceci est très utile si, par exemple, vous voulez pouvoir
+utiliser des pluriels irréguliers. Normalement, JSPWiki reconnaît à peu près
+correctement les pluriels des noms de page (au moins en anglais), mais il n'est pas
+assez intelligent pour en détecter toutes les formes (par exemple : cheval/chevaux).
+
+!Editer une page d'alias/de redirection
+
+Evidemment, cliquer sur le lien "Editer" ne va pas fonctionner, parce que vous allez
+être systématiquement redirigé avant de pouvoir voir le contenu de la page. Mais vous
+pouvez quand même éditer cette page directement en tapant, dans la barre d'adresses de
+votre navigateur Web {{Edit.jsp?page=''nom-de-page''}} après l'URL de base du Wiki.
+Vous pouvez aussi utiliser l'interWikiRef définie pour l'édition, car par défaut, elle
+est positionnée sur "Editer" (c'est-à-dire [[Editer les pages d'alias|Edit:Aliases]).

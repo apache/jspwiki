@@ -1,0 +1,6 @@
+Dit zijn de wijzigingen van pagina's van de laatste 30 dagen. Kijk op de  [FullRecentChanges] voor een lijst van alle wijzigingen.
+
+This server lives on [{INSERT CurrentTimePlugin format=zzzz}] and the time here is [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+De server bevindt zich op [{INSERT CurrentTimePlugin format=zzzz}] en het is hier nu [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

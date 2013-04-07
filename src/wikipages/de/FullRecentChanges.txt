@@ -1,0 +1,5 @@
+Dies ist eine Liste sämtlicher Änderungen, die an den Wikiseiten jemals vorgenommen wurden. Eine deutlich kürzere Liste gibt es unter [Letzte Änderungen|RecentChanges].
+
+Dieser Server befindet sich in der Zeitzone ''[{INSERT CurrentTimePlugin format=zzzz}]'', wo es momentan der [{INSERT CurrentTimePlugin format='dd. MMMM yyyy \'um\' HH:mm \'Uhr\''}] ist.
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin}]

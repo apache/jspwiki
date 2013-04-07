@@ -1,0 +1,4 @@
+----
+
+__referenziert von__\\
+[{ReferringPagesPlugin max=20, maxwidth=50}]

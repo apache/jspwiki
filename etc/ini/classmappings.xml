@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+
+<!--
+     This file lists the classes you can change in a running JSPWiki
+     environment.
+     
+     The requestedClass can either be a Class or an Interface.  However,
+     the mappedClass must always be a concrete Class, which either extends
+     or implements requestedClass (depending on whether it is a class or an
+     interface).
+     
+     Note that this does not change static class contents; normal
+     inheritance rules apply.
+     
+     If this file does not define a class mapping, then the requestedClass
+     is always instantiated (if it's a concrete class).
+     
+     Please understand that the contents of this file are not to be changed
+     lightly.  It's very easy to break JSPWiki, and this is really meant
+     for people who wish to make very deep modifications but don't want
+     to be patching their code all the time.
+     
+     Note that there is no guarantee that your modifications will stay
+     compatible between different versions of JSPWiki.  This is really,
+     really deeply, invasive stuff we're talking here.  Really, seriously!
+     We're not kidding!  We don't even know if this works ourselves!
+  -->
+  
+<classmappings>
+  <mapping>
+    <requestedClass>org.apache.wiki.PageManager</requestedClass>
+    <mappedClass>org.apache.wiki.PageManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ReferenceManager</requestedClass>
+    <mappedClass>org.apache.wiki.ReferenceManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.VariableManager</requestedClass>
+    <mappedClass>org.apache.wiki.VariableManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.attachment.AttachmentManager</requestedClass>
+    <mappedClass>org.apache.wiki.attachment.AttachmentManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.acl.DefaultAclManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.acl.DefaultAclManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.AuthenticationManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.AuthenticationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.AuthorizationManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.AuthorizationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.UserManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.UserManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.auth.authorize.GroupManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.authorize.GroupManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.diff.DifferenceManager</requestedClass>
+    <mappedClass>org.apache.wiki.diff.DifferenceManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.api.engine.FilterManager</requestedClass>
+    <mappedClass>org.apache.wiki.filters.FilterManager</mappedClass> <!-- to be replaced in 2.10 -->
+    <!-- <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass> --> <!-- replacing the former in 2.10 -->
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>
+    <mappedClass>org.apache.wiki.i18n.InternationalizationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.api.engine.PluginManager</requestedClass>
+    <mappedClass>org.apache.wiki.plugin.PluginManager</mappedClass> <!-- to be replaced in 2.10 -->
+    <!-- <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass> --> <!-- replacing the former in 2.10 -->
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>
+    <mappedClass>org.apache.wiki.render.RenderingManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.search.SearchManager</requestedClass>
+    <mappedClass>org.apache.wiki.search.SearchManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ui.EditorManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.EditorManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ui.TemplateManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.ui.admin.AdminBeanManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.admin.AdminBeanManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>
+    <mappedClass>org.apache.wiki.workflow.WorkflowManager</mappedClass>
+  </mapping>
+</classmappings>
