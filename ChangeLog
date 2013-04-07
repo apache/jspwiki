@@ -1,3 +1,7 @@
+2013-04-07  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-incubating-0
+       
 2013-04-04 Glen Mazza (glenmazza AT apache DOT org)
 
        * Updated pom.xml by removing Jaxen transitive dependencies and providing
