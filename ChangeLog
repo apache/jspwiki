@@ -1,3 +1,11 @@
+2013-04-14 Glen Mazza (glenmazza AT apache DOT org)
+
+       * Start of Selenium plugin (just testing prior to it moving into its own module)
+         
+       * Tomcat 5.x JSP precompilation option removed from build.xml
+
+       * Selenium TestSuite.html tests renamed to CamelCase to allow export-to-Java to work.
+
 2013-04-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-incubating-0

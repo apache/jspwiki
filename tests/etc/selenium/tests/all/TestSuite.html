@@ -24,6 +24,11 @@
 <title>Test Suite</title>
 </head>
 
+<!-- Note: Selenium IDE's export-to-JUnit feature (so far not used by JSPWiki)
+uses the text contents of the anchor tags below in creating the Java class name,
+including invalid spaces and punctuation if part of the text contents.  Using 
+alphanumeric CamelCase in the text areas will keep any generated JUnit class
+names valid. -->
 <body>
 
     <table id="suiteTable"    cellpadding="1"
@@ -34,41 +39,41 @@
 		<tr><td><b>JSPWiki Test Suite for @selenium.context@</b></td></tr>
 		
         <!-- Anonymous user tests -->
-        <tr><td><a href="./AnonymousView.html">Anonymous View</a></td></tr>
-        <tr><td><a href="./AnonymousViewImage.html">Anonymous View Image</a></td></tr>
+        <tr><td><a href="./AnonymousView.html">AnonymousView</a></td></tr>
+        <tr><td><a href="./AnonymousViewImage.html">AnonymousViewImage</a></td></tr>
 
         <!-- Asserted user tests -->
-        <tr><td><a href="./AssertedName.html">Asserted Name</a></td></tr>
-        <tr><td><a href="./AssertedPermissions.html">Asserted Permissions</a></td></tr>
+        <tr><td><a href="./AssertedName.html">AssertedName</a></td></tr>
+        <tr><td><a href="./AssertedPermissions.html">AssertedPermissions</a></td></tr>
 
         <!-- Authentication tests -->
         <tr><td><a href="./Login.html">Login</a></td></tr>
         <tr><td><a href="./Logout.html">Logout</a></td></tr>
-        <tr><td><a href="./RedirectAfterLogin.html">Redirect After Login</a></td></tr>
+        <tr><td><a href="./RedirectAfterLogin.html">RedirectAfterLogin</a></td></tr>
 
         <!-- Page creation/rename tests -->
-        <tr><td><a href="./CreatePage.html">Create Page</a></td></tr>
-        <tr><td><a href="./RenamePage.html">Rename Page</a></td></tr>
+        <tr><td><a href="./CreatePage.html">CreatePage</a></td></tr>
+        <tr><td><a href="./RenamePage.html">RenamePage</a></td></tr>
         
         <!-- Page deletion tests -->
-        <tr><td><a href="./DeletePage.html">Delete Page</a></td></tr>
-        <tr><td><a href="./DeletePageNonAdmin.html">Delete Page (non admin)</a></td></tr>
+        <tr><td><a href="./DeletePage.html">DeletePage</a></td></tr>
+        <tr><td><a href="./DeletePageNonAdmin.html">DeletePageNonAdmin</a></td></tr>
         
         <!-- ACL tests -->
-        <tr><td><a href="./AclJanneEdit.html">Acl: Janne Edit (nobody else can view)</a></td></tr>
-        <tr><td><a href="./AclJanneEditAllView.html">Acl: Janne Edit (all view)</a></td></tr>
+        <tr><td><a href="./AclJanneEdit.html">AclJanneEditNobodyElseCanView</a></td></tr>
+        <tr><td><a href="./AclJanneEditAllView.html">AclJanneEditAllCanView</a></td></tr>
         
         <!-- Group creation tests -->
-        <tr><td><a href="./AnonymousCreateGroup.html">Anonymous Create Group</a></td></tr>
-        <tr><td><a href="./CreateGroupFullName.html">Create Group (FullName)</a></td></tr>
-        <tr><td><a href="./CreateGroupLoginName.html">Create Group (LoginName)</a></td></tr>
-        <tr><td><a href="./CreateGroupWikiName.html">Create Group (WikiName)</a></td></tr>
+        <tr><td><a href="./AnonymousCreateGroup.html">AnonymousCreateGroup</a></td></tr>
+        <tr><td><a href="./CreateGroupFullName.html">CreateGroupFullName</a></td></tr>
+        <tr><td><a href="./CreateGroupLoginName.html">CreateGroupLoginName</a></td></tr>
+        <tr><td><a href="./CreateGroupWikiName.html">CreateGroupWikiName</a></td></tr>
         
         <!-- User profile/preferences tests -->
-        <tr><td><a href="./RenameProfile.html">Rename Profile</a></td></tr>
+        <tr><td><a href="./RenameProfile.html">RenameProfile</a></td></tr>
 
         <!-- View Page Source Test -->
-        <tr><td><a href="./ViewPageSource.html">View Page Source</a></td></tr>
+        <tr><td><a href="./ViewPageSource.html">ViewPageSource</a></td></tr>
 
         </tbody>
     </table>
