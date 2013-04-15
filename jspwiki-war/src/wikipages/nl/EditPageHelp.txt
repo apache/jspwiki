@@ -1,0 +1,30 @@
+Hier een korte samenvatting voor je:
+{{{
+----             Horizontale lijn
+\\               Geforceerd een nieuwe regel
+[link]           Maak een hyperlink naar "link", waar "link" zowel een interne 
+                 WikiName kan zijn als een externe link (http://)
+[text|link]      Maak een hyperlink waarbij de tekst anders is dan de tekst van de hyperlink 
+[text|wiki:link] Maak een hyperlink waarbij de tekst anders is dan de tekst van de hyperlink en waarbij naar een andere wiki wordt verwezen  Dit ondersteunt interWiki linking.
+*                Maak een opsommingslijst (moet op de eerste positie staan). Gebruik meerdere (**) om verder in te springen (meerdere niveaus).
+#               Maak een genummerde opsommingslijst (moet op de eerste positie staan). Gebruik meerdere (##, ###) om verder in te springen (meerdere niveaus). 
+
+!, !!, !!!      Begin een regel met een uitroep teken om een hoofdstuk te maken. 
+                 Meer uitroeptekens betekent een 'groter' hoofdstuk.
+
+__text__        Geeft vetgedrukte tekst
+''text''         Geeft cursieve tekst (letop dat dit enkele quotes zijn ('))
+{{text}}         Geeft tekst in monospaced font
+;term:def        Definieert 'term' met 'def'.  Gebruik dit met de lege 'term' om kleine commentaren te maken.
+
+|tekst|meer tekst  Geeft een tabel. Dubbele strepen voor een tabel heading.
+}}}
+
+Gebruik geen HTML, dat werkt gewoon niet.
+
+Om plaatjes in te voegen, zet deze gewoon op een web pagina, en ze worden automatisch weergegeven. Kijk op [SystemInfo] om te zien welk formaten toegestaan zijn.
+
+Om een programma code blok te maken, gebruik drie accolades ({) voor het openen, en weer drie accolades (}) voor het sluiten ervan.
+
+''(Vraag je je af waar deze tekst vandaan komt?  Het staat op een pagina genaamd [Edit Page Help], die je zelf kan wijzigen !)''
+

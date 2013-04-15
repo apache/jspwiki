@@ -1,0 +1,3 @@
+Deze pagina's zijn zelfstandige pagina's die niet toegankelijk zijn van welke pagina dan ook (behalve die automatisch worden gegenereerd).
+
+[{INSERT org.apache.wiki.plugin.UnusedPagesPlugin}]

@@ -1,0 +1,4566 @@
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSPWiki Public API Changes - API Change History</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>JSPWiki Public API Changes - API Change History</h1>
+<ul>
+<li>
+<a href="#[build/JSPWiki.jar]">[../JSPWiki-2.6.3-src/build/JSPWiki.jar] to [build/JSPWiki.jar]</a>
+</li>
+</ul>
+<hr>
+<a name="[build/JSPWiki.jar]"></a>
+<h2>[../JSPWiki-2.6.3-src/build/JSPWiki.jar] to [build/JSPWiki.jar]</h2>
+<li>
+<nobr><code>JSPWiki Public API Changes</code></nobr>
+</li>
+<h3>Removed Classes:</h3>
+<ul>
+<li>
+<nobr><code>com.ecyrd.jspwiki.PageRenamer</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.TranslatorReader$HTMLRenderer</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.TranslatorReader$TextRenderer</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.AuthenticationManager$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.AuthenticationManager$2</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.AuthenticationManager$3</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader$2</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader$3</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader$4</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader$5</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.auth.PolicyLoader$6</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.plugin.IndexPlugin$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.plugin.VotePlugin</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.tags.RSSCoffeeCupLinkTag</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.ui.admin.AdminBeanManager$MBeanServerFactory14</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.ui.admin.beans.WikiWizardAdminBean</code></nobr>
+</li>
+</ul>
+<h3>Modified Interfaces:</h3>
+<blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.user.UserDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>public abstract boolean isSharedWithContainer()</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public abstract com.ecyrd.jspwiki.auth.user.UserProfile findByUid(long) throws com.ecyrd.jspwiki.auth.NoSuchPrincipalException</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.user.UserProfile</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public interface com.ecyrd.jspwiki.auth.user.UserProfile<br>
+<b>new:</b>public interface com.ecyrd.jspwiki.auth.user.UserProfile extends java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public abstract java.util.Map getAttributes()</code></nobr>
+</li>
+<li>
+<nobr><code>public abstract java.util.Date getLockExpiry()</code></nobr>
+</li>
+<li>
+<nobr><code>public abstract long getUid()</code></nobr>
+</li>
+<li>
+<nobr><code>public abstract boolean isLocked()</code></nobr>
+</li>
+<li>
+<nobr><code>public abstract void setLockExpiry(java.util.Date)</code></nobr>
+</li>
+<li>
+<nobr><code>public abstract void setUid(long)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.Step</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public interface com.ecyrd.jspwiki.workflow.Step<br>
+<b>new:</b>public interface com.ecyrd.jspwiki.workflow.Step extends java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public abstract java.lang.Object[] getMessageArguments()<br>
+<b>new:</b>public abstract java.io.Serializable[] getMessageArguments()</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h3>Modified Classes:</h3>
+<blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.FileUtil</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$FileUtil</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.PageManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$PageManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.PageManager$LockReaper</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.PageManager this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.PageManager this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.PageManager$PreSaveWikiPageTask</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.PageManager$SaveWikiPageTask</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.PageTimeComparator</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$PageTimeComparator</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compare(com.ecyrd.jspwiki.WikiPage, com.ecyrd.jspwiki.WikiPage)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.PropertyReader</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_VAR_DECLARATION<br>
+<b>new:</b>private static final java.lang.String PARAM_VAR_DECLARATION</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_VAR_IDENTIFIER<br>
+<b>new:</b>private static final java.lang.String PARAM_VAR_IDENTIFIER</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.lang.String DEFAULT_JSPWIKI_PROPERTIES</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ReferenceManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ReferenceManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.SearchMatcher$SearchResultImpl</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.SearchMatcher this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.SearchMatcher this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.SearchResultComparator</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compare(com.ecyrd.jspwiki.SearchResult, com.ecyrd.jspwiki.SearchResult)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.TextUtil</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public static java.lang.String replaceStringCaseUnsensitive(java.lang.String, java.lang.String, java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.TranslatorReader</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final int ATTACHMENT</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final int BOLD</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int EDIT</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int EMPTY</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int EXTERNAL</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int IMAGE</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int IMAGELINK</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int IMAGEWIKILINK</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int INTERWIKI</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final int ITALIC</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int LOCAL</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int LOCALREF</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PUNCTUATION_CHARS_ALLOWED</code></nobr>
+</li>
+<li>
+<nobr><code>private static final int PUSHBACK_BUFFER_SIZE</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int READ</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final int TYPED</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String WORD_SEPARATORS</code></nobr>
+</li>
+<li>
+<nobr><code>static final java.lang.String[] c_externalLinks</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$TranslatorReader</code></nobr>
+</li>
+<li>
+<nobr><code>private static org.apache.log4j.Logger log</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_allowHTML</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_allowPHPWikiStyleLists</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.ArrayList m_attachmentLinkMutatorChain</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_camelCaseLinks</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.oro.text.regex.Pattern m_camelCasePtrn</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_closeTag</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.oro.text.regex.PatternCompiler m_compiler</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_enablePlugins</code></nobr>
+</li>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.WikiEngine m_engine</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.ArrayList m_externalLinkMutatorChain</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.StringBuffer m_genlistBulletBuffer</code></nobr>
+</li>
+<li>
+<nobr><code>private int m_genlistlevel</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.ArrayList m_headingListenerChain</code></nobr>
+</li>
+<li>
+<nobr><code>private java.io.PushbackReader m_in</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.ArrayList m_inlineImagePatterns</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_inlineImages</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.oro.text.regex.PatternMatcher m_inlineMatcher</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isEscaping</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isOpenParagraph</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isPre</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isTypedText</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isbold</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isdefinition</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isitalic</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_istable</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.ArrayList m_linkMutators</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.ArrayList m_localLinkMutatorChain</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.oro.text.regex.PatternMatcher m_matcher</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_parseAccessRules</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_plainUris</code></nobr>
+</li>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.TranslatorReader$TextRenderer m_renderer</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.Stack m_styleStack</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_useOutlinkImage</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_useRelNofollow</code></nobr>
+</li>
+</ul>
+<h5>Removed Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public TranslatorReader(com.ecyrd.jspwiki.WikiContext, java.io.Reader, com.ecyrd.jspwiki.TranslatorReader$TextRenderer)</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static com.ecyrd.jspwiki.WikiEngine access$000(com.ecyrd.jspwiki.TranslatorReader)</code></nobr>
+</li>
+<li>
+<nobr><code>static com.ecyrd.jspwiki.WikiContext access$100(com.ecyrd.jspwiki.TranslatorReader)</code></nobr>
+</li>
+<li>
+<nobr><code>static boolean access$202(com.ecyrd.jspwiki.TranslatorReader, boolean)</code></nobr>
+</li>
+<li>
+<nobr><code>static boolean access$300(com.ecyrd.jspwiki.TranslatorReader)</code></nobr>
+</li>
+<li>
+<nobr><code>static org.apache.log4j.Logger access$400()</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.String access$502(com.ecyrd.jspwiki.TranslatorReader, java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>static boolean access$600(com.ecyrd.jspwiki.TranslatorReader)</code></nobr>
+</li>
+<li>
+<nobr><code>private void callHeadingListenerChain(com.ecyrd.jspwiki.parser.Heading)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String callMutatorChain(java.util.Collection, java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String checkForCamelCaseLink(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String closeAll()</code></nobr>
+</li>
+<li>
+<nobr><code>private void fillBuffer() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String findAttachment(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleAccessRule(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleApostrophe() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleBackslash() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleBar(boolean) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleClosebrace() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleDash() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleDefinitionList() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleDiv(boolean) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleGeneralList() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleHeading() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleHyperlinks(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleImageLink(java.lang.String, java.lang.String, boolean)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleMetadata(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleOpenbrace(boolean) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleOpenbracket() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleTilde() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String handleUnderscore() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private void initialize(com.ecyrd.jspwiki.WikiContext, java.io.Reader, com.ecyrd.jspwiki.TranslatorReader$TextRenderer)</code></nobr>
+</li>
+<li>
+<nobr><code>private static boolean isAccessRule(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean isExternalLink(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean isImageLink(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private static boolean isMetadata(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean isNumber(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String linkExists(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String makeCamelCaseLink(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String makeDirectURILink(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String makeLink(int, java.lang.String, java.lang.String, java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private int nextToken() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String peekAheadLine() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private void pushBack(int) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private void pushBack(java.lang.String) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String readBraceContent(char, char) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String readUntil(java.lang.String) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.StringBuffer readUntilEOL() throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String readWhile(java.lang.String) throws java.io.IOException</code></nobr>
+</li>
+<li>
+<nobr><code>protected void setRenderer(com.ecyrd.jspwiki.TranslatorReader$TextRenderer)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String startBlockLevel()</code></nobr>
+</li>
+<li>
+<nobr><code>static static {}</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String unwindGeneralList()</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.parser.JSPWikiMarkupParser m_parser</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public TranslatorReader(com.ecyrd.jspwiki.WikiContext, java.io.Reader, java.lang.Object)</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private void initialize(com.ecyrd.jspwiki.WikiContext, java.io.Reader)</code></nobr>
+</li>
+<li>
+<nobr><code>protected void setRenderer(java.lang.Object)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.VariableManager</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static org.apache.log4j.Logger log</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.WikiContext</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$WikiContext</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.WikiEngine</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$PageManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$PageRenamer</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ReferenceManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$VariableManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$WikiEngine</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$attachment$AttachmentManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$AuthenticationManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$AuthorizationManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$UserManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$acl$DefaultAclManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$GroupManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$diff$DifferenceManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$filters$FilterManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$i18n$InternationalizationManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$PluginManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$render$RenderingManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$rss$RSSGenerator</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$search$SearchManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$EditorManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$TemplateManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$admin$AdminBeanManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$workflow$WorkflowManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private com.ecyrd.jspwiki.PageRenamer m_pageRenamer<br>
+<b>new:</b>private com.ecyrd.jspwiki.content.PageRenamer m_pageRenamer</code></nobr>
+</p>
+</blockquote>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public com.ecyrd.jspwiki.PageRenamer getPageRenamer()<br>
+<b>new:</b>public com.ecyrd.jspwiki.content.PageRenamer getPageRenamer()</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>protected java.util.Collection scanWikiLinks(com.ecyrd.jspwiki.WikiPage, java.lang.String)<br>
+<b>new:</b>public java.util.Collection scanWikiLinks(com.ecyrd.jspwiki.WikiPage, java.lang.String)</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String PROP_ALLOW_CREATION_OF_EMPTY_PAGES</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.WikiPage</code>
+</h4>
+<blockquote>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>public boolean equals(java.lang.Object)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.WikiServlet</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$WikiServlet</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.WikiSession</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$WikiSession</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$GroupPrincipal</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$Role</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_cachedCookieIdentity</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_cachedRemoteUser</code></nobr>
+</li>
+<li>
+<nobr><code>private java.security.Principal m_cachedUserPrincipal</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isNew</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>public final javax.security.auth.login.LoginContext getLoginContext(java.lang.String, javax.security.auth.callback.CallbackHandler) throws javax.security.auth.login.LoginException</code></nobr>
+</li>
+<li>
+<nobr><code>protected final void injectRolePrincipals()</code></nobr>
+</li>
+<li>
+<nobr><code>protected final boolean isContainerStatusChanged(javax.servlet.http.HttpServletRequest)</code></nobr>
+</li>
+<li>
+<nobr><code>protected final boolean isNew()</code></nobr>
+</li>
+<li>
+<nobr><code>protected final void setNew(boolean)</code></nobr>
+</li>
+<li>
+<nobr><code>protected final void updatePrincipals()</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>protected final void injectGroupPrincipals()</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.attachment.AttachmentManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$attachment$AttachmentManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.String validateFileName(java.lang.String) throws com.ecyrd.jspwiki.WikiException</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.attachment.AttachmentServlet</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$attachment$AttachmentServlet</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.attachment.AttachmentServlet$UploadListener</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>class com.ecyrd.jspwiki.attachment.AttachmentServlet$UploadListener extends com.ecyrd.jspwiki.ui.progress.ProgressItem implements net.iamvegan.multipartrequest.ProgressListener<br>
+<b>new:</b>class com.ecyrd.jspwiki.attachment.AttachmentServlet$UploadListener extends com.ecyrd.jspwiki.ui.progress.ProgressItem implements org.apache.commons.fileupload.ProgressListener</code></nobr>
+</p>
+</blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private final com.ecyrd.jspwiki.attachment.AttachmentServlet this$0</code></nobr>
+</li>
+</ul>
+<h5>Removed Constructors:</h5>
+<ul>
+<li>
+<nobr><code>private AttachmentServlet$UploadListener(com.ecyrd.jspwiki.attachment.AttachmentServlet)</code></nobr>
+</li>
+<li>
+<nobr><code>AttachmentServlet$UploadListener(com.ecyrd.jspwiki.attachment.AttachmentServlet, com.ecyrd.jspwiki.attachment.AttachmentServlet$1)</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>private AttachmentServlet$UploadListener()</code></nobr>
+</li>
+<li>
+<nobr><code>AttachmentServlet$UploadListener(com.ecyrd.jspwiki.attachment.AttachmentServlet$1)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.AuthenticationManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.lang.String DEFAULT_JAAS_CONFIG</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String LOGIN_CONTAINER</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String LOGIN_CUSTOM</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PROP_JAAS_CONFIG</code></nobr>
+</li>
+<li>
+<nobr><code>private static java.lang.Boolean c_allowsAssertions</code></nobr>
+</li>
+<li>
+<nobr><code>private static java.lang.Boolean c_allowsAuthentication</code></nobr>
+</li>
+<li>
+<nobr><code>private static boolean c_useJAAS</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$AuthenticationManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$CookieAssertionLoginModule</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$CookieAuthenticationLoginModule</code></nobr>
+</li>
+<li>
+<nobr><code>protected boolean m_isJaasConfiguredAtStartup</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private final boolean doLogin(com.ecyrd.jspwiki.WikiSession, javax.security.auth.callback.CallbackHandler, java.lang.String) throws com.ecyrd.jspwiki.auth.WikiSecurityException</code></nobr>
+</li>
+</ul>
+<h5>Newly Deprecated Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String PROP_SECURITY</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final boolean allowsCookieAssertions()<br>
+<b>new:</b>public final boolean allowsCookieAssertions()</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final boolean allowsCookieAuthentication()<br>
+<b>new:</b>public final boolean allowsCookieAuthentication()</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.lang.String DEFAULT_LOGIN_MODULE</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final java.util.Map EMPTY_MAP</code></nobr>
+</li>
+<li>
+<nobr><code>private static final long LASTLOGINS_CLEANUP_TIME</code></nobr>
+</li>
+<li>
+<nobr><code>private static final long MAX_LOGIN_DELAY</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.util.Set NO_PRINCIPALS</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final java.lang.String PREFIX_LOGIN_MODULE_OPTIONS</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final java.lang.String PROP_ALLOW_COOKIE_ASSERTIONS</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PROP_ALLOW_COOKIE_AUTH</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final java.lang.String PROP_LOGIN_MODULE</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_allowsCookieAssertions</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_allowsCookieAuthentication</code></nobr>
+</li>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.util.TimedCounterList m_lastLoginAttempts</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.lang.Class m_loginModuleClass</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.util.Map m_loginModuleOptions</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_useJAAS</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private void delayLogin(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.util.Set doJAASLogin(java.lang.Class, javax.security.auth.callback.CallbackHandler, java.util.Map) throws com.ecyrd.jspwiki.auth.WikiSecurityException</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.security.Principal getLoginPrincipal(java.util.Set)</code></nobr>
+</li>
+<li>
+<nobr><code>private void initLoginModuleOptions(java.util.Properties)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.AuthorizationManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$AuthorizationManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.AuthorizationManager$1</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.auth.AuthorizationManager this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.auth.AuthorizationManager this$0</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final java.security.Permission val$permission<br>
+<b>new:</b>final java.security.Permission val$permission</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.WikiSession val$session<br>
+<b>new:</b>final com.ecyrd.jspwiki.WikiSession val$session</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.PrincipalComparator</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compare(java.security.Principal, java.security.Principal)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.SecurityVerifier</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$SecurityVerifier</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_isJaasConfigured</code></nobr>
+</li>
+<li>
+<nobr><code>private java.io.File m_jaasConfig</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>protected final boolean isJaasConfigurationAvailable(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>public final boolean isJaasConfigured()</code></nobr>
+</li>
+<li>
+<nobr><code>public final boolean isJaasConfiguredAtStartup()</code></nobr>
+</li>
+<li>
+<nobr><code>public final java.io.File jaasConfiguration()</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.SecurityVerifier$1</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.auth.SecurityVerifier this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.auth.SecurityVerifier this$0</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final java.security.Permission val$permission<br>
+<b>new:</b>final java.security.Permission val$permission</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.SessionMonitor</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$SessionMonitor</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.UserManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$UserManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.UserManager$DummyUserDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>public boolean isSharedWithContainer()</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public com.ecyrd.jspwiki.auth.user.UserProfile findByUid(long) throws com.ecyrd.jspwiki.auth.NoSuchPrincipalException</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.UserManager$JSONUserModule</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.UserManager$JSONUserModule extends java.lang.Object implements com.ecyrd.jspwiki.rpc.RPCCallable<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.UserManager$JSONUserModule extends java.lang.Object implements com.ecyrd.jspwiki.rpc.RPCCallable, java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private final com.ecyrd.jspwiki.auth.UserManager this$0</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private volatile com.ecyrd.jspwiki.auth.UserManager m_manager</code></nobr>
+</li>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.UserManager$SaveUserProfileTask</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.WikiPrincipal</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.WikiPrincipal extends java.lang.Object implements java.security.Principal<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.WikiPrincipal extends java.lang.Object implements java.io.Serializable, java.lang.Comparable, java.security.Principal</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>protected WikiPrincipal()</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compareTo(java.lang.Object)</code></nobr>
+</li>
+<li>
+<nobr><code>public int compareTo(java.security.Principal)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.acl.AclEntryImpl</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public class com.ecyrd.jspwiki.auth.acl.AclEntryImpl extends java.lang.Object implements com.ecyrd.jspwiki.auth.acl.AclEntry<br>
+<b>new:</b>public class com.ecyrd.jspwiki.auth.acl.AclEntryImpl extends java.lang.Object implements com.ecyrd.jspwiki.auth.acl.AclEntry, java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.acl.AclImpl</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public class com.ecyrd.jspwiki.auth.acl.AclImpl extends java.lang.Object implements com.ecyrd.jspwiki.auth.acl.Acl<br>
+<b>new:</b>public class com.ecyrd.jspwiki.auth.acl.AclImpl extends java.lang.Object implements com.ecyrd.jspwiki.auth.acl.Acl, java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.acl.DefaultAclManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$acl$DefaultAclManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal extends java.lang.Object implements java.security.Principal<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal extends java.lang.Object implements java.io.Serializable, java.security.Principal</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.authorize.GroupManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$GroupManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$XMLGroupDatabase</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$JDBCGroupDatabase</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.authorize.Role</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.authorize.Role extends java.lang.Object implements java.security.Principal<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.authorize.Role extends java.lang.Object implements java.io.Serializable, java.security.Principal</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>protected Role()</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$WebContainerAuthorizer</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer$LocalEntityResolver</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$authorize$XMLGroupDatabase</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.login.AbstractLoginModule</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$WikiPrincipal</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$AbstractLoginModule</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Newly Deprecated Fields:</h5>
+<ul>
+<li>
+<nobr><code>protected java.util.Collection m_previousWikiPrincipals</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.util.Collection m_principalsToOverwrite</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.util.Collection m_principalsToRemove</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final boolean commit() throws javax.security.auth.login.LoginException<br>
+<b>new:</b>public final boolean commit()</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.login.AnonymousLoginModule</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$AnonymousLoginModule</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$CookieAssertionLoginModule</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$CookieAuthenticationLoginModule</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$UserDatabaseLoginModule</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.login.WebContainerLoginModule</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$login$WebContainerLoginModule</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.permissions.AllPermission</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.permissions.AllPermission extends java.security.Permission<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.permissions.AllPermission extends java.security.Permission implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>protected AllPermission()</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.permissions.GroupPermission</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.permissions.GroupPermission extends java.security.Permission<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.permissions.GroupPermission extends java.security.Permission implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$GroupPrincipal</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>protected GroupPermission()</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.permissions.PagePermission</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.permissions.PagePermission extends java.security.Permission<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.permissions.PagePermission extends java.security.Permission implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>protected PagePermission()</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.permissions.PermissionFactory</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public class com.ecyrd.jspwiki.auth.permissions.PermissionFactory extends java.lang.Object<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.permissions.PermissionFactory extends java.lang.Object</code></nobr>
+</p>
+</blockquote>
+<h5>Constructor Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public PermissionFactory()<br>
+<b>new:</b>private PermissionFactory()</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.permissions.WikiPermission</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.auth.permissions.WikiPermission extends java.security.Permission<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.permissions.WikiPermission extends java.security.Permission implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.user.AbstractUserDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>protected static final java.lang.String PROP_SHARED_WITH_CONTAINER</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$auth$user$AbstractUserDatabase</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>protected static final java.lang.String SSHA_PREFIX</code></nobr>
+</li>
+<li>
+<nobr><code>protected static final long UID_NOT_SET</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>protected static long generateUid(com.ecyrd.jspwiki.auth.user.UserDatabase)</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.lang.String getOldHash(java.lang.String)<b>[deprecated]</b></code></nobr>
+</li>
+<li>
+<nobr><code>protected long parseLong(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.user.DefaultUserProfile</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public class com.ecyrd.jspwiki.auth.user.DefaultUserProfile extends java.lang.Object implements com.ecyrd.jspwiki.auth.user.UserProfile<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.auth.user.DefaultUserProfile extends java.lang.Object implements com.ecyrd.jspwiki.auth.user.UserProfile</code></nobr>
+</p>
+</blockquote>
+<h5>Constructor Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public DefaultUserProfile()<br>
+<b>new:</b>private DefaultUserProfile()</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private java.util.Map m_attributes</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.Date m_lockExpiry</code></nobr>
+</li>
+<li>
+<nobr><code>private long m_uid</code></nobr>
+</li>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public java.util.Map getAttributes()</code></nobr>
+</li>
+<li>
+<nobr><code>public java.util.Date getLockExpiry()</code></nobr>
+</li>
+<li>
+<nobr><code>public long getUid()</code></nobr>
+</li>
+<li>
+<nobr><code>public boolean isLocked()</code></nobr>
+</li>
+<li>
+<nobr><code>protected static com.ecyrd.jspwiki.auth.user.UserProfile newProfile(com.ecyrd.jspwiki.auth.user.UserDatabase)</code></nobr>
+</li>
+<li>
+<nobr><code>public void setLockExpiry(java.util.Date)</code></nobr>
+</li>
+<li>
+<nobr><code>public void setUid(long)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.user.JDBCUserDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String DEFAULT_DB_HASH_PREFIX</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PROP_DB_HASH_PREFIX</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_hashPrefix</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_sharedWithContainer</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.auth.user.UserProfile findByPreparedStatement(java.lang.String, java.lang.String) throws com.ecyrd.jspwiki.auth.NoSuchPrincipalException</code></nobr>
+</li>
+<li>
+<nobr><code>public boolean isSharedWithContainer()</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String DEFAULT_DB_ATTRIBUTES</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String DEFAULT_DB_LOCK_EXPIRY</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String DEFAULT_DB_UID</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PROP_DB_ATTRIBUTES</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PROP_DB_LOCK_EXPIRY</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PROP_DB_UID</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_attributes</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_findByUid</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_lockExpiry</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_uid</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.auth.user.UserProfile findByPreparedStatement(java.lang.String, java.lang.Object) throws com.ecyrd.jspwiki.auth.NoSuchPrincipalException</code></nobr>
+</li>
+<li>
+<nobr><code>public com.ecyrd.jspwiki.auth.user.UserProfile findByUid(long) throws com.ecyrd.jspwiki.auth.NoSuchPrincipalException</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.auth.user.XMLUserDatabase</code>
+</h4>
+<blockquote>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>public boolean isSharedWithContainer()</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.lang.String ATTRIBUTES_TAG</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String LOCK_EXPIRY</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String UID</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private java.lang.String extractText(org.w3c.dom.Element)</code></nobr>
+</li>
+<li>
+<nobr><code>public com.ecyrd.jspwiki.auth.user.UserProfile findByUid(long) throws com.ecyrd.jspwiki.auth.NoSuchPrincipalException</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.dav.AttachmentDavProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$dav$AttachmentDavProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.dav.RawPagesDavProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$dav$RawPagesDavProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.dav.methods.PropFindMethod</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$dav$methods$PropFindMethod</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.diff.ContextualDiffProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$diff$ContextualDiffProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.diff.ContextualDiffProvider$ChangeMerger</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.diff.ContextualDiffProvider this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.diff.ContextualDiffProvider this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.diff.DifferenceManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$diff$DifferenceManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$diff$TraditionalDiffProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.diff.ExternalDiffProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$diff$ExternalDiffProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.diff.TraditionalDiffProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$diff$TraditionalDiffProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.diff.TraditionalDiffProvider$RevisionPrint</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.diff.TraditionalDiffProvider$RevisionPrint extends java.lang.Object implements org.apache.commons.jrcs.diff.RevisionVisitor<br>
+<b>new:</b>final class com.ecyrd.jspwiki.diff.TraditionalDiffProvider$RevisionPrint extends java.lang.Object implements org.apache.commons.jrcs.diff.RevisionVisitor</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.event.WikiEventManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$event$WikiEventManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.event.WikiEventManager$WikiEventListenerComparator</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compare(com.ecyrd.jspwiki.event.WikiEventListener, com.ecyrd.jspwiki.event.WikiEventListener)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.event.WikiSecurityEvent</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final int PRINCIPAL_ADD</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.FilterManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$WikiEngine</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public void addPageFilter(com.ecyrd.jspwiki.filters.PageFilter, int)<br>
+<b>new:</b>public void addPageFilter(com.ecyrd.jspwiki.filters.PageFilter, int) throws java.lang.IllegalArgumentException</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.FilterManager$PageFilterInfo</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>class com.ecyrd.jspwiki.filters.FilterManager$PageFilterInfo extends com.ecyrd.jspwiki.modules.WikiModuleInfo<br>
+<b>new:</b>final class com.ecyrd.jspwiki.filters.FilterManager$PageFilterInfo extends com.ecyrd.jspwiki.modules.WikiModuleInfo</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.PingWeblogsComFilter</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$filters$PingWeblogsComFilter</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String m_pingURL<br>
+<b>new:</b>private java.lang.String m_pingURL</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.PingWeblogsComFilter$1</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.filters.PingWeblogsComFilter this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.filters.PingWeblogsComFilter this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.ProfanityFilter</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private static final java.lang.String[] c_profanities<br>
+<b>new:</b>private static java.lang.String[] c_profanities</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.lang.String PROPERTYFILE</code></nobr>
+</li>
+<li>
+<nobr><code>private static org.apache.log4j.Logger log</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.SpamFilter</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$filters$SpamFilter</code></nobr>
+</li>
+<li>
+<nobr><code>static org.apache.log4j.Logger spamlog</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>static org.apache.log4j.Logger log<br>
+<b>new:</b>private static org.apache.log4j.Logger log</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static org.apache.log4j.Logger c_spamlog</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.filters.SpamFilter$Host</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.filters.SpamFilter this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.filters.SpamFilter this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.forms.FormInfo</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String m_action<br>
+<b>new:</b>private java.lang.String m_action</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String m_error<br>
+<b>new:</b>private java.lang.String m_error</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String m_handler<br>
+<b>new:</b>private java.lang.String m_handler</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public boolean m_hide<br>
+<b>new:</b>private boolean m_hide</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String m_name<br>
+<b>new:</b>private java.lang.String m_name</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String m_result<br>
+<b>new:</b>private java.lang.String m_result</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public int m_status<br>
+<b>new:</b>private int m_status</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.util.Map m_submission<br>
+<b>new:</b>private java.util.Map m_submission</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.forms.FormOpen</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$forms$FormOpen</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator</code>
+</h4>
+<blockquote>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static com.ecyrd.jspwiki.htmltowiki.WhitespaceTrimWriter access$000(com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator)</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>static com.ecyrd.jspwiki.htmltowiki.WhitespaceTrimWriter access$200(com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator$LiStack</code>
+</h4>
+<blockquote>
+<h5>Constructor Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>XHtmlElementToWikiTranslator$LiStack()<br>
+<b>new:</b>private XHtmlElementToWikiTranslator$LiStack()</code></nobr>
+</p>
+</blockquote>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>XHtmlElementToWikiTranslator$LiStack(com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator$1)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator$PreStack</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator this$0</code></nobr>
+</p>
+</blockquote>
+<h5>Constructor Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>XHtmlElementToWikiTranslator$PreStack(com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator)<br>
+<b>new:</b>private XHtmlElementToWikiTranslator$PreStack(com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator)</code></nobr>
+</p>
+</blockquote>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>XHtmlElementToWikiTranslator$PreStack(com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator, com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator$1)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.modules.ModuleManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String LOAD_INCOMPATIBLE_MODULES</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.modules.WikiModuleInfo</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compareTo(com.ecyrd.jspwiki.modules.WikiModuleInfo)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.parser.CreoleToJSPWikiTranslator</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static java.lang.String VAR_CREOLE_VERSION<br>
+<b>new:</b>public static final java.lang.String VAR_CREOLE_VERSION</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static java.lang.String VAR_LINEBREAK_BLOGLIKE<br>
+<b>new:</b>public static final java.lang.String VAR_LINEBREAK_BLOGLIKE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static java.lang.String VAR_LINEBREAK_C2LIKE<br>
+<b>new:</b>public static final java.lang.String VAR_LINEBREAK_C2LIKE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static java.lang.String VAR_VERSION<br>
+<b>new:</b>public static final java.lang.String VAR_VERSION</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.parser.JSPWikiMarkupParser</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static final java.lang.String[] c_externalLinks</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$parser$JSPWikiMarkupParser</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final int CHARACTER<br>
+<b>new:</b>protected static final int CHARACTER</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final int ELEMENT<br>
+<b>new:</b>protected static final int ELEMENT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final int IGNORE<br>
+<b>new:</b>protected static final int IGNORE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private java.lang.StringBuffer m_genlistBulletBuffer<br>
+<b>new:</b>private java.lang.StringBuilder m_genlistBulletBuffer</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private java.lang.StringBuffer m_plainTextBuf<br>
+<b>new:</b>private java.lang.StringBuilder m_plainTextBuf</code></nobr>
+</p>
+</blockquote>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private java.lang.StringBuffer readUntilEOL() throws java.io.IOException<br>
+<b>new:</b>private java.lang.StringBuilder readUntilEOL() throws java.io.IOException</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>static final java.lang.String[] EXTERNAL_LINKS</code></nobr>
+</li>
+<li>
+<nobr><code>private java.util.Map m_titleSectionCounter</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.parser.JSPWikiMarkupParser$StartingComparator</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compare(java.lang.String, java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.parser.LinkParser</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$parser$LinkParser</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.parser.MarkupParser</code>
+</h4>
+<blockquote>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>protected final int nextToken() throws java.io.IOException<br>
+<b>new:</b>protected final int nextToken() throws java.io.IOException, java.lang.NullPointerException</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.AbstractReferralPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$AbstractReferralPlugin</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String PARAM_LASTMODIFIED</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PARAM_SHOW</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PARAM_SHOW_VALUE_COUNT</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String PARAM_SHOW_VALUE_PAGES</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.text.SimpleDateFormat m_dateFormat</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.util.Date m_dateLastModified</code></nobr>
+</li>
+<li>
+<nobr><code>protected boolean m_lastModified</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.lang.String m_show</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.BugReportHandler</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$BugReportHandler</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String DEFAULT_DATEFORMAT<br>
+<b>new:</b>private static final java.lang.String DEFAULT_DATEFORMAT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String DESCRIPTION<br>
+<b>new:</b>private static final java.lang.String DESCRIPTION</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String MAPPINGS<br>
+<b>new:</b>private static final java.lang.String MAPPINGS</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PAGE<br>
+<b>new:</b>private static final java.lang.String PAGE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String TITLE<br>
+<b>new:</b>private static final java.lang.String TITLE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String VERSION<br>
+<b>new:</b>private static final java.lang.String VERSION</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.Counter</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static final java.lang.String VARIABLE_NAME</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final int DEFAULT_INCREMENT</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String DEFAULT_NAME</code></nobr>
+</li>
+<li>
+<nobr><code>private static final boolean DEFAULT_SHOW_RESULT</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PARAM_INCREMENT</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PARAM_NAME</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PARAM_SHOW_RESULT</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PARAM_START</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.CurrentTimePlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String DEFAULT_FORMAT</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$CurrentTimePlugin</code></nobr>
+</li>
+<li>
+<nobr><code>private static org.apache.log4j.Logger log</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>static static {}</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.Denounce</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$Denounce</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_LINK<br>
+<b>new:</b>private static final java.lang.String PARAM_LINK</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_TEXT<br>
+<b>new:</b>private static final java.lang.String PARAM_TEXT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROPERTYFILE<br>
+<b>new:</b>private static final java.lang.String PROPERTYFILE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROP_AGENTPATTERN<br>
+<b>new:</b>private static final java.lang.String PROP_AGENTPATTERN</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROP_DENOUNCETEXT<br>
+<b>new:</b>private static final java.lang.String PROP_DENOUNCETEXT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROP_HOSTPATTERN<br>
+<b>new:</b>private static final java.lang.String PROP_HOSTPATTERN</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROP_REFERERPATTERN<br>
+<b>new:</b>private static final java.lang.String PROP_REFERERPATTERN</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.Image</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_ALIGN<br>
+<b>new:</b>private static final java.lang.String PARAM_ALIGN</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_ALT<br>
+<b>new:</b>private static final java.lang.String PARAM_ALT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_BORDER<br>
+<b>new:</b>private static final java.lang.String PARAM_BORDER</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_CAPTION<br>
+<b>new:</b>private static final java.lang.String PARAM_CAPTION</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_CLASS<br>
+<b>new:</b>private static final java.lang.String PARAM_CLASS</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_HEIGHT<br>
+<b>new:</b>private static final java.lang.String PARAM_HEIGHT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_LINK<br>
+<b>new:</b>private static final java.lang.String PARAM_LINK</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_SRC<br>
+<b>new:</b>private static final java.lang.String PARAM_SRC</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_STYLE<br>
+<b>new:</b>private static final java.lang.String PARAM_STYLE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_TARGET<br>
+<b>new:</b>private static final java.lang.String PARAM_TARGET</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_WIDTH<br>
+<b>new:</b>private static final java.lang.String PARAM_WIDTH</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.IndexPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final int DEFAULT_ITEMS_PER_LINE</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String INITIALS_COLOR</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.lang.String PARAM_ITEMS_PER_LINE</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$IndexPlugin</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.io.StringWriter m_bodyPart</code></nobr>
+</li>
+<li>
+<nobr><code>private int m_currentNofPagesOnLine</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.oro.text.regex.Pattern m_excludePattern</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.io.StringWriter m_headerPart</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.oro.text.regex.Pattern m_includePattern</code></nobr>
+</li>
+<li>
+<nobr><code>private int m_itemsPerLine</code></nobr>
+</li>
+<li>
+<nobr><code>protected java.lang.String m_previousPageFirstLetter</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>private void addLetterHeaderWithLine(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private void addLetterToIndexHeader(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>protected void addPageToIndex(com.ecyrd.jspwiki.WikiContext, com.ecyrd.jspwiki.WikiPage)</code></nobr>
+</li>
+<li>
+<nobr><code>protected void breakLineIfTooLong()</code></nobr>
+</li>
+<li>
+<nobr><code>private void buildIndexPageHeaderAndBody(com.ecyrd.jspwiki.WikiContext, java.util.Collection)</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>static java.util.Collection getAllPagesSortedByName(com.ecyrd.jspwiki.WikiContext)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>protected static final org.apache.log4j.Logger log<br>
+<b>new:</b>private static org.apache.log4j.Logger log</code></nobr>
+</p>
+</blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private java.util.List listPages(com.ecyrd.jspwiki.WikiContext, java.lang.String, java.lang.String) throws com.ecyrd.jspwiki.providers.ProviderException</code></nobr>
+</li>
+<li>
+<nobr><code>private org.apache.ecs.Element makeHeader(char)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.InsertPage</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_CLASS<br>
+<b>new:</b>private static final java.lang.String PARAM_CLASS</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_DEFAULT<br>
+<b>new:</b>private static final java.lang.String PARAM_DEFAULT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_MAXLENGTH<br>
+<b>new:</b>private static final java.lang.String PARAM_MAXLENGTH</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_PAGENAME<br>
+<b>new:</b>private static final java.lang.String PARAM_PAGENAME</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_SECTION<br>
+<b>new:</b>private static final java.lang.String PARAM_SECTION</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_STYLE<br>
+<b>new:</b>private static final java.lang.String PARAM_STYLE</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.PluginManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$PluginManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String DEFAULT_FORMS_PACKAGE<br>
+<b>new:</b>private static final java.lang.String DEFAULT_FORMS_PACKAGE</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.RecentChangesPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$RecentChangesPlugin</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.text.DateFormat getDateFormat(java.util.Map)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.text.DateFormat getTimeFormat(java.util.Map)</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private java.text.DateFormat getDateFormat(com.ecyrd.jspwiki.WikiContext, java.util.Map)</code></nobr>
+</li>
+<li>
+<nobr><code>private java.text.DateFormat getTimeFormat(com.ecyrd.jspwiki.WikiContext, java.util.Map)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.ReferredPagesPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$ReferredPagesPlugin</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>protected void getReferredPages(com.ecyrd.jspwiki.WikiContext, java.lang.String, int)<br>
+<b>new:</b>private void getReferredPages(com.ecyrd.jspwiki.WikiContext, java.lang.String, int)</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>protected void handleLinks(com.ecyrd.jspwiki.WikiContext, java.util.Collection, int, java.lang.String)<br>
+<b>new:</b>private void handleLinks(com.ecyrd.jspwiki.WikiContext, java.util.Collection, int, java.lang.String)</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.ReferringPagesPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$ReferringPagesPlugin</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.Search</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$Search</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.TableOfContents</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$TableOfContents</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.WeblogArchivePlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$WeblogArchivePlugin</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_PAGE<br>
+<b>new:</b>private static final java.lang.String PARAM_PAGE</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.WeblogEntryPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$WeblogEntryPlugin</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final int MAX_BLOG_ENTRIES<br>
+<b>new:</b>private static final int MAX_BLOG_ENTRIES</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_ENTRYTEXT<br>
+<b>new:</b>private static final java.lang.String PARAM_ENTRYTEXT</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.WeblogPlugin</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.text.DateFormat DEFAULT_ENTRYFORMAT</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$plugin$WeblogPlugin</code></nobr>
+</li>
+<li>
+<nobr><code>private static final java.util.regex.Pattern headingPattern</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final int DEFAULT_DAYS<br>
+<b>new:</b>private static final int DEFAULT_DAYS</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String DEFAULT_PAGEFORMAT<br>
+<b>new:</b>private static final java.lang.String DEFAULT_PAGEFORMAT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_ALLOWCOMMENTS<br>
+<b>new:</b>private static final java.lang.String PARAM_ALLOWCOMMENTS</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_DAYS<br>
+<b>new:</b>private static final java.lang.String PARAM_DAYS</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_ENTRYFORMAT<br>
+<b>new:</b>private static final java.lang.String PARAM_ENTRYFORMAT</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_MAXENTRIES<br>
+<b>new:</b>private static final java.lang.String PARAM_MAXENTRIES</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_PAGE<br>
+<b>new:</b>private static final java.lang.String PARAM_PAGE</code></nobr>
+</p>
+</blockquote>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PARAM_STARTDATE<br>
+<b>new:</b>private static final java.lang.String PARAM_STARTDATE</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final java.util.regex.Pattern HEADINGPATTERN</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.plugin.WeblogPlugin$PageDateComparator</code>
+</h4>
+<blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public int compare(com.ecyrd.jspwiki.WikiPage, com.ecyrd.jspwiki.WikiPage)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.preferences.Preferences</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static org.apache.log4j.Logger log</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public static java.text.SimpleDateFormat getDateFormat(com.ecyrd.jspwiki.WikiContext, com.ecyrd.jspwiki.preferences.Preferences$TimeFormat)</code></nobr>
+</li>
+<li>
+<nobr><code>public static java.util.Locale getLocale(com.ecyrd.jspwiki.WikiContext)</code></nobr>
+</li>
+<li>
+<nobr><code>public static java.lang.String renderDate(com.ecyrd.jspwiki.WikiContext, java.util.Date, com.ecyrd.jspwiki.preferences.Preferences$TimeFormat)</code></nobr>
+</li>
+<li>
+<nobr><code>static static {}</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.AbstractFileProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$AbstractFileProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public void initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties) throws com.ecyrd.jspwiki.NoRequiredPropertyException, java.io.IOException<br>
+<b>new:</b>public void initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties) throws com.ecyrd.jspwiki.NoRequiredPropertyException, java.io.IOException, java.io.FileNotFoundException</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.BasicAttachmentProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$BasicAttachmentProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.CachingAttachmentProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$CachingAttachmentProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.providers.CachingAttachmentProvider$CachedAttachmentCollector m_allCollector</code></nobr>
+</li>
+<li>
+<nobr><code>private com.opensymphony.oscache.base.Cache m_attCache</code></nobr>
+</li>
+<li>
+<nobr><code>private boolean m_gotall</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.CachingProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$CachingProvider</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$opensymphony$oscache$base$events$CacheEntryEventListener</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.FileSystemProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$FileSystemProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.RCSFileProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$RCSFileProvider</code></nobr>
+</li>
+<li>
+<nobr><code>private java.text.SimpleDateFormat m_rcsdatefmt_utc</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private java.text.SimpleDateFormat m_rcsdatefmtUTC</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.providers.VersioningFileProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$providers$VersioningFileProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.render.CleanTextRenderer</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$render$CleanTextRenderer</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.render.RenderingManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$WikiContext</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$parser$WikiDocument</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$render$RenderingManager</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$render$XHTMLRenderer</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.rpc.RPCManager</code>
+</h4>
+<blockquote>
+<h5>Constructor Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public RPCManager()<br>
+<b>new:</b>protected RPCManager()</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.rpc.atom.AtomAPIServlet</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$rpc$atom$AtomAPIServlet</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.rpc.json.JSONRPCManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$rpc$json$JSONRPCManager$WikiJSONAccessor</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$javax$servlet$http$HttpServletRequest</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.rss.Entry</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private java.lang.String m_URL</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private java.lang.String m_url</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.rss.RSSGenerator</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$rss$RSSGenerator</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.String generateFeed(com.ecyrd.jspwiki.WikiContext, java.util.List, java.lang.String, java.lang.String) throws com.ecyrd.jspwiki.providers.ProviderException<br>
+<b>new:</b>public java.lang.String generateFeed(com.ecyrd.jspwiki.WikiContext, java.util.List, java.lang.String, java.lang.String) throws com.ecyrd.jspwiki.providers.ProviderException, java.lang.IllegalArgumentException</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.rss.RSSThread</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$rss$RSSThread</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.search.BasicSearchProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$search$BasicSearchProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.search.LuceneSearchProvider</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$search$LuceneSearchProvider</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.search.SearchManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$search$SearchManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROP_USE_LUCENE<br>
+<b>new:</b>private static final java.lang.String PROP_USE_LUCENE</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.search.SearchManager$JSONSearch</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.search.SearchManager this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.search.SearchManager this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.AttachmentsIteratorTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$AttachmentsIteratorTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.BreadcrumbsTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$BreadcrumbsTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.CheckLockTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final int LOCKED</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int NOTLOCKED</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int OWNED</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private int m_mode<br>
+<b>new:</b>private com.ecyrd.jspwiki.tags.CheckLockTag$LockState m_mode</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.CheckVersionTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final int FIRST</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int LATEST</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int NOTFIRST</code></nobr>
+</li>
+<li>
+<nobr><code>public static final int NOTLATEST</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private int m_mode<br>
+<b>new:</b>private com.ecyrd.jspwiki.tags.CheckVersionTag$VersionMode m_mode</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.CookieTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$CookieTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.EditorIteratorTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$EditorIteratorTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.HistoryIteratorTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$HistoryIteratorTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.IteratorTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$IteratorTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.RSSImageLinkTag</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private java.lang.String m_mode</code></nobr>
+</li>
+<li>
+<nobr><code>private java.lang.String m_pageName</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public void setMode(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.SearchResultIteratorTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$SearchResultIteratorTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.TabTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$TabbedSectionTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.TranslateTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$TranslateTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.WikiBodyTag</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$WikiBodyTag</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.tags.WikiTagBase</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$tags$WikiTagBase</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.CommandResolver</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$CommandResolver</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.EditorManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$EditorManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.TemplateManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$TemplateManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>public static final java.lang.String I18NDEFAULT_LOCALE</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String I18NRESOURCE_PATH</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String I18NRESOURCE_PREFIX</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String I18NRESOURCE_SUFFIX</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String I18NSERVER_TIMEZONE</code></nobr>
+</li>
+<li>
+<nobr><code>public static final java.lang.String TIMEFORMATPROPERTIES</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public java.util.Map listLanguages(javax.servlet.jsp.PageContext)</code></nobr>
+</li>
+<li>
+<nobr><code>public java.util.Map listTimeFormats(javax.servlet.jsp.PageContext)</code></nobr>
+</li>
+<li>
+<nobr><code>public java.util.Map listTimeZones(javax.servlet.jsp.PageContext)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.WikiJSPFilter$MyServletResponseWrapper$MyServletOutputStream</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private final com.ecyrd.jspwiki.ui.WikiJSPFilter$MyServletResponseWrapper this$0</code></nobr>
+</li>
+</ul>
+<h5>Removed Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public WikiJSPFilter$MyServletResponseWrapper$MyServletOutputStream(com.ecyrd.jspwiki.ui.WikiJSPFilter$MyServletResponseWrapper, java.io.CharArrayWriter)</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public WikiJSPFilter$MyServletResponseWrapper$MyServletOutputStream(java.io.CharArrayWriter)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.WikiServletFilter</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$WikiServletFilter</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>private boolean isWrapped(javax.servlet.ServletRequest)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.admin.AdminBeanManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$admin$AdminBeanManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static org.apache.log4j.Logger access$000()</code></nobr>
+</li>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$admin$beans$SearchManagerBean</code></nobr>
+</li>
+<li>
+<nobr><code>private static org.apache.log4j.Logger log</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String[] METHODS<br>
+<b>new:</b>private static final java.lang.String[] METHODS</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean$1</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean$1$1</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean$1 this$1<br>
+<b>new:</b>final com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean$1 this$1</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.progress.ProgressManager</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$ui$progress$ProgressManager</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.ui.progress.ProgressManager$JSONTracker</code>
+</h4>
+<blockquote>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final com.ecyrd.jspwiki.ui.progress.ProgressManager this$0<br>
+<b>new:</b>final com.ecyrd.jspwiki.ui.progress.ProgressManager this$0</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.url.ShortURLConstructor</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$url$ShortURLConstructor</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.util.ClassUtil</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$util$ClassUtil</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.util.HttpUtil</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$util$HttpUtil</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.util.MailUtil</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$util$MailUtil</code></nobr>
+</li>
+<li>
+<nobr><code>private static java.lang.String fromAddress</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public static final java.lang.String PROP_MAIL_AUTH<br>
+<b>new:</b>private static final java.lang.String PROP_MAIL_AUTH</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static java.lang.String c_fromAddress</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.util.WatchDog</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$util$WatchDog</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private static org.apache.log4j.Logger log<br>
+<b>new:</b>private org.apache.log4j.Logger log</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.AbstractStep</code>
+</h4>
+<blockquote>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final java.lang.Object[] getMessageArguments()<br>
+<b>new:</b>public final java.io.Serializable[] getMessageArguments()</code></nobr>
+</p>
+</blockquote>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.DecisionQueue</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public class com.ecyrd.jspwiki.workflow.DecisionQueue extends java.lang.Object<br>
+<b>new:</b>public class com.ecyrd.jspwiki.workflow.DecisionQueue extends java.lang.Object implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.Fact</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.workflow.Fact extends java.lang.Object<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.workflow.Fact extends java.lang.Object implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>Removed Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public Fact(java.lang.String, java.lang.Object)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>private final java.lang.Object m_obj<br>
+<b>new:</b>private final java.io.Serializable m_obj</code></nobr>
+</p>
+</blockquote>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public java.lang.Object getValue()<br>
+<b>new:</b>public java.io.Serializable getValue()</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public Fact(java.lang.String, java.io.Serializable)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.Outcome</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final class com.ecyrd.jspwiki.workflow.Outcome extends java.lang.Object<br>
+<b>new:</b>public final class com.ecyrd.jspwiki.workflow.Outcome extends java.lang.Object implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.SimpleDecision</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.SimpleNotification</code>
+</h4>
+<blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.workflow.Workflow</code>
+</h4>
+<blockquote>
+<h5>Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public class com.ecyrd.jspwiki.workflow.Workflow extends java.lang.Object<br>
+<b>new:</b>public class com.ecyrd.jspwiki.workflow.Workflow extends java.lang.Object implements java.io.Serializable</code></nobr>
+</p>
+</blockquote>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>public final void addMessageArgument(java.lang.Object)</code></nobr>
+</li>
+</ul>
+<h5>Method Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>public final java.lang.Object[] getMessageArguments()<br>
+<b>new:</b>public final java.io.Serializable[] getMessageArguments()</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private static final long serialVersionUID</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>public final void addMessageArgument(java.io.Serializable)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.xmlrpc.MetaWeblogHandler</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$xmlrpc$MetaWeblogHandler</code></nobr>
+</li>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.WikiEngine m_engine</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>org.apache.log4j.Logger log<br>
+<b>new:</b>private static org.apache.log4j.Logger log</code></nobr>
+</p>
+</blockquote>
+<h5>New Fields:</h5>
+<ul>
+<li>
+<nobr><code>private com.ecyrd.jspwiki.WikiContext m_context</code></nobr>
+</li>
+</ul>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>static static {}</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.xmlrpc.RPCHandler</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$xmlrpc$RPCHandler</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+<h5>Field Declaration Changes:</h5>
+<blockquote>
+<p>
+<nobr><code><b>old:</b>org.apache.log4j.Logger log<br>
+<b>new:</b>private static org.apache.log4j.Logger log</code></nobr>
+</p>
+</blockquote>
+<h5>New Methods:</h5>
+<ul>
+<li>
+<nobr><code>static static {}</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.xmlrpc.RPCServlet</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$com$ecyrd$jspwiki$xmlrpc$RPCServlet</code></nobr>
+</li>
+</ul>
+<h5>Removed Methods:</h5>
+<ul>
+<li>
+<nobr><code>static java.lang.Class class$(java.lang.String)</code></nobr>
+</li>
+</ul>
+</blockquote>
+<h4>
+<code>com.ecyrd.jspwiki.xmlrpc.RPCServlet$LocalHandler</code>
+</h4>
+<blockquote>
+<h5>Removed Fields:</h5>
+<ul>
+<li>
+<nobr><code>private final com.ecyrd.jspwiki.xmlrpc.RPCServlet this$0</code></nobr>
+</li>
+</ul>
+<h5>Removed Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public RPCServlet$LocalHandler(com.ecyrd.jspwiki.xmlrpc.RPCServlet, java.lang.Class)</code></nobr>
+</li>
+</ul>
+<h5>New Constructors:</h5>
+<ul>
+<li>
+<nobr><code>public RPCServlet$LocalHandler(java.lang.Class)</code></nobr>
+</li>
+</ul>
+</blockquote>
+</blockquote>
+<h3>New Packages:</h3>
+<ul>
+<li>
+<nobr><code>com.ecyrd.jspwiki.content</code></nobr>
+</li>
+</ul>
+<h3>New Classes:</h3>
+<ul>
+<li>
+<nobr><code>com.ecyrd.jspwiki.VariableManager$SystemVariables</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.htmltowiki.XHtmlElementToWikiTranslator$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.preferences.Preferences$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.preferences.Preferences$TimeFormat</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.providers.CachingAttachmentProvider$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.providers.CachingAttachmentProvider$CachedAttachmentCollector</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.tags.CheckLockTag$LockState</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.tags.CheckVersionTag$1</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.tags.CheckVersionTag$VersionMode</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.ui.WikiRequestWrapper</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.util.CryptoUtil</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.util.Serializer</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.util.TimedCounterList</code></nobr>
+</li>
+<li>
+<nobr><code>com.ecyrd.jspwiki.util.TimedCounterList$CounterItem</code></nobr>
+</li>
+</ul>
+<hr>
+</body>
+</html>

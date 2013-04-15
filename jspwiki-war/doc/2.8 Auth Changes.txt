@@ -1,0 +1,180 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+#
+#  This file contains defaults for development.  If you are cross-
+#  developing in multiple environments, just change the defaults
+#  in this file.
+#
+#  Any changes in this file will be reflected in the default
+#  jspwiki.properties-file when it is run.
+#
+
+Authentication Login changes
+----------------------------
+
+Login sequence for container scenario
+-------------------------------------
+
+ - WikiSession starts with userPrincipal = GUEST and loginPrincipal = GUEST, and login status of ANONYMOUS
+ - WikiContext constructor checks whether container status changed (WikiSession.isContainerStatusChanged(Request))
+ - If it has, or if WikiSession is new , we call AuthenticationManager.login(request)
+   - login sets up the callback handler WebContainerCallbackHandler
+     and logs in via doLogin(). The WikiEngine's Authorizer is passed to the callback handler
+     
+     - doLogin does the following:
+       Fetches the JAAS LoginContext (via WikiSession.getLoginContext())
+       Initiates the login (fires LOGIN_INITIATED)
+         ..WikiSession 
+             calls updatePrincipals()
+               - which sets user/login principals to GUEST
+       Logs in (using the JAAS application stack)
+        ... which populates the Subject
+          WebContainerLoginModule
+            ...checks the remoteUser and userPrincipal fields; adds PrincipalWrapper if one exists
+            ...if successful, injects web container roles (tests each via Request.isInRole())
+               adds AUTHENTICATED and ALL, removes GUEST, ANONYMOUS, ASSERTED
+          CookieAuthenticationLoginModule
+            ...if cookie exists, adds WikiPrincipal(fullname) with cookie value
+               adds AUTHENTICATED and ALL, removes GUEST, ANONYMOUS, ASSERTED
+          CookieAssertionLoginModule
+            ...if cookie exists, adds WikiPrincipal(fullname) with cookie value
+               adds ASSERTED and ALL, removes GUEST, ANONYMOUS
+          AnonymousLoginModule 
+               adds ANOMYNOUS and ALL, removes GUEST
+       If WikiSession is now anonymous, fires LOGIN_ANONYMOUS
+         WikiSession: does nothing else
+       If WikiSession is now asserted, fires LOGIN_ASSERTED
+         WikiSession: sets status of ASSERTED; no change in user/login principals
+       If WikiSession is now authenticated, fires LOGIN_AUTHENTICATED
+         WikiSession: sets status of AUTHENTICATED
+            injects user profile principals
+              ...preserves Group/Role principals; injects WikiPrincipals for the user profile attributes
+                 (one WikiPrincipal for each wiki name, full name, login name)
+            injects Role and Group principals
+                 iterates through each Group returned GroupManager; tests each group; if member, adds GroupPrincipal
+                 iterates through each Role returned engine.getAuthorizer; tests each role; if member, adds GroupPrincipal
+                 ...note that if the Authorizer is WebContainerAuthorizer, all it does is examine the Subject; it does NOT
+                    examine the request. This works, but is a hack, because we've already injected the role principals
+                    in WebContainerLoginModule.
+            updates user/login principals
+              - which sets login principal to the WrappedPrincipal if we have one
+                and then in order of preference, the login name, wiki name, full name
+              - which sets user principal to wiki name, full name, login principal (in order of preference)
+       If login fails, fires LOGIN_FAILED, LOGIN_ACCOUNT_EXPIRED, LOGIN_CREDENTIAL_EXPIRED
+     - When wikisession receives the fired event
+ - Then we set WikiSession.setNew(false)
+ 
+Login sequence for custom scenario
+----------------------------------
+
+Login.jsp calls AuthenticationManager.login(WikiSession,username,password)
+   - login sets up the callback handler WikiCallbackHandler
+     and logs in via doLogin(). The WikiEngine's UserDatabase is passed to the callback handler
+
+(doLogin proceeds as described above, except that UserDatabaseLoginModule executes in the login stack instead), e.g.:
+
+       Logs in (using the JAAS application stack)
+        ... which populates the Subject
+          UserDatabaseLoginModule
+            ...checks the remoteUser and userPrincipal fields; adds PrincipalWrapper if one exists
+               adds AUTHENTICATED and ALL, removes GUEST, ANONYMOUS, ASSERTED
+
+(see above)
+
+If successful, optionally sets the CookieAuthenticationLoginModule cookie.
+
+Observations
+------------
+
+UserDatabaseLoginModule will be the only remaining JAAS LoginModule, unless substituted by the admin at runtime
+Recommended strategy & config:
+loginModule.class=(class name). This class MUST have a zero-argument constructor (as noted in LoginModule API). Default value will be com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule.
+Other parameters will be loaded into an options Map. Params may be specified this way:
+loginModule.options.param1=value1
+loginModule.options.param2=value2
+
+For the custom auth case only: we will try to fetch the 'jspwiki-custom' login configuration from JAAS, and try to use it first. We will configure it with a null Subject, and . If it does not exist, we just execute the single LoginModule. We could also make this a parameter too, so that it's configurable. E.g.:
+
+jaas.loginContext=jspwiki-custom
+
+For both cases, the CallBackHandler we supply will be WikiCallbackHandler (which supplies user, password, user database); this will be unchanged from its current form.
+
+QUESTION: should we pass WikiEngine also? ANSWER: probably not
+
+
+New filter WikiSecurityFilter simply wraps the current request with WikiRequestWrapper.
+  
+  - Wrapper should be fairly stupid: at time of construction, accept the WikiSession as
+    a parameter. The wrapper overrides the normal request fuctions as follows:
+
+    - getUserPrincipal(): if WikiSession.isAuthenticated(), always returns
+      WikiSession.getLoginPrincipal(); otherwise delegates to request
+
+    - getRemoteUser(): if WikiSession.isAuthenticated(), always returns
+      WikiSession.getLoginPrincipal().getName(); otherwise delegates to request
+
+    - isUserInRole(String): iterates through the *built-in* Role objects
+      (ANONYMOUS, ASSERTED, AUTHENTICATED) returned by WikiSession.getRoles()
+      AND ALSO delegates to request. We do not need to check custom roles because
+      we're delegating those checks to the container.
+
+      QUESTION: should we also accept a special prefix to differentiate between JSPWiki built-in roles & container roles?
+      E.g., require isInRole("JSPWiki.Authenticated") rather than just "Authenticated"?
+
+      QUESTION: what does the J2EE spec say about isInRole() if the user is not authenticated?
+
+  - WikiSecurityFilter's job is to modify the WikiSession's state so that when we create the
+    WikiRequestWrapper, its methods will return the correct userPrincipal, and include JSPWiki
+    built-in Roles when performing role checking via isInRole(). The filter performs the same
+    tasks as the old JAAS login stack did, and in the same order.
+
+    Processing logic is as follows:
+
+    - If WikiSession is currently Anonymous or Asserted, check to see if user has subsequently
+      Authenticated. To be considered authenticated, the request must supply one of the following
+      (in order of preference): the container userPrincipal, container remoteUser, or authentication cookie
+      If the user is authenticated, fire LOGIN_AUTHENTICATED with params Principal[] containing loginPrincipal, WikiSession
+      Also: if the authorizer is of type WebAuthorizer, iterate through the container roles, test each one,
+      and add those that pass to the principal array.
+
+      NOTE: WikiSession must be modified to inject the correct login principal and/or roles
+
+    - if WikiSession is still Anonymous, check to see if user has subsequently Asserted. To be considered
+      asserted, the request must supply the correct assertion cookie. If the user is asserted,
+      fire LOGIN_ASSERTED with params WikiPrincipal(cookievalue), WikiSession
+      
+      NOTE: WikiSession must be modified to inject the correct assertion principal
+
+    - If WikiSession is currently anonymous, fire LOGIN_ANONYMOUS with params
+      WikiPrincipal(remoteAddress), WikiSession
+
+      NOTE: WikiSession must be modified to inject the correct anonymous principal
+
+Class Adds/Removes
+------------------
+AuthenticationManager.login(request) changes its internal implementation significantly.
+
+WikiSession does not need getLoginContext() any more...
+
+These login modules can be refactored:
+WebContainerLoginModule, CookieAuthenticationLoginModule, CookieAssertionLoginModule, AnonymousLoginModule
+These are used by LoginModules and can go away: AuthorizerCallback, HttpRequestCallback
+
+UserDatabaseCallback/CallbackHandler are fine and can stay
+UserDatabaseLoginModule and AbstractLoginModule should be merged (eventually)
+

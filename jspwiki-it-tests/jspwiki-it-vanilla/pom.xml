@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns              = "http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <groupId>jspwiki.it</groupId>
+  <artifactId>jspwiki-it-vanilla</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <name>jspwiki-it-vanilla</name>
+  <description>selenium tests execution for jspwiki-vanilla (simple war)</description>
+  <version>1.0.0</version>
+  <packaging>war</packaging> <!-- this enables tests reuse [1/2] -->
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>selenium-maven-plugin</artifactId>
+        <configuration>
+          <browser>*firefox</browser>
+          <!-- <browser>*iexplore</browser> -->
+          <startURL>http://localhost:8080/JSPWiki/</startURL>
+          <suite>${project.basedir}/../jspwiki-selenium-tests/src/test/resources/selenium/TestSuite.html</suite> <!-- this enables tests reuse [2/2] -->
+          <background>true</background>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>selenese</goal>
+            </goals>
+          </execution>                               
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>tomcat-run</id>
+            <goals>
+              <goal>run-war</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <port>8080</port>
+              <fork>true</fork>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tomcat-shutdown</id>
+            <goals>
+              <goal>shutdown</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.incubator</groupId>
+      <artifactId>jspwiki</artifactId>
+      <version>2.9.1-SNAPSHOT</version>
+      <type>war</type>
+    </dependency>
+                
+    <dependency>
+      <groupId>org.seleniumhq.selenium.client-drivers</groupId>
+      <artifactId>selenium-java-client-driver</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>2.32.0</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <!-- (un)comment based on your browser preferences for tests execution -->
+      <!-- <artifactId>selenium-chrome-driver</artifactId> -->
+      <!-- <artifactId>selenium-ie-driver</artifactId> -->
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>2.32.0</version>
+    </dependency>
+  </dependencies>
+</project>

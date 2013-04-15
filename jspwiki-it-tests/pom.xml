@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns              = "http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <groupId>jspwiki.it</groupId>
+  <artifactId>jspwiki-it-builder</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <name>jspwiki-it-builder</name>
+  <description>selenium tests execution for jspwiki</description>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  
+  <modules>
+    <module>jspwiki-selenium-tests</module> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
+    <module>jspwiki-it-vanilla</module>
+  </modules>
+  
+</project>
