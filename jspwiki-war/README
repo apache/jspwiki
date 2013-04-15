@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.9.0-incubating - Documentation
+Apache JSPWiki 2.9.1-incubating - Documentation
 ===============================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ in its development.  JSPWiki supports all the traditional wiki features,
 as well as very detailed access control and security integration using JAAS. 
 
 
-Why is the version named 2.9.0-incubating? - Is it not a "real" version 2.9.0?
+Why is the version named 2.9.1-incubating? - Is it not a "real" version 2.9.1?
 ------------------------------------------------------------------------------
 
 Short answer:  Don't worry, it really is a mature and official Apache release!
@@ -39,7 +39,7 @@ Short answer:  Don't worry, it really is a mature and official Apache release!
 Explanation:  JSPWiki is on its way to become an Apache top level project.
    The Incubator project is the entry path into the Apache Software Foundation
    (ASF) for projects and codebases wishing to become part of the Foundation's
-   efforts.  This is why the version is named 2.9.0-incubating.
+   efforts.  This is why the version is named 2.9.1-incubating.
 
 
 Pre-requirements
