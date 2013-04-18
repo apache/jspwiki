@@ -1,2 +1,74 @@
-<!-- placeholder for https://issues.apache.org/jira/browse/JSPWIKI-771 -->
-<!-- this file should contain the project's parent pom.xml             -->
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns              = "http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <groupId>org.apache.incubator.jspwiki</groupId>
+  <artifactId>jspwiki-builder</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <name>jspwiki-builder</name>
+  <version>2.9.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich 
+    and built around standard J2EE components (Java, servlets, JSP).</description>
+  <url>http://incubator.apache.org/jspwiki/</url>
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jdk.version>1.6</jdk.version>
+  </properties>
+  
+  <modules>
+    <module>jspwiki-war</module>
+    <!-- <module>jspwiki-it-tests</module> --><!-- don't launch the IT tests as part of the main build -->
+  </modules>
+  
+  <pluginManagement> <!-- defines what configuration is going to be used if and only if the plugin is used -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+      
+      <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+      <plugin>
+        <groupId>org.eclipse.m2e</groupId>
+        <artifactId>lifecycle-mapping</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <lifecycleMappingMetadata>
+            <pluginExecutions>
+              <pluginExecution>
+                <pluginExecutionFilter>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <versionRange>[1.7,)</versionRange>
+                  <goals><goal>run</goal></goals>
+                </pluginExecutionFilter>
+                <action><ignore></ignore></action>
+              </pluginExecution>
+              <pluginExecution>
+                <pluginExecutionFilter>
+                  <groupId>net.alchim31.maven</groupId>
+                  <artifactId>yuicompressor-maven-plugin</artifactId>
+                  <versionRange>[1.3.2,)</versionRange>
+                  <goals><goal>compress</goal></goals>
+                </pluginExecutionFilter>
+                <action><ignore></ignore></action>
+              </pluginExecution>
+            </pluginExecutions>
+          </lifecycleMappingMetadata>
+        </configuration>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+</project>
