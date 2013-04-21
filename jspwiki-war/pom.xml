@@ -38,164 +38,119 @@
         <dependency>
             <groupId>xmlrpc</groupId>
             <artifactId>xmlrpc</artifactId>
-            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-highlighter</artifactId>
-            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sourceforge</groupId>
             <artifactId>sandler</artifactId>
-            <version>0.5</version>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>
             <artifactId>oscache</artifactId>
-            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>oro</groupId>
             <artifactId>oro</artifactId>
-            <version>2.0.7</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.metaparadigm</groupId>
             <artifactId>json-rpc</artifactId>
-            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.jvnet.hudson</groupId>
             <artifactId>org.suigeneris.jrcs.diff</artifactId>
-            <version>0.4.2</version>
         </dependency>
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
-            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.freshcookies</groupId>
             <artifactId>freshcookies-security</artifactId>
-            <version>0.60</version>
         </dependency>
         <dependency>
             <groupId>ecs</groupId>
             <artifactId>ecs</artifactId>
-            <version>1.4.2</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge</groupId>
             <artifactId>akismet-java</artifactId>
-            <version>1.02</version>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
-            <version>0.9.4</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
-            <version>1.1.2</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
-            <version>1.1-beta-6</version>
-            <exclusions>
-               <exclusion>
-                 <groupId>*</groupId>
-                 <artifactId>*</artifactId>
-               </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.stripes</groupId>
             <artifactId>stripes</artifactId>
-            <version>1.5.7</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>tomcat</groupId>
             <artifactId>jasper-runtime</artifactId>
-            <version>5.5.23</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.aggregate</groupId>
             <artifactId>jetty-all</artifactId>
-            <version>7.6.7.v20120910</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>2.25.0</version>
-            <scope>test</scope>
+            <scope>test</scope><!-- overwritting sxope defined in parent dpdncyMgmt; really needed here? -->
         </dependency>
     </dependencies>
 

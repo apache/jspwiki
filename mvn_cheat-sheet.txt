@@ -9,7 +9,7 @@ mvn clean install                    : performs a build
 mvn clean install -Dmaven.skip.test  : performs a build, skipping the tests (not recommended)
 mvn clean test                       : compiles the source and executes the tests
 mvn tomcat7:run                      : (from a war module) starts JSPWiki on a 
-                                       Tomcat7 instance on http://localhost:8080/JSPWiki
+                                       Tomcat7 instance at http://localhost:8080/JSPWiki
                                        
 Selenium execution: go to jspwiki-it-tests module and execute mvn clean test
 
