@@ -111,6 +111,8 @@ public class UtilJ2eeCompat
         else if( serverInfo.indexOf( TOMCAT ) >= 0 )
         {
             log.info( TOMCAT + " detected" );
+            // use response.getOutputStream instead of response.getWriter
+            useStream = true;
         }
         else if( serverInfo.indexOf( JRUN ) >= 0 )
         {
