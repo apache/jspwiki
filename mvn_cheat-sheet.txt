@@ -5,17 +5,19 @@ mvn idea:idea       : generates IDEA IntelliJ project files
 
 Build specific
 **************
-mvn clean install                    : performs a build
-mvn clean install -Dmaven.skip.test  : performs a build, skipping the tests (not recommended)
-mvn clean test                       : compiles the source and executes the tests
-mvn tomcat7:run                      : (from a war module) starts JSPWiki on a 
-                                       Tomcat7 instance at http://localhost:8080/JSPWiki
+mvn clean install                                        : performs a build
+mvn clean install -Dmaven.skip.test                      : performs a build, skipping the tests (not recommended)
+mvn clean test                                           : compiles the source and executes the tests
+mvn tomcat7:run                                          : (from a war module) starts JSPWiki on a 
+                                                           Tomcat7 instance at http://localhost:8080/JSPWiki
+mvn clean deploy -Prelease -Dgpg.passphrase=<passphrase> : deploys generated artifact to a repository
+                                                           If -Dgpg.passphrase is not given, it'll be asked
                                        
 Selenium execution: go to jspwiki-it-tests module and execute mvn clean test
 
 Reports specific
 ****************
-mvn javadoc:javadoc : creates javadocs; if graphviz binaries (www.graphviz.org) 
-                      are found on $PATH, the javadocs will display some UML 
-                      class/package level diagrams
-mvn apache-rat      : creates a RAT report
+mvn javadoc:javadoc  : creates javadocs; if graphviz binaries (www.graphviz.org) 
+                       are found on $PATH, the javadocs will display some UML 
+                       class/package level diagrams
+mvn apache-rat:check : creates a RAT report

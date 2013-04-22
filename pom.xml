@@ -21,10 +21,10 @@
          xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <groupId>org.apache.incubator.jspwiki</groupId>
+  <groupId>org.apache.jspwiki</groupId>
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>Apache JSPWiki (incubating)</name>
+  <name>Apache JSPWiki (Incubating)</name>
   <version>2.9.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich 
@@ -156,7 +156,6 @@
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-chrome-driver</artifactId>
-        <artifactId>selenium-firefox-driver</artifactId>
         <version>2.32.0</version>
       </dependency>
 
@@ -332,6 +331,11 @@
             </rules>
           </configuration>
         </plugin>
+        
+        <plugin>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.4</version>
+        </plugin>
           
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
@@ -371,7 +375,7 @@
             <docletArtifact>
             <groupId>org.jboss.apiviz</groupId>
             <artifactId>apiviz</artifactId>
-            <version>1.3.1.GA</version>
+            <version>1.3.2.GA</version>
           </docletArtifact>
           <encoding>${project.build.sourceEncoding}</encoding>
           </configuration>
@@ -542,6 +546,52 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   
   <organization>
     <name>The Apache Software Foundation</name>
