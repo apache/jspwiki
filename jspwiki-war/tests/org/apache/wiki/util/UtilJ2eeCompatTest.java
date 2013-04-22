@@ -35,7 +35,7 @@ public class UtilJ2eeCompatTest extends TestCase
     {
         assertTrue( UtilJ2eeCompat.useOutputStream( "Oracle Containers for J2EE 10g(10.1.3.1.0 )", true ) );
         // Do not reinitialize
-        assertTrue( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/5.5.20" ) );
+        assertTrue( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/7.0.39" ) );
         // Do not reinitialize
         assertTrue( UtilJ2eeCompat.useOutputStream( "Sun Java System Application Server 9.1_02" ) );
     }
@@ -49,9 +49,9 @@ public class UtilJ2eeCompatTest extends TestCase
 
     public void testTomcat()
     {
-        assertFalse( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/5.5.20", true ) );
+        assertTrue( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/7.0.39", true ) );
         // Reinitialize
-        assertFalse( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/5.5.20", true ) );
+        assertTrue( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/7.0.39", true ) );
     }
 
     public static Test suite()

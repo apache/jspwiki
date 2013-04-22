@@ -1,3 +1,9 @@
+2013-04-21  Harry Metske <metskem@apache.org>
+
+       * 2.9.1-incubating-1
+
+       * fixed JSPWIKI-396): UTF-8 characters in wiki pages incorrectly rendered if served by Tomcat
+
 2013-04-14 Glen Mazza (glenmazza AT apache DOT org)
 
        * Start of Selenium plugin (just testing prior to it moving into its own module)
