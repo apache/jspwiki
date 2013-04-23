@@ -241,7 +241,8 @@
         </td>
 
          <td class="changenote">
-           <%= (String)currentPage.getAttribute( WikiPage.CHANGENOTE ) %>
+           <% String changenote = (String) currentPage.getAttribute( WikiPage.CHANGENOTE );  %>
+		   <%= (changenote==null) ? "" : changenote  %>
          </td>
 
       </tr>
@@ -392,7 +393,8 @@
       </wiki:Permission>
       --%>
       <td class='changenote'>
-        <%= (String)att.getAttribute(WikiPage.CHANGENOTE) %>
+        <% String changenote = (String) att.getAttribute( WikiPage.CHANGENOTE ); %>
+		<%= (changenote==null) ? "" : changenote  %>
       </td>
     </tr>
     </wiki:HistoryIterator><%-- </wiki:AttachmentsIterator> --%>

@@ -1,3 +1,9 @@
+2013-04-23  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.9.1-incubating-2
+
+       * JSPWIKI-775, fixing "null" change-notes in PageInfo.jsp.
+
 2013-04-21  Harry Metske <metskem@apache.org>
 
        * 2.9.1-incubating-1
