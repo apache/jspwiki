@@ -71,8 +71,11 @@
   <property name="deprecation" value="false" />
   <property name="optimize" value="false" />
 
-  <!-- This denotes the directory where the source code lies. -->
-  <property name="code.src" value="src" />
+  <!-- This denotes the directory where the Java source code lies. -->
+  <property name="code.src" value="src/main/java" />
+
+  <!-- This denotes the directory where the source code resources lie. -->
+  <property name="code.resources" value="src" />
 
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
@@ -100,7 +103,8 @@
        test sources, the location of the test .class files and the
        directory where the test results are written in. -->
 
-  <property name="tests.src" value="tests" />
+  <property name="tests.src" value="src/test/java" />
+  <property name="tests.resources" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
   <property name="doc.rat" value="doc/rat" />
@@ -165,7 +169,7 @@
      <fileset dir="${libs.tests}">
         <include name="*.jar" />
      </fileset>
-     <pathelement path="${tests.src}/etc" />
+     <pathelement path="${tests.resources}/etc" />
   </path>
 
   <!-- Path holding (L)GPL jars and their dependencies -->
@@ -422,7 +426,7 @@
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="org/**/*.properties" />
-         <fileset dir="${code.src}" includes="templates/**/*.properties" />
+         <fileset dir="${code.resources}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
       </jar>
@@ -520,7 +524,7 @@
        <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
        <lib file="${jarfile}" />
        <!--lib file="${libs.tests}/stripes*.jar"/-->
-       <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
+       <fileset dir="${code.resources}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc">
          <include name="dtd/**" />
          <include name="jsp/**" />
@@ -553,7 +557,7 @@
             <java jar="tests/lib/yuicompressor-2.4.7.jar"
                   output="${tmpdir}/compress/@{src}"
                   fork="true">
-                <arg line="'${code.src}/@{src}' @{args}" />
+                <arg line="'${code.resources}/@{src}' @{args}" />
             </java>
         </sequential>
     </macrodef>
@@ -885,11 +889,11 @@
         </batchtest>
      </junit>
 
-     <junitreport todir="${tests.src}">
+     <junitreport todir="${tests.resources}">
         <fileset dir="${tests.reports}">
            <include name="**/TEST-*.xml" />
         </fileset>
-        <report format="noframes" todir="${tests.src}" />
+        <report format="noframes" todir="${tests.resources}" />
      </junitreport>
   </target>
 
@@ -1052,7 +1056,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the JSPs -->
       <copy toDir="@{context.dir}/webapp">
-        <fileset dir="${code.src}/webdocs" includes="**" />
+        <fileset dir="${code.resources}/webdocs" includes="**" />
       </copy>
 
     </sequential>
@@ -1282,7 +1286,7 @@ To automate the JAR signing processs, you can add the property
     <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
 
     <!-- Bulk-copy the table setup/teardown scripts -->
-    <property name="tests.db.scripts" value="${tests.src}/etc/db/${jdbc.driver.id}" />
+    <property name="tests.db.scripts" value="${tests.resources}/etc/db/${jdbc.driver.id}" />
     <mkdir dir="${tests.db.scripts}" />
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
@@ -1305,7 +1309,7 @@ To automate the JAR signing processs, you can add the property
     <property name="db.props.exist" value="true" />
 
     <!-- Copying the testing jdbc.properties file -->
-    <copy file="${tests.src}/etc/jdbc.properties.tmpl" toFile="${tests.src}/etc/db/jdbc.properties" overwrite="true"/>
+    <copy file="${tests.resources}/etc/jdbc.properties.tmpl" toFile="${tests.resources}/etc/db/jdbc.properties" overwrite="true"/>
   </target>
 
   <!-- Some convenience macrodefs -->
@@ -1455,7 +1459,7 @@ To automate the JAR signing processs, you can add the property
   	
     <!-- list of optional Sonar properties -->
     <property name="sonar.binaries" value="${code.build}" />
-    <property name="sonar.tests" value="${tests.src}" />
+    <property name="sonar.tests" value="${tests.resources}" />
     
     <!-- list of advanced properties -->
     <property name="sonar.core.codeCoveragePlugin" value="cobertura"/>
@@ -1524,7 +1528,7 @@ To automate the JAR signing processs, you can add the property
         <fileset dir="."
         	excludes=".*, .*/**,
         	doc/LICENSE.*,
-        	${code.src}/wikipages/**,
+        	${code.resources}/wikipages/**,
         	${code.build}/**,
         	${tests.build}/**,
         	${tests.reports}/**,

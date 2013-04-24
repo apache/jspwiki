@@ -207,8 +207,6 @@
 
     <build>
         <finalName>JSPWiki</finalName>
-        <sourceDirectory>${basedir}/src</sourceDirectory>
-        <testSourceDirectory>${basedir}/tests</testSourceDirectory>
         <resources>
             <resource>
                 <directory>etc</directory>
