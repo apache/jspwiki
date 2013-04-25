@@ -1,3 +1,12 @@
+2013-04-25 Glen Mazza (glenmazza AT apache DOT org)
+
+       * 2.9.1-incubating-4
+
+       * Moved ini folders from etc/ and tests/etc to 
+         Mavenized locations src/[main|test]/resources/ini
+         
+       * Updated build.xml and pom.xml for new ini source locations
+
 2013-04-24 Glen Mazza (glenmazza AT apache DOT org)
 
        * 2.9.1-incubating-3

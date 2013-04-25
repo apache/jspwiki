@@ -169,6 +169,10 @@
      <fileset dir="${libs.tests}">
         <include name="*.jar" />
      </fileset>
+     <!-- Standard Maven location for test resources; note ini folder
+          present both below and in ${jarfile} (can cause conflict? bug?) -->
+     <pathelement path="${tests.src}/../resources" />
+     <!-- Below line temporary until all test resources in Maven location -->
      <pathelement path="${tests.resources}/etc" />
   </path>
 
@@ -428,7 +432,7 @@
          <fileset dir="${code.src}" includes="org/**/*.properties" />
          <fileset dir="${code.resources}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
-         <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
+         <fileset dir="src/main/resources" includes="ini/*.*" />
       </jar>
   </target>
 

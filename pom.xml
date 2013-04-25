@@ -209,9 +209,9 @@
         <finalName>JSPWiki</finalName>
         <resources>
             <resource>
-                <directory>etc</directory>
+                <directory>src/main/resources</directory>
                 <includes>
-                    <include>ini/*</include>
+                    <include>**/*</include>
                 </includes>
             </resource>
             <resource>
@@ -223,10 +223,12 @@
         </resources>
         <testResources>
             <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
                 <directory>tests/etc</directory>
                 <includes>
                     <!--include>selenium/*</include-->
-                    <include>ini/*</include>
                     <include>jspwiki.policy</include>
                     <include>jspwiki-testUserPolicy.policy</include>
                     <include>test.properties</include>
