@@ -82,7 +82,8 @@
   <property name="code.build" value ="build" />
 
   <!-- The internationalization strings for the core JSPWiki classes -->
-  <property name="code.i18n" value="etc/i18n" />
+  <property name="code.i18n" value="src/main/resources" />
+
   <!-- The i18n location in which 18n templates are created -->
   <property name="tmplt.i18n.dir" value="i18n_templates" />
 
@@ -311,9 +312,9 @@
   	<delete dir="${docs.javadoc}" />
     <delete dir="${doc.rat}" />
   	<delete file="etc/jspwiki.properties" />
-    <delete file="etc/i18n/CoreResources_en.properties" />
-    <delete file="etc/i18n/plugin/PluginResources_en.properties" />
-    <delete file="etc/i18n/templates/default_en.properties" />
+    <delete file="${code.i18n}/CoreResources_en.properties" />
+    <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
+    <delete file="${code.i18n}/templates/default_en.properties" />
     <delete file="tests/etc/groupdatabase.xml" />
     <delete file="tests/etc/userdatabase.xml" />
     <delete file="tests/etc/jspwiki.properties" />
@@ -422,17 +423,17 @@
 
   <!--  Builds the jar of all compiled class files -->
   <target name="buildjar" unless="check_jar_has_been_built">
-  	  <!-- This is unfortunately needed, since the default property files are not otherwise
-  	       used. FIXME: Figure out a better way to do this in the future. -->
+      <!-- Creating a specific _en file presently needed just so that "English" will appear as an option on 
+           the User Preferences page, language option (and similar issues).  FIXME: change JSP code  
+           so this is no longer necessary.
+      -->
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
 	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
 	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
-         <fileset dir="${code.src}" includes="org/**/*.properties" />
          <fileset dir="${code.resources}" includes="templates/**/*.properties" />
-         <fileset dir="${code.i18n}" />
-         <fileset dir="src/main/resources" includes="ini/*.*" />
+         <fileset dir="src/main/resources" />
       </jar>
   </target>
 

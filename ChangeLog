@@ -1,3 +1,11 @@
+2013-04-29 Glen Mazza (glenmazza AT apache DOT org)
+
+       * 2.9.1-incubating-5
+
+       * Moved i18n resource files to Mavenized location.
+         
+       * Updated build.xml and pom.xml for new i18n source locations
+
 2013-04-25 Glen Mazza (glenmazza AT apache DOT org)
 
        * 2.9.1-incubating-4
