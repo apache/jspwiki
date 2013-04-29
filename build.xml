@@ -139,7 +139,7 @@
        source distribution.  Normally, you shouldn't have to care about these.
    -->
   <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
-  <property name="svn.tag" value="trunk" />
+  <property name="svn.tag" value="tags/jspwiki_2_9_1_incubating_rc2" />
 
   <!-- And finally, the directory where the final .zip-file is put -->
   <property name="release.dir" value="releases" />
