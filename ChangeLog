@@ -1,3 +1,11 @@
+2013-04-30 Glen Mazza (glenmazza AT apache DOT org)
+
+       * 2.9.1-incubating-6
+
+       * Moved WAR resources that don't require modification from etc/ to Mavenized src/main/webapps location.
+         
+       * removed unused etc/dtd folder
+
 2013-04-29 Glen Mazza (glenmazza AT apache DOT org)
 
        * 2.9.1-incubating-5

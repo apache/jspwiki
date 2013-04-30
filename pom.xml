@@ -219,7 +219,6 @@
             <testResource>
                 <directory>tests/etc</directory>
                 <includes>
-                    <!--include>selenium/*</include-->
                     <include>jspwiki.policy</include>
                     <include>jspwiki-testUserPolicy.policy</include>
                     <include>test.properties</include>
@@ -293,7 +292,7 @@
                                          replacefilterfile="build.properties" />
 
                                 <!-- Create web.xml files for testing -->
-                                <copy file="${basedir}/etc/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
+                                <copy file="src/main/webapp/WEB-INF/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
 
                                 <!-- For web unit tests, turn off SSL (self-signed certs b0rk
                                      the tests) and enable JDBC refs -->
@@ -310,12 +309,6 @@
                                 <replace file="target/test-classes/WEB-INF/web.xml"
                                         token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
 
-                                <!-- Copy the DTDs to the test WEB-INF -->
-                                <mkdir dir="target/test-classes/WEB-INF/dtd" />
-                                <copy toDir="target/test-classes/WEB-INF/dtd">
-                                    <fileset dir="${basedir}/etc/dtd/" />
-                                </copy>
- 
                                 <!-- Copy the database configuration information -->
                                 <mkdir dir="tests/etc/db/hsql" />
                                 <copy file="tests/etc/jdbc.properties.tmpl" tofile="tests/etc/db/jdbc.properties" />
@@ -422,7 +415,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <webXml>etc/web.xml</webXml>
+                    <!--webXml>etc/web.xml</webXml-->
                     <archiveClasses>true</archiveClasses>
                     <webResources>
                         <resource>
@@ -430,19 +423,17 @@
                             <targetPath>WEB-INF</targetPath>
                             <includes>
                                 <include>userdatabase.xml</include>
-                                <include>dtd/**</include>
                                 <include>groupdatabase.xml</include>
-                                <include>geronimo-web.xml</include>
-                                <include>jspwiki.policy</include>
-                                <include>*.tld</include>
                                 <include>jspwiki.properties</include>
                             </includes>
                         </resource>
                         <resource>
-                            <directory>etc</directory>
-                            <targetPath>WEB-INF/classes</targetPath>
+                            <directory>src/main/webapp</directory>
+                            <targetPath>WEB-INF</targetPath>
                             <includes>
-                                <include>oscache.properties</include>
+                                <include>geronimo-web.xml</include>
+                                <include>jspwiki.policy</include>
+                                <include>*.tld</include>
                             </includes>
                         </resource>
                         <resource>

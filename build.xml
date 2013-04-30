@@ -248,9 +248,9 @@
         <get-element to-file="${libs.main}/jstl-1.1.2.jar" url="${central.url}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" />
         <get-element to-file="${libs.main}/jaxen-1.1-beta-6.jar" url="${central.url}/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar"/>
         <get-element to-file="${libs.main}/jdom-1.0.jar" url="${central.url}/jdom/jdom/1.0/jdom-1.0.jar" />
-        <get-element to-file="${libs.main}/jrcs-diff-0.4.2.jar" 
+        <get-element to-file="${libs.main}/org.suigeneris.jrcs.diff-0.4.2.jar" 
                      url="${central.url}/org/jvnet/hudson/org.suigeneris.jrcs.diff/0.4.2/org.suigeneris.jrcs.diff-0.4.2.jar" />
-        <get-element to-file="${libs.main}/jsonrpc-1.0.jar" url="${central.url}/com/metaparadigm/json-rpc/1.0/json-rpc-1.0.jar" />
+        <get-element to-file="${libs.main}/json-rpc-1.0.jar" url="${central.url}/com/metaparadigm/json-rpc/1.0/json-rpc-1.0.jar" />
         <get-element to-file="${libs.main}/jsp-api-2.0.jar" url="${central.url}/javax/servlet/jsp/jsp-api/2.0/jsp-api-2.0.jar" />
         <get-element to-file="${libs.main}/log4j-1.2.14.jar" url="${central.url}/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
         <get-element to-file="${libs.main}/lucene-core-3.6.0.jar" url="${central.url}/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar" />
@@ -321,8 +321,9 @@
     <delete file="tests/etc/jspwiki_rcs.properties" />
     <delete file="tests/etc/jspwiki_vers.properties" />
     <delete dir="tests/etc/db" />
-    <delete dir="tests/etc/WEB-INF/dtd" />
-    <delete file="tests/etc/WEB-INF/web.xml" />
+    <delete dir="tests/etc/WEB-INF" />
+    <delete file="tests/etc/groupdatabase.xml.old" />
+    <delete file="tests/etc/userdatabase.xml.old" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -432,7 +433,7 @@
 	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
-         <fileset dir="${code.resources}" includes="templates/**/*.properties" />
+         <!--fileset dir="${code.resources}" includes="templates/**/*.properties"/-->
          <fileset dir="src/main/resources" />
       </jar>
   </target>
@@ -525,27 +526,25 @@
     <delete file="${warfile}" />
 
     <war warfile="${warfile}"
-         webxml="etc/web.xml">
+         webxml="src/main/webapp/WEB-INF/web.xml">
        <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
        <lib file="${jarfile}" />
        <!--lib file="${libs.tests}/stripes*.jar"/-->
        <fileset dir="${code.resources}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc">
-         <include name="dtd/**" />
-         <include name="jsp/**" />
-         <include name="commons-logging.properties" />
-         <include name="jspwiki.policy" />
          <include name="jspwiki.properties" />
-         <include name="*.tld" />
          <include name="userdatabase.xml" />
-        <include name="groupdatabase.xml" />
-        <include name="geronimo-web.xml" />
+         <include name="groupdatabase.xml" />
        </webinf>
-       <classes dir="etc" includes="oscache.properties" />
+       <webinf dir="src/main/webapp">
+          <include name="geronimo-web.xml" />
+          <include name="*.tld" />
+          <include name="jspwiki.policy" />
+       </webinf>
     </war>
 
     <war warfile="${warfile}"
-         webxml="etc/web.xml" update="true">
+         webxml="src/main/webapp/WEB-INF/web.xml" update="true">
       	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
       	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
     </war>
@@ -784,7 +783,7 @@
       <mkdir dir="tests/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
-      <copy file="${basedir}/etc/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
+      <copy file="src/main/webapp/WEB-INF/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
 
       <!-- For web unit tests, turn off SSL (self-signed certs b0rk
            the tests) and enable JDBC refs -->
@@ -805,11 +804,6 @@
       <copy file="${webtests.build}/web.xml.container"
           tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
 
-      <!-- Copy the DTDs to the test WEB-INF -->
-      <mkdir dir="tests/etc/WEB-INF/dtd" />
-      <copy toDir="tests/etc/WEB-INF/dtd">
-        <fileset dir="${basedir}/etc/dtd/" />
-      </copy>
   </target>
 
   <!-- This target runs the JUnit tests that are available
@@ -849,7 +843,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <include name="**/*Test.java" />
+                <exclude name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
@@ -1022,9 +1016,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the WEB-INF files -->
       <copy toDir="@{context.dir}/webapp/WEB-INF">
-        <fileset dir="etc">
-          <include name="dtd/**" />
-          <include name="commons-logging.properties" />
+        <fileset dir="src/main/webapp">
           <include name="jspwiki.policy" />
           <include name="*.tld" />
         </fileset>
@@ -1046,11 +1038,6 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <entry key="log4j.appender.FileLog.File"                value="@{context.path}/jspwiki.log" />
         <propertyfile-entries/>
       </propertyfile>
-
-      <!-- Copy the classes -->
-      <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
-        <fileset dir="etc" includes="oscache.properties" />
-      </copy>
 
       <!-- Copy the libraries -->
       <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
