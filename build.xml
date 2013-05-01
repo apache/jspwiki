@@ -536,7 +536,7 @@
          <include name="userdatabase.xml" />
          <include name="groupdatabase.xml" />
        </webinf>
-       <webinf dir="src/main/webapp">
+       <webinf dir="src/main/webapp/WEB-INF">
           <include name="geronimo-web.xml" />
           <include name="*.tld" />
           <include name="jspwiki.policy" />
@@ -843,7 +843,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <exclude name="**/*Test.java" />
+                <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
@@ -1016,7 +1016,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the WEB-INF files -->
       <copy toDir="@{context.dir}/webapp/WEB-INF">
-        <fileset dir="src/main/webapp">
+        <fileset dir="src/main/webapp/WEB-INF">
           <include name="jspwiki.policy" />
           <include name="*.tld" />
         </fileset>

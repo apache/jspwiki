@@ -428,15 +428,6 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>src/main/webapp</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <includes>
-                                <include>geronimo-web.xml</include>
-                                <include>jspwiki.policy</include>
-                                <include>*.tld</include>
-                            </includes>
-                        </resource>
-                        <resource>
                             <directory>src/webdocs</directory>
                             <includes>
                                 <include>admin/**</include>

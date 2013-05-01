@@ -1,5 +1,13 @@
 2013-04-30 Glen Mazza (glenmazza AT apache DOT org)
 
+       * 2.9.1-incubating-7
+
+       * Moved WAR resources from previous commit to correct src/main/webapps/WEB-INF location, fixed pom.xml
+         to stop duplicating those resources in both webapps and webapps/WEB-INF
+         
+
+2013-04-30 Glen Mazza (glenmazza AT apache DOT org)
+
        * 2.9.1-incubating-6
 
        * Moved WAR resources that don't require modification from etc/ to Mavenized src/main/webapps location.
