@@ -1,7 +1,12 @@
 2013-05-02 Glen Mazza (glenmazza AT apache DOT org)
 
-       * Removed install.sh, slight renaming of web.xml files generated in build.xml for readability
-         
+       * Removed install.sh, build.sh/build.bat/build.properties.win, moved latter's
+         info into build.properties.
+
+       * slight renaming of web.xml files generated in build.xml for readability
+
+       * Added Maven-only filters.properties to src/main/filters (not yet used)
+        
 2013-04-30 Glen Mazza (glenmazza AT apache DOT org)
 
        * 2.9.1-incubating-7
