@@ -212,15 +212,6 @@
 
     <build>
         <finalName>JSPWiki</finalName>
-        <filters>
-            <filter>src/main/filters/glen.properties</filter>        
-        </filters>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
