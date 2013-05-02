@@ -783,25 +783,25 @@
       <mkdir dir="tests/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
-      <copy file="src/main/webapp/WEB-INF/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
+      <copy file="src/main/webapp/WEB-INF/web.xml" tofile="${webtests.build}/webtest.web.xml" overwrite="true" />
 
       <!-- For web unit tests, turn off SSL (self-signed certs b0rk
            the tests) and enable JDBC refs -->
-      <replace file="${webtests.build}/web.xml.custom"
+      <replace file="${webtests.build}/webtest.web.xml"
                token="CONFIDENTIAL" value="NONE" />
-      <replace file="${webtests.build}/web.xml.custom"
+      <replace file="${webtests.build}/webtest.web.xml"
                token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
-      <replace file="${webtests.build}/web.xml.custom"
+      <replace file="${webtests.build}/webtest.web.xml"
                token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
 
       <!-- For unit testing, turn on container auth -->
-      <copy file="${webtests.build}/web.xml.custom"
-          tofile="${webtests.build}/web.xml.container" overwrite="true" />
-      <replace file="${webtests.build}/web.xml.container"
+      <copy file="${webtests.build}/webtest.web.xml"
+          tofile="${webtests.build}/unittest.web.xml" overwrite="true" />
+      <replace file="${webtests.build}/unittest.web.xml"
                token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-      <replace file="${webtests.build}/web.xml.container"
+      <replace file="${webtests.build}/unittest.web.xml"
                token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
-      <copy file="${webtests.build}/web.xml.container"
+      <copy file="${webtests.build}/unittest.web.xml"
           tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
 
   </target>
@@ -843,7 +843,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <include name="**/*Test.java" />
+                <exclude name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
@@ -922,11 +922,11 @@
 
     <!-- Build the custom auth WAR -->
     <webtest-setup context="test-custom"
-      webxml="${webtests.build}/web.xml.custom"/>
+      webxml="${webtests.build}/webtest.web.xml"/>
 
     <!-- Build the custom auth WAR (absolute URLs) -->
     <webtest-setup context="test-custom-absolute"
-      webxml="${webtests.build}/web.xml.custom">
+      webxml="${webtests.build}/webtest.web.xml">
       <propertyfile-entries>
         <entry key="jspwiki.referenceStyle" value="absolute" />
         <entry key="jspwiki.baseURL" value="http://localhost:${webtests.port}/test-custom-absolute/" />
@@ -935,11 +935,11 @@
 
     <!-- Build the container auth WAR -->
     <webtest-setup context="test-container"
-      webxml="${webtests.build}/web.xml.container" />
+      webxml="${webtests.build}/unittest.web.xml" />
 
     <!-- Build the custom auth WAR (JDBC database) -->
     <webtest-setup context="test-custom-jdbc"
-      webxml="${webtests.build}/web.xml.custom">
+      webxml="${webtests.build}/webtest.web.xml">
       <propertyfile-entries>
         <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.JDBCUserDatabase" />
         <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.JDBCGroupDatabase" />
@@ -948,7 +948,7 @@
 
     <!-- Build the container auth WAR (JDBC database) and test it -->
     <webtest-setup context="test-container-jdbc"
-      webxml="${webtests.build}/web.xml.container">
+      webxml="${webtests.build}/unittest.web.xml">
       <propertyfile-entries>
         <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.JDBCUserDatabase" />
         <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.JDBCGroupDatabase" />
