@@ -212,6 +212,7 @@
 
     <build>
         <finalName>JSPWiki</finalName>
+        <!-- filtering: http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html -->
         <filters>
             <filter>src/main/filters/filters.properties</filter>        
         </filters>
@@ -225,6 +226,7 @@
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
+                <filtering>true</filtering>
             </testResource>
             <testResource>
                 <directory>tests/etc</directory>
@@ -274,6 +276,7 @@
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
+                        <id>create_files</id>
                         <configuration>
                             <target>
                                 <!-- Creating a specific _en file presently needed just so that "English" will appear as an option on 
@@ -287,18 +290,9 @@
                                 <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
                                 <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
                                 <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
-                                <copy file="tests/etc/jspwiki.properties.tmpl" tofile="target/test-classes/jspwiki.properties" />
-                                <copy file="tests/etc/jspwiki_rcs.properties.tmpl" tofile="target/test-classes/jspwiki_rcs.properties" />
-                                <copy file="tests/etc/jspwiki_vers.properties.tmpl" tofile="target/test-classes/jspwiki_vers.properties" />
 
                                 <!-- Filter the properties files -->
                                 <replace file="etc/jspwiki.properties"
-                                         replacefilterfile="build.properties" />
-                                <replace file="target/test-classes/jspwiki.properties"
-                                         replacefilterfile="build.properties" />
-                                <replace file="target/test-classes/jspwiki_rcs.properties"
-                                         replacefilterfile="build.properties" />
-                                <replace file="target/test-classes/jspwiki_vers.properties"
                                          replacefilterfile="build.properties" />
 
                                 <!-- Create web.xml files for testing -->
@@ -318,7 +312,17 @@
                                         token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
                                 <replace file="target/test-classes/WEB-INF/web.xml"
                                         token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
-
+                           </target>
+                       </configuration>
+                       <goals>
+                           <goal>run</goal>
+                       </goals>
+                   </execution>
+                    <execution>
+                        <phase>process-test-resources</phase>
+                        <id>compile</id>
+                        <configuration>
+                            <target>
                                 <!-- Copy the database configuration information -->
                                 <mkdir dir="tests/etc/db/hsql" />
                                 <copy file="tests/etc/jdbc.properties.tmpl" tofile="tests/etc/db/jdbc.properties" />

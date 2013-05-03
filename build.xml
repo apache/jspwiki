@@ -170,9 +170,9 @@
      <fileset dir="${libs.tests}">
         <include name="*.jar" />
      </fileset>
-     <!-- Standard Maven location for test resources; note ini folder
-          present both below and in ${jarfile} (can cause conflict? bug?) -->
-     <pathelement path="${tests.src}/../resources" />
+     <!-- Note ini folder present both below and 
+          in ${jarfile} (can cause conflict? bug?) -->
+     <pathelement path="target/test-classes" />
      <!-- Below line temporary until all test resources in Maven location -->
      <pathelement path="${tests.resources}/etc" />
   </path>
@@ -289,16 +289,16 @@
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
-     <copy file="tests/etc/jspwiki.properties.tmpl" tofile="tests/etc/jspwiki.properties" />
-     <copy file="tests/etc/jspwiki_rcs.properties.tmpl" tofile="tests/etc/jspwiki_rcs.properties" />
-     <copy file="tests/etc/jspwiki_vers.properties.tmpl" tofile="tests/etc/jspwiki_vers.properties" />
+     <copy file="src/test/resources/jspwiki.properties" tofile="target/test-classes/jspwiki.properties" />
+     <copy file="src/test/resources/jspwiki_rcs.properties" tofile="target/test-classes/jspwiki_rcs.properties" />
+     <copy file="src/test/resources/jspwiki_vers.properties" tofile="target/test-classes/jspwiki_vers.properties" />
      <replace file="etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="tests/etc/jspwiki.properties"
+     <replace file="target/test-classes/jspwiki.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="tests/etc/jspwiki_rcs.properties"
+     <replace file="target/test-classes/jspwiki_rcs.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="tests/etc/jspwiki_vers.properties"
+     <replace file="target/test-classes/jspwiki_vers.properties"
               replacefilterfile="${build.properties}" />
   </target>
 
@@ -317,9 +317,7 @@
     <delete file="${code.i18n}/templates/default_en.properties" />
     <delete file="tests/etc/groupdatabase.xml" />
     <delete file="tests/etc/userdatabase.xml" />
-    <delete file="tests/etc/jspwiki.properties" />
-    <delete file="tests/etc/jspwiki_rcs.properties" />
-    <delete file="tests/etc/jspwiki_vers.properties" />
+    <delete dir="target" />
     <delete dir="tests/etc/db" />
     <delete dir="tests/etc/WEB-INF" />
     <delete file="tests/etc/groupdatabase.xml.old" />
@@ -834,6 +832,16 @@
     </condition>
     <antcall target="buildjar" />
     
+    <!-- Copy non-filtered test resources to target/test-classes folder -->
+    <copy todir="target/test-classes/ini">
+        <fileset dir="src/test/resources/ini"/>
+    </copy>
+    <copy todir="target/test-classes">
+        <fileset dir="src/test/resources">
+           <include name="*.xml"/>
+        </fileset>
+    </copy>
+
     <junit printsummary="yes" haltonfailure="no" fork="yes" failureproperty="test.failed">
         <classpath>
            <path refid="path.tests" />
@@ -843,7 +851,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <include name="**/*Test.java" />
+                <exclude name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
@@ -908,7 +916,7 @@
     <mkdir dir="${webtests.build}" />
   
     <!-- Create the master jspwiki.properties template for all webtests -->
-    <copy file="tests/etc/jspwiki.properties"
+    <copy file="src/test/resources/jspwiki.properties"
         toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
     <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
       <entry key="jspwiki.authorizer" value="org.apache.wiki.auth.authorize.WebContainerAuthorizer" />
@@ -1283,7 +1291,7 @@ To automate the JAR signing processs, you can add the property
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
       <filterset>
-        <filtersfile file="tests/etc/jspwiki.properties" />
+        <filtersfile file="target/test-classes/jspwiki.properties" />
         <filtersfile file="build.properties" />
       </filterset>
     </copy>
