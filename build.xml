@@ -851,7 +851,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <exclude name="**/*Test.java" />
+                <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
