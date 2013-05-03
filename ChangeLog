@@ -1,3 +1,10 @@
+2013-05-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.9.1-incubating-9
+       
+       * Refactored TemplateManager#listLanguages(PageContext pageContext) so it doesn't search for 
+         i18n files under a specific jar filename
+       
 2013-05-03 Glen Mazza (glenmazza AT apache DOT org)
 
        * 2.9.1-incubating-8

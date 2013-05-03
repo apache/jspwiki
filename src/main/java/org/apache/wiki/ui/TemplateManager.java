@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +30,6 @@ import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -40,6 +37,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.util.ClassUtil;
 
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
@@ -88,8 +86,6 @@ public class TemplateManager
     public static final String PROPERTYFILE = "template.properties";
 
     /** Location of I18N Resource bundles, and path prefix and suffixes */
-
-    public static final String I18NRESOURCE_PATH = "/WEB-INF/lib/JSPWiki.jar";
 
     public static final String I18NRESOURCE_PREFIX = "templates/default_";
 
@@ -420,58 +416,26 @@ public class TemplateManager
      * List all installed i18n language properties
      * 
      * @param pageContext
-     * @return map of installed Languages (with help of Juan Pablo Santos Rodriguez)
+     * @return map of installed Languages
      * @since 2.7.x
      */
     public Map listLanguages(PageContext pageContext)
     {
-        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
-
+        Map< String, String > resultMap = new LinkedHashMap< String, String >();
         String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
-        JarInputStream jarStream = null;
         
-        try
-        {
-            JarEntry entry;
-            InputStream inputStream = pageContext.getServletContext().getResourceAsStream(I18NRESOURCE_PATH);
-            jarStream = new JarInputStream(inputStream);
-
-            while ((entry = jarStream.getNextJarEntry()) != null)
+        List< String > entries = ClassUtil.classpathEntriesUnder( DIRECTORY );
+        for( String name : entries ) {
+            if ( name.startsWith( I18NRESOURCE_PREFIX ) && name.endsWith( I18NRESOURCE_SUFFIX ) )
             {
-                String name = entry.getName();
-
-                if (!entry.isDirectory() && name.startsWith(I18NRESOURCE_PREFIX) && name.endsWith(I18NRESOURCE_SUFFIX))
+                name = name.substring(I18NRESOURCE_PREFIX.length(), name.lastIndexOf(I18NRESOURCE_SUFFIX));
+                Locale locale = new Locale(name.substring(0, 2), ((name.indexOf("_") == -1) ? "" : name.substring(3, 5)));
+                String defaultLanguage = "";
+                if (clientLanguage.startsWith(name))
                 {
-                    name = name.substring(I18NRESOURCE_PREFIX.length(), name.lastIndexOf(I18NRESOURCE_SUFFIX));
-
-                    Locale locale = new Locale(name.substring(0, 2), ((name.indexOf("_") == -1) ? "" : name.substring(3, 5)));
-
-                    String defaultLanguage = "";
-
-                    if (clientLanguage.startsWith(name))
-                    {
-                        defaultLanguage = LocaleSupport.getLocalizedMessage(pageContext, I18NDEFAULT_LOCALE);
-                    }
-
-                    resultMap.put(name, locale.getDisplayName(locale) + " " + defaultLanguage);
+                    defaultLanguage = LocaleSupport.getLocalizedMessage(pageContext, I18NDEFAULT_LOCALE);
                 }
-            }
-        }
-        catch (IOException ioe)
-        {
-            if (log.isDebugEnabled())
-                log.debug("Could not search jar file '" + I18NRESOURCE_PATH + 
-                          "'for properties files due to an IOException: \n" + ioe.getMessage());
-        }
-        finally
-        {
-            if( jarStream != null ) 
-            {
-                try 
-                { 
-                    jarStream.close(); 
-                } 
-                catch(IOException e) {}
+                resultMap.put(name, locale.getDisplayName(locale) + " " + defaultLanguage);
             }
         }
         

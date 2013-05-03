@@ -18,18 +18,25 @@
  */
 package org.apache.wiki.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
-
-import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Contains useful utilities for class file manipulation.  This is a static class,
@@ -167,6 +174,120 @@ public final class ClassUtil
         list.add( packageName );
 
         return findClass( list, className );
+    }
+    
+    /**
+     * Lists all the files in classpath under a given package.
+     * 
+     * @param rootPackage the base package. Can be {code null}.
+     * @return all files entries in classpath under the given package
+     */
+    public static List< String > classpathEntriesUnder( final String rootPackage ) 
+    {
+        List< String > results = new ArrayList< String >();
+        Enumeration< URL > en = null;
+        if( StringUtils.isNotEmpty( rootPackage ) ) {
+            try
+            {
+                en = ClassUtil.class.getClassLoader().getResources( rootPackage );
+            }
+            catch( IOException e )
+            {
+                log.error( e.getMessage(), e );
+            }
+        }
+        
+        while( en != null && en.hasMoreElements() )
+        {
+            URL url = en.nextElement();
+            try
+            {
+                if( "jar".equals( url.getProtocol() ) ) 
+                {
+                    jarEntriesUnder( results, ( JarURLConnection )url.openConnection(), rootPackage );
+                } 
+                else if( "file".equals( url.getProtocol() ) ) 
+                {
+                    fileEntriesUnder( results, new File( url.getFile() ), rootPackage );
+                }
+                
+            }
+            catch (IOException ioe)
+            {
+                log.error( ioe.getMessage(), ioe );
+            }
+        }
+        return results;
+    }
+    
+    /**
+     * Searchs for all the files in classpath under a given package, for a given {@link File}. If the 
+     * {@link File} is a directory all files inside it are stored, otherwise the {@link File} itself is
+     * stored
+     * 
+     * @param results collection in which the found entries are stored
+     * @param file given {@link File} to search in.
+     * @param rootPackage base package.
+     */
+    static void fileEntriesUnder( List< String > results, File file, String rootPackage ) 
+    {
+        log.debug( "scanning [" + file.getName() +"]" );
+        if( file.isDirectory() ) {
+            @SuppressWarnings( "unchecked" )Iterator< File > files = FileUtils.iterateFiles( file, null, true );
+            while( files.hasNext() ) 
+            {
+                File subfile = files.next();
+                // store an entry similar to the jarSearch(..) below ones
+                String entry = StringUtils.replace( subfile.getAbsolutePath(), file.getAbsolutePath() + File.separatorChar, StringUtils.EMPTY );
+                results.add( rootPackage + "/" + entry );
+            }
+        } else {
+            results.add( file.getName() );
+        }
+    }
+    
+    /**
+     * Searchs for all the files in classpath under a given package, for a given {@link JarURLConnection}.
+     * 
+     * @param results collection in which the found entries are stored
+     * @param jurlcon given {@link JarURLConnection} to search in.
+     * @param rootPackage base package.
+     */
+    static void jarEntriesUnder( List< String > results, JarURLConnection jurlcon, String rootPackage )
+    {
+        JarFile jar = null;
+        try
+        {
+            jar = jurlcon.getJarFile();
+            log.debug( "scanning [" + jar.getName() +"]" );
+            Enumeration< JarEntry > entries = jar.entries();
+            while( entries.hasMoreElements() )
+            {
+                JarEntry entry = entries.nextElement();
+                if( entry.getName().startsWith( rootPackage ) && !entry.isDirectory() ) 
+                {
+                    results.add( entry.getName() );
+                }
+            }
+        }
+        catch( IOException ioe )
+        {
+            log.error( ioe.getMessage(), ioe );
+        }
+        finally 
+        {
+            if (jar != null)
+            {
+                try
+                {
+                    jar.close();
+                }
+                catch( IOException ioe )
+                {
+                    log.error( ioe.getMessage(), ioe );
+                }
+            }
+        }
     }
     
     /**

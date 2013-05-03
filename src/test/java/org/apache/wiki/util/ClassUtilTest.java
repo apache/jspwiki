@@ -19,13 +19,39 @@
 
 package org.apache.wiki.util;
 
-import junit.framework.*;
+import java.util.List;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ClassUtilTest extends TestCase
 {
     public ClassUtilTest( String s )
     {
         super( s );
+    }
+    
+    /**
+     * tests various kinds of searches on classpath items
+     */
+    public void testClasspathSearch() throws Exception
+    {
+        List< String > jarSearch = ClassUtil.classpathEntriesUnder( "META-INF" );
+        assertNotNull( jarSearch );
+        assertTrue( jarSearch.size() > 0 );
+        
+        List< String > fileSearch = ClassUtil.classpathEntriesUnder( "templates" );
+        assertNotNull( fileSearch );
+        assertTrue( fileSearch.size() > 0 );
+        
+        List< String > nullSearch = ClassUtil.classpathEntriesUnder( "blurb" );
+        assertNotNull( nullSearch );
+        assertTrue( nullSearch.size() == 0 );
+        
+        List< String > nullInputSearch = ClassUtil.classpathEntriesUnder( null );
+        assertNotNull( nullInputSearch );
+        assertTrue( nullSearch.size() == 0 );
     }
 
     /**
