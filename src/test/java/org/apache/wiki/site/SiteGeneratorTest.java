@@ -65,7 +65,7 @@ public class SiteGeneratorTest extends TestCase
     
     private static final String BASE_FILE_NAME = "../site/trunk/";
     
-    private static final String I18N_BASE = "/etc/i18n/";
+    private static final String I18N_BASE = "/src/main/resources/";
     private static final String I18N_CORE = I18N_BASE + "CoreResources.properties";
     private static final String I18N_TEMPLATE = I18N_BASE + "templates/default.properties";
     private static final String I18N_PLUGIN = I18N_BASE + "plugin/PluginResources.properties";
@@ -98,7 +98,8 @@ public class SiteGeneratorTest extends TestCase
     void generateI18nStatusFile()
     {
         String file = BASE_FILE_NAME + "content/jspwiki/development/translations.mdtext";
-        StringBuilder sb = new StringBuilder( "## I18n current status\n" );
+        StringBuilder sb = new StringBuilder( "Title: Translation status\n\n" );
+        sb.append( "## I18n current status\n" );
         
         String[] locales = new String[] { "de", "es", "fi", "fr", "it", "nl", "pt_BR", "ru", "zh_CN" };
         for( String locale : locales ) 
@@ -154,7 +155,7 @@ public class SiteGeneratorTest extends TestCase
     void generateChangelogFile() 
     {
         String file = BASE_FILE_NAME + "content/jspwiki/development/changelog.mdtext";
-        StringBuilder sb = new StringBuilder( "## Changelog\n\n" );
+        StringBuilder sb = new StringBuilder( "Title: Changelog\n\n" );
         List< String > links = new ArrayList< String >();
         try 
         {
