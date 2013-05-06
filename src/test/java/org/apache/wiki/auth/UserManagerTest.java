@@ -58,7 +58,7 @@ public class UserManagerTest extends TestCase
     props.remove( "jspwiki.approver"+UserManager.SAVE_APPROVER );
     
     // Make sure we are using the XML user database
-    props.put( XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml" );
+    props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
     m_engine  = new TestEngine( props );
     m_mgr = m_engine.getUserManager();
     m_db = m_mgr.getUserDatabase();
@@ -84,7 +84,7 @@ public class UserManagerTest extends TestCase
       props.put( "jspwiki.approver."+UserManager.SAVE_APPROVER, "Admin" );
       
       // Make sure we are using the XML user database
-      props.put( XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml" );
+      props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
       m_engine  = new TestEngine( props );
       m_mgr = m_engine.getUserManager();
       m_db = m_mgr.getUserDatabase();

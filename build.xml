@@ -315,13 +315,9 @@
     <delete file="${code.i18n}/CoreResources_en.properties" />
     <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
     <delete file="${code.i18n}/templates/default_en.properties" />
-    <delete file="tests/etc/groupdatabase.xml" />
-    <delete file="tests/etc/userdatabase.xml" />
     <delete dir="target" />
     <delete dir="tests/etc/db" />
     <delete dir="tests/etc/WEB-INF" />
-    <delete file="tests/etc/groupdatabase.xml.old" />
-    <delete file="tests/etc/userdatabase.xml.old" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -772,12 +768,6 @@
 
   <target name="tests-init" depends="init">
       <!-- Build up the /etc directory for testing -->
-      <delete file="tests/etc/userdatabase.xml" />
-      <delete file="tests/etc/userdatabase.xml.old" />
-      <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
-      <delete file="tests/etc/groupdatabase.xml" />
-      <delete file="tests/etc/groupdatabase.xml.old" />
-      <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
       <mkdir dir="tests/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
@@ -838,7 +828,11 @@
     </copy>
     <copy todir="target/test-classes">
         <fileset dir="src/test/resources">
+           <!-- three jspwiki*.properties files filtered, so skipped -->
            <include name="*.xml"/>
+           <include name="*.txt"/>
+           <include name="*.policy"/>
+           <include name="test.properties"/>
         </fileset>
     </copy>
 
@@ -1028,7 +1022,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <include name="jspwiki.policy" />
           <include name="*.tld" />
         </fileset>
-        <fileset dir="tests/etc" includes="userdatabase.xml groupdatabase.xml" />
+        <fileset dir="target/test-classes" includes="userdatabase.xml groupdatabase.xml" />
       </copy>
       <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
       
@@ -1228,7 +1222,7 @@ To automate the JAR signing processs, you can add the property
        JDBC-compliant database such as Postgresql.
 
        Step 2: If desired, modify the database properties in
-       tests/etc/jdbc.properties.impl.  The defaults given should be sufficient 
+       tests/etc/jdbc.properties.tmpl.  The defaults given should be sufficient 
        for JDBC testing using hsql on any developer's local machine.
 
        The 'jdbc.driver.id' property in this file (defaulted to hsql) is 

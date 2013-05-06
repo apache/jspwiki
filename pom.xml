@@ -228,17 +228,6 @@
                 <directory>src/test/resources</directory>
                 <filtering>true</filtering>
             </testResource>
-            <testResource>
-                <directory>tests/etc</directory>
-                <includes>
-                    <include>jspwiki.policy</include>
-                    <include>jspwiki-testUserPolicy.policy</include>
-                    <include>test.properties</include>
-                    <include>log4j.properties</include>
-                    <include>TextFormattingRules.txt</include>
-                    <include>TestPlugins.txt</include>
-                </includes>
-            </testResource>
         </testResources>
         <plugins>
             <plugin>
@@ -287,8 +276,6 @@
                                 <copy file="src/main/resources/templates/default.properties" tofile="target/classes/templates/default_en.properties"/>
                                 <copy file="src/main/resources/plugin/PluginResources.properties" tofile="target/classes/plugin/PluginResources_en.properties"/>
 
-                                <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
-                                <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
                                 <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
 
                                 <!-- Filter the properties files -->

@@ -51,7 +51,7 @@ public class XMLUserDatabaseTest extends TestCase
       super.setUp();
       Properties props = new Properties();
       props.load( TestEngine.findTestProperties() );
-      props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
+      props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
       WikiEngine engine  = new TestEngine(props);
       m_db = new XMLUserDatabase();
       m_db.initialize(engine, props);
