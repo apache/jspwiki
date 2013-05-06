@@ -27,7 +27,7 @@
     <version>2.9.1-SNAPSHOT</version>
   </parent>
   
-  <groupId>org.apache.incubator.jspwiki.it</groupId>
+  <groupId>org.apache.jspwiki.it</groupId>
   <artifactId>jspwiki-it-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>jspwiki-it-builder</name>
