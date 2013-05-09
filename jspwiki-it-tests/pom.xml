@@ -36,7 +36,7 @@
   
   <modules>
     <module>jspwiki-selenium-tests</module> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
-    <module>jspwiki-it-vanilla</module>
+    <module>jspwiki-it-test-custom</module>
   </modules>
   
 </project>
