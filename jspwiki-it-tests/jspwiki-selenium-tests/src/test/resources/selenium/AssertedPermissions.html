@@ -28,21 +28,21 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Asserted Permissions<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
 	<tr><td>store</td>	<td>javascript{'Test-asserted-permissions-'+new Date().getTime()}</td>	<td>group</td></tr>
 	<tr><td>store</td>	<td>Janne Jalkanen<br />FredFlintstone</td>		<td>members</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp</td>			<td>url</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>		<td>loginurl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp</td>			<td>wikiurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Login.jsp</td>		<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
 	<tr><td>store</td>	<td>janne</td>	<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
 
     <tr><td rowspan="1" colspan="3"> Create new group with 'janne' and 'FredFlintstone' as members </td></tr>
 
-    <tr><td>open</td>				<td>${url}</td>	<td>&nbsp;</td></tr>
+    <tr><td>open</td>				<td>${wikiurl}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
 
@@ -104,7 +104,7 @@
 
     <tr><td rowspan="1" colspan="3"> Verify that asserted user 'Fred' can view the group but not edit </td></tr>
 
-    <tr><td>open</td>	<td>${url}</td>	<td>&nbsp;</td></tr>
+    <tr><td>open</td>	<td>${wikiurl}</td>	<td>&nbsp;</td></tr>
     
     <tr><td>clickAndWait</td>	<td>link=My Prefs</td> 	<td>&nbsp;</td></tr>
     <!--<tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>-->

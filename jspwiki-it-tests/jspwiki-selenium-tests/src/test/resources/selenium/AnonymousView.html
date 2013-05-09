@@ -27,8 +27,8 @@
 <table cellpadding="1" cellspacing="1" border="1">
   <tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Anonymous View<br></td></tr>
-	<tr><td>store</td><td>/@selenium.context@</td>	<td>baseUrl</td></tr>
-	<tr><td>open</td>	<td>${baseUrl}/Wiki.jsp?page=Main</td>	<td>&nbsp;</td></tr>
+	<tr><td>store</td><td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
+	<tr><td>open</td>	<td>${it_baseUrl}/Wiki.jsp?page=Main</td>	<td>&nbsp;</td></tr>
 	<tr><td>verifyTextPresent</td>		<td>You have successfully installed</td>	<td>&nbsp;</td></tr>
 	<tr><td>verifyElementPresent</td>	<td>link=About</td>		<td></td></tr>
 	<tr><td>clickAndWait</td>			<td>link=About</td> 	<td>&nbsp;</td></tr>

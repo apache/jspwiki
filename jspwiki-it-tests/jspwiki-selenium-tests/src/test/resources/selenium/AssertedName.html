@@ -28,13 +28,13 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Asserted Name<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=Main</td>	<td>url</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp?page=Main</td>	<td>wikiurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
 	<tr><td>store</td>	<td>DonQuixote</td>						<td>TestUsername</td></tr>
 
 	<!-- Navigate to Prefs page; see the 'G'day message' for the anonymous user -->
-    <tr><td>open</td>	<td>${url}</td>	<td>&nbsp;</td></tr>
+    <tr><td>open</td>	<td>${wikiurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>

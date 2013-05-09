@@ -28,12 +28,12 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Login<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=Main</td>	<td>url</td></tr>
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp?page=Main</td>	<td>wikiurl</td></tr>
 	<tr><td>store</td>	<td>janne</td>		<td>TestLoginname</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
     
-    <tr><td>open</td>	<td>${url}</td>	<td>&nbsp;</td></tr>
+    <tr><td>open</td>	<td>${wikiurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>

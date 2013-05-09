@@ -30,11 +30,11 @@
 <thead>
 <tr><td rowspan="1" colspan="3">ViewPageSource</td></tr>
 </thead><tbody>
-    <tr><td>store</td>							<td>/@selenium.context@</td>	                							<td>baseUrl</td></tr>
-    <tr><td>open</td>							<td>${baseUrl}/Wiki.jsp?page=Main</td>								<td>&nbsp;</td></tr>
+    <tr><td>store</td>							<td>/${it-jspwiki.context}</td>	                							<td>it_baseUrl</td></tr>
+    <tr><td>open</td>							<td>${it_baseUrl}/Wiki.jsp?page=Main</td>								<td>&nbsp;</td></tr>
 	<tr><td>verifyTextPresent</td>	<td>You have successfully installed</td>								<td>&nbsp;</td></tr>
 	<tr><td rowspan="1" colspan="3"> Simply do View Page Source and check if you get it<br/></td>						</tr>
-    <tr><td>open</td>							<td>${baseUrl}/Wiki.jsp?page=Main&skin=raw</td>			<td>&nbsp;</td></tr>
+    <tr><td>open</td>							<td>${it_baseUrl}/Wiki.jsp?page=Main&skin=raw</td>			<td>&nbsp;</td></tr>
 	<tr><td>verifyTextPresent</td>	<td>You have successfully installed [JSPWiki|About].</td>	<td>&nbsp;</td></tr>
 </tbody></table>
 </body>

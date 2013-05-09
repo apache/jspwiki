@@ -29,14 +29,14 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Acl Janne Edit All View<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
 	<tr><td>store</td>	<td>javascript{'Aclviewandeditonly '+new Date().getTime()}</td>	<td>page</td></tr>
 	<tr><td>store</td>	<td>janne</td>		<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
 
-	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=${page}</td>	<td>url</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>				<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp?page=${page}</td>	<td>wikiurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Login.jsp</td>				<td>loginurl</td></tr>
     <tr><td>store</td>	<td>This page was created with an ACL by janne.</td>	<td>PageContent</td></tr>
 
 	<!-- Login -->
@@ -64,7 +64,7 @@
     <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
 
     <!-- Anonymous viewing should succeed -->
-    <tr><td>open</td>				<td>${url}</td>				<td>&nbsp;</td></tr>
+    <tr><td>open</td>				<td>${wikiurl}</td>				<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>		<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>		<td>&nbsp;</td></tr>	
 
@@ -78,7 +78,7 @@
     <tr><td>type</td>			<td>j_password</td>		<td>${TestPassword}</td></tr>
     <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
 
-    <tr><td>open</td>				<td>${url}</td>			<td>&nbsp;</td></tr>
+    <tr><td>open</td>				<td>${wikiurl}</td>			<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>open</td>					<td>${editurl}</td>		<td>&nbsp;</td></tr>

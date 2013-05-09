@@ -28,15 +28,15 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Rename Page<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
 	<tr><td>store</td>	<td>javascript{'Rename-page '+new Date().getTime()}</td>	<td>page</td></tr>
 	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
 
-	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=${page}</td>		<td>url</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Edit.jsp?page=${page}</td>		<td>editurl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/PageInfo.jsp?page=${page}</td>	<td>infourl</td></tr>
-	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>				<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp?page=${page}</td>		<td>url</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Edit.jsp?page=${page}</td>		<td>editurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/PageInfo.jsp?page=${page}</td>	<td>infourl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Login.jsp</td>				<td>loginurl</td></tr>
     <tr><td>store</td>	<td>This page was created by the rename web unit tests.</td>	<td>PageContent</td></tr>
 
 	<!-- Login --!>
