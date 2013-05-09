@@ -709,6 +709,7 @@
 
     <!-- binary distribution -->
     <copy file="ChangeLog"    todir="${install.fulldir}" />
+    <copy file="DISCLAIMER"   todir="${install.fulldir}" />
     <copy file="LICENSE"      todir="${install.fulldir}" />
     <copy file="NOTICE"       todir="${install.fulldir}" />
     <copy file="README"       todir="${install.fulldir}" />
