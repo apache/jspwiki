@@ -222,7 +222,7 @@
      <location>/error/Forbidden.html</location>
    </error-page>
 
-   <!--  REMOVE ME TO ENABLE JDBC DATABASE
+   
    <resource-ref>
        <description>
            Resource reference to JNDI factory for the JDBCUserDatabase.
@@ -251,7 +251,7 @@
            Container
        </res-auth>
    </resource-ref>
-   REMOVE ME TO ENABLE JDBC DATABASE  -->
+   
 
    <!--  REMOVE ME TO ENABLE JAVAMAIL
    <resource-ref>
@@ -314,7 +314,7 @@
            <role-name>Admin</role-name>
        </auth-constraint>
        <user-data-constraint>
-           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+           <transport-guarantee>NONE</transport-guarantee>
        </user-data-constraint>
    </security-constraint>
       
@@ -348,7 +348,7 @@
        </auth-constraint>
 
        <user-data-constraint>
-           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+           <transport-guarantee>NONE</transport-guarantee>
        </user-data-constraint>
    </security-constraint>
 
