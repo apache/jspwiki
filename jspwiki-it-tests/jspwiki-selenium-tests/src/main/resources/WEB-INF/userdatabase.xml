@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<users>
+  <user uid="-7739839977499061014" email="janne@ecyrd.com" fullName="Janne Jalkanen" loginName="janne" password="{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==" wikiName="JanneJalkanen" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST">
+    <attributes>rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4</attributes>
+  </user>
+  <user uid="-8629747547991531672" email="user@example.com" loginName="user" password="{SSHA}iQWmcKE8PyO965jh4+VNLYbxagaDdS0nC9GmuQ==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+  <user loginName="admin" wikiName="Administrator" fullName="Administrator" email="admin@locahost" password="{SSHA}6YNKYMwXICUf5pMvYUZumgbFCxZMT2njtUQtJw==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+  <user loginName="Alice" wikiName="Alice" fullName="Alice" email="alice@example.com" password="{SSHA}3V4zI5W6mT+x5NIHKI2KFQIYBdnAYKNOE9Aj+Q==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+  <user loginName="Bob" wikiName="Bob" fullName="Bob" email="bob@example.com" password="{SSHA}NP3aAmiwK0gHywTe4qbY6klKDqnZ+F9ym9YiLg==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+  <user loginName="Charlie" wikiName="Charlie" fullName="Charlie" email="charlie@example.com" password="{SSHA}wn81B14F9axtTVYsipQKC2OWQHlc6EcpMSe58Q==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+  <user loginName="Fred" wikiName="FredFlintstone" fullName="Fred Flintstone" email="fred@example.com" password="{SSHA}iDeE9dysPUE28SWd6yeIqiIj9sIVyiMM7VnMKQ==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+  <user loginName="Biff" wikiName="Biff" fullName="Biff" email="biff@example.com" password="{SSHA}xKAIienaZZHhKTGCNv5Li6lzeemaSs6ZYXTHFQ==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
+</users>
