@@ -32,6 +32,6 @@
   <artifactId>jspwiki-selenium-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>jspwiki-selenium-tests</name>
-  <description>selenium tests for jspwiki</description>
+  <description>templates of selenium tests for jspwiki</description>
   <version>2.9.1-SNAPSHOT</version>
 </project>
