@@ -1,3 +1,11 @@
+2013-05-16  Glen Mazza (glenmazza AT apache DOT org)
+
+       * 2.9.2-incubating-0
+       
+       * Mavenized location of jdbc.properties.tmpl, routed JDBC tests 
+         from tests/etc/db to target/etc/db, removed unused Ant API-difference
+         detector & switched to Maven Clirr plugin equivalent.
+
 2013-05-06  Glen Mazza (glenmazza AT apache DOT org)
 
        * 2.9.1-incubating-10

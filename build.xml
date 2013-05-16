@@ -105,6 +105,7 @@
        directory where the test results are written in. -->
 
   <property name="tests.src" value="src/test/java" />
+  <property name="tests.mvnresources" value="src/test/resources" />
   <property name="tests.resources" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
@@ -316,7 +317,6 @@
     <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
     <delete file="${code.i18n}/templates/default_en.properties" />
     <delete dir="target" />
-    <delete dir="tests/etc/db" />
     <delete dir="tests/etc/WEB-INF" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
@@ -1223,7 +1223,7 @@ To automate the JAR signing processs, you can add the property
        JDBC-compliant database such as Postgresql.
 
        Step 2: If desired, modify the database properties in
-       tests/etc/jdbc.properties.tmpl.  The defaults given should be sufficient 
+       src/test/resources/jdbc.properties.  The defaults given should be sufficient 
        for JDBC testing using hsql on any developer's local machine.
 
        The 'jdbc.driver.id' property in this file (defaulted to hsql) is 
@@ -1281,7 +1281,7 @@ To automate the JAR signing processs, you can add the property
     <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
 
     <!-- Bulk-copy the table setup/teardown scripts -->
-    <property name="tests.db.scripts" value="${tests.resources}/etc/db/${jdbc.driver.id}" />
+    <property name="tests.db.scripts" value="target/etc/db/${jdbc.driver.id}" />
     <mkdir dir="${tests.db.scripts}" />
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
@@ -1304,7 +1304,7 @@ To automate the JAR signing processs, you can add the property
     <property name="db.props.exist" value="true" />
 
     <!-- Copying the testing jdbc.properties file -->
-    <copy file="${tests.resources}/etc/jdbc.properties.tmpl" toFile="${tests.resources}/etc/db/jdbc.properties" overwrite="true"/>
+    <copy file="${tests.mvnresources}/jdbc.properties" toFile="target/test-classes/jdbc.properties" overwrite="true"/>
   </target>
 
   <!-- Some convenience macrodefs -->
@@ -1367,40 +1367,6 @@ To automate the JAR signing processs, you can add the property
 	       <classpath path="${code.build}"/>
 	       <arg line="${check.language}"/>
 	     </java>
-  </target>
-	
-  <target name="api-diff" description="Compares API in JSPWiki.jar with previous version"
-    depends="jar">
-     <!-- Assumes that the dependencyfinder.dir property points to the
-          dir containing the binary distribution of DependencyFinder -->
-     <check-property prop="dependencyfinder.dir" />
-     <check-property prop="jarfile.old" />
-     <mkdir dir="${tests.reports}" />
-     <java classname="com.jeantessier.dependencyfinder.cli.JarJarDiff"
-       output="${tests.reports}/API-changes.xml">
-       <classpath refid="path.tests" />
-       <classpath>
-         <pathelement location="${dependencyfinder.dir}/lib/DependencyFinder.jar" />
-       </classpath>
-       <arg value="-new" />
-       <arg value="${jarfile}" />
-       <arg value="-old" />
-       <arg value="${jarfile.old}" />
-       <arg value="-name" />
-       <arg value="JSPWiki Public API Changes" />
-     </java>
-
-     <!-- Filthy hack that suppresses DTD resolution -->
-     <replace file="${tests.reports}/API-changes.xml"
-       token='&lt;!DOCTYPE differences SYSTEM "http://depfind.sourceforge.net/dtd/differences.dtd"&gt;'
-       value=""/>
-     <!-- Just to be safe, replace raw ampersands with something bogus -->
-     <replace file="${tests.reports}/API-changes.xml"
-       token="&amp;" value="(ampersand)"/>
-     <xslt in="${tests.reports}/API-changes.xml"
-       out="${tests.reports}/API-changes.html"
-       style="${dependencyfinder.dir}/etc/DiffToHTML.xsl">
-     </xslt>
   </target>
 	
   <target name="coverage-tests" depends="compile,tests">

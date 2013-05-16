@@ -36,8 +36,6 @@
 	<classpathentry kind="lib" path="lib/jstl-1.1.2.jar"/>
 	<classpathentry kind="lib" path="tests/lib/commons-el-1.0.jar"/>
 	<classpathentry kind="lib" path="tests/lib/hsqldb-1.8.0.10.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jasper-compiler-5.5.23.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jasper-runtime-5.5.23.jar"/>
 	<classpathentry kind="lib" path="tests/lib/stripes-1.5.7.jar"/>
 	<classpathentry kind="lib" path="tests/lib/selenium-server-standalone-2.25.0.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-all-7.6.7.v20120910.jar"/>

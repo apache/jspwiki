@@ -37,8 +37,8 @@ import org.hsqldb.util.SqlFile;
  * <ol>
  *   <li>HsqlDbUtils hsqldbu = new HsqlDbUtils()</li>
  *   <li>hsqldbu.start()</li>
- *   <li>hsqldbu.exec( "tests/etc/db/hsql/userdb-setup.ddl" )</li>
- *   <li>hsqldbu.exec( "tests/etc/db/hsql/userdb-teardown.ddl" )</li>
+ *   <li>hsqldbu.exec( "target/etc/db/hsql/userdb-setup.ddl" )</li>
+ *   <li>hsqldbu.exec( "target/etc/db/hsql/userdb-teardown.ddl" )</li>
  *   <li>hsqldbu.stop()</li>
  * </ol>
  * </code>
@@ -71,7 +71,7 @@ public class HsqlDbUtils
         {
             LOG.error( e.getMessage(), e );
         }
-        exec( "tests/etc/db/hsql/userdb-setup.ddl" );
+        exec( "target/etc/db/hsql/userdb-setup.ddl" );
     }
     
     /**
@@ -79,7 +79,7 @@ public class HsqlDbUtils
      */
     public void tearDown() 
     {
-        exec( "tests/etc/db/hsql/userdb-teardown.ddl" );
+        exec( "target/etc/db/hsql/userdb-teardown.ddl" );
         stop();
     }
     
@@ -90,7 +90,7 @@ public class HsqlDbUtils
     {
         
         // start Hypersonic server
-        Properties hProps = loadPropertiesFrom( "tests/etc/db/hsql/server.properties" );
+        Properties hProps = loadPropertiesFrom( "target/etc/db/hsql/server.properties" );
         
         hsqlServer = new Server();
         // pre-checks
@@ -168,7 +168,7 @@ public class HsqlDbUtils
     Connection getConnection() throws IOException, SQLException
     {
         Connection conn;
-        Properties jProps = loadPropertiesFrom( "tests/etc/db/jdbc.properties" );
+        Properties jProps = loadPropertiesFrom( "target/test-classes/jdbc.properties" );
         conn = DriverManager.getConnection( jProps.getProperty( "jdbc.driver.url" ), 
                                             jProps.getProperty( "jdbc.admin.id" ),
                                             jProps.getProperty( "jdbc.admin.password" ) );
