@@ -1277,23 +1277,7 @@ To automate the JAR signing processs, you can add the property
   <target name="db-properties" depends="init" if="jdbc.driver.id">
 
     <!-- Check for the presence of the database driver & script dir -->
-    <check-file file="etc/db/${jdbc.driver.id}"      prop="db.scripts" />
     <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
-
-    <!-- Bulk-copy the table setup/teardown scripts -->
-    <property name="tests.db.scripts" value="target/etc/db/${jdbc.driver.id}" />
-    <mkdir dir="${tests.db.scripts}" />
-    <copy toDir="${tests.db.scripts}" overwrite="true">
-      <fileset dir="${db.scripts}" />
-      <filterset>
-        <filtersfile file="target/test-classes/jspwiki.properties" />
-        <filtersfile file="build.properties" />
-      </filterset>
-    </copy>
-
-    <!-- Check if the customized database scripts exist -->
-    <check-file file="${tests.db.scripts}/userdb-setup.ddl"    prop="userdb.setup" />
-    <check-file file="${tests.db.scripts}/userdb-teardown.ddl" prop="userdb.teardown" />
 
     <!-- If it's the Hypersonic database, set a special flag -->
     <condition property="hsql">

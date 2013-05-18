@@ -1,5 +1,5 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-drop table @jspwiki.userdatabase.table@;
-drop table @jspwiki.userdatabase.roleTable@;
-drop table @jspwiki.groupdatabase.table@;
-drop table @jspwiki.groupdatabase.membertable@;
-drop user @jdbc.user.id@;
+drop table users if exists;
+drop table roles if exists;
+drop table groups if exists;
+drop table group_members if exists;
+drop user jspwiki;

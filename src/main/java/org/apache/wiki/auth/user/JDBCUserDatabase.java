@@ -41,8 +41,8 @@ import org.apache.wiki.util.Serializer;
  * Implementation of UserDatabase that persists {@link DefaultUserProfile}
  * objects to a JDBC DataSource, as might typically be provided by a web
  * container. This implementation looks up the JDBC DataSource using JNDI. The
- * JNDI name of the datasource, backing table and mapped columns used by this
- * class are configured via settings in <code>jspwiki.properties</code>.
+ * JNDI name of the datasource, backing table and mapped columns used by this 
+ * class can be overridden by adding settings in <code>jspwiki.properties</code>.
  * </p>
  * <p>
  * Configurable properties are these:

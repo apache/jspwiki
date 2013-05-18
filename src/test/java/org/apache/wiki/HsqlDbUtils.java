@@ -37,8 +37,8 @@ import org.hsqldb.util.SqlFile;
  * <ol>
  *   <li>HsqlDbUtils hsqldbu = new HsqlDbUtils()</li>
  *   <li>hsqldbu.start()</li>
- *   <li>hsqldbu.exec( "target/etc/db/hsql/userdb-setup.ddl" )</li>
- *   <li>hsqldbu.exec( "target/etc/db/hsql/userdb-teardown.ddl" )</li>
+ *   <li>hsqldbu.exec( "target/etc/db/hsql/hsql-userdb-setup.ddl" )</li>
+ *   <li>hsqldbu.exec( "target/etc/db/hsql/hsql-userdb-teardown.ddl" )</li>
  *   <li>hsqldbu.stop()</li>
  * </ol>
  * </code>
@@ -71,7 +71,7 @@ public class HsqlDbUtils
         {
             LOG.error( e.getMessage(), e );
         }
-        exec( "target/etc/db/hsql/userdb-setup.ddl" );
+        exec( "src/test/config/hsql-userdb-setup.ddl" );
     }
     
     /**
@@ -79,7 +79,7 @@ public class HsqlDbUtils
      */
     public void tearDown() 
     {
-        exec( "target/etc/db/hsql/userdb-teardown.ddl" );
+        exec( "src/test/config/hsql-userdb-teardown.ddl" );
         stop();
     }
     
@@ -90,7 +90,7 @@ public class HsqlDbUtils
     {
         
         // start Hypersonic server
-        Properties hProps = loadPropertiesFrom( "target/etc/db/hsql/server.properties" );
+        Properties hProps = loadPropertiesFrom( "target/test-classes/jdbc.properties" );
         
         hsqlServer = new Server();
         // pre-checks

@@ -305,27 +305,6 @@
                            <goal>run</goal>
                        </goals>
                    </execution>
-                    <execution>
-                        <phase>process-test-resources</phase>
-                        <id>compile</id>
-                        <configuration>
-                            <target>
-                                <!-- Copy the database configuration information -->
-                                <mkdir dir="target/etc/db/hsql" />
-                                <!-- Bulk-copy the table setup/teardown scripts -->
-                                <copy toDir="target/etc/db/hsql" overwrite="true">
-                                    <fileset dir="etc/db/hsql" />
-                                    <filterset>
-                                        <filtersfile file="target/test-classes/jspwiki.properties" />
-                                        <filtersfile file="build.properties" />
-                                    </filterset>
-                                </copy>
-                           </target>
-                       </configuration>
-                       <goals>
-                           <goal>run</goal>
-                       </goals>
-                   </execution>
                </executions>
             </plugin>
             <!-- Surefire plugin (running unit tests):
