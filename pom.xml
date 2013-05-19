@@ -326,9 +326,7 @@
                 </configuration>
             </plugin>
             <!-- Compress certain CSS and JS files using the YUICompressor 
-                 TODO: See if all JS files can be compressed to simplify
-                 configuration (currently just using hardcoded subset in
-                 Ant file.) 
+                 (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
             -->
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
@@ -342,44 +340,8 @@
                         </goals>
                         <configuration>
                             <nosuffix>true</nosuffix>
-                            <warSourceDirectory>${basedir}/src/webdocs</warSourceDirectory>
+                            <excludeResources>true</excludeResources>
                             <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
-                            <!-- Lots of warnings (300+) as YUICompressor is unhappy with our JS files -->
-                            <!--jswarn>false</jswarn-->
-                            <includes>
-                                <include>scripts/jspwiki-common.js</include>
-                                <include>scripts/jspwiki-edit.js</include>
-                                <include>scripts/jspwiki-prefs.js</include>
-                                <include>scripts/jspwiki-commonstyles.js</include>
-                                <include>scripts/prettify.js</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <!-- Separate execution for CSS files due to its different line-break setting 
-                             (https://github.com/yui/yuicompressor/blob/master/README.md) as configured
-                             in Ant.
-                             TODO: See if can compress all CSS files (using Ant subset)
-                             TODO: See if can have same line-break setting for JS and CSS to simplify
-                                   configuration
-                        -->
-                        <id>compressCSSfiles</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <configuration>
-                            <nosuffix>true</nosuffix>
-                            <warSourceDirectory>${basedir}/src/webdocs</warSourceDirectory>
-                            <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
-                            <linebreakpos>0</linebreakpos>
-                            <includes>
-                                <include>templates/default/jspwiki.css</include>
-                                <include>templates/default/jspwiki_print.css</include>
-                                <include>templates/default/skins/OrderedList/skin.css</include>
-                                <include>templates/default/skins/PlainVanilla/skin.css</include>
-                                <include>templates/default/skins/PlainVanilla 1024x768/skin.css</include>
-                                <include>templates/default/skins/Smart/skin.css</include>
-                            </includes>
                         </configuration>
                     </execution>
                 </executions> 
@@ -398,33 +360,6 @@
                                 <include>jspwiki.properties</include>
                             </includes>
                             <filtering>true</filtering>
-                        </resource>
-                        <resource>
-                            <directory>src/webdocs</directory>
-                            <includes>
-                                <include>admin/**</include>
-                                <include>error/**</include>
-                                <include>images/**</include>
-                                <include>scripts/**</include>
-                                <include>templates/**</include>
-                                <include>*.jsp</include>
-                                <include>*.css</include>
-                            </includes>
-                            <!-- Below excluded because YUICompressor's version of
-                                 the files will be used. -->
-                            <excludes>
-                                <exclude>scripts/jspwiki-common.js</exclude>
-                                <exclude>scripts/jspwiki-edit.js</exclude>
-                                <exclude>scripts/jspwiki-prefs.js</exclude>
-                                <exclude>scripts/jspwiki-commonstyles.js</exclude>
-                                <exclude>scripts/prettify.js</exclude>
-                                <exclude>templates/default/jspwiki.css</exclude>
-                                <exclude>templates/default/jspwiki_print.css</exclude>
-                                <exclude>templates/default/skins/OrderedList/skin.css</exclude>
-                                <exclude>templates/default/skins/PlainVanilla/skin.css</exclude>
-                                <exclude>templates/default/skins/PlainVanilla 1024x768/skin.css</exclude>
-                                <exclude>templates/default/skins/Smart/skin.css</exclude>
-                            </excludes>
                         </resource>
                         <!-- Output directory configured above with the YUICompressor Maven plugin -->
                         <resource>

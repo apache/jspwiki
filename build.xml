@@ -523,7 +523,14 @@
        <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
        <lib file="${jarfile}" />
        <!--lib file="${libs.tests}/stripes*.jar"/-->
-       <fileset dir="${code.resources}/webdocs" includes="**" excludes="**/FCK/jsp" />
+       <fileset dir="src/main/webapp">
+           <include name="admin/**" />
+	   <include name="error/**" />
+	   <include name="images/**"/>
+	   <include name="scripts/**"/>
+	   <include name="templates/**" />
+	   <include name="*.*" />
+      </fileset>
        <webinf dir="target/etc">
          <include name="jspwiki.properties" />
        </webinf>
@@ -538,8 +545,8 @@
 
     <war warfile="${warfile}"
          webxml="src/main/webapp/WEB-INF/web.xml" update="true">
-      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
-      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
+      	<fileset dir="${tmpdir}/compress/src/main/webapp/" includes="**/*.js" />
+      	<fileset dir="${tmpdir}/compress/src/main/webapp/" includes="**/*.css" />
     </war>
 
    </target>
@@ -554,7 +561,7 @@
             <java jar="tests/lib/yuicompressor-2.4.7.jar"
                   output="${tmpdir}/compress/@{src}"
                   fork="true">
-                <arg line="'${code.resources}/@{src}' @{args}" />
+                <arg line="'@{src}' @{args}" />
             </java>
         </sequential>
     </macrodef>
@@ -565,36 +572,36 @@
         .js files from the distro on top of the compressed ones from the WAR.
     -->
    <target name="compressedjs">
-        <mkdir dir="${tmpdir}/compress/webdocs/scripts"/>
+        <mkdir dir="${tmpdir}/compress/src/main/webapp/scripts"/>
     
-        <compressjs src="webdocs/scripts/jspwiki-common.js"/>
-        <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
-        <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
-        <compressjs src="webdocs/scripts/jspwiki-commonstyles.js"/>
-        <compressjs src="webdocs/scripts/prettify.js"/>
+        <compressjs src="src/main/webapp/scripts/jspwiki-common.js"/>
+        <compressjs src="src/main/webapp/scripts/jspwiki-edit.js"/>
+        <compressjs src="src/main/webapp/scripts/jspwiki-prefs.js"/>
+        <compressjs src="src/main/webapp/scripts/jspwiki-commonstyles.js"/>
+        <compressjs src="src/main/webapp/scripts/prettify.js"/>
 
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
+        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default"/>
 
-        <compressjs src="webdocs/templates/default/jspwiki.css"
+        <compressjs src="src/main/webapp/templates/default/jspwiki.css"
                     args="--line-break 0" />
     
-        <compressjs src="webdocs/templates/default/jspwiki_print.css"
+        <compressjs src="src/main/webapp/templates/default/jspwiki_print.css"
                     args="--line-break 0" />   	
 
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
-   	    <compressjs src="webdocs/templates/default/skins/OrderedList/skin.css"
+        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/OrderedList"/>   	
+   	    <compressjs src="src/main/webapp/templates/default/skins/OrderedList/skin.css"
                 args="--line-break 0" />
 
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
-   	    <compressjs src="webdocs/templates/default/skins/PlainVanilla/skin.css"
+        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/PlainVanilla"/>   	
+   	    <compressjs src="src/main/webapp/templates/default/skins/PlainVanilla/skin.css"
                 args="--line-break 0" />
 
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
-        <compressjs src="webdocs/templates/default/skins/PlainVanilla 1024x768/skin.css"
+        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/PlainVanilla 1024x768"/>   	
+        <compressjs src="src/main/webapp/templates/default/skins/PlainVanilla 1024x768/skin.css"
                 args="--line-break 0" />
 
-   	    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
-        <compressjs src="webdocs/templates/default/skins/Smart/skin.css"
+   	    <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/Smart"/>   	
+        <compressjs src="src/main/webapp/templates/default/skins/Smart/skin.css"
                 args="--line-break 0" />
    </target>
 
@@ -1050,7 +1057,14 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the JSPs -->
       <copy toDir="@{context.dir}/webapp">
-        <fileset dir="${code.resources}/webdocs" includes="**" />
+        <fileset dir="src/main/webapp">
+            <include name="admin/**" />
+            <include name="error/**" />
+	    <include name="images/**"/>
+	    <include name="scripts/**"/>
+	    <include name="templates/**" />
+	    <include name="*.*" />
+        </fileset>
       </copy>
 
     </sequential>
@@ -1484,7 +1498,7 @@ To automate the JAR signing processs, you can add the property
         	${release.dir}/**" />
 <!--
       <fileset dir="src/org"/>
-      <fileset dir="src/webdocs" 
+      <fileset dir="src/src/main/webapp" 
                excludes="**/SilkIconSet-readme.txt,**/fckconfig.js,**/mootools.js,**/posteditor.js" />
       <fileset dir="tests/org"/>
       -->
