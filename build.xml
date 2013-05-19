@@ -289,11 +289,11 @@
   
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
-     <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
+     <copy file="src/main/webapp/WEB-INF/jspwiki.properties" tofile="target/etc/jspwiki.properties" />
      <copy file="src/test/resources/jspwiki.properties" tofile="target/test-classes/jspwiki.properties" />
      <copy file="src/test/resources/jspwiki_rcs.properties" tofile="target/test-classes/jspwiki_rcs.properties" />
      <copy file="src/test/resources/jspwiki_vers.properties" tofile="target/test-classes/jspwiki_vers.properties" />
-     <replace file="etc/jspwiki.properties"
+     <replace file="target/etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
      <replace file="target/test-classes/jspwiki.properties"
               replacefilterfile="${build.properties}" />
@@ -307,12 +307,11 @@
   <target name="clean"
           description="Cleans away all generated files.">
     <delete file="cobertura.ser" />
-  	<delete dir="${tests.build}" />
+    <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
-  	<delete dir="${docs.javadoc}" />
+    <delete dir="${docs.javadoc}" />
     <delete dir="${doc.rat}" />
-  	<delete file="etc/jspwiki.properties" />
     <delete file="${code.i18n}/CoreResources_en.properties" />
     <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
     <delete file="${code.i18n}/templates/default_en.properties" />
@@ -525,15 +524,15 @@
        <lib file="${jarfile}" />
        <!--lib file="${libs.tests}/stripes*.jar"/-->
        <fileset dir="${code.resources}/webdocs" includes="**" excludes="**/FCK/jsp" />
-       <webinf dir="etc">
+       <webinf dir="target/etc">
          <include name="jspwiki.properties" />
-         <include name="userdatabase.xml" />
-         <include name="groupdatabase.xml" />
        </webinf>
        <webinf dir="src/main/webapp/WEB-INF">
           <include name="geronimo-web.xml" />
           <include name="*.tld" />
           <include name="jspwiki.policy" />
+          <include name="userdatabase.xml" />
+          <include name="groupdatabase.xml" />
        </webinf>
     </war>
 

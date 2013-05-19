@@ -276,12 +276,6 @@
                                 <copy file="src/main/resources/templates/default.properties" tofile="target/classes/templates/default_en.properties"/>
                                 <copy file="src/main/resources/plugin/PluginResources.properties" tofile="target/classes/plugin/PluginResources_en.properties"/>
 
-                                <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
-
-                                <!-- Filter the properties files -->
-                                <replace file="etc/jspwiki.properties"
-                                         replacefilterfile="build.properties" />
-
                                 <!-- Create web.xml files for testing -->
                                 <copy file="src/main/webapp/WEB-INF/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
 
@@ -398,13 +392,12 @@
                     <archiveClasses>true</archiveClasses>
                     <webResources>
                         <resource>
-                            <directory>etc</directory>
+                            <directory>src/main/webapp/WEB-INF</directory>
                             <targetPath>WEB-INF</targetPath>
                             <includes>
-                                <include>userdatabase.xml</include>
-                                <include>groupdatabase.xml</include>
                                 <include>jspwiki.properties</include>
                             </includes>
+                            <filtering>true</filtering>
                         </resource>
                         <resource>
                             <directory>src/webdocs</directory>

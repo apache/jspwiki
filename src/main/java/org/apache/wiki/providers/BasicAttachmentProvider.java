@@ -96,7 +96,8 @@ public class BasicAttachmentProvider
                IOException
     {
         m_engine = engine;
-        m_storageDir = TextUtil.getRequiredProperty( properties, PROP_STORAGEDIR );
+        m_storageDir = TextUtil.getStringProperty( properties, PROP_STORAGEDIR, 
+                                                   System.getProperty( "user.home" ) + File.separator + "jspwiki-files" );
         
         String patternString = engine.getWikiProperties().getProperty( PROP_DISABLECACHE );
         if ( patternString != null )
