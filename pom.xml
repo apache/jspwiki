@@ -45,7 +45,7 @@
   
   <modules>
     <module>jspwiki-war</module>
-    <!-- <module>jspwiki-it-tests</module> --><!-- don't launch the IT tests as part of the main build -->
+    <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
   </modules>
   
   <dependencyManagement> <!-- defines what configuration is going to be used if, and only if, the dependency is used -->
@@ -471,6 +471,12 @@
             <contextReloadable>true</contextReloadable>
             <port>8080</port>
           </configuration>
+        </plugin>
+   
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>clirr-maven-plugin</artifactId>
+          <version>2.5</version>
         </plugin>
    
         <plugin>

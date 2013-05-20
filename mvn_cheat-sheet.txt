@@ -13,7 +13,7 @@ mvn tomcat7:run                                          : (from a war module) s
 mvn clean deploy -Prelease -Dgpg.passphrase=<passphrase> : deploys generated artifact to a repository
                                                            If -Dgpg.passphrase is not given, it'll be asked
                                        
-Selenium execution: go to jspwiki-it-tests module and execute mvn clean test
+mvn clean install -Pintegration-tests                    : Selenium tests execution
 
 Reports specific
 ****************
