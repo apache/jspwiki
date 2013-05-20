@@ -37,6 +37,114 @@
   <modules>
     <module>jspwiki-selenium-tests</module> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
     <module>jspwiki-it-test-custom</module>
+    <module>jspwiki-it-test-custom-absolute-urls</module>
   </modules>
+  
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <build>
+        <finalName>${project.artifactId}</finalName>
+        <testResources><!-- this enables tests reuse [1/2] -->
+          <testResource>
+            <directory>${project.basedir}/../jspwiki-selenium-tests/src/test/resources</directory>
+            <filtering>true</filtering>
+          </testResource>
+        </testResources>
+        
+        <pluginManagement>
+        <plugins>
+          <plugin><!-- this enables tests reuse [2/2] -->
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <webResources>
+                <resource>
+                  <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>selenium-maven-plugin</artifactId>
+            <configuration>
+              <!-- <browser>*firefox</browser> -->
+              <browser>*iexplore</browser>
+              <startURL>http://localhost:8080/${project.artifactId}/</startURL>
+              <suite>target/test-classes/selenium/TestSuite.html</suite> 
+              <background>true</background>
+            </configuration>
+            <executions>
+              <execution>
+                <id>test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>selenese</goal>
+                </goals>
+              </execution>                               
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>tomcat-run</id>
+                <goals>
+                  <goal>run-war</goal>
+                </goals>
+                <phase>pre-integration-test</phase>
+                <configuration>
+                  <fork>true</fork>
+                  <systemProperties>
+                    <user.language>en</user.language>
+                    <user.region>US</user.region>
+                  </systemProperties>
+                </configuration>
+              </execution>
+              <execution>
+                <id>tomcat-shutdown</id>
+                <goals>
+                  <goal>shutdown</goal>
+                </goals>
+                <phase>post-integration-test</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+        </pluginManagement>
+      </build>
+      
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.jspwiki</groupId>
+          <artifactId>jspwiki-war</artifactId>
+          <version>${project.version}</version>
+          <type>war</type>
+        </dependency>
+                    
+        <dependency>
+          <groupId>org.seleniumhq.selenium.client-drivers</groupId>
+          <artifactId>selenium-java-client-driver</artifactId>
+        </dependency>
+      
+        <dependency>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-java</artifactId>
+        </dependency>
+      
+        <dependency>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <!-- (un)comment based on your browser preferences for tests execution -->
+          <!-- <artifactId>selenium-chrome-driver</artifactId> -->
+          <artifactId>selenium-ie-driver</artifactId>
+          <!-- <artifactId>selenium-firefox-driver</artifactId> -->
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
   
 </project>
