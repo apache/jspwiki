@@ -640,43 +640,43 @@
   </target>
 
   <!-- Creates a zip of all the core pages.  The file which determines
-       whether a page is a core page or not is found in src/wikipages/.corepages -->
+       whether a page is a core page or not is found in src/main/config/wikipages/.corepages -->
 
   <target name="corepageszip" depends="installinit">
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_en.zip"
-         basedir="src/wikipages/en" includesfile="src/wikipages/.corepages">
+         basedir="src/main/config/wikipages/en" includesfile="src/main/config/wikipages/.corepages">
     </zip>
   
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fi.zip"
-         basedir="src/wikipages/fi" includesfile="src/wikipages/.corepages">
+         basedir="src/main/config/wikipages/fi" includesfile="src/main/config/wikipages/.corepages">
     </zip>
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_de.zip"
-         basedir="src/wikipages/de">
+         basedir="src/main/config/wikipages/de">
     </zip>
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_zh_CN.zip"
-         basedir="src/wikipages/zh_CN">
+         basedir="src/main/config/wikipages/zh_CN">
     </zip>
   	
   	<zip zipfile="${install.fulldir}/${ant.project.name}-corepages_es.zip"
-         basedir="src/wikipages/es" includesfile="src/wikipages/.corepages">
+         basedir="src/main/config/wikipages/es" includesfile="src/main/config/wikipages/.corepages">
     </zip>
  
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_nl.zip"
-         basedir="src/wikipages/nl">
+         basedir="src/main/config/wikipages/nl">
     </zip>
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fr.zip"
-         basedir="src/wikipages/fr">
+         basedir="src/main/config/wikipages/fr">
     </zip>
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_it.zip"
-         basedir="src/wikipages/it">
+         basedir="src/main/config/wikipages/it">
     </zip>
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_pt_BR.zip"
-         basedir="src/wikipages/pt_BR">
+         basedir="src/main/config/wikipages/pt_BR">
     </zip>
  
     <!-- Add other languages here -->
@@ -691,7 +691,7 @@
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
         <zipfileset dir="doc" prefix="doc" excludes="rat/**" />
-        <zipfileset dir="src/wikipages" prefix="doc/wikipages" excludes="**/.??*" />
+        <zipfileset dir="src/main/config/wikipages" prefix="doc/wikipages" excludes="**/.??*" />
     </zip>
   </target>
 
@@ -1007,7 +1007,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <!-- Create a wiki page directory and point jspwiki.properties to it -->
       <mkdir dir="@{context.dir}/wikipages" />
       <copy toDir="@{context.dir}/wikipages" flatten="true" >
-        <fileset dir="src/wikipages/en">
+        <fileset dir="src/main/config/wikipages/en">
           <include name="Main.*" />
           <include name="LeftMenu*.*" />
           <include name="About.*" />
@@ -1479,14 +1479,14 @@ To automate the JAR signing processs, you can add the property
   	     Exclusions and their reasons:
   	     - .* and .*/** are automatically created configuration files
   	     - doc/LICENSE.* are third-party licenses
-  	     - ${code.src}/wikipages/** are default wiki pages for use in JSPWiki installations
+  	     - ${code.src}/main/config/wikipages/** are default wiki pages for use in JSPWiki installations
   	     - all others are directories which contain generated output and third-party binary libraries
   	-->
     <report reportFile="${doc.rat}/rat-report.txt" addLicenseHeaders="false">
         <fileset dir="."
         	excludes=".*, .*/**,
         	doc/LICENSE.*,
-        	${code.resources}/wikipages/**,
+        	${code.resources}//**,
         	${code.build}/**,
         	${tests.build}/**,
         	${tests.reports}/**,

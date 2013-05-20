@@ -1,3 +1,9 @@
+2013-05-20  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.9.2-incubating-4
+       
+       * Mavenized location of src/wikipages files
+
 2013-05-19  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-3
