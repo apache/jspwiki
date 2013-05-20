@@ -1486,7 +1486,7 @@ To automate the JAR signing processs, you can add the property
         <fileset dir="."
         	excludes=".*, .*/**,
         	doc/LICENSE.*,
-        	${code.resources}//**,
+        	${code.resources}/main/config/wikipages/**,
         	${code.build}/**,
         	${tests.build}/**,
         	${tests.reports}/**,
