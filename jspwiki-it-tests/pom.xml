@@ -70,8 +70,8 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>selenium-maven-plugin</artifactId>
             <configuration>
-              <!-- <browser>*firefox</browser> -->
-              <browser>*iexplore</browser>
+              <browser>*firefox</browser>
+              <!-- <browser>*iexplore</browser> -->
               <startURL>http://localhost:8080/${project.artifactId}/</startURL>
               <suite>target/test-classes/selenium/TestSuite.html</suite> 
               <background>true</background>
@@ -140,11 +140,10 @@
           <groupId>org.seleniumhq.selenium</groupId>
           <!-- (un)comment based on your browser preferences for tests execution -->
           <!-- <artifactId>selenium-chrome-driver</artifactId> -->
-          <artifactId>selenium-ie-driver</artifactId>
-          <!-- <artifactId>selenium-firefox-driver</artifactId> -->
+          <!-- <artifactId>selenium-ie-driver</artifactId> -->
+          <artifactId>selenium-firefox-driver</artifactId>
         </dependency>
       </dependencies>
     </profile>
   </profiles>
-  
 </project>

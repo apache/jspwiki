@@ -12,12 +12,12 @@ mvn tomcat7:run                                          : (from a war module) s
                                                            Tomcat7 instance at http://localhost:8080/JSPWiki
 mvn clean deploy -Prelease -Dgpg.passphrase=<passphrase> : deploys generated artifact to a repository
                                                            If -Dgpg.passphrase is not given, it'll be asked
-                                       
-mvn clean install -Pintegration-tests                    : Selenium tests execution
+mvn clean install -Pintegration-tests                    : performs a build, enabling Selenium tests execution
 
 Reports specific
 ****************
-mvn javadoc:javadoc  : creates javadocs; if graphviz binaries (www.graphviz.org) 
-                       are found on $PATH, the javadocs will display some UML 
-                       class/package level diagrams
-mvn apache-rat:check : creates a RAT report
+mvn apache-rat:check    : creates an Apache RAT report
+mvn cobertura:cobertura : generates a cobertura maven report
+mvn javadoc:javadoc     : creates javadocs; if graphviz binaries (www.graphviz.org) 
+                          are found on $PATH, the javadocs will display some UML 
+                          class/package level diagrams
