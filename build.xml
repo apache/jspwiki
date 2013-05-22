@@ -109,7 +109,6 @@
   <property name="tests.resources" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
-  <property name="doc.rat" value="target/rat" />
 	
   <!-- dirs holding libs -->
   <property name="libs.main" value="target/JSPWiki/WEB-INF/lib" />
@@ -125,10 +124,6 @@
   <property name="webtests.port"     value="10024" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
   <property name="selenium-rc.jar"   value="tests/lib/selenium-server-standalone-2.25.0.jar" />
-
-  <!-- The place where the javadocs are created -->
-
-  <property name="docs.javadoc" value="target/javadoc" />
 
   <!-- The temporary installation directory where all war-files
        are collected, for example -->
@@ -344,30 +339,6 @@
       <classpath refid="path.base" />
       <classpath refid="path.tests" />
     </javac>
-  </target>
-
-  <!-- Creates javadocs -->
-  <target name="javadoc"
-          description="Compiles the javadocs.">
-
-    <delete dir="${docs.javadoc}" quiet="true"/>
-    <mkdir dir="${docs.javadoc}" />
-
-    <javadoc destdir="${docs.javadoc}"
-             use="yes"
-             breakiterator="true"
-             windowtitle="${ant.project.name}">
-      <packageset dir="${code.src}">
-        <include name="org/apache/wiki/**" />
-      </packageset>
-      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
-      <link href="http://java.sun.com/products/javamail/javadocs/"/>
-      <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
-      <link href="http://www.jdom.org/docs/apidocs/"/>
-      <classpath refid="path.base" />
-      <classpath refid="path.tests" />   
-    </javadoc>
-
   </target>
 
   <!-- ============================================================== -->
@@ -655,12 +626,12 @@
   <!-- Creates a full ZIP file of all document files, ignoring any resources
        which start with a dot. -->
 
-  <target name="documentzip" depends="installinit,javadoc"
+  <target name="documentzip" depends="installinit"
           description="Creates JSPWiki documentation zipfile">
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
         <zipfileset dir="src/main/config/doc" prefix="doc" />
-        <zipfileset dir="${docs.javadoc}" prefix="javadoc" />
+        <zipfileset dir="target/apidocs" prefix="javadoc" />
         <zipfileset dir="src/main/config/wikipages" prefix="wikipages" excludes="**/.??*" />
     </zip>
   </target>
@@ -822,7 +793,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <include name="**/*Test.java" />
+                <exclude name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
@@ -1417,62 +1388,6 @@ To automate the JAR signing processs, you can add the property
   	                  destdir="${tests.build}/cobertura" />
     
     <sonar:sonar xmlns:sonar="antlib:org.sonar.ant"/>
-  </target>
-  
-  <target name="rat-report" description="Generate an Apache Rat report.">
-    <mkdir dir="${doc.rat}/lib" />
-    <get-element to-file="${doc.rat}/lib/apache-rat-tasks-0.8.jar" 
-                 url="${central.url}/org/apache/rat/apache-rat-tasks/0.8/apache-rat-tasks-0.8.jar" />
-    <get-element to-file="${doc.rat}/lib/apache-rat-core-0.8.jar" 
-                 url="${central.url}/org/apache/rat/apache-rat-core/0.8/apache-rat-core-0.8.jar" />
-    <get-element to-file="${doc.rat}/lib/commons-cli-1.2.jar" 
-                 url="${central.url}/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" />
-    <get-element to-file="${doc.rat}/lib/commons-collections-3.2.jar" 
-                 url="${central.url}/commons-collections/commons-collections/3.2/commons-collections-3.2.jar" />
-    <get-element to-file="${doc.rat}/lib/commons-lang-2.1.jar" url="${central.url}/commons-lang/commons-lang/2.1/commons-lang-2.1.jar" />
-    <get-element to-file="${doc.rat}/lib/commons-compress-1.0.jar" 
-                 url="${central.url}/org/apache/commons/commons-compress/1.0/commons-compress-1.0.jar" />
-    <get-element to-file="${doc.rat}/lib/commons-io-1.4.jar" url="${central.url}/commons-io/commons-io/1.4/commons-io-1.4.jar" />
-    
-    <path id="rat.libs.path">
-      <fileset dir="${doc.rat}/lib">
-        <include name="*.jar" />
-      </fileset>
-    </path>
-    <taskdef resource="org/apache/rat/anttasks/antlib.xml">
-      <classpath refid="rat.libs.path" />
-    </taskdef>
-
-  	<!-- If you want the RAT run to automatically add license headers where needed, set addLicenseHeaders="true".
-  	     However, afterwards, you will have to manually double-check every single modified file regarding the
-  	     ASF Source Header and Copyright Notice Policy!
-  	     Exclusions and their reasons:
-  	     - .* and .*/** are automatically created configuration files
-  	     - doc/LICENSE.* are third-party licenses
-  	     - ${code.src}/main/config/wikipages/** are default wiki pages for use in JSPWiki installations
-  	     - all others are directories which contain generated output and third-party binary libraries
-  	-->
-    <report reportFile="${doc.rat}/rat-report.txt" addLicenseHeaders="false">
-        <fileset dir="."
-        	excludes=".*, .*/**,
-        	src/main/config/doc/LICENSE.*,
-        	${code.resources}/main/config/wikipages/**,
-        	${code.build}/**,
-        	${tests.build}/**,
-        	${tests.reports}/**,
-        	${doc.rat}/**,
-        	${libs.main}/**,
-        	${libs.tests}/**,
-        	${libs.opt}/**,
-        	${docs.javadoc}/**,
-        	${release.dir}/**" />
-<!--
-      <fileset dir="src/org"/>
-      <fileset dir="src/src/main/webapp" 
-               excludes="**/SilkIconSet-readme.txt,**/fckconfig.js,**/mootools.js,**/posteditor.js" />
-      <fileset dir="tests/org"/>
-      -->
-    </report>
   </target>
 
 </project>

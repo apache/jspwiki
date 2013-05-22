@@ -1,5 +1,16 @@
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.9.2-incubating-7
+       
+       * Moved the javadoc and Rat plugins from MVN3_BRANCH to 
+         trunk and removed corresponding javadoc and rat code from
+         the Ant script; "ant dist" will now use the javadoc generated
+         from Maven.  Note additional configuration for javadoc plugin 
+         still present in MVN3_BRANCH; that can be moved over as part
+         of the move to submodules.
+
+2013-05-22  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.9.2-incubating-6
        
        * Moved to one source of record for JSPWiki's 
