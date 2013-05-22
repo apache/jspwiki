@@ -232,6 +232,27 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalConfig>
+                        <file>
+                            <name>.checkstyle</name>
+                            <location>src/main/config/dev/jspwiki-checkstyle.xml</location>
+                        </file>
+                        <file>
+                            <name>.settings/org.eclipse.jdt.core.prefs</name>
+                            <location>src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
+                        </file>
+                    </additionalConfig>
+                    <additionalProjectnatures>
+                        <projectnature>net.sourceforge.metrics.nature</projectnature>
+                        <projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>                        
+                    </additionalProjectnatures>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>

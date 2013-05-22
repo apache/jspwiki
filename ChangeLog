@@ -1,5 +1,21 @@
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.9.2-incubating-6
+       
+       * Moved to one source of record for JSPWiki's 
+         dependencies (the Maven pom.xml file), it will
+         now be needed to run "mvn clean install [-Dmaven.test.skip]"
+         prior to running any of the Ant tasks, in
+         order to download the necessary libs.
+
+       * Added maven-eclipse-plugin to pom.xml to create necessary
+         Eclipse .project/.settings/.classpath settings upon calling
+         mvn eclipse:clean eclipse:eclipse and removed corresponding
+         folders in SVN repository. (IDEA users use mvn idea:idea
+         instead.)
+
+2013-05-22  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.9.2-incubating-5
        
        * Mavenized location of doc directory; rat, javadoc,
