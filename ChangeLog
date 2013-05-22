@@ -1,3 +1,10 @@
+2013-05-22  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.9.2-incubating-5
+       
+       * Mavenized location of doc directory; rat, javadoc,
+         and releases folder now under target.         
+
 2013-05-20  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-4

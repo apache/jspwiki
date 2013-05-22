@@ -109,7 +109,7 @@
   <property name="tests.resources" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
-  <property name="doc.rat" value="doc/rat" />
+  <property name="doc.rat" value="target/rat" />
 	
   <!-- dirs holding libs -->
   <property name="libs.main" value="lib" />
@@ -128,7 +128,7 @@
 
   <!-- The place where the javadocs are created -->
 
-  <property name="docs.javadoc" value="doc/javadoc" />
+  <property name="docs.javadoc" value="target/javadoc" />
 
   <!-- The temporary installation directory where all war-files
        are collected, for example -->
@@ -144,7 +144,7 @@
   <property name="svn.tag" value="trunk" />
 
   <!-- And finally, the directory where the final .zip-file is put -->
-  <property name="release.dir" value="releases" />
+  <property name="release.dir" value="target/releases" />
 
   <!--  PATH DEFINITIONS -->
 
@@ -310,8 +310,6 @@
     <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
-    <delete dir="${docs.javadoc}" />
-    <delete dir="${doc.rat}" />
     <delete file="${code.i18n}/CoreResources_en.properties" />
     <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
     <delete file="${code.i18n}/templates/default_en.properties" />
@@ -690,8 +688,9 @@
           description="Creates JSPWiki documentation zipfile">
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
-        <zipfileset dir="doc" prefix="doc" excludes="rat/**" />
-        <zipfileset dir="src/main/config/wikipages" prefix="doc/wikipages" excludes="**/.??*" />
+        <zipfileset dir="src/main/config/doc" prefix="doc" />
+        <zipfileset dir="${docs.javadoc}" prefix="javadoc" />
+        <zipfileset dir="src/main/config/wikipages" prefix="wikipages" excludes="**/.??*" />
     </zip>
   </target>
 
@@ -1485,7 +1484,7 @@ To automate the JAR signing processs, you can add the property
     <report reportFile="${doc.rat}/rat-report.txt" addLicenseHeaders="false">
         <fileset dir="."
         	excludes=".*, .*/**,
-        	doc/LICENSE.*,
+        	src/main/config/doc/LICENSE.*,
         	${code.resources}/main/config/wikipages/**,
         	${code.build}/**,
         	${tests.build}/**,
