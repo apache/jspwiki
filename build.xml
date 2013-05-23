@@ -19,34 +19,14 @@
 -->
 
 <!--
-    This is the Ant build file for the JSPWiki project.
-
-    The verbosity in this file is intentional - it is also
-    an example for those who don't know Ant yet that well
-    and would like to learn it.
-
-    The build file assumes the following directory structure:
-
-    JSPWiki
-    |___build.xml
-    |
-    |___etc
-    |   |___[jspwiki.properties and web.xml]
-    |
-    |___src
-    |   |___webdocs
-    |   |   |___[all .jsp files]
-    |   |
-    |   |___org
-    |       |___[...and the rest of the source code files]
-    |
-    |___docs
-    |
-    |___lib
-    |
-    |___tests
-        |___org
-            |___[...and the rest of the test source code]
+    This is the Ant build file for the JSPWiki project.  It's
+    in the process of getting replaced by the Maven pom.xml.
+    To build:
+    1.) run mvn clean install from Maven, which runs all unit
+        tests and builds the WAR.
+    2.) from Ant, run the webtests (Selenium tests), war
+        (another way to build the war), or dist (create the
+        full distribution).
 
     $Id: build.xml,v 1.97 2007-12-22 22:00:31 jalkanen Exp $
 -->
@@ -298,7 +278,7 @@
     </condition>
   	<antcall target="buildjar" /> <!-- needed to avoid circular references when invoking tests target -->
   	<!-- comment out the following line if you only want to run the webtests and not the normal tests -->
-    <antcall target="tests" />
+    <!--antcall target="tests" /-->
   </target>
 
   <target name="jartests">
@@ -381,8 +361,8 @@
 
     <war warfile="${warfile}"
          webxml="src/main/webapp/WEB-INF/web.xml">
-       <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar jspwiki*.jar"/>
-       <lib file="${jarfile}" />
+       <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
+       <!--lib file="${jarfile}" /-->
        <!--lib file="${libs.tests}/stripes*.jar"/-->
        <fileset dir="src/main/webapp">
            <include name="admin/**" />
@@ -561,7 +541,7 @@
           description="Reads the current code base's version string.">
     <java outputproperty="jspwiki.version" classname="org.apache.wiki.Release">
       <classpath>
-        <pathelement location="build/JSPWiki.jar"/>
+        <pathelement location="target/classes"/>
       </classpath>
     </java>
   </target>
@@ -661,110 +641,6 @@
       <copy file="${webtests.build}/containerauth.web.xml"
           tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
 
-  </target>
-
-  <!-- This target runs the JUnit tests that are available
-       under tests/.  It generates the test result files
-       into the ${tests.reports} -directory, one file per
-       each tested class.  The tests are generated in
-       plain text, but you can easily get XML format results
-       as well, just by setting the formatter, below.
-
-       Only tests that end with "*Test.java" are included.
-       This is because then you can also use a manual
-       "AllTests.java" in each directory, as per the JUnit
-       Cookbook.
-
-       This runs the tests in text mode.  If you want the
-       pretty GUI you probably want to write a new target.
-
-       If this test fails with a "cannot find task 'junit'"
-       error, put the junit.jar in yourm CLASSPATH.
-
-       More info http://ant.apache.org/faq.html#delegating-classloader
-   -->
-  <target name="tests" depends="tests-init,jartests,tests-db-init" unless="jspwiki.test.skip"
-          description="Runs the JUnit tests.">
-
-    <condition property="check_jar_has_been_built"> <!-- build main jar if it has not been created yet; should -->
-      <available file="${jarfile}"/>                <!-- only happen if this target is invoked directly        -->
-    </condition>
-    <antcall target="buildjar" />
-    
-    <!-- Copy non-filtered test resources to target/test-classes folder -->
-    <copy todir="target/test-classes/ini">
-        <fileset dir="src/test/resources/ini"/>
-    </copy>
-    <copy todir="target/test-classes">
-        <fileset dir="src/test/resources">
-           <!-- three jspwiki*.properties files filtered, so skipped -->
-           <include name="*.xml"/>
-           <include name="*.txt"/>
-           <include name="*.policy"/>
-           <include name="test.properties"/>
-        </fileset>
-    </copy>
-
-    <junit printsummary="yes" haltonfailure="no" fork="yes" failureproperty="test.failed">
-        <classpath>
-           <path refid="path.tests" />
-        </classpath>
-        <sysproperty key="jspwiki.tests.auth" value="true" />
-        <formatter type="plain" />
-        <formatter type="xml" usefile="yes" />
-        <batchtest todir="${tests.reports}">
-           <fileset dir="${tests.src}">
-                <include name="**/*Test.java" />
-                <exclude name="**/AllTest*java" />
-                <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
-                <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
-                <exclude name="org/apache/wiki/web/*.*" />
-                <exclude name="org/apache/wiki/TranslatorReaderTest*" />
-           </fileset>
-        </batchtest>
-     </junit>
-
-  	 <junitreport todir="${tests.reports}">
-  	    <fileset dir="${tests.reports}">
-  	       <include name="**/TEST-*.xml" />
-  	    </fileset>
-  	    <report format="noframes" todir="${tests.reports}" />
-  	 </junitreport>
-     
-     <antcall target="fail-build-if-junit-fails">
-       <param name="test.failed" value="${test.failed}"/>
-     </antcall>
-  </target>
-	
-  <target name="fail-build-if-junit-fails" unless="continue_even_with_test_failures">
-  	<fail message="Test failure(s) detected, check test results." if="${test.failed}" />
-  </target>
-
-  <target name="tests-auth" depends="jar,tests-init,jartests"
-          description="Runs the AuthorizationManager tests, with JDPA">
-
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
-        <classpath>
-           <path refid="path.tests" />
-        </classpath>
-        <sysproperty key="jspwiki.tests.auth" value="true" />
-        <jvmarg value="-Xdebug" />
-        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y" />
-        <formatter type="plain" />
-        <formatter type="xml" usefile="yes" />
-        <batchtest todir="${tests.reports}">
-           <fileset dir="${tests.src}">
-                <include name="**/AuthorizationManagerTest.java" />
-           </fileset>
-        </batchtest>
-     </junit>
-
-     <junitreport todir="${tests.resources}">
-        <fileset dir="${tests.reports}">
-           <include name="**/TEST-*.xml" />
-        </fileset>
-        <report format="noframes" todir="${tests.resources}" />
-     </junitreport>
   </target>
 
   <!-- This target runs web unit tests using Selenium. These tests run
@@ -1064,77 +940,8 @@ To automate the JAR signing processs, you can add the property
 
   <!-- ============================================================== -->
 
-  <!-- JDBC Support -->
-
-  <!-- Starting with 2.3.33, JSPWiki supports JDBC DataSources for
-       storing user profiles. The DataSource can be any database that
-       your web container supports. In practice, most containers supply
-       a generic datatbase connection pooling package that can be configured
-       to use any JDBC driver.
-
-       RUNNING JDBC UNIT TESTS
-       =======================
-       If you don't enable JDBC support, the JDBC-related unit test classes
-       will compile fine, but will fail when the 'tests' Ant target executes.
-       Don't worry about that. The JDBC-related test classes, by the way,
-       are these:
-
-          org.apache.wiki.auth.user.JDBCUserDatabaseTest
-
-       To run JDBC-related unit tests, you need to:
-
-       1) Set up an external database
-       2) Obtain a JDBC driver
-       3) Tell JSPWiki where to find the driver, and how to
-          connect to the database, via jdbc.* properties in
-          your build.properties file.
-       4) Provide table setup/teardown DDL scripts (executed by
-          the db-setup and db-teardown targets, below)
-
-       Step 1 is the hardest. Luckily for you, JSPWiki has built-in Ant
-       scripts to automatically start and stop the embedded Hypersonic 100%
-       Java database. It's small and fast, and is included
-       in the JSPWiki base distribution. You can, of course, use your own
-       JDBC-compliant database such as Postgresql.
-
-       Step 2: If desired, modify the database properties in
-       src/test/resources/jdbc.properties.  The defaults given should be sufficient 
-       for JDBC testing using hsql on any developer's local machine.
-
-       The 'jdbc.driver.id' property in this file (defaulted to hsql) is 
-       important. Its presence tells the Ant scripts to do JDBC testing. 
-       It also points to the subdirectory in etc/db that contains our 
-       setup/teardown scripts, which *must* contain these files at a minimum:
-
-         userdb-setup.ddl
-         userdb-teardown.ddl
-
-       Sample scripts for Hypersonic and Postgresql are supplied.
-       If you want to use a different database, create a subdirectory in etc/db
-       (e.g., etc/db/oracle) and create the necessary DDL script files.
-
-       Note that the DDL scripts contain token substitution fields where
-       table and column names mappings can be plugged in. This is so you
-       can customize how JSPWiki stores its data. For example, the Hypersonic
-       teardown DDL looks like this:
-
-         DROP TABLE @jspwiki.userdatabase.table@ IF EXISTS;
-
-       The complete list of customizable table properties are found
-       in etc/jspwiki.properties.tmpl. If you don't customize them,
-       JSPWiki will use some sensible defaults. For unit testing purposes,
-       this script will always use the defaults from 'tests/etc/jspwiki.properties',
-       then apply any custom properties defined in your build.properties file.
-
-       All of this may sound complicated, but it really isn't. If you use Hypersonic,
-       the JDBC tests should Just Work. And if you specify an external database,
-       they should work just fine also.
-
-       RUNNING JSPWIKI WITH JDBC SUPPORT
+  <!-- RUNNING JSPWIKI WITH JDBC SUPPORT
        =================================
-       All of the preceding tells you how to test JSPWiki with JDBC support.
-       Sounds great, but how do you *run* JSPWiki with it? Simple:
-
        1) Configure the Jdbc.* properties in the build.properties file
        2) Configure table and column mappings in etc/jspwiki.properties.tmpl
        3) Configure your web container to create a JDBC DataSource
@@ -1146,25 +953,6 @@ To automate the JAR signing processs, you can add the property
        See the Javadoc for org.apache.wiki.auth.user.JDBCUserDatabase
        for details and examples.
   -->
-
-  <target name="tests-db-init" depends="db-properties"/>
-
-  <target name="db-properties" depends="init" if="jdbc.driver.id">
-
-    <!-- Check for the presence of the database driver & script dir -->
-    <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
-
-    <!-- If it's the Hypersonic database, set a special flag -->
-    <condition property="hsql">
-      <equals arg1="${jdbc.driver.id}" arg2="hsql" />
-    </condition>
-
-    <!-- Set a flag that says all of our pre-conditions are met! -->
-    <property name="db.props.exist" value="true" />
-
-    <!-- Copying the testing jdbc.properties file -->
-    <copy file="${tests.mvnresources}/jdbc.properties" toFile="target/test-classes/jdbc.properties" overwrite="true"/>
-  </target>
 
   <!-- Some convenience macrodefs -->
   <macrodef name="check-property">
@@ -1228,7 +1016,7 @@ To automate the JAR signing processs, you can add the property
 	     </java>
   </target>
 	
-  <target name="coverage-tests" depends="tests">
+  <target name="coverage-tests">
   	<!-- delete previous info, if any -->
     <delete file="cobertura.ser" />
     <delete dir="${tests.build}/instrumented-classes" />
