@@ -209,7 +209,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <finalName>JSPWiki</finalName>
         <!-- filtering: http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html -->
@@ -461,6 +460,38 @@
                    </execution>
                </executions>
             </plugin>
+            <!-- 
+                Cobertura unit test coverage checker, see
+                http://mojo.codehaus.org/cobertura-maven-plugin/usage.html
+                http://www.ibm.com/developerworks/java/library/j-cobertura/
+                activate via mvn cobertura:cobertura, check target/site
+                folder for results.
+            -->               
+            <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>cobertura-maven-plugin</artifactId>
+		<version>2.5.2</version>
+		<configuration>
+		    <formats>
+		        <format>html</format>
+		        <format>xml</format>
+		    </formats>
+		</configuration>
+            </plugin>
+  	    <!-- Sonar software quality checker, 
+  	         http://mojo.codehaus.org/sonar-maven-plugin/plugin-info.html
+  	         Sonar Server must be downloaded and running first  
+	         (test: should be able to access http://localhost:9000/):
+	         http://docs.codehaus.org/display/SONAR/Get+started+in+2+minutes
+	         Apparently activates its own, closely similar, unit test  
+	         coverage (not necessary to run cobertura plugin above)
+	         Activate via mvn sonar:sonar
+	    -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
 	    <!-- Run via mvn apache-rat:check (http://creadur.apache.org/rat/apache-rat-plugin/plugin-info.html) 
 	         using rat:check activates old Codehaus plugin instead.
 	    -->
@@ -472,7 +503,8 @@
 	            <excludes>
   	                <exclude>src/main/config/doc/LICENSE.*</exclude> <!-- License files -->
   	                <exclude>src/main/config/wikipages/**</exclude> <!-- Default wikipages -->
-	                <exclude>OldChangeLog</exclude> <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
+	                <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
+  	                <exclude>src/main/config/dev/OldChangeLog</exclude> 
 	                <exclude>src/main/webapp/scripts/*.js</exclude>              <!-- minified files -->
 	                <exclude>src/test/resources/TextFormattingRules.txt</exclude> <!-- test input data -->
 	                <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->

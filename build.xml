@@ -25,7 +25,7 @@
     1.) run mvn clean install from Maven, which runs all unit
         tests and builds the WAR.
     2.) from Ant, run the webtests (Selenium tests) or dist 
-        (to create the full distribution).
+        targets (to create the full distribution).
 -->
 
 <project name="JSPWiki" default="war" basedir=".">
@@ -37,22 +37,9 @@
 
   <property file="${build.properties}" />
 
-  <property name="debug" value="true" />
-  <property name="deprecation" value="false" />
-  <property name="optimize" value="false" />
-
-  <!-- This denotes the directory where the Java source code lies. -->
-  <property name="code.src" value="src/main/java" />
-
-  <!-- This denotes the directory where the source code resources lie. -->
-  <property name="code.resources" value="src" />
-
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
   <property name="code.build" value ="target/classes" />
-
-  <!-- The internationalization strings for the core JSPWiki classes -->
-  <property name="code.i18n" value="src/main/resources" />
 
   <!-- The i18n location in which 18n templates are created -->
   <property name="tmplt.i18n.dir" value="i18n_templates" />
@@ -71,9 +58,6 @@
        test sources, the location of the test .class files and the
        directory where the test results are written in. -->
 
-  <property name="tests.src" value="src/test/java" />
-  <property name="tests.mvnresources" value="src/test/resources" />
-  <property name="tests.resources" value="tests" />
   <property name="tests.build" value="target/test-classes" />
   <property name="tests.reports" value="tests/reports" />
 	
@@ -192,22 +176,18 @@
         <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
      	
      	<!-- other dependencies ((L)GPL dependencies and jars needed by these) -->
-     	<get-element to-file="${libs.opt}/cobertura-1.9.4.1.jar" url="${central.url}/net/sourceforge/cobertura/cobertura/1.9.4.1/cobertura-1.9.4.1.jar" />
      	<get-element to-file="${libs.opt}/asm-3.0.jar" url="${central.url}/asm/asm/3.0/asm-3.0.jar" />
      	<get-element to-file="${libs.opt}/asm-tree-3.0.jar" url="${central.url}/asm/asm-tree/3.0/asm-tree-3.0.jar" />
-     	<get-element to-file="${libs.opt}/sonar-ant-task-2.0.jar" url="${central.url}/org/codehaus/sonar-plugins/sonar-ant-task/2.0/sonar-ant-task-2.0.jar" />
      </sequential>
   </macrodef>
   
   <!-- Removes the build directory and the tests build directory -->
   <target name="clean"
           description="Cleans away all generated files.">
-    <delete file="cobertura.ser" />
     <delete dir="${tests.reports}" />
     <delete includeemptydirs="true" quiet="true">
       <fileset dir="target" includes="**/*" excludes="JSPWiki/WEB-INF/lib/*.*"/>
     </delete>
-    <delete dir="tests/etc/WEB-INF" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -607,7 +587,6 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <!-- Copy the libraries -->
       <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
         <fileset dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar" />
-        <!--fileset file="${jarfile}"/-->
         <fileset file="${jdbc.driver.jar}"/>
       </copy>
 
@@ -816,80 +795,6 @@ To automate the JAR signing processs, you can add the property
 	       <classpath path="${code.build}"/>
 	       <arg line="${check.language}"/>
 	     </java>
-  </target>
-	
-  <target name="coverage-tests" depends="init,version">
-    <!-- delete previous info, if any -->
-    <delete file="cobertura.ser" />
-    <delete dir="target/instrumented-classes" />
-    <!-- bootstrap cobertura ant-tasks -->
-    <taskdef classpathref="path.optional" resource="tasks.properties"/>
-    <cobertura-instrument todir="target/instrumented-classes">
-      <fileset dir="${code.build}">
-        <include name="**/*.class"/>
-      </fileset>
-    </cobertura-instrument>
-    <junit haltonfailure="no" fork="yes">
-      <classpath>
-        <path location="target/instrumented-classes" />
-        <path refid="path.optional" />
-      </classpath>
-      <formatter type="xml"/>
-      <sysproperty key="jspwiki.tests.auth" value="true" />
-      <batchtest todir="${tests.reports}">
-        <fileset dir="${tests.src}">
-          <include name="**/*Test.java" />
-          <exclude name="**/AllTest*java" />
-          <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
-          <exclude name="org/apache/wiki/web/*.*" />
-          <exclude name="org/apache/wiki/TranslatorReaderTest*" />
-        </fileset>
-      </batchtest>
-    </junit>
-  </target>
-  
-  <target name="coverage-reports" depends="coverage-tests,version">
-     <taskdef classpathref="path.optional" resource="tasks.properties" />
-     <cobertura-report srcdir="${code.src}" destdir="target/cobertura" />
-  </target>
-	    
-  <target name="sonar-bootstrap" description="sonar ant task build configuration">
-  	<!-- bootstrap sonar ant tasks -->
-    <typedef resource="org/sonar/ant/antlib.xml" 
-             uri="antlib:org.sonar.ant" 
-             classpathref="path.optional" />
-  	    
-    <!-- list of Sonar project configuration properties -->
-    <property name="sonar.projectKey" value="org.apache.jspwiki:jspwiki" />
-    <property name="sonar.projectName" value="Apache JSPWiki (incubating)" />
-    <property name="sonar.projectVersion" value="${jspwiki.version}" />
-    <property name="sonar.sources" value="${code.src}" />
-    <property name="sonar.scm.url" value="scm:svn:http://svn.apache.org/repos/asf/incubator/jspwiki/trunk/" />
-  	
-    <!-- list of optional Sonar properties -->
-    <property name="sonar.binaries" value="${code.build}" />
-    <property name="sonar.tests" value="${tests.resources}" />
-    
-    <!-- list of advanced properties -->
-    <property name="sonar.core.codeCoveragePlugin" value="cobertura"/>
-    <property name="sonar.surefire.reportsPath" value="./tests/reports" />
-    <property name="sonar.cobertura.reportPath" value="${tests.build}/cobertura/coverage.xml" />
-    <property name="sonar.dynamicAnalysis" value="reuseReports" />
-    
-    <!-- Used by PMD only -->
-    <property name="sonar.java.source" value="1.6" />
-    <property name="sonar.java.target" value="1.6" />
-    
-    <!-- don't break the build if there are test failures -->
-    <property name="continue_even_with_test_failures" value="true" />
-  </target>
-  
-  <!-- Sonar server must be downloaded and running first (test: should be 
-       able to access http://localhost:9000/):
-       http://docs.codehaus.org/display/SONAR/Get+started+in+2+minutes 
-  -->
-  <target name="sonar" depends="sonar-bootstrap,coverage-reports,version">   
-    <sonar:sonar xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
 
 </project>
