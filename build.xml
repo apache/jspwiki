@@ -818,23 +818,23 @@ To automate the JAR signing processs, you can add the property
 	     </java>
   </target>
 	
-  <target name="coverage-tests">
-  	<!-- delete previous info, if any -->
+  <target name="coverage-tests" depends="init,version">
+    <!-- delete previous info, if any -->
     <delete file="cobertura.ser" />
-    <delete dir="${tests.build}/instrumented-classes" />
-  	<!-- bootstrap cobertura ant-tasks -->
-    <taskdef classpathref="path.optional" resource="tasks.properties" />
-  	<cobertura-instrument todir="${tests.build}/instrumented-classes">
+    <delete dir="target/instrumented-classes" />
+    <!-- bootstrap cobertura ant-tasks -->
+    <taskdef classpathref="path.optional" resource="tasks.properties"/>
+    <cobertura-instrument todir="target/instrumented-classes">
       <fileset dir="${code.build}">
         <include name="**/*.class"/>
       </fileset>
     </cobertura-instrument>
-  	<junit haltonfailure="no" fork="yes">
+    <junit haltonfailure="no" fork="yes">
       <classpath>
-        <path location="${tests.build}/instrumented-classes" />
+        <path location="target/instrumented-classes" />
         <path refid="path.optional" />
       </classpath>
-      <formatter type="xml" />
+      <formatter type="xml"/>
       <sysproperty key="jspwiki.tests.auth" value="true" />
       <batchtest todir="${tests.reports}">
         <fileset dir="${tests.src}">
@@ -848,8 +848,9 @@ To automate the JAR signing processs, you can add the property
     </junit>
   </target>
   
-  <target name="coverage-reports" depends="coverage-tests,version">
-  	<cobertura-report srcdir="${code.src}" destdir="${tests.build}/cobertura" />
+  <target name="coverage-reports" depends="version">
+     <taskdef classpathref="path.optional" resource="tasks.properties" />
+     <cobertura-report srcdir="${code.src}" destdir="target/cobertura" />
   </target>
 	    
   <target name="sonar-bootstrap" depends="clean" description="sonar ant task build configuration">
