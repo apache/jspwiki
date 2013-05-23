@@ -278,7 +278,7 @@
     <delete file="${code.i18n}/CoreResources_en.properties" />
     <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
     <delete file="${code.i18n}/templates/default_en.properties" />
-    <delete includeemptydirs="true">
+    <delete includeemptydirs="true" quiet="true">
       <fileset dir="target" includes="**/*" excludes="JSPWiki/WEB-INF/lib/*.*"/>
     </delete>
     <delete dir="tests/etc/WEB-INF" />
