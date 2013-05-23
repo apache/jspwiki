@@ -138,7 +138,7 @@ import org.apache.wiki.util.Serializer;
  * </p>
  * <p>
  * This class is typically used in conjunction with a web container's JNDI
- * resource factory. For example, Tomcat versions 4 and higher provide a basic
+ * resource factory. For example, Tomcat provides a basic
  * JNDI factory for registering DataSources. To give JSPWiki access to the JNDI
  * resource named by <code></code>, you would declare the datasource resource
  * similar to this:
@@ -152,10 +152,23 @@ import org.apache.wiki.util.Serializer;
  *  &nbsp;...<br/>
  * &lt;/Context&gt;</code></blockquote>
  * <p>
- * JDBC driver JARs should be added to Tomcat's <code>common/lib</code>
- * directory. For more Tomcat 5.5 JNDI configuration examples, see <a
- * href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
- * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
+ * To configure JSPWiki to use JDBC support, first create a database 
+ * with a structure similar to that provided by the HSQL and PostgreSQL 
+ * scripts in src/main/config/db.  If you have different table or column 
+ * names you can either alias them with a database view and have JSPWiki
+ * use the views, or alter the WEB-INF/jspwiki.properties file: the 
+ * jspwiki.userdatabase.* and jspwiki.groupdatabase.* properties change the
+ * names of the tables and columns that JSPWiki uses.
+ * </p>
+ * <p>
+ * A JNDI datasource (named jdbc/UserDatabase by default but can be configured 
+ * in the jspwiki.properties file) will need to be created in your servlet container.
+ * JDBC driver JARs should be added, e.g. in Tomcat's <code>lib</code>
+ * directory. For more Tomcat JNDI configuration examples, see <a
+ * href="http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html">
+ * http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html</a>.
+ * Once done, restart JSPWiki in the servlet container for it to read the 
+ * new properties and switch to JDBC authentication.
  * </p>
  * <p>
  * JDBCUserDatabase commits changes as transactions if the back-end database

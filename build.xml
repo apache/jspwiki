@@ -24,31 +24,10 @@
     To build:
     1.) run mvn clean install from Maven, which runs all unit
         tests and builds the WAR.
-    2.) from Ant, run the webtests (Selenium tests), war
-        (another way to build the war), or dist (create the
-        full distribution).
-
-    RUNNING JSPWIKI WITH JDBC SUPPORT
-    =================================
-    1) Configure the Jdbc.* properties in the build.properties file
-    2) Configure table and column mappings in etc/jspwiki.properties.tmpl
-    3) Configure your web container to create a JDBC DataSource
-       (by default, the JNDI name is jdbc/UserDatabase)
-    4) Put the JDBC driver jar in a place where your web container will
-       find it, for example CATALINA_HOME/common/lib
-    5) Build JSPWiki, and start it up!
-
-    See the Javadoc for org.apache.wiki.auth.user.JDBCUserDatabase
-    for details and examples.
+    2.) from Ant, run the webtests (Selenium tests) or dist 
+        (to create the full distribution).
 -->
 
-<!--
-    First, we define the project.  We assign it a name,
-    and the default action if no action is specified on the
-    command line.  Also, all relative directory references
-    in the rest of the project file should be calculated from
-    the current directory.
--->
 <project name="JSPWiki" default="war" basedir=".">
 
   <!-- This tells us which build.properties file lies.  By default, we
@@ -80,9 +59,6 @@
 
   <!-- The location for the JAR file for the core JSPWiki classes -->
   <property name="jarfile" value="target/JSPWiki/WEB-INF/lib/jspwiki-2.9.2-SNAPSHOT.jar" />
-
-  <!-- The location of the JAR file for the test classes -->
-  <property name="testjarfile" location="${code.build}/${ant.project.name}-test.jar" />
 
   <!-- The location for the keystore used to sign the JAR; will be created if it doesn't exist. -->
   <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
@@ -138,10 +114,8 @@
        already built files in the build-directory, and then we
        add all the jar files in the "lib" -directory. -->
   <path id="path.base">
-     <pathelement path="${code.build}" />
      <fileset dir="${libs.main}">
         <include name="*.jar" />
-        <exclude name="jspwiki*.jar"/>
      </fileset>
   </path>
 
@@ -149,21 +123,14 @@
        to the base path defined above, since we put all the relevant
        .properties-files in tests/etc. -->
   <path id="path.tests">
-     <pathelement location="${jarfile}" />
-     <pathelement location="${testjarfile}" />
      <pathelement location="${java.home}/../lib/tools.jar" />
      <fileset dir="${libs.main}">
         <include name="*.jar" />
-        <exclude name="jspwiki*.jar"/>
      </fileset>
      <fileset dir="${libs.tests}">
         <include name="*.jar" />
      </fileset>
-     <!-- Note ini folder present both below and 
-          in ${jarfile} (can cause conflict? bug?) -->
      <pathelement path="target/test-classes" />
-     <!-- Below line temporary until all test resources in Maven location -->
-     <pathelement path="${tests.resources}/etc" />
   </path>
 
   <!-- Path holding (L)GPL jars and their dependencies -->
@@ -214,12 +181,6 @@
 
   <macrodef name="download-deps">
      <sequential>
-     	<!-- main dependencies now populated via "mvn clean install [-Dmaven.test.skip]", which must be run prior to any Ant task 
-             present build process:
-             mvn clean install [-Dmaven.test.skip to avoid unit tests] will build a WAR.
-             ant dist (will run unit tests still) or ant war (just to build a WAR).
-     	-->
-     
      	<!-- tests dependencies  -->
      	<get-element to-file="${libs.tests}/commons-el-1.0.jar" url="${central.url}/commons-el/commons-el/1.0/commons-el-1.0.jar" />
      	<get-element to-file="${libs.tests}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
@@ -229,8 +190,6 @@
         <get-element to-file="${libs.tests}/selenium-server-standalone-2.25.0.jar" 
                      url="http://selenium.googlecode.com/files/selenium-server-standalone-2.25.0.jar" />
         <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
-        <get-element to-file="${libs.tests}/yuicompressor-2.4.7.jar" 
-                     url="${central.url}/com/yahoo/platform/yui/yuicompressor/2.4.7/yuicompressor-2.4.7.jar" />
      	
      	<!-- other dependencies ((L)GPL dependencies and jars needed by these) -->
      	<get-element to-file="${libs.opt}/cobertura-1.9.4.1.jar" url="${central.url}/net/sourceforge/cobertura/cobertura/1.9.4.1/cobertura-1.9.4.1.jar" />
@@ -274,17 +233,6 @@
     <mkdir dir="${install.src}" />
     <delete dir="${release.dir}" />
     <mkdir dir="${release.dir}" />
-  </target>
-
-  <target name="jartests">
-    <jar jarfile="${testjarfile}" update="false">
-      <fileset dir="${tests.build}">
-        <include name="**/*.class"/>
-      </fileset>
-      <fileset dir="${tests.src}">
-        <include name="org/**/*.properties"/>
-      </fileset>
-    </jar>
   </target>
 
   <!--  Signs the JSPWiki JAR file with a self-issued digital certificate.
@@ -510,8 +458,6 @@
                token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
       <replace file="${webtests.build}/containerauth.web.xml"
                token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
-      <copy file="${webtests.build}/containerauth.web.xml"
-          tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
 
   </target>
 
@@ -522,7 +468,7 @@
        - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
        These are the same as the test users in tests/org.apache.wiki.auth.Users.
   -->
-  <target name="webtests" depends="tests-init,jartests">
+  <target name="webtests" depends="tests-init">
     <mkdir dir="${webtests.temp}" />
     <mkdir dir="${webtests.build}" />
   

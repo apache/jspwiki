@@ -1,3 +1,13 @@
+2013-05-23  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.9.2-incubating-11
+       
+       * Remove unused .externalToolBuilders, .fbprefs folders
+         OldChangeLog out of root directory and now under config/dev,
+         build.properties deleted, JDBC config notes moved from
+         build.xml to JDBCUserDatabase.java, removed no longer used
+         etc/WEB-INF folder, jartests target gone from build.xml. 
+
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-10

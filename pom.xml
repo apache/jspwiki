@@ -450,6 +450,9 @@
             <plugin>
                <artifactId>maven-javadoc-plugin</artifactId>
                <version>2.9</version>
+               <configuration>
+                   <quiet>true</quiet>
+               </configuration>
                <executions>
                    <execution>
                        <goals>
