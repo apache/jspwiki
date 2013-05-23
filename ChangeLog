@@ -1,17 +1,25 @@
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.9.2-incubating-10
+       
+       * Removed the war target from the Ant build.xml, 
+         the Ant webtests and dist targets run fine with
+         the results from mvn clean install.
+
+2013-05-22  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.9.2-incubating-9
        
        * Removed the unit test targets from the Ant build.xml, 
-         the Ant war, webtests, and dist targets will 
-         run fine with the results from mvn clean install.
+         the Ant war, webtests, and dist targets run 
+         fine with the results from mvn clean install.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-8
        
        * Removed the Compile and Compile test targets from the Ant 
-         build.xml, the Ant tests, war, webtests, and dist targets will 
+         build.xml, the Ant tests, war, webtests, and dist targets
          run fine with the results from mvn clean install.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)

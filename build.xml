@@ -28,7 +28,18 @@
         (another way to build the war), or dist (create the
         full distribution).
 
-    $Id: build.xml,v 1.97 2007-12-22 22:00:31 jalkanen Exp $
+    RUNNING JSPWIKI WITH JDBC SUPPORT
+    =================================
+    1) Configure the Jdbc.* properties in the build.properties file
+    2) Configure table and column mappings in etc/jspwiki.properties.tmpl
+    3) Configure your web container to create a JDBC DataSource
+       (by default, the JNDI name is jdbc/UserDatabase)
+    4) Put the JDBC driver jar in a place where your web container will
+       find it, for example CATALINA_HOME/common/lib
+    5) Build JSPWiki, and start it up!
+
+    See the Javadoc for org.apache.wiki.auth.user.JDBCUserDatabase
+    for details and examples.
 -->
 
 <!--
@@ -68,7 +79,7 @@
   <property name="tmplt.i18n.dir" value="i18n_templates" />
 
   <!-- The location for the JAR file for the core JSPWiki classes -->
-  <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
+  <property name="jarfile" value="target/JSPWiki/WEB-INF/lib/jspwiki-2.9.2-SNAPSHOT.jar" />
 
   <!-- The location of the JAR file for the test classes -->
   <property name="testjarfile" location="${code.build}/${ant.project.name}-test.jar" />
@@ -234,7 +245,7 @@
           description="Cleans away all generated files.">
     <delete file="cobertura.ser" />
     <delete dir="${tests.reports}" />
-    <delete includeemptydirs="true">
+    <delete includeemptydirs="true" quiet="true">
       <fileset dir="target" includes="**/*" excludes="JSPWiki/WEB-INF/lib/*.*"/>
     </delete>
     <delete dir="tests/etc/WEB-INF" />
@@ -265,22 +276,6 @@
     <mkdir dir="${release.dir}" />
   </target>
 
-  <!--  Builds the jar of all compiled class files -->
-  <target name="buildjar" unless="check_jar_has_been_built">
-      <jar jarfile="${jarfile}">
-         <fileset dir="${code.build}" />
-      </jar>
-  </target>
-
-  <target name="jar">
-    <condition property="check_jar_has_been_built">
-      <available file="${jarfile}"/>
-    </condition>
-  	<antcall target="buildjar" /> <!-- needed to avoid circular references when invoking tests target -->
-  	<!-- comment out the following line if you only want to run the webtests and not the normal tests -->
-    <!--antcall target="tests" /-->
-  </target>
-
   <target name="jartests">
     <jar jarfile="${testjarfile}" update="false">
       <fileset dir="${tests.build}">
@@ -303,7 +298,7 @@
       	  1) through 3) see below
   -->
 
-  <target name="signjar" depends="jar,sign-init" description="Signs jar: for use with global JVM security policies">
+  <target name="signjar" depends="sign-init" description="Signs jar: for use with global JVM security policies">
     <sign-jar jar="${jarfile}" />
     <echo>
   Congratulations -- you just signed your JAR file. We assume
@@ -332,129 +327,6 @@
   that you ran this target just for fun. In that case, we
   hope you enjoyed the experience.</echo>
   </target>
-
-  <!--  Builds a Web Archive - basically a JAR file which
-        also contains all of the JSP pages and can be deployed
-        as-is.
-
-        The archive gets put in the ${install.fulldir}.  The
-        reason for this is that this is just a temporary
-        step when building the entire distribution archive.
-
-        We include the following things:
-
-        1) All .jar -files in the lib-directory (except servlet-api.jar
-           and jsp-api.jar, since these are provided by the servlet
-           container anyway.
-        2) All .class-files from the build-directory
-        3) Everything from the src/webdocs -directory
-        4) Everything from the etc-directory go to the WEB-INF -directory
-           of the WAR-file.
-   -->
-
-  <target name="war" depends="installinit,jar,compressedjs"
-          description="Builds the WAR file for installation.">
-
-    <property name="warfile" value="build/${ant.project.name}.war" />
-
-    <delete file="${warfile}" />
-
-    <war warfile="${warfile}"
-         webxml="src/main/webapp/WEB-INF/web.xml">
-       <lib dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar"/>
-       <!--lib file="${jarfile}" /-->
-       <!--lib file="${libs.tests}/stripes*.jar"/-->
-       <fileset dir="src/main/webapp">
-           <include name="admin/**" />
-	   <include name="error/**" />
-	   <include name="images/**"/>
-	   <include name="scripts/**"/>
-	   <include name="templates/**" />
-	   <include name="*.*" />
-      </fileset>
-       <webinf dir="target/JSPWiki/WEB-INF">
-         <include name="jspwiki.properties" />
-       </webinf>
-       <webinf dir="src/main/webapp/WEB-INF">
-          <include name="geronimo-web.xml" />
-          <include name="*.tld" />
-          <include name="jspwiki.policy" />
-          <include name="userdatabase.xml" />
-          <include name="groupdatabase.xml" />
-       </webinf>
-    </war>
-
-    <war warfile="${warfile}"
-         webxml="src/main/webapp/WEB-INF/web.xml" update="true">
-      	<fileset dir="${tmpdir}/compress/src/main/webapp/" includes="**/*.js" />
-      	<fileset dir="${tmpdir}/compress/src/main/webapp/" includes="**/*.css" />
-    </war>
-
-   </target>
-
-    <!-- Defines a compression macro for the JS/CSS bits we want to transform
-         into something that saves a bit of space. -->
-    
-    <macrodef name="compressjs">
-        <attribute name="src"/>
-        <attribute name="args" default=""/>   
-        <sequential>
-            <java jar="tests/lib/yuicompressor-2.4.7.jar"
-                  output="${tmpdir}/compress/@{src}"
-                  fork="true">
-                <arg line="'@{src}' @{args}" />
-            </java>
-        </sequential>
-    </macrodef>
-    
-   <!-- We compress the Javascript using yahoo's yui compressor, 
-        which compresses both javascript and css files.
-        If you don't want to use the compressed stuff, just copy the default
-        .js files from the distro on top of the compressed ones from the WAR.
-    -->
-   <target name="compressedjs">
-        <mkdir dir="${tmpdir}/compress/src/main/webapp/scripts"/>
-    
-        <compressjs src="src/main/webapp/scripts/jspwiki-common.js"/>
-        <compressjs src="src/main/webapp/scripts/jspwiki-edit.js"/>
-        <compressjs src="src/main/webapp/scripts/jspwiki-prefs.js"/>
-        <compressjs src="src/main/webapp/scripts/jspwiki-commonstyles.js"/>
-        <compressjs src="src/main/webapp/scripts/prettify.js"/>
-
-        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default"/>
-
-        <compressjs src="src/main/webapp/templates/default/jspwiki.css"
-                    args="--line-break 0" />
-    
-        <compressjs src="src/main/webapp/templates/default/jspwiki_print.css"
-                    args="--line-break 0" />   	
-
-        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/OrderedList"/>   	
-   	    <compressjs src="src/main/webapp/templates/default/skins/OrderedList/skin.css"
-                args="--line-break 0" />
-
-        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/PlainVanilla"/>   	
-   	    <compressjs src="src/main/webapp/templates/default/skins/PlainVanilla/skin.css"
-                args="--line-break 0" />
-
-        <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/PlainVanilla 1024x768"/>   	
-        <compressjs src="src/main/webapp/templates/default/skins/PlainVanilla 1024x768/skin.css"
-                args="--line-break 0" />
-
-   	    <mkdir dir="${tmpdir}/compress/src/main/webapp/templates/default/skins/Smart"/>   	
-        <compressjs src="src/main/webapp/templates/default/skins/Smart/skin.css"
-                args="--line-break 0" />
-   </target>
-
-  <target name="opened-war" depends="war"
-   description="Creates an opened JSPWiki war hierarchy into the build dir.">
-
-    <mkdir dir="${code.build}/${ant.project.name}" />
-    <unzip src="${warfile}"
-           dest="${code.build}/${ant.project.name}" />
-
-  </target>
-
 
   <!--
        Here goes some nice Ant magic...  We build the source
@@ -537,7 +409,7 @@
     </zip>
   </target>
 
-  <target name="version" depends="jar"
+  <target name="version" 
           description="Reads the current code base's version string.">
     <java outputproperty="jspwiki.version" classname="org.apache.wiki.Release">
       <classpath>
@@ -552,7 +424,7 @@
        copy in some useful files and zip the whole thing
        into the release directory.
     -->
-  <target name="dist" depends="clean-deps,installinit,srczip,war,corepageszip,documentzip,version"
+  <target name="dist" depends="clean-deps,installinit,srczip,corepageszip,documentzip,version"
           description="Builds the entire distribution artifacts without checksums and signatures.">
 
     <!-- binary distribution -->
@@ -563,7 +435,7 @@
     <copy file="README"       todir="${install.fulldir}" />
     <copy file="ReleaseNotes" todir="${install.fulldir}" />
     <copy file="UPGRADING"    todir="${install.fulldir}" />
-    <copy file="${warfile}"   todir="${install.fulldir}" />
+    <copy file="target/JSPWiki.war"   todir="${install.fulldir}" />
     <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
       <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}-bin" />
     </zip>
@@ -650,7 +522,7 @@
        - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
        These are the same as the test users in tests/org.apache.wiki.auth.Users.
   -->
-  <target name="webtests" depends="jar,tests-init,jartests,war">
+  <target name="webtests" depends="tests-init,jartests">
     <mkdir dir="${webtests.temp}" />
     <mkdir dir="${webtests.build}" />
   
@@ -788,8 +660,8 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the libraries -->
       <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
-        <fileset dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar jspwiki*.jar" />
-        <fileset file="${jarfile}"/>
+        <fileset dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar" />
+        <!--fileset file="${jarfile}"/-->
         <fileset file="${jdbc.driver.jar}"/>
       </copy>
 
@@ -938,22 +810,6 @@ To automate the JAR signing processs, you can add the property
      </sequential>
   </macrodef>
 
-  <!-- ============================================================== -->
-
-  <!-- RUNNING JSPWIKI WITH JDBC SUPPORT
-       =================================
-       1) Configure the Jdbc.* properties in the build.properties file
-       2) Configure table and column mappings in etc/jspwiki.properties.tmpl
-       3) Configure your web container to create a JDBC DataSource
-          (by default, the JNDI name is jdbc/UserDatabase)
-       4) Put the JDBC driver jar in a place where your web container will
-          find it, for example CATALINA_HOME/common/lib
-       5) Build JSPWiki, and start it up!
-
-       See the Javadoc for org.apache.wiki.auth.user.JDBCUserDatabase
-       for details and examples.
-  -->
-
   <!-- Some convenience macrodefs -->
   <macrodef name="check-property">
     <attribute name="prop"/>
@@ -1049,8 +905,6 @@ To automate the JAR signing processs, you can add the property
   <target name="coverage-reports" depends="coverage-tests,version">
   	<cobertura-report srcdir="${code.src}" destdir="${tests.build}/cobertura" />
   </target>
-	
-	
 	    
   <target name="sonar-bootstrap" depends="clean" description="sonar ant task build configuration">
   	<!-- bootstrap sonar ant tasks -->
