@@ -41,9 +41,6 @@
        a good habit to keep .class -files separate from the .java -files. -->
   <property name="code.build" value ="target/classes" />
 
-  <!-- The i18n location in which 18n templates are created -->
-  <property name="tmplt.i18n.dir" value="i18n_templates" />
-
   <!-- The location for the JAR file for the core JSPWiki classes -->
   <property name="jarfile" value="target/JSPWiki/WEB-INF/lib/jspwiki-2.9.2-SNAPSHOT.jar" />
 
@@ -751,50 +748,5 @@ To automate the JAR signing processs, you can add the property
       <fail unless="@{prop}" message="Couldn't find @{file}!" />
     </sequential>
   </macrodef>
-
-  <!-- ============================================================== -->
-  <target name="i18n-create-template" description="Creates a given directory structure with all the needed files to make an i18n jar">
-	<input message="i18n template code to generate (ie: es_ES):" addproperty="i18n.template" />
-
-  	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/templates" />
-  	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/plugin" />
-
-  	<copy file="etc/i18n/CoreResources.properties"
-  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/CoreResources_${i18n.template}.properties"
-  		  overwrite="true"/>
-  	<copy file="etc/i18n/templates/default.properties"
-  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/templates/default_${i18n.template}.properties"
-  		  overwrite="true"/>
-  	<copy file="etc/i18n/plugin/PluginResources.properties"
-  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/plugin/PluginResources_${i18n.template}.properties"
-  		  overwrite="true" />
-
-  	<echo message="Now you can start translating at ${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}." />
-  	<echo message="When finished, execute i18n-jar-template target to jar it" />
-  </target>
-
-  <target name="i18n-jar-template" description="Jars a given i18n directory structure">
-	<input message="i18n template code to jar (ie: es_ES):" addproperty="i18n.template" />
-  	<jar jarfile="${code.build}/${ant.project.name}_${i18n.template}.jar">
-		<fileset dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}" includes="**/*.properties" />
-	</jar>
-	<echo message="Created ${code.build}/${ant.project.name}_${i18n.template}.jar. Drop it on your web/WEB-INF/lib folder and that should do the i18n trick" />
-	<echo message="You can also upload the jar to http://jspwiki.org/wiki/ContributedLocalizations or to any page linked to it to make it available for everyone!" />
-  </target>
-
-  <target name="i18n-clean-templates" description="Deletes all i18n directory structures">
-	<delete dir="${tmplt.i18n.dir}" />
-  </target>
-  
-  <target name="i18n-check" 
-	      description="Run this target to check whether a translation is up to date.">
-	  	 <input message="Please give the language you want to check translation for (e.g. fi, es, de)"
-	  			addproperty="check.language"/>
-	     <java classname="org.apache.wiki.TranslationsCheck">
-	       <classpath path="${tests.build}"/>
-	       <classpath path="${code.build}"/>
-	       <arg line="${check.language}"/>
-	     </java>
-  </target>
 
 </project>

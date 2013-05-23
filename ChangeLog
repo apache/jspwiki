@@ -1,5 +1,14 @@
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.9.2-incubating-13
+       
+       * Adjusted exclusions in Apache Rat, nonvital
+         i18n stuff removed from build.xml, HSQLDB now
+         writing temp files to target instead of base
+         directory (easier to remove that way).
+
+2013-05-23  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.9.2-incubating-12
        
        * Removed Cobertura and Sonar tasks from Ant build

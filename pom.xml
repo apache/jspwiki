@@ -496,24 +496,25 @@
 	         using rat:check activates old Codehaus plugin instead.
 	    -->
             <plugin>
-	        <groupId>org.apache.rat</groupId>
-	        <artifactId>apache-rat-plugin</artifactId>
-	        <version>0.8</version>
-	        <configuration>
-	            <excludes>
-  	                <exclude>src/main/config/doc/LICENSE.*</exclude> <!-- License files -->
-  	                <exclude>src/main/config/wikipages/**</exclude> <!-- Default wikipages -->
-	                <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
-  	                <exclude>src/main/config/dev/OldChangeLog</exclude> 
-	                <exclude>src/main/webapp/scripts/*.js</exclude>              <!-- minified files -->
-	                <exclude>src/test/resources/TextFormattingRules.txt</exclude> <!-- test input data -->
-	                <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
-	                <exclude>src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude>     
-	                <exclude>tests/**</exclude> <!-- legacy stuff used by Ant -->
-	                <exclude>build/**</exclude> <!-- legacy stuff used by Ant -->
-	            </excludes>
-	        </configuration>
-	    </plugin>            
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.8</version>
+                <configuration>
+                    <excludes>
+                        <exclude>src/main/config/doc/LICENSE.*</exclude> <!-- License files -->
+                        <exclude>src/main/config/wikipages/**</exclude> <!-- Default wikipages -->
+                        <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
+                        <exclude>src/main/config/dev/OldChangeLog</exclude> 
+                        <exclude>src/main/webapp/scripts/*.js</exclude>              <!-- minified files -->
+                        <exclude>src/test/resources/TextFormattingRules.txt</exclude> <!-- test input data -->
+                        <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
+                        <exclude>src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude>     
+                        <exclude>tests/**</exclude> <!-- legacy stuff used by Ant -->
+                        <exclude>build/**</exclude> <!-- legacy stuff used by Ant -->
+                        <exclude>rss.rdf</exclude> <!-- can this go in config/dev? -->
+                    </excludes>
+                </configuration>
+  	        </plugin>
         </plugins>
         <pluginManagement>
         	<plugins>
