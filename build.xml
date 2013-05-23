@@ -848,12 +848,12 @@ To automate the JAR signing processs, you can add the property
     </junit>
   </target>
   
-  <target name="coverage-reports" depends="version">
+  <target name="coverage-reports" depends="coverage-tests,version">
      <taskdef classpathref="path.optional" resource="tasks.properties" />
      <cobertura-report srcdir="${code.src}" destdir="target/cobertura" />
   </target>
 	    
-  <target name="sonar-bootstrap" depends="clean" description="sonar ant task build configuration">
+  <target name="sonar-bootstrap" description="sonar ant task build configuration">
   	<!-- bootstrap sonar ant tasks -->
     <typedef resource="org/sonar/ant/antlib.xml" 
              uri="antlib:org.sonar.ant" 
@@ -880,23 +880,15 @@ To automate the JAR signing processs, you can add the property
     <property name="sonar.java.source" value="1.6" />
     <property name="sonar.java.target" value="1.6" />
     
-    <!-- other interesting properties that can be overriden -->
-    <!-- <property name="sonar.jdbc.driverClassName" value="org.apache.derby.jdbc.ClientDriver" /> -->
-    <!-- <property name="sonar.jdbc.username" value="sonar" /> -->
-    <!-- <property name="sonar.jdbc.password" value="sonar" /> -->
-    <!-- <property name="sonar.jdbc.url" value="jdbc:derby://localhost:1527/sonar" /> -->
-    <!-- <property name="sonar.host.url" value="http://localhost:9000" /> -->
-    
     <!-- don't break the build if there are test failures -->
-  	<property name="continue_even_with_test_failures" value="true" />
+    <property name="continue_even_with_test_failures" value="true" />
   </target>
   
-  <target name="sonar" depends="sonar-bootstrap,coverage-tests,version">
-  	<!-- Sonar needs an xml type cobertura report -->
-  	<cobertura-report format="xml" 
-  	                  srcdir="${code.src}" 
-  	                  destdir="${tests.build}/cobertura" />
-    
+  <!-- Sonar server must be downloaded and running first (test: should be 
+       able to access http://localhost:9000/):
+       http://docs.codehaus.org/display/SONAR/Get+started+in+2+minutes 
+  -->
+  <target name="sonar" depends="sonar-bootstrap,coverage-reports,version">   
     <sonar:sonar xmlns:sonar="antlib:org.sonar.ant"/>
   </target>
 
