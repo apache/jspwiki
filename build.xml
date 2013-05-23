@@ -58,7 +58,7 @@
     in the rest of the project file should be calculated from
     the current directory.
 -->
-<project name="JSPWiki" default="compile" basedir=".">
+<project name="JSPWiki" default="war" basedir=".">
 
   <!-- This tells us which build.properties file lies.  By default, we
        use the SVN version (which is tuned to my environment), but you
@@ -79,7 +79,7 @@
 
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
-  <property name="code.build" value ="build" />
+  <property name="code.build" value ="target/classes" />
 
   <!-- The internationalization strings for the core JSPWiki classes -->
   <property name="code.i18n" value="src/main/resources" />
@@ -107,7 +107,7 @@
   <property name="tests.src" value="src/test/java" />
   <property name="tests.mvnresources" value="src/test/resources" />
   <property name="tests.resources" value="tests" />
-  <property name="tests.build" value="tests/build" />
+  <property name="tests.build" value="target/test-classes" />
   <property name="tests.reports" value="tests/reports" />
 	
   <!-- dirs holding libs -->
@@ -193,10 +193,7 @@
   <!-- Initialising, cleaning, etc. -->
 
   <target name="init"
-          description="Initializes everything, creates directories, etc."
-          depends="mkpropertyfile">
-     <mkdir dir="${code.build}" />
-     <mkdir dir="${tests.build}" />
+          description="Initializes everything, creates directories, etc.">
      <mkdir dir="${tests.reports}" />
      <mkdir dir="${@tests.pagedir@}" />
      <mkdir dir="${libs.tests}" />
@@ -252,33 +249,12 @@
      </sequential>
   </macrodef>
   
-  <target name="mkpropertyfile"
-          description="Builds the correct propertyfile from the build.properties">
-     <copy file="src/main/webapp/WEB-INF/jspwiki.properties" tofile="target/etc/jspwiki.properties" />
-     <copy file="src/test/resources/jspwiki.properties" tofile="target/test-classes/jspwiki.properties" />
-     <copy file="src/test/resources/jspwiki_rcs.properties" tofile="target/test-classes/jspwiki_rcs.properties" />
-     <copy file="src/test/resources/jspwiki_vers.properties" tofile="target/test-classes/jspwiki_vers.properties" />
-     <replace file="target/etc/jspwiki.properties"
-              replacefilterfile="${build.properties}" />
-     <replace file="target/test-classes/jspwiki.properties"
-              replacefilterfile="${build.properties}" />
-     <replace file="target/test-classes/jspwiki_rcs.properties"
-              replacefilterfile="${build.properties}" />
-     <replace file="target/test-classes/jspwiki_vers.properties"
-              replacefilterfile="${build.properties}" />
-  </target>
-
   <!-- Removes the build directory and the tests build directory -->
   <target name="clean"
           description="Cleans away all generated files.">
     <delete file="cobertura.ser" />
-    <delete dir="${tests.build}" />
-    <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
-    <delete file="${code.i18n}/CoreResources_en.properties" />
-    <delete file="${code.i18n}/plugin/PluginResources_en.properties" />
-    <delete file="${code.i18n}/templates/default_en.properties" />
-    <delete includeemptydirs="true" quiet="true">
+    <delete includeemptydirs="true">
       <fileset dir="target" includes="**/*" excludes="JSPWiki/WEB-INF/lib/*.*"/>
     </delete>
     <delete dir="tests/etc/WEB-INF" />
@@ -297,52 +273,6 @@
 
   <!-- ============================================================== -->
 
-  <!-- Compilation targets -->
-
-  <!-- In English this means that the "init" -target must be executed
-       first.  After this, the java compiler is invoked with options
-       that compile every .java file in ${code.src} into .class files
-       in directory ${code.build}.  The is no debugging information
-       and the compiler is instructed to optimize the resulting code.
-
-       For the classpath we use the previously defined path called
-       "path.base" -->
-
-  <target name="compile" depends="init"
-          description="Builds the source code.">
-    <javac srcdir="${code.src}"
-           destdir="${code.build}"
-           debug="${debug}"
-           optimize="${optimize}"
-           deprecation="${deprecation}"
-           source="1.6"
-           target="1.6"
-    	   includeantruntime="false"
-           >
-      <classpath refid="path.base" />
-      <classpath refid="path.tests" />
-    </javac>
-  </target>
-
-  <!-- This is similar to above.  We use this to compile the
-       tests. -->
-  <target name="compiletests" depends="init,compile"
-          description="Builds the test code.">
-    <javac srcdir="${tests.src}"
-           destdir="${tests.build}"
-           debug="true"
-           deprecation="${deprecation}"
-           source="1.6"
-           target="1.6"
-     	   includeantruntime="false"
-           >
-      <classpath refid="path.base" />
-      <classpath refid="path.tests" />
-    </javac>
-  </target>
-
-  <!-- ============================================================== -->
-
   <!--  Installation targets -->
 
   <!-- This target makes sure all the necessary directories exist
@@ -357,21 +287,12 @@
 
   <!--  Builds the jar of all compiled class files -->
   <target name="buildjar" unless="check_jar_has_been_built">
-      <!-- Creating a specific _en file presently needed just so that "English" will appear as an option on 
-           the User Preferences page, language option (and similar issues).  FIXME: change JSP code  
-           so this is no longer necessary.
-      -->
-  	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
-	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
-	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
-         <fileset dir="${code.build}" includes="**/*.class" />
-         <!--fileset dir="${code.resources}" includes="templates/**/*.properties"/-->
-         <fileset dir="src/main/resources" />
+         <fileset dir="${code.build}" />
       </jar>
   </target>
 
-  <target name="jar" depends="compile">
+  <target name="jar">
     <condition property="check_jar_has_been_built">
       <available file="${jarfile}"/>
     </condition>
@@ -380,7 +301,7 @@
     <antcall target="tests" />
   </target>
 
-  <target name="jartests" depends="compiletests">
+  <target name="jartests">
     <jar jarfile="${testjarfile}" update="false">
       <fileset dir="${tests.build}">
         <include name="**/*.class"/>
@@ -471,7 +392,7 @@
 	   <include name="templates/**" />
 	   <include name="*.*" />
       </fileset>
-       <webinf dir="target/etc">
+       <webinf dir="target/JSPWiki/WEB-INF">
          <include name="jspwiki.properties" />
        </webinf>
        <webinf dir="src/main/webapp/WEB-INF">
@@ -758,7 +679,7 @@
        pretty GUI you probably want to write a new target.
 
        If this test fails with a "cannot find task 'junit'"
-       error, put the junit.jar in your CLASSPATH.
+       error, put the junit.jar in yourm CLASSPATH.
 
        More info http://ant.apache.org/faq.html#delegating-classloader
    -->
@@ -793,7 +714,7 @@
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <exclude name="**/*Test.java" />
+                <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <include name="**/StressTestVersioningProvider.java" if="tests.stress.enabled"/>
@@ -970,7 +891,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <include name="jspwiki.policy" />
           <include name="*.tld" />
         </fileset>
-        <fileset dir="target/test-classes" includes="userdatabase.xml groupdatabase.xml" />
+        <fileset dir="src/test/resources" includes="userdatabase.xml groupdatabase.xml" />
       </copy>
       <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
       
@@ -1296,7 +1217,7 @@ To automate the JAR signing processs, you can add the property
 	<delete dir="${tmplt.i18n.dir}" />
   </target>
   
-  <target name="i18n-check" depends="compile,compiletests" 
+  <target name="i18n-check" 
 	      description="Run this target to check whether a translation is up to date.">
 	  	 <input message="Please give the language you want to check translation for (e.g. fi, es, de)"
 	  			addproperty="check.language"/>
@@ -1307,7 +1228,7 @@ To automate the JAR signing processs, you can add the property
 	     </java>
   </target>
 	
-  <target name="coverage-tests" depends="compile,tests">
+  <target name="coverage-tests" depends="tests">
   	<!-- delete previous info, if any -->
     <delete file="cobertura.ser" />
     <delete dir="${tests.build}/instrumented-classes" />

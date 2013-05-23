@@ -339,7 +339,6 @@
                         <!-- time-consuming tests excluded by default -->
                         <exclude>**/StressTestVersioningProvider.java</exclude>
                         <exclude>**/StressTestSpeed.java</exclude>
-                        <!--exclude>**/*Test.java</exclude-->
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>
