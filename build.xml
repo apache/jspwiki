@@ -30,52 +30,31 @@
 
 <project name="JSPWiki" default="war" basedir=".">
 
-  <!-- This tells us which build.properties file lies.  By default, we
-       use the SVN version (which is tuned to my environment), but you
-       will probably want to override this from the command line. -->
-  <property name="build.properties" value="build.properties" />
-
-  <property file="${build.properties}" />
-
-  <!-- The class files are actually put in this directory.  It is
-       a good habit to keep .class -files separate from the .java -files. -->
-  <property name="code.build" value ="target/classes" />
-
   <!-- The location for the JAR file for the core JSPWiki classes -->
   <property name="jarfile" value="target/JSPWiki/WEB-INF/lib/jspwiki-2.9.2-SNAPSHOT.jar" />
 
   <!-- The location for the keystore used to sign the JAR; will be created if it doesn't exist. -->
   <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
 
-  <!-- Define a temporary directory, based on the system temporary directory,
-       the user name, and the project name (defined above) -->
-  <property name="tmpdir" value="${basedir}/build/tmp" />
-
-  <!-- The following three properties define the location of the
-       test sources, the location of the test .class files and the
-       directory where the test results are written in. -->
-
-  <property name="tests.build" value="target/test-classes" />
-  <property name="tests.reports" value="tests/reports" />
+  <!-- Define directies for the "ant dist target -->
+  <property name="tmpdir" value="target/ant-dist/tmp" />
+  <property name="release.dir" value="target/ant-dist/releases" />
+  <property name="install.fulldir" value="${tmpdir}/install" />
 	
   <!-- dirs holding libs -->
   <property name="libs.main" value="target/JSPWiki/WEB-INF/lib" />
-  <property name="libs.tests" value="tests/lib" />
-  <property name="libs.opt" value="tests/libs-opt" />
 	
   <property name="central.url" value="http://repo.maven.apache.org/maven2" />
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
-  <property name="webtests.reports"  value="${basedir}/tests/reports/selenium" />
-  <property name="webtests.build"    value="tests/build/webtests" />
+  <property name="webtests.folder"   value="target/ant-webtests"/>
+  <property name="webtests.build"    value="${webtests.folder}/build" />
+  <property name="webtests.libs"     value="${webtests.folder}/lib" />  
+  <property name="webtests.reports"  value="${webtests.folder}/reports" />
   <property name="webtests.port"     value="10024" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
-  <property name="selenium-rc.jar"   value="tests/lib/selenium-server-standalone-2.25.0.jar" />
-
-  <!-- The temporary installation directory where all war-files
-       are collected, for example -->
-  <property name="install.fulldir" value="${tmpdir}/install" />
+  <property name="selenium-rc.jar"   value="${webtests.libs}/selenium-server-standalone-2.25.0.jar" />
 
   <!-- The directory where the SVN sources are checked out. -->
   <property name="install.src" value="${tmpdir}/svnsrc" />
@@ -86,20 +65,6 @@
   <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
   <property name="svn.tag" value="trunk" />
 
-  <!-- And finally, the directory where the final .zip-file is put -->
-  <property name="release.dir" value="target/releases" />
-
-  <!--  PATH DEFINITIONS -->
-
-  <!-- The base path for compilation.  We include, of course, the
-       already built files in the build-directory, and then we
-       add all the jar files in the "lib" -directory. -->
-  <path id="path.base">
-     <fileset dir="${libs.main}">
-        <include name="*.jar" />
-     </fileset>
-  </path>
-
   <!-- The path used for running tests.  We add the tests/etc directory
        to the base path defined above, since we put all the relevant
        .properties-files in tests/etc. -->
@@ -108,21 +73,12 @@
      <fileset dir="${libs.main}">
         <include name="*.jar" />
      </fileset>
-     <fileset dir="${libs.tests}">
+     <fileset dir="${webtests.libs}">
         <include name="*.jar" />
      </fileset>
      <pathelement path="target/test-classes" />
   </path>
 
-  <!-- Path holding (L)GPL jars and their dependencies -->
-  <path id="path.optional">
-    <fileset dir="${libs.opt}">
-      <include name="*.jar" />
-    </fileset>
-    <path refid="path.base" />
-    <path refid="path.tests" />
-  </path>
-    
   <!-- The prefix to use when reading environment variables -->
   <property environment="env" />
 
@@ -133,15 +89,12 @@
 
   <target name="init"
           description="Initializes everything, creates directories, etc.">
-     <mkdir dir="${tests.reports}" />
-     <mkdir dir="${@tests.pagedir@}" />
-     <mkdir dir="${libs.tests}" />
-     <mkdir dir="${libs.opt}" />
+     <mkdir dir="${webtests.libs}" />
      <download-deps />
   </target>
   
   <target name="test-file-exists">
-     <echo message="Testing  for ${download-to-file}" level="debug"/>
+     <echo message="Testing for ${download-to-file}" level="debug"/>
      <available file="${download-to-file}" property="exists" />
   </target>
 	    
@@ -162,42 +115,15 @@
 
   <macrodef name="download-deps">
      <sequential>
-     	<!-- tests dependencies  -->
-     	<get-element to-file="${libs.tests}/commons-el-1.0.jar" url="${central.url}/commons-el/commons-el/1.0/commons-el-1.0.jar" />
-     	<get-element to-file="${libs.tests}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
-        <get-element to-file="${libs.tests}/jetty-all-7.6.7.v20120910.jar" 
-                     url="${central.url}/org/eclipse/jetty/aggregate/jetty-all/7.6.7.v20120910/jetty-all-7.6.7.v20120910.jar" />
-        <get-element to-file="${libs.tests}/junit-3.8.2.jar" url="${central.url}/junit/junit/3.8.2/junit-3.8.2.jar" />
-        <get-element to-file="${libs.tests}/selenium-server-standalone-2.25.0.jar" 
+     	<!-- Dependencies used by webtests task  -->
+        <get-element to-file="${webtests.libs}/selenium-server-standalone-2.25.0.jar" 
                      url="http://selenium.googlecode.com/files/selenium-server-standalone-2.25.0.jar" />
-        <get-element to-file="${libs.tests}/stripes-1.5.7.jar" url="${central.url}/net/sourceforge/stripes/stripes/1.5.7/stripes-1.5.7.jar" />
-     	
-     	<!-- other dependencies ((L)GPL dependencies and jars needed by these) -->
-     	<get-element to-file="${libs.opt}/asm-3.0.jar" url="${central.url}/asm/asm/3.0/asm-3.0.jar" />
-     	<get-element to-file="${libs.opt}/asm-tree-3.0.jar" url="${central.url}/asm/asm-tree/3.0/asm-tree-3.0.jar" />
+        <get-element to-file="${webtests.libs}/jetty-all-7.6.7.v20120910.jar" 
+                     url="${central.url}/org/eclipse/jetty/aggregate/jetty-all/7.6.7.v20120910/jetty-all-7.6.7.v20120910.jar" />
+     	<get-element to-file="${webtests.libs}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
      </sequential>
   </macrodef>
   
-  <!-- Removes the build directory and the tests build directory -->
-  <target name="clean"
-          description="Cleans away all generated files.">
-    <delete dir="${tests.reports}" />
-    <delete includeemptydirs="true" quiet="true">
-      <fileset dir="target" includes="**/*" excludes="JSPWiki/WEB-INF/lib/*.*"/>
-    </delete>
-    <delete>
-      <fileset dir="." includes="**/*~" defaultexcludes="no"/>
-      <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
-    </delete>
-  </target>
-	
-  <!-- Removes all lib directories -->
-  <target name="clean-deps"
-          description="Cleans away all downloaded files.">
-    <delete dir="${libs.tests}" />
-    <delete dir="${libs.opt}" />
-  </target>
-
   <!-- ============================================================== -->
 
   <!--  Installation targets -->
@@ -349,7 +275,7 @@
        copy in some useful files and zip the whole thing
        into the release directory.
     -->
-  <target name="dist" depends="clean-deps,installinit,srczip,corepageszip,documentzip,version"
+  <target name="dist" depends="installinit,srczip,corepageszip,documentzip,version"
           description="Builds the entire distribution artifacts without checksums and signatures.">
 
     <!-- binary distribution -->
@@ -413,8 +339,6 @@
   <!-- Running tests -->
 
   <target name="tests-init" depends="init">
-      <!-- Build up the /etc directory for testing -->
-      <mkdir dir="tests/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
       <copy file="src/main/webapp/WEB-INF/web.xml" tofile="${webtests.build}/webtest.web.xml" overwrite="true" />
@@ -450,7 +374,7 @@
     <mkdir dir="${webtests.build}" />
   
     <!-- Create the master jspwiki.properties template for all webtests -->
-    <copy file="src/test/resources/jspwiki.properties"
+    <copy file="target/test-classes/jspwiki.properties"
         toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
     <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
       <entry key="jspwiki.authorizer" value="org.apache.wiki.auth.authorize.WebContainerAuthorizer" />
@@ -530,7 +454,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <echo message="Creating Selenium test scripts..."/>
       <mkdir dir="@{context.dir}/selenium" />
       <copy flatten="true" toDir="@{context.dir}/selenium">
-        <fileset dir="tests/etc/selenium/tests/all" />
+        <fileset dir="src/test/config/selenium/tests/all" />
         <filterset>
           <filter token="selenium.context" value="@{context}" />
         </filterset>
@@ -730,23 +654,6 @@ To automate the JAR signing processs, you can add the property
         <signjar jar="@{jar}" alias="jspwiki" keystore="${jks.keystore}"
         storepass="${jks.password}" verbose="false"/>
      </sequential>
-  </macrodef>
-
-  <!-- Some convenience macrodefs -->
-  <macrodef name="check-property">
-    <attribute name="prop"/>
-    <sequential>
-      <fail unless="@{prop}" message="Property @{prop} is required." />
-    </sequential>
-  </macrodef>
-
-  <macrodef name="check-file">
-    <attribute name="file" />
-    <attribute name="prop" />
-    <sequential>
-      <available file="@{file}" property="@{prop}" value="@{file}" />
-      <fail unless="@{prop}" message="Couldn't find @{file}!" />
-    </sequential>
   </macrodef>
 
 </project>

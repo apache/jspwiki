@@ -1,5 +1,18 @@
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.9.2-incubating-14
+       
+       * Had Ant webtests and dist targets now write
+         to target/ant-webtests and target/ant-dist
+         respectively instead of non-Mavenized folder
+       * Removed ant clean target in favor
+         of mvn clean. 
+
+       * Selenium tests folder moved to 
+         src/test/config; deleted now-unused tests folder.
+
+2013-05-23  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.9.2-incubating-13
        
        * Adjusted exclusions in Apache Rat, nonvital
