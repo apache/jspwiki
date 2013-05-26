@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!--
+    This is the Ant build file for the JSPWiki project.  It's
+    in the process of getting replaced by the Maven pom.xml.
+    To build:
+    1.) run mvn clean install from Maven, which runs all unit
+        tests and builds the WAR.
+    2.) from Ant, run the webtests (Selenium tests) or dist 
+        targets (to create the full distribution).
+-->
+
+<project name="JSPWiki" default="war" basedir=".">
+
+  <!-- The location for the JAR file for the core JSPWiki classes -->
+  <property name="jarfile" value="target/JSPWiki/WEB-INF/lib/jspwiki-2.9.2-SNAPSHOT.jar" />
+
+  <!-- The location for the keystore used to sign the JAR; will be created if it doesn't exist. -->
+  <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
+
+  <!-- Define directies for the "ant dist target -->
+  <property name="tmpdir" value="target/ant-dist/tmp" />
+  <property name="release.dir" value="target/ant-dist/releases" />
+  <property name="install.fulldir" value="${tmpdir}/install" />
+	
+  <!-- dirs holding libs -->
+  <property name="libs.main" value="target/JSPWiki/WEB-INF/lib" />
+	
+  <property name="central.url" value="http://repo.maven.apache.org/maven2" />
+  
+  <!-- Web unit test properties -->
+  <property name="webtests.browser"  value="*firefox" />
+  <property name="webtests.folder"   value="target/ant-webtests"/>
+  <property name="webtests.build"    value="${webtests.folder}/build" />
+  <property name="webtests.libs"     value="${webtests.folder}/lib" />  
+  <property name="webtests.reports"  value="${webtests.folder}/reports" />
+  <property name="webtests.port"     value="10024" />
+  <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
+  <property name="selenium-rc.jar"   value="${webtests.libs}/selenium-server-standalone-2.25.0.jar" />
+
+  <!-- The directory where the SVN sources are checked out. -->
+  <property name="install.src" value="${tmpdir}/svnsrc" />
+
+  <!-- Define the SVN properties.  These are used when building the
+       source distribution.  Normally, you shouldn't have to care about these.
+   -->
+  <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
+  <property name="svn.tag" value="trunk" />
+
+  <!-- The path used for running tests.  We add the tests/etc directory
+       to the base path defined above, since we put all the relevant
+       .properties-files in tests/etc. -->
+  <path id="path.tests">
+     <pathelement location="${java.home}/../lib/tools.jar" />
+     <fileset dir="${libs.main}">
+        <include name="*.jar" />
+     </fileset>
+     <fileset dir="${webtests.libs}">
+        <include name="*.jar" />
+     </fileset>
+     <pathelement path="target/test-classes" />
+  </path>
+
+  <!-- The prefix to use when reading environment variables -->
+  <property environment="env" />
+
+
+  <!-- ============================================================== -->
+
+  <!-- Initialising, cleaning, etc. -->
+
+  <target name="init"
+          description="Initializes everything, creates directories, etc.">
+     <mkdir dir="${webtests.libs}" />
+     <download-deps />
+  </target>
+  
+  <target name="test-file-exists">
+     <echo message="Testing for ${download-to-file}" level="debug"/>
+     <available file="${download-to-file}" property="exists" />
+  </target>
+	    
+  <target name="download-lib" unless="exists" depends="test-file-exists">
+    <get src="${download-url}" dest="${download-to-file}" />
+  </target>
+  
+  <macrodef name="get-element">
+    <attribute name="to-file" />
+    <attribute name="url" />
+    <sequential>
+       <antcall target="download-lib">
+          <param name="download-to-file" value="@{to-file}"/>
+       	  <param name="download-url" value="@{url}" />
+       </antcall>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="download-deps">
+     <sequential>
+     	<!-- Dependencies used by webtests task  -->
+        <get-element to-file="${webtests.libs}/selenium-server-standalone-2.25.0.jar" 
+                     url="http://selenium.googlecode.com/files/selenium-server-standalone-2.25.0.jar" />
+        <get-element to-file="${webtests.libs}/jetty-all-7.6.7.v20120910.jar" 
+                     url="${central.url}/org/eclipse/jetty/aggregate/jetty-all/7.6.7.v20120910/jetty-all-7.6.7.v20120910.jar" />
+     	<get-element to-file="${webtests.libs}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
+     </sequential>
+  </macrodef>
+  
+  <!-- ============================================================== -->
+
+  <!--  Installation targets -->
+
+  <!-- This target makes sure all the necessary directories exist
+       for building the installation package. -->
+  <target name="installinit">
+    <mkdir dir="${install.fulldir}" />
+    <delete dir="${install.src}" />
+    <mkdir dir="${install.src}" />
+    <delete dir="${release.dir}" />
+    <mkdir dir="${release.dir}" />
+  </target>
+
+  <!--  Signs the JSPWiki JAR file with a self-issued digital certificate.
+        This should only be needed when your JVM starts with a global security
+        policy. By this we mean a standard J2SE policy that is set at JVM startup
+      	using the -Djava.security.policy=/some/policy/file VM argument. If this
+      	global policy file contains references to JSPWiki permission classes
+      	(PagePermission, GroupPermission, etc) **and** you set it before JSPWiki
+      	is loaded, **then** you must do four things:
+      	  0) run this target (signjar)
+      	  1) through 3) see below
+  -->
+
+  <target name="signjar" depends="sign-init" description="Signs jar: for use with global JVM security policies">
+    <sign-jar jar="${jarfile}" />
+    <echo>
+  Congratulations -- you just signed your JAR file. We assume
+  you did this because you want to create a global security
+  policy for your entire JVM. That's fine, but please make
+  sure you configure your JVM (and container) correctly.
+  Normally, this means you should:
+
+    1) Copy ${jarfile} to a place where its classes will be
+       read at startup. (Example: for Tomcat, this is
+       $CATALINA_HOME/common/lib)
+
+    2) Copy the keystore from ${jks.keystore} to the same
+       location as your global policy. (Example: Tomcat's
+       policy is in $CATALINA_HOME/conf/catalina.policy,
+       so you would copy it to $CATALINA_HOME/conf.)
+
+    3) Add a reference to the keystore as the *first* line of
+       the global policy. It should read
+
+       keystore "jspwiki.jks";
+
+       ... or something similar.
+
+  If you have no idea what this is all about, we assume
+  that you ran this target just for fun. In that case, we
+  hope you enjoyed the experience.</echo>
+  </target>
+
+  <!--
+       Here goes some nice Ant magic...  We build the source
+       code archive by directly exporting all code from the SVN
+       repository, and then zipping it to the temporary installation
+       directory.
+
+       NB: You must have the svn command line client available in
+       your path before you attempt to run this task.
+   -->
+  <target name="srczip" depends="installinit"
+          description="Builds source zip.">
+
+  	<delete dir="${install.src}" />
+  	
+  	<exec executable="svn">
+       <arg line="export ${svn.repository}/${svn.tag} &quot;${install.src}&quot;"/>
+  	</exec>
+  	
+    <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
+        <zipfileset dir="${install.src}" prefix="${ant.project.name}-src" />
+    </zip>
+
+  </target>
+
+  <!-- Creates a zip of all the core pages.  The file which determines
+       whether a page is a core page or not is found in src/main/config/wikipages/.corepages -->
+
+  <target name="corepageszip" depends="installinit">
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_en.zip"
+         basedir="src/main/config/wikipages/en" includesfile="src/main/config/wikipages/.corepages">
+    </zip>
+  
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fi.zip"
+         basedir="src/main/config/wikipages/fi" includesfile="src/main/config/wikipages/.corepages">
+    </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_de.zip"
+         basedir="src/main/config/wikipages/de">
+    </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_zh_CN.zip"
+         basedir="src/main/config/wikipages/zh_CN">
+    </zip>
+  	
+  	<zip zipfile="${install.fulldir}/${ant.project.name}-corepages_es.zip"
+         basedir="src/main/config/wikipages/es" includesfile="src/main/config/wikipages/.corepages">
+    </zip>
+ 
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_nl.zip"
+         basedir="src/main/config/wikipages/nl">
+    </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fr.zip"
+         basedir="src/main/config/wikipages/fr">
+    </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_it.zip"
+         basedir="src/main/config/wikipages/it">
+    </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_pt_BR.zip"
+         basedir="src/main/config/wikipages/pt_BR">
+    </zip>
+ 
+    <!-- Add other languages here -->
+    
+  </target>
+
+  <!-- Creates a full ZIP file of all document files, ignoring any resources
+       which start with a dot. -->
+
+  <target name="documentzip" depends="installinit"
+          description="Creates JSPWiki documentation zipfile">
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
+        <zipfileset dir="src/main/config/doc" prefix="doc" />
+        <zipfileset dir="target/apidocs" prefix="javadoc" />
+        <zipfileset dir="src/main/config/wikipages" prefix="wikipages" excludes="**/.??*" />
+    </zip>
+  </target>
+
+  <target name="version" 
+          description="Reads the current code base's version string.">
+    <java outputproperty="jspwiki.version" classname="org.apache.wiki.Release">
+      <classpath>
+        <pathelement location="target/classes"/>
+      </classpath>
+    </java>
+  </target>
+
+  <!-- Builds the entire distribution artifacts without checksums and signatures.
+
+       We build both the WAR-file and the source zip, then
+       copy in some useful files and zip the whole thing
+       into the release directory.
+    -->
+  <target name="dist" depends="installinit,srczip,corepageszip,documentzip,version"
+          description="Builds the entire distribution artifacts without checksums and signatures.">
+
+    <!-- binary distribution -->
+    <copy file="ChangeLog"    todir="${install.fulldir}" />
+    <copy file="DISCLAIMER"   todir="${install.fulldir}" />
+    <copy file="LICENSE"      todir="${install.fulldir}" />
+    <copy file="NOTICE"       todir="${install.fulldir}" />
+    <copy file="README"       todir="${install.fulldir}" />
+    <copy file="ReleaseNotes" todir="${install.fulldir}" />
+    <copy file="UPGRADING"    todir="${install.fulldir}" />
+    <copy file="target/JSPWiki.war"   todir="${install.fulldir}" />
+    <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
+      <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}-bin" />
+    </zip>
+
+    <!-- source distribution -->
+    <move file="${release.dir}/${ant.project.name}-src.zip"
+        tofile="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip"/>
+
+  </target>
+
+  <!-- Nabbed from solr -->
+  <macrodef name="sign-artifact" description="Signs an artifact.">
+    <attribute name="input.file"/>
+    <attribute name="output.file" default="@{input.file}.asc"/>
+    <sequential>
+      <echo>Signing @{input.file} Sig File: @{output.file}</echo>
+      <exec executable="gpg">
+        <arg value="--armor"/>
+        <arg value="--output"/>
+        <arg value="@{output.file}"/>
+        <arg value="--detach-sig"/>
+        <arg value="@{input.file}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <!-- Generate signatures and checksums for the distribution artifacts. -->
+  <target name="signeddist" depends="dist" description="Generate signatures and checksums for the release artifacts.">
+
+  	<echo>Generating checksums for the release artifacts.</echo>
+    <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" forceoverwrite="yes">
+      <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+    </checksum>
+    <checksum algorithm="SHA" fileext=".sha1" format="MD5SUM" forceoverwrite="yes">
+      <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+    </checksum>
+    <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM" forceoverwrite="yes">
+      <fileset dir="${release.dir}"><include name="*.zip"/></fileset>
+    </checksum>
+
+  	<sequential>
+      <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip" />
+      <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" />
+    </sequential>
+
+  </target>
+
+  <!-- ============================================================== -->
+
+  <!-- Running tests -->
+
+  <target name="tests-init" depends="init">
+
+      <!-- Create web.xml files for testing -->
+      <copy file="src/main/webapp/WEB-INF/web.xml" tofile="${webtests.build}/webtest.web.xml" overwrite="true" />
+
+      <!-- For web unit tests, turn off SSL (self-signed certs b0rk
+           the tests) and enable JDBC refs -->
+      <replace file="${webtests.build}/webtest.web.xml"
+               token="CONFIDENTIAL" value="NONE" />
+      <replace file="${webtests.build}/webtest.web.xml"
+               token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
+      <replace file="${webtests.build}/webtest.web.xml"
+               token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
+
+      <!-- For unit testing and some webtests, turn on container auth -->
+      <copy file="${webtests.build}/webtest.web.xml"
+          tofile="${webtests.build}/containerauth.web.xml" overwrite="true" />
+      <replace file="${webtests.build}/containerauth.web.xml"
+               token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+      <replace file="${webtests.build}/containerauth.web.xml"
+               token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+
+  </target>
+
+  <!-- This target runs web unit tests using Selenium. These tests run
+       using an enbedded Jetty server running on a hard-coded high port.
+       The webapps deployed to Jetty contain 2 sample users:
+       - 'janne' with password 'myP@5sw0rd' and role of 'Authenticated'
+       - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
+       These are the same as the test users in tests/org.apache.wiki.auth.Users.
+  -->
+  <target name="webtests" depends="tests-init">
+    <mkdir dir="${webtests.temp}" />
+    <mkdir dir="${webtests.build}" />
+  
+    <!-- Create the master jspwiki.properties template for all webtests -->
+    <copy file="target/test-classes/jspwiki.properties"
+        toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
+    <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
+      <entry key="jspwiki.authorizer" value="org.apache.wiki.auth.authorize.WebContainerAuthorizer" />
+      <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.XMLUserDatabase" />
+      <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.XMLGroupDatabase" />
+      <entry key="jspwiki.referenceStyle" value="relative" />
+      <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
+      <entry key="jspwiki-x.securityconfig.enable" value="true" />
+      <entry key="jspwiki.login.throttling" value="false" />
+    </propertyfile>
+
+    <!-- Build the custom auth WAR -->
+    <webtest-setup context="test-custom"
+      webxml="${webtests.build}/webtest.web.xml"/>
+
+    <!-- Build the custom auth WAR (absolute URLs) -->
+    <webtest-setup context="test-custom-absolute"
+      webxml="${webtests.build}/webtest.web.xml">
+      <propertyfile-entries>
+        <entry key="jspwiki.referenceStyle" value="absolute" />
+        <entry key="jspwiki.baseURL" value="http://localhost:${webtests.port}/test-custom-absolute/" />
+      </propertyfile-entries>
+    </webtest-setup>
+
+    <!-- Build the container auth WAR -->
+    <webtest-setup context="test-container"
+      webxml="${webtests.build}/containerauth.web.xml" />
+
+    <!-- Build the custom auth WAR (JDBC database) -->
+    <webtest-setup context="test-custom-jdbc"
+      webxml="${webtests.build}/webtest.web.xml">
+      <propertyfile-entries>
+        <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.JDBCUserDatabase" />
+        <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.JDBCGroupDatabase" />
+      </propertyfile-entries>
+    </webtest-setup>
+
+    <!-- Build the container auth WAR (JDBC database) and test it -->
+    <webtest-setup context="test-container-jdbc"
+      webxml="${webtests.build}/containerauth.web.xml">
+      <propertyfile-entries>
+        <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.JDBCUserDatabase" />
+        <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.JDBCGroupDatabase" />
+      </propertyfile-entries>
+    </webtest-setup>
+
+    <!-- Run each test in succession -->
+    <mkdir dir="${webtests.reports}" />
+    <webtest-exec context="test-custom" />
+    <webtest-exec context="test-container" />
+    <webtest-exec context="test-custom-jdbc" />
+    <webtest-exec context="test-container-jdbc" />
+    <webtest-exec context="test-custom-absolute" />  
+  	
+    <!-- Shut down the embedded Jetty server by sending the shutdown command -->
+    <echo message="Shutting down Jetty (if it is up)."/>
+    <get src="http://localhost:${webtests.port}/GO_AWAY/" dest="${webtests.temp}/shutdown.log" ignoreerrors="true" verbose="true" />
+
+    <echo>The web unit tests have finished. You can find the test reports in ${webtests.reports}.
+    
+If all of the tests ran successfully, the reports will all be "green."</echo>
+    
+  </target>
+
+  <macrodef name="webtest-setup">
+    <attribute name="context" />
+    <attribute name="webxml" />
+    <attribute name="context.dir" default="${webtests.build}/@{context}" />
+    <attribute name="context.path" default="${basedir}/${webtests.build}/@{context}" />
+    <element name="propertyfile-entries" implicit="no" optional="true" />
+    <sequential>
+
+      <echo message="===============================================================" />
+      <echo message=" Setting up web unit tests for '@{context}'" />
+      <echo message="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" />
+      <echo message="" />
+      <echo message="Creating Selenium test scripts..."/>
+      <mkdir dir="@{context.dir}/selenium" />
+      <copy flatten="true" toDir="@{context.dir}/selenium">
+        <fileset dir="src/test/config/selenium/tests/all" />
+        <filterset>
+          <filter token="selenium.context" value="@{context}" />
+        </filterset>
+      </copy>
+
+      <echo message="Creating test page repositories..."/>
+      <!-- Create a wiki page directory and point jspwiki.properties to it -->
+      <mkdir dir="@{context.dir}/wikipages" />
+      <copy toDir="@{context.dir}/wikipages" flatten="true" >
+        <fileset dir="src/main/config/wikipages/en">
+          <include name="Main.*" />
+          <include name="LeftMenu*.*" />
+          <include name="About.*" />
+          <include name="RecentChanges.*" />
+          <include name="WikiEtiquette.*" />
+          <include name="UnusedPages.*" />
+          <include name="UndefinedPages.*" />
+          <include name="PageIndex.*" />
+        </fileset>
+      </copy>
+
+      <echo message="Creating test webapp..."/>
+      <mkdir dir="@{context.dir}/webapp/WEB-INF/classes" />
+      <mkdir dir="@{context.dir}/webapp/WEB-INF/lib" />
+
+      <!-- Copy the WEB-INF files -->
+      <copy toDir="@{context.dir}/webapp/WEB-INF">
+        <fileset dir="src/main/webapp/WEB-INF">
+          <include name="jspwiki.policy" />
+          <include name="*.tld" />
+        </fileset>
+        <fileset dir="src/test/resources" includes="userdatabase.xml groupdatabase.xml" />
+      </copy>
+      <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
+      
+      <!-- Create the jspwiki.properties file -->
+      <mkdir dir="@{context.dir}/workdir" />
+      <copy toFile="@{context.dir}/webapp/WEB-INF/jspwiki.properties"
+        file="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
+        <propertyfile file="@{context.dir}/webapp/WEB-INF/jspwiki.properties">
+          <entry key="jspwiki.baseURL"                            value="http://localhost:${webtests.port}/@{context}/" />
+          <entry key="jspwiki.workDir"                            value="@{context.path}/workdir" />
+          <entry key="jspwiki.fileSystemProvider.pageDir"         value="@{context.path}/wikipages" />
+          <entry key="jspwiki.basicAttachmentProvider.storageDir" value="@{context.path}/wikipages" />
+          <entry key="jspwiki.xmlUserDatabaseFile"                value="@{context.path}/webapp/WEB-INF/userdatabase.xml" />
+          <entry key="jspwiki.xmlGroupDatabaseFile"               value="@{context.path}/webapp/WEB-INF/groupdatabase.xml" />
+          <entry key="log4j.appender.FileLog.File"                value="@{context.path}/jspwiki.log" />
+        <propertyfile-entries/>
+      </propertyfile>
+
+      <!-- Copy the libraries -->
+      <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
+        <fileset dir="${libs.main}" includes="*.jar" excludes="servlet-api-*.jar jsp-api-*.jar" />
+        <fileset file="${jdbc.driver.jar}"/>
+      </copy>
+
+      <!-- Copy the JSPs -->
+      <copy toDir="@{context.dir}/webapp">
+        <fileset dir="src/main/webapp">
+            <include name="admin/**" />
+            <include name="error/**" />
+	    <include name="images/**"/>
+	    <include name="scripts/**"/>
+	    <include name="templates/**" />
+	    <include name="*.*" />
+        </fileset>
+      </copy>
+
+    </sequential>
+  </macrodef>
+  
+  <!-- ============================================================== -->
+  
+  <!-- Selenium execution test task -->
+
+  <!-- This macro executes the Selenium test plans located in 
+       tests/build/selenium/@context@/, based on templates stored
+       in tests/etc/selenium/tests. It expects your favorite servlet
+       container up & running on ${tomcat.protocol}://${tomcat.host}:${tomcat.port} 
+       For this reason, these properties must be set up in your 
+       build.properties file.
+  -->
+
+  <macrodef name="webtest-exec">
+    <attribute name="context"/>
+    <sequential>
+      <!-- If already running, shut down the embedded Jetty server by sending the shutdown command -->
+      <echo message="Shutting down Jetty (if it is up)."/>
+      <get src="http://localhost:${webtests.port}/GO_AWAY/" dest="${webtests.temp}/shutdown.log" ignoreerrors="true" verbose="true" />
+      <sleep seconds="3"/>
+
+      <!-- Start Jetty with our test context -->
+      <echo message="Starting Jetty."/>
+        <java classname="org.apache.wiki.web.StreamRedirector" fork="true" spawn="true">
+        <!--java classname="org.apache.wiki.web.TestContainer" fork="true" spawn="true"-->
+        <arg value="org.apache.wiki.web.TestContainer"/>
+        <arg value="/tmp/jetty-redirectedoutput.log"/>
+      	<!--jvmarg value="-Dlog4j.debug=yesplease"/-->  <!-- to enable log4j debugging-->
+      	<jvmarg value="-Dorg.eclipse.jetty.LEVEL=info"/>  <!-- to enable jetty debugging-->
+        <classpath>
+           <path refid="path.tests" />
+        </classpath>
+        <sysproperty key="java.io.tmpdir" value="${webtests.temp}" />
+        <!--
+        <jvmarg value="-Xdebug" />
+        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
+        -->
+        <arg line="@{context}=${webtests.build}/@{context}/webapp" />
+      </java>
+        
+      <!-- Start Selenium tests -->
+      <echo message="Running web unit tests for context '@{context}'."/>
+      <java jar="${selenium-rc.jar}" fork="true"
+        output="${webtests.build}/@{context}/selenium/selenium.log">
+        <!--
+        <arg line="-browserSessionReuse" />
+		<arg line="-log" />
+		<arg line="${webtests.reports}/@{context}.selenium.log" />
+        -->
+        <arg line="-htmlSuite" />
+        <arg line='"${webtests.browser}"' />
+        <arg line='"http://localhost:${webtests.port}"' />
+        <!-- pre-filtered TestSuite.htmlin tests/etc/selenium/tests/all -->
+        <arg line="${basedir}/${webtests.build}/@{context}/selenium/TestSuite.html" />
+        <arg line="${webtests.reports}/@{context}.html" />
+      </java>
+    </sequential>
+  </macrodef>
+  
+  <!-- ============================================================== -->
+
+  <!-- Targets for signing JAR files -->
+
+  <!-- These targets collectively create a Java keystore for signing,
+       and automate the jar-signing process.
+  -->
+  <target name="sign-init" depends="installinit,jks-init,jks-create,jks-password" />
+
+  <target name="jks-init">
+    <property name="jks.alias" value="jspwiki" />
+    <available file="${jks.keystore}" property="jks.exists" />
+  </target>
+
+  <target name="jks-create" unless="jks.exists">
+    <echo>
+JSPWiki needs a digital certificate for code signing its JAR files.
+Since you don't appear to have one, we need to generate a new certificate.
+Once generated, it will be used to sign the JSPWiki.jar file. To create
+the certificate, we need to ask you for your name and a few other things.
+
+The certificate file will be generated at: ${jks.keystore}.
+You should copy this file to your container's configuration directory,
+or wherever your jspwiki.policy file lives.
+
+If something in this process goes wrong, you can simply delete
+${jks.keystore} and execute this target again... no harm done.
+To automate the JAR signing processs, you can add the property
+'jks.password' to your build.properties file.
+    </echo>
+    <input message="Your name (example: Simon Bar Sinister):" addproperty="jks.cn" />
+    <input message="Your organization (example: ecyrd.com):" addproperty="jks.o" />
+    <input message="Your country (example: US, FI, AU):" addproperty="jks.c" />
+    <input message="Keystore password (>6 characters):" addproperty="jks.password" />
+    <exec dir="${basedir}" executable="keytool" failonerror="true">
+      <arg value="-genkey"/>
+      <arg value="-keysize"/>
+      <arg value="1024"/>
+      <arg value="-alias"/>
+      <arg value="${jks.alias}"/>
+      <arg value="-keystore"/>
+      <arg value="${jks.keystore}"/>
+      <arg value="-storepass"/>
+      <arg value="${jks.password}"/>
+      <arg value="-dname"/>
+      <arg value="cn=${jks.cn}, ou=JSPWiki Code Signing Division, o=${jks.o}, c=${jks.c}"/>
+    </exec>
+  </target>
+
+  <target name="jks-password" unless="jks.password">
+    <input message="Keystore password:" addproperty="jks.password" />
+  </target>
+
+  <macrodef name="sign-jar">
+     <attribute name="jar"/>
+     <sequential>
+        <echo message="Signing code with this certificate: ${jks.keystore}" />
+        <exec dir="${basedir}" executable="keytool" failonerror="true">
+           <arg value="-list"/>
+           <arg value="-v"/>
+           <arg value="-alias"/>
+           <arg value="${jks.alias}"/>
+           <arg value="-keystore"/>
+           <arg value="${jks.keystore}"/>
+           <arg value="-storepass"/>
+           <arg value="${jks.password}"/>
+        </exec>
+        <signjar jar="@{jar}" alias="jspwiki" keystore="${jks.keystore}"
+        storepass="${jks.password}" verbose="false"/>
+     </sequential>
+  </macrodef>
+
+</project>

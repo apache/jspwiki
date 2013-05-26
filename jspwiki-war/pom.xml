@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.  
+-->
+<project xmlns              = "http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <parent>
+    <groupId>org.apache.jspwiki</groupId>
+    <artifactId>jspwiki-builder</artifactId>
+    <version>2.10.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jspwiki-war</artifactId>
+  <name>Apache JSPWiki (Incubating)</name>
+  <packaging>war</packaging>
+  <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich 
+  and built around standard J2EE components (Java, servlets, JSP).</description>
+  <url>http://incubator.apache.org/jspwiki/</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>xmlrpc</groupId>
+      <artifactId>xmlrpc</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-highlighter</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge</groupId>
+      <artifactId>sandler</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>opensymphony</groupId>
+      <artifactId>oscache</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>oro</groupId>
+      <artifactId>oro</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.metaparadigm</groupId>
+      <artifactId>json-rpc</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>org.suigeneris.jrcs.diff</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.freshcookies</groupId>
+      <artifactId>freshcookies-security</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>ecs</groupId>
+      <artifactId>ecs</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>net.sourceforge</groupId>
+      <artifactId>akismet-java</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>net.sourceforge.stripes</groupId>
+      <artifactId>stripes</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>tomcat</groupId>
+      <artifactId>jasper-runtime</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.eclipse.jetty.aggregate</groupId>
+      <artifactId>jetty-all</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <scope>test</scope><!-- overwritting scope defined in parent dpdncyMgmt; really needed here? -->
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>JSPWiki</finalName>
+    <!-- filtering: http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html -->
+    <filters>
+      <filter>src/main/filters/filters.properties</filter>    
+    </filters>
+    
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <!-- No filtering yet -->
+        <!--filtering>true</filtering-->
+      </resource>
+    </resources>
+    
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+    
+    <plugins>
+      <!-- With below plugin can deploy to an embedded Tomcat instance via:
+         mvn clean install tomcat7:run-war [-Dmaven.test.skip]
+         ...or standalone by adding a <server/> entry "myTomcat":
+         http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
+         and running tomcat7:redeploy instead of run-war in 
+         string above.
+
+         Either way, JSPWiki URL will be
+         http://localhost:8080/JSPWiki
+      -->
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <configuration>
+          <server>myTomcat</server>
+          <url>http://localhost:8080/manager/text</url>
+          <path>/${project.build.finalName}</path>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <id>create_files</id>
+            <configuration>
+              <target>
+                <!-- Creating a specific _en file presently needed just so that "English" will appear as an option on 
+                   the User Preferences page, language option (and similar issues).  FIXME: change JSP code  
+                   so this is no longer necessary.
+                -->
+                <copy file="src/main/resources/CoreResources.properties" tofile="target/classes/CoreResources_en.properties"/>
+                <copy file="src/main/resources/templates/default.properties" tofile="target/classes/templates/default_en.properties"/>
+                <copy file="src/main/resources/plugin/PluginResources.properties" tofile="target/classes/plugin/PluginResources_en.properties"/>
+
+                <!-- Create web.xml files for testing -->
+                <copy file="src/main/webapp/WEB-INF/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
+
+                <!-- For web unit tests, turn off SSL (self-signed certs b0rk
+                   the tests) and enable JDBC refs -->
+                <replace file="target/test-classes/WEB-INF/web.xml"
+                    token="CONFIDENTIAL" value="NONE" />
+                <replace file="target/test-classes/WEB-INF/web.xml"
+                    token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
+                <replace file="target/test-classes/WEB-INF/web.xml"
+                    token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
+
+                <!-- For unit testing, turn on container auth -->
+                <replace file="target/test-classes/WEB-INF/web.xml"
+                    token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+                <replace file="target/test-classes/WEB-INF/web.xml"
+                    token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+               </target>
+             </configuration>
+             <goals>
+               <goal>run</goal>
+             </goals>
+           </execution>
+         </executions>
+      </plugin>
+      
+      <!-- Surefire plugin (running unit tests):
+         http://maven.apache.org/surefire/maven-surefire-plugin/
+         
+         Individual tests can be run command line via:
+         mvn clean test -Dtest=WikiEngineTest,AclImplTest,...
+         
+         All tests can be skipped via -Dmaven.test.skip
+       -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- time-consuming tests excluded by default -->
+            <exclude>**/StressTestVersioningProvider.java</exclude>
+            <exclude>**/StressTestSpeed.java</exclude>
+          </excludes>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      
+      <!-- Compress certain CSS and JS files using the YUICompressor 
+         (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
+      -->
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compressJSfiles</id>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions> 
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>src/main/webapp/WEB-INF</directory>
+              <targetPath>WEB-INF</targetPath>
+              <includes>
+                <include>jspwiki.properties</include>
+              </includes>
+              <filtering>true</filtering>
+            </resource>
+            <!-- Output directory configured above with the YUICompressor Maven plugin -->
+            <resource>
+              <directory>${project.build.directory}/generated-sources/yuicompress</directory>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
