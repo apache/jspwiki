@@ -1,5 +1,0 @@
-Aqui estão as páginas que ainda não foram criadas. Por que você não cria algumas?
-
-[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
-
-(Voltar para [Home]).

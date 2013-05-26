@@ -1,3 +1,0 @@
-%%center
-[Tervetuloa|TitleBox] [JSPWikin pariin|About]
-/%
