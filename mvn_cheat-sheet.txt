@@ -8,7 +8,7 @@ Build specific
 mvn clean install                                        : performs a build
 mvn clean install -Dmaven.skip.test                      : performs a build, skipping the tests (not recommended)
 mvn clean test                                           : compiles the source and executes the tests
-mvn tomcat7:run                                          : (from a war module) starts JSPWiki on a 
+mvn tomcat7:run-war                                      : (from a war module) starts JSPWiki on a 
                                                            Tomcat7 instance at http://localhost:8080/JSPWiki
 mvn clean deploy -Prelease -Dgpg.passphrase=<passphrase> : deploys generated artifact to a repository
                                                            If -Dgpg.passphrase is not given, it'll be asked
@@ -16,8 +16,14 @@ mvn clean install -Pintegration-tests                    : performs a build, ena
 
 Reports specific
 ****************
-mvn apache-rat:check    : creates an Apache RAT report
-mvn cobertura:cobertura : generates a cobertura maven report
+mvn apache-rat:check    : creates an Apache RAT report. See:
+                            http://creadur.apache.org/rat/apache-rat-plugin/plugin-info.html
+mvn cobertura:cobertura : generates a cobertura maven report. See:
+                            http://mojo.codehaus.org/cobertura-maven-plugin/usage.html
+                            http://www.ibm.com/developerworks/java/library/j-cobertura/
 mvn javadoc:javadoc     : creates javadocs; if graphviz binaries (www.graphviz.org) 
                           are found on $PATH, the javadocs will display some UML 
                           class/package level diagrams
+mvn sonar:sonar         : generates a Sonar report. Expects a Sonar server running at http://localhost:9000/ See:
+                            http://mojo.codehaus.org/sonar-maven-plugin/plugin-info.html
+                            http://docs.codehaus.org/display/SONAR/Get+started+in+2+minutes
