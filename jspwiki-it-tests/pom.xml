@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.9.1-SNAPSHOT</version>
+    <version>2.9.2-SNAPSHOT</version>
   </parent>
   
   <groupId>org.apache.jspwiki.it</groupId>
@@ -38,6 +38,7 @@
     <module>jspwiki-selenium-tests</module> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
     <module>jspwiki-it-test-custom</module>
     <module>jspwiki-it-test-custom-absolute-urls</module>
+    <module>jspwiki-it-test-custom-jdbc</module>
   </modules>
   
   <profiles>
@@ -64,6 +65,50 @@
                 </resource>
               </webResources>
             </configuration>
+          </plugin>
+          
+          <plugin> <!-- exec-maven-plugin does not accept forked executions (!) -->
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <id>db-setUp</id>
+                <phase>pre-integration-test</phase>
+                <goals><goal>run</goal></goals>
+                <configuration>
+                  <target>
+                    <property name="compile_classpath" refid="maven.compile.classpath" />
+                    <echo message="starting hsqldb..." />
+                    <exec executable="java" dir="${env.JAVA_HOME}/bin" spawn="true">
+                        <arg value="-classpath" />
+                        <arg value="${compile_classpath}" />
+                        <arg value="org.apache.wiki.HsqlDbUtils"/>
+                        <arg value="setUp" />
+                        <arg value="${project.basedir}/target/classes/hsql-userdb-setup.ddl" />
+                    </exec>  
+                  </target>
+                </configuration>
+              </execution>
+              
+              <execution>
+                <id>db-tearDown</id>
+                <phase>post-integration-test</phase>
+                <goals><goal>run</goal></goals>
+                <configuration>
+                  <target>
+                    <property name="compile_classpath" refid="maven.compile.classpath" />
+                    <echo message="stopping hsqldb..." />
+                    <exec executable="java" dir="${env.JAVA_HOME}/bin" spawn="true">
+                        <arg value="-classpath" />
+                        <arg value="${compile_classpath}" />
+                        <arg value="org.apache.wiki.HsqlDbUtils"/>
+                        <arg value="tearDown" />
+                        <arg value="${project.basedir}/target/classes/hsql-userdb-teardown.ddl" />
+                    </exec>  
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           
           <plugin>

@@ -28,10 +28,10 @@
   </parent>
   
   <groupId>org.apache.incubator.jspwiki.it</groupId>
-  <artifactId>jspwiki-it-test-custom</artifactId>
+  <artifactId>jspwiki-it-test-custom-jdbc</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>jspwiki-it-test-custom</name>
-  <description>selenium tests execution for jspwiki-it-test-custom (custom auth, relative URLs)</description>
+  <name>jspwiki-it-test-custom-jdbc</name>
+  <description>selenium tests execution for jspwiki-it-test-custom (custom auth, JDBC database)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
   
   <properties> <!-- values injected at jspwiki.properties & selenium templates -->
@@ -39,17 +39,35 @@
     <it-jspwiki.context>${project.artifactId}</it-jspwiki.context>
     
     <it-jspwiki.authorizer>org.apache.wiki.auth.authorize.WebContainerAuthorizer</it-jspwiki.authorizer>
-    <it-jspwiki.groupdatabase>org.apache.wiki.auth.authorize.XMLGroupDatabase</it-jspwiki.groupdatabase>
+    <it-jspwiki.groupdatabase>org.apache.wiki.auth.authorize.JDBCGroupDatabase</it-jspwiki.groupdatabase>
     <it-jspwiki.login.throttling>false</it-jspwiki.login.throttling>
     <it-jspwiki.referenceStyle>relative</it-jspwiki.referenceStyle>
-    <it-jspwiki.userdatabase>org.apache.wiki.auth.user.XMLUserDatabase</it-jspwiki.userdatabase>
+    <it-jspwiki.userdatabase>org.apache.wiki.auth.user.JDBCUserDatabase</it-jspwiki.userdatabase>
     <it-jspwiki.userdatabase.hashPrefix>false</it-jspwiki.userdatabase.hashPrefix>
     <it-jspwiki-x.securityconfig.enable>true</it-jspwiki-x.securityconfig.enable>
   </properties>
   
   <build>
     <finalName>${project.artifactId}</finalName>
+    
+    <!-- So we can reuse o.a.w.HsqlDbUtils, but it should be loaded as a dependency (i.e.: jspwiki-test-support, 
+         alongside TestEngine, and other test classes). Btw, this HsqlDbUtils is slightly modified, as it 
+         reads all files from target/classes + has a public static void main(String[]) method -->
+    <sourceDirectory>${project.basedir}/../jspwiki-selenium-tests/src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
+      </resource>
+    </resources>
+    
     <plugins> <!-- selenium test execution -->
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+      </plugin>
       
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -59,7 +77,35 @@
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
+        <configuration>
+          <contextFile>target/${project.artifactId}/WEB-INF/tomcat7-context.xml</contextFile>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
+  
+  <dependencies>    
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>
