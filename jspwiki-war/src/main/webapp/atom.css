@@ -1,0 +1,103 @@
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ */
+
+feed {
+  display:block;
+  font-family:verdana, sans-serif;
+  margin:2%;
+  font-size:90%;
+  color:#000000;
+  background:#ffffff;
+}
+
+title {
+  display:block;
+  font-size:1.3em;
+  color:inherit;
+  background:inherit;
+  font-weight:bold;
+}
+
+tagline, link {
+  display:block;
+  font-size:0.9em;
+}
+
+id, modified {
+  display:none;
+}
+
+generator {
+  display:block;
+  font-size:0.9em;
+}
+
+info {
+  display:block;
+  margin:3em 4em 3em 4em;
+  color:#CC3333;
+  background:#FFFF66;
+  border:solid #CCCC66 2px;
+  text-align:center;
+  padding:1.5em;
+  font-family:mono;
+  font-size:0.8em;
+}
+
+entry {
+  display:block;
+  color:inherit;
+  background:inherit;
+  padding:0;
+  margin:1em 1em 4em 1em;
+  
+}
+
+entry modified, entry name {
+  display:inline;
+  color:#999999;
+  background:inherit;
+  font-size:0.8em;
+}
+
+entry created, entry issued, entry id {
+  display:none;
+}
+
+entry title {
+  display:block;
+  font-size:1em;
+  font-weight:bold;
+  color:inherit;
+  background:inherit;
+  padding:1em 1em 0em 1em;
+  margin:0;
+  border-top:solid 1px #dddddd;
+}
+
+content {
+  display:block;
+  font-size:0.9em;
+  color:inherit;
+  background:inherit;
+  padding:1em;
+  line-height:1.5em;
+}

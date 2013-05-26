@@ -1,0 +1,14 @@
+* [Page principale|Main]
+* [A propos|About]
+* [Derniers changements|RecentChanges]
+* [WikiEtiquette]
+
+* [Rechercher une page|Search]
+* [Pages orphelines|UnusedPages]
+* [Pages non définies|UndefinedPages]
+* [Index des pages|PageIndex]
+* [Index des pages spéciales|SpecialPageIndex]
+* [Infos système|SystemInfo]
+
+* [Règles de formatage|TextFormattingRules]
+* [Entraînez-vous ici (sandbox)|Sandbox]

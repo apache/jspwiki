@@ -1,0 +1,65 @@
+[{TableOfContents}]
+
+!! Problematiche in ambiente Microsoft Windows
+
+!Configurazione Wiki 
+Il modo meno problematico per definire la posizione dei file corrispondenti alle pagine wiki è di far si che siano sullo stesso drive dell'istallazione Tomcat (o del vostro web server), e definire tale posizione in formato Unix. Ad esempio, file che stanno fisicamente in C:\JSPWiki\files saranno definiti nel file di configurazione come /JSPWiki/files.
+
+Accertatevi anche di aver modificato la configurazione di {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} se volete la gestione di un file di log. Questa configurazione si trova piuttosto nascosto vicino alla fine del config-file. Il formato è lo stesso della configurazione di {{jspwiki.fileSystemProvider.pageDir}}, ovvero i backslash devono essere duplicati.
+
+!! Problematiche UTF-8 
+
+Se avete problemi con un Tomcat 5.x (o versioni successive) e JSPWiki con i caratteri UTF-8, fate attenzione a quanto segue!
+
+Dovete modificare il file di configurazione del Tomcat server.xml (si trova nella directory conf del Tomcat). Aggiungete a
+
+{{{<Connector port="8080"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" redirectPort="8443" acceptCount="100"
+               debug="0" connectionTimeout="20000" 
+               disableUploadTimeout="true"/>}}}
+
+il termine '{{{URIEncoding="UTF-8"}}}'.
+
+Facendolo diventare come segue:
+
+{{{
+<Connector port="8080"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" redirectPort="8443" acceptCount="100"
+               debug="0" connectionTimeout="20000" 
+               disableUploadTimeout="true" 
+               URIEncoding="UTF-8"/>
+}}}
+
+Ricordatevi anche che se usate mod_jk, dovete definire l' {{URIEncoding}} anche per il connettore JK:
+
+{{{
+.........
+  <service name="Catalina">
+    <connector port="8080" />
+.........
+    <connector protocol="AJP/1.3" uriencoding="UTF-8" port="8009" />
+.........
+  </service>
+}}}
+
+!! Altri suggerimenti
+
+!Modificare il menu sinistro
+
+Il menu nella colonna sinistra (laggiù <-----) è una normale pagina wiki chiamata [LeftMenu].
+
+Se voi (l'amministratore) non volete che sia modificata da altri, potete modificare [LeftMenu], e renderla non scrivibile da altri mettendovi un ACL.
+
+
+Analogamente, la parte bassa del menu sinistro è la pagina [LeftMenuFooter], anch'essa modificabile.
+
+!Abilitare il feed [RSS|http://blogspace.com/rss/]
+
+Nel file jspwiki.properties, dovete modificare la proprietà "jspwiki.rss.generate" a "true", e anche far si che la proprietà "jspwiki.baseURL" corrisponda al vostro Wiki.  Altrimenti il generatore RSS non avrà idea del come costruire i link ... :-)
+
+!Non mi piace avere cose del tipo ~ThingsSquashedTogether nei titoli delle pagine. E' possibile cambiare questo comportamento?
+
+Come dicono i Finnici, "voe tokkiinsa", ovvero "si, certamente".  Basta configurare la proprietà "jspwiki.breakTitleWithSpaces" a "true" nel vostro
+file jspwiki.properties.

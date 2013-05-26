@@ -1,0 +1,187 @@
+
+Apache JSPWiki 2.9.1-incubating - Documentation
+===============================================
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+
+The license file can be found in LICENSE.
+
+
+What is JSPWiki?
+----------------
+
+JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java
+and JSP.  A WikiWiki is a web site which allows anyone to participate
+in its development.  JSPWiki supports all the traditional wiki features,
+as well as very detailed access control and security integration using JAAS. 
+
+
+Why is the version named 2.9.1-incubating? - Is it not a "real" version 2.9.1?
+------------------------------------------------------------------------------
+
+Short answer:  Don't worry, it really is a mature and official Apache release!
+
+Explanation:  JSPWiki is on its way to become an Apache top level project.
+   The Incubator project is the entry path into the Apache Software Foundation
+   (ASF) for projects and codebases wishing to become part of the Foundation's
+   efforts.  This is why the version is named 2.9.1-incubating.
+
+
+Pre-requirements
+----------------
+
+Okay, so you wanna Wiki?  You'll need the following things:
+
+REQUIRED:
+
+* A JSP engine that supports Servlet API 2.4.  We recommend Tomcat from
+  http://tomcat.apache.org/ for a really easy installation.
+  Tomcat 5.5.x or later is supported.
+
+* Some previous administration experience...  If you've ever installed
+  Apache or any other web server, you should be pretty well off.
+
+* And of course, a server to run the JSP engine on.
+
+* JDK 1.5+
+
+
+OPTIONAL:
+
+* JavaMail package from java.sun.com, if you want to use log4j mailing
+  capabilities.  You'll also need the Java Activation Framework.
+
+* RCS versioning system installed and available in your PATH if you
+  want to use RCS versioning.  It is also possible (and on Windows, it
+  is even recommended) to use the VersioningFileProvider, which does
+  not require RCS.
+
+
+Really simple installation
+--------------------------
+
+This section is meant for you, if you just want to have a really quick
+install without much worries.  If you want to have a more complicated
+installation (with more power as to how to do things), 
+check out the "Install" section below.
+
+Since JSPWiki 2.1.153, JSPWiki comes with a really simple installation
+engine.  Just do the following:
+
+1) Install Tomcat from http://tomcat.apache.org/ (or any other servlet
+   container)
+
+2) After you've installed the engine and checked that it works, you just make a
+   subdirectory under $TOMCAT_HOME/webapps/.
+   For example, if you want your application to be called 'wiki', just create a
+   directory called 'wiki', then extract all files from the war file into that
+   directory, preserving the directory structure.
+
+3) Point your browser at http://<myhost>/JSPWiki/Install.jsp
+   (Or, if you renamed it in the previous phase, use something like
+   http://<myhost>/wiki/Install.jsp)
+
+4) Answer a couple of simple questions
+
+5) Restart your container
+
+6) Point your browser to http://<myhost>/JSPWiki/ (or whatever name you
+   chose in point 2)
+
+That's it!
+
+
+Advanced Installation
+---------------------
+
+First, install a JSP engine and a web server.  You can download Tomcat
+from http://tomcat.apache.org.  This software was built
+originally on top of Tomcat 5.5, but probably most other versions
+work, too, and most other JSP containers.
+
+After you've installed the engine and checked that it works, you just
+make a subdirectory under $TOMCAT_HOME/webapps/.  For example, if you
+want your application to be called 'MyWiki', just create a directory
+called 'MyWiki', then extract all files from the war files into that
+directory, preserving the directory structure.
+
+Edit the WEB-INF/jspwiki.properties file to your liking.  The only
+thing you need to set is the directory where you want your wiki pages
+to be stored.  I recommend a directory that is regularly backed up.
+
+Unzip the contents of jspwiki-corepages.zip into your newly created
+directory.  You can find the rest of the documentation in the
+JSPWiki-doc.zip file.
+
+(Re)start tomcat.
+
+Point your browser at http://<where your Tomcat is installed>/MyWiki/.
+You should see the Main Wiki page.  See the next section if you want
+to edit the pages =).
+
+
+Installation with Windows
+-------------------------
+
+If you are using a version of Microsoft Windows, you'll find that
+getting RCS up and running may be a bit problematic, and thus we
+recommend the VersioningFileProvider.
+
+All JSPWiki documentation is in the web; please see
+http://doc.jspwiki.org/2.8/wiki/WindowsInstall
+
+Upgrading from previous versions
+--------------------------------
+
+Please read ReleaseNotes and the UPGRADING document.
+
+All JSPWiki documentation is in the web; please see
+http://doc.jspwiki.org/2.8/
+
+
+Configuring JSPWiki
+-------------------
+
+All configuration information is kept in WEB_INF/jspwiki.properties.
+The file is pretty well documented, so I recommend you read it through
+first. 
+
+There are also some auxiliary configuration files, such as filters.xml.
+
+Also, there is a far more detailed documentation in the web:
+
+http://doc.jspwiki.org/2.8/
+
+
+Where to go next aka. where is the rest of the documentation?
+-------------------------------------------------------------
+
+The rest of the documentation is at
+
+http://doc.jspwiki.org/2.8/
+
+
+
+Contact
+-------
+
+JSPWiki authors can be contacted on the jspwiki-users mailing list.
+You can see the instructions on http://www.jspwiki.org/wiki/JSPWikiMailingList.
+
+The mailing list should also be your primary place to ask support questions.
+There are many wise and knowledgeable people on that list.

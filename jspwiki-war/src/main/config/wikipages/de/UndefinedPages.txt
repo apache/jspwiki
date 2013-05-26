@@ -1,0 +1,5 @@
+Folgende Seiten wurden referenziert, aber bisher noch nicht erstellt. Erstelle doch einfach ein paar!
+
+[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
+
+(Zurück zur [Startseite|Main])

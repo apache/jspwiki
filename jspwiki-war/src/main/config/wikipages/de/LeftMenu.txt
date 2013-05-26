@@ -1,0 +1,15 @@
+* [Startseite|Main]
+* [Über dieses Wiki|About]
+* [Neuigkeiten|News]
+* [letzte Änderungen|RecentChanges]
+* [WikiEtikette|WikiEtiquette]
+
+* [Suche|Search]
+* [Unbenutzte Seiten|UnusedPages]
+* [Undefinierte Seiten|UndefinedPages]
+* [Seitenindex|PageIndex]
+* [WikiGruppen]
+* [Systeminformationen|SystemInfo]
+* [Sandkasten|SandBox]
+
+* [LeftMenu bearbeiten|Edit:LeftMenu]

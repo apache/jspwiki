@@ -1,0 +1,11 @@
+* [Main pagina|Main]
+* [About]
+* [Nieuws|News]
+* [Recente Wijzigingen|Recent Changes]
+* [WikiEtiquette]
+
+* [Zoek pagina's|Search]
+* [Ongebruikte pagina's|UnusedPages]
+* [Ongedefinieerde pagina's|UndefinedPages]
+* [Pagina Index]
+* [SystemInfo]
