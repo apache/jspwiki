@@ -1,3 +1,10 @@
+2013-05-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-incubating-0
+
+       * Maven multimodule build (related to JSPWIKI-768, JSPWIKI-769, 
+         JSPWIKI-770 and JSPWIKI-771)
+
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-14
