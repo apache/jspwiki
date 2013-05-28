@@ -28,10 +28,10 @@
   </parent>
   
   <groupId>org.apache.incubator.jspwiki.it</groupId>
-  <artifactId>jspwiki-it-test-custom</artifactId>
+  <artifactId>jspwiki-it-test-container</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>jspwiki-it-test-custom</name>
-  <description>selenium tests execution for jspwiki-it-test-custom (custom auth, relative URLs)</description>
+  <name>jspwiki-it-test-container</name>
+  <description>selenium tests execution for jspwiki-it-test-container (container auth, relative URLs)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
   
   <properties> <!-- values injected at jspwiki.properties & selenium templates -->

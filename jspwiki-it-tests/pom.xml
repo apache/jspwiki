@@ -39,6 +39,8 @@
     <module>jspwiki-it-test-custom</module>
     <module>jspwiki-it-test-custom-absolute-urls</module>
     <module>jspwiki-it-test-custom-jdbc</module>
+    <module>jspwiki-it-test-container</module>
+    <module>jspwiki-it-test-container-jdbc</module>
   </modules>
   
   <profiles>
@@ -115,7 +117,8 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>selenium-maven-plugin</artifactId>
             <configuration>
-              <browser>*firefox</browser>
+              <browser>*googlechrome</browser>
+              <!-- <browser>*firefox</browser> -->
               <!-- <browser>*iexplore</browser> -->
               <startURL>http://localhost:8080/${project.artifactId}/</startURL>
               <suite>target/test-classes/selenium/TestSuite.html</suite> 
@@ -143,6 +146,9 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
+                  <additionalConfigFilesDir>
+                    ${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf
+                  </additionalConfigFilesDir>
                   <fork>true</fork>
                   <systemProperties>
                     <user.language>en</user.language>
@@ -170,23 +176,13 @@
           <version>${project.version}</version>
           <type>war</type>
         </dependency>
-                    
-        <dependency>
-          <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-          <artifactId>selenium-java-client-driver</artifactId>
-        </dependency>
-      
-        <dependency>
-          <groupId>org.seleniumhq.selenium</groupId>
-          <artifactId>selenium-java</artifactId>
-        </dependency>
       
         <dependency>
           <groupId>org.seleniumhq.selenium</groupId>
           <!-- (un)comment based on your browser preferences for tests execution -->
-          <!-- <artifactId>selenium-chrome-driver</artifactId> -->
+          <artifactId>selenium-chrome-driver</artifactId>
           <!-- <artifactId>selenium-ie-driver</artifactId> -->
-          <artifactId>selenium-firefox-driver</artifactId>
+          <!-- <artifactId>selenium-firefox-driver</artifactId> -->
         </dependency>
       </dependencies>
     </profile>
