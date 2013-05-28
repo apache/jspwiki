@@ -1,6 +1,16 @@
+2013-05-28  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-1
+
+       * JSPWIKI-770: added jspwiki-it-test-container and jspwiki-it-test-container-jdbc
+         selenium maven execution. Still some bits of refactor remaining + the IT 
+         tests are assuming english language, but the base configuration is finished
+       
+       * artifact checksums created on release profile
+
 2013-05-27  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.10.0-incubating-0
+       * 2.10.0-svn-0
 
        * Maven multimodule build (related to JSPWIKI-768, JSPWIKI-769, 
          JSPWIKI-770 and JSPWIKI-771)
