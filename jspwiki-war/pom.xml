@@ -174,12 +174,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <scope>test</scope><!-- overwritting scope defined in parent dpdncyMgmt; really needed here? -->
-    </dependency>
   </dependencies>
 
   <build>
