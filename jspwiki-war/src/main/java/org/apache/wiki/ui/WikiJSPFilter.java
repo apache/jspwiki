@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.log4j.NDC;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.url.DefaultURLConstructor;
@@ -67,6 +68,7 @@ import org.apache.wiki.util.WatchDog;
 public class WikiJSPFilter extends WikiServletFilter
 {
     private Boolean m_useOutputStream;
+    private String m_wiki_encoding = m_engine.getWikiProperties().getProperty(WikiEngine.PROP_ENCODING);
 
     /** {@inheritDoc} */
     public void init( FilterConfig config ) throws ServletException
@@ -76,9 +78,7 @@ public class WikiJSPFilter extends WikiServletFilter
         m_useOutputStream = UtilJ2eeCompat.useOutputStream( context.getServerInfo() );
     }
 
-    public void doFilter( ServletRequest  request,
-                          ServletResponse response,
-                          FilterChain     chain )
+    public void doFilter( ServletRequest  request, ServletResponse response, FilterChain chain )
         throws ServletException, IOException
     {
         WatchDog w = m_engine.getCurrentWatchDog();
@@ -92,13 +92,12 @@ public class WikiJSPFilter extends WikiServletFilter
             if( m_useOutputStream )
             {
                 log.debug( "Using ByteArrayResponseWrapper" );
-                responseWrapper = new ByteArrayResponseWrapper( (HttpServletResponse)response );
+                responseWrapper = new ByteArrayResponseWrapper( (HttpServletResponse)response, m_wiki_encoding );
             }
             else
             {
                 log.debug( "Using MyServletResponseWrapper" );
-                responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
-                
+                responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response, m_wiki_encoding );
             }
         
             // fire PAGE_REQUESTED event
@@ -118,13 +117,6 @@ public class WikiJSPFilter extends WikiServletFilter
                 w.enterState( "Delivering response", 30 );
                 WikiContext wikiContext = getWikiContext( request );
                 String r = filter( wikiContext, responseWrapper );
-        
-                //String encoding = "UTF-8";
-                //if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
-        
-                // Only now write the (real) response to the client.
-                // response.setContentLength(r.length());
-                // response.setContentType(encoding);
                 
                 if (m_useOutputStream) 
                 {
@@ -166,7 +158,7 @@ public class WikiJSPFilter extends WikiServletFilter
      * Goes through all types and writes the appropriate response.
      * 
      * @param wikiContext The usual processing context
-     * @param string The source string
+     * @param response The source string
      * @return The modified string with all the insertions in place.
      */
     private String filter(WikiContext wikiContext, HttpServletResponse response )
@@ -268,12 +260,12 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         private static final int INIT_BUFFER_SIZE = 4096;
         
-        public MyServletResponseWrapper( HttpServletResponse r )
-        {
+        public MyServletResponseWrapper( HttpServletResponse r, final String wiki_encoding )
+                throws UnsupportedEncodingException {
             super(r);
             m_output = new CharArrayWriter( INIT_BUFFER_SIZE );
             m_servletOut = new MyServletOutputStream(m_output);
-            m_writer = new PrintWriter(m_servletOut, true);
+            m_writer = new PrintWriter(new OutputStreamWriter(m_servletOut, wiki_encoding), true);
         }
 
         /**
@@ -351,12 +343,12 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         private static final int INIT_BUFFER_SIZE = 4096;
         
-        public ByteArrayResponseWrapper( HttpServletResponse r )
-        {
+        public ByteArrayResponseWrapper( HttpServletResponse r, final String wiki_encoding )
+                throws UnsupportedEncodingException {
             super(r);
             m_output = new ByteArrayOutputStream( INIT_BUFFER_SIZE );
             m_servletOut = new MyServletOutputStream(m_output);
-            m_writer = new PrintWriter(m_servletOut, true);
+            m_writer = new PrintWriter(new OutputStreamWriter(m_servletOut, wiki_encoding), true);
             m_response = r;
         }
         
