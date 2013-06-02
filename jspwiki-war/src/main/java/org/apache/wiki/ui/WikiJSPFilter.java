@@ -68,12 +68,13 @@ import org.apache.wiki.util.WatchDog;
 public class WikiJSPFilter extends WikiServletFilter
 {
     private Boolean m_useOutputStream;
-    private String m_wiki_encoding = m_engine.getWikiProperties().getProperty(WikiEngine.PROP_ENCODING);
+    private String m_wiki_encoding;
 
     /** {@inheritDoc} */
     public void init( FilterConfig config ) throws ServletException
     {
         super.init( config );
+        m_wiki_encoding = m_engine.getWikiProperties().getProperty(WikiEngine.PROP_ENCODING);
         ServletContext context = config.getServletContext();
         m_useOutputStream = UtilJ2eeCompat.useOutputStream( context.getServerInfo() );
     }
