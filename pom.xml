@@ -21,6 +21,12 @@
          xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>13</version>
+  </parent>
+
   <groupId>org.apache.jspwiki</groupId>
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
@@ -332,11 +338,6 @@
             </rules>
           </configuration>
         </plugin>
-        
-        <plugin>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.4</version>
-        </plugin>
           
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
@@ -351,6 +352,14 @@
                 <Extension-Name>${project.artifactId}</Extension-Name>
               </manifestEntries>
             </archive>
+          </configuration>
+        </plugin>
+          
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <createChecksum>true</createChecksum>
           </configuration>
         </plugin>
           
@@ -557,59 +566,6 @@
     </pluginManagement>
   </build>
   
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          
-          <plugin>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          
-          <plugin>
-            <artifactId>maven-install-plugin</artifactId>
-            <configuration>
-              <createChecksum>true</createChecksum>
-            </configuration>
-          </plugin>
-          
-          <plugin>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-  
   <organization>
     <name>The Apache Software Foundation</name>
     <url>http://www.apache.org/</url>
@@ -622,4 +578,40 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
+  <mailingLists>
+    <mailingList>
+      <name>Apache JSPWiki-dev List</name>
+      <subscribe>jspwiki-dev-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>jspwiki-dev-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>jspwiki-dev@incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/</archive>
+    </mailingList>
+    
+    <mailingList>
+      <name>Apache JSPWiki-user List</name>
+      <subscribe>jspwiki-user-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>jspwiki-user-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>jspwiki-user@incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/</archive>
+    </mailingList>
+    
+    <mailingList>
+      <name>Apache JSPWiki-commits List</name>
+      <subscribe>jspwiki-commits-subscribe@incubator.apache.org</subscribe>
+      <unsubscribe>jspwiki-commits-unsubscribe@incubator.apache.org</unsubscribe>
+      <post>jspwiki-commits@incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/</archive>
+    </mailingList>
+  </mailingLists>
+  
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://issues.apache.org/jira/browse/JSPWIKI</url>
+  </issueManagement>
+  
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://builds.apache.org/job/JSPWiki</url>
+  </ciManagement>
 </project>
