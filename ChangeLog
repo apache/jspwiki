@@ -1,3 +1,13 @@
+2013-06-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-3
+
+       * JSPWIKI-771: inherit ASF parent pom. Deleted release profile in favour of
+         apache-release and gpg configuration (both present on parent pom);
+         added <ciManagement/>, <issueManagement/> and <mailingLists/> sections.
+       
+       * fixed runtime NPE on WikiJSPFilter (m_engine used before having been initialized)
+
 2013-06-01  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-2
