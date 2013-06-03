@@ -24,8 +24,8 @@
     To build:
     1.) run mvn clean install from Maven, which runs all unit
         tests and builds the WAR.
-    2.) from Ant, run the webtests (Selenium tests) or dist 
-        targets (to create the full distribution).
+    2.) run mvn javadoc:javadoc to build the Javadocs in target/site
+    3.) from Ant, run the dist target (to create the full distribution).
 -->
 
 <project name="JSPWiki" default="war" basedir=".">
@@ -41,11 +41,6 @@
   <property name="release.dir" value="target/ant-dist/releases" />
   <property name="install.fulldir" value="${tmpdir}/install" />
 	
-  <!-- dirs holding libs -->
-  <property name="libs.main" value="target/JSPWiki/WEB-INF/lib" />
-	
-  <property name="central.url" value="http://repo.maven.apache.org/maven2" />
-
   <!-- The directory where the SVN sources are checked out. -->
   <property name="install.src" value="${tmpdir}/svnsrc" />
 
@@ -55,65 +50,9 @@
   <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
   <property name="svn.tag" value="trunk" />
 
-  <!-- The path used for running tests.  We add the tests/etc directory
-       to the base path defined above, since we put all the relevant
-       .properties-files in tests/etc. -->
-  <path id="path.tests">
-     <pathelement location="${java.home}/../lib/tools.jar" />
-     <fileset dir="${libs.main}">
-        <include name="*.jar" />
-     </fileset>
-     <fileset dir="${webtests.libs}">
-        <include name="*.jar" />
-     </fileset>
-     <pathelement path="target/test-classes" />
-  </path>
-
   <!-- The prefix to use when reading environment variables -->
   <property environment="env" />
 
-
-  <!-- ============================================================== -->
-
-  <!-- Initialising, cleaning, etc. -->
-
-  <target name="init"
-          description="Initializes everything, creates directories, etc.">
-     <mkdir dir="${webtests.libs}" />
-     <download-deps />
-  </target>
-  
-  <target name="test-file-exists">
-     <echo message="Testing for ${download-to-file}" level="debug"/>
-     <available file="${download-to-file}" property="exists" />
-  </target>
-	    
-  <target name="download-lib" unless="exists" depends="test-file-exists">
-    <get src="${download-url}" dest="${download-to-file}" />
-  </target>
-  
-  <macrodef name="get-element">
-    <attribute name="to-file" />
-    <attribute name="url" />
-    <sequential>
-       <antcall target="download-lib">
-          <param name="download-to-file" value="@{to-file}"/>
-       	  <param name="download-url" value="@{url}" />
-       </antcall>
-    </sequential>
-  </macrodef>
-
-  <macrodef name="download-deps">
-     <sequential>
-     	<!-- Dependencies used by webtests task  -->
-        <get-element to-file="${webtests.libs}/selenium-server-standalone-2.25.0.jar" 
-                     url="http://selenium.googlecode.com/files/selenium-server-standalone-2.25.0.jar" />
-        <get-element to-file="${webtests.libs}/jetty-all-7.6.7.v20120910.jar" 
-                     url="${central.url}/org/eclipse/jetty/aggregate/jetty-all/7.6.7.v20120910/jetty-all-7.6.7.v20120910.jar" />
-     	<get-element to-file="${webtests.libs}/hsqldb-1.8.0.10.jar" url="${central.url}/org/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
-     </sequential>
-  </macrodef>
-  
   <!-- ============================================================== -->
 
   <!--  Installation targets -->
@@ -245,7 +184,7 @@
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
         <zipfileset dir="src/main/config/doc" prefix="doc" />
-        <zipfileset dir="target/apidocs" prefix="javadoc" />
+        <zipfileset dir="target/site/apidocs" prefix="javadoc" />
         <zipfileset dir="src/main/config/wikipages" prefix="wikipages" excludes="**/.??*" />
     </zip>
   </target>
@@ -269,13 +208,13 @@
           description="Builds the entire distribution artifacts without checksums and signatures.">
 
     <!-- binary distribution -->
-    <copy file="ChangeLog"    todir="${install.fulldir}" />
-    <copy file="DISCLAIMER"   todir="${install.fulldir}" />
-    <copy file="LICENSE"      todir="${install.fulldir}" />
-    <copy file="NOTICE"       todir="${install.fulldir}" />
-    <copy file="README"       todir="${install.fulldir}" />
-    <copy file="ReleaseNotes" todir="${install.fulldir}" />
-    <copy file="UPGRADING"    todir="${install.fulldir}" />
+    <copy file="../ChangeLog"    todir="${install.fulldir}" />
+    <copy file="../DISCLAIMER"   todir="${install.fulldir}" />
+    <copy file="../LICENSE"      todir="${install.fulldir}" />
+    <copy file="../NOTICE"       todir="${install.fulldir}" />
+    <copy file="../README"       todir="${install.fulldir}" />
+    <copy file="../ReleaseNotes" todir="${install.fulldir}" />
+    <copy file="../UPGRADING"    todir="${install.fulldir}" />
     <copy file="target/JSPWiki.war"   todir="${install.fulldir}" />
     <zip zipfile="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip">
       <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}-bin" />
@@ -321,34 +260,6 @@
       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-bin.zip" />
       <sign-artifact input.file="${release.dir}/${ant.project.name}-${jspwiki.version}-src.zip" />
     </sequential>
-
-  </target>
-
-  <!-- ============================================================== -->
-
-  <!-- Running tests -->
-
-  <target name="tests-init" depends="init">
-
-      <!-- Create web.xml files for testing -->
-      <copy file="src/main/webapp/WEB-INF/web.xml" tofile="${webtests.build}/webtest.web.xml" overwrite="true" />
-
-      <!-- For web unit tests, turn off SSL (self-signed certs b0rk
-           the tests) and enable JDBC refs -->
-      <replace file="${webtests.build}/webtest.web.xml"
-               token="CONFIDENTIAL" value="NONE" />
-      <replace file="${webtests.build}/webtest.web.xml"
-               token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
-      <replace file="${webtests.build}/webtest.web.xml"
-               token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
-
-      <!-- For unit testing and some webtests, turn on container auth -->
-      <copy file="${webtests.build}/webtest.web.xml"
-          tofile="${webtests.build}/containerauth.web.xml" overwrite="true" />
-      <replace file="${webtests.build}/containerauth.web.xml"
-               token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-      <replace file="${webtests.build}/containerauth.web.xml"
-               token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
 
   </target>
 

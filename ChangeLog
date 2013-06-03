@@ -1,3 +1,14 @@
+2013-06-03  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-4
+
+       * Removed further webtest-related configuration from jspwiki-war/build.xml;
+         updated parameters so ant dist still works.
+       
+       * Updated o.a.w.TranslationsCheck to make less chatty
+
+       * Removed unused translations from Italian and German resource files.
+
 2013-06-02  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-3

@@ -118,15 +118,9 @@ public class TranslationsCheck
         Properties p2 = new Properties();
         p2.load(new FileInputStream(new File(base + source2)));
 
-        String msg = "Properties in file " + source2;
+        String msg = "Checking " + source2 + "...";
         System.out.println(msg);
-        StringBuffer sb = new StringBuffer(msg.length());
-        for (int i = 0; i < msg.length(); i++)
-            sb.append("-");
-        System.out.println(sb.toString());
-
-        System.out.println("Missing:");
-        System.out.println("--------");
+        
         Iterator< String > iter = sortedNames(p1).iterator();
         while (iter.hasNext())
         {
@@ -136,13 +130,19 @@ public class TranslationsCheck
             if (p2.get(name) == null)
             {
                 missing++;
+                if (missing == 1) 
+                {
+                    System.out.println("\nMissing:");
+                    System.out.println("--------");
+                }
                 System.out.println(name + " = " + value);
             }
         }
-        System.out.println();
+        if (missing > 0) 
+        {
+            System.out.println();
+        }    
 
-        System.out.println("Outdated or superfluous:");
-        System.out.println("------------------------");
         iter = sortedNames(p2).iterator();
         while (iter.hasNext())
         {
@@ -152,10 +152,19 @@ public class TranslationsCheck
             if (p1.get(name) == null)
             {
                 outdated++;
+                if (outdated == 1) 
+                {
+                    System.out.println("\nOutdated or superfluous:");
+                    System.out.println("------------------------");
+                }
                 System.out.println(name + " = " + value);
             }
         }
-        System.out.println();
+        if (outdated > 0) 
+        {
+            System.out.println();
+        }    
+
         Map< String, Integer > diff = new HashMap< String, Integer >( 2 );
         diff.put( "missing", missing );
         diff.put( "outdated", outdated );
