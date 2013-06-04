@@ -45,6 +45,7 @@ public class TranslationsCheck
         if( args.length == 0 )
         {
             System.out.println("Usage: java TranslationsCheck <language> [<path>]");
+            System.out.println("Example: java TranslationsCheck nl jspwiki-war/src/main/resources]");
             return;
         }
         
@@ -61,32 +62,29 @@ public class TranslationsCheck
 
         try
         {
-            diff("/etc/i18n/CoreResources.properties",
-                 "/etc/i18n/CoreResources_" + suffix + ".properties");
-            detectDuplicates("/etc/i18n/CoreResources_" + suffix + ".properties");
+            diff("/CoreResources.properties", "/CoreResources_" + suffix + ".properties");
+            detectDuplicates("/CoreResources_" + suffix + ".properties");
         }
         catch( FileNotFoundException e )
         {
-            System.err.println("Unable to locate "+"/etc/i18n/CoreResources_" + suffix + ".properties");
+            System.err.println("Unable to locate "+"/CoreResources_" + suffix + ".properties");
         }
 
         try
         {
-            diff("/etc/i18n/templates/default.properties",
-                 "/etc/i18n/templates/default_" + suffix + ".properties");
-            detectDuplicates("/etc/i18n/templates/default_" + suffix + ".properties");
+            diff("/templates/default.properties", "/templates/default_" + suffix + ".properties");
+            detectDuplicates("/templates/default_" + suffix + ".properties");
         }
         catch( FileNotFoundException e )
         {
-            System.err.println("Unable to locate "+"/etc/i18n/templates/default_" + suffix + ".properties");
+            System.err.println("Unable to locate "+"/templates/default_" + suffix + ".properties");
         }    
         
         try
         {
-            diff("/etc/i18n/plugin/PluginResources.properties",
-                 "/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+            diff("/plugin/PluginResources.properties", "/plugin/PluginResources_" + suffix + ".properties");
         
-            detectDuplicates("/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+            detectDuplicates("/plugin/PluginResources_" + suffix + ".properties");
         
             System.out.println("Duplicates overall (two or more occurences):");
             System.out.println("--------------------------------------------");
@@ -100,7 +98,7 @@ public class TranslationsCheck
         }
         catch( FileNotFoundException e ) 
         {
-            System.err.println("Unable to locate "+"/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+            System.err.println("Unable to locate "+"/plugin/PluginResources_" + suffix + ".properties");
         } 
 
         System.out.println("NOTE: Please remember that dependent on the usage of these i18n files, outdated " +
