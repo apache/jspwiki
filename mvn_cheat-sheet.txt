@@ -28,3 +28,5 @@ mvn javadoc:javadoc     : creates javadocs; if graphviz binaries (www.graphviz.o
 mvn sonar:sonar         : generates a Sonar report. Expects a Sonar server running at http://localhost:9000/ See:
                             http://mojo.codehaus.org/sonar-maven-plugin/plugin-info.html
                             http://docs.codehaus.org/display/SONAR/Get+started+in+2+minutes
+cd jspwiki-war; mvn test -Dtest=SiteGeneratorTest: Checks all language resource files for missing or
+                         unused translations.
