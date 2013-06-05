@@ -38,7 +38,6 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.ClassUtil;
-
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
  *  the ResourceRequest mechanism.
@@ -90,6 +89,11 @@ public class TemplateManager
     public static final String I18NRESOURCE_PREFIX = "templates/default_";
 
     public static final String I18NRESOURCE_SUFFIX = ".properties";
+
+    /** The default (en) RESOURCE name and id. */
+
+    public static final String I18NRESOURCE_EN = "templates/default.properties";
+    public static final String I18NRESOURCE_EN_ID = "en";
 
     /** I18N string to mark the default locale */
 
@@ -413,7 +417,9 @@ public class TemplateManager
     }
 
     /**
-     * List all installed i18n language properties
+     * List all installed i18n language properties by classpath searching for files like :
+     *    templates/default_*.properties
+     *    templates/default.properties
      * 
      * @param pageContext
      * @return map of installed Languages
@@ -423,12 +429,17 @@ public class TemplateManager
     {
         Map< String, String > resultMap = new LinkedHashMap< String, String >();
         String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
-        
+
         List< String > entries = ClassUtil.classpathEntriesUnder( DIRECTORY );
         for( String name : entries ) {
-            if ( name.startsWith( I18NRESOURCE_PREFIX ) && name.endsWith( I18NRESOURCE_SUFFIX ) )
+            if ( name.equals( I18NRESOURCE_EN ) ||
+                    (name.startsWith( I18NRESOURCE_PREFIX ) && name.endsWith( I18NRESOURCE_SUFFIX ) ) )
             {
-                name = name.substring(I18NRESOURCE_PREFIX.length(), name.lastIndexOf(I18NRESOURCE_SUFFIX));
+                if (name.equals( I18NRESOURCE_EN )) {
+                    name = I18NRESOURCE_EN_ID;
+                }    else {
+                    name = name.substring(I18NRESOURCE_PREFIX.length(), name.lastIndexOf(I18NRESOURCE_SUFFIX));
+                }
                 Locale locale = new Locale(name.substring(0, 2), ((name.indexOf("_") == -1) ? "" : name.substring(3, 5)));
                 String defaultLanguage = "";
                 if (clientLanguage.startsWith(name))
@@ -438,7 +449,7 @@ public class TemplateManager
                 resultMap.put(name, locale.getDisplayName(locale) + " " + defaultLanguage);
             }
         }
-        
+
         return resultMap;
     }
 
@@ -640,10 +651,10 @@ public class TemplateManager
 
     /**
      *  Extract all i18n strings in the javascript domain. (javascript.*)
-     *  Returns a javascript snippet which defines the LoacalizedStings array.
+     *  Returns a javascript snippet which defines the LocalizedStings array.
      *
-     *  @param wiki context
-     *  @return Javascript snippet which defines the LocaliedStrings array
+     *  @param context the {@link WikiContext}
+     *  @return Javascript snippet which defines the LocalizedStrings array
      *  @since 2.5.108
      */
     private static String getJSLocalizedStrings( WikiContext context )

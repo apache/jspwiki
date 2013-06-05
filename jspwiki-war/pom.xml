@@ -228,14 +228,6 @@
             <id>create_files</id>
             <configuration>
               <target>
-                <!-- Creating a specific _en file presently needed just so that "English" will appear as an option on 
-                   the User Preferences page, language option (and similar issues).  FIXME: change JSP code  
-                   so this is no longer necessary.
-                -->
-                <copy file="src/main/resources/CoreResources.properties" tofile="target/classes/CoreResources_en.properties"/>
-                <copy file="src/main/resources/templates/default.properties" tofile="target/classes/templates/default_en.properties"/>
-                <copy file="src/main/resources/plugin/PluginResources.properties" tofile="target/classes/plugin/PluginResources_en.properties"/>
-
                 <!-- Create web.xml files for testing -->
                 <copy file="src/main/webapp/WEB-INF/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
 
