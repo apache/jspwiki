@@ -219,41 +219,6 @@
         </configuration>
       </plugin>
       
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <id>create_files</id>
-            <configuration>
-              <target>
-                <!-- Create web.xml files for testing -->
-                <copy file="src/main/webapp/WEB-INF/web.xml" tofile="target/test-classes/WEB-INF/web.xml" />
-
-                <!-- For web unit tests, turn off SSL (self-signed certs b0rk
-                   the tests) and enable JDBC refs -->
-                <replace file="target/test-classes/WEB-INF/web.xml"
-                    token="CONFIDENTIAL" value="NONE" />
-                <replace file="target/test-classes/WEB-INF/web.xml"
-                    token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
-                <replace file="target/test-classes/WEB-INF/web.xml"
-                    token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
-
-                <!-- For unit testing, turn on container auth -->
-                <replace file="target/test-classes/WEB-INF/web.xml"
-                    token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-                <replace file="target/test-classes/WEB-INF/web.xml"
-                    token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
-               </target>
-             </configuration>
-             <goals>
-               <goal>run</goal>
-             </goals>
-           </execution>
-         </executions>
-      </plugin>
-      
       <!-- Surefire plugin (running unit tests):
          http://maven.apache.org/surefire/maven-surefire-plugin/
          
