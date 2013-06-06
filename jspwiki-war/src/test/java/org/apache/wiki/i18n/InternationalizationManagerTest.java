@@ -19,23 +19,19 @@
 package org.apache.wiki.i18n;
 
 import java.util.Locale;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.wiki.TestEngine;
-
 public class InternationalizationManagerTest extends TestCase
 {
-    TestEngine te = null;
-    Properties props = new Properties();
-    InternationalizationManager i18n = null;
+    InternationalizationManager i18n = new InternationalizationManager( null );
     
     protected void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-        te = new TestEngine( props );
-        i18n = te.getInternationalizationManager();
+    	// enforce english locale as the default one. Otherwise, if your default locale is one
+    	// of the given translations, ResourceBundle.getBundle(String, Locale.ENGLISH) will 
+    	// return the bundle of your locale, rather than returning the default -english- one
+    	Locale.setDefault( Locale.ENGLISH );
     }
     
     public void testGetFromCoreWithArgs() 
