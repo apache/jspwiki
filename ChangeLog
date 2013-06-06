@@ -1,3 +1,16 @@
+2013-06-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-8
+
+       * removed some deprecated classes (related to JSPWIKI-303), targetted to be removed
+         on 2.10. Specifically: 
+           - o.a.w.FileUtil: in favour of o.a.w.util.FileUtil
+           - o.a.w.TextUtil: in favour of o.a.w.util.TextUtil
+           - o.a.w.filters.FilterManager: in favour of o.a.w.filters.DefaultFilterManager
+           - o.a.w.plugin.PluginManager: in favour of o.a.w.plugin.DefaultPluginManager
+
+       * JSPWIKI-780: InternationalizationManagerTest is no longer sytem-locale dependent
+
 2013-06-06  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-7
