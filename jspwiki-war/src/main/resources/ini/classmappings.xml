@@ -89,8 +89,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.api.engine.FilterManager</requestedClass>
-    <mappedClass>org.apache.wiki.filters.FilterManager</mappedClass> <!-- to be replaced in 2.10 -->
-    <!-- <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass> --> <!-- replacing the former in 2.10 -->
+    <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>
@@ -98,8 +97,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.api.engine.PluginManager</requestedClass>
-    <mappedClass>org.apache.wiki.plugin.PluginManager</mappedClass> <!-- to be replaced in 2.10 -->
-    <!-- <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass> --> <!-- replacing the former in 2.10 -->
+    <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>

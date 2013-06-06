@@ -88,10 +88,8 @@ import org.jdom.xpath.XPath;
  *
  *  The &lt;filter> -sections define the filters.  For more information, please see
  *  the PageFilterConfiguration page in the JSPWiki distribution.
- *  
- * FIXME: this class should be final in 2.10. It isn't right now because of compatibility reasons
  */
-public class DefaultFilterManager extends ModuleManager implements org.apache.wiki.api.engine.FilterManager
+public final class DefaultFilterManager extends ModuleManager implements org.apache.wiki.api.engine.FilterManager
 {
     private PriorityList<PageFilter> m_pageFilters = new PriorityList<PageFilter>();
 
