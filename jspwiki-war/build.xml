@@ -33,9 +33,6 @@
   <!-- The location for the JAR file for the core JSPWiki classes -->
   <property name="jarfile" value="target/JSPWiki/WEB-INF/lib/jspwiki-2.9.2-SNAPSHOT.jar" />
 
-  <!-- The location for the keystore used to sign the JAR; will be created if it doesn't exist. -->
-  <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
-
   <!-- Define directies for the "ant dist" target -->
   <property name="tmpdir" value="target/ant-dist/tmp" />
   <property name="release.dir" value="target/ant-dist/releases" />
@@ -49,9 +46,6 @@
    -->
   <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
   <property name="svn.tag" value="trunk" />
-
-  <!-- The prefix to use when reading environment variables -->
-  <property environment="env" />
 
   <!-- ============================================================== -->
 
