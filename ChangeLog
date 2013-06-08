@@ -17,6 +17,12 @@
 
        * removed duplicate keys from translation files.
 
+2013-06-06  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-6
+
+       * Update to Chinese, Portuguese, French and Italian language files.      
+
 2013-06-05  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-5
