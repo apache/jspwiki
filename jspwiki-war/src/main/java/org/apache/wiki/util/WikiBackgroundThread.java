@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.event.WikiEngineEvent;
@@ -35,6 +36,7 @@ import org.apache.wiki.event.WikiEventListener;
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener
 {
+    private static final Logger LOG = Logger.getLogger(WikiBackgroundThread.class);
     private volatile boolean m_killMe = false;
     private final WikiEngine m_engine;
     private final int m_interval;
@@ -71,7 +73,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
         {
             if ( ((WikiEngineEvent)event).getType() == WikiEngineEvent.SHUTDOWN )
             {
-                System.out.println( "Detected wiki engine shutdown: killing " + getName() + "." );
+                LOG.warn( "Detected wiki engine shutdown: killing " + getName() + "." );
                 m_killMe = true;
             }
         }
@@ -125,7 +127,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
         {
             // Perform the initial startup task
             final String name = getName();
-            System.out.println( "Starting up background thread: " + name + ".");
+            LOG.warn( "Starting up background thread: " + name + ".");
             startupTask();
             
             // Perform the background task; check every
@@ -147,7 +149,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
                         if( m_killMe )
                         {
                             interrupted = true;
-                            System.out.println( "Interrupted background thread: " + name + "." );
+                            LOG.warn( "Interrupted background thread: " + name + "." );
                             break;
                         }
                     }
@@ -158,8 +160,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
                 }
                 catch( Throwable t ) 
                 {
-                    System.err.println( "Background thread error: (stack trace follows)" );
-                    t.printStackTrace();
+                    LOG.error( "Background thread error: (stack trace follows)", t );
                 }
             }
             
@@ -168,8 +169,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
         }
         catch( Throwable t )
         {
-            System.err.println( "Background thread error: (stack trace follows)" );
-            t.printStackTrace();
+            LOG.error( "Background thread error: (stack trace follows)", t );
             throw new InternalWikiException( t.getMessage() );
         }
     }

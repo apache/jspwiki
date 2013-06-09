@@ -1,3 +1,10 @@
+2013-06-09  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-9
+
+       * minor tweaks to HsqlDbUtils so we get far less debug output on builds (450k => 90k)
+       * WikiBackgroundThread: replace "System.out.println" with log4j error/warn
+
 2013-06-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-8

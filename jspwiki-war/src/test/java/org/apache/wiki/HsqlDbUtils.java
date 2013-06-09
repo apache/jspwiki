@@ -93,6 +93,8 @@ public class HsqlDbUtils
         Properties hProps = loadPropertiesFrom( "target/test-classes/jdbc.properties" );
         
         hsqlServer = new Server();
+        hsqlServer.setSilent(true);   // be quiet during junit tests
+        hsqlServer.setLogWriter(null);  // and even more quiet
         // pre-checks
         hsqlServer.checkRunning( false ); // throws RuntimeException if running
         
