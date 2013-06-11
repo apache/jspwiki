@@ -16,4 +16,4 @@ drop table users if exists;
 drop table roles if exists;
 drop table groups if exists;
 drop table group_members if exists;
-drop user jspwiki;
+drop user "jspwiki";

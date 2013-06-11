@@ -48,7 +48,7 @@ import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.util.security.Password;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 
 
 /**
@@ -115,7 +115,7 @@ public class TestContainer
         m_hu.setUp();
 
         // Create the connection pool
-        jdbcDataSource cpds = new jdbcDataSource();
+        JDBCDataSource cpds = new JDBCDataSource();
         cpds.setDatabase( "jdbc:hsqldb:hsql://localhost/jspwiki" );
         cpds.setLoginTimeout( 10 );
         cpds.setUser( "SA" );

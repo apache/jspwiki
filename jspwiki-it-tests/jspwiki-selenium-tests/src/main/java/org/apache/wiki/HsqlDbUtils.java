@@ -30,7 +30,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hsqldb.Server;
-import org.hsqldb.util.SqlFile;
+import org.hsqldb.cmdline.SqlFile;
 
 
 /**
@@ -59,7 +59,6 @@ public class HsqlDbUtils
     
     private static final Logger LOG = Logger.getLogger( HsqlDbUtils.class );
     
-    Properties hProps = null;
     Server hsqlServer = null;
     
     /**
@@ -121,8 +120,9 @@ public class HsqlDbUtils
         try
         {
             conn = getConnection();
-            SqlFile userDbSetup = new SqlFile( new File( file ), false, null );
-            userDbSetup.execute( conn, true );
+            SqlFile userDbSetup = new SqlFile( new File( file ));
+            userDbSetup.setConnection( conn );
+            userDbSetup.execute();
         }
         catch( Exception e ) 
         {

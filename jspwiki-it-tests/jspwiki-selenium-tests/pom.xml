@@ -51,11 +51,17 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>compile</scope>
-    </dependency>
+
+      <dependency>
+          <groupId>org.hsqldb</groupId>
+          <artifactId>hsqldb</artifactId>
+          <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.hsqldb</groupId>
+          <artifactId>sqltool</artifactId>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 </project>

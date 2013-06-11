@@ -1,3 +1,11 @@
+2013-06-11  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-10
+
+       * upgraded hsqldb from 1.8.0.10 (very old, no more sources and docs in central)
+                           to 2.2.9 (current release)
+       * removed (illegal according to IntelliJ IDEA) cobertura systemProperties from pom.xml
+
 2013-06-09  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-9

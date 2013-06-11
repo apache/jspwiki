@@ -240,7 +240,8 @@ TEST LIBRARY                                LICENSE FILE
 =============================================================================================================
 commons-el-1.0.jar                          LICENSE
 custom_rhino-0.4.3.jar                      doc/LICENSE.mpl
-hsqldb-1.8.0.10.jar                         doc/LICENSE.hsqldb
+hsqldb-2.2.9.jar                            doc/LICENSE.hsqldb
+sqltool-2.2.9.jar                           doc/LICENSE.hsqldb
 jasper-compiler-5.5.23.jar                  LICENSE
 jasper-runtime-5.5.23.jar                   LICENSE
 jetty-all-7.6.7.v20120910.jar               LICENSE
