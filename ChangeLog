@@ -1,3 +1,13 @@
+2013-06-11  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-11
+
+       * Switched jslint checking from yuicompressor-maven-plugin to jslint-maven-plugin 
+         (former uses out-of-date jslint version from 2010, and latter allows more customization
+         options)
+
+       * Updated google-code-prettify's JS to latest 2013 version.
+
 2013-06-11  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-10

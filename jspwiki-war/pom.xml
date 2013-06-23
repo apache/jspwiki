@@ -260,6 +260,50 @@
             </goals>
           </execution>
         </executions> 
+        <configuration>
+          <excludeResources>true</excludeResources>
+          <nosuffix>true</nosuffix>
+          <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
+          <!-- relying on jslint-maven-plugin instead, which allows
+               better customization -->
+          <jswarn>false</jswarn>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>checkJSPWikiFiles</id>
+            <goals>
+              <goal>jslint</goal>
+            </goals>
+            <configuration>
+              <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
+              <failOnIssues>false</failOnIssues>
+              <excludes>
+                <exclude>prettify.js</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <!-- Some third party JSs have many multiple number of VARs per function
+               block, are outside of our control so suppressing such messages -->
+          <execution>
+            <id>checkThirdParty</id>
+            <goals>
+              <goal>jslint</goal>
+            </goals>
+            <configuration>
+              <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
+              <failOnIssues>false</failOnIssues>
+              <includes>
+                 <include>prettify.js</include>
+              </includes>
+              <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
+            </configuration>
+          </execution>
+        </executions> 
       </plugin>
       
       <plugin>

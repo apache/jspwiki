@@ -455,13 +455,14 @@
           <groupId>net.alchim31.maven</groupId>
           <artifactId>yuicompressor-maven-plugin</artifactId>
           <version>1.3.2</version>
-          <configuration>
-            <excludeResources>true</excludeResources>
-            <nosuffix>true</nosuffix>
-            <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
-          </configuration>
         </plugin>
         
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jslint-maven-plugin</artifactId>
+          <version>1.0.1</version>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>

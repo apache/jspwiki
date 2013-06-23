@@ -17,1465 +17,1640 @@
  * @fileoverview
  * some functions for browser-side pretty printing of code contained in html.
  *
- * The lexer should work on a number of languages including C and friends,
- * Java, Python, Bash, SQL, HTML, XML, CSS, Javascript, and Makefiles.
- * It works passably on Ruby, PHP and Awk and a decent subset of Perl, but,
- * because of commenting conventions, doesn't work on Smalltalk, Lisp-like, or
- * CAML-like languages.
- *
- * If there's a language not mentioned here, then I don't know it, and don't
- * know whether it works.  If it has a C-like, Bash-like, or XML-like syntax
- * then it should work passably.
- *
- * Usage:
- * 1) include this source file in an html page via
- * <script type="text/javascript" src="/path/to/prettify.js"></script>
- * 2) define style rules.  See the example page for examples.
- * 3) mark the <pre> and <code> tags in your source with class=prettyprint.
- *    You can also use the (html deprecated) <xmp> tag, but the pretty printer
- *    needs to do more substantial DOM manipulations to support that, so some
- *    css styles may not be preserved.
+ * <p>
+ * For a fairly comprehensive set of languages see the
+ * <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html#langs">README</a>
+ * file that came with this source.  At a minimum, the lexer should work on a
+ * number of languages including C and friends, Java, Python, Bash, SQL, HTML,
+ * XML, CSS, Javascript, and Makefiles.  It works passably on Ruby, PHP and Awk
+ * and a subset of Perl, but, because of commenting conventions, doesn't work on
+ * Smalltalk, Lisp-like, or CAML-like languages without an explicit lang class.
+ * <p>
+ * Usage: <ol>
+ * <li> include this source file in an html page via
+ *   {@code <script type="text/javascript" src="/path/to/prettify.js"></script>}
+ * <li> define style rules.  See the example page for examples.
+ * <li> mark the {@code <pre>} and {@code <code>} tags in your source with
+ *    {@code class=prettyprint.}
+ *    You can also use the (html deprecated) {@code <xmp>} tag, but the pretty
+ *    printer needs to do more substantial DOM manipulations to support that, so
+ *    some css styles may not be preserved.
+ * </ol>
  * That's it.  I wanted to keep the API as simple as possible, so there's no
- * need to specify which language the code is in.
- *
- * Change log:
+ * need to specify which language the code is in, but if you wish, you can add
+ * another class to the {@code <pre>} or {@code <code>} element to specify the
+ * language, as in {@code <pre class="prettyprint lang-java">}.  Any class that
+ * starts with "lang-" followed by a file extension, specifies the file type.
+ * See the "lang-*.js" files in this directory for code that implements
+ * per-language file handlers.
+ * <p>
+ * Change log:<br>
  * cbeust, 2006/08/22
+ * <blockquote>
  *   Java annotations (start with "@") are now captured as literals ("lit")
+ * </blockquote>
+ * @requires console
  */
 
-var PR_keywords = {};
-/** initialize the keyword list for our target languages. */
+// JSLint declarations
+
+/*global console, document, navigator, setTimeout, window, define */
+
+/** @define {boolean} */
+var IN_GLOBAL_SCOPE = true;
+
+/**
+ * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
+ * UI events.
+ * If set to {@code false}, {@code prettyPrint()} is synchronous.
+ */
+window['PR_SHOULD_USE_CONTINUATION'] = true;
+
+/**
+ * Pretty print a chunk of code.
+ * @param {string} sourceCodeHtml The HTML to pretty print.
+ * @param {string} opt_langExtension The language name to use.
+ *     Typically, a filename extension like 'cpp' or 'java'.
+ * @param {number|boolean} opt_numberLines True to number lines,
+ *     or the 1-indexed number of the first line in sourceCodeHtml.
+ * @return {string} code as html, but prettier
+ */
+var prettyPrintOne;
+/**
+ * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+ * {@code class=prettyprint} and prettify them.
+ *
+ * @param {Function} opt_whenDone called when prettifying is done.
+ * @param {HTMLElement|HTMLDocument} opt_root an element or document
+ *   containing all the elements to pretty print.
+ *   Defaults to {@code document.body}.
+ */
+var prettyPrint;
+
+
 (function () {
-  var CPP_KEYWORDS = "abstract bool break case catch char class const " +
-    "const_cast continue default delete deprecated dllexport dllimport do " +
-    "double dynamic_cast else enum explicit extern false float for friend " +
-    "goto if inline int long mutable naked namespace new noinline noreturn " +
-    "nothrow novtable operator private property protected public register " +
-    "reinterpret_cast return selectany short signed sizeof static " +
-    "static_cast struct switch template this thread throw true try typedef " +
-    "typeid typename union unsigned using declaration, directive uuid " +
-    "virtual void volatile while typeof";
-  var CSHARP_KEYWORDS = "as base by byte checked decimal delegate descending " +
-    "event finally fixed foreach from group implicit in interface internal " +
-    "into is lock null object out override orderby params readonly ref sbyte " +
-    "sealed stackalloc string select uint ulong unchecked unsafe ushort var";
-  var JAVA_KEYWORDS = "package synchronized boolean implements import throws " +
-    "instanceof transient extends final strictfp native super";
-  var JSCRIPT_KEYWORDS = "debugger export function with NaN Infinity";
-  var PERL_KEYWORDS = "require sub unless until use elsif BEGIN END";
-  var PYTHON_KEYWORDS = "and assert def del elif except exec global lambda " +
-    "not or pass print raise yield False True None";
-  var RUBY_KEYWORDS = "then end begin rescue ensure module when undef next " +
-    "redo retry alias defined";
-  var SH_KEYWORDS = "done fi";
+  var win = window;
+  // Keyword lists for various languages.
+  // We use things that coerce to strings to make them compact when minified
+  // and to defeat aggressive optimizers that fold large string constants.
+  var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
+  var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," + 
+      "double,enum,extern,float,goto,inline,int,long,register,short,signed," +
+      "sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];
+  var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
+      "new,operator,private,protected,public,this,throw,true,try,typeof"];
+  var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignof,align_union,asm,axiom,bool," +
+      "concept,concept_map,const_cast,constexpr,decltype,delegate," +
+      "dynamic_cast,explicit,export,friend,generic,late_check," +
+      "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
+      "static_cast,template,typeid,typename,using,virtual,where"];
+  var JAVA_KEYWORDS = [COMMON_KEYWORDS,
+      "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
+      "instanceof,interface,null,native,package,strictfp,super,synchronized," +
+      "throws,transient"];
+  var CSHARP_KEYWORDS = [JAVA_KEYWORDS,
+      "as,base,by,checked,decimal,delegate,descending,dynamic,event," +
+      "fixed,foreach,from,group,implicit,in,internal,into,is,let," +
+      "lock,object,out,override,orderby,params,partial,readonly,ref,sbyte," +
+      "sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort," +
+      "var,virtual,where"];
+  var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
+      "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
+      "throw,true,try,unless,until,when,while,yes";
+  var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
+      "debugger,eval,export,function,get,null,set,undefined,var,with," +
+      "Infinity,NaN"];
+  var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
+      "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
+      "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
+  var PYTHON_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "and,as,assert,class,def,del," +
+      "elif,except,exec,finally,from,global,import,in,is,lambda," +
+      "nonlocal,not,or,pass,print,raise,try,with,yield," +
+      "False,True,None"];
+  var RUBY_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "alias,and,begin,case,class," +
+      "def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo," +
+      "rescue,retry,self,super,then,true,undef,unless,until,when,yield," +
+      "BEGIN,END"];
+   var RUST_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "as,assert,const,copy,drop," +
+      "enum,extern,fail,false,fn,impl,let,log,loop,match,mod,move,mut,priv," +
+      "pub,pure,ref,self,static,struct,true,trait,type,unsafe,use"];
+  var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
+      "function,in,local,set,then,until"];
+  var ALL_KEYWORDS = [
+      CPP_KEYWORDS, CSHARP_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS,
+      PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
+  var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
 
-  var KEYWORDS = [CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS,
-                  JSCRIPT_KEYWORDS, PERL_KEYWORDS, PYTHON_KEYWORDS,
-                  RUBY_KEYWORDS, SH_KEYWORDS];
-  for (var k = 0; k < KEYWORDS.length; k++) {
-    var kw = KEYWORDS[k].split(' ');
-    for (var i = 0; i < kw.length; i++) {
-      if (kw[i]) { PR_keywords[kw[i]] = true; }
+  // token style names.  correspond to css classes
+  /**
+   * token style for a string literal
+   * @const
+   */
+  var PR_STRING = 'str';
+  /**
+   * token style for a keyword
+   * @const
+   */
+  var PR_KEYWORD = 'kwd';
+  /**
+   * token style for a comment
+   * @const
+   */
+  var PR_COMMENT = 'com';
+  /**
+   * token style for a type
+   * @const
+   */
+  var PR_TYPE = 'typ';
+  /**
+   * token style for a literal value.  e.g. 1, null, true.
+   * @const
+   */
+  var PR_LITERAL = 'lit';
+  /**
+   * token style for a punctuation string.
+   * @const
+   */
+  var PR_PUNCTUATION = 'pun';
+  /**
+   * token style for plain text.
+   * @const
+   */
+  var PR_PLAIN = 'pln';
+
+  /**
+   * token style for an sgml tag.
+   * @const
+   */
+  var PR_TAG = 'tag';
+  /**
+   * token style for a markup declaration such as a DOCTYPE.
+   * @const
+   */
+  var PR_DECLARATION = 'dec';
+  /**
+   * token style for embedded source.
+   * @const
+   */
+  var PR_SOURCE = 'src';
+  /**
+   * token style for an sgml attribute name.
+   * @const
+   */
+  var PR_ATTRIB_NAME = 'atn';
+  /**
+   * token style for an sgml attribute value.
+   * @const
+   */
+  var PR_ATTRIB_VALUE = 'atv';
+
+  /**
+   * A class that indicates a section of markup that is not code, e.g. to allow
+   * embedding of line numbers within code listings.
+   * @const
+   */
+  var PR_NOCODE = 'nocode';
+
+  
+  
+  /**
+   * A set of tokens that can precede a regular expression literal in
+   * javascript
+   * http://web.archive.org/web/20070717142515/http://www.mozilla.org/js/language/js20/rationale/syntax.html
+   * has the full list, but I've removed ones that might be problematic when
+   * seen in languages that don't support regular expression literals.
+   *
+   * <p>Specifically, I've removed any keywords that can't precede a regexp
+   * literal in a syntactically legal javascript program, and I've removed the
+   * "in" keyword since it's not a keyword in many languages, and might be used
+   * as a count of inches.
+   *
+   * <p>The link above does not accurately describe EcmaScript rules since
+   * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
+   * very well in practice.
+   *
+   * @private
+   * @const
+   */
+  var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
+  
+  // CAVEAT: this does not properly handle the case where a regular
+  // expression immediately follows another since a regular expression may
+  // have flags for case-sensitivity and the like.  Having regexp tokens
+  // adjacent is not valid in any language I'm aware of, so I'm punting.
+  // TODO: maybe style special characters inside a regexp as punctuation.
+
+  /**
+   * Given a group of {@link RegExp}s, returns a {@code RegExp} that globally
+   * matches the union of the sets of strings matched by the input RegExp.
+   * Since it matches globally, if the input strings have a start-of-input
+   * anchor (/^.../), it is ignored for the purposes of unioning.
+   * @param {Array.<RegExp>} regexs non multiline, non-global regexs.
+   * @return {RegExp} a global regex.
+   */
+  function combinePrefixPatterns(regexs) {
+    var capturedGroupIndex = 0;
+  
+    var needToFoldCase = false;
+    var ignoreCase = false;
+    for (var i = 0, n = regexs.length; i < n; ++i) {
+      var regex = regexs[i];
+      if (regex.ignoreCase) {
+        ignoreCase = true;
+      } else if (/[a-z]/i.test(regex.source.replace(
+                     /\\u[0-9a-f]{4}|\\x[0-9a-f]{2}|\\[^ux]/gi, ''))) {
+        needToFoldCase = true;
+        ignoreCase = false;
+        break;
+      }
     }
-  }
-}).call(this);
-
-// token style names.  correspond to css classes
-/** token style for a string literal */
-var PR_STRING = 'str';
-/** token style for a keyword */
-var PR_KEYWORD = 'kwd';
-/** token style for a comment */
-var PR_COMMENT = 'com';
-/** token style for a type */
-var PR_TYPE = 'typ';
-/** token style for a literal value.  e.g. 1, null, true. */
-var PR_LITERAL = 'lit';
-/** token style for a punctuation string. */
-var PR_PUNCTUATION = 'pun';
-/** token style for a punctuation string. */
-var PR_PLAIN = 'pln';
-
-/** token style for an sgml tag. */
-var PR_TAG = 'tag';
-/** token style for a markup declaration such as a DOCTYPE. */
-var PR_DECLARATION = 'dec';
-/** token style for embedded source. */
-var PR_SOURCE = 'src';
-/** token style for an sgml attribute name. */
-var PR_ATTRIB_NAME = 'atn';
-/** token style for an sgml attribute value. */
-var PR_ATTRIB_VALUE = 'atv';
-
-/** the number of characters between tab columns */
-var PR_TAB_WIDTH = 8;
-
-/** the position of the end of a token during.  A division of a string into
-  * n tokens can be represented as a series n - 1 token ends, as long as
-  * runs of whitespace warrant their own token.
-  * @private
-  */
-function PR_TokenEnd(end, style) {
-  if (undefined === style) { throw new Error('BAD'); }
-  if ('number' != typeof(end)) { throw new Error('BAD'); }
-  this.end = end;
-  this.style = style;
-}
-PR_TokenEnd.prototype.toString = function () {
-  return '[PR_TokenEnd ' + this.end +
-    (this.style ? ':' + this.style : '') + ']';
-};
-
-
-/** a chunk of text with a style.  These are used to represent both the output
-  * from the lexing functions as well as intermediate results.
-  * @constructor
-  * @param token the token text
-  * @param style one of the token styles defined in designdoc-template, or null
-  *   for a styleless token, such as an embedded html tag.
-  * @private
-  */
-function PR_Token(token, style) {
-  if (undefined === style) { throw new Error('BAD'); }
-  this.token = token;
-  this.style = style;
-}
-
-PR_Token.prototype.toString = function () {
-  return '[PR_Token ' + this.token + (this.style ? ':' + this.style : '') + ']';
-};
-
-
-/** a helper class that decodes common html entities used to escape special
-  * characters in source code.
-  * @constructor
-  * @private
-  */
-function PR_DecodeHelper() {
-  this.next = 0;
-  this.ch = '\0';
-}
-
-var PR_NAMED_ENTITIES = {
-  'lt':   '<',
-  'gt':   '>',
-  'quot': '"',
-  'apos': "'",
-  'amp':  '&'   // reencoding requires that & always be decoded properly
-};
-
-PR_DecodeHelper.prototype.decode = function (s, i) {
-  var next = i + 1;
-  var ch = s.charAt(i);
-  if ('&' === ch) {
-    var semi = s.indexOf(';', next);
-    if (semi >= 0 && semi < next + 4) {
-      var entityName = s.substring(next, semi);
-      var decoded = null;
-      if (entityName.charAt(0) === '#') {  // check for numeric entity
-        var ch1 = entityName.charAt(1);
-        var charCode;
-        if (ch1 === 'x' || ch1 === 'X') {  // like &#xA0;
-          charCode = parseInt(entityName.substring(2), 16);
-        } else {  // like &#160;
-          charCode = parseInt(entityName.substring(1), 10);
-        }
-        if (!isNaN(charCode)) {
-          decoded = String.fromCharCode(charCode);
-        }
+  
+    var escapeCharToCodeUnit = {
+      'b': 8,
+      't': 9,
+      'n': 0xa,
+      'v': 0xb,
+      'f': 0xc,
+      'r': 0xd
+    };
+  
+    function decodeEscape(charsetPart) {
+      var cc0 = charsetPart.charCodeAt(0);
+      if (cc0 !== 92 /* \\ */) {
+        return cc0;
       }
-      if (!decoded) {
-        decoded = PR_NAMED_ENTITIES[entityName.toLowerCase()];
-      }
-      if (decoded) {
-        ch = decoded;
-        next = semi + 1;
-      } else {  // skip over unrecognized entity
-        next = i + 1;
-        ch = '\0';
+      var c1 = charsetPart.charAt(1);
+      cc0 = escapeCharToCodeUnit[c1];
+      if (cc0) {
+        return cc0;
+      } else if ('0' <= c1 && c1 <= '7') {
+        return parseInt(charsetPart.substring(1), 8);
+      } else if (c1 === 'u' || c1 === 'x') {
+        return parseInt(charsetPart.substring(2), 16);
+      } else {
+        return charsetPart.charCodeAt(1);
       }
     }
-  }
-  this.next = next;
-  this.ch = ch;
-  return this.ch;
-};
-
-
-// some string utilities
-function PR_isWordChar(ch) {
-  return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-}
-
-function PR_isIdentifierStart(ch) {
-  return PR_isWordChar(ch) || ch == '_' || ch == '$' || ch == '@';
-}
-
-function PR_isIdentifierPart(ch) {
-  return PR_isIdentifierStart(ch) || PR_isDigitChar(ch);
-}
-
-function PR_isSpaceChar(ch) {
-  return "\t \r\n".indexOf(ch) >= 0;
-}
-
-function PR_isDigitChar(ch) {
-  return ch >= '0' && ch <= '9';
-}
-
-function PR_trim(s) {
-  var i = 0, j = s.length - 1;
-  while (i <= j && PR_isSpaceChar(s.charAt(i))) { ++i; }
-  while (j > i && PR_isSpaceChar(s.charAt(j))) { --j; }
-  return s.substring(i, j + 1);
-}
-
-function PR_startsWith(s, prefix) {
-  return s.length >= prefix.length && prefix == s.substring(0, prefix.length);
-}
-
-function PR_endsWith(s, suffix) {
-  return s.length >= suffix.length &&
-         suffix == s.substring(s.length - suffix.length, s.length);
-}
-
-/** true iff prefix matches the first prefix characters in chars[0:len].
-  * @private
-  */
-function PR_prefixMatch(chars, len, prefix) {
-  if (len < prefix.length) { return false; }
-  for (var i = 0, n = prefix.length; i < n; ++i) {
-    if (prefix.charAt(i) != chars[i]) { return false; }
-  }
-  return true;
-}
-
-/** like textToHtml but escapes double quotes to be attribute safe. */
-function PR_attribToHtml(str) {
-  return str.replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\"/g, '&quot;')
-    .replace(/\xa0/, '&nbsp;');
-}
-
-/** escapest html special characters to html. */
-function PR_textToHtml(str) {
-  return str.replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\xa0/g, '&nbsp;');
-}
-
-/** is the given node's innerHTML normally unescaped? */
-function PR_isRawContent(node) {
-  return 'XMP' == node.tagName;
-}
-
-var PR_innerHtmlWorks = null;
-function PR_getInnerHtml(node) {
-  // inner html is hopelessly broken in Safari 2.0.4 when the content is
-  // an html description of well formed XML and the containing tag is a PRE
-   // tag, so we detect that case and emulate innerHTML.
-  if (null == PR_innerHtmlWorks) {
-    var testNode = document.createElement('PRE');
-    testNode.appendChild(
-        document.createTextNode('<!DOCTYPE foo PUBLIC "foo bar">\n<foo />'));
-    PR_innerHtmlWorks = !/</.test(testNode.innerHTML);
-  }
-
-  if (PR_innerHtmlWorks) {
-    var content = node.innerHTML;
-    // XMP tags contain unescaped entities so require special handling.
-    if (PR_isRawContent(node)) {
-       content = PR_textToHtml(content);
+  
+    function encodeEscape(charCode) {
+      if (charCode < 0x20) {
+        return (charCode < 0x10 ? '\\x0' : '\\x') + charCode.toString(16);
+      }
+      var ch = String.fromCharCode(charCode);
+      return (ch === '\\' || ch === '-' || ch === ']' || ch === '^')
+          ? "\\" + ch : ch;
     }
-    return content;
-  }
-
-  var out = [];
-  for (var child = node.firstChild; child; child = child.nextSibling) {
-    PR_normalizedHtml(child, out);
-  }
-  return out.join('');
-}
-
-/**
- * walks the DOM returning a properly escaped version of innerHTML.
- */
-function PR_normalizedHtml(node, out) {
-  switch (node.nodeType) {
-    case 1:  // an element
-      var name = node.tagName.toLowerCase();
-      out.push('\074', name);
-      for (var i = 0; i < node.attributes.length; ++i) {
-        var attr = node.attributes[i];
-        if (!attr.specified) { continue; }
-        out.push(' ');
-        PR_normalizedHtml(attr, out);
-      }
-      out.push('>');
-      for (var child = node.firstChild; child; child = child.nextSibling) {
-        PR_normalizedHtml(child, out);
-      }
-      if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
-        out.push('<\/', name, '>');
-      }
-      break;
-    case 2: // an attribute
-      out.push(node.name.toLowerCase(), '="', PR_attribToHtml(node.value), '"');
-      break;
-    case 3: case 4: // text
-      out.push(PR_textToHtml(node.nodeValue));
-      break;
-  }
-}
-
-/** expand tabs to spaces
-  * @param {Array} chunks PR_Tokens possibly containing tabs
-  * @param {Number} tabWidth number of spaces between tab columns
-  * @return {Array} chunks with tabs replaced with spaces
-  */
-function PR_expandTabs(chunks, tabWidth) {
-  var SPACES = '                ';
-
-  var charInLine = 0;
-  var decodeHelper = new PR_DecodeHelper();
-
-  var chunksOut = []
-  for (var chunkIndex = 0; chunkIndex < chunks.length; ++chunkIndex) {
-    var chunk = chunks[chunkIndex];
-    if (chunk.style == null) {
-      chunksOut.push(chunk);
-      continue;
-    }
-
-    var s = chunk.token;
-    var pos = 0;  // index of last character output
-    var out = [];
-
-    // walk over each character looking for tabs and newlines.
-    // On tabs, expand them.  On newlines, reset charInLine.
-    // Otherwise increment charInLine
-    for (var charIndex = 0, n = s.length; charIndex < n;
-         charIndex = decodeHelper.next) {
-      decodeHelper.decode(s, charIndex);
-      var ch = decodeHelper.ch;
-
-      switch (ch) {
-        case '\t':
-          out.push(s.substring(pos, charIndex));
-          // calculate how much space we need in front of this part
-          // nSpaces is the amount of padding -- the number of spaces needed to
-          // move us to the next column, where columns occur at factors of
-          // tabWidth.
-          var nSpaces = tabWidth - (charInLine % tabWidth);
-          charInLine += nSpaces;
-          for (; nSpaces >= 0; nSpaces -= SPACES.length) {
-            out.push(SPACES.substring(0, nSpaces));
+  
+    function caseFoldCharset(charSet) {
+      var charsetParts = charSet.substring(1, charSet.length - 1).match(
+          new RegExp(
+              '\\\\u[0-9A-Fa-f]{4}'
+              + '|\\\\x[0-9A-Fa-f]{2}'
+              + '|\\\\[0-3][0-7]{0,2}'
+              + '|\\\\[0-7]{1,2}'
+              + '|\\\\[\\s\\S]'
+              + '|-'
+              + '|[^-\\\\]',
+              'g'));
+      var ranges = [];
+      var inverse = charsetParts[0] === '^';
+  
+      var out = ['['];
+      if (inverse) { out.push('^'); }
+  
+      for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
+        var p = charsetParts[i];
+        if (/\\[bdsw]/i.test(p)) {  // Don't muck with named groups.
+          out.push(p);
+        } else {
+          var start = decodeEscape(p);
+          var end;
+          if (i + 2 < n && '-' === charsetParts[i + 1]) {
+            end = decodeEscape(charsetParts[i + 2]);
+            i += 2;
+          } else {
+            end = start;
           }
-          pos = decodeHelper.next;
-          break;
-        case '\n': case '\r':
-          charInLine = 0;
-          break;
-        default:
-          ++charInLine;
-      }
-    }
-    out.push(s.substring(pos));
-    chunksOut.push(new PR_Token(out.join(''), chunk.style));
-  }
-  return chunksOut
-}
-
-/** split markup into chunks of html tags (style null) and
-  * plain text (style {@link #PR_PLAIN}).
-  *
-  * @param {String} s html.
-  * @return {Array} of PR_Tokens of style PR_PLAIN, and null.
-  * @private
-  */
-function PR_chunkify(s) {
-  // The below pattern matches one of the following
-  // (1) /[^<]+/ : A run of characters other than '<'
-  // (2) /<\/?[a-zA-Z][^>]*>/ : A probably tag that should not be highlighted
-  // (3) /</ : A '<' that does not begin a larger chunk.  Treated as 1
-  var chunkPattern = /(?:[^<]+|<\/?[a-zA-Z][^>]*>|<)/g;
-  // since the pattern has the 'g' modifier and defines no capturing groups,
-  // this will return a list of all chunks which we then classify and wrap as
-  // PR_Tokens
-  var matches = s.match(chunkPattern);
-  var chunks = [];
-  if (matches) {
-    var lastChunk = null;
-    for (var i = 0, n = matches.length; i < n; ++i) {
-      var chunkText = matches[i];
-      var style;
-      if (chunkText.length < 2 || chunkText.charAt(0) !== '<') {
-        if (lastChunk && lastChunk.style === PR_PLAIN) {
-          lastChunk.token += chunkText;
-          continue;
-        }
-        style = PR_PLAIN;
-      } else {  // a tag
-        style = null;
-      }
-      lastChunk = new PR_Token(chunkText, style);
-      chunks.push(lastChunk);
-    }
-  }
-  return chunks;
-}
-
-/** walk the tokenEnds list and the chunk list in parallel to generate a list
-  * of split tokens.
-  * @private
-  */
-function PR_splitChunks(chunks, tokenEnds) {
-  var tokens = [];  // the output
-
-  var ci = 0;  // index into chunks
-  // position of beginning of amount written so far in absolute space.
-  var posAbs = 0;
-  // position of amount written so far in chunk space
-  var posChunk = 0;
-
-  // current chunk
-  var chunk = new PR_Token('', null);
-
-  for (var ei = 0, ne = tokenEnds.length, lastEnd = 0; ei < ne; ++ei) {
-    var tokenEnd = tokenEnds[ei];
-    var end = tokenEnd.end;
-    if (end === lastEnd) { continue; }  // skip empty regions
-
-    var tokLen = end - posAbs;
-    var remainingInChunk = chunk.token.length - posChunk;
-    while (remainingInChunk <= tokLen) {
-      if (remainingInChunk > 0) {
-        tokens.push(
-            new PR_Token(chunk.token.substring(posChunk, chunk.token.length),
-                         null == chunk.style ? null : tokenEnd.style));
-      }
-      posAbs += remainingInChunk;
-      posChunk = 0;
-      if (ci < chunks.length) {
-        chunk = chunks[ci++];
-      }
-
-      tokLen = end - posAbs;
-      remainingInChunk = chunk.token.length - posChunk;
-    }
-
-    if (tokLen) {
-      tokens.push(
-          new PR_Token(chunk.token.substring(posChunk, posChunk + tokLen),
-                       tokenEnd.style));
-      posAbs += tokLen;
-      posChunk += tokLen;
-    }
-  }
-
-  return tokens;
-}
-
-/** splits markup tokens into declarations, tags, and source chunks.
-  * @private
-  */
-function PR_splitMarkup(chunks) {
-  // A state machine to split out declarations, tags, etc.
-  // This state machine deals with absolute space in the text, indexed by k,
-  // and position in the current chunk, indexed by pos and tokenStart to
-  // generate a list of the ends of tokens.
-  // Absolute space is calculated by considering the chunks as appended into
-  // one big string, as they were before being split.
-
-  // Known failure cases
-  // Server side scripting sections such as <?...?> in attributes.
-  // i.e. <span class="<? foo ?>">
-  // Handling this would require a stack, and we don't use PHP.
-
-  // The output: a list of pairs of PR_TokenEnd instances
-  var tokenEnds = [];
-
-  var state = 0;  // FSM state variable
-  var k = 0;  // position in absolute space of the start of the current chunk
-  var tokenStart = -1;  // the start of the current token
-
-  // Try to find a closing tag for any open <style> or <script> tags
-  // We can't do this at a later stage because then the following case
-  // would fail:
-  // <script>document.writeln('<!--');</script>
-
-  // We use tokenChars[:tokenCharsI] to accumulate the tag name so that we
-  // can check whether to enter into a no scripting section when the tag ends.
-  var tokenChars = new Array(12);
-  var tokenCharsI = 0;
-  // if non null, the tag prefix that we need to see to break out.
-  var endScriptTag = null;
-  var decodeHelper = new PR_DecodeHelper();
-
-  for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
-    var chunk = chunks[ci];
-    if (PR_PLAIN != chunk.style) {
-      k += chunk.token.length;
-      continue;
-    }
-
-    var s = chunk.token;
-    var pos = 0;  // the position past the last character processed so far in s
-
-    for (var i = 0, n = s.length; i < n; /* i = next at bottom */) {
-      decodeHelper.decode(s, i);
-      var ch = decodeHelper.ch;
-      var next = decodeHelper.next;
-
-      var tokenStyle = null;
-      switch (state) {
-        case 0:
-          if ('<' == ch) { state = 1; }
-          break;
-        case 1:
-          tokenCharsI = 0;
-          if ('/' == ch) {  // only consider close tags if we're in script/style
-            state = 7;
-          } else if (null == endScriptTag) {
-            if ('!' == ch) {
-              state = 2;
-            } else if (PR_isWordChar(ch)) {
-              state = 8;
-            } else if ('?' == ch) {
-              state = 9;
-            } else if ('%' == ch) {
-              state = 11;
-            } else if ('<' != ch) {
-              state = 0;
+          ranges.push([start, end]);
+          // If the range might intersect letters, then expand it.
+          // This case handling is too simplistic.
+          // It does not deal with non-latin case folding.
+          // It works for latin source code identifiers though.
+          if (!(end < 65 || start > 122)) {
+            if (!(end < 65 || start > 90)) {
+              ranges.push([Math.max(65, start) | 32, Math.min(end, 90) | 32]);
             }
-          } else if ('<' != ch) {
-            state = 0;
-          }
-          break;
-        case 2:
-          if ('-' == ch) {
-            state = 4;
-          } else if (PR_isWordChar(ch)) {
-            state = 3;
-          } else if ('<' == ch) {
-            state = 1;
-          } else {
-            state = 0;
-          }
-          break;
-        case 3:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_DECLARATION;
-          }
-          break;
-        case 4:
-          if ('-' == ch) { state = 5; }
-          break;
-        case 5:
-          if ('-' == ch) { state = 6; }
-          break;
-        case 6:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_COMMENT;
-          } else if ('-' == ch) {
-            state = 6;
-          } else {
-            state = 4;
-          }
-          break;
-        case 7:
-          if (PR_isWordChar(ch)) {
-            state = 8;
-          } else if ('<' == ch) {
-            state = 1;
-          } else {
-            state = 0;
-          }
-          break;
-        case 8:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_TAG;
-          }
-          break;
-        case 9:
-          if ('?' == ch) { state = 10; }
-          break;
-        case 10:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_SOURCE;
-          } else if ('?' != ch) {
-            state = 9;
-          }
-          break;
-        case 11:
-          if ('%' == ch) { state = 12; }
-          break;
-        case 12:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_SOURCE;
-          } else if ('%' != ch) {
-            state = 11;
-          }
-          break;
-      }
-
-      if (tokenCharsI < tokenChars.length) {
-        tokenChars[tokenCharsI++] = ch.toLowerCase();
-      }
-      if (1 == state) { tokenStart = k + i; }
-      i = next;
-      if (tokenStyle != null) {
-        if (null != tokenStyle) {
-          if (endScriptTag) {
-            if (PR_prefixMatch(tokenChars, tokenCharsI, endScriptTag)) {
-              endScriptTag = null;
-            }
-          } else {
-            if (PR_prefixMatch(tokenChars, tokenCharsI, 'script')) {
-              endScriptTag = '/script';
-            } else if (PR_prefixMatch(tokenChars, tokenCharsI, 'style')) {
-              endScriptTag = '/style';
-            } else if (PR_prefixMatch(tokenChars, tokenCharsI, 'xmp')) {
-              endScriptTag = '/xmp';
+            if (!(end < 97 || start > 122)) {
+              ranges.push([Math.max(97, start) & ~32, Math.min(end, 122) & ~32]);
             }
           }
-          // disallow the tag if endScriptTag is set and this was not an open
-          // tag.
-          if (endScriptTag && tokenCharsI && '/' == tokenChars[0]) {
-            tokenStyle = null;
-          }
-        }
-        if (null != tokenStyle) {
-          tokenEnds.push(new PR_TokenEnd(tokenStart, PR_PLAIN));
-          tokenEnds.push(new PR_TokenEnd(k + next, tokenStyle));
         }
       }
-    }
-    k += chunk.token.length;
-  }
-  tokenEnds.push(new PR_TokenEnd(k, PR_PLAIN));
-
-  return tokenEnds;
-}
-
-/** splits the given string into comment, string, and "other" tokens.
-  * @return {Array} of PR_Tokens with style in
-  *   (PR_STRING, PR_COMMENT, PR_PLAIN, null)
-  *   The result array may contain spurious zero length tokens.  Ignore them.
-  *
-  * @private
-  */
-function PR_splitStringAndCommentTokens(chunks) {
-  // a state machine to split out comments, strings, and other stuff
-  var tokenEnds = [];  // positions of ends of tokens in absolute space
-  var state = 0;  // FSM state variable
-  var delim = -1;  // string delimiter
-  var k = 0;  // absolute position of beginning of current chunk
-
-  for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
-    var chunk = chunks[ci];
-    var s = chunk.token;
-    if (PR_PLAIN == chunk.style) {
-      var decodeHelper = new PR_DecodeHelper();
-      var last = -1;
-      var next;
-      for (var i = 0, n = s.length; i < n; last = i, i = next) {
-        decodeHelper.decode(s, i);
-        var ch = decodeHelper.ch;
-        next = decodeHelper.next;
-        if (0 == state) {
-          if (ch == '"' || ch == '\'' || ch == '`') {
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
-            state = 1;
-            delim = ch;
-          } else if (ch == '/') {
-            state = 3;
-          } else if (ch == '#') {
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
-            state = 4;
-          }
-        } else if (1 == state) {
-          if (ch == delim) {
-            state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + next, PR_STRING));
-          } else if (ch == '\\') {
-            state = 2;
-          }
-        } else if (2 == state) {
-          state = 1;
-        } else if (3 == state) {
-          if (ch == '/') {
-            state = 4;
-            tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
-          } else if (ch == '*') {
-            state = 5;
-            tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
-          } else {
-            state = 0;
-            // next loop will reenter state 0 without same value of i, so
-            // ch will be reconsidered as start of new token.
-            next = i;
-          }
-        } else if (4 == state) {
-          if (ch == '\r' || ch == '\n') {
-            state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_COMMENT));
-          }
-        } else if (5 == state) {
-          if (ch == '*') {
-            state = 6;
-          }
-        } else if (6 == state) {
-          if (ch == '/') {
-            state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + next, PR_COMMENT));
-          } else if (ch != '*') {
-            state = 5;
-          }
+  
+      // [[1, 10], [3, 4], [8, 12], [14, 14], [16, 16], [17, 17]]
+      // -> [[1, 12], [14, 14], [16, 17]]
+      ranges.sort(function (a, b) { return (a[0] - b[0]) || (b[1]  - a[1]); });
+      var consolidatedRanges = [];
+      var lastRange = [];
+      for (var i = 0; i < ranges.length; ++i) {
+        var range = ranges[i];
+        if (range[0] <= lastRange[1] + 1) {
+          lastRange[1] = Math.max(lastRange[1], range[1]);
+        } else {
+          consolidatedRanges.push(lastRange = range);
         }
       }
-    }
-    k += s.length;
-  }
-  var endTokenType;
-  switch (state) {
-    case 1: case 2:
-      endTokenType = PR_STRING;
-      break;
-    case 4: case 5: case 6:
-      endTokenType = PR_COMMENT;
-      break;
-    default:
-      endTokenType = PR_PLAIN;
-      break;
-  }
-  // handle unclosed token which can legally happen for line comments (state 4)
-  tokenEnds.push(new PR_TokenEnd(k, endTokenType));  // a token ends at the end
-
-  return PR_splitChunks(chunks, tokenEnds);
-}
-
-/** used by lexSource to split a non string, non comment token.
-  * @private
-  */
-function PR_splitNonStringNonCommentToken(s, outlist) {
-  var pos = 0;
-  var state = 0;
-
-  var decodeHelper = new PR_DecodeHelper();
-  var next;
-  for (var i = 0; i <= s.length; i = next) {
-    if (i == s.length) {
-      // nstate will not be equal to state, so it will append the token
-      nstate = -2;
-      next = i + 1;
-    } else {
-      decodeHelper.decode(s, i);
-      next = decodeHelper.next;
-      var ch = decodeHelper.ch;
-
-      // the next state.
-      // if set to -1 then it will cause a reentry to state 0 without consuming
-      // another character.
-      var nstate = state;
-
-      switch (state) {
-      case 0:  // whitespace state
-        if (PR_isIdentifierStart(ch)) {
-          nstate = 1;
-        } else if (PR_isDigitChar(ch)) {
-          nstate = 2;
-        } else if (!PR_isSpaceChar(ch)) {
-          nstate = 3;
+  
+      for (var i = 0; i < consolidatedRanges.length; ++i) {
+        var range = consolidatedRanges[i];
+        out.push(encodeEscape(range[0]));
+        if (range[1] > range[0]) {
+          if (range[1] + 1 > range[0]) { out.push('-'); }
+          out.push(encodeEscape(range[1]));
         }
-        if (nstate && pos < i) {
-          var t = s.substring(pos, i);
-          outlist.push(new PR_Token(t, PR_PLAIN));
-          pos = i;
-        }
-        break;
-      case 1:  // identifier state
-        if (!PR_isIdentifierPart(ch)) {
-          nstate = -1;
-        }
-        break;
-      case 2:  // number literal state
-        // handle numeric literals like
-        // 0x7f 300UL 100_000
-
-        // this does not treat floating point values as a single literal
-        //   0.1 and 3e-6
-        // are each split into multiple tokens
-        if (!(PR_isDigitChar(ch) || PR_isWordChar(ch) || ch == '_')) {
-          nstate = -1;
-        }
-        break;
-      case 3:  // punctuation state
-        if (PR_isIdentifierStart(ch) || PR_isDigitChar(ch) ||
-            PR_isSpaceChar(ch)) {
-          nstate = -1;
-        }
-        break;
       }
+      out.push(']');
+      return out.join('');
     }
-
-    if (nstate != state) {
-      if (nstate < 0) {
-        if (i > pos) {
-          var t = s.substring(pos, i);
-          var wordDecodeHelper = new PR_DecodeHelper();
-          wordDecodeHelper.decode(t, 0);
-          var ch0 = wordDecodeHelper.ch;
-          var isSingleCharacter = wordDecodeHelper.next == t.length;
-          var style;
-          if (PR_isIdentifierStart(ch0)) {
-            if (PR_keywords[t]) {
-              style = PR_KEYWORD;
-            } else if (ch0 === '@') {
-              style = PR_LITERAL;
+  
+    function allowAnywhereFoldCaseAndRenumberGroups(regex) {
+      // Split into character sets, escape sequences, punctuation strings
+      // like ('(', '(?:', ')', '^'), and runs of characters that do not
+      // include any of the above.
+      var parts = regex.source.match(
+          new RegExp(
+              '(?:'
+              + '\\[(?:[^\\x5C\\x5D]|\\\\[\\s\\S])*\\]'  // a character set
+              + '|\\\\u[A-Fa-f0-9]{4}'  // a unicode escape
+              + '|\\\\x[A-Fa-f0-9]{2}'  // a hex escape
+              + '|\\\\[0-9]+'  // a back-reference or octal escape
+              + '|\\\\[^ux0-9]'  // other escape sequence
+              + '|\\(\\?[:!=]'  // start of a non-capturing group
+              + '|[\\(\\)\\^]'  // start/end of a group, or line start
+              + '|[^\\x5B\\x5C\\(\\)\\^]+'  // run of other characters
+              + ')',
+              'g'));
+      var n = parts.length;
+  
+      // Maps captured group numbers to the number they will occupy in
+      // the output or to -1 if that has not been determined, or to
+      // undefined if they need not be capturing in the output.
+      var capturedGroups = [];
+  
+      // Walk over and identify back references to build the capturedGroups
+      // mapping.
+      for (var i = 0, groupIndex = 0; i < n; ++i) {
+        var p = parts[i];
+        if (p === '(') {
+          // groups are 1-indexed, so max group index is count of '('
+          ++groupIndex;
+        } else if ('\\' === p.charAt(0)) {
+          var decimalValue = +p.substring(1);
+          if (decimalValue) {
+            if (decimalValue <= groupIndex) {
+              capturedGroups[decimalValue] = -1;
             } else {
-              // Treat any word that starts with an uppercase character and
-              // contains at least one lowercase character as a type, or
-              // ends with _t.
-              // This works perfectly for Java, pretty well for C++, and
-              // passably for Python.  The _t catches C structs.
-              var isType = false;
-              if (ch0 >= 'A' && ch0 <= 'Z') {
-                for (var j = wordDecodeHelper.next;
-                     j < t.length; j = wordDecodeHelper.next) {
-                  wordDecodeHelper.decode(t, j);
-                  var ch1 = wordDecodeHelper.ch;
-                  if (ch1 >= 'a' && ch1 <= 'z') {
-                    isType = true;
-                    break;
-                  }
-                }
-                if (!isType && !isSingleCharacter &&
-                    t.substring(t.length - 2) == '_t') {
-                  isType = true;
-                }
-              }
-              style = isType ? PR_TYPE : PR_PLAIN;
+              // Replace with an unambiguous escape sequence so that
+              // an octal escape sequence does not turn into a backreference
+              // to a capturing group from an earlier regex.
+              parts[i] = encodeEscape(decimalValue);
             }
-          } else if (PR_isDigitChar(ch0)) {
-            style = PR_LITERAL;
-          } else if (!PR_isSpaceChar(ch0)) {
-            style = PR_PUNCTUATION;
+          }
+        }
+      }
+  
+      // Renumber groups and reduce capturing groups to non-capturing groups
+      // where possible.
+      for (var i = 1; i < capturedGroups.length; ++i) {
+        if (-1 === capturedGroups[i]) {
+          capturedGroups[i] = ++capturedGroupIndex;
+        }
+      }
+      for (var i = 0, groupIndex = 0; i < n; ++i) {
+        var p = parts[i];
+        if (p === '(') {
+          ++groupIndex;
+          if (!capturedGroups[groupIndex]) {
+            parts[i] = '(?:';
+          }
+        } else if ('\\' === p.charAt(0)) {
+          var decimalValue = +p.substring(1);
+          if (decimalValue && decimalValue <= groupIndex) {
+            parts[i] = '\\' + capturedGroups[decimalValue];
+          }
+        }
+      }
+  
+      // Remove any prefix anchors so that the output will match anywhere.
+      // ^^ really does mean an anchored match though.
+      for (var i = 0; i < n; ++i) {
+        if ('^' === parts[i] && '^' !== parts[i + 1]) { parts[i] = ''; }
+      }
+  
+      // Expand letters to groups to handle mixing of case-sensitive and
+      // case-insensitive patterns if necessary.
+      if (regex.ignoreCase && needToFoldCase) {
+        for (var i = 0; i < n; ++i) {
+          var p = parts[i];
+          var ch0 = p.charAt(0);
+          if (p.length >= 2 && ch0 === '[') {
+            parts[i] = caseFoldCharset(p);
+          } else if (ch0 !== '\\') {
+            // TODO: handle letters in numeric escapes.
+            parts[i] = p.replace(
+                /[a-zA-Z]/g,
+                function (ch) {
+                  var cc = ch.charCodeAt(0);
+                  return '[' + String.fromCharCode(cc & ~32, cc | 32) + ']';
+                });
+          }
+        }
+      }
+  
+      return parts.join('');
+    }
+  
+    var rewritten = [];
+    for (var i = 0, n = regexs.length; i < n; ++i) {
+      var regex = regexs[i];
+      if (regex.global || regex.multiline) { throw new Error('' + regex); }
+      rewritten.push(
+          '(?:' + allowAnywhereFoldCaseAndRenumberGroups(regex) + ')');
+    }
+  
+    return new RegExp(rewritten.join('|'), ignoreCase ? 'gi' : 'g');
+  }
+
+  /**
+   * Split markup into a string of source code and an array mapping ranges in
+   * that string to the text nodes in which they appear.
+   *
+   * <p>
+   * The HTML DOM structure:</p>
+   * <pre>
+   * (Element   "p"
+   *   (Element "b"
+   *     (Text  "print "))       ; #1
+   *   (Text    "'Hello '")      ; #2
+   *   (Element "br")            ; #3
+   *   (Text    "  + 'World';")) ; #4
+   * </pre>
+   * <p>
+   * corresponds to the HTML
+   * {@code <p><b>print </b>'Hello '<br>  + 'World';</p>}.</p>
+   *
+   * <p>
+   * It will produce the output:</p>
+   * <pre>
+   * {
+   *   sourceCode: "print 'Hello '\n  + 'World';",
+   *   //                     1          2
+   *   //           012345678901234 5678901234567
+   *   spans: [0, #1, 6, #2, 14, #3, 15, #4]
+   * }
+   * </pre>
+   * <p>
+   * where #1 is a reference to the {@code "print "} text node above, and so
+   * on for the other text nodes.
+   * </p>
+   *
+   * <p>
+   * The {@code} spans array is an array of pairs.  Even elements are the start
+   * indices of substrings, and odd elements are the text nodes (or BR elements)
+   * that contain the text for those substrings.
+   * Substrings continue until the next index or the end of the source.
+   * </p>
+   *
+   * @param {Node} node an HTML DOM subtree containing source-code.
+   * @param {boolean} isPreformatted true if white-space in text nodes should
+   *    be considered significant.
+   * @return {Object} source code and the text nodes in which they occur.
+   */
+  function extractSourceSpans(node, isPreformatted) {
+    var nocode = /(?:^|\s)nocode(?:\s|$)/;
+  
+    var chunks = [];
+    var length = 0;
+    var spans = [];
+    var k = 0;
+  
+    function walk(node) {
+      var type = node.nodeType;
+      if (type == 1) {  // Element
+        if (nocode.test(node.className)) { return; }
+        for (var child = node.firstChild; child; child = child.nextSibling) {
+          walk(child);
+        }
+        var nodeName = node.nodeName.toLowerCase();
+        if ('br' === nodeName || 'li' === nodeName) {
+          chunks[k] = '\n';
+          spans[k << 1] = length++;
+          spans[(k++ << 1) | 1] = node;
+        }
+      } else if (type == 3 || type == 4) {  // Text
+        var text = node.nodeValue;
+        if (text.length) {
+          if (!isPreformatted) {
+            text = text.replace(/[ \t\r\n]+/g, ' ');
           } else {
-            style = PR_PLAIN;
+            text = text.replace(/\r\n?/g, '\n');  // Normalize newlines.
           }
-          pos = i;
-          outlist.push(new PR_Token(t, style));
-        }
-
-        state = 0;
-        if (nstate == -1) {
-          // don't increment.  This allows us to use state 0 to redispatch based
-          // on the current character.
-          next = i;
-          continue;
+          // TODO: handle tabs here?
+          chunks[k] = text;
+          spans[k << 1] = length;
+          length += text.length;
+          spans[(k++ << 1) | 1] = node;
         }
       }
-      state = nstate;
     }
+  
+    walk(node);
+  
+    return {
+      sourceCode: chunks.join('').replace(/\n$/, ''),
+      spans: spans
+    };
   }
 
-}
-
-/** split a group of chunks of markup.
-  * @private
-  */
-function PR_tokenizeMarkup(chunks) {
-  if (!(chunks && chunks.length)) { return chunks; }
-
-  var tokenEnds = PR_splitMarkup(chunks);
-  return PR_splitChunks(chunks, tokenEnds);
-}
-
-/** split tags attributes and their values out from the tag name, and
-  * recursively lex source chunks.
-  * @private
-  */
-function PR_splitTagAttributes(tokens) {
-  var tokensOut = [];
-  var state = 0;
-  var stateStyle = PR_TAG;
-  var delim = null;  // attribute delimiter for quoted value state.
-  var decodeHelper = new PR_DecodeHelper();
-  for (var ci = 0; ci < tokens.length; ++ci) {
-    var tok = tokens[ci];
-    if (PR_TAG == tok.style) {
-      var s = tok.token;
-      var start = 0;
-      for (var i = 0; i < s.length; /* i = next at bottom */) {
-        decodeHelper.decode(s, i);
-        var ch = decodeHelper.ch;
-        var next = decodeHelper.next;
-
-        var emitEnd = null;  // null or position of end of chunk to emit.
-        var nextStyle = null;  // null or next value of stateStyle
-        if (ch == '>') {
-          if (PR_TAG != stateStyle) {
-            emitEnd = i;
-            nextStyle = PR_TAG;
-          }
-        } else {
-          switch (state) {
-            case 0:
-              if ('<' == ch) { state = 1; }
-              break;
-            case 1:
-              if (PR_isSpaceChar(ch)) { state = 2; }
-              break;
-            case 2:
-              if (!PR_isSpaceChar(ch)) {
-                nextStyle = PR_ATTRIB_NAME;
-                emitEnd = i;
-                state = 3;
-              }
-              break;
-            case 3:
-              if ('=' == ch) {
-                emitEnd = i;
-                nextStyle = PR_TAG;
-                state = 5;
-              } else if (PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_TAG;
-                state = 4;
-              }
-              break;
-            case 4:
-              if ('=' == ch) {
-                state = 5;
-              } else if (!PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_ATTRIB_NAME;
-                state = 3;
-              }
-              break;
-            case 5:
-              if ('"' == ch || '\'' == ch) {
-                emitEnd = i;
-                nextStyle = PR_ATTRIB_VALUE;
-                state = 6;
-                delim = ch;
-              } else if (!PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_ATTRIB_VALUE;
-                state = 7;
-              }
-              break;
-            case 6:
-              if (ch == delim) {
-                emitEnd = next;
-                nextStyle = PR_TAG;
-                state = 2;
-              }
-              break;
-            case 7:
-              if (PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_TAG;
-                state = 2;
-              }
-              break;
-          }
-        }
-        if (emitEnd) {
-          if (emitEnd > start) {
-            tokensOut.push(
-                new PR_Token(s.substring(start, emitEnd), stateStyle));
-            start = emitEnd;
-          }
-          stateStyle = nextStyle;
-        }
-        i = next;
-      }
-      if (s.length > start) {
-        tokensOut.push(new PR_Token(s.substring(start, s.length), stateStyle));
-      }
-    } else {
-      if (tok.style) {
-        state = 0;
-        stateStyle = PR_TAG;
-      }
-      tokensOut.push(tok);
-    }
+  /**
+   * Apply the given language handler to sourceCode and add the resulting
+   * decorations to out.
+   * @param {number} basePos the index of sourceCode within the chunk of source
+   *    whose decorations are already present on out.
+   */
+  function appendDecorations(basePos, sourceCode, langHandler, out) {
+    if (!sourceCode) { return; }
+    var job = {
+      sourceCode: sourceCode,
+      basePos: basePos
+    };
+    langHandler(job);
+    out.push.apply(out, job.decorations);
   }
-  return tokensOut;
-}
 
-/** identify regions of markup that are really source code, and recursivley
-  * lex them.
-  * @private
-  */
-function PR_splitSourceNodes(tokens) {
-  var tokensOut = [];
-  // when we see a <script> tag, store '/' here so that we know to end the
-  // source processing
-  var endScriptTag = null;
-  var decodeHelper = new PR_DecodeHelper();
+  var notWs = /\S/;
 
-  var sourceChunks = null;
-
-  for (var ci = 0, nc = tokens.length; /* break below */; ++ci) {
-    var tok;
-
-    if (ci < nc) {
-      tok = tokens[ci];
-      if (null == tok.style) {
-        tokens.push(tok);
-        continue;
-      }
-    } else if (!endScriptTag) {
-      break;
-    } else {
-      // else pretend there's an end tag so we can gracefully handle
-      // unclosed source blocks
-      tok = new PR_Token('', null);
+  /**
+   * Given an element, if it contains only one child element and any text nodes
+   * it contains contain only space characters, return the sole child element.
+   * Otherwise returns undefined.
+   * <p>
+   * This is meant to return the CODE element in {@code <pre><code ...>} when
+   * there is a single child element that contains all the non-space textual
+   * content, but not to return anything where there are multiple child elements
+   * as in {@code <pre><code>...</code><code>...</code></pre>} or when there
+   * is textual content.
+   */
+  function childContentWrapper(element) {
+    var wrapper = undefined;
+    for (var c = element.firstChild; c; c = c.nextSibling) {
+      var type = c.nodeType;
+      wrapper = (type === 1)  // Element Node
+          ? (wrapper ? element : c)
+          : (type === 3)  // Text Node
+          ? (notWs.test(c.nodeValue) ? element : wrapper)
+          : wrapper;
     }
+    return wrapper === element ? undefined : wrapper;
+  }
 
-    var s = tok.token;
-
-    if (null == endScriptTag) {
-      if (PR_SOURCE == tok.style) {
-        // split off any starting and trailing <?, <%
-        if ('<' == decodeHelper.decode(s, 0)) {
-          decodeHelper.decode(s, decodeHelper.next);
-          if ('%' == decodeHelper.ch || '?' == decodeHelper.ch) {
-            endScriptTag = decodeHelper.ch;
-            tokensOut.push(new PR_Token(s.substring(0, decodeHelper.next),
-                                        PR_TAG));
-            s = s.substring(decodeHelper.next, s.length);
+  /** Given triples of [style, pattern, context] returns a lexing function,
+    * The lexing function interprets the patterns to find token boundaries and
+    * returns a decoration list of the form
+    * [index_0, style_0, index_1, style_1, ..., index_n, style_n]
+    * where index_n is an index into the sourceCode, and style_n is a style
+    * constant like PR_PLAIN.  index_n-1 <= index_n, and style_n-1 applies to
+    * all characters in sourceCode[index_n-1:index_n].
+    *
+    * The stylePatterns is a list whose elements have the form
+    * [style : string, pattern : RegExp, DEPRECATED, shortcut : string].
+    *
+    * Style is a style constant like PR_PLAIN, or can be a string of the
+    * form 'lang-FOO', where FOO is a language extension describing the
+    * language of the portion of the token in $1 after pattern executes.
+    * E.g., if style is 'lang-lisp', and group 1 contains the text
+    * '(hello (world))', then that portion of the token will be passed to the
+    * registered lisp handler for formatting.
+    * The text before and after group 1 will be restyled using this decorator
+    * so decorators should take care that this doesn't result in infinite
+    * recursion.  For example, the HTML lexer rule for SCRIPT elements looks
+    * something like ['lang-js', /<[s]cript>(.+?)<\/script>/].  This may match
+    * '<script>foo()<\/script>', which would cause the current decorator to
+    * be called with '<script>' which would not match the same rule since
+    * group 1 must not be empty, so it would be instead styled as PR_TAG by
+    * the generic tag rule.  The handler registered for the 'js' extension would
+    * then be called with 'foo()', and finally, the current decorator would
+    * be called with '<\/script>' which would not match the original rule and
+    * so the generic tag rule would identify it as a tag.
+    *
+    * Pattern must only match prefixes, and if it matches a prefix, then that
+    * match is considered a token with the same style.
+    *
+    * Context is applied to the last non-whitespace, non-comment token
+    * recognized.
+    *
+    * Shortcut is an optional string of characters, any of which, if the first
+    * character, gurantee that this pattern and only this pattern matches.
+    *
+    * @param {Array} shortcutStylePatterns patterns that always start with
+    *   a known character.  Must have a shortcut string.
+    * @param {Array} fallthroughStylePatterns patterns that will be tried in
+    *   order if the shortcut ones fail.  May have shortcuts.
+    *
+    * @return {function (Object)} a
+    *   function that takes source code and returns a list of decorations.
+    */
+  function createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns) {
+    var shortcuts = {};
+    var tokenizer;
+    (function () {
+      var allPatterns = shortcutStylePatterns.concat(fallthroughStylePatterns);
+      var allRegexs = [];
+      var regexKeys = {};
+      for (var i = 0, n = allPatterns.length; i < n; ++i) {
+        var patternParts = allPatterns[i];
+        var shortcutChars = patternParts[3];
+        if (shortcutChars) {
+          for (var c = shortcutChars.length; --c >= 0;) {
+            shortcuts[shortcutChars.charAt(c)] = patternParts;
           }
         }
-      } else if (PR_TAG == tok.style) {
-        if ('<' == decodeHelper.decode(s, 0) &&
-            '/' != s.charAt(decodeHelper.next)) {
-          var tagContent = s.substring(decodeHelper.next).toLowerCase();
-          // FIXME(msamuel): this does not mirror exactly the code in
-          // in PR_splitMarkup that defers splitting tags inside script and
-          // style blocks.
-          if (PR_startsWith(tagContent, 'script') ||
-              PR_startsWith(tagContent, 'style') ||
-              PR_startsWith(tagContent, 'xmp')) {
-            endScriptTag = '/';
-          }
+        var regex = patternParts[1];
+        var k = '' + regex;
+        if (!regexKeys.hasOwnProperty(k)) {
+          allRegexs.push(regex);
+          regexKeys[k] = null;
         }
       }
-    }
+      allRegexs.push(/[\0-\uffff]/);
+      tokenizer = combinePrefixPatterns(allRegexs);
+    })();
 
-    if (null != endScriptTag) {
-      var endTok = null;
-      if (PR_SOURCE == tok.style) {
-        if (endScriptTag == '%' || endScriptTag == '?') {
-          var pos = s.lastIndexOf(endScriptTag);
-          if (pos >= 0 && '>' == decodeHelper.decode(s, pos + 1) &&
-              s.length == decodeHelper.next) {
-            endTok = new PR_Token(s.substring(pos, s.length), PR_TAG);
-            s = s.substring(0, pos);
-          }
-        }
-        if (null == sourceChunks) { sourceChunks = []; }
-        sourceChunks.push(new PR_Token(s, PR_PLAIN));
-      } else if (PR_PLAIN == tok.style) {
-        if (null == sourceChunks) { sourceChunks = []; }
-        sourceChunks.push(tok);
-      } else if (PR_TAG == tok.style) {
-        // if it starts with </ then it must be the end tag.
-        if ('<' == decodeHelper.decode(tok.token, 0) &&
-            tok.token.length > decodeHelper.next &&
-            '/' == decodeHelper.decode(tok.token, decodeHelper.next)) {
-          endTok = tok;
+    var nPatterns = fallthroughStylePatterns.length;
+
+    /**
+     * Lexes job.sourceCode and produces an output array job.decorations of
+     * style classes preceded by the position at which they start in
+     * job.sourceCode in order.
+     *
+     * @param {Object} job an object like <pre>{
+     *    sourceCode: {string} sourceText plain text,
+     *    basePos: {int} position of job.sourceCode in the larger chunk of
+     *        sourceCode.
+     * }</pre>
+     */
+    var decorate = function (job) {
+      var sourceCode = job.sourceCode, basePos = job.basePos;
+      /** Even entries are positions in source in ascending order.  Odd enties
+        * are style markers (e.g., PR_COMMENT) that run from that position until
+        * the end.
+        * @type {Array.<number|string>}
+        */
+      var decorations = [basePos, PR_PLAIN];
+      var pos = 0;  // index into sourceCode
+      var tokens = sourceCode.match(tokenizer) || [];
+      var styleCache = {};
+
+      for (var ti = 0, nTokens = tokens.length; ti < nTokens; ++ti) {
+        var token = tokens[ti];
+        var style = styleCache[token];
+        var match = void 0;
+
+        var isEmbedded;
+        if (typeof style === 'string') {
+          isEmbedded = false;
         } else {
-          tokensOut.push(tok);
+          var patternParts = shortcuts[token.charAt(0)];
+          if (patternParts) {
+            match = token.match(patternParts[1]);
+            style = patternParts[0];
+          } else {
+            for (var i = 0; i < nPatterns; ++i) {
+              patternParts = fallthroughStylePatterns[i];
+              match = token.match(patternParts[1]);
+              if (match) {
+                style = patternParts[0];
+                break;
+              }
+            }
+
+            if (!match) {  // make sure that we make progress
+              style = PR_PLAIN;
+            }
+          }
+
+          isEmbedded = style.length >= 5 && 'lang-' === style.substring(0, 5);
+          if (isEmbedded && !(match && typeof match[1] === 'string')) {
+            isEmbedded = false;
+            style = PR_SOURCE;
+          }
+
+          if (!isEmbedded) { styleCache[token] = style; }
         }
-      } else if (ci >= nc) {
-        // force the token to close
-        endTok = tok;
+
+        var tokenStart = pos;
+        pos += token.length;
+
+        if (!isEmbedded) {
+          decorations.push(basePos + tokenStart, style);
+        } else {  // Treat group 1 as an embedded block of source code.
+          var embeddedSource = match[1];
+          var embeddedSourceStart = token.indexOf(embeddedSource);
+          var embeddedSourceEnd = embeddedSourceStart + embeddedSource.length;
+          if (match[2]) {
+            // If embeddedSource can be blank, then it would match at the
+            // beginning which would cause us to infinitely recurse on the
+            // entire token, so we catch the right context in match[2].
+            embeddedSourceEnd = token.length - match[2].length;
+            embeddedSourceStart = embeddedSourceEnd - embeddedSource.length;
+          }
+          var lang = style.substring(5);
+          // Decorate the left of the embedded source
+          appendDecorations(
+              basePos + tokenStart,
+              token.substring(0, embeddedSourceStart),
+              decorate, decorations);
+          // Decorate the embedded source
+          appendDecorations(
+              basePos + tokenStart + embeddedSourceStart,
+              embeddedSource,
+              langHandlerForExtension(lang, embeddedSource),
+              decorations);
+          // Decorate the right of the embedded section
+          appendDecorations(
+              basePos + tokenStart + embeddedSourceEnd,
+              token.substring(embeddedSourceEnd),
+              decorate, decorations);
+        }
+      }
+      job.decorations = decorations;
+    };
+    return decorate;
+  }
+
+  /** returns a function that produces a list of decorations from source text.
+    *
+    * This code treats ", ', and ` as string delimiters, and \ as a string
+    * escape.  It does not recognize perl's qq() style strings.
+    * It has no special handling for double delimiter escapes as in basic, or
+    * the tripled delimiters used in python, but should work on those regardless
+    * although in those cases a single string literal may be broken up into
+    * multiple adjacent string literals.
+    *
+    * It recognizes C, C++, and shell style comments.
+    *
+    * @param {Object} options a set of optional parameters.
+    * @return {function (Object)} a function that examines the source code
+    *     in the input job and builds the decoration list.
+    */
+  function sourceDecorator(options) {
+    var shortcutStylePatterns = [], fallthroughStylePatterns = [];
+    if (options['tripleQuotedStrings']) {
+      // '''multi-line-string''', 'single-line-string', and double-quoted
+      shortcutStylePatterns.push(
+          [PR_STRING,  /^(?:\'\'\'(?:[^\'\\]|\\[\s\S]|\'{1,2}(?=[^\']))*(?:\'\'\'|$)|\"\"\"(?:[^\"\\]|\\[\s\S]|\"{1,2}(?=[^\"]))*(?:\"\"\"|$)|\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$))/,
+           null, '\'"']);
+    } else if (options['multiLineStrings']) {
+      // 'multi-line-string', "multi-line-string"
+      shortcutStylePatterns.push(
+          [PR_STRING,  /^(?:\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)|\`(?:[^\\\`]|\\[\s\S])*(?:\`|$))/,
+           null, '\'"`']);
+    } else {
+      // 'single-line-string', "single-line-string"
+      shortcutStylePatterns.push(
+          [PR_STRING,
+           /^(?:\'(?:[^\\\'\r\n]|\\.)*(?:\'|$)|\"(?:[^\\\"\r\n]|\\.)*(?:\"|$))/,
+           null, '"\'']);
+    }
+    if (options['verbatimStrings']) {
+      // verbatim-string-literal production from the C# grammar.  See issue 93.
+      fallthroughStylePatterns.push(
+          [PR_STRING, /^@\"(?:[^\"]|\"\")*(?:\"|$)/, null]);
+    }
+    var hc = options['hashComments'];
+    if (hc) {
+      if (options['cStyleComments']) {
+        if (hc > 1) {  // multiline hash comments
+          shortcutStylePatterns.push(
+              [PR_COMMENT, /^#(?:##(?:[^#]|#(?!##))*(?:###|$)|.*)/, null, '#']);
+        } else {
+          // Stop C preprocessor declarations at an unclosed open comment
+          shortcutStylePatterns.push(
+              [PR_COMMENT, /^#(?:(?:define|e(?:l|nd)if|else|error|ifn?def|include|line|pragma|undef|warning)\b|[^\r\n]*)/,
+               null, '#']);
+        }
+        // #include <stdio.h>
+        fallthroughStylePatterns.push(
+            [PR_STRING,
+             /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h(?:h|pp|\+\+)?|[a-z]\w*)>/,
+             null]);
       } else {
-        if (sourceChunks) {
-          sourceChunks.push(tok);
-        } else {
-          // push remaining tag and attribute tokens from the opening tag
-          tokensOut.push(tok);
-        }
-      }
-      if (endTok) {
-        if (sourceChunks) {
-          var sourceTokens = PR_lexSource(sourceChunks);
-          tokensOut.push(new PR_Token('<span class=embsrc>', null));
-          for (var si = 0, ns = sourceTokens.length; si < ns; ++si) {
-            tokensOut.push(sourceTokens[si]);
-          }
-          tokensOut.push(new PR_Token('</span>', null));
-          sourceChunks = null;
-        }
-        if (endTok.token) { tokensOut.push(endTok); }
-        endScriptTag = null;
-      }
-    } else {
-      tokensOut.push(tok);
-    }
-  }
-  return tokensOut;
-}
-
-/** splits the quotes from an attribute value.
-  * ['"foo"'] -> ['"', 'foo', '"']
-  * @private
-  */
-function PR_splitAttributeQuotes(tokens) {
-  var firstPlain = null, lastPlain = null;
-  for (var i = 0; i < tokens.length; ++i) {
-    if (PR_PLAIN == tokens[i].style) {
-      firstPlain = i;
-      break;
-    }
-  }
-  for (var i = tokens.length; --i >= 0;) {
-    if (PR_PLAIN == tokens[i].style) {
-      lastPlain = i;
-      break;
-    }
-  }
-  if (null == firstPlain) { return tokens; }
-
-  var decodeHelper = new PR_DecodeHelper();
-  var fs = tokens[firstPlain].token;
-  var fc = decodeHelper.decode(fs, 0);
-  if ('"' != fc && '\'' != fc) {
-    return tokens;
-  }
-  var fpos = decodeHelper.next;
-
-  var ls = tokens[lastPlain].token;
-  var lpos = ls.lastIndexOf('&');
-  if (lpos < 0) { lpos = ls.length - 1; }
-  var lc = decodeHelper.decode(ls, lpos);
-  if (lc != fc || decodeHelper.next != ls.length) {
-    lc = null;
-    lpos = ls.length;
-  }
-
-  var tokensOut = [];
-  for (var i = 0; i < firstPlain; ++i) {
-    tokensOut.push(tokens[i]);
-  }
-  tokensOut.push(new PR_Token(fs.substring(0, fpos), PR_ATTRIB_VALUE));
-  if (lastPlain == firstPlain) {
-    tokensOut.push(new PR_Token(fs.substring(fpos, lpos), PR_PLAIN));
-  } else {
-    tokensOut.push(new PR_Token(fs.substring(fpos, fs.length), PR_PLAIN));
-    for (var i = firstPlain + 1; i < lastPlain; ++i) {
-      tokensOut.push(tokens[i]);
-    }
-    if (lc) {
-      tokens.push(new PR_Token(ls.substring(0, lpos), PR_PLAIN));
-    } else {
-      tokens.push(tokens[lastPlain]);
-    }
-  }
-  if (lc) {
-    tokensOut.push(new PR_Token(ls.substring(lpos, ls.length), PR_PLAIN));
-  }
-  for (var i = lastPlain + 1; i < tokens.length; ++i) {
-    tokensOut.push(tokens[i]);
-  }
-  return tokensOut;
-}
-
-/** identify attribute values that really contain source code and recursively
-  * lex them.
-  * @private
-  */
-function PR_splitSourceAttributes(tokens) {
-  var tokensOut = [];
-
-  var sourceChunks = null;
-  var inSource = false;
-  var name = '';
-
-  for (var ci = 0, nc = tokens.length; ci < nc; ++ci) {
-    var tok = tokens[ci];
-    var outList = tokensOut;
-    if (PR_TAG == tok.style) {
-      if (inSource) {
-        inSource = false;
-        name = '';
-        if (sourceChunks) {
-          tokensOut.push(new PR_Token('<span class=embsrc>', null));
-          var sourceTokens =
-            PR_lexSource(PR_splitAttributeQuotes(sourceChunks));
-          for (var si = 0, ns = sourceTokens.length; si < ns; ++si) {
-            tokensOut.push(sourceTokens[si]);
-          }
-          tokensOut.push(new PR_Token('</span>', null));
-          sourceChunks = null;
-        }
-      } else if (name && tok.token.indexOf('=') >= 0) {
-        var nameLower = name.toLowerCase();
-        if (PR_startsWith(nameLower, 'on') || 'style' == nameLower) {
-          inSource = true;
-        }
-      } else {
-        name = '';
-      }
-    } else if (PR_ATTRIB_NAME == tok.style) {
-      name += tok.token;
-    } else if (PR_ATTRIB_VALUE == tok.style) {
-      if (inSource) {
-        if (null == sourceChunks) { sourceChunks = []; }
-        outList = sourceChunks;
-        tok = new PR_Token(tok.token, PR_PLAIN);
-      }
-    } else {
-      if (sourceChunks) {
-        outList = sourceChunks;
+        shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
       }
     }
-    outList.push(tok);
-  }
-  return tokensOut;
-}
-
-/** returns a list of PR_Token objects given chunks of source code.
-  *
-  * This code treats ", ', and ` as string delimiters, and \ as a string escape.
-  * It does not recognize perl's qq() style strings.  It has no special handling
-  * for double delimiter escapes as in basic, or tje tripled delimiters used in
-  * python, but should work on those regardless although in those cases a single
-  * string literal may be broken up into multiple adjacent string literals.
-  *
-  * It recognizes C, C++, and shell style comments.
-  *
-  * @param chunks PR_Tokens with style in (null, PR_PLAIN)
-  */
-function PR_lexSource(chunks) {
-  // split into strings, comments, and other.
-  // We do this because strings and comments are easily recognizable and can
-  // contain stuff that looks like other tokens, so we want to mark those early
-  // so we don't recurse into them.
-  var tokens = PR_splitStringAndCommentTokens(chunks);
-
-  // split non comment|string tokens on whitespace and word boundaries
-  var tokensOut = [];
-  for (var i = 0; i < tokens.length; ++i) {
-    var tok = tokens[i];
-    if (PR_PLAIN === tok.style) {
-      PR_splitNonStringNonCommentToken(tok.token, tokensOut);
-      continue;
+    if (options['cStyleComments']) {
+      fallthroughStylePatterns.push([PR_COMMENT, /^\/\/[^\r\n]*/, null]);
+      fallthroughStylePatterns.push(
+          [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);
     }
-    tokensOut.push(tok);
-  }
-
-  return tokensOut;
-}
-
-/** returns a list of PR_Token objects given a string of markup.
-  *
-  * This code assumes that < tokens are html escaped, but " are not.
-  * It will do a resonable job with <, but will not recognize an &quot;
-  * as starting a string.
-  *
-  * This code recognizes a number of constructs.
-  * <!-- ... --> comment
-  * <!\w ... >   declaration
-  * <\w ... >    tag
-  * </\w ... >   tag
-  * <?...?>      embedded source
-  * &[#\w]...;   entity
-  *
-  * It does not recognizes %foo; entities.
-  *
-  * It will recurse into any <style>, <script>, and on* attributes using
-  * PR_lexSource.
-  */
-function PR_lexMarkup(chunks) {
-  // This function works as follows:
-  // 1) Start by splitting the markup into text and tag chunks
-  //    Input:  String s
-  //    Output: List<PR_Token> where style in (PR_PLAIN, null)
-  // 2) Then split the text chunks further into comments, declarations,
-  //    tags, etc.
-  //    After each split, consider whether the token is the start of an
-  //    embedded source section, i.e. is an open <script> tag.  If it is,
-  //    find the corresponding close token, and don't bother to lex in between.
-  //    Input:  List<String>
-  //    Output: List<PR_Token> with style in (PR_TAG, PR_PLAIN, PR_SOURCE, null)
-  // 3) Finally go over each tag token and split out attribute names and values.
-  //    Input:  List<PR_Token>
-  //    Output: List<PR_Token> where style in
-  //            (PR_TAG, PR_PLAIN, PR_SOURCE, NAME, VALUE, null)
-  var tokensOut = PR_tokenizeMarkup(chunks);
-  tokensOut = PR_splitTagAttributes(tokensOut);
-  tokensOut = PR_splitSourceNodes(tokensOut);
-  tokensOut = PR_splitSourceAttributes(tokensOut);
-  return tokensOut;
-}
-
-/**
- * classify the string as either source or markup and lex appropriately.
- * @param {String} html
- */
-function PR_lexOne(html) {
-  var chunks = PR_expandTabs(PR_chunkify(html), PR_TAB_WIDTH);
-
-  // treat it as markup if the first non whitespace character is a < and the
-  // last non-whitespace character is a >
-  var isMarkup = false;
-  for (var i = 0; i < chunks.length; ++i) {
-    if (PR_PLAIN == chunks[i].style) {
-      if (PR_startsWith(PR_trim(chunks[i].token), '&lt;')) {
-        for (var j = chunks.length; --j >= 0;) {
-          if (PR_PLAIN == chunks[j].style) {
-            isMarkup = PR_endsWith(PR_trim(chunks[j].token), '&gt;');
-            break;
-          }
-        }
-      }
-      break;
+    var regexLiterals = options['regexLiterals'];
+    if (regexLiterals) {
+      /**
+       * @const
+       */
+      var regexExcls = regexLiterals > 1
+        ? ''  // Multiline regex literals
+        : '\n\r';
+      /**
+       * @const
+       */
+      var regexAny = regexExcls ? '.' : '[\\S\\s]';
+      /**
+       * @const
+       */
+      var REGEX_LITERAL = (
+          // A regular expression literal starts with a slash that is
+          // not followed by * or / so that it is not confused with
+          // comments.
+          '/(?=[^/*' + regexExcls + '])'
+          // and then contains any number of raw characters,
+          + '(?:[^/\\x5B\\x5C' + regexExcls + ']'
+          // escape sequences (\x5C),
+          +    '|\\x5C' + regexAny
+          // or non-nesting character sets (\x5B\x5D);
+          +    '|\\x5B(?:[^\\x5C\\x5D' + regexExcls + ']'
+          +             '|\\x5C' + regexAny + ')*(?:\\x5D|$))+'
+          // finally closed by a /.
+          + '/');
+      fallthroughStylePatterns.push(
+          ['lang-regex',
+           RegExp('^' + REGEXP_PRECEDER_PATTERN + '(' + REGEX_LITERAL + ')')
+           ]);
     }
-  }
 
-  return isMarkup ? PR_lexMarkup(chunks) : PR_lexSource(chunks);
-}
-
-/** pretty print a chunk of code.
-  *
-  * @param s code as html
-  * @return code as html, but prettier
-  */
-function prettyPrintOne(s) {
-  try {
-    var tokens = PR_lexOne(s);
-    var out = [];
-    var lastStyle = null;
-    for (var i = 0; i < tokens.length; i++) {
-      var t = tokens[i];
-      if (t.style != lastStyle) {
-        if (lastStyle != null) {
-          out.push('</span>');
-        }
-        if (t.style != null) {
-          out.push('<span class=', t.style, '>');
-        }
-        lastStyle = t.style;
-      }
-      var html = t.token;
-      if (null != t.style) {
-        // This interacts badly with some wikis which introduces paragraph tags
-        // into pre blocks for some strange reason.
-        // It's necessary for IE though which seems to lose the preformattedness
-        // of <pre> tags when their innerHTML is assigned.
-        // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
-        html = html
-               .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
-               .replace(/\r\n?|\n/g, '<br>');
-      }
-      out.push(html);
+    var types = options['types'];
+    if (types) {
+      fallthroughStylePatterns.push([PR_TYPE, types]);
     }
-    if (lastStyle != null) {
-      out.push('</span>');
-    }
-    return out.join('');
-  } catch (e) {
-    if ('console' in window) {
-      console.log(e);
-      console.trace();
-    }
-    return s;
-  }
-}
 
-/** find all the < pre > and < code > tags in the DOM with class=prettyprint and
-  * prettify them.
-  */
-function prettyPrint() {
-  // fetch a list of nodes to rewrite
-  var codeSegments = [
-      document.getElementsByTagName('pre'),
-      document.getElementsByTagName('code'),
-      document.getElementsByTagName('xmp') ];
-  var elements = [];
-  for (var i = 0; i < codeSegments.length; ++i) {
-    for (var j = 0; j < codeSegments[i].length; ++j) {
-      elements.push(codeSegments[i][j]);
+    var keywords = ("" + options['keywords']).replace(/^ | $/g, '');
+    if (keywords.length) {
+      fallthroughStylePatterns.push(
+          [PR_KEYWORD,
+           new RegExp('^(?:' + keywords.replace(/[\s,]+/g, '|') + ')\\b'),
+           null]);
     }
-  }
-  codeSegments = null;
 
-  // the loop is broken into a series of continuations to make sure that we
-  // don't make the browser unresponsive when rewriting a large page.
-  var k = 0;
+    shortcutStylePatterns.push([PR_PLAIN,       /^\s+/, null, ' \r\n\t\xA0']);
 
-  function doWork() {
-    var endTime = new Date().getTime() + 250;
-    for (; k < elements.length && new Date().getTime() < endTime; k++) {
-      var cs = elements[k];
+    var punctuation =
+      // The Bash man page says
+
+      // A word is a sequence of characters considered as a single
+      // unit by GRUB. Words are separated by metacharacters,
+      // which are the following plus space, tab, and newline: { }
+      // | & $ ; < >
+      // ...
       
-      /* added classname 'prettified' to avoid double processing */
-      if (cs.className 
-       && cs.className.indexOf('prettyprint') >= 0 
-       && cs.className.indexOf('prettified') == -1 ) {
+      // A word beginning with # causes that word and all remaining
+      // characters on that line to be ignored.
 
-        // make sure this is not nested in an already prettified element
-        var nested = false;
-        for (var p = cs.parentNode; p != null; p = p.parentNode) {
-          if ((p.tagName == 'pre' || p.tagName == 'code' ||
-               p.tagName == 'xmp') &&
-              p.className && p.className.indexOf('prettyprint') >= 0) {
-            nested = true;
-            break;
+      // which means that only a '#' after /(?:^|[{}|&$;<>\s])/ starts a
+      // comment but empirically
+      // $ echo {#}
+      // {#}
+      // $ echo \$#
+      // $#
+      // $ echo }#
+      // }#
+
+      // so /(?:^|[|&;<>\s])/ is more appropriate.
+
+      // http://gcc.gnu.org/onlinedocs/gcc-2.95.3/cpp_1.html#SEC3
+      // suggests that this definition is compatible with a
+      // default mode that tries to use a single token definition
+      // to recognize both bash/python style comments and C
+      // preprocessor directives.
+
+      // This definition of punctuation does not include # in the list of
+      // follow-on exclusions, so # will not be broken before if preceeded
+      // by a punctuation character.  We could try to exclude # after
+      // [|&;<>] but that doesn't seem to cause many major problems.
+      // If that does turn out to be a problem, we should change the below
+      // when hc is truthy to include # in the run of punctuation characters
+      // only when not followint [|&;<>].
+      '^.[^\\s\\w.$@\'"`/\\\\]*';
+    if (options['regexLiterals']) {
+      punctuation += '(?!\s*\/)';
+    }
+
+    fallthroughStylePatterns.push(
+        // TODO(mikesamuel): recognize non-latin letters and numerals in idents
+        [PR_LITERAL,     /^@[a-z_$][a-z_$@0-9]*/i, null],
+        [PR_TYPE,        /^(?:[@_]?[A-Z]+[a-z][A-Za-z_$@0-9]*|\w+_t\b)/, null],
+        [PR_PLAIN,       /^[a-z_$][a-z_$@0-9]*/i, null],
+        [PR_LITERAL,
+         new RegExp(
+             '^(?:'
+             // A hex number
+             + '0x[a-f0-9]+'
+             // or an octal or decimal number,
+             + '|(?:\\d(?:_\\d+)*\\d*(?:\\.\\d*)?|\\.\\d\\+)'
+             // possibly in scientific notation
+             + '(?:e[+\\-]?\\d+)?'
+             + ')'
+             // with an optional modifier like UL for unsigned long
+             + '[a-z]*', 'i'),
+         null, '0123456789'],
+        // Don't treat escaped quotes in bash as starting strings.
+        // See issue 144.
+        [PR_PLAIN,       /^\\[\s\S]?/, null],
+        [PR_PUNCTUATION, new RegExp(punctuation), null]);
+
+    return createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns);
+  }
+
+  var decorateSource = sourceDecorator({
+        'keywords': ALL_KEYWORDS,
+        'hashComments': true,
+        'cStyleComments': true,
+        'multiLineStrings': true,
+        'regexLiterals': true
+      });
+
+  /**
+   * Given a DOM subtree, wraps it in a list, and puts each line into its own
+   * list item.
+   *
+   * @param {Node} node modified in place.  Its content is pulled into an
+   *     HTMLOListElement, and each line is moved into a separate list item.
+   *     This requires cloning elements, so the input might not have unique
+   *     IDs after numbering.
+   * @param {boolean} isPreformatted true iff white-space in text nodes should
+   *     be treated as significant.
+   */
+  function numberLines(node, opt_startLineNum, isPreformatted) {
+    var nocode = /(?:^|\s)nocode(?:\s|$)/;
+    var lineBreak = /\r\n?|\n/;
+  
+    var document = node.ownerDocument;
+  
+    var li = document.createElement('li');
+    while (node.firstChild) {
+      li.appendChild(node.firstChild);
+    }
+    // An array of lines.  We split below, so this is initialized to one
+    // un-split line.
+    var listItems = [li];
+  
+    function walk(node) {
+      var type = node.nodeType;
+      if (type == 1 && !nocode.test(node.className)) {  // Element
+        if ('br' === node.nodeName) {
+          breakAfter(node);
+          // Discard the <BR> since it is now flush against a </LI>.
+          if (node.parentNode) {
+            node.parentNode.removeChild(node);
+          }
+        } else {
+          for (var child = node.firstChild; child; child = child.nextSibling) {
+            walk(child);
           }
         }
-        if (!nested) {        
-          // fetch the content as a snippet of properly escaped HTML.
-          // Firefox adds newlines at the end.
-          var content = PR_getInnerHtml(cs);
-          content = content.replace(/(?:\r\n?|\n)$/, '');
-
-          // do the pretty printing
-          var newContent = prettyPrintOne(content);
-
-          // push the prettified html back into the tag.
-          if (!PR_isRawContent(cs)) {
-            // just replace the old html with the new
-            cs.innerHTML = newContent;
-          } else {
-            // we need to change the tag to a <pre> since <xmp>s do not allow
-            // embedded tags such as the span tags used to attach styles to
-            // sections of source code.
-            var pre = document.createElement('PRE');
-            for (var i = 0; i < cs.attributes.length; ++i) {
-              var a = cs.attributes[i];
-              if (a.specified) {
-                pre.setAttribute(a.name, a.value);
-              }
-            }
-            pre.innerHTML = newContent;
-            // remove the old
-            cs.parentNode.replaceChild(pre, cs);
+      } else if ((type == 3 || type == 4) && isPreformatted) {  // Text
+        var text = node.nodeValue;
+        var match = text.match(lineBreak);
+        if (match) {
+          var firstLine = text.substring(0, match.index);
+          node.nodeValue = firstLine;
+          var tail = text.substring(match.index + match[0].length);
+          if (tail) {
+            var parent = node.parentNode;
+            parent.insertBefore(
+              document.createTextNode(tail), node.nextSibling);
           }
-          //mark the element as converted
-          cs.className = cs.className+' prettified';
+          breakAfter(node);
+          if (!firstLine) {
+            // Don't leave blank text nodes in the DOM.
+            node.parentNode.removeChild(node);
+          }
         }
       }
     }
-    if (k < elements.length) {
-      // finish up in a continuation
-      setTimeout(doWork, 250);
+  
+    // Split a line after the given node.
+    function breakAfter(lineEndNode) {
+      // If there's nothing to the right, then we can skip ending the line
+      // here, and move root-wards since splitting just before an end-tag
+      // would require us to create a bunch of empty copies.
+      while (!lineEndNode.nextSibling) {
+        lineEndNode = lineEndNode.parentNode;
+        if (!lineEndNode) { return; }
+      }
+  
+      function breakLeftOf(limit, copy) {
+        // Clone shallowly if this node needs to be on both sides of the break.
+        var rightSide = copy ? limit.cloneNode(false) : limit;
+        var parent = limit.parentNode;
+        if (parent) {
+          // We clone the parent chain.
+          // This helps us resurrect important styling elements that cross lines.
+          // E.g. in <i>Foo<br>Bar</i>
+          // should be rewritten to <li><i>Foo</i></li><li><i>Bar</i></li>.
+          var parentClone = breakLeftOf(parent, 1);
+          // Move the clone and everything to the right of the original
+          // onto the cloned parent.
+          var next = limit.nextSibling;
+          parentClone.appendChild(rightSide);
+          for (var sibling = next; sibling; sibling = next) {
+            next = sibling.nextSibling;
+            parentClone.appendChild(sibling);
+          }
+        }
+        return rightSide;
+      }
+  
+      var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
+  
+      // Walk the parent chain until we reach an unattached LI.
+      for (var parent;
+           // Check nodeType since IE invents document fragments.
+           (parent = copiedListItem.parentNode) && parent.nodeType === 1;) {
+        copiedListItem = parent;
+      }
+      // Put it on the list of lines for later processing.
+      listItems.push(copiedListItem);
+    }
+  
+    // Split lines while there are lines left to split.
+    for (var i = 0;  // Number of lines that have been split so far.
+         i < listItems.length;  // length updated by breakAfter calls.
+         ++i) {
+      walk(listItems[i]);
+    }
+  
+    // Make sure numeric indices show correctly.
+    if (opt_startLineNum === (opt_startLineNum|0)) {
+      listItems[0].setAttribute('value', opt_startLineNum);
+    }
+  
+    var ol = document.createElement('ol');
+    ol.className = 'linenums';
+    var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
+    for (var i = 0, n = listItems.length; i < n; ++i) {
+      li = listItems[i];
+      // Stick a class on the LIs so that stylesheets can
+      // color odd/even rows, or any other row pattern that
+      // is co-prime with 10.
+      li.className = 'L' + ((i + offset) % 10);
+      if (!li.firstChild) {
+        li.appendChild(document.createTextNode('\xA0'));
+      }
+      ol.appendChild(li);
+    }
+  
+    node.appendChild(ol);
+  }
+  /**
+   * Breaks {@code job.sourceCode} around style boundaries in
+   * {@code job.decorations} and modifies {@code job.sourceNode} in place.
+   * @param {Object} job like <pre>{
+   *    sourceCode: {string} source as plain text,
+   *    sourceNode: {HTMLElement} the element containing the source,
+   *    spans: {Array.<number|Node>} alternating span start indices into source
+   *       and the text node or element (e.g. {@code <BR>}) corresponding to that
+   *       span.
+   *    decorations: {Array.<number|string} an array of style classes preceded
+   *       by the position at which they start in job.sourceCode in order
+   * }</pre>
+   * @private
+   */
+  function recombineTagsAndDecorations(job) {
+    var isIE8OrEarlier = /\bMSIE\s(\d+)/.exec(navigator.userAgent);
+    isIE8OrEarlier = isIE8OrEarlier && +isIE8OrEarlier[1] <= 8;
+    var newlineRe = /\n/g;
+  
+    var source = job.sourceCode;
+    var sourceLength = source.length;
+    // Index into source after the last code-unit recombined.
+    var sourceIndex = 0;
+  
+    var spans = job.spans;
+    var nSpans = spans.length;
+    // Index into spans after the last span which ends at or before sourceIndex.
+    var spanIndex = 0;
+  
+    var decorations = job.decorations;
+    var nDecorations = decorations.length;
+    // Index into decorations after the last decoration which ends at or before
+    // sourceIndex.
+    var decorationIndex = 0;
+  
+    // Remove all zero-length decorations.
+    decorations[nDecorations] = sourceLength;
+    var decPos, i;
+    for (i = decPos = 0; i < nDecorations;) {
+      if (decorations[i] !== decorations[i + 2]) {
+        decorations[decPos++] = decorations[i++];
+        decorations[decPos++] = decorations[i++];
+      } else {
+        i += 2;
+      }
+    }
+    nDecorations = decPos;
+  
+    // Simplify decorations.
+    for (i = decPos = 0; i < nDecorations;) {
+      var startPos = decorations[i];
+      // Conflate all adjacent decorations that use the same style.
+      var startDec = decorations[i + 1];
+      var end = i + 2;
+      while (end + 2 <= nDecorations && decorations[end + 1] === startDec) {
+        end += 2;
+      }
+      decorations[decPos++] = startPos;
+      decorations[decPos++] = startDec;
+      i = end;
+    }
+  
+    nDecorations = decorations.length = decPos;
+  
+    var sourceNode = job.sourceNode;
+    var oldDisplay;
+    if (sourceNode) {
+      oldDisplay = sourceNode.style.display;
+      sourceNode.style.display = 'none';
+    }
+    try {
+      var decoration = null;
+      while (spanIndex < nSpans) {
+        var spanStart = spans[spanIndex];
+        var spanEnd = spans[spanIndex + 2] || sourceLength;
+  
+        var decEnd = decorations[decorationIndex + 2] || sourceLength;
+  
+        var end = Math.min(spanEnd, decEnd);
+  
+        var textNode = spans[spanIndex + 1];
+        var styledText;
+        if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
+            // Don't introduce spans around empty text nodes.
+            && (styledText = source.substring(sourceIndex, end))) {
+          // This may seem bizarre, and it is.  Emitting LF on IE causes the
+          // code to display with spaces instead of line breaks.
+          // Emitting Windows standard issue linebreaks (CRLF) causes a blank
+          // space to appear at the beginning of every line but the first.
+          // Emitting an old Mac OS 9 line separator makes everything spiffy.
+          if (isIE8OrEarlier) {
+            styledText = styledText.replace(newlineRe, '\r');
+          }
+          textNode.nodeValue = styledText;
+          var document = textNode.ownerDocument;
+          var span = document.createElement('span');
+          span.className = decorations[decorationIndex + 1];
+          var parentNode = textNode.parentNode;
+          parentNode.replaceChild(span, textNode);
+          span.appendChild(textNode);
+          if (sourceIndex < spanEnd) {  // Split off a text node.
+            spans[spanIndex + 1] = textNode
+                // TODO: Possibly optimize by using '' if there's no flicker.
+                = document.createTextNode(source.substring(end, spanEnd));
+            parentNode.insertBefore(textNode, span.nextSibling);
+          }
+        }
+  
+        sourceIndex = end;
+  
+        if (sourceIndex >= spanEnd) {
+          spanIndex += 2;
+        }
+        if (sourceIndex >= decEnd) {
+          decorationIndex += 2;
+        }
+      }
+    } finally {
+      if (sourceNode) {
+        sourceNode.style.display = oldDisplay;
+      }
     }
   }
 
-  doWork();
-}
+  /** Maps language-specific file extensions to handlers. */
+  var langHandlerRegistry = {};
+  /** Register a language handler for the given file extensions.
+    * @param {function (Object)} handler a function from source code to a list
+    *      of decorations.  Takes a single argument job which describes the
+    *      state of the computation.   The single parameter has the form
+    *      {@code {
+    *        sourceCode: {string} as plain text.
+    *        decorations: {Array.<number|string>} an array of style classes
+    *                     preceded by the position at which they start in
+    *                     job.sourceCode in order.
+    *                     The language handler should assigned this field.
+    *        basePos: {int} the position of source in the larger source chunk.
+    *                 All positions in the output decorations array are relative
+    *                 to the larger source chunk.
+    *      } }
+    * @param {Array.<string>} fileExtensions
+    */
+  function registerLangHandler(handler, fileExtensions) {
+    for (var i = fileExtensions.length; --i >= 0;) {
+      var ext = fileExtensions[i];
+      if (!langHandlerRegistry.hasOwnProperty(ext)) {
+        langHandlerRegistry[ext] = handler;
+      } else if (win['console']) {
+        console['warn']('cannot override language handler %s', ext);
+      }
+    }
+  }
+  function langHandlerForExtension(extension, source) {
+    if (!(extension && langHandlerRegistry.hasOwnProperty(extension))) {
+      // Treat it as markup if the first non whitespace character is a < and
+      // the last non-whitespace character is a >.
+      extension = /^\s*</.test(source)
+          ? 'default-markup'
+          : 'default-code';
+    }
+    return langHandlerRegistry[extension];
+  }
+  registerLangHandler(decorateSource, ['default-code']);
+  registerLangHandler(
+      createSimpleLexer(
+          [],
+          [
+           [PR_PLAIN,       /^[^<?]+/],
+           [PR_DECLARATION, /^<!\w[^>]*(?:>|$)/],
+           [PR_COMMENT,     /^<\!--[\s\S]*?(?:-\->|$)/],
+           // Unescaped content in an unknown language
+           ['lang-',        /^<\?([\s\S]+?)(?:\?>|$)/],
+           ['lang-',        /^<%([\s\S]+?)(?:%>|$)/],
+           [PR_PUNCTUATION, /^(?:<[%?]|[%?]>)/],
+           ['lang-',        /^<xmp\b[^>]*>([\s\S]+?)<\/xmp\b[^>]*>/i],
+           // Unescaped content in javascript.  (Or possibly vbscript).
+           ['lang-js',      /^<script\b[^>]*>([\s\S]*?)(<\/script\b[^>]*>)/i],
+           // Contains unescaped stylesheet content
+           ['lang-css',     /^<style\b[^>]*>([\s\S]*?)(<\/style\b[^>]*>)/i],
+           ['lang-in.tag',  /^(<\/?[a-z][^<>]*>)/i]
+          ]),
+      ['default-markup', 'htm', 'html', 'mxml', 'xhtml', 'xml', 'xsl']);
+  registerLangHandler(
+      createSimpleLexer(
+          [
+           [PR_PLAIN,        /^[\s]+/, null, ' \t\r\n'],
+           [PR_ATTRIB_VALUE, /^(?:\"[^\"]*\"?|\'[^\']*\'?)/, null, '\"\'']
+           ],
+          [
+           [PR_TAG,          /^^<\/?[a-z](?:[\w.:-]*\w)?|\/?>$/i],
+           [PR_ATTRIB_NAME,  /^(?!style[\s=]|on)[a-z](?:[\w:-]*\w)?/i],
+           ['lang-uq.val',   /^=\s*([^>\'\"\s]*(?:[^>\'\"\s\/]|\/(?=\s)))/],
+           [PR_PUNCTUATION,  /^[=<>\/]+/],
+           ['lang-js',       /^on\w+\s*=\s*\"([^\"]+)\"/i],
+           ['lang-js',       /^on\w+\s*=\s*\'([^\']+)\'/i],
+           ['lang-js',       /^on\w+\s*=\s*([^\"\'>\s]+)/i],
+           ['lang-css',      /^style\s*=\s*\"([^\"]+)\"/i],
+           ['lang-css',      /^style\s*=\s*\'([^\']+)\'/i],
+           ['lang-css',      /^style\s*=\s*([^\"\'>\s]+)/i]
+           ]),
+      ['in.tag']);
+  registerLangHandler(
+      createSimpleLexer([], [[PR_ATTRIB_VALUE, /^[\s\S]+/]]), ['uq.val']);
+  registerLangHandler(sourceDecorator({
+          'keywords': CPP_KEYWORDS,
+          'hashComments': true,
+          'cStyleComments': true,
+          'types': C_TYPES
+        }), ['c', 'cc', 'cpp', 'cxx', 'cyc', 'm']);
+  registerLangHandler(sourceDecorator({
+          'keywords': 'null,true,false'
+        }), ['json']);
+  registerLangHandler(sourceDecorator({
+          'keywords': CSHARP_KEYWORDS,
+          'hashComments': true,
+          'cStyleComments': true,
+          'verbatimStrings': true,
+          'types': C_TYPES
+        }), ['cs']);
+  registerLangHandler(sourceDecorator({
+          'keywords': JAVA_KEYWORDS,
+          'cStyleComments': true
+        }), ['java']);
+  registerLangHandler(sourceDecorator({
+          'keywords': SH_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true
+        }), ['bash', 'bsh', 'csh', 'sh']);
+  registerLangHandler(sourceDecorator({
+          'keywords': PYTHON_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true,
+          'tripleQuotedStrings': true
+        }), ['cv', 'py', 'python']);
+  registerLangHandler(sourceDecorator({
+          'keywords': PERL_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true,
+          'regexLiterals': 2  // multiline regex literals
+        }), ['perl', 'pl', 'pm']);
+  registerLangHandler(sourceDecorator({
+          'keywords': RUBY_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true,
+          'regexLiterals': true
+        }), ['rb', 'ruby']);
+  registerLangHandler(sourceDecorator({
+          'keywords': JSCRIPT_KEYWORDS,
+          'cStyleComments': true,
+          'regexLiterals': true
+        }), ['javascript', 'js']);
+  registerLangHandler(sourceDecorator({
+          'keywords': COFFEE_KEYWORDS,
+          'hashComments': 3,  // ### style block comments
+          'cStyleComments': true,
+          'multilineStrings': true,
+          'tripleQuotedStrings': true,
+          'regexLiterals': true
+        }), ['coffee']);
+  registerLangHandler(sourceDecorator({
+          'keywords': RUST_KEYWORDS,
+          'cStyleComments': true,
+          'multilineStrings': true
+        }), ['rc', 'rs', 'rust']);
+  registerLangHandler(
+      createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
+
+  function applyDecorator(job) {
+    var opt_langExtension = job.langExtension;
+
+    try {
+      // Extract tags, and convert the source code to plain text.
+      var sourceAndSpans = extractSourceSpans(job.sourceNode, job.pre);
+      /** Plain text. @type {string} */
+      var source = sourceAndSpans.sourceCode;
+      job.sourceCode = source;
+      job.spans = sourceAndSpans.spans;
+      job.basePos = 0;
+
+      // Apply the appropriate language handler
+      langHandlerForExtension(opt_langExtension, source)(job);
+
+      // Integrate the decorations and tags back into the source code,
+      // modifying the sourceNode in place.
+      recombineTagsAndDecorations(job);
+    } catch (e) {
+      if (win['console']) {
+        console['log'](e && e['stack'] || e);
+      }
+    }
+  }
+
+  /**
+   * Pretty print a chunk of code.
+   * @param sourceCodeHtml {string} The HTML to pretty print.
+   * @param opt_langExtension {string} The language name to use.
+   *     Typically, a filename extension like 'cpp' or 'java'.
+   * @param opt_numberLines {number|boolean} True to number lines,
+   *     or the 1-indexed number of the first line in sourceCodeHtml.
+   */
+  function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
+    var container = document.createElement('div');
+    // This could cause images to load and onload listeners to fire.
+    // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
+    // We assume that the inner HTML is from a trusted source.
+    // The pre-tag is required for IE8 which strips newlines from innerHTML
+    // when it is injected into a <pre> tag.
+    // http://stackoverflow.com/questions/451486/pre-tag-loses-line-breaks-when-setting-innerhtml-in-ie
+    // http://stackoverflow.com/questions/195363/inserting-a-newline-into-a-pre-tag-ie-javascript
+    container.innerHTML = '<pre>' + sourceCodeHtml + '</pre>';
+    container = container.firstChild;
+    if (opt_numberLines) {
+      numberLines(container, opt_numberLines, true);
+    }
+
+    var job = {
+      langExtension: opt_langExtension,
+      numberLines: opt_numberLines,
+      sourceNode: container,
+      pre: 1
+    };
+    applyDecorator(job);
+    return container.innerHTML;
+  }
+
+   /**
+    * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+    * {@code class=prettyprint} and prettify them.
+    *
+    * @param {Function} opt_whenDone called when prettifying is done.
+    * @param {HTMLElement|HTMLDocument} opt_root an element or document
+    *   containing all the elements to pretty print.
+    *   Defaults to {@code document.body}.
+    */
+  function $prettyPrint(opt_whenDone, opt_root) {
+    var root = opt_root || document.body;
+    var doc = root.ownerDocument || document;
+    function byTagName(tn) { return root.getElementsByTagName(tn); }
+    // fetch a list of nodes to rewrite
+    var codeSegments = [byTagName('pre'), byTagName('code'), byTagName('xmp')];
+    var elements = [];
+    for (var i = 0; i < codeSegments.length; ++i) {
+      for (var j = 0, n = codeSegments[i].length; j < n; ++j) {
+        elements.push(codeSegments[i][j]);
+      }
+    }
+    codeSegments = null;
+
+    var clock = Date;
+    if (!clock['now']) {
+      clock = { 'now': function () { return +(new Date); } };
+    }
+
+    // The loop is broken into a series of continuations to make sure that we
+    // don't make the browser unresponsive when rewriting a large page.
+    var k = 0;
+    var prettyPrintingJob;
+
+    var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
+    var prettyPrintRe = /\bprettyprint\b/;
+    var prettyPrintedRe = /\bprettyprinted\b/;
+    var preformattedTagNameRe = /pre|xmp/i;
+    var codeRe = /^code$/i;
+    var preCodeXmpRe = /^(?:pre|code|xmp)$/i;
+    var EMPTY = {};
+
+    function doWork() {
+      var endTime = (win['PR_SHOULD_USE_CONTINUATION'] ?
+                     clock['now']() + 250 /* ms */ :
+                     Infinity);
+      for (; k < elements.length && clock['now']() < endTime; k++) {
+        var cs = elements[k];
+
+        // Look for a preceding comment like
+        // <?prettify lang="..." linenums="..."?>
+        var attrs = EMPTY;
+        {
+          for (var preceder = cs; (preceder = preceder.previousSibling);) {
+            var nt = preceder.nodeType;
+            // <?foo?> is parsed by HTML 5 to a comment node (8)
+            // like <!--?foo?-->, but in XML is a processing instruction
+            var value = (nt === 7 || nt === 8) && preceder.nodeValue;
+            if (value
+                ? !/^\??prettify\b/.test(value)
+                : (nt !== 3 || /\S/.test(preceder.nodeValue))) {
+              // Skip over white-space text nodes but not others.
+              break;
+            }
+            if (value) {
+              attrs = {};
+              value.replace(
+                  /\b(\w+)=([\w:.%+-]+)/g,
+                function (_, name, value) { attrs[name] = value; });
+              break;
+            }
+          }
+        }
+
+        var className = cs.className;
+        if ((attrs !== EMPTY || prettyPrintRe.test(className))
+            // Don't redo this if we've already done it.
+            // This allows recalling pretty print to just prettyprint elements
+            // that have been added to the page since last call.
+            && !prettyPrintedRe.test(className)) {
+
+          // make sure this is not nested in an already prettified element
+          var nested = false;
+          for (var p = cs.parentNode; p; p = p.parentNode) {
+            var tn = p.tagName;
+            if (preCodeXmpRe.test(tn)
+                && p.className && prettyPrintRe.test(p.className)) {
+              nested = true;
+              break;
+            }
+          }
+          if (!nested) {
+            // Mark done.  If we fail to prettyprint for whatever reason,
+            // we shouldn't try again.
+            cs.className += ' prettyprinted';
+
+            // If the classes includes a language extensions, use it.
+            // Language extensions can be specified like
+            //     <pre class="prettyprint lang-cpp">
+            // the language extension "cpp" is used to find a language handler
+            // as passed to PR.registerLangHandler.
+            // HTML5 recommends that a language be specified using "language-"
+            // as the prefix instead.  Google Code Prettify supports both.
+            // http://dev.w3.org/html5/spec-author-view/the-code-element.html
+            var langExtension = attrs['lang'];
+            if (!langExtension) {
+              langExtension = className.match(langExtensionRe);
+              // Support <pre class="prettyprint"><code class="language-c">
+              var wrapper;
+              if (!langExtension && (wrapper = childContentWrapper(cs))
+                  && codeRe.test(wrapper.tagName)) {
+                langExtension = wrapper.className.match(langExtensionRe);
+              }
+
+              if (langExtension) { langExtension = langExtension[1]; }
+            }
+
+            var preformatted;
+            if (preformattedTagNameRe.test(cs.tagName)) {
+              preformatted = 1;
+            } else {
+              var currentStyle = cs['currentStyle'];
+              var defaultView = doc.defaultView;
+              var whitespace = (
+                  currentStyle
+                  ? currentStyle['whiteSpace']
+                  : (defaultView
+                     && defaultView.getComputedStyle)
+                  ? defaultView.getComputedStyle(cs, null)
+                  .getPropertyValue('white-space')
+                  : 0);
+              preformatted = whitespace
+                  && 'pre' === whitespace.substring(0, 3);
+            }
+
+            // Look for a class like linenums or linenums:<n> where <n> is the
+            // 1-indexed number of the first line.
+            var lineNums = attrs['linenums'];
+            if (!(lineNums = lineNums === 'true' || +lineNums)) {
+              lineNums = className.match(/\blinenums\b(?::(\d+))?/);
+              lineNums =
+                lineNums
+                ? lineNums[1] && lineNums[1].length
+                  ? +lineNums[1] : true
+                : false;
+            }
+            if (lineNums) { numberLines(cs, lineNums, preformatted); }
+
+            // do the pretty printing
+            prettyPrintingJob = {
+              langExtension: langExtension,
+              sourceNode: cs,
+              numberLines: lineNums,
+              pre: preformatted
+            };
+            applyDecorator(prettyPrintingJob);
+          }
+        }
+      }
+      if (k < elements.length) {
+        // finish up in a continuation
+        setTimeout(doWork, 250);
+      } else if ('function' === typeof opt_whenDone) {
+        opt_whenDone();
+      }
+    }
+
+    doWork();
+  }
+
+  /**
+   * Contains functions for creating and registering new language handlers.
+   * @type {Object}
+   */
+  var PR = win['PR'] = {
+        'createSimpleLexer': createSimpleLexer,
+        'registerLangHandler': registerLangHandler,
+        'sourceDecorator': sourceDecorator,
+        'PR_ATTRIB_NAME': PR_ATTRIB_NAME,
+        'PR_ATTRIB_VALUE': PR_ATTRIB_VALUE,
+        'PR_COMMENT': PR_COMMENT,
+        'PR_DECLARATION': PR_DECLARATION,
+        'PR_KEYWORD': PR_KEYWORD,
+        'PR_LITERAL': PR_LITERAL,
+        'PR_NOCODE': PR_NOCODE,
+        'PR_PLAIN': PR_PLAIN,
+        'PR_PUNCTUATION': PR_PUNCTUATION,
+        'PR_SOURCE': PR_SOURCE,
+        'PR_STRING': PR_STRING,
+        'PR_TAG': PR_TAG,
+        'PR_TYPE': PR_TYPE,
+        'prettyPrintOne':
+           IN_GLOBAL_SCOPE
+             ? (win['prettyPrintOne'] = $prettyPrintOne)
+             : (prettyPrintOne = $prettyPrintOne),
+        'prettyPrint': prettyPrint =
+           IN_GLOBAL_SCOPE
+             ? (win['prettyPrint'] = $prettyPrint)
+             : (prettyPrint = $prettyPrint)
+      };
+
+  // Make PR available via the Asynchronous Module Definition (AMD) API.
+  // Per https://github.com/amdjs/amdjs-api/wiki/AMD:
+  // The Asynchronous Module Definition (AMD) API specifies a
+  // mechanism for defining modules such that the module and its
+  // dependencies can be asynchronously loaded.
+  // ...
+  // To allow a clear indicator that a global define function (as
+  // needed for script src browser loading) conforms to the AMD API,
+  // any global define function SHOULD have a property called "amd"
+  // whose value is an object. This helps avoid conflict with any
+  // other existing JavaScript code that could have defined a define()
+  // function that does not conform to the AMD API.
+  if (typeof define === "function" && define['amd']) {
+    define("google-code-prettify", [], function () {
+      return PR; 
+    });
+  }
+})();
