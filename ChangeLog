@@ -1,5 +1,13 @@
 2013-06-11  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.10.0-svn-12
+
+       * Switched to Jaxen 1.1.4 and removed nonstandard *-exclusion to get rid
+         of "jaxen:jaxen:jar with value '*' does not match a valid id pattern"
+         warning messages in the build.
+
+2013-06-23  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.10.0-svn-11
 
        * Switched jslint checking from yuicompressor-maven-plugin to jslint-maven-plugin 
