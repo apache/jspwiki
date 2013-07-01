@@ -1,4 +1,11 @@
-2013-06-11  Glen Mazza (gmazza AT apache DOT org)
+2013-07-01  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-13
+
+       * Got rid of explicit jaxen dependency, switched from jdom:jdom:1.0
+         to org.jdom:jdom:1.2
+
+2013-06-26  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-12
 
