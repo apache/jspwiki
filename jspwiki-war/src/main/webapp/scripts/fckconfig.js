@@ -22,8 +22,19 @@
  *
  * Follow this link for more information:
  * http://docs.fckeditor.net/FCKeditor_2.x/Developers_Guide/Configuration/Configuration_Options
+ *
  */
 
+// Note 7/2013: JSPWiki does not package this editor in its distribution
+// it's necessary for it to be manually included by the user 
+// (See "HowToManuallyIntegrateFCKEditor" in the JSPWiki Wiki.)
+//   
+// This configuration is apparently for FCKEditor V2.6.2 (rather old): 
+// https://issues.apache.org/jira/browse/JSPWIKI-61, featuring JSPWiki's   
+// overrides to standard values shown in
+// https://dev.ckeditor.com/browser/FCKeditor/branches/versions/2.6.x/fckconfig.js?rev=2113
+// A later version, CKEditor, is also available (see JIRA issue JSPWIKI-623).
+ 
 // JSPWiki: this option is dynamically configured in the 'FCK.jsp' file
 // to point to this very 'fckconfig.js' file that you are viewing right now.
 //FCKConfig.CustomConfigurationsPath = '' ;
