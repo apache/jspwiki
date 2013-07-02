@@ -2,8 +2,8 @@
 
        * 2.10.0-svn-13
 
-       * Got rid of explicit jaxen dependency, switched from jdom:jdom:1.0
-         to org.jdom:jdom:1.2
+       * Switched from jdom:jdom:1.0 to org.jdom:jdom:1.2, removed 
+         tomcat:jasper-runtime dependency
 
 2013-06-26  Glen Mazza (gmazza AT apache DOT org)
 
