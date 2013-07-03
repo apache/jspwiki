@@ -44,7 +44,7 @@ import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.freshcookies.security.policy.PolicyReader;
-import org.jdom.JDOMException;
+import org.jdom2.JDOMException;
 
 /**
  * Helper class for verifying JSPWiki's security configuration. Invoked by

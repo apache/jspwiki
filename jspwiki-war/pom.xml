@@ -93,9 +93,14 @@
     
     <dependency>
       <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
+      <artifactId>jdom2</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
@@ -176,7 +181,7 @@
     <finalName>JSPWiki</finalName>
     <!-- filtering: http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html -->
     <filters>
-      <filter>src/main/filters/filters.properties</filter>    
+      <filter>src/test/filters/filters.properties</filter>
     </filters>
     
     <resources>

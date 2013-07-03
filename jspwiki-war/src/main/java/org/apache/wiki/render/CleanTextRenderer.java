@@ -23,9 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jdom.JDOMException;
-import org.jdom.Text;
-import org.jdom.xpath.XPath;
+import org.jdom2.JDOMException;
+import org.jdom2.Text;
+import org.jdom2.xpath.XPath;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;

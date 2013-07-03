@@ -45,7 +45,7 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
-import org.jdom.*;
+import org.jdom2.*;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the

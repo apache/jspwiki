@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import org.apache.wiki.util.FileUtil;
 

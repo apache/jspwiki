@@ -30,12 +30,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPath;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -356,7 +356,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
     }
 
     /**
-     * Returns an {@link org.jdom.Document} representing JSPWiki's web
+     * Returns an {@link org.jdom2.Document} representing JSPWiki's web
      * application deployment descriptor. The document is obtained by calling
      * the servlet context's <code>getResource()</code> method and requesting
      * <code>/WEB-INF/web.xml</code>. For non-servlet applications, this

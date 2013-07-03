@@ -1,3 +1,16 @@
+2013-07-03  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-14
+
+       * Switched from org.jdom:jdom:1.2 to org.jdom:jdom2:2.0.5, to JUnit 4.11
+
+       * Updated Maven cheat sheet to provide debugging info 
+
+       * Moved filters file from src/main/filters to src/test/filters as test
+         is the only place using it.
+
+       * Updated some licenses to most recent.
+
 2013-07-01  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-13

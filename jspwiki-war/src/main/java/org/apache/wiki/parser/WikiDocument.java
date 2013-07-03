@@ -20,7 +20,7 @@ package org.apache.wiki.parser;
 
 import java.lang.ref.WeakReference;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;

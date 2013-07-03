@@ -107,20 +107,14 @@
 
       <dependency>
         <groupId>org.jdom</groupId>
-        <artifactId>jdom</artifactId>
-        <version>1.1.2</version>
+        <artifactId>jdom2</artifactId>
+        <version>2.0.5</version>
       </dependency>
       
-      <!-- Jaxen has to be specified, else jdom above brings in 
-           jaxen:1.1.3, which uses older Maven 1.x cobertura 
-           and findbugs deps no longer available in Central 
-           TODO: Upgrade to org.jdom:jdom2:2.0.5 which uses
-           Jaxen 1.1.4 by default.
-      -->
       <dependency>
-	<groupId>jaxen</groupId>
-	<artifactId>jaxen</artifactId>
-	<version>1.1.4</version>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen</artifactId>
+        <version>1.1.4</version>
       </dependency>
 
       <dependency>
@@ -199,7 +193,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>3.8.2</version>
+        <version>4.11</version>
         <scope>test</scope>
       </dependency>
 
@@ -321,6 +315,16 @@
           </configuration>
         </plugin>
         
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-idea-plugin</artifactId>
+          <version>2.2</version>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
+          </configuration>
+        </plugin>
+
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.2</version>

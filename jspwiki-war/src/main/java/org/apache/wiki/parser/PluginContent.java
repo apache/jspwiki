@@ -31,7 +31,7 @@ import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
-import org.jdom.Text;
+import org.jdom2.Text;
 
 /**
  *  Stores the contents of a plugin in a WikiDocument DOM tree.

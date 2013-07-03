@@ -29,11 +29,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.jdom.Element;
-import org.jdom.Attribute;
-import org.jdom.JDOMException;
-import org.jdom.Text;
-import org.jdom.xpath.XPath;
+import org.jdom2.Element;
+import org.jdom2.Attribute;
+import org.jdom2.JDOMException;
+import org.jdom2.Text;
+import org.jdom2.xpath.XPath;
 
 /**
  * Converting XHtml to Wiki Markup.  This is the class which does all of the heavy loading.

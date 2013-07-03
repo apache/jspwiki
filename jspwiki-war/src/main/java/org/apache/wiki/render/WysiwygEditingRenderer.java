@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 
-import org.jdom.Attribute;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;

@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;

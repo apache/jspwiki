@@ -21,8 +21,8 @@ package org.apache.wiki.render;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;
@@ -58,7 +58,8 @@ public class XHTMLRenderer
     {
         m_document.setContext( m_context );
 
-        XMLOutputter output = new XMLOutputter();
+        CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
+        XMLOutputter output = new XMLOutputter(processor);
         
         StringWriter out = new StringWriter();
         
@@ -69,6 +70,7 @@ public class XHTMLRenderer
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );
         
-        return out.toString();
+        String result = out.toString();
+        return result;
     }
 }

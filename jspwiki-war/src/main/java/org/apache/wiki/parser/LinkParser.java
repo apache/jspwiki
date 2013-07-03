@@ -22,7 +22,7 @@ package org.apache.wiki.parser;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.jdom.Attribute;
+import org.jdom2.Attribute;
 
 /**
  *  Parses JSPWiki-style "augmented" link markup into a Link object
