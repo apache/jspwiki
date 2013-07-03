@@ -11,10 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wiki;
+package org.apache.wiki.site;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeSet;
 
 import org.apache.wiki.Release;
 
@@ -37,10 +48,10 @@ public class TranslationsCheck
     private static final TreeSet<String> duplProps = new TreeSet<String>();
     
     // Change these to your settings...
-    static String base = ".";
+    static String base = "../jspwiki-war";
     static String suffix = null;
    
-    public static void main(String[] args) throws IOException
+    public static void main( String[] args ) throws IOException
     {
         if( args.length == 0 )
         {
@@ -88,12 +99,14 @@ public class TranslationsCheck
         
             System.out.println("Duplicates overall (two or more occurences):");
             System.out.println("--------------------------------------------");
-            Iterator iter = duplProps.iterator();
-            if (duplProps.size() == 0)
+            Iterator< String > iter = duplProps.iterator();
+            if (duplProps.size() == 0) {
                 System.out.println("(none)");
-            else
-                while (iter.hasNext())
+            } else {
+                while( iter.hasNext() ) {
                     System.out.println(iter.next());
+                }
+            }
             System.out.println();
         }
         catch( FileNotFoundException e ) 
@@ -120,7 +133,7 @@ public class TranslationsCheck
         System.out.println(msg);
         
         Iterator< String > iter = sortedNames(p1).iterator();
-        while (iter.hasNext())
+        while( iter.hasNext() )
         {
             String name = iter.next();
             String value = p1.getProperty(name);
@@ -172,10 +185,11 @@ public class TranslationsCheck
     private static List<String> sortedNames(Properties p)
     {
         List<String> list = new ArrayList<String>();
-        Enumeration iter = p.propertyNames();
+        @SuppressWarnings("unchecked")
+		Enumeration< String > iter = ( Enumeration< String > )p.propertyNames();
         while (iter.hasMoreElements())
         {
-            list.add( (String)iter.nextElement() );
+            list.add( iter.nextElement() );
         }
 
         Collections.sort(list);
@@ -187,11 +201,12 @@ public class TranslationsCheck
         Properties p = new Properties();
         p.load(new FileInputStream(new File(base + source)));
         
-        Enumeration iter = p.propertyNames();
+        @SuppressWarnings("unchecked")
+		Enumeration< String > iter = ( Enumeration< String > )p.propertyNames();
         String currentStr;
         while (iter.hasMoreElements())
         {
-            currentStr = (String) iter.nextElement();
+            currentStr = iter.nextElement();
             if (!allProps.add(currentStr))
                 duplProps.add(currentStr);
         }

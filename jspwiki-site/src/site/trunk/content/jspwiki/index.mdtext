@@ -1,0 +1,53 @@
+Title: Apache JSPWiki (Incubating)
+
+## Welcome to Apache JSPWiki
+
+Apache JSPWiki is a leading open source WikiWiki engine, feature-rich 
+and built around standard J2EE components (Java, servlets, JSP). 
+
+Some of its features include:
+
+  * WikiMarkup/Structured Text
+  * File attachments 
+  * Templates support
+  * Data storage through your choice of three WikiPage Providers, with the 
+capability to create and plug in new ones
+  * Security: fine grained control over authorization and authentication, yet 
+simple to configure
+  * Easy plugin interface
+  * UTF-8 support
+  * JSP-based
+  * Easy-ish installation
+  * Page locking to prevent editing conflicts
+  * Support for Multiple Wikis
+
+## Project status
+
+  * **15-May-2013:** Official [Apache JSPWiki 2.9.1-incubating release][] is out!
+
+  * **04-Jan-2013:** new committer and PPMC member - Glen Mazza
+  
+  * **01-Dec-2012:** Official Apache JSPWiki 2.9.0-incubating release is out!
+
+  * **01-Nov-2012:** New mentor - Siegfried Goeschl.
+
+  * **01-May-2012:** New, yet familiar, project website.
+
+  * **23-Jan-2012:** The previous attempt to graduate to an ASF top-level 
+project did not succeed for various reasons. A new effort is started to 
+graduate with a 2.9 codebase (based on 2.8), so no JCR backend and no Stripes, 
+but the traditional JSPWiki, the progress can still be followed at our 
+[JIRA][] issue tracker.
+
+## Disclaimer
+
+Incubation is required of all newly accepted projects until a further review 
+indicates that the infrastructure, communications, and decision making process 
+have stabilized in a manner consistent with other successful ASF projects. 
+While incubation status is not necessarily a reflection of the completeness or 
+stability of the code, it does indicate that the project has yet to be fully 
+endorsed by the ASF.
+
+
+[JIRA]: https://issues.apache.org/jira/browse/JSPWIKI
+[Apache JSPWiki 2.9.1-incubating release]: general/downloads.html

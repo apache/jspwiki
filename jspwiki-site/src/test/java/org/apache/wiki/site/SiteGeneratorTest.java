@@ -36,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.Release;
-import org.apache.wiki.TranslationsCheck;
 
 
 /**
@@ -63,7 +62,7 @@ public class SiteGeneratorTest extends TestCase
 
     private static final Logger LOG = Logger.getLogger( SiteGeneratorTest.class );
     
-    private static final String BASE_FILE_NAME = "../site/trunk/";
+    private static final String BASE_FILE_NAME = "./src/site/trunk/";
     
     private static final String I18N_BASE = "/src/main/resources/";
     private static final String I18N_CORE = I18N_BASE + "CoreResources.properties";
@@ -159,8 +158,8 @@ public class SiteGeneratorTest extends TestCase
         List< String > links = new ArrayList< String >();
         try 
         {
-            @SuppressWarnings({ "unchecked", "cast" })
-            List< String > lines = ( List< String > )FileUtils.readLines( new File( "./ChangeLog") );
+            @SuppressWarnings( { "unchecked", "cast" } )
+            List< String > lines = ( List< String > )FileUtils.readLines( new File( "../ChangeLog" ) );
             for( String line : lines ) 
             {
                 parseChangeLogLine( line, sb, links );

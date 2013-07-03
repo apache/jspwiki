@@ -1,3 +1,10 @@
+2013-07-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-15
+       
+       * JSPWIKI-772: Move site to trunk so content generated from source gets 
+         built automatically
+
 2013-07-03  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-14

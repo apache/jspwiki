@@ -29,11 +29,8 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jspwiki-war</artifactId>
-  <name>Apache JSPWiki (Incubating)</name>
+  <name>Apache JSPWiki (Incubating) Main War</name>
   <packaging>war</packaging>
-  <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich 
-  and built around standard J2EE components (Java, servlets, JSP).</description>
-  <url>http://incubator.apache.org/jspwiki/</url>
 
   <dependencies>
     <dependency>
@@ -239,6 +236,13 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
       

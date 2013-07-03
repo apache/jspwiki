@@ -1,0 +1,30 @@
+Title: Downloads
+
+15-May-2013: The current release is version 2.9.1-incubating.
+
+This release fixes the following issues:
+<a class="external" href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12310732&version=12321249">https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12310732&version=12319521</a>
+
+Current source and binary distributions are available through the
+<a class="external" href="http://www.apache.org/dyn/closer.cgi/incubator/jspwiki/2.9.1-incubating/">Apache mirrors</a>.
+
+Note: When downloading from a mirror, please be sure to verify that checksums and signatures are correct.
+To do so, use the checksum and signature files from the main Apache site at
+<a class="external" href="http://www.apache.org/dist/incubator/jspwiki/2.9.1-incubating/">http://www.apache.org/dist/incubator/jspwiki/2.9.1-incubating/</a>
+Find here the KEYS file, which contains all OpenPGP keys we use to sign releases:
+<a class="external" href="http://www.apache.org/dist/incubator/jspwiki/KEYS">http://www.apache.org/dist/incubator/jspwiki/KEYS</a>
+
+
+Previous source and binary distributions are available through the
+<a class="external" href="http://archive.apache.org/dist/incubator/jspwiki/">
+Apache archives</a>.
+
+<!--
+  Source, javadoc, and build artifacts are also available via the 
+  <a class="external" href="https://repository.apache.org/index.html#nexus-search;gav~org.apache.jspwiki~~~~">
+  Nexus</a> repository with the groupId: org.apache.jspwiki and artifactId: jspwiki.
+-->
+
+If you want to build directly from the sources, please check the [Get and Build Source][] page.
+
+[Get and Build Source]: ../development/source_and_guide.html
