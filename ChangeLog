@@ -1,3 +1,21 @@
+2013-07-11  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-17
+       
+       * Moved jspwiki.tld to releases/META-INF/ so it becomes part of the JSPWiki JAR instead of 
+         standalone file
+ 
+       * Upgraded jspwiki.tld from JSP 1.1 to JSP 2.1 (requires Tomcat 6 or higher), new URL for taglib 
+         includes "incubator" but can be quickly changed should JSPWiki become TLP.
+
+2013-07-11  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-16
+       
+       * Upgraded JSTL to 1.2 (which includes standard, so could remove that dependency)
+      
+       * Removed jstl-fmt.tld, oscache.tld in favor of versions within their respective JARs
+
 2013-07-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-15

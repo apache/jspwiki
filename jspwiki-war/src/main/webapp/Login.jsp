@@ -31,7 +31,7 @@
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>

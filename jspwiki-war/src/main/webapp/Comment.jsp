@@ -34,7 +34,7 @@
 <%@ page import="org.apache.wiki.preferences.Preferences.TimeFormat" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%!

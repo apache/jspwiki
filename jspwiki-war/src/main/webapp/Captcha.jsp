@@ -26,7 +26,7 @@
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 

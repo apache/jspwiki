@@ -18,7 +18,7 @@
 --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>

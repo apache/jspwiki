@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-                        "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -19,23 +17,20 @@
     specific language governing permissions and limitations
     under the License.  
 -->
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
 
-<!--
-     JSPWiki tag libraries are defined here.
-
-     Note that we support only the 1.1 spec for now,
-     simply because there is no reason to break compatibility.
- -->
-<taglib>
-  <tlibversion>1.0</tlibversion>
-  <jspversion>1.1</jspversion>
-  <shortname>jspwiki</shortname>
+  <tlib-version>2.10</tlib-version>
+  <short-name>jspwiki</short-name>
+  <uri>http://incubator.apache.org/jspwiki/tags</uri>
 
   <tag>
     <name>AdminBeanIterator</name>
-    <tagclass>org.apache.wiki.tags.AdminBeanIteratorTag</tagclass>
-    <teiclass>org.apache.wiki.tags.AdminBeanIteratorInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.AdminBeanIteratorTag</tag-class>
+    <tei-class>org.apache.wiki.tags.AdminBeanIteratorInfo</tei-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>id</name>
        <rtexprvalue>true</rtexprvalue>
@@ -48,9 +43,9 @@
 
   <tag>
     <name>AttachmentsIterator</name>
-    <tagclass>org.apache.wiki.tags.AttachmentsIteratorTag</tagclass>
-    <teiclass>org.apache.wiki.tags.AttachmentsIteratorInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.AttachmentsIteratorTag</tag-class>
+    <tei-class>org.apache.wiki.tags.AttachmentsIteratorInfo</tei-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>id</name>
     </attribute>
@@ -58,20 +53,20 @@
 
   <tag>
     <name>Author</name>
-    <tagclass>org.apache.wiki.tags.AuthorTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.AuthorTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>BaseURL</name>
-    <tagclass>org.apache.wiki.tags.BaseURLTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.BaseURLTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>Breadcrumbs</name>
-    <tagclass>org.apache.wiki.tags.BreadcrumbsTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.BreadcrumbsTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>maxpages</name>
        <required>false</required><!-- the default value is 10 -->
@@ -84,8 +79,8 @@
 
   <tag>
     <name>Calendar</name>
-    <tagclass>org.apache.wiki.tags.CalendarTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.CalendarTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>pageformat</name>
        <rtexprvalue>true</rtexprvalue>
@@ -102,9 +97,9 @@
 
   <tag>
     <name>CheckLock</name>
-    <tagclass>org.apache.wiki.tags.CheckLockTag</tagclass>
-    <teiclass>org.apache.wiki.tags.CheckLockInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.CheckLockTag</tag-class>
+    <tei-class>org.apache.wiki.tags.CheckLockInfo</tei-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>mode</name>
     </attribute>
@@ -115,8 +110,8 @@
 
   <tag>
     <name>CheckRequestContext</name>
-    <tagclass>org.apache.wiki.tags.CheckRequestContextTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.CheckRequestContextTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>context</name>
        <rtexprvalue>true</rtexprvalue>
@@ -125,8 +120,8 @@
 
   <tag>
     <name>CheckVersion</name>
-    <tagclass>org.apache.wiki.tags.CheckVersionTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.CheckVersionTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>mode</name>
     </attribute>
@@ -134,8 +129,8 @@
 
   <tag>
     <name>CommentLink</name>
-    <tagclass>org.apache.wiki.tags.CommentLinkTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.CommentLinkTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -147,8 +142,8 @@
 
   <tag>
     <name>Content</name>
-    <tagclass>org.apache.wiki.tags.ContentTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.ContentTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>view</name>
        <rtexprvalue>true</rtexprvalue>
@@ -193,14 +188,14 @@
 
   <tag>
     <name>ContentEncoding</name>
-    <tagclass>org.apache.wiki.tags.ContentEncodingTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.ContentEncodingTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>DiffLink</name>
-    <tagclass>org.apache.wiki.tags.DiffLinkTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.DiffLinkTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -220,8 +215,8 @@
 
   <tag>
     <name>EditLink</name>
-    <tagclass>org.apache.wiki.tags.EditLinkTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.EditLinkTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -245,15 +240,15 @@
 
   <tag>
     <name>Editor</name>
-    <tagclass>org.apache.wiki.tags.EditorTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.EditorTag</tag-class>
+    <body-content>JSP</body-content>
   </tag>
 
   <tag>
     <name>EditorIterator</name>
-    <tagclass>org.apache.wiki.tags.EditorIteratorTag</tagclass>
-    <teiclass>org.apache.wiki.tags.EditorIteratorInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.EditorIteratorTag</tag-class>
+    <tei-class>org.apache.wiki.tags.EditorIteratorInfo</tei-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>id</name>
     </attribute>
@@ -261,21 +256,21 @@
 
   <tag>
     <name>FeedDiscovery</name>
-    <tagclass>org.apache.wiki.tags.FeedDiscoveryTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.FeedDiscoveryTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>HasAttachments</name>
-    <tagclass>org.apache.wiki.tags.HasAttachmentsTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.HasAttachmentsTag</tag-class>
+    <body-content>JSP</body-content>
   </tag>
 
   <tag>
     <name>HistoryIterator</name>
-    <tagclass>org.apache.wiki.tags.HistoryIteratorTag</tagclass>
-    <teiclass>org.apache.wiki.tags.HistoryIteratorInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.HistoryIteratorTag</tag-class>
+    <tei-class>org.apache.wiki.tags.HistoryIteratorInfo</tei-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>id</name>
     </attribute>
@@ -283,14 +278,14 @@
 
   <tag>
     <name>IfNoSearchResults</name>
-    <tagclass>org.apache.wiki.tags.IfNoSearchResultsTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.IfNoSearchResultsTag</tag-class>
+    <body-content>JSP</body-content>
   </tag>
 
   <tag>
     <name>Include</name>
-    <tagclass>org.apache.wiki.tags.IncludeTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.IncludeTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -299,8 +294,8 @@
 
   <tag>
     <name>IncludeResources</name>
-    <tagclass>org.apache.wiki.tags.IncludeResourcesTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.IncludeResourcesTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>type</name>
        <rtexprvalue>true</rtexprvalue>
@@ -309,8 +304,8 @@
 
   <tag>
     <name>InsertDiff</name>
-    <tagclass>org.apache.wiki.tags.InsertDiffTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.InsertDiffTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -319,8 +314,8 @@
 
   <tag>
     <name>InsertPage</name>
-    <tagclass>org.apache.wiki.tags.InsertPageTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.InsertPageTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -333,8 +328,8 @@
 
   <tag>
     <name>Link</name>
-    <tagclass>org.apache.wiki.tags.LinkTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.LinkTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -398,8 +393,8 @@
 
   <tag>
     <name>LinkTo</name>
-    <tagclass>org.apache.wiki.tags.LinkToTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.LinkToTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -427,8 +422,8 @@
 
   <tag>
     <name>LinkToParent</name>
-    <tagclass>org.apache.wiki.tags.LinkToParentTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.LinkToParentTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -444,8 +439,8 @@
 
   <tag>
     <name>Messages</name>
-    <tagclass>org.apache.wiki.tags.MessagesTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.MessagesTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>action</name>
        <rtexprvalue>true</rtexprvalue>
@@ -466,14 +461,14 @@
 
   <tag>
     <name>NextVersion</name>
-    <tagclass>org.apache.wiki.tags.NextVersionTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.NextVersionTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>NoSuchPage</name>
-    <tagclass>org.apache.wiki.tags.NoSuchPageTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.NoSuchPageTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -482,8 +477,8 @@
 
   <tag>
     <name>PageExists</name>
-    <tagclass>org.apache.wiki.tags.PageExistsTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageExistsTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -492,8 +487,8 @@
 
   <tag>
     <name>PageInfoLink</name>
-    <tagclass>org.apache.wiki.tags.PageInfoLinkTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageInfoLinkTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -514,8 +509,8 @@
 
   <tag>
     <name>PageDate</name>
-    <tagclass>org.apache.wiki.tags.PageDateTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageDateTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
         <name>format</name>
         <rtexprvalue>true</rtexprvalue>
@@ -524,20 +519,20 @@
 
   <tag>
     <name>PageName</name>
-    <tagclass>org.apache.wiki.tags.PageNameTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageNameTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>PageSize</name>
-    <tagclass>org.apache.wiki.tags.PageSizeTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageSizeTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>PageType</name>
-    <tagclass>org.apache.wiki.tags.PageTypeTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageTypeTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>type</name>
        <rtexprvalue>true</rtexprvalue>
@@ -546,14 +541,14 @@
 
   <tag>
     <name>PageVersion</name>
-    <tagclass>org.apache.wiki.tags.PageVersionTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.PageVersionTag</tag-class>
+    <body-content>JSP</body-content>
   </tag>
 
   <tag>
     <name>Param</name>
-    <tagclass>org.apache.wiki.tags.ParamTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.ParamTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>name</name>
        <required>true</required>
@@ -568,14 +563,14 @@
 
   <tag>
     <name>ParentPageName</name>
-    <tagclass>org.apache.wiki.tags.ParentPageNameTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.ParentPageNameTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>Permission</name>
-    <tagclass>org.apache.wiki.tags.PermissionTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.PermissionTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>permission</name>
        <rtexprvalue>true</rtexprvalue>
@@ -584,14 +579,14 @@
 
   <tag>
     <name>PreviousVersion</name>
-    <tagclass>org.apache.wiki.tags.PreviousVersionTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.PreviousVersionTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>Plugin</name>
-    <tagclass>org.apache.wiki.tags.PluginTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.PluginTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>plugin</name>
        <required>true</required>
@@ -606,8 +601,8 @@
 
   <tag>
     <name>RequestResource</name>
-    <tagclass>org.apache.wiki.tags.RequestResourceTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.RequestResourceTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>type</name>
        <rtexprvalue>true</rtexprvalue>
@@ -620,14 +615,14 @@
 
   <tag>
     <name>RSSLink</name>
-    <tagclass>org.apache.wiki.tags.RSSLinkTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.RSSLinkTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>RSSImageLink</name>
-    <tagclass>org.apache.wiki.tags.RSSImageLinkTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.RSSImageLinkTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>title</name>
        <rtexprvalue>true</rtexprvalue>
@@ -640,9 +635,9 @@
 
   <tag>
     <name>SearchResultIterator</name>
-    <tagclass>org.apache.wiki.tags.SearchResultIteratorTag</tagclass>
-    <teiclass>org.apache.wiki.tags.SearchResultIteratorInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.SearchResultIteratorTag</tag-class>
+    <tei-class>org.apache.wiki.tags.SearchResultIteratorInfo</tei-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>id</name>
     </attribute>
@@ -664,21 +659,21 @@
 
   <tag>
     <name>SearchResults</name>
-    <tagclass>org.apache.wiki.tags.SearchResultsTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.SearchResultsTag</tag-class>
+    <body-content>JSP</body-content>
   </tag>
 
   <tag>
     <name>SearchResultsSize</name>
-    <tagclass>org.apache.wiki.tags.SearchResultsSizeTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.SearchResultsSizeTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>SetPagination</name>
-    <tagclass>org.apache.wiki.tags.SetPaginationTag</tagclass>
-    <bodycontent>empty</bodycontent>
-    <info>Returns pagination string and cache it in the pageContext</info>
+    <tag-class>org.apache.wiki.tags.SetPaginationTag</tag-class>
+    <body-content>empty</body-content>
+    <description>Returns pagination string and cache it in the pageContext</description>
     <attribute>
        <name>start</name>
        <rtexprvalue>true</rtexprvalue>
@@ -716,9 +711,9 @@
 
   <tag>
     <name>TabbedSection</name>
-    <tagclass>org.apache.wiki.tags.TabbedSectionTag</tagclass>
-    <bodycontent>JSP</bodycontent>
-    <info>A BodyTag for tabbed sections</info>
+    <tag-class>org.apache.wiki.tags.TabbedSectionTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>A BodyTag for tabbed sections</description>
     <attribute>
       <name>defaultTab</name>
       <required>false</required>
@@ -728,9 +723,9 @@
 
   <tag>
     <name>Tab</name>
-    <tagclass>org.apache.wiki.tags.TabTag</tagclass>
-    <bodycontent>JSP</bodycontent>
-    <info>A Tag for a tab, which is a child of tabbedSection</info>
+    <tag-class>org.apache.wiki.tags.TabTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>A Tag for a tab, which is a child of tabbedSection</description>
     <attribute>
       <name>id</name>
       <required>true</required>
@@ -755,20 +750,20 @@
 
   <tag>
     <name>TemplateDir</name>
-    <tagclass>org.apache.wiki.tags.TemplateDirTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.TemplateDirTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>Translate</name>
-    <tagclass>org.apache.wiki.tags.TranslateTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.TranslateTag</tag-class>
+    <body-content>JSP</body-content>
   </tag>
 
   <tag>
     <name>UploadLink</name>
-    <tagclass>org.apache.wiki.tags.UploadLinkTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.UploadLinkTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
@@ -780,14 +775,14 @@
 
   <tag>
     <name>UserName</name>
-    <tagclass>org.apache.wiki.tags.UserNameTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.UserNameTag</tag-class>
+    <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>UserCheck</name>
-    <tagclass>org.apache.wiki.tags.UserCheckTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.UserCheckTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>status</name>
        <rtexprvalue>true</rtexprvalue>
@@ -800,8 +795,8 @@
 
   <tag>
     <name>UserProfile</name>
-    <tagclass>org.apache.wiki.tags.UserProfileTag</tagclass>
-    <bodycontent>JSP</bodycontent>
+    <tag-class>org.apache.wiki.tags.UserProfileTag</tag-class>
+    <body-content>JSP</body-content>
     <attribute>
        <name>property</name>
        <rtexprvalue>true</rtexprvalue>
@@ -810,8 +805,8 @@
 
   <tag>
     <name>Variable</name>
-    <tagclass>org.apache.wiki.tags.VariableTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <tag-class>org.apache.wiki.tags.VariableTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
        <name>var</name>
        <required>true</required>
@@ -826,8 +821,8 @@
 
   <tag>
       <name>Cookie</name>
-      <tagclass>org.apache.wiki.tags.CookieTag</tagclass>
-      <bodycontent>empty</bodycontent>
+      <tag-class>org.apache.wiki.tags.CookieTag</tag-class>
+      <body-content>empty</body-content>
       <attribute>
           <name>name</name>
           <required>true</required>

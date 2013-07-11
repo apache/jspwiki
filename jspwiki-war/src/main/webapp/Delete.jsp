@@ -25,7 +25,7 @@
 <%@ page import="org.apache.wiki.attachment.Attachment" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 
 <%! 
     Logger log = Logger.getLogger("JSPWiki");

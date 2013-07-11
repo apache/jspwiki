@@ -21,7 +21,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 <%! 
     /**
      * This page contains the logic for finding and including

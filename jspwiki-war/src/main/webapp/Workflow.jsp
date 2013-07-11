@@ -30,7 +30,7 @@
 <%@ page import="org.apache.wiki.workflow.Outcome" %>
 <%@ page import="org.apache.wiki.workflow.Workflow" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
 
 <%! 
     Logger log = Logger.getLogger("JSPWiki"); 
