@@ -29,7 +29,7 @@ public interface SearchResult
      *  
      *  @return the WikiPage object containing this result
      */
-    public WikiPage getPage();
+    WikiPage getPage();
 
     /**
      *  Returns the score.
@@ -37,7 +37,7 @@ public interface SearchResult
      *  @return A positive score value.  Note that there is no upper limit for the score.
      */
 
-    public int getScore();
+    int getScore();
     
     
     /**
@@ -47,5 +47,5 @@ public interface SearchResult
      * @return the search results
      * @since 2.4
      */
-    public String[] getContexts();
+    String[] getContexts();
 }

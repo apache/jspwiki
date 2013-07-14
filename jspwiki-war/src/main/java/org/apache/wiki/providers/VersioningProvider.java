@@ -38,6 +38,5 @@ public interface VersioningProvider
      *  @param version The version to check
      *  @return True, if page exists; false otherwise.
      */
-
-    public boolean pageExists( String page, int version );
+    boolean pageExists( String page, int version );
 }

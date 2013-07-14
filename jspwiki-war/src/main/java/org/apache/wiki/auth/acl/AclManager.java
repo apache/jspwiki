@@ -36,7 +36,7 @@ public interface AclManager
      * @param engine the wiki engine
      * @param props the initialization properties
      */
-    public void initialize( WikiEngine engine, Properties props );
+    void initialize( WikiEngine engine, Properties props );
 
     /**
      * A helper method for parsing textual AccessControlLists. The line is in
@@ -50,7 +50,7 @@ public interface AclManager
      * @throws WikiSecurityException if the ruleLine was faulty somehow.
      * @since 2.1.121
      */
-    public Acl parseAcl( WikiPage page, String ruleLine ) throws WikiSecurityException;
+    Acl parseAcl( WikiPage page, String ruleLine ) throws WikiSecurityException;
 
     /**
      * Returns the access control list for the page.
@@ -62,7 +62,7 @@ public interface AclManager
      * @since 2.2.121
      * @return the Acl representing permissions for the page
      */
-    public Acl getPermissions( WikiPage page );
+    Acl getPermissions( WikiPage page );
 
     /**
      * Sets the access control list for the page and persists it.
@@ -71,5 +71,5 @@ public interface AclManager
      * @since 2.5
      * @throws WikiSecurityException if the ACL cannot be set or persisted
      */
-    public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException;
+    void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException;
 }

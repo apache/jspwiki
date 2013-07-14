@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 
 /**
@@ -41,19 +40,19 @@ public interface GroupDatabase
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
-    public void commit() throws WikiSecurityException;
+    void commit() throws WikiSecurityException;
 
     /**
      * Looks up and deletes a {@link Group} from the group database. If the
      * group database does not contain the supplied Group. this method throws a
-     * {@link NoSuchPrincipalException}. The method commits the results
+     * {@link org.apache.wiki.auth.NoSuchPrincipalException}. The method commits the results
      * of the delete to persistent storage.
      * @param group the group to remove
      * @throws WikiSecurityException if the database does not contain the
-     * supplied group (thrown as {@link NoSuchPrincipalException}) or if
+     * supplied group (thrown as {@link org.apache.wiki.auth.NoSuchPrincipalException}) or if
      * the commit did not succeed
      */
-    public void delete( Group group ) throws WikiSecurityException;
+    void delete( Group group ) throws WikiSecurityException;
 
     /**
      * Initializes the group database based on values from a Properties object.
@@ -62,7 +61,7 @@ public interface GroupDatabase
      * @throws WikiSecurityException if the database could not be initialized successfully
      * @throws NoRequiredPropertyException if a required property is not present
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
+    void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Saves a Group to the group database. Note that this method <em>must</em>
@@ -75,7 +74,7 @@ public interface GroupDatabase
      * @param modifier the user who saved the Group
      * @throws WikiSecurityException if the Group could not be saved successfully
      */
-    public void save( Group group, Principal modifier ) throws WikiSecurityException;
+    void save( Group group, Principal modifier ) throws WikiSecurityException;
 
     /**
      * Returns all wiki groups that are stored in the GroupDatabase as an array
@@ -90,5 +89,5 @@ public interface GroupDatabase
      * @return the wiki groups
      * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
-    public Group[] groups() throws WikiSecurityException;
+    Group[] groups() throws WikiSecurityException;
 }

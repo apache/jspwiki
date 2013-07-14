@@ -54,7 +54,7 @@ public interface Authorizer
      * 
      * @return an array of Principals representing the roles
      */
-    public Principal[] getRoles();
+    Principal[] getRoles();
 
     /**
      * Looks up and returns a role Principal matching a given String. If a
@@ -65,7 +65,7 @@ public interface Authorizer
      * @param role the name of the role to retrieve
      * @return the role Principal
      */
-    public Principal findRole( String role );
+    Principal findRole( String role );
 
     /**
      * Initializes the authorizer.
@@ -74,7 +74,7 @@ public interface Authorizer
      * @param props the wiki engine initialization properties
      * @throws WikiSecurityException if the Authorizer could not be initialized
      */
-    public void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException;
+    void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException;
 
     /**
      * Determines whether the Subject associated with a WikiSession is in a
@@ -88,6 +88,6 @@ public interface Authorizer
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
      */
-    public boolean isUserInRole( WikiSession session, Principal role );
+    boolean isUserInRole( WikiSession session, Principal role );
 
 }

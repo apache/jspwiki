@@ -27,5 +27,5 @@ package org.apache.wiki.tags;
  */
 public interface ParamHandler
 {
-    public void setContainedParameter( String n, String v );
+    void setContainedParameter( String n, String v );
 }

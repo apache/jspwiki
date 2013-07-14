@@ -32,5 +32,5 @@ public interface HeadingListener
      *  @param context The WikiContext
      *  @param hd The heading which was just encountered.
      */
-    public void headingAdded( WikiContext context, Heading hd );
+    void headingAdded( WikiContext context, Heading hd );
 }

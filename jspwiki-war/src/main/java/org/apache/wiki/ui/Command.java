@@ -90,7 +90,7 @@ public interface Command
      * @return the new, targeted Command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public Command targetedCommand( Object target );
+    Command targetedCommand( Object target );
 
     /**
      * Returns the content template associated with a Command, such as
@@ -100,7 +100,7 @@ public interface Command
      * of this method is <code>null</code></em>.
      * @return the content template
      */
-    public String getContentTemplate();
+    String getContentTemplate();
 
     /**
      * Returns the JSP associated with the Command. The JSP is
@@ -111,20 +111,20 @@ public interface Command
      * result, although in some cases the result may be an empty string.
      * @return the JSP or url associated with the wiki command
      */
-    public String getJSP();
+    String getJSP();
 
     /**
      * Returns the human-friendly name for this command.
      * @return the name
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns the request context associated with this Command. This method is
      * guaranteed to return a non-<code>null</code> String.
      * @return the request context
      */
-    public String getRequestContext();
+    String getRequestContext();
 
     /**
      * Returns the Permission required to successfully execute this Command. If
@@ -137,7 +137,7 @@ public interface Command
      * <code>PagePermission "<em>yourWiki</em>:Main", "view"</code>.
      * @return the required permission, or <code>null</code> if not required
      */
-    public Permission requiredPermission();
+    Permission requiredPermission();
 
     /**
      * Returns the target associated with a Command, if it was created with one.
@@ -147,13 +147,13 @@ public interface Command
      * is <code>null</code></em>.
      * @return the wiki page
      */
-    public Object getTarget();
+    Object getTarget();
 
     /**
      * Returns the URL pattern associated with this Command. This method is
      * guaranteed to return a non-<code>null</code> String.
      * @return the URL pattern
      */
-    public String getURLPattern();
+    String getURLPattern();
 
 }

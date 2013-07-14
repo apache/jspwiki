@@ -35,7 +35,6 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -419,7 +418,7 @@ public final class CommandResolver
      * user, taking into acccount special pages. The resolution algorithm will:
      * <ul>
      * <li>Extract the page name from the URL according to the rules for the
-     * current {@link URLConstructor}. If a page name was
+     * current {@link org.apache.wiki.url.URLConstructor}. If a page name was
      * passed in the request, return the correct name after taking into account
      * potential plural matches.</li>
      * <li>If the extracted page name is <code>null</code>, attempt to see

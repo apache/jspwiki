@@ -55,7 +55,7 @@ public interface AclEntry
      *         already part of this entry's permission set, and <code>false</code> if
      *         the permission is not of type PagePermission
      */
-    public boolean addPermission(Permission permission);
+    boolean addPermission(Permission permission);
 
     /**
      * Checks if the specified permission is part of the permission set in this
@@ -64,20 +64,20 @@ public interface AclEntry
      * @return true if the permission is part of the permission set in this entry,
      *         false otherwise.
      */
-    public boolean checkPermission(Permission permission);
+    boolean checkPermission(Permission permission);
 
     /**
      * Returns the principal for which permissions are granted by this
      * ACL entry. Returns null if there is no principal set for this entry yet.
      * @return the principal associated with this entry.
      */
-    public Principal getPrincipal();
+    Principal getPrincipal();
 
     /**
      * Returns an enumeration of the permissions in this ACL entry.
      * @return an enumeration of the permissions
      */
-    public Enumeration< Permission > permissions();
+    Enumeration< Permission > permissions();
 
     /**
      * Removes the specified permission from this ACL entry.
@@ -85,7 +85,7 @@ public interface AclEntry
      * @return true if the permission is removed, false if the permission was not
      *         part of this entry's permission set.
      */
-    public boolean removePermission(Permission permission);
+    boolean removePermission(Permission permission);
 
     /**
      * Specifies the principal for which permissions are granted or denied by
@@ -95,11 +95,11 @@ public interface AclEntry
      * @return true if the principal is set, false if there was already a
      *         principal set for this entry
      */
-    public boolean setPrincipal(Principal user);
+    boolean setPrincipal(Principal user);
 
     /**
      * Returns a string representation of the contents of this ACL entry.
      * @return a string representation of the contents.
      */
-    public String toString();
+    String toString();
 }

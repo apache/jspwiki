@@ -34,7 +34,7 @@ public interface WikiEventListener extends EventListener
      *
      * @param event    a WikiEvent object
      */
-    public void actionPerformed( WikiEvent event );
+    void actionPerformed( WikiEvent event );
 
 
 } // end com.ecryd.jspwiki.event.WikiEventListener

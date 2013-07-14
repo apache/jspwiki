@@ -32,5 +32,5 @@ public interface StringTransmutator
      *  @param source  The source string.
      *  @return The mutated string.
      */
-    public String mutate( WikiContext context, String source );
+    String mutate( WikiContext context, String source );
 }

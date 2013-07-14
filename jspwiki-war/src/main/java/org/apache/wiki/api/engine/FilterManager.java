@@ -28,16 +28,16 @@ import org.apache.wiki.api.filters.PageFilter;
 public interface FilterManager
 {
     /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
-    static final String PROP_FILTERXML = "jspwiki.filterConfig";
+    String PROP_FILTERXML = "jspwiki.filterConfig";
     
     /** Default location for the filter XML property file.  Value is <tt>{@value}</tt>. */
-    static final String DEFAULT_XMLFILE = "/WEB-INF/filters.xml";
+    String DEFAULT_XMLFILE = "/WEB-INF/filters.xml";
 
     /** JSPWiki system filters are all below this value. */
-    static final int SYSTEM_FILTER_PRIORITY = -1000;
+    int SYSTEM_FILTER_PRIORITY = -1000;
     
     /** The standard user level filtering. */
-    static final int USER_FILTER_PRIORITY   = 0;
+    int USER_FILTER_PRIORITY   = 0;
     
     /**
      *  Adds a page filter to the queue.  The priority defines in which

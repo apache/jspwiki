@@ -42,6 +42,6 @@ public interface WebAuthorizer extends Authorizer
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
      */
-    public boolean isUserInRole( HttpServletRequest request, Principal role );
+    boolean isUserInRole( HttpServletRequest request, Principal role );
     
 }

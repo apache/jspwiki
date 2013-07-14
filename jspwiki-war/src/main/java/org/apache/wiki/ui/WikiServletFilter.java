@@ -31,7 +31,6 @@ import org.apache.log4j.NDC;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.tags.WikiTagBase;
@@ -45,7 +44,7 @@ import org.apache.wiki.tags.WikiTagBase;
  * authenticated by container or by JSPWiki's custom system).
  * The wrapper's other responsibility is to incorporate JSPWiki built-in roles
  * into the role-checking algorithm for {@link  HttpServletRequest#isUserInRole(String)}.
- * Just before the request is wrapped, the method {@link AuthenticationManager#login(HttpServletRequest)} executes;
+ * Just before the request is wrapped, the method {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)} executes;
  * this method contains all of the logic needed to grab any user login credentials set 
  * by the container or by cookies.
  *  
@@ -93,13 +92,13 @@ public class WikiServletFilter implements Filter
     /**
     * Checks that the WikiEngine is running ok, wraps the current
     * HTTP request, and sets the correct authentication state for the users's
-    * WikiSession. First, the method {@link AuthenticationManager#login(HttpServletRequest)}
+    * WikiSession. First, the method {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)}
     * executes, which sets the authentication state. Then, the request is wrapped with a
     * {@link WikiRequestWrapper}.
     * @param request the current HTTP request object
     * @param response the current HTTP response object
     * @param chain The Filter chain passed down.
-    * @throws ServletException if {@link AuthenticationManager#login(HttpServletRequest)} fails for any reason
+    * @throws ServletException if {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)} fails for any reason
     * @throws IOException If writing to the servlet response fails. 
     */
     public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException

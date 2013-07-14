@@ -24,12 +24,11 @@ import javax.security.auth.callback.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 
 /**
  * Handles logins made from inside the wiki application, rather than via the web
  * container. This handler is instantiated in
- * {@link org.apache.wiki.auth.AuthenticationManager#login(WikiSession,HttpServletRequest, String, String)}.
+ * {@link org.apache.wiki.auth.AuthenticationManager#login(org.apache.wiki.WikiSession,HttpServletRequest, String, String)}.
  * If container-managed authentication is used, the
  * {@link WebContainerCallbackHandler}is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.

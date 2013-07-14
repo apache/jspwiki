@@ -32,7 +32,7 @@ public interface Watchable
      *
      *  @param state The state in which your Watchable is currently.
      */
-    public void timeoutExceeded( String state );
+    void timeoutExceeded( String state );
 
     /**
      *  Returns a human-readable name of this Watchable.  Used in
@@ -40,7 +40,7 @@ public interface Watchable
      *
      *  @return The name of the Watchable.
      */
-    public String getName();
+    String getName();
 
     /**
      *  Returns <code>true</code>, if this Watchable is still alive and can be
@@ -49,5 +49,5 @@ public interface Watchable
      *
      *  @return the result
      */
-    public boolean isAlive();
+    boolean isAlive();
 }

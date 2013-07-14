@@ -32,7 +32,7 @@ public interface WikiProvider
     /**
      *  Passing this to any method should get the latest version
      */
-    public static final int LATEST_VERSION = -1;
+    int LATEST_VERSION = -1;
 
     /**
      *  Initializes the page provider.
@@ -42,7 +42,7 @@ public interface WikiProvider
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
      *  @throws IOException If there is an IO problem
      */
-    public void initialize( WikiEngine engine, Properties properties ) 
+    void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException;
 
@@ -53,7 +53,7 @@ public interface WikiProvider
      *  @return A string describing the provider.
      */
 
-    public String getProviderInfo();
+    String getProviderInfo();
 }
 
 

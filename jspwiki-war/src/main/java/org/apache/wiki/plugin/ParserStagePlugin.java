@@ -41,5 +41,5 @@ public interface ParserStagePlugin extends org.apache.wiki.api.plugin.ParserStag
      *  @param context WikiContext, as usual.
      *  @param params  Parsed parameters for the plugin.
      */
-    public void executeParser( PluginContent element, WikiContext context, Map<String, String> params );
+    void executeParser( PluginContent element, WikiContext context, Map<String, String> params );
 }

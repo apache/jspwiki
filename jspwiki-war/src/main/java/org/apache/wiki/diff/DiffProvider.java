@@ -40,12 +40,12 @@ public interface DiffProvider extends WikiProvider
      * @param oldWikiText the old text
      * @param newWikiText the new text
      */
-    public String makeDiffHtml(WikiContext context, String oldWikiText, String newWikiText);
+    String makeDiffHtml(WikiContext context, String oldWikiText, String newWikiText);
     
     /**
      *  If there is no diff provider set, this provider will work instead.
      */
-    public static class NullDiffProvider implements DiffProvider
+    class NullDiffProvider implements DiffProvider
     {
         /**
          *  {@inheritDoc}

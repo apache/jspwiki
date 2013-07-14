@@ -46,6 +46,6 @@ public interface DynamicAttachmentProvider
      *  @throws ProviderException If something goes wrong internally
      *  @throws IOException If something goes wrong when reading the data
      */
-    public InputStream getAttachmentData( WikiContext context, Attachment att )
+    InputStream getAttachmentData( WikiContext context, Attachment att )
         throws ProviderException, IOException;
 }

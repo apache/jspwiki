@@ -42,7 +42,7 @@ public interface UserDatabase
      * @deprecated there is no need to call this method because the save, rename and
      * delete methods contain their own commit logic
      */
-    public void commit() throws WikiSecurityException;
+    void commit() throws WikiSecurityException;
 
     /**
      * Looks up and deletes the first {@link UserProfile} in the user database
@@ -54,7 +54,7 @@ public interface UserDatabase
      * to the file system may wish to make this method <code>synchronized</code>.
      * @param loginName the login name of the user profile that shall be deleted
      */
-    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException;
+    void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException;
 
     /**
      * <p>
@@ -80,7 +80,7 @@ public interface UserDatabase
      *            {@link UserProfile#getLoginName()} method.
      * @return the array of Principals representing the user's identities
      */
-    public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException;
+    Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException;
 
     /**
      * Returns all WikiNames that are stored in the UserDatabase
@@ -89,7 +89,7 @@ public interface UserDatabase
      * array.
      * @return the WikiNames
      */
-    public Principal[] getWikiNames() throws WikiSecurityException;
+    Principal[] getWikiNames() throws WikiSecurityException;
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
@@ -99,7 +99,7 @@ public interface UserDatabase
      * is unknown.
      * @param index the login name, full name, or wiki name
      */
-    public UserProfile find( String index ) throws NoSuchPrincipalException;
+    UserProfile find( String index ) throws NoSuchPrincipalException;
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
@@ -109,7 +109,7 @@ public interface UserDatabase
      * @param index the e-mail address of the desired user profile
      * @return the user profile
      */
-    public UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
+    UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
@@ -119,7 +119,7 @@ public interface UserDatabase
      * @param index the login name of the desired user profile
      * @return the user profile
      */
-    public UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
+    UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
@@ -130,7 +130,7 @@ public interface UserDatabase
      * @return the user profile
      * @since 2.8
      */
-    public UserProfile findByUid( String uid ) throws NoSuchPrincipalException;
+    UserProfile findByUid( String uid ) throws NoSuchPrincipalException;
     
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
@@ -140,7 +140,7 @@ public interface UserDatabase
      * @param index the wiki name of the desired user profile
      * @return the user profile
      */
-    public UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
+    UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
@@ -150,19 +150,19 @@ public interface UserDatabase
      * @param index the fill name of the desired user profile
      * @return the user profile
      */
-    public UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
+    UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
 
     /**
      * Initializes the user database based on values from a Properties object.
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
+    void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
      * Factory method that instantiates a new user profile.
      * The {@link UserProfile#isNew()} method of profiles created using
      * this method should return <code>true</code>.
      */
-    public UserProfile newProfile();
+    UserProfile newProfile();
 
     /**
      * <p>Renames a {@link UserProfile} in the user database by changing
@@ -185,7 +185,7 @@ public interface UserDatabase
      * any reason, such as an I/O error, database connection failure
      * or lack of support for renames.
      */
-    public void rename( String loginName, String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException;
+    void rename( String loginName, String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException;
 
     /**
      * <p>
@@ -211,7 +211,7 @@ public interface UserDatabase
      * @param profile the user profile to save
      * @throws WikiSecurityException if the profile cannot be saved
      */
-    public void save( UserProfile profile ) throws WikiSecurityException;
+    void save( UserProfile profile ) throws WikiSecurityException;
 
     /**
      * Determines whether a supplied user password is valid, given a login name
@@ -223,6 +223,6 @@ public interface UserDatabase
      * @return <code>true</code> if the password is valid, <code>false</code>
      *         otherwise
      */
-    public boolean validatePassword( String loginName, String password );
+    boolean validatePassword( String loginName, String password );
 
 }

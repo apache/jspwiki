@@ -53,7 +53,7 @@ public interface PageFilter
      *  @throws FilterException If the filter could not be initialized. If this is thrown,
      *                          the filter is not added to the internal queues.
      */
-    public void initialize( WikiEngine engine, Properties properties )
+    void initialize( WikiEngine engine, Properties properties )
         throws FilterException;
 
     /**
@@ -67,7 +67,7 @@ public interface PageFilter
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
      *                          processing to be abandoned.
      */
-    public String preTranslate( WikiContext wikiContext, String content )
+    String preTranslate( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
@@ -82,7 +82,7 @@ public interface PageFilter
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
      *                          processing to be abandoned.
      */
-    public String postTranslate( WikiContext wikiContext, String htmlContent )
+    String postTranslate( WikiContext wikiContext, String htmlContent )
         throws FilterException;
 
     /**
@@ -94,7 +94,7 @@ public interface PageFilter
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
      *                          processing to be abandoned.
      */
-    public String preSave( WikiContext wikiContext, String content )
+    String preSave( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
@@ -110,7 +110,7 @@ public interface PageFilter
      *  @throws FilterException If something goes wrong.  As the page is already saved,
      *                          This is just logged.
      */
-    public void postSave( WikiContext wikiContext, String content )
+    void postSave( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
@@ -120,6 +120,6 @@ public interface PageFilter
      *  @param engine The WikiEngine which owns this filter.
      *  @since 2.5.36
      */
-    public void destroy( WikiEngine engine );
+    void destroy( WikiEngine engine );
 
 }

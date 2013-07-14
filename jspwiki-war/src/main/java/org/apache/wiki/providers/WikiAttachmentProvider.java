@@ -51,7 +51,7 @@ public interface WikiAttachmentProvider
      *  @throws IOException If writing fails
      *  @throws ProviderException If there are other errors.
      */
-    public void putAttachmentData( Attachment att, InputStream data )
+    void putAttachmentData( Attachment att, InputStream data )
         throws ProviderException,
                IOException;
 
@@ -65,7 +65,7 @@ public interface WikiAttachmentProvider
      *  @throws IOException If the attachment cannot be opened
      */
 
-    public InputStream getAttachmentData( Attachment att )
+    InputStream getAttachmentData( Attachment att )
         throws ProviderException,
                IOException;
 
@@ -77,7 +77,7 @@ public interface WikiAttachmentProvider
      *  @throws ProviderException If something goes wrong when listing the attachments.
      */
 
-    public Collection listAttachments( WikiPage page )
+    Collection listAttachments( WikiPage page )
         throws ProviderException;
 
     /**
@@ -85,7 +85,7 @@ public interface WikiAttachmentProvider
      * @param query An array of QueryItem objects to search for
      * @return A Collection of Attachment objects.  May be empty, but never null.
      */
-    public Collection findAttachments( QueryItem[] query );
+    Collection findAttachments( QueryItem[] query );
 
     /**
      *  Lists changed attachments since given date.  Can also be used to fetch
@@ -103,7 +103,7 @@ public interface WikiAttachmentProvider
      *  @return A List of Attachment objects, in most-recently-changed first order.
      *  @throws ProviderException If something goes wrong.
      */
-    public List listAllChanged( Date timestamp )
+    List listAllChanged( Date timestamp )
         throws ProviderException;
 
     /**
@@ -115,7 +115,7 @@ public interface WikiAttachmentProvider
      *  @return An attachment object
      *  @throws ProviderException If the attachment cannot be found or some other error occurs.
      */
-    public Attachment getAttachmentInfo( WikiPage page, String name, int version )
+    Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException;
 
     /**
@@ -125,7 +125,7 @@ public interface WikiAttachmentProvider
      *  @param att The attachment for which to find the version history for.
      *  @return A List of Attachment objects.
      */
-    public List getVersionHistory( Attachment att );
+    List getVersionHistory( Attachment att );
 
     /**
      *  Removes a specific version from the repository.  The implementations
@@ -140,7 +140,7 @@ public interface WikiAttachmentProvider
      *  @throws ProviderException If the attachment cannot be removed for some reason.
      */
 
-    public void deleteVersion( Attachment att )
+    void deleteVersion( Attachment att )
         throws ProviderException;
 
     /**
@@ -157,7 +157,7 @@ public interface WikiAttachmentProvider
      *
      *  @throws ProviderException If the page could not be removed for some reason.
      */
-    public void deleteAttachment( Attachment att )
+    void deleteAttachment( Attachment att )
         throws ProviderException;
    
     /**
@@ -170,7 +170,7 @@ public interface WikiAttachmentProvider
      * @throws ProviderException If the attachments could not be moved for some
      *                           reason.
      */
-    public void moveAttachmentsForPage( String oldParent,
+    void moveAttachmentsForPage( String oldParent,
                                         String newParent )
         throws ProviderException;
 }

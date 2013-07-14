@@ -43,7 +43,7 @@ public interface URLConstructor
      *  @param  engine The WikiEngine that this URLConstructor belongs to
      *  @param properties Properties used to initialize
      */
-    public void initialize( WikiEngine engine, 
+    void initialize( WikiEngine engine,
                             Properties properties );
 
     /**
@@ -58,7 +58,7 @@ public interface URLConstructor
      *  @return An URL pointing to the resource.  Must never return null - throw an InternalWikiException
      *          if something goes wrong.
      */
-    public String makeURL( String context,
+    String makeURL( String context,
                            String name,
                            boolean absolute,
                            String parameters );
@@ -77,7 +77,7 @@ public interface URLConstructor
      *  @return This method must return the name of the resource.
      *  @throws IOException If parsing failes
      */
-    public String parsePage( String context,
+    String parsePage( String context,
                              HttpServletRequest request,
                              String encoding )
         throws IOException;
@@ -90,5 +90,5 @@ public interface URLConstructor
      * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name,
      *         JSPWiki will figure out the page.
      */
-    public String getForwardPage( HttpServletRequest request );
+    String getForwardPage( HttpServletRequest request );
 }

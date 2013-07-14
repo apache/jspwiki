@@ -40,31 +40,31 @@ public interface UserProfile extends Serializable
      * in the UserProfile.
      * @return the attributes
      */
-    public Map<String,Serializable> getAttributes();
+    Map<String,Serializable> getAttributes();
 
     /**
      * Returns the creation date.
      * @return the creation date
      */
-    public Date getCreated();
+    Date getCreated();
 
     /**
      * Returns the user's e-mail address.
      * @return the e-mail address
      */
-    public String getEmail();
+    String getEmail();
 
     /**
      * Returns the user's full name.
      * @return the full name
      */
-    public String getFullname();
+    String getFullname();
 
     /**
      * Returns the last-modified date.
      * @return the date and time of last modification
      */
-    public Date getLastModified();
+    Date getLastModified();
 
     /**
      * Returns the date/time of expiration of the profile's lock, if it has been
@@ -76,13 +76,13 @@ public interface UserProfile extends Serializable
      * 
      * @return the lock expiration date
      */
-    public Date getLockExpiry();
+    Date getLockExpiry();
 
     /**
      * Returns the user's login name.
      * @return the login name
      */
-    public String getLoginName();
+    String getLoginName();
 
     /**
      * Returns the user password for use with custom authentication. Note that
@@ -93,21 +93,21 @@ public interface UserProfile extends Serializable
      * itself.
      * @return the password
      */
-    public String getPassword();
+    String getPassword();
 
     /**
      * Returns the unique identifier for the user profile. If not previously
      * set, the value will be <code>null</code>.
      * @return the unique ID.
      */
-    public String getUid();
+    String getUid();
     
     /**
      * Returns the user's wiki name, based on the full name with all
      * whitespace removed.
      * @return the wiki name.
      */
-    public String getWikiName();
+    String getWikiName();
 
     /**
      * Returns
@@ -116,7 +116,7 @@ public interface UserProfile extends Serializable
      * and, if it returns a non-<code>null</code> value, checking if the date returned is later than the current time.
      * @return the result
      */
-    public boolean isLocked();
+    boolean isLocked();
 
     /**
      * Returns <code>true</code> if the profile has never been
@@ -124,31 +124,31 @@ public interface UserProfile extends Serializable
      * last modified date, for example, to determine this.
      * @return whether the profile is new
      */
-    public boolean isNew();
+    boolean isNew();
 
     /**
      * Sets the created date.
      * @param date the creation date
      */
-    public void setCreated( Date date );
+    void setCreated( Date date );
 
     /**
      * Sets the user's e-mail address.
      * @param email the e-mail address
      */
-    public void setEmail( String email );
+    void setEmail( String email );
 
     /**
      * Sets the user's full name. For example, "Janne Jalkanen."
      * @param arg the full name
      */
-    public void setFullname( String arg );
+    void setFullname( String arg );
 
     /**
      * Sets the last-modified date
      * @param date the last-modified date
      */
-    public void setLastModified( Date date );
+    void setLastModified( Date date );
 
     /**
      * Locks the profile until a specified lock expiration date.
@@ -156,7 +156,7 @@ public interface UserProfile extends Serializable
      * @param expiry the date the lock expires; setting this value to <code>null</code>
      * will cause the lock to be cleared.
      */
-    public void setLockExpiry( Date expiry );
+    void setLockExpiry( Date expiry );
     
     /**
      * Sets the name by which the user logs in. The login name is used as the
@@ -167,7 +167,7 @@ public interface UserProfile extends Serializable
      * typically of type FirstnameLastName ("JanneJalkanen").
      * @param name the login name
      */
-    public void setLoginName( String name );
+    void setLoginName( String name );
 
     /**
      * Sets the user's password for use with custom authentication. It is
@@ -179,14 +179,14 @@ public interface UserProfile extends Serializable
      * elsewhere.
      * @param arg the password
      */
-    public void setPassword( String arg );
+    void setPassword( String arg );
 
     /**
      * Sets the unique identifier for the user profile. Note that UserDatabase implementations
      * are required <em>not</em> to change the unique identifier after the initial save.
      * @param uid the unique identifier to set
      */
-    public void setUid( String uid );
+    void setUid( String uid );
     
     /**
      * No-op method. In previous versions of JSPWiki, the method
@@ -195,11 +195,11 @@ public interface UserProfile extends Serializable
      * @param name the wiki name
      * @deprecated This method will be removed in a future release.
      */
-    public void setWikiName( String name );
+    void setWikiName( String name );
 
     /**
      * Returns a string representation of this user profile.
      * @return the string
      */
-    public String toString();
+    String toString();
 }

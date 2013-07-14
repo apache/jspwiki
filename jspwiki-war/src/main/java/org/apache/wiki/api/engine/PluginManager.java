@@ -31,28 +31,28 @@ import org.apache.wiki.parser.PluginContent;
 public interface PluginManager
 {
     /** The property name defining which packages will be searched for properties. */
-    static final String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
+    String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
     
     /** This is the default package to try in case the instantiation fails. */
-    static final String DEFAULT_PACKAGE = "org.apache.wiki.plugin";
+    String DEFAULT_PACKAGE = "org.apache.wiki.plugin";
 
     /**
      *  The name of the body content.  Current value is "_body".
      */
-    static final String PARAM_BODY      = "_body";
+    String PARAM_BODY      = "_body";
 
     /** The name of the command line content parameter. The value is "_cmdline". */
-    static final String PARAM_CMDLINE   = "_cmdline";
+    String PARAM_CMDLINE   = "_cmdline";
 
     /**
      *  The name of the parameter containing the start and end positions in the
      *  read stream of the plugin text (stored as a two-element int[], start
      *  and end resp.).
      */
-    static final String PARAM_BOUNDS    = "_bounds";
+    String PARAM_BOUNDS    = "_bounds";
 
     /** A special name to be used in case you want to see debug output */
-    static final String PARAM_DEBUG     = "debug";
+    String PARAM_DEBUG     = "debug";
 
     /**
      * Enables or disables plugin execution.

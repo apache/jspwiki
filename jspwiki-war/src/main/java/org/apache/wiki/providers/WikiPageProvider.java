@@ -51,7 +51,7 @@ public interface WikiPageProvider
      *  @param text The text to save.
      *  @throws ProviderException If something goes wrong.
      */
-    public void putPageText( WikiPage page, String text )
+    void putPageText( WikiPage page, String text )
         throws ProviderException;
 
     /**
@@ -61,7 +61,7 @@ public interface WikiPageProvider
      *  @return true, if the page exists; false otherwise.
      */
 
-    public boolean pageExists( String page );
+    boolean pageExists( String page );
 
     /**
      *  Finds pages based on the query.   Only applicable to providers
@@ -73,7 +73,7 @@ public interface WikiPageProvider
      *  @param query An array of QueryItems to match
      *  @return A Collection of WikiPages.
      */
-    public Collection findPages( QueryItem[] query );
+    Collection findPages( QueryItem[] query );
 
     /**
      *  Returns info about the page.
@@ -83,7 +83,7 @@ public interface WikiPageProvider
      *  @param version The version number
      *  @throws ProviderException If something goes wrong.
      */
-    public WikiPage getPageInfo( String page, int version )
+    WikiPage getPageInfo( String page, int version )
         throws ProviderException;
 
     /**
@@ -94,7 +94,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong.
      */
 
-    public Collection getAllPages()
+    Collection getAllPages()
         throws ProviderException;
 
     /**
@@ -105,7 +105,7 @@ public interface WikiPageProvider
      *  @since 1.6.4
      */
 
-    public Collection getAllChangedSince( Date date );
+    Collection getAllChangedSince( Date date );
 
     /**
      *  Gets the number of pages.
@@ -115,7 +115,7 @@ public interface WikiPageProvider
      *  @since 1.6.4
      */
 
-    public int getPageCount()
+    int getPageCount()
         throws ProviderException;
 
     /**
@@ -127,7 +127,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong.
      */
 
-    public List getVersionHistory( String page )
+    List getVersionHistory( String page )
         throws ProviderException;
 
     /**
@@ -140,7 +140,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong.
      */
 
-    public String getPageText( String page, int version )
+    String getPageText( String page, int version )
         throws ProviderException;
 
     /**
@@ -156,7 +156,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If the page cannot be removed for some reason.
      */
 
-    public void deleteVersion( String pageName, int version )
+    void deleteVersion( String pageName, int version )
         throws ProviderException;
 
     /**
@@ -178,7 +178,7 @@ public interface WikiPageProvider
      *
      *  @throws ProviderException If the page could not be removed for some reason.
      */
-    public void deletePage( String pageName )
+    void deletePage( String pageName )
         throws ProviderException;
 
      
@@ -190,7 +190,7 @@ public interface WikiPageProvider
       *
       * @throws ProviderException If the page could not be moved for some reason.
       */
-     public void movePage(String from, String to)
+     void movePage(String from, String to)
          throws ProviderException;
 
 }

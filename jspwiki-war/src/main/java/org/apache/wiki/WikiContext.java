@@ -21,7 +21,6 @@ package org.apache.wiki;
 import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -33,13 +32,11 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.*;
@@ -795,7 +792,8 @@ public class WikiContext
      * @param response the http response
      * @return the result of the access check
      * @throws IOException In case something goes wrong
-     * @deprecated will be removed in 2.10 scope. Consider using {@link AuthorizationManager#hasAccess(WikiContext, HttpServletResponse)} 
+     * @deprecated will be removed in 2.10 scope. Consider using
+     * {@link org.apache.wiki.auth.AuthorizationManager#hasAccess(WikiContext, HttpServletResponse)}
      * instead
      */
     @Deprecated
@@ -818,7 +816,7 @@ public class WikiContext
      * @param redirect If true, makes an automatic redirect to the response
      * @throws IOException If something goes wrong
      * @deprecated will be removed in 2.10 scope. Consider using 
-     * {@link AuthorizationManager#hasAccess(WikiContext, HttpServletResponse, boolean)} instead
+     * {@link org.apache.wiki.auth.AuthorizationManager#hasAccess(WikiContext, HttpServletResponse, boolean)} instead
      */
     @Deprecated
     public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException

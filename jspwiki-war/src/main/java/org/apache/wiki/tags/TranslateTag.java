@@ -24,7 +24,6 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 
 import org.apache.log4j.Logger;
 

@@ -30,5 +30,5 @@ import org.apache.wiki.WikiContext;
 //           in 3.0
 public interface WikiRPCHandler
 {
-    public void initialize( WikiContext context );
+    void initialize( WikiContext context );
 }

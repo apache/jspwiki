@@ -34,7 +34,7 @@ public interface GenericHTTPHandler
      *  
      *  @return the identifier for the bean
      */
-    public String getId();
+    String getId();
     
     /**
      *  Return basic HTML.
@@ -42,12 +42,12 @@ public interface GenericHTTPHandler
      *  @param context
      *  @return the HTML for the bean
      */
-    public String doGet( WikiContext context );
+    String doGet( WikiContext context );
     
     /**
      *  Handles a POST response.
      *  @param context
      *  @return the response string resulting from the POST
      */
-    public String doPost( WikiContext context );
+    String doPost( WikiContext context );
 }
