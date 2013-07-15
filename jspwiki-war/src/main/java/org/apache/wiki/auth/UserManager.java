@@ -107,7 +107,7 @@ public final class UserManager
      * @param props the wiki engine initialization properties
      */
     @SuppressWarnings("deprecation")
-    public final void initialize( WikiEngine engine, Properties props )
+    public void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
 
@@ -128,7 +128,7 @@ public final class UserManager
      * @return the dummy user database
      * @since 2.3
      */
-    public final UserDatabase getUserDatabase()
+    public UserDatabase getUserDatabase()
     {
         // FIXME: Must not throw RuntimeException, but something else.
         if( m_database != null )
@@ -206,7 +206,7 @@ public final class UserManager
      * is anonymous or asserted, or if the user cannot be found in the user
      * database
      */
-    public final UserProfile getUserProfile( WikiSession session )
+    public UserProfile getUserProfile( WikiSession session )
     {
         // Look up cached user profile
         UserProfile profile = m_profiles.get( session );
@@ -282,7 +282,7 @@ public final class UserManager
      * {@link org.apache.wiki.workflow.DecisionRequiredException}. All other WikiException
      * indicate a condition that is not normal is probably due to mis-configuration
      */
-    public final void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException
+    public void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException
     {
         // Verify user is allowed to save profile!
         Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
@@ -428,7 +428,7 @@ public final class UserManager
      * @param context the current wiki context
      * @return a new, populated user profile
      */
-    public final UserProfile parseProfile( WikiContext context )
+    public UserProfile parseProfile( WikiContext context )
     {
         // Retrieve the user's profile (may have been previously cached)
         UserProfile profile = getUserProfile( context.getWikiSession() );
@@ -474,7 +474,7 @@ public final class UserManager
      * @param context the current wiki context
      * @param profile the supplied UserProfile
      */
-    public final void validateProfile( WikiContext context, UserProfile profile )
+    public void validateProfile( WikiContext context, UserProfile profile )
     {
         boolean isNew = profile.isNew();
         WikiSession session = context.getWikiSession();
@@ -794,7 +794,7 @@ public final class UserManager
      * This is a convenience method.
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -804,7 +804,7 @@ public final class UserManager
      * This is a convenience method.
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -818,7 +818,7 @@ public final class UserManager
      * @param session    the wiki session supporting the event
      * @param profile    the user profile (or array of user profiles), which may be <code>null</code>
      */
-    protected final void fireEvent( int type, WikiSession session, Object profile )
+    protected void fireEvent( int type, WikiSession session, Object profile )
     {
         if ( WikiEventManager.isListening(this) )
         {

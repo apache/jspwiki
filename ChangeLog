@@ -1,3 +1,10 @@
+2013-07-15  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-19
+
+       * Some Sonar complaints removed regarding redundant final declarations within
+         final classes.
+       
 2013-07-14  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-18

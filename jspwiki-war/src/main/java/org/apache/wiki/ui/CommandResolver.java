@@ -195,7 +195,7 @@ public final class CommandResolver
      * @param defaultContext the request context to use by default
      * @return the resolved wiki command
      */
-    public final Command findCommand( HttpServletRequest request, String defaultContext )
+    public Command findCommand( HttpServletRequest request, String defaultContext )
     {
         // Corner case if request is null
         if ( request == null )
@@ -295,7 +295,7 @@ public final class CommandResolver
      * @throws ProviderException if the underlyng page provider that locates pages
      * throws an exception
      */
-    public final String getFinalPageName( String page ) throws ProviderException
+    public String getFinalPageName( String page ) throws ProviderException
     {
         boolean isThere = simplePageExists( page );
         String  finalName = page;
@@ -351,7 +351,7 @@ public final class CommandResolver
      * @param page the page name ro search for
      * @return the URL of the special page, if the supplied page is one, or <code>null</code>
      */
-    public final String getSpecialPageReference( String page )
+    public String getSpecialPageReference( String page )
     {
         Command command = m_specialPages.get( page );
 
@@ -371,7 +371,7 @@ public final class CommandResolver
      * @param request the HTTP request
      * @return the resolved Command, or <code>null</code> if not found
      */
-    protected final Command extractCommandFromPath( HttpServletRequest request )
+    protected Command extractCommandFromPath( HttpServletRequest request )
     {
         String jsp = request.getServletPath();
 
@@ -432,7 +432,7 @@ public final class CommandResolver
      * @param request the HTTP request
      * @return the resolved page name
      */
-    protected final String extractPageFromParameter( String requestContext, HttpServletRequest request )
+    protected String extractPageFromParameter( String requestContext, HttpServletRequest request )
     {
         String page;
 
@@ -478,7 +478,7 @@ public final class CommandResolver
      * @param page the name of the page to look up; this page <em>must</em> exist
      * @return the wiki page
      */
-    protected final WikiPage resolvePage( HttpServletRequest request, String page )
+    protected WikiPage resolvePage( HttpServletRequest request, String page )
     {
         // See if the user included a version parameter
         WikiPage wikipage;
@@ -518,7 +518,7 @@ public final class CommandResolver
      * @throws ProviderException if the underlyng page provider that locates pages
      * throws an exception
      */
-    protected final boolean simplePageExists( String page ) throws ProviderException
+    protected boolean simplePageExists( String page ) throws ProviderException
     {
         if ( m_specialPages.containsKey( page ) )
         {

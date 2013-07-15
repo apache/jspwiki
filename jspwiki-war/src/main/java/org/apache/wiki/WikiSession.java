@@ -128,7 +128,7 @@ public final class WikiSession implements WikiEventListener
      * @param group the group to test
      * @return the result
      */
-    protected final boolean isInGroup( Group group )
+    protected boolean isInGroup( Group group )
     {
         for ( Principal principal : getPrincipals() )
         {
@@ -154,7 +154,7 @@ public final class WikiSession implements WikiEventListener
      * Role.ASSERTED.
      * @return Returns <code>true</code> if the user is asserted
      */
-    public final boolean isAsserted()
+    public boolean isAsserted()
     {
         return m_subject.getPrincipals().contains( Role.ASSERTED );
     }
@@ -167,7 +167,7 @@ public final class WikiSession implements WikiEventListener
      * if the user is not anonymous <em>and</em> not asserted.
      * @return Returns <code>true</code> if the user is authenticated
      */
-    public final boolean isAuthenticated()
+    public boolean isAuthenticated()
     {
         // If Role.AUTHENTICATED is in principals set, always return true.
         if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) )
@@ -203,7 +203,7 @@ public final class WikiSession implements WikiEventListener
      * @return whether the current user's identity is equivalent to an IP
      * address
      */
-    public final boolean isAnonymous()
+    public boolean isAnonymous()
     {
         Set<Principal> principals = m_subject.getPrincipals();
         return principals.contains( Role.ANONYMOUS ) ||
@@ -223,7 +223,7 @@ public final class WikiSession implements WikiEventListener
      * externally-provided Principal, the object returned is the Principal, not
      * the wrapper around it.
      */
-    public final Principal getLoginPrincipal()
+    public Principal getLoginPrincipal()
     {
         return m_loginPrincipal;
     }
@@ -241,7 +241,7 @@ public final class WikiSession implements WikiEventListener
      * {@link org.apache.wiki.auth.WikiPrincipal#GUEST}.
      * @return the primary user Principal
      */
-    public final Principal getUserPrincipal()
+    public Principal getUserPrincipal()
     {
         return m_userPrincipal;
     }
@@ -257,7 +257,7 @@ public final class WikiSession implements WikiEventListener
      *  @return A cached Locale object
      *  @since 2.5.96
      */
-    public final Locale getLocale()
+    public Locale getLocale()
     {
         return m_cachedLocale;
     }
@@ -268,7 +268,7 @@ public final class WikiSession implements WikiEventListener
      * the {@link #clearMessages()} method is called.
      * @param message the message to add; if <code>null</code> it is ignored.
      */
-    public final void addMessage(String message)
+    public void addMessage(String message)
     {
         addMessage( ALL, message );
     }
@@ -281,7 +281,7 @@ public final class WikiSession implements WikiEventListener
      * @param topic the topic to associate the message to;
      * @param message the message to add
      */
-    public final void addMessage(String topic, String message)
+    public void addMessage(String topic, String message)
     {
         if ( topic == null )
         {
@@ -299,7 +299,7 @@ public final class WikiSession implements WikiEventListener
     /**
      * Clears all messages associated with this session.
      */
-    public final void clearMessages()
+    public void clearMessages()
     {
         m_messages.clear();
     }
@@ -308,7 +308,7 @@ public final class WikiSession implements WikiEventListener
      * Clears all messages associated with a session topic.
      * @param topic the topic whose messages should be cleared.
      */
-    public final void clearMessages( String topic )
+    public void clearMessages( String topic )
     {
         Set<String> messages = m_messages.get( topic );
         if ( messages != null )
@@ -323,7 +323,7 @@ public final class WikiSession implements WikiEventListener
      * session unless they have been reset with {@link #clearMessages()}.
      * @return the current messages.
      */
-    public final String[] getMessages()
+    public String[] getMessages()
     {
         return getMessages( ALL );
     }
@@ -335,7 +335,7 @@ public final class WikiSession implements WikiEventListener
      * @return the current messages.
      * @param topic The topic
      */
-    public final String[] getMessages( String topic )
+    public String[] getMessages( String topic )
     {
         Set<String> messages = m_messages.get( topic );
         if ( messages == null || messages.size() == 0 )
@@ -352,7 +352,7 @@ public final class WikiSession implements WikiEventListener
      * @return Returns the user principal
      * @see org.apache.wiki.auth.AuthenticationManager#isUserPrincipal(Principal)
      */
-    public final Principal[] getPrincipals()
+    public Principal[] getPrincipals()
     {
         ArrayList<Principal> principals = new ArrayList<Principal>();
 
@@ -381,7 +381,7 @@ public final class WikiSession implements WikiEventListener
      * @return an array of Principal objects corresponding to the roles the
      *         Subject possesses
      */
-    public final Principal[] getRoles()
+    public Principal[] getRoles()
     {
         Set<Principal> roles = new HashSet<Principal>();
 
@@ -404,7 +404,7 @@ public final class WikiSession implements WikiEventListener
      * @param engine the wiki engine
      * @param request the users's HTTP request
      */
-    public static final void removeWikiSession( WikiEngine engine, HttpServletRequest request )
+    public static void removeWikiSession( WikiEngine engine, HttpServletRequest request )
     {
         if ( engine == null || request == null )
         {
@@ -421,7 +421,7 @@ public final class WikiSession implements WikiEventListener
      * @param principal the Principal to test
      * @return the result
      */
-    public final boolean hasPrincipal( Principal principal )
+    public boolean hasPrincipal( Principal principal )
     {
         return m_subject.getPrincipals().contains( principal );
 
@@ -433,7 +433,7 @@ public final class WikiSession implements WikiEventListener
      * by the WikiSession.
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      */
-    public final void actionPerformed( WikiEvent event )
+    public void actionPerformed( WikiEvent event )
     {
         if ( event instanceof WikiSecurityEvent )
         {
@@ -597,7 +597,7 @@ public final class WikiSession implements WikiEventListener
      * Invalidates the WikiSession and resets its Subject's
      * Principals to the equivalent of a "guest session".
      */
-    public final void invalidate()
+    public void invalidate()
     {
         m_subject.getPrincipals().clear();
         m_subject.getPrincipals().add( WikiPrincipal.GUEST );
@@ -620,7 +620,7 @@ public final class WikiSession implements WikiEventListener
      * saved. If the wiki session is null, or there is no matching user profile,
      * the method returns silently.
      */
-    protected final void injectGroupPrincipals()
+    protected void injectGroupPrincipals()
     {
         // Flush the existing GroupPrincipals
         m_subject.getPrincipals().removeAll( m_subject.getPrincipals(GroupPrincipal.class) );
@@ -643,7 +643,7 @@ public final class WikiSession implements WikiEventListener
      * will replace all other WikiPrincipals in the Subject. <em>Note:
      * this method is never called during anonymous or asserted sessions.</em>
      */
-    protected final void injectUserProfilePrincipals()
+    protected void injectUserProfilePrincipals()
     {
         // Search for the user profile
         String searchId = m_loginPrincipal.getName();
@@ -698,7 +698,7 @@ public final class WikiSession implements WikiEventListener
      * </ul>
      * @return the user's session status
      */
-    public final String getStatus()
+    public String getStatus()
     {
         return m_status;
     }
@@ -717,7 +717,7 @@ public final class WikiSession implements WikiEventListener
      * @param request the servlet request object
      * @return the existing (or newly created) wiki session
      */
-    public static final WikiSession getWikiSession( WikiEngine engine, HttpServletRequest request )
+    public static WikiSession getWikiSession( WikiEngine engine, HttpServletRequest request )
     {
         // If request is null, return guest session
         if ( request == null )
@@ -752,7 +752,7 @@ public final class WikiSession implements WikiEventListener
      * @param engine the wiki engine
      * @return the guest wiki session
      */
-    public static final WikiSession guestSession( WikiEngine engine )
+    public static WikiSession guestSession( WikiEngine engine )
     {
         WikiSession session = new WikiSession();
         session.m_engine = engine;
@@ -802,7 +802,7 @@ public final class WikiSession implements WikiEventListener
      * @param engine the wiki session
      * @return the number of sessions
      */
-    public static final int sessions( WikiEngine engine )
+    public static int sessions( WikiEngine engine )
     {
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.sessions();
@@ -816,7 +816,7 @@ public final class WikiSession implements WikiEventListener
      * @param engine the wiki engine
      * @return an array of Principal objects, sorted by name
      */
-    public static final Principal[] userPrincipals( WikiEngine engine )
+    public static Principal[] userPrincipals( WikiEngine engine )
     {
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
@@ -835,7 +835,7 @@ public final class WikiSession implements WikiEventListener
      * @throws java.security.AccessControlException if the action is not permitted
      * by the security policy
      */
-    public static final Object doPrivileged( WikiSession session, PrivilegedAction<?> action ) throws AccessControlException
+    public static Object doPrivileged( WikiSession session, PrivilegedAction<?> action ) throws AccessControlException
     {
         return Subject.doAsPrivileged( session.m_subject, action, null );
     }
@@ -846,7 +846,7 @@ public final class WikiSession implements WikiEventListener
      * @param name the address to test
      * @return the result
      */
-    protected static final boolean isIPV4Address( String name )
+    protected static boolean isIPV4Address( String name )
     {
         if ( name.charAt( 0 ) == DOT || name.charAt( name.length() - 1 ) == DOT )
         {

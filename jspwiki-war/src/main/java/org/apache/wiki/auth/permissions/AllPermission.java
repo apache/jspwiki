@@ -61,7 +61,7 @@ public final class AllPermission extends Permission implements Serializable
      * @return {@inheritDoc}
      * @param obj {@inheritDoc}
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( !( obj instanceof AllPermission ) )
         {
@@ -77,7 +77,7 @@ public final class AllPermission extends Permission implements Serializable
      *
      * @return Always null.
      */
-    public final String getActions()
+    public String getActions()
     {
         return null;
     }
@@ -87,7 +87,7 @@ public final class AllPermission extends Permission implements Serializable
      * permission; may return the wildcard string.
      * @return The wiki
      */
-    public final String getWiki()
+    public String getWiki()
     {
         return m_wiki;
     }
@@ -98,7 +98,7 @@ public final class AllPermission extends Permission implements Serializable
      * 
      * @return {@inheritDoc}
      */
-    public final int hashCode()
+    public int hashCode()
     {
         return m_wiki.hashCode();
     }
@@ -114,7 +114,7 @@ public final class AllPermission extends Permission implements Serializable
      *         <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
-    public final boolean implies( Permission permission )
+    public boolean implies( Permission permission )
     {
         // Permission must be a JSPWiki permission, PagePermission or AllPermission
         if ( !isJSPWikiPermission( permission ) )
@@ -159,7 +159,7 @@ public final class AllPermission extends Permission implements Serializable
      * @see java.lang.Object#toString()
      * @return {@inheritDoc}
      */
-    public final String toString()
+    public String toString()
     {
         return "(\"" + this.getClass().getName() + "\",\"" + m_wiki + "\")";
     }
@@ -170,7 +170,7 @@ public final class AllPermission extends Permission implements Serializable
      *  @param permission Permission to check
      *  @return true, if the permission is a JSPWiki permission; false otherwise.
      */
-    protected static final boolean isJSPWikiPermission( Permission permission )
+    protected static boolean isJSPWikiPermission( Permission permission )
     {
         return   permission instanceof WikiPermission ||
                  permission instanceof PagePermission ||

@@ -158,7 +158,7 @@ public final class AuthenticationManager
      * @throws WikiException if the AuthenticationManager cannot be initialized
      */
     @SuppressWarnings("unchecked")
-    public final void initialize( WikiEngine engine, Properties props ) throws WikiException
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
@@ -206,7 +206,7 @@ public final class AuthenticationManager
      * @return <code>true</code> if the wiki's authentication is managed by
      *         the container, <code>false</code> otherwise
      */
-    public final boolean isContainerAuthenticated()
+    public boolean isContainerAuthenticated()
     {
         if( !m_useJAAS ) return true;
 
@@ -260,7 +260,7 @@ public final class AuthenticationManager
      * @throws org.apache.wiki.auth.WikiSecurityException if the user cannot be logged in for any reason
      * @since 2.3
      */
-    public final boolean login( HttpServletRequest request ) throws WikiSecurityException
+    public boolean login( HttpServletRequest request ) throws WikiSecurityException
     {
         HttpSession httpSession = request.getSession();
         WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
@@ -337,7 +337,7 @@ public final class AuthenticationManager
      * @throws org.apache.wiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      * @deprecated use {@link #login(WikiSession, HttpServletRequest, String, String)} instead
      */
-    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
+    public boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
     {
         return login( session, null, username, password );
     }
@@ -362,7 +362,7 @@ public final class AuthenticationManager
      * @return true, if the username/password is valid
      * @throws org.apache.wiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      */
-    public final boolean login( WikiSession session, HttpServletRequest request, String username, String password ) throws WikiSecurityException
+    public boolean login( WikiSession session, HttpServletRequest request, String username, String password ) throws WikiSecurityException
     {
         if ( session == null )
         {
@@ -437,7 +437,7 @@ public final class AuthenticationManager
      * the user's browser session, if it was set.
      * @param request the current HTTP request
      */
-    public final void logout( HttpServletRequest request )
+    public void logout( HttpServletRequest request )
     {
         if( request == null )
         {
@@ -475,7 +475,7 @@ public final class AuthenticationManager
      * the WikiEngine property {@link #PROP_ALLOW_COOKIE_ASSERTIONS}.
      * @return <code>true</code> if cookies are allowed
      */
-    public final boolean allowsCookieAssertions()
+    public boolean allowsCookieAssertions()
     {
         return m_allowsCookieAssertions;
     }
@@ -487,7 +487,7 @@ public final class AuthenticationManager
      *  @return <code>true</code> if cookies are allowed for authentication
      *  @since 2.5.62
      */
-    public final boolean allowsCookieAuthentication()
+    public boolean allowsCookieAuthentication()
     {
         return m_allowsCookieAuthentication;
     }
@@ -500,7 +500,7 @@ public final class AuthenticationManager
      *         {@link org.apache.wiki.auth.authorize.Role},
      *         <code>false</code> otherwise
      */
-    public static final boolean isRolePrincipal( Principal principal )
+    public static boolean isRolePrincipal( Principal principal )
     {
         return principal instanceof Role || principal instanceof GroupPrincipal;
     }
@@ -513,7 +513,7 @@ public final class AuthenticationManager
      *         {@link org.apache.wiki.auth.authorize.Role},
      *         <code>true</code> otherwise
      */
-    public static final boolean isUserPrincipal( Principal principal )
+    public static boolean isUserPrincipal( Principal principal )
     {
         return !isRolePrincipal( principal );
     }
@@ -588,7 +588,7 @@ public final class AuthenticationManager
      * @param name the file to obtain, <em>e.g.</em>, <code>jspwiki.policy</code>
      * @return the URL to the file
      */
-    protected static final URL findConfigFile( WikiEngine engine, String name )
+    protected static URL findConfigFile( WikiEngine engine, String name )
     {
         // Try creating an absolute path first
         File defaultFile = null;
@@ -676,7 +676,7 @@ public final class AuthenticationManager
      * This is a convenience method.
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -686,7 +686,7 @@ public final class AuthenticationManager
      * This is a convenience method.
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -700,7 +700,7 @@ public final class AuthenticationManager
      * @param principal  the subject of the event, which may be <code>null</code>
      * @param target     the changed Object, which may be <code>null</code>
      */
-    protected final void fireEvent( int type, Principal principal, Object target )
+    protected void fireEvent( int type, Principal principal, Object target )
     {
         if ( WikiEventManager.isListening(this) )
         {
@@ -709,8 +709,8 @@ public final class AuthenticationManager
     }
     
     /**
-     * Initializes the options Map supplied to the configured LoginModule every time it is invoked by
-     * {@link #doLoginModule(Class, CallbackHandler)}. The properties and values extracted from
+     * Initializes the options Map supplied to the configured LoginModule every time it is invoked.
+     * The properties and values extracted from
      * <code>jspwiki.properties</code> are of the form
      * <code>jspwiki.loginModule.options.<var>param</var> = <var>value</var>, where
      * <var>param</var> is the key name, and <var>value</var> is the value.
@@ -753,7 +753,7 @@ public final class AuthenticationManager
      * @param authorizer the WikiEngine's configured Authorizer
      * @param request the user's HTTP session, which may be <code>null</code>
      */
-    private final void injectAuthorizerRoles( WikiSession session, Authorizer authorizer, HttpServletRequest request )
+    private void injectAuthorizerRoles( WikiSession session, Authorizer authorizer, HttpServletRequest request )
     {
         // Test each role the authorizer knows about
         for ( Principal role : authorizer.getRoles() )

@@ -100,7 +100,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @return the group
      * @throws NoSuchPrincipalException if the group cannot be found
      */
-    public final Group getGroup( String name ) throws NoSuchPrincipalException
+    public Group getGroup( String name ) throws NoSuchPrincipalException
     {
         Group group = m_groups.get( new GroupPrincipal( name ) );
         if ( group != null )
@@ -121,7 +121,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @return the current GroupDatabase
      * @since 2.3
      */
-    public final GroupDatabase getGroupDatabase() throws WikiSecurityException
+    public GroupDatabase getGroupDatabase() throws WikiSecurityException
     {
         if ( m_groupDatabase != null )
         {
@@ -185,7 +185,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * defensive copy of an internally stored hashmap.
      * @return an array of Principals representing the roles
      */
-    public final Principal[] getRoles()
+    public Principal[] getRoles()
     {
         return m_groups.keySet().toArray( new Principal[m_groups.size()] );
     }
@@ -200,7 +200,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @see GroupDatabase#groups()
      * @throws WikiSecurityException if GroupManager cannot be initialized
      */
-    public final void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException
+    public void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException
     {
         m_engine = engine;
 
@@ -254,7 +254,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
      */
-    public final boolean isUserInRole( WikiSession session, Principal role )
+    public boolean isUserInRole( WikiSession session, Principal role )
     {
         // Always return false if session/role is null, or if
         // role isn't a GroupPrincipal
@@ -311,7 +311,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * <code>create</code> is <code>false</code>
      * and the Group named <code>name</code> does not exist
      */
-    public final Group parseGroup( String name, String memberLine, boolean create ) throws WikiSecurityException
+    public Group parseGroup( String name, String memberLine, boolean create ) throws WikiSecurityException
     {
         // If null name parameter, it's because someone's creating a new group
         if ( name == null )
@@ -406,7 +406,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * <code>create</code> is <code>false</code>
      * and the Group does not exist
      */
-    public final Group parseGroup( WikiContext context, boolean create ) throws WikiSecurityException
+    public Group parseGroup( WikiContext context, boolean create ) throws WikiSecurityException
     {
         // Extract parameters
         HttpServletRequest request = context.getHttpRequest();
@@ -439,7 +439,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * the back-end
      * @see org.apache.wiki.auth.authorize.GroupDatabase#delete(Group)
      */
-    public final void removeGroup( String index ) throws WikiSecurityException
+    public void removeGroup( String index ) throws WikiSecurityException
     {
         if ( index == null )
         {
@@ -502,7 +502,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @param group the Group, which may not be <code>null</code>
      * @throws WikiSecurityException if the Group cannot be saved by the back-end
      */
-    public final void setGroup( WikiSession session, Group group ) throws WikiSecurityException
+    public void setGroup( WikiSession session, Group group ) throws WikiSecurityException
     {
         // TODO: check for appropriate permissions
 
@@ -567,7 +567,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @param context the current wiki context
      * @param group the supplied Group
      */
-    public final void validateGroup( WikiContext context, Group group )
+    public void validateGroup( WikiContext context, Group group )
     {
         InputValidator validator = new InputValidator( MESSAGES_KEY, context );
 
@@ -594,7 +594,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @param memberLine the list of members
      * @return the list of members
      */
-    protected final String[] extractMembers( String memberLine )
+    protected String[] extractMembers( String memberLine )
     {
         Set<String> members = new HashSet<String>();
         if ( memberLine != null )
@@ -621,7 +621,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * <code>null</code> or the Group name is illegal
      * @see Group#RESTRICTED_GROUPNAMES
      */
-    protected final void checkGroupName( WikiContext context, String name ) throws WikiSecurityException
+    protected void checkGroupName( WikiContext context, String name ) throws WikiSecurityException
     {
         //TODO: groups cannot have the same name as a user
 
@@ -644,7 +644,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * This is a convenience method.
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -654,7 +654,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * This is a convenience method.
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -667,7 +667,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * @param type       the event type to be fired
      * @param target     the changed Object, which may be <code>null</code>
      */
-    protected final void fireEvent( int type, Object target )
+    protected void fireEvent( int type, Object target )
     {
         if ( WikiEventManager.isListening(this) )
         {

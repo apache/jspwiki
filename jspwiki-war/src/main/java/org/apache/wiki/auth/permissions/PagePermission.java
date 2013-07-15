@@ -219,7 +219,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( !( obj instanceof PagePermission ) )
         {
@@ -237,7 +237,7 @@ public final class PagePermission extends Permission implements Serializable
      *
      * @return {@inheritDoc}
      */
-    public final String getActions()
+    public String getActions()
     {
         return m_actionString;
     }
@@ -246,7 +246,7 @@ public final class PagePermission extends Permission implements Serializable
      * Returns the name of the wiki page represented by this permission.
      * @return the page name
      */
-    public final String getPage()
+    public String getPage()
     {
         return m_page;
     }
@@ -256,7 +256,7 @@ public final class PagePermission extends Permission implements Serializable
      * this permission; may return the wildcard string.
      * @return the wiki
      */
-    public final String getWiki()
+    public String getWiki()
     {
         return m_wiki;
     }
@@ -265,7 +265,7 @@ public final class PagePermission extends Permission implements Serializable
      * Returns the hash code for this PagePermission.
      * @return {@inheritDoc}
      */
-    public final int hashCode()
+    public int hashCode()
     {
         //  If the wiki has not been set, uses a dummy value for the hashcode
         //  calculation.  This may occur if the page given does not refer
@@ -297,7 +297,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param permission {@inheritDoc}
      * @return {@inheritDoc}
      */
-    public final boolean implies( Permission permission )
+    public boolean implies( Permission permission )
     {
         // Permission must be a PagePermission
         if ( !( permission instanceof PagePermission ) )
@@ -342,7 +342,7 @@ public final class PagePermission extends Permission implements Serializable
      * 
      * @return Something human-readable
      */
-    public final String toString()
+    public String toString()
     {
         String wiki = ( m_wiki == null ) ? "" : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_page + "\",\"" + getActions() + "\")";
@@ -354,7 +354,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param mask binary mask for actions
      * @return binary mask for implied actions
      */
-    protected static final int impliedMask( int mask )
+    protected static int impliedMask( int mask )
     {
         if ( ( mask & DELETE_MASK ) > 0 )
         {
@@ -390,7 +390,7 @@ public final class PagePermission extends Permission implements Serializable
      * @return the results of the test, where <code>true</code> indicates that
      *         <code>subSet</code> is a subset of <code>superSet</code>
      */
-    protected static final boolean isSubset( String superSet, String subSet )
+    protected static boolean isSubset( String superSet, String subSet )
     {
         // If either is null, return false
         if ( superSet == null || subSet == null )
@@ -433,7 +433,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param actions the actions for this permission, separated by commas
      * @return the binary actions mask
      */
-    protected static final int createMask( String actions )
+    protected static int createMask( String actions )
     {
         if ( actions == null || actions.length() == 0 )
         {

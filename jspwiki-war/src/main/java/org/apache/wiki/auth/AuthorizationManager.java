@@ -165,7 +165,7 @@ public final class AuthorizationManager
      * @see #hasRoleOrPrincipal(WikiSession, Principal)
      * @return the result of the Permission check
      */
-    public final boolean checkPermission( WikiSession session, Permission permission )
+    public boolean checkPermission( WikiSession session, Permission permission )
     {
         if( !m_useJAAS )
         {
@@ -285,7 +285,7 @@ public final class AuthorizationManager
      * @return <code>true</code> if the Subject supplied with the WikiContext
      *         posesses the Role or GroupPrincipal, <code>false</code> otherwise
      */
-    public final boolean isUserInRole( WikiSession session, Principal principal )
+    public boolean isUserInRole( WikiSession session, Principal principal )
     {
         if ( session == null || principal == null ||
              AuthenticationManager.isUserPrincipal( principal ) )
@@ -316,7 +316,7 @@ public final class AuthorizationManager
      * not be initialized
      * @return the current Authorizer
      */
-    public final Authorizer getAuthorizer() throws WikiSecurityException
+    public Authorizer getAuthorizer() throws WikiSecurityException
     {
         if ( m_authorizer != null )
         {
@@ -463,7 +463,7 @@ public final class AuthorizationManager
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
     @SuppressWarnings("deprecation")
-    public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
+    public void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
 
@@ -529,13 +529,13 @@ public final class AuthorizationManager
      * @return a Authorizer used to get page authorization information
      * @throws WikiException
      */
-    private final Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
+    private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
     {
         String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
         return (Authorizer) locateImplementation( authClassName );
     }
 
-    private final Object locateImplementation( String clazz ) throws WikiException
+    private Object locateImplementation( String clazz ) throws WikiException
     {
         if ( clazz != null )
         {
@@ -615,7 +615,7 @@ public final class AuthorizationManager
      * @return <code>true</code> if the Subject possesses the permission,
      *         <code>false</code> otherwise
      */
-    protected final boolean checkStaticPermission( final WikiSession session, final Permission permission )
+    protected boolean checkStaticPermission( final WikiSession session, final Permission permission )
     {
         if( !m_useJAAS ) return true;
 
@@ -668,7 +668,7 @@ public final class AuthorizationManager
      * @param name the name of the Principal to resolve
      * @return the fully-resolved Principal
      */
-    public final Principal resolvePrincipal( String name )
+    public Principal resolvePrincipal( String name )
     {
         if( !m_useJAAS )
         {
@@ -728,7 +728,7 @@ public final class AuthorizationManager
      * Registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -737,7 +737,7 @@ public final class AuthorizationManager
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -751,7 +751,7 @@ public final class AuthorizationManager
      * @param user        the user associated with the event
      * @param permission  the permission the subject must possess
      */
-    protected final void fireEvent( int type, Principal user, Object permission )
+    protected void fireEvent( int type, Principal user, Object permission )
     {
         if ( WikiEventManager.isListening(this) )
         {

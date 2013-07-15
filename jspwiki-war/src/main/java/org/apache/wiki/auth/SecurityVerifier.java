@@ -160,7 +160,7 @@ public final class SecurityVerifier
      * the policy.
      * @return the array of principals
      */
-    public final Principal[] policyPrincipals()
+    public Principal[] policyPrincipals()
     {
         return m_policyPrincipals;
     }
@@ -172,7 +172,7 @@ public final class SecurityVerifier
      * {@link org.apache.wiki.auth.authorize.WebContainerAuthorizer}
      * @return the formatted HTML table containing the result of the tests
      */
-    public final String policyRoleTable()
+    public String policyRoleTable()
     {
         Principal[] roles = m_policyPrincipals;
         String wiki = m_engine.getApplicationName();
@@ -295,10 +295,11 @@ public final class SecurityVerifier
 
     /**
      * Prints a &lt;td&gt; HTML element with the results of a permission test.
-     * @param perm the permission to format
-     * @param allowed whether the permission is allowed
+     * @param permission the permission to format
+     * @param principal
+     * @param cols
      */
-    private final String printPermissionTest( Permission permission, Principal principal, int cols )
+    private String printPermissionTest( Permission permission, Principal principal, int cols )
     {
         StringBuffer s = new StringBuffer();
         if ( permission == null )
@@ -341,7 +342,7 @@ public final class SecurityVerifier
      * @return the formatted HTML table containing the result of the tests
      * @throws WikiException if tests fail for unexpected reasons
      */
-    public final String containerRoleTable() throws WikiException
+    public String containerRoleTable() throws WikiException
     {
 
         AuthorizationManager authorizationManager = m_engine.getAuthorizationManager();
@@ -431,7 +432,7 @@ public final class SecurityVerifier
      * correctly, and it verifies as valid.
      * @return the result of the configuration check
      */
-    public final boolean isSecurityPolicyConfigured()
+    public boolean isSecurityPolicyConfigured()
     {
         return m_isSecurityPolicyConfigured;
     }
@@ -442,7 +443,7 @@ public final class SecurityVerifier
      * @return the roles parsed from <code>web.xml</code>, or a zero-length array
      * @throws WikiException if the web authorizer cannot obtain the list of roles
      */
-    public final Principal[] webContainerRoles() throws WikiException
+    public Principal[] webContainerRoles() throws WikiException
     {
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         if ( authorizer instanceof WebContainerAuthorizer )
@@ -457,7 +458,7 @@ public final class SecurityVerifier
      * container <code>web.xml</code> file.
      * @throws WikiException if the web authorizer cannot verify the roles
      */
-    protected final void verifyPolicyAndContainerRoles() throws WikiException
+    protected void verifyPolicyAndContainerRoles() throws WikiException
     {
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         Principal[] containerRoles = authorizer.getRoles();
@@ -485,7 +486,7 @@ public final class SecurityVerifier
      * Verifies that the group datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
-    protected final void verifyGroupDatabase()
+    protected void verifyGroupDatabase()
     {
         GroupManager mgr = m_engine.getGroupManager();
         GroupDatabase db = null;
@@ -585,7 +586,7 @@ public final class SecurityVerifier
      * {@value org.apache.wiki.auth.AuthenticationManager#PROP_LOGIN_MODULE}
      * resolves to a valid class on the classpath.
      */
-    protected final void verifyJaas()
+    protected void verifyJaas()
     {
         // See if JAAS is on
         AuthorizationManager authMgr = m_engine.getAuthorizationManager();
@@ -645,7 +646,7 @@ public final class SecurityVerifier
      * @param property the system property to look up
      * @return the file object, or <code>null</code> if not found
      */
-    protected final File getFileFromProperty( String property )
+    protected File getFileFromProperty( String property )
     {
         String propertyValue = null;
         try
@@ -707,7 +708,7 @@ public final class SecurityVerifier
      * represents a valid policy.
      */
     @SuppressWarnings("unchecked")
-    protected final void verifyPolicy()
+    protected void verifyPolicy()
     {
         // Look up the policy file and set the status text.
         URL policyURL = AuthenticationManager.findConfigFile( m_engine, AuthorizationManager.DEFAULT_POLICY );
@@ -786,7 +787,7 @@ public final class SecurityVerifier
      * @return the result, based on consultation with the active Java security
      *         policy
      */
-    protected final boolean verifyStaticPermission( Principal principal, final Permission permission )
+    protected boolean verifyStaticPermission( Principal principal, final Permission permission )
     {
         Subject subject = new Subject();
         subject.getPrincipals().add( principal );
@@ -821,7 +822,7 @@ public final class SecurityVerifier
      * Verifies that the user datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
-    protected final void verifyUserDatabase()
+    protected void verifyUserDatabase()
     {
         UserDatabase db = m_engine.getUserManager().getUserDatabase();
 

@@ -70,7 +70,7 @@ public final class Role implements Principal, Serializable
      * @param role the role to check
      * @return the result of the check
      */
-    public static final boolean isBuiltInRole(Role role)
+    public static boolean isBuiltInRole(Role role)
     {
         return  role.equals( ALL ) || role.equals( ANONYMOUS ) ||
                 role.equals( ASSERTED ) || role.equals( AUTHENTICATED );
@@ -86,7 +86,7 @@ public final class Role implements Principal, Serializable
      * @return <code>true</code> if the name is reserved; <code>false</code>
      *         if not
      */
-    public static final boolean isReservedName(String name)
+    public static boolean isReservedName(String name)
     {
         return  name.equals( ALL.m_name ) ||
                 name.equals( ANONYMOUS.m_name ) || name.equals( ASSERTED.m_name ) ||
@@ -97,7 +97,7 @@ public final class Role implements Principal, Serializable
      * Returns a unique hashcode for the Role.
      * @return the hashcode
      */
-    public final int hashCode()
+    public int hashCode()
     {
         return m_name.hashCode();
     }
@@ -108,7 +108,7 @@ public final class Role implements Principal, Serializable
      * @return <code>true</code> if both objects are of type Role and have identical names
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( obj == null || !( obj instanceof Role ) ) return false;
         return m_name.equals( ( (Role) obj ).getName() );
@@ -118,7 +118,7 @@ public final class Role implements Principal, Serializable
      *  Returns the name of the Principal.
      * @return the name of the Role
      */
-    public final String getName()
+    public String getName()
     {
         return m_name;
     }
@@ -128,7 +128,7 @@ public final class Role implements Principal, Serializable
      * @return the string representation of the role
      * @see java.lang.Object#toString()
      */
-    public final String toString()
+    public String toString()
     {
         return "[" + this.getClass().getName() + ": " + m_name + "]";
     }

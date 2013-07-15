@@ -1,5 +1,22 @@
 Title: Changelog
 
+#### 2013-07-15  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-19
+
+* Minor amount of Sonar complaints removed regarding redundant final declarations within
+  final classes.
+
+#### 2013-07-14  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-18
+
+* Fixed the 160-170 Sonar complaints about redundant methods/variables redundantly being 
+  declared "public" or "public static final" within interfaces, also removed unused imports.
+  Pre-commit we're at 77.5% rules compliance (ranked 69 of 87 Apache projects).
+ 
+* Moved POM dependency scope declarations out of root pom and into jspwiki-war pom.
+
 #### 2013-07-11  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-17

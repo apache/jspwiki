@@ -190,7 +190,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the result of the comparison
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( !( obj instanceof GroupPermission ) )
         {
@@ -207,7 +207,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the actions
      * @see java.security.Permission#getActions()
      */
-    public final String getActions()
+    public String getActions()
     {
         return m_actionString;
     }
@@ -216,7 +216,7 @@ public final class GroupPermission extends Permission implements Serializable
      * Returns the name of the wiki group represented by this permission.
      * @return the page name
      */
-    public final String getGroup()
+    public String getGroup()
     {
         return m_group;
     }
@@ -226,7 +226,7 @@ public final class GroupPermission extends Permission implements Serializable
      * permission; may return the wildcard string.
      * @return the wiki
      */
-    public final String getWiki()
+    public String getWiki()
     {
         return m_wiki;
     }
@@ -236,7 +236,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the hash code
      * @see java.lang.Object#hashCode()
      */
-    public final int hashCode()
+    public int hashCode()
     {
         // If the wiki has not been set, uses a dummy value for the hashcode
         // calculation. This may occur if the page given does not refer
@@ -268,7 +268,7 @@ public final class GroupPermission extends Permission implements Serializable
      * supplied Permission; <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
-    public final boolean implies( Permission permission )
+    public boolean implies( Permission permission )
     {
         // Permission must be a GroupPermission
         if ( !( permission instanceof GroupPermission ) )
@@ -313,7 +313,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the string
      * @see java.lang.Object#toString()
      */
-    public final String toString()
+    public String toString()
     {
         String wiki = ( m_wiki == null ) ? "" : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_group + "\",\"" + getActions()
@@ -326,7 +326,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @param mask binary mask for actions
      * @return binary mask for implied actions
      */
-    protected static final int impliedMask( int mask )
+    protected static int impliedMask( int mask )
     {
         if ( ( mask & DELETE_MASK ) > 0 )
         {
@@ -345,7 +345,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @param actions the actions for this permission, separated by commas
      * @return the binary actions mask
      */
-    protected static final int createMask( String actions )
+    protected static int createMask( String actions )
     {
         if ( actions == null || actions.length() == 0 )
         {
@@ -463,7 +463,7 @@ public final class GroupPermission extends Permission implements Serializable
      *         GroupPrincipal matching the implied GroupPermission&#8217;s group;
      *         <code>false</code> otherwise
      */
-    protected final boolean impliesMember( Permission permission )
+    protected boolean impliesMember( Permission permission )
     {
         if ( !( permission instanceof GroupPermission ) )
         {

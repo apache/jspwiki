@@ -119,7 +119,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @return the result
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( !( obj instanceof WikiPermission ) )
         {
@@ -137,7 +137,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @return the actions
      * @see java.security.Permission#getActions()
      */
-    public final String getActions()
+    public String getActions()
     {
         return m_actionString;
     }
@@ -147,7 +147,7 @@ public final class WikiPermission extends Permission implements Serializable
      * permission; may return the wildcard string.
      * @return the wiki
      */
-    public final String getWiki()
+    public String getWiki()
     {
         return m_wiki;
     }
@@ -156,7 +156,7 @@ public final class WikiPermission extends Permission implements Serializable
      * Returns the hash code for this WikiPermission.
      * @return {@inheritDoc}
      */
-    public final int hashCode()
+    public int hashCode()
     {
         return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * m_wiki.hashCode() );
     }
@@ -172,7 +172,7 @@ public final class WikiPermission extends Permission implements Serializable
      * <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
-    public final boolean implies( Permission permission )
+    public boolean implies( Permission permission )
     {
         // Permission must be a WikiPermission
         if ( !( permission instanceof WikiPermission ) )
@@ -204,7 +204,7 @@ public final class WikiPermission extends Permission implements Serializable
      * Prints a human-readable representation of this permission.
      * @return {@inheritDoc}
      */
-    public final String toString()
+    public String toString()
     {
         return "(\"" + this.getClass().getName() + "\",\"" + m_wiki + "\",\"" + getActions() + "\")";
     }
@@ -215,7 +215,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @param mask the initial mask
      * @return the implied mask
      */
-    protected static final int impliedMask( int mask )
+    protected static int impliedMask( int mask )
     {
         if ( ( mask & CREATE_GROUPS_MASK ) > 0 )
         {
@@ -230,7 +230,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @param actions the permission actions, separated by commas
      * @return binary mask representing the permissions
      */
-    protected static final int createMask( String actions )
+    protected static int createMask( String actions )
     {
         if ( actions == null || actions.length() == 0 )
         {
