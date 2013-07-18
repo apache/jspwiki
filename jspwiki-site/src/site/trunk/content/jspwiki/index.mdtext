@@ -1,4 +1,4 @@
-Title: Apache JSPWiki (Incubating)
+Title: Apache JSPWiki
 
 ## Welcome to Apache JSPWiki
 
@@ -22,6 +22,9 @@ simple to configure
   * Support for Multiple Wikis
 
 ## Project status
+
+  * **17-July-2013:** Apache JSPWiki has graduated from the Incubator! It's now a top-level
+                      Apache project.
 
   * **15-May-2013:** Official [Apache JSPWiki 2.9.1-incubating release][] is out!
 
