@@ -49,7 +49,7 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object, presenting this page+actions combination.
      */
-    public static final PagePermission getPagePermission( WikiPage page, String actions )
+    public static PagePermission getPagePermission( WikiPage page, String actions )
     {
         return getPagePermission( page.getWiki(), page.getName(), actions );
     }
@@ -61,7 +61,7 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object, presenting this page+actions combination.
      */
-    public static final PagePermission getPagePermission( String page, String actions )
+    public static PagePermission getPagePermission( String page, String actions )
     {
         return getPagePermission( "", page, actions );
     }
@@ -74,7 +74,7 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object.
      */
-    private static final PagePermission getPagePermission( String wiki, String page, String actions )
+    private static PagePermission getPagePermission( String wiki, String page, String actions )
     {
         PagePermission perm;
         //

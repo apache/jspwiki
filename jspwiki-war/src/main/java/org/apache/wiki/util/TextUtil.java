@@ -303,7 +303,7 @@ public final class TextUtil
      *  @param dest The string to replace <I>src</I> with.
      *  @return A string with the replacement done.
      */
-    public static final String replaceString( String orig, String src, String dest )
+    public static String replaceString( String orig, String src, String dest )
     {
         if ( orig == null ) return null;
         if ( src == null || dest == null ) throw new NullPointerException();

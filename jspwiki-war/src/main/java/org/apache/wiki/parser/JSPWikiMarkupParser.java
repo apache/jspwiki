@@ -714,7 +714,7 @@ public class JSPWikiMarkupParser
         "hr", "noscript", "ol", "p", "pre", "table", "ul"
     };
 
-    private static final boolean isBlockLevel( String name )
+    private static boolean isBlockLevel( String name )
     {
         return Arrays.binarySearch( BLOCK_ELEMENTS, name ) >= 0;
     }

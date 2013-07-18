@@ -55,7 +55,7 @@ public final class WebContainerCallbackHandler implements CallbackHandler
      * 
      * {@inheritDoc}
      */
-    public final void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
+    public void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
     {
         for( int i = 0; i < callbacks.length; i++ )
         {

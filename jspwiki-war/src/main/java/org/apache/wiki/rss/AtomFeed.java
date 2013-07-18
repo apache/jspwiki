@@ -218,7 +218,7 @@ public class AtomFeed extends Feed
         }
     }
 
-    private final Element getElement( String name )
+    private Element getElement( String name )
     {
         return new Element( name, m_atomNameSpace );
     }

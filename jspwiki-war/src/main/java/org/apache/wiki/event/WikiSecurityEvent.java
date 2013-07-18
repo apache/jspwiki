@@ -185,7 +185,7 @@ public final class WikiSecurityEvent extends WikiEvent
      * <em>&#8212; and calling methods should check for this condition</em>.
      * @return the changed object
      */
-    public final Object getPrincipal()
+    public Object getPrincipal()
     {
         return m_principal;
     }
@@ -196,7 +196,7 @@ public final class WikiSecurityEvent extends WikiEvent
      * <em>&#8212; and calling methods should check for this condition</em>.
      * @return the changed object
      */
-    public final Object getTarget()
+    public Object getTarget()
     {
         return m_target;
     }
@@ -205,7 +205,7 @@ public final class WikiSecurityEvent extends WikiEvent
      * Prints a String (human-readable) representation of this object.
      * @see java.lang.Object#toString()
      */
-    public final String toString()
+    public String toString()
     {
         StringBuffer msg = new StringBuffer();
         msg.append( "WikiSecurityEvent." );
@@ -227,7 +227,7 @@ public final class WikiSecurityEvent extends WikiEvent
      * @param type the type
      * @return the string representation
      */
-    public final String eventName( int type )
+    public String eventName( int type )
     {
         switch( type )
         {
@@ -254,7 +254,7 @@ public final class WikiSecurityEvent extends WikiEvent
      *
      * @return a String description of the type
      */
-    public final String getTypeDescription()
+    public String getTypeDescription()
     {
         switch ( getType() )
         {

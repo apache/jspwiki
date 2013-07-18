@@ -123,7 +123,7 @@ public class DefaultURLConstructor
      *  
      *  We also convert any %2F's back to slashes to make nicer-looking URLs.
      */
-    private final String encodeURI( String uri )
+    private String encodeURI( String uri )
     {
         uri = m_engine.encodeName(uri);
         

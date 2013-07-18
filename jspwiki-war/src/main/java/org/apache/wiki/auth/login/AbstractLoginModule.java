@@ -239,7 +239,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * <code>false</code> otherwise.
      * @return True, if a login has succeeded.
      */
-    private final boolean succeeded()
+    private boolean succeeded()
     {
         return m_principals.size() > 0;
     }
@@ -249,7 +249,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * Principal set.
      * @param principals the principals to remove
      */
-    private final void removePrincipals( Collection<Principal> principals )
+    private void removePrincipals( Collection<Principal> principals )
     {
         for ( Principal principal : principals )
         {

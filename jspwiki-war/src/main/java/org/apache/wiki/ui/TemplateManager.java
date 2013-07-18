@@ -239,7 +239,7 @@ public class TemplateManager
     /**
      *  Removes the template part of a name.
      */
-    private static final String removeTemplatePart( String name )
+    private static String removeTemplatePart( String name )
     {
         int idx = 0;
         if( name.startsWith( "/" ) ) idx = 1;
@@ -266,7 +266,7 @@ public class TemplateManager
      * @param name The name of the resource.
      * @return The full name for a template.
      */
-    private static final String makeFullJSPName( String template, String name )
+    private static String makeFullJSPName( String template, String name )
     {
         return "/"+DIRECTORY+"/"+template+"/"+name;
     }
@@ -364,7 +364,7 @@ public class TemplateManager
     /**
      *  Returns an absolute path to a given template.
      */
-    private static final String getPath( String template )
+    private static String getPath( String template )
     {
         return "/"+DIRECTORY+"/"+template+"/";
     }

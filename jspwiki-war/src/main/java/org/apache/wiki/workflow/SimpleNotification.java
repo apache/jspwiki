@@ -69,7 +69,7 @@ public final class SimpleNotification extends Decision
      * <code>false</code>.
      * @return <code>false</code> always
      */
-    public final boolean isReassignable()
+    public boolean isReassignable()
     {
         return false;
     }

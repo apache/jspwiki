@@ -84,7 +84,7 @@ public final class InputValidator
      * @return returns <code>true</code> if valid, <code>false</code>
      * otherwise
      */
-    public final boolean validateNotNull( String input, String label )
+    public boolean validateNotNull( String input, String label )
     {
         return validateNotNull( input, label, STANDARD );
     }
@@ -99,7 +99,7 @@ public final class InputValidator
      * @return returns <code>true</code> if valid, <code>false</code>
      * otherwise
      */
-    public final boolean validateNotNull( String input, String label, int type )
+    public boolean validateNotNull( String input, String label, int type )
     {
         if ( isBlank( input ) )
         {
@@ -123,7 +123,7 @@ public final class InputValidator
      * @return returns <code>true</code> if valid, <code>false</code>
      * otherwise
      */
-    public final boolean validate( String input, String label, int type )
+    public boolean validate( String input, String label, int type )
     {
         // If blank, it's valid
         if ( isBlank( input ) )
@@ -180,7 +180,7 @@ public final class InputValidator
      * @return <code>true</code> if <code>null</code> or blank (zero-length);
      * <code>false</code> otherwise
      */
-    public static final boolean isBlank( String input )
+    public static boolean isBlank( String input )
     {
         return input == null || input.trim().length() < 1;
     }

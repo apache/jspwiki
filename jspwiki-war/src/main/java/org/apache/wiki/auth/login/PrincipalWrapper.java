@@ -43,7 +43,7 @@ public final class PrincipalWrapper implements Principal
      * Returns the wrapped Principal used to construct this instance.
      * @return the wrapped Principal decorated by this instance.
      */
-    public final Principal getPrincipal()
+    public Principal getPrincipal()
     {
         return m_principal;
     }
@@ -53,7 +53,7 @@ public final class PrincipalWrapper implements Principal
      * 
      * @return The name of the wrapped principal.
      */
-    public final String getName()
+    public String getName()
     {
         return m_principal.getName();
     }

@@ -112,7 +112,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
      *  Returns the wiki name of the Principal.
      *  @return the name
      */
-    public final String getName()
+    public String getName()
     {
         return m_name;
     }
@@ -123,7 +123,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
      * @param obj the object to compare
      * @return the result of the equality test
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( obj == null || !( obj instanceof WikiPrincipal ) )
         {
@@ -137,7 +137,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
      *  for its name.
      *  @return the hash code
      */
-    public final int hashCode()
+    public int hashCode()
     {
         return m_name.hashCode();
     }
@@ -147,7 +147,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
      * {@link #WIKI_NAME} or {@link #WIKI_NAME}
      * @return the type
      */
-    public final String getType()
+    public String getType()
     {
         return m_type;
     }
@@ -156,7 +156,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
      * Returns a human-readable representation of the object.
      * @return the string representation
      */
-    public final String toString()
+    public String toString()
     {
         return "[WikiPrincipal (" + m_type + "): " + getName() + "]";
     }

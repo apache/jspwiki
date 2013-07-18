@@ -125,7 +125,7 @@ public final class WikiCommand extends AbstractCommand
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public final Command targetedCommand( Object target )
+    public Command targetedCommand( Object target )
     {
         if ( !( target != null && target instanceof String ) )
         {
@@ -138,7 +138,7 @@ public final class WikiCommand extends AbstractCommand
      * Always returns the "friendly" JSP name.
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public final String getName()
+    public String getName()
     {
         return getJSPFriendlyName();
     }
@@ -146,7 +146,7 @@ public final class WikiCommand extends AbstractCommand
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public final Permission requiredPermission()
+    public Permission requiredPermission()
     {
         return m_permission;
     }

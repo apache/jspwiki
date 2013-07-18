@@ -217,7 +217,7 @@ public final class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was added (i.e., it was not already in the list and was added)
      */
-    public static final boolean addWikiEventListener(
+    public static boolean addWikiEventListener(
             Object client, WikiEventListener listener )
     {
         if ( client == WikiEventManager.class )
@@ -238,7 +238,7 @@ public final class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was found and removed.
      */
-    public static final boolean removeWikiEventListener(
+    public static boolean removeWikiEventListener(
             Object client, WikiEventListener listener )
     {
         if ( client == WikiEventManager.class )
@@ -272,7 +272,7 @@ public final class WikiEventManager
      * @return an unmodifiable Set containing the WikiEventListeners attached to the client
      * @throws java.lang.UnsupportedOperationException  if any attempt is made to modify the Set
      */
-    public static final Set getWikiEventListeners( Object client )
+    public static Set getWikiEventListeners( Object client )
         throws UnsupportedOperationException
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
@@ -289,7 +289,7 @@ public final class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was found and removed.
      */
-    public static final boolean removeWikiEventListener( WikiEventListener listener )
+    public static boolean removeWikiEventListener( WikiEventListener listener )
     {
         // get the Map.entry object for the entire Map, then check match on entry (listener)
         WikiEventManager mgr = getInstance();

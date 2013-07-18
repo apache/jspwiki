@@ -84,7 +84,7 @@ public class Image
      *  This method is used to clean away things like quotation marks which
      *  a malicious user could use to stop processing and insert javascript.
      */
-    private static final String getCleanParameter( Map<String, String> params, String paramId )
+    private static String getCleanParameter( Map<String, String> params, String paramId )
     {
         return TextUtil.replaceEntities( params.get( paramId ) );
     }

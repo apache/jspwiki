@@ -66,7 +66,7 @@ public final class RedirectCommand extends AbstractCommand
      * @param target the object to combine
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public final Command targetedCommand( Object target )
+    public Command targetedCommand( Object target )
     {
         if ( !( target != null && target instanceof String ) )
         {
@@ -78,7 +78,7 @@ public final class RedirectCommand extends AbstractCommand
     /**
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public final String getName()
+    public String getName()
     {
         Object target = getTarget();
         if ( target == null )
@@ -92,7 +92,7 @@ public final class RedirectCommand extends AbstractCommand
      * No-op; always returns <code>null</code>.
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public final Permission requiredPermission()
+    public Permission requiredPermission()
     {
         return null;
     }

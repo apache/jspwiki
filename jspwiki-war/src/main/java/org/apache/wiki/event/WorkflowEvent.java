@@ -94,7 +94,7 @@ public final class WorkflowEvent extends WikiEvent
      * @deprecated will be removed in 2.10 scope. Consider using {@link WikiEvent#getSrc()} instead
      */
     @Deprecated
-    public final Workflow getWorkflow()
+    public Workflow getWorkflow()
     {
         return (Workflow) super.getSrc();
     }
@@ -104,7 +104,7 @@ public final class WorkflowEvent extends WikiEvent
      * 
      * @see java.lang.Object#toString()
      */
-    public final String toString()
+    public String toString()
     {
         StringBuffer msg = new StringBuffer();
         msg.append("WorkflowEvent.");
@@ -122,7 +122,7 @@ public final class WorkflowEvent extends WikiEvent
      *            the type
      * @return the string representation
      */
-    public final String eventName(int type)
+    public String eventName(int type)
     {
         switch (type)
         {

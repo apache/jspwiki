@@ -282,7 +282,7 @@ public class CachingAttachmentProvider
      *  @return The newly fetched object from the provider.
      */
     @SuppressWarnings("unchecked")
-    private final Collection<Attachment> refresh( WikiPage page )
+    private Collection<Attachment> refresh( WikiPage page )
         throws ProviderException
     {
         m_cacheMisses++;

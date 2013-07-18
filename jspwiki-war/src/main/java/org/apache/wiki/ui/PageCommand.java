@@ -114,7 +114,7 @@ public final class PageCommand extends AbstractCommand
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public final Command targetedCommand( Object target )
+    public Command targetedCommand( Object target )
     {
         if( !( target != null && target instanceof WikiPage ) )
         {

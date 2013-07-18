@@ -236,7 +236,7 @@ public final class AuthorizationManager
 
         log.debug( "Checking ACL entries..." );
         log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + String.valueOf( aclPrincipals ) );
+        log.debug( "Checking for principal: " + aclPrincipals );
         log.debug( "Permission: " + permission );
 
         for( Principal aclPrincipal : aclPrincipals )

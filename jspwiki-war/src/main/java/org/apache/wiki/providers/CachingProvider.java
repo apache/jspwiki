@@ -198,8 +198,7 @@ public class CachingProvider
 
 
     private WikiPage getPageInfoFromCache( String name )
-        throws ProviderException,
-               RepositoryModifiedException
+        throws ProviderException
     {
         boolean wasUpdated = false;
         // Sanity check; seems to occur sometimes
@@ -474,8 +473,7 @@ public class CachingProvider
      *  @throws RepositoryModifiedException If the page has been externally modified.
      */
     public String getPageText( String pageName, int version )
-        throws ProviderException,
-               RepositoryModifiedException
+        throws ProviderException
     {
         String result = null;
 
@@ -510,8 +508,7 @@ public class CachingProvider
      *  @throws RepositoryModifiedException If the page has been externally modified.
      */
     private String getTextFromCache( String pageName )
-        throws ProviderException,
-               RepositoryModifiedException
+        throws ProviderException
     {
         String text;
         boolean wasUpdated = false;
@@ -699,8 +696,7 @@ public class CachingProvider
      *  {@inheritDoc}
      */
     public WikiPage getPageInfo( String pageName, int version )
-        throws ProviderException,
-               RepositoryModifiedException
+        throws ProviderException
     {
         WikiPage page = null;
         WikiPage cached = getPageInfoFromCache( pageName );

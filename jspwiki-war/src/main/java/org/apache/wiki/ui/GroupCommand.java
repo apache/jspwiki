@@ -85,7 +85,7 @@ public final class GroupCommand extends AbstractCommand
      * @param target the GroupPrincipal to combine into the current Command
      * @return the new, targeted command
      */
-    public final Command targetedCommand( Object target )
+    public Command targetedCommand( Object target )
     {
         if ( !( target != null && target instanceof GroupPrincipal ) )
         {
@@ -100,7 +100,7 @@ public final class GroupCommand extends AbstractCommand
      * @return the name
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public final String getName()
+    public String getName()
     {
         Object target = getTarget();
         if ( target == null )
@@ -115,7 +115,7 @@ public final class GroupCommand extends AbstractCommand
      * @return the permission
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public final Permission requiredPermission()
+    public Permission requiredPermission()
     {
         return m_permission;
     }

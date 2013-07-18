@@ -55,7 +55,7 @@ public final class GroupPrincipal implements Principal
      * @return the name
      * @see java.security.Principal#getName()
      */
-    public final String getName()
+    public String getName()
     {
         return m_name;
     }
@@ -66,7 +66,7 @@ public final class GroupPrincipal implements Principal
      * @return the result of the equality test
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public final boolean equals( Object obj )
+    public boolean equals( Object obj )
     {
         if ( !( obj instanceof GroupPrincipal ) )
         {
@@ -81,7 +81,7 @@ public final class GroupPrincipal implements Principal
      * @return the hash code
      * @see java.lang.Object#hashCode()
      */
-    public final int hashCode()
+    public int hashCode()
     {
         return m_name.hashCode();
     }
@@ -91,7 +91,7 @@ public final class GroupPrincipal implements Principal
      * @return the string
      * @see java.lang.Object#toString()
      */
-    public final String toString()
+    public String toString()
     {
         return "[GroupPrincipal " + m_name + "]";
     }

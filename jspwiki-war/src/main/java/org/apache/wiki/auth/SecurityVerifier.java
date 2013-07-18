@@ -191,7 +191,7 @@ public final class SecurityVerifier
         String colWidth;
         if ( pageActions.length > 0 && roles.length > 0 )
         {
-            colWidth = String.valueOf( 67f / ( pageActions.length * roles.length ) ) + "%";
+            colWidth =  (67f / ( pageActions.length * roles.length )) + "%";
         }
         else
         {
@@ -536,7 +536,7 @@ public final class SecurityVerifier
         }
 
         // Try adding a bogus group with random name
-        String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+        String name = "TestGroup" + System.currentTimeMillis();
         Group group = null;
         try
         {
@@ -861,7 +861,7 @@ public final class SecurityVerifier
         }
 
         // Try adding a bogus user with random name
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        String loginName = "TestUser" + System.currentTimeMillis();
         try
         {
             UserProfile profile = db.newProfile();
