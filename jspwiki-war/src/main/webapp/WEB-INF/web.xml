@@ -26,7 +26,6 @@
    <description>
        JSPWiki is an open source JSP-based WikiClone.  It is licensed
        under the Apache 2.0 license.
-
        For more information, please come to http://www.jspwiki.org/
    </description>
    <display-name>JSPWiki</display-name>
@@ -46,7 +45,7 @@
       execute first. Note that if you configure a filter *before* this one that returns
       non-null values for getUserPrincipal() or getRemoteUser(), WikiSecurityFilter
       will pick the credentials up, and set the user's WikiSession state to
-      "authenticated." WikiServletFlter will also set the WikiSession's' state
+      "authenticated." WikiServletFilter will also set the WikiSession's' state
       to "authenticated" if jspwiki.properties property "jspwiki.cookieAuthentication"
       is set to true, and the user possesses the correct authentication cookie.
 

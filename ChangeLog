@@ -1,5 +1,17 @@
 2013-07-18  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.10.0-svn-21
+
+       * Some Sonar fixes on trailing comments
+
+       * Combined our two maven-war-plugin definitions in jspwiki-war, added a Maven 3 requirement to the base POM
+         so we can run mvn versions:display-[plugin|dependency]-updates
+       
+       * Tightened up SearchManagerTest, now deleting page created after each test (was failing on Jenkins although
+         for some reason still working fine on my computer).
+
+2013-07-18  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.10.0-svn-20
 
        * Some Sonar fixes on minor matters.

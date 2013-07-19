@@ -42,7 +42,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>1.6</jdk.version>
   </properties>
-  
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/jspwiki/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jspwiki/trunk</developerConnection>

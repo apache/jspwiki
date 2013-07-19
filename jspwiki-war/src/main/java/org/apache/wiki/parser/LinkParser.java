@@ -202,43 +202,54 @@ public class LinkParser
 
             if ( cut2 == -1 )
             {
-                //  link form 2:  [Acme | http://www.acme.com/]
-                String text = linktext.substring( 0, cut1 ).trim(); // to cut1
-                String ref  = linktext.substring( cut1+1 ).trim();  // cut1 to end
+                // link form 2:  [Acme | http://www.acme.com/]
+                // text = Acme
+                String text = linktext.substring( 0, cut1 ).trim();
+                // ref = http://www.acme.com/
+                String ref  = linktext.substring( cut1+1 ).trim();
                 return new Link( text, ref );
             }
 
-            // otherwise:           link form 3:  [Acme | http://www.acme.com/ | id='foo' rel='Next']
-            String text    = linktext.substring( 0, cut1 ).trim();      // to cut1
-            String ref     = linktext.substring( cut1+1, cut2 ).trim(); // cut1 to cut2
-            String attribs = linktext.substring( cut2+1 ).trim();       // cut2 to end
+            // link form 3:  [Acme | http://www.acme.com/ | id='foo' rel='Next']
+            String text    = linktext.substring( 0, cut1 ).trim();
+            String ref     = linktext.substring( cut1+1, cut2 ).trim();
+            // attribs = id='foo' rel='Next'
+            String attribs = linktext.substring( cut2+1 ).trim();
 
             link = new Link( text, ref );
 
             // parse attributes
-            if( attribs.indexOf(EQSQUO) != -1 ) // contains "='" that looks like attrib spec
+            // contains "='" that looks like attrib spec
+            if( attribs.indexOf(EQSQUO) != -1 )
             {
                 try
                 {
                     StringTokenizer tok = new StringTokenizer(attribs,DELIMS,true);
                     while ( tok.hasMoreTokens() )
                     {
-                        String token = tok.nextToken(DELIMS).trim(); // get attribute name token
+                        // get attribute name token
+                        String token = tok.nextToken(DELIMS).trim();
                         while ( isSpace(token) && tok.hasMoreTokens() )
                         {
-                            token = tok.nextToken(DELIMS).trim(); // eat any WS
+                            // remove all whitespace
+                            token = tok.nextToken(DELIMS).trim();
                         }
 
-                        require( tok, EQ ); // eat '=', break after '='
-                        require( tok, SQUO ); // eat opening delim
-                        String value = tok.nextToken(SQUO);  // using existing delim
-                        require( tok, SQUO ); // eat closing delim
+                        // eat '=', break after '='
+                        require( tok, EQ );
+                        // eat opening delim
+                        require( tok, SQUO );
+                        // using existing delim
+                        String value = tok.nextToken(SQUO);
+                        // eat closing delim
+                        require( tok, SQUO );
 
                         if( token != null && value != null )
                         {
                             if( Arrays.binarySearch( PERMITTED_ATTRIBUTES, token ) >= 0 )
                             {
-                                if( !token.equals(TARGET) // _blank _self _parent _top
+                                // _blank _self _parent _top
+                                if( !token.equals(TARGET)
                                         || Arrays.binarySearch( PERMITTED_TARGET_VALUES, value ) >= 0 )
                                 {
                                     Attribute a = new Attribute(token,value);
@@ -290,7 +301,7 @@ public class LinkParser
         String s = tok.nextToken(required);
         if( !s.equals(required) )
         {
-            throw new ParseException("expected '"+required+"' not '"+s+"'"); // I18N
+            throw new ParseException("expected '"+required+"' not '"+s+"'");
         }
         return s;
     }
@@ -322,13 +333,14 @@ public class LinkParser
      */
     public static final boolean isSpace( char c )
     {
+        // 0x20 = SPACE, 0x0A = LF, 0x0D = CR, 0x09 = TAB, 0x85 = NEL, 0x2028 = Line separator
         return
-           0x20 == c    // SPACE
-        || 0x0A == c    // LF
-        || 0x0D == c    // CR
-        || 0x09 == c    // TAB
-        || 0x85 == c    // NEL
-        || 0x2028 == c; // LS (line separator)
+           0x20 == c
+        || 0x0A == c
+        || 0x0D == c
+        || 0x09 == c
+        || 0x85 == c
+        || 0x2028 == c;
     }
 
 
@@ -560,7 +572,7 @@ public class LinkParser
             return sb.toString();
         }
 
-    } // end inner class
+    }
+    // end inner class
 
 }
-

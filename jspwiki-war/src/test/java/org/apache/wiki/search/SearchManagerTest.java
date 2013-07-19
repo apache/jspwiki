@@ -56,8 +56,6 @@ public class SearchManagerTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        
-        m_engine.deleteTestPage("TestPage");
     }
 
     public void testDefaultProvider()
@@ -101,6 +99,7 @@ public class SearchManagerTest extends TestCase
         assertEquals( "no pages", 1, res.size() );
         
         assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        m_engine.deleteTestPage("TestPage");
     }
 
     public void testSimpleSearch2()
@@ -119,6 +118,7 @@ public class SearchManagerTest extends TestCase
         assertEquals( "no pages", 1, res.size() );
     
         assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        m_engine.deleteTestPage("TestPage");
     }
 
     public void testSimpleSearch3()
@@ -148,6 +148,7 @@ public class SearchManagerTest extends TestCase
         assertEquals( "no pages", 1, res.size() );
      
         assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        m_engine.deleteTestPage("TestPage");
     }
 
     public void testTitleSearch()
@@ -164,6 +165,7 @@ public class SearchManagerTest extends TestCase
         assertEquals( "no pages", 1, res.size() );
  
         assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        m_engine.deleteTestPage("TestPage");
     }
 
     public void testTitleSearch2()
@@ -180,6 +182,7 @@ public class SearchManagerTest extends TestCase
         assertEquals( "no pages", 1, res.size() );
 
         assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        m_engine.deleteTestPage("TestPage");
     }
 
     public static Test suite()
