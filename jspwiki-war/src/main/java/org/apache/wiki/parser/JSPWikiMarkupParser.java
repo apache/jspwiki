@@ -1880,7 +1880,11 @@ public class JSPWikiMarkupParser
                 {
                     // Empty away all the rest of the dashes.
                     // Do not forget to return the first non-match back.
-                    while( (ch = nextToken()) == '-' );
+                    do
+                    {
+                        ch = nextToken();
+                    }
+                    while ( ch == '-' );
 
                     pushBack(ch);
                     startBlockLevel();

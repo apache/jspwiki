@@ -36,7 +36,6 @@ public class RSSThread extends WikiBackgroundThread
     static Logger              log = Logger.getLogger( RSSThread.class );
         
     private final File m_rssFile;
-    private final int m_rssInterval;
     private final RSSGenerator m_generator;
         
     private WatchDog m_watchdog;
@@ -53,10 +52,9 @@ public class RSSThread extends WikiBackgroundThread
         super( engine, rssInterval );
         m_generator = engine.getRSSGenerator();
         m_rssFile = rssFile;
-        m_rssInterval = rssInterval;
         setName("JSPWiki RSS Generator");
         log.debug( "RSS file will be at "+m_rssFile.getAbsolutePath() );
-        log.debug( "RSS refresh interval (seconds): "+m_rssInterval );
+        log.debug( "RSS refresh interval (seconds): "+rssInterval );
     }
     
     /**

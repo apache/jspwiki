@@ -270,13 +270,9 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     private String m_findRoles = null;
 
-    private String m_initialRole = "Authenticated";
-
     private String m_insertProfile = null;
 
     private String m_insertRole = null;
-
-    private String m_userTable = null;
 
     private String m_attributes = null;
 
@@ -289,10 +285,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     private String m_loginName = null;
 
     private String m_password = null;
-
-    private String m_role = null;
-
-    private String m_roleTable = null;
 
     private String m_uid = null;
     
@@ -460,6 +452,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
     {
+        String userTable;
+        String role;
+        String roleTable;
+
         String jndiName = props.getProperty( PROP_DB_DATASOURCE, DEFAULT_DB_JNDI_NAME );
         try
         {
@@ -468,7 +464,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             m_ds = (DataSource) ctx.lookup( jndiName );
 
             // Prepare the SQL selectors
-            m_userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
+            userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
             m_email = props.getProperty( PROP_DB_EMAIL, DEFAULT_DB_EMAIL );
             m_fullName = props.getProperty( PROP_DB_FULL_NAME, DEFAULT_DB_FULL_NAME );
             m_lockExpiry = props.getProperty( PROP_DB_LOCK_EXPIRY, DEFAULT_DB_LOCK_EXPIRY );
@@ -480,15 +476,15 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             m_modified = props.getProperty( PROP_DB_MODIFIED, DEFAULT_DB_MODIFIED );
             m_attributes = props.getProperty( PROP_DB_ATTRIBUTES, DEFAULT_DB_ATTRIBUTES );
 
-            m_findAll = "SELECT * FROM " + m_userTable;
-            m_findByEmail = "SELECT * FROM " + m_userTable + " WHERE " + m_email + "=?";
-            m_findByFullName = "SELECT * FROM " + m_userTable + " WHERE " + m_fullName + "=?";
-            m_findByLoginName = "SELECT * FROM " + m_userTable + " WHERE " + m_loginName + "=?";
-            m_findByUid = "SELECT * FROM " + m_userTable + " WHERE " + m_uid + "=?";
-            m_findByWikiName = "SELECT * FROM " + m_userTable + " WHERE " + m_wikiName + "=?";
+            m_findAll = "SELECT * FROM " + userTable;
+            m_findByEmail = "SELECT * FROM " + userTable + " WHERE " + m_email + "=?";
+            m_findByFullName = "SELECT * FROM " + userTable + " WHERE " + m_fullName + "=?";
+            m_findByLoginName = "SELECT * FROM " + userTable + " WHERE " + m_loginName + "=?";
+            m_findByUid = "SELECT * FROM " + userTable + " WHERE " + m_uid + "=?";
+            m_findByWikiName = "SELECT * FROM " + userTable + " WHERE " + m_wikiName + "=?";
 
             // The user insert SQL prepared statement
-            m_insertProfile = "INSERT INTO " + m_userTable + " ("
+            m_insertProfile = "INSERT INTO " + userTable + " ("
                               + m_uid + ","
                               + m_email + ","
                               + m_fullName + ","
@@ -501,7 +497,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                               + ") VALUES (?,?,?,?,?,?,?,?,?)";
             
             // The user update SQL prepared statement
-            m_updateProfile = "UPDATE " + m_userTable + " SET "
+            m_updateProfile = "UPDATE " + userTable + " SET "
                               + m_uid + "=?,"
                               + m_email + "=?,"
                               + m_fullName + "=?,"
@@ -514,21 +510,21 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                               + "WHERE " + m_loginName + "=?";
 
             // Prepare the role insert SQL
-            m_roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
-            m_role = props.getProperty( PROP_DB_ROLE, DEFAULT_DB_ROLE );
-            m_insertRole = "INSERT INTO " + m_roleTable + " (" + m_loginName + "," + m_role + ") VALUES (?,?)";
-            m_findRoles = "SELECT * FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
+            roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
+            role = props.getProperty( PROP_DB_ROLE, DEFAULT_DB_ROLE );
+            m_insertRole = "INSERT INTO " + roleTable + " (" + m_loginName + "," + role + ") VALUES (?,?)";
+            m_findRoles = "SELECT * FROM " + roleTable + " WHERE " + m_loginName + "=?";
 
             // Prepare the user delete SQL
-            m_deleteUserByLoginName = "DELETE FROM " + m_userTable + " WHERE " + m_loginName + "=?";
+            m_deleteUserByLoginName = "DELETE FROM " + userTable + " WHERE " + m_loginName + "=?";
 
             // Prepare the role delete SQL
-            m_deleteRoleByLoginName = "DELETE FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
+            m_deleteRoleByLoginName = "DELETE FROM " + roleTable + " WHERE " + m_loginName + "=?";
 
             // Prepare the rename user/roles SQL
-            m_renameProfile = "UPDATE " + m_userTable + " SET " + m_loginName + "=?," + m_modified + "=? WHERE " + m_loginName
+            m_renameProfile = "UPDATE " + userTable + " SET " + m_loginName + "=?," + m_modified + "=? WHERE " + m_loginName
                               + "=?";
-            m_renameRoles = "UPDATE " + m_roleTable + " SET " + m_loginName + "=? WHERE " + m_loginName + "=?";
+            m_renameRoles = "UPDATE " + roleTable + " SET " + m_loginName + "=? WHERE " + m_loginName + "=?";
         }
         catch( NamingException e )
         {
@@ -542,7 +538,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
-            ps.executeQuery();
             ps.close();
         }
         catch( SQLException e )
@@ -675,10 +670,13 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      */
     public void save( UserProfile profile ) throws WikiSecurityException
     {
+        String initialRole = "Authenticated";
+
         // Figure out which prepared statement to use & execute it
         String loginName = profile.getLoginName();
         PreparedStatement ps = null;
         UserProfile existingProfile = null;
+
         try
         {
             existingProfile = findByLoginName( loginName );
@@ -758,7 +756,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                 {
                     ps = conn.prepareStatement( m_insertRole );
                     ps.setString( 1, profile.getLoginName() );
-                    ps.setString( 2, m_initialRole );
+                    ps.setString( 2, initialRole );
                     ps.execute();
                     ps.close();
                 }

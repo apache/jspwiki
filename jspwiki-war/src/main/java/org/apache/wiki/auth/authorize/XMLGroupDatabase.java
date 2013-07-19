@@ -451,12 +451,9 @@ public class XMLGroupDatabase implements GroupDatabase
 
         // Copy new file over old version
         File backup = new File( m_file.getAbsolutePath() + ".old" );
-        if ( backup.exists() )
+        if ( backup.exists() && !backup.delete())
         {
-            if ( !backup.delete() )
-            {
-                log.error( "Could not delete old group database backup: " + backup );
-            }
+            log.error( "Could not delete old group database backup: " + backup );
         }
         if ( !m_file.renameTo( backup ) )
         {

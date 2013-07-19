@@ -23,7 +23,7 @@ import java.util.Comparator;
 
 /**
  * A comparator that sorts Strings using "human" ordering, including decimal
- * ordering. Only works for languages where every Character is lexigraphically
+ * ordering. Only works for languages where every character is lexigraphically
  * distinct and correctly unicode ordered (e.g. English). Other languages should use
  * <code>CollatedHumanComparator</code>. Pretty efficient but still slower than
  * String.compareTo().
@@ -80,18 +80,26 @@ public class HumanComparator implements Comparator<String>
     {
         // Some quick and easy checks
         if( str1 == str2 )
-            return 0; // they're identical, possibly both null
-        if( str1 == null )
-            return -1; // str1 is null and str2 isn't so str1 is smaller
-        if( str2 == null )
-            return 1; // str2 is null and str1 isn't so str1 is bigger
+        {
+            // they're identical, possibly both null
+            return 0;
+        } else if ( str1 == null )
+        {
+            // str1 is null and str2 isn't so str1 is smaller
+            return -1;
+        } else if ( str2 == null )
+        {
+            // str2 is null and str1 isn't so str1 is bigger
+            return 1;
+        }
 
         char[] s1 = str1.toCharArray();
         char[] s2 = str2.toCharArray();
         int len1 = s1.length;
         int len2 = s2.length;
         int idx = 0;
-        int caseComparison = 0; // Used to defer a case sensitive comparison
+        // caseComparison used to defer a case sensitive comparison
+        int caseComparison = 0;
 
         while ( idx < len1 && idx < len2 )
         {
@@ -105,16 +113,18 @@ public class HumanComparator implements Comparator<String>
             // If case makes a difference, note the difference the first time
             // it's encountered
             if( caseComparison == 0 && c1 != c2 && lc1 == lc2 )
+            {
                 if( Character.isLowerCase( c1 ) )
                     caseComparison = 1;
                 else if( Character.isLowerCase( c2 ) )
                     caseComparison = -1;
-
+            }
             // Do the rest of the tests in lower case
             c1 = lc1;
             c2 = lc2;
 
-            if( c1 != c2 || c1 == '0' ) // leading zeros are a special case
+            // leading zeros are a special case
+            if( c1 != c2 || c1 == '0' )
             {
                 // They might be different, now we can do a comparison
                 CharType type1 = mapCharTypes( c1 );
@@ -123,8 +133,10 @@ public class HumanComparator implements Comparator<String>
                 // Do the character class check
                 int result = compareCharTypes( type1, type2 );
                 if( result != 0 )
-                    return result; // different character classes so that's
-                // sufficient
+                {
+                    // different character classes so that's sufficient
+                    return result;
+                }
 
                 // If they're not digits, use character to character comparison
                 if( type1 != CharType.TYPE_DIGIT )
@@ -138,7 +150,10 @@ public class HumanComparator implements Comparator<String>
                 assert( type1 == CharType.TYPE_DIGIT && type2 == CharType.TYPE_DIGIT );
                 result = compareDigits( s1, s2, idx - 1 );
                 if( result != 0 )
-                    return result; // Got a result so return it
+                {
+                    // Got a result so return it
+                    return result;
+                }
 
                 // No result yet, spin through the digits and continue trying
                 while ( idx < len1 && idx < len2 && Character.isDigit( s1[idx] ) )
@@ -147,8 +162,13 @@ public class HumanComparator implements Comparator<String>
         }
 
         if( len1 == len2 )
-            return caseComparison; // identical so return any case dependency
-        return len1 - len2; // Shorter String is less
+        {
+            // identical so return any case dependency
+            return caseComparison;
+        }
+
+        // Shorter String is less
+        return len1 - len2;
     }
 
     /**
@@ -162,18 +182,31 @@ public class HumanComparator implements Comparator<String>
     private int compareCharTypes( CharType type1, CharType type2 )
     {
         if( type1 == type2 )
-            return 0; // Same type so equal
-        if( type1 == sortOrder[0] )
-            return -1; // t1 is the lowest order and t2 isn't so t1 must be less
-        if( type2 == sortOrder[0] )
-            return 1; // t2 is the lowest order and t1 isn't so t1 must be more
-        if( type1 == sortOrder[1] )
-            return -1; // t1 is the middle order and t2 isn't so t1 must be less
-        if( type2 == sortOrder[1] )
-            return 1; // t2 is the middle order and t1 isn't so t1 must be more
-        // Can't possible get here as that would mean they're both sortOrder[2]
-        assert( type1 != type2 );
-        return 0;
+        {
+            // Same type so equal
+            return 0;
+        } else if( type1 == sortOrder[0] )
+        {
+            // t1 is the lowest order and t2 isn't so t1 must be less
+            return -1;
+        } else if( type2 == sortOrder[0] )
+        {
+            // t2 is the lowest order and t1 isn't so t1 must be more
+            return 1;
+        } else if( type1 == sortOrder[1] )
+        {
+            // t1 is the middle order and t2 isn't so t1 must be less
+            return -1;
+        } else if( type2 == sortOrder[1] )
+        {
+            // t2 is the middle order and t1 isn't so t1 must be more
+            return 1;
+        } else
+        {
+            // Can't possibly get here as that would mean they're both sortOrder[2]
+            assert( type1 != type2 );
+            return 0;
+        }
     }
 
     /**
@@ -249,9 +282,13 @@ public class HumanComparator implements Comparator<String>
 
         // Sanity check the sort order
         if( sortOrder.length != 3 )
+        {
             throw new IllegalArgumentException( "There must be exactly three elements in the sort order" );
+        }
         if( sortOrder[0] == sortOrder[1] || sortOrder[0] == sortOrder[2] || sortOrder[1] == sortOrder[2] )
+        {
             throw new IllegalArgumentException( "The sort order must contain EXACTLY one of each CharType" );
+        }
         this.sortOrder = sortOrder;
     }
 }

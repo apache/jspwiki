@@ -48,13 +48,10 @@ public class FormClose
 
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
-        if( info != null )
+        if( info != null && info.hide() )
         {
-            if( info.hide() )
-            {
-                ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
-                return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
-            }
+            ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+            return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
         }
 
         // Get rid of remaining form data, so it doesn't mess up other forms.

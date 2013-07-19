@@ -75,8 +75,11 @@ public class ParamTag
     public int doEndTag()
     {
         Tag t = null;
-        while( (t = getParent()) != null && !(t instanceof ParamHandler) )
-            ;
+        do
+        {
+            t = getParent();
+        } while (t != null && !(t instanceof ParamHandler));
+
         if( t != null )
         {
             String val = m_value;

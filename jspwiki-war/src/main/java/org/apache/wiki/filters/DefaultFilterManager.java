@@ -420,7 +420,7 @@ public final class DefaultFilterManager extends ModuleManager implements org.apa
      * @param type      the WikiPageEvent type to be fired.
      * @param context   the WikiContext of the event.
      */
-    public final void fireEvent( int type, WikiContext context )
+    public void fireEvent( int type, WikiContext context )
     {
         if ( WikiEventManager.isListening(this) && WikiPageEvent.isValidType(type) )
         {

@@ -1,3 +1,14 @@
+2013-07-19  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-22
+
+       * Updated some dependencies and plugins based on results from mvn versions:display-[plugin|dependency]-updates (see base pom.xml)
+
+       * Various Sonar fixes (if cases without braces, trailing-line comments, etc.)
+
+       * Moved filter file (back) from jspwiki-war/src/test/filters to src/main/filters as I
+         realized filtering is used in the webapp/WEB-INF folder in the main branch.
+
 2013-07-18  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-21

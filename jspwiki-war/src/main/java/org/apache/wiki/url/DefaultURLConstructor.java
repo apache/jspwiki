@@ -143,9 +143,10 @@ public class DefaultURLConstructor
     public static String getURLPattern( String context, String name )
         throws IllegalArgumentException
     {
-        if( context.equals(WikiContext.VIEW) )
+        if( context.equals(WikiContext.VIEW) && name == null)
         {
-            if( name == null ) return "%uWiki.jsp"; // FIXME
+            // FIXME
+            return "%uWiki.jsp";
         }
         
         // Find the action matching our pattern (could throw exception)

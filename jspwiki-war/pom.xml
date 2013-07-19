@@ -181,16 +181,8 @@
     <finalName>JSPWiki</finalName>
     <!-- filtering: http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html -->
     <filters>
-      <filter>src/test/filters/filters.properties</filter>
+      <filter>src/main/filters/filters.properties</filter>
     </filters>
-    
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <!-- No filtering yet -->
-        <!--filtering>true</filtering-->
-      </resource>
-    </resources>
     
     <testResources>
       <testResource>
@@ -305,7 +297,10 @@
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <attachClasses>true</attachClasses>
+            <filters>
+                <filter>${pom.basedir}/src/main/filters/filters.properties</filter>
+            </filters>
+            <attachClasses>true</attachClasses>
           <webResources>
             <resource>
               <directory>src/main/webapp/WEB-INF</directory>

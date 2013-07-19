@@ -129,12 +129,9 @@ public final class HttpUtil
                         
             String eTag = req.getHeader( "If-None-Match" );
             
-            if( eTag != null )
+            if( eTag != null && eTag.equals(thisTag) )
             {
-                if( eTag.equals(thisTag) )
-                {
-                    return true;
-                }
+                return true;
             }
             
             //

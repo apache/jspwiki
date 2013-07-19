@@ -82,8 +82,6 @@ public class AttachmentServlet extends HttpServlet
     /** Default expiry period is 1 day */
     protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000;
 
-    private String m_tmpDir;
-
     /**
      *  The maximum size that an attachment can be.
      */
@@ -110,10 +108,12 @@ public class AttachmentServlet extends HttpServlet
     public void init( ServletConfig config )
         throws ServletException
     {
+        String tmpDir;
+
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
 
-        m_tmpDir         = m_engine.getWorkDir()+File.separator+"attach-tmp";
+        tmpDir         = m_engine.getWorkDir()+File.separator+"attach-tmp";
 
         m_maxSize        = TextUtil.getIntegerProperty( props,
                                                         AttachmentManager.PROP_MAXSIZE,
@@ -137,18 +137,18 @@ public class AttachmentServlet extends HttpServlet
         else
             m_forbiddenPatterns = new String[0];
 
-        File f = new File( m_tmpDir );
+        File f = new File( tmpDir );
         if( !f.exists() )
         {
             f.mkdirs();
         }
         else if( !f.isDirectory() )
         {
-            log.fatal("A file already exists where the temporary dir is supposed to be: "+m_tmpDir+".  Please remove it.");
+            log.fatal("A file already exists where the temporary dir is supposed to be: "+tmpDir+".  Please remove it.");
         }
 
         log.debug( "UploadServlet initialized. Using " +
-                   m_tmpDir + " for temporary storage." );
+                   tmpDir + " for temporary storage." );
     }
 
     private boolean isTypeAllowed( String name )

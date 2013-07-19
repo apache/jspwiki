@@ -193,10 +193,6 @@ public class JDBCGroupDatabase implements GroupDatabase
 
     private DataSource m_ds = null;
 
-    private String m_table = null;
-
-    private String m_memberTable = null;
-
     private String m_created = null;
 
     private String m_creator = null;
@@ -483,6 +479,9 @@ public class JDBCGroupDatabase implements GroupDatabase
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
+        String table;
+        String memberTable;
+
         m_engine = engine;
 
         String jndiName = props.getProperty( PROP_GROUPDB_DATASOURCE, DEFAULT_GROUPDB_DATASOURCE );
@@ -493,8 +492,8 @@ public class JDBCGroupDatabase implements GroupDatabase
             m_ds = (DataSource) ctx.lookup( jndiName );
 
             // Prepare the SQL selectors
-            m_table = props.getProperty( PROP_GROUPDB_TABLE, DEFAULT_GROUPDB_TABLE );
-            m_memberTable = props.getProperty( PROP_GROUPDB_MEMBER_TABLE, DEFAULT_GROUPDB_MEMBER_TABLE );
+            table = props.getProperty( PROP_GROUPDB_TABLE, DEFAULT_GROUPDB_TABLE );
+            memberTable = props.getProperty( PROP_GROUPDB_MEMBER_TABLE, DEFAULT_GROUPDB_MEMBER_TABLE );
             m_name = props.getProperty( PROP_GROUPDB_NAME, DEFAULT_GROUPDB_NAME );
             m_created = props.getProperty( PROP_GROUPDB_CREATED, DEFAULT_GROUPDB_CREATED );
             m_creator = props.getProperty( PROP_GROUPDB_CREATOR, DEFAULT_GROUPDB_CREATOR );
@@ -502,21 +501,21 @@ public class JDBCGroupDatabase implements GroupDatabase
             m_modified = props.getProperty( PROP_GROUPDB_MODIFIED, DEFAULT_GROUPDB_MODIFIED );
             m_member = props.getProperty( PROP_GROUPDB_MEMBER, DEFAULT_GROUPDB_MEMBER );
 
-            m_findAll = "SELECT DISTINCT * FROM " + m_table;
-            m_findGroup = "SELECT DISTINCT * FROM " + m_table + " WHERE " + m_name + "=?";
-            m_findMembers = "SELECT * FROM " + m_memberTable + " WHERE " + m_name + "=?";
+            m_findAll = "SELECT DISTINCT * FROM " + table;
+            m_findGroup = "SELECT DISTINCT * FROM " + table + " WHERE " + m_name + "=?";
+            m_findMembers = "SELECT * FROM " + memberTable + " WHERE " + m_name + "=?";
 
             // Prepare the group insert/update SQL
-            m_insertGroup = "INSERT INTO " + m_table + " (" + m_name + "," + m_modified + "," + m_modifier + "," + m_created + ","
+            m_insertGroup = "INSERT INTO " + table + " (" + m_name + "," + m_modified + "," + m_modifier + "," + m_created + ","
                             + m_creator + ") VALUES (?,?,?,?,?)";
-            m_updateGroup = "UPDATE " + m_table + " SET " + m_modified + "=?," + m_modifier + "=? WHERE " + m_name + "=?";
+            m_updateGroup = "UPDATE " + table + " SET " + m_modified + "=?," + m_modifier + "=? WHERE " + m_name + "=?";
 
             // Prepare the group member insert SQL
-            m_insertGroupMembers = "INSERT INTO " + m_memberTable + " (" + m_name + "," + m_member + ") VALUES (?,?)";
+            m_insertGroupMembers = "INSERT INTO " + memberTable + " (" + m_name + "," + m_member + ") VALUES (?,?)";
 
             // Prepare the group delete SQL
-            m_deleteGroup = "DELETE FROM " + m_table + " WHERE " + m_name + "=?";
-            m_deleteGroupMembers = "DELETE FROM " + m_memberTable + " WHERE " + m_name + "=?";
+            m_deleteGroup = "DELETE FROM " + table + " WHERE " + m_name + "=?";
+            m_deleteGroupMembers = "DELETE FROM " + memberTable + " WHERE " + m_name + "=?";
         }
         catch( NamingException e )
         {

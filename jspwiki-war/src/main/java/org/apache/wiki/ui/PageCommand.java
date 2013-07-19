@@ -126,7 +126,7 @@ public final class PageCommand extends AbstractCommand
     /**
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public final String getName()
+    public String getName()
     {
         Object target = getTarget();
         if( target == null )
@@ -139,7 +139,7 @@ public final class PageCommand extends AbstractCommand
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public final Permission requiredPermission()
+    public Permission requiredPermission()
     {
         return m_permission;
     }

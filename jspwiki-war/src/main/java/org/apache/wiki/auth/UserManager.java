@@ -445,13 +445,11 @@ public final class UserManager
         email = InputValidator.isBlank( email ) ? null : email;
 
         // A special case if we have container authentication
-        if ( m_engine.getAuthenticationManager().isContainerAuthenticated() )
+        // If authenticated, login name is always taken from container
+        if ( m_engine.getAuthenticationManager().isContainerAuthenticated() &&
+                context.getWikiSession().isAuthenticated() )
         {
-            // If authenticated, login name is always taken from container
-            if ( context.getWikiSession().isAuthenticated() )
-            {
-                loginName = context.getWikiSession().getLoginPrincipal().getName();
-            }
+            loginName = context.getWikiSession().getLoginPrincipal().getName();
         }
 
         // Set the profile fields!
