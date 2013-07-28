@@ -47,6 +47,8 @@ public class UtilJ2eeCompat
 
     public static final String GLASSFISH = "Sun Java System Application Server";
 
+    public static final String JBOSS = "JBoss";
+
     /**
      * 
      */
@@ -143,6 +145,12 @@ public class UtilJ2eeCompat
         else if( serverInfo.indexOf( OC4J ) >= 0 )
         {
             log.info( "Oracle Container for JEE detected" );
+            // use response.getOutputStream instead of response.getWriter
+            useStream = true;
+        }
+        else if( serverInfo.indexOf( JBOSS ) >= 0 )
+        {
+            log.info( JBOSS + " detected" );
             // use response.getOutputStream instead of response.getWriter
             useStream = true;
         }

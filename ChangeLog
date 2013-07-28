@@ -1,3 +1,10 @@
+2013-07-28  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-23
+
+       * fixed JSPWIKI-784 UTF-8 chars not correctly rendered if served by JBoss
+          (JBoss now also uses response.getOutputStream)
+
 2013-07-19  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-22
