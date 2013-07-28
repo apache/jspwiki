@@ -27,10 +27,8 @@
     <version>2.10.0-SNAPSHOT</version>
   </parent>
   
-  <groupId>org.apache.incubator.jspwiki.it</groupId>
   <artifactId>jspwiki-it-test-custom-absolute-urls</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>jspwiki-it-test-custom-absolute-urls</name>
   <description>selenium tests execution for jspwiki-it-test-custom-absolute-urls (custom auth, absolute URLs)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
   

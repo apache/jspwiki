@@ -30,7 +30,6 @@
   <groupId>org.apache.jspwiki.it</groupId>
   <artifactId>jspwiki-it-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>jspwiki-it-builder</name>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
   

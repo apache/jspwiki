@@ -28,10 +28,8 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
   
-  <groupId>org.apache.incubator.jspwiki.it</groupId>
   <artifactId>jspwiki-selenium-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>jspwiki-selenium-tests</name>
   <description>templates of selenium tests for jspwiki</description>
   
   <dependencies>
@@ -52,16 +50,16 @@
       <artifactId>log4j</artifactId>
     </dependency>
 
-      <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <scope>compile</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>compile</scope>
+    </dependency>
 
-      <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>sqltool</artifactId>
-          <scope>compile</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>sqltool</artifactId>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 </project>

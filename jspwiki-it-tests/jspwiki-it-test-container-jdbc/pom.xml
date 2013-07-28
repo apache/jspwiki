@@ -27,10 +27,8 @@
     <version>2.10.0-SNAPSHOT</version>
   </parent>
   
-  <groupId>org.apache.incubator.jspwiki.it</groupId>
   <artifactId>jspwiki-it-test-container-jdbc</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>jspwiki-it-test-container-jdbc</name>
   <description>selenium tests execution for jspwiki-it-test-container-jdbc (container auth, relative URLs, JDBC database)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
   
