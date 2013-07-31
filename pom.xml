@@ -157,6 +157,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-analyzers-common</artifactId>
+        <scope>compile</scope>
+        <version>${lucene.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.freshcookies</groupId>
         <artifactId>freshcookies-security</artifactId>
         <version>0.60</version>
