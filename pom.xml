@@ -38,6 +38,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>1.6</jdk.version>
+    <lucene.version>4.4.0</lucene.version>
   </properties>
 
   <prerequisites>
@@ -145,8 +146,14 @@
 
       <dependency>
         <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-queryparser</artifactId>
+        <version>${lucene.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-highlighter</artifactId>
-        <version>3.6.0</version>
+        <version>${lucene.version}</version>
       </dependency>
 
       <dependency>

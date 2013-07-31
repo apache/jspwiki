@@ -30,11 +30,18 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.*;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.*;
-import org.apache.lucene.search.highlight.*;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -592,7 +599,7 @@ public class LuceneSearchProvider implements SearchProvider
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
-            QueryParser qp = new MultiFieldQueryParser(Version.LUCENE_36, queryfields, getLuceneAnalyzer() );
+            QueryParser qp = new MultiFieldQueryParser(Version.LUCENE_44, queryfields, getLuceneAnalyzer() );
 
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
@@ -608,7 +615,7 @@ public class LuceneSearchProvider implements SearchProvider
             {
                 File dir = new File(m_luceneDirectory);
                 Directory luceneDir = new SimpleFSDirectory(dir, null);
-                IndexReader reader = IndexReader.open( luceneDir);
+                IndexReader reader = DirectoryReader.open(luceneDir);
                 searcher = new IndexSearcher(reader);
             }
             catch( Exception ex )
@@ -680,7 +687,7 @@ public class LuceneSearchProvider implements SearchProvider
             {
                 try
                 {
-                    searcher.close();
+                    searcher.getIndexReader().close();
                 }
                 catch( IOException e )
                 {

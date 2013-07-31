@@ -1,5 +1,23 @@
 Title: Changelog
 
+#### 2013-07-28  Harry Metske (metskem@apache.org)
+
+* 2.10.0-svn-23
+
+* fixed [JSPWIKI 784][JIRA-784] UTF-8 chars not correctly rendered if served by JBoss
+   (JBoss now also uses response.getOutputStream)
+
+#### 2013-07-19  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-22
+
+* Updated some dependencies and plugins based on results from mvn versions:display-[plugin|dependency]-updates (see base pom.xml)
+
+* Various Sonar fixes (if cases without braces, trailing-line comments, etc.)
+
+* Moved filter file (back) from jspwiki-war/src/test/filters to src/main/filters as I
+  realized filtering is used in the webapp/WEB-INF folder in the main branch.
+
 #### 2013-07-18  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-21
@@ -1010,6 +1028,7 @@ and propagated the change to all plugins. Cfr. with UPGRADING document for detai
 * 2.9.0-svn-1
 
 * release bump because of package rename
+  [JIRA-784]: https://issues.apache.org/jira/browse/JSPWIKI-784
   [JIRA-772]: https://issues.apache.org/jira/browse/JSPWIKI-772
   [JIRA-303]: https://issues.apache.org/jira/browse/JSPWIKI-303
   [JIRA-780]: https://issues.apache.org/jira/browse/JSPWIKI-780

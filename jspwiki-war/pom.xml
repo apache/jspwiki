@@ -37,7 +37,12 @@
       <groupId>xmlrpc</groupId>
       <artifactId>xmlrpc</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queryparser</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-highlighter</artifactId>
