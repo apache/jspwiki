@@ -1,3 +1,9 @@
+2013-08-01  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-26
+
+       * Removed org.apache.wiki.WikiException in favour of org.apache.wiki.api.exceptions.WikiException
+         
 2013-07-31  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-25
