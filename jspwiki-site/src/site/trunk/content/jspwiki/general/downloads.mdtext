@@ -21,8 +21,8 @@ Apache archives</a>.
 
 <!--
   Source, javadoc, and build artifacts are also available via the 
-  <a class="external" href="https://repository.apache.org/index.html#nexus-search;gav~org.apache.jspwiki~~~~">
-  Nexus</a> repository with the groupId: org.apache.jspwiki and artifactId: jspwiki.
+  <a class="external" href="https://repository.apache.org/index.html#nexus-search;gav~org.apache.wiki~~~~">
+  Nexus</a> repository with the groupId: org.apache.wiki and artifactId: jspwiki.
 -->
 
 If you want to build directly from the sources, please check the [Get and Build Source][] page.

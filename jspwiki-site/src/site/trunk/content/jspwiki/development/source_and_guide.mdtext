@@ -2,16 +2,16 @@ Title: Getting and Building JSPWiki Source code
 
 ## Getting JSPWiki Source Code
 
-JSPWiki source code (<a class="external" href="http://svn.apache.org/viewvc/incubator/jspwiki/">
+JSPWiki source code (<a class="external" href="http://svn.apache.org/viewvc/jspwiki/">
 browse</a>) is maintained using Apache Subversion.
 
 Checkout the code using:
 
-    svn co http://svn.apache.org/repos/asf/incubator/jspwiki/trunk jspwiki
+    svn co http://svn.apache.org/repos/asf/jspwiki/trunk jspwiki
     
 There is also a European mirror, so you can alternatively use:
 
-    svn co http://svn.eu.apache.org/repos/asf/incubator/jspwiki/trunk jspwiki
+    svn co http://svn.eu.apache.org/repos/asf/jspwiki/trunk jspwiki
     
 Change http to https if you are a developer intending to make commits
 
@@ -25,8 +25,8 @@ Production distributions (see [Release Page][]) still use the Apache Ant "ant di
 
 ### Coding standards:
 
-  * Use the <a href="http://svn.apache.org/viewvc/incubator/jspwiki/trunk/jspwiki-war/src/main/config/dev/jspwiki-eclipse-codestyle.xml?view=co&content-type=text%2Fplain">Eclipse</a> 
-and <a href="http://svn.apache.org/viewvc/incubator/jspwiki/trunk/jspwiki-war/src/main/config/dev/jspwiki-checkstyle.xml?view=co&revision=1486481&content-type=text%2Fplain">Checkstyle</a> formatters (both automatically incorporated when you run mvn eclipse:eclipse on the project.)
+  * Use the <a href="http://svn.apache.org/viewvc/jspwiki/trunk/jspwiki-war/src/main/config/dev/jspwiki-eclipse-codestyle.xml?view=co&content-type=text%2Fplain">Eclipse</a>
+and <a href="http://svn.apache.org/viewvc/jspwiki/trunk/jspwiki-war/src/main/config/dev/jspwiki-checkstyle.xml?view=co&revision=1486481&content-type=text%2Fplain">Checkstyle</a> formatters (both automatically incorporated when you run mvn eclipse:eclipse on the project.)
   * Remove trailing whitespace and whitespace on empty lines
 
 ### Commits:

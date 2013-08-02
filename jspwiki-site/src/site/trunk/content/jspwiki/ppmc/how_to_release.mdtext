@@ -48,7 +48,7 @@ you'll have to enter your login password a number of times.
     1. Update ReleaseNotes with [new release notes from JIRA][], select the 
 version and set the style to Text
     2. Commit the updated ReleaseNotes with message: "Preparing for release 
-X.Y.Z-incubating"
+X.Y.Z"
 -->
   
 <!---
@@ -56,21 +56,21 @@ X.Y.Z-incubating"
 
     1. Create a branch for the X.Y release series
 
-            svn copy https://svn.apache.org/repos/asf/incubator/jspwiki/trunk \
-            https://svn.apache.org/repos/asf/incubator/jspwiki/branches/jspwiki-X.Y -m "Branching for X.Y releases"
+            svn copy https://svn.apache.org/repos/asf/jspwiki/trunk \
+            https://svn.apache.org/repos/asf/jspwiki/branches/jspwiki-X.Y -m "Branching for X.Y releases"
 
     2. Bump the version number in trunk and commit (the update-versions script 
 mangles the whitespace in the root XML element):
 
-            sed -i "" -e "s/X.Y.0-incubating-SNAPSHOT/X.Y+1.0-incubating-SNAPSHOT/" pom.xml
+            sed -i "" -e "s/X.Y.0-SNAPSHOT/X.Y+1.0-SNAPSHOT/" pom.xml
 
     3. Checkout the release branch:
 
-            svn checkout https://svn.apache.org/repos/asf/incubator/jspwiki/branches/jspwiki-X.Y
+            svn checkout https://svn.apache.org/repos/asf/jspwiki/branches/jspwiki-X.Y
 
   3. Remove -SNAPSHOT from the release branch and commit
 
-        sed -i "" -e "s/X.Y.Z-incubating-SNAPSHOT/X.Y.Z-incubating/" pom.xml
+        sed -i "" -e "s/X.Y.Z-SNAPSHOT/X.Y.Z/" pom.xml
 
   4. Deploy to Nexus Staging Repository
 
@@ -84,7 +84,7 @@ mangles the whitespace in the root XML element):
 on the left under Build Promotion.
     4. Select org.apache.jspwiki from the list of repositories, select the 
 current repository and delete any asc.md5/asc.sha1 files. Then click Close 
-using "Apache JSPWiki X.Y.Z-incubating" as the description to allow others 
+using "Apache JSPWiki X.Y.Z" as the description to allow others
 to see the repository.
 -->
   2. Deploy source and binary distributions
@@ -100,7 +100,7 @@ to see the repository.
     3. Copy the src distribution file and checksums to people.apache.org,
 excluding the asc.md5/asc.sha1 files:
 
-            scp target/*.tar.gz* username@people.apache.org:~/public_html/jspwiki-X.Y.Z-incubating-candidate-$RC
+            scp target/*.tar.gz* username@people.apache.org:~/public_html/jspwiki-X.Y.Z-candidate-$RC
 
 <!---
     3. Generate the bin distribution:
@@ -111,22 +111,21 @@ excluding the asc.md5/asc.sha1 files:
 excluding the asc.md5/asc.sha1 files:
 
             rm target/*asc.*
-            scp target/*.tar.gz* username@people.apache.org:~/public_html/jspwiki-X.Y.Z-incubating-candidate-$RC
+            scp target/*.tar.gz* username@people.apache.org:~/public_html/jspwiki-X.Y.Z-candidate-$RC
 -->
   3. Tag the release candidate:
 
-        svn copy https://svn.apache.org/repos/asf/incubator/jspwiki/branches/jspwiki-X.Y/ \
-        https://svn.apache.org/repos/asf/incubator/jspwiki/tags/release-X.Y.Z-incubating/ -m "jspwiki X.Y.Z-incubating release."
+        svn copy https://svn.apache.org/repos/asf/jspwiki/branches/jspwiki-X.Y/ \
+        https://svn.apache.org/repos/asf/jspwiki/tags/release-X.Y.Z/ -m "jspwiki X.Y.Z release."
 
 ## Run a vote
 
-Send the following to jspwiki-dev@incubator.apache.org and 
-general@incubator.apache.org:
+Send the following to dev@jspwiki.apache.org:
 
 <!---
-    Subject: [VOTE] Release JSPWiki version X.Y.Z-incubating
+    Subject: [VOTE] Release JSPWiki version X.Y.Z
     
-    This is an incubator release for Apache JSPWiki, version X.Y.Z-incubating.
+    This is a release for Apache JSPWiki, version X.Y.Z.
     
     It fixes the following issues:
     https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12310732&version=<REPLACE>
@@ -136,21 +135,21 @@ general@incubator.apache.org:
     Note that we are voting upon the source (tag), binaries are provided for convenience.
     
     Source and binary files:
-    http://people.apache.org/~<REPLACE>/jspwiki-X.Y.Z-incubating-candidate-$RC
+    http://people.apache.org/~<REPLACE>/jspwiki-X.Y.Z-candidate-$RC
 
     Maven staging repo:
     https://repository.apache.org/content/repositories/orgapachejspwiki-<REPLACE>/
 
     The tag to be voted upon:
-    http://svn.apache.org/repos/asf/incubator/jspwiki/tags/release-X.Y.Z-incubating/
+    http://svn.apache.org/repos/asf/jspwiki/tags/release-X.Y.Z/
     
     JSPWiki's KEYS file containing PGP keys we use to sign the release:
     http://www.apache.org/dist/incubator/jspwiki/KEYS
 -->
 
-    Subject: [VOTE] Release JSPWiki version X.Y.Z-incubating
+    Subject: [VOTE] Release JSPWiki version X.Y.Z
     
-    This is an incubator release for Apache JSPWiki, version X.Y.Z-incubating.
+    This is a release for Apache JSPWiki, version X.Y.Z.
     
     It fixes the following issues:
     https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12310732&version=<REPLACE>
@@ -160,16 +159,15 @@ general@incubator.apache.org:
     Note that we are voting upon the source (tag), binaries are provided for convenience.
     
     Source and binary files:
-    http://people.apache.org/~<REPLACE>/jspwiki-X.Y.Z-incubating-candidate-$RC
+    http://people.apache.org/~<REPLACE>/jspwiki-X.Y.Z-candidate-$RC
 
     The tag to be voted upon:
-    http://svn.apache.org/repos/asf/incubator/jspwiki/tags/release-X.Y.Z-incubating/
+    http://svn.apache.org/repos/asf/jspwiki/tags/release-X.Y.Z/
     
     JSPWiki's KEYS file containing PGP keys we use to sign the release:
     http://www.apache.org/dist/incubator/jspwiki/KEYS
     
-Note that the Incubator PMC needs to vote upon the release after a successful 
-PPMC vote before any release can be made official.
+Note that the PMC needs to vote upon the release before any release can be made official.
 
 ## Roll Out
 
@@ -180,7 +178,7 @@ If the vote passes, roll out the release:
     1. Login to <https://repository.apache.org> and select Staging Repositories 
 on the left under Build Promotion.
     2. Select the repository that was closed earlier, and click Release, using 
-the description "Apache jspwiki X.Y.Z-incubating artifacts"
+the description "Apache jspwiki X.Y.Z artifacts"
 -->
   1. Publish src and bin distributions to the [mirrors][]:
 
@@ -188,12 +186,12 @@ the description "Apache jspwiki X.Y.Z-incubating artifacts"
         VERSION=X.Y.Z
         PREVIOUS_VERSION=X.Y.Z
         CANDIDATE=C
-        cp -r ~/public_html/jspwiki-$VERSION-incubating-candidate-$CANDIDATE \
-        /www/www.apache.org/dist/incubator/jspwiki/jspwiki-$VERSION-incubating
+        cp -r ~/public_html/jspwiki-$VERSION-candidate-$CANDIDATE \
+        /www/www.apache.org/dist/incubator/jspwiki/jspwiki-$VERSION
         cd /www/www.apache.org/dist/incubator/jspwiki
-        chgrp -R incubator jspwiki-$VERSION-incubating
-        chmod -R g+w jspwiki-$VERSION-incubating
-        rm -r /www/www.apache.org/dist/incubator/jspwiki/jspwiki-$PREVIOUS_VERSION-incubating # remove older versions
+        chgrp -R jspwiki jspwiki-$VERSION
+        chmod -R g+w jspwiki-$VERSION
+        rm -r /www/www.apache.org/dist/incubator/jspwiki/jspwiki-$PREVIOUS_VERSION # remove older versions
 
     The last line is to remove the previous version, since only the most recent 
 version on a particular branch should be in the dist directory. Older versions 
@@ -206,7 +204,7 @@ are [archived][] automatically.
 
             mvn javadoc:javadoc
 
-    2. Copy javadocs to https://svn.apache.org/repos/infra/websites/production/jspwiki/documentation/javadocs/X.Y.Z-incubating
+    2. Copy javadocs to https://svn.apache.org/repos/infra/websites/production/jspwiki/documentation/javadocs/X.Y.Z
     3. Add a link to index.html of the javadoc in the documentation/javadoc.mdtext page
 
   4. Post link to the full release notes along with links to the major JIRA 
@@ -215,25 +213,24 @@ changes on the front page of the site
 ## Announce the release
 
 Send the following from an apache.org address to announce@apache.org, 
-jspwiki-user@incubator.apache.org, jspwiki-dev@incubator.apache.org:
+user@jspwiki.apache.org, dev@jspwiki.apache.org:
 
-    Subject: [ANNOUNCE] Apache JSPWiki X.Y.Z-incubating released
+    Subject: [ANNOUNCE] Apache JSPWiki X.Y.Z released
     
-    The Apache JSPWiki team is pleased to announce the release of JSPWiki
-    X.Y.Z-incubating from the Apache Incubator.
+    The Apache JSPWiki team is pleased to announce the release of JSPWiki X.Y.Z.
     
     This is the <REPLACE> release of Apache JSPWiki, a feature-rich and 
     extensible WikiWiki engine built around the standard J2EE components.
     
     The release is available here:
-    http://www.apache.org/dyn/closer.cgi/incubator/jspwiki/
+    http://www.apache.org/dyn/closer.cgi/jspwiki/
     
     The full change log is available here:
     https://issues.apache.org/jira/browse/jspwiki/fixforversion/<REPLACE>
     
     We welcome your help and feedback. For more information on how to
     report problems, and to get involved, visit the project website at
-    http://incubator.apache.org/jspwiki/
+    http://jspwiki.apache.org/
     
     The Apache JSPWiki Team
 
@@ -244,14 +241,14 @@ jspwiki-user@incubator.apache.org, jspwiki-dev@incubator.apache.org:
 
 
 [PGP code signing keys]: http://www.apache.org/dev/release-signing.html#generate
-[KEYS file]: http://svn.apache.org/repos/asf/incubator/jspwiki/dist/KEYS
+[KEYS file]: http://svn.apache.org/repos/asf/jspwiki/dist/KEYS
 [Infrastructure site]: http://www.apache.org/dev/release-signing.html#keys-policy
 [Infrastructure JIRA]: https://issues.apache.org/jira/browse/INFRA
 [setup the ssh keys]: http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/
 
 [new release notes from JIRA]: https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310732
 
-[archived]: http://archive.apache.org/dist/incubator/jspwiki/
+[archived]: http://archive.apache.org/dist/jspwiki/
 [mirrors]: http://www.apache.org/dev/mirrors.html
 
 [next version number to JIRA]: https://issues.apache.org/jira/plugins/servlet/project-config/jspwiki/versions

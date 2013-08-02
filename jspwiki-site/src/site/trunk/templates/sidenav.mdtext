@@ -21,16 +21,15 @@
 
 **Development**
 
-  * <a href="http://svn.apache.org/viewvc/incubator/jspwiki/" class="external">Browse Source</a>
+  * <a href="http://svn.apache.org/viewvc/jspwiki/" class="external">Browse Source</a>
   * [Get and Build Source](/jspwiki/development/source_and_guide.html)
   * <a href="https://builds.apache.org/job/JSPWiki/" class="external">Jenkins CI</a>
   * <a href="https://analysis.apache.org/dashboard/index/139724" class="external">Sonar Analysis</a>
   * [Edit Website](/jspwiki/development/edit_website.html)
-  * <a href="http://svn.apache.org/viewvc/incubator/jspwiki/trunk/ChangeLog?view=co" class="external">Change Log</a>
+  * <a href="http://svn.apache.org/viewvc/jspwiki/trunk/ChangeLog?view=co" class="external">Change Log</a>
 
 **PPMC**
 
-  * <a href="http://incubator.apache.org/projects/jspwiki.html" class="external">Incubation Status</a>
   * [How to Release](/jspwiki/ppmc/how_to_release.html)
   * [Incubator Reports](/jspwiki/ppmc/incubator_reports.html)
 
