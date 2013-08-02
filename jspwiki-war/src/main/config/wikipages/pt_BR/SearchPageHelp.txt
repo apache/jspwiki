@@ -15,7 +15,7 @@ de proibido e exigência, ela não é exibida.
 
 !! Tabela da sintaxe de busca
 
-Para maiores informações olhe em %%slimbox [Sintaxe de busca do  Lucene|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
+Para maiores informações olhe em %%slimbox [Sintaxe de busca do  Lucene|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
 
 || termo  | procura por um termo   | {{hello}}
 || "..."  | procura por um grupo de palavras | {{"hello dolly"}}

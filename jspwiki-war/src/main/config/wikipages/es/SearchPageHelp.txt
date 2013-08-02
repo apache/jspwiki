@@ -16,7 +16,7 @@ y prohibidas, no es mostrada.
 
 !! Tabla con la sintaxis de consulta
 
-Para más información echa un ojo a la %%slimbox [sintaxis de consulta de Lucene|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
+Para más información echa un ojo a la %%slimbox [sintaxis de consulta de Lucene|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
 
 || término  | encontrar un término es fácil   | {{hola}}
 || "..." | encuentra un grupo de palabras | {{"hola fondo norte"}}

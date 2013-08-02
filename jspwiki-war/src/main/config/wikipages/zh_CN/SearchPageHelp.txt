@@ -13,7 +13,7 @@
 
 !! 查询语法表
 
-有关更多信息，请参阅 %%slimbox [Lucene 查询语法|http://www.lucenetutorial.com/lucene-query-syntax.html]/%。
+有关更多信息，请参阅 %%slimbox [Lucene 查询语法|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%。
 
 || term  | 查找单个词容易   | {{hello}}
 || "..." | 查找一组单词     | {{"hello dolly"}}

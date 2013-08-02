@@ -16,7 +16,7 @@ forbidden and required keywords, it is not shown.
 
 !! Query syntax table
 
-For more info look at %%slimbox [Lucene's query syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
+For more info look at %%slimbox [Lucene's query syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
 
 || term  | find a single Term is easy   | {{hello}}
 || "..." | find a group of words | {{"hello dolly"}}

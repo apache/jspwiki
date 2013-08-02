@@ -14,7 +14,7 @@ Alle zoekopdrachten zijn hoofdletter gevoelig. Als een pagina zowel benodigde al
 
 !! Query syntax tabel
 
-Voor meer informatie kijk op %%slimbox [Lucene's query syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
+Voor meer informatie kijk op %%slimbox [Lucene's query syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
 
 || term  | een enkelvoudige term zoeken is een makkie   | {{hello}}
 || "..." | zoek een groep woorden | {{"hello dolly"}}

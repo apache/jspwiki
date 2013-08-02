@@ -15,7 +15,7 @@ Tutte le ricerche vengono effettuate senza tener conto di maiuscole e minuscole.
 
 !! Tabella della sintassi delle query
 
-Per informazioni più dettagliate si rimanda a %%slimbox [Lucene's query syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
+Per informazioni più dettagliate si rimanda a %%slimbox [Lucene's query syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
 
 || termine  | trovare un singole termine è semplice | {{hello}}
 || "..." | trovare un gruppo di parole | {{"hello dolly"}}
