@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
@@ -41,7 +41,7 @@
 <link rel="stylesheet" media="screen, projection, print" type="text/css"
      href="<wiki:Link format='url' templatefile='jspwiki.css'/>"/>
 <%-- put this at the top, to avoid double load when not yet cached --%>
-<link rel="stylesheet" type="text/css" media="print" 
+<link rel="stylesheet" type="text/css" media="print"
      href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" />
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
@@ -55,9 +55,7 @@
 
 <%-- JAVASCRIPT --%>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js'/>"></script>
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js'/>"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js'/>"></script>
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-commonstyles.js'/>"></script>
 <wiki:IncludeResources type="script"/>
 
 <%-- COOKIE read client preferences --%>
@@ -104,7 +102,7 @@
 <wiki:CheckRequestContext context='view|info|diff|upload'>
   <wiki:Permission permission="edit">
     <wiki:PageType type="page">
-    <link rel="alternate" type="application/x-wiki" 
+    <link rel="alternate" type="application/x-wiki"
           href="<wiki:EditLink format='url' />"
           title="<fmt:message key='actions.edit.title'/>" />
     </wiki:PageType>

@@ -1,3 +1,16 @@
+2013-08-01  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.0-svn-27
+
+       * JSPWIKI-761 : Implementing the WRO4J ( Web Resource Optimizer for Java ) Build-time solution 
+       through the wro4j maven plugin. 
+          - replacing YUI-Compressor for JS by UglifyJS (better compression)
+          - introducing the LESS CSS preprocessor supporting advanced css authoring capabilities (variables, mixins, ...)
+          - merging JS and CSS files to reduce the number of resources needed at page-load.
+
+       You can now build with or without minification of the JS and CSS files to ease development 
+       by using -Dminimize = true | false. (ref. mvn_cheat-sheet.txt)  
+        
 2013-08-01  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-26

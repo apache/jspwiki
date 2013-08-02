@@ -99,10 +99,10 @@
 	float:left;
 }
 /*ie6 hack*/
-* html /*#wikibody.fav-left*/ #page, * html #wikibody.fav-right #favorites {
+* html  #page, * html #wikibody.fav-right #favorites {
 	margin-left:-3px; /*Three Pixel Text Jog*/
 }
-* html #wikibody.fav-right #page, * html /*#wikibody.fav-left*/ #favorites {
+* html #wikibody.fav-right #page, * html #favorites {
 	margin-right:-3px;/*Three Pixel Text Jog*/
 }
 #wikibody.fav-right #header, #wikibody.fav-right #footer {
@@ -132,7 +132,7 @@
 	margin-bottom:0.5em;
 }
 * html #header, * html .userbox {
-	height:1% /*hasLayout:true; --ie peekaboo/layout hack */
+	height:1%; /*hasLayout:true; --ie peekaboo/layout hack */
 }
 
 b.roundedCorners {
@@ -1922,13 +1922,13 @@ a.slimbox:hover {
 }
 
 
-/* Pretty printing styles. Used with prettify.js. 
+/* Pretty printing styles. Used with prettify.js.
 pre.prettyprint {
 }
 
-.str {color: #489a1b; } 
+.str {color: #489a1b; }
 .kwd {color: #1b609a; }
-.com {color: #888; } 
+.com {color: #888; }
 .typ {color: #666; }
 .lit {color: #066; }
 .pun {color: #660; }
@@ -1952,10 +1952,10 @@ pre.prettyprint {
 }
 */
 
-/* Pretty printing styles. Used with prettify.js from 
+/* Pretty printing styles. Used with prettify.js from
    Google Code Prettify (4 March 2013 version). Below CSS
    adapted from prettify.css in GCP download.
-   CSS for line nums not included, as presently not 
+   CSS for line nums not included, as presently not
    supported by JSPWiki.
 */
 pre.prettyprint {

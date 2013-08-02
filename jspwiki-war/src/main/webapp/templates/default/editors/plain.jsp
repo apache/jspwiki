@@ -41,8 +41,6 @@
 
    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
    		context.getURL( WikiContext.NONE, "scripts/jspwiki-edit.js" ) );
-   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-   		context.getURL( WikiContext.NONE, "scripts/posteditor.js" ) );
 
    String usertext = EditorManager.getEditedText( pageContext );
 %>

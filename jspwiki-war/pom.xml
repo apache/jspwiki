@@ -15,12 +15,12 @@
   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
   KIND, either express or implied.  See the License for the
   specific language governing permissions and limitations
-  under the License.  
+  under the License.
 -->
 <project xmlns              = "http://maven.apache.org/POM/4.0.0"
          xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
@@ -47,7 +47,7 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-highlighter</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-common</artifactId>
@@ -70,22 +70,22 @@
       <groupId>net.sourceforge</groupId>
       <artifactId>sandler</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>opensymphony</groupId>
       <artifactId>oscache</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -95,12 +95,12 @@
       <groupId>com.metaparadigm</groupId>
       <artifactId>json-rpc</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jvnet.hudson</groupId>
       <artifactId>org.suigeneris.jrcs.diff</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
@@ -115,60 +115,60 @@
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.freshcookies</groupId>
       <artifactId>freshcookies-security</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>ecs</groupId>
       <artifactId>ecs</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>net.sourceforge</groupId>
       <artifactId>akismet-java</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>net.sourceforge.stripes</groupId>
       <artifactId>stripes</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>sqltool</artifactId>
@@ -180,7 +180,7 @@
       <artifactId>jetty-all</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -194,20 +194,20 @@
     <filters>
       <filter>src/main/filters/filters.properties</filter>
     </filters>
-    
+
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
         <filtering>true</filtering>
       </testResource>
     </testResources>
-    
+
     <plugins>
       <!-- With below plugin can deploy to an embedded Tomcat instance via:
          mvn clean install tomcat7:run-war [-Dmaven.test.skip]
          ...or standalone by adding a <server/> entry "myTomcat":
          http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
-         and running tomcat7:redeploy instead of run-war in 
+         and running tomcat7:redeploy instead of run-war in
          string above.
 
          Either way, JSPWiki URL will be
@@ -222,13 +222,13 @@
           <path>/${project.build.finalName}</path>
         </configuration>
       </plugin>
-      
+
       <!-- Surefire plugin (running unit tests):
          http://maven.apache.org/surefire/maven-surefire-plugin/
-         
+
          Individual tests can be run command line via:
          mvn clean test -Dtest=WikiEngineTest,AclImplTest,...
-         
+
          All tests can be skipped via -Dmaven.test.skip
        -->
       <plugin>
@@ -244,10 +244,43 @@
           </includes>
         </configuration>
       </plugin>
-      
-      <!-- Compress certain CSS and JS files using the YUICompressor 
-         (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
+
+      <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
+        Merge and compress CSS and JS files using the WRO4J.
+        - use UglifyJS for JS compression
+        - use Less as advanced CSS preprocessor
       -->
+      <plugin>
+        <groupId>ro.isdc.wro4j</groupId>
+        <artifactId>wro4j-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+              <!--<goal>jshint</goal>-->
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!--
+          <targetGroups>all</targetGroups>
+          <minimize>true</minimize>
+          <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
+          <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
+          <ignoreMissingResources>false</ignoreMissingResources>
+          -->
+          <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+          <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
+          <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
+          <contextFolder>${basedir}/src/main/</contextFolder>
+          <wroFile>src/main/config/wro/wro.xml</wroFile>
+          <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
+        </configuration>
+      </plugin>
+
+      <!-- Compress certain CSS and JS files using the YUICompressor
+         (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -258,16 +291,17 @@
               <goal>compress</goal>
             </goals>
           </execution>
-        </executions> 
+        </executions>
         <configuration>
           <excludeResources>true</excludeResources>
           <nosuffix>true</nosuffix>
           <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
-          <!-- relying on jslint-maven-plugin instead, which allows
-               better customization -->
+          *** relying on jslint-maven-plugin instead, which allows
+               better customization ***
           <jswarn>false</jswarn>
         </configuration>
       </plugin>
+      -->
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -302,9 +336,9 @@
               <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
             </configuration>
           </execution>
-        </executions> 
+        </executions>
       </plugin>
-      
+
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
@@ -321,9 +355,13 @@
               </includes>
               <filtering>true</filtering>
             </resource>
-            <!-- Output directory configured above with the YUICompressor Maven plugin -->
+            <!-- Output directory configured above with the YUICompressor Maven plugin
             <resource>
               <directory>${project.build.directory}/generated-sources/yuicompress</directory>
+            </resource>
+            -->
+            <resource>
+              <directory>${project.build.directory}/generated-sources/wro</directory>
             </resource>
           </webResources>
         </configuration>

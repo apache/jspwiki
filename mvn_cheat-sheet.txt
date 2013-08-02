@@ -13,12 +13,16 @@ mvn test -Dtest=JSPWikiMarkupParserTest#testHeadingHyperlinks3  : run just a sin
 mvn test -Dtest=TestClassName#methodName -Dmaven.surefire.debug : debug a test in Eclipse or IDEA to see why it's failing
                                                                   (see http://www.jroller.com/gmazza/entry/jpa_and_junit#debugging)
 
-mvn tomcat7:run-war                                             : (from a war module) starts JSPWiki on a 
+mvn tomcat7:run-war                                             : (from a war module) starts JSPWiki on a
                                                                   Tomcat7 instance at http://localhost:8080/JSPWiki
 mvn clean deploy -Papache-release -Dgpg.passphrase=<passphrase> : deploys generated artifact to a repository
                                                                   If -Dgpg.passphrase is not given, expects a gpg-agent
                                                                   running
 mvn clean install -Pintegration-tests                           : performs a build, enabling Selenium tests execution
+
+mvn wro4j:run -Dminimize=true                                   : merge & compress js & css files
+mvn wro4j:run -Dminimize=false                                  : only merge the js & css files  (no compression)
+mvn clean install -Dmaven.test.skip -Dminimize=false            : performs a build, skipping the tests and skip compression
 
 
 Reports specific
@@ -28,8 +32,8 @@ mvn apache-rat:check    : creates an Apache RAT report. See:
 mvn cobertura:cobertura : generates a cobertura maven report. See:
                             http://mojo.codehaus.org/cobertura-maven-plugin/usage.html
                             http://www.ibm.com/developerworks/java/library/j-cobertura/
-mvn javadoc:javadoc     : creates javadocs; if graphviz binaries (www.graphviz.org) 
-                          are found on $PATH, the javadocs will display some UML 
+mvn javadoc:javadoc     : creates javadocs; if graphviz binaries (www.graphviz.org)
+                          are found on $PATH, the javadocs will display some UML
                           class/package level diagrams
 mvn sonar:sonar         : generates a Sonar report. Expects a Sonar server running at http://localhost:9000/ See:
                             http://mojo.codehaus.org/sonar-maven-plugin/plugin-info.html

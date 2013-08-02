@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,9 +14,9 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
- 
+
 /**
  ** Javascript routines to support JSPWiki Editing
  ** since v.2.6.0
@@ -25,7 +25,7 @@
  ** Needs jspwiki-common.js and mootools.js
  ** EditTools object (main object)
  ** - find&replace functionality : with regexp support
- ** - included popup-pagelinks routines from Janne 
+ ** - included popup-pagelinks routines from Janne
  **
  ** TextArea object
  **     Supports selections inside textarea, in ie and other browsers
@@ -38,7 +38,7 @@ var WikiSnippets =
 		var day = ((now.getDate() < 10) ? "0" + now.getDate() : now.getDate())
 		var month = ((now.getMonth() < 9) ? "0" + (now.getMonth()+1) : (now.getMonth()+1) )
 		var currentDate = now.getFullYear() + "-" + month + "-" + day;
-	 
+
 		return {
 	"toc" : {
 		snippet:["","[{TableOfContents }]", "\n"],
@@ -165,12 +165,12 @@ var WikiSnippets =
 /*
  *
  */
-var EditTools = 
+var EditTools =
 {
 	onPageLoad: function(){
 
 		Wiki.onPageLoad(); //Wiki.onpageload should always run first, but seems not guaranteed on ie so let's do this for sure
-		
+
 		window.onbeforeunload = (function(){
 			var ta = $('editorarea');
 			if(ta.value != ta.defaultValue) return "edit.areyousure".localize();
@@ -179,7 +179,7 @@ var EditTools =
 		this.wikisnippets = WikiSnippets.getSnippets();
 		this.wikismartpairs = WikiSnippets.getSmartPairs();
 
-		this.mainarea = this.textarea = $('editorarea'); 
+		this.mainarea = this.textarea = $('editorarea');
 		if(!this.textarea || !this.textarea.visible) return;
 
 		/* may insert a new this.textarea */
@@ -200,30 +200,30 @@ var EditTools =
 			.addEvent('change', this.onChangeTextarea.bind(this))
 			.focus();
 
-		/* regularly refresh section-edit toc and sneak-preview */		
-		this.textarea.fireEvent.periodical(3000,this.textarea,['change']);		
+		/* regularly refresh section-edit toc and sneak-preview */
+		this.textarea.fireEvent.periodical(3000,this.textarea,['change']);
 	},
 
 	/* add textarea resize drag bar */
-	onPageLoadResizeTextarea: function(){	
+	onPageLoadResizeTextarea: function(){
 		var hh=Wiki.prefs.get('EditorSize');
 		if(hh) this.textarea.setStyle('height',hh);
 
 		var h = new Element('div',{
-			'class':'textarea-resizer', 
+			'class':'textarea-resizer',
 			'title':'edit.resize'.localize()
-		}).injectAfter(this.textarea);	
+		}).injectAfter(this.textarea);
 
 		this.textarea.makeResizable({
-			handle:h, 
-			modifiers: {x:false, y:'height'}, 
-			onComplete: function(){	
-				Wiki.prefs.set('EditorSize',this.value.now.y); 
+			handle:h,
+			modifiers: {x:false, y:'height'},
+			onComplete: function(){
+				Wiki.prefs.set('EditorSize',this.value.now.y);
 			}
-		});		
-	},	
+		});
+	},
 
-	onPageLoadToolbar: function(){	
+	onPageLoadToolbar: function(){
 		$('tools').addClass('collapsebox-closed');
 		Collapsible.render('editform','');
 
@@ -252,37 +252,37 @@ var EditTools =
 			var re = new RegExp('([\.\*\\\?\+\[\^\$])','gi');
 			findText = findText.replace(re,'\\$1');
 		}
-		
+
 		var re = new RegExp(findText, reGlobal+reMatchCase+'m'); //multiline
 		if(!re.exec(data)){
 			Wiki.alert('edit.findandreplace.nomatch'.localize());
 			return;// true;
-		}		
-		data = data.replace(re, replaceText);  
-	
+		}
+		data = data.replace(re, replaceText);
+
 		this.store();
 		if(!sel || (sel=="")){
 			this.textarea.value = data;
 		} else {
 			TextArea.replaceSelection( this.textarea, data );
 		}
-		this.textarea.fireEvent('change');		
-	},	
-			
+		this.textarea.fireEvent('change');
+	},
+
 	onPageLoadPostEditor: function(){
 		if(window.ie) return;
-		
+
 		$('toolextra').show();
 		this.posteditor = new postEditor.create(this.textarea,'changenote');
-		
+
 		/* patch posteditor DF Jul 07 */
 		/* righ-arrow nok on FF, nop on Safari */
-		this.posteditor.onKeyRight = Class.empty; 				
+		this.posteditor.onKeyRight = Class.empty;
 		/* make posteditor changes undoable */
 		this.posteditor.value = function(value) {
 			EditTools.store();
 			this.element.value = value.join('');
-			this.element.fireEvent('change');		
+			this.element.fireEvent('change');
 		};
 
 		/* quick dirty patch: backspace should remove only one char and not 4 spaces */
@@ -301,8 +301,8 @@ var EditTools =
 		  		this.selectRange(ss - this.tabl,0);
 		  	*/
 			} else if(ss == se) {
-  		  		var charCode  = this.slice(ss - 1,ss), 
-  		      	close     = this.slice(ss,ss+1), 
+  		  		var charCode  = this.slice(ss - 1,ss),
+  		      	close     = this.slice(ss,ss+1),
   		      	stpair    = this.options.smartTypingPairs[charCode];
   		  		if($type(stpair) == 'string') stpair = { pair : stpair };
   		  		if(stpair && stpair.pair == close) {
@@ -311,11 +311,11 @@ var EditTools =
   		  		}
   			}
   		};
-	
+
 
 		/* next extra fix for latest Safari 3.1 cause tabs are not catched anymore in the onkeypress handler */
 		/* TODO: this could be a great workaround for ie as well */
-		if(window.webkit){ 
+		if(window.webkit){
 			this.textarea.addEvent('keydown',function(e){
 				if(e.keyCode == 9) EditTools.posteditor.onKeyPress(e);
 			});
@@ -328,21 +328,21 @@ var EditTools =
 					EditTools.initPostEditor();
 				 });
 		},this);
-				
-		this.initPostEditor();	
+
+		this.initPostEditor();
 	},
 
 	initPostEditor: function(){
 		if(! this.posteditor) return;
 		this.posteditor.changeSmartTypingPairs( $('smartpairs').checked ? this.wikismartpairs : {} );
-		this.posteditor.changeSnippets( $('tabcompletion').checked ? this.wikisnippets : {} );	
+		this.posteditor.changeSnippets( $('tabcompletion').checked ? this.wikisnippets : {} );
 	},
 
 	toggleSnippet: function(e) {
 		e = new Event(e).stop();
 
 		var el  = e.target,
-			snippy = this.wikisnippets[el.getText()]; 
+			snippy = this.wikisnippets[el.getText()];
 
 		if(!snippy) return;
 
@@ -353,7 +353,7 @@ var EditTools =
 
 		this.store();
 
-		if((el.rel=='break') && (!TextArea.isSelectionAtStartOfLine(this.textarea))) { 
+		if((el.rel=='break') && (!TextArea.isSelectionAtStartOfLine(this.textarea))) {
 			t = '\n' + t;
 		}
 		if(s) {
@@ -371,15 +371,15 @@ var EditTools =
 	$undo: [],
 	$redo: [],
 	$maxundo: 20,
-	
+
 	$get: function() {
 		var ta = this.textarea,
 			sel = TextArea.getSelectionCoordinates(ta);
-		return { 
+		return {
 			main:this.mainarea.value,
-			value:ta.value, 
-			cursor:sel, 
-			scrollTop:ta.scrollTop, 
+			value:ta.value,
+			cursor:sel,
+			scrollTop:ta.scrollTop,
 			scrollLeft:ta.scrollLeft
 		};
 	},
@@ -409,7 +409,7 @@ var EditTools =
 		} else {
 			$('tbUNDO').disabled = 'true';
 		}
-	},	
+	},
 	redo: function(e){
 		new Event(e).stop();
 		if(this.$redo.length > 0){
@@ -421,31 +421,31 @@ var EditTools =
 		}
 	},
 	// *** end of UNDO functionality ***
-	
+
 	getSuggestions: function() {
 		var textarea = this.textarea,
 			sel = TextArea.getSelectionCoordinates(textarea),
 			val = textarea.value,
 			searchword = '',
 			searchlen = 0;
-			
+
 		var	suggestID = 'findSuggestionMenu',
 			suggest = $(suggestID) || new Element('div',{
-				'id':suggestID 
+				'id':suggestID
 			}).injectAfter($('favorites').getFirst());
 
 		/* find a partial jspwiki-link 'searchword' */
 		/* look backwards for the start of a wiki-link bracket */
 		for( var i = sel.start-1; i >= 0; i-- ){
 			if( val.charAt(i) == ']' ) break;
-			if( val.charAt(i) == '[' && i < val.length-1 ) { 
-				searchword = val.substring(i+1,sel.start); 
+			if( val.charAt(i) == '[' && i < val.length-1 ) {
+				searchword = val.substring(i+1,sel.start);
                 if( searchword.charAt(0) == '{' ) return; // Ignore plugins.
 				if(searchword.indexOf('|') != -1) searchword = searchword.split('|')[1];
 				searchlen = searchword.length;
 
 				if(searchlen == 0) searchword=Wiki.PageName+'/'; /* by default - get list of attachments, if any */
-				break; 
+				break;
 			}
 		}
 		if(searchword =='') return suggest.hide();
@@ -457,18 +457,18 @@ var EditTools =
 		}
 
 		Wiki.jsonrpc('search.getSuggestions', [searchword,30], function(result,exception){
-			if(exception) { 
-				alert(exception.message); 
-			} else if(!result.list || (result.list.length == 0)) { 
+			if(exception) {
+				alert(exception.message);
+			} else if(!result.list || (result.list.length == 0)) {
 				suggest.hide();
 			} else {
 				var ul = new Element('ul').inject( suggest.empty().show() );
-				result.list.each( function(rslt) { 
+				result.list.each( function(rslt) {
 					new Element('li',{
 						'title':rslt,
 						'events': {
-							'click':function(ev){ 
-								new Event(ev).stop(); 
+							'click':function(ev){
+								new Event(ev).stop();
 								EditTools.store();
 								TextArea.setSelection(sel.start,sel.end);
 								TextArea.replaceSelection(textarea, rslt.substr(searchlen));
@@ -490,7 +490,7 @@ var EditTools =
 
 		checkbox
 			.setProperty('checked', Wiki.prefs.get('autopreview') || false)
-			.addEvent('click', function(){ 
+			.addEvent('click', function(){
 				var ta = this.textarea,
 					isOn = checkbox.checked;
 
@@ -507,10 +507,10 @@ var EditTools =
     	var	preview = $('sneakpreview');
 
 		$('previewSpin').show();
-		new Ajax( Wiki.TemplateUrl + "/AJAXPreview.jsp?page="+Wiki.PageName, { 
+		new Ajax( Wiki.TemplateUrl + "/AJAXPreview.jsp?page="+Wiki.PageName, {
 			postBody: 'wikimarkup=' + encodeURIComponent(this.textarea.value),
 			update: preview,
-			onComplete: function(){ 
+			onComplete: function(){
 				$('previewSpin').hide();
 				Wiki.renderPage(preview, Wiki.PageName);
 			}
@@ -520,7 +520,7 @@ var EditTools =
 	onPageLoadSectionEdit : function( ){
 
 		/* section editing is only valid for edit context, not valid in the comment context */
-		if( (Wiki.Context!='edit') 
+		if( (Wiki.Context!='edit')
 		  ||(Wiki.prefs.get('SectionEditing') != 'on') ) return;
 
 		/* Duplicate the textarea into a main and work area.
@@ -530,8 +530,8 @@ var EditTools =
 		this.textarea = this.mainarea.clone()
 			.removeProperty('id')
 			.removeProperty('name')
-			.injectBefore( this.mainarea.hide() ); 
-		
+			.injectBefore( this.mainarea.hide() );
+
 		var tt = new Element('div',{'id':'toctoc'}).adopt(
 			new Element('label').setHTML('sectionediting.label'.localize()),
 			this.sections = new Element('ul')
@@ -539,7 +539,7 @@ var EditTools =
 
 		/* initialise the section sections */
 		this.onSectionLoad();
-    
+
 		var cursor = location.search.match(/[&?]section=(\d+)/);
 		cursor = (cursor && cursor[1]) ? 1+cursor[1].toInt() : 0;
 		if((cursor>0) && this.textarea.sop) cursor++;
@@ -547,32 +547,32 @@ var EditTools =
 		/* initialise the selected section */
 		this.onChangeSection(cursor);
 
-	},	
-	
-	/* 
+	},
+
+	/*
 	 * UPDATE/RFEFRESH the section dropdown
 	 * This function is called at startup, and everytime the section textarea changes
 	 * Postcondition: the section-edit dropdown contains following entries
 	 *   0. ( all )
 	 *   1. start-of-page (if applicable)
 	 *   2. text==<<header 1...n>> , <<sections.offset stores start-offset in main textarea>>
-	 */  
+	 */
 	 onSectionLoad : function(){
 		var mainarea = this.mainarea.value,
 			ta = this.textarea,
 			DELIM = "\u00a4";
-		 
+
 		/* mask all headers inside a {{{ ... }}} but keep length unchanged! */
 		mainarea = mainarea.replace(/\{\{\{([\s\S]*?)\}\}\}/g, function(match){
 			return match.replace( /^!/mg, ' ' );
 		});
 
 		var tt = mainarea.replace( /^([!]{1,3})/mg, DELIM+"$1"+DELIM ).split(DELIM);
-		
+
 		this.newSection();
-		ta.sop = (tt.length>1) && (tt[0] != ''); //start of page section has no !!!header 
+		ta.sop = (tt.length>1) && (tt[0] != ''); //start of page section has no !!!header
 		if(ta.sop) this.addSection("edit.startOfPage".localize(), 0, 0);
-		
+
 		var pos = tt.shift().length,
 			ttlen = tt.map(function(i){ return i.length });
 
@@ -588,7 +588,7 @@ var EditTools =
 
 	setSection: function( cursor ){
 		var els = this.sections.getChildren();
-		
+
 		if(cursor <0 || cursor >= els.length) cursor = 0;
 		els.removeClass('cursor');
 		els[cursor].addClass('cursor');
@@ -603,7 +603,7 @@ var EditTools =
 	addSection: function(text,offset,indent){
 		text = text.replace(/~([^~])/g, '$1'); /*remove wiki-markup escape chars ~ */
 		this.sections.offsets.push(offset);
-		this.sections.adopt( 
+		this.sections.adopt(
 			new Element('li').adopt(
 				new Element('a',{
 					'class':'action',
@@ -612,37 +612,37 @@ var EditTools =
 					},
 					'title':text,
 					'events':{
-						'click':this.onChangeSection.pass([this.sections.offsets.length-1],this) 
+						'click':this.onChangeSection.pass([this.sections.offsets.length-1],this)
 					}
 				}).setHTML(text.trunc(30))
-			) 
-		);	
+			)
+		);
 	},
 
 	/* the USER clicks a new item from the section dropdown
 	 * copy a part of the main textarea to the section textarea
 	 */
 	onChangeSection: function(cursor){
-		var se = this.sections.offsets, 
-			ta = this.textarea, 
+		var se = this.sections.offsets,
+			ta = this.textarea,
 			ma = this.mainarea.value;
 
 		this.setSection(cursor);
 		ta.cursor = cursor;
 		ta.begin = (cursor==0) ? 0 : se[cursor];
-		ta.end = ((cursor==0) || (cursor+1 >= se.length)) ? ma.length : se[cursor+1]; 
-		ta.value = ma.substring(ta.begin,ta.end);		
+		ta.end = ((cursor==0) || (cursor+1 >= se.length)) ? ma.length : se[cursor+1];
+		ta.value = ma.substring(ta.begin,ta.end);
 		ta.focus();
 		ta.fireEvent('preview');
 	},
 
 	/*
-	 * Changes in the section textarea: 
-	 * happens when 
-	 *  (i)  textarea is changed and deselected (click outside the textarea) 
+	 * Changes in the section textarea:
+	 * happens when
+	 *  (i)  textarea is changed and deselected (click outside the textarea)
 	 *  (ii) user clicks a toolbar-button
 	 *  (iii) periodical
-	 *  
+	 *
 	 * 1) copy section textarea at the right offset of the main textarea
 	 * 2) refresh the section-edit menu
 	 */
@@ -656,17 +656,17 @@ var EditTools =
 			var	s = ma.value,
 				//insert \n to ensure the next line's !!!header remains at column 0.
 				addNewLine = ((ta.value.slice(-1) != '\n')  && (s.charAt(ta.end) =='!')) ? '\n' : '';
-			
+
 			ma.value = s.substring(0, ta.begin) + ta.value + addNewLine + s.substring(ta.end);
 			ta.end = ta.begin + ta.value.length;
 			this.onSectionLoad();  //refresh section-edit menu
-		}		
+		}
 		ta.fireEvent('preview');
 	 }
-} 
+}
 
-/* 
- * TextArea support routines 
+/*
+ * TextArea support routines
  */
 //var TextArea = new Class({
 var TextArea =
@@ -677,18 +677,18 @@ var TextArea =
 	},
 
 	getSelection: function(id){
-		var f = $(id); if(!f) return ''; 
-		
-		// IE fixme: this returns any selection, not only selected text in the textarea 
+		var f = $(id); if(!f) return '';
+
+		// IE fixme: this returns any selection, not only selected text in the textarea
 		//if(window.ie) return document.selection.createRange().text;
 		//return f.getValue().substring(f.selectionStart, f.selectionEnd);
-		
+
 		var cur = this.getSelectionCoordinates(id);
-		return f.getValue().substring(cur.start, cur.end);		
+		return f.getValue().substring(cur.start, cur.end);
 	},
 
 	/*
-	Function: setSelectionRange 
+	Function: setSelectionRange
 		Selects the selection range of the textarea from start to end
 
 	Arguments:
@@ -713,7 +713,7 @@ var TextArea =
             	diff = value.substr(start, end - start).replace(/\r/g, '').length;
 
             start = value.substr(0, start).replace(/\r/g, '').length;
-           
+
 			var range = txta.createTextRange();
 			range.collapse(true);
 			range.moveEnd('character', start + diff);
@@ -731,10 +731,10 @@ var TextArea =
 	getCursor: function(id) {
 		return this.getSelectionCoordinates(id).start;
 	},
-	
+
 	/*
 	Function: getSelectionCoordinates
-		Returns the selected textarea range. 
+		Returns the selected textarea range.
 
 	Returns:
 		{{ { 'start':number, 'end':number, 'thin':boolean } }}
@@ -768,7 +768,7 @@ var TextArea =
 
 		pos.thin = (pos.start==pos.end);
 		return pos;
-			
+
 	},
 
 	// replaceSelection(id,newtext) replaces the selection with a newtext, an selects the replaced newtext
@@ -777,33 +777,33 @@ var TextArea =
 		var value = newText.replace(/\r/g, ''), //$A(arguments).join(''),
 			txta = $(id),
 			scrollTop = txta.scrollTop; //cache top
-		 
+
 		if( $defined(txta.selectionStart) ){
 
-			var start = txta.selectionStart, 
+			var start = txta.selectionStart,
 				end = txta.selectionEnd,
 				v = txta.value;
 			txta.value = v.substr(0, start) + value + v.substr(end);
 			txta.selectionStart = start;
 			txta.selectionEnd = start + value.length;
 
-		} else { 
+		} else {
 
 			txta.focus();
 			var range = document.selection.createRange();
-			range.text = value;			
+			range.text = value;
 			range.collapse(true);
 			range.moveStart("character", -value.length);
 			range.select();
 
 		}
 		txta.focus();
-		txta.scrollTop = scrollTop;		
+		txta.scrollTop = scrollTop;
 		txta.fireEvent('change');
 		return;
 
 	},
-	
+
 	// isSelectionAtStartOfLine(id): returns boolean indicating whether cursor is at the start of newline
 	isSelectionAtStartOfLine: function(id){
 		var f = $(id); if(!f) return false;
@@ -811,7 +811,7 @@ var TextArea =
 		var i = this.getCursor(id);
 	    return( (i<=0) || ( f.value.charAt( i-1 ).match( /[\n\r]/ ) ) );
 	}
-	
+
 };
 
-window.addEvent('load', EditTools.onPageLoad.bind(EditTools) ); //edit only
+window.addEvent('load', EditTools.onPageLoad.bind(EditTools) );
