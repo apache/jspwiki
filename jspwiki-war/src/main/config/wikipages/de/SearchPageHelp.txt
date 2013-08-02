@@ -14,7 +14,7 @@ Die Groß-/Kleinschreibung wird niemals beachtet.
 
 !!Anfragesyntaxtabelle
 
-Details gibt es unter %%slimbox [Apache Lucene - Query Parser Syntax|http://lucene.apache.org/java/docs/queryparsersyntax.html]%%.
+Details gibt es unter %%slimbox [Apache Lucene - Query Parser Syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]%%.
 
 || term  | ein einfaches Wort finden | {{hello}}
 || "..." | eine Folge von Wörtern finden | {{"hello dolly"}}

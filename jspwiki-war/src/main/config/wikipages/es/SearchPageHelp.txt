@@ -11,12 +11,12 @@ encontrará todas las páginas que incluyan la palabra "java", y PUEDAN NO incluir
 la palabra "emacs".  Además, las páginas que contengan la palabra "jsp" serán mostradas
 antes que las páginas que no la tengan.
 
-Las búsquedas no son sensibles a mayúsculas/minúsculas.  Si una página incluye palabras requeridas 
+Las búsquedas no son sensibles a mayúsculas/minúsculas.  Si una página incluye palabras requeridas
 y prohibidas, no es mostrada.
 
 !! Tabla con la sintaxis de consulta
 
-Para más información echa un ojo a la %%slimbox [sintaxis de consulta de Lucene|http://lucene.apache.org/java/docs/queryparsersyntax.html]/%.
+Para más información echa un ojo a la %%slimbox [sintaxis de consulta de Lucene|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
 
 || término  | encontrar un término es fácil   | {{hola}}
 || "..." | encuentra un grupo de palabras | {{"hola fondo norte"}}

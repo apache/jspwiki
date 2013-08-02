@@ -1,4 +1,4 @@
-Deze pagina geeft een kort overzicht van de zoekmachine query syntax  
+Deze pagina geeft een kort overzicht van de zoekmachine query syntax
 Deze pagina heet [Search Page Help].
 
 Gebruik '+' om aan te geven dat een woord moet voorkomen, '-' om aan te geven dat een woord niet mag voorkomen.
@@ -7,14 +7,14 @@ Gebruik '+' om aan te geven dat een woord moet voorkomen, '-' om aan te geven da
           +java -emacs jsp
 }}}
 
-vind pagina's die het woord "java" MOETEN bevatten, en die het woord "emacs"  NIET MAG bevatten 
+vind pagina's die het woord "java" MOETEN bevatten, en die het woord "emacs"  NIET MAG bevatten
  En, pagina's met het woord "jsp" worden als eerste gerangschikt.
 
 Alle zoekopdrachten zijn hoofdletter gevoelig. Als een pagina zowel benodigde als verboden keywords bevat, wordt hij niet getoond.
 
 !! Query syntax tabel
 
-Voor meer informatie kijk op %%slimbox [Lucene's query syntax|http://lucene.apache.org/java/docs/queryparsersyntax.html]/%.
+Voor meer informatie kijk op %%slimbox [Lucene's query syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
 
 || term  | een enkelvoudige term zoeken is een makkie   | {{hello}}
 || "..." | zoek een groep woorden | {{"hello dolly"}}

@@ -1,4 +1,4 @@
-This page gives a quick overview of the search engine query syntax.  
+This page gives a quick overview of the search engine query syntax.
 This page is called [Search Page Help].
 
 Use '+' to require a word, '-' to forbid a word.  For example:
@@ -16,7 +16,7 @@ forbidden and required keywords, it is not shown.
 
 !! Query syntax table
 
-For more info look at %%slimbox [Lucene's query syntax|http://lucene.apache.org/java/docs/queryparsersyntax.html]/%.
+For more info look at %%slimbox [Lucene's query syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
 
 || term  | find a single Term is easy   | {{hello}}
 || "..." | find a group of words | {{"hello dolly"}}

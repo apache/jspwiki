@@ -10,7 +10,7 @@ Les recherches sont toutes insensibles à la casse (différence majuscules/minus
 
 !! Syntaxe des requêtes
 
-Plus plus d'information, vous pouvez vous référer à la %%slimbox [syntaxe des requêtes Lucene|http://lucene.apache.org/java/docs/queryparsersyntax.html]/%.
+Plus plus d'information, vous pouvez vous référer à la %%slimbox [syntaxe des requêtes Lucene|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
 
 |       || Description             || Exemple
 || mot   | sélectionne les documents contenant un simple mot   | {{bonjour}}

@@ -1,4 +1,4 @@
-Questa pagina riporta un breve somamrio della sintassi di ricerca.  
+Questa pagina riporta un breve somamrio della sintassi di ricerca.
 Questa pagina è denominata [Search Page Help].
 
 Usate '+' per includere forzare esplicitamente una parola, '-' per escluderla.  Per esempio:
@@ -8,14 +8,14 @@ Usate '+' per includere forzare esplicitamente una parola, '-' per escluderla.  
 }}}
 
 trova le pafine che DEVONO includere la parola "java", e NON devono includere la parola
-"emacs".  Inoltre, le pagine che contengono "jsp" avranno un peso maggiore di quelle che 
+"emacs".  Inoltre, le pagine che contengono "jsp" avranno un peso maggiore di quelle che
 non la includono.
 
 Tutte le ricerche vengono effettuate senza tener conto di maiuscole e minuscole.
 
 !! Tabella della sintassi delle query
 
-Per informazioni più dettagliate si rimanda a %%slimbox [Lucene's query syntax|http://lucene.apache.org/java/docs/queryparsersyntax.html]/%.
+Per informazioni più dettagliate si rimanda a %%slimbox [Lucene's query syntax|http://www.lucenetutorial.com/lucene-query-syntax.html]/%.
 
 || termine  | trovare un singole termine è semplice | {{hello}}
 || "..." | trovare un gruppo di parole | {{"hello dolly"}}
