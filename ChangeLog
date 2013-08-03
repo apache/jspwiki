@@ -1,5 +1,11 @@
 2013-08-03  Harry Metske (metskem@apache.org)
 
+       * 2.10.0-svn-31
+
+       * refixed JSPWIKI-791 NoClassDefFoundError for org.apache.lucene.analysis.standard.ClassicAnalyzer
+
+2013-08-03  Harry Metske (metskem@apache.org)
+
        * 2.10.0-svn-30
 
        * fixed JSPWIKI-789 upgrade commons-io from 1.4 to 2.4

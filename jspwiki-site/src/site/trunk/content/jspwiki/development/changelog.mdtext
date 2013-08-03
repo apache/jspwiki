@@ -1,5 +1,26 @@
 Title: Changelog
 
+#### 2013-08-03  Harry Metske (metskem@apache.org)
+
+* 2.10.0-svn-30
+
+* fixed [JSPWIKI 789][JIRA-789] upgrade commons-io from 1.4 to 2.4
+
+#### 2013-08-03  Harry Metske (metskem@apache.org)
+
+* 2.10.0-svn-29
+
+* fixed [JSPWIKI 790][JIRA-790] upgrade HSQLDB from 2.2.9 to 2.3.0
+
+#### 2013-08-03  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-28
+
+* Removed unused variables as reported by Sonar, as information is obtainable
+  by other means when needed.
+
+* Removed "incubating" references in pom.xml
+ 
 #### 2013-08-01  Dirk Frederickx (brushed AT apache DOT org)
 
 * 2.10.0-svn-27
@@ -1061,6 +1082,8 @@ and propagated the change to all plugins. Cfr. with UPGRADING document for detai
 * 2.9.0-svn-1
 
 * release bump because of package rename
+  [JIRA-789]: https://issues.apache.org/jira/browse/JSPWIKI-789
+  [JIRA-790]: https://issues.apache.org/jira/browse/JSPWIKI-790
   [JIRA-761]: https://issues.apache.org/jira/browse/JSPWIKI-761
   [JIRA-791]: https://issues.apache.org/jira/browse/JSPWIKI-791
   [JIRA-784]: https://issues.apache.org/jira/browse/JSPWIKI-784

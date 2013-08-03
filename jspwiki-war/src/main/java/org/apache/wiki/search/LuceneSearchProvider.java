@@ -396,8 +396,8 @@ public class LuceneSearchProvider implements SearchProvider
         try
         {
             Class clazz = ClassUtil.findClass( "", m_analyzerClass );
-            Constructor constructor = clazz.getConstructor( Version.LUCENE_36.getClass() );
-            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_36 );
+            Constructor constructor = clazz.getConstructor( Version.LUCENE_44.getClass() );
+            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_44 );
             return analyzer;
         }
         catch( Exception e )
