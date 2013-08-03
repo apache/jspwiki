@@ -1,11 +1,37 @@
 Title: Changelog
 
-#### 2013-07-28  Glen Mazza (gmazza AT apache DOT org)
+#### 2013-08-01  Dirk Frederickx (brushed AT apache DOT org)
+
+* 2.10.0-svn-27
+
+* [JSPWIKI 761][JIRA-761] : Implementing the WRO4J ( Web Resource Optimizer for Java ) Build-time solution 
+through the wro4j maven plugin. 
+   - replacing YUI-Compressor for JS by UglifyJS (better compression)
+   - introducing the LESS CSS preprocessor supporting advanced css authoring capabilities (variables, mixins, ...)
+   - merging JS and CSS files to reduce the number of resources needed at page-load.
+
+You can now build with or without minification of the JS and CSS files to ease development 
+by using -Dminimize = true | false. (ref. mvn_cheat-sheet.txt)  
+ 
+#### 2013-08-01  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+* 2.10.0-svn-26
+
+* Removed org.apache.wiki.WikiException in favour of org.apache.wiki.api.exceptions.WikiException
+  
+#### 2013-07-31  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-25
+
+* Added missing Lucene dependency for testing, changed location of
+  userdatabase.xml and groupdatabase.xml to get more of the Selenium
+  tests running.
+  
+#### 2013-07-30  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-24
 
 * [JSPWIKI 791][JIRA-791]: Upgrade Lucene from 3.6.0 to 4.4.0
-  
 
 #### 2013-07-28  Harry Metske (metskem@apache.org)
 
@@ -1035,6 +1061,7 @@ and propagated the change to all plugins. Cfr. with UPGRADING document for detai
 * 2.9.0-svn-1
 
 * release bump because of package rename
+  [JIRA-761]: https://issues.apache.org/jira/browse/JSPWIKI-761
   [JIRA-791]: https://issues.apache.org/jira/browse/JSPWIKI-791
   [JIRA-784]: https://issues.apache.org/jira/browse/JSPWIKI-784
   [JIRA-772]: https://issues.apache.org/jira/browse/JSPWIKI-772

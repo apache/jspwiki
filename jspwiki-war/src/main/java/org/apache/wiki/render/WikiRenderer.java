@@ -39,8 +39,7 @@ public abstract class WikiRenderer
 {
     protected WikiContext     m_context;
     protected WikiDocument    m_document;
-    protected boolean         m_enablePlugins = true;
-    
+
     /**
      *  Create a WikiRenderer.
      *  
@@ -52,23 +51,6 @@ public abstract class WikiRenderer
         m_context = context;
         m_document = doc;
         doc.setContext( context ); // Make sure it is set
-        
-        //
-        //  Do some sane defaults
-        //
-        WikiEngine engine = m_context.getEngine();
-        String runplugins = engine.getVariable( m_context, MarkupParser.PROP_RUNPLUGINS );
-        if( runplugins != null ) enablePlugins( TextUtil.isPositive(runplugins));
-    }
-
-    /**
-     *  Can be used to turn on plugin execution on a translator-reader basis.
-     *  
-     *  @param toggle True, if plugins are to be enabled.  False, if disabled.
-     */
-    public void enablePlugins( boolean toggle )
-    {
-        m_enablePlugins = toggle;
     }
 
     /**

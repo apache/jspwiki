@@ -27,7 +27,7 @@
   <groupId>org.apache.jspwiki</groupId>
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <name>Apache JSPWiki (Incubating)</name>
+  <name>Apache JSPWiki</name>
   <version>2.10.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
@@ -601,26 +601,25 @@
   <mailingLists>
     <mailingList>
       <name>Apache JSPWiki-dev List</name>
-      <subscribe>jspwiki-dev-subscribe@incubator.apache.org</subscribe>
-      <unsubscribe>jspwiki-dev-unsubscribe@incubator.apache.org</unsubscribe>
-      <post>jspwiki-dev@incubator.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/</archive>
+      <subscribe>dev-subscribe@jspwiki.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@jspwiki.apache.org</unsubscribe>
+      <post>dev@jspwiki.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/jspwiki-dev/</archive>
     </mailingList>
 
     <mailingList>
       <name>Apache JSPWiki-user List</name>
-      <subscribe>jspwiki-user-subscribe@incubator.apache.org</subscribe>
-      <unsubscribe>jspwiki-user-unsubscribe@incubator.apache.org</unsubscribe>
-      <post>jspwiki-user@incubator.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/</archive>
+      <subscribe>user-subscribe@jspwiki.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@jspwiki.apache.org</unsubscribe>
+      <post>user@jspwiki.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/jspwiki-user/</archive>
     </mailingList>
 
     <mailingList>
       <name>Apache JSPWiki-commits List</name>
-      <subscribe>jspwiki-commits-subscribe@incubator.apache.org</subscribe>
-      <unsubscribe>jspwiki-commits-unsubscribe@incubator.apache.org</unsubscribe>
-      <post>jspwiki-commits@incubator.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/</archive>
+      <subscribe>commits-subscribe@jspwiki.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@jspwiki.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/jspwiki-commits/</archive>
     </mailingList>
   </mailingLists>
 

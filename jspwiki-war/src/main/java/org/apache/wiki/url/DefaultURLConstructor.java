@@ -45,9 +45,6 @@ public class DefaultURLConstructor
 {
     protected WikiEngine m_engine;
 
-    /** Are URL styles relative or absolute? */
-    protected boolean          m_useRelativeURLStyle = true;
-
     /**
      *  Contains the absolute path of the JSPWiki Web application without the
      *  actual servlet (which is the m_urlPrefix).
@@ -62,9 +59,6 @@ public class DefaultURLConstructor
                             Properties properties )
     {
         m_engine = engine;
-
-        m_useRelativeURLStyle = "relative".equals( properties.getProperty( WikiEngine.PROP_REFSTYLE,
-                                                                           "relative" ) );
 
         String baseurl = engine.getBaseURL();
 
