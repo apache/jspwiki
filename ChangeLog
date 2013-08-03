@@ -1,5 +1,11 @@
 2013-08-03  Harry Metske (metskem@apache.org)
 
+       * 2.10.0-svn-30
+
+       * fixed JSPWIKI-789 upgrade commons-io from 1.4 to 2.4
+
+2013-08-03  Harry Metske (metskem@apache.org)
+
        * 2.10.0-svn-29
 
        * fixed JSPWIKI-790 upgrade HSQLDB from 2.2.9 to 2.3.0
