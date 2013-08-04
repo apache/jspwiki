@@ -77,7 +77,7 @@ public class SearchManagerTest extends TestCase
             if( res == null || res.isEmpty() )
             {
                 Thread.sleep( SLEEP_TIME );
-                System.out.println( "SearchManagerTest.waitForIndex sleeping " + l + " (out of 20), result (size): " + res!= null ? res.size() : res );
+                System.out.println( "SearchManagerTest.waitForIndex sleeping " + l + " (out of 20)" );
             }
             else
             {
