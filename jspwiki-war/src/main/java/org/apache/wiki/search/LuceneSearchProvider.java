@@ -508,7 +508,7 @@ public class LuceneSearchProvider implements SearchProvider
             LockObtainFailedException, IOException, ProviderException 
     {
         IndexWriter writer = null;
-        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_36, getLuceneAnalyzer() );
+        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_44, getLuceneAnalyzer() );
         writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
         writer = new IndexWriter( luceneDir, writerConfig );
         

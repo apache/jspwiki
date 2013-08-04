@@ -48,7 +48,6 @@ public class SearchManagerTest extends TestCase
         
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
-        props.setProperty( "jspwiki.workDir", System.getProperty( "java.io.tmpdir" ) + File.separator + Release.APPNAME );
         
         TestEngine.emptyWorkDir(props);
         
