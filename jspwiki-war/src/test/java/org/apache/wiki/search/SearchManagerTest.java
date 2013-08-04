@@ -34,7 +34,7 @@ import org.apache.wiki.WikiContext;
 
 public class SearchManagerTest extends TestCase
 {
-    private static final long SLEEP_TIME = 200L;
+    private static final long SLEEP_TIME = 1000L;
     TestEngine m_engine;
     SearchManager m_mgr;
     
@@ -72,13 +72,14 @@ public class SearchManagerTest extends TestCase
     Collection waitForIndex( String text ) throws Exception
     {
         Collection res = null;
-        for( long l = 0; l < 50; l++ ) 
+        for( long l = 0; l < 20; l++ )
         {
-            if( res == null || res.isEmpty() ) 
+            if( res == null || res.isEmpty() )
             {
                 Thread.sleep( SLEEP_TIME );
+                System.out.println( "SearchManagerTest.waitForIndex sleeping " + l + " (out of 20), result (size): " + res!= null ? res.size() : res );
             }
-            else 
+            else
             {
                 break;
             }
