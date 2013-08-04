@@ -191,7 +191,7 @@ public class LuceneSearchProvider implements SearchProvider
                 Date start = new Date();
                 IndexWriter writer = null;
 
-                log.info("Starting Lucene reindexing, this can take a couple minutes...");
+                log.info("Starting Lucene reindexing, this can take a couple of minutes...");
 
                 Directory luceneDir = new SimpleFSDirectory(dir, null);
                 
