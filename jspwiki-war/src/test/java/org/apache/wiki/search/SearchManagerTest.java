@@ -72,12 +72,13 @@ public class SearchManagerTest extends TestCase
     Collection waitForIndex( String text, String testName ) throws Exception
     {
         Collection res = null;
-        for( long l = 0; l < 500; l++ )
+        int waitCount = 500;
+        for( long l = 0; l < waitCount; l++ )
         {
             if( res == null || res.isEmpty() )
             {
                 Thread.sleep( SLEEP_TIME );
-                System.out.println( "SearchManagerTest.waitForIndex for " + testName + " sleeping " + l + " (out of 20)" );
+                System.out.println( "SearchManagerTest.waitForIndex for " + testName + " sleeping " + l + " (out of " + waitCount + ")" );
             }
             else
             {
