@@ -69,7 +69,7 @@ public class SearchManagerTest extends TestCase
     /**
      * Should cover for both index and initial delay
      */
-    Collection waitForIndex( String text ) throws Exception
+    Collection waitForIndex( String text, String testName ) throws Exception
     {
         Collection res = null;
         for( long l = 0; l < 20; l++ )
@@ -77,7 +77,7 @@ public class SearchManagerTest extends TestCase
             if( res == null || res.isEmpty() )
             {
                 Thread.sleep( SLEEP_TIME );
-                System.out.println( "SearchManagerTest.waitForIndex sleeping " + l + " (out of 20)" );
+                System.out.println( "SearchManagerTest.waitForIndex for " + testName + " sleeping (Thread " + Thread.currentThread() +") " + l + " (out of 20)" );
             }
             else
             {
@@ -96,7 +96,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt);
 
         Thread.yield();
-        Collection res = waitForIndex( "mankind" );
+        Collection res = waitForIndex( "mankind" , "testSimpleSearch" );
      
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -115,7 +115,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt + " 2");
         
         Thread.yield();
-        Collection res = waitForIndex( "mankind" );
+        Collection res = waitForIndex( "mankind" , "testSimpleSearch2" );
  
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -139,7 +139,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
      
         Thread.yield();
-        Collection res = waitForIndex( "Babylon" ); // wait until 2nd m_engine.saveText() takes effect
+        Collection res = waitForIndex( "Babylon" , "testSimpleSearch3" ); // wait until 2nd m_engine.saveText() takes effect
 
         res = m_mgr.findPages( "mankind" ); // check for text present in 1st m_engine.saveText() but not in 2nd
 
@@ -162,7 +162,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt);
      
         Thread.yield();
-        Collection res = waitForIndex( "Test" );
+        Collection res = waitForIndex( "Test" , "testTitleSearch" );
 
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -179,7 +179,7 @@ public class SearchManagerTest extends TestCase
         m_engine.saveText("TestPage", txt);
  
         Thread.yield();
-        Collection res = waitForIndex( "TestPage" );
+        Collection res = waitForIndex( "TestPage" , "testTitleSearch2" );
 
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
