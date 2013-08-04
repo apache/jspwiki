@@ -1,3 +1,9 @@
+2013-08-04  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-32
+
+       * first guess in fixing JSPWIKI-799 TestEngine.emptyWorkdir() cleans another directory the the one used by the test ?
+
 2013-08-03  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-31

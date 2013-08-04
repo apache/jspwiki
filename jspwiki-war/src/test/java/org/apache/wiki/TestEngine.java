@@ -145,27 +145,30 @@ public class TestEngine extends WikiEngine
         request.addLocale( new Locale( "" ) );
         return request;
     }
-    
-    public static void emptyWorkDir()
-    {
-        Properties properties = new Properties();
 
-        try
-        {
-            properties.load( findTestProperties() );
+    public static void emptyWorkDir() {
+        emptyWorkDir( null );
+    }
+
+    public static void emptyWorkDir(Properties properties) {
+
+        try {
+            if (properties == null) {
+                properties = new Properties();
+                properties.load( findTestProperties() );
+            }
 
             String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
-            if( workdir != null )
-            {
+            if ( workdir != null ) {
                 File f = new File( workdir );
 
-                if( f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists() )
-                {
+                if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
                     deleteAll( f );
                 }
             }
+        } catch (IOException e) {
+            System.out.println( e );
         }
-        catch( IOException e ) {} // Fine
     }
 
     public static final InputStream findTestProperties()

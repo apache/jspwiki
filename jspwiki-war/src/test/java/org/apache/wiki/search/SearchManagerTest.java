@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.search;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -26,6 +27,7 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.wiki.Release;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -45,9 +47,9 @@ public class SearchManagerTest extends TestCase
         
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
-        props.setProperty( "jspwiki.workDir", System.getProperty( "java.io.tmpdir" ) );
+        props.setProperty( "jspwiki.workDir", System.getProperty( "java.io.tmpdir" ) + File.separator + Release.APPNAME );
         
-        TestEngine.emptyWorkDir();
+        TestEngine.emptyWorkDir(props);
         
         m_engine = new TestEngine( props );
         m_mgr = m_engine.getSearchManager();

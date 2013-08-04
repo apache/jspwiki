@@ -71,7 +71,7 @@ public class SearchManager
      *  
      *  @param engine The WikiEngine that owns this SearchManager.
      *  @param properties The list of Properties.
-     *  @throws WikiException If it cannot be instantiated.
+     *  @throws FilterException If it cannot be instantiated.
      */
     public SearchManager( WikiEngine engine, Properties properties )
         throws FilterException
