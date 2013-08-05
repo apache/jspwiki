@@ -20,29 +20,27 @@ package org.apache.wiki.search;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Properties;
-
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
 import org.apache.wiki.Release;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 
-public class SearchManagerTest extends TestCase
-{
+public class SearchManagerTest extends TestCase {
+	
     private static final long SLEEP_TIME = 2000L;
     private static final int SLEEP_COUNT = 50;
     TestEngine m_engine;
     SearchManager m_mgr;
     
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-        
+    protected void setUp() throws Exception {
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         
@@ -58,13 +56,11 @@ public class SearchManagerTest extends TestCase
         m_mgr = m_engine.getSearchManager();
     }
 
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
         super.tearDown();
     }
 
-    public void testDefaultProvider()
-    {
+    public void testDefaultProvider() {
         assertEquals( "org.apache.wiki.search.LuceneSearchProvider", 
                       m_mgr.getSearchEngine().getClass().getName() );    
     }
@@ -72,28 +68,34 @@ public class SearchManagerTest extends TestCase
     /**
      * Should cover for both index and initial delay
      */
-    Collection waitForIndex( String text, String testName ) throws Exception
-    {
+    Collection waitForIndex( String text, String testName ) throws Exception {
         Collection res = null;
-        for( long l = 0; l < SLEEP_COUNT; l++ )
-        {
-            if( res == null || res.isEmpty() )
-            {
+        for( long l = 0; l < SLEEP_COUNT; l++ ) {
+            if( res == null || res.isEmpty() ) {
                 Thread.sleep( SLEEP_TIME );
                 System.out.println( "SearchManagerTest.waitForIndex for " + testName + " sleeping " + l + " (out of " + SLEEP_COUNT + ")" );
-            }
-            else
-            {
+            } else {
                 break;
             }
             res = m_mgr.findPages( text );
+            
+            debugSearchResults( res );
         }
         return res;
     }
+
+	void debugSearchResults( Collection< SearchResult > res ) {
+		Iterator< SearchResult > iterator = res.iterator();
+		while( iterator.hasNext() ) {
+			SearchResult next = iterator.next();
+			System.out.println( "page: " + next.getPage() );
+			for( String s : next.getContexts() ) {
+				System.out.println( "snippet: " + s );
+			}
+		}
+	}
     
-    public void testSimpleSearch()
-        throws Exception
-    {
+    public void testSimpleSearch() throws Exception {
         String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         
         m_engine.saveText("TestPage", txt);
@@ -108,9 +110,7 @@ public class SearchManagerTest extends TestCase
         m_engine.deleteTestPage("TestPage");
     }
 
-    public void testSimpleSearch2()
-       throws Exception
-    {
+    public void testSimpleSearch2() throws Exception {
         String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
     
         m_engine.saveText("TestPage", txt);
@@ -127,9 +127,7 @@ public class SearchManagerTest extends TestCase
         m_engine.deleteTestPage("TestPage");
     }
 
-    public void testSimpleSearch3()
-        throws Exception
-    {
+    public void testSimpleSearch3() throws Exception {
         String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
  
         MockHttpServletRequest request = m_engine.newHttpRequest();
@@ -157,9 +155,7 @@ public class SearchManagerTest extends TestCase
         m_engine.deleteTestPage("TestPage");
     }
 
-    public void testTitleSearch()
-        throws Exception
-    {
+    public void testTitleSearch() throws Exception {
         String txt = "Nonsensical content that should not match";
  
         m_engine.saveText("TestPage", txt);
@@ -174,9 +170,7 @@ public class SearchManagerTest extends TestCase
         m_engine.deleteTestPage("TestPage");
     }
 
-    public void testTitleSearch2()
-        throws Exception
-    { 
+    public void testTitleSearch2() throws Exception { 
         String txt = "Nonsensical content that should not match";
 
         m_engine.saveText("TestPage", txt);
@@ -191,8 +185,8 @@ public class SearchManagerTest extends TestCase
         m_engine.deleteTestPage("TestPage");
     }
 
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( SearchManagerTest.class );
     }
+
 }

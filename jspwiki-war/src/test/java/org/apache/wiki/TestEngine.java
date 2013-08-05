@@ -19,7 +19,12 @@
 
 package org.apache.wiki;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -151,7 +156,6 @@ public class TestEngine extends WikiEngine
     }
 
     public static void emptyWorkDir(Properties properties) {
-
         try {
             if (properties == null) {
                 properties = new Properties();
@@ -163,6 +167,7 @@ public class TestEngine extends WikiEngine
                 File f = new File( workdir );
 
                 if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
+                	System.out.println( "Deleting " + f.getAbsolutePath() );
                     deleteAll( f );
                 }
             }
