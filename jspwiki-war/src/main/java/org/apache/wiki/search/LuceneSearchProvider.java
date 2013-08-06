@@ -18,9 +18,19 @@
  */
 package org.apache.wiki.search;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,33 +38,47 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.*;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.SearchResult;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
-import org.apache.wiki.util.*;
+import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.util.WatchDog;
+import org.apache.wiki.util.WikiBackgroundThread;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
@@ -428,12 +452,11 @@ public class LuceneSearchProvider implements SearchProvider
         if( text == null ) return doc;
 
         // Raw name is the keyword we'll use to refer to this document for updates.
-        Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED);
+        Field field = new Field( LUCENE_ID, page.getName(), StringField.TYPE_STORED );
         doc.add( field );
 
         // Body text.  It is stored in the doc for search contexts.
-        field = new Field(LUCENE_PAGE_CONTENTS, text,
-                          Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+        field = new Field( LUCENE_PAGE_CONTENTS, text, TextField.TYPE_STORED );
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
@@ -441,17 +464,16 @@ public class LuceneSearchProvider implements SearchProvider
                                                             MarkupParser.PUNCTUATION_CHARS_ALLOWED,
                                                             c_punctuationSpaces );
 
-        field = new Field(LUCENE_PAGE_NAME,
-                          TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle,
-                          Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+        field = new Field( LUCENE_PAGE_NAME,
+                           TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle,
+                           TextField.TYPE_STORED );
         doc.add( field );
 
         // Allow searching by authorname
 
         if( page.getAuthor() != null )
         {
-            field = new Field(LUCENE_AUTHOR, page.getAuthor(),
-                              Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+            field = new Field( LUCENE_AUTHOR, page.getAuthor(), TextField.TYPE_STORED );
             doc.add( field );
         }
 
@@ -466,8 +488,7 @@ public class LuceneSearchProvider implements SearchProvider
                 Attachment att = (Attachment) it.next();
                 attachmentNames += att.getName() + ";";
             }
-            field = new Field(LUCENE_ATTACHMENTS, attachmentNames,
-                              Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+            field = new Field( LUCENE_ATTACHMENTS, attachmentNames, TextField.TYPE_STORED );
             doc.add( field );
 
         }
