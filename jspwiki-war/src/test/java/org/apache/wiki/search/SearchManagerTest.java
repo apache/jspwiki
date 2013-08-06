@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.search;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -28,7 +27,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
-import org.apache.wiki.Release;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -39,25 +37,25 @@ public class SearchManagerTest extends TestCase {
     private static final int SLEEP_COUNT = 50;
     TestEngine m_engine;
     SearchManager m_mgr;
+    Properties props;
     
     protected void setUp() throws Exception {
-        Properties props = new Properties();
+        props = new Properties();
         props.load( TestEngine.findTestProperties() );
+        String workDir = props.getProperty( "jspwiki.workDir" );
+        String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
         
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
-        props.setProperty( "jspwiki.workDir", System.getProperty( "java.io.tmpdir" ) + 
-        		                              File.separator + Release.APPNAME + "_" +  
-        		                              File.separator + System.currentTimeMillis() );
-        
-        TestEngine.emptyWorkDir( props );
+        props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
         
         m_engine = new TestEngine( props );
         m_mgr = m_engine.getSearchManager();
     }
 
     protected void tearDown() throws Exception {
-        super.tearDown();
+    	TestEngine.emptyWorkDir( props );
     }
 
     public void testDefaultProvider() {
