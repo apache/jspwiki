@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.9.1-incubating - Documentation
+Apache JSPWiki 2.10 - Documentation
 ===============================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -31,17 +31,6 @@ in its development.  JSPWiki supports all the traditional wiki features,
 as well as very detailed access control and security integration using JAAS. 
 
 
-Why is the version named 2.9.1-incubating? - Is it not a "real" version 2.9.1?
-------------------------------------------------------------------------------
-
-Short answer:  Don't worry, it really is a mature and official Apache release!
-
-Explanation:  JSPWiki is on its way to become an Apache top level project.
-   The Incubator project is the entry path into the Apache Software Foundation
-   (ASF) for projects and codebases wishing to become part of the Foundation's
-   efforts.  This is why the version is named 2.9.1-incubating.
-
-
 Pre-requirements
 ----------------
 
@@ -49,16 +38,16 @@ Okay, so you wanna Wiki?  You'll need the following things:
 
 REQUIRED:
 
-* A JSP engine that supports Servlet API 2.4.  We recommend Tomcat from
+* A JSP engine that supports Servlet API 2.5.  We recommend Tomcat from
   http://tomcat.apache.org/ for a really easy installation.
-  Tomcat 5.5.x or later is supported.
+  Tomcat 6.x or later is supported.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
 
 * And of course, a server to run the JSP engine on.
 
-* JDK 1.5+
+* JDK 1.6+
 
 
 OPTIONAL:
@@ -66,10 +55,6 @@ OPTIONAL:
 * JavaMail package from java.sun.com, if you want to use log4j mailing
   capabilities.  You'll also need the Java Activation Framework.
 
-* RCS versioning system installed and available in your PATH if you
-  want to use RCS versioning.  It is also possible (and on Windows, it
-  is even recommended) to use the VersioningFileProvider, which does
-  not require RCS.
 
 
 Really simple installation
