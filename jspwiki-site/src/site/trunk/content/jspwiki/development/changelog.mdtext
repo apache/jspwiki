@@ -1,5 +1,33 @@
 Title: Changelog
 
+#### 2013-08-07  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-34
+
+* Upgrade from Jetty used in unit test cases from v. 7.6.7 to v. 9.0.4
+ 
+#### 2013-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+* 2.10.0-svn-33
+
+* [JSPWIKI 799][JIRA-799]: jenkins build fails because of SearchManagerTest. It was reusing the same page directory  
+  as other tests, indexing pages created on other tests, depending on the test execution order.
+  
+* Use of Lucene 4.4 *Fields on LuceneSearchProvider to instantiate Fields, instead of using deprecated 
+  constructor + Field.Index
+
+#### 2013-08-04  Harry Metske (metskem@apache.org)
+
+* 2.10.0-svn-32
+
+* first guess in fixing [JSPWIKI 799][JIRA-799] TestEngine.emptyWorkdir() cleans another directory the the one used by the test ?
+
+#### 2013-08-03  Harry Metske (metskem@apache.org)
+
+* 2.10.0-svn-31
+
+* refixed [JSPWIKI 791][JIRA-791] NoClassDefFoundError for org.apache.lucene.analysis.standard.ClassicAnalyzer
+
 #### 2013-08-03  Harry Metske (metskem@apache.org)
 
 * 2.10.0-svn-30
@@ -1082,6 +1110,9 @@ and propagated the change to all plugins. Cfr. with UPGRADING document for detai
 * 2.9.0-svn-1
 
 * release bump because of package rename
+  [JIRA-799]: https://issues.apache.org/jira/browse/JSPWIKI-799
+  [JIRA-799]: https://issues.apache.org/jira/browse/JSPWIKI-799
+  [JIRA-791]: https://issues.apache.org/jira/browse/JSPWIKI-791
   [JIRA-789]: https://issues.apache.org/jira/browse/JSPWIKI-789
   [JIRA-790]: https://issues.apache.org/jira/browse/JSPWIKI-790
   [JIRA-761]: https://issues.apache.org/jira/browse/JSPWIKI-761

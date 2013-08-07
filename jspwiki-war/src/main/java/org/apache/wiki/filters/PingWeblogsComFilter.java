@@ -42,7 +42,7 @@ import org.apache.xmlrpc.XmlRpcClient;
 public class PingWeblogsComFilter
     extends BasicPageFilter
 {
-    static Logger log = Logger.getLogger( PingWeblogsComFilter.class );
+    private static final Logger log = Logger.getLogger( PingWeblogsComFilter.class );
 
     private String m_pingURL;
 
