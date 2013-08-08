@@ -26,7 +26,6 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -40,16 +39,20 @@ import org.apache.wiki.util.TextUtil;
  */
 public final class PropertyReader
 {
+    /**
+     * Path to the base property file, usually overridden by values provided in
+     * a jspwiki-custom.properties file
+     * {@value #DEFAULT_JSPWIKI_CONFIG}
+     */
+    public static final String DEFAULT_JSPWIKI_CONFIG = "/ini/jspwiki.properties";
 
-    private static final String DEFAULT_JSPWIKI_PROPERTIES = "/ini/default_jspwiki.properties";
-
-    /** The servlet context parameter (from web.xml)  that defines where the 
+    /** The servlet context parameter (from web.xml)  that defines where the
      *  config file is to be found.
      *  If it is not defined, checks the Java System Property, if that is not defined either, 
      *  uses the default as defined by DEFAULT_PROPERTYFILE.
-     *  {@value #DEFAULT_PROPERTYFILE}
+     *  {@value #DEFAULT_JSPWIKI_CONFIG}
      */
-    public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
+    public static final String PARAM_PROPERTYFILE = "jspwiki.custom.config";
 
     /**
      *  The prefix when you are cascading properties.  
@@ -58,28 +61,10 @@ public final class PropertyReader
      */
     public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.propertyfile.cascade.";
 
-    /** Path to the default property file.
-     * {@value #DEFAULT_PROPERTYFILE}
-     */
-    public static final String  DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
+    public static final String  CUSTOM_JSPWIKI_CONFIG = "/jspwiki-custom.properties";
 
     private static final String PARAM_VAR_DECLARATION = "var.";
     private static final String PARAM_VAR_IDENTIFIER  = "$";
-
-
-    /**
-     *  Contains the default properties for JSPWiki.
-     */
-    private static final String[] DEFAULT_PROPERTIES =
-    { "jspwiki.specialPage.Login",           "Login.jsp",
-      "jspwiki.specialPage.Logout",          "Logout.jsp",
-      "jspwiki.specialPage.CreateGroup",     "NewGroup.jsp",
-      "jspwiki.specialPage.CreateProfile",   "Register.jsp",
-      "jspwiki.specialPage.EditProfile",     "UserPreferences.jsp",
-      "jspwiki.specialPage.Preferences",     "UserPreferences.jsp",
-      "jspwiki.specialPage.Search",          "Search.jsp",
-      "jspwiki.specialPage.FindPage",        "FindPage.jsp"};
-
 
     /**
      *  Private constructor to prevent instantiation.
@@ -123,29 +108,34 @@ public final class PropertyReader
 
         try
         {
+            // we'll need this to get at our properties files in the classpath
+            Class config_class = Class.forName("org.apache.wiki.PropertyReader");
+
             //
             //  Figure out where our properties lie.
             //
             if( propertyFile == null )
             {
-                context.log("No "+PARAM_PROPERTYFILE
-                        +" defined for this context, using default from "+DEFAULT_PROPERTYFILE);
-                //  Use the default property file.
-                propertyStream = context.getResourceAsStream(DEFAULT_PROPERTYFILE);
+                context.log("No " + PARAM_PROPERTYFILE + " defined for this context, " +
+                        "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG);
+                //  Use the custom property file at the default location
+                propertyStream = config_class.getResourceAsStream(CUSTOM_JSPWIKI_CONFIG);
             }
             else
             {
-                context.log("Reading properties from "+propertyFile+" instead of default.");
+                context.log(PARAM_PROPERTYFILE + " defined, using " + propertyFile + " as the custom properties file.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
             }
 
+            Properties props = getDefaultProperties();
             if( propertyStream == null )
             {
-                throw new WikiException("Property file cannot be found!"+propertyFile);
+                context.log("No custom property file found, relying on JSPWiki defaults.");
             }
-
-            Properties props = getDefaultProperties();
-            props.load( propertyStream );
+            else
+            {
+                props.load( propertyStream );
+            }
 
             //this will add additional properties to the default ones:
             context.log("Loading cascading properties...");
@@ -180,15 +170,14 @@ public final class PropertyReader
 
 
     /**
-     *  Returns the default property set as a Properties object.
-     *  
-     *  @return The default property set.
+     *  Returns the property set as a Properties object.
+     *
+     *  @return A property set.
      */
     public static Properties getDefaultProperties()
     {
-        Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
-        
-        InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_PROPERTIES );
+        Properties props = new Properties();
+        InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_CONFIG );
         
         if( in != null )
         {
@@ -198,13 +187,65 @@ public final class PropertyReader
             }
             catch( IOException e )
             {
-                System.err.println("Unable to load default propertyfile '"+DEFAULT_JSPWIKI_PROPERTIES+"'"+e.getMessage());
+                System.err.println("Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage());
+            }
+            finally
+            {
+                try
+                {
+                    if( in != null ) in.close();
+                }
+                catch( IOException e )
+                {
+                    System.err.println("Unable to close stream for property file - something must be seriously wrong.");
+                }
             }
         }
         
         return props;
     }
 
+    /**
+     *  Returns a property set consisting of the default Property Set overlaid with a custom property set
+     *
+     *  @param fileName Reference to the custom override file
+     *  @return A property set consisting of the default property set and custom property set, with
+     *          the latter's properties replacing the former for any common values
+     */
+    public static Properties getCombinedProperties(String fileName)
+    {
+        Properties newPropertySet = getDefaultProperties();
+        InputStream in = PropertyReader.class.getResourceAsStream( fileName );
+
+        if( in != null )
+        {
+            try
+            {
+                newPropertySet.load( in );
+            }
+            catch( IOException e )
+            {
+                System.err.println("Unable to load propertyfile '" + fileName + "'" + e.getMessage());
+            }
+            finally
+            {
+                try
+                {
+                    if( in != null ) in.close();
+                }
+                catch( IOException e )
+                {
+                    System.err.println("Unable to close stream for property file - something must be seriously wrong.");
+                }
+            }
+        }
+        else
+        {
+            System.err.println("*** Custom property file \"" + fileName + "\" not found, relying on default file alone.");
+        }
+
+        return newPropertySet;
+    }
 
     /**
      *  Returns the ServletContext Init parameter if has been set, otherwise

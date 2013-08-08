@@ -117,14 +117,12 @@ public final class CommandResolver
         // the "special page" prefix. Create maps that allow us
         // look up the correct Command based on special page name.
         // If a matching command isn't found, create a RedirectCommand.
-        for( Iterator i = properties.entrySet().iterator(); i.hasNext(); )
+        for(String key : properties.stringPropertyNames())
         {
-            Map.Entry entry = (Map.Entry) i.next();
-            String key = (String) entry.getKey();
             if ( key.startsWith( PROP_SPECIALPAGE ) )
             {
                 String specialPage = key.substring( PROP_SPECIALPAGE.length() );
-                String jsp = (String) entry.getValue();
+                String jsp = (String) properties.getProperty(key);
                 if ( specialPage != null && jsp != null )
                 {
                     specialPage = specialPage.trim();

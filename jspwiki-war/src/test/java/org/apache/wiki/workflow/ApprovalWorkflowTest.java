@@ -46,8 +46,7 @@ public class ApprovalWorkflowTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        Properties props = new Properties();
-        props.load(TestEngine.findTestProperties());
+        Properties props = TestEngine.getTestProperties();
 
         // Explicitly turn on Admin approvals for page saves and our sample approval workflow
         props.put("jspwiki.approver.workflow.saveWikiPage", "Admin");

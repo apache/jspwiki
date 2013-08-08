@@ -44,8 +44,7 @@ public class WebContainerAuthorizerTest extends TestCase
 
     public void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         m_authorizer = new WebContainerAuthorizer();
         m_authorizer.initialize( m_engine, props );

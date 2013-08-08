@@ -37,13 +37,8 @@ public class ShortViewURLConstructorTest extends TestCase
 {
     TestEngine testEngine;
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     
-    protected void setUp() throws Exception
-    {
-        props.load( TestEngine.findTestProperties() );
-    }
-
     private URLConstructor getConstructor( String baseURL, String prefix )
         throws WikiException
     {

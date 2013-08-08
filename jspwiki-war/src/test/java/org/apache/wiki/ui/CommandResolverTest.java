@@ -43,9 +43,8 @@ public class CommandResolverTest extends TestCase
 
     protected void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
-        props.put( WikiEngine.PROP_MATCHPLURALS, "yes" );
+        Properties props = TestEngine.getTestProperties();
+        props.setProperty( WikiEngine.PROP_MATCHPLURALS, "yes" );
         m_engine = new TestEngine( props );
         resolver = m_engine.getCommandResolver();
         m_engine.saveText( "SinglePage", "This is a test." );
@@ -227,9 +226,6 @@ public class CommandResolverTest extends TestCase
         String url;
         url = resolver.getSpecialPageReference( "RecentChanges" );
         assertEquals( "http://localhost/RecentChanges.jsp", url );
-        
-        url = resolver.getSpecialPageReference( "Search" );
-        assertEquals( "http://localhost/Search.jsp", url );
         
         url = resolver.getSpecialPageReference( "Search" );
         assertEquals( "http://localhost/Search.jsp", url );

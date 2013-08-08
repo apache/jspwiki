@@ -35,7 +35,7 @@ public class DefaultPluginManagerTest extends TestCase
 {
     public static final String NAME1 = "Test1";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     WikiEngine engine;
 
@@ -51,8 +51,6 @@ public class DefaultPluginManagerTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         engine = new TestEngine(props);
         context = new WikiContext( engine, new WikiPage(engine, "Testpage") );
         manager = new DefaultPluginManager( engine, props );

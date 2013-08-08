@@ -41,8 +41,7 @@ public class GroupTest extends TestCase
 
     public void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         WikiEngine engine  = new TestEngine( props );
         m_wiki = engine.getApplicationName();
         

@@ -46,8 +46,7 @@ public class XMLGroupDatabaseTest extends TestCase
   protected void setUp() throws Exception
   {
       super.setUp();
-      Properties props = new Properties();
-      props.load( TestEngine.findTestProperties() );
+      Properties props = TestEngine.getTestProperties();
       WikiEngine engine  = new TestEngine( props );
       m_db = new XMLGroupDatabase();
       m_db.initialize( engine, props );

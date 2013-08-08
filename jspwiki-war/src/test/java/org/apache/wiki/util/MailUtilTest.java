@@ -46,7 +46,7 @@ import org.apache.wiki.util.MailUtil;
  */
 public class MailUtilTest extends TestCase
 {
-    Properties m_props = new Properties();
+    Properties m_props = TestEngine.getTestProperties();
 
     WikiContext     m_context;
 
@@ -68,7 +68,6 @@ public class MailUtilTest extends TestCase
     public void setUp()
         throws Exception
     {
-        m_props.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(m_props);
         
         TestEngine testEngine = new TestEngine( m_props );

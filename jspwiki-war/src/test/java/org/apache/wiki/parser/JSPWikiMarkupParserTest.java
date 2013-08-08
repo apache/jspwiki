@@ -43,7 +43,7 @@ import org.apache.wiki.util.TextUtil;
 
 public class JSPWikiMarkupParserTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     Vector<String>     created = new Vector<String>();
 
     static final String PAGE_NAME = "testpage";
@@ -59,8 +59,6 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void setUp()
     throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         testEngine = new TestEngine( props );
     }
@@ -136,7 +134,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                ServletException,
                WikiException
     {
-        props.load( TestEngine.findTestProperties() );
+        props = TestEngine.getTestProperties();
 
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
         TestEngine testEngine2 = new TestEngine( props );

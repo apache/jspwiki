@@ -29,7 +29,7 @@ public class StressTestVersioningProvider extends TestCase
 {
     public static final String NAME1 = "Test1";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
 
     TestEngine engine;
 
@@ -41,8 +41,6 @@ public class StressTestVersioningProvider extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
-
         props.setProperty( CachingProvider.PROP_CACHECAPACITY, "10000" );
         engine = new TestEngine(props);
     }

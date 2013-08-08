@@ -34,7 +34,7 @@ import org.apache.wiki.api.exceptions.PluginException;
 
 public class ReferringPagesPluginTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     TestEngine engine;
     WikiContext context;
     PluginManager manager;
@@ -47,8 +47,6 @@ public class ReferringPagesPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         props.setProperty( "jspwiki.breakTitleWithSpaces", "false" );
         engine = new TestEngine(props);
 

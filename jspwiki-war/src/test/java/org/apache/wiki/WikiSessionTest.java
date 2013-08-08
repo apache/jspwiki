@@ -51,8 +51,7 @@ public class WikiSessionTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
     }
 
@@ -195,8 +194,7 @@ public class WikiSessionTest extends TestCase
     
     public void testAuthenticationCookieWhenOn() throws WikiException, ServletException, IOException
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         props.setProperty( AuthenticationManager.PROP_ALLOW_COOKIE_AUTH, "true");
         m_engine = new TestEngine( props );
         

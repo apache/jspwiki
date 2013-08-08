@@ -51,8 +51,7 @@ public class GroupManagerTest extends TestCase
 
     public void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
 
         m_engine = new TestEngine( props );
         m_groupMgr = m_engine.getGroupManager();

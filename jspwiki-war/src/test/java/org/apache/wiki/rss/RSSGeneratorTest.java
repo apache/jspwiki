@@ -45,7 +45,7 @@ import junit.framework.TestSuite;
 public class RSSGeneratorTest extends TestCase
 {
     TestEngine m_testEngine;
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     public RSSGeneratorTest( String arg0 )
     {
@@ -54,8 +54,6 @@ public class RSSGeneratorTest extends TestCase
 
     protected void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         props.setProperty( WikiEngine.PROP_BASEURL, "http://localhost/" );
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
         m_testEngine = new TestEngine(props);

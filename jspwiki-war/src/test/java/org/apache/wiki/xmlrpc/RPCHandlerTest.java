@@ -30,7 +30,7 @@ public class RPCHandlerTest extends TestCase
 {
     TestEngine m_engine;
     RPCHandler m_handler;
-    Properties m_props;
+    Properties m_props = TestEngine.getTestProperties();
 
     static final String NAME1 = "Test";
 
@@ -42,9 +42,6 @@ public class RPCHandlerTest extends TestCase
     public void setUp()
         throws Exception
     {
-        m_props = new Properties();
-        m_props.load( TestEngine.findTestProperties() );
-
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();

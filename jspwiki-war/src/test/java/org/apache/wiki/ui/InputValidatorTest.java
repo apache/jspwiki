@@ -43,8 +43,7 @@ public class InputValidatorTest extends TestCase
 
     protected void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
         WikiContext context = new WikiContext( testEngine, new WikiPage(testEngine,"dummyPage"));
         val = new InputValidator( TEST, context );

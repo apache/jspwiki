@@ -41,7 +41,7 @@ public class VersioningFileProviderTest extends TestCase
 {
     public static final String NAME1 = "Test1";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
 
     TestEngine engine;
 
@@ -53,8 +53,6 @@ public class VersioningFileProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
-
         engine = new TestEngine(props);
     }
 

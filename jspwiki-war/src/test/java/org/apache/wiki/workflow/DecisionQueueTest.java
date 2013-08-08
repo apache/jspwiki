@@ -52,8 +52,7 @@ public class DecisionQueueTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        Properties props = new Properties();
-        props.load(TestEngine.findTestProperties());
+        Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
         m_queue = m_engine.getWorkflowManager().getDecisionQueue();
         adminSession = m_engine.adminSession();

@@ -32,7 +32,7 @@ import org.apache.wiki.api.engine.PluginManager;
 public class PageViewPluginTest extends TestCase
 
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     TestEngine testEngine;
 
@@ -47,8 +47,6 @@ public class PageViewPluginTest extends TestCase
 
     public void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         testEngine = new TestEngine( props );
 
         // create pages that should be counted

@@ -61,6 +61,9 @@ public class TestEngine extends WikiEngine
     private WikiSession m_janneWikiSession = null;
     private WikiSession m_guestWikiSession = null;
 
+    // combined properties file (jspwiki.properties + custom override, if any)
+    private static Properties combinedProperties = null;
+
     /**
      * Creates WikiSession with the privileges of the administrative user.
      * For testing purposes, obviously.
@@ -156,26 +159,36 @@ public class TestEngine extends WikiEngine
     }
 
     public static void emptyWorkDir(Properties properties) {
-        try {
-            if (properties == null) {
-                properties = new Properties();
-                properties.load( findTestProperties() );
-            }
+        if (properties == null) {
+            properties = getTestProperties();
+        }
 
-            String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
-            if ( workdir != null ) {
-                File f = new File( workdir );
+        String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
+        if ( workdir != null ) {
+            File f = new File( workdir );
 
-                if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
-                	System.out.println( "Deleting " + f.getAbsolutePath() );
-                    deleteAll( f );
-                }
+            if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
+                // System.out.println( "Deleting " + f.getAbsolutePath() );
+                deleteAll( f );
             }
-        } catch (IOException e) {
-            System.out.println( e );
         }
     }
 
+    public static final Properties getTestProperties() {
+        if (combinedProperties == null) {
+            combinedProperties = PropertyReader.getCombinedProperties(PropertyReader.CUSTOM_JSPWIKI_CONFIG);
+        }
+        // better to make a copy via putAll instead of Properties(properties)
+        // constructor, see http://stackoverflow.com/a/2004900
+        Properties propCopy = new Properties();
+        propCopy.putAll(combinedProperties);
+        return propCopy;
+    }
+
+    public static final Properties getTestProperties(String customPropFile) {
+        return PropertyReader.getCombinedProperties(customPropFile);
+    }
+/*
     public static final InputStream findTestProperties()
     {
         return findTestProperties( "/jspwiki.properties" );
@@ -189,7 +202,7 @@ public class TestEngine extends WikiEngine
 
         return in;
     }
-
+*/
     /**
      *  Deletes all files under this directory, and does them recursively.
      */
@@ -240,11 +253,10 @@ public class TestEngine extends WikiEngine
      */
     public void deleteTestPage( String name )
     {
-        Properties properties = new Properties();
+        Properties properties = getTestProperties();
 
         try
         {
-            properties.load( findTestProperties() );
             String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
             File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
@@ -271,11 +283,10 @@ public class TestEngine extends WikiEngine
      */
     public static void deleteAttachments( String page )
     {
-        Properties properties = new Properties();
+        Properties properties = getTestProperties();
 
         try
         {
-            properties.load( findTestProperties() );
             String files = properties.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 
             File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );

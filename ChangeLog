@@ -1,4 +1,17 @@
-2013-08-07  Glen Mazza (gmazza AT apache DOT org)
+2013-08-09  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-36
+
+       * Introducted new jspwiki-custom.properties file, which can be placed in test/resources for JUnit tests
+         or externally to the WAR (for Tomcat, $CATALINA_HOME/lib) and will be picked up automatically by 
+         JSPWiki.  Only those elements that you're changing from default src/main/resources/ini/jspwiki.properties
+         need addition to the custom properties file.  I still need to convert the Selenium tests to the new format.
+
+       * Renamed jspwiki.properties, _rcs.properties, and _vers.properties file with new -custom suffix in src/test/resources
+         (can be named anything as JUnit tests hardcode the names).  Removed elements that are the same as those
+         in the default jspwiki.properties file.
+        
+2013-08-08  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-35
 
@@ -6,7 +19,7 @@
         
 2013-08-07  Glen Mazza (gmazza AT apache DOT org)
 
-       * 2.10.0-svn-34
+       * 2.10.0-svn-34find 
 
        * Upgrade from Jetty used in unit test cases from v. 7.6.7 to v. 9.0.4
         

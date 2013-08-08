@@ -32,7 +32,7 @@ import org.apache.wiki.util.TextUtil;
 
 public class MassiveRepositoryTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
 
     TestEngine engine;
 
@@ -40,7 +40,6 @@ public class MassiveRepositoryTest extends TestCase
     {
         super.setUp();     
 
-        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
         props.setProperty( CachingProvider.PROP_CACHECAPACITY, "1000" );
 
         

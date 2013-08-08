@@ -48,8 +48,7 @@ public class CachingProviderTest extends TestCase
     {
         TestEngine.emptyWorkDir();
 
-        Properties props2 = new Properties();
-        props2.load( TestEngine.findTestProperties() );
+        Properties props2 = TestEngine.getTestProperties();
         testEngine = new TestEngine(props2);
         PropertyConfigurator.configure(props2);
     }
@@ -66,8 +65,7 @@ public class CachingProviderTest extends TestCase
     public void testInitialization()
         throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
 
         props.setProperty( "jspwiki.usePageCache", "true" );
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.CounterProvider" );
@@ -92,8 +90,7 @@ public class CachingProviderTest extends TestCase
     public void testSneakyAdd()
         throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
 
         props.setProperty( "jspwiki.cachingProvider.cacheCheckInterval", "2" );
         

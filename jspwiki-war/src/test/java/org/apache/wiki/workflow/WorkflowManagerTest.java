@@ -37,8 +37,7 @@ public class WorkflowManagerTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        Properties props = new Properties();
-        props.load(TestEngine.findTestProperties());
+        Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
         wm = m_engine.getWorkflowManager();
         // Create a workflow with 3 steps, with a Decision in the middle

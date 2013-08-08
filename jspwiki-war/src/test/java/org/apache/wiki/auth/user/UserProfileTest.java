@@ -40,8 +40,7 @@ public class UserProfileTest extends TestCase
     public void setUp()
         throws Exception
     {
-            Properties props = new Properties();
-            props.load( TestEngine.findTestProperties() );
+            Properties props = TestEngine.getTestProperties();
             PropertyConfigurator.configure(props);
             WikiEngine engine  = new TestEngine(props);
             m_db = engine.getUserManager().getUserDatabase();

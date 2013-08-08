@@ -103,8 +103,7 @@ public class AuthenticationManagerTest extends TestCase
 
     public void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         m_auth = m_engine.getAuthenticationManager();
         m_groupMgr = m_engine.getGroupManager();
@@ -119,8 +118,7 @@ public class AuthenticationManagerTest extends TestCase
      */
     public void testCustomAuthorizer() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         props.put( AuthorizationManager.PROP_AUTHORIZER, "org.apache.wiki.auth.AuthenticationManagerTest$DummyAuthorizer" );
         m_engine = new TestEngine( props );
 
@@ -149,8 +147,7 @@ public class AuthenticationManagerTest extends TestCase
 
     public void testCustomJAASLoginModule() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
 
         // Supply a custom LoginModule class
         props.put( "jspwiki.loginModule.class", "org.apache.wiki.auth.login.CookieAssertionLoginModule" );
@@ -164,8 +161,7 @@ public class AuthenticationManagerTest extends TestCase
 
     public void testCustomJAASLoginModuleOptions() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
 
         // Supply a custom LoginModule options
         props.put( "jspwiki.loginModule.options.key1", "value1" );

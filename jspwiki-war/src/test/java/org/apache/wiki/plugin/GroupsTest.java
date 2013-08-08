@@ -29,7 +29,7 @@ import org.apache.wiki.TestEngine;
 
 public class GroupsTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
     
     public GroupsTest( String s )
@@ -40,8 +40,6 @@ public class GroupsTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         testEngine = new TestEngine(props);
     }
 

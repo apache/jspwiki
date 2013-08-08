@@ -37,20 +37,12 @@ public class AllTests extends TestCase
     //
     static
     {
-        Properties props = new Properties();
-        try
+        Properties props = TestEngine.getTestProperties();
+        if( props == null )
         {
-            InputStream pin = TestEngine.findTestProperties();
-            if( pin == null )
-            {
-                fail( "No property file found!" );
-            }
-            props.load( pin );
-            PropertyConfigurator.configure(props);
+            fail( "No property file found!" );
         }
-        catch( IOException e ) 
-        {
-        }
+        PropertyConfigurator.configure(props);
     }
 
     public AllTests( String s )

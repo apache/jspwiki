@@ -41,7 +41,7 @@ public class BasicAttachmentProviderTest extends TestCase
     public static final String NAME1 = "TestPage";
     public static final String NAME2 = "TestPageToo";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     TestEngine m_engine;
 
@@ -60,8 +60,6 @@ public class BasicAttachmentProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         m_engine  = new TestEngine(props);
 
         TestEngine.deleteAll( new File(TextUtil.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR )) );

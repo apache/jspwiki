@@ -51,9 +51,8 @@ public class UserManagerTest extends TestCase
   protected void setUp() throws Exception
   {
     super.setUp();
-    Properties props = new Properties();
-    props.load( TestEngine.findTestProperties() );
-    
+    Properties props = TestEngine.getTestProperties();
+
     // Make sure user profile save workflow is OFF
     props.remove( "jspwiki.approver"+UserManager.SAVE_APPROVER );
     
@@ -77,9 +76,8 @@ public class UserManagerTest extends TestCase
   /** Call this setup program to use the save-profile workflow. */
   protected void setUpWithWorkflow() throws Exception
   {
-      Properties props = new Properties();
-      props.load( TestEngine.findTestProperties() );
-      
+      Properties props = TestEngine.getTestProperties();
+
       // Turn on user profile saves by the Admin group
       props.put( "jspwiki.approver."+UserManager.SAVE_APPROVER, "Admin" );
       

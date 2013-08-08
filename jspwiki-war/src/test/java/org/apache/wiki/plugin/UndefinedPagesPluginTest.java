@@ -33,7 +33,7 @@ import org.apache.wiki.api.exceptions.PluginException;
 
 public class UndefinedPagesPluginTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
     WikiContext context;
     PluginManager manager;
@@ -46,8 +46,6 @@ public class UndefinedPagesPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         testEngine = new TestEngine(props);
 
         testEngine.saveText( "TestPage", "Reference to [Foobar]." );

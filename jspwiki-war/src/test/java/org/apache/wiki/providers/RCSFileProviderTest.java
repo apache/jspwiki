@@ -42,7 +42,7 @@ public class RCSFileProviderTest extends TestCase
 {
     public static final String NAME1 = "Test1";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties("/jspwiki-rcs-custom.properties");
 
     TestEngine engine;
     
@@ -56,8 +56,6 @@ public class RCSFileProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties("/jspwiki_rcs.properties") );
-
         engine = new TestEngine(props);
         
         checkIfRCSIsInPath();

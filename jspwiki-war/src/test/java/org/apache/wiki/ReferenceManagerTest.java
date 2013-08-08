@@ -30,7 +30,7 @@ import org.apache.wiki.providers.FileSystemProvider;
  */
 public class ReferenceManagerTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     TestEngine engine;
     ReferenceManager mgr;
     
@@ -42,7 +42,6 @@ public class ReferenceManagerTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true");
 
         //

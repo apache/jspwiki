@@ -34,7 +34,7 @@ public final class StressTestSpeed extends TestCase
     private static int ITERATIONS = 100;
     public static final String NAME1 = "Test1";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties("/jspwiki-rcs-custom.properties");
 
     TestEngine engine;
 
@@ -46,8 +46,6 @@ public final class StressTestSpeed extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties("/jspwiki_rcs.properties") );
-
         props.setProperty( "jspwiki.usePageCache", "true" );
         props.setProperty( "jspwiki.newRenderingEngine", "true" );
         

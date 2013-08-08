@@ -41,7 +41,7 @@ import org.apache.wiki.render.XHTMLRenderer;
 
 public class CounterPluginTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
     
     public CounterPluginTest( String s )
@@ -52,8 +52,6 @@ public class CounterPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         testEngine = new TestEngine(props);
     }
 

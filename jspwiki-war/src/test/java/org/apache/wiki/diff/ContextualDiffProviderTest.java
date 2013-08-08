@@ -192,13 +192,12 @@ public class ContextualDiffProviderTest extends TestCase
 
         specializedNotation(diff);
 
-        Properties props = new Properties();
+        Properties props = TestEngine.getTestProperties();
         if (null != contextLimit)
             props.put(ContextualDiffProvider.PROP_UNCHANGED_CONTEXT_LIMIT, contextLimit);
 
         diff.initialize(null, props);
 
-        props.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(props);
         TestEngine engine = new TestEngine(props);
         

@@ -54,8 +54,7 @@ public class OutcomeTest extends TestCase
 
     public void testMessage() throws Exception
     {
-        Properties props = new Properties();
-        props.load(TestEngine.findTestProperties());
+        Properties props = TestEngine.getTestProperties();
         WikiEngine engine = new TestEngine(props);
         InternationalizationManager i18n = engine.getInternationalizationManager();
         String core = "templates.default";

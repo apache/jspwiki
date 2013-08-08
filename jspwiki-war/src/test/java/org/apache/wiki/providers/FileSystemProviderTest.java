@@ -40,7 +40,7 @@ public class FileSystemProviderTest extends TestCase
     FileSystemProvider m_provider;
     FileSystemProvider m_providerUTF8;
     String             m_pagedir;
-    Properties props  = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     TestEngine         m_engine;
 
@@ -60,7 +60,6 @@ public class FileSystemProviderTest extends TestCase
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            m_pagedir );
 
-        props2.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(props2);
         
         m_engine = new TestEngine(props);

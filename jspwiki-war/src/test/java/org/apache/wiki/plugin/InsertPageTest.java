@@ -29,12 +29,10 @@ import junit.framework.TestSuite;
 public class InsertPageTest extends TestCase
 {
     protected TestEngine testEngine;
-    protected Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
     
     protected void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         testEngine = new TestEngine(props);
     }
 

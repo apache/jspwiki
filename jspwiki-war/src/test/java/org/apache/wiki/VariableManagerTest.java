@@ -39,19 +39,13 @@ public class VariableManagerTest extends TestCase
     public void setUp()
         throws Exception
     {
-        Properties props = new Properties();
-        try
-        {
-            props.load( TestEngine.findTestProperties() );
-            PropertyConfigurator.configure(props);
+        Properties props = TestEngine.getTestProperties();
+        PropertyConfigurator.configure(props);
 
-            m_variableManager = new VariableManager( props );
-            TestEngine testEngine = new TestEngine( props );
-            m_context = new WikiContext( testEngine,
-                                         new WikiPage( testEngine, PAGE_NAME ) );
-
-        }
-        catch( IOException e ) {}
+        m_variableManager = new VariableManager( props );
+        TestEngine testEngine = new TestEngine( props );
+        m_context = new WikiContext( testEngine,
+                                     new WikiPage( testEngine, PAGE_NAME ) );
     }
 
     public void tearDown()

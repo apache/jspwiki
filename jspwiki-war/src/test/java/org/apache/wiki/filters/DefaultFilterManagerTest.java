@@ -33,7 +33,7 @@ import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 
 public class DefaultFilterManagerTest extends TestCase {
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     TestEngine engine;
 
@@ -42,7 +42,6 @@ public class DefaultFilterManagerTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        props.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(props);
         engine = new TestEngine(props);
     }

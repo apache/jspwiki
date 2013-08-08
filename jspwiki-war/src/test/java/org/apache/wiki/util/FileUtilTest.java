@@ -37,13 +37,8 @@ public class FileUtilTest extends TestCase
     public FileUtilTest( String s )
     {
         super( s );
-        Properties props = new Properties();
-        try
-        {
-            props.load( TestEngine.findTestProperties() );
-            PropertyConfigurator.configure(props);
-        }
-        catch( IOException e ) {}
+        Properties props = TestEngine.getTestProperties();
+        PropertyConfigurator.configure(props);
     }
 
     public void setUp()

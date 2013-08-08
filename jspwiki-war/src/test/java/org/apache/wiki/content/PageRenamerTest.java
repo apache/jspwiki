@@ -36,10 +36,8 @@ public class PageRenamerTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        
-        Properties props = new Properties();
-        
-        props.load( TestEngine.findTestProperties() );
+
+        Properties props = TestEngine.getTestProperties();
 
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
         

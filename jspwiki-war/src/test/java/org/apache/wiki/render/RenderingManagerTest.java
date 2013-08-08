@@ -39,9 +39,7 @@ public class RenderingManagerTest extends TestCase
     
     protected void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
-        
+        Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         
         m_manager = new RenderingManager();

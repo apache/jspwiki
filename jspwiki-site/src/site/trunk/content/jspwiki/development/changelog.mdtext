@@ -2,6 +2,12 @@ Title: Changelog
 
 #### 2013-08-07  Glen Mazza (gmazza AT apache DOT org)
 
+* 2.10.0-svn-35
+
+* Partial revert of Jetty to v. 8.1.12 so it can still run with the JDK 6 used by Jenkins.
+ 
+#### 2013-08-07  Glen Mazza (gmazza AT apache DOT org)
+
 * 2.10.0-svn-34
 
 * Upgrade from Jetty used in unit test cases from v. 7.6.7 to v. 9.0.4

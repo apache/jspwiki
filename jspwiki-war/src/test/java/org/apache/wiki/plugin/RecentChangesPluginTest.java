@@ -31,7 +31,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 
 public class RecentChangesPluginTest extends TestCase {
-	Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
 	TestEngine testEngine;
 
@@ -40,8 +40,6 @@ public class RecentChangesPluginTest extends TestCase {
 	PluginManager manager;
 
 	public void setUp() throws Exception {
-		props.load(TestEngine.findTestProperties());
-
 		testEngine = new TestEngine(props);
 
 		testEngine.saveText("TestPage01", "Some Text for testing 01");

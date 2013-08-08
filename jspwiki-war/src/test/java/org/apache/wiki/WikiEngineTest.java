@@ -44,7 +44,7 @@ public class WikiEngineTest extends TestCase
     public static final String NAME1 = "Test1";
     public static final long PAGEPROVIDER_RESCAN_PERIOD = 2;
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     TestEngine m_engine;
 
@@ -67,8 +67,6 @@ public class WikiEngineTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
         // We'll need a shorter-than-default consistency check for
         // the page-changed checks. This will cause additional load
@@ -847,12 +845,11 @@ public class WikiEngineTest extends TestCase
     public void testOldVersionVars()
         throws Exception
     {   
-        Properties pr = new Properties();
-        pr.load( TestEngine.findTestProperties("/jspwiki_vers.properties"));
+        Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
+
+        props.setProperty( PageManager.PROP_USECACHE, "true" );
         
-        pr.setProperty( PageManager.PROP_USECACHE, "true" );
-        
-        TestEngine engine = new TestEngine( pr );
+        TestEngine engine = new TestEngine( props );
         
         engine.saveText( NAME1, "[{SET foo=bar}]" );
     

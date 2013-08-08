@@ -65,8 +65,7 @@ public class AclImplTest extends TestCase
     public void setUp() throws Exception
     {
         super.setUp();
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         TestEngine engine  = new TestEngine( props );
         m_groupMgr = engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( engine );

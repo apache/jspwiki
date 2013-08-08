@@ -44,9 +44,8 @@ public class IfPluginTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+
+        Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
     }
 

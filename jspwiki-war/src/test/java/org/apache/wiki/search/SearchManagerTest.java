@@ -40,8 +40,7 @@ public class SearchManagerTest extends TestCase {
     Properties props;
     
     protected void setUp() throws Exception {
-        props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         String workDir = props.getProperty( "jspwiki.workDir" );
         String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
         

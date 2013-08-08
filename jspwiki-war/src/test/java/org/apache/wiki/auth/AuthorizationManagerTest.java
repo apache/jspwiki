@@ -87,8 +87,7 @@ public class AuthorizationManagerTest extends TestCase
 
     public void setUp() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         
         // Make sure we are using the default security policy file jspwiki.policy
         props.put( AuthorizationManager.POLICY, AuthorizationManager.DEFAULT_POLICY );
@@ -687,8 +686,7 @@ public class AuthorizationManagerTest extends TestCase
     
     public void testUserPolicy() throws Exception
     {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
+        Properties props = TestEngine.getTestProperties();
         
         // Make sure we are using the default security policy file jspwiki.policy
         props.put( AuthorizationManager.POLICY, "jspwiki-testUserPolicy.policy" );

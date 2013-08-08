@@ -53,7 +53,6 @@ public class Installer
     public static final String ADMIN_ID = "admin";
     public static final String ADMIN_NAME = "Administrator";
     public static final String INSTALL_INFO = "Installer.Info";
-    public static final String INSTALL_WARNING = "Installer.Warning";
     public static final String INSTALL_ERROR = "Installer.Error";
     public static final String APP_NAME = WikiEngine.PROP_APPNAME;
     public static final String BASE_URL = WikiEngine.PROP_BASEURL;
@@ -78,7 +77,7 @@ public class Installer
         // Get the servlet context, and file for properties
         ServletContext context = config.getServletContext();
         String path = context.getRealPath("/");
-        m_propertyFile = new File( path, PropertyReader.DEFAULT_PROPERTYFILE );
+        m_propertyFile = new File( path, PropertyReader.DEFAULT_JSPWIKI_CONFIG );
         m_props = new CommentedProperties();
         
         // Stash the request
@@ -306,7 +305,6 @@ public class Installer
     /**
      * Sets a property based on the value of an HTTP request parameter.
      * If the parameter is not found, a default value is used instead.
-     * @param request the HTTP request
      * @param param the parameter containing the value we will extract
      * @param defaultValue the default to use if the parameter was not passed
      * in the request
@@ -324,7 +322,7 @@ public class Installer
     /**
      * Simply sanitizes any path which contains backslashes (sometimes Windows
      * users may have them) by expanding them to double-backslashes
-     * @param s the key of the property to sanitize
+     * @param key the key of the property to sanitize
      */
     private void sanitizePath( String key )
     {
@@ -337,7 +335,7 @@ public class Installer
     /**
      * Simply sanitizes any URL which contains backslashes (sometimes Windows
      * users may have them)
-     * @param s the key of the property to sanitize
+     * @param key the key of the property to sanitize
      */
     private void sanitizeURL( String key )
     {

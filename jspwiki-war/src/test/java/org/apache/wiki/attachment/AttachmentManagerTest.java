@@ -32,7 +32,7 @@ public class AttachmentManagerTest extends TestCase
     public static final String NAME1 = "TestPage";
     public static final String NAMEU = "TestPage\u00e6";
 
-    Properties props = new Properties();
+    Properties props = TestEngine.getTestProperties();
 
     TestEngine m_engine;
     AttachmentManager m_manager;
@@ -47,8 +47,6 @@ public class AttachmentManagerTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
-
         m_engine  = new TestEngine(props);
         m_manager = m_engine.getAttachmentManager();
 
