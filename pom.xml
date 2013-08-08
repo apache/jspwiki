@@ -218,10 +218,16 @@
         <version>1.5.7</version>
       </dependency>
 
+      <!--
+           Note: As Jetty activates during the build, can upgrade
+           only to the latest Jetty version that can run on the
+           minimum JDK JSPWiki supports:
+           http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html
+      -->
       <dependency>
         <groupId>org.eclipse.jetty.aggregate</groupId>
         <artifactId>jetty-all</artifactId>
-        <version>9.0.4.v20130625</version>
+        <version>8.1.12.v20130726</version>
       </dependency>
 
       <dependency>

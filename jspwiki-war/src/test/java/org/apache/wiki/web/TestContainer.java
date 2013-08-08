@@ -44,7 +44,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.util.security.Password;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -239,10 +239,10 @@ public class TestContainer
         server.setStopAtShutdown( true );
         
         // Create HTTP listener
-        ServerConnector connector = new ServerConnector(server);
+        SocketConnector connector = new SocketConnector();
         connector.setHost( "localhost" );
         connector.setPort( HTTP_PORT );
-        connector.setIdleTimeout( 60000 );
+        connector.setMaxIdleTime( 60000 );
 
         server.setConnectors( new Connector[] {connector} );
         log.info( "added HTTP listener for port " + HTTP_PORT );
