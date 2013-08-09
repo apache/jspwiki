@@ -173,7 +173,7 @@ public class LinkTag
      *  This method figures out what kind of an URL should be output.  It mirrors heavily
      *  on JSPWikiMarkupParser.handleHyperlinks();
      *
-     * @return
+     * @return the URL
      * @throws ProviderException
      */
     private String figureOutURL()

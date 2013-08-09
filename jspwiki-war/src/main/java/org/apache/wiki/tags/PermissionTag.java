@@ -103,7 +103,7 @@ public class PermissionTag
      *  Checks a single permission.
      *  
      *  @param permission
-     *  @return
+     *  @return true if granted, false if not
      */
     private boolean checkPermission( String permission )
     {

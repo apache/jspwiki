@@ -206,7 +206,7 @@ public class TemplateManager
      * @param sContext
      * @param template
      * @param name
-     * @return
+     * @return the Resource for the given template and name.
      */
     private static String findResource( ServletContext sContext, String template, String name )
     {

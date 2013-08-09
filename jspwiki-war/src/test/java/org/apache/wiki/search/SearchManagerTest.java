@@ -70,13 +70,12 @@ public class SearchManagerTest extends TestCase {
         for( long l = 0; l < SLEEP_COUNT; l++ ) {
             if( res == null || res.isEmpty() ) {
                 Thread.sleep( SLEEP_TIME );
-                System.out.println( "SearchManagerTest.waitForIndex for " + testName + " sleeping " + l + " (out of " + SLEEP_COUNT + ")" );
             } else {
                 break;
             }
             res = m_mgr.findPages( text );
             
-            debugSearchResults( res );
+//            debugSearchResults( res );
         }
         return res;
     }
