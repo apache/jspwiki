@@ -1,3 +1,13 @@
+2013-08-11  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-37
+
+       * Updated it-test's selenium module to use new jspwiki-custom.properties system.  IT tests only
+         working 50% presently (same as before though).
+
+       * Removed some values from our jspwiki-custom.properties files where the defaults in jspwiki.properties
+         are sufficient.
+        
 2013-08-09  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-36

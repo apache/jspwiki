@@ -19,7 +19,7 @@ mvn clean deploy -Papache-release -Dgpg.passphrase=<passphrase> : deploys genera
                                                                   If -Dgpg.passphrase is not given, expects a gpg-agent
                                                                   running
 mvn clean install -Pintegration-tests                           : performs a build, enabling Selenium tests execution
-
+                                                                  (best run from the jspwiki-it-tests folder).
 mvn wro4j:run -Dminimize=true                                   : merge & compress js & css files
 mvn wro4j:run -Dminimize=false                                  : only merge the js & css files  (no compression)
 mvn clean install -Dmaven.test.skip -Dminimize=false            : performs a build, skipping the tests and skip compression
@@ -35,9 +35,10 @@ mvn cobertura:cobertura : generates a cobertura maven report. See:
 mvn javadoc:javadoc     : creates javadocs; if graphviz binaries (www.graphviz.org)
                           are found on $PATH, the javadocs will display some UML
                           class/package level diagrams
-mvn sonar:sonar         : generates a Sonar report. Expects a Sonar server running at http://localhost:9000/ See:
+mvn sonar:sonar         : generates a Sonar report. Expects a Sonar server running at http://localhost:9000/, from
+                          where you can see results afterwards (note default username/password login is admin/admin).
+                          See:
                             http://mojo.codehaus.org/sonar-maven-plugin/plugin-info.html
                             http://docs.codehaus.org/display/SONAR/Get+started+in+2+minutes
 cd jspwiki-site; mvn test -Dtest=SiteGeneratorTest: Checks all language resource files for missing or
                           unused translations.
-

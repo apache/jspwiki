@@ -34,7 +34,7 @@
   <packaging>pom</packaging>
   
   <modules>
-    <module>jspwiki-selenium-tests</module> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
+    <!--module>jspwiki-selenium-tests</module--> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
     <module>jspwiki-it-test-custom</module>
     <module>jspwiki-it-test-custom-absolute-urls</module>
     <module>jspwiki-it-test-custom-jdbc</module>
