@@ -92,11 +92,11 @@ public class WikiEngineTest extends TestCase
         TestEngine.emptyWorkDir();
     }
     
-    public void testNonExistantDirectory()
+    public void testNonExistentDirectory()
         throws Exception
     {
         String tmpdir = System.getProperties().getProperty("java.io.tmpdir");
-        String dirname = "non-existant-directory";
+        String dirname = "non-existent-directory";
 
         String newdir = tmpdir + File.separator + dirname;
 
@@ -116,7 +116,7 @@ public class WikiEngineTest extends TestCase
     /**
      *  Check that calling pageExists( String ) works.
      */
-    public void testNonExistantPage()
+    public void testNonExistentPage()
         throws Exception
     {
         String pagename = "Test1";
@@ -129,7 +129,7 @@ public class WikiEngineTest extends TestCase
     /**
      *  Check that calling pageExists( WikiPage ) works.
      */
-    public void testNonExistantPage2()
+    public void testNonExistentPage2()
         throws Exception
     {
         WikiPage page = new WikiPage(m_engine, "Test1");

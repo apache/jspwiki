@@ -46,9 +46,6 @@ public final class StressTestSpeed extends TestCase
     public void setUp()
         throws Exception
     {
-        props.setProperty( "jspwiki.usePageCache", "true" );
-        props.setProperty( "jspwiki.newRenderingEngine", "true" );
-        
         engine = new TestEngine(props);
     }
 

@@ -214,7 +214,7 @@ public class VersioningFileProviderTest extends TestCase
         assertEquals("ver3", text3, engine.getText( NAME1, 3 ) );
     }
 
-    public void testNonexistantPage()
+    public void testNonexistentPage()
     {
         assertNull( engine.getPage("fjewifjeiw") );
     }
