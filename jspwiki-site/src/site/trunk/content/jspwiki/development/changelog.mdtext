@@ -1,5 +1,13 @@
 Title: Changelog
 
+#### 2013-08-13  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-38
+
+* Updated all the test/*-custom.properties files, removed all non-necessary configuration items
+
+* Removed no-longer-needed file filtering from the jspwiki WAR pom.
+ 
 #### 2013-08-11  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-37

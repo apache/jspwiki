@@ -36,13 +36,9 @@
                <!-- this enables tests reuse [3/3] -->
     <it-jspwiki.context>${project.artifactId}</it-jspwiki.context>
     
-    <it-jspwiki.authorizer>org.apache.wiki.auth.authorize.WebContainerAuthorizer</it-jspwiki.authorizer>
     <it-jspwiki.groupdatabase>org.apache.wiki.auth.authorize.XMLGroupDatabase</it-jspwiki.groupdatabase>
-    <it-jspwiki.login.throttling>false</it-jspwiki.login.throttling>
-    <it-jspwiki.referenceStyle>absolute</it-jspwiki.referenceStyle>
     <it-jspwiki.userdatabase>org.apache.wiki.auth.user.XMLUserDatabase</it-jspwiki.userdatabase>
-    <it-jspwiki.userdatabase.hashPrefix>false</it-jspwiki.userdatabase.hashPrefix>
-    <it-jspwiki-x.securityconfig.enable>true</it-jspwiki-x.securityconfig.enable>
+    <it-jspwiki.referenceStyle>absolute</it-jspwiki.referenceStyle>
   </properties>
   
   <build>
