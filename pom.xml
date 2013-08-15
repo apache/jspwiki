@@ -32,7 +32,7 @@
   <packaging>pom</packaging>
   <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard J2EE components (Java, servlets, JSP).</description>
-  <url>http://incubator.apache.org/jspwiki/</url>
+  <url>http://jspwiki.apache.org/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

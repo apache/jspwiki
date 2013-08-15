@@ -18,10 +18,10 @@
     under the License.  
 -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-        version="2.4">
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+        version="2.5">
 
    <description>
        JSPWiki is an open source JSP-based WikiClone.  It is licensed
@@ -66,32 +66,17 @@
    <filter-mapping>
        <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/attach/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/atom/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/RPCU/</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/RPC2/</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/JSON-RPC</url-pattern>
-   </filter-mapping> 
+   </filter-mapping>
    <filter-mapping>
        <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>/wiki/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
-   
+
    <!--
        HttpSessionListener used for managing WikiSession's.
      -->
@@ -165,35 +150,6 @@
        <servlet-class>org.apache.wiki.attachment.AttachmentServlet</servlet-class>
    </servlet>
 
-   <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->
-
-   <!--
-       And finally, let us tell the servlet container which
-       URLs should correspond to which XML RPC servlet.
-     -->
-
-   <!-- By default, this is disabled.  If you want to enabled it,
-        just uncomment the whole section. -->
-
-   <!--  REMOVE ME TO ENABLE XML-RPC
-
-   <servlet-mapping>
-       <servlet-name>XMLRPC</servlet-name>
-       <url-pattern>/RPC2/</url-pattern>
-   </servlet-mapping>
-
-   <servlet-mapping>
-       <servlet-name>XMLRPC-UTF8</servlet-name>
-       <url-pattern>/RPCU/</url-pattern>
-   </servlet-mapping>
-
-   <servlet-mapping>
-       <servlet-name>ATOM</servlet-name>
-       <url-pattern>/atom/*</url-pattern>
-   </servlet-mapping>
-
-   AND REMOVE ME TOO -->
-
    <servlet-mapping>
        <servlet-name>AttachmentServlet</servlet-name>
        <url-pattern>/attach/*</url-pattern>
@@ -208,6 +164,30 @@
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
        <url-pattern>/JSON-RPC</url-pattern>
    </servlet-mapping>
+
+    <!--
+        And finally, let us tell the servlet container which
+        URLs should correspond to which XML RPC servlet.
+        By default, this is disabled.  If you want to enable it,
+        just uncomment the whole section.
+    -->
+
+    <!--  REMOVE ME TO ENABLE XML-RPC
+    <servlet-mapping>
+        <servlet-name>XMLRPC</servlet-name>
+        <url-pattern>/RPC2/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>XMLRPC-UTF8</servlet-name>
+        <url-pattern>/RPCU/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ATOM</servlet-name>
+        <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+    AND REMOVE ME TOO -->
 
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->

@@ -19,7 +19,7 @@
 
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
   public void jspInit()
   {

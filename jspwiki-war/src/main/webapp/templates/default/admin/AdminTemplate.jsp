@@ -22,7 +22,7 @@
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <html>
 <head>
 <title>JSPWiki administration</title>

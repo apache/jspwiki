@@ -23,7 +23,7 @@
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
     Logger log = Logger.getLogger("JSPWiki"); 
 %>

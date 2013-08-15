@@ -17,7 +17,7 @@
     under the License.  
 --%>
 
-<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>

@@ -21,8 +21,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.util.FileUtil" %>
-<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
-<%! 
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%!
     Logger log = Logger.getLogger("JSPWiki"); 
 %>
 <%

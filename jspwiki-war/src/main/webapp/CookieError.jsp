@@ -18,7 +18,7 @@
 --%>
 
 <%@ page import="org.apache.wiki.*" %>
-<%@ taglib uri="http://incubator.apache.org/jspwiki/tags" prefix="wiki" %>
+<%@ taglib prefix="wiki" uri="http://jspwiki.apache.org/tags" %>
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

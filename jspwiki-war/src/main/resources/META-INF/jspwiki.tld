@@ -24,7 +24,7 @@
 
   <tlib-version>2.10</tlib-version>
   <short-name>jspwiki</short-name>
-  <uri>http://incubator.apache.org/jspwiki/tags</uri>
+  <uri>http://jspwiki.apache.org/tags</uri>
 
   <tag>
     <name>AdminBeanIterator</name>
@@ -611,12 +611,6 @@
        <name>resource</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>
-
-  <tag>
-    <name>RSSLink</name>
-    <tag-class>org.apache.wiki.tags.RSSLinkTag</tag-class>
-    <body-content>empty</body-content>
   </tag>
 
   <tag>
