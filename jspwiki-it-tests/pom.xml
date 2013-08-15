@@ -34,12 +34,12 @@
   <packaging>pom</packaging>
   
   <modules>
-    <!--module>jspwiki-selenium-tests</module--> <!-- not really necessary; just in case if some day we need to reference the artifact... -->
+    <module>jspwiki-selenium-tests</module>
     <module>jspwiki-it-test-custom</module>
-    <module>jspwiki-it-test-custom-absolute-urls</module>
-    <module>jspwiki-it-test-container</module>
+    <!--module>jspwiki-it-test-custom-absolute-urls</module>
     <module>jspwiki-it-test-custom-jdbc</module>
-    <module>jspwiki-it-test-container-jdbc</module>
+    <module>jspwiki-it-test-container</module>
+    <module>jspwiki-it-test-container-jdbc</module-->
   </modules>
   
   <profiles>
@@ -54,19 +54,18 @@
           </testResource>
         </testResources>
         
+        <resources>
+          <resource><!-- this enables tests reuse [2/2] -->
+            <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+
         <pluginManagement>
         <plugins>
-          <plugin><!-- this enables tests reuse [2/2] -->
+          <plugin>
             <artifactId>maven-war-plugin</artifactId>
             <version>2.4</version>
-            <configuration>
-              <webResources>
-                <resource>
-                  <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </webResources>
-            </configuration>
           </plugin>
           
           <plugin> <!-- exec-maven-plugin does not accept forked executions (!) -->
@@ -86,7 +85,7 @@
                         <arg value="${compile_classpath}" />
                         <arg value="org.apache.wiki.HsqlDbUtils"/>
                         <arg value="setUp" />
-                        <arg value="${project.basedir}/target/classes/hsql-userdb-setup.ddl" />
+                        <arg value="jspwiki-selenium-tests/src/main/config/hsql-userdb-setup.ddl" />
                     </exec>  
                   </target>
                 </configuration>
@@ -105,7 +104,7 @@
                         <arg value="${compile_classpath}" />
                         <arg value="org.apache.wiki.HsqlDbUtils"/>
                         <arg value="tearDown" />
-                        <arg value="${project.basedir}/target/classes/hsql-userdb-teardown.ddl" />
+                        <arg value="jspwiki-selenium-tests/src/main/config/hsql-userdb-teardown.ddl" />
                     </exec>  
                   </target>
                 </configuration>
@@ -149,7 +148,7 @@
                 <phase>pre-integration-test</phase>
                 <configuration>
                   <additionalConfigFilesDir>
-                    ${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf
+                    jspwiki-selenium-tests/src/main/config/tomcatconf
                   </additionalConfigFilesDir>
                   <fork>true</fork>
                   <systemProperties>

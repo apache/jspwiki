@@ -89,7 +89,7 @@ public class HsqlDbUtils
     {
         
         // start Hypersonic server
-        Properties hProps = loadPropertiesFrom( "target/test-classes/jdbc.properties" );
+        Properties hProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
         
         hsqlServer = new Server();
         hsqlServer.setSilent(true);   // be quiet during junit tests
@@ -170,7 +170,7 @@ public class HsqlDbUtils
     Connection getConnection() throws IOException, SQLException
     {
         Connection conn;
-        Properties jProps = loadPropertiesFrom( "target/test-classes/jdbc.properties" );
+        Properties jProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
         conn = DriverManager.getConnection( jProps.getProperty( "jdbc.driver.url" ), 
                                             jProps.getProperty( "jdbc.admin.id" ),
                                             jProps.getProperty( "jdbc.admin.password" ) );

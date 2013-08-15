@@ -1,3 +1,16 @@
+2013-08-15  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-40
+
+       * Removed unneeded config files in Selenium IT module, changed its packaging to WAR
+         and its parent to the it tests folder.  JDBC tests still inoperative, but others
+         working as before.
+
+       * Removed jdbc.properties file in favor of configuring it in jspwiki-custom.properties.
+
+       * jspwiki.policy file in test updated to more recent structure used by the integrated 
+         tests module, subsequently removed from latter as it's unneeded there.
+        
 2013-08-14  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-39

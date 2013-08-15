@@ -21,6 +21,8 @@
          xmlns:xsi          = "http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <modelVersion>4.0.0</modelVersion>
+
   <parent> <!-- this enables tests reuse [1/3] -->
     <groupId>org.apache.jspwiki.it</groupId>
     <artifactId>jspwiki-it-builder</artifactId>
@@ -28,10 +30,9 @@
   </parent>
   
   <artifactId>jspwiki-it-test-custom</artifactId>
-  <modelVersion>4.0.0</modelVersion>
-  <description>selenium tests execution for jspwiki-it-test-custom (custom auth, relative URLs)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
-  
+  <description>selenium tests execution for jspwiki-it-test-custom (custom auth, relative URLs)</description>
+
   <properties> <!-- values injected at jspwiki.properties & selenium templates -->
                <!-- this enables tests reuse [3/3] -->
     <it-jspwiki.context>${project.artifactId}</it-jspwiki.context>

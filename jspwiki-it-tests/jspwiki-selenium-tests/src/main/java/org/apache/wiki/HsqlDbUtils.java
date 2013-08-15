@@ -74,7 +74,7 @@ public class HsqlDbUtils
         {
             LOG.error( e.getMessage(), e );
         }
-        exec( "./target/classes/hsql-userdb-setup.ddl" );
+        exec( "./src/main/config/hsql-userdb-setup.ddl" );
     }
     
     /**
@@ -82,7 +82,7 @@ public class HsqlDbUtils
      */
     public void tearDown() 
     {
-        exec( "./target/classes/hsql-userdb-teardown.ddl" );
+        exec( "./src/main/config/hsql-userdb-teardown.ddl" );
         stop();
     }
     
@@ -93,7 +93,7 @@ public class HsqlDbUtils
     {
         
         // start Hypersonic server
-        Properties hProps = loadPropertiesFrom( "/jdbc.properties" );
+        Properties hProps = loadPropertiesFrom( "/jspwiki-custom.properties" );
         
         hsqlServer = new Server();
         // pre-checks
@@ -171,7 +171,7 @@ public class HsqlDbUtils
     Connection getConnection() throws IOException, SQLException
     {
         Connection conn;
-        Properties jProps = loadPropertiesFrom( "/jdbc.properties" );
+        Properties jProps = loadPropertiesFrom( "/jspwiki-custom.properties" );
         conn = DriverManager.getConnection( jProps.getProperty( "jdbc.driver.url" ), 
                                             jProps.getProperty( "jdbc.admin.id" ),
                                             jProps.getProperty( "jdbc.admin.password" ) );

@@ -1,5 +1,17 @@
 Title: Changelog
 
+#### 2013-08-14  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-39
+
+* Cleaned out unused config in IT tests, centralized common config 
+  to Selenium IT module's custom properties file.
+
+* Patches to the three non-JDBC IT tests made so they're now all running 
+  except for one test (RenameProfile), two JDBC IT tests still inoperative.
+
+* Removed config references to long-discontinued "jspwiki.admin.user" value.
+ 
 #### 2013-08-13  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-38

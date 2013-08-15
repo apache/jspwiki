@@ -73,7 +73,7 @@ public class JDBCGroupDatabaseTest extends TestCase
             // ignore
         }
         Context ctx = (Context) initCtx.lookup( "java:comp/env" );
-        DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jdbc.properties" ) );
+        DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ) );
         ctx.bind( JDBCGroupDatabase.DEFAULT_GROUPDB_DATASOURCE, ds );
 
         // Get the JDBC connection and init tables

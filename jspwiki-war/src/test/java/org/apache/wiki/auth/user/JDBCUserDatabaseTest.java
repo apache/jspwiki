@@ -97,7 +97,7 @@ public class JDBCUserDatabaseTest extends TestCase
             // ignore
         }
         Context ctx = (Context) initCtx.lookup( "java:comp/env" );
-        DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jdbc.properties" ) );
+        DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ) );
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
