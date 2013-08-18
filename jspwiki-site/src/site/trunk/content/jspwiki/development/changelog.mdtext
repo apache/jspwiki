@@ -2,6 +2,14 @@ Title: Changelog
 
 #### 2013-08-15  Glen Mazza (gmazza AT apache DOT org)
 
+* 2.10.0-svn-41
+
+* Removed "incubator" from JSPWiki taglib URI, removed deprecated in 2004 RSSLinkTag
+
+* Some simplifications to web.xml put in, taking advantage of 2.5 web.xml format.
+ 
+#### 2013-08-15  Glen Mazza (gmazza AT apache DOT org)
+
 * 2.10.0-svn-40
 
 * Removed unneeded config files in Selenium IT module, changed its packaging to WAR

@@ -155,7 +155,7 @@ public interface UserDatabase
     /**
      * Initializes the user database based on values from a Properties object.
      */
-    void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
+    void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Factory method that instantiates a new user profile.

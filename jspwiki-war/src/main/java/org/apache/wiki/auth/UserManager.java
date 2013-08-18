@@ -171,6 +171,10 @@ public final class UserManager
         {
             log.error( "You are not allowed to access this user database class", e );
         }
+        catch( WikiSecurityException e )
+        {
+            log.error( "Exception initializing user database: " + e.getMessage() );
+        }
         finally
         {
             if( m_database == null )
@@ -669,6 +673,7 @@ public final class UserManager
 
         /**
          * No-op.
+         *
          * @param engine the wiki engine
          * @param props the properties used to initialize the wiki engine
          * @throws NoRequiredPropertyException never...
@@ -720,7 +725,7 @@ public final class UserManager
          * Constructs a new Task for saving a user profile.
          * @param engine the wiki engine
          * @deprecated will be removed in 2.10 scope. Consider using 
-         * {@link UserManager.SaveUserProfileTask#UserManager.SaveUserProfileTask(WikiEngine, Locale)} instead
+         * {@link UserManager.SaveUserProfileTask(WikiEngine, Locale)} instead
          */
         @Deprecated
         public SaveUserProfileTask( WikiEngine engine )

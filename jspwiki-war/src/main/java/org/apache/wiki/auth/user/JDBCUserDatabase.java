@@ -450,7 +450,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
+    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
         String userTable;
         String role;
@@ -542,8 +542,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         }
         catch( SQLException e )
         {
-            log.error( "JDBCUserDatabase initialization error: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
+            log.error( "DB connectivity error: " + e.getMessage() );
+            throw new WikiSecurityException("DB connectivity error: " + e.getMessage(), e );
         }
         finally
         {
@@ -572,7 +572,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         catch( SQLException e )
         {
             log.warn( "JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
         finally
         {

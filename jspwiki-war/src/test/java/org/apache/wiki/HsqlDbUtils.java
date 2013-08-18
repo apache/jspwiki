@@ -103,7 +103,7 @@ public class HsqlDbUtils
         hsqlServer.setDatabasePath( 0, hProps.getProperty( "server.database.0" ) );
         hsqlServer.start();
         
-        Class.forName( "org.hsqldb.jdbcDriver" );
+        Class.forName( "org.hsqldb.jdbc.JDBCDriver" );
         hsqlServer.checkRunning( true ); // throws RuntimeException if not running
     }
     

@@ -534,8 +534,8 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( SQLException e )
         {
-            log.error( "JDBCGroupDatabase initialization error: " + e );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e );
+            log.error( "DB connectivity error: " + e.getMessage() );
+            throw new WikiSecurityException("DB connectivity error: " + e.getMessage(), e );
         }
         finally
         {
@@ -564,7 +564,6 @@ public class JDBCGroupDatabase implements GroupDatabase
         catch( SQLException e )
         {
             log.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e);
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e);
         }
         finally
         {

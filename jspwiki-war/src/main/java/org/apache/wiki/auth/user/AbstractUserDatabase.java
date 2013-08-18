@@ -183,7 +183,8 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
-    public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
+    public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException,
+            WikiSecurityException;
 
     /**
      * Factory method that instantiates a new DefaultUserProfile with a new, distinct
