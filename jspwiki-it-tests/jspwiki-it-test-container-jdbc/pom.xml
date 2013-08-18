@@ -72,7 +72,7 @@
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
         <configuration>
-          <contextFile>target/${project.artifactId}/WEB-INF/tomcat7-context.xml</contextFile>
+          <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
         </configuration>
         <dependencies>
           <dependency>

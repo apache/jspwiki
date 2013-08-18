@@ -18,7 +18,7 @@
     under the License.  
 -->
 <Context>
-    <Resource name="jdbc/GroupDatabase" 
+    <Resource name="jdbc/GroupDatabase"
             auth="Container"
             type="javax.sql.DataSource"
             maxActive="10" 
@@ -26,7 +26,7 @@
             maxWait="5000"
             username="SA" 
             password=""
-            driverClassName="org.hsqldb.jdbcDriver"
+            driverClassName="org.hsqldb.jdbc.JDBCDriver"
             url="jdbc:hsqldb:hsql://localhost/jspwiki"
     />
     
@@ -38,7 +38,7 @@
             maxWait="5000"
             username="SA" 
             password=""
-            driverClassName="org.hsqldb.jdbcDriver"
+            driverClassName="org.hsqldb.jdbc.JDBCDriver"
             url="jdbc:hsqldb:hsql://localhost/jspwiki"
     />
 </Context>

@@ -37,9 +37,9 @@
     <module>jspwiki-selenium-tests</module>
     <module>jspwiki-it-test-custom</module>
     <!--module>jspwiki-it-test-custom-absolute-urls</module>
-    <module>jspwiki-it-test-custom-jdbc</module>
-    <module>jspwiki-it-test-container</module>
-    <module>jspwiki-it-test-container-jdbc</module-->
+    <module>jspwiki-it-test-container</module-->
+    <!--module>jspwiki-it-test-container-jdbc</module-->
+    <!--module>jspwiki-it-test-custom-jdbc</module-->
   </modules>
   
   <profiles>
@@ -67,8 +67,9 @@
             <artifactId>maven-war-plugin</artifactId>
             <version>2.4</version>
           </plugin>
-          
-          <plugin> <!-- exec-maven-plugin does not accept forked executions (!) -->
+
+          <!-- exec-maven-plugin does not accept forked executions (!) -->
+          <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.7</version>
             <executions>
@@ -79,11 +80,11 @@
                 <configuration>
                   <target>
                     <property name="compile_classpath" refid="maven.compile.classpath" />
-                    <echo message="starting hsqldb..." />
+                    <echo message="**** starting hsqldb..." />
                     <exec executable="java" dir="${env.JAVA_HOME}/bin" spawn="true">
                         <arg value="-classpath" />
                         <arg value="${compile_classpath}" />
-                        <arg value="org.apache.wiki.HsqlDbUtils"/>
+                        <arg value="org.apache.wiki.HsqlDbUtilsIT"/>
                         <arg value="setUp" />
                         <arg value="jspwiki-selenium-tests/src/main/config/hsql-userdb-setup.ddl" />
                     </exec>  
@@ -98,11 +99,11 @@
                 <configuration>
                   <target>
                     <property name="compile_classpath" refid="maven.compile.classpath" />
-                    <echo message="stopping hsqldb..." />
+                    <echo message="***** stopping hsqldb..." />
                     <exec executable="java" dir="${env.JAVA_HOME}/bin" spawn="true">
                         <arg value="-classpath" />
                         <arg value="${compile_classpath}" />
-                        <arg value="org.apache.wiki.HsqlDbUtils"/>
+                        <arg value="org.apache.wiki.HsqlDbUtilsIT"/>
                         <arg value="tearDown" />
                         <arg value="jspwiki-selenium-tests/src/main/config/hsql-userdb-teardown.ddl" />
                     </exec>  
@@ -111,15 +112,15 @@
               </execution>
             </executions>
           </plugin>
-          
+
+            <!-- <browser>*firefox</browser> -->
+            <!-- <browser>*iexplore</browser> -->
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>selenium-maven-plugin</artifactId>
             <version>2.3</version>
             <configuration>
               <browser>*googlechrome</browser>
-              <!-- <browser>*firefox</browser> -->
-              <!-- <browser>*iexplore</browser> -->
               <startURL>http://localhost:8080/${project.artifactId}/</startURL>
               <suite>target/test-classes/selenium/TestSuite.html</suite> 
               <background>true</background>

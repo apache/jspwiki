@@ -54,10 +54,10 @@ import org.hsqldb.cmdline.SqlFile;
  * </ol>
  * </code>
  */
-public class HsqlDbUtils
+public class HsqlDbUtilsIT
 {
     
-    private static final Logger LOG = Logger.getLogger( HsqlDbUtils.class );
+    private static final Logger LOG = Logger.getLogger( HsqlDbUtilsIT.class );
     
     Server hsqlServer = null;
     
@@ -91,7 +91,8 @@ public class HsqlDbUtils
      */
     public void start() throws Exception
     {
-        
+        LOG.info( "Attempting to start Hypersonic JDBC server on localhost..." );
+
         // start Hypersonic server
         Properties hProps = loadPropertiesFrom( "/jspwiki-custom.properties" );
         
@@ -105,8 +106,10 @@ public class HsqlDbUtils
         hsqlServer.setDatabasePath( 0, hProps.getProperty( "server.database.0" ) );
         hsqlServer.start();
         
-        Class.forName( "org.hsqldb.jdbcDriver" );
+        Class.forName( "org.hsqldb.jdbc.JDBCDriver" );
         hsqlServer.checkRunning( true ); // throws RuntimeException if not running
+
+        LOG.info( "Hypersonic JDBC server on localhost started" );
     }
     
     /**
@@ -205,7 +208,7 @@ public class HsqlDbUtils
      * @return {@link Properties} holding {@code fileLocation} properties.
      * @throws IOException if {@code fileLocation} cannot be readed.
      */
-    Properties loadPropertiesFrom( String fileLocation ) throws IOException 
+    Properties loadPropertiesFrom( String fileLocation ) throws IOException
     {
         Properties p = new Properties();
         InputStream inStream = this.getClass().getResourceAsStream( fileLocation );
@@ -216,14 +219,15 @@ public class HsqlDbUtils
     
     /* REFACTOR: copy of jspwiki-war/src/test/java/o.a.w.HsqlDbutil, with some minor modifications */
     public static void main( String[] args ) {
-        HsqlDbUtils hsqldb = new HsqlDbUtils();
-        try {
-        hsqldb.start();
-        } catch (Exception e) {}
-        hsqldb.exec(args[1]);
+        HsqlDbUtilsIT hsqldb = new HsqlDbUtilsIT();
+        System.out.println("args = " + ArrayUtils.toString(args));
         if( ArrayUtils.isNotEmpty( args ) && StringUtils.equals( "tearDown", args[0] ) ) {
-    		hsqldb.tearDown();
-    	}
+            hsqldb.tearDown();
+        } else {
+            try {
+                hsqldb.start();
+            } catch (Exception e) {}
+        }
     }
     
 }
