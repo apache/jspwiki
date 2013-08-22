@@ -59,7 +59,7 @@ public final class PropertyReader
      *  
      *  @see #loadWebAppProps(ServletContext)
      */
-    public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.propertyfile.cascade.";
+    public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.custom.cascade.";
 
     public static final String  CUSTOM_JSPWIKI_CONFIG = "/jspwiki-custom.properties";
 
