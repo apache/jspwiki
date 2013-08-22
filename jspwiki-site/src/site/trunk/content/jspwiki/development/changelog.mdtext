@@ -1,5 +1,20 @@
 Title: Changelog
 
+#### 2013-08-17  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-42
+
+* Updated code from using org.hsqldb.jdbcDriver to org.hsqldb.jdbc.JDBCDriver
+
+* Switched from inaccurate NoRequiredPropertyException to somewhat better WikiSecurityException 
+  for database errors in JDBCGroup/UserDatabase (former was giving confusing error messages
+  when the underlying problem was just DB-related).
+
+* More work in IT tests, for JDBC tests to become operative again (not yet finished).
+
+* Renamed HsqlDbUtils to HsqlDBUtilsIT in it-tests, to fully ensure HsqlDBUtils in jspwiki-war
+  isn't being run instead.
+ 
 #### 2013-08-15  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-41

@@ -1,5 +1,17 @@
 2013-08-17  Glen Mazza (gmazza AT apache DOT org)
 
+       * 2.10.0-svn-43
+
+       * Changed jspwiki.propertyfile.cascade to jspwiki.custom.cascade to emphasize cascading is done
+         on top of new jspwiki-custom.properties file if present, the default properties file only if not
+         present.
+
+       * Changed some internal constants from "propertyfile" to "custom" so they more accurately reflect
+         their meaning in 2.10.
+
+        
+2013-08-17  Glen Mazza (gmazza AT apache DOT org)
+
        * 2.10.0-svn-42
 
        * Updated code from using org.hsqldb.jdbcDriver to org.hsqldb.jdbc.JDBCDriver

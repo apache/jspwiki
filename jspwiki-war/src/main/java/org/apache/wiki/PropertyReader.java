@@ -52,14 +52,14 @@ public final class PropertyReader
      *  uses the default as defined by DEFAULT_PROPERTYFILE.
      *  {@value #DEFAULT_JSPWIKI_CONFIG}
      */
-    public static final String PARAM_PROPERTYFILE = "jspwiki.custom.config";
+    public static final String PARAM_CUSTOMCONFIG = "jspwiki.custom.config";
 
     /**
      *  The prefix when you are cascading properties.  
      *  
      *  @see #loadWebAppProps(ServletContext)
      */
-    public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.custom.cascade.";
+    public static final String PARAM_CUSTOMCONFIG_CASCADEPREFIX = "jspwiki.custom.cascade.";
 
     public static final String  CUSTOM_JSPWIKI_CONFIG = "/jspwiki-custom.properties";
 
@@ -74,10 +74,10 @@ public final class PropertyReader
 
     /**
      *  Loads the webapp properties based on servlet context information, 
-     *  or (if absent) based on the Java System Property PARAM_PROPERTYFILE .
+     *  or (if absent) based on the Java System Property PARAM_CUSTOMCONFIG .
      *  Returns a Properties object containing the settings, or null if unable
-     *  to load it. (The default file is WEB-INF/jspwiki.properties, and can
-     *  be overridden by setting PARAM_PROPERTYFILE in the server or webapp
+     *  to load it. (The default file is ini/jspwiki.properties, and can
+     *  be customized by setting PARAM_CUSTOMCONFIG in the server or webapp
      *  configuration.)
      *
      *  <h3>Cascading Properties</h3>
@@ -90,9 +90,9 @@ public final class PropertyReader
      *  <p>
      *  You define a cascade in the context mapping of your servlet container.
      *  <pre>
-     *  jspwiki.properties.cascade.1
-     *  jspwiki.properties.cascade.2
-     *  jspwiki.properties.cascade.3
+     *  jspwiki.custom.cascade.1
+     *  jspwiki.custom.cascade.2
+     *  jspwiki.custom.cascade.3
      *  </pre>
      *  and so on. You have to number your cascade in a descending way starting
      *  with "1". This means you cannot leave out numbers in your cascade. This
@@ -103,7 +103,7 @@ public final class PropertyReader
      */
     public static Properties loadWebAppProps( ServletContext context )
     {
-        String propertyFile = getInitParameter( context, PARAM_PROPERTYFILE );
+        String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG);
         InputStream propertyStream = null;
 
         try
@@ -116,14 +116,14 @@ public final class PropertyReader
             //
             if( propertyFile == null )
             {
-                context.log("No " + PARAM_PROPERTYFILE + " defined for this context, " +
+                context.log("No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
                         "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG);
                 //  Use the custom property file at the default location
                 propertyStream = config_class.getResourceAsStream(CUSTOM_JSPWIKI_CONFIG);
             }
             else
             {
-                context.log(PARAM_PROPERTYFILE + " defined, using " + propertyFile + " as the custom properties file.");
+                context.log(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
             }
 
@@ -271,7 +271,7 @@ public final class PropertyReader
      */
     private static void loadWebAppPropsCascade(ServletContext context, Properties defaultProperties)
     {
-        if( getInitParameter(context,PARAM_PROPERTYFILE_CASCADEPREFIX + "1") == null )
+        if( getInitParameter(context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + "1") == null )
         {
             context.log(" No cascading properties defined for this context");
             return;
@@ -284,7 +284,7 @@ public final class PropertyReader
         while (more)
         {
             depth++;
-            String propertyFile = getInitParameter(context,PARAM_PROPERTYFILE_CASCADEPREFIX + depth);
+            String propertyFile = getInitParameter(context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + depth);
 
             if (propertyFile == null)
             {
