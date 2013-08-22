@@ -35,11 +35,11 @@
   
   <modules>
     <module>jspwiki-selenium-tests</module>
-    <module>jspwiki-it-test-custom</module>
+    <!--module>jspwiki-it-test-custom</module-->
     <!--module>jspwiki-it-test-custom-absolute-urls</module>
     <module>jspwiki-it-test-container</module-->
     <!--module>jspwiki-it-test-container-jdbc</module-->
-    <!--module>jspwiki-it-test-custom-jdbc</module-->
+    <module>jspwiki-it-test-custom-jdbc</module>
   </modules>
   
   <profiles>
@@ -68,47 +68,41 @@
             <version>2.4</version>
           </plugin>
 
-          <!-- exec-maven-plugin does not accept forked executions (!) -->
+          <!-- Activates the HSQLDB database for IT tests -->
           <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
+            <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
+            <artifactId>inmemdb-maven-plugin</artifactId>
+            <version>1.3.0</version>
+            <configuration>
+              <monitorKey>inmem</monitorKey>
+              <monitorPort>11157</monitorPort>
+            </configuration>
             <executions>
               <execution>
-                <id>db-setUp</id>
+                <id>run</id>
                 <phase>pre-integration-test</phase>
-                <goals><goal>run</goal></goals>
+                <goals>
+                  <goal>run</goal>
+                </goals>
                 <configuration>
-                  <target>
-                    <property name="compile_classpath" refid="maven.compile.classpath" />
-                    <echo message="**** starting hsqldb..." />
-                    <exec executable="java" dir="${env.JAVA_HOME}/bin" spawn="true">
-                        <arg value="-classpath" />
-                        <arg value="${compile_classpath}" />
-                        <arg value="org.apache.wiki.HsqlDbUtilsIT"/>
-                        <arg value="setUp" />
-                        <arg value="jspwiki-selenium-tests/src/main/config/hsql-userdb-setup.ddl" />
-                    </exec>  
-                  </target>
+                  <daemon>true</daemon>
+                  <type>hsqldb</type>
+                  <database>jspwiki</database>
+                  <username>sa</username>
+                  <password></password>
+                  <sources>
+                    <script>
+                      <sourceFile>jspwiki-selenium-tests/src/main/config/hsql-userdb-setup.sql</sourceFile>
+                    </script>
+                  </sources>
                 </configuration>
               </execution>
-              
               <execution>
-                <id>db-tearDown</id>
+                <id>stop</id>
                 <phase>post-integration-test</phase>
-                <goals><goal>run</goal></goals>
-                <configuration>
-                  <target>
-                    <property name="compile_classpath" refid="maven.compile.classpath" />
-                    <echo message="***** stopping hsqldb..." />
-                    <exec executable="java" dir="${env.JAVA_HOME}/bin" spawn="true">
-                        <arg value="-classpath" />
-                        <arg value="${compile_classpath}" />
-                        <arg value="org.apache.wiki.HsqlDbUtilsIT"/>
-                        <arg value="tearDown" />
-                        <arg value="jspwiki-selenium-tests/src/main/config/hsql-userdb-teardown.ddl" />
-                    </exec>  
-                  </target>
-                </configuration>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -166,6 +160,13 @@
                 <phase>post-integration-test</phase>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.3.0</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
         </pluginManagement>

@@ -66,20 +66,18 @@
         <artifactId>maven-antrun-plugin</artifactId>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <configuration>
-          <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.3.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
+        <plugin>
+            <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
+            <artifactId>inmemdb-maven-plugin</artifactId>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <configuration>
+                <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
+            </configuration>
+        </plugin>
 
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -88,28 +86,5 @@
 
     </plugins>
   </build>
-  
-  <dependencies>
-   <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
 
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>sqltool</artifactId>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
 </project>
