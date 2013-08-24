@@ -27,7 +27,8 @@
     <version>2.10.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>jspwiki-it-test-container</artifactId>
+  <!-- Container Managed Authentication -->
+  <artifactId>jspwiki-it-test-cma</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki-it-test-container (container auth, relative URLs)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
@@ -43,17 +44,21 @@
   
   <build>
     <finalName>${project.artifactId}</finalName>
-    <plugins> <!-- selenium test execution -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <configuration>
+          <!-- Using CMA, so Tomcat instance needs a tomcat-users.xml w/usernames & passwords -->
+          <tomcatUsers>
+            ${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat-users.xml
+          </tomcatUsers>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>selenium-maven-plugin</artifactId>
       </plugin>
-      
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-      </plugin>
-
     </plugins>
   </build>
 </project>

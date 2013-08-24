@@ -35,11 +35,11 @@
   
   <modules>
     <module>jspwiki-selenium-tests</module>
-    <!--module>jspwiki-it-test-custom</module-->
-    <!--module>jspwiki-it-test-custom-absolute-urls</module>
-    <module>jspwiki-it-test-container</module-->
-    <!--module>jspwiki-it-test-container-jdbc</module-->
+    <module>jspwiki-it-test-custom</module>
+    <module>jspwiki-it-test-custom-absolute-urls</module>
     <module>jspwiki-it-test-custom-jdbc</module>
+    <module>jspwiki-it-test-cma</module>
+    <module>jspwiki-it-test-cma-jdbc</module>
   </modules>
   
   <profiles>
@@ -130,6 +130,8 @@
             </executions>
           </plugin>
           
+          <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file)
+               located in pom.xml of submodules using them. -->
           <plugin>
             <groupId>org.apache.tomcat.maven</groupId>
             <artifactId>tomcat7-maven-plugin</artifactId>
@@ -142,9 +144,6 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
-                  <additionalConfigFilesDir>
-                    jspwiki-selenium-tests/src/main/config/tomcatconf
-                  </additionalConfigFilesDir>
                   <fork>true</fork>
                   <systemProperties>
                     <user.language>en</user.language>

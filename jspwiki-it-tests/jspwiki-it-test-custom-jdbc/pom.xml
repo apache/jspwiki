@@ -44,28 +44,7 @@
   <build>
     <finalName>${project.artifactId}</finalName>
     
-    <!-- So we can reuse o.a.w.HsqlDbUtils, but it should be loaded as a dependency (i.e.: jspwiki-test-support, 
-         alongside TestEngine, and other test classes). Btw, this HsqlDbUtils is slightly modified, as it 
-         reads all files from target/classes + has a public static void main(String[]) method -->
-    <sourceDirectory>${project.basedir}/../jspwiki-selenium-tests/src/main/java</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    
     <plugins>
-
-      <!-- selenium test execution -->
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-      </plugin>
-
         <plugin>
             <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
             <artifactId>inmemdb-maven-plugin</artifactId>
@@ -75,7 +54,8 @@
             <groupId>org.apache.tomcat.maven</groupId>
             <artifactId>tomcat7-maven-plugin</artifactId>
             <configuration>
-                <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
+              <!-- Using JDBC for User & Group info, so Tomcat instance needs JNDI lookups for database -->
+              <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
             </configuration>
         </plugin>
 
@@ -83,7 +63,6 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>selenium-maven-plugin</artifactId>
         </plugin>
-
     </plugins>
   </build>
 

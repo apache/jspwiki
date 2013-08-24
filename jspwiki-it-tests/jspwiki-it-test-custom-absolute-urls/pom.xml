@@ -43,15 +43,14 @@
   
   <build>
     <finalName>${project.artifactId}</finalName>
-    <plugins> <!-- selenium test execution -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>selenium-maven-plugin</artifactId>
-      </plugin>
-      
+    <plugins>
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>selenium-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

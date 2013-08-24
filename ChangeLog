@@ -1,3 +1,12 @@
+2013-08-24  Glen Mazza (gmazza AT apache DOT org)
+
+       * No revision number (IT tests change only)
+
+       * jspwiki-it-test-container-jdbc test now working, so all five IT test submodules are working 
+         (except for RenameProfile which fails with all tests).
+
+       * renamed the two "container" tests to more descriptive "cma" (container-managed authentication).
+        
 2013-08-22  Glen Mazza (gmazza AT apache DOT org)
 
        * No revision number (IT tests change only)

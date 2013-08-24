@@ -40,27 +40,5 @@
       <version>${project.version}</version>
       <type>war</type>
     </dependency>
-    
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>sqltool</artifactId>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
 </project>

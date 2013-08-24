@@ -26,8 +26,9 @@
     <artifactId>jspwiki-it-builder</artifactId>
     <version>2.10.0-SNAPSHOT</version>
   </parent>
-  
-  <artifactId>jspwiki-it-test-container-jdbc</artifactId>
+
+  <!-- Container Managed Authentication using JDBC instead of XML files for user and group info -->
+  <artifactId>jspwiki-it-test-cma-jdbc</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki-it-test-container-jdbc (container auth, relative URLs, JDBC database)</description>
   <packaging>war</packaging> <!-- this enables tests reuse [2/3] -->
@@ -44,15 +45,7 @@
   <build>
     <finalName>${project.artifactId}</finalName>
     
-    <!-- So we can reuse o.a.w.HsqlDbUtils, but it should be loaded as a dependency (i.e.: jspwiki-test-support, 
-         alongside TestEngine, and other test classes). Btw, this HsqlDbUtils is slightly modified, as it 
-         reads all files from target/classes + has a public static void main(String[]) method -->
-    <sourceDirectory>${project.basedir}/../jspwiki-selenium-tests/src/main/java</sourceDirectory>
     <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
       <resource>
         <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
         <filtering>true</filtering>
@@ -69,6 +62,11 @@
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
         <configuration>
+          <!-- Using CMA, so Tomcat instance needs a tomcat-users.xml w/usernames & passwords -->
+          <tomcatUsers>
+            ${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat-users.xml
+          </tomcatUsers>
+          <!-- Using JDBC for User & Group info, so Tomcat instance needs JNDI lookups for database -->
           <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
         </configuration>
       </plugin>
