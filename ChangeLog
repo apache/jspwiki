@@ -1,3 +1,11 @@
+2013-08-25  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-44
+
+       * Added jspwiki.login.throttling (default true, as in Java code) to default jspwiki.properties
+       
+       * Removed unnecessary config from IT test's jspwiki-custom.properties.
+        
 2013-08-24  Glen Mazza (gmazza AT apache DOT org)
 
        * No revision number (IT tests change only)

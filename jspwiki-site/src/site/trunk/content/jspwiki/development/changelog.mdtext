@@ -1,5 +1,36 @@
 Title: Changelog
 
+#### 2013-08-24  Glen Mazza (gmazza AT apache DOT org)
+
+* No revision number (IT tests change only)
+
+* jspwiki-it-test-container-jdbc test now working, so all five IT test submodules are working 
+  (except for RenameProfile which fails with all tests).
+
+* renamed the two "container" tests to more descriptive "cma" (container-managed authentication).
+ 
+#### 2013-08-22  Glen Mazza (gmazza AT apache DOT org)
+
+* No revision number (IT tests change only)
+
+* For IT tests switched to Brian Matthew's inmemdb-maven-plugin used by Roller, creates an in-memory
+  HSQLDB database with a lifespan that of the IT tests themselves (so no Ant tasks and no DB drop 
+  scripts needed).
+
+* jspwiki-it-test-custom-jdbc test now working, only one still not operative is -container-jdbc,
+  which is up from 0 to 25 percent working.
+ 
+#### 2013-08-22  Glen Mazza (gmazza AT apache DOT org)
+
+* 2.10.0-svn-43
+
+* Changed jspwiki.propertyfile.cascade to jspwiki.custom.cascade to emphasize cascading is done
+  on top of new jspwiki-custom.properties file if present, the default properties file only if not
+  present.
+
+* Changed some internal constants from "propertyfile" to "custom" so they more accurately reflect
+  their meaning in 2.10.
+ 
 #### 2013-08-17  Glen Mazza (gmazza AT apache DOT org)
 
 * 2.10.0-svn-42

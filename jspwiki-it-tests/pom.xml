@@ -53,7 +53,7 @@
             <filtering>true</filtering>
           </testResource>
         </testResources>
-        
+
         <resources>
           <resource><!-- this enables tests reuse [2/2] -->
             <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
@@ -116,7 +116,7 @@
             <configuration>
               <browser>*googlechrome</browser>
               <startURL>http://localhost:8080/${project.artifactId}/</startURL>
-              <suite>target/test-classes/selenium/TestSuite.html</suite> 
+              <suite>target/test-classes/selenium/TestSuite.html</suite>
               <background>true</background>
             </configuration>
             <executions>
@@ -126,10 +126,10 @@
                 <goals>
                   <goal>selenese</goal>
                 </goals>
-              </execution>                               
+              </execution>
             </executions>
           </plugin>
-          
+
           <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file)
                located in pom.xml of submodules using them. -->
           <plugin>
@@ -170,7 +170,7 @@
         </plugins>
         </pluginManagement>
       </build>
-      
+
       <dependencies>
         <dependency>
           <groupId>org.apache.jspwiki</groupId>
@@ -178,7 +178,7 @@
           <version>${project.version}</version>
           <type>war</type>
         </dependency>
-      
+
         <dependency>
           <groupId>org.seleniumhq.selenium</groupId>
           <!-- (un)comment based on your browser preferences for tests execution -->
