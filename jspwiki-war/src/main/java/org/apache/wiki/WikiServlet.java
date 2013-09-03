@@ -22,6 +22,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.url.DefaultURLConstructor;
@@ -64,6 +65,7 @@ public class WikiServlet
     public void destroy()
     {
         log.info("WikiServlet shutdown.");
+        CacheManager.getInstance().shutdown();
         m_engine.shutdown();
         super.destroy();
     }

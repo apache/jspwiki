@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -47,6 +48,10 @@ public class AttachmentManagerTest extends TestCase
     public void setUp()
         throws Exception
     {
+        CacheManager m_cacheManager = CacheManager.getInstance();
+        m_cacheManager.clearAll();
+        m_cacheManager.removalAll();
+
         m_engine  = new TestEngine(props);
         m_manager = m_engine.getAttachmentManager();
 
@@ -336,7 +341,7 @@ public class AttachmentManagerTest extends TestCase
                     m_engine.pageExists( att.getName() ) );
     }
 
-    public void testNonexistantPage() throws Exception
+    public void testNonexistentPage() throws Exception
     {
         try
         {

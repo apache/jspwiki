@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -56,6 +57,7 @@ public class RSSGeneratorTest extends TestCase
     {
         props.setProperty( WikiEngine.PROP_BASEURL, "http://localhost/" );
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
+        CacheManager.getInstance().removalAll();
         m_testEngine = new TestEngine(props);
     }
 

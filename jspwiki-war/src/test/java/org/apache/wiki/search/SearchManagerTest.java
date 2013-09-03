@@ -25,6 +25,7 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import org.apache.wiki.SearchResult;
@@ -48,7 +49,8 @@ public class SearchManagerTest extends TestCase {
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
-        
+
+        CacheManager.getInstance().removalAll();
         m_engine = new TestEngine( props );
         m_mgr = m_engine.getSearchManager();
     }

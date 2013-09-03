@@ -230,7 +230,7 @@ lucene-memory-4.4.0.jar                     LICENSE
 mail-1.4.7.jar                              doc/LICENSE.cddl
 nekohtml-0.9.5.jar                          LICENSE
 oro-2.0.8.jar                               LICENSE
-oscache-2.3.jar                             doc/LICENSE.OpenSymphony
+ehcache-core-2.6.6.jar                      LICENSE
 sandler-0.5.jar                             doc/LICENSE.sandler
 servlet-api-2.5.jar                         doc/LICENSE.cddl
 xmlrpc-2.0.1.jar                            LICENSE

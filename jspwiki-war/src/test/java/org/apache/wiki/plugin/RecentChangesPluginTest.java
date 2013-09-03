@@ -25,6 +25,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -40,6 +41,7 @@ public class RecentChangesPluginTest extends TestCase {
 	PluginManager manager;
 
 	public void setUp() throws Exception {
+        CacheManager.getInstance().removalAll();
 		testEngine = new TestEngine(props);
 
 		testEngine.saveText("TestPage01", "Some Text for testing 01");
@@ -63,23 +65,17 @@ public class RecentChangesPluginTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testSimple() throws Exception {
-		context = new WikiContext(testEngine, new WikiPage(testEngine,
-				"TestPage01"));
+		context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage01"));
 
-		String res = manager.execute(context,
-				"{INSERT org.apache.wiki.plugin.RecentChangesPlugin}");
+		String res = manager.execute(context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}");
 
 		// we don't want to compare the complete html returned, but check if
 		// certain Strings are present and other
 		// Strings are not present
-		assertTrue(res
-				.contains("<table cellpadding='4' class='recentchanges'>"));
-		assertTrue(res
-				.contains("<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>"));
-		assertTrue(res
-				.contains("<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>"));
-		assertTrue(res
-				.contains("<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>"));
+		assertTrue(res.contains("<table cellpadding='4' class='recentchanges'>"));
+		assertTrue(res.contains("<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>"));
+		assertTrue(res.contains("<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>"));
+		assertTrue(res.contains("<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>"));
 
 	}
 
@@ -89,21 +85,16 @@ public class RecentChangesPluginTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testParmInClude() throws Exception {
-		context = new WikiContext(testEngine, new WikiPage(testEngine,
-				"TestPage02"));
+		context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage02"));
 
 		String res = manager
 				.execute(context,
 						"{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}");
 
-		assertTrue(res
-				.contains("<table cellpadding='4' class='recentchanges'>"));
-		assertFalse(res
-				.contains("<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>"));
-		assertTrue(res
-				.contains("<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>"));
-		assertFalse(res
-				.contains("<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>"));
+		assertTrue(res.contains("<table cellpadding='4' class='recentchanges'>"));
+		assertFalse(res.contains("<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>"));
+		assertTrue(res.contains("<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>"));
+		assertFalse(res.contains("<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>"));
 
 	}
 
@@ -113,21 +104,16 @@ public class RecentChangesPluginTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testParmExClude() throws Exception {
-		context = new WikiContext(testEngine, new WikiPage(testEngine,
-				"TestPage03"));
+		context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage03"));
 
 		String res = manager
 				.execute(context,
 						"{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}");
 
-		assertTrue(res
-				.contains("<table cellpadding='4' class='recentchanges'>"));
-		assertTrue(res
-				.contains("<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>"));
-		assertTrue(res
-				.contains("<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>"));
-		assertFalse(res
-				.contains("<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>"));
+		assertTrue(res.contains("<table cellpadding='4' class='recentchanges'>"));
+		assertTrue(res.contains("<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>"));
+		assertTrue(res.contains("<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>"));
+		assertFalse(res.contains("<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>"));
 
 	}
 

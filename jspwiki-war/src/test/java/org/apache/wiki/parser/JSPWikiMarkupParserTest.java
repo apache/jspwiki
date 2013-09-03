@@ -33,6 +33,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
@@ -59,6 +60,8 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void setUp()
     throws Exception
     {
+        CacheManager.getInstance().removalAll();
+
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         testEngine = new TestEngine( props );
     }

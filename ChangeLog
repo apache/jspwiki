@@ -1,3 +1,9 @@
+2013-09-03  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-45
+
+       * fixed JSPWIKI-792, replace opensymphony's oscache with ehcache
+
 2013-08-25  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-44

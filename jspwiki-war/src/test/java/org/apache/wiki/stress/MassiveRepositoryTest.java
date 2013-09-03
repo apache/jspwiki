@@ -24,6 +24,7 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.providers.CachingProvider;
@@ -38,17 +39,16 @@ public class MassiveRepositoryTest extends TestCase
 
     protected void setUp() throws Exception
     {
-        super.setUp();     
+        super.setUp();
 
-        props.setProperty( CachingProvider.PROP_CACHECAPACITY, "1000" );
-
-        
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
         // Remove file
         File f = new File( files );
 
         TestEngine.deleteAll(f);
+
+        CacheManager.getInstance().removalAll();
 
         engine = new TestEngine(props);
     }

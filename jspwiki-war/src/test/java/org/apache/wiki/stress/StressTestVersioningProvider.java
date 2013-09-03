@@ -41,7 +41,6 @@ public class StressTestVersioningProvider extends TestCase
     public void setUp()
         throws Exception
     {
-        props.setProperty( CachingProvider.PROP_CACHECAPACITY, "10000" );
         engine = new TestEngine(props);
     }
 

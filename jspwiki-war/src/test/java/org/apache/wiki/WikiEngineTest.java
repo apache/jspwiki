@@ -30,6 +30,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
@@ -68,11 +69,8 @@ public class WikiEngineTest extends TestCase
         throws Exception
     {
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-        // We'll need a shorter-than-default consistency check for
-        // the page-changed checks. This will cause additional load
-        // to the file system, though.
-        props.setProperty( CachingProvider.PROP_CACHECHECKINTERVAL, 
-                           Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
+
+        CacheManager.getInstance().removalAll();
 
         TestEngine.emptyWorkDir();
         m_engine = new TestEngine(props);        
@@ -725,118 +723,7 @@ public class WikiEngineTest extends TestCase
         
         assertEquals( "content1", "", engine.getText(NAME1, 1).trim() );
     }
-    
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModificationRefs()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
 
-        m_engine.saveText( NAME1, "[Foobar]" );
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        Collection c = refMgr.findUncreated();
-        assertTrue( "Non-existent reference not detected by ReferenceManager",
-            Util.collectionContains( c, "Foobar" ));
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
-
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        assertTrue( "No file!", saved.exists() );
-
-        FileWriter out = new FileWriter( saved );
-        FileUtil.copyContents( new StringReader("[Puppaa]"), out );
-        out.close();
-
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD ); // Wait five seconds for CachingProvider to wake up.
-
-        String text = m_engine.getText( NAME1 );
-
-        assertEquals( "wrong contents", "[Puppaa]", text );
-
-        c = refMgr.findUncreated();
-
-        assertTrue( "Non-existent reference after external page change " +
-                    "not detected by ReferenceManager",
-                    Util.collectionContains( c, "Puppaa" ));
-    }
-
-
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModificationRefsDeleted()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-
-        m_engine.saveText( NAME1, "[Foobar]" );
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        Collection c = refMgr.findUncreated();
-        assertEquals( "uncreated count", 1, c.size() );
-        assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
-
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        assertTrue( "No file!", saved.exists() );
-
-        saved.delete();
-
-        assertFalse( "File not deleted!", saved.exists() );
-
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD ); // Wait five seconds for CachingProvider to catch up.
-
-        WikiPage p = m_engine.getPage( NAME1 );
-
-        assertNull( "Got page!", p );
-
-        String text = m_engine.getText( NAME1 );
-
-        assertEquals( "wrong contents", "", text );
-
-        c = refMgr.findUncreated();
-        assertEquals( "NEW: uncreated count", 0, c.size() );
-    }
-
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModification()
-        throws Exception
-    {
-        m_engine.saveText( NAME1, "Foobar" );
-
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
-
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        assertTrue( "No file!", saved.exists() );
-
-        FileWriter out = new FileWriter( saved );
-        FileUtil.copyContents( new StringReader("Puppaa"), out );
-        out.close();
-
-        // Wait for the caching provider to notice a refresh.
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD );
-
-        // Trim - engine.saveText() may append a newline.
-        String text = m_engine.getText( NAME1 ).trim();
-        assertEquals( "wrong contents", "Puppaa", text );
-    }
 
     /**
      *  Tests BugReadingOfVariableNotWorkingForOlderVersions

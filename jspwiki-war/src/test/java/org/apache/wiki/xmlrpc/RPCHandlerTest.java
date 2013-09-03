@@ -19,6 +19,7 @@
 
 package org.apache.wiki.xmlrpc;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
 import junit.framework.*;
@@ -42,6 +43,7 @@ public class RPCHandlerTest extends TestCase
     public void setUp()
         throws Exception
     {
+        CacheManager.getInstance().removalAll();
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();

@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.WikiContext;
@@ -40,8 +43,6 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.util.TextUtil;
-import com.opensymphony.oscache.base.Cache;
-import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  This class provides a facade towards the differing rendering routines.  You should
@@ -49,13 +50,8 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  want the different side effects to occur - such as WikiFilters.
  *  <p>
  *  This class also manages a rendering cache, i.e. documents are stored between calls.
- *  You may control the size of the cache by using the "jspwiki.renderingManager.cacheSize"
- *  parameter in jspwiki.properties.  The property value is the number of items that
- *  are stored in the cache.  By default, the value of this parameter is taken from
- *  the "jspwiki.cachingProvider.cacheSize" parameter (i.e. the rendering cache is
- *  the same size as the page cache), but you may control them separately.
+ *  You may control the cache by tweaking the ehcache.xml file.
  *  <p>
- *  You can turn caching completely off by stating a cacheSize of zero.
  *
  *  @since  2.4
  */
@@ -67,13 +63,11 @@ public class RenderingManager implements WikiEventListener, InternalModule
 
     private          WikiEngine m_engine;
 
-    /**
-     *  Parameter value for setting the cache size.
-     */
-    public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";
+    private CacheManager m_cacheManager = CacheManager.getInstance();
+
+    /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
     private static final int    DEFAULT_CACHESIZE = 1000;
     private static final String VERSION_DELIMITER = "::";
-    private static final String OSCACHE_ALGORITHM = "com.opensymphony.oscache.base.algorithm.LRUCache";
     private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
     
     /** The name of the default renderer. */
@@ -82,11 +76,10 @@ public class RenderingManager implements WikiEventListener, InternalModule
     /**
      *  Stores the WikiDocuments that have been cached.
      */
-    private              Cache  m_documentCache;
+    private Cache m_documentCache;
+    /** Name of the regular page cache. */
+    public static final String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
 
-    /**
-     *
-     */
     private         Constructor m_rendererConstructor;
 
     /**
@@ -115,24 +108,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
         throws WikiException
     {
         m_engine = engine;
-        int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
 
-        if( cacheSize == -1 )
-        {
-            cacheSize = TextUtil.getIntegerProperty( properties,
-                                                     CachingProvider.PROP_CACHECAPACITY,
-                                                     DEFAULT_CACHESIZE );
-        }
-
-        if( cacheSize > 0 )
-        {
-            m_documentCache = new Cache(true,false,false,false,
-                                        OSCACHE_ALGORITHM,
-                                        cacheSize);
-        }
-        else
-        {
-            log.info( "RenderingManager caching is disabled." );
+        if (m_cacheManager.cacheExists(DOCUMENTCACHE_NAME)) {
+            m_documentCache = m_cacheManager.getCache(DOCUMENTCACHE_NAME);
+        } else {
+            log.info("cache with name " + DOCUMENTCACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
+            m_documentCache = new Cache(DOCUMENTCACHE_NAME, DEFAULT_CACHESIZE, false, false, m_cacheExpiryPeriod, m_cacheExpiryPeriod);
+            m_cacheManager.addCache(m_documentCache);
         }
 
         String renderImplName = properties.getProperty( PROP_RENDERER );
@@ -189,39 +171,24 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @return the rendered wiki document
      * @throws IOException If rendering cannot be accomplished
      */
-    // FIXME: The cache management policy is not very good: deleted/changed pages
-    //        should be detected better.
-    protected WikiDocument getRenderedDocument( WikiContext context, String pagedata )
-        throws IOException
-    {
-        String pageid = context.getRealPage().getName()+VERSION_DELIMITER+context.getRealPage().getVersion();
+    // FIXME: The cache management policy is not very good: deleted/changed pages should be detected better.
+    protected WikiDocument getRenderedDocument(WikiContext context, String pagedata) throws IOException {
+        String pageid = context.getRealPage().getName() + VERSION_DELIMITER + context.getRealPage().getVersion();
 
-        boolean wasUpdated = false;
-
-        if( m_documentCache != null )
-        {
-            try
-            {
-                WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pageid,
-                                                                                m_cacheExpiryPeriod );
-
-                wasUpdated = true;
+            Element element = m_documentCache.get(pageid);
+            if (element != null) {
+                WikiDocument doc = (WikiDocument) element.getObjectValue();
 
                 //
-                //  This check is needed in case the different filters have actually
-                //  changed the page data.
+                //  This check is needed in case the different filters have actually changed the page data.
                 //  FIXME: Figure out a faster method
-                if( pagedata.equals(doc.getPageData()) )
-                {
-                    if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pageid );
+                if (pagedata.equals(doc.getPageData())) {
+                    if (log.isDebugEnabled()) log.debug("Using cached HTML for page " + pageid);
                     return doc;
                 }
+            } else {
+                if (log.isDebugEnabled()) log.debug("Re-rendering and storing " + pageid);
             }
-            catch( NeedsRefreshException e )
-            {
-                if( log.isDebugEnabled() ) log.debug("Re-rendering and storing "+pageid );
-            }
-        }
 
         //
         //  Refresh the data content
@@ -231,20 +198,12 @@ public class RenderingManager implements WikiEventListener, InternalModule
             MarkupParser parser = getParser( context, pagedata );
             WikiDocument doc = parser.parse();
             doc.setPageData( pagedata );
-            if( m_documentCache != null )
-            {
-                m_documentCache.putInCache( pageid, doc );
-                wasUpdated = true;
-            }
+            m_documentCache.put( new Element(pageid, doc ));
             return doc;
         }
         catch( IOException ex )
         {
             log.error("Unable to parse",ex);
-        }
-        finally
-        {
-            if( m_documentCache != null && !wasUpdated ) m_documentCache.cancelUpdate( pageid );
         }
 
         return null;
@@ -262,8 +221,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *  @return Rendered HTML.
      *  @throws IOException If the WikiDocument is poorly formed.
      */
-    public String getHTML( WikiContext context, WikiDocument doc )
-        throws IOException
+    public String getHTML( WikiContext context, WikiDocument doc ) throws IOException
     {
         WikiRenderer rend = getRenderer( context, doc );
 
@@ -296,7 +254,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     }
 
     /**
-     *   Convinience method for rendering, using the default parser and renderer.  Note that
+     *   Convenience method for rendering, using the default parser and renderer.  Note that
      *   you can't use this method to do any arbitrary rendering, as the pagedata MUST
      *   be the data from the that the WikiContext refers to - this method caches the HTML
      *   internally, and will return the cached version.  If the pagedata is different
@@ -336,12 +294,12 @@ public class RenderingManager implements WikiEventListener, InternalModule
             if( m_documentCache != null )
             {
                 String pageName = ((WikiPageEvent) event).getPageName();
-                m_documentCache.flushPattern( pageName );
+                m_documentCache.remove(pageName);
                 Collection referringPages = m_engine.getReferenceManager().findReferrers( pageName );
 
                 //
-                //  Flush also those pages that refer to this page (if an nonexistant page
-                //  appears; we need to flush the HTML that refers to the now-existant page
+                //  Flush also those pages that refer to this page (if an nonexistent page
+                //  appears; we need to flush the HTML that refers to the now-existent page
                 //
                 if( referringPages != null )
                 {
@@ -350,7 +308,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
                     {
                         String page = (String) i.next();
                         if( log.isDebugEnabled() ) log.debug( "Flushing " + page );
-                        m_documentCache.flushPattern( page );
+                        m_documentCache.remove(page);
                     }
                 }
             }

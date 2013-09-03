@@ -66,7 +66,7 @@ public class RenderingManagerTest extends TestCase
         System.out.println("DOM cache speed test:");
         sw.start();
         
-        for( int i = 0; i < 100; i++ )
+        for( int i = 0; i < 300; i++ )
         {
             WikiPage page = m_engine.getPage( "TestPage" );
             String pagedata = m_engine.getPureText( page );
@@ -89,7 +89,7 @@ public class RenderingManagerTest extends TestCase
         sw.reset();
         sw.start();
         
-        for( int i = 0; i < 100; i++ )
+        for( int i = 0; i < 300; i++ )
         {
             WikiPage page = m_engine.getPage( "TestPage" );
             String pagedata = m_engine.getPureText( page );

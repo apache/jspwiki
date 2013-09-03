@@ -71,10 +71,9 @@
     </dependency>
 
     <dependency>
-      <groupId>opensymphony</groupId>
-      <artifactId>oscache</artifactId>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
     </dependency>
-
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
@@ -89,6 +88,11 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+      </dependency>
 
     <dependency>
       <groupId>com.metaparadigm</groupId>
@@ -237,6 +241,7 @@
         - use UglifyJS for JS compression
         - use Less as advanced CSS preprocessor
       -->
+
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
         <artifactId>wro4j-maven-plugin</artifactId>
