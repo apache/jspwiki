@@ -62,4 +62,4 @@ numbers to have to get updated
 [these instructions]: http://apache.org/dev/cmsref.html#local-build
 [Staging website]: http://jspwiki.staging.apache.org/jspwiki/
 [Publish site]: https://cms.apache.org/jspwiki/publish
-[Site's trunk]: https://svn.apache.org/repos/asf/incubator/jspwiki/site/trunk
+[Site's trunk]: https://svn.apache.org/repos/asf/jspwiki/site/trunk
