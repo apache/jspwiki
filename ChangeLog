@@ -1,3 +1,8 @@
+2013-09-15  Glen Mazza (gmazza AT apache DOT org)
+
+       * Removed jspwiki-site under jspwiki-trunk, now just one source of record
+         for the website (jspwiki/site)
+
 2013-09-03  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-45
