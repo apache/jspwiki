@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -46,6 +47,7 @@ public class UndefinedPagesPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
+        CacheManager.getInstance().removalAll();
         testEngine = new TestEngine(props);
 
         testEngine.saveText( "TestPage", "Reference to [Foobar]." );
