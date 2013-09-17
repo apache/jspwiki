@@ -24,6 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.commons.lang.time.StopWatch;
 
 import org.apache.wiki.TestEngine;
@@ -39,6 +40,7 @@ public class RenderingManagerTest extends TestCase
     
     protected void setUp() throws Exception
     {
+        CacheManager.getInstance().removalAll();
         Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         
