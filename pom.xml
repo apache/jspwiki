@@ -490,7 +490,7 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.8</version>
+          <version>0.10</version>
           <configuration>
             <excludes>
               <exclude>mvn_cheat-sheet.txt</exclude> <!-- handy list of maven commands; will be moved to site once we've switched to Maven -->

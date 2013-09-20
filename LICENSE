@@ -241,7 +241,7 @@ commons-el-1.0.jar                          LICENSE
 custom_rhino-0.4.3.jar                      doc/LICENSE.mpl
 hsqldb-2.3.0.jar                            doc/LICENSE.hsqldb
 sqltool-2.3.0.jar                           doc/LICENSE.hsqldb
-jetty-all-7.6.7.v20120910.jar               LICENSE
+jetty-all-8.1.12.v20130726.jar              LICENSE
 junit-4.11.jar                              doc/LICENSE.cpl
 selenium-chrome-driver-2.33.0.jar           LICENSE
 selenium-firefox-driver-2.33.0.jar          LICENSE
