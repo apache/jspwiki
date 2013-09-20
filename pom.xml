@@ -30,7 +30,7 @@
   <name>Apache JSPWiki</name>
   <version>2.10.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <description>Incubating Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
+  <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard J2EE components (Java, servlets, JSP).</description>
   <url>http://jspwiki.apache.org/</url>
 
@@ -46,9 +46,9 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/jspwiki/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jspwiki/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/incubator/jspwiki/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/jspwiki/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/jspwiki/trunk</developerConnection>
+    <url>http://svn.apache.org/viewvc/jspwiki/trunk</url>
   </scm>
 
   <modules>
