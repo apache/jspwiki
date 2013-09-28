@@ -80,11 +80,6 @@ public class CachingProvider
     private long             m_historyCacheMisses = 0;
     private long             m_historyCacheHits   = 0;
 
-    /**
-     *  This can be very long, as normally all modifications are noticed in an earlier stage.
-     */
-    private int              m_pageContentExpiryPeriod = 24*60*60;
-
     // FIXME: This MUST be cached somehow.
 
     private boolean          m_gotall = false;
@@ -106,7 +101,7 @@ public class CachingProvider
             m_cache = m_cacheManager.getCache(CACHE_NAME);
         } else {
             log.info("cache with name " + CACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_cache = new Cache(CACHE_NAME, DEFAULT_CACHECAPACITY, false, false, m_pageContentExpiryPeriod, m_pageContentExpiryPeriod);
+            m_cache = new Cache(CACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
             m_cacheManager.addCache(m_cache);
         }
 
@@ -114,7 +109,7 @@ public class CachingProvider
             m_textCache= m_cacheManager.getCache(TEXTCACHE_NAME);
         } else {
             log.info("cache with name " + TEXTCACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_textCache = new Cache(TEXTCACHE_NAME, DEFAULT_CACHECAPACITY, false, false, m_pageContentExpiryPeriod, m_pageContentExpiryPeriod);
+            m_textCache = new Cache(TEXTCACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
             m_cacheManager.addCache(m_textCache);
         }
 
@@ -122,7 +117,7 @@ public class CachingProvider
             m_historyCache= m_cacheManager.getCache(HISTORYCACHE_NAME);
         } else {
             log.info("cache with name " + HISTORYCACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_historyCache = new Cache(HISTORYCACHE_NAME, DEFAULT_CACHECAPACITY, false, false, m_pageContentExpiryPeriod, m_pageContentExpiryPeriod);
+            m_historyCache = new Cache(HISTORYCACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
             m_cacheManager.addCache(m_historyCache);
         }
 

@@ -53,8 +53,6 @@ public class CachingAttachmentProvider
 
     /** Default cache capacity for now. */
     public static final int m_capacity = 1000;
-    /** Default expiry period for now. */
-    private int m_pageContentExpiryPeriod = 24*60*60;
 
     /**
      *  The cache contains Collection objects which contain Attachment objects.
@@ -95,7 +93,7 @@ public class CachingAttachmentProvider
         if (m_cacheManager.cacheExists(ATTCOLLCACHE_NAME)) {
             m_cache = m_cacheManager.getCache(ATTCOLLCACHE_NAME);
         } else {
-            m_cache = new Cache(ATTCOLLCACHE_NAME, m_capacity, false, false, m_pageContentExpiryPeriod, m_pageContentExpiryPeriod);
+            m_cache = new Cache(ATTCOLLCACHE_NAME, m_capacity, false, false, 0, 0);
             m_cacheManager.addCache(m_cache);
         }
 
@@ -105,7 +103,7 @@ public class CachingAttachmentProvider
         if (m_cacheManager.cacheExists(ATTCACHE_NAME)) {
             m_attCache = m_cacheManager.getCache(ATTCACHE_NAME);
         } else {
-            m_attCache = new Cache(ATTCACHE_NAME, m_capacity, false, false, m_pageContentExpiryPeriod, m_pageContentExpiryPeriod);
+            m_attCache = new Cache(ATTCACHE_NAME, m_capacity, false, false, 0, 0);
             m_cacheManager.addCache(m_attCache);
         }
 
@@ -285,12 +283,12 @@ public class CachingAttachmentProvider
         Element element =   m_cache.get(page.getName());
 
         if (element == null) {
-            log.debug("...wasn't in the cache");
+            log.debug(page.getName() + " wasn't in the cache");
             c = refresh(page);
 
             if (c == null) return null; // No such attachment
         } else {
-            log.debug("...FOUND in the cache");
+            log.debug(page.getName() + " FOUND in the cache");
             c = (Collection<Attachment>) element.getObjectValue();
         }
 

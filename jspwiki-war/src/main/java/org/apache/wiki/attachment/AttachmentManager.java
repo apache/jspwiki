@@ -79,8 +79,6 @@ public class AttachmentManager
 
     /** The capacity of the cache, if you want something else, tweak ehcache.xml. */
     public static final int   DEFAULT_CACHECAPACITY   = 1000;
-    private int expiryPeriod = 24*60*60;
-
 
     /**
      *  Creates a new AttachmentManager.  Note that creation will never fail,
@@ -134,7 +132,7 @@ public class AttachmentManager
                 m_dynamicAttachments = m_cacheManager.getCache(CACHE_NAME);
             } else {
                 log.info("cache with name " + CACHE_NAME + " not found in ehcache.xml, creating it with defaults.");
-                m_dynamicAttachments = new Cache(CACHE_NAME, DEFAULT_CACHECAPACITY, false, false, expiryPeriod, expiryPeriod);
+                m_dynamicAttachments = new Cache(CACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
                 m_cacheManager.addCache(m_dynamicAttachments);
             }
 
