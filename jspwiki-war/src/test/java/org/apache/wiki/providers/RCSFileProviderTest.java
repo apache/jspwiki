@@ -41,6 +41,7 @@ import org.apache.wiki.util.FileUtil;
 public class RCSFileProviderTest extends TestCase
 {
     public static final String NAME1 = "Test1";
+    public static final String NAME2 = "Test2";
 
     Properties props = TestEngine.getTestProperties("/jspwiki-rcs-custom.properties");
 
@@ -155,26 +156,23 @@ public class RCSFileProviderTest extends TestCase
      *  Checks if migration from FileSystemProvider to VersioningFileProvider
      *  works by creating a dummy file without corresponding content in OLD/
      */
-    public void testMigration()
-        throws IOException
-    {
-        if( isRcsInPath )
-        {
+    public void testMigration() throws IOException {
+        if (isRcsInPath) {
             String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
             
-            File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+            File f = new File(files, NAME2 + FileSystemProvider.FILE_EXT );
 
-            Writer out = new FileWriter( f );
-            FileUtil.copyContents( new StringReader("foobar"), out );
+            Writer out = new FileWriter(f);
+            FileUtil.copyContents(new StringReader("foobar"), out);
             out.close();
 
-            String res = engine.getText( NAME1 );
+            String res = engine.getText(NAME2);
 
-            assertEquals( "latest did not work", "foobar", res );
+            assertEquals("latest did not work", "foobar", res);
 
-            res = engine.getText( NAME1, 1 ); // Should be the first version.
+            res = engine.getText(NAME2, 1); // Should be the first version.
 
-            assertEquals( "fetch by direct version did not work", "foobar", res );
+            assertEquals("fetch by direct version did not work", "foobar", res);
         }
     }
 
