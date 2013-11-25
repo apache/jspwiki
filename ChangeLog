@@ -1,3 +1,9 @@
+2013-11-25  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-47
+
+       * fixed JSPWIKI-803 Too strict version requirement on plain editor, maxVersion set to 2.9
+
 2013-09-28  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-46
