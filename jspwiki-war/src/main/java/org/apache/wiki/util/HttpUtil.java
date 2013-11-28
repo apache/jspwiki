@@ -26,25 +26,35 @@ import java.util.Date;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiPage;
+
 
 /**
  *  Contains useful utilities for some common HTTP tasks.
  *
  *  @since 2.1.61.
  */
-public final class HttpUtil
-{
+public final class HttpUtil {
+
     static Logger log = Logger.getLogger( HttpUtil.class );
     
-    /**
-     * Private constructor to prevent direct instantiation.
-     */
-    private HttpUtil()
-    {
+    /** Private constructor to prevent direct instantiation. */
+    private HttpUtil() {
     }
+    
+    /**
+     * returns the remote address by looking into {@code x-forwarded-for} header or, if unavailable, 
+     * into {@link HttpServletRequest#getRemoteAddr()}.
+     * 
+     * @param req http request
+     * @return remote address associated to the request.
+     */
+    public static String getRemoteAddress( HttpServletRequest req ) {
+		return StringUtils.isNotEmpty ( req.getHeader( "x-forwarded-for" ) ) ? req.getHeader( "x-forwarded-for" ) : 
+			                                                                   req.getRemoteAddr();
+	}
 
     /**
      *  Attempts to retrieve the given cookie value from the request.
@@ -58,23 +68,17 @@ public final class HttpUtil
      *  @return Value of the cookie, or null, if there is no such cookie.
      */
 
-    public static String retrieveCookieValue( HttpServletRequest request, String cookieName )
-    {
+    public static String retrieveCookieValue( HttpServletRequest request, String cookieName ) {
         Cookie[] cookies = request.getCookies();
 
-        if( cookies != null )
-        {
-            for( int i = 0; i < cookies.length; i++ )
-            {
-                if( cookies[i].getName().equals( cookieName ) )
-                {
+        if( cookies != null ) {
+            for( int i = 0; i < cookies.length; i++ ) {
+                if( cookies[i].getName().equals( cookieName ) ) {
                     String value = cookies[i].getValue();
-                    if ( value.length() == 0 )
-                    {
+                    if( value.length() == 0 ) {
                         return null;
                     }
-                    if ( value.charAt( 0 ) == '"' && value.charAt( value.length() - 1 ) == '"')
-                    {
+                    if( value.charAt( 0 ) == '"' && value.charAt( value.length() - 1 ) == '"' ) {
                         value = value.substring( 1, value.length() - 1 );
                     }
                     return value;
@@ -93,9 +97,8 @@ public final class HttpUtil
      *  @param p  The page for which the ETag should be created.
      *  @return A String depiction of an ETag.
      */
-    public static String createETag( WikiPage p )
-    {
-        return Long.toString(p.getName().hashCode() ^ p.getLastModified().getTime());
+    public static String createETag( WikiPage p ) {
+        return Long.toString( p.getName().hashCode() ^ p.getLastModified().getTime() );
     }
     
     /**
@@ -104,9 +107,7 @@ public final class HttpUtil
      *  @param page the wiki page to check for
      *  @return the result of the check
      */
-    public static boolean checkFor304( HttpServletRequest req,
-                                       WikiPage page )
-    {
+    public static boolean checkFor304( HttpServletRequest req, WikiPage page ) {
         //
         //  We'll do some handling for CONDITIONAL GET (and return a 304)
         //  If the client has set the following headers, do not try for a 304.
@@ -115,13 +116,10 @@ public final class HttpUtil
         //    cache-control: no-cache
         //
 
-        if( "no-cache".equalsIgnoreCase(req.getHeader("Pragma"))
-            || "no-cache".equalsIgnoreCase(req.getHeader("cache-control"))) 
-        {
+        if( "no-cache".equalsIgnoreCase( req.getHeader( "Pragma" ) )
+            || "no-cache".equalsIgnoreCase( req.getHeader( "cache-control" ) ) ) {
             // Wants specifically a fresh copy
-        } 
-        else 
-        {
+        } else {
             //
             //  HTTP 1.1 ETags go first
             //
@@ -129,8 +127,7 @@ public final class HttpUtil
                         
             String eTag = req.getHeader( "If-None-Match" );
             
-            if( eTag != null && eTag.equals(thisTag) )
-            {
+            if( eTag != null && eTag.equals(thisTag) ) {
                 return true;
             }
             
@@ -140,45 +137,33 @@ public final class HttpUtil
             DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
             Date lastModified = page.getLastModified();
 
-            try
-            {
-                long ifModifiedSince = req.getDateHeader("If-Modified-Since");
+            try {
+                long ifModifiedSince = req.getDateHeader( "If-Modified-Since" );
 
                 //log.info("ifModifiedSince:"+ifModifiedSince);
-                if( ifModifiedSince != -1 )
-                {
+                if( ifModifiedSince != -1 ) {
                     long lastModifiedTime = lastModified.getTime();
 
                     //log.info("lastModifiedTime:" + lastModifiedTime);
-                    if( lastModifiedTime <= ifModifiedSince )
-                    {
+                    if( lastModifiedTime <= ifModifiedSince ) {
                         return true;
                     }
-                } 
-                else
-                {
-                    try 
-                    {
+                } else {
+                    try {
                         String s = req.getHeader("If-Modified-Since");
 
-                        if( s != null ) 
-                        {
+                        if( s != null ) {
                             Date ifModifiedSinceDate = rfcDateFormat.parse(s);
                             //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
-                            if( lastModified.before(ifModifiedSinceDate) ) 
-                            {
+                            if( lastModified.before(ifModifiedSinceDate) ) {
                                 return true;
                             }
                         }
-                    } 
-                    catch (ParseException e) 
-                    {
+                    } catch (ParseException e) {
                         log.warn(e.getLocalizedMessage(), e);
                     }
                 }
-            }
-            catch( IllegalArgumentException e )
-            {
+            } catch( IllegalArgumentException e ) {
                 // Illegal date/time header format.
                 // We fail quietly, and return false.
                 // FIXME: Should really move to ETags.
@@ -191,29 +176,27 @@ public final class HttpUtil
     /**
      *  Attempts to form a valid URI based on the string given.  Currently
      *  it can guess email addresses (mailto:).  If nothing else is given,
-     *  it assumes it to be a http:// url.
+     *  it assumes it to be an http:// url.
      * 
      *  @param uri  URI to take a poke at
      *  @return Possibly a valid URI
      *  @since 2.2.8
      */
-    public static String guessValidURI( String uri )
-    {
-        if( uri.indexOf('@') != -1 )
-        {
-            if( !uri.startsWith("mailto:") )
-            {
+    public static String guessValidURI( String uri ) {
+        if( uri.indexOf( '@' ) != -1 ) {
+            if( !uri.startsWith( "mailto:" ) ) {
                 // Assume this is an email address
-            
-                uri = "mailto:"+uri;
+                uri = "mailto:" + uri;
             }
-        }
-        else if( uri.length() > 0 && !((uri.startsWith("http://") || uri.startsWith("https://")) ))
-        {
-            uri = "http://"+uri;
+        } else if( notBeginningWithHttpOrHttps( uri ) ) {
+            uri = "http://" + uri;
         }
         
         return uri;
     }
+
+	static boolean notBeginningWithHttpOrHttps( String uri ) {
+		return uri.length() > 0 && !( ( uri.startsWith("http://" ) || uri.startsWith( "https://" ) ) );
+	}
 
 }
