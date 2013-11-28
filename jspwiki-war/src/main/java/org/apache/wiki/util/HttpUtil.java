@@ -52,7 +52,7 @@ public final class HttpUtil {
      * @return remote address associated to the request.
      */
     public static String getRemoteAddress( HttpServletRequest req ) {
-		return StringUtils.isNotEmpty ( req.getHeader( "x-forwarded-for" ) ) ? req.getHeader( "x-forwarded-for" ) : 
+		return StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) : 
 			                                                                   req.getRemoteAddr();
 	}
 
