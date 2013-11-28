@@ -75,7 +75,7 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "47";
+    public static final String     BUILD         = "48";
     
     /**
      *  This is the generic version string you should use
@@ -87,8 +87,8 @@ public final class Release
     /**
      *  Private constructor prevents instantiation.
      */
-    private Release()
-    {}
+    private Release() {
+    }
 
     /**
      *  This method is useful for templates, because hopefully it will

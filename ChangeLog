@@ -1,3 +1,11 @@
+2013-11-28  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-48
+
+       * JSPWIKI-804: SpamFilter should support X-Forwarded-For header in the banlist
+         
+       * Lucene upgraded to 4.6, minor upgrades on plugin versions
+
 2013-11-25  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-47
