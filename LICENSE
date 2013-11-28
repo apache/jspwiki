@@ -224,9 +224,9 @@ jrcs-diff-0.4.2.jar                         LICENSE
 jsonrpc-1.0.jar                             LICENSE
 jsp-api-2.1.jar                             LICENSE
 log4j-1.2.17.jar                            LICENSE
-lucene-core-4.4.0.jar                       LICENSE
-lucene-highlighter-4.4.0.jar                LICENSE
-lucene-memory-4.4.0.jar                     LICENSE
+lucene-core-4.6.0.jar                       LICENSE
+lucene-highlighter-4.6.0.jar                LICENSE
+lucene-memory-4.6.0.jar                     LICENSE
 mail-1.4.7.jar                              doc/LICENSE.cddl
 nekohtml-0.9.5.jar                          LICENSE
 oro-2.0.8.jar                               LICENSE

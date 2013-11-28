@@ -38,7 +38,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>1.6</jdk.version>
-    <lucene.version>4.4.0</lucene.version>
+    <lucene.version>4.6.0</lucene.version>
   </properties>
 
   <prerequisites>
@@ -331,7 +331,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-idea-plugin</artifactId>
-          <version>2.2</version>
+          <version>2.2.1</version>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>true</downloadJavadocs>
@@ -374,7 +374,7 @@
 
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.4</version>
+          <version>2.5.1</version>
           <configuration>
             <createChecksum>true</createChecksum>
           </configuration>
@@ -382,7 +382,7 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.9</version>
+          <version>2.9.1</version>
           <configuration>
             <additionalparam>
             -charset ${project.build.sourceEncoding}
@@ -434,12 +434,12 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.15</version>
+          <version>2.16</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.15</version>
+          <version>2.16</version>
         </plugin>
 
         <plugin>
@@ -470,7 +470,7 @@
         <plugin>
           <groupId>ro.isdc.wro4j</groupId>
           <artifactId>wro4j-maven-plugin</artifactId>
-          <version>1.7.0</version>
+          <version>1.7.2</version>
         </plugin>
 
         <!-- yuicompressor  => replaced by wro4j
@@ -508,7 +508,7 @@
         <plugin>
           <groupId>org.apache.tomcat.maven</groupId>
           <artifactId>tomcat7-maven-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.2</version>
           <configuration>
             <contextReloadable>true</contextReloadable>
             <port>8080</port>
@@ -518,13 +518,13 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>clirr-maven-plugin</artifactId>
-          <version>2.5</version>
+          <version>2.6.1</version>
         </plugin>
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>2.6</version>
           <configuration>
             <formats>
               <format>html</format>
@@ -545,7 +545,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>2.0</version>
+          <version>2.2</version>
         </plugin>
 
         <plugin>
@@ -586,6 +586,15 @@
                     <artifactId>jslint-maven-plugin</artifactId>
                     <versionRange>[1.0.1,)</versionRange>
                     <goals><goal>jslint</goal></goals>
+                  </pluginExecutionFilter>
+                  <action><ignore/></action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>ro.isdc.wro4j</groupId>
+                    <artifactId>wro4j-maven-plugin</artifactId>
+                    <versionRange>[1.7.2,)</versionRange>
+                    <goals><goal>run</goal></goals>
                   </pluginExecutionFilter>
                   <action><ignore/></action>
                 </pluginExecution>
