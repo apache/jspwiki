@@ -294,7 +294,7 @@ public class AttachmentServlet extends HttpServlet
 
                 if(log.isDebugEnabled())
                 {
-                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteAddr();
+                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+HttpUtil.getRemoteAddress(req);
                     log.debug( msg );
                 }
                 if( nextPage != null ) res.sendRedirect( nextPage );

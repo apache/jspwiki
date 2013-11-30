@@ -20,6 +20,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
@@ -108,7 +109,7 @@
 
     if( ok != null || captcha != null )
     {
-        log.info("Saving page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
+        log.info("Saving page "+pagereq+". User="+user+", host="+HttpUtil.getRemoteAddress(request) );
 
         //
         //  Check for session expiry
@@ -260,7 +261,7 @@
 
     session.removeAttribute( EditorManager.REQ_EDITEDTEXT );
 
-    log.info("Editing page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
+    log.info("Editing page "+pagereq+". User="+user+", host="+HttpUtil.getRemoteAddress(request) );
 
     //
     //  Determine and store the date the latest version was changed.  Since

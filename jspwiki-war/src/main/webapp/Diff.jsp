@@ -19,6 +19,7 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
@@ -83,7 +84,7 @@
                               new Integer(ver2),
                               PageContext.REQUEST_SCOPE );
 
-    // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
+    // log.debug("Request for page diff for '"+pagereq+"' from "+HttpUtil.getRemoteAddress(request)+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

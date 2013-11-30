@@ -19,6 +19,7 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
@@ -52,7 +53,7 @@
         changeReferences = true;
     }
 
-    log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
+    log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+HttpUtil.getRemoteAddress(request)+" by "+request.getRemoteUser() );
 
     WikiSession wikiSession = wikiContext.getWikiSession();
     try

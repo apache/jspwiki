@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.util.HttpUtil;
 
 /**
  * <p>
@@ -79,7 +80,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
         {
             m_handler.handle( callbacks );
             HttpServletRequest request = hcb.getRequest();
-            WikiPrincipal ipAddr = new WikiPrincipal( request.getRemoteAddr() );
+            WikiPrincipal ipAddr = new WikiPrincipal( HttpUtil.getRemoteAddress(request) );
             if ( log.isDebugEnabled() )
             {
                 HttpSession session = request.getSession( false );

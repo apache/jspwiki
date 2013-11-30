@@ -19,6 +19,7 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="java.util.*" %>
@@ -57,7 +58,7 @@
 
     if( deleteall != null )
     {
-        log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
+        log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+HttpUtil.getRemoteAddress(request) );
 
         wiki.deletePage( pagereq );
 
