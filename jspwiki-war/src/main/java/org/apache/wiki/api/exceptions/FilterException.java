@@ -24,9 +24,7 @@ package org.apache.wiki.api.exceptions;
  *
  *  @since 2.1.112
  */
-public class FilterException 
-    extends WikiException
-{
+public class FilterException extends WikiException {
     
     private static final long serialVersionUID = -490652869936406653L;
 
@@ -35,8 +33,8 @@ public class FilterException
      *  
      *  @param msg {@inheritDoc}
      */
-    public FilterException( String msg )
-    {
+    public FilterException( String msg ) {
         super( msg );
     }
+
 }

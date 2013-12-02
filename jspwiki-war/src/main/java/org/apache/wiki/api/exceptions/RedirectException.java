@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.api.exceptions;
 
+
 /**
- *  This exception may be thrown if a filter wants to reject something and
- *  redirect the user elsewhere.
+ *  This exception may be thrown if a filter wants to reject something and redirect the user elsewhere.
  *
  *  @since 2.1.112
  */
-public class RedirectException
-    extends FilterException
-{
+public class RedirectException extends FilterException {
+	
     private static final long serialVersionUID = 6626993875873941172L;
     
     private final String m_where;
@@ -37,10 +36,8 @@ public class RedirectException
      *  @param msg The message for the exception
      *  @param redirect The redirect URI.
      */
-    public RedirectException( String msg, String redirect )
-    {
+    public RedirectException( String msg, String redirect ) {
         super( msg );
-
         m_where = redirect;
     }
 
@@ -49,8 +46,8 @@ public class RedirectException
      *  
      *  @return The URI given in the constructor.
      */
-    public String getRedirect()
-    {
+    public String getRedirect() {
         return m_where;
     }
+    
 }

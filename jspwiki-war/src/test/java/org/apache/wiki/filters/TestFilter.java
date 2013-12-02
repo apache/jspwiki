@@ -21,14 +21,15 @@ package org.apache.wiki.filters;
 import java.util.Properties;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.filters.BasicPageFilter;
 
-public class TestFilter
-    extends BasicPageFilter
-{
+
+public class TestFilter extends BasicPageFilter {
+	
     public Properties m_properties;
 
-    public void initialize( WikiEngine engine, Properties props )
-    {
+    public void initialize( WikiEngine engine, Properties props ) {
         m_properties = props;
     }
+
 }
