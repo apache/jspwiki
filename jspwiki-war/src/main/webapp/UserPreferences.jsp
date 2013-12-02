@@ -78,7 +78,7 @@
                 // User collision! (full name or wiki name already taken)
                 wikiSession.addMessage( "profile", wiki.getInternationalizationManager()
                                                        .get( InternationalizationManager.CORE_BUNDLE,
-                                                    		 WikiContext.getLocale( wikiContext ), 
+                                                    		 Preferences.getLocale( wikiContext ), 
                                                              due.getMessage(), due.getArgs() ) );
             }
             catch( DecisionRequiredException e )
