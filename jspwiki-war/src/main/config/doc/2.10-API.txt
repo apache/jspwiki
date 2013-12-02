@@ -37,14 +37,9 @@ api
 api.exceptions
  -> new package org.apache.wiki.api.exceptions with copies of the original Exceptions declared by
     the API methods
- -> to retain backwards compatibility, "old" exceptions will inherit new ones, also the former ones 
-    are marked as @Deprecated
-      * e.g.: org.apache.wiki.plugin.PluginException will inherit 
-        org.apache.wiki.api.exceptions.PluginException which (ultimately) inherits WikiException
-      * note that, until the API is completed, regarding exceptions there will be an somewhat 
-        awkward jump: org.apache.wiki.api.exceptions.*Exception -> org.apache.wiki.api.WikiException ->
-        org.apache.wiki.WikiException. It allows us to achieve compatibility with 
-        2.9 derived source (regarding exceptions).
+      * moved o.a.w.filters.FilterException to o.a.w.api.exceptions.FilterException
+      * moved o.a.w.filters.RedirectException to o.a.w.api.exceptions.RedirectException
+      * moved o.a.w.plugin.PluginException to o.a.w.api.exceptions.PluginException
         
 api.filters
  -> Interface and base classes needed to develop WikiFilters
@@ -59,28 +54,25 @@ api.plugin
 ---------------------------
 @Deprecated
  -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
-       in 2.10 timeframe
+    in 2.10 timeframe
 
 org.apache.wiki.WikiContext
- -> @Deprecated WikiContext.getBundle( String ) in favour of  
-    Preferences.getBundle( String )
- -> @Deprecated WikiContext.getLocale( WikiContext ) in favour of  
-    Preferences.getLocale( WikiContext )
- -> @Deprecated WikiContext.hasAccess( HttpServletResponse ) in favour of
+ -> removed WikiContext.getBundle( String ) in favour of Preferences.getBundle( String )
+ -> removed WikiContext.getLocale( WikiContext ) in favour of Preferences.getLocale( WikiContext )
+ -> removed WikiContext.hasAccess( HttpServletResponse ) in favour of
     AuthorizationManager.hasAccess( HttpServletResponse )
- -> @Deprecated WikiContext.hasAccess( HttpServletResponse, boolean ) in favour of
+ -> removed WikiContext.hasAccess( HttpServletResponse, boolean ) in favour of
     AuthorizationManager.hasAccess( HttpServletResponse, boolean )
     
 org.apache.wiki.WikiEngine
- -> @Deprecated WikiEngine.getRequiredProperty( props, key ) in favour of  
+ -> removed WikiEngine.getRequiredProperty( props, key ) in favour of  
     TextUtil.getRequiredProperty( props, key )
     
 org.apache.wiki.FileUtil and org.apache.wiki.TextUtil
  -> Moved to org.apache.wiki.util.FileUtil and org.apache.wiki.util.TextUtil respectively
- -> original classes marked with @Deprecated and forwarding to the new ones until 2.10
 
 org.apache.wiki.event.WorkflowEvent
- -> @Deprecated getWorkflow() in favour of the generified WikiEvent#getSrc()
+ -> removed getWorkflow() in favour of the generified WikiEvent#getSrc()
 
 org.apache.wiki.filters.FilterManager
  -> new interface org.apache.wiki.api.engine.FilterManager
@@ -89,13 +81,9 @@ org.apache.wiki.filters.FilterManager
 
 org.apache.wiki.filters.BasicPageFilter
  -> moved to new class org.apache.wiki.api.filter.BasicPageFilter
- -> org.apache.wiki.filters.BasicPageFilter marked with @Deprecated + extends 
-    org.apache.wiki.api.filter.BasicPageFilter
  
 org.apache.wiki.filters.PageFilter
  -> moved to new interface org.apache.wiki.api.filter.PageFilter
- -> org.apache.wiki.filters.PageFilter marked with @Deprecated + extends 
-    org.apache.wiki.api.filter.PageFilter
  -> all core wikifilters implementing the "old" interface now implement the new one
 
 org.apache.wiki.parser.JSPWikiMarkupParser
