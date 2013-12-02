@@ -18,11 +18,18 @@
 */
 package org.apache.wiki.parser;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+import org.apache.oro.text.regex.MatchResult;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
@@ -32,6 +39,7 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 import org.jdom2.Text;
+
 
 /**
  *  Stores the contents of a plugin in a WikiDocument DOM tree.
@@ -46,8 +54,8 @@ import org.jdom2.Text;
  *  
  *  @since  2.4
  */
-public class PluginContent extends Text
-{
+public class PluginContent extends Text {
+	
     private static final String BLANK = "";
     private static final String CMDLINE = "_cmdline";
     private static final String ELEMENT_BR = "<br/>";
@@ -58,9 +66,11 @@ public class PluginContent extends Text
     private static final String SPACE = " ";
 
     private static final long serialVersionUID = 1L;
+    
+    private static Logger log = Logger.getLogger( PluginContent.class );
 
-    private String                m_pluginName;
-    private Map<String,String>    m_params;
+    private String                   m_pluginName;
+    private Map< String, String >    m_params;
     
     /**
      *  Creates a new DOM element with the given plugin name and a map of parameters.
@@ -68,8 +78,7 @@ public class PluginContent extends Text
      *  @param pluginName The FQN of a plugin.
      *  @param parameters A Map of parameters.
      */
-    public PluginContent( String pluginName, Map<String, String> parameters )
-    {
+    public PluginContent( String pluginName, Map<String, String> parameters ) {
         m_pluginName = pluginName;
         m_params     = parameters;
     }
@@ -79,8 +88,7 @@ public class PluginContent extends Text
      *  @return Name of the plugin
      *  @since 2.5.7
      */
-    public String getPluginName()
-    {
+    public String getPluginName() {
         return m_pluginName;
     }
     
@@ -90,8 +98,7 @@ public class PluginContent extends Text
      *  @param name the name of the parameter.
      *  @return The value from the map, or null, if no such parameter exists.
      */
-    public String getParameter( String name )
-    {
+    public String getParameter( String name ) {
         return m_params.get(name);
     }
     
@@ -100,8 +107,7 @@ public class PluginContent extends Text
      *  
      *  @return The parameter map.
      */
-    public Map< String, String > getParameters()
-    {
+    public Map< String, String > getParameters() {
         return m_params;
     }
     
@@ -110,8 +116,7 @@ public class PluginContent extends Text
      *  
      *  @return HTML
      */
-    public String getValue()
-    {
+    public String getValue() {
         return getText();
     }
     
@@ -122,14 +127,12 @@ public class PluginContent extends Text
      *  
      *  @return The plugin rendered according to the options set in the WikiContext.
      */
-    public String getText()
-    {
+    public String getText() {
         String result;
         
-        WikiDocument doc = (WikiDocument)getDocument();
+        WikiDocument doc = ( WikiDocument )getDocument();
 
-        if( doc == null )
-        {
+        if( doc == null ) {
             //
             // This element has not yet been attached anywhere, so we simply assume there is
             // no rendering and return the plugin name.  This is required e.g. when the 
@@ -143,33 +146,27 @@ public class PluginContent extends Text
                
         WikiContext context = doc.getContext();
         
-        Boolean wysiwygVariable = (Boolean)context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        Boolean wysiwygVariable = ( Boolean )context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
         boolean wysiwygEditorMode = false;
-        if( wysiwygVariable != null )
-        {
+        if( wysiwygVariable != null ) {
             wysiwygEditorMode = wysiwygVariable.booleanValue();
         }
 
-        try
-        {
+        try {
             //
             //  Determine whether we should emit the actual code for this plugin or
             //  whether we should execute it.  For some plugins we always execute it,
             //  since they can be edited visually.
             //
             // FIXME: The plugin name matching should not be done here, but in a per-editor resource
-            if( wysiwygEditorMode 
-                && !m_pluginName.matches( EMITTABLE_PLUGINS ) )
-            {        
+            if( wysiwygEditorMode && !m_pluginName.matches( EMITTABLE_PLUGINS ) ) {        
                 result = PLUGIN_START + m_pluginName + SPACE;            
             
                 // convert newlines to <br> in case the plugin has a body.
                 String cmdLine = ( m_params.get( CMDLINE ) ).replaceAll( LINEBREAK, ELEMENT_BR );
             
                 result = result + cmdLine + PLUGIN_END;
-            }
-            else
-            {
+            } else {
                 Boolean b = (Boolean)context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
                 if( b != null && !b.booleanValue() ) return BLANK;
 
@@ -180,8 +177,7 @@ public class PluginContent extends Text
                 //
                 //  Parse any variable instances from the string
                 //
-                for( Map.Entry<String, String> e : m_params.entrySet() )
-                {
+                for( Map.Entry<String, String> e : m_params.entrySet() ) {
                     String val = e.getValue();
                     val = engine.getVariableManager().expandVariables( context, val );
                     parsedParams.put( e.getKey(), val );
@@ -189,15 +185,10 @@ public class PluginContent extends Text
                 PluginManager pm = engine.getPluginManager();
                 result = pm.execute( context, m_pluginName, parsedParams );
             }
-        }
-        catch( Exception e )
-        {
-            if( wysiwygEditorMode )
-            {
+        } catch( Exception e ) {
+            if( wysiwygEditorMode )  {
                 result = "";
-            }
-            else
-            {
+            } else {
                 // log.info("Failed to execute plugin",e);
                 ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
                 result = JSPWikiMarkupParser.makeError( 
@@ -215,26 +206,72 @@ public class PluginContent extends Text
      *  @param context The WikiContext
      *  @throws PluginException If something goes wrong.
      */
-    public void executeParse( WikiContext context )
-        throws PluginException
-    {
+    public void executeParse( WikiContext context ) throws PluginException {
         PluginManager pm = context.getEngine().getPluginManager();
         if( pm.pluginsEnabled() ) {
             ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
             Map<String, String> params = getParameters();
             WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
-            try
-            {
-                if( plugin != null && plugin instanceof ParserStagePlugin )
-                {
+            try {
+                if( plugin != null && plugin instanceof ParserStagePlugin ) {
                     ( ( ParserStagePlugin )plugin ).executeParser( this, context, params );
                 }
-            }
-            catch( ClassCastException e )
-            {
+            } catch( ClassCastException e ) {
                 throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notawikiplugin" ), getPluginName() ), e );
             }
         }
+    }
+    
+    /**
+     * Parses a plugin invocation and returns a DOM element.
+     * 
+     * @param context The WikiContext
+     * @param commandline The line to parse
+     * @param pos The position in the stream parsing.
+     * @return A DOM element
+     * @throws PluginException If plugin invocation is faulty
+     * @since 2.10.0
+     */
+    public static PluginContent parsePluginLine( WikiContext context, String commandline, int pos ) throws PluginException {
+        PatternMatcher  matcher  = new Perl5Matcher();
+
+        try {
+        	PluginManager pm = context.getEngine().getPluginManager();
+            if( matcher.contains( commandline, pm.getPluginPattern() ) ) {
+            	
+                MatchResult res = matcher.getMatch();
+
+                String plugin   = res.group(2);
+                String args     = commandline.substring(res.endOffset(0),
+                                                        commandline.length() -
+                                                        (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
+                Map<String, String> arglist = pm.parseArgs( args );
+
+                // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
+                if ( pos != -1 ) {
+                    int end = pos + commandline.length() + 2;
+                    String bounds = pos + "|" + end;
+                    arglist.put( PluginManager.PARAM_BOUNDS, bounds );
+                }
+
+                PluginContent result = new PluginContent( plugin, arglist );
+
+                return result;
+            }
+        } catch( ClassCastException e ) {
+            log.error( "Invalid type offered in parsing plugin arguments.", e );
+            throw new InternalWikiException( "Oops, someone offered !String!" );
+        } catch( NoSuchElementException e ) {
+            String msg =  "Missing parameter in plugin definition: " + commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
+        } catch( IOException e ) {
+            String msg = "Zyrf.  Problems with parsing arguments: " + commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
+        }
+
+        return null;
     }
 
 }

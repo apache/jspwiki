@@ -23,13 +23,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.parser.PluginContent;
 
-public interface PluginManager
-{
+
+public interface PluginManager {
+	
     /** The property name defining which packages will be searched for properties. */
     String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
     
@@ -69,6 +70,13 @@ public interface PluginManager
      * @return True, if plugins are enabled; false otherwise.
      */
     boolean pluginsEnabled();
+    
+    /**
+     * Returns plugin insert pattern.
+     * 
+     * @return plugin insert pattern.
+     */
+    public Pattern getPluginPattern();
 
     /**
      *  Executes a plugin class in the given context.
@@ -88,8 +96,7 @@ public interface PluginManager
      *
      *  @since 2.0
      */
-    String execute( WikiContext context, String classname, Map< String, String > params )
-        throws PluginException;
+    String execute( WikiContext context, String classname, Map< String, String > params ) throws PluginException;
 
     /**
      *  Parses plugin arguments.  Handles quotes and all other kewl stuff.
@@ -111,8 +118,7 @@ public interface PluginManager
      *
      * @throws IOException If the parsing fails.
      */
-    Map< String, String > parseArgs( String argstring )
-        throws IOException;
+    Map< String, String > parseArgs( String argstring ) throws IOException;
 
     /**
      *  Parses a plugin.  Plugin commands are of the form:
@@ -130,20 +136,7 @@ public interface PluginManager
      *  
      *  @throws PluginException From the plugin itself, it propagates, waah!
      */
-    String execute( WikiContext context, String commandline )
-        throws PluginException;
-
-    /**
-     *  Parses a plugin invocation and returns a DOM element.
-     *  
-     *  @param context The WikiContext
-     *  @param commandline The line to parse
-     *  @param pos The position in the stream parsing.
-     *  @return A DOM element
-     *  @throws PluginException If plugin invocation is faulty
-     */
-    PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
-        throws PluginException;
+    String execute( WikiContext context, String commandline ) throws PluginException;
 
     /**
      * Returns a collection of modules currently managed by this ModuleManager.  Each
@@ -162,7 +155,6 @@ public interface PluginManager
      * @return a {@link WikiPlugin}.
      * @throws PluginException if there is a problem building the {@link WikiPlugin}.
      */
-    WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) 
-        throws PluginException;
+    WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) throws PluginException;
     
 }
