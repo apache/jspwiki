@@ -19,26 +19,21 @@
 
 package org.apache.wiki.event;
 
-import org.apache.wiki.workflow.Workflow;
 
 /**
  * <p>
- * WorkflowEvent indicates that a state change to a Workflow: started, running,
- * waiting, completed, aborted. These correspond exactly to the states described
- * in the {@link org.apache.wiki.workflow.Workflow}. All events are logged
- * with priority INFO.
+ * WorkflowEvent indicates that a state change to a Workflow: started, running, waiting, completed, aborted. 
+ * These correspond exactly to the states described in the {@link org.apache.wiki.workflow.Workflow}. All events 
+ * are logged with priority INFO.
  * </p>
  * 
  * @since 2.3.79
  */
-public final class WorkflowEvent extends WikiEvent
-{
+public final class WorkflowEvent extends WikiEvent {
 
     private static final long serialVersionUID = 1L;
     
-    /**
-     * After Workflow instantiation.
-     */
+    /** After Workflow instantiation. */
     public static final int CREATED = 0;
 
     /**
@@ -54,10 +49,7 @@ public final class WorkflowEvent extends WikiEvent
      */
     public static final int RUNNING = 20;
 
-    /**
-     * When the Workflow has temporarily paused, for example because of a
-     * pending Decision.
-     */
+    /** When the Workflow has temporarily paused, for example because of a pending Decision. */
     public static final int WAITING = 30;
 
     /** After the Workflow has finished processing all Steps, without errors. */
@@ -67,36 +59,19 @@ public final class WorkflowEvent extends WikiEvent
     public static final int ABORTED = 50;
 
     /**
-     * Constructs a new instance of this event type, which signals a security
-     * event has occurred. The <code>source</code> parameter is required, and
-     * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link WikiSecurityEvent#log} is notified.
+     * Constructs a new instance of this event type, which signals a security event has occurred. 
+     * The <code>source</code> parameter is required, and may not be <code>null</code>. When the 
+     * WikiSecurityEvent is constructed, the security logger {@link WikiSecurityEvent#log} is notified.
      * 
-     * @param src
-     *            the source of the event, which can be any object: a wiki page,
-     *            group or authentication/authentication/group manager.
-     * @param type
-     *            the type of event
+     * @param src the source of the event, which can be any object: a wiki page, group or 
+     *            authentication/authentication/group manager.
+     * @param type the type of event
      */
-    public WorkflowEvent(Object src, int type)
-    {
-        super(src, type);
-        if (src == null)
-        {
-            throw new IllegalArgumentException("Argument(s) cannot be null.");
+    public WorkflowEvent( Object src, int type ) {
+        super( src, type );
+        if( src == null ) {
+            throw new IllegalArgumentException( "Argument(s) cannot be null." );
         }
-    }
-
-    /**
-     * Convenience method that returns the Workflow to which the event applied.
-     * 
-     * @return the Workflow
-     * @deprecated will be removed in 2.10 scope. Consider using {@link WikiEvent#getSrc()} instead
-     */
-    @Deprecated
-    public Workflow getWorkflow()
-    {
-        return (Workflow) super.getSrc();
     }
 
     /**
@@ -104,28 +79,24 @@ public final class WorkflowEvent extends WikiEvent
      * 
      * @see java.lang.Object#toString()
      */
-    public String toString()
-    {
+    public String toString() {
         StringBuffer msg = new StringBuffer();
-        msg.append("WorkflowEvent.");
-        msg.append(eventName(getType()));
+        msg.append( "WorkflowEvent." );
+        msg.append( eventName( getType() ) );
         Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
-        msg.append(" [source=" + obj.toString());
-        msg.append("]");
+        msg.append( " [source=" + obj.toString() );
+        msg.append( "]" );
         return msg.toString();
     }
 
     /**
      * Returns a textual representation of an event type.
      * 
-     * @param type
-     *            the type
+     * @param type the type
      * @return the string representation
      */
-    public String eventName(int type)
-    {
-        switch (type)
-        {
+    public String eventName( int type ) {
+        switch( type ) {
             case CREATED:
                 return "CREATED";
             case ABORTED:
