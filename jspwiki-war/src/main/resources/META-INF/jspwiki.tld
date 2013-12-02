@@ -664,10 +664,10 @@
   </tag>
 
   <tag>
+    <description>Returns pagination string and cache it in the pageContext</description>
     <name>SetPagination</name>
     <tag-class>org.apache.wiki.tags.SetPaginationTag</tag-class>
     <body-content>empty</body-content>
-    <description>Returns pagination string and cache it in the pageContext</description>
     <attribute>
        <name>start</name>
        <rtexprvalue>true</rtexprvalue>
@@ -704,10 +704,10 @@
   </tag>
 
   <tag>
+    <description>A BodyTag for tabbed sections</description>
     <name>TabbedSection</name>
     <tag-class>org.apache.wiki.tags.TabbedSectionTag</tag-class>
     <body-content>JSP</body-content>
-    <description>A BodyTag for tabbed sections</description>
     <attribute>
       <name>defaultTab</name>
       <required>false</required>
@@ -716,10 +716,10 @@
   </tag>
 
   <tag>
+    <description>A Tag for a tab, which is a child of tabbedSection</description>
     <name>Tab</name>
     <tag-class>org.apache.wiki.tags.TabTag</tag-class>
     <body-content>JSP</body-content>
-    <description>A Tag for a tab, which is a child of tabbedSection</description>
     <attribute>
       <name>id</name>
       <required>true</required>
