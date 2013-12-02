@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 import java.util.Map;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.parser.PluginContent;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.wiki.parser.PluginContent;
  *
  */
 public class SamplePlugin
-    implements WikiPlugin, ParserStagePlugin
+    implements org.apache.wiki.api.plugin.WikiPlugin, ParserStagePlugin
 {
     protected static boolean c_rendered = false;
     

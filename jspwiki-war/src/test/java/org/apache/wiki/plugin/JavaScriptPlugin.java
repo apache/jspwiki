@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Implements a simple plugin that just returns a piece of Javascript
@@ -29,7 +30,7 @@ import org.apache.wiki.WikiEngine;
  *  Parameters: text - text to return.
  *
  */
-public class JavaScriptPlugin implements WikiPlugin, InitializablePlugin
+public class JavaScriptPlugin implements org.apache.wiki.api.plugin.WikiPlugin, InitializablePlugin
 {
     protected static boolean c_inited = false;
     

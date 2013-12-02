@@ -18,9 +18,11 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.plugin.*;
-import java.util.*;
+import java.util.Map;
+
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Implements a simple plugin that just returns its text.
@@ -29,7 +31,7 @@ import java.util.*;
  *
  */
 public class SamplePlugin3
-    implements WikiPlugin
+    implements org.apache.wiki.api.plugin.WikiPlugin
 {
     public void initialize( WikiEngine engine )
         throws PluginException
