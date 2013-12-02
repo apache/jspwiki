@@ -105,15 +105,20 @@ org.apache.wiki.parser.JSPWikiMarkupParser
     ones from WikiEngine
 
 org.apache.wiki.parser.PluginContent
- -> getParameter returns String instead of Object (internally, it was returning a String)
+ -> getParameter returns String instead of Object ( internally, it was returning a String )
+ -> gains executeParse( WikiContext ), moved from o.a.w.p.PluginManager
+ -> gains PluginContent.executeParseLine( WikiContext, String, int ), moved from o.a.w.p.PluginManager
 
 org.apache.wiki.plugin.PluginManager
- -> new interface org.apache.wiki.api.engine.PluginManager
  -> moved to org.apache.wiki.plugin.DefaultPluginManager
- -> @Deprecated public static boolean isPluginLink( String link )
+ -> new interface org.apache.wiki.api.engine.PluginManager
+ -> removed public static boolean isPluginLink( String link )
       * equivalent method on org.apache.wiki.parser.JSPWikiMarkupParser
- -> @Deprecated public void executeParse(PluginContent content, WikiContext context)
-      * consider using PluginContent.executeParse(WikiContext) instead
+ -> removed public void executeParse( PluginContent content, WikiContext context )
+      * consider using PluginContent.executeParse( WikiContext ) instead
+ -> removed parsePluginLine( WikiContext, String, int )
+      * consider using PluginContent.executeParseLine( WikiContext, String, int ) instead
+ -> added public Pattern getPluginPattern(), which is part of the org.apache.wiki.api.engine.PluginManager API
  -> WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public 
     and part of the org.apache.wiki.api.engine.PluginManager API
  -> WikiEngine.getPluginManager returns org.apache.wiki.api.engine.PluginManager
