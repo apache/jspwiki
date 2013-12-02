@@ -18,16 +18,15 @@
  */
 package org.apache.wiki.api.exceptions;
 
+
 /**
- *  A generic Wiki exception, meant to carry key & args to construct i18n messages to show 
- *  meaningful messages to end-user. Classes and/or JSPs on the web tier are responsible of
- *  constructing the appropiate message.
+ *  A generic Wiki exception, meant to carry key & args to construct i18n messages to show meaningful messages to 
+ *  end-user. Classes and/or JSPs on the web tier are responsible of constructing the appropiate message.
  *
  *  @since 2.9.1
  */
-public class WikiI18nException
-    extends WikiException
-{
+public class WikiI18nException extends WikiException {
+	
     private static final long serialVersionUID = -1412916016409728838L;
     
     /** arguments needed to construct the i18n message associated with the exception. */
@@ -39,8 +38,7 @@ public class WikiI18nException
      *  @param key the key corresponding to the i18n message in the exception.
      *  @param args arguments needed to construct the i18n message associated with the exception.
      */
-    public WikiI18nException( String key, Object... args )
-    {
+    public WikiI18nException( String key, Object... args ) {
         super( key );
         this.args = args;
     }
@@ -50,8 +48,8 @@ public class WikiI18nException
      * 
      * @return arguments needed to construct the i18n message associated with the exception.
      */
-    public Object[] getArgs()
-    {
+    public Object[] getArgs() {
         return args;
     }
+
 }
