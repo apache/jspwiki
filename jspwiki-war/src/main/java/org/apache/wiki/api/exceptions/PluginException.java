@@ -20,12 +20,10 @@ package org.apache.wiki.api.exceptions;
 
 
 /**
- *  Provides a generic PluginException.  This is the kind of
- *  an exception that the plugins should throw.
+ *  Provides a generic PluginException.  This is the kind of an exception that the plugins should throw.
  */
-public class PluginException
-    extends WikiException
-{
+public class PluginException  extends WikiException {
+	
     private static final long serialVersionUID = -289900047240960332L;
 
     private final Throwable m_throwable;
@@ -35,8 +33,7 @@ public class PluginException
      *  
      *  @param message {@inheritDoc}
      */
-    public PluginException( String message )
-    {
+    public PluginException( String message ) {
         super( message );
         m_throwable = null;
     }
@@ -47,8 +44,7 @@ public class PluginException
      *  @param message {@inheritDoc}
      *  @param original The original exception.
      */
-    public PluginException( String message, Throwable original )
-    {
+    public PluginException( String message, Throwable original ) {
         super( message, original );
         m_throwable = original;
     }
@@ -58,8 +54,8 @@ public class PluginException
      *  
      *  @return The original exception.
      */
-    public Throwable getRootThrowable()
-    {
+    public Throwable getRootThrowable() {
         return m_throwable;
     }
+    
 }

@@ -19,6 +19,7 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  If a plugin defines this interface, it is called exactly once

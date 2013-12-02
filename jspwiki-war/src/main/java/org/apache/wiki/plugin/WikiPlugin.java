@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 import java.util.Map;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Defines an interface for plugins.  Any instance of a wiki plugin
@@ -59,6 +60,5 @@ public interface WikiPlugin extends org.apache.wiki.api.plugin.WikiPlugin
      *  @throws PluginException In case anything goes wrong.
      */
 
-    String execute( WikiContext context, Map<String, String> params )
-        throws PluginException;
+    String execute( WikiContext context, Map<String, String> params ) throws PluginException;
 }
