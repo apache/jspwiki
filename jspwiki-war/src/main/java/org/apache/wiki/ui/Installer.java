@@ -54,6 +54,7 @@ public class Installer
     public static final String ADMIN_NAME = "Administrator";
     public static final String INSTALL_INFO = "Installer.Info";
     public static final String INSTALL_ERROR = "Installer.Error";
+    public static final String INSTALL_WARNING = "Installer.Warning";
     public static final String APP_NAME = WikiEngine.PROP_APPNAME;
     public static final String BASE_URL = WikiEngine.PROP_BASEURL;
     public static final String STORAGE_DIR = BasicAttachmentProvider.PROP_STORAGEDIR;
