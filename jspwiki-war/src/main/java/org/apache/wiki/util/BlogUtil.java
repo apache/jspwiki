@@ -18,7 +18,9 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.wiki.*;
+import org.apache.wiki.NoSuchVariableException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 
 
 /**

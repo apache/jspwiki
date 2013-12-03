@@ -19,10 +19,14 @@
 package org.apache.wiki.util;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiEngine;
 
 /**

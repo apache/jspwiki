@@ -20,7 +20,11 @@ package org.apache.wiki.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Properties;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.wiki.PageManager;
