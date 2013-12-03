@@ -32,9 +32,14 @@ import javax.servlet.ServletException;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import net.sf.ehcache.CacheManager;
-import org.apache.wiki.*;
+
+import org.apache.wiki.LinkCollector;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.BasicAttachmentProvider;
@@ -2331,7 +2336,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         p.parse();
 
-        Collection links = coll.getLinks();
+        Collection< String > links = coll.getLinks();
 
         assertEquals( "no links found", 1, links.size() );
         assertEquals( "wrong link", "Test", links.iterator().next() );
@@ -2354,7 +2359,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         p.parse();
 
-        Collection links = coll.getLinks();
+        Collection< String > links = coll.getLinks();
 
         assertEquals( "no links found", 1, links.size() );
         assertEquals( "wrong link", PAGE_NAME+"/Test.txt",
@@ -2388,7 +2393,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
             p.parse();
 
-            Collection links = coll.getLinks();
+            Collection< String > links = coll.getLinks();
 
             assertEquals( "no links found", 1, links.size() );
             assertEquals( "wrong link", PAGE_NAME+"/TestAtt.txt",

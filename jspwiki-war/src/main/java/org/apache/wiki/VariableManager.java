@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -424,10 +423,10 @@ public class VariableManager
         {
             StringBuffer res = new StringBuffer();
 
-            for( Iterator i = m_context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
+            for( Iterator< String > i = m_context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
-                String link = (String) i.next();
+                String link = i.next();
                 res.append( link );
                 res.append( " --> " );
                 res.append( m_context.getEngine().getInterWikiURL(link) );    
@@ -439,7 +438,7 @@ public class VariableManager
         {
             StringBuffer res = new StringBuffer();
 
-            for( Iterator<String> i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+            for( Iterator< String > i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
 

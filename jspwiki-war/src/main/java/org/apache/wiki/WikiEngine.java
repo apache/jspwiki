@@ -531,7 +531,7 @@ public class WikiEngine
         //        of a better way to do the startup-sequence.
         try
         {
-            Class urlclass = ClassUtil.findClass( "org.apache.wiki.url",
+            Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
@@ -1024,21 +1024,21 @@ public class WikiEngine
      *
      *  @return A Collection of Strings.
      */
-    public Collection getAllInterWikiLinks()
+    public Collection< String > getAllInterWikiLinks()
     {
-        Vector<String> v = new Vector<String>();
+    	ArrayList< String > list = new ArrayList< String >();
 
-        for( Enumeration i = m_properties.propertyNames(); i.hasMoreElements(); )
+        for( Enumeration< ? > i = m_properties.propertyNames(); i.hasMoreElements(); )
         {
-            String prop = (String) i.nextElement();
+            String prop = ( String )i.nextElement();
 
             if( prop.startsWith( PROP_INTERWIKIREF ) )
             {
-                v.add( prop.substring( prop.lastIndexOf(".")+1 ) );
+                list.add( prop.substring( prop.lastIndexOf( "." ) + 1 ) );
             }
         }
 
-        return v;
+        return list;
     }
 
     /**
@@ -1051,9 +1051,9 @@ public class WikiEngine
         Properties props    = getWikiProperties();
         ArrayList<String>  ptrnlist = new ArrayList<String>();
 
-        for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+        for( Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
         {
-            String name = (String) e.nextElement();
+            String name = ( String )e.nextElement();
 
             if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
             {
@@ -1565,11 +1565,10 @@ public class WikiEngine
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    public Collection scanWikiLinks( WikiPage page, String pagedata )
-    {
+    public Collection< String > scanWikiLinks( WikiPage page, String pagedata ) {
         LinkCollector localCollector = new LinkCollector();
 
-        textToHTML( new WikiContext(this,page),
+        textToHTML( new WikiContext( this, page ),
                     pagedata,
                     localCollector,
                     null,
@@ -1685,10 +1684,11 @@ public class WikiEngine
         }
         catch( IOException e )
         {
-            log.error("Failed to scan page data: ", e);
+            log.error( "Failed to scan page data: ", e );
         }
         catch( FilterException e )
         {
+        	log.error( "page filter threw exception: ", e );
             // FIXME: Don't yet know what to do
         }
 
@@ -1943,7 +1943,7 @@ public class WikiEngine
         }
         catch( ProviderException e )
         {
-            log.error("FIXME");
+            log.error( "FIXME", e );
         }
 
         return c;

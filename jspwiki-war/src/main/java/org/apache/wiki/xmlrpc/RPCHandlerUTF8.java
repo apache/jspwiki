@@ -233,10 +233,10 @@ public class RPCHandlerUTF8
         //
         //  Add local links.
         //
-        for( Iterator i = localCollector.getLinks().iterator(); i.hasNext(); )
+        for( Iterator< String > i = localCollector.getLinks().iterator(); i.hasNext(); )
         {
-            String link = (String) i.next();
-            Hashtable<String, String> ht = new Hashtable<String, String>();
+            String link = i.next();
+            Hashtable< String, String > ht = new Hashtable< String, String >();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
 

@@ -166,9 +166,7 @@ public class ReferenceManager
     /**
      *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
      */
-    @SuppressWarnings("unchecked")
-    private void updatePageReferences( WikiPage page )
-        throws ProviderException
+    private void updatePageReferences( WikiPage page ) throws ProviderException
     {
         String content = m_engine.getPageManager().getPageText( page.getName(),
                                                                 WikiPageProvider.LATEST_VERSION );
@@ -661,7 +659,7 @@ public class ReferenceManager
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
-    public synchronized void updateReferences( String page, Collection references )
+    public synchronized void updateReferences( String page, Collection< String > references )
     {
         internalUpdateReferences(page, references);
 
@@ -679,7 +677,7 @@ public class ReferenceManager
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
 
-    private void internalUpdateReferences(String page, Collection references)
+    private void internalUpdateReferences(String page, Collection< String > references)
     {
         page = getFinalPageName( page );
 
@@ -690,9 +688,9 @@ public class ReferenceManager
         m_refersTo.remove( page );
 
         TreeSet<String> cleanedRefs = new TreeSet<String>();
-        for( Iterator i = references.iterator(); i.hasNext(); )
+        for( Iterator< String > i = references.iterator(); i.hasNext(); )
         {
-            String ref = (String)i.next();
+            String ref = i.next();
 
             ref = getFinalPageName( ref );
 

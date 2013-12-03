@@ -21,32 +21,29 @@ package org.apache.wiki;
 import java.util.ArrayList;
 import java.util.Collection;
 
+
 /**
- *  Just a simple class collecting all of the links
- *  that come in.
+ *  Just a simple class collecting all of the links that come in.
  */
-public class LinkCollector
-    implements StringTransmutator
-{
-    private ArrayList<String> m_items = new ArrayList<String>();
+public class LinkCollector implements StringTransmutator {
+	
+    private ArrayList< String > m_items = new ArrayList< String >();
 
     /**
      * Returns a List of Strings representing links.
      * @return the link collection
      */
-    public Collection getLinks()
-    {
+    public Collection< String > getLinks() {
         return m_items;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String mutate( WikiContext context, String in )
-    {
+    public String mutate( WikiContext context, String in ) {
         m_items.add( in );
-
         return in;
     }
+
 }
 
