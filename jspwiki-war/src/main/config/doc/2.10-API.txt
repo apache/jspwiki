@@ -37,6 +37,8 @@ api
 api.exceptions
  -> new package org.apache.wiki.api.exceptions with copies of the original Exceptions declared by
     the API methods
+      * moved o.a.w.NoRequiredPropertyException to o.a.w.api.exceptions.NoRequiredPropertyException
+      * moved o.a.w.NoSuchVariableException to o.a.w.api.exceptions.NoSuchVariableException
       * moved o.a.w.filters.FilterException to o.a.w.api.exceptions.FilterException
       * moved o.a.w.filters.RedirectException to o.a.w.api.exceptions.RedirectException
       * moved o.a.w.plugin.PluginException to o.a.w.api.exceptions.PluginException
@@ -55,6 +57,9 @@ api.plugin
 @Deprecated
  -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
     in 2.10 timeframe
+
+org.apache.wiki.SearchResult, org.apache.wiki.SearchResultComparator and org.apache.wiki.SearchMatcher
+ -> moved to org.apache.wiki.search package
 
 org.apache.wiki.WikiContext
  -> removed WikiContext.getBundle( String ) in favour of Preferences.getBundle( String )
@@ -87,10 +92,9 @@ org.apache.wiki.filters.PageFilter
  -> all core wikifilters implementing the "old" interface now implement the new one
 
 org.apache.wiki.parser.JSPWikiMarkupParser
- -> deprecated method public static Collection getImagePatterns( WikiEngine ) in favour of
+ -> moved method public static Collection getImagePatterns( WikiEngine ) to
     WikiEngine.getAllInlinedImagePatterns()
- -> deprecated constants DEFAULT_INLINEPATTERN and PROP_INLINEIMAGEPTRN. Consider using equivalent
-    ones from WikiEngine
+ -> moved constants DEFAULT_INLINEPATTERN and PROP_INLINEIMAGEPTRN to WikiEngine
 
 org.apache.wiki.parser.PluginContent
  -> getParameter returns String instead of Object ( internally, it was returning a String )
@@ -112,19 +116,13 @@ org.apache.wiki.plugin.PluginManager
  -> WikiEngine.getPluginManager returns org.apache.wiki.api.engine.PluginManager
 
 org.apache.wiki.plugin.InitializablePlugin
- -> new interface org.apache.wiki.api.plugin.InitializablePlugin
+ -> moved to new interface org.apache.wiki.api.plugin.InitializablePlugin
  -> all core wikiplugins and wikiforms implementing the "old" interface now implement the new one
- -> org.apache.wiki.plugin.InitializablePlugin marked with @Deprecated + extends
-    org.apache.wiki.api.plugin.InitializablePlugin
  
 org.apache.wiki.plugin.ParserStagePlugin
- -> new interface org.apache.wiki.api.plugins.ParserStagePlugin
+ -> moved to new interface org.apache.wiki.api.plugins.ParserStagePlugin
  -> all core wikiplugins and wikiforms implementing the "old" interface now implement the new one
- -> org.apache.wiki.plugin.ParserStagePlugin marked with @Deprecated + extends
-    org.apache.wiki.api.plugin.ParserStagePlugin
  
 org.apache.wiki.plugin.WikiPlugin
- -> new interface org.apache.wiki.api.plugins.WikiPlugin
+ -> moved to new interface org.apache.wiki.api.plugins.WikiPlugin
  -> all core wikiplugins and wikiforms implement the new interface
- -> org.apache.wiki.plugin.WikiPlugin marked with @Deprecated + extends 
-    org.apache.wiki.api.plugin.WikiPlugin

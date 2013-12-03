@@ -1,3 +1,31 @@
+2013-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-52
+       
+       * second wave of removing deprecated classes / methods, cfr. with 
+         $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
+         
+2013-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-51
+       
+       * first wave of removing deprecated classes / methods, cfr. with 
+         $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
+         
+       * Brought back Installer.INSTALL_WARNING constant, got lost somewhere in time and was still 
+         being used by Install.jsp
+       
+2013-12-01  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-50
+
+       * Broke cycle between o.a.w.parser and o.a.w.api.engine packages:
+       ** added public Pattern getPluginPattern() to o.a.w.api.engine.PluginManager
+       ** moved PluginContent parsePluginLine( WikiContext context, String commandline, int pos ) from 
+          o.a.w.api.engine.PluginManager to equivalent-static method on o.a.w.parser.PluginContent
+       ** deleted deprecated public static boolean isPluginLink( String link ) from o.a.w.api.engine.PluginManager,
+          consider using equivalent method on o.a.w.parser.JSPWikiMarkupParser
+
 2013-11-30  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-49
