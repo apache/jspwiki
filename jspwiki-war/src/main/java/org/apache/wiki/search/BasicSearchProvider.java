@@ -27,9 +27,6 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.QueryItem;
-import org.apache.wiki.SearchMatcher;
-import org.apache.wiki.SearchResult;
-import org.apache.wiki.SearchResultComparator;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;

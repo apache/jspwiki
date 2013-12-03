@@ -16,12 +16,16 @@
     specific language governing permissions and limitations
     under the License.   
  */
-package org.apache.wiki;
+package org.apache.wiki.search;
 
 
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;
+
+import org.apache.wiki.QueryItem;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 
 /**
  * SearchMatcher performs the task of matching a search query to a page's
@@ -31,9 +35,8 @@ import java.io.StringReader;
  *
  * @since 2.1.5
  */
-// FIXME: Move to the "search" -package in 3.0
-public class SearchMatcher
-{
+public class SearchMatcher {
+	
     private QueryItem[] m_queries;
     private WikiEngine m_engine;
 
@@ -43,8 +46,7 @@ public class SearchMatcher
      *  @param engine The WikiEngine
      *  @param queries A list of queries
      */
-    public SearchMatcher( WikiEngine engine, QueryItem[] queries )
-    {
+    public SearchMatcher( WikiEngine engine, QueryItem[] queries ) {
         m_engine = engine;
         m_queries = queries;
     }
@@ -61,11 +63,8 @@ public class SearchMatcher
      * @return A SearchResult item, or null, there are no queries
      * @throws IOException If reading page content fails
      */
-    public SearchResult matchPageContent( String wikiname, String pageText )
-        throws IOException
-    {
-        if( m_queries == null )
-        {
+    public SearchResult matchPageContent( String wikiname, String pageText ) throws IOException {
+        if( m_queries == null ) {
             return null;
         }
 
@@ -73,22 +72,16 @@ public class SearchMatcher
         BufferedReader in = new BufferedReader( new StringReader( pageText ) );
         String line = null;
 
-        while( (line = in.readLine()) != null )
-        {
+        while( (line = in.readLine() ) != null ) {
             line = line.toLowerCase();
 
-            for( int j = 0; j < m_queries.length; j++ )
-            {
+            for( int j = 0; j < m_queries.length; j++ ) {
                 int index = -1;
 
-                while( (index = line.indexOf( m_queries[j].word, index+1 )) != -1 )
-                {
-                    if( m_queries[j].type != QueryItem.FORBIDDEN )
-                    {
+                while( (index = line.indexOf( m_queries[j].word, index + 1 ) ) != -1 ) {
+                    if( m_queries[j].type != QueryItem.FORBIDDEN ) {
                         scores[j]++; // Mark, found this word n times
-                    }
-                    else
-                    {
+                    } else {
                         // Found something that was forbidden.
                         return null;
                     }
@@ -99,23 +92,20 @@ public class SearchMatcher
         //
         //  Check that we have all required words.
         //
-
         int totalscore = 0;
 
-        for( int j = 0; j < scores.length; j++ )
-        {
+        for( int j = 0; j < scores.length; j++ ) {
             // Give five points for each occurrence
             // of the word in the wiki name.
 
-            if( wikiname.toLowerCase().indexOf( m_queries[j].word ) != -1 &&
-                m_queries[j].type != QueryItem.FORBIDDEN )
+            if( wikiname.toLowerCase().indexOf( m_queries[j].word ) != -1 && m_queries[j].type != QueryItem.FORBIDDEN ) {
                 scores[j] += 5;
+            }
 
             //  Filter out pages if the search word is marked 'required'
             //  but they have no score.
 
-            if( m_queries[j].type == QueryItem.REQUIRED && scores[j] == 0 )
-            {
+            if( m_queries[j].type == QueryItem.REQUIRED && scores[j] == 0 ) {
                 return null;
             }
 
@@ -125,8 +115,7 @@ public class SearchMatcher
             totalscore += scores[j];
         }
 
-        if( totalscore > 0 )
-        {
+        if( totalscore > 0 ) {
             return new SearchResultImpl( wikiname, totalscore );
         }
 
@@ -135,11 +124,9 @@ public class SearchMatcher
 
     /**
      *  A local search result.
-     *  
      */
-    public class SearchResultImpl
-        implements SearchResult
-    {
+    public class SearchResultImpl implements SearchResult {
+    	
         int      m_score;
         WikiPage m_page;
 
@@ -149,8 +136,7 @@ public class SearchMatcher
          *  @param name Page Name
          *  @param score A score from 0+
          */
-        public SearchResultImpl( String name, int score )
-        {
+        public SearchResultImpl( String name, int score ) {
             m_page  = new WikiPage( m_engine, name );
             m_score = score;
         }
@@ -159,8 +145,7 @@ public class SearchMatcher
          *  Returns Wikipage for this result.
          *  @return WikiPage
          */
-        public WikiPage getPage()
-        {
+        public WikiPage getPage() {
             return m_page;
         }
 
@@ -169,8 +154,7 @@ public class SearchMatcher
          *  
          *  @return Score from 0+
          */
-        public int getScore()
-        {
+        public int getScore() {
             return m_score;
         }
 
@@ -180,8 +164,7 @@ public class SearchMatcher
          *  
          *  @return an empty array
          */
-        public String[] getContexts()
-        {
+        public String[] getContexts() {
             // Unimplemented
             return new String[0];
         }

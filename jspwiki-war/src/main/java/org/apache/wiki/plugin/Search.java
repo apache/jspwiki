@@ -23,14 +23,18 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.ecs.xhtml.*;
+import org.apache.ecs.xhtml.b;
+import org.apache.ecs.xhtml.table;
+import org.apache.ecs.xhtml.td;
+import org.apache.ecs.xhtml.th;
+import org.apache.ecs.xhtml.tr;
 import org.apache.log4j.Logger;
-import org.apache.wiki.SearchResult;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.search.SearchResult;
 
 /**
  *  The "Search" plugin allows you to access the JSPWiki search routines and show the displays in an array on your page. 

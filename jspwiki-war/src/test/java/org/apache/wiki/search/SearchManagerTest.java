@@ -28,7 +28,6 @@ import junit.framework.TestSuite;
 import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
-import org.apache.wiki.SearchResult;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 

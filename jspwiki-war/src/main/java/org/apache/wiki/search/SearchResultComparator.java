@@ -16,19 +16,17 @@
     specific language governing permissions and limitations
     under the License.     
  */
-package org.apache.wiki;
+package org.apache.wiki.search;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
+
 
 /**
- *  Simple class that decides which search results are more
- *  important than others.
+ *  Simple class that decides which search results are more important than others.
  */
-// FIXME3.0: move to the search package
-public class SearchResultComparator
-    implements Comparator<SearchResult>, Serializable
-{
+public class SearchResultComparator implements Comparator< SearchResult >, Serializable {
+	
     private static final long serialVersionUID = 1L;
 
     /**
@@ -37,15 +35,16 @@ public class SearchResultComparator
      *  
      *  {@inheritDoc}
      */
-    public int compare( SearchResult s1, SearchResult s2 )
-    {
+    public int compare( SearchResult s1, SearchResult s2 ) {
         // Bigger scores are first.
 
         int res = s2.getScore() - s1.getScore();
 
-        if( res == 0 )
-            res = s1.getPage().getName().compareTo(s2.getPage().getName());
+        if( res == 0 ) {
+            res = s1.getPage().getName().compareTo( s2.getPage().getName() );
+        }
 
         return res;
     }
+
 }

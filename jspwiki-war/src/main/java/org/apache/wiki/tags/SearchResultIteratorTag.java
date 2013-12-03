@@ -26,10 +26,9 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.SearchResult;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.PageCommand;
 
