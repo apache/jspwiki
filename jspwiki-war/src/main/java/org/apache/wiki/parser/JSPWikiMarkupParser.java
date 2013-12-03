@@ -22,7 +22,19 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Stack;
 
 import javax.xml.transform.Result;
 
@@ -30,9 +42,18 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
-import org.apache.wiki.*;
-import org.apache.wiki.api.engine.PluginManager;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.MatchResult;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.StringTransmutator;
+import org.apache.wiki.VariableManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.attachment.Attachment;
@@ -45,7 +66,12 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
-import org.jdom2.*;
+import org.jdom2.Attribute;
+import org.jdom2.Content;
+import org.jdom2.Element;
+import org.jdom2.IllegalDataException;
+import org.jdom2.ProcessingInstruction;
+import org.jdom2.Verifier;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
@@ -54,9 +80,8 @@ import org.jdom2.*;
  *
  *  @since  2.4
  */
-public class JSPWikiMarkupParser
-    extends MarkupParser
-{
+public class JSPWikiMarkupParser extends MarkupParser {
+	
     /** Name of the outlink image; relative path to the JSPWiki directory. */
     private static final String OUTLINK_IMAGE = "images/out.png";
 
@@ -121,15 +146,6 @@ public class JSPWikiMarkupParser
     /** Keep track of duplicate header names.  */
     private Map<String, Integer>   m_titleSectionCounter = new HashMap<String, Integer>();
 
-    /**
-     *  This property defines the inline image pattern.  It's current value
-     *  is jspwiki.translatorReader.inlinePattern
-     *  @deprecated will be removed in 2.10 scope. 
-     *  Consider using {@link WikiEngine#PROP_INLINEIMAGEPTRN} instead 
-     */
-    @Deprecated
-    public static final String     PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
-
     /** If true, consider CamelCase hyperlinks as well. */
     public static final String     PROP_CAMELCASELINKS   = "jspwiki.translatorReader.camelCaseLinks";
 
@@ -177,14 +193,6 @@ public class JSPWikiMarkupParser
 
     private Heading                m_lastHeading         = null;
     
-    /**
-     *  The default inlining pattern.  Currently "*.png"
-     *  @deprecated will be removed in 2.10 scope. 
-     *  Consider using {@link WikiEngine#DEFAULT_INLINEPATTERN} instead 
-     */
-    @Deprecated
-    public static final String     DEFAULT_INLINEPATTERN = "*.png";
-
     /**
      *  This list contains all IANA registered URI protocol
      *  types as of September 2004 + a few well-known extra types.
@@ -389,20 +397,6 @@ public class JSPWikiMarkupParser
         }
 
         return TextUtil.getBooleanProperty( props, key, defValue );
-    }
-
-    /**
-     *  Figure out which image suffixes should be inlined.
-     *  @return Collection of Strings with patterns.
-     *  
-     *  @param engine The WikiEngine from which the patterns are read.
-     *  @deprecated will be removed in 2.10 scope. 
-     *  Consider using {@link WikiEngine#getAllInlinedImagePatterns()} instead 
-     */
-    @Deprecated
-    public static Collection getImagePatterns( WikiEngine engine )
-    {
-        return engine.getAllInlinedImagePatterns();
     }
 
     /**
