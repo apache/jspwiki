@@ -29,9 +29,9 @@ import javax.security.auth.spi.LoginModule;
 
 import junit.framework.TestCase;
 
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;

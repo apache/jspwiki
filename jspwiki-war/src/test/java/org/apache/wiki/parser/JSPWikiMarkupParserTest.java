@@ -35,11 +35,11 @@ import junit.framework.TestSuite;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.wiki.LinkCollector;
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.BasicAttachmentProvider;

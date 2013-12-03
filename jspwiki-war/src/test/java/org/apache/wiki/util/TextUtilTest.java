@@ -21,7 +21,7 @@ package org.apache.wiki.util;
 import java.io.File;
 import java.util.Properties;
 
-import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

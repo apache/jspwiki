@@ -21,8 +21,8 @@ package org.apache.wiki.auth.user;
 import java.security.Principal;
 import java.util.Properties;
 
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 

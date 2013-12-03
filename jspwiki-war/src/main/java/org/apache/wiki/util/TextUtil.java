@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 
 
 /**

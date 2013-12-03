@@ -16,20 +16,18 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.api.exceptions;
 
-import org.apache.wiki.api.exceptions.WikiException;
+
 
 /**
- *  Marks an erroneus jspwiki.properties file.  Certain properties
- *  have been marked as "required", and if you do not provide
- *  a good value for a property, you'll see this exception.
+ *  Marks an erroneus jspwiki.properties file.  Certain properties have been marked as "required", and if you 
+ *  do not provide a good value for a property, you'll see this exception.
  *  <P>
  *  Check <TT>jspwiki.properties</TT> for the required properties.
  */
-public class NoRequiredPropertyException
-    extends WikiException
-{
+public class NoRequiredPropertyException extends WikiException {
+	
     private static final long          serialVersionUID = 1L;
 
     /**
@@ -38,8 +36,8 @@ public class NoRequiredPropertyException
      *  @param msg Message to show
      *  @param key The key of the property in question.
      */
-    public NoRequiredPropertyException( String msg, String key )
-    {
-        super(msg+": key="+key);
+    public NoRequiredPropertyException( String msg, String key ) {
+        super( msg + ": key=" + key );
     }
+
 }

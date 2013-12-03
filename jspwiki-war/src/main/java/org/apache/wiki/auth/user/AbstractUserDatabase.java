@@ -26,9 +26,8 @@ import java.util.*;
 
 import org.apache.catalina.util.HexUtils;
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;

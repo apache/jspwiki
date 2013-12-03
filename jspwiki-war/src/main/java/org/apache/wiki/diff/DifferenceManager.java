@@ -23,10 +23,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.util.ClassUtil;
 
 
