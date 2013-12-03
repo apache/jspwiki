@@ -21,6 +21,8 @@ package org.apache.wiki;
 import java.util.Properties;
 import java.io.IOException;
 
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+
 /**
  *  A generic Wiki provider for all sorts of things that the Wiki can
  *  store.

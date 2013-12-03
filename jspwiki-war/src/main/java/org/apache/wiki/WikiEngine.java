@@ -37,6 +37,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
