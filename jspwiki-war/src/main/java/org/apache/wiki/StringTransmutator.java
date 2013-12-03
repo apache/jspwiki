@@ -18,13 +18,14 @@
  */
 package org.apache.wiki;
 
+
 /**
  *  Defines an interface for transforming strings within a Wiki context.
  *
  *  @since 1.6.4
  */
-public interface StringTransmutator
-{
+public interface StringTransmutator {
+	
     /**
      *  Returns a changed String, suitable for Wiki context.
      *  
@@ -33,4 +34,5 @@ public interface StringTransmutator
      *  @return The mutated string.
      */
     String mutate( WikiContext context, String source );
+
 }
