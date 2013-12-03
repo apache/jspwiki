@@ -23,13 +23,11 @@ import java.util.Map;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 
+
 /**
- *  Defines an interface for plugins.  Any instance of a wiki plugin
- *  should implement this interface.
- *
+ *  Defines an interface for plugins.  Any instance of a wiki plugin should implement this interface.
  */
-public interface WikiPlugin 
-{
+public interface WikiPlugin {
     /**
      *  Name of the default plugin resource bundle.
      */
@@ -58,4 +56,5 @@ public interface WikiPlugin
      *  @throws PluginException In case anything goes wrong.
      */
     String execute( WikiContext context, Map< String, String > params ) throws PluginException;
+    
 }
