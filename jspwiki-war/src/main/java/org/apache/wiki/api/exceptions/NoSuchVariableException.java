@@ -16,16 +16,15 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.api.exceptions;
 
-import org.apache.wiki.api.exceptions.WikiException;
+
 
 /**
  *  Marks that no such variable was located.
  */
-public class NoSuchVariableException
-    extends WikiException
-{
+public class NoSuchVariableException extends WikiException {
+	
     private static final long          serialVersionUID = 1L;
 
     /**
@@ -33,8 +32,8 @@ public class NoSuchVariableException
      *
      *  @param msg Message to show
      */
-    public NoSuchVariableException( String msg )
-    {
-        super(msg);
+    public NoSuchVariableException( String msg ) {
+        super( msg );
     }
+
 }

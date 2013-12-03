@@ -20,9 +20,8 @@ package org.apache.wiki.parser;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom2.Text;
-
-import org.apache.wiki.NoSuchVariableException;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.render.RenderingManager;
 
 /**

@@ -20,9 +20,12 @@
 package org.apache.wiki;
 
 import junit.framework.*;
+
 import java.io.*;
 import java.util.*;
+
 import org.apache.log4j.*;
+import org.apache.wiki.api.exceptions.NoSuchVariableException;
 
 public class VariableManagerTest extends TestCase
 {
