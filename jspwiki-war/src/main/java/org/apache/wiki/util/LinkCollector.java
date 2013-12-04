@@ -14,25 +14,38 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.     
+    under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.util;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.apache.wiki.WikiContext;
 
 
 /**
- *  Defines an interface for transforming strings within a Wiki context.
- *
- *  @since 1.6.4
+ *  Just a simple class collecting all of the links that come in.
  */
-public interface StringTransmutator {
+public class LinkCollector implements StringTransmutator {
 	
+    private ArrayList< String > m_items = new ArrayList< String >();
+
     /**
-     *  Returns a changed String, suitable for Wiki context.
-     *  
-     *  @param context WikiContext in which mutation is to be done
-     *  @param source  The source string.
-     *  @return The mutated string.
+     * Returns a List of Strings representing links.
+     * @return the link collection
      */
-    String mutate( WikiContext context, String source );
+    public Collection< String > getLinks() {
+        return m_items;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String mutate( WikiContext context, String in ) {
+        m_items.add( in );
+        return in;
+    }
 
 }
+

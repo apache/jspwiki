@@ -34,7 +34,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sf.ehcache.CacheManager;
 
-import org.apache.wiki.LinkCollector;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -45,6 +44,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.stress.Benchmark;
+import org.apache.wiki.util.LinkCollector;
 import org.apache.wiki.util.TextUtil;
 
 public class JSPWikiMarkupParserTest extends TestCase
