@@ -19,13 +19,20 @@
 package org.apache.wiki.rss;
 
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.WatchDog;
+import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.WatchDog;
-import org.apache.wiki.util.WikiBackgroundThread;
 
 /**
  *  Runs the RSS generation thread.

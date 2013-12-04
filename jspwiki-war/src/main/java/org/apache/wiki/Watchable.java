@@ -16,18 +16,16 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.util;
+package org.apache.wiki;
+
 
 /**
- *  A watchdog needs something to watch.  If you wish to be watched,
- *  implement this interface.
- *
+ *  A watchdog needs something to watch.  If you wish to be watched, implement this interface.
  */
-public interface Watchable
-{
-    /**
-     *  This is a callback which is called whenever your expected
-     *  completion time is exceeded.  The current state of the
+public interface Watchable {
+
+	/**
+     *  This is a callback which is called whenever your expected completion time is exceeded.  The current state of the
      *  stack is available.
      *
      *  @param state The state in which your Watchable is currently.
@@ -35,19 +33,18 @@ public interface Watchable
     void timeoutExceeded( String state );
 
     /**
-     *  Returns a human-readable name of this Watchable.  Used in
-     *  logging.
+     *  Returns a human-readable name of this Watchable.  Used in logging.
      *
      *  @return The name of the Watchable.
      */
     String getName();
 
     /**
-     *  Returns <code>true</code>, if this Watchable is still alive and can be
-     *  watched; otherwise <code>false</code>. For example, a stopped Thread
-     *  is not very interesting to watch.
+     *  Returns <code>true</code>, if this Watchable is still alive and can be watched; otherwise <code>false</code>. 
+     *  For example, a stopped Thread is not very interesting to watch.
      *
      *  @return the result
      */
     boolean isAlive();
+
 }

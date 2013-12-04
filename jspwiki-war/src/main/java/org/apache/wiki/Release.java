@@ -21,24 +21,23 @@ package org.apache.wiki;
 
 import org.apache.commons.lang.StringUtils;
 
+
 /**
- *  Contains release and version information.  You may also invoke this
- *  class directly, in which case it prints out the version string.  This
- *  is a handy way of checking which JSPWiki version you have - just type
+ *  Contains release and version information.  You may also invoke this class directly, in which case it prints 
+ *  out the version string.  This is a handy way of checking which JSPWiki version you have - just type
  *  from a command line:
  *  <pre>
  *  % java -cp JSPWiki.jar org.apache.wiki.Release
  *  2.5.38
  *  </pre>
  *  <p>
- *  As a historical curiosity, this is the oldest JSPWiki file.  According
- *  to the CVS history, it dates from 6.7.2001, and it really hasn't changed
- *  much since.
+ *  As a historical curiosity, this is the oldest JSPWiki file.  According to the CVS history, it dates from 6.7.2001, 
+ *  and it really hasn't changed much since.
  *  </p>
  *  @since  1.0
  */
-public final class Release
-{
+public final class Release {
+	
     private static final String VERSION_SEPARATORS = ".-";
 
     /**
@@ -47,11 +46,9 @@ public final class Release
     public static final String     APPNAME       = "JSPWiki";
 
     /**
-     *  This should be empty when doing a release - otherwise
-     *  keep it as "cvs" so that whenever someone checks out the code,
-     *  they know it is a bleeding-edge version.  Other possible
-     *  values are "alpha" and "beta" for alpha and beta versions,
-     *  respectively.
+     *  This should be empty when doing a release - otherwise keep it as "cvs" so that whenever someone checks 
+     *  out the code, they know it is a bleeding-edge version.  Other possible values are "alpha" and "beta" for 
+     *  alpha and beta versions, respectively.
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
@@ -66,20 +63,20 @@ public final class Release
     /** The minor revision.  */
     public static final int        MINORREVISION = 0;
 
-    /** The build number/identifier.  This is a String as opposed to an integer, just
-     *  so that people can add other identifiers to it.  The build number is incremented
-     *  every time a committer checks in code, and reset when the a release is made.
+    /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add 
+     *  other identifiers to it.  The build number is incremented every time a committer checks in code, and reset 
+     *  when the a release is made.
      *  <p>
-     *  If you are a person who likes to build his own releases, we recommend that you
-     *  add your initials to this identifier (e.g. "13-jj", or 49-aj").
+     *  If you are a person who likes to build his own releases, we recommend that you add your initials to this 
+     *  identifier (e.g. "13-jj", or 49-aj").
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "52";
+    public static final String     BUILD         = "53";
     
     /**
-     *  This is the generic version string you should use
-     *  when printing out the version.  It is of the form "VERSION.REVISION.MINORREVISION[-POSTFIX][-BUILD]".
+     *  This is the generic version string you should use when printing out the version.  It is of 
+     *  the form "VERSION.REVISION.MINORREVISION[-POSTFIX][-BUILD]".
      */
     public static final String     VERSTR        =
         VERSION+"."+REVISION+"."+MINORREVISION+ ((POSTFIX.length() != 0 ) ? "-"+POSTFIX : "") + ((BUILD.length() != 0 ? "-"+BUILD : ""));
@@ -98,8 +95,7 @@ public final class Release
      *  @since 2.1.26.
      *  @return The version string (e.g. 2.5.23).
      */
-    public static String getVersionString()
-    {
+    public static String getVersionString() {
         return VERSTR;
     }
 
@@ -110,21 +106,18 @@ public final class Release
      *  @since 2.4.57
      *  @throws IllegalArgumentException If the version string could not be parsed.
      */
-    public static boolean isNewerOrEqual( String version )
-        throws IllegalArgumentException
-    {
-        if( version == null ) return true;
-        String[] versionComponents = StringUtils.split(version,VERSION_SEPARATORS);
-        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
-        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
-        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
+    public static boolean isNewerOrEqual( String version ) throws IllegalArgumentException {
+        if( version == null ) {
+        	return true;
+        }
+        String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
+        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
+        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
+        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
 
-        if( VERSION == reqVersion )
-        {
-            if( REVISION == reqRevision )
-            {
-                if( MINORREVISION == reqMinorRevision )
-                {
+        if( VERSION == reqVersion ) {
+            if( REVISION == reqRevision ) {
+                if( MINORREVISION == reqMinorRevision ) {
                     return true;
                 }
 
@@ -139,27 +132,25 @@ public final class Release
 
     /**
      *  Returns true, if this version of JSPWiki is older or equal than what is requested.
+     *  
      *  @param version A version parameter string (a.b.c-something)
      *  @return A boolean value describing whether the given version is older than the current JSPWiki version
      *  @since 2.4.57
      *  @throws IllegalArgumentException If the version string could not be parsed.
      */
-    public static boolean isOlderOrEqual( String version )
-        throws IllegalArgumentException
-    {
-        if( version == null ) return true;
+    public static boolean isOlderOrEqual( String version ) throws IllegalArgumentException {
+        if( version == null ) {
+        	return true;
+        }
 
-        String[] versionComponents = StringUtils.split(version,VERSION_SEPARATORS);
-        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
-        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
-        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
+        String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
+        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
+        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
+        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
 
-        if( VERSION == reqVersion )
-        {
-            if( REVISION == reqRevision )
-            {
-                if( MINORREVISION == reqMinorRevision )
-                {
+        if( VERSION == reqVersion ) {
+            if( REVISION == reqRevision ) {
+                if( MINORREVISION == reqMinorRevision ) {
                     return true;
                 }
 
@@ -173,9 +164,8 @@ public final class Release
     }
 
     /**
-     *  Executing this class directly from command line prints out
-     *  the current version.  It is very useful for things like
-     *  different command line tools.
+     *  Executing this class directly from command line prints out the current version.  It is very useful for 
+     *  things like different command line tools.
      *  <P>Example:
      *  <PRE>
      *  % java org.apache.wiki.Release
@@ -184,8 +174,8 @@ public final class Release
      *
      *  @param argv The argument string.  This class takes in no arguments.
      */
-    public static void main( String[] argv )
-    {
+    public static void main( String[] argv ) {
         System.out.println(VERSTR);
     }
+    
 }

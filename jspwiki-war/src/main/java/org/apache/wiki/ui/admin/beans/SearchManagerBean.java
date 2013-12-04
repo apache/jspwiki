@@ -22,13 +22,13 @@ import java.util.Collection;
 
 import javax.management.NotCompliantMBeanException;
 
+import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.ui.progress.ProgressItem;
-import org.apache.wiki.util.WikiBackgroundThread;
 
 /**
  *  The SearchManagerBean is a simple AdminBean interface

@@ -88,7 +88,6 @@ import org.apache.wiki.util.LinkCollector;
 import org.apache.wiki.util.PageSorter;
 import org.apache.wiki.util.StringTransmutator;
 import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.WatchDog;
 import org.apache.wiki.util.comparators.PageTimeComparator;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;

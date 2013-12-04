@@ -64,6 +64,8 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WatchDog;
+import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
@@ -76,8 +78,6 @@ import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.WatchDog;
-import org.apache.wiki.util.WikiBackgroundThread;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
