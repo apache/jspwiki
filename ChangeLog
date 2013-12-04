@@ -1,4 +1,11 @@
-2013-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+2013-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-53
+       
+       * some more refactorings before moving into JSPWIKI-155, cfr. with 
+         $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
+         
+2013-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-52
        

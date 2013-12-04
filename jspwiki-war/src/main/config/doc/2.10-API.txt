@@ -58,6 +58,12 @@ api.plugin
  -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
     in 2.10 timeframe
 
+org.apache.wiki.LinkCollector
+ -> moved to org.apache.wiki.util package    
+
+org.apache.wiki.PageTimeComparator
+ -> moved to org.apache.wiki.util.comparators package
+
 org.apache.wiki.QueryItem 
  -> moved to org.apache.wiki.search package
 
@@ -69,6 +75,9 @@ org.apache.wiki.SearchResultComparator
 
 org.apache.wiki.SearchMatcher
  -> moved to org.apache.wiki.search package
+
+org.apache.wiki.StringTransmutator
+ -> moved to org.apache.wiki.util package    
 
 org.apache.wiki.WikiContext
  -> removed WikiContext.getBundle( String ) in favour of Preferences.getBundle( String )
@@ -83,7 +92,7 @@ org.apache.wiki.WikiEngine
     TextUtil.getRequiredProperty( props, key )
     
 org.apache.wiki.FileUtil and org.apache.wiki.TextUtil
- -> Moved to org.apache.wiki.util.FileUtil and org.apache.wiki.util.TextUtil respectively
+ -> moved to org.apache.wiki.util.FileUtil and org.apache.wiki.util.TextUtil respectively
 
 org.apache.wiki.event.WorkflowEvent
  -> removed getWorkflow() in favour of the generified WikiEvent#getSrc()
@@ -135,3 +144,12 @@ org.apache.wiki.plugin.ParserStagePlugin
 org.apache.wiki.plugin.WikiPlugin
  -> moved to new interface org.apache.wiki.api.plugins.WikiPlugin
  -> all core wikiplugins and wikiforms implement the new interface
+
+org.apache.wiki.util.Watchable
+ -> moved to org.apache.wiki package
+
+org.apache.wiki.util.WatchDog
+ -> moved to org.apache.wiki package
+ 
+org.apache.wiki.util.WikiBackgroundThread
+ -> moved to org.apache.wiki package
