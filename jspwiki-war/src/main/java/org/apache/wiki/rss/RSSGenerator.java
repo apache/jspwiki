@@ -18,15 +18,24 @@
  */
 package org.apache.wiki.rss;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.util.comparators.PageTimeComparator;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).

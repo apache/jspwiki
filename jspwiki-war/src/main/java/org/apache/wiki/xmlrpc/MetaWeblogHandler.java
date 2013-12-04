@@ -19,12 +19,13 @@
 package org.apache.wiki.xmlrpc;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlrpc.XmlRpcException;
-
-import org.apache.wiki.PageTimeComparator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -37,6 +38,8 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.comparators.PageTimeComparator;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  *  Provides handlers for all RPC routines of the MetaWeblog API.

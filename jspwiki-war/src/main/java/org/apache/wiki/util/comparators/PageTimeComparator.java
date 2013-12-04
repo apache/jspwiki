@@ -16,11 +16,14 @@
     specific language governing permissions and limitations
     under the License.   
  */
-package org.apache.wiki;
+package org.apache.wiki.util.comparators;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
+import org.apache.wiki.WikiPage;
 
 /**
  *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
@@ -30,22 +33,17 @@ import org.apache.log4j.Logger;
  *  If the page name is also equal, then returns 0 for equality.
  */
 // FIXME: Does not implement equals().
-// FIXME3.0: move to util package
-
-public class PageTimeComparator
-    implements Comparator<WikiPage>, Serializable
-{
+public class PageTimeComparator implements Comparator<WikiPage>, Serializable {
+	
     private static final long serialVersionUID = 0L;
 
-    static Logger log = Logger.getLogger( PageTimeComparator.class ); 
+    private static final Logger log = Logger.getLogger( PageTimeComparator.class ); 
 
     /**
      *  {@inheritDoc}
      */
-    public int compare( WikiPage w1, WikiPage w2 )
-    {
-        if( w1 == null || w2 == null ) 
-        {
+    public int compare( WikiPage w1, WikiPage w2 ) {
+        if( w1 == null || w2 == null ) {
             log.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?
         }
@@ -53,25 +51,22 @@ public class PageTimeComparator
         Date w1LastMod = w1.getLastModified();
         Date w2LastMod = w2.getLastModified();
 
-        if( w1LastMod == null )
-        {
-            log.error( "NULL MODIFY DATE WITH "+w1.getName() );
+        if( w1LastMod == null ) {
+            log.error( "NULL MODIFY DATE WITH " + w1.getName() );
             return 0;
-        }
-        else if( w2LastMod == null )
-        {
-            log.error( "NULL MODIFY DATE WITH "+w2.getName() );
+        } else if( w2LastMod == null ) {
+            log.error( "NULL MODIFY DATE WITH " + w2.getName() );
             return 0;
         }
 
         // This gets most recent on top
         int timecomparison = w2LastMod.compareTo( w1LastMod );
 
-        if( timecomparison == 0 )
-        {
+        if( timecomparison == 0 ) {
             return w1.compareTo( w2 );
         }
 
         return timecomparison;
     }
+
 }
