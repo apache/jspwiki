@@ -16,16 +16,15 @@
     specific language governing permissions and limitations
     under the License.     
  */
-package org.apache.wiki;
+package org.apache.wiki.search;
+
 
 /**
- *  This simple class just fulfils the role of a container
- *  for searches.  It tells the word and whether it is requested or not.
- *
+ * This simple class just fulfils the role of a container for searches.  It tells the word and whether it is 
+ * requested or not.
  */
-// FIXME3.0: This should be moved to the search-package, as well as properly rewritten as a bean.
-public class QueryItem
-{
+public class QueryItem {
+	
     /** The word is required to be in the pages */
     public static final int REQUIRED  = 1;
 
@@ -39,7 +38,7 @@ public class QueryItem
     /** The word that is being searched */
     public String word;
 
-    /** The type of the word.  See above for types.  The default
-        is REQUESTED. */
+    /** The type of the word.  See above for types.  The default is REQUESTED. */
     public int    type = REQUESTED;
+
 }

@@ -20,13 +20,13 @@ package org.apache.wiki.providers;
 
 import java.io.InputStream;
 import java.io.IOException;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.search.QueryItem;
 
 /**
  *  Defines an attachment provider - a class which is capable of saving

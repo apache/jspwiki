@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.wiki.*;
+import org.apache.wiki.search.QueryItem;
 
 /**
  *  Each Wiki page provider should implement this interface.

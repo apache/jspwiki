@@ -37,11 +37,11 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.QueryItem;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.search.SearchMatcher;
 import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.search.SearchResultComparator;

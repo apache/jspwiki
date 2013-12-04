@@ -18,8 +18,15 @@
  */
 package org.apache.wiki.providers;
 
-import java.util.*;
-import org.apache.wiki.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import java.util.Vector;
+
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.search.QueryItem;
 
 /**
  *  This is a simple provider that is used by some of the tests.  It has some

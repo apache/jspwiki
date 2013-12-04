@@ -58,7 +58,16 @@ api.plugin
  -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
     in 2.10 timeframe
 
-org.apache.wiki.SearchResult, org.apache.wiki.SearchResultComparator and org.apache.wiki.SearchMatcher
+org.apache.wiki.QueryItem 
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.SearchResult
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.SearchResultComparator 
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.SearchMatcher
  -> moved to org.apache.wiki.search package
 
 org.apache.wiki.WikiContext

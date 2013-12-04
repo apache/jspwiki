@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
-import org.apache.wiki.QueryItem;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 

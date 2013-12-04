@@ -31,6 +31,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 

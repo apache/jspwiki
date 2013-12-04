@@ -30,6 +30,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
