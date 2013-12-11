@@ -120,7 +120,7 @@ public final class ClassUtil
      *  @throws ClassNotFoundException if this particular class cannot be found
      *          from the list.
      */
-    public static Class findClass( List packages, String className )
+    public static Class<?> findClass( List packages, String className )
         throws ClassNotFoundException
     {
         ClassLoader loader = ClassUtil.class.getClassLoader();
@@ -172,7 +172,7 @@ public final class ClassUtil
      *  @throws ClassNotFoundException if this particular class cannot be found.
      */
 
-    public static Class findClass( String packageName, String className )
+    public static Class<?> findClass( String packageName, String className )
         throws ClassNotFoundException
     {
         ArrayList<String> list = new ArrayList<String>();
@@ -238,7 +238,7 @@ public final class ClassUtil
     {
         log.debug( "scanning [" + file.getName() +"]" );
         if( file.isDirectory() ) {
-            @SuppressWarnings( "unchecked" )Iterator< File > files = FileUtils.iterateFiles( file, null, true );
+            Iterator< File > files = FileUtils.iterateFiles( file, null, true );
             while( files.hasNext() ) 
             {
                 File subfile = files.next();
@@ -343,7 +343,7 @@ public final class ClassUtil
         {
             Class<?> cl = getMappedClass( requestedClass );
          
-            Constructor[] ctors = cl.getConstructors();
+            Constructor<?>[] ctors = cl.getConstructors();
             
             //
             //  Try to find the proper constructor by comparing the
