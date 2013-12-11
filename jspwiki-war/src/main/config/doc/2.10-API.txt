@@ -145,6 +145,11 @@ org.apache.wiki.plugin.WikiPlugin
  -> moved to new interface org.apache.wiki.api.plugins.WikiPlugin
  -> all core wikiplugins and wikiforms implement the new interface
 
+org.apache.wiki.ui.admin.AdminBeanManager
+ -> moved to new interface org.apache.wiki.ui.admin.DefaultAdminBeanManager
+ -> new interface org.apache.wiki.api.engine.AdminBeanManager
+ -> public static int getTypeFromString( String type ) not static anymore
+
 org.apache.wiki.util.Watchable
  -> moved to org.apache.wiki package
 

@@ -1,3 +1,10 @@
+2013-12-11  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-54
+       
+       * retaking JSPWIKI-155, extracted interface o.a.w.api.engine.AdminBeanManager, cfr. with  
+         $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
+         
 2013-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-53

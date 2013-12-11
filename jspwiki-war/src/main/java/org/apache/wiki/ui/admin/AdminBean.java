@@ -21,14 +21,14 @@ package org.apache.wiki.ui.admin;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.GenericHTTPHandler;
 
+
 /**
  *  Describes an administrative bean.
  *  
  *  @since  2.5.52
  */
-public interface AdminBean
-    extends GenericHTTPHandler
-{
+public interface AdminBean extends GenericHTTPHandler {
+	
     int UNKNOWN = 0;
     int CORE    = 1;
     int EDITOR  = 2;

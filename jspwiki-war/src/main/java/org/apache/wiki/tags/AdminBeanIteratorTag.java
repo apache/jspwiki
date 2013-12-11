@@ -22,15 +22,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.ui.admin.AdminBean;
-import org.apache.wiki.ui.admin.AdminBeanManager;
 
 /**
  *  Provides an iterator for all AdminBeans of a given type.
  *
  */
-public class AdminBeanIteratorTag extends IteratorTag
-{
+public class AdminBeanIteratorTag extends IteratorTag {
+	
     private static final long serialVersionUID = 1L;
 
     private int m_type;
@@ -40,33 +40,26 @@ public class AdminBeanIteratorTag extends IteratorTag
      *  
      *  @param type Type to set
      */
-    public void setType(String type)
-    {
-        m_type = AdminBeanManager.getTypeFromString( type );
+    public void setType( String type ) {
+        m_type = m_wikiContext.getEngine().getAdminBeanManager().getTypeFromString( type );
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public void resetIterator()
-    {
+    public void resetIterator() {
         AdminBeanManager mgr = m_wikiContext.getEngine().getAdminBeanManager();
-
-        Collection beans = mgr.getAllBeans();
-
-        ArrayList<AdminBean> typedBeans = new ArrayList<AdminBean>();
-
-        for( Iterator i = beans.iterator(); i.hasNext(); )
-        {
-            AdminBean ab = (AdminBean)i.next();
-
-            if( ab.getType() == m_type )
-            {
+        Collection< AdminBean > beans = mgr.getAllBeans();
+        ArrayList< AdminBean > typedBeans = new ArrayList< AdminBean >();
+        for( Iterator< AdminBean > i = beans.iterator(); i.hasNext(); ) {
+            AdminBean ab = i.next();
+            if( ab.getType() == m_type ) {
                 typedBeans.add( ab );
             }
         }
 
         setList( typedBeans );
     }
+
 }

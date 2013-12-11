@@ -116,8 +116,8 @@
     <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.ui.admin.AdminBeanManager</requestedClass>
-    <mappedClass>org.apache.wiki.ui.admin.AdminBeanManager</mappedClass>
+    <requestedClass>org.apache.wiki.api.engine.AdminBeanManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.admin.DefaultAdminBeanManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>

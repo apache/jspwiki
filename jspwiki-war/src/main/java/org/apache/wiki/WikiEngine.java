@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
@@ -80,7 +81,6 @@ import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
-import org.apache.wiki.ui.admin.AdminBeanManager;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
@@ -2360,13 +2360,12 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the current AdminBeanManager.
+     *  Returns the current {@link AdminBeanManager}.
      *
-     *  @return The current AdminBeanManager
+     *  @return The current {@link AdminBeanManager}.
      *  @since  2.6
      */
-    public AdminBeanManager getAdminBeanManager()
-    {
+    public AdminBeanManager getAdminBeanManager() {
         return m_adminBeanManager;
     }
 
