@@ -59,6 +59,9 @@ public class XmlUtilTest extends TestCase {
      	
      	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, null );
      	assertEquals( 0, elements.size() );
+     	
+     	elements = XmlUtil.parse( ClassUtil.MAPPINGS, "/classmappings/mapping" );
+     	assertEquals( 19, elements.size() );
     }
     
     public void testParseFromStream() throws FileNotFoundException {
