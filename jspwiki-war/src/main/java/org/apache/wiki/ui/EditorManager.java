@@ -18,10 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,11 +36,8 @@ import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
-import org.jdom2.Document;
+import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.xpath.XPath;
 
 
 /**
@@ -110,68 +105,28 @@ public class EditorManager extends ModuleManager {
      *  Any editors found are put in the registry.
      *
      */
-    private void registerEditors()
-    {
+    private void registerEditors() {
         log.info( "Registering editor modules" );
-
         m_editors = new HashMap<String, WikiEditorInfo>();
-        SAXBuilder builder = new SAXBuilder();
 
-        try
-        {
-            //
-            // Register all editors which have created a resource containing its properties.
-            //
-            // Get all resources of all modules
-            //
+        //
+        // Register all editors which have created a resource containing its properties.
+        //
+        // Get all resources of all modules
+        //
+        List< Element > editors = XmlUtil.parse( PLUGIN_RESOURCE_LOCATION, "/modules/editor" );
 
-            Enumeration< URL > resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
+        for( Iterator< Element > i = editors.iterator(); i.hasNext(); ) {
+            Element pluginEl = i.next();
+            String name = pluginEl.getAttributeValue( "name" );
+            WikiEditorInfo info = WikiEditorInfo.newInstance( name, pluginEl );
 
-            while( resources.hasMoreElements() )
-            {
-                URL resource = resources.nextElement();
-
-                try
-                {
-                    log.debug( "Processing XML: " + resource );
-
-                    Document doc = builder.build( resource );
-
-                    List plugins = XPath.selectNodes( doc, "/modules/editor");
-
-                    for( Iterator i = plugins.iterator(); i.hasNext(); )
-                    {
-                        Element pluginEl = (Element) i.next();
-
-                        String name = pluginEl.getAttributeValue("name");
-
-                        WikiEditorInfo info = WikiEditorInfo.newInstance(name, pluginEl);
-
-                        if( checkCompatibility(info) )
-                        {
-                            m_editors.put( name, info );
-
-                            log.debug("Registered editor "+name);
-                        }
-                        else
-                        {
-                            log.info("Editor '"+name+"' not compatible with this version of JSPWiki.");
-                        }
-                    }
-                }
-                catch( java.io.IOException e )
-                {
-                    log.error( "Couldn't load " + ModuleManager.PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
-                }
-                catch( JDOMException e )
-                {
-                    log.error( "Error parsing XML for plugin: "+ModuleManager.PLUGIN_RESOURCE_LOCATION );
-                }
+            if( checkCompatibility(info) ) {
+                m_editors.put( name, info );
+                log.debug( "Registered editor " + name );
+            } else {
+                log.info( "Editor '" + name + "' not compatible with this version of JSPWiki." );
             }
-        }
-        catch( java.io.IOException e )
-        {
-            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
         }
     }
 

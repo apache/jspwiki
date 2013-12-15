@@ -16,7 +16,6 @@
     specific language governing permissions and limitations
     under the License.  
  */
-
 package org.apache.wiki.util;
 
 import junit.framework.Test;
@@ -24,15 +23,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 
-public class AllTests extends TestCase
-{
-    public AllTests( String s )
-    {
+public class AllTests extends TestCase {
+
+    public AllTests( String s ) {
         super( s );
     }
 
-    public static Test suite()
-    {
+    public static Test suite() {
         TestSuite suite = new TestSuite("Utility suite tests");
 
         suite.addTest( ClassUtilTest.suite() );
@@ -47,6 +44,7 @@ public class AllTests extends TestCase
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TimedCounterListTest.suite() );
         suite.addTest( UtilJ2eeCompatTest.suite() );
+        suite.addTest( XmlUtilTest.suite() );
         
         return suite;
     }

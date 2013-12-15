@@ -23,11 +23,9 @@ import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,11 +64,8 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
-import org.jdom2.Document;
+import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.xpath.XPath;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -541,41 +536,20 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
     private void registerPlugins() {
         log.info( "Registering plugins" );
-        SAXBuilder builder = new SAXBuilder();
+        List< Element > plugins = XmlUtil.parse( PLUGIN_RESOURCE_LOCATION, "/modules/plugin" );
 
-        try {
-            //
-            // Register all plugins which have created a resource containing its properties.
-            //
-            // Get all resources of all plugins.
-            //
+        //
+        // Register all plugins which have created a resource containing its properties.
+        //
+        // Get all resources of all plugins.
+        //
+        for( Element pluginEl : plugins ) {
+            String className = pluginEl.getAttributeValue( "class" );
+            WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl );
 
-            Enumeration< URL > resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
-
-            while( resources.hasMoreElements() ) {
-                URL resource = resources.nextElement();
-
-                try {
-                    log.debug( "Processing XML: " + resource );
-                    Document doc = builder.build( resource );
-                    List< Element > plugins = ( List< Element > )XPath.selectNodes( doc, "/modules/plugin" );
-
-                    for( Element pluginEl : plugins ) {
-                        String className = pluginEl.getAttributeValue( "class" );
-                        WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl );
-
-                        if( pluginInfo != null ) {
-                            registerPlugin( pluginInfo );
-                        }
-                    }
-                } catch( IOException e ) {
-                    log.error( "Couldn't load " + PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
-                } catch( JDOMException e ) {
-                    log.error( "Error parsing XML for plugin: "+PLUGIN_RESOURCE_LOCATION );
-                }
+            if( pluginInfo != null ) {
+                registerPlugin( pluginInfo );
             }
-        } catch( IOException e ) {
-            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
         }
     }
 
