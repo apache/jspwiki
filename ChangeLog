@@ -1,3 +1,14 @@
+2013-12-15  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-55
+       
+       * JSPWIKI-155: AuthenticationManager, AuthorizationManager, DefaultFilterManager, GroupManager
+         and UserManager not final anymore
+         
+       * Introduced utility class to parse xml files.
+       
+       * DefaultFilterManager closes stream on .initialize(Properties props) if needed
+         
 2013-12-11  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-54
