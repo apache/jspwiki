@@ -60,12 +60,20 @@
     <mappedClass>org.apache.wiki.VariableManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.attachment.AttachmentManager</requestedClass>
-    <mappedClass>org.apache.wiki.attachment.AttachmentManager</mappedClass>
+    <requestedClass>org.apache.wiki.api.engine.FilterManager</requestedClass>
+    <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.auth.acl.DefaultAclManager</requestedClass>
-    <mappedClass>org.apache.wiki.auth.acl.DefaultAclManager</mappedClass>
+    <requestedClass>org.apache.wiki.api.engine.PluginManager</requestedClass>
+    <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.api.engine.AdminBeanManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.admin.DefaultAdminBeanManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.attachment.AttachmentManager</requestedClass>
+    <mappedClass>org.apache.wiki.attachment.AttachmentManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.AuthenticationManager</requestedClass>
@@ -80,6 +88,10 @@
     <mappedClass>org.apache.wiki.auth.UserManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.auth.acl.DefaultAclManager</requestedClass>
+    <mappedClass>org.apache.wiki.auth.acl.DefaultAclManager</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.auth.authorize.GroupManager</requestedClass>
     <mappedClass>org.apache.wiki.auth.authorize.GroupManager</mappedClass>
   </mapping>
@@ -88,16 +100,8 @@
     <mappedClass>org.apache.wiki.diff.DifferenceManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.api.engine.FilterManager</requestedClass>
-    <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass>
-  </mapping>
-  <mapping>
     <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>
     <mappedClass>org.apache.wiki.i18n.InternationalizationManager</mappedClass>
-  </mapping>
-  <mapping>
-    <requestedClass>org.apache.wiki.api.engine.PluginManager</requestedClass>
-    <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>
@@ -114,10 +118,6 @@
   <mapping>
     <requestedClass>org.apache.wiki.ui.TemplateManager</requestedClass>
     <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
-  </mapping>
-  <mapping>
-    <requestedClass>org.apache.wiki.api.engine.AdminBeanManager</requestedClass>
-    <mappedClass>org.apache.wiki.ui.admin.DefaultAdminBeanManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>
