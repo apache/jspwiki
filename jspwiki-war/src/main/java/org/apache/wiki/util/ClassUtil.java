@@ -52,7 +52,7 @@ public final class ClassUtil {
      *  The location of the classmappings.xml document. It will be searched for
      *  in the classpath.  It's value is "{@value}".
      */
-    public  static final String MAPPINGS = "/ini/classmappings.xml";
+    public  static final String MAPPINGS = "ini/classmappings.xml";
     
     private static Map<String, String> c_classMappings = new Hashtable<String, String>();
 

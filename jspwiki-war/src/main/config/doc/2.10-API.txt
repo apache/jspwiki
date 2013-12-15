@@ -59,7 +59,10 @@ api.plugin
     in 2.10 timeframe
 
 org.apache.wiki.LinkCollector
- -> moved to org.apache.wiki.util package    
+ -> moved to org.apache.wiki.util package
+
+org.apache.wiki.PageManager
+ -> getActiveLocks() returns List<PageLock> instead of List (internally it was returning List<PageLock> anyway)
 
 org.apache.wiki.PageTimeComparator
  -> moved to org.apache.wiki.util.comparators package
@@ -149,6 +152,10 @@ org.apache.wiki.ui.admin.AdminBeanManager
  -> moved to new interface org.apache.wiki.ui.admin.DefaultAdminBeanManager
  -> new interface org.apache.wiki.api.engine.AdminBeanManager
  -> public static int getTypeFromString( String type ) not static anymore
+ 
+org.apache.wiki.util.MailUtil
+ -> sendMessage(WikiEngine, String, String, String) changed to sendMessage(Properties, String, String, String) 
+ -> use WikiEngine.getWikiProperties() to pass the appropiate object
 
 org.apache.wiki.util.Watchable
  -> moved to org.apache.wiki package
