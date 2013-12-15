@@ -57,6 +57,7 @@ import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.Workflow;
 
+
 /**
  *  Manages the WikiPages.  This class functions as an unified interface towards
  *  the page providers.  It handles initialization and management of the providers,
@@ -70,8 +71,8 @@ import org.apache.wiki.workflow.Workflow;
 // FIXME: This class currently only functions just as an extra layer over providers,
 //        complicating things.  We need to move more provider-specific functionality
 //        from WikiEngine (which is too big now) into this class.
-public class PageManager extends ModuleManager implements WikiEventListener
-{
+public class PageManager extends ModuleManager implements WikiEventListener {
+	
     private static final long serialVersionUID = 1L;
 
     /** The property value for setting the current page provider.  Value is {@value}. */
@@ -80,9 +81,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /** The property value for setting the cache on/off.  Value is {@value}. */
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
     
-    /** The property value for setting the amount of time before the page locks expire. 
-     *  Value is {@value}.
-     */
+    /** The property value for setting the amount of time before the page locks expire. Value is {@value}. */
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
     
     /** The message key for storing the text for the presave task.  Value is <tt>{@value}</tt>*/
@@ -138,80 +137,55 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @param props Properties to use for initialization
      *  @throws WikiException If anything goes wrong, you get this.
      */
-    public PageManager( WikiEngine engine, Properties props )
-        throws WikiException
-    {
+    public PageManager( WikiEngine engine, Properties props ) throws WikiException {
         super( engine );
-
         String classname;
-
         m_engine = engine;
-
-        boolean useCache = "true".equals(props.getProperty( PROP_USECACHE ));
+        boolean useCache = "true".equals( props.getProperty( PROP_USECACHE ) );
 
         m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ), 60 );
 
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.
         //
-        if( useCache )
-        {
+        if( useCache ) {
             classname = "org.apache.wiki.providers.CachingProvider";
-        }
-        else
-        {
+        } else {
             classname = TextUtil.getRequiredProperty( props, PROP_PAGEPROVIDER );
         }
 
-        try
-        {
-            log.debug("Page provider class: '"+classname+"'");
+        try {
+            log.debug( "Page provider class: '" + classname + "'" );
+            Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
+            m_provider = ( WikiPageProvider )providerclass.newInstance();
 
-            Class providerclass = ClassUtil.findClass( "org.apache.wiki.providers",
-                                                       classname );
-
-            m_provider = (WikiPageProvider)providerclass.newInstance();
-
-            log.debug("Initializing page provider class "+m_provider);
+            log.debug( "Initializing page provider class " + m_provider );
             m_provider.initialize( m_engine, props );
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.error("Unable to locate provider class '"+classname+"'",e);
+        } catch( ClassNotFoundException e ) {
+            log.error( "Unable to locate provider class '" + classname + "'", e );
             throw new WikiException( "No provider class.", e );
-        }
-        catch( InstantiationException e )
-        {
-            log.error("Unable to create provider class '"+classname+"'",e);
+        } catch( InstantiationException e ) {
+            log.error( "Unable to create provider class '" + classname + "'", e );
             throw new WikiException( "Faulty provider class.", e );
-        }
-        catch( IllegalAccessException e )
-        {
-            log.error("Illegal access to provider class '"+classname+"'",e);
+        } catch( IllegalAccessException e ) {
+            log.error( "Illegal access to provider class '" + classname + "'", e );
             throw new WikiException( "Illegal provider class.", e );
-        }
-        catch( NoRequiredPropertyException e )
-        {
-            log.error("Provider did not found a property it was looking for: "+e.getMessage(),
-                      e);
+        } catch( NoRequiredPropertyException e ) {
+            log.error( "Provider did not found a property it was looking for: " + e.getMessage(), e );
             throw e;  // Same exception works.
-        }
-        catch( IOException e )
-        {
-            log.error("An I/O exception occurred while trying to create a new page provider: "+classname, e );
-            throw new WikiException( "Unable to start page provider: "+e.getMessage(), e );
+        } catch( IOException e ) {
+            log.error("An I/O exception occurred while trying to create a new page provider: " + classname, e );
+            throw new WikiException( "Unable to start page provider: " + e.getMessage(), e );
         }
 
     }
-
 
     /**
      *  Returns the page provider currently in use.
      *  
      *  @return A WikiPageProvider instance.
      */
-    public WikiPageProvider getProvider()
-    {
+    public WikiPageProvider getProvider() {
         return m_provider;
     }
 
@@ -223,9 +197,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
-    public Collection getAllPages()
-        throws ProviderException
-    {
+    public Collection getAllPages() throws ProviderException {
         return m_provider.getAllPages();
     }
 
@@ -239,26 +211,19 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @return The page content as a raw string
      *  @throws ProviderException If the backend has issues.
      */
-    public String getPageText( String pageName, int version )
-        throws ProviderException
-    {
-        if( pageName == null || pageName.length() == 0 )
-        {
+    public String getPageText( String pageName, int version ) throws ProviderException {
+        if( pageName == null || pageName.length() == 0 ) {
             throw new ProviderException("Illegal page name");
         }
-
         String text = null;
 
-        try
-        {
+        try {
             text = m_provider.getPageText( pageName, version );
-        }
-        catch( RepositoryModifiedException e )
-        {
+        } catch( RepositoryModifiedException e ) {
             //
             //  This only occurs with the latest version.
             //
-            log.info("Repository has been modified externally while fetching page "+pageName );
+            log.info( "Repository has been modified externally while fetching page " + pageName );
 
             //
             //  Empty the references and yay, it shall be recalculated
@@ -268,19 +233,16 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
             m_engine.updateReferences( p );
 
-            if( p != null )
-            {
+            if( p != null ) {
                 m_engine.getSearchManager().reindexPage( p );
                 text = m_provider.getPageText( pageName, version );
-            }
-            else
-            {
+            } else {
                 //
                 //  Make sure that it no longer exists in internal data structures either.
                 //
-                WikiPage dummy = new WikiPage(m_engine,pageName);
-                m_engine.getSearchManager().pageRemoved(dummy);
-                m_engine.getReferenceManager().pageRemoved(dummy);
+                WikiPage dummy = new WikiPage( m_engine, pageName );
+                m_engine.getSearchManager().pageRemoved( dummy );
+                m_engine.getReferenceManager().pageRemoved( dummy );
             }
         }
 
@@ -292,8 +254,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  
      *  @return The WikiEngine object.
      */
-    public WikiEngine getEngine()
-    {
+    public WikiEngine getEngine() {
         return m_engine;
     }
 
@@ -305,12 +266,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
      * @param content Wikimarkup to save
      * @throws ProviderException If something goes wrong in the saving phase
      */
-    public void putPageText( WikiPage page, String content )
-        throws ProviderException
-    {
-        if( page == null || page.getName() == null || page.getName().length() == 0 )
-        {
-            throw new ProviderException("Illegal page name");
+    public void putPageText( WikiPage page, String content ) throws ProviderException {
+        if( page == null || page.getName() == null || page.getName().length() == 0 ) {
+            throw new ProviderException( "Illegal page name" );
         }
 
         m_provider.putPageText( page, content );
@@ -325,12 +283,10 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @param user Username to use for locking
      *  @return null, if page could not be locked.
      */
-    public PageLock lockPage( WikiPage page, String user )
-    {
+    public PageLock lockPage( WikiPage page, String user ) {
         PageLock lock = null;
 
-        if( m_reaper == null )
-        {
+        if( m_reaper == null ) {
             //
             //  Start the lock reaper lazily.  We don't want to start it in
             //  the constructor, because starting threads in constructors
@@ -341,27 +297,19 @@ public class PageManager extends ModuleManager implements WikiEventListener
             m_reaper.start();
         }
 
-        synchronized( m_pageLocks )
-        {
+        synchronized( m_pageLocks ) {
             fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
-
             lock = m_pageLocks.get( page.getName() );
 
-            if( lock == null )
-            {
+            if( lock == null ) {
                 //
                 //  Lock is available, so make a lock.
                 //
                 Date d = new Date();
-                lock = new PageLock( page, user, d,
-                                     new Date( d.getTime() + m_expiryTime*60*1000L ) );
-
+                lock = new PageLock( page, user, d, new Date( d.getTime() + m_expiryTime*60*1000L ) );
                 m_pageLocks.put( page.getName(), lock );
-
                 log.debug( "Locked page "+page.getName()+" for "+user);
-            }
-            else
-            {
+            } else {
                 log.debug( "Page "+page.getName()+" already locked by "+lock.getLocker() );
                 lock = null; // Nothing to return
             }
@@ -371,19 +319,15 @@ public class PageManager extends ModuleManager implements WikiEventListener
     }
 
     /**
-     *  Marks a page free to be written again.  If there has not been a lock,
-     *  will fail quietly.
+     *  Marks a page free to be written again.  If there has not been a lock, will fail quietly.
      *
      *  @param lock A lock acquired in lockPage().  Safe to be null.
      */
-    public void unlockPage( PageLock lock )
-    {
+    public void unlockPage( PageLock lock ) {
         if( lock == null ) return;
 
-        synchronized( m_pageLocks )
-        {
+        synchronized( m_pageLocks ) {
             m_pageLocks.remove( lock.getPage() );
-
             log.debug( "Unlocked page "+lock.getPage() );
         }
 
@@ -397,12 +341,10 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @param page The page to check the lock for
      *  @return Current lock, or null, if there is no lock
      */
-    public PageLock getCurrentLock( WikiPage page )
-    {
+    public PageLock getCurrentLock( WikiPage page ) {
         PageLock lock = null;
 
-        synchronized( m_pageLocks )
-        {
+        synchronized( m_pageLocks ) {
             lock = m_pageLocks.get( page.getName() );
         }
 
@@ -417,14 +359,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *          an empty list.
      *  @since 2.0.22.
      */
-    public List getActiveLocks()
-    {
+    public List<PageLock> getActiveLocks() {
         ArrayList<PageLock> result = new ArrayList<PageLock>();
 
-        synchronized( m_pageLocks )
-        {
-            for( PageLock lock : m_pageLocks.values() )
-            {
+        synchronized( m_pageLocks ) {
+            for( PageLock lock : m_pageLocks.values() ) {
                 result.add( lock );
             }
         }
@@ -441,36 +380,25 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @throws ProviderException If there is something wrong with the page 
      *                            name or the repository
      */
-    public WikiPage getPageInfo( String pageName, int version )
-        throws ProviderException
-    {
-        if( pageName == null || pageName.length() == 0 )
-        {
-            throw new ProviderException("Illegal page name '"+pageName+"'");
+    public WikiPage getPageInfo( String pageName, int version ) throws ProviderException {
+        if( pageName == null || pageName.length() == 0 ) {
+            throw new ProviderException( "Illegal page name '" + pageName + "'" );
         }
 
         WikiPage page = null;
 
-        try
-        {
+        try {
             page = m_provider.getPageInfo( pageName, version );
-        }
-        catch( RepositoryModifiedException e )
-        {
+        } catch( RepositoryModifiedException e ) {
             //
             //  This only occurs with the latest version.
             //
-            log.info("Repository has been modified externally while fetching info for "+pageName );
-
+            log.info( "Repository has been modified externally while fetching info for " + pageName );
             page = m_provider.getPageInfo( pageName, version );
-
-            if( page != null )
-            {
+            if( page != null ) {
                 m_engine.updateReferences( page );
-            }
-            else
-            {
-                m_engine.getReferenceManager().pageRemoved( new WikiPage(m_engine,pageName) );
+            } else {
+                m_engine.getReferenceManager().pageRemoved( new WikiPage( m_engine, pageName ) );
             }
         }
 
@@ -496,11 +424,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *          of WikiPages.
      *  @throws ProviderException If the repository fails.
      */
-    public List getVersionHistory( String pageName )
-        throws ProviderException
-    {
-        if( pageExists( pageName ) )
-        {
+    public List getVersionHistory( String pageName ) throws ProviderException {
+        if( pageExists( pageName ) ) {
             return m_provider.getVersionHistory( pageName );
         }
 
@@ -512,8 +437,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  
      *  @return A human-readable description.
      */
-    public String getProviderDescription()
-    {
+    public String getProviderDescription() {
         return m_provider.getProviderInfo();
     }
 
@@ -525,14 +449,10 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  
      *  @return The number of pages, or -1, if there is an error.
      */
-    public int getTotalPageCount()
-    {
-        try
-        {
+    public int getTotalPageCount() {
+        try {
             return m_provider.getAllPages().size();
-        }
-        catch( ProviderException e )
-        {
+        } catch( ProviderException e ) {
             log.error( "Unable to count pages: ",e );
             return -1;
         }
@@ -545,12 +465,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @return A boolean value describing the existence of a page
      *  @throws ProviderException If the backend fails or the name is illegal.
      */
-    public boolean pageExists( String pageName )
-        throws ProviderException
-    {
-        if( pageName == null || pageName.length() == 0 )
-        {
-            throw new ProviderException("Illegal page name");
+    public boolean pageExists( String pageName ) throws ProviderException {
+        if( pageName == null || pageName.length() == 0 ) {
+            throw new ProviderException( "Illegal page name" );
         }
 
         return m_provider.pageExists( pageName );
@@ -565,20 +482,17 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
      *  @throws ProviderException If backend fails or name is illegal
      */
-    public boolean pageExists( String pageName, int version )
-        throws ProviderException
-    {
-        if( pageName == null || pageName.length() == 0 )
-        {
+    public boolean pageExists( String pageName, int version ) throws ProviderException {
+        if( pageName == null || pageName.length() == 0 ) {
             throw new ProviderException("Illegal page name");
         }
 
-        if( version == WikiProvider.LATEST_VERSION )
-            return pageExists( pageName );
+        if( version == WikiProvider.LATEST_VERSION ) {
+        	return pageExists( pageName );
+        }
 
-        if( m_provider instanceof CachingProvider )
-        {
-            return ((CachingProvider)m_provider).pageExists( pageName , version );
+        if( m_provider instanceof CachingProvider ) {
+            return ( ( CachingProvider )m_provider ).pageExists( pageName , version );
         }
 
         return m_provider.getPageInfo( pageName, version ) != null;
@@ -590,9 +504,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @param page The page to delete.
      *  @throws ProviderException if the page fails
      */
-    public void deleteVersion( WikiPage page )
-        throws ProviderException
-    {
+    public void deleteVersion( WikiPage page ) throws ProviderException {
         m_provider.deleteVersion( page.getName(), page.getVersion() );
 
         // FIXME: If this was the latest, reindex Lucene
@@ -605,13 +517,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @param page The WikiPage to delete
      *  @throws ProviderException If the repository operation fails
      */
-    public void deletePage( WikiPage page )
-        throws ProviderException
-    {
+    public void deletePage( WikiPage page ) throws ProviderException {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
-
         m_provider.deletePage( page.getName() );
-
         fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
     }
 
@@ -620,39 +528,31 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  or so (it's not really that important, as long as it runs),
      *  and removes all locks that have expired.
      */
-    private class LockReaper extends WikiBackgroundThread
-    {
+    private class LockReaper extends WikiBackgroundThread {
         /**
          *  Create a LockReaper for a given engine.
          *  
          *  @param engine WikiEngine to own this thread.
          */
-        public LockReaper( WikiEngine engine )
-        {
+        public LockReaper( WikiEngine engine ) {
             super( engine, 60 );
             setName("JSPWiki Lock Reaper");
         }
 
-        public void backgroundTask() throws Exception
-        {
-            synchronized( m_pageLocks )
-            {
-                Collection entries = m_pageLocks.values();
-
+        public void backgroundTask() throws Exception {
+            synchronized( m_pageLocks ) {
+                Collection< PageLock > entries = m_pageLocks.values();
                 Date now = new Date();
-
-                for( Iterator i = entries.iterator(); i.hasNext(); )
-                {
-                    PageLock p = (PageLock) i.next();
-
-                    if( now.after( p.getExpiryTime() ) )
-                    {
+                for( Iterator< PageLock > i = entries.iterator(); i.hasNext(); ) {
+                    PageLock p = i.next();
+                    
+                    if( now.after( p.getExpiryTime() ) ) {
                         i.remove();
 
-                        log.debug( "Reaped lock: "+p.getPage()+
-                                   " by "+p.getLocker()+
-                                   ", acquired "+p.getAcquisitionTime()+
-                                   ", and expired "+p.getExpiryTime() );
+                        log.debug( "Reaped lock: " + p.getPage() +
+                                   " by " + p.getLocker() +
+                                   ", acquired " + p.getAcquisitionTime() +
+                                   ", and expired " + p.getExpiryTime() );
                     }
                 }
             }
@@ -669,8 +569,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      * will abort.
      *
      */
-    public static class PreSaveWikiPageTask extends Task
-    {
+    public static class PreSaveWikiPageTask extends Task {
         private static final long serialVersionUID = 6304715570092804615L;
         private final WikiContext m_context;
         private final String m_proposedText;
@@ -681,8 +580,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
          *  @param context The WikiContext
          *  @param proposedText The text that was just saved.
          */
-        public PreSaveWikiPageTask( WikiContext context, String proposedText )
-        {
+        public PreSaveWikiPageTask( WikiContext context, String proposedText ) {
             super( PRESAVE_TASK_MESSAGE_KEY );
             m_context = context;
             m_proposedText = proposedText;
@@ -692,8 +590,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
          *  {@inheritDoc}
          */
         @Override
-        public Outcome execute() throws WikiException
-        {
+        public Outcome execute() throws WikiException {
             // Retrieve attributes
             WikiEngine engine = m_context.getEngine();
             Workflow workflow = getWorkflow();
@@ -704,12 +601,12 @@ public class PageManager extends ModuleManager implements WikiEventListener
             // Figure out who the author was. Prefer the author
             // set programmatically; otherwise get from the
             // current logged in user
-            if ( page.getAuthor() == null )
-            {
+            if ( page.getAuthor() == null ) {
                 Principal wup = m_context.getCurrentUser();
 
-                if ( wup != null )
-                    page.setAuthor( wup.getName() );
+                if ( wup != null ) {
+                	page.setAuthor( wup.getName() );
+                }
             }
 
             // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
@@ -731,22 +628,19 @@ public class PageManager extends ModuleManager implements WikiEventListener
      * they will not function correctly otherwise.
      *
      */
-    public static class SaveWikiPageTask extends Task
-    {
+    public static class SaveWikiPageTask extends Task {
         private static final long serialVersionUID = 3190559953484411420L;
 
         /**
          *  Creates the Task.
          */
-        public SaveWikiPageTask()
-        {
+        public SaveWikiPageTask() {
             super( SAVE_TASK_MESSAGE_KEY );
         }
 
         /** {@inheritDoc} */
         @Override
-        public Outcome execute() throws WikiException
-        {
+        public Outcome execute() throws WikiException {
             // Retrieve attributes
             WikiContext context = (WikiContext) getWorkflow().getAttribute( PRESAVE_WIKI_CONTEXT );
             String proposedText = (String) getWorkflow().getAttribute( FACT_PROPOSED_TEXT );
@@ -777,11 +671,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
      * @param type       the event type to be fired
      * @param pagename   the wiki page name as a String
      */
-    protected final void fireEvent( int type, String pagename )
-    {
-        if ( WikiEventManager.isListening(this) )
-        {
-            WikiEventManager.fireEvent(this,new WikiPageEvent(m_engine,type,pagename));
+    protected final void fireEvent( int type, String pagename ) {
+        if ( WikiEventManager.isListening( this ) ) {
+            WikiEventManager.fireEvent( this, new WikiPageEvent( m_engine, type, pagename ) );
         }
     }
 
@@ -805,16 +697,13 @@ public class PageManager extends ModuleManager implements WikiEventListener
      * 
      *  @param event The event
      */
-    public void actionPerformed(WikiEvent event)
-    {
-        if (! ( event instanceof WikiSecurityEvent ) )
-        {
+    public void actionPerformed( WikiEvent event ) {
+        if (! ( event instanceof WikiSecurityEvent ) ) {
             return;
         }
 
         WikiSecurityEvent se = (WikiSecurityEvent)event;
-        if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
-        {
+        if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED ) {
             UserProfile[] profiles = (UserProfile[])se.getTarget();
             Principal[] oldPrincipals = new Principal[]
                 { new WikiPrincipal( profiles[0].getLoginName() ),
@@ -823,23 +712,17 @@ public class PageManager extends ModuleManager implements WikiEventListener
             Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
 
             // Examine each page ACL
-            try
-            {
+            try {
                 int pagesChanged = 0;
                 Collection pages = getAllPages();
-                for ( Iterator it = pages.iterator(); it.hasNext(); )
-                {
+                for ( Iterator it = pages.iterator(); it.hasNext(); ) {
                     WikiPage page = (WikiPage)it.next();
                     boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
-                    if ( aclChanged )
-                    {
+                    if ( aclChanged ) {
                         // If the Acl needed changing, change it now
-                        try
-                        {
+                        try {
                             m_engine.getAclManager().setPermissions( page, page.getAcl() );
-                        }
-                        catch ( WikiSecurityException e )
-                        {
+                        } catch ( WikiSecurityException e ) {
                             log.error( "Could not change page ACL for page " + page.getName() + ": " + e.getMessage(), e );
                         }
                         pagesChanged++;
@@ -848,8 +731,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
                 log.info( "Profile name change for '" + newPrincipal.toString() +
                           "' caused " + pagesChanged + " page ACLs to change also." );
             }
-            catch ( ProviderException e )
-            {
+            catch ( ProviderException e ) {
                 // Oooo! This is really bad...
                 log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage(), e );
             }
@@ -866,26 +748,21 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @param newPrincipal the Principal that should receive the old Principals' permissions
      *  @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
      */
-    protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
-    {
+    protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal ) {
         Acl acl = page.getAcl();
         boolean pageChanged = false;
-        if ( acl != null )
-        {
+        if ( acl != null ) {
             Enumeration< AclEntry > entries      = acl.entries();
-            Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
-            Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
-            while ( entries.hasMoreElements() )
-            {
+            Collection< AclEntry > entriesToAdd    = new ArrayList< AclEntry >();
+            Collection< AclEntry > entriesToRemove = new ArrayList< AclEntry >();
+            while ( entries.hasMoreElements() ) {
                 AclEntry entry = entries.nextElement();
-                if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) )
-                {
+                if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) ) {
                     // Create new entry
                     AclEntry newEntry = new AclEntryImpl();
                     newEntry.setPrincipal( newPrincipal );
                     Enumeration< Permission > permissions = entry.permissions();
-                    while ( permissions.hasMoreElements() )
-                    {
+                    while ( permissions.hasMoreElements() ) {
                         Permission permission = permissions.nextElement();
                         newEntry.addPermission( permission );
                     }
@@ -894,13 +771,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
                     entriesToAdd.add( newEntry );
                 }
             }
-            for ( Iterator< AclEntry > ix = entriesToRemove.iterator(); ix.hasNext(); )
-            {
+            for ( Iterator< AclEntry > ix = entriesToRemove.iterator(); ix.hasNext(); ) {
                 AclEntry entry = ix.next();
                 acl.removeEntry( entry );
             }
-            for ( Iterator< AclEntry > ix = entriesToAdd.iterator(); ix.hasNext(); )
-            {
+            for ( Iterator< AclEntry > ix = entriesToAdd.iterator(); ix.hasNext(); ) {
                 AclEntry entry = ix.next();
                 acl.addEntry( entry );
             }
