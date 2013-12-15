@@ -21,7 +21,12 @@ package org.apache.wiki.auth;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.WeakHashMap;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -53,14 +58,21 @@ import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.workflow.*;
+import org.apache.wiki.workflow.Decision;
+import org.apache.wiki.workflow.DecisionRequiredException;
+import org.apache.wiki.workflow.Fact;
+import org.apache.wiki.workflow.Outcome;
+import org.apache.wiki.workflow.Task;
+import org.apache.wiki.workflow.Workflow;
+import org.apache.wiki.workflow.WorkflowBuilder;
+
 
 /**
  * Provides a facade for obtaining user information.
  * @since 2.3
  */
-public final class UserManager
-{
+public class UserManager {
+
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
     private static final String SESSION_MESSAGES = "profile";
     private static final String PARAM_EMAIL = "email";

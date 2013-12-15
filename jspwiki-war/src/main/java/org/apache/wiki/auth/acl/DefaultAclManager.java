@@ -20,13 +20,24 @@ package org.apache.wiki.auth.acl;
 
 import java.security.Permission;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.*;
+import org.apache.wiki.PageLock;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.PrincipalComparator;
@@ -40,9 +51,9 @@ import org.apache.wiki.render.RenderingManager;
  * Default implementation that parses Acls from wiki page markup.
  * @since 2.3
  */
-public class DefaultAclManager implements AclManager
-{
-    static Logger                log    = Logger.getLogger( DefaultAclManager.class );
+public class DefaultAclManager implements AclManager {
+
+    private static final Logger  log    = Logger.getLogger( DefaultAclManager.class );
 
     private AuthorizationManager m_auth = null;
     private WikiEngine           m_engine = null;

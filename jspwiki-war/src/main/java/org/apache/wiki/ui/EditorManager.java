@@ -19,23 +19,31 @@
 package org.apache.wiki.ui;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.xpath.XPath;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
-import org.apache.wiki.plugin.DefaultPluginManager;
 import org.apache.wiki.preferences.Preferences;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPath;
+
 
 /**
  *  Defines an editor manager.  An editor can be added by adding a
@@ -57,8 +65,8 @@ import org.apache.wiki.preferences.Preferences;
  *
  *  @since 2.4
  */
-public class EditorManager extends ModuleManager
-{
+public class EditorManager extends ModuleManager {
+
     /** The property name for setting the editor.  Current value is "jspwiki.editor" */
     /* not used anymore -- replaced by defaultpref.template.editor */
     public static final String       PROP_EDITORTYPE = "jspwiki.editor";
@@ -117,11 +125,11 @@ public class EditorManager extends ModuleManager
             // Get all resources of all modules
             //
 
-            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
+            Enumeration< URL > resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
 
             while( resources.hasMoreElements() )
             {
-                URL resource = (URL) resources.nextElement();
+                URL resource = resources.nextElement();
 
                 try
                 {
@@ -153,11 +161,11 @@ public class EditorManager extends ModuleManager
                 }
                 catch( java.io.IOException e )
                 {
-                    log.error( "Couldn't load " + DefaultPluginManager.PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
+                    log.error( "Couldn't load " + ModuleManager.PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
                 }
                 catch( JDOMException e )
                 {
-                    log.error( "Error parsing XML for plugin: "+DefaultPluginManager.PLUGIN_RESOURCE_LOCATION );
+                    log.error( "Error parsing XML for plugin: "+ModuleManager.PLUGIN_RESOURCE_LOCATION );
                 }
             }
         }

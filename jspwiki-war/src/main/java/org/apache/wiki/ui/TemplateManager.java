@@ -21,7 +21,22 @@ package org.apache.wiki.ui;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -38,15 +53,16 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.ClassUtil;
+
+
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
  *  the ResourceRequest mechanism.
  *
  *  @since 2.1.62
  */
-public class TemplateManager
-    extends ModuleManager
-{
+public class TemplateManager extends ModuleManager {
+
     private static final String SKIN_DIRECTORY = "skins";
 
     /**
@@ -667,9 +683,9 @@ public class TemplateManager
 
         boolean first = true;
 
-        for( Enumeration en = rb.getKeys(); en.hasMoreElements(); )
+        for( Enumeration< String > en = rb.getKeys(); en.hasMoreElements(); )
         {
-            String key = (String)en.nextElement();
+            String key = en.nextElement();
 
             if( key.startsWith("javascript") )
             {

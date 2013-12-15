@@ -19,15 +19,24 @@
 package org.apache.wiki.workflow;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WorkflowEvent;
+
 
 /**
  * <p>
@@ -35,10 +44,8 @@ import org.apache.wiki.event.WorkflowEvent;
  * track of the names of users or groups expected to approve particular
  * Workflows.
  * </p>
- *
  */
-public class WorkflowManager implements WikiEventListener
-{
+public class WorkflowManager implements WikiEventListener {
 
     private final DecisionQueue m_queue = new DecisionQueue();
 

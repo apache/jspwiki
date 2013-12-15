@@ -29,10 +29,8 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.util.ClassUtil;
 
 
-
 /**
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
- *
  */
 public class DifferenceManager
 {
@@ -40,7 +38,6 @@ public class DifferenceManager
 
     /** Property value for storing a diff provider.  Value is {@value}. */
     public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";
-
 
     private DiffProvider m_provider;
 
@@ -66,7 +63,7 @@ public class DifferenceManager
 
         try
         {
-            Class providerClass = ClassUtil.findClass( "org.apache.wiki.diff", providerClassName );
+            Class< ? > providerClass = ClassUtil.findClass( "org.apache.wiki.diff", providerClassName );
             m_provider = (DiffProvider)providerClass.newInstance();
         }
         catch( ClassNotFoundException e )

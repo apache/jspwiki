@@ -19,11 +19,19 @@
 package org.apache.wiki.search;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.filters.BasicPageFilter;
@@ -39,15 +47,14 @@ import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
+
 /**
  *  Manages searching the Wiki.
  *
  *  @since 2.2.21.
  */
-public class SearchManager
-    extends BasicPageFilter
-    implements InternalModule, WikiEventListener
-{
+public class SearchManager extends BasicPageFilter implements InternalModule, WikiEventListener {
+
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
     private static final String DEFAULT_SEARCHPROVIDER  = "org.apache.wiki.search.LuceneSearchProvider";

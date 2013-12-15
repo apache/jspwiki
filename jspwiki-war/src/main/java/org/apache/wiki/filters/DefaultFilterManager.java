@@ -23,11 +23,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.PageFilter;
@@ -89,11 +97,11 @@ import org.jdom2.xpath.XPath;
  *  The &lt;filter> -sections define the filters.  For more information, please see
  *  the PageFilterConfiguration page in the JSPWiki distribution.
  */
-public final class DefaultFilterManager extends ModuleManager implements org.apache.wiki.api.engine.FilterManager
-{
-    private PriorityList<PageFilter> m_pageFilters = new PriorityList<PageFilter>();
+public class DefaultFilterManager extends ModuleManager implements FilterManager {
+	
+    private PriorityList< PageFilter > m_pageFilters = new PriorityList< PageFilter >();
 
-    private Map<String, PageFilterInfo> m_filterClassMap = new HashMap<String,PageFilterInfo>();
+    private Map< String, PageFilterInfo > m_filterClassMap = new HashMap< String, PageFilterInfo >();
 
     private static final Logger log = Logger.getLogger(DefaultFilterManager.class);
 
@@ -149,8 +157,7 @@ public final class DefaultFilterManager extends ModuleManager implements org.apa
             
             int priority = 0; // FIXME: Currently fixed.
 
-            Class cl = ClassUtil.findClass( "org.apache.wiki.filters",
-                                            className );
+            Class< ? > cl = ClassUtil.findClass( "org.apache.wiki.filters", className );
 
             PageFilter filter = (PageFilter)cl.newInstance();
 
@@ -432,10 +439,9 @@ public final class DefaultFilterManager extends ModuleManager implements org.apa
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public Collection modules()
     {
-        ArrayList modules = new ArrayList();
+        ArrayList< PageFilter > modules = new ArrayList< PageFilter >();
         
         modules.addAll( m_pageFilters );
         

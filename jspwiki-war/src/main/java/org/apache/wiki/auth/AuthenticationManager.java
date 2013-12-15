@@ -18,11 +18,20 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -38,7 +47,13 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
-import org.apache.wiki.auth.login.*;
+import org.apache.wiki.auth.login.AnonymousLoginModule;
+import org.apache.wiki.auth.login.CookieAssertionLoginModule;
+import org.apache.wiki.auth.login.CookieAuthenticationLoginModule;
+import org.apache.wiki.auth.login.UserDatabaseLoginModule;
+import org.apache.wiki.auth.login.WebContainerCallbackHandler;
+import org.apache.wiki.auth.login.WebContainerLoginModule;
+import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
@@ -58,8 +73,8 @@ import org.apache.wiki.util.TimedCounterList;
  * 
  * @since 2.3
  */
-public final class AuthenticationManager
-{
+public class AuthenticationManager {
+
     /** How many milliseconds the logins are stored before they're cleaned away. */
     private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
 

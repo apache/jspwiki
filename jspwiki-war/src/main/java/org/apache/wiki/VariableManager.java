@@ -20,7 +20,11 @@ package org.apache.wiki;
 
 import java.lang.reflect.Method;
 import java.security.Principal;
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

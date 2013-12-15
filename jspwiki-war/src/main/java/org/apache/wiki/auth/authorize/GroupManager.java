@@ -19,7 +19,12 @@
 package org.apache.wiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,6 +49,7 @@ import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 
+
 /**
  * <p>
  * Facade class for storing, retrieving and managing wiki groups on behalf of
@@ -59,8 +65,8 @@ import org.apache.wiki.util.ClassUtil;
  * </p>
  * @since 2.4.19
  */
-public final class GroupManager implements Authorizer, WikiEventListener
-{
+public class GroupManager implements Authorizer, WikiEventListener {
+
     /** Key used for adding UI messages to a user's WikiSession. */
     public static final String  MESSAGES_KEY       = "group";
 

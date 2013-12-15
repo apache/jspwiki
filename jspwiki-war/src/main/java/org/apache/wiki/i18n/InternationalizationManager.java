@@ -25,13 +25,14 @@ import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiEngine;
 
+
 /**
  *  Manages all internationalization in JSPWiki.
  *
  *  @since 2.6
  */
-public class InternationalizationManager
-{
+public class InternationalizationManager {
+
     /** The name of the ResourceBundle which contains any and all JSPWiki core
      *  resource strings.  It's value is {@value}.
      */
