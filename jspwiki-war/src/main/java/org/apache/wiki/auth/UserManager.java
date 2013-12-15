@@ -603,7 +603,6 @@ public class UserManager {
          * No-op.
          * @throws WikiSecurityException never...
          */
-        @SuppressWarnings("deprecation")
         public void commit() throws WikiSecurityException
         {
             // No operation
@@ -787,7 +786,7 @@ public class UserManager {
                                                profile.getFullname(),
                                                profile.getEmail(),
                                                m_engine.getURL( WikiContext.LOGIN, null, null, true ) );
-                    MailUtil.sendMessage( m_engine, to, subject, content);
+                    MailUtil.sendMessage( m_engine.getWikiProperties(), to, subject, content);
                 }
                 catch ( AddressException e)
                 {

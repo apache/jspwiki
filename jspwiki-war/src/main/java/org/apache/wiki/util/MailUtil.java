@@ -35,7 +35,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
+
 
 /**
  * <p>Contains static methods for sending e-mails to recipients using JNDI-supplied
@@ -189,8 +189,8 @@ import org.apache.wiki.WikiEngine;
  * <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=40668">here</a>.
  *
  */
-public final class MailUtil
-{
+public final class MailUtil {
+
     private static final String JAVA_COMP_ENV = "java:comp/env";
 
     private static final String FALSE = "false";
@@ -267,11 +267,10 @@ public final class MailUtil
      * @throws AddressException If the address is invalid
      * @throws MessagingException If the message cannot be sent.
      */
-    public static void sendMessage(WikiEngine engine, String to, String subject, String content)
+    public static void sendMessage( Properties props, String to, String subject, String content)
         throws AddressException, MessagingException
     {
-        Properties props = engine.getWikiProperties();
-        Session session = getMailSession(engine);
+        Session session = getMailSession( props );
         getSenderEmailAddress(session, props);
 
         try
@@ -342,10 +341,9 @@ public final class MailUtil
      * @param engine a <code>WikiEngine</code>
      * @return <code>Session</code>
      */
-    private static Session getMailSession(WikiEngine engine)
+    private static Session getMailSession(Properties props)
     {
         Session result = null;
-        Properties props = engine.getWikiProperties();
         String jndiName = props.getProperty(PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME).trim();
 
         if (c_useJndi)
@@ -386,8 +384,7 @@ public final class MailUtil
      * @param props the properties that contain mail session properties
      * @return the initialized JavaMail Session
      */
-    protected static Session getStandaloneMailSession( Properties props )
-    {
+    protected static Session getStandaloneMailSession( Properties props ) {
         // Read the JSPWiki settings from the properties
         String host     = props.getProperty( PROP_MAIL_HOST, DEFAULT_MAIL_HOST );
         String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
@@ -465,8 +462,7 @@ public final class MailUtil
      * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
      * an SMTP server.
      */
-    protected static class SmtpAuthenticator extends Authenticator
-    {
+    protected static class SmtpAuthenticator extends Authenticator {
 
         private static final String BLANK = "";
         private final String m_pass;
