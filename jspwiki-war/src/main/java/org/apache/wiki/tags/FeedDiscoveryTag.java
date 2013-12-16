@@ -24,7 +24,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.plugin.WeblogPlugin;
-import org.apache.wiki.util.BlogUtil;
+import org.apache.wiki.rss.Feed;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -52,7 +52,7 @@ public class FeedDiscoveryTag
         
         if( rssURL != null )
         {
-            String siteName = BlogUtil.getSiteName(m_wikiContext);
+            String siteName = Feed.getSiteName(m_wikiContext);
             siteName = TextUtil.replaceEntities( siteName );
             
             pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for the entire site.\" href=\""+rssURL+"\" />\n");

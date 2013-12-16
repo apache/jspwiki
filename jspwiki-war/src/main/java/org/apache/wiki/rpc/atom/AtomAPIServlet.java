@@ -37,12 +37,16 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.util.BlogUtil;
 import org.apache.wiki.util.TextUtil;
 import org.intabulas.sandler.Sandler;
 import org.intabulas.sandler.SyndicationFactory;
-import org.intabulas.sandler.elements.*;
+import org.intabulas.sandler.elements.Content;
+import org.intabulas.sandler.elements.Entry;
+import org.intabulas.sandler.elements.Feed;
+import org.intabulas.sandler.elements.Link;
+import org.intabulas.sandler.elements.Person;
 import org.intabulas.sandler.exceptions.FeedMarshallException;
+
 
 /**
  *  Handles incoming requests for the Atom API.  This class uses the
@@ -284,7 +288,7 @@ public class AtomAPIServlet extends HttpServlet
 
             WikiContext context = new WikiContext( m_engine, p );
 
-            String title = TextUtil.replaceEntities(BlogUtil.getSiteName(context));
+            String title = TextUtil.replaceEntities(org.apache.wiki.rss.Feed.getSiteName(context));
 
             Link postlink = createLink( "service.post",
                                         m_engine.getBaseURL()+"atom/"+encodedName,

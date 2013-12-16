@@ -18,11 +18,14 @@
  */
 package org.apache.wiki.rss;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.util.TextUtil;
 
 /**
@@ -41,6 +44,34 @@ public abstract class Feed
     protected WikiContext m_wikiContext;
 
     protected String m_mode = RSSGenerator.MODE_WIKI;
+    
+    /** Wiki variable storing the blog's name. */
+    public static final String VAR_BLOGNAME = "blogname";
+
+    /**
+     * Figure out a site name for a feed.
+     * @param context the wiki context
+     * @return the site name
+     */
+    public static String getSiteName( WikiContext context )
+    {
+        WikiEngine engine = context.getEngine();
+
+        String blogname = null;
+
+        try
+        {
+            blogname = engine.getVariableManager().getValue( context, VAR_BLOGNAME );
+        }
+        catch( NoSuchVariableException e ) {}
+
+        if( blogname == null )
+        {
+            blogname = engine.getApplicationName()+": "+context.getPage().getName();
+        }
+
+        return blogname;
+    }
 
     /**
      *  Create a new Feed for a particular WikiContext.
