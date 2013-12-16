@@ -58,9 +58,6 @@ api.plugin
  -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
     in 2.10 timeframe
 
-org.apache.wiki.LinkCollector
- -> moved to org.apache.wiki.util package
-
 org.apache.wiki.PageManager
  -> getActiveLocks() returns List<PageLock> instead of List (internally it was returning List<PageLock> anyway)
 
@@ -79,9 +76,6 @@ org.apache.wiki.SearchResultComparator
 org.apache.wiki.SearchMatcher
  -> moved to org.apache.wiki.search package
 
-org.apache.wiki.StringTransmutator
- -> moved to org.apache.wiki.util package    
-
 org.apache.wiki.WikiContext
  -> removed WikiContext.getBundle( String ) in favour of Preferences.getBundle( String )
  -> removed WikiContext.getLocale( WikiContext ) in favour of Preferences.getLocale( WikiContext )
@@ -93,6 +87,7 @@ org.apache.wiki.WikiContext
 org.apache.wiki.WikiEngine
  -> removed WikiEngine.getRequiredProperty( props, key ) in favour of  
     TextUtil.getRequiredProperty( props, key )
+ -> moved WikiEngine.getPluginSearchPath() to PluginManager.getPluginSearchPath()
     
 org.apache.wiki.FileUtil and org.apache.wiki.TextUtil
  -> moved to org.apache.wiki.util.FileUtil and org.apache.wiki.util.TextUtil respectively
@@ -135,6 +130,7 @@ org.apache.wiki.plugin.PluginManager
  -> WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public 
     and part of the org.apache.wiki.api.engine.PluginManager API
  -> WikiEngine.getPluginManager returns org.apache.wiki.api.engine.PluginManager
+ -> obtained PluginManager.getPluginSearchPath() from WikiEngine.getPluginSearchPath()
 
 org.apache.wiki.plugin.InitializablePlugin
  -> moved to new interface org.apache.wiki.api.plugin.InitializablePlugin
@@ -148,14 +144,30 @@ org.apache.wiki.plugin.WikiPlugin
  -> moved to new interface org.apache.wiki.api.plugins.WikiPlugin
  -> all core wikiplugins and wikiforms implement the new interface
 
+org.apache.wiki.rss.Feed
+ -> receives static method getSiteName() from o.a.w.util.BlogUtil
+
 org.apache.wiki.ui.admin.AdminBeanManager
  -> moved to new interface org.apache.wiki.ui.admin.DefaultAdminBeanManager
  -> new interface org.apache.wiki.api.engine.AdminBeanManager
  -> public static int getTypeFromString( String type ) not static anymore
  
+org.apache.wiki.util.BlogUtil
+ -> removed; its only method is moved to o.a.w.rss.Feed#getSiteName() 
+
+org.apache.wiki.util.HttpUtil
+ -> HttpUtil.createETag and HttpUtil.checkFor304 now receive String name, Date lastModified instead of WikiPage 
+ -> use wikipage.getName(), wikipage.getLastModified() to pass the appropiate objects
+
 org.apache.wiki.util.MailUtil
  -> sendMessage(WikiEngine, String, String, String) changed to sendMessage(Properties, String, String, String) 
  -> use WikiEngine.getWikiProperties() to pass the appropiate object
+
+org.apache.wiki.util.PageSorter
+ -> moved to o.a.w.PageSorter
+
+org.apache.wiki.util.ProviderConverter
+ -> moved to o.a.w.providers
 
 org.apache.wiki.util.Watchable
  -> moved to org.apache.wiki package

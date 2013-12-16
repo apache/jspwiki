@@ -1,3 +1,10 @@
+2013-12-16  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-56
+       
+       * decoupled o.a.w.util from o.a.w, cfr. with $SVN/jspwiki-war/src/main/config/2.10-API.txt 
+         for details
+         
 2013-12-15  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-55
