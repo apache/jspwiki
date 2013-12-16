@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.util;
+package org.apache.wiki.providers;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,9 +31,7 @@ import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.providers.AbstractFileProvider;
-import org.apache.wiki.providers.VersioningFileProvider;
-import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  A command-line application that allows you to convert from
