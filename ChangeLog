@@ -4,6 +4,10 @@
        
        * decoupled o.a.w.util from o.a.w, cfr. with $SVN/jspwiki-war/src/main/config/2.10-API.txt 
          for details
+       
+       * wikipages for each language are zipped in their respective submodule
+       
+       * removed remaining build.xml from war submodule, all artifacts are generated from maven now
          
 2013-12-15  Juan Pablo Santos (juanpablo AT apache DOT org)
 

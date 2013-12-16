@@ -53,6 +53,7 @@
 
   <modules>
     <module>jspwiki-war</module>
+    <module>jspwiki-wikipages</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
   </modules>
 
@@ -266,7 +267,6 @@
         <artifactId>nekohtml</artifactId>
         <version>0.9.5</version>
       </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -288,6 +288,11 @@
         <plugin>       <!-- default maven plugins have their version configured to make the build independent of the maven version used -->
           <artifactId>maven-antrun-plugin</artifactId>
           <version>1.7</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.4</version>
         </plugin>
 
         <plugin>
@@ -606,6 +611,37 @@
     </pluginManagement>
   </build>
 
+  <profiles>
+    <profile>
+      <id>build-wikipages-zip</id>
+      <activation>
+        <file>
+          <exists>../assembly/zip.xml</exists>
+        </file>
+      </activation>
+      <build>       <!-- apache-release from project's parent pom enables assembly plugin on all modules, so to build the -->
+        <plugins>   <!-- wikipages zip we must fall back to invoke it on each wikipage submodule. In order to reuse some  -->
+          <plugin>  <!-- build logic, we use a custom profile. Cfr with property on each jspwiki-wikipages submodule.     -->
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create-wikipages-zip</id>
+                <phase>package</phase>
+                <goals><goal>single</goal></goals>
+                <configuration>
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <descriptors>
+                    <descriptor>../assembly/zip.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
   <organization>
     <name>The Apache Software Foundation</name>
     <url>http://www.apache.org/</url>
