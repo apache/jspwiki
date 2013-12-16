@@ -17,7 +17,7 @@
     under the License.  
  */
 
-package org.apache.wiki.util;
+package org.apache.wiki;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.comparators.JavaNaturalComparator;
 
 /**

@@ -16,9 +16,8 @@
     specific language governing permissions and limitations
     under the License.     
  */
-package org.apache.wiki.util;
+package org.apache.wiki;
 
-import org.apache.wiki.WikiContext;
 
 
 /**

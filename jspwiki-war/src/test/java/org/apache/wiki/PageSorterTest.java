@@ -17,7 +17,7 @@
     under the License.  
  */
 
-package org.apache.wiki.util;
+package org.apache.wiki;
 
 import java.util.Properties;
 

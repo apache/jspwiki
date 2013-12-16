@@ -19,8 +19,6 @@
 
 package org.apache.wiki;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -55,6 +53,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("JSPWiki Unit Tests");
 
         suite.addTest( PageManagerTest.suite() );
+        suite.addTest( PageSorterTest.suite() );
         suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( ReleaseTest.suite() );

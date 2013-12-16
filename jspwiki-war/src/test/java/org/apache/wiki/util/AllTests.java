@@ -38,7 +38,6 @@ public class AllTests extends TestCase {
         suite.addTest( FileUtilTest.suite() );
         suite.addTest( org.apache.wiki.util.comparators.AllTests.suite() );
         suite.addTest( MailUtilTest.suite() );
-        suite.addTest( PageSorterTest.suite() );
         suite.addTest( PriorityListTest.suite() );
         suite.addTest( SerializerTest.suite() );
         suite.addTest( TextUtilTest.suite() );

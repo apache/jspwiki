@@ -27,13 +27,13 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.util.LinkCollector;
 import org.apache.wiki.util.TextUtil;
 import org.apache.xmlrpc.XmlRpcException;
 
