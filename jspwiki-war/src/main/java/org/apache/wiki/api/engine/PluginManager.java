@@ -76,7 +76,14 @@ public interface PluginManager {
      * 
      * @return plugin insert pattern.
      */
-    public Pattern getPluginPattern();
+    Pattern getPluginPattern();
+    
+    /**
+     * Returns plugins' search path.
+     * 
+     * @return plugins' search path.
+     */
+    String getPluginSearchPath();
 
     /**
      *  Executes a plugin class in the given context.

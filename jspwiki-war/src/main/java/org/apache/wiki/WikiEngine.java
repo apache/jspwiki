@@ -743,26 +743,6 @@ public class WikiEngine
         }
     }
 
-
-    /**
-     * Throws an exception if a property is not found.
-     *
-     * @param props A set of properties to search the key in.
-     * @param key   The key to look for.
-     * @return The required property
-     *
-     * @throws NoRequiredPropertyException If the search key is not
-     *         in the property set.
-     * @deprecated will be removed in 2.10 scope. Consider using {@link TextUtil#getRequiredProperty(Properties, String)} 
-     * instead
-     */
-    @Deprecated
-    public static String getRequiredProperty( Properties props, String key )
-        throws NoRequiredPropertyException
-    {
-        return TextUtil.getRequiredProperty( props, key );
-    }
-
     /**
      *  Returns the set of properties that the WikiEngine was initialized
      *  with.  Note that this method returns a direct reference, so it's possible
@@ -786,18 +766,6 @@ public class WikiEngine
     public String getWorkDir()
     {
         return m_workDir;
-    }
-
-    /**
-     *  Don't use.
-     *  @since 1.8.0
-     *  @deprecated
-     *  @return Something magical.
-     */
-    public String getPluginSearchPath()
-    {
-        // FIXME: This method should not be here, probably.
-        return TextUtil.getStringProperty( m_properties, PluginManager.PROP_SEARCHPATH, null );
     }
 
     /**

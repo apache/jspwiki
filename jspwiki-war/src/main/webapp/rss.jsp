@@ -19,9 +19,10 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
 
-<%@ page import="java.util.*,org.apache.wiki.*" %>
+<%@ page import="java.util.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
@@ -94,8 +95,8 @@
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     Properties properties = wiki.getWikiProperties();
-    String channelDescription = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-    String channelLanguage    = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+    String channelDescription = TextUtil.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+    String channelLanguage    = TextUtil.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
 
     //
     //  Now, list items.
@@ -125,7 +126,7 @@
     {
         WikiPage p = (WikiPage) i.next();
 
-        if( !HttpUtil.checkFor304( request, p ) ) hasChanged = true;
+        if( !HttpUtil.checkFor304( request, p.getName(), p.getLastModified() ) ) hasChanged = true;
         if( p.getLastModified().after( latest ) ) latest = p.getLastModified();
     }
 
@@ -137,7 +138,7 @@
     }
 
     response.addDateHeader("Last-Modified",latest.getTime());
-    response.addHeader("ETag", HttpUtil.createETag(wikipage) );
+    response.addHeader("ETag", HttpUtil.createETag( wikipage.getName(), wikipage.getLastModified() ) );
     
     //
     //  Try to get the RSS XML from the cache.  We build the hashkey

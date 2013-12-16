@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 
 
 /**
@@ -94,20 +93,22 @@ public final class HttpUtil {
      *  and version, so it can be used to check if the page has changed.  Do not
      *  assume that the ETag is in any particular format.
      *  
-     *  @param p  The page for which the ETag should be created.
+     *  @param pageName  The page name for which the ETag should be created.
+     *  @param lastModified  The page last modified date for which the ETag should be created.
      *  @return A String depiction of an ETag.
      */
-    public static String createETag( WikiPage p ) {
-        return Long.toString( p.getName().hashCode() ^ p.getLastModified().getTime() );
+    public static String createETag( String pageName, Date lastModified ) {
+        return Long.toString( pageName.hashCode() ^ lastModified.getTime() );
     }
     
     /**
      *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
      *  @param req the HTTP request
-     *  @param page the wiki page to check for
+     *  @param pageName the wiki page name to check for
+     *  @param lastModified the last modified date of the wiki page to check for
      *  @return the result of the check
      */
-    public static boolean checkFor304( HttpServletRequest req, WikiPage page ) {
+    public static boolean checkFor304( HttpServletRequest req, String pageName, Date lastModified ) {
         //
         //  We'll do some handling for CONDITIONAL GET (and return a 304)
         //  If the client has set the following headers, do not try for a 304.
@@ -123,7 +124,7 @@ public final class HttpUtil {
             //
             //  HTTP 1.1 ETags go first
             //
-            String thisTag = createETag( page );
+            String thisTag = createETag( pageName, lastModified );
                         
             String eTag = req.getHeader( "If-None-Match" );
             
@@ -135,7 +136,6 @@ public final class HttpUtil {
             //  Next, try if-modified-since
             //
             DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-            Date lastModified = page.getLastModified();
 
             try {
                 long ifModifiedSince = req.getDateHeader( "If-Modified-Since" );

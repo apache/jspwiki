@@ -215,32 +215,32 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     }
 
     /**
-     * Enables or disables plugin execution.
-     * 
-     * @param enabled True, if plugins should be globally enabled; false, if disabled.
+     * {@inheritDoc}
      */
     public void enablePlugins( boolean enabled ) {
         m_pluginsEnabled = enabled;
     }
 
     /**
-     * Returns plugin execution status. If false, plugins are not executed when they are encountered on a 
-     * WikiPage, and an empty string is returned in their place.
-     * 
-     * @return True, if plugins are enabled; false otherwise.
+     * {@inheritDoc}
      */
     public boolean pluginsEnabled() {
         return m_pluginsEnabled;
     }
 
     /**
-     * Returns plugin insert pattern.
-     * 
-     * @return plugin insert pattern.
+     * {@inheritDoc}
      */
     public Pattern getPluginPattern() {
 		return m_pluginPattern;
 	}
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getPluginSearchPath() {
+    	return TextUtil.getStringProperty( m_engine.getWikiProperties(), PROP_SEARCHPATH, null );
+    }
 
 	/**
      *  Attempts to locate a plugin class from the class path set in the property file.
