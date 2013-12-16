@@ -18,16 +18,11 @@
  */
 package org.apache.wiki;
 
-import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
@@ -37,9 +32,13 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
-import org.apache.wiki.ui.*;
+import org.apache.wiki.ui.Command;
+import org.apache.wiki.ui.CommandResolver;
+import org.apache.wiki.ui.GroupCommand;
+import org.apache.wiki.ui.Installer;
+import org.apache.wiki.ui.PageCommand;
+import org.apache.wiki.ui.WikiCommand;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A

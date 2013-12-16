@@ -263,9 +263,9 @@ public class WeblogPlugin
 
             sb.append("<div class=\"weblog\">\n");
             
-            for( Iterator i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
+            for( Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
             {
-                WikiPage p = (WikiPage) i.next();
+                WikiPage p = i.next();
 
                 if( mgr.checkPermission( context.getWikiSession(), 
                                          new PagePermission(p, PagePermission.VIEW_ACTION) ) )
