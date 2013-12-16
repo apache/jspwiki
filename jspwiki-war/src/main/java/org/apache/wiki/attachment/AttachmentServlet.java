@@ -247,7 +247,7 @@ public class AttachmentServlet extends HttpServlet
                 //
                 //  Check if the client already has a version of this attachment.
                 //
-                if( HttpUtil.checkFor304( req, att ) )
+                if( HttpUtil.checkFor304( req, att.getName(), att.getLastModified() ) )
                 {
                     log.debug("Client has latest version already, sending 304...");
                     res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
