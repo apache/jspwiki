@@ -43,7 +43,7 @@ api.exceptions
       * moved o.a.w.filters.FilterException to o.a.w.api.exceptions.FilterException
       * moved o.a.w.filters.RedirectException to o.a.w.api.exceptions.RedirectException
       * moved o.a.w.plugin.PluginException to o.a.w.api.exceptions.PluginException
-      * moved o.a.w.providers.ProviderExceotion to o.a.w.api.exceptions.ProviderExceotion
+      * moved o.a.w.providers.ProviderException to o.a.w.api.exceptions.ProviderException
         
 api.filters
  -> Interface and base classes needed to develop WikiFilters
