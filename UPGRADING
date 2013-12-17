@@ -1,6 +1,6 @@
 
-Apache JSPWiki 2.9.0-incubating - Upgrading Notes
-=================================================
+Apache JSPWiki 2.10.0-incubating - Upgrading Notes
+==================================================
 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -21,6 +21,13 @@ Apache JSPWiki 2.9.0-incubating - Upgrading Notes
 
 The license file can be found in LICENSE.
 
+Upgrading JSPWiki to 2.10.0
+---------------------------
+
+1. There have been some public API changes, detailed at:
+http://svn.apache.org/repos/asf/jspwiki/trunk/jspwiki-war/src/main/config/doc/2.10-API.txt
+
+2. RCS Support dropped, as noted on 2.9.1 upgrade notes
 
 
 Upgrading JSPWiki to 2.9.1

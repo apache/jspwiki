@@ -1,5 +1,7 @@
 2013-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)
 
+       * 2.10.0 - first RC 
+       
        * 2.10.0-svn-57
        
        * JSPWIKI-758: dropped support for RCS (as per 2.9.1 notes on UPGRADING document)

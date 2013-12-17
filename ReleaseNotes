@@ -1,4 +1,53 @@
 
+Apache JSPWiki 2.10.0 - Release Notes
+=====================================
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+
+The license file can be found in LICENSE.
+
+
+Welcome to the stable version of Apache JSPWiki 2.10.0!
+
+Apache JSPWiki 2.10.0 is the first JSPWiki release made as an Apache TLP. This release
+features, among other things:
+  * use of jspwiki-custom.properties to override specific values of jspwiki.properties file
+  * proxy support through X-Forwarded-For request header
+  * merging and compression of css & js
+  * upgrade of used libraries
+    -> lucene to 4.6
+    -> commons.io to 2.4
+    -> hsqldb to 2.3.0 (for testing)
+    -> jetty to 8.1.12 (for testing)
+    -> ehcache replacing oscache
+  * switch to maven as build tool
+  * jspwiki artifacts published at Central repository (org.apache.jspwiki groupId)
+  * dropped RCS support
+
+There have also been some public API changes, detailed at:
+http://svn.apache.org/repos/asf/jspwiki/trunk/jspwiki-war/src/main/config/doc/2.10-API.txt
+
+Details are available in the ChangeLog file or via our issue tracker.
+
+Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+
+
 Apache JSPWiki 2.9.1-incubating - Release Notes
 ===============================================
 
