@@ -31,8 +31,8 @@ public class SearchResultIteratorInfo extends TagExtraInfo
 {
     public VariableInfo[] getVariableInfo(TagData data)
     {
-        VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
-                                                 "org.apache.wiki.SearchResult",
+        VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
+                                                 "org.apache.wiki.search.SearchResult",
                                                  true,
                                                  VariableInfo.NESTED )
         };
