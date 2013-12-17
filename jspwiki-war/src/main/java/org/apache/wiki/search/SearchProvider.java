@@ -23,7 +23,7 @@ import java.util.Collection;
 
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Interface for the search providers that handle searching the Wiki

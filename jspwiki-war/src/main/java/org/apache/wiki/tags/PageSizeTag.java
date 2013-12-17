@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Returns the currently requested page or attachment size.

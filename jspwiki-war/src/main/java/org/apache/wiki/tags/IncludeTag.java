@@ -19,10 +19,11 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 /**

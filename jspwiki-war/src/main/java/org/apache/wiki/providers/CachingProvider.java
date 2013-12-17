@@ -28,6 +28,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.QueryItem;

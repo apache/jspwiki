@@ -30,9 +30,9 @@ import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.providers.ProviderException;
 
 public class DefaultAclManagerTest
     extends TestCase

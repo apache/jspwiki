@@ -20,9 +20,10 @@ package org.apache.wiki.providers;
 
 import java.io.*;
 import java.util.Properties;
-import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.

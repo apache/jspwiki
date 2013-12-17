@@ -24,9 +24,9 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.providers.ProviderException;
 
 /**
  *  Builds a simple weblog.

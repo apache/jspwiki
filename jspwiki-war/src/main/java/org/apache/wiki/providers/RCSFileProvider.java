@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 

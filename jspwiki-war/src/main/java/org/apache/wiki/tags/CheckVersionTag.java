@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Does a version check on the page.  Mode is as follows:

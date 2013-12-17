@@ -16,19 +16,16 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.providers;
+package org.apache.wiki.api.exceptions;
 
-import org.apache.wiki.api.exceptions.WikiException;
 
 /**
- *  This exception represents the superclass of all exceptions that providers
- *  may throw.  It is okay to throw it in case you cannot use any of
- *  the specific subclasses, in which case the page loading is
- *  considered to be broken, and the user is notified.
+ *  This exception represents the superclass of all exceptions that providers may throw.  It is okay to throw 
+ *  it in case you cannot use any of the specific subclasses, in which case the page loading is considered to be 
+ *  broken, and the user is notified.
  */
-public class ProviderException
-    extends WikiException
-{
+public class ProviderException extends WikiException {
+
     private static final long serialVersionUID = 0L;
     
     /**
@@ -36,8 +33,8 @@ public class ProviderException
      *  
      *  @param msg {@inheritDoc}
      */
-    public ProviderException( String msg )
-    {
+    public ProviderException( String msg ) {
         super( msg );
     }
+
 }

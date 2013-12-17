@@ -41,6 +41,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.search.SearchMatcher;
 import org.apache.wiki.search.SearchResult;

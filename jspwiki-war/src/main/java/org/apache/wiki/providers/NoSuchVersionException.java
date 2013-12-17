@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.wiki.api.exceptions.ProviderException;
+
 /**
  *  Indicates that an non-existing version was specified.
  */

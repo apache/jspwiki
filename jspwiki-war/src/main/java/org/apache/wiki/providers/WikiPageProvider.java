@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
 
 /**

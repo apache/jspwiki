@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.wiki.*;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.search.QueryItem;
 

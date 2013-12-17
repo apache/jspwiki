@@ -20,7 +20,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Includes the body in case the set page does exist.

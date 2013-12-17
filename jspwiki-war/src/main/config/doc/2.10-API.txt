@@ -27,7 +27,8 @@
 1. JSPWiki API
 ==============
 
-The package org.apache.wiki.api aims to provide an API to give access to JSPWiki internals.
+The package org.apache.wiki.api aims to provide an API to extend JSPWiki. As for 2.10.x, it's still unfinished,
+with work still in progress.
 
 1.1. API modules
 ----------------
@@ -42,6 +43,7 @@ api.exceptions
       * moved o.a.w.filters.FilterException to o.a.w.api.exceptions.FilterException
       * moved o.a.w.filters.RedirectException to o.a.w.api.exceptions.RedirectException
       * moved o.a.w.plugin.PluginException to o.a.w.api.exceptions.PluginException
+      * moved o.a.w.providers.ProviderExceotion to o.a.w.api.exceptions.ProviderExceotion
         
 api.filters
  -> Interface and base classes needed to develop WikiFilters

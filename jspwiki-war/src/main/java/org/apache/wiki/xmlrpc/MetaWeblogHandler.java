@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -37,7 +38,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.comparators.PageTimeComparator;
 import org.apache.xmlrpc.XmlRpcException;
 

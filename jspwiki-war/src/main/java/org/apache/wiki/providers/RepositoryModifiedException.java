@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.wiki.api.exceptions.ProviderException;
+
 /**
  *  If the provider detects that someone has modified the repository
  *  externally, it should throw this exception.

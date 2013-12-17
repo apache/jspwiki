@@ -29,8 +29,8 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
 
 /**

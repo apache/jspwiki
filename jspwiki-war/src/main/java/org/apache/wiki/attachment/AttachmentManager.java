@@ -40,9 +40,9 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.util.ClassUtil;
 

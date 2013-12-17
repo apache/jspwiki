@@ -21,8 +21,7 @@ package org.apache.wiki.tags;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Includes body, if the request context matches.  To understand more about

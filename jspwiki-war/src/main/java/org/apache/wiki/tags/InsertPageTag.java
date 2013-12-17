@@ -19,11 +19,12 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Renders WikiPage content.  For InsertPage tag and the InsertPage plugin

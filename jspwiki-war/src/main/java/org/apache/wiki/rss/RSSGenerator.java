@@ -31,9 +31,9 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.comparators.PageTimeComparator;
 
