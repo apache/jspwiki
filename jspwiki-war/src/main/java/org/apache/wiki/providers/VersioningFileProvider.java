@@ -585,6 +585,10 @@ public class VersioningFileProvider
      */
     public boolean pageExists( String pageName, int version )
     {
+        if (version == WikiPageProvider.LATEST_VERSION) {
+            return pageExists(pageName);
+        }
+
         File dir = findOldPageDir( pageName );
 
         if( !dir.exists() || !dir.isDirectory() )

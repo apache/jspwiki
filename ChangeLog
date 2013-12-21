@@ -1,3 +1,10 @@
+2013-12-21  Harry Metske (metskem@apache.org)
+
+       * 2.10.1-svn-1
+
+       * JSPWIKI-807: VersioningFileProvider pageExist failure to properly handle latest version
+
+
 2013-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0 - first RC 
