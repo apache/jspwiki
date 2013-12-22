@@ -52,13 +52,13 @@ import org.apache.log4j.Logger;
 public final class WatchDog {
 	
     private Watchable m_watchable;
-    private Stack<State> m_stateStack = new Stack<State>();
+    private Stack< State > m_stateStack = new Stack< State >();
     private boolean m_enabled = true;
     private WikiEngine m_engine;
 
-    private static final Logger log = Logger.getLogger(WatchDog.class.getName());
+    private static final Logger log = Logger.getLogger( WatchDog.class );
 
-    private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = new HashMap<Integer,WeakReference<WatchDog>>();
+    private static HashMap< Integer, WeakReference< WatchDog > > c_kennel = new HashMap< Integer, WeakReference< WatchDog > >();
     
     private static WikiBackgroundThread c_watcherThread;
 
@@ -76,7 +76,7 @@ public final class WatchDog {
         Thread t = Thread.currentThread();
         WatchDog wd = null;
 
-        WeakReference<WatchDog> w = c_kennel.get( t.hashCode() );
+        WeakReference< WatchDog > w = c_kennel.get( t.hashCode() );
 
         if( w != null ) {
         	wd = w.get();
@@ -84,7 +84,7 @@ public final class WatchDog {
 
         if( w == null || wd == null ) {
             wd = new WatchDog( engine, t );
-            w = new WeakReference<WatchDog>(wd);
+            w = new WeakReference< WatchDog >( wd );
 
             synchronized( c_kennel ) {
                 c_kennel.put( t.hashCode(), w );
@@ -248,9 +248,26 @@ public final class WatchDog {
                 }
             }
         } catch( EmptyStackException e ) {
-            log.error( "Stack is empty!", e );
+            log.error( "Stack for " + m_watchable.getName() + " is empty!", e );
         }
-
+    }
+    
+    /**
+     * helper to see if the associated stateStack is not empty.
+     * 
+     * @return {@code true} if not empty, {@code false} otherwise.
+     */
+    public boolean isStateStackNotEmpty() {
+		return m_stateStack != null && !m_stateStack.isEmpty();
+	}
+    
+    /**
+     * helper to see if the associated watchable is alive.
+     * 
+     * @return {@code true} if it's alive, {@code false} otherwise.
+     */
+    public boolean isWatchableAlive() {
+    	return m_watchable != null && m_watchable.isAlive();
     }
 
     private void check() {
@@ -260,7 +277,7 @@ public final class WatchDog {
 
         synchronized( m_stateStack ) {
             try {
-                WatchDog.State st = m_stateStack.peek();
+                State st = m_stateStack.peek();
                 long now = System.currentTimeMillis();
 
                 if( now > st.getExpiryTime() ) {
@@ -272,8 +289,7 @@ public final class WatchDog {
                     m_watchable.timeoutExceeded(st.getState());
                 }
             } catch( EmptyStackException e ) {
-                // FIXME: Do something?
-            	log.error( "Stack is empty!", e );
+            	log.error( "Stack for " + m_watchable.getName() + " is empty!", e );
             }
         }
     }
@@ -362,11 +378,9 @@ public final class WatchDog {
                     Map.Entry< Integer, WeakReference< WatchDog > > entry = i.next();
 
                     WeakReference< WatchDog > wr = entry.getValue();
-
-                    WatchDog w = (WatchDog) wr.get();
-
+                    WatchDog w = wr.get();
                     if( w != null ) {
-                        if( w.m_watchable != null && w.m_watchable.isAlive() ) {
+                        if( w.isWatchableAlive() && w.isStateStackNotEmpty() ) {
                             w.check();
                         } else {
                             c_kennel.remove( entry.getKey() );
@@ -378,6 +392,7 @@ public final class WatchDog {
 
             WatchDog.scrub();
         }
+
     }
 
     /**

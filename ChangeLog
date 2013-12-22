@@ -1,9 +1,20 @@
+2013-12-22  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-rc2-3 
+       
+       * fixed lots of EmptyStackException while checking WatchDogs' state
+       
+2013-12-22  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-rc2-2
+       
+       * fixed NPE when using custom policy file
+       
 2013-12-21  Harry Metske (metskem@apache.org)
 
-       * 2.10.1-svn-1
+       * 2.10.0-rc2-1
 
        * JSPWIKI-807: VersioningFileProvider pageExist failure to properly handle latest version
-
 
 2013-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)
 

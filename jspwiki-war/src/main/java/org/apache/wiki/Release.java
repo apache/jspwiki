@@ -52,7 +52,7 @@ public final class Release {
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "svn";
+    private static final String    POSTFIX       = "rc2";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
@@ -72,7 +72,7 @@ public final class Release {
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "1";
+    public static final String     BUILD         = "3";
     
     /**
      *  This is the generic version string you should use when printing out the version.  It is of 
