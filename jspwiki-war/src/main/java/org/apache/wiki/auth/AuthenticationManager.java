@@ -635,7 +635,7 @@ public class AuthenticationManager {
             {
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
                 //  
-                InputStream is = engine.getServletContext().getResourceAsStream( name );
+                InputStream is = AuthenticationManager.class.getResourceAsStream( "/" + name );
                 File tmpFile = File.createTempFile( "temp." + name, "" );
                 tmpFile.deleteOnExit();
 
@@ -660,7 +660,7 @@ public class AuthenticationManager {
             }
             catch (IOException e)
             {
-               log.error("failed to load security policy from " + name + ",stacktrace follows", e);
+               log.error("failed to load security policy from file " + name + ",stacktrace follows", e);
             }
         }
         return path;

@@ -161,7 +161,6 @@ public class VersioningFileProvider
     }
 */
     private int findLatestVersion( String page )
-        throws ProviderException
     {
         int version = -1;
         
@@ -598,12 +597,8 @@ public class VersioningFileProvider
 
         File file = new File( dir, version+FILE_EXT );
 
-        if( file.exists() )
-        {
-            return true;
-        }
-        
-        return false;
+        return file.exists();
+
     }
 
     /**
@@ -699,7 +694,7 @@ public class VersioningFileProvider
             catch( IOException e )
             {
                 log.error("Unable to modify page properties",e);
-                throw new ProviderException("Could not modify page properties");
+                throw new ProviderException("Could not modify page properties: " + e.getMessage());
             }
 
             // We can let the FileSystemProvider take care
