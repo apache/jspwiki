@@ -260,7 +260,7 @@ public final class MailUtil {
      * <p>Note that the first form allows a "friendly" user name to be supplied
      * in addition to the actual e-mail address.</p>
      *
-     * @param engine the WikiEngine for the current wiki
+     * @param props the properties that contain mail session properties
      * @param to the receiver
      * @param subject the subject line of the message
      * @param content the contents of the mail message, as plain text
@@ -338,7 +338,7 @@ public final class MailUtil {
 
     /**
      * Returns the Mail Session from either JNDI or creates a stand-alone.
-     * @param engine a <code>WikiEngine</code>
+     * @param props a the properties that contain mail session properties
      * @return <code>Session</code>
      */
     private static Session getMailSession(Properties props)

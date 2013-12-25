@@ -29,7 +29,7 @@ public interface AdminBeanManager {
 	/**
 	 *  Unregisters AdminBeans upon SHUTDOWN event.
 	 *
-	 *  @param event {@inheritDoc}
+	 *  @param event the WikiEvent
 	 */
 	void actionPerformed(WikiEvent event);
 	
