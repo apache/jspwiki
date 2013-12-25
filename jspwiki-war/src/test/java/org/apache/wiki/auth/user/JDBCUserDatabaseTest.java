@@ -125,10 +125,8 @@ public class JDBCUserDatabaseTest extends TestCase
         }
         catch( SQLException e )
         {
-            System.err.println("Looks like your database could not be connected to - "+
-                               "please make sure that you have started your database, exception: " + e);
-
-            throw (SQLException) e.fillInStackTrace();
+            fail("Looks like your database could not be connected to - "+
+                  "please make sure that you have started your database, exception: " + e.getMessage());
         }
     }
     

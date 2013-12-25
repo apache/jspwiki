@@ -1,3 +1,17 @@
+2013-12-22  Glen Mazza (gmazza AT apache DOT org)
+
+       * 2.10.0-svn-58 (I think)
+
+       * Moved MassiveRepositoryTest to surefire plugin exclusion test to speed
+         up build.
+
+       * Moved wro4j-maven-plugin from compile to prepare-package phase so
+         people can run mvn test, mvn test -Dtest=xxxxTest, etc. without needing
+         to trigger wro4j each time.  (A nice sanity saver.)
+
+       * Simpler error messages when JDBC*DatabaseTest fail due to DB being
+         unavailable.
+
 2013-12-22  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-rc2-3 
