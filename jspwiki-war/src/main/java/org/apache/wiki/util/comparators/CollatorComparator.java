@@ -22,6 +22,8 @@ package org.apache.wiki.util.comparators;
 import java.text.Collator;
 import java.util.Comparator;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * A comparator that sorts Strings using a Collator. This class is needed
  * because, even though Collator implements
@@ -61,12 +63,15 @@ public class CollatorComparator implements Comparator<String>
      */
     public int compare( String str1, String str2 )
     {
-        if( str1 == str2 )
-            return 0; // the same object
-        if( str1 == null )
-            return -1; // str1 is null and str2 isn't so str1 is smaller
-        if( str2 == null )
-            return 1; // str2 is null and str1 isn't so str1 is bigger
+        if( StringUtils.equals( str1, str2 ) ) {
+        	return 0; // the same object
+        }
+        if( str1 == null ) {
+        	return -1; // str1 is null and str2 isn't so str1 is smaller
+        }
+        if( str2 == null ) {
+        	return 1; // str2 is null and str1 isn't so str1 is bigger
+        }
         return m_collator.compare( str1, str2 );
     }
 

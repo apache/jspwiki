@@ -21,6 +21,8 @@ package org.apache.wiki.util.comparators;
 
 import java.util.Comparator;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * A comparator that sorts Strings using Java's "natural" order.
  * 
@@ -34,14 +36,16 @@ public class JavaNaturalComparator implements Comparator<String>
      * (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare( String str1, String str2 )
-    {
-        if ( str1 == str2 )
-            return 0; // the same object
-        if( str1 == null )
-            return -1; // str1 is null and str2 isn't so str1 is smaller
-        if( str2 == null )
-            return 1; // str2 is null and str1 isn't so str1 is bigger
+    public int compare( String str1, String str2 ) {
+        if (StringUtils.equals( str1, str2 ) ) {
+        	return 0; // the same object
+        }
+        if( str1 == null ) {
+        	return -1; // str1 is null and str2 isn't so str1 is smaller
+        }
+        if( str2 == null ) {
+        	return 1; // str2 is null and str1 isn't so str1 is bigger
+        }
         return str1.compareTo( str2 );
     }
 }

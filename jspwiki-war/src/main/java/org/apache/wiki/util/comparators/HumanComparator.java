@@ -21,6 +21,8 @@ package org.apache.wiki.util.comparators;
 
 import java.util.Comparator;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * A comparator that sorts Strings using "human" ordering, including decimal
  * ordering. Only works for languages where every character is lexigraphically
@@ -79,16 +81,13 @@ public class HumanComparator implements Comparator<String>
     public int compare( String str1, String str2 )
     {
         // Some quick and easy checks
-        if( str1 == str2 )
-        {
+        if( StringUtils.equals( str1, str2 ) ) {
             // they're identical, possibly both null
             return 0;
-        } else if ( str1 == null )
-        {
+        } else if ( str1 == null ) {
             // str1 is null and str2 isn't so str1 is smaller
             return -1;
-        } else if ( str2 == null )
-        {
+        } else if ( str2 == null ) {
             // str2 is null and str1 isn't so str1 is bigger
             return 1;
         }
