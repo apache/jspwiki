@@ -80,6 +80,12 @@ public class HsqlDbUtils
     {
         exec( "src/test/config/hsql-userdb-teardown.ddl" );
         stop();
+        try {
+        	LOG.info( "Sleeping for 1000 milliseconds." );
+        	Thread.sleep( 1000 );
+        } catch( InterruptedException ex ) {
+        	Thread.currentThread().interrupt();
+        }
     }
     
     /**

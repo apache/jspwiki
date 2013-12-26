@@ -5,6 +5,8 @@
        * Big bunch of Sonar warnings fixed.
        
        * o.a.w.PropertyReader moved to o.a.w.util.PropertyReader
+       
+       * Workaround for testing Hsql - thanks to Marco Roeland
 
 2013-12-22  Glen Mazza (gmazza AT apache DOT org)
 
