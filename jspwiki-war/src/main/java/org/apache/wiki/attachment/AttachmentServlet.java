@@ -41,8 +41,13 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -67,14 +72,14 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 1.9.45.
  */
-public class AttachmentServlet extends HttpServlet
-{
+public class AttachmentServlet extends HttpServlet {
+
     private static final int BUFFER_SIZE = 8192;
 
     private static final long serialVersionUID = 3257282552187531320L;
     
     private WikiEngine m_engine;
-    static Logger log = Logger.getLogger(AttachmentServlet.class.getName());
+    private static final Logger log = Logger.getLogger( AttachmentServlet.class );
 
     private static final String HDR_VERSION     = "version";
     // private static final String HDR_NAME        = "page";
@@ -105,9 +110,7 @@ public class AttachmentServlet extends HttpServlet
      *  Initializes the servlet from WikiEngine properties.
      *   
      */
-    public void init( ServletConfig config )
-        throws ServletException
-    {
+    public void init( ServletConfig config ) throws ServletException {
         String tmpDir;
 
         m_engine         = WikiEngine.getInstance( config );
@@ -321,17 +324,15 @@ public class AttachmentServlet extends HttpServlet
             //
             try
             {
-                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                               msg );
+                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
             }
             catch( IllegalStateException e ) {}
             return;
         }
         catch( NumberFormatException nfe )
         {
-            msg = "Invalid version number (" + version + ")";
-            res.sendError( HttpServletResponse.SC_BAD_REQUEST,
-                           msg );
+        	log.warn( "Invalid version number: " + version );
+            res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
             return;
         }
         catch( SocketException se )
@@ -355,37 +356,21 @@ public class AttachmentServlet extends HttpServlet
             
             try
             {
-                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                               msg );
+                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
             }
             catch( IllegalStateException e ) {}
             return;
         }
         finally
         {
-            if( in != null )
-            {
-                try
-                {
-                    in.close();
-                }
-                catch( IOException e ) {}
-            }
+            IOUtils.closeQuietly( in );
 
             //
             //  Quite often, aggressive clients close the connection when they have
             //  received the last bits.  Therefore, we close the output, but ignore
             //  any exception that might come out of it.
             //
-
-            if( out != null )
-            {
-                try
-                {
-                    out.close();
-                }
-                catch( IOException e ) {}
-            }
+            IOUtils.closeQuietly( out );
         }
     }
 
@@ -481,10 +466,7 @@ public class AttachmentServlet extends HttpServlet
      * @throws FileUploadException 
      */
     @SuppressWarnings("unchecked")
-    protected String upload( HttpServletRequest req )
-        throws RedirectException,
-               IOException
-    {
+    protected String upload( HttpServletRequest req ) throws RedirectException, IOException {
         String msg     = "";
         String attName = "(unknown)";
         String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
@@ -580,7 +562,7 @@ public class AttachmentServlet extends HttpServlet
             }
             finally
             {
-                in.close();
+            	IOUtils.closeQuietly( in );
             }
 
         }
