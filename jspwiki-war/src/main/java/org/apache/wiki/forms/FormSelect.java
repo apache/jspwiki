@@ -63,17 +63,10 @@ public class FormSelect
             previousValues = new HashMap< String, String >();
         }
 
-        ConcreteElement field = null;
-        
-        field = buildSelect( params, previousValues, rb );
+        ConcreteElement field = buildSelect( params, previousValues, rb );
 
         // We should look for extra params, e.g. width, ..., here.
-        if( field != null )
-        {
-            return field.toString( ctx.getEngine().getContentEncoding() );
-        }
-        
-        return "";
+        return field.toString( ctx.getEngine().getContentEncoding() );
     }
 
 
@@ -84,8 +77,7 @@ public class FormSelect
         throws PluginException
     {
         String inputName = pluginParams.get( PARAM_INPUTNAME );
-        if( inputName == null )
-        {
+        if( inputName == null ) {
             throw new PluginException( rb.getString( "formselect.namemissing" ) );
         }
     
@@ -96,38 +88,42 @@ public class FormSelect
         // some input application the default value.
         //
         String optionSeparator = pluginParams.get( "separator" );
-        if( optionSeparator == null )
-            optionSeparator = ctxValues.get( "separator." + inputName);
-        if( optionSeparator == null )
-            optionSeparator = ctxValues.get( "select.separator" );
-        if( optionSeparator == null )
-            optionSeparator = ";";
+        if( optionSeparator == null ) {
+        	optionSeparator = ctxValues.get( "separator." + inputName);
+        }
+        if( optionSeparator == null ) {
+        	optionSeparator = ctxValues.get( "select.separator" );
+        }
+        if( optionSeparator == null ) {
+        	optionSeparator = ";";
+        }
         
         String optionSelector = pluginParams.get( "selector" );
-        if( optionSelector == null )
-            optionSelector = ctxValues.get( "selector." + inputName );
-        if( optionSelector == null )
-            optionSelector = ctxValues.get( "select.selector" );
-        if( optionSelector == null )
-            optionSelector = "*";
-        if( optionSelector.equals( optionSeparator ) )
-            optionSelector = null;
-        if( inputValue == null )
-            inputValue = "";
+        if( optionSelector == null ) {
+        	optionSelector = ctxValues.get( "selector." + inputName );
+        }
+        if( optionSelector == null ) {
+        	optionSelector = ctxValues.get( "select.selector" );
+        }
+        if( optionSelector == null ) {
+        	optionSelector = "*";
+        }
+        if( optionSelector.equals( optionSeparator ) ) {
+        	optionSelector = null;
+        }
+        if( inputValue == null ) {
+        	inputValue = "";
+        }
 
         // If values from the context contain the separator, we assume
         // that the plugin or something else has given us a better
         // list to display.
         boolean contextValueOverride = false;
-        if( previousValue != null )
-        {
-            if( previousValue.indexOf( optionSeparator ) != -1 )
-            {
+        if( previousValue != null ) {
+            if( previousValue.indexOf( optionSeparator ) != -1 ) {
                 inputValue = previousValue;
                 previousValue = null;
-            }
-            else
-            {
+            } else {
                 // If a context value exists, but it's not a list,
                 // it'll just override any existing selector
                 // indications.
@@ -136,8 +132,6 @@ public class FormSelect
         }
 
         String[] options = inputValue.split( optionSeparator );
-        if( options == null )
-            options = new String[0];
         int previouslySelected = -1;
         
         option[] optionElements = new option[options.length];
@@ -147,25 +141,18 @@ public class FormSelect
         //  that was previously selected, otherwise try to find the one
         //  with the "select" marker.
         //
-        for( int i = 0; i < options.length; i++ )
-        {
+        for( int i = 0; i < options.length; i++ ) {
             int indicated = -1;
             options[i] = options[i].trim();
             
-            if( optionSelector != null && options[i].startsWith( optionSelector ) ) 
-            {
+            if( optionSelector != null && options[i].startsWith( optionSelector ) ) {
                 options[i] = options[i].substring( optionSelector.length() );
                 indicated = i;
             }
-            if( previouslySelected == -1 )
-            {
-                if( !contextValueOverride && indicated > 0 )
-                {
+            if( previouslySelected == -1 ) {
+                if( !contextValueOverride && indicated > 0 ) {
                     previouslySelected = indicated;
-                }
-                else if( previousValue != null && 
-                        options[i].equals( previousValue ) )
-                {
+                } else if( previousValue != null && options[i].equals( previousValue ) ) {
                     previouslySelected = i;
                 }
             }
@@ -174,9 +161,10 @@ public class FormSelect
             optionElements[i].addElement( options[i] );
         }
 
-        if( previouslySelected > -1 ) optionElements[previouslySelected].setSelected(true);
-        select field = new select( HANDLERPARAM_PREFIX + inputName, optionElements );
+        if( previouslySelected > -1 ) {
+        	optionElements[previouslySelected].setSelected(true);
+        }
 
-        return field;
+        return new select( HANDLERPARAM_PREFIX + inputName, optionElements );
     }
 }
