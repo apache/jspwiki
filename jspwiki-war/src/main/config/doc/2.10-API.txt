@@ -66,6 +66,9 @@ org.apache.wiki.PageManager
 org.apache.wiki.PageTimeComparator
  -> moved to org.apache.wiki.util.comparators package
 
+org.apache.wiki.PropertyReader
+ -> moved to org.apache.wiki.util.PropertyReader
+
 org.apache.wiki.QueryItem 
  -> moved to org.apache.wiki.search package
 

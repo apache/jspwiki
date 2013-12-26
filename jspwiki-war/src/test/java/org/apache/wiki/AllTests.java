@@ -54,7 +54,6 @@ public class AllTests extends TestCase
 
         suite.addTest( PageManagerTest.suite() );
         suite.addTest( PageSorterTest.suite() );
-        suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( ReleaseTest.suite() );
         suite.addTest( VariableManagerTest.suite() );

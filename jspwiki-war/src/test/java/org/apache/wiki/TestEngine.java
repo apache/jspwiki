@@ -48,6 +48,7 @@ import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 
 /**

@@ -30,10 +30,10 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.PropertyReader;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 import org.json.JSONObject;
 

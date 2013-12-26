@@ -83,6 +83,7 @@ import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.comparators.PageTimeComparator;
 import org.apache.wiki.workflow.Decision;

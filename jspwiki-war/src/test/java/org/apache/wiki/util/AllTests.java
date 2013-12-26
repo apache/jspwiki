@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.wiki.PropertyReaderTest;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -39,6 +41,7 @@ public class AllTests extends TestCase {
         suite.addTest( org.apache.wiki.util.comparators.AllTests.suite() );
         suite.addTest( MailUtilTest.suite() );
         suite.addTest( PriorityListTest.suite() );
+        suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( SerializerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TimedCounterListTest.suite() );

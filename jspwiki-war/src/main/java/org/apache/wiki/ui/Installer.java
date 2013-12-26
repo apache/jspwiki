@@ -28,7 +28,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.PageManager;
-import org.apache.wiki.PropertyReader;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.*;
@@ -40,6 +39,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.CommentedProperties;
+import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 
 /**
