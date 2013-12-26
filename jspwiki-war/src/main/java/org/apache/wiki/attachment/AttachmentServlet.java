@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
+import java.net.URLEncoder;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.List;
@@ -300,17 +301,17 @@ public class AttachmentServlet extends HttpServlet {
                     msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+HttpUtil.getRemoteAddress(req);
                     log.debug( msg );
                 }
-                if( nextPage != null ) res.sendRedirect( nextPage );
+                if( nextPage != null ) {
+                	res.sendRedirect( URLEncoder.encode( nextPage, m_engine.getContentEncoding() ) );
+                }
 
                 return;
             }
 
-            msg = "Attachment '" + page + "', version " + ver +
-                  " does not exist.";
+            msg = "Attachment '" + page + "', version " + ver + " does not exist.";
 
             log.info( msg );
-            res.sendError( HttpServletResponse.SC_NOT_FOUND,
-                           msg );
+            res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
             return;
         }
         catch( ProviderException pe )
