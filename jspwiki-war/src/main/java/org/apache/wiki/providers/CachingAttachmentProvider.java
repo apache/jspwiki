@@ -118,7 +118,7 @@ public class CachingAttachmentProvider
         
         try
         {            
-            Class providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
+            Class<?> providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
@@ -128,17 +128,17 @@ public class CachingAttachmentProvider
         catch( ClassNotFoundException e )
         {
             log.error("Unable to locate provider class "+classname,e);
-            throw new IllegalArgumentException("no provider class");
+            throw new IllegalArgumentException("no provider class", e);
         }
         catch( InstantiationException e )
         {
             log.error("Unable to create provider class "+classname,e);
-            throw new IllegalArgumentException("faulty provider class");
+            throw new IllegalArgumentException("faulty provider class", e);
         }
         catch( IllegalAccessException e )
         {
             log.error("Illegal access to provider class "+classname,e);
-            throw new IllegalArgumentException("illegal provider class");
+            throw new IllegalArgumentException("illegal provider class", e);
         }
 
     }

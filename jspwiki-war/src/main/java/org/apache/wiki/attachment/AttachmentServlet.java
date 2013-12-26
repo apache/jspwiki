@@ -589,7 +589,7 @@ public class AttachmentServlet extends HttpServlet {
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
-            throw new IOException( msg );
+            throw new IOException( msg, e );
         }
         finally
         {

@@ -517,8 +517,8 @@ public class WikiEngine
         }
         catch( SecurityException e )
         {
-            log.fatal("Unable to find or create the working directory: "+m_workDir,e);
-            throw new IllegalArgumentException("Unable to find or create the working dir: "+m_workDir);
+            log.fatal( "Unable to find or create the working directory: "+m_workDir, e );
+            throw new IllegalArgumentException( "Unable to find or create the working dir: " + m_workDir, e );
         }
 
         log.info("JSPWiki working directory is '"+m_workDir+"'");
@@ -1279,7 +1279,7 @@ public class WikiEngine
         }
         catch( UnsupportedEncodingException e )
         {
-            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
+            throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." );
         }
     }
 
