@@ -31,6 +31,7 @@ import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -246,7 +247,7 @@ public class AuthorizationManager {
 
         log.debug( "Checking ACL entries..." );
         log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + aclPrincipals );
+        log.debug( "Checking for principal: " + Arrays.toString( aclPrincipals ) );
         log.debug( "Permission: " + permission );
 
         for( Principal aclPrincipal : aclPrincipals )
