@@ -22,9 +22,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import javax.management.*;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.AttributeNotFoundException;
+import javax.management.DynamicMBean;
+import javax.management.IntrospectionException;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanConstructorInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanNotificationInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ReflectionException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  *  A simple MBean which does not require an interface class unlike
@@ -40,9 +54,9 @@ import org.apache.commons.lang.StringUtils;
  */
 // FIXME: This class should really use Annotations instead of a method call.
 // FIXME: Exception handling is not probably according to spec...
-public abstract class SimpleMBean
-    implements DynamicMBean
-{
+public abstract class SimpleMBean implements DynamicMBean {
+
+	private static final Logger LOG = Logger.getLogger( SimpleMBean.class );
     protected MBeanInfo m_beanInfo;
 
     private static Method findGetterSetter( Class<?> clazz, String name, Class<?> parm )
@@ -208,22 +222,22 @@ public abstract class SimpleMBean
         catch (SecurityException e)
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+        	LOG.error( e.getMessage(), e );
         }
         catch (IllegalArgumentException e)
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+        	LOG.error( e.getMessage(), e );
         }
         catch (IllegalAccessException e)
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+        	LOG.error( e.getMessage(), e );
         }
         catch (InvocationTargetException e)
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+        	LOG.error( e.getMessage(), e );
         }
 
         return res;
@@ -248,17 +262,17 @@ public abstract class SimpleMBean
             catch (AttributeNotFoundException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
             catch (MBeanException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
             catch (ReflectionException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
         }
 
@@ -364,22 +378,22 @@ public abstract class SimpleMBean
             catch (AttributeNotFoundException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
             catch (InvalidAttributeValueException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
             catch (MBeanException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
             catch (ReflectionException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.error( e.getMessage(), e );
             }
         }
 
