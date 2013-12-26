@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -79,13 +80,14 @@ import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
+
 /**
  *  Interface for the search providers that handle searching the Wiki
  *
  *  @since 2.2.21.
  */
-public class LuceneSearchProvider implements SearchProvider
-{
+public class LuceneSearchProvider implements SearchProvider {
+
     protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
 
     private WikiEngine m_engine;
@@ -341,35 +343,34 @@ public class LuceneSearchProvider implements SearchProvider
             }
         }
 
+        String out = null;
         if( searchSuffix )
         {
-            InputStream attStream;
-
+            InputStream attStream = null;
+            StringWriter sout = new StringWriter();
+            
             try
             {
                 attStream = mgr.getAttachmentStream( att );
-
-                StringWriter sout = new StringWriter();
                 FileUtil.copyContents( new InputStreamReader(attStream), sout );
-
-                attStream.close();
-                sout.close();
-
-                return sout.toString();
+                out = sout.toString();
             }
             catch (ProviderException e)
             {
                 log.error("Attachment cannot be loaded", e);
-                return null;
             }
             catch (IOException e)
             {
                 log.error("Attachment cannot be loaded", e);
-                return null;
+            }
+            finally 
+            {
+            	IOUtils.closeQuietly( attStream );
+            	IOUtils.closeQuietly( sout );
             }
         }
 
-        return null;
+        return out;
     }
 
     /**
@@ -800,7 +801,7 @@ public class LuceneSearchProvider implements SearchProvider
         {
             m_page  = page;
             m_score = score;
-            m_contexts = contexts;
+            m_contexts = contexts != null ? contexts.clone() : null;
         }
 
         public WikiPage getPage()
