@@ -40,6 +40,7 @@ import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -631,6 +632,7 @@ public class AuthenticationManager {
         
         if( engine.getServletContext() != null )
         {
+        	OutputStream os = null;
             try
             {
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
@@ -639,7 +641,7 @@ public class AuthenticationManager {
                 File tmpFile = File.createTempFile( "temp." + name, "" );
                 tmpFile.deleteOnExit();
 
-                OutputStream os = new FileOutputStream(tmpFile);
+                os = new FileOutputStream(tmpFile);
 
                 byte[] buff = new byte[1024];
 
@@ -648,10 +650,7 @@ public class AuthenticationManager {
                     os.write(buff);
                 }
 
-                os.close();
-
                 path = tmpFile.toURI().toURL();
-
             }
             catch( MalformedURLException e )
             {
@@ -661,6 +660,10 @@ public class AuthenticationManager {
             catch (IOException e)
             {
                log.error("failed to load security policy from file " + name + ",stacktrace follows", e);
+            }
+            finally 
+            {
+            	IOUtils.closeQuietly( os );
             }
         }
         return path;
