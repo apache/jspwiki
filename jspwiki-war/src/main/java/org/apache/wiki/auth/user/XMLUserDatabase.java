@@ -18,24 +18,38 @@
  */
 package org.apache.wiki.auth.user;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.Serializer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
 
 /**
  * <p>Manages {@link DefaultUserProfile} objects using XML files for persistence.
@@ -55,8 +69,7 @@ import org.apache.wiki.util.Serializer;
 
 // FIXME: If the DB is shared across multiple systems, it's possible to lose accounts
 //        if two people add new accounts right after each other from different wikis.
-public class XMLUserDatabase extends AbstractUserDatabase
-{
+public class XMLUserDatabase extends AbstractUserDatabase {
 
     /**
      * The jspwiki.properties property specifying the file system location of
@@ -66,7 +79,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
     
     private static final String DEFAULT_USERDATABASE = "userdatabase.xml";
 
-    private static final String ATTRIBUTES_TAG = "attributes";
+    private static final String ATTRIBUTES_TAG    = "attributes";
     
     private static final String CREATED           = "created";
     
@@ -78,22 +91,20 @@ public class XMLUserDatabase extends AbstractUserDatabase
 
     private static final String LAST_MODIFIED     = "lastModified";
     
-    private static final String LOCK_EXPIRY    = "lockExpiry";
+    private static final String LOCK_EXPIRY       = "lockExpiry";
 
     private static final String PASSWORD          = "password";
 
-    private static final String UID = "uid";
+    private static final String UID               = "uid";
 
     private static final String USER_TAG          = "user";
 
     private static final String WIKI_NAME         = "wikiName";
 
+    private static final String DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
+
     private Document            c_dom             = null;
 
-    private DateFormat          c_defaultFormat   = DateFormat.getDateTimeInstance();
-
-    private DateFormat          c_format          = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
-    
     private File                c_file            = null;
 
     /**
@@ -475,6 +486,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             Element user = (Element) users.item( i );
             if ( user.getAttribute( LOGIN_NAME ).equals( loginName ) )
             {
+            	DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
                 Date modDate = new Date( System.currentTimeMillis() );
                 setAttribute( user, LOGIN_NAME, newName );
                 setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
@@ -506,6 +518,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         
         checkForRefresh();
         
+        DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
         String index = profile.getLoginName();
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         Element user = null;
@@ -704,13 +717,14 @@ public class XMLUserDatabase extends AbstractUserDatabase
     {
         try
         {
+        	DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
             return c_format.parse( date );
         }
         catch( ParseException e )
         {
             try
             {
-                return c_defaultFormat.parse( date );
+                return DateFormat.getDateTimeInstance().parse( date );
             }
             catch ( ParseException e2)
             {
@@ -751,6 +765,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             String loginName = user.getAttribute( LOGIN_NAME );
             String created = user.getAttribute( CREATED );
             String modified = user.getAttribute( LAST_MODIFIED );
+            DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
             try
             {
                 created = c_format.format( c_format.parse( created ) );
@@ -762,17 +777,15 @@ public class XMLUserDatabase extends AbstractUserDatabase
             {
                 try
                 {
-                    created = c_format.format( c_defaultFormat.parse( created ) );
-                    modified = c_format.format( c_defaultFormat.parse( modified ) );
+                    created = c_format.format( DateFormat.getDateTimeInstance().parse( created ) );
+                    modified = c_format.format( DateFormat.getDateTimeInstance().parse( modified ) );
                     user.setAttribute( CREATED,  created );
                     user.setAttribute( LAST_MODIFIED,  modified );
                 }
-                catch ( ParseException e2)
+                catch ( ParseException e2 )
                 {
-                    log.warn("Could not parse 'created' or 'lastModified' "
-                        + "attribute for "
-                        + " profile '" + loginName + "'."
-                        + " It may have been tampered with." );
+                    log.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + loginName + "'."
+                            + " It may have been tampered with." );
                 }            
             }
         }
@@ -784,10 +797,8 @@ public class XMLUserDatabase extends AbstractUserDatabase
      * @param attribute the name of the attribute to set
      * @param value the desired attribute value
      */
-    private void setAttribute( Element element, String attribute, String value )
-    {
-        if ( value != null )
-        {
+    private void setAttribute( Element element, String attribute, String value ) {
+        if( value != null ) {
             element.setAttribute( attribute, value );
         }
     }
