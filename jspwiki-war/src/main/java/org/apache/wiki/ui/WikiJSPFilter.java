@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.NDC;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiContext;
@@ -329,7 +330,7 @@ public class WikiJSPFilter extends WikiServletFilter
             catch( IOException e )
             {
                 log.error( MyServletResponseWrapper.class + " toString() flushBuffer() Failed", e );
-                return null;
+                return StringUtils.EMPTY;
             }
             
             return m_output.toString();
@@ -414,12 +415,12 @@ public class WikiJSPFilter extends WikiServletFilter
             catch( UnsupportedEncodingException e )
             {
                 log.error( ByteArrayResponseWrapper.class + " Unsupported Encoding", e );
-                return null;
+                return StringUtils.EMPTY;
             }
             catch( IOException e )
             {
                 log.error( ByteArrayResponseWrapper.class + " toString() Flush Failed", e );
-                return null;
+                return StringUtils.EMPTY;
             }
         }
     }
