@@ -50,7 +50,6 @@ import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
