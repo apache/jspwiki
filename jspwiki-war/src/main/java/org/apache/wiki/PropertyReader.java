@@ -22,11 +22,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.apache.wiki.util.TextUtil;
+
 
 /**
  * Property Reader for the WikiEngine. Reads the properties for the WikiEngine
@@ -37,8 +44,10 @@ import org.apache.wiki.util.TextUtil;
  *
  * @since 2.5.x
  */
-public final class PropertyReader
-{
+public final class PropertyReader {
+	
+	private static final Logger LOG = Logger.getLogger( PropertyReader.class );
+	
     /**
      * Path to the base property file, usually overridden by values provided in
      * a jspwiki-custom.properties file
@@ -101,68 +110,46 @@ public final class PropertyReader
      *  @param context A Servlet Context which is used to find the properties
      *  @return A filled Properties object with all the cascaded properties in place
      */
-    public static Properties loadWebAppProps( ServletContext context )
-    {
-        String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG);
+    public static Properties loadWebAppProps( ServletContext context ) {
+        String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG );
         InputStream propertyStream = null;
 
-        try
-        {
-            // we'll need this to get at our properties files in the classpath
-            Class config_class = Class.forName("org.apache.wiki.PropertyReader");
-
+        try {
             //
             //  Figure out where our properties lie.
             //
-            if( propertyFile == null )
-            {
-                context.log("No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
-                        "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG);
+            if( propertyFile == null ) {
+                context.log( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
+                             "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
                 //  Use the custom property file at the default location
-                propertyStream = config_class.getResourceAsStream(CUSTOM_JSPWIKI_CONFIG);
-            }
-            else
-            {
+                propertyStream = PropertyReader.class.getResourceAsStream( CUSTOM_JSPWIKI_CONFIG );
+            } else {
                 context.log(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
             }
 
             Properties props = getDefaultProperties();
-            if( propertyStream == null )
-            {
+            if( propertyStream == null ) {
                 context.log("No custom property file found, relying on JSPWiki defaults.");
-            }
-            else
-            {
+            } else {
                 props.load( propertyStream );
             }
 
             //this will add additional properties to the default ones:
-            context.log("Loading cascading properties...");
+            context.log( "Loading cascading properties..." );
 
             //now load the cascade (new in 2.5)
-            loadWebAppPropsCascade(context, props);
+            loadWebAppPropsCascade( context, props );
 
             //finally expand the variables (new in 2.5)
-            expandVars(props);
+            expandVars( props );
 
             return props;
-        }
-        catch( Exception e )
-        {
-            context.log( Release.APPNAME
-                    +": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
-        }
-        finally
-        {
-            try
-            {
-                if( propertyStream != null ) propertyStream.close();
-            }
-            catch( IOException e )
-            {
-                context.log("Unable to close property stream - something must be seriously wrong.");
-            }
+        } catch( Exception e ) {
+            context.log( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + 
+                         e.getMessage() );
+        } finally {
+        	IOUtils.closeQuietly( propertyStream );
         }
 
         return null;
@@ -174,31 +161,17 @@ public final class PropertyReader
      *
      *  @return A property set.
      */
-    public static Properties getDefaultProperties()
-    {
+    public static Properties getDefaultProperties() {
         Properties props = new Properties();
         InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_CONFIG );
         
-        if( in != null )
-        {
-            try
-            {
+        if( in != null ) {
+            try {
                 props.load( in );
-            }
-            catch( IOException e )
-            {
-                System.err.println("Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage());
-            }
-            finally
-            {
-                try
-                {
-                    if( in != null ) in.close();
-                }
-                catch( IOException e )
-                {
-                    System.err.println("Unable to close stream for property file - something must be seriously wrong.");
-                }
+            } catch( IOException e ) {
+                LOG.error( "Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage(), e );
+            } finally {
+            	IOUtils.closeQuietly( in );
             }
         }
         
@@ -212,36 +185,20 @@ public final class PropertyReader
      *  @return A property set consisting of the default property set and custom property set, with
      *          the latter's properties replacing the former for any common values
      */
-    public static Properties getCombinedProperties(String fileName)
-    {
+    public static Properties getCombinedProperties( String fileName ) {
         Properties newPropertySet = getDefaultProperties();
         InputStream in = PropertyReader.class.getResourceAsStream( fileName );
 
-        if( in != null )
-        {
-            try
-            {
+        if( in != null ) {
+            try {
                 newPropertySet.load( in );
+            } catch( IOException e ) {
+                LOG.error( "Unable to load propertyfile '" + fileName + "'" + e.getMessage(), e );
+            } finally {
+            	IOUtils.closeQuietly( in );
             }
-            catch( IOException e )
-            {
-                System.err.println("Unable to load propertyfile '" + fileName + "'" + e.getMessage());
-            }
-            finally
-            {
-                try
-                {
-                    if( in != null ) in.close();
-                }
-                catch( IOException e )
-                {
-                    System.err.println("Unable to close stream for property file - something must be seriously wrong.");
-                }
-            }
-        }
-        else
-        {
-            System.err.println("*** Custom property file \"" + fileName + "\" not found, relying on default file alone.");
+        } else {
+            LOG.error( "*** Custom property file \"" + fileName + "\" not found, relying on default file alone." );
         }
 
         return newPropertySet;
@@ -253,12 +210,11 @@ public final class PropertyReader
      *  returns null. This permits both Servlet- and System-defined cascading
      *  properties.
      */
-    private static String getInitParameter( ServletContext context, String name )
-    {
-        String value = context.getInitParameter(name);
+    private static String getInitParameter( ServletContext context, String name ) {
+        String value = context.getInitParameter( name );
         return ( value != null )
                 ? value
-                : System.getProperty(name) ;
+                : System.getProperty( name ) ;
     }
 
 
@@ -269,11 +225,9 @@ public final class PropertyReader
      * @param defaultProperties   properties to merge the cascading properties to
      * @since 2.5.x
      */
-    private static void loadWebAppPropsCascade(ServletContext context, Properties defaultProperties)
-    {
-        if( getInitParameter(context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + "1") == null )
-        {
-            context.log(" No cascading properties defined for this context");
+    private static void loadWebAppPropsCascade( ServletContext context, Properties defaultProperties ) {
+        if( getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + "1" ) == null ) {
+            context.log( " No cascading properties defined for this context" );
             return;
         }
 
@@ -281,44 +235,27 @@ public final class PropertyReader
         int depth = 0;
         boolean more = true;
         InputStream propertyStream = null;
-        while (more)
-        {
+        while( more ) {
             depth++;
-            String propertyFile = getInitParameter(context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + depth);
+            String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + depth );
 
-            if (propertyFile == null)
-            {
+            if( propertyFile == null ) {
                 more = false;
                 break;
             }
 
-            try
-            {
-                context.log(" Reading additional properties from " + propertyFile + " and merge to cascade.");
+            try {
+                context.log( " Reading additional properties from " + propertyFile + " and merge to cascade." );
                 Properties additionalProps = new Properties();
-                propertyStream = new FileInputStream(new File(propertyFile));
+                propertyStream = new FileInputStream( new File( propertyFile ) );
                 additionalProps.load(propertyStream);
                 defaultProperties.putAll(additionalProps);
-            }
-            catch (Exception e)
-            {
-                context.log(" " + Release.APPNAME
-                        + ": Unable to load and setup properties from " + propertyFile + "."
-                        + e.getMessage());
-            }
-            finally
-            {
-                try
-                {
-                    if( propertyStream != null )
-                    {
-                        propertyStream.close();
-                    }
-                }
-                catch (IOException e)
-                {
-                    context.log(" Unable to close property stream - something must be seriously wrong.");
-                }
+            } catch( Exception e ) {
+                context.log( " " + Release.APPNAME +
+                             ": Unable to load and setup properties from " + propertyFile + "." +
+                             e.getMessage() );
+            } finally {
+            	IOUtils.closeQuietly( propertyStream );
             }
         }
 
@@ -343,53 +280,45 @@ public final class PropertyReader
      *
      * @param properties - properties to expand;
      */
-    public static void expandVars(Properties properties)
-    {
+    public static void expandVars(Properties properties) {
         //get variable name/values from properties...
-        Map<String,String> vars = new HashMap<String,String>();
-        Enumeration propertyList = properties.propertyNames();
-        while( propertyList.hasMoreElements() )
-        {
-            String propertyName = (String)propertyList.nextElement();
-            String propertyValue = properties.getProperty(propertyName);
+        Map< String, String > vars = new HashMap< String, String >();
+        Enumeration< ? > propertyList = properties.propertyNames();
+        while( propertyList.hasMoreElements() ) {
+            String propertyName = ( String )propertyList.nextElement();
+            String propertyValue = properties.getProperty( propertyName );
 
-            if ( propertyName.startsWith(PARAM_VAR_DECLARATION) )
-            {
-                String varName = propertyName.substring(4, propertyName.length()).trim();
+            if ( propertyName.startsWith( PARAM_VAR_DECLARATION ) ) {
+                String varName = propertyName.substring( 4, propertyName.length() ).trim();
                 String varValue = propertyValue.trim();
-                vars.put(varName, varValue);
+                vars.put( varName, varValue );
             }
         }
 
         //now, substitute $ values in property values with vars...
         propertyList = properties.propertyNames();
-        while( propertyList.hasMoreElements() )
-        {
-            String propertyName = (String)propertyList.nextElement();
-            String propertyValue = properties.getProperty(propertyName);
+        while( propertyList.hasMoreElements() ) {
+            String propertyName = ( String )propertyList.nextElement();
+            String propertyValue = properties.getProperty( propertyName );
 
             //skip var properties itself...
-            if ( propertyName.startsWith(PARAM_VAR_DECLARATION) )
-            {
+            if( propertyName.startsWith( PARAM_VAR_DECLARATION ) ) {
                 continue;
             }
 
-            Iterator iter = vars.entrySet().iterator();
-            while ( iter.hasNext() )
-            {
-                Map.Entry entry = (Map.Entry)iter.next();
-                String varName = (String)entry.getKey();
-                String varValue = (String)entry.getValue();
+            Iterator< Map.Entry< String, String > > iter = vars.entrySet().iterator();
+            while ( iter.hasNext() ) {
+                Map.Entry< String, String > entry = iter.next();
+                String varName = entry.getKey();
+                String varValue = entry.getValue();
 
                 //replace old property value, using the same variabe. If we don't overwrite
                 //the same one the next loop works with the original one again and
                 //multiple var expansion won't work...
-                propertyValue =
-                    TextUtil.replaceString( propertyValue, PARAM_VAR_IDENTIFIER + varName, varValue );
+                propertyValue = TextUtil.replaceString( propertyValue, PARAM_VAR_IDENTIFIER + varName, varValue );
 
                 //add the new PropertyValue to the properties
                 properties.put(propertyName, propertyValue);
-
             }
         }
     }
