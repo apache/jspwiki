@@ -1,3 +1,11 @@
+2013-12-26  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-59
+
+       * Big bunch of Sonar warnings fixed.
+       
+       * o.a.w.PropertyReader moved to o.a.w.util.PropertyReader
+
 2013-12-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-58 (I think)
