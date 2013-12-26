@@ -310,13 +310,12 @@ public class CookieTag
      */
     private String getItemValue( Cookie c, String item )
     {
-        if( c == null || item == null )
-        {
+        if( c == null || item == null ) {
             return null;
         }
         String in = c.getValue();
-        Map values = parseCookieValues( in );
-        return (String)values.get( item );
+        Map< String, String > values = parseCookieValues( in );
+        return values.get( item );
     }
 
 
@@ -326,18 +325,15 @@ public class CookieTag
      */
     private Map<String, String> parseCookieValues( String s )
     {
-        Map<String, String> rval = new HashMap<String, String>();
-        if( s == null )
-        {
+        Map< String, String > rval = new HashMap< String, String >();
+        if( s == null ) {
             return rval;
         }
         String[] nvps = s.split( "&" );
-        if( nvps == null )
-        {
+        if( nvps.length == 0 ) {
             return rval;
         }
-        for( int i = 0; i < nvps.length; i++ )
-        {
+        for( int i = 0; i < nvps.length; i++ ) {
             String nvp = decode( nvps[i] );
             String[] nv = nvp.split( "=" );
             if( nv[0] != null && nv[0].trim().length() > 0 )
@@ -353,22 +349,19 @@ public class CookieTag
      * Encodes name-value pairs in the map into a single string, in a format
      * understood by this class and JavaScript decodeURIComponent().
      */
-    private String encodeValues( Map values )
+    private String encodeValues( Map<String, String> values )
     {
-        StringBuffer rval = new StringBuffer();
-        if( values == null || values.size() == 0 )
-        {
+        StringBuilder rval = new StringBuilder();
+        if( values == null || values.size() == 0 ) {
             return rval.toString();
         }
 
-        Iterator it = values.entrySet().iterator();
-        while( it.hasNext() )
-        {
-            Map.Entry e = (Map.Entry) it.next();
-            String n = (String)e.getKey();
-            String v = (String)e.getValue();
-            if( v != null )
-            {
+        Iterator< Map.Entry< String, String > > it = values.entrySet().iterator();
+        while( it.hasNext() ) {
+            Map.Entry< String, String > e = it.next();
+            String n = e.getKey();
+            String v = e.getValue();
+            if( v != null ) {
                 String nv = n + "=" + v;
                 rval.append( encode( nv ) );
             }
