@@ -34,7 +34,11 @@ import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
 import org.suigeneris.jrcs.diff.Revision;
 import org.suigeneris.jrcs.diff.RevisionVisitor;
-import org.suigeneris.jrcs.diff.delta.*;
+import org.suigeneris.jrcs.diff.delta.AddDelta;
+import org.suigeneris.jrcs.diff.delta.ChangeDelta;
+import org.suigeneris.jrcs.diff.delta.Chunk;
+import org.suigeneris.jrcs.diff.delta.DeleteDelta;
+import org.suigeneris.jrcs.diff.delta.Delta;
 import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
 
@@ -45,8 +49,7 @@ import org.suigeneris.jrcs.diff.myers.MyersDiff;
  * Suggested by John Volkar.
  *
  */
-public class ContextualDiffProvider implements DiffProvider
-{
+public class ContextualDiffProvider implements DiffProvider {
 
     private static final Logger log = Logger.getLogger( ContextualDiffProvider.class );
 
@@ -250,7 +253,7 @@ public class ContextualDiffProvider implements DiffProvider
         private ChangeMerger( final StringBuffer sb, final String[] origStrings, final int max )
         {
             m_sb = sb;
-            m_origStrings = origStrings;
+            m_origStrings = origStrings != null ? origStrings.clone() : null;
             m_max = max;
 
             m_origBuf = new StringBuffer();

@@ -289,6 +289,6 @@ public class HumanComparator implements Comparator<String>
         {
             throw new IllegalArgumentException( "The sort order must contain EXACTLY one of each CharType" );
         }
-        this.sortOrder = sortOrder;
+        this.sortOrder = sortOrder != null ? sortOrder.clone() : null;
     }
 }

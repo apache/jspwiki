@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.search;
 
-
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+
 
 /**
  * SearchMatcher performs the task of matching a search query to a page's
@@ -47,7 +47,7 @@ public class SearchMatcher {
      */
     public SearchMatcher( WikiEngine engine, QueryItem[] queries ) {
         m_engine = engine;
-        m_queries = queries;
+        m_queries = queries != null ? queries.clone() : null;
     }
 
     /**
