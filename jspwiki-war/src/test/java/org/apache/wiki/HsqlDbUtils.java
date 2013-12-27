@@ -39,7 +39,7 @@ import org.hsqldb.cmdline.SqlFile;
  *   <li>hsqldbu.start()</li>
  *   <li>hsqldbu.exec( "target/etc/db/hsql/hsql-userdb-setup.ddl" )</li>
  *   <li>hsqldbu.exec( "target/etc/db/hsql/hsql-userdb-teardown.ddl" )</li>
- *   <li>hsqldbu.stop()</li>
+ *   <li>hsqldbu.shutdown()</li>
  * </ol>
  * </code>
  * There are also a couple of convenience methods for unit testing:
@@ -79,13 +79,7 @@ public class HsqlDbUtils
     public void tearDown() 
     {
         exec( "src/test/config/hsql-userdb-teardown.ddl" );
-        stop();
-        try {
-        	LOG.info( "Sleeping for 1000 milliseconds." );
-        	Thread.sleep( 1000 );
-        } catch( InterruptedException ex ) {
-        	Thread.currentThread().interrupt();
-        }
+        shutdown();
     }
     
     /**
@@ -139,9 +133,9 @@ public class HsqlDbUtils
     }
 
     /**
-     * Stops the Hypersonic server.
+     * Shutdown the Hypersonic server.
      */
-    public void stop() 
+    public void shutdown()
     {
         LOG.info( "Shutting down Hypersonic JDBC server on localhost." );
         if( hsqlServer != null ) 
@@ -161,8 +155,8 @@ public class HsqlDbUtils
             {
                 close( conn );
             }
-            
-            hsqlServer.stop();
+
+            hsqlServer.shutdown();
         }
     }
     
