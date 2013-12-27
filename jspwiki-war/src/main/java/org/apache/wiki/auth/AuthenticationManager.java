@@ -633,11 +633,12 @@ public class AuthenticationManager {
         if( engine.getServletContext() != null )
         {
         	OutputStream os = null;
+        	InputStream is = null;
             try
             {
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
                 //  
-                InputStream is = AuthenticationManager.class.getResourceAsStream( "/" + name );
+                is = AuthenticationManager.class.getResourceAsStream( "/" + name );
                 File tmpFile = File.createTempFile( "temp." + name, "" );
                 tmpFile.deleteOnExit();
 
@@ -645,7 +646,7 @@ public class AuthenticationManager {
 
                 byte[] buff = new byte[1024];
 
-                while (is.read(buff) != -1)
+                while( is.read(buff) != -1 )
                 {
                     os.write(buff);
                 }
@@ -655,14 +656,15 @@ public class AuthenticationManager {
             catch( MalformedURLException e )
             {
                 // This should never happen unless I screw up
-                log.fatal("Your code is b0rked.  You are a bad person.");
+                log.fatal( "Your code is b0rked.  You are a bad person.", e );
             }
             catch (IOException e)
             {
-               log.error("failed to load security policy from file " + name + ",stacktrace follows", e);
+               log.error( "failed to load security policy from file " + name + ",stacktrace follows", e );
             }
             finally 
             {
+            	IOUtils.closeQuietly( is );
             	IOUtils.closeQuietly( os );
             }
         }
