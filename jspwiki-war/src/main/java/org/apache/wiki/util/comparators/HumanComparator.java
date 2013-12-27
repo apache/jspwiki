@@ -31,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
  * String.compareTo().
  * 
  */
-public class HumanComparator implements Comparator<String>
-{
+public class HumanComparator implements Comparator< String > {
+
     // Constants for categorising characters and specifying category level
     // ordering
     public enum CharType
@@ -140,8 +140,8 @@ public class HumanComparator implements Comparator<String>
                 // If they're not digits, use character to character comparison
                 if( type1 != CharType.TYPE_DIGIT )
                 {
-                    Character ch1 = new Character( c1 );
-                    Character ch2 = new Character( c2 );
+                    Character ch1 = Character.valueOf( c1 );
+                    Character ch2 = Character.valueOf( c2 );
                     return ch1.compareTo( ch2 );
                 }
 
@@ -155,8 +155,9 @@ public class HumanComparator implements Comparator<String>
                 }
 
                 // No result yet, spin through the digits and continue trying
-                while ( idx < len1 && idx < len2 && Character.isDigit( s1[idx] ) )
-                    idx++;
+                while ( idx < len1 && idx < len2 && Character.isDigit( s1[idx] ) ) {
+                	idx++;
+                }
             }
         }
 
@@ -221,20 +222,23 @@ public class HumanComparator implements Comparator<String>
     {
         // Calculate the integer value of the left hand side
         int idx = offset;
-        while ( idx < left.length && Character.isDigit( left[idx] ) )
-            idx++;
+        while ( idx < left.length && Character.isDigit( left[idx] ) ) {
+        	idx++;
+        }
         int leftLen = idx - offset;
         int leftValue = Integer.valueOf( new String( left, offset, leftLen ) );
 
         // Calculate the integer value of the right hand side
         idx = offset;
-        while ( idx < right.length && Character.isDigit( right[idx] ) )
-            idx++;
+        while ( idx < right.length && Character.isDigit( right[idx] ) ) {
+        	idx++;
+        }
         int rightLen = idx - offset;
         int rightValue = Integer.valueOf( new String( right, offset, rightLen ) );
 
-        if( leftValue == rightValue )
+        if( leftValue == rightValue ) {
             return leftLen - rightLen; // Same value so use the lengths
+        }
         return leftValue - rightValue; // Otherwise compare the values
     }
 
@@ -244,21 +248,20 @@ public class HumanComparator implements Comparator<String>
     }
 
     /**
-     * Very broadly characterises a character as a digit, a letter or a
-     * punctuation character.
+     * Very broadly characterises a character as a digit, a letter or a punctuation character.
      * 
      * @param c <code>char</code> to be characterised
      * @return <code>IS_DIGIT</code> if it's a digit, <code>IS_LETTER</code> if
      *         it's a letter, <code>IS_PUNC</code> otherwise.
      */
-    private CharType mapCharTypes( char c )
-    {
-        if( Character.isDigit( c ) )
+    private CharType mapCharTypes( char c ) {
+        if( Character.isDigit( c ) ) {
             return CharType.TYPE_DIGIT;
-        else if( Character.isLetter( c ) )
+        } else if( Character.isLetter( c ) ) {
             return CharType.TYPE_LETTER;
-        else
+        } else {
             return CharType.TYPE_OTHER;
+        }
     }
 
     /**
@@ -274,20 +277,19 @@ public class HumanComparator implements Comparator<String>
      *             <code>sortOrder</code> is not exactly 3 different
      *             <code>CharType</code>.
      */
-    public void setSortOrder( CharType[] sortOrder )
-    {
-        if( this == DEFAULT_HUMAN_COMPARATOR )
-            throw new IllegalArgumentException( "Can't call setters on default " + this.getClass().getName() );
+    public void setSortOrder( CharType[] sortOrder ) {
+        if( this == DEFAULT_HUMAN_COMPARATOR ) {
+        	throw new IllegalArgumentException( "Can't call setters on default " + HumanComparator.class.getName() );
+        }
 
         // Sanity check the sort order
-        if( sortOrder.length != 3 )
-        {
+        if( sortOrder == null || sortOrder.length != 3 ) {
             throw new IllegalArgumentException( "There must be exactly three elements in the sort order" );
         }
-        if( sortOrder[0] == sortOrder[1] || sortOrder[0] == sortOrder[2] || sortOrder[1] == sortOrder[2] )
-        {
+        if( sortOrder[0] == sortOrder[1] || sortOrder[0] == sortOrder[2] || sortOrder[1] == sortOrder[2] ) {
             throw new IllegalArgumentException( "The sort order must contain EXACTLY one of each CharType" );
         }
-        this.sortOrder = sortOrder != null ? sortOrder.clone() : null;
+        this.sortOrder = sortOrder.clone();
     }
+
 }
