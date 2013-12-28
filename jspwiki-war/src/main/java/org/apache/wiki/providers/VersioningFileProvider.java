@@ -55,7 +55,6 @@ import org.apache.wiki.util.FileUtil;
  */
 public class VersioningFileProvider
     extends AbstractFileProvider
-    implements VersioningProvider
 {
     private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
    
@@ -584,7 +583,7 @@ public class VersioningFileProvider
      */
     public boolean pageExists( String pageName, int version )
     {
-        if (version == WikiPageProvider.LATEST_VERSION) {
+        if (version == WikiPageProvider.LATEST_VERSION || version == findLatestVersion( pageName ) ) {
             return pageExists(pageName);
         }
 

@@ -491,11 +491,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         	return pageExists( pageName );
         }
 
-        if( m_provider instanceof CachingProvider ) {
-            return ( ( CachingProvider )m_provider ).pageExists( pageName , version );
-        }
-
-        return m_provider.getPageInfo( pageName, version ) != null;
+        return m_provider.pageExists( pageName , version );
     }
 
     /**

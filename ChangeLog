@@ -1,3 +1,9 @@
+2013-12-28  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-61
+
+       * fixed JSPWIKI-807 VersioningFileProvider pageExist failure to properly handle latest version
+
 2013-12-27  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-60

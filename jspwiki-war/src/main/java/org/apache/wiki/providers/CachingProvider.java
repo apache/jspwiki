@@ -56,7 +56,7 @@ import org.apache.wiki.util.TextUtil;
 //        for a lot of things.  RefactorMe.
 
 public class CachingProvider
-    implements WikiPageProvider, VersioningProvider
+    implements WikiPageProvider
 {
     private static final Logger log = Logger.getLogger(CachingProvider.class);
 
@@ -208,8 +208,7 @@ public class CachingProvider
                 return true;
             }
 
-            if( m_provider instanceof VersioningProvider )
-                return ((VersioningProvider) m_provider).pageExists( pageName, version );
+            return m_provider.pageExists( pageName, version );
         }
 
         try

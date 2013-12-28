@@ -230,7 +230,15 @@ public abstract class AbstractFileProvider
     {
         File pagefile = findPage( page );
 
-        return pagefile.exists();        
+        return pagefile.exists();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public boolean pageExists( String page, int version )
+    {
+        return pageExists (page);
     }
 
     /**

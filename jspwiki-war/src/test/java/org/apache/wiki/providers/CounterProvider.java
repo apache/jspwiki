@@ -81,10 +81,12 @@ public class CounterProvider
     {
         m_pageExistsCalls++;
 
-        //System.out.println("PAGE="+page);
-        //TestEngine.trace();
-
         return findPage( page ) != null;
+    }
+
+    public boolean pageExists( String page, int version )
+    {
+        return pageExists (page);
     }
 
     public Collection findPages( QueryItem[] query )

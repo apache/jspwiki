@@ -66,6 +66,16 @@ public interface WikiPageProvider
     boolean pageExists( String page );
 
     /**
+     * Return true, if page with a particular version exists.
+     *
+     * @param page    The page name to check for
+     * @param version The version to check
+     * @return True, if page exists; false otherwise.
+     */
+
+    public boolean pageExists(String page, int version);
+
+    /**
      *  Finds pages based on the query.   Only applicable to providers
      *  which implement the FastSearch interface.  Otherwise JSPWiki
      *  will use its internal cache.

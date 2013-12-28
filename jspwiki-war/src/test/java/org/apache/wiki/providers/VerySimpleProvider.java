@@ -77,6 +77,14 @@ public class VerySimpleProvider implements WikiPageProvider
     }
 
     /**
+     *  Always returns true.
+     */
+    public boolean pageExists( String page, int version )
+    {
+        return true;
+    }
+
+    /**
      *  Always returns null.
      */
     public Collection findPages( QueryItem[] query )
