@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.net.URLEncoder;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.List;
@@ -302,17 +301,15 @@ public class AttachmentServlet extends HttpServlet {
                     log.debug( msg );
                 }
                 if( nextPage != null ) {
-                	res.sendRedirect( URLEncoder.encode( nextPage, m_engine.getContentEncoding() ) );
+                	res.sendRedirect( validateNextPage( nextPage, m_engine.getURL( WikiContext.ERROR, "", null, false ) ) );
                 }
 
-                return;
+            } else {
+            	msg = "Attachment '" + page + "', version " + ver + " does not exist.";
+
+                log.info( msg );
+                res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
             }
-
-            msg = "Attachment '" + page + "', version " + ver + " does not exist.";
-
-            log.info( msg );
-            res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
-            return;
         }
         catch( ProviderException pe )
         {
@@ -323,18 +320,15 @@ public class AttachmentServlet extends HttpServlet {
             //  This might fail, if the response is already committed.  So in that
             //  case we just log it.
             //
-            try
-            {
+            try {
                 res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
             }
             catch( IllegalStateException e ) {}
-            return;
         }
         catch( NumberFormatException nfe )
         {
         	log.warn( "Invalid version number: " + version );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
-            return;
         }
         catch( SocketException se )
         {
@@ -343,7 +337,6 @@ public class AttachmentServlet extends HttpServlet {
             //  clients.  No need to try and send an error.
             //
             log.debug("I/O exception during download",se);
-            return;
         }
         catch( IOException ioe )
         {
@@ -360,7 +353,6 @@ public class AttachmentServlet extends HttpServlet {
                 res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
             }
             catch( IllegalStateException e ) {}
-            return;
         }
         finally
         {
@@ -439,7 +431,6 @@ public class AttachmentServlet extends HttpServlet {
      *  Validates the next page to be on the same server as this webapp.
      *  Fixes [JSPWIKI-46].
      */
-    
     private String validateNextPage( String nextPage, String errorPage )
     {
          if( nextPage.indexOf("://") != -1 )
@@ -466,7 +457,6 @@ public class AttachmentServlet extends HttpServlet {
      *  @throws IOException If upload fails
      * @throws FileUploadException 
      */
-    @SuppressWarnings("unchecked")
     protected String upload( HttpServletRequest req ) throws RedirectException, IOException {
         String msg     = "";
         String attName = "(unknown)";
