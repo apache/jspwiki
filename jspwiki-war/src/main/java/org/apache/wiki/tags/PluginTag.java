@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -43,6 +44,7 @@ public class PluginTag
     extends WikiBodyTag
 {
     private static final long serialVersionUID = 0L;
+    private static final Logger log = Logger.getLogger( PluginTag.class );
     
     private String m_plugin;
     private String m_args;

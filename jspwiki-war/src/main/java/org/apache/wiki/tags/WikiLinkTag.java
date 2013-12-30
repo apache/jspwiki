@@ -36,10 +36,10 @@ import java.io.IOException;
  *
  *  @since 2.0
  */
-public abstract class WikiLinkTag
-    extends WikiTagBase
-{
-    public static final int   ANCHOR = 0;
+public abstract class WikiLinkTag extends WikiTagBase {
+
+	private static final long serialVersionUID = 4130732879352134867L;
+	public static final int   ANCHOR = 0;
     public static final int   URL    = 1;
 
     protected String m_pageName;

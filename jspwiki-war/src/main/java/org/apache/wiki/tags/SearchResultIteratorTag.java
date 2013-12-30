@@ -53,7 +53,7 @@ public class SearchResultIteratorTag
     private   int         m_count = 0;
     private   int         m_start = 0;
     
-    static Logger log = Logger.getLogger(SearchResultIteratorTag.class);
+    private static final Logger log = Logger.getLogger(SearchResultIteratorTag.class);
     
     public void release()
     {

@@ -29,17 +29,16 @@ import org.apache.log4j.Logger;
 
 import org.apache.wiki.WikiContext;
 
+
 /**
  *  This is a class that provides the same services as the WikiTagBase, but this time it
  *   works for the BodyTagSupport base class.
- * 
- *
  */
-public abstract class WikiBodyTag extends BodyTagSupport
-    implements TryCatchFinally
-{
-    protected WikiContext m_wikiContext;
-    static    Logger    log = Logger.getLogger( WikiBodyTag.class );
+public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFinally {
+
+	private static final long serialVersionUID = -6732266865112847897L;
+	protected WikiContext m_wikiContext;
+    private static final Logger log = Logger.getLogger( WikiBodyTag.class );
 
     public int doStartTag() throws JspException
     {

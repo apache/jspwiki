@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 
@@ -37,10 +38,10 @@ import org.apache.wiki.WikiEngine;
  *
  *  @since 2.0
  */
-public class InsertDiffTag
-    extends WikiTagBase
-{
+public class InsertDiffTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
+    private static final Logger log = Logger.getLogger( InsertDiffTag.class );
     
     /** Attribute which is used to store the old page content to the Page Context */
     public static final String ATTR_OLDVERSION = "olddiff";

@@ -20,17 +20,18 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.Iterator;
+
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+
 
 /**
  *  Iterates through tags.
@@ -42,16 +43,14 @@ import org.apache.wiki.WikiPage;
  *
  *  @since 2.0
  */
-public abstract class IteratorTag
-    extends BodyTagSupport
-    implements TryCatchFinally
-{
+public abstract class IteratorTag extends BodyTagSupport implements TryCatchFinally {
 
-    protected String      m_pageName;
+	private static final long serialVersionUID = 8945334759300595321L;
+	protected String      m_pageName;
     protected Iterator    m_iterator;
     protected WikiContext m_wikiContext;
 
-    private static Logger log = Logger.getLogger( IteratorTag.class );
+    private static final Logger log = Logger.getLogger( IteratorTag.class );
 
     /**
      *  Sets the collection that is used to form the iteration.

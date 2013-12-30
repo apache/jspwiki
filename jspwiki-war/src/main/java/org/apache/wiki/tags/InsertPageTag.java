@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -47,10 +48,10 @@ import org.apache.wiki.api.exceptions.ProviderException;
  *
  *  @since 2.0
  */
-public class InsertPageTag
-    extends WikiTagBase
-{
+public class InsertPageTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
+    private static final Logger log = Logger.getLogger( InsertPageTag.class );
     
     public static final int HTML  = 0;
     public static final int PLAIN = 1;

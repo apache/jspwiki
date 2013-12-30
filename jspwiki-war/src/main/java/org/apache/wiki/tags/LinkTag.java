@@ -27,6 +27,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -48,11 +49,10 @@ import org.apache.wiki.util.TextUtil;
  *  <p>
  *  @since 2.3.50
  */
-public class LinkTag
-    extends WikiLinkTag
-    implements ParamHandler, BodyTag
-{
-    static final long serialVersionUID = 0L;
+public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
+    
+	static final long serialVersionUID = 0L;
+    private static final Logger log = Logger.getLogger( LinkTag.class );
 
     private String m_version = null;
     private String m_class   = null;
@@ -312,19 +312,19 @@ public class LinkTag
         return url;
     }
 
-    private String addParamsForRecipient( String addTo, Map params )
+    private String addParamsForRecipient( String addTo, Map< String, String > params )
     {
         if( params == null || params.size() == 0 )
         {
             return addTo;
         }
-        StringBuffer buf = new StringBuffer();
-        Iterator it = params.entrySet().iterator();
+        StringBuilder buf = new StringBuilder();
+        Iterator< Map.Entry< String, String > > it = params.entrySet().iterator();
         while( it.hasNext() )
         {
-            Map.Entry e = (Map.Entry) it.next();
-            String n = (String)e.getKey();
-            String v = (String)e.getValue();
+            Map.Entry< String, String > e = it.next();
+            String n = e.getKey();
+            String v = e.getValue();
             buf.append( n );
             buf.append( "=" );
             buf.append( v );

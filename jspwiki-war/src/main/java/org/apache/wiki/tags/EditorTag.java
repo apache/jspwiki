@@ -23,8 +23,10 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.EditorManager;
+
 
 /**
  *  Creates an editor component with all the necessary parts
@@ -35,10 +37,10 @@ import org.apache.wiki.ui.EditorManager;
  *
  *  @since 2.2
  */
-public class EditorTag
-    extends WikiBodyTag
-{
+public class EditorTag extends WikiBodyTag {
+
     private static final long serialVersionUID = 0L;
+    private static final Logger log = Logger.getLogger( EditorTag.class );
     
     public final int doWikiStartTag()
         throws IOException
