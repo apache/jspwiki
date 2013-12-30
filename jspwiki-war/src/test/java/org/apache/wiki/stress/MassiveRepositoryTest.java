@@ -23,22 +23,21 @@ import java.util.Properties;
 import java.util.Random;
 
 import junit.framework.TestCase;
-
 import net.sf.ehcache.CacheManager;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.providers.CachingProvider;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
 
-public class MassiveRepositoryTest extends TestCase
-{
+public class MassiveRepositoryTest extends TestCase {
+	
     Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
 
     TestEngine engine;
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() throws Exception {
         super.setUp();
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
@@ -48,13 +47,12 @@ public class MassiveRepositoryTest extends TestCase
 
         TestEngine.deleteAll(f);
 
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().clearAll();
 
         engine = new TestEngine(props);
     }
 
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
         super.tearDown();
         
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
@@ -65,20 +63,31 @@ public class MassiveRepositoryTest extends TestCase
         TestEngine.deleteAll(f);
     }
 
-    private String getName( int i )
-    {
+    private String getName( int i ) {
         String baseName = "Page";
         return baseName + i;
     }
     
-    public void testMassiveRepository1()
-    throws Exception
-    {
-        String baseText = "!This is a page %d\r\n\r\nX\r\n\r\nLinks to [%1], [%2], [%3], [%4], [%5], [%6], [%7], [%8], [%9], [%0]";
-        int    numPages = 1000;
-        int    numRevisions = 1000;
-        int    numRenders = 10000;
+    public void testMassiveRepositoryGettingAllPagesFromCache() throws Exception {
+        int    numPages = 900;
+        int    numRevisions = 900;
+        int    numRenders = 9000;
+        int    tickmarks  = 90;
+        
+        stressTest( numPages, numRevisions, numRenders, tickmarks );
+    }
+    
+    public void testMassiveRepositoryBypassingCacheByHavingTooMuchPages() throws Exception {
+    	int    numPages = 1001;
+        int    numRevisions = 1001;
+        int    numRenders = 10001;
         int    tickmarks  = 100;
+        
+        stressTest( numPages, numRevisions, numRenders, tickmarks );
+    }
+
+	void stressTest( int numPages, int numRevisions, int numRenders, int tickmarks ) throws WikiException {
+		String baseText = "!This is a page %d\r\n\r\nX\r\n\r\nLinks to [%1], [%2], [%3], [%4], [%5], [%6], [%7], [%8], [%9], [%0]";
         
         Random random = new Random();
         Benchmark sw = new Benchmark();
@@ -156,6 +165,6 @@ public class MassiveRepositoryTest extends TestCase
         
         sw.stop();
         System.out.println("\nTook "+sw.toString()+", which is "+sw.toString(numRenders)+" renders/second");
-        
-    }
+	}
+
 }
