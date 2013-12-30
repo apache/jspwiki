@@ -1,3 +1,12 @@
+2013-12-28  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-62
+       
+       * JSPWIKI-809: PageCache has hardcoded limit of 1000 and doesn't fail gracefully
+       
+       * Attachment servlet would perform unsafe redirection on doGet if a nextpage param was provided 
+         (JSPWIKI-46 related)
+
 2013-12-28  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-61
