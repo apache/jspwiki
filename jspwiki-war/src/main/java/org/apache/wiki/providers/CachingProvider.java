@@ -55,10 +55,9 @@ import org.apache.wiki.util.TextUtil;
 // FIXME: A part of the stuff is now redundant, since we could easily use the text cache
 //        for a lot of things.  RefactorMe.
 
-public class CachingProvider
-    implements WikiPageProvider
-{
-    private static final Logger log = Logger.getLogger(CachingProvider.class);
+public class CachingProvider implements WikiPageProvider {
+
+    private static final Logger log = Logger.getLogger( CachingProvider.class );
 
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
@@ -126,7 +125,7 @@ public class CachingProvider
         }
 
         //
-//        m_cache.getCacheEventNotificationService().registerListener(new CacheItemCollector());
+        // m_cache.getCacheEventNotificationService().registerListener(new CacheItemCollector());
 
         //
         //  Find and initialize real provider.
@@ -136,7 +135,7 @@ public class CachingProvider
 
         try
         {
-            Class providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
+            Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
 
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
@@ -325,7 +324,7 @@ public class CachingProvider
             m_cacheMisses++;
             return text;
         }
-        //page not found (not in cache, not by real provider
+        //page not found (not in cache, not by real provider)
         return  null;
     }
 
@@ -379,7 +378,14 @@ public class CachingProvider
                 }
             }
         }
-
+        
+        if( all.size() >= m_cache.getCacheConfiguration().getMaxEntriesLocalHeap() ) {
+        	log.warn( "seems " + m_cache.getName() + " can't hold all pages from your page repository, " +
+        			  "so we're delegating on the underlying provider instead. Please consider increasing " +
+        			  "your cache sizes on ehcache.xml to avoid this behaviour" );
+        	return m_provider.getAllPages();
+        }
+        
         return all;
     }
 
