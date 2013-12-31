@@ -107,8 +107,9 @@ public abstract class WikiTagBase
         return EVAL_PAGE;
     }
 
-    public void doCatch(Throwable arg0) throws Throwable
+    public void doCatch( Throwable th ) throws Throwable
     {
+    	log.error( th.getMessage(), th );
     }
 
     public void doFinally()
