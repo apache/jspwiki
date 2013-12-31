@@ -1,4 +1,11 @@
-2013-12-28  Juan Pablo Santos (juanpablo AT apache DOT org)
+2013-12-31  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-63
+       
+       * Special page reference RecentChanges giving a blank page (due to non-existent JSP) instead  
+         of required WikiPage.
+       
+2013-12-30  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-62
        
