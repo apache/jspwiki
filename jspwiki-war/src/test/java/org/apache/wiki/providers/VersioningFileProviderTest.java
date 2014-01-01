@@ -252,10 +252,6 @@ public class VersioningFileProviderTest extends TestCase
         File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
         assertFalse( "file exists", f.exists() );
-
-        f = new File( files, NAME1+".properties" );
-
-        assertFalse( "RCS file exists", f.exists() );
     }
 
     public void testDeleteVersion()

@@ -434,38 +434,10 @@ public class WeblogPlugin
 
             if( pageName.startsWith( baseName ) )
             {
-                //
-                //  Check the creation date from the page name.
-                //  We do this because RCSFileProvider is very slow at getting a
-                //  specific page version.
-                //
                 try
                 {
-                    //log.debug("Checking: "+pageName);
-                    int firstScore = pageName.indexOf('_',baseName.length()-1 );
-                    if( firstScore != -1 && firstScore+1 < pageName.length() )
-                    {
-                        int secondScore = pageName.indexOf('_', firstScore+1);
-
-                        if( secondScore != -1 )
-                        {
-                            String creationDate = pageName.substring( firstScore+1, secondScore );
-
-                            //log.debug("   Creation date: "+creationDate);
-
-                            Date pageDay = fmt.parse( creationDate );
-
-                            //
-                            //  Add the first version of the page into the list.  This way
-                            //  the page modified date becomes the page creation date.
-                            //
-                            if( pageDay != null && pageDay.after(start) && pageDay.before(end) )
-                            {
-                                WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
-                                result.add( firstVersion );
-                            }
-                        }
-                    }
+                    WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
+                    result.add( firstVersion );
                 }
                 catch( Exception e )
                 {

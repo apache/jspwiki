@@ -1,3 +1,9 @@
+2014-01-01  Harry Metske (metskem@apache.org)
+
+       * 2.10.0-svn-64
+
+       * dropped last pieces of RCS file support including ProviderConverter
+
 2013-12-31  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-63
