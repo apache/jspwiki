@@ -1,3 +1,9 @@
+2014-01-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-65
+       
+       * JSPWIKI-731: replaced all http://www.jspwiki.org references with TLP homepage
+       
 2014-01-01  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-64
