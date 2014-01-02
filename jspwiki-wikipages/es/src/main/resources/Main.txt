@@ -18,8 +18,8 @@ Tienes algunas páginas ya configuradas de salida:
 !Documentación
 
 * Para ver todas las características del marcado Wiki, [Reglas de Formato del Texto|TextFormattingRules].
-* Punto de entrada a toda [Documentación de JSPWiki|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
-** [Nuevas características en JSPWiki 2.8|http://www.jspwiki.org/wiki/NewIn2.8].
+* Punto de entrada a toda [Documentación de JSPWiki|JSPWiki:JSPWikiDocumentation]
+** [Nuevas características en JSPWiki 2.8|JSPWiki:NewIn2.8].
 
 !Miscelánea
 

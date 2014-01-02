@@ -1,4 +1,4 @@
-Op deze pagina vind je de wiki syntax die je voor JSPWiki moet gebruiken. Voor details over wat de verschillen zijn t.o.v. Wikipedia, kijk op [MigratingFromMediaWiki|http://www.jspwiki.org/wiki/MigratingFromMediaWiki].
+Op deze pagina vind je de wiki syntax die je voor JSPWiki moet gebruiken. Voor details over wat de verschillen zijn t.o.v. Wikipedia, kijk op [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki].
 
 [{TableOfContents }]
 \\
@@ -40,23 +40,23 @@ Je kunt altijd "Bewerk deze pagina" (kijk aan de linker zijkant) doen, om te zie
 De hyperlink kan ook een directe URL zijn die begint met  {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, or {{news:}}, in dat geval zal de link naar een externe bron verwijzen. Bijvoorbeeld, om naar java.sun.com te verwijzen, gebruik je simpelweg {{[[http://java.sun.com]}}, dat wordt dan  [http://java.sun.com/] of {{[[Java home page|http://java.sun.com]}}, dat wordt [Java home page|http://java.sun.com].
 Als je de link niet begint met een van bovengenoemde "protocollen", dan gaat de wiki uit van een normale link naar een wiki pagina, het eerste karakter van de pagina naam moet een letter zijn. Numerieke pagina namen zijn niet toegestaan. Als je vierkante haken wil gebruiken ({{[[]}})  in de pagina, zonder een link te maken, gebruik dan 2 vierkante haken achter elkaar. Dus de tekst  {{[[[Example Non-Link]}}, zal zichtbaar zijn als {{[[Example Non-Link]}}. 
 Om een pagina toe te voegen, maak je gewoon ergens een link die er naar toe wijst. Per slot van rekening heeft het niet veel zin om een pagina te hebben als je er niet bij kunt. Je ziet dan de pagina naam onderstreept met een rode stippel lijn als je op de pagina terugkomt. Klik er op en je hebt een nieuwe pagina ! 
-Het is toegestaan om bijna elk karakter te gebruiken in een [WikiName|http://www.jspwiki.org/wiki/WikiName], zo lang het maar letters of cijfers zijn.
-Let wel, je kunt deze Wiki ook zo configureren dat standaard [CamelCase|http://www.jspwiki.org/wiki/CamelCase] linking wordt ondersteund (als het wordt ondersteund, dan is het woord CamelCase een link, als het niet wordt voorafgegaan door '~~'). Standaard staat het uit, maar als die aardige administrator het heeft aangezet, CamelCase dan maar =).
+Het is toegestaan om bijna elk karakter te gebruiken in een [WikiName|JSPWiki:WikiName], zo lang het maar letters of cijfers zijn.
+Let wel, je kunt deze Wiki ook zo configureren dat standaard [CamelCase|JSPWiki:CamelCase] linking wordt ondersteund (als het wordt ondersteund, dan is het woord CamelCase een link, als het niet wordt voorafgegaan door '~~'). Standaard staat het uit, maar als die aardige administrator het heeft aangezet, CamelCase dan maar =).
 
 !Voetnoten
 Dit zijn een speciaal soort hyperlinks.
 Door in een hyperlink niets anders dan een nummer te gebruiken, maak je een link naar een voetnoot. 
 Kijk hieronder om een voetnoot te vinden.
 Je kunt ook een voetnot met een naam maken, net zoals je normale hyperlinks maakt, zoals {{[[Footnote name|1]}} als een andere manier om naar de eerste voetnoot [Footnote name|1] te verwijzen. Of je kunt de voetnaam naam zelf gebruiken[2].
-![InterWiki|http://www.jspwiki.org/wiki/InterWiki] links
+![InterWiki|JSPWiki:InterWiki] links
 Je kunt ook linken tussen verschillende wiki's zonder de URL te weten. Net zoals een link in de vorm {{[[Wiki:WikiPage]}} en JSPWiki zal zelf een link voor je maken. Bij voorbeeld, deze link verwijst naar de [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Kijk ook naar de [SystemInfo] pagina voor meer informatie over welke Wiki links beschikbaar zijn. 
-Als een [InterWiki|http://www.jspwiki.org/wiki/InterWiki] link niet wordt ondersteund, krijg je er een melding van op de pagina wanneer je de pagina opslaat.
+Als een [InterWiki|JSPWiki:InterWiki] link niet wordt ondersteund, krijg je er een melding van op de pagina wanneer je de pagina opslaat.
 
 !Plaatjes toevoegen.
 Je kunt elke plaatje invoegen in de wiki code door het plaatje ergens op een website te zetten, en door er simpel naar te verwijzen.
 Als je een link tekst opgeeft ({{[[this one here|http://example.com/example.png]}}) dan wordt het de ALT text voor degenen die geen plaatjes kunnen of willen zien. 
 De lijst met toegestane image types hangt van de wiki af, zie de [SystemInfo] pagina voor een lijst van de diverse image types.
-Het is ook mogelijk om de [Image plugin|http://www.jspwiki.org/wiki/Image] te gebruiken, hiermee heb je wat meer controle over de plaatsing van het plaatje en de attributen ervan.
+Het is ook mogelijk om de [Image plugin|JSPWiki:Image] te gebruiken, hiermee heb je wat meer controle over de plaatsing van het plaatje en de attributen ervan.
 Om een nieuwe regel te forceren na een plaatje, gebruik \\\ (drie backslashes achter elkaar, i.p.v. twee)
 
 !Opsommings lijsten
@@ -134,7 +134,7 @@ geeft je de volgende tabel. Zie dat je in een tabel ook hyperlinks kunt gebruike
 | [Main] | [SandBox]
 
 !CSS styles
-Alhoewel niet in overeenstemming met het keep it simple principe, CSS styles [kunnen inline worden gebruikt|http://www.jspwiki.org/wiki/CSSInWikipages] voor die situaties waarbij je echt de nadruk op een bepaald gedeelte van een pagina wilt leggen.
+Alhoewel niet in overeenstemming met het keep it simple principe, CSS styles [kunnen inline worden gebruikt|JSPWiki:CSSInWikipages] voor die situaties waarbij je echt de nadruk op een bepaald gedeelte van een pagina wilt leggen.
 
 !Conflicten
 Als iemand toevallig dezelfde pagina wil wijzigen als jij op hetzelfde tijdstip, dan zorgt JSPWiki er voor dat je geen wijzigingen kunt doen en zal je een conflict pagina geven. Sorry, maar degene die de eerste wijzigingen maakt, die wint..... 
@@ -144,7 +144,7 @@ __Waarschuwing:__ Als je de  Back knop van je browser gebruikt om terug te gaan 
 Dat kan niet. Je kunt natuurlijk alle links naar een pagina weghalen, waardoor ie onbereikbaar wordt.Of je kunt de administrator vragen om de pagina te verwijderen. Je kunt ook de [DELETEME|JSPWiki:DELETEME] link gebruiken.
 
 !Toevoegen van nieuwe pagina's
-Maak een link op een pagina die naar de nieuwe (nog niet bestaande) pagina verwijst door zijn [wiki naam|http://www.jspwiki.org/wiki/WikiName] te gebruiken
+Maak een link op een pagina die naar de nieuwe (nog niet bestaande) pagina verwijst door zijn [wiki naam|JSPWiki:WikiName] te gebruiken
 Klik op de link die nu een vraagteken (?) suffix moet hebben en je krijgt een editor window voor de nieuwe pagina.
 
 !Aliasing van een pagina
@@ -154,15 +154,15 @@ Soms wil je dat een link naar een pagina direct naar een andere pagina gaat. Dit
 Er zijn vele variabelen die je aan een pagina kan toevoegen. De basis vorm is:
 {{ [[{$variablename}], }}
 waar ''variablename'' de naam van de variabele is die je wilt invoegen. Variabele namen zijn case-insensitive - d.w.z., "pagename" is hetzelfde als  "paGeNamE" en "PageName".
-Je kunt de lijst van beschikbare variabelen zien op [WikiVariables|http://www.jspwiki.org/wiki/WikiVariables].
+Je kunt de lijst van beschikbare variabelen zien op [WikiVariables|JSPWiki:WikiVariables].
 
 !Plugins gebruiken
 De standaard manier om een plugin op een pagina te gebruiken, is ::
 [[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
-Meer informatie hierover is te vinden op  [JSPWikiPlugins | http://www.jspwiki.org/wiki/JSPWikiPlugins].
+Meer informatie hierover is te vinden op  [JSPWikiPlugins | JSPWiki:JSPWikiPlugins].
 ----
 [#1] Hier is de genoemde voetnoot.
 [2-De andere voetnoot|#2] De andere voetnoot. Zie je dat de naam anders is ?
 ----
-Enig  [idee | http://www.jspwiki.org/wiki/IdeasTextFormattingRules]?
-Nog [vragen | http://www.jspwiki.org/wiki/TextFormattingRulesDiscussion]?
+Enig  [idee | JSPWiki:IdeasTextFormattingRules]?
+Nog [vragen | JSPWiki:TextFormattingRulesDiscussion]?

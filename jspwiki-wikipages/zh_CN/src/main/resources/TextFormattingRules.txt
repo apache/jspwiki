@@ -1,4 +1,4 @@
-本页面描述了 JSPWiki 所使用的 wiki 语法。有关 JSPWiki 语法和 Wikipedia 的区别的详细信息，请参考 [MigratingFromMediaWiki|http://www.jspwiki.org/wiki/MigratingFromMediaWiki]。
+本页面描述了 JSPWiki 所使用的 wiki 语法。有关 JSPWiki 语法和 Wikipedia 的区别的详细信息，请参考 [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki]。
 
 [{TableOfContents }]
 \\
@@ -36,21 +36,21 @@ __text__   = 以粗体显示 'text'。
 链接也可以是直接以{{http:}}、{{ftp:}}、{{mailto:}}、{{https:}} 或 {{news:}} 开头的 URL，在这种情况下，链接指向外部实体。例如，要指向 ''java.sun.com'' 的主页，就要使用 {{[[http://java.sun.com]}}，它会是 [http://java.sun.com/] 或者使用 {{[[Java 主页|http://java.sun.com]}}，则会是 [Java 主页|http://java.sun.com]。
 如果链接不以上面的“协议”开头，那么 Wiki 会将其认作链接到 Wiki 空间中其他页面的普通链接，您需要以字母作为这个页面的第一个字符，纯粹数字的页面名是不允许的。如果要在页面中使用方括号（{{[[]}}）而不想创建链接，就用两个开口的方括号（{{[[[}}）。所以文本 {{[[[Example Non-Link]}}，会显示为 {{[[Example Non-Link]}}[[Murali]。
 要添加新页面，您只需要从其他地方创建一个指向它的链接即可。毕竟，要一个不能访问的页面意义不大！在返回到那个页面的时候，您会发现页面名称后面有个小问号。然后，点击这个问号，这样您就创建了一个页面。
-在一个 [WikiName|http://www.jspwiki.org/wiki/WikiName] 中，几乎可以使用任何字符，不过他们要是字母或数字才行。
-另外有一点，本 Wiki 可以通过配置来支持标准的驼峰字 [CamelCase|http://www.jspwiki.org/wiki/CamelCase] 连接（如果支持，只要不以 '~' 开头，单词 CamelCase 应该就是一个链接）。缺省情况下这个功能是关闭的，当然如果管理员已经将这个设置打开的话，那么 CamelCase 就是你要的了。
+在一个 [WikiName|JSPWiki:WikiName] 中，几乎可以使用任何字符，不过他们要是字母或数字才行。
+另外有一点，本 Wiki 可以通过配置来支持标准的驼峰字 [CamelCase|JSPWiki:CamelCase] 连接（如果支持，只要不以 '~' 开头，单词 CamelCase 应该就是一个链接）。缺省情况下这个功能是关闭的，当然如果管理员已经将这个设置打开的话，那么 CamelCase 就是你要的了。
 !脚注
 脚注是一种特殊类型的超链接。创建脚注十分简单，只需在脚注要引用到的超链接中加入数字即可，例如 {{[[1]}}。
 实际使用的时候，把脚注 {{[[#1]}} 放到应指向的位置。
 如下所示。
 您还可以创建一个带名字的脚注，方法和创建普通超链接相同。比如 {{[[Footnote name|1]}}，也是引用第一个脚注 [Footnote name|1]的一种方式。也可以把自定义的名字用作脚注本身，如“Footnote name[2]”。
-![InterWiki|http://www.jspwiki.org/wiki/InterWiki] 链接
+![InterWiki|JSPWiki:InterWiki] 链接
 您还可以在不同的 Wiki 之间做链接，不一定要知道具体的 URL。只需要使用此格式“{{[[Wiki:WikiPage]}}”，JSPWiki 会自动帮您创建链接。例如，这个链接是指向 [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]。关于哪些 WiKi 链接可用的更多信息，可查看 [SystemInfo] 页面。
-如果不支持 [InterWiki|http://www.jspwiki.org/wiki/InterWiki] 链接，当您保存这个页面时会收到通知。
+如果不支持 [InterWiki|JSPWiki:InterWiki] 链接，当您保存这个页面时会收到通知。
 !添加图片
 您可以把图片嵌入到 wiki 代码里，只要该图片在网络上可用，并且符合以下格式，然后只需链接过去。
 如果指定链接文本（{{[[this one here|http://example.com/example.png]}}），对于无法查看或不想查看图片的人，即可显示 ALT 文本。
 允许的图片类型取决于 Wiki。您可以查看 [SystemInfo] 页面获取图片类型列表。
-还可以使用 [Image plugin|http://www.jspwiki.org/wiki/Image] 格式控制图片的位置和属性。
+还可以使用 [Image plugin|JSPWiki:Image] 格式控制图片的位置和属性。
 要在图片后添加空行，可以使用三个反斜杠（\ \ \）。
 !符号列表
 可以在第一列使用一个星号（*）来添加符号列表。增加星号数量可添加更多的缩进。例如：
@@ -126,31 +126,31 @@ creates
 | ''Gobble'' | Bar \\ foo
 | [Main] | [SandBox]
 !CSS 样式
-如果不想像多数文本那样遵循简单的原则，可以在行内使用 CSS 样式 [can be used inline |http://www.jspwiki.org/wiki/CSSInWikipages] 对页面中想要特别强调的部分做修饰。
+如果不想像多数文本那样遵循简单的原则，可以在行内使用 CSS 样式 [can be used inline |JSPWiki:CSSInWikipages] 对页面中想要特别强调的部分做修饰。
 !冲突
 如果有人和您同时对某页面进行编辑，JSPWiki 会阻止您进行修改并显示冲突页面。遗憾的是，首先修改的人会修改成功...
 __警告信息：__ 如果您使用浏览器的后退按钮返回编辑页面，通常会引起冲突。这是因为浏览器会认为您还是编辑以前的页面。
 !删除页面
 这是不可能的。当然，您可以删除对该页面的所有链接，这样这个页面就无法访问了。或电子邮件给管理员，我会帮您删除此页面。您也可以添加一个 [DELETEME|JSPWiki:DELETEME] 链接。
 !添加新页面
-可以创建一个链接指向新的页面（尚未存在的），方法是使用它的Wiki名字，如 [WikiName|http://www.jspwiki.org/wiki/WikiName].
+可以创建一个链接指向新的页面（尚未存在的），方法是使用它的Wiki名字，如 [WikiName|JSPWiki:WikiName].
 如果现在单击该新链接，会显示一个问号 (?) 后缀，您将获取新页面的编辑权限。
--- [Asser|http://www.jspwiki.org/wiki/Asser]
+-- [Asser|JSPWiki:Asser]
 !页面别名识别
 有时候您想链接到某个 wiki 页面，以便立即浏览到其他页面。这可以使用“页面别名”来进行。
 !插入变量
 可以在页面上插入很多种变量。基本的格式为：
 {{ [[{$variablename}], }}
 其中 ''variablename'' 是要插入的变量的名称。注意变量名称是不区分大小写的 - 即“pagename”和“paGeNamE”以及“PageName”都是一样的。
-您可以在此页面查看可用的变量列表：[WikiVariables|http://www.jspwiki.org/wiki/WikiVariables]。
+您可以在此页面查看可用的变量列表：[WikiVariables|JSPWiki:WikiVariables]。
 
 !插入插件
 插入插件的基本语法如下：
 [[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
-可查看此页面获取更多信息：[JSPWikiPlugins | http://www.jspwiki.org/wiki/JSPWikiPlugins].
+可查看此页面获取更多信息：[JSPWikiPlugins | JSPWiki:JSPWikiPlugins].
 ----
 [#1] 这是我提到过的脚注。
 [2-The other footnote|#2] 另外一个脚注。注意到名字的区别了吗？
 ----
-有任何意见吗 [意见 | http://www.jspwiki.org/wiki/IdeasTextFormattingRules]？
-有任何问题吗 [问题 | http://www.jspwiki.org/wiki/TextFormattingRulesDiscussion]？
+有任何意见吗 [意见 | JSPWiki:IdeasTextFormattingRules]？
+有任何问题吗 [问题 | JSPWiki:TextFormattingRulesDiscussion]？

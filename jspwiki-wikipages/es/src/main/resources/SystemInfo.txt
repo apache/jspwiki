@@ -1,4 +1,4 @@
-Aquí hay algunas figuras estratégicas y otras cosas interesantes acerca de esta Wiki en particular.  Toda esta información también está disponible mediante  [WikiVariables], por si quieres usarlas en cualquier otra página.
+Aquí hay algunas figuras estratégicas y otras cosas interesantes acerca de esta Wiki en particular.  Toda esta información también está disponible mediante  [WikiVariables|JSPWiki:WikiVariables], por si quieres usarlas en cualquier otra página.
 
 | __Nombre de la aplicación__                    | [{$applicationname}]
 | __URL Base__                                   | [{$baseurl}]

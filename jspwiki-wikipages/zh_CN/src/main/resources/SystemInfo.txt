@@ -1,4 +1,4 @@
-下面是一些战略性的图表和其他有关这个 Wiki 的有趣信息。如果您打算在其他页面上使用 Wiki 变量，所有这些信息可以在 [WikiVariables] 页面找到。
+下面是一些战略性的图表和其他有关这个 Wiki 的有趣信息。如果您打算在其他页面上使用 Wiki 变量，所有这些信息可以在 [WikiVariables|JSPWiki:WikiVariables] 页面找到。
 
 | __应用名称__               | [{$applicationname}]
 | __基本地址__                   | [{$baseurl}]

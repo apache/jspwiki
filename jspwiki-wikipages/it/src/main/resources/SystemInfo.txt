@@ -1,4 +1,4 @@
-Quì sono elencate le informazioni rilevanti per questo Wiki. Tutte le informazioni sono anche disponibili nelle [WikiVariables|http://www.jspwiki.org/wiki/WikiVariables] se le voleste utilizzare all'interno di una specifica pagina.
+Quì sono elencate le informazioni rilevanti per questo Wiki. Tutte le informazioni sono anche disponibili nelle [WikiVariables|JSPWiki:WikiVariables] se le voleste utilizzare all'interno di una specifica pagina.
 
 | __Nome dell' applicazione__                     | [{$applicationname}]
 | __URL base__                                    | [{$baseurl}]

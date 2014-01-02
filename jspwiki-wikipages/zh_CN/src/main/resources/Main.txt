@@ -17,8 +17,8 @@
 !文档
 
 * 有关 Wiki 标记的全部特性，请参阅 [TextFormattingRules]。
-* 完整 JSPWiki 文档入口：[JSPWiki 文档|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
-** [JSPWiki 2.6 新特性|http://www.jspwiki.org/wiki/NewIn2.6].
+* 完整 JSPWiki 文档入口：[JSPWiki 文档|JSPWiki:JSPWikiDocumentation]
+** [JSPWiki 2.6 新特性|JSPWiki:NewIn2.6].
 
 
 !其他

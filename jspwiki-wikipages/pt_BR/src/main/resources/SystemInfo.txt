@@ -1,4 +1,4 @@
-Aqui estão algumas informações estratégicas sobre esta Wiki em particular. Toda esta informação também está disponível em [Variáveis Wiki|http://www.jspwiki.org/wiki/WikiVariables] para o caso de você quiser utilizá-la em outra página.
+Aqui estão algumas informações estratégicas sobre esta Wiki em particular. Toda esta informação também está disponível em [Variáveis Wiki|JSPWiki:WikiVariables] para o caso de você quiser utilizá-la em outra página.
 
 | __Nome da Aplicação__                            | [{$applicationname}]
 | __Endereço Base__                                | [{$baseurl}]

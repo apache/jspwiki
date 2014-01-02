@@ -1,5 +1,5 @@
 Hier zijn een paar strategische cijfers en andere interessante zaken over deze Wiki.  
-Al deze informatie is ook beschikbaar in [Wiki Variabelen||http://www.jspwiki.org/wiki/WikiVariables], als je ze op een andere pagina wil gebruiken.
+Al deze informatie is ook beschikbaar in [Wiki Variabelen||JSPWiki:WikiVariables], als je ze op een andere pagina wil gebruiken.
 
 | __Applicatie naam__               | [{$applicationname}]
 | __Base address__                   | [{$baseurl}]

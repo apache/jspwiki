@@ -18,8 +18,8 @@ Je moet een paar pagina's gaan maken:
 !Documentatie
 
 * Voor alle Wiki opmaak mogelijkheden, zie [TextFormattingRules].
-* Ingang voor de volledige  [JSPWikiDocumentation|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
-** [JSPWiki 2.8 nieuwe features|http://www.jspwiki.org/wiki/NewIn2.8].
+* Ingang voor de volledige  [JSPWikiDocumentation|JSPWiki:JSPWikiDocumentation]
+** [JSPWiki 2.8 nieuwe features|JSPWiki:NewIn2.8].
 
 !Diversen
 

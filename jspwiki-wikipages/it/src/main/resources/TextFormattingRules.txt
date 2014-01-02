@@ -1,4 +1,4 @@
-Questa pagina descrive esaustivamente la sintassi Wiki usata da JSPWiki. Per approfondire le differenze con la sintassi usata per Wikipedia, si faccia riferimento a [Migrazione da MediaWiki|http://www.jspwiki.org/wiki/MigratingFromMediaWiki].
+Questa pagina descrive esaustivamente la sintassi Wiki usata da JSPWiki. Per approfondire le differenze con la sintassi usata per Wikipedia, si faccia riferimento a [Migrazione da MediaWiki|JSPWiki:MigratingFromMediaWiki].
 
 [{TableOfContents }]
 \\
@@ -38,8 +38,8 @@ Potete sempre modificare questa pagina per verificare come i diversi effetti son
 Il link può anche essere un normale URL prefissato da {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, o {{news:}}, nel qual caso il link punterà ad un entità esterna. Per esempio, per puntare a java.sun.com, usate {{[[http://java.sun.com]}}, che diventa [http://java.sun.com/] o {{[[Java home page|http://java.sun.com]}}, che diventa [Java home page|http://java.sun.com].
 Se il link non inizia con uno dei protocolli menzionati, il wiki assume sia un normale link interno che punta d un altra pagina wiki; occorre però che la prima lettera del nome della pagina sia alfabetico, non sono ammessi nomi puramente numerici. Se volete usare parentesi quadre ({{[[]}}) nella pagina senza creare un hyperlink, raddoppiatele. Così ad esempio il testo {{[[[Example Non-Link]}}, apparirà come {{[[Example Non-Link]}}.
 Per aggiungere una nuova pagina, create un link as essa da un altra pagina. Dopo tutto, avete comunque bisogno di riferirla, non ha molto senso avere una pagina se non potete raggiungerla! Vedrete a quel punto il nome della pagina sottolineato con una linea tratteggiata rossa. A questo punto cliccatevi sopra e avrete creato la nuova pagina!
-E' permesso usare praticamente qualsiasi carattere all'interno di un [WikiName|http://www.jspwiki.org/wiki/WikiName], purchè siano lettere o numeri.
-Si noti che quetso wiki può essere configurato per gestire lo standard di linking [CamelCase|http://www.jspwiki.org/wiki/CamelCase] (se è gestito, la parola CamelCase sarà un link, a meno che non inizi con'~~'). Per default, non è gestito ma se il vostro amministratore lo avesse configurato, bene, 'CamelLizzate quello che volete =).
+E' permesso usare praticamente qualsiasi carattere all'interno di un [WikiName|JSPWiki:WikiName], purchè siano lettere o numeri.
+Si noti che quetso wiki può essere configurato per gestire lo standard di linking [CamelCase|JSPWiki:CamelCase] (se è gestito, la parola CamelCase sarà un link, a meno che non inizi con'~~'). Per default, non è gestito ma se il vostro amministratore lo avesse configurato, bene, 'CamelLizzate quello che volete =).
 !Note a piè di pagina
 Questi sono hyperlink di un tipo speciale. Usando semplicemente un numero come hyperlink
 verrà creato un riferimento a una nota a piè di pagina, come questo {{[[1]}}, che crea
@@ -47,10 +47,10 @@ una nota[1]. Per definire la nota vera e propria, inserite un {{[[#1]}}
 dove volete che la nota punti. Guardate in basso per trovare la nota in questione.
 Potete anche creare una nota a piè di pagina associata ad un nome, come fareste con un normale link, come in {{[[Footnote name|1]}}, un altro modo
 di riferire la nota di cui sopra[Footnote name|1]. Oppure, è anche possibile mettere il nome sulla nota stessa[2].
-!Link [InterWiki|http://www.jspwiki.org/wiki/InterWiki]
+!Link [InterWiki|JSPWiki:InterWiki]
 Potete creare link tra wiki diversi senza nominare esplicitamente l'URL. Usate un link di tipo {{[[Wiki:WikiPage]}} e JSPwiki creerà automaticamente
 il link. Per esempio, questo è un link che punta a [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Verificate nelle [Informazioni di sistema | SystemInfo] per ulteriori informazioni su quali link interWiki sono disponibili.
-Se un link [InterWiki|http://www.jspwiki.org/wiki/InterWiki]non è gestito, vi verrà notificato sula pagina dove lo avete usato al momento
+Se un link [InterWiki|JSPWiki:InterWiki]non è gestito, vi verrà notificato sula pagina dove lo avete usato al momento
 del salvataggio.
 !Aggiungere immagini
 Potete includere immagini in una pagina wiki purchè l'immagine sia disponibile ad un url accessibile e sia in uno dei formati accettati;
@@ -59,7 +59,7 @@ Specificando il link come in: ({{[[this one here|http://example.com/example.png]
 a coloro che non possono o non vogliono vedere le immagini.
 La lista dei formati accettati dipende dalla configurazione del wiki. Si vedano la pagina delle [Informazioni di Sistema | SystemInfo]
 per la lista completa.
-E' anche possibile usare l' [Image plugin|http://www.jspwiki.org/wiki/Image] se si vuole avere maggior controllo sul posizionamento dell'immagine e sui diversi attributi di presentazione.
+E' anche possibile usare l' [Image plugin|JSPWiki:Image] se si vuole avere maggior controllo sul posizionamento dell'immagine e sui diversi attributi di presentazione.
 Per forzare un acapo dopo un immagine, usate \ \ \ (ovvero tre backslash consecutivi anzichè due).
 !Liste puntate
 Usate un asterisco (*) nella prima colonna di una riga per rendere liste puntate. Usate più asterischi per un indentazione maggiore. Per esempio:
@@ -133,7 +133,7 @@ rende la tabella (si noti che le caselle possono contenere dei link):
 | ''Gobble'' | Bar \\ foo
 | [Main] | [SandBox]
 !Stili e CSS 
-Anche se l'uso di stili CSS non è in linea con la raccomandazione generale 'mantenete semplici le cose', gli stili CSS [possono essere usati|http://www.jspwiki.org/wiki/CSSInWikipages] per eventuali esigenze particolari in cui occorra davvero evidenziare una parte di un una pagina.
+Anche se l'uso di stili CSS non è in linea con la raccomandazione generale 'mantenete semplici le cose', gli stili CSS [possono essere usati|JSPWiki:CSSInWikipages] per eventuali esigenze particolari in cui occorra davvero evidenziare una parte di un una pagina.
 !Conflitti
 Se due persone tentano di modificare una pagina nello stesso momento, JSPWiki lo impedirà e mostrerà invece una pagina di spiegazione. 
 Triste a dirsi, ma chi modifica per primo vince ...
@@ -142,24 +142,24 @@ voi stessi un conflitto. Questo perchè il browser stesso crederà di stare anco
 !Cancellazione delle pagine
 Questo non è proprio possibile ad un utente normale. E' solo possibile rimuovere tutti i link ad una pagina, rendendola inaccessibile. Oppure potete richiedere la rimozione all'amministratore, magari aggiungendo nella pagina stessa un link[CANCELLAMI|JSPWiki:DELETEME].
 !Aggiunta di nuove pagine
-Create un link che punta alla nuova pagina (ancora inesistente) dandole il [Nome Wiki|http://www.jspwiki.org/wiki/WikiName].
+Create un link che punta alla nuova pagina (ancora inesistente) dandole il [Nome Wiki|JSPWiki:WikiName].
 A questo punto, basta selezionare il nuovo link - che comparirà con un punto di domanda alla fine, e si aprirà l'editor
-sulla nuova pagina. -- [Asser|http://www.jspwiki.org/wiki/Asser]
+sulla nuova pagina. -- [Asser|JSPWiki:Asser]
 !Alias di una pagina
 Talvolta è utile avere un link ad una pagina che rimanda ad un altra voce. Questo è possibile tramite un [Alias di pagina | PageAlias].
 !Utilizzo delle variabili
 Ci sono diverse variabili che potete utilizzare all'interno di una pagina. Il formato base per l'utilizzo è il seguente:
 {{ [[{$variablename}], }}
 dove ''variablename'' è il nome della variabile da usare. Si noti che i nomi delle variabili sono insensibili al'uso delel maiuscole - ovvero, "pagename" è la stessa cosa di "paGeNamE" e "PageName".
-La lista completa delle variabili disponibili si può vedere su: [Variabili Wiki|http://www.jspwiki.org/wiki/WikiVariables].
+La lista completa delle variabili disponibili si può vedere su: [Variabili Wiki|JSPWiki:WikiVariables].
 
 !Inserimento di plugin
 La sintassi standard per inserire un plugin è la seguente:
 [[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
-Ulteriori informazioni si trovano a [Plugin JSPWiki | http://www.jspwiki.org/wiki/JSPWikiPlugins].
+Ulteriori informazioni si trovano a [Plugin JSPWiki | JSPWiki:JSPWikiPlugins].
 ----
 [#1] Ecco la nota a piè di pagina menzionata nel testo.
 [2-The other footnote|#2] L'altra nota. Si nota la differenza nel nome?
 ----
-Altre [idee | http://www.jspwiki.org/wiki/IdeasTextFormattingRules]?
-Altre [domande | http://www.jspwiki.org/wiki/TextFormattingRulesDiscussion]?
+Altre [idee | JSPWiki:IdeasTextFormattingRules]?
+Altre [domande | JSPWiki:TextFormattingRulesDiscussion]?

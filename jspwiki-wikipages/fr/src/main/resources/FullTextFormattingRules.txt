@@ -50,7 +50,7 @@ Si vous spécifiez un texte lié ([[celui-ci|http://example.com/example.png]), c
 
 Vous pouvez aussi attacher une image, et y faire référence comme s'il s'agissait de n'importe quelle autre page. Vous pouvez consulter la page [WikiAttachments|JSPWiki:WikiAttachments] pour plus d'informations.
 
-Si vous avez besoin de plus de contrôle sur la présentation (ou des choses comme des légendes), regardez du côté du [plugin Image|http://www.jspwiki.org/wiki/Image]. Il peut faire beaucoup plus que simplement insérer une image.
+Si vous avez besoin de plus de contrôle sur la présentation (ou des choses comme des légendes), regardez du côté du [plugin Image|JSPWiki:Image]. Il peut faire beaucoup plus que simplement insérer une image.
 
 La liste des types d'image acceptés dépend du Wiki (cf. la page [SystemInfo] pour consulter cette liste).
 
