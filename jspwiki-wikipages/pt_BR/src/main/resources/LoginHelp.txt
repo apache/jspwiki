@@ -1,5 +1,5 @@
 Aqui está um pequeno guia de como se autenticar em __[{$applicationname}]__. Este texto está [nesta pagina|LoginHelp]. \\
-Você pode ler mais sobre as funcionalidade de segurança da JSPWiki em [páginas de documentação|http://doc.jspwiki.org/2.8/wiki/Security].
+Você pode ler mais sobre as funcionalidade de segurança da JSPWiki em [páginas de documentação|Doc:Security].
 
 !!  Autenticação
 

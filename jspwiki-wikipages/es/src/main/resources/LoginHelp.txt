@@ -1,5 +1,5 @@
 Esto es una breve ayuda sobre cómo identifcarse en __[{$applicationname}]__. El texto se encuentra [aquí|LoginHelp]. \\
-Puedes leer más sobre de las características de seguridad de JSPWiki en las [páginas de la documentación|http://doc.jspwiki.org/2.8/wiki/Security].
+Puedes leer más sobre de las características de seguridad de JSPWiki en las [páginas de la documentación|Doc:Security].
 
 !!  Identificación
 

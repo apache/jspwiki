@@ -1,5 +1,5 @@
 Hier ist eine kurze Hilfeseite zum Thema "Anmelden bei [{$applicationname}]". Diesen Text gibts auf dieser [Seite|LoginHelp].\\
-Details zu den Sicherheitsfeatures von JSPWiki gibt es in der [JSPWiki-Dokumentation|http://doc.jspwiki.org/2.8/wiki/Security].
+Details zu den Sicherheitsfeatures von JSPWiki gibt es in der [JSPWiki-Dokumentation|Doc:Security].
 
 !!Anmeldung
 

@@ -1,5 +1,5 @@
 登录 __[{$applicationname}]__ 的简明帮助。帮助文本[在此|LoginHelp]。 \\
-您可以在 JSPWiki 网站的[文档：安全|http://doc.jspwiki.org/2.8/wiki/Security]阅读更多有关 JSPWiki 的安全特性。
+您可以在 JSPWiki 网站的[文档：安全|Doc:Security]阅读更多有关 JSPWiki 的安全特性。
 
 !!  登录
 

@@ -1,5 +1,5 @@
 Hier een korte uitleg over hoe in te loggen op  __[{$applicationname}]__.  Deze tekst is  [hier|LoginHelp]. \\
-Je kunt meer lezen over JSPWiki's security features op de [documentatie pagina's|http://doc.jspwiki.org/2.8/wiki/Security].
+Je kunt meer lezen over JSPWiki's security features op de [documentatie pagina's|Doc:Security].
 
 !!  Inloggen
 

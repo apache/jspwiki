@@ -1,5 +1,5 @@
 Here's a brief help on how to login to __[{$applicationname}]__. This text is [here|LoginHelp]. \\
-You can read more about JSPWiki's security features on the [documentation pages|http://doc.jspwiki.org/2.8/wiki/Security].
+You can read more about JSPWiki's security features on the [documentation pages|Doc:Security].
 
 !!  Login
 

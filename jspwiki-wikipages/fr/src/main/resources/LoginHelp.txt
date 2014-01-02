@@ -1,7 +1,7 @@
 Voici une aide rapide sur la manière de s'identifier auprès de __[{$applicationname}]__.
 Ce texte se trouve [ici|LoginHelp]. \\
 Vous pouvez lire plus d'informations sur les fonctionnalités de sécurité de JSPWiki dans
-ses [pages de documentation|http://doc.jspwiki.org/2.8/wiki/Security].
+ses [pages de documentation|Doc:Security].
 
 !!  Identification
 
