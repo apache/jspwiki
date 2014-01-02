@@ -36,7 +36,7 @@ There is a JSPWiki [IRC|http://www.mirc.com/irc.html] channel on [Freenode|http:
 Note that the channel is pretty quiet at certain times of the day, so don't be discouraged if you don't get an answer.  Just hang around for a while...
 
 Regulars on the channel:
-* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Lives on GMT+2.
+* [Janne Jalkanen|http://www.ecyrd.com/JSPWiki/wiki/JanneJalkanen] (Ecyrd): Lives on GMT+2.
 
 ! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
 

@@ -35,7 +35,7 @@ jspwiki-commits 列表由 Apache 托管，您可以通过给下面的地址发�
 需要注意的是，有些时段这个频道里面会相当安静，如果发了消息没有回复的话，属于正常，不要泄气。就在线等一会儿看看……
 
 频道上的常客；
-* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd)：时区为 GMT+2.
+* [Janne Jalkanen|http://www.ecyrd.com/JSPWiki/wiki/JanneJalkanen] (Ecyrd)：时区为 GMT+2.
 
 ! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
 

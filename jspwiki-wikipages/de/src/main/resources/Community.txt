@@ -32,7 +32,7 @@ Es gibt einen [IRC|http://de.wikipedia.org/wiki/IRC]-Kanal namens ''#jspwiki'' a
 Im Kanal ist es zu bestimmten Tageszeiten relativ ruhig. Sei also nicht enttäuscht, wenn du nicht gleich eine Antwort bekommst. Bleib einfach eine Weile da...
 
 Regelmäßig anwesend:
-* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Lebt in der Zeitzone GMT+2.
+* [Janne Jalkanen|http://www.ecyrd.com/JSPWiki/wiki/JanneJalkanen] (Ecyrd): Lebt in der Zeitzone GMT+2.
 
 !!FaceBook-Gruppe
 
