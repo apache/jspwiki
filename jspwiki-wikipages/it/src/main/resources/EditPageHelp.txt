@@ -2,20 +2,20 @@ Ecco un veloce riepilogo degli elementi di formattazione che avete a disposizion
 {{{
 ----                Linea orizzontale
 \\                  Ritorno a capo forzato
-[link]              Crea un link ipertestuale a "link", dove "link" può essere sia un nome 
+[link]              Crea un link ipertestuale a "link", dove "link" puÃ² essere sia un nome 
                     interno Wiki che un link esterno (http://)
-[testo|link]        Crea un link ipertestuale dove il testo del link è diverso dal link
+[testo|link]        Crea un link ipertestuale dove il testo del link Ã¨ diverso dal link
                     vero e proprio.
-[testo|wiki:link]   Crea un link ipertestuale dove il testo del link è diverso dal link
+[testo|wiki:link]   Crea un link ipertestuale dove il testo del link Ã¨ diverso dal link
                     vero e proprio, e il link punta a un diverso wiki. 
 
-*                   Lista puntata (deve essere il primo carattere della linea). Usatene di più (**) 
-                    per un innestamento più profondo.
-#                   Lista numerata (deve essere il primo carattere della linea). Usatene di più (**)
-                    per un innestamento più profondo.
+*                   Lista puntata (deve essere il primo carattere della linea). Usatene di piÃ¹ (**) 
+                    per un innestamento piÃ¹ profondo.
+#                   Lista numerata (deve essere il primo carattere della linea). Usatene di piÃ¹ (**)
+                    per un innestamento piÃ¹ profondo.
 
 !, !!, !!!          Iniziate la linea con un punto esclamativo per marcare un intestazione.
-                    Più punti esclamativi implicano un'intestazione più rilevante.
+                    PiÃ¹ punti esclamativi implicano un'intestazione piÃ¹ rilevante.
 
 __testo__           Rende il testo in grassetto.
 ''testo''           Rende il testo in corsivo (si noti che questi sono doppi singoli apici ('))

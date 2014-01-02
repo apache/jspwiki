@@ -1,26 +1,26 @@
-VocÍ pode usar os seguintes caracteres especiais no campo 'Encontrar' no menu de ediÁ„o:
+Voc√™ pode usar os seguintes caracteres especiais no campo 'Encontrar' no menu de edi√ß√£o:
 
 |.      |qualquer caracter exceto nova linha |+       |uma ou mais vezes
 |*      |zero ou mais vezes                  |?       |zero ou uma vez
-|{n}    |exatamente n vezes                  |{n,m}   |pelo menos n vezes e no m·ximo m vezes
-|~|     |pipe: {{a~|b}} procura por a ou b   | -      |hÌfen, procura um conjunto de caracteres
+|{n}    |exatamente n vezes                  |{n,m}   |pelo menos n vezes e no m√°ximo m vezes
+|~|     |pipe: {{a~|b}} procura por a ou b   | -      |h√≠fen, procura um conjunto de caracteres
 |^      |inicio da linha                     |$       |fim da linha
-|[[...] |um dos caracteres do conjunto       |[[^...] |negaÁ„o do conjunto de caracteres
-|\b     |palavra limitada                    |\B      |palavra n„o limitada
-|\d     |numeral [[0-9]                      |\D      |n„o numeral [[^0-9]
-|\s     |um caracter de espaÁo em branco     |\S      |um caracter que n„o È espaÁo em branco
+|[[...] |um dos caracteres do conjunto       |[[^...] |nega√ß√£o do conjunto de caracteres
+|\b     |palavra limitada                    |\B      |palavra n√£o limitada
+|\d     |numeral [[0-9]                      |\D      |n√£o numeral [[^0-9]
+|\s     |um caracter de espa√ßo em branco     |\S      |um caracter que n√£o √© espa√ßo em branco
 |\w     |[[A-Za-z0-9_]                       |\W      |[[^A-Za-z0-9_]
-|(...)  |agrupamentos s„o salvos como $1..$9 |\.      |escape de um caracter especial
+|(...)  |agrupamentos s√£o salvos como $1..$9 |\.      |escape de um caracter especial
 
-O campo 'Substituir' pode utilizar $1..$9 como uma referÍncia aos parenteses do campo 'Encontrar'.
+O campo 'Substituir' pode utilizar $1..$9 como uma refer√™ncia aos parenteses do campo 'Encontrar'.
 ----
 Exemplo:\\
 
 Encontrar __/abc|def/__ vai procurar a palavra 'abc' ou a palavra 'def'\\
-Encontrar  __/bwiki/b__ vai procurar a palavra 'wiki' mas n„o a palavra 'jspwiki'.\\
-Encontrar __^[[IVXMDCL]+\.__ vai procurar qualquer combinaÁ„o de numerais romanos seguidos de um ponto final\\
-Encontrar __/(-?\d+)(\d{3})/__ e substituir por __$1,$2__ para inserir vÌrgulas em algarismos grandes.
+Encontrar  __/bwiki/b__ vai procurar a palavra 'wiki' mas n√£o a palavra 'jspwiki'.\\
+Encontrar __^[[IVXMDCL]+\.__ vai procurar qualquer combina√ß√£o de numerais romanos seguidos de um ponto final\\
+Encontrar __/(-?\d+)(\d{3})/__ e substituir por __$1,$2__ para inserir v√≠rgulas em algarismos grandes.
 
-Esta È a p·gina [Ajuda em Encontrar e Substituir|EditFindAndReplaceHelp].
-[Mais informaÁıes sobre expressıes regulares em |http://www.regular-expressions.info/javascript.html]
- e [Caixa de areia para expressıes regulares|http://www.regular-expressions.info/javascriptexample.html]\\
+Esta √© a p√°gina [Ajuda em Encontrar e Substituir|EditFindAndReplaceHelp].
+[Mais informa√ß√µes sobre express√µes regulares em |http://www.regular-expressions.info/javascript.html]
+ e [Caixa de areia para express√µes regulares|http://www.regular-expressions.info/javascriptexample.html]\\

@@ -12,7 +12,7 @@ Ci sono alcune pagine preliminari per:
 
 !Problemi d'istallazione
 
-* Se l'istallazione Ë su Microsoft Windows, o se avte problemi con il formato UTF-8, vi conviene dare un 'occhiata ai [Consigli di istallazione | InstallationTips].
+* Se l'istallazione √® su Microsoft Windows, o se avte problemi con il formato UTF-8, vi conviene dare un 'occhiata ai [Consigli di istallazione | InstallationTips].
 
 !Documentazione
 
@@ -22,8 +22,8 @@ Ci sono alcune pagine preliminari per:
 
 !Miscellanea
 
-* Ci sono diversi modi di entrare in contatto con la [Comunit‡ | Community] JSPWiki. Verificateli!
-* Per verificare qual'Ë il contenuto di questo specifico wiki, selezionate l'etichetta Wiki 
+* Ci sono diversi modi di entrare in contatto con la [Comunit√† | Community] JSPWiki. Verificateli!
+* Per verificare qual'√® il contenuto di questo specifico wiki, selezionate l'etichetta Wiki 
   nell'angolo in alto a sinistra della finestra, oppure selezionate [Informazioni di sistema|SystemInfo].
 
 Buon lavoro, e grazie per aver scelto JSPWiki!

@@ -1,4 +1,4 @@
-Sua edição foi rejeitada pela seguinte razão:
+Sua ediÃ§Ã£o foi rejeitada pela seguinte razÃ£o:
 %%(padding: 4px; margin: 3em; border: 1px inset; background: #eeeeee)
 [{$message}]
 %%

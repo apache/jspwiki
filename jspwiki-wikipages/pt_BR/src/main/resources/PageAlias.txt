@@ -1,13 +1,13 @@
-Algumas vezes pode ser útil ter uma página que "signifique" outra página. Por exemplo, você pode ter uma página chamada "Pseudônimos de páginas" mas também querer que as pessoas possam acessar esse conteúdo pela página "Pseudônimos". Nestes casos, você pode utilizar um "pseudônimo de página":
+Algumas vezes pode ser Ãºtil ter uma pÃ¡gina que "signifique" outra pÃ¡gina. Por exemplo, vocÃª pode ter uma pÃ¡gina chamada "PseudÃ´nimos de pÃ¡ginas" mas tambÃ©m querer que as pessoas possam acessar esse conteÃºdo pela pÃ¡gina "PseudÃ´nimos". Nestes casos, vocÃª pode utilizar um "pseudÃ´nimo de pÃ¡gina":
 
-Coloque o seguinte na página de "[Acronimos|PageAliases]": (Nós temos uma ´página exeplo lá, então se você clicar no link será redirecionado para aqui.)
+Coloque o seguinte na pÃ¡gina de "[Acronimos|PageAliases]": (NÃ³s temos uma Â´pÃ¡gina exeplo lÃ¡, entÃ£o se vocÃª clicar no link serÃ¡ redirecionado para aqui.)
 
 {{{
-[{SET alias='Acrônimo'}]
+[{SET alias='AcrÃ´nimo'}]
 }}}
 
-Toda vez que alguém visitar a página "[Acronimos|PageAliases]", será automaticamente redirecionado para esta página. Isto é muito útil se você quiser utilizar as formas irregulares do plural por exemplo. Normalmente, a JSPWiki reconhece páginas com o nome em inglês e no plural e assim consegue redirecionar páginas com o nome no plural para páginas que tenham o nome no singular, mas não consegue reconhecer certas formas mais complexas do plural.
+Toda vez que alguÃ©m visitar a pÃ¡gina "[Acronimos|PageAliases]", serÃ¡ automaticamente redirecionado para esta pÃ¡gina. Isto Ã© muito Ãºtil se vocÃª quiser utilizar as formas irregulares do plural por exemplo. Normalmente, a JSPWiki reconhece pÃ¡ginas com o nome em inglÃªs e no plural e assim consegue redirecionar pÃ¡ginas com o nome no plural para pÃ¡ginas que tenham o nome no singular, mas nÃ£o consegue reconhecer certas formas mais complexas do plural.
 
-!Editando os acrônimos/redirecionando páginas
+!Editando os acrÃ´nimos/redirecionando pÃ¡ginas
 
-Bem, obviamente você não pode clicar no link "Editar esta página", porque você será redirecionado toda vez que tentar visualizar a página. Mas você pode editar a página diretamente digitanto {{Edit.jsp?page=''nomedapagina''}} na URL da página. Alternativamente você pode usar o interWikiRef definido para edição, por padrão ele é setadp para "Editar". (i.e., [[Página de edição de acrônimos|Edit:Aliases])
+Bem, obviamente vocÃª nÃ£o pode clicar no link "Editar esta pÃ¡gina", porque vocÃª serÃ¡ redirecionado toda vez que tentar visualizar a pÃ¡gina. Mas vocÃª pode editar a pÃ¡gina diretamente digitanto {{Edit.jsp?page=''nomedapagina''}} na URL da pÃ¡gina. Alternativamente vocÃª pode usar o interWikiRef definido para ediÃ§Ã£o, por padrÃ£o ele Ã© setadp para "Editar". (i.e., [[PÃ¡gina de ediÃ§Ã£o de acrÃ´nimos|Edit:Aliases])

@@ -1,7 +1,7 @@
-[WikiNames(NomesWiki)|WikiNames] s„o tradicionalmente escritos usando ~InterCapping, tambÈm conhecido como ~CamelCase (comeÁa com letra mai˙scula e pelo menos mais uma letra mai˙scula no meio da palavra). Isto torna a criaÁ„o de hiperlinks internos bem f·cil.
+[WikiNames(NomesWiki)|WikiNames] s√£o tradicionalmente escritos usando ~InterCapping, tamb√©m conhecido como ~CamelCase (come√ßa com letra mai√∫scula e pelo menos mais uma letra mai√∫scula no meio da palavra). Isto torna a cria√ß√£o de hiperlinks internos bem f√°cil.
 
-Entretando, nesta [WikiWiki] os [links] s„o escritos usando a notaÁ„o de [[link], j· que o estilo original ~InterCapping de links costuma ser um pouco confuso.  Os nomes ainda obedecem ao padr„o [WikiWiki], olhe a URL no topo da p·gina.
+Entretando, nesta [WikiWiki] os [links] s√£o escritos usando a nota√ß√£o de [[link], j√° que o estilo original ~InterCapping de links costuma ser um pouco confuso.  Os nomes ainda obedecem ao padr√£o [WikiWiki], olhe a URL no topo da p√°gina.
 
-Nomes s„o ''juntados'', i.e. [[Isto e um link] vira [[IstoEUmLink]. Entretanto sublinhados e pontos s„o mantidos, ou seja, vocÍ pode ter links assim: [[Isto_e_um_link] ou [[Isto.e.um.link]. Todos os caracteres que n„o s„o alfa-numÈricos, com excess„o de '_' e '.', ser„o removidos (ou seja, todos os caracteres que  n„o s„o letras ou n˙meros ser„o removidos), assim [[John's page] vira [[JohnsPage]. Isto permite vocÍ escrever sentenÁas normalmente que ser„o utilizadas como link, assim como est· dito em [Etiqueta Wiki|WikiEtiquette]
+Nomes s√£o ''juntados'', i.e. [[Isto e um link] vira [[IstoEUmLink]. Entretanto sublinhados e pontos s√£o mantidos, ou seja, voc√™ pode ter links assim: [[Isto_e_um_link] ou [[Isto.e.um.link]. Todos os caracteres que n√£o s√£o alfa-num√©ricos, com excess√£o de '_' e '.', ser√£o removidos (ou seja, todos os caracteres que  n√£o s√£o letras ou n√∫meros ser√£o removidos), assim [[John's page] vira [[JohnsPage]. Isto permite voc√™ escrever senten√ßas normalmente que ser√£o utilizadas como link, assim como est√° dito em [Etiqueta Wiki|WikiEtiquette]
 
-Um WikiName n„o pode ser um n˙mero. Nomes numÈricos s„o utilizados para [notas de rodapÈ|TextFormattingRules].
+Um WikiName n√£o pode ser um n√∫mero. Nomes num√©ricos s√£o utilizados para [notas de rodap√©|TextFormattingRules].

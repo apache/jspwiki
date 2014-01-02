@@ -6,25 +6,25 @@ Durante la [modifica delle pagine|TextFormattingRules] seguite queste regole:
 * Non eliminate contributi introdotti da altre persone (a meno che non sappiate molto bene quello che state facendo)
 * Non abusate degli acronimi (oppure aggiungete una pagina che ne spiega il significato)
 * __Evitate la frase ''"clicca qui"''!!__ Non scrivete: "Ulteriori informazioni sulla WikiEtiquette si trovano [qui|WikiEtiquette]" ma piuttosto: but use "Ulteriori informazioni si possono trovare a [WikiEtiquette]". Lo stesso dovrebbe valere anche per link esterni.
-* Aggiungete materiale originale; inserire un collegamento puÚ essere accettabile, ma evitate il copia-incolla, soprattutto di materiale che potrebbe essere coperto da copy right.
-* La correzione di eventuali errori di battitura trovati Ë invece incoraggiata - Ë un ottima abitudine che rende le pagine pi˘ leggibili.
+* Aggiungete materiale originale; inserire un collegamento pu√≤ essere accettabile, ma evitate il copia-incolla, soprattutto di materiale che potrebbe essere coperto da copy right.
+* La correzione di eventuali errori di battitura trovati √® invece incoraggiata - √® un ottima abitudine che rende le pagine pi√π leggibili.
 
 !!I commenti
 
-* Potete commentare liberamente ed in forma anonima, ma Ë preferibile che marchiate i vostri commenti con il vostro nome (o utente). E' uso comune prefissare la vostra 'firma' con '--' come in : ''-- [Janne Jalkanen]'' (Gi‡ che ci siete, potete creare una vostra pagina dove vi presentate.)
-* Un altra buona pratica Ë quella di mettere prima dei commenti il vostro nome, come in : ''[Janne Jalkanen] : vorrei notare che ...''
-* Riflettete prima di inserire un commento.  [WikiWiki] non Ë un sistema di messaggistica e neanche un servizio di news. Quello che scrivete rester‡ nel sistema per sempre (anche cancellando un commento, questo rester‡ nelle versioni precedenti mantenute dal sistema) e sar‡ visibile sempre da tutti.
+* Potete commentare liberamente ed in forma anonima, ma √® preferibile che marchiate i vostri commenti con il vostro nome (o utente). E' uso comune prefissare la vostra 'firma' con '--' come in : ''-- [Janne Jalkanen]'' (Gi√† che ci siete, potete creare una vostra pagina dove vi presentate.)
+* Un altra buona pratica √® quella di mettere prima dei commenti il vostro nome, come in : ''[Janne Jalkanen] : vorrei notare che ...''
+* Riflettete prima di inserire un commento.  [WikiWiki] non √® un sistema di messaggistica e neanche un servizio di news. Quello che scrivete rester√† nel sistema per sempre (anche cancellando un commento, questo rester√† nelle versioni precedenti mantenute dal sistema) e sar√† visibile sempre da tutti.
 
 !!Come creare un Nome Wiki
-* Un buon [Nome Wiki | WikiName] Ë breve e descrittivo. Se il nome Ë significativo e facile da ricordare, sar‡ pi˘ facile creare collegamenti.
-* Sebbene sia tecnicamente possibile creare un [Nome Wiki | WikiName] a partire da un intera frase, Ë buona prassi limitarsi ad un massimo di 5 parole.
+* Un buon [Nome Wiki | WikiName] √® breve e descrittivo. Se il nome √® significativo e facile da ricordare, sar√† pi√π facile creare collegamenti.
+* Sebbene sia tecnicamente possibile creare un [Nome Wiki | WikiName] a partire da un intera frase, √® buona prassi limitarsi ad un massimo di 5 parole.
 * Tentate di definire un [Nome Wiki | WikiName] con lo stesso criterio con cui scegliereste un titolo per un libro.
-* Questo Wiki vi permette di creare pagine che hanno come nome una singola parola; puÚ essere perÚ preferibile usarne almeno due - talora una sola puÚ essere ambigua :-).
-* __Controllate con attenzione i [Nomi Wiki | WikiName] riguardo errori di battitura__ - altrimenti rischiate di creare pagine con nomi scorretti!  Le pagine con nomi scorretti sono un problema, perchË collegarle richiede molta pi˘ attenzione.
+* Questo Wiki vi permette di creare pagine che hanno come nome una singola parola; pu√≤ essere per√≤ preferibile usarne almeno due - talora una sola pu√≤ essere ambigua :-).
+* __Controllate con attenzione i [Nomi Wiki | WikiName] riguardo errori di battitura__ - altrimenti rischiate di creare pagine con nomi scorretti!  Le pagine con nomi scorretti sono un problema, perch√® collegarle richiede molta pi√π attenzione.
 
 !!Ristrutturare le pagine
 
-La ristrutturazione Ë il processo attraverso cui una pagina viene rivista e riassunta in modo da renderla pi˘ accessibile. Chiunque ritiene che una pagina debba essere ristrutturata dovrebbe poterlo fare, anche se suggeriamo che quest'attivit‡ sia lasciata agli utenti pi˘ esperti.
+La ristrutturazione √® il processo attraverso cui una pagina viene rivista e riassunta in modo da renderla pi√π accessibile. Chiunque ritiene che una pagina debba essere ristrutturata dovrebbe poterlo fare, anche se suggeriamo che quest'attivit√† sia lasciata agli utenti pi√π esperti.
 
 * Siate obiettivi - su qualsiasi argomento vanno evidenziati correttamente diversi punti di vista.
 * Fate attenzione nel modificare eventuali contributi firmati da altri, non cambiatene il significato se non appropriatamente.

@@ -1,28 +1,28 @@
-!!!ParabÈns!
+!!!Parab√©ns!
 
-VocÍ instalou a [JSPWiki|About] com sucesso!
+Voc√™ instalou a [JSPWiki|About] com sucesso!
 
-VocÍ j· possui algumas p·ginas prontas.
+Voc√™ j√° possui algumas p√°ginas prontas.
 
-!R·pido inÌcio
+!R√°pido in√≠cio
 
-* Para testes v· a [Caixa de areia|SandBox].
-* Para uma r·pida olhada sobre o que uma Wiki È v· em [Wiki em um minuto|OneMinuteWiki].
-* Para um guia sobre boas pr·ticas wiki v· em [Etiqueta Wiki|WikiEtiquette].
+* Para testes v√° a [Caixa de areia|SandBox].
+* Para uma r√°pida olhada sobre o que uma Wiki √© v√° em [Wiki em um minuto|OneMinuteWiki].
+* Para um guia sobre boas pr√°ticas wiki v√° em [Etiqueta Wiki|WikiEtiquette].
 
-!Problemas de InstalaÁ„o
+!Problemas de Instala√ß√£o
 
-* Se vocÍ est· utilizando o Microsoft Windows, ou est· tendo problemas com o UTF-8 ent„o vocÍ provavelmente vai querer dar uma olhada em [Dicas de InstalaÁ„o|InstallationTips].
+* Se voc√™ est√° utilizando o Microsoft Windows, ou est√° tendo problemas com o UTF-8 ent√£o voc√™ provavelmente vai querer dar uma olhada em [Dicas de Instala√ß√£o|InstallationTips].
 
-!DocumentaÁ„o
+!Documenta√ß√£o
 
-* Para conhecer todas as funcionalidades de ediÁ„o veja [Regras de FormataÁ„o de Texto|TextFormattingRules].
-* Local com toda a [DocumentaÁ„o da JSPWiki|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
+* Para conhecer todas as funcionalidades de edi√ß√£o veja [Regras de Formata√ß√£o de Texto|TextFormattingRules].
+* Local com toda a [Documenta√ß√£o da JSPWiki|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
 ** [Novas funcionalidades da JSPWiki 2.8|http://www.jspwiki.org/wiki/NewIn2.8].
 
 !Outras coisas
 
-* Existem v·rias manerias de interagir com a [Comunidade JSPWiki|Community]. DÍ uma olhada!
+* Existem v√°rias manerias de interagir com a [Comunidade JSPWiki|Community]. D√™ uma olhada!
 * Para saber mais sobre esta wiki e o seu sistema em particular clique no nome dela no canto superior esquerdo da sua janela ou [clique aqui|SystemInfo].
 
 Boa sorte e obrigado por escolher a JSPWiki!

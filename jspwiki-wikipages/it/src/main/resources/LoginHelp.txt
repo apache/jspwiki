@@ -1,26 +1,26 @@
-Ecco una breve informativa sul come autenticarsi a __[{$applicationname}]__. Questo testo si trova [quÏ|LoginHelp]. \\
+Ecco una breve informativa sul come autenticarsi a __[{$applicationname}]__. Questo testo si trova [qu√¨|LoginHelp]. \\
 Maggiori informazioni sulle caratteristiche di JSPWiki per quanto concerne la sicurezza nella [documentazione|http://doc.jspwiki.org/2.8/wiki/Security].
 
 !!  Login/Autenticazione
 
-JSPWiki mette a disposizione diversi livelli di __autenticazione__ e sicurezza. Gli utenti possono essere anonimi, avere identit‡ "asserite" tramite cookies, essere autenticati, o essere amministratori:
+JSPWiki mette a disposizione diversi livelli di __autenticazione__ e sicurezza. Gli utenti possono essere anonimi, avere identit√† "asserite" tramite cookies, essere autenticati, o essere amministratori:
 
 || Stato || Descrizione || Cosa viene mostrato nel box utente nelle pagine..
-| Anonimo | L'utente non si Ë autenticato e il browser non ha fornito un cookie | "Salve (utente anonimo)"
+| Anonimo | L'utente non si √® autenticato e il browser non ha fornito un cookie | "Salve (utente anonimo)"
 | Asserito | Il browser dell'utente ha fornito un cookie denominato {{~JSPWikiAssertedName}} | "Salve, ''username'' (non autenticato)"
-| Autenticato | Un utente che si Ë autenticato con una id e una password | "Salve, ''username'' (autenticato)"
+| Autenticato | Un utente che si √® autenticato con una id e una password | "Salve, ''username'' (autenticato)"
 
 A seconda della politica di sicurezza impostata sul sistema, e dei sistemi di controllo sulle pagine in uso, gli utenti possono o meno essere obbligati ad autenticarsi. 
 
-Quando un utente decidi di autenticarsi - o Ë obbligato a farlo da un sistema degli accessi alle pagine o da una politica di sicurezza - gli/le viene presentata una form standard con un campo per specificare lo username e un campo - mascherato - per la password. Dopo aver ricevuto i dati attraverso la form, , JSPWiki verificher‡ le credenziali concedendo o meno l'accesso.
+Quando un utente decidi di autenticarsi - o √® obbligato a farlo da un sistema degli accessi alle pagine o da una politica di sicurezza - gli/le viene presentata una form standard con un campo per specificare lo username e un campo - mascherato - per la password. Dopo aver ricevuto i dati attraverso la form, , JSPWiki verificher√† le credenziali concedendo o meno l'accesso.
 
 !! Password dimenticate
 
-Se perdete la password, ne potete richiedere una nuova - che verr‡ generata in modo casuale e inviata all'indirizzo email associata al vostro profilo.
+Se perdete la password, ne potete richiedere una nuova - che verr√† generata in modo casuale e inviata all'indirizzo email associata al vostro profilo.
 
 !! Nuovi utenti
 
-Sebbene alcuni wiki siano anonimi, la maggior parte non lo sono. Spesso, i sistemi Wiki forniscono funzionalit‡ per cui un utente possa 'auto-registrarsi'. 
+Sebbene alcuni wiki siano anonimi, la maggior parte non lo sono. Spesso, i sistemi Wiki forniscono funzionalit√† per cui un utente possa 'auto-registrarsi'. 
 JSPWiki include un sistema base di auto-registrazione, che permette agli utenti di efinire e gestire un proprio profilo.
 
 Per default, la form richiede
@@ -30,8 +30,8 @@ Per default, la form richiede
 * Un "nome wiki" preferito (e.g., JanneJalkanen). E' possibile usare questo nome, al posto dell'id, nelle liste di controllo degli accessi o nei gruppi Wiki
 * Un indirizzo E-mail. Usabile se occorre resettare la password. (Si veda 'Password dimenticate')
 
-Tuttavia, se sul wiki Ë impostato un sistema di gestione delle autorizzazioni basato sul container, lo  user ID non sar‡ modificabile, in quanto gestito dal container.
+Tuttavia, se sul wiki √® impostato un sistema di gestione delle autorizzazioni basato sul container, lo  user ID non sar√† modificabile, in quanto gestito dal container.
 
-Quando un utente salva il proprio profilo, JSPWiki verifica che user id, nome wiki e nome completo non siano gi‡ utilizzati. In questo caso, l'utente dovr‡ fornire valori diversi.
+Quando un utente salva il proprio profilo, JSPWiki verifica che user id, nome wiki e nome completo non siano gi√† utilizzati. In questo caso, l'utente dovr√† fornire valori diversi.
 
-Dopo che un utente avr‡ creato il proprio profilo, potr‡ modificarlo attraverso il link ''Preferenze''. Ovviamente, un utente deve essere autenticato per poterlo fare.
+Dopo che un utente avr√† creato il proprio profilo, potr√† modificarlo attraverso il link ''Preferenze''. Ovviamente, un utente deve essere autenticato per poterlo fare.

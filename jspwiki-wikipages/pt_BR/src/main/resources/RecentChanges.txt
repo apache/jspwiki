@@ -1,5 +1,5 @@
-Estas s„o as alteraÁıes feitas ‡ essas p·ginas nos ˙ltimos 30 dias. Cheque a p·gina [Todas as mudanÁas recentes|FullRecentChanges] para uma lista completa de todas as p·ginas mudadas.
+Estas s√£o as altera√ß√µes feitas √† essas p√°ginas nos √∫ltimos 30 dias. Cheque a p√°gina [Todas as mudan√ßas recentes|FullRecentChanges] para uma lista completa de todas as p√°ginas mudadas.
 
-Este servidor est· em [{INSERT CurrentTimePlugin format=zzzz}] e a hora aqui È [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+Este servidor est√° em [{INSERT CurrentTimePlugin format=zzzz}] e a hora aqui √© [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
 
 [{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

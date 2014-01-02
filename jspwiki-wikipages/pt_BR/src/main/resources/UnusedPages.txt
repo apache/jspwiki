@@ -1,3 +1,3 @@
-Estas p·ginas est„o isoladas, ou seja, n„o possuem ligaÁ„o com nenhuma outra p·gina da wiki (exceto aquelas que s„o geradas automaticamente).
+Estas p√°ginas est√£o isoladas, ou seja, n√£o possuem liga√ß√£o com nenhuma outra p√°gina da wiki (exceto aquelas que s√£o geradas automaticamente).
 
 [{INSERT org.apache.wiki.plugin.UnusedPagesPlugin}]

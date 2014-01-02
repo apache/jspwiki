@@ -2,16 +2,16 @@
 
 !! Problemas com o Microsoft Windows
 
-!Configuração da Wiki
-A abordagem mais fácil para definir a localização dos arquivos da sua Wiki é localizá-los no mesmo drive que o seu Tomcat (ou outro servidor web), e definir a localização no formato Unix. Por exemplo, arquivos em C:\JSPWiki\arquivos são definidos nos arquivos de configuração como /JSPWiki/arquivos.
+!ConfiguraÃ§Ã£o da Wiki
+A abordagem mais fÃ¡cil para definir a localizaÃ§Ã£o dos arquivos da sua Wiki Ã© localizÃ¡-los no mesmo drive que o seu Tomcat (ou outro servidor web), e definir a localizaÃ§Ã£o no formato Unix. Por exemplo, arquivos em C:\JSPWiki\arquivos sÃ£o definidos nos arquivos de configuraÃ§Ã£o como /JSPWiki/arquivos.
 
-Também tenha certeza que você alterou a configuração para {{log4j.appender.~FileLog.File}} em {{jspwiki.properties}} se você quiser que um arquivo de log seja criado. esta configuração é bem escondida perto do fim do arquivo de configuração. O formato é o mesmo que em {{jspwiki.fileSystemProvider.pageDir}}, i.e. as barras invertidas devem ser duplicadas.
+TambÃ©m tenha certeza que vocÃª alterou a configuraÃ§Ã£o para {{log4j.appender.~FileLog.File}} em {{jspwiki.properties}} se vocÃª quiser que um arquivo de log seja criado. esta configuraÃ§Ã£o Ã© bem escondida perto do fim do arquivo de configuraÃ§Ã£o. O formato Ã© o mesmo que em {{jspwiki.fileSystemProvider.pageDir}}, i.e. as barras invertidas devem ser duplicadas.
 
 !! Problemas com UTF-8 
 
-Se você estiver tendo problemas com o Tomcat 5.x (ou maior) e a JSPWiki com UTF-8, por favor anote o seguinte!
+Se vocÃª estiver tendo problemas com o Tomcat 5.x (ou maior) e a JSPWiki com UTF-8, por favor anote o seguinte!
 
-Você tem que editar o arquivo server.xml do Tomcat (localizado no diretório de configuração do Tomcat). Por favor adicione em 
+VocÃª tem que editar o arquivo server.xml do Tomcat (localizado no diretÃ³rio de configuraÃ§Ã£o do Tomcat). Por favor adicione em 
 
 {{{<Connector port="8080"
                maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
@@ -32,7 +32,7 @@ Deve ficar parecido com:
                URIEncoding="UTF-8"/>
 }}}
 
-Lembre que se você usar mod_jk, você deve também definir o {{URIEncoding}} para o conector JK.
+Lembre que se vocÃª usar mod_jk, vocÃª deve tambÃ©m definir o {{URIEncoding}} para o conector JK.
 
 {{{
 .........
@@ -48,16 +48,16 @@ Lembre que se você usar mod_jk, você deve também definir o {{URIEncoding}} para 
 
 !Alterando o menu no canto esquerdo
 
-O menu no canto esquero (bem ali <-----) não é nada mais do que uma página Wiki, chamada [LeftMenu] (MenuEsquerdo).
+O menu no canto esquero (bem ali <-----) nÃ£o Ã© nada mais do que uma pÃ¡gina Wiki, chamada [LeftMenu] (MenuEsquerdo).
 
-Se você (o administrador) não quiser que ninguém a altere, você pode sempre editar o [LeftMenu], e torná-lo uma página apenas de leitura, basta colocar uma lista de controle de acesso (ACL) nele.
+Se vocÃª (o administrador) nÃ£o quiser que ninguÃ©m a altere, vocÃª pode sempre editar o [LeftMenu], e tornÃ¡-lo uma pÃ¡gina apenas de leitura, basta colocar uma lista de controle de acesso (ACL) nele.
 
-A parte mais baixa deste menu é chamada similarmente de [LeftMenuFooter] (BaixoMenuEsquerdo), e é completamente editável também. 
+A parte mais baixa deste menu Ã© chamada similarmente de [LeftMenuFooter] (BaixoMenuEsquerdo), e Ã© completamente editÃ¡vel tambÃ©m. 
 
 !Habilitanto o [RSS|http://blogspace.com/rss/] feed
 
-No seu arquivo jspwiki.properties, você precisará de alterar o atributo "jspwiki.rss.generate" para "true" (verdadeiro), e também precisará alterar o atributo "jspwiki.baseURL" para apontar para a sua Wiki.  Se não fizer isso o gerador de RSS não conseguirá saber para onde os links devem ir... :-)
+No seu arquivo jspwiki.properties, vocÃª precisarÃ¡ de alterar o atributo "jspwiki.rss.generate" para "true" (verdadeiro), e tambÃ©m precisarÃ¡ alterar o atributo "jspwiki.baseURL" para apontar para a sua Wiki.  Se nÃ£o fizer isso o gerador de RSS nÃ£o conseguirÃ¡ saber para onde os links devem ir... :-)
 
-!Eu não gosto que as ~CoisasFiquemJuntas nos títulos das páginas.  O que eu posso fazer?
+!Eu nÃ£o gosto que as ~CoisasFiquemJuntas nos tÃ­tulos das pÃ¡ginas.  O que eu posso fazer?
 
-Como Finns diria, "voe tokkiinsa", que significa "sim, mas é claro".  Basta alterar a propriedade "jspwiki.breakTitleWithSpaces" para "true" (verdadeiro) no seu arquivo jspwiki.properties.
+Como Finns diria, "voe tokkiinsa", que significa "sim, mas Ã© claro".  Basta alterar a propriedade "jspwiki.breakTitleWithSpaces" para "true" (verdadeiro) no seu arquivo jspwiki.properties.

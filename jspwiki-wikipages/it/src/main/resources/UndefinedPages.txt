@@ -1,4 +1,4 @@
-Queste sono le pagine che sono state collegate ma non ancora create. Perchè non le create?
+Queste sono le pagine che sono state collegate ma non ancora create. PerchÃ¨ non le create?
 
 [{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
 

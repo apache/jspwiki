@@ -1,4 +1,4 @@
-Aqui estão as páginas que ainda não foram criadas. Por que você não cria algumas?
+Aqui estÃ£o as pÃ¡ginas que ainda nÃ£o foram criadas. Por que vocÃª nÃ£o cria algumas?
 
 [{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
 

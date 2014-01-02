@@ -3,9 +3,9 @@
 !! Problematiche in ambiente Microsoft Windows
 
 !Configurazione Wiki 
-Il modo meno problematico per definire la posizione dei file corrispondenti alle pagine wiki è di far si che siano sullo stesso drive dell'istallazione Tomcat (o del vostro web server), e definire tale posizione in formato Unix. Ad esempio, file che stanno fisicamente in C:\JSPWiki\files saranno definiti nel file di configurazione come /JSPWiki/files.
+Il modo meno problematico per definire la posizione dei file corrispondenti alle pagine wiki Ã¨ di far si che siano sullo stesso drive dell'istallazione Tomcat (o del vostro web server), e definire tale posizione in formato Unix. Ad esempio, file che stanno fisicamente in C:\JSPWiki\files saranno definiti nel file di configurazione come /JSPWiki/files.
 
-Accertatevi anche di aver modificato la configurazione di {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} se volete la gestione di un file di log. Questa configurazione si trova piuttosto nascosto vicino alla fine del config-file. Il formato è lo stesso della configurazione di {{jspwiki.fileSystemProvider.pageDir}}, ovvero i backslash devono essere duplicati.
+Accertatevi anche di aver modificato la configurazione di {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} se volete la gestione di un file di log. Questa configurazione si trova piuttosto nascosto vicino alla fine del config-file. Il formato Ã¨ lo stesso della configurazione di {{jspwiki.fileSystemProvider.pageDir}}, ovvero i backslash devono essere duplicati.
 
 !! Problematiche UTF-8 
 
@@ -48,18 +48,18 @@ Ricordatevi anche che se usate mod_jk, dovete definire l' {{URIEncoding}} anche 
 
 !Modificare il menu sinistro
 
-Il menu nella colonna sinistra (laggiù <-----) è una normale pagina wiki chiamata [LeftMenu].
+Il menu nella colonna sinistra (laggiÃ¹ <-----) Ã¨ una normale pagina wiki chiamata [LeftMenu].
 
 Se voi (l'amministratore) non volete che sia modificata da altri, potete modificare [LeftMenu], e renderla non scrivibile da altri mettendovi un ACL.
 
 
-Analogamente, la parte bassa del menu sinistro è la pagina [LeftMenuFooter], anch'essa modificabile.
+Analogamente, la parte bassa del menu sinistro Ã¨ la pagina [LeftMenuFooter], anch'essa modificabile.
 
 !Abilitare il feed [RSS|http://blogspace.com/rss/]
 
-Nel file jspwiki.properties, dovete modificare la proprietà "jspwiki.rss.generate" a "true", e anche far si che la proprietà "jspwiki.baseURL" corrisponda al vostro Wiki.  Altrimenti il generatore RSS non avrà idea del come costruire i link ... :-)
+Nel file jspwiki.properties, dovete modificare la proprietÃ  "jspwiki.rss.generate" a "true", e anche far si che la proprietÃ  "jspwiki.baseURL" corrisponda al vostro Wiki.  Altrimenti il generatore RSS non avrÃ  idea del come costruire i link ... :-)
 
 !Non mi piace avere cose del tipo ~ThingsSquashedTogether nei titoli delle pagine. E' possibile cambiare questo comportamento?
 
-Come dicono i Finnici, "voe tokkiinsa", ovvero "si, certamente".  Basta configurare la proprietà "jspwiki.breakTitleWithSpaces" a "true" nel vostro
+Come dicono i Finnici, "voe tokkiinsa", ovvero "si, certamente".  Basta configurare la proprietÃ  "jspwiki.breakTitleWithSpaces" a "true" nel vostro
 file jspwiki.properties.

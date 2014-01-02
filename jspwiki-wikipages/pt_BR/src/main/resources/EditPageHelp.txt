@@ -1,37 +1,37 @@
-Aqui est· um pequeno lembre dos elementos que vocÍ tem a sua disposiÁ„o:
+Aqui est√° um pequeno lembre dos elementos que voc√™ tem a sua disposi√ß√£o:
 {{{
 ----             Barra Horizontal
-\\               ForÁa quebra de linha
-[link]           Cria hiperlink para "linkar" p·ginas, onde "link" pode ser uma p·gina 
+\\               For√ßa quebra de linha
+[link]           Cria hiperlink para "linkar" p√°ginas, onde "link" pode ser uma p√°gina 
 				 interna ou um link externo (http://)
-[text|link]      Cria um hiperlink onde "text" È o nome do link que ser· exibido e 
-			     "link" È o hiperlink
-[text|wiki:link] Cria um hiperlink onde "text" È o nome do link que ser· exibido e 
-			     "link" È o hiperlink e o hiperlink aponta para a wiki nomeada.
+[text|link]      Cria um hiperlink onde "text" √© o nome do link que ser√° exibido e 
+			     "link" √© o hiperlink
+[text|wiki:link] Cria um hiperlink onde "text" √© o nome do link que ser√° exibido e 
+			     "link" √© o hiperlink e o hiperlink aponta para a wiki nomeada.
 				 Suporta linkagem entre Wikis.
 
 *                Cria uma lista (deve estar na primeira coluna). Use mais asteriscos 
-				 para outros nÌveis na lista (**, ***, etc).
+				 para outros n√≠veis na lista (**, ***, etc).
 #                Cria uma lista numerada (deve estar na primeira coluna). Use mais
-				 cerquilhas para outros nÌves na lista (##, ###, etc).
+				 cerquilhas para outros n√≠ves na lista (##, ###, etc).
 
-!, !!, !!!       ComeÁe uma linha com um ponto de exclamaÁ„o (!) para tornar esta linha 
-				 um cabeÁalho.
-                 Mais pontos de exclamaÁ„o tornam o cabeÁalho maior.
+!, !!, !!!       Come√ße uma linha com um ponto de exclama√ß√£o (!) para tornar esta linha 
+				 um cabe√ßalho.
+                 Mais pontos de exclama√ß√£o tornam o cabe√ßalho maior.
 
 __text__         Coloca "text" em negrito.
-''text''         Coloca "text" em it·lico (note que È utilizado aspas simples ('))
-{{text}}         Coloca "text" em fonte mono espaÁada (todas as letras com o mesmo tamanho.
-;term:def        Define um termo 'term' a sua definiÁ„o 'def'.  Use o campo 'term' vazio para fazer pequenos coment·rios.
+''text''         Coloca "text" em it√°lico (note que √© utilizado aspas simples ('))
+{{text}}         Coloca "text" em fonte mono espa√ßada (todas as letras com o mesmo tamanho.
+;term:def        Define um termo 'term' a sua defini√ß√£o 'def'.  Use o campo 'term' vazio para fazer pequenos coment√°rios.
 
-|text|more text  Cria uma tabela onde "text" e "more text" s„o textos dentro de cÈlulas na primeir alinha. 
-				 Barras duplas para fazer o cabeÁalho da tabela.
+|text|more text  Cria uma tabela onde "text" e "more text" s√£o textos dentro de c√©lulas na primeir alinha. 
+				 Barras duplas para fazer o cabe√ßalho da tabela.
 }}}
 
-N„o tente usar HTML, simplesmente n„o ir· funcionar.
+N√£o tente usar HTML, simplesmente n√£o ir√° funcionar.
 
-Para inserir imagens basta apenas torn·-las disponÌveis na web usando uma das extensıes aceitas e ela ser„o alinhadas automaticamente. Para ver a lista de extensıes aceitas v· para [InformaÁ„o de Sistema|SystemInfo].
+Para inserir imagens basta apenas torn√°-las dispon√≠veis na web usando uma das extens√µes aceitas e ela ser√£o alinhadas automaticamente. Para ver a lista de extens√µes aceitas v√° para [Informa√ß√£o de Sistema|SystemInfo].
 
-Para fazer um bloco de cÛdigo, use triplas chaves ({) para abrir e triplas chaves (}) para fechar.
+Para fazer um bloco de c√≥digo, use triplas chaves ({) para abrir e triplas chaves (}) para fechar.
 
-''(Imaginando de onde veio este texto? Ele est· em uma p·gina chamada [Ajuda em EdiÁ„o de P·ginas|Edit Page Help] que vocÍ tambÈm pode editar!)''
+''(Imaginando de onde veio este texto? Ele est√° em uma p√°gina chamada [Ajuda em Edi√ß√£o de P√°ginas|Edit Page Help] que voc√™ tamb√©m pode editar!)''

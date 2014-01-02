@@ -1,36 +1,36 @@
-Aqui est· um pequeno guia de como se autenticar em __[{$applicationname}]__. Este texto est· [nesta pagina|LoginHelp]. \\
-VocÍ pode ler mais sobre as funcionalidade de seguranÁa da JSPWiki em [p·ginas de documentaÁ„o|http://doc.jspwiki.org/2.8/wiki/Security].
+Aqui est√° um pequeno guia de como se autenticar em __[{$applicationname}]__. Este texto est√° [nesta pagina|LoginHelp]. \\
+Voc√™ pode ler mais sobre as funcionalidade de seguran√ßa da JSPWiki em [p√°ginas de documenta√ß√£o|http://doc.jspwiki.org/2.8/wiki/Security].
 
-!!  AutenticaÁ„o
+!!  Autentica√ß√£o
 
-A JSPWiki suporta v·rios nÌveis de __autenticaÁ„o__ e confianÁa. Usu·rios podem ser anÙnimos, terem identidades "identificadas" usando cookies, serem autenticados ou serem administradores:
+A JSPWiki suporta v√°rios n√≠veis de __autentica√ß√£o__ e confian√ßa. Usu√°rios podem ser an√¥nimos, terem identidades "identificadas" usando cookies, serem autenticados ou serem administradores:
 
-|| Status || DescriÁ„o || As boas vindas Mostra..
-| AnÙnimo | Usu·rio n„o autenticado, e n„o forneceu um cookie | "Bem vindo (anonymous guest)"
-| Identificado | Navegador do usu·rio contÈm um cookie chamado {{~JSPWikiAssertedName}} | "Bem vindo, ''nomedeusuario'' (n„o autenticado)"
-| Autenticado | Usu·rio autenticado com um login e senha | "Bem vindo, ''nomedeusuario'' (autenticado)"
+|| Status || Descri√ß√£o || As boas vindas Mostra..
+| An√¥nimo | Usu√°rio n√£o autenticado, e n√£o forneceu um cookie | "Bem vindo (anonymous guest)"
+| Identificado | Navegador do usu√°rio cont√©m um cookie chamado {{~JSPWikiAssertedName}} | "Bem vindo, ''nomedeusuario'' (n√£o autenticado)"
+| Autenticado | Usu√°rio autenticado com um login e senha | "Bem vindo, ''nomedeusuario'' (autenticado)"
 
-Dependendo da polÌtica padr„o de seguranÁa e do controle de acesso de p·ginas no lugar, usu·rios podem (ou n„o) serem obrigados a se autenticar.
+Dependendo da pol√≠tica padr√£o de seguran√ßa e do controle de acesso de p√°ginas no lugar, usu√°rios podem (ou n√£o) serem obrigados a se autenticar.
 
-Quando um usu·rio decide se autenticar - ou È pedido a se autenticar por um controle de acesso a p·gina (ACL) ou polÌtica de seguranÁa - ele ou ela vÍ um formul·rio web padr„o com campos para login e senha. ApÛs receber o formul·rio preenchido, a JSPWiki tenta autenticar o usu·rio com os dados dos campos.
+Quando um usu√°rio decide se autenticar - ou √© pedido a se autenticar por um controle de acesso a p√°gina (ACL) ou pol√≠tica de seguran√ßa - ele ou ela v√™ um formul√°rio web padr√£o com campos para login e senha. Ap√≥s receber o formul√°rio preenchido, a JSPWiki tenta autenticar o usu√°rio com os dados dos campos.
 
 !! Senha Perdida
 
-Se vocÍ perder sua senha, vocÍ pode pedir por uma nova senha aleatÛria que ser· enviada para o seu email salvo no seu Perfil de Usu·rio.
+Se voc√™ perder sua senha, voc√™ pode pedir por uma nova senha aleat√≥ria que ser√° enviada para o seu email salvo no seu Perfil de Usu√°rio.
 
-!! Cadastrar Novo Usu·rio
+!! Cadastrar Novo Usu√°rio
 
-Enquanto algumas wikis s„o anÙnimas, muitas n„o s„o. Frequentemente, wikis d„o a habilidade de criar uma identidade para o website ‡ usu·rios. A JSPWiki inclui uma p·gina b·sica de auto-cadastramento que permite aos usu·rios de configurar e gerenciar seus prÛprios perfis wiki.
+Enquanto algumas wikis s√£o an√¥nimas, muitas n√£o s√£o. Frequentemente, wikis d√£o a habilidade de criar uma identidade para o website √† usu√°rios. A JSPWiki inclui uma p√°gina b√°sica de auto-cadastramento que permite aos usu√°rios de configurar e gerenciar seus pr√≥prios perfis wiki.
 
-Por padr„o, o formul·rio pede:
+Por padr√£o, o formul√°rio pede:
 
-* Um ID de usu·rio
+* Um ID de usu√°rio
 * Uma senha
-* O "nome wiki" desejado pelo usu·rio (e.g., JanneJalkanen). VocÍ pode usar este nome em Listas de Controle de Acesso (ACLs) ou em grupos Wiiki.
-* EndereÁo de email. Este È usado quando vocÍ precisar resetar sua senha. (veja Senha Perdida)
+* O "nome wiki" desejado pelo usu√°rio (e.g., JanneJalkanen). Voc√™ pode usar este nome em Listas de Controle de Acesso (ACLs) ou em grupos Wiiki.
+* Endere√ßo de email. Este √© usado quando voc√™ precisar resetar sua senha. (veja Senha Perdida)
 
-Se a autenticaÁ„o pelo container for a utilizada, o ID do usu·rio n„o ser· edit·vel; o prÛprio container ir· fornecer este valor.
+Se a autentica√ß√£o pelo container for a utilizada, o ID do usu√°rio n√£o ser√° edit√°vel; o pr√≥prio container ir√° fornecer este valor.
 
-Quando o usu·rio salva o perfil, a JSPWiki checa ele para ter certeza que o novo id de usu·rio, o nome wiki e o nome completo n„o est„o sendo utilizados por outro usu·rio. Se estiverem, È dado ao usu·rio a oportunidade de escolher diferentes valores.
+Quando o usu√°rio salva o perfil, a JSPWiki checa ele para ter certeza que o novo id de usu√°rio, o nome wiki e o nome completo n√£o est√£o sendo utilizados por outro usu√°rio. Se estiverem, √© dado ao usu√°rio a oportunidade de escolher diferentes valores.
 
-ApÛs o usu·rio criar um perfil wiki, ele ou ela pode alter·-lo depois indo no link ''Minhas PreferÍncias''. Por padr„o, usu·rios devem estar autenticados para poderem alterar os seus perfis.
+Ap√≥s o usu√°rio criar um perfil wiki, ele ou ela pode alter√°-lo depois indo no link ''Minhas Prefer√™ncias''. Por padr√£o, usu√°rios devem estar autenticados para poderem alterar os seus perfis.
