@@ -47,7 +47,7 @@ api.exceptions
         
 api.filters
  -> Interface and base classes needed to develop WikiFilters
- -> cfr. with http://doc.jspwiki.org/2.4/wiki/WikiFilters
+ -> cfr. with http://jspwiki-wiki.apache.org/Wiki.jsp?page=WikiFilters
         
 api.plugin
  -> Interfaces needed to develop WikiPlugins
