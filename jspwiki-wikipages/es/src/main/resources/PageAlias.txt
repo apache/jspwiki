@@ -1,13 +1,13 @@
-A veces es ˙til que el nombre de una p·gina ''realmente'' signifique otra p·gina distinta.  Por ejemplo, puede que te interese tener una p·gina llamada "Alias dsiponibles", pero tambiÈn que dicha p·gina fuese accesible adem·s bajo el nombre "Alias".  En este caso, puedes usar un "alias de la p·gina":
+A veces es √∫til que el nombre de una p√°gina ''realmente'' signifique otra p√°gina distinta.  Por ejemplo, puede que te interese tener una p√°gina llamada "Alias dsiponibles", pero tambi√©n que dicha p√°gina fuese accesible adem√°s bajo el nombre "Alias".  En este caso, puedes usar un "alias de la p√°gina":
 
-Escribe lo siguiente en la p·gina "[PageAliases]":  (Hay una p·gina de ejemplo ahÌ, por lo que si haces click en el enlace te devolveremos aquÌ.)
+Escribe lo siguiente en la p√°gina "[PageAliases]":  (Hay una p√°gina de ejemplo ah√≠, por lo que si haces click en el enlace te devolveremos aqu√≠.)
 
 {{{
 [{SET alias='PageAlias'}]
 }}}
 
-Cada vez que alguien solicite la p·gina "[PageAliases]", ser· autom·ticamente redirigido a esta p·gina.  Esto es bastante ˙til si, por ejemplo, quieres poder usar formas de plural irregulares. Normalmente, JSPWiki reconoce los plurales en inglÈs de los nombres de las p·ginas, pero no es lo suficientemente listo como para reconocer determinadas formas de plural, como en el caso de "aliases".
+Cada vez que alguien solicite la p√°gina "[PageAliases]", ser√° autom√°ticamente redirigido a esta p√°gina.  Esto es bastante √∫til si, por ejemplo, quieres poder usar formas de plural irregulares. Normalmente, JSPWiki reconoce los plurales en ingl√©s de los nombres de las p√°ginas, pero no es lo suficientemente listo como para reconocer determinadas formas de plural, como en el caso de "aliases".
 
-!Editando las p·ginas de alias/redirecciÛn
+!Editando las p√°ginas de alias/redirecci√≥n
 
-Bueno, obviamente no puedes hacer click en enlace de "Editar", vas a ser redirido cada vez que intentes editar la p·gina.  Sin embargo, puedes editar la p·gina directamente escribiendo {{Edit.jsp?page=''pagename''}} directamente justo despuÈs de la URL base o usando una referencia interWiki para editar, por defecto esto se consigue asÌ [[Aliases|Edit:Aliases].
+Bueno, obviamente no puedes hacer click en enlace de "Editar", vas a ser redirido cada vez que intentes editar la p√°gina.  Sin embargo, puedes editar la p√°gina directamente escribiendo {{Edit.jsp?page=''pagename''}} directamente justo despu√©s de la URL base o usando una referencia interWiki para editar, por defecto esto se consigue as√≠ [[Aliases|Edit:Aliases].

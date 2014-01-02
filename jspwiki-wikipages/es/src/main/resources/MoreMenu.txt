@@ -1,8 +1,8 @@
 [Cambios Recientes|Recent Changes]\\
-[Õndice|Page Index]\\
+[√çndice|Page Index]\\
 [Acerca de...|About]\\
 [Info. del sistema|SystemInfo]\\
 
-[P·ginas sin usar|UnusedPages]\\
-[P·ginas sin definir|UndefinedPages]\\
+[P√°ginas sin usar|UnusedPages]\\
+[P√°ginas sin definir|UndefinedPages]\\
 

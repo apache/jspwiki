@@ -1,35 +1,35 @@
-Cuando [edites las p·ginas|TextFormattingRules] ten en mente las siguientes reglas:
+Cuando [edites las p√°ginas|TextFormattingRules] ten en mente las siguientes reglas:
 
 !! General
 * Se amable - no sea maleducado u ofensivo.
 * Escribe de un modo que sea sencillo de entender y evita jerga o giros locales. Muchos de los que te lean puede que no hablen tu mismo idioma como primera lengua.
-* No borres las ccontribuciones de otras personas (a menos que sepas lo que est·s haciendo)
-* No utilices muchos acrÛnimos (o por lo menos, ten un p·gina dÛnde los expliques)
-* °°__Evita la frase ''"click aquÌ"''!!__ No digas: "M·s informaciÛn acerca de la etiqueta puede encontrarse [aquÌ|WikiEtiquette]", en vez de eso, usa "M·s informaciÛn acerca de la etiqueta puede encontrarse en [WikiEtiqueta|WikiEtiquette]". TambiÈn sugerirÌa evitar los enlaces externos.
-* Contribuye ˙nicamente con contenido original.  Los enlaces est·n bien, pero evita el corta-y-pega de cosas bajo copyright.
-* Corregir pequeÒas erratas est· bien - de hecho, es un h·bito muy bueno, dado que hace la p·gina m·s legible.
+* No borres las ccontribuciones de otras personas (a menos que sepas lo que est√°s haciendo)
+* No utilices muchos acr√≥nimos (o por lo menos, ten un p√°gina d√≥nde los expliques)
+* ¬°¬°__Evita la frase ''"click aqu√≠"''!!__ No digas: "M√°s informaci√≥n acerca de la etiqueta puede encontrarse [aqu√≠|WikiEtiquette]", en vez de eso, usa "M√°s informaci√≥n acerca de la etiqueta puede encontrarse en [WikiEtiqueta|WikiEtiquette]". Tambi√©n sugerir√≠a evitar los enlaces externos.
+* Contribuye √∫nicamente con contenido original.  Los enlaces est√°n bien, pero evita el corta-y-pega de cosas bajo copyright.
+* Corregir peque√±as erratas est√° bien - de hecho, es un h√°bito muy bueno, dado que hace la p√°gina m√°s legible.
 
 !! Sobre los comentarios
 
-* Eres libre de contribuir anÛnimamente, pero es preferible que firmes tus comentarios con tu nombre (o algo que te identifique). Es bastante com˙n poner antes de tu firma  '--', tal que asÌ: ''-- [Janne Jalkanen]'' (Y ya que est·s, puedes crear tu propia wiki-p·gina yy contarnos algo sobre ti.)
-* TambiÈn es una buena opciÛn poner tu nombre primero, asÌ: ''[Janne Jalkanen] : Me gustarÌa decir que...''
-* Piensa antes de comentar.  [WikiWiki] no es un sistema ultra-r·pido de conversaciÛn.   Tampoco es un servidor de news.  Lo que digas permanecer· aquÌ para siempre (si borras tu comentario, todavÌa estar· accesible en versiones anteriores de la p·gina) y cualquiera podr· verlo y comentar.
+* Eres libre de contribuir an√≥nimamente, pero es preferible que firmes tus comentarios con tu nombre (o algo que te identifique). Es bastante com√∫n poner antes de tu firma  '--', tal que as√≠: ''-- [Janne Jalkanen]'' (Y ya que est√°s, puedes crear tu propia wiki-p√°gina yy contarnos algo sobre ti.)
+* Tambi√©n es una buena opci√≥n poner tu nombre primero, as√≠: ''[Janne Jalkanen] : Me gustar√≠a decir que...''
+* Piensa antes de comentar.  [WikiWiki] no es un sistema ultra-r√°pido de conversaci√≥n.   Tampoco es un servidor de news.  Lo que digas permanecer√° aqu√≠ para siempre (si borras tu comentario, todav√≠a estar√° accesible en versiones anteriores de la p√°gina) y cualquiera podr√° verlo y comentar.
 
 !! Creando WikiNombres
-* Un buen [WikiNombre|WikiName] es corto y descriptivo. Si el nombre es lÛgico y f·cil, es m·s probable que la gente lo enlace.
-* Aunque puedas coger una frase entera y aplsatarla para formar un [WikiNombre|WikiName], es mejor, desde un punto de vista estilÌstico, limitarlo a un m·ximo de 5 palabras.
-* En cambio, prueba a usar los [WikiNombre|WikiName]s como si fueran tÌtulos de capÌtulos en un libro.
-* Esta Wiki te permite crear p·ginas con nua sola palabra como nombre, pero intenta usar al menos dos palabras - no queremos dejar exhausto el espacio de nombres :-).
-* __Re-comprueba que los [WikiNombre|WikiName]s no tienen erratas__ - de lo contrario, °cualquier otra persona crear· una p·gina mal nombrada!  Esto es una mala idea debido a que enlazarlas requiere m·s esfuerzo que un [WikiNombre|WikiName] lÛgico y correcto.
+* Un buen [WikiNombre|WikiName] es corto y descriptivo. Si el nombre es l√≥gico y f√°cil, es m√°s probable que la gente lo enlace.
+* Aunque puedas coger una frase entera y aplsatarla para formar un [WikiNombre|WikiName], es mejor, desde un punto de vista estil√≠stico, limitarlo a un m√°ximo de 5 palabras.
+* En cambio, prueba a usar los [WikiNombre|WikiName]s como si fueran t√≠tulos de cap√≠tulos en un libro.
+* Esta Wiki te permite crear p√°ginas con nua sola palabra como nombre, pero intenta usar al menos dos palabras - no queremos dejar exhausto el espacio de nombres :-).
+* __Re-comprueba que los [WikiNombre|WikiName]s no tienen erratas__ - de lo contrario, ¬°cualquier otra persona crear√° una p√°gina mal nombrada!  Esto es una mala idea debido a que enlazarlas requiere m√°s esfuerzo que un [WikiNombre|WikiName] l√≥gico y correcto.
 
-!! Refactorizando p·ginas
+!! Refactorizando p√°ginas
 
-Refactorizar es el proceso por el cu·l resumes una p·gina, acort·ndola y haciÈndola m·s accesible. Cualquiera que tenga ganas puede ponerse a ello, pero te sugerimos que lo 
+Refactorizar es el proceso por el cu√°l resumes una p√°gina, acort√°ndola y haci√©ndola m√°s accesible. Cualquiera que tenga ganas puede ponerse a ello, pero te sugerimos que lo 
 dejes para visitantes frecuentes (experimentados).
 
-* SÈ objetivo - tanto los pros como las contras deben representarse correctamente.
+* S√© objetivo - tanto los pros como las contras deben representarse correctamente.
 * Ten cuidado con las contribuciones firmadas - no alteres su significado.
-* Da reconocimiento cu·ndo es debido.
+* Da reconocimiento cu√°ndo es debido.
 * Utiliza la tercera persona o el plural en vez de la primera persona del singular en tu resumen.
 
-(Agradecimientos a la [librerÌa de Sensei|http://senseis.xmp.net/] por este texto inicial.)
+(Agradecimientos a la [librer√≠a de Sensei|http://senseis.xmp.net/] por este texto inicial.)

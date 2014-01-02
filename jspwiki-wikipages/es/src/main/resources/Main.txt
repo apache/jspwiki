@@ -1,31 +1,31 @@
-!!! °Enhorabuena!
+!!! ¬°Enhorabuena!
 
-Has instalado con Èxito [JSPWiki|About].
+Has instalado con √©xito [JSPWiki|About].
 
-Tienes algunas p·ginas ya configuradas de salida:
+Tienes algunas p√°ginas ya configuradas de salida:
 
-!Inicio r·pido
+!Inicio r√°pido
 
-* Para probar cosas, nada como la [p·gina de pruebas|SandBox].
-* Para un vistazo r·pido sobre quÈ es una Wiki, mira [Wiki en un minuto|OneMinuteWiki].
-* Para una serie de buenas pr·cticas trabajando con una wiki, mira [WikiEtiqueta|WikiEtiquette].
+* Para probar cosas, nada como la [p√°gina de pruebas|SandBox].
+* Para un vistazo r√°pido sobre qu√© es una Wiki, mira [Wiki en un minuto|OneMinuteWiki].
+* Para una serie de buenas pr√°cticas trabajando con una wiki, mira [WikiEtiqueta|WikiEtiquette].
 
-!Problemas con la instalaciÛn
+!Problemas con la instalaci√≥n
 
 * Si funcionas con Microsoft Windows, o tienes problemas con UTF-8 probablemente quieras echar un ojo
-  a los [consejos de instalaciÛn|InstallationTips] para m·s informaciÛn.
+  a los [consejos de instalaci√≥n|InstallationTips] para m√°s informaci√≥n.
 
-!DocumentaciÛn
+!Documentaci√≥n
 
-* Para ver todas las caracterÌsticas del marcado Wiki, [Reglas de Formato del Texto|TextFormattingRules].
-* Punto de entrada a toda [DocumentaciÛn de JSPWiki|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
-** [Nuevas caracterÌsticas en JSPWiki 2.8|http://www.jspwiki.org/wiki/NewIn2.8].
+* Para ver todas las caracter√≠sticas del marcado Wiki, [Reglas de Formato del Texto|TextFormattingRules].
+* Punto de entrada a toda [Documentaci√≥n de JSPWiki|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
+** [Nuevas caracter√≠sticas en JSPWiki 2.8|http://www.jspwiki.org/wiki/NewIn2.8].
 
-!Miscel·nea
+!Miscel√°nea
 
-* Hay muchas maneras de contactar con la [Comunidad|Community] de JSPWiki. °CompruÈbalas!
-* Para ver en quÈ consiste esta wiki en particular, haz click en el nombre de la Wiki
-  en la esquina superior izquierda, o haz [click aquÌ|SystemInfo].
+* Hay muchas maneras de contactar con la [Comunidad|Community] de JSPWiki. ¬°Compru√©balas!
+* Para ver en qu√© consiste esta wiki en particular, haz click en el nombre de la Wiki
+  en la esquina superior izquierda, o haz [click aqu√≠|SystemInfo].
 
-°Buena suerte, y gracias por elegir JSPWiki!
+¬°Buena suerte, y gracias por elegir JSPWiki!
 

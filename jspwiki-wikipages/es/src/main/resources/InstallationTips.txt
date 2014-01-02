@@ -2,16 +2,16 @@
 
 !! Problemas con Microsoft Windows
 
-!Configuración de la Wiki
-El enfoque menos doloroso para definir la localización de las páginas de la Wiki es tenerlas en la misma unidad que tu instalación de Tomcat (u otro servidor de aplicaciones), y definir su localización con formato Unix. Por ejemplo, los archivos en C:\JSPWiki\files son definidos en el fichero de configuración como /JSPWiki/files.
+!ConfiguraciÃ³n de la Wiki
+El enfoque menos doloroso para definir la localizaciÃ³n de las pÃ¡ginas de la Wiki es tenerlas en la misma unidad que tu instalaciÃ³n de Tomcat (u otro servidor de aplicaciones), y definir su localizaciÃ³n con formato Unix. Por ejemplo, los archivos en C:\JSPWiki\files son definidos en el fichero de configuraciÃ³n como /JSPWiki/files.
 
-También, comprueba que cambias el valor del parámetro para {{log4j.appender.~FileLog.File}} en {{jspwiki.properties}} si quieres que se cree un fichero de log. Este parámetro está bien escondido cerca del final del fichero de configuración. El formato es el mismo que en el parámetro {{jspwiki.fileSystemProvider.pageDir}}, es decir, las contrabarras deben ser duplicadas.
+TambiÃ©n, comprueba que cambias el valor del parÃ¡metro para {{log4j.appender.~FileLog.File}} en {{jspwiki.properties}} si quieres que se cree un fichero de log. Este parÃ¡metro estÃ¡ bien escondido cerca del final del fichero de configuraciÃ³n. El formato es el mismo que en el parÃ¡metro {{jspwiki.fileSystemProvider.pageDir}}, es decir, las contrabarras deben ser duplicadas.
 
 !! Problemas con UTF-8
 
-Si estás teniendo problemas con Tomcat 5.x (o superior) y JSPWiki con UTF-8, por favor, ¡presta atención!
+Si estÃ¡s teniendo problemas con Tomcat 5.x (o superior) y JSPWiki con UTF-8, por favor, Â¡presta atenciÃ³n!
 
-Tienes que editar el fichero server.xml de Tomcat (localizado en el directorio conf del Tomcat). Por favor añade a
+Tienes que editar el fichero server.xml de Tomcat (localizado en el directorio conf del Tomcat). Por favor aÃ±ade a
 
 {{{<Connector port="8080"
                maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
@@ -19,9 +19,9 @@ Tienes que editar el fichero server.xml de Tomcat (localizado en el directorio c
                debug="0" connectionTimeout="20000"
                disableUploadTimeout="true"/>}}}
 
-el término '{{{URIEncoding="UTF-8"}}}'.
+el tÃ©rmino '{{{URIEncoding="UTF-8"}}}'.
 
-Debería quedar algo parecido a esto:
+DeberÃ­a quedar algo parecido a esto:
 
 {{{
 <Connector port="8080"
@@ -32,7 +32,7 @@ Debería quedar algo parecido a esto:
                URIEncoding="UTF-8"/>
 }}}
 
-Recuerda que si estás usando mod_jk, también deberías definir el {{URIEncoding}} para el Conector JK:
+Recuerda que si estÃ¡s usando mod_jk, tambiÃ©n deberÃ­as definir el {{URIEncoding}} para el Conector JK:
 
 {{{
 .........
@@ -48,17 +48,17 @@ Recuerda que si estás usando mod_jk, también deberías definir el {{URIEncoding}}
 
 !Editar el menu situado a la izquierda.
 
-El menú situado a la izquierda (ahí <-----) es solo otra página del Wiki como las demás, llamada [LeftMenu].
+El menÃº situado a la izquierda (ahÃ­ <-----) es solo otra pÃ¡gina del Wiki como las demÃ¡s, llamada [LeftMenu].
 
-Si tú (el administrador) no quieres que sea editable, siempre puedes editar la página [LeftMenu], y hacerla de solo lectura poniendo una ACL en ella.
+Si tÃº (el administrador) no quieres que sea editable, siempre puedes editar la pÃ¡gina [LeftMenu], y hacerla de solo lectura poniendo una ACL en ella.
 
 
-La parte inferior de la sección de la izquierda es otra página más, llamada [LeftMenuFooter], y también es totalmente editable.
+La parte inferior de la secciÃ³n de la izquierda es otra pÃ¡gina mÃ¡s, llamada [LeftMenuFooter], y tambiÃ©n es totalmente editable.
 
 !Activando el feed [RSS|http://blogspace.com/rss/]
 
-En tu archivo jspwiki.properties, tienes que establecer el parámetro "jspwiki.rss.generate" a "true", y también establecer el parámetro "jspwiki.baseURL" para que apunte a tu Wiki. De otro modo el generador de RSS no sabrá a dónde deben ir los enlaces... :-)
+En tu archivo jspwiki.properties, tienes que establecer el parÃ¡metro "jspwiki.rss.generate" a "true", y tambiÃ©n establecer el parÃ¡metro "jspwiki.baseURL" para que apunte a tu Wiki. De otro modo el generador de RSS no sabrÃ¡ a dÃ³nde deben ir los enlaces... :-)
 
-!No me gusta que ~LasPalabrasSeAmontonenEnLosTitulos en los títulos de las páginas. ¿Puedo hacer algo al respecto?
+!No me gusta que ~LasPalabrasSeAmontonenEnLosTitulos en los tÃ­tulos de las pÃ¡ginas. Â¿Puedo hacer algo al respecto?
 
-Como dicen los finlandeses, "voe tokkiinsa", es decir "sí, por supuesto".  Simplemente establece el parámetro "jspwiki.breakTitleWithSpaces" a "true" en tu fichero jspwiki.properties.
+Como dicen los finlandeses, "voe tokkiinsa", es decir "sÃ­, por supuesto".  Simplemente establece el parÃ¡metro "jspwiki.breakTitleWithSpaces" a "true" en tu fichero jspwiki.properties.

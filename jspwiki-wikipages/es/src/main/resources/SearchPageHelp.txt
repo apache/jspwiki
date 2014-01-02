@@ -1,5 +1,5 @@
-Esta p·gina tiene un repaso general de la sintaxis de consulta usada por el motor de b˙squedas.
-Esta p·gina se llama [Search Page Help].
+Esta p√°gina tiene un repaso general de la sintaxis de consulta usada por el motor de b√∫squedas.
+Esta p√°gina se llama [Search Page Help].
 
 Usa '+' para exigir una palabra, '-' para prohibirla.  Por ejemplo:
 
@@ -7,33 +7,33 @@ Usa '+' para exigir una palabra, '-' para prohibirla.  Por ejemplo:
           +java -emacs jsp
 }}}
 
-encontrar· todas las p·ginas que incluyan la palabra "java", y PUEDAN NO incluir
-la palabra "emacs".  Adem·s, las p·ginas que contengan la palabra "jsp" ser·n mostradas
-antes que las p·ginas que no la tengan.
+encontrar√° todas las p√°ginas que incluyan la palabra "java", y PUEDAN NO incluir
+la palabra "emacs".  Adem√°s, las p√°ginas que contengan la palabra "jsp" ser√°n mostradas
+antes que las p√°ginas que no la tengan.
 
-Las b˙squedas no son sensibles a may˙sculas/min˙sculas.  Si una p·gina incluye palabras requeridas
+Las b√∫squedas no son sensibles a may√∫sculas/min√∫sculas.  Si una p√°gina incluye palabras requeridas
 y prohibidas, no es mostrada.
 
 !! Tabla con la sintaxis de consulta
 
-Para m·s informaciÛn echa un ojo a la %%slimbox [sintaxis de consulta de Lucene|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+Para m√°s informaci√≥n echa un ojo a la %%slimbox [sintaxis de consulta de Lucene|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
 
-|| tÈrmino  | encontrar un tÈrmino es f·cil   | {{hola}}
+|| t√©rmino  | encontrar un t√©rmino es f√°cil   | {{hola}}
 || "..." | encuentra un grupo de palabras | {{"hola fondo norte"}}
-|| ?     | comodÌn para un solo car·cter (la ? no puede ser el primer car·cter de la b˙squeda) | {{prue?a}}
-|| *     | comodÌn para varios caracteres (el * no puede ser el primer car·cter de la b˙squeda) | {{prueba*}}
-|| OR    | marca el documento si cualquiera de los dos tÈrminos existe | {{"hola fondo norte" "hola fondo sur"}}\\{{"hola fondo norte" OR "hola fondo sur"}}
-|| AND   | marca el documento si los dos tÈrminos existen | {{"hola fondo" AND norte}}
-|| +     | requiere que el tÈrmino a continuaciÛn del sÌmbolo "+" exista | {{+hola fondo norte}}
-|| -\\NOT | excluye los documentos que contengan el tÈrmino a continuaciÛn del sÌmbolo "-" \\ la exclusiÛn est· soportada tanto por NOT como por ! | {{"hola fondo" -"norte y tal"}}\\{{"hola fondo" NOT "norte y tal"}}
-|| (...) | usa los parÈntesis para formar subconsultas | {{(hola OR fondo) AND norte}}
-|| ~~    | b˙squedas ''borrosas'' para encontrar tÈrminos cuya grafÌa sea similar | {{pera~ }}
-|| ~n    | b˙squedas de ''proximidad'', con una distancia expresada en n˙mero de palabras | {{"hola sur"~2}}
-|| ^n    | factor de ''importancia'' para incrementar la importancia en una b˙squeda | {{"hola fondo norte"^4 sur}}
+|| ?     | comod√≠n para un solo car√°cter (la ? no puede ser el primer car√°cter de la b√∫squeda) | {{prue?a}}
+|| *     | comod√≠n para varios caracteres (el * no puede ser el primer car√°cter de la b√∫squeda) | {{prueba*}}
+|| OR    | marca el documento si cualquiera de los dos t√©rminos existe | {{"hola fondo norte" "hola fondo sur"}}\\{{"hola fondo norte" OR "hola fondo sur"}}
+|| AND   | marca el documento si los dos t√©rminos existen | {{"hola fondo" AND norte}}
+|| +     | requiere que el t√©rmino a continuaci√≥n del s√≠mbolo "+" exista | {{+hola fondo norte}}
+|| -\\NOT | excluye los documentos que contengan el t√©rmino a continuaci√≥n del s√≠mbolo "-" \\ la exclusi√≥n est√° soportada tanto por NOT como por ! | {{"hola fondo" -"norte y tal"}}\\{{"hola fondo" NOT "norte y tal"}}
+|| (...) | usa los par√©ntesis para formar subconsultas | {{(hola OR fondo) AND norte}}
+|| ~~    | b√∫squedas ''borrosas'' para encontrar t√©rminos cuya graf√≠a sea similar | {{pera~ }}
+|| ~n    | b√∫squedas de ''proximidad'', con una distancia expresada en n√∫mero de palabras | {{"hola sur"~2}}
+|| ^n    | factor de ''importancia'' para incrementar la importancia en una b√∫squeda | {{"hola fondo norte"^4 sur}}
 || \     | para escapar caracteres especiales: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} para encontrar (1+1):2
 
-Puedes restringir el dominio de la b˙squeda aÒadiendo un prefijo a la consulta:
-|| author:''term''     | encuentra las p·ginas modificadas por determinado(s) autor(es) | {{author:~PerryMason}}
-|| attachment:''term'' | encuentra las p·ginas con un determinado nombre de fichero adjunto | {{attachment:brushed*}}
-|| name:''term''       | encuentra las p·ginas con un determinado nombre de p·gina        | {{name:Main}}
-|| content:''term''     | encuentra las p·ginas con un determinado contenido          | {{content:jspwiki}}
+Puedes restringir el dominio de la b√∫squeda a√±adiendo un prefijo a la consulta:
+|| author:''term''     | encuentra las p√°ginas modificadas por determinado(s) autor(es) | {{author:~PerryMason}}
+|| attachment:''term'' | encuentra las p√°ginas con un determinado nombre de fichero adjunto | {{attachment:brushed*}}
+|| name:''term''       | encuentra las p√°ginas con un determinado nombre de p√°gina        | {{name:Main}}
+|| content:''term''     | encuentra las p√°ginas con un determinado contenido          | {{content:jspwiki}}

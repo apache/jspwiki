@@ -1,35 +1,35 @@
-Este es un pequeÒo resumen de los elementos que tienes tu disposiciÛn:
+Este es un peque√±o resumen de los elementos que tienes tu disposici√≥n:
 {{{
 ----                Regla horizontal
-\\                  Fuerza salto de lÌnea
-[enlace]            Crea un hipervÌnculo a "enlace", dÛnde "enlace" puede ser tanto un WikiNombre
+\\                  Fuerza salto de l√≠nea
+[enlace]            Crea un hiperv√≠nculo a "enlace", d√≥nde "enlace" puede ser tanto un WikiNombre
                     interno como un enlace externo (http://)
-[texto|enlace]      Crea un hipervÌnculo dÛnde el texto enlazado es diferente del enlace en si.
-[texto|wiki:enlace] Crea un hipervÌnculo dÛnde el texto enlazado es diferente del enlace en si,
-                    y el hipervÌnculo apunta a una Wiki nombrada.
+[texto|enlace]      Crea un hiperv√≠nculo d√≥nde el texto enlazado es diferente del enlace en si.
+[texto|wiki:enlace] Crea un hiperv√≠nculo d√≥nde el texto enlazado es diferente del enlace en si,
+                    y el hiperv√≠nculo apunta a una Wiki nombrada.
                     Esto soporta el enlazado interWiki.
 
-*                   Crea una lista sin numerar (debe estar en la primera columna). Usa m·s (**, ***)
+*                   Crea una lista sin numerar (debe estar en la primera columna). Usa m√°s (**, ***)
                     para indentaciones anidadas.
-#                   Crea una lista sin numerar (debe estar en la primera columna). Usa m·s (##, ###)
+#                   Crea una lista sin numerar (debe estar en la primera columna). Usa m√°s (##, ###)
                     para indentaciones anidadas.
 
-!, !!, !!!          Comienza una lÌnea con un signo de exclamaciÛn (!) para crear un encabezado.
-                    M·s signos de exclamaciÛn significan encabezados m·s grandes.
+!, !!, !!!          Comienza una l√≠nea con un signo de exclamaci√≥n (!) para crear un encabezado.
+                    M√°s signos de exclamaci√≥n significan encabezados m√°s grandes.
 
 __texto__           Texto en negrita.
-''texto''           Texto en cursiva (fÌjate que son comillas simples ('))
+''texto''           Texto en cursiva (f√≠jate que son comillas simples ('))
 {{texto}}           Texto monoespaciado.
-;termino:definicion Define 'termino' con 'definicion'.  ⁄salo con un 'termino' vacÌo para realizar comentarios cortos.
+;termino:definicion Define 'termino' con 'definicion'.  √ösalo con un 'termino' vac√≠o para realizar comentarios cortos.
 
 |texto|mas texto    Crea una tabla. Barras dobles para encabezados de la tabla.
 }}}
 
 No intentes usar HTML, no va a funcionar.
 
-Para embeber im·genes simplemente s˙belas a la web en uno de los formatos permitidos y quedar·n insertadas autom·ticamente. Para ver una lista de formatos permitidos, comprueba la [informaciÛn del sistema|SystemInfo].
+Para embeber im√°genes simplemente s√∫belas a la web en uno de los formatos permitidos y quedar√°n insertadas autom√°ticamente. Para ver una lista de formatos permitidos, comprueba la [informaci√≥n del sistema|SystemInfo].
 
-Para generar un bloque de cÛdigo, usa { triples para abrir, y } triples para cerrar.
+Para generar un bloque de c√≥digo, usa { triples para abrir, y } triples para cerrar.
 
-''(øte preguntas de dÛnde viene este texto?  est· todo en una p·gina llamada [Ayuda de EdiciÛn de P·gina|Edit Page Help], °que tambiÈn puedes editar!)''
+''(¬øte preguntas de d√≥nde viene este texto?  est√° todo en una p√°gina llamada [Ayuda de Edici√≥n de P√°gina|Edit Page Help], ¬°que tambi√©n puedes editar!)''
 

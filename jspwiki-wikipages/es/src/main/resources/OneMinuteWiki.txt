@@ -1,11 +1,11 @@
-°Hola! °Y bienvenido al Wiki!
+¬°Hola! ¬°Y bienvenido al Wiki!
 
-WikiWiki es Hawaiano y significa "r·pido".  La idea original de WikiWiki era crear un entorno r·pido, colaborativo que adem·s fuese persistente.
+WikiWiki es Hawaiano y significa "r√°pido".  La idea original de WikiWiki era crear un entorno r√°pido, colaborativo que adem√°s fuese persistente.
 
-Cualquiera puede contribuir, incluso anÛnimamente.  SÌ, puedes borrar lo que otras personas han dicho, e incluso puedes borrar p·ginas enteras, pero sorprendentemente, las wikis [funcionan|WikiWikiWeb:WhyWikiWorks].
+Cualquiera puede contribuir, incluso an√≥nimamente.  S√≠, puedes borrar lo que otras personas han dicho, e incluso puedes borrar p√°ginas enteras, pero sorprendentemente, las wikis [funcionan|WikiWikiWeb:WhyWikiWorks].
 
-Cuando editas, puedes crear f·cilmente (y deberÌas crear) hiperenlaces simplemente poniendo palabras entre corchetes, [[tal que asÌ].  Si la p·gina a la que te refieres no existe, la p·gina resultante mostrar· el nombre subrayado con lÌnea discontinua.  Por ejemplo: [EstaPaginaNoExiste].  (Por favor no fastidies el ejemplo creando esa p·gina...)
+Cuando editas, puedes crear f√°cilmente (y deber√≠as crear) hiperenlaces simplemente poniendo palabras entre corchetes, [[tal que as√≠].  Si la p√°gina a la que te refieres no existe, la p√°gina resultante mostrar√° el nombre subrayado con l√≠nea discontinua.  Por ejemplo: [EstaPaginaNoExiste].  (Por favor no fastidies el ejemplo creando esa p√°gina...)
 
 Los WikiNombres que contengan espacios o guiones bajos son aplastados y capitalizados juntos, por lo que [[Esto es un enlace] se convierte en [[EstoEsUnEnlace].
 
-Una wiki es y debrÌa ser simple.  Por eso no hay necesidad de HTML complejo.  Puedes conseguir algunos efectos, como __texto en negrita__ y ''cursiva'', pero nada muy complicado.  La disposiciÛn de los elementos es problema de la propia wiki.  Hay m·s informaciÛn al respecto en las [Reglas de Formato del Texto|TextFormattingRules].
+Una wiki es y debr√≠a ser simple.  Por eso no hay necesidad de HTML complejo.  Puedes conseguir algunos efectos, como __texto en negrita__ y ''cursiva'', pero nada muy complicado.  La disposici√≥n de los elementos es problema de la propia wiki.  Hay m√°s informaci√≥n al respecto en las [Reglas de Formato del Texto|TextFormattingRules].

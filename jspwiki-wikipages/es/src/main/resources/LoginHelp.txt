@@ -1,37 +1,37 @@
-Esto es una breve ayuda sobre cÛmo identifcarse en __[{$applicationname}]__. El texto se encuentra [aquÌ|LoginHelp]. \\
-Puedes leer m·s sobre de las caracterÌsticas de seguridad de JSPWiki en las [p·ginas de la documentaciÛn|http://doc.jspwiki.org/2.8/wiki/Security].
+Esto es una breve ayuda sobre c√≥mo identifcarse en __[{$applicationname}]__. El texto se encuentra [aqu√≠|LoginHelp]. \\
+Puedes leer m√°s sobre de las caracter√≠sticas de seguridad de JSPWiki en las [p√°ginas de la documentaci√≥n|http://doc.jspwiki.org/2.8/wiki/Security].
 
-!!  IdentificaciÛn
+!!  Identificaci√≥n
 
-JSPWiki soporta m˙ltiples niveles de __autenticaciÛn__ y confianza. Los usuarios pueden ser anÛnimos, tener identidades "declaradas" usando cookies, estar autenticados, o ser administradores:
+JSPWiki soporta m√∫ltiples niveles de __autenticaci√≥n__ y confianza. Los usuarios pueden ser an√≥nimos, tener identidades "declaradas" usando cookies, estar autenticados, o ser administradores:
 
-|| Estado || DescripciÛn || El saludo al usuario muestra..
-| AnÛnimo | Usuario sin identificar, y no ha suministrado una cookie | "Buenas, (anÛnimo)"
-| Declarado | User's browser contains a cookie called {{~JSPWikiAssertedName}} | "Buenas, ''usuario''(no has iniciado sesiÛn)"
+|| Estado || Descripci√≥n || El saludo al usuario muestra..
+| An√≥nimo | Usuario sin identificar, y no ha suministrado una cookie | "Buenas, (an√≥nimo)"
+| Declarado | User's browser contains a cookie called {{~JSPWikiAssertedName}} | "Buenas, ''usuario''(no has iniciado sesi√≥n)"
 | Autenticado | User logged in with a login id and password | "Buenas, ''usuario'' (autenticado)"
 
-Dependiendo de la polÌtica de seguridad por defecto y de las ACLs, a los usuarios tal vez (o tal vez no) se les requiera autenticarse.
+Dependiendo de la pol√≠tica de seguridad por defecto y de las ACLs, a los usuarios tal vez (o tal vez no) se les requiera autenticarse.
 
-Cuando un usuario decide identificarse - o se le pide que lo haga mediante ACL o polÌtica de seguridad - el o ella ver· un formulario web est·ndar con un campo de identificador de usuario y un campo enmascarado de contraseÒa. DespuÈs de haber recibido la peticiÛn de la p·gina de identificaciÛn, JSPWiki intenta identificar al usuario.
+Cuando un usuario decide identificarse - o se le pide que lo haga mediante ACL o pol√≠tica de seguridad - el o ella ver√° un formulario web est√°ndar con un campo de identificador de usuario y un campo enmascarado de contrase√±a. Despu√©s de haber recibido la petici√≥n de la p√°gina de identificaci√≥n, JSPWiki intenta identificar al usuario.
 
-!! PÈrdida de contraseÒa
+!! P√©rdida de contrase√±a
 
-Si has perdido tu contraseÒa, puedes pedir que se te envÌe una nueva contraseÒa aleatoria a la direcciÛn de correo electrÛnico registrada en tu Perfil de Usuario.
+Si has perdido tu contrase√±a, puedes pedir que se te env√≠e una nueva contrase√±a aleatoria a la direcci√≥n de correo electr√≥nico registrada en tu Perfil de Usuario.
 
 !! Registro de nuevos usuarios
 
-Aunque algunas wikis son anÛnimas, unas cuantas no. A menudo, las wikis dan a los usuarios la habilidad de crear una identidad para el sitio web.
-JSPWiki incluye un mecanismo b·sico de auto-registro que permite a los usuarios establecer y configurar su propios perfiles en la wiki.
+Aunque algunas wikis son an√≥nimas, unas cuantas no. A menudo, las wikis dan a los usuarios la habilidad de crear una identidad para el sitio web.
+JSPWiki incluye un mecanismo b√°sico de auto-registro que permite a los usuarios establecer y configurar su propios perfiles en la wiki.
 
 Por defecto, el formulario pregunta por:
 
 * Un ID de usuario
-* Una contraseÒa
+* Una contrase√±a
 * El "wiki nombre" de usuario preferido (p.ej., JanneJalkanen). Puedes usar este nombre en las ACLs o Wiki Grupos
-* DirecciÛn de correo electrÛnico. Puede ser usada cuando se necesite reestablecer la contraseÒa. (cfr. PÈrdida de contraseÒa)
+* Direcci√≥n de correo electr√≥nico. Puede ser usada cuando se necesite reestablecer la contrase√±a. (cfr. P√©rdida de contrase√±a)
 
-Si se est· usando autenticaciÛn gestionado por el contenedor, el ID de usuario no ser· editable; el contenedor de aplicaciones suministrar· este valor.
+Si se est√° usando autenticaci√≥n gestionado por el contenedor, el ID de usuario no ser√° editable; el contenedor de aplicaciones suministrar√° este valor.
 
-Cuando el usuario salva el perfil, JSPWiki verifica que los datos introducidos (exceptuando la contraseÒa) no est·n siendo usados por otra persona. De serlo, se le da otra oportunidad al usuario de elegir valores distintos.
+Cuando el usuario salva el perfil, JSPWiki verifica que los datos introducidos (exceptuando la contrase√±a) no est√°n siendo usados por otra persona. De serlo, se le da otra oportunidad al usuario de elegir valores distintos.
 
-Una vez el usuario crea su perfil, el o ella puede editarlo despuÈs vÌa el enlace ''Mis Preferencias''. Por defecto, los usuarios deben estar autenticados para editar sus propios perfiles...
+Una vez el usuario crea su perfil, el o ella puede editarlo despu√©s v√≠a el enlace ''Mis Preferencias''. Por defecto, los usuarios deben estar autenticados para editar sus propios perfiles...

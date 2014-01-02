@@ -20,7 +20,7 @@ Aquí hay algunas figuras estratégicas y otras cosas interesantes acerca de est
 | __¿Embellecemos los títulos?__ | [{$jspwiki.breakTitleWithSpaces}]
 | __¿Hacemos coincidir las formas plurales inglesas?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
 | __¿Se usan los enlaces a partir de mayúsculas y minúsculas (CamelCase)?__ | [{$jspwiki.translatorReader.camelCaseLinks}]
-| __¿Est� permitido el uso de HTML en las páginas?__ | [{$jspwiki.translatorReader.allowHTML}]
+| __¿Está permitido el uso de HTML en las páginas?__ | [{$jspwiki.translatorReader.allowHTML}]
 
 !Contenido enriquecido
 

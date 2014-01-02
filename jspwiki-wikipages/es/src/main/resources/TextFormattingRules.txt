@@ -1,26 +1,26 @@
-Esta p·gina describe la sintaxis usada por JSPWiki. Para ver los detalles de cÛmo difiera de la sintaxis usada por la Wikipedia, por favor verifica [MigrandoDesdeMediaWiki|http://www.jspwiki.org/wiki/MigratingFromMediaWiki].
+Esta p√°gina describe la sintaxis usada por JSPWiki. Para ver los detalles de c√≥mo difiera de la sintaxis usada por la Wikipedia, por favor verifica [MigrandoDesdeMediaWiki|http://www.jspwiki.org/wiki/MigratingFromMediaWiki].
 
 [{TableOfContents }]
 \\
-Cuando ya te hayas hecho a cÛmo funciona el editor, entonces deberÌas leer [WikiEtiqueta|WikiEtiquette] de tal modo que sepas como emplear tus habilidades reciÈn adquiridas. El [¡rea de Pruebas|http://sandbox.jspwiki.org] es un sitio fenomenal para probarlas.
+Cuando ya te hayas hecho a c√≥mo funciona el editor, entonces deber√≠as leer [WikiEtiqueta|WikiEtiquette] de tal modo que sepas como emplear tus habilidades reci√©n adquiridas. El [√Årea de Pruebas|http://sandbox.jspwiki.org] es un sitio fenomenal para probarlas.
 
-!Referencia r·pida
+!Referencia r√°pida
 {{{
 ----       = crea una regla horizontal. Los '-' extra son ignorados.
-\\         = fuerza un salto de lÌnea
+\\         = fuerza un salto de l√≠nea
 
-[enlace]     = crea un hiperenlace a una p·gina de la Wiki llamada 'Enlace'.
-[esto es otro enlace] = crea un hiperenlace a una p·gina de la Wiki llamada
+[enlace]     = crea un hiperenlace a una p√°gina de la Wiki llamada 'Enlace'.
+[esto es otro enlace] = crea un hiperenlace a una p√°gina de la Wiki llamada
              'EstoEsOtroEnlace' pero muestra el enlace conservando los espacios en blanco.
-[un ejemplo|enlace] = crea un hiperenlace a una p·gina de la Wiki llamada
+[un ejemplo|enlace] = crea un hiperenlace a una p√°gina de la Wiki llamada
              'Enlace', pero muestra al usuario el texto 'un ejemplo'
              en vez de 'Enlace'.
-~NoLink    = desactiva la creaciÛn del enlace para la palabra en CamelCase.
+~NoLink    = desactiva la creaci√≥n del enlace para la palabra en CamelCase.
 [1]        = crea un referencia a una nota al pie numerada con 1.
 [#1]       = crea la nota al pie numerada con 1.
 [[enlace]     = crea el textp '[enlace]'.
 
-!encabezado   = encabezado pequeÒo con el texto 'encabezado'
+!encabezado   = encabezado peque√±o con el texto 'encabezado'
 !!encabezado  = encabezado medio con el texto 'encabezado'
 !!!heading = encabezado grande con el texto 'encabezado'
 
@@ -28,41 +28,41 @@ Cuando ya te hayas hecho a cÛmo funciona el editor, entonces deberÌas leer [Wiki
 __texto__   = muestra 'texto' en negrita.
 {{texto}}   = muestra 'texto' en monoespaciado.
 [texto|]    = muestra 'texto' subrayado (enlace ''dummy'')
-* texto     = crea un Ìtem de una lista sin numerar con el texto 'texto'
-# texto     = crea un Ìtem de una lista numerada con el texto 'texto'
-;term:ex   = crea una definiciÛn para 'term' con la explicaciÛn 'ex'
+* texto     = crea un √≠tem de una lista sin numerar con el texto 'texto'
+# texto     = crea un √≠tem de una lista numerada con el texto 'texto'
+;term:ex   = crea una definici√≥n para 'term' con la explicaci√≥n 'ex'
 }}}
 
 !Escribiendo texto
-No necesitas saber nada acerca de las reglas de formato usadas por la Wiki para usarla. Simplemente escribe texto nomral. y usa una lÌnea en blanco para marcar un p·rrafo.
-Es como escribir un correo electrÛnico.
-Siempre puedes editar esta p·gina (mira en el men˙ lateral de la izquierda) para ver cÛmo aplican los distintos efectos usados en esta p·gina.
+No necesitas saber nada acerca de las reglas de formato usadas por la Wiki para usarla. Simplemente escribe texto nomral. y usa una l√≠nea en blanco para marcar un p√°rrafo.
+Es como escribir un correo electr√≥nico.
+Siempre puedes editar esta p√°gina (mira en el men√∫ lateral de la izquierda) para ver c√≥mo aplican los distintos efectos usados en esta p√°gina.
 
 !Hiperenlaces
-El enlace tambiÈn puede ser una URL que comience por {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, o {{news:}}, en cuyo caso el enlace apuntar· a una entidad externa. Por ejemplo, para apuntar a la p·gina java.sun.com, utiliza {{[[http://java.sun.com]}}, que se conviertir· en [http://java.sun.com/] o {{[[P·gina principal de Java|http://java.sun.com]}}, que se convertir· en [P·gina principal de Java|http://java.sun.com].
-Si no empiezas el enlace con alguno de los "protocolos" anteriores, la wiki asume un enlace normal a otra p·gina de la wiki; es obligatorio empezar los nombres de una p·gina con una letra, los nombres de p·gina basados ˙nicamente en n˙meros no est·n permitidos. Si quieres usar corchetes ({{[[]}}) en la p·gina sin crear un hipernenlace, usa dos corchetes de apertura. De tal modo que, el texto {{[[[Ejemplo No-Enlace]}}, aparecer· como {{[[Ejemplo No-Enlace]}}.
-Para aÒadir una nueva p·gina simplemente crea un enlace a ella desde cualquier sitio. DespuÈs de todo, °no tiene mucho sentido tener una p·gina si no puedes acceder a ella! Ver·s un enlace subrayado en rojo con lÌnea discontinua con el nombre de la p·gina. Haz click entonces en dicho enlace y °habr·s creado una nueva p·gina!
-Est· permitido el uso de casi todo tipo de caracteres dentro de un [nombre de una p·gina de la Wiki|http://www.jspwiki.org/wiki/WikiName], siempre que se usen letras o n˙meros.
-Date cuenta tambiÈn de que esta Wiki puede configurarse para soportar enlazado [CamelCase|http://www.jspwiki.org/wiki/CamelCase] (si est· soportado, la palabra CamelCase deberÌa ser un enlace, si no empieza con '~~'). Por defecto est· desactivado, pero si tu amistoso administrador ha activado esta caracterÌstica, entonces, bueno, CamelCase toda la que quieras =).
+El enlace tambi√©n puede ser una URL que comience por {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, o {{news:}}, en cuyo caso el enlace apuntar√° a una entidad externa. Por ejemplo, para apuntar a la p√°gina java.sun.com, utiliza {{[[http://java.sun.com]}}, que se conviertir√° en [http://java.sun.com/] o {{[[P√°gina principal de Java|http://java.sun.com]}}, que se convertir√° en [P√°gina principal de Java|http://java.sun.com].
+Si no empiezas el enlace con alguno de los "protocolos" anteriores, la wiki asume un enlace normal a otra p√°gina de la wiki; es obligatorio empezar los nombres de una p√°gina con una letra, los nombres de p√°gina basados √∫nicamente en n√∫meros no est√°n permitidos. Si quieres usar corchetes ({{[[]}}) en la p√°gina sin crear un hipernenlace, usa dos corchetes de apertura. De tal modo que, el texto {{[[[Ejemplo No-Enlace]}}, aparecer√° como {{[[Ejemplo No-Enlace]}}.
+Para a√±adir una nueva p√°gina simplemente crea un enlace a ella desde cualquier sitio. Despu√©s de todo, ¬°no tiene mucho sentido tener una p√°gina si no puedes acceder a ella! Ver√°s un enlace subrayado en rojo con l√≠nea discontinua con el nombre de la p√°gina. Haz click entonces en dicho enlace y ¬°habr√°s creado una nueva p√°gina!
+Est√° permitido el uso de casi todo tipo de caracteres dentro de un [nombre de una p√°gina de la Wiki|http://www.jspwiki.org/wiki/WikiName], siempre que se usen letras o n√∫meros.
+Date cuenta tambi√©n de que esta Wiki puede configurarse para soportar enlazado [CamelCase|http://www.jspwiki.org/wiki/CamelCase] (si est√° soportado, la palabra CamelCase deber√≠a ser un enlace, si no empieza con '~~'). Por defecto est√° desactivado, pero si tu amistoso administrador ha activado esta caracter√≠stica, entonces, bueno, CamelCase toda la que quieras =).
 
 !Notas al pie
-Son un tipo especial de hipernelace. Usando simplemente un n˙mero dentro de un enlace se crea un referencia a la nota al pie, como por ejemplo asÌ {{[[1]}}, que crea la nota al pie[1]. Para crear la nota al pie, simplemente pon un {{[[#1]}} dÛnde quieres que apunte la nota. Mira m·s abajo para encontrar la nota al pie.
-TambiÈn es posible nombrar los pies de p·gina, exactamente del mismo modo en que se hace con un enlace normal, por ejemplo {{[[Nota al pie nombrada|1]}} es otra manera de referirse a la primera nota al pie [Nota al pie nombrada|1]. O puedes poner tambiÈn el nombre personalizado en la propia nota al pie[2].
+Son un tipo especial de hipernelace. Usando simplemente un n√∫mero dentro de un enlace se crea un referencia a la nota al pie, como por ejemplo as√≠ {{[[1]}}, que crea la nota al pie[1]. Para crear la nota al pie, simplemente pon un {{[[#1]}} d√≥nde quieres que apunte la nota. Mira m√°s abajo para encontrar la nota al pie.
+Tambi√©n es posible nombrar los pies de p√°gina, exactamente del mismo modo en que se hace con un enlace normal, por ejemplo {{[[Nota al pie nombrada|1]}} es otra manera de referirse a la primera nota al pie [Nota al pie nombrada|1]. O puedes poner tambi√©n el nombre personalizado en la propia nota al pie[2].
 
 !Enlaces [InterWiki|http://www.jspwiki.org/wiki/InterWiki]
-TambiÈn es posible enlazar wikis distintos sin necesidad de saber la URL. Simplemente utiliza el enlace del siguiente modo: {{[[Wiki:WikiPagina]}} y JSPWiki crear· un enlace por ti. Por ejemplo, este enlace apunta a las [reglas de formato de texto de JSPWiki|JSPWiki:TextFormattingRules]. Mira la [InformaciÛn del Sistema|SystemInfo] para ver cu·les enlaces InterWiki fest·n disponibles.
-Si un enlace [InterWiki|http://www.jspwiki.org/wiki/InterWiki] no est· soportado, recibir·s una notificaciÛn al guardar la p·gina.
+Tambi√©n es posible enlazar wikis distintos sin necesidad de saber la URL. Simplemente utiliza el enlace del siguiente modo: {{[[Wiki:WikiPagina]}} y JSPWiki crear√° un enlace por ti. Por ejemplo, este enlace apunta a las [reglas de formato de texto de JSPWiki|JSPWiki:TextFormattingRules]. Mira la [Informaci√≥n del Sistema|SystemInfo] para ver cu√°les enlaces InterWiki fest√°n disponibles.
+Si un enlace [InterWiki|http://www.jspwiki.org/wiki/InterWiki] no est√° soportado, recibir√°s una notificaci√≥n al guardar la p√°gina.
 
-!AÒadiendo im·genes
-Puedes embeber cualquier imagen en el cÛdigo wiki haciendo disponible la imagen en cualquier sitio web en cualquiera de los formatos permitidos, y simplemente enlazando a ella.
-Si especificas un texto del enlace ({{[[este texto aquÌ|http://example.com/example.png]}}) formar· parte del texto ALT para aquellos que no puedan o no quieran ver las im·genes.
-La lista de los formatos permitidos depende de cada Wiki. Consulta la [InformaciÛn del sistema|SystemInfo]
+!A√±adiendo im√°genes
+Puedes embeber cualquier imagen en el c√≥digo wiki haciendo disponible la imagen en cualquier sitio web en cualquiera de los formatos permitidos, y simplemente enlazando a ella.
+Si especificas un texto del enlace ({{[[este texto aqu√≠|http://example.com/example.png]}}) formar√° parte del texto ALT para aquellos que no puedan o no quieran ver las im√°genes.
+La lista de los formatos permitidos depende de cada Wiki. Consulta la [Informaci√≥n del sistema|SystemInfo]
 para ver todos los tipos de formatos admitidos.
-TambiÈn se puede usar el [plugin Image|http://www.jspwiki.org/wiki/Image] para obtener m·s control sobre la posiciÛn y los atributos de la imagen.
-Para forzar una limpia de la posiciÛn (un ''flush'') despuÈs de la imagen, utiliza \ \ \ (esto es, tres contrabarras consecutivas en vez de dos).
+Tambi√©n se puede usar el [plugin Image|http://www.jspwiki.org/wiki/Image] para obtener m√°s control sobre la posici√≥n y los atributos de la imagen.
+Para forzar una limpia de la posici√≥n (un ''flush'') despu√©s de la imagen, utiliza \ \ \ (esto es, tres contrabarras consecutivas en vez de dos).
 
 ! Listas sin numerar
-Utiliza un asterisco (*) en la primera columna para generar listas sin numerar. Usa m·s asteriscos para conseguir mayores niveles de anidamiento. Por ejemplo:
+Utiliza un asterisco (*) en la primera columna para generar listas sin numerar. Usa m√°s asteriscos para conseguir mayores niveles de anidamiento. Por ejemplo:
 {{{
 * Uno \\ uno y medio
 * Dos
@@ -87,22 +87,22 @@ crea
 # Dos
 # Tres
 ## Tres.Uno
-Si quieres escribir el elemento de la lista varias lÌneas, simplemente aÒade uno o m·s espacios en blanco en la siguiente lÌnea y Èsta ser· aÒadida autom·ticamente al elemento anterior. Por ejemplo:
+Si quieres escribir el elemento de la lista varias l√≠neas, simplemente a√±ade uno o m√°s espacios en blanco en la siguiente l√≠nea y √©sta ser√° a√±adida autom√°ticamente al elemento anterior. Por ejemplo:
 {{{
-* Esto es un elemento de una sola lÌnea
-* Esto es un elemento de que continua a travÈs de varias lÌneas.
-  Continuamos la segunda sentencia en una nueva lÌnea.
-  PodrÌamos tambiÈn aÒadir una tercera lÌnea, ya que estamos...
-  FÌjate que, sin embargo, °todas estas frases caen dentro de un mismo elemento!
-* Esta tercera lÌnea tambiÈn es un elemento de una sola lÌnea
+* Esto es un elemento de una sola l√≠nea
+* Esto es un elemento de que continua a trav√©s de varias l√≠neas.
+  Continuamos la segunda sentencia en una nueva l√≠nea.
+  Podr√≠amos tambi√©n a√±adir una tercera l√≠nea, ya que estamos...
+  F√≠jate que, sin embargo, ¬°todas estas frases caen dentro de un mismo elemento!
+* Esta tercera l√≠nea tambi√©n es un elemento de una sola l√≠nea
 }}}
 genera:
-* Esto es un elemento de una sola lÌnea
-* Esto es un elemento de que continua a travÈs de varias lÌneas.
-  Continuamos la segunda sentencia en una nueva lÌnea.
-  PodrÌamos tambiÈn aÒadir una tercera lÌnea, ya que estamos...
-  FÌjate que, sin embargo, °todas estas frases caen dentro de un mismo elemento!
-* Esta tercera lÌnea tambiÈn es un elemento de una sola lÌnea
+* Esto es un elemento de una sola l√≠nea
+* Esto es un elemento de que continua a trav√©s de varias l√≠neas.
+  Continuamos la segunda sentencia en una nueva l√≠nea.
+  Podr√≠amos tambi√©n a√±adir una tercera l√≠nea, ya que estamos...
+  F√≠jate que, sin embargo, ¬°todas estas frases caen dentro de un mismo elemento!
+* Esta tercera l√≠nea tambi√©n es un elemento de una sola l√≠nea
 
 ! Listas de definiciones y comments
 Una manera sencilla de hacer listas de definiciones es usar la estructura ';:':
@@ -111,65 +111,65 @@ Una manera sencilla de hacer listas de definiciones es usar la estructura ';:':
 }}}
 se renderiza como:
 ;__Autoreferente__:''cfr. con Autoreferente''
-Otro uso simp·tico de ';:' es que puede ser usado para comentar brÈvemente los textos de otras personas, aÒadiendo un 'tÈrmino' vacÌo en la definiciÛn, por ejemplo, asÌ:
+Otro uso simp√°tico de ';:' es que puede ser usado para comentar br√©vemente los textos de otras personas, a√±adiendo un 't√©rmino' vac√≠o en la definici√≥n, por ejemplo, as√≠:
 {{{
-;:''Comentario aquÌ.''
+;:''Comentario aqu√≠.''
 }}}
-Que se verÌa cÛmo
-;:''Comentario aquÌ.''
+Que se ver√≠a c√≥mo
+;:''Comentario aqu√≠.''
 
 ! Efectos del texto
-Puedes usar texto en __negrita__ o en ''cursiva'', utilizando para ello dos guiones bajos (_) y dos comillas simples ('), respectivamente. Si est·s utilizando Windows, aseg˙rate de utilizar el sÌmbolo correcto de la comilla, hay otro que es muy similar y es f·cil condudirlos.
-Se puede conseguir el efecto de [subrayado|] utilizando un enlace que apunte a ninguna parte, [[como Èste|]
+Puedes usar texto en __negrita__ o en ''cursiva'', utilizando para ello dos guiones bajos (_) y dos comillas simples ('), respectivamente. Si est√°s utilizando Windows, aseg√∫rate de utilizar el s√≠mbolo correcto de la comilla, hay otro que es muy similar y es f√°cil condudirlos.
+Se puede conseguir el efecto de [subrayado|] utilizando un enlace que apunte a ninguna parte, [[como √©ste|]
 
 ! Texto preformateado
-Si quieres aÒadir texto preformateado (como por ejemplo cÛdigo) utiliza tres llaves consecutivas ({) para abrir un bloque, y tres llaves consecutivas (}) para  cerrarlo. Edita esta p·gina para ver un ejemplo.
+Si quieres a√±adir texto preformateado (como por ejemplo c√≥digo) utiliza tres llaves consecutivas ({) para abrir un bloque, y tres llaves consecutivas (}) para  cerrarlo. Edita esta p√°gina para ver un ejemplo.
 
 ! Tablas
-Puedes obtener tablas simples usando tuberÌas ('|'). Usa una doble tuberÌa
-para empezar el encabezado de una tabla, y tuberÌas simples para comenzar las filas
-de la tabla. Termina con una lÌnea que no sea una tabla.
+Puedes obtener tablas simples usando tuber√≠as ('|'). Usa una doble tuber√≠a
+para empezar el encabezado de una tabla, y tuber√≠as simples para comenzar las filas
+de la tabla. Termina con una l√≠nea que no sea una tabla.
 Por ejemplo:
 {{{
 || Encabezado 1 || Encabezado 2
 | ''Gobble'' | Bar \\ foo
 | [Principal|Main] | [Pruebas|SandBox]
 }}}
-genera la siguiente tabla. FÌjate que tambiÈn puedes usar enlaces dentro de las tablas.
+genera la siguiente tabla. F√≠jate que tambi√©n puedes usar enlaces dentro de las tablas.
 || Encabezado 1 || Encabezado 2
 | ''Gobble'' | Bar \\ foo
 | [Principal|Main] | [Pruebas|SandBox]
 
 ! Estilos CSS
-Aunque no est· alineado con el principio de Mantener Las Cosas Simples, se pueden embeber [estilos CSS|http://www.jspwiki.org/wiki/CSSInWikipages] para aquellos casos en los que realmente necesites enfatizar parte de una p·gina.
+Aunque no est√° alineado con el principio de Mantener Las Cosas Simples, se pueden embeber [estilos CSS|http://www.jspwiki.org/wiki/CSSInWikipages] para aquellos casos en los que realmente necesites enfatizar parte de una p√°gina.
 
 ! Conflictos
-Si quien sea edita la misma p·gina que t˙ al mismo tiempo, JSPWiki te prevendr· de hacer cambios, mostr·ndote una p·gina de conflicto. Es triste decirlo, pero el primero en hacer el cambio gana...
-__Aviso:__ Si utilizas el botÛn Atr·s del navegador y llegas a la p·gina de EdiciÛn, es casi seguro que se cree un conflicto. Esto es porque el navegador aun piensa que est· en una copia antigua de la p·gina.
+Si quien sea edita la misma p√°gina que t√∫ al mismo tiempo, JSPWiki te prevendr√° de hacer cambios, mostr√°ndote una p√°gina de conflicto. Es triste decirlo, pero el primero en hacer el cambio gana...
+__Aviso:__ Si utilizas el bot√≥n Atr√°s del navegador y llegas a la p√°gina de Edici√≥n, es casi seguro que se cree un conflicto. Esto es porque el navegador aun piensa que est√° en una copia antigua de la p√°gina.
 
-! Borrar p·ginas
-No es posible. Puedes, sin embargo, borrar todos los enlaces a esa p·gina, haciÈndola inaccesible. O puedes mandar un correo electrÛnico al administrador, y Èste borrar· la p·gina. TambiÈn, puedes aÒadir un enlace You [DELETEME|JSPWiki:DELETEME].
+! Borrar p√°ginas
+No es posible. Puedes, sin embargo, borrar todos los enlaces a esa p√°gina, haci√©ndola inaccesible. O puedes mandar un correo electr√≥nico al administrador, y √©ste borrar√° la p√°gina. Tambi√©n, puedes a√±adir un enlace You [DELETEME|JSPWiki:DELETEME].
 
-! AÒadiendo nuevas p·ginas
-Crea un enlace que apunta a una p·gina nueva (=inexistente) usando su [WikiNombre|http://www.jspwiki.org/wiki/WikiName].
-Haz click en este nuevo enlace, que deberÌa estar subrayado en rojo y aparecer· el editor para la nueva p·gina. -- [Asser|http://www.jspwiki.org/wiki/Asser]
+! A√±adiendo nuevas p√°ginas
+Crea un enlace que apunta a una p√°gina nueva (=inexistente) usando su [WikiNombre|http://www.jspwiki.org/wiki/WikiName].
+Haz click en este nuevo enlace, que deber√≠a estar subrayado en rojo y aparecer√° el editor para la nueva p√°gina. -- [Asser|http://www.jspwiki.org/wiki/Asser]
 
-! Estableciendo un alias para la p·gina
-A veces interesa que un enlace a una p·gina del wiki en realidad apunte a un sitio distinto al indicado. Esto puede hacerse utilizando un [Alias|PageAlias].
+! Estableciendo un alias para la p√°gina
+A veces interesa que un enlace a una p√°gina del wiki en realidad apunte a un sitio distinto al indicado. Esto puede hacerse utilizando un [Alias|PageAlias].
 
 ! Insertando variables
-Hay muchas variables distintas que puedes insertar en una p·gina. La forma b·sica es:
+Hay muchas variables distintas que puedes insertar en una p√°gina. La forma b√°sica es:
 {{ [[{$nombrevariable}], }}
-donde ''nombrevariable'' es el nombre de la variable que quieres insertar. Los nombres de las variables no son sensibles a may˙sculas, esto es,"pagename" es lo mismo que "paGeNamE" y que "PageName".
+donde ''nombrevariable'' es el nombre de la variable que quieres insertar. Los nombres de las variables no son sensibles a may√∫sculas, esto es,"pagename" es lo mismo que "paGeNamE" y que "PageName".
 Puedes ver la lista completa de variables en [WikiVariables|http://www.jspwiki.org/wiki/WikiVariables].
 
 ! Insertando plugins
-La instanciaciÛn b·sica de un plugin tiene esta pinta:
+La instanciaci√≥n b√°sica de un plugin tiene esta pinta:
 [[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
-Hay m·s informaciÛn disponible en [JSPWikiPlugins | http://www.jspwiki.org/wiki/JSPWikiPlugins].
+Hay m√°s informaci√≥n disponible en [JSPWikiPlugins | http://www.jspwiki.org/wiki/JSPWikiPlugins].
 ----
-[#1] AquÌ est· la nota al pie que mencionÈ.
-[2-La otra nota al pie|#2] La otra nota al pie. øHas visto cÛmo el nombre es diferente?
+[#1] Aqu√≠ est√° la nota al pie que mencion√©.
+[2-La otra nota al pie|#2] La otra nota al pie. ¬øHas visto c√≥mo el nombre es diferente?
 ----
-øAlguna [idea | http://www.jspwiki.org/wiki/IdeasTextFormattingRules]?
-øAlguna [pregunta | http://www.jspwiki.org/wiki/TextFormattingRulesDiscussion]?
+¬øAlguna [idea | http://www.jspwiki.org/wiki/IdeasTextFormattingRules]?
+¬øAlguna [pregunta | http://www.jspwiki.org/wiki/TextFormattingRulesDiscussion]?

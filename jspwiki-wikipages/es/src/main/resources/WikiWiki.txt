@@ -1,5 +1,5 @@
-WikiWiki es la palabra hawaiana para &quot;r·pido&quot;.
-~ViteVite es la palabra francesa para &quot;r·pidor·pido&quot;.
-Wiki tambiÈn es un acrÛnimo reverso  - What I Know Is (Lo Que Yo SÈ)
+WikiWiki es la palabra hawaiana para &quot;r√°pido&quot;.
+~ViteVite es la palabra francesa para &quot;r√°pidor√°pido&quot;.
+Wiki tambi√©n es un acr√≥nimo reverso  - What I Know Is (Lo Que Yo S√©)
 
-Una lista exhaustiva de otros motores de Wiki est· disponible en la [Wiki original|http://c2.com/cgi/wiki?WikiEngines] por Ward Cunningham.
+Una lista exhaustiva de otros motores de Wiki est√° disponible en la [Wiki original|http://c2.com/cgi/wiki?WikiEngines] por Ward Cunningham.

@@ -1,4 +1,4 @@
-Tu edición ha sido denegada debido al siguiente motivo:
+Tu ediciÃ³n ha sido denegada debido al siguiente motivo:
 %%(padding: 4px; margin: 3em; border: 1px inset; background: #eeeeee)
 [{$message}]
 %%

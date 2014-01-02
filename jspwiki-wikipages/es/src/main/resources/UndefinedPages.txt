@@ -1,6 +1,6 @@
-Aquí está el listado de las páginas que aún no han sido creadas.  ¿Por qué no vas y creas
+AquÃ­ estÃ¡ el listado de las pÃ¡ginas que aÃºn no han sido creadas.  Â¿Por quÃ© no vas y creas
 unas cuantas?
 
 [{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
 
-(Vuelta a la página [Principal|Main]).
+(Vuelta a la pÃ¡gina [Principal|Main]).

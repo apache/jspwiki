@@ -1,5 +1,5 @@
-Estos son los cambios efectuados a las páginas durante los últimos 30 días.  Mira la [lista completa de cambios|FullRecentChanges] para ver todas las páginas que hayan cambiado.
+Estos son los cambios efectuados a las pÃ¡ginas durante los Ãºltimos 30 dÃ­as.  Mira la [lista completa de cambios|FullRecentChanges] para ver todas las pÃ¡ginas que hayan cambiado.
 
-Este servidor vive en [{INSERT CurrentTimePlugin format=zzzz}] y la hora aquí es [{INSERT CurrentTimePlugin format='HH:mm \'a\' dd-MMM-yyyy'}].
+Este servidor vive en [{INSERT CurrentTimePlugin format=zzzz}] y la hora aquÃ­ es [{INSERT CurrentTimePlugin format='HH:mm \'a\' dd-MMM-yyyy'}].
 
 [{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]
