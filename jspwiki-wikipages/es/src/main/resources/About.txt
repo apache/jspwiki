@@ -1,16 +1,16 @@
-Esta Wiki se ha hecho usando tecnologÌa [JSP|http://java.sun.com/products/jsp],
-lo que afortunadamente hace muy f·cil estar al dÌa y verse mejor que la mayorÌa de las Wikis basadas en la [original|http://c2.com/cgi/wiki].  Un bean personalizado se encarga de la transformaciÛn del texto en HTML.
+Esta Wiki se ha hecho usando tecnolog√≠a [JSP|http://java.sun.com/products/jsp],
+lo que afortunadamente hace muy f√°cil estar al d√≠a y verse mejor que la mayor√≠a de las Wikis basadas en la [original|http://c2.com/cgi/wiki].  Un bean personalizado se encarga de la transformaci√≥n del texto en HTML.
 
-La mayorÌa de los [marcadores de formato|TextFormattingRules] han sido modelados en consonancia con la [librerÌa Sensei|http://senseis.xmp.net], el mejor sitio sobre Go en Internet.  Su marcado es muy f·cil, adem·s de claro.
+La mayor√≠a de los [marcadores de formato|TextFormattingRules] han sido modelados en consonancia con la [librer√≠a Sensei|http://senseis.xmp.net], el mejor sitio sobre Go en Internet.  Su marcado es muy f√°cil, adem√°s de claro.
 
-Esta wiki est· disponible bajo la [Licencia de Apache, VersiÛn 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Por favor mira
-[http://incubator.apache.org/jspwiki] para m·s informaciÛn.
+Esta wiki estÔøΩ disponible bajo la [Licencia de Apache, Versi√≥n 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Por favor mira
+[http://jspwiki.apache.org] para m√°s informaci√≥n.
 
-Si est·s interesado en el desarrollo de JSPWiki, la p·gina principal de JSPWiki est· en [http://www.jspwiki.org].  Algunos enlaces r·pidos:
+Si est√°s interesado en el desarrollo de JSPWiki, la p√°gina principal de JSPWiki est√° en [http://jspwiki.apache.org].  Algunos enlaces r√°pidos:
 
 * [Reportes de error|JSPWiki:SubmitBugReport] - o [mira la lista de bugs abiertos|JSPWiki:OpenBugs].
 * [Contribuye con nuevas ideas|JSPWiki:SubmitNewIdea].
-* Echa un vistazo a las [preguntas m·s frecuentes sobre JSPWiki|JSPWiki:JSPWikiFAQ]
+* Echa un vistazo a las [preguntas m√°s frecuentes sobre JSPWiki|JSPWiki:JSPWikiFAQ]
 * Busca nuevos [plugins|JSPWiki:ContributedPlugins], [plantillas|JSPWiki:ContributedTemplates], [filtros|JSPWiki:ContributedFilters], [proveedores|JSPWiki:ContributedProviders], u [otras cosas chulas|JSPWiki:ContributedCode].
 
 Feliz hacking, y gracias por elegir JSPWiki!

@@ -40,4 +40,4 @@ Dit is wat ik nu van je weet:
 
 [{ListLocksPlugin}]
 
-JSPWiki home page zit op [http://www.jspwiki.org/]. Welkom!
+JSPWiki home page zit op [http://jspwiki.apache.org/]. Welkom!

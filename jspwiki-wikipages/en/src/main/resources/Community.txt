@@ -7,23 +7,23 @@ There are currently three email lists, ''jspwiki-users'', ''jspwiki-dev'' and ''
 
 !JSPWiki-user
 
-The jspwiki-user mailing list is hosted at Apache Incubator.  You can join it by sending an email to [jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org]. The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
+The jspwiki-user mailing list is hosted at Apache.  You can join it by sending an email to [user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org]. The list archives are at [http://mail-archives.apache.org/mod_mbox/jspwiki-user/|http://mail-archives.apache.org/mod_mbox/jspwiki-user/]
 
 The [old list archives|http://www.ecyrd.com/pipermail/jspwiki-users/] are also available. There's also a [secondary archive|http://www.nabble.com/JspWiki---User-f2680.html] on Nabble.
 
 !JSPWiki-dev
 
-This is the list for JSPWiki developers.  Do not join if you fear geek-talk.  The jspwiki-dev list is hosted at Apache, so you join by sending an email to [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].  The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
+This is the list for JSPWiki developers.  Do not join if you fear geek-talk.  The jspwiki-dev list is hosted at Apache, so you join by sending an email to [dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org].  The list archives are at [http://mail-archives.apache.org/mod_mbox/jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/jspwiki-dev/]
 
 !JSPWiki-commits
 
 If you subscribe to this list you will get emailed when (a committer) commits new or changed files to the SVN repository.
-The jspwiki-commits list is hosted at Apache, join it by sending an email to [jspwiki-commits-subscribe@incubator.apache.org|mailto:jspwiki-commits-subscribe@incubator.apache.org].  
-The list archives are at http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/
+The jspwiki-commits list is hosted at Apache, join it by sending an email to [commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org].  
+The list archives are at http://mail-archives.apache.org/mod_mbox/jspwiki-commits/
 
 !Unsubscribing
 
-Unsubscribing is equally easy: you can just send an email to jspwiki-<user|dev|commits>-unsubscribe@incubator.apache.org from the same email address that you originally subscribed from. 
+Unsubscribing is equally easy: you can just send an email to <user|dev|commits>-unsubscribe@jspwiki.apache.org from the same email address that you originally subscribed from. 
 
 The old JSPWiki-dev archives (up until Oct. 2007) are [also available|http://www.ecyrd.com/pipermail/jspwiki-dev/], if you want to peruse some interesting issues.
 
@@ -44,5 +44,3 @@ Just for fun, I create a JSPWiki Users group at Facebook.  If you're a regular F
 
 (And no, we're not planning to replace any existing site with it.  But since everyone and their cousin seems to be on Facebook, I figured that it's probably not a bad idea to add an extra channel)
 -- Janne 17/09/07
-
-* [JSPWiki dev blog|http://blog.jspwiki.org/]

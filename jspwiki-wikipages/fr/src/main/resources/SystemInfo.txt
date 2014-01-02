@@ -37,7 +37,7 @@ Ce que JSPWiki sait de vous :
 
 ----
 
-La page d'accueil de JSPWiki est [http://www.jspwiki.org/]. Bienvenue !
+La page d'accueil de JSPWiki est [http://jspwiki.apache.org/]. Bienvenue !
 
 ----
 

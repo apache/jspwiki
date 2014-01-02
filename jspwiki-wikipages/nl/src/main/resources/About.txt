@@ -6,9 +6,9 @@ De meeste [editing markers|TextFormattingRules] zijn gestyleerd volgens de [Sens
 Ik vind de opmaak erg makkelijk en duidelijk.
 
 Deze wiki is beschikbaar onder de [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0].
-Zie [http://incubator.apache.org/jspwiki] voor meer informatie.
+Zie [http://jspwiki.apache.org] voor meer informatie.
 
-Als je geïnteresseerd bent in JSPWiki ontwikkeling, de home page voor JSPWiki zit op [http://www.jspwiki.org]. 
+Als je geïnteresseerd bent in JSPWiki ontwikkeling, de home page voor JSPWiki zit op [http://jspwiki.apache.org]. 
 Een paar snelle links:
 
 * [Openstaande bugs|https://issues.apache.org/jira/browse/JSPWIKI]

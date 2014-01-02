@@ -39,4 +39,4 @@ Here is what I know about you currently:
 
 [{ListLocksPlugin}]
 
-JSPWiki home page is at [http://www.jspwiki.org/]. Welcome!
+JSPWiki home page is at [http://jspwiki.apache.org/]. Welcome!

@@ -39,4 +39,4 @@
 
 [{ListLocksPlugin}]
 
-JSPWiki 主页是 [http://www.jspwiki.org/]. 欢迎使用 JSPWiki！
+JSPWiki 主页是 [http://jspwiki.apache.org/]. 欢迎使用 JSPWiki！

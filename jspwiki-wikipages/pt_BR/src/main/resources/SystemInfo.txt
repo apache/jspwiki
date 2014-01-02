@@ -1,42 +1,42 @@
-Aqui est„o algumas informaÁıes estratÈgicas sobre esta Wiki em particular. Toda esta informaÁ„o tambÈm est· disponÌvel em [Vari·veis Wiki|http://www.jspwiki.org/wiki/WikiVariables] para o caso de vocÍ quiser utiliz·-la em outra p·gina.
+Aqui est√£o algumas informa√ß√µes estrat√©gicas sobre esta Wiki em particular. Toda esta informa√ß√£o tamb√©m est√° dispon√≠vel em [Vari√°veis Wiki|http://www.jspwiki.org/wiki/WikiVariables] para o caso de voc√™ quiser utiliz√°-la em outra p√°gina.
 
-| __Nome da AplicaÁ„o__                            | [{$applicationname}]
-| __EndereÁo Base__                                | [{$baseurl}]
-| __Vers„o da Engine da JSPWiki__                  | [{$jspwikiversion}] 
-| __CodificaÁ„o dos caracteres__                   | [{$encoding}]
-| __N˙mero Total de P·ginas__                      | [{$totalpages}]
-| __Total de Sessıes Ativas__                      | [{INSERT SessionsPlugin}]
-| __Usu·rios Wiki Ativos__                         | [{INSERT SessionsPlugin property=users}]
+| __Nome da Aplica√ß√£o__                            | [{$applicationname}]
+| __Endere√ßo Base__                                | [{$baseurl}]
+| __Vers√£o da Engine da JSPWiki__                  | [{$jspwikiversion}] 
+| __Codifica√ß√£o dos caracteres__                   | [{$encoding}]
+| __N√∫mero Total de P√°ginas__                      | [{$totalpages}]
+| __Total de Sess√µes Ativas__                      | [{INSERT SessionsPlugin}]
+| __Usu√°rios Wiki Ativos__                         | [{INSERT SessionsPlugin property=users}]
 | __Tempo de Atividade Atual__                     | [{$uptime}]
-| __Fornecedor de P·ginas Atual__                  | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Fornecedor de P√°ginas Atual__                  | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
 | __Fornecedor de Anexos Atual__                   | [{$jspwiki.attachmentProvider}]
-| __Links InterWiki DisponÌveis__                  | [{$interwikilinks}]
-| __Extensıes de Imagens Permitidas__              | [{$inlinedimages}]
+| __Links InterWiki Dispon√≠veis__                  | [{$interwikilinks}]
+| __Extens√µes de Imagens Permitidas__              | [{$inlinedimages}]
 | __Caminho Adicional de Busca de Plugins__        | [{$pluginpath}]
-| __[Filtros de P·gina|PageFilters] Instalados__   | [{$pagefilters}]
+| __[Filtros de P√°gina|PageFilters] Instalados__   | [{$pagefilters}]
 
 !Usabilidade
 
-| __NÛs temos tÌtulo bonitos?__            | [{$jspwiki.breakTitleWithSpaces}]
-| __NÛs buscamos por palavras no plural?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
-| __Links CamelCase s„o usados?__          | [{$jspwiki.translatorReader.camelCaseLinks}]
-| __O HTML È permitido nas p·ginas?__      | [{$jspwiki.translatorReader.allowHTML}]
+| __N√≥s temos t√≠tulo bonitos?__            | [{$jspwiki.breakTitleWithSpaces}]
+| __N√≥s buscamos por palavras no plural?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Links CamelCase s√£o usados?__          | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __O HTML √© permitido nas p√°ginas?__      | [{$jspwiki.translatorReader.allowHTML}]
 
-!Resumo de AplicaÁıes Rich do Site
+!Resumo de Aplica√ß√µes Rich do Site
 
-| __NÛs geramos arquivo RSS?__ | [{$jspwiki.rss.generate}]
+| __N√≥s geramos arquivo RSS?__ | [{$jspwiki.rss.generate}]
 | __Se sim, qual o nome do arquivo?__ | [{$jspwiki.rss.fileName}]
-| __Qu„o frequente o RSS È atualizado?__ |  [{$jspwiki.rss.interval}]
+| __Qu√£o frequente o RSS √© atualizado?__ |  [{$jspwiki.rss.interval}]
 
-!InformaÁıes Pessoais
+!Informa√ß√µes Pessoais
 
-Aqui est· o que eu sei sobre vocÍ atualmente:
+Aqui est√° o que eu sei sobre voc√™ atualmente:
 
-| __Nome de usu·rio__    | [{$username}]
+| __Nome de usu√°rio__    | [{$username}]
 | __Status do Login__    | [{$loginstatus}]
 
-!Lista das p·ginas que est„o sendo editadas neste momento
+!Lista das p√°ginas que est√£o sendo editadas neste momento
 
 [{ListLocksPlugin}]
 
-A p·gina principal da JSPWiki est· em [http://www.jspwiki.org/]. Bem Vindo!
+A p√°gina principal da JSPWiki est√° em [http://jspwiki.apache.org/]. Bem Vindo!

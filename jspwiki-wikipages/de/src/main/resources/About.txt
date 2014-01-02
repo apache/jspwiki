@@ -2,9 +2,9 @@ Diese WikiWiki-Software wurde unter Verwendung der [JSP|http://java.sun.com/prod
 
 Die meisten [Formatierungsregeln|TextFormattingRules] wurden nach Vorlage der [Sensei's Library|http://senseis.xmp.net], eine der besten Go-Sites im Internet, erstellt. Ich empfinde deren Formatierungsregeln als sehr einfach und klar verständlich.
 
-Diese WikiWiki-Software ist unter der [Version 2.0 der Apache License|http://www.apache.org/licenses/LICENSE-2.0] lizensiert. Weitere Informationen findest du unter [http://incubator.apache.org/jspwiki/].
+Diese WikiWiki-Software ist unter der [Version 2.0 der Apache License|http://www.apache.org/licenses/LICENSE-2.0] lizensiert. Weitere Informationen findest du unter [http://jspwiki.apache.org/].
 
-Wenn du dich für die JSPWiki-Entwicklung interessierst, besuche die Homepage des Projekts unter [http://www.jspwiki.org/].
+Wenn du dich für die JSPWiki-Entwicklung interessierst, besuche die Homepage des Projekts unter [http://jspwiki.apache.org/].
 
 Einige nützliche Links:
 

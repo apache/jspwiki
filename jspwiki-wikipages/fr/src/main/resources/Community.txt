@@ -10,11 +10,11 @@ Aujourd'hui, il y a trois listes de diffusion : ''jspwiki-users'', ''jspwiki-dev
 
 !JSPWiki-user
 
-La liste de diffusion ''jspwiki-user'' est hébergée par l'Apache Incubator.
+La liste de diffusion ''jspwiki-user'' est hébergée par l'Apache.
 Vous pouvez vous y abonner en envoyant un e-mail à
-[jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org].
+[user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org].
 Les archives de la liste de diffusion se trouvent sur
-[http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/].
+[http://mail-archives.apache.org/mod_mbox/jspwiki-user/].
 
 Les [archives anciennes de la liste|http://www.ecyrd.com/pipermail/jspwiki-users/] sont
 également disponibles, ainsi qu'une [archive secondaire|http://www.nabble.com/JspWiki---User-f2680.html]
@@ -25,23 +25,23 @@ sur Nabble.
 Il s'agit de la liste de diffusion des développeurs JSPWiki. Ne vous y abonnez
 pas si vous craignez la langue ''geek''.
 La liste est hébergée par Apache : vous pouvez vous y abonner en envoyant un e-mail à
-[jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].
+[dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org].
 Les archives de la liste de diffusion se trouvent sur
-[http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/].
+[http://mail-archives.apache.org/mod_mbox/jspwiki-dev/].
 
 !JSPWiki-commits
 
 En s'abonnant à cette liste, vous recevrez un e-mail à chaque fois que quelqu'un
 livre des fichiers modifiés ou de nouveaux fichiers au dépôt SVN.
 La liste est hébergée par Apache : vous pouvez vous y abonner en envoyant un e-mail à
-[jspwiki-commits-subscribe@incubator.apache.org|mailto:jspwiki-commits-subscribe@incubator.apache.org].  
+[commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org].  
 Les archives de la liste de diffusion se trouvent sur
-[http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/].
+[http://mail-archives.apache.org/mod_mbox/jspwiki-commits/].
 
 !Désabonnement
 
 Se désabonner à une liste de diffusion est tout aussi facile : il suffit d'envoyer 
-un e-mail à {{jspwiki-}}<''user''|''dev''|''commits''>{{-unsubscribe@incubator.apache.org}}
+un e-mail à {{jspwiki-}}<''user''|''dev''|''commits''>{{-unsubscribe@jspwiki.apache.org}}
 avec le même e-mail que celui avec lequel vous vous êtes inscrit. 
 
 Les anciennes archives JSPWiki-dev (jusqu'en octobre 2007) sont également
@@ -71,5 +71,3 @@ Si vous êtes un utilisateur régulier de Facebook, passez me voir !
 Mais comme tout le monde semble être sur Facebook, je me suis dit que ce n'était pas
 forcément une mauvaise idée d'ajouter un canal de dialogue supplémentaire)
 -- Janne 17/09/07
-
-* [blog de dev JSPWiki|http://blog.jspwiki.org/]

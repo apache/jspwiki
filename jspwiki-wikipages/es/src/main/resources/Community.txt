@@ -1,48 +1,46 @@
 [{TableOfContents}]
 
 !! Listas de correo
-Existen listas de correo de JSPWiki para discutir acerca de esta wiki.  Est·n muy bien para discutir acerca de cosas como parches, problemas, desarrollo, etc.
+Existen listas de correo de JSPWiki para discutir acerca de esta wiki.  Est√°n muy bien para discutir acerca de cosas como parches, problemas, desarrollo, etc.
 
 Actualmente hay tres listas de correo, ''jspwiki-users'', ''jspwiki-dev'' y ''jspwiki-commits''.
 
 !JSPWiki-user
 
-La lista jspwiki-user de correo est· alojada en Apache Incubator.  Puedes unirte a ella enviando un correo electrÛnico a [jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org]. Los archivos de la lista est·n disponibles en [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
+La lista jspwiki-user de correo est√° alojada en Apache.  Puedes unirte a ella enviando un correo electr√≥nico a [user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org]. Los archivos de la lista est√°n disponibles en [http://mail-archives.apache.org/mod_mbox/jspwiki-user/|http://mail-archives.apache.org/mod_mbox/jspwiki-user/]
 
-Los [archivos de la lista antigua|http://www.ecyrd.com/pipermail/jspwiki-users/] tambiÈn est·n disponibles. TambiÈn hay un [archivo secundario|http://www.nabble.com/JspWiki---User-f2680.html] en Nabble.
+Los [archivos de la lista antigua|http://www.ecyrd.com/pipermail/jspwiki-users/] tambi√©n est√°n disponibles. Tambi√©n hay un [archivo secundario|http://www.nabble.com/JspWiki---User-f2680.html] en Nabble.
 
 !JSPWiki-dev
 
-Esta es la lista para los desarrolladores de JSPWiki.  No te unas si temes las charlas ''geek''.  La lista jspwiki-dev tambiÈn est· alojada en Apache, asÌ que tambiÈn puedes unirte enviando un correo electrÛnico a [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].  Los archivos de la lista est·n disponibles en [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
+Esta es la lista para los desarrolladores de JSPWiki.  No te unas si temes las charlas ''geek''.  La lista jspwiki-dev tambi√©n est√° alojada en Apache, as√≠ que tambi√©n puedes unirte enviando un correo electr√≥nico a [dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org].  Los archivos de la lista est√°n disponibles en [http://mail-archives.apache.org/mod_mbox/jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/jspwiki-dev/]
 
 !JSPWiki-commits
 
-Si te suscribes a esta lista recibir·s un correo electrÛnico cuando un committer sube ficheros nuevos o realice alg˙n cambio en el repositorio SVN.
-Las lista jspwiki-commits est· alojada en Apache, ˙nete a ella enviando un correo electrÛnico a [jspwiki-commits-subscribe@incubator.apache.org|mailto:jspwiki-commits-subscribe@incubator.apache.org].
-Los archivos de la lista est·n disponibles en http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/
+Si te suscribes a esta lista recibir√°s un correo electr√≥nico cuando un committer sube ficheros nuevos o realiza alg√∫n cambio en el repositorio SVN.
+Las lista jspwiki-commits est√° alojada en Apache, √∫nete a ella enviando un correo electr√≥nico a [commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org].
+Los archivos de la lista est√°n disponibles en http://mail-archives.apache.org/mod_mbox/jspwiki-commits/
 
 !Darse de baja
 
-Darse de baja es igualmente f·cil: envÌa un correo electrÛnico a jspwiki-<user|dev|commits>-unsubscribe@incubator.apache.org desde la misma direcciÛn desde la cual te suscribiste.
+Darse de baja es igualmente f√°cil: env√≠a un correo electr√≥nico a <user|dev|commits>-unsubscribe@jspwiki.apache.org desde la misma direcci√≥n desde la cual te suscribiste.
 
-Los archivos antiguos de la lista JSPWiki-dev (hasta Oct. 2007) tambiÈn [est·n disponibles|http://www.ecyrd.com/pipermail/jspwiki-dev/], por siq uieres examinar algunas cuestiones interesantes.
+Los archivos antiguos de la lista JSPWiki-dev (hasta Oct. 2007) tambi√©n [est√°n disponibles|http://www.ecyrd.com/pipermail/jspwiki-dev/], por si quieres examinar algunas cuestiones interesantes.
 
-!! Otras fuentes de informaciÛn
+!! Otras fuentes de informaci√≥n
 
 ! IrcChannel - chat en vivo con los desarrolladores!
 
-Hay un canal de [IRC|http://www.mirc.com/irc.html] sobre JSPWiki en [Freenode|http://www.freenode.net], llamado #jspwiki. DÈjate caer por ahÌ si tienes alguna pregunta, o por si simplemente te apetece chatear.
+Hay un canal de [IRC|http://www.mirc.com/irc.html] sobre JSPWiki en [Freenode|http://www.freenode.net], llamado #jspwiki. D√©jate caer por ah√≠ si tienes alguna pregunta, o simplemente te apetece chatear.
 
-FÌjate que el canal puede estar sin demasiado movimiento a determinadas horas del dÌa, asÌ que no te preocupes si no obtienes ninguna respuesta.  Simplemente quÈdate por ahÌ lo suficiente...
+F√≠jate que el canal puede estar sin demasiado movimiento a determinadas horas del d√≠a, as√≠ que no te preocupes si no obtienes ninguna respuesta.  Simplemente espera...
 
 Habituales del canal:
-* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Est· en GMT+2.
+* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Est√° en GMT+2.
 
 ! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
 
-Como divertimento, se ha creado un grupo de usuarios de JSPWiki en Facebook.  Si usas Facebook habitualmente, °dÈjate caer!
+Como divertimento, se ha creado un grupo de usuarios de JSPWiki en Facebook.  Si usas Facebook habitualmente, ¬°d√©jate caer!
 
-(Y no, no estamos planeando reemplazar ninguna web existente con esto.  Pero como parece que todo el mundo y allegados parece estar en Facebook, pensÈ que no serÌa mala idea aÒadir un canal de informaciÛn adicional)
+(Y no, no estamos planeando reemplazar ninguna web existente con esto.  Pero como parece que todo el mundo y allegados parece estar en Facebook, pens√© que no ser√≠a mala idea a√±adir un canal de informaci√≥n adicional)
 -- Janne 17/09/07
-
-* [Blog sobre el desarrollo de JSPWiki|http://blog.jspwiki.org/]

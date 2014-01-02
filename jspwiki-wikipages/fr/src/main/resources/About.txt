@@ -9,9 +9,9 @@ l'Internet. Je trouve son balisage très facile à utiliser, et en même temps t
 lisible.
 
 Ce wiki est diffusable sous la [licence Apache, version 2.0|http://www.apache.org/licenses/LICENSE-2.0].
-Veuillez vous reporter à [http://incubator.apache.org/jspwiki] pour plus d'informations.
+Veuillez vous reporter à [http://jspwiki.apache.org] pour plus d'informations.
 
-Si le développement de JSPWiki vous intéresse, sa page d'accueil est [http://www.jspwiki.org].
+Si le développement de JSPWiki vous intéresse, sa page d'accueil est [http://jspwiki.apache.org].
 Quelques liens rapides :
 
 * [Rapports de bugs|JSPWiki:SubmitBugReport] - ou [allez voir la liste des bugs ouverts|JSPWiki:OpenBugs].

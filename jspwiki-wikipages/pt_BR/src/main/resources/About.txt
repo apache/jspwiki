@@ -1,14 +1,14 @@
-Esta Wiki foi construÌda utilizando a tecnologia [JSP|http://java.sun.com/products/jsp] que torna bem mais f·cil de se manter a wiki e melhor interface de usu·rio do que as outras Wikis baseadas na [wiki original|http://c2.com/cgi/wiki]. Um bean especÌfico È respons·vel por traduzir o texto em HTML.
+Esta Wiki foi constru√≠da utilizando a tecnologia [JSP|http://java.sun.com/products/jsp] que torna bem mais f√°cil de se manter a wiki e melhor interface de usu√°rio do que as outras Wikis baseadas na [wiki original|http://c2.com/cgi/wiki]. Um bean espec√≠fico √© respons√°vel por traduzir o texto em HTML.
 
-A maioria das [regras de formataÁ„o de texto|TextFormattingRules] foram estilizadas de acordo com o [Sensei's Library|http://senseis.xmp.net], o melhor site sobre o assunto da internet. Eu acho as regras dele bem f·ceis e simples.
+A maioria das [regras de formata√ß√£o de texto|TextFormattingRules] foram estilizadas de acordo com o [Sensei's Library|http://senseis.xmp.net], o melhor site sobre o assunto da internet. Eu acho as regras dele bem f√°ceis e simples.
 
-Esta wiki È disponÌvel via a [LicenÁa Apache, Vers„o 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Por favor veja [http://incubator.apache.org/jspwiki] para maiores informaÁıes.
+Esta wiki √© dispon√≠vel via a [Licen√ßa Apache, Vers√£o 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Por favor veja [http://jspwiki.apache.org] para maiores informa√ß√µes.
 
-Se vocÍ est· interessado no desenvolvimento da JSPWiki, a p·gina principal do projeto È [http://www.jspwiki.org]. E abaixo alguns links r·pidos:
+Se voc√™ est√° interessado no desenvolvimento da JSPWiki, a p√°gina principal do projeto √© [http://jspwiki.apache.org]. E abaixo alguns links r√°pidos:
 
-* [RelatÛrios de bugs|JSPWiki:SubmitBugReport] - ou [olhe a lista de bugs abertos|JSPWiki:OpenBugs].
-* [Contribuir com novas idÈias|JSPWiki:SubmitNewIdea].
-* DÍ uma olhada no mais atualizado [FAQ da JSPWiki|JSPWiki:JSPWikiFAQ]
+* [Relat√≥rios de bugs|JSPWiki:SubmitBugReport] - ou [olhe a lista de bugs abertos|JSPWiki:OpenBugs].
+* [Contribuir com novas id√©ias|JSPWiki:SubmitNewIdea].
+* D√™ uma olhada no mais atualizado [FAQ da JSPWiki|JSPWiki:JSPWikiFAQ]
 * Procurar por [plugins|JSPWiki:ContributedPlugins] adicionais, [templates|JSPWiki:ContributedTemplates], [filtros|JSPWiki:ContributedFilters], [contribuintes|JSPWiki:ContributedProviders], ou [outras coisas legais|JSPWiki:ContributedCode].
 
 Boa sorte e obrigado por escolher a JSPWiki!

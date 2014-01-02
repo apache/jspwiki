@@ -7,22 +7,22 @@
 
 !JSPWiki-user
 
-jspwiki-user 邮件列表由 Apache Incubator 托管。可以通过发送邮件到以下地址申请加入：[jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org]。邮件列表归档位于  [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
+jspwiki-user 邮件列表由 Apache 托管。可以通过发送邮件到以下地址申请加入：[user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org]。邮件列表归档位于  [http://mail-archives.apache.org/mod_mbox/jspwiki-user/|http://mail-archives.apache.org/mod_mbox/jspwiki-user/]
 
 [以前的列表归档|http://www.ecyrd.com/pipermail/jspwiki-users/] 还在。另外，在 Nabble 上还有一个 [副归档|http://www.nabble.com/JspWiki---User-f2680.html]。
 
 !JSPWiki-dev
 
-这个列表主要针对 JSPWiki 开发者。如果担心满天飞的暗语的话，最好还是别加入。jspwiki-dev 列表由 Apache 托管，所以您可以通过给下面的地址发个邮件来加入：[jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org]。邮件列表归档位于 [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
+这个列表主要针对 JSPWiki 开发者。如果担心满天飞的暗语的话，最好还是别加入。jspwiki-dev 列表由 Apache 托管，所以您可以通过给下面的地址发个邮件来加入：[dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org]。邮件列表归档位于 [http://mail-archives.apache.org/mod_mbox/jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/jspwiki-dev/]
 
 !JSPWiki-commits
 
 如果订阅了这个列表，你会在向 SVN 库提交了新的或修改过的文件时会收到邮件通知。
-jspwiki-commits 列表由 Apache 托管，您可以通过给下面的地址发送邮件加入：[jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org]。邮件列表归档位于 http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/
+jspwiki-commits 列表由 Apache 托管，您可以通过给下面的地址发送邮件加入：[commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org]。邮件列表归档位于 http://mail-archives.apache.org/mod_mbox/jspwiki-commits/
 
 !取消订阅
 
-取消订阅同样容易：您只需用订阅列表时使用的邮件地址给 jspwiki-<user|dev|commits>-unsubscribe@incubator.apache.org 发送邮件即可完成。
+取消订阅同样容易：您只需用订阅列表时使用的邮件地址给 <user|dev|commits>-unsubscribe@jspwiki.apache.org 发送邮件即可完成。
 
 如果您想探究一些有趣的问题的话，以前的 JSPWiki-dev（到 2007年10月）归档[还可以用|http://www.ecyrd.com/pipermail/jspwiki-dev/]。
 
@@ -43,5 +43,3 @@ jspwiki-commits 列表由 Apache 托管，您可以通过给下面的地址发�
 
 （当然，我们不会用这个替换任何现有的站点。不过，每个人还有他们的亲友似乎也在 Facebook 上，我似乎觉得再加一个频道也不错）
 -- Janne 2007年9月17日
-
-* [JSPWiki 开发博客|http://blog.jspwiki.org/]

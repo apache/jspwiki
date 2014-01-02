@@ -2,9 +2,9 @@
 
 大多数[编辑标记|TextFormattingRules]根据 [Sensei's Library|http://senseis.xmp.net] 设计，它是互联网上最好的 GO 站点之一。我觉得他们的标记非常容易，而且清晰。
 
-本 Wiki（JSPWiki）的许可协议是 [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]。请参考 [http://incubator.apache.org/jspwiki] 了解更多信息。
+本 Wiki（JSPWiki）的许可协议是 [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]。请参考 [http://jspwiki.apache.org] 了解更多信息。
 
-如果您对 JSPWiki 开发感兴趣，JSPWiki 的主页是 [http://www.jspwiki.org]。下面是一些快速链接：
+如果您对 JSPWiki 开发感兴趣，JSPWiki 的主页是 [http://jspwiki.apache.org]。下面是一些快速链接：
 
 * [缺陷报告|JSPWiki:SubmitBugReport] 或者[看一下 Open 缺陷的列表|JSPWiki:OpenBugs].
 * [贡献新的想法|JSPWiki:SubmitNewIdea]。
