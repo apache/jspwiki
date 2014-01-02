@@ -19,7 +19,7 @@ Tienes algunas páginas ya configuradas de salida:
 
 * Para ver todas las características del marcado Wiki, [Reglas de Formato del Texto|TextFormattingRules].
 * Punto de entrada a toda [Documentación de JSPWiki|JSPWiki:JSPWikiDocumentation]
-** [Nuevas características en JSPWiki 2.8|JSPWiki:NewIn2.8].
+** [Nuevas características en JSPWiki|JSPWiki:NewIn].
 
 !Miscelánea
 

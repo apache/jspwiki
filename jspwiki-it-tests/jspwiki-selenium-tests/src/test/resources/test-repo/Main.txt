@@ -18,8 +18,8 @@ You have some pages set up for you:
 !Documentation
 
 * For all of the Wiki markup features, see [TextFormattingRules].
-* Entry point for full [JSPWikiDocumentation|http://jspwiki-wiki.apache.org/JSPWikiDocumentation]
-** [JSPWiki 2.8 New Features|http://jspwiki-wiki.apache.org/NewIn2.8].
+* Entry point for full [JSPWikiDocumentation|JSPWiki:JSPWikiDocumentation]
+** [JSPWiki 2.8 New Features|JSPWiki:NewIn].
 
 !Miscellaneous
 

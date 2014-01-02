@@ -18,7 +18,7 @@ Ci sono alcune pagine preliminari per:
 
 * Per le caratteristiche del linguaggio di markup di JSPWiki, fate riferimento a [Regole di formattazione | TextFormattingRules].
 * Punto di partenza per la completa [Documentazione|JSPWiki:JSPWikiDocumentation]
-** [JSPWiki 2.8 Nuove Features|JSPWiki:NewIn2.8].
+** [JSPWiki Nuove Features|JSPWiki:NewIn].
 
 !Miscellanea
 

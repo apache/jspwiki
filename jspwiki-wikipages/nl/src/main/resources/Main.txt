@@ -19,7 +19,7 @@ Je moet een paar pagina's gaan maken:
 
 * Voor alle Wiki opmaak mogelijkheden, zie [TextFormattingRules].
 * Ingang voor de volledige  [JSPWikiDocumentation|JSPWiki:JSPWikiDocumentation]
-** [JSPWiki 2.8 nieuwe features|JSPWiki:NewIn2.8].
+** [JSPWiki nieuwe features|JSPWiki:NewIn].
 
 !Diversen
 

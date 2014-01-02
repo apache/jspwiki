@@ -22,7 +22,7 @@ Voici quelques pages qui ont été préparées pour vous :
   des [règles de formatage du texte|TextFormattingRules], voire des 
   [règles de formatage du texte complètes|FullTextFormattingRules].
 * Voici le point d'entrée de la [documentation JSPWiki|JSPWiki:JSPWikiDocumentation] complète.
-** Et voilà les [nouveautés de JSPWiki 2.8|JSPWiki:NewIn2.8] !
+** Et voilà les [nouveautés de JSPWiki|JSPWiki:NewIn]!
 
 !Divers
 

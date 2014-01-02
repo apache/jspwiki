@@ -14,7 +14,7 @@ Du hast bereits einige Seiten eingerichtet...
 
 * Eine Beschreibung der Wiki-Formatierungsmöglichkeiten findest du in den [Formatierungsregeln|TextFormattingRules].
 * Einstiegspunkt für die vollständige [JSPWiki-Dokumentation|JSPWiki:JSPWikiDocumentation]
-** [Neue Features von JSPWiki 2.6|JSPWiki:NewIn2.6]
+** [Neue Features von JSPWiki|JSPWiki:NewIn]
 
 !Verschiedenes
 
