@@ -658,7 +658,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "This should be a [link|JSPWiki:HyperLink]";
 
-        assertEquals( "This should be a <a class=\"interwiki\" href=\"http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=HyperLink\">link</a>",
+        assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">link</a>",
                       translate(src) );
     }
 
@@ -667,7 +667,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "This should be a [JSPWiki:HyperLink]";
 
-        assertEquals( "This should be a <a class=\"interwiki\" href=\"http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=HyperLink\">JSPWiki:HyperLink</a>",
+        assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">JSPWiki:HyperLink</a>",
                       translate(src) );
     }
 
