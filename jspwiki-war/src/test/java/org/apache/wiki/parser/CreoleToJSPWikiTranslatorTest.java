@@ -474,9 +474,9 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
 
     public void testExtensions4() throws Exception
     {
-        String src = "<<FormOpen submit=\'http://www.jspwiki.org\' >>";
+        String src = "<<FormOpen submit=\'http://jspwiki.apache.org\' >>";
 
-        String target = "[{FormOpen submit=\'http://www.jspwiki.org\' }]";
+        String target = "[{FormOpen submit=\'http://jspwiki.apache.org\' }]";
         
         assertEquals(target, translate(src));
     }

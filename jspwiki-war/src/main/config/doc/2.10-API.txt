@@ -51,7 +51,7 @@ api.filters
         
 api.plugin
  -> Interfaces needed to develop WikiPlugins
- -> cfr. with http://www.jspwiki.org/wiki/WritingPlugins
+ -> cfr. with http://jspwiki-wiki.apache.org/WritingPlugins
 
 
 1.2. Other classes affected

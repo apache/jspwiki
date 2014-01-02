@@ -154,16 +154,16 @@ public class CreoleRendererTest extends TestCase
 */
     public void testExternalAnchor() throws Exception
     {
-        String src = "[http://www.jspwiki.org]";
+        String src = "[http://jspwiki.apache.org]";
         
-        assertEquals( "[[http://www.jspwiki.org]]", render(src) );
+        assertEquals( "[[http://jspwiki.apache.org]]", render(src) );
     }
     
     public void testExternalAnchor2() throws Exception
     {
-        String src = "[JSPWiki|http://www.jspwiki.org]";
+        String src = "[JSPWiki|http://jspwiki.apache.org]";
         
-        assertEquals( "[[http://www.jspwiki.org|JSPWiki]]", render(src) );
+        assertEquals( "[[http://jspwiki.apache.org|JSPWiki]]", render(src) );
     }
     
     public void testLineBreak() throws Exception

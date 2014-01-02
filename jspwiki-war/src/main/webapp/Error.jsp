@@ -90,7 +90,7 @@
    either installing JSPWiki for the first time or have changed configuration,
    then you might want to check your configuration files.  If you are absolutely sure
    that JSPWiki was running quite okay or you can't figure out what is going
-   on, then by all means, come over to <a href="http://www.jspwiki.org/">jspwiki.org</a>
+   on, then by all means, come over to <a href="http://jspwiki.apache.org/">jspwiki.apache.org</a>
    and tell us.  There is more information in the log file (like the full stack trace, 
    which you should add to any error report).
    </p>
