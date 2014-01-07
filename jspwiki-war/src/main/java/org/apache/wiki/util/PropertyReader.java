@@ -119,24 +119,24 @@ public final class PropertyReader {
             //  Figure out where our properties lie.
             //
             if( propertyFile == null ) {
-                context.log( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
+                LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
                              "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
                 //  Use the custom property file at the default location
                 propertyStream = PropertyReader.class.getResourceAsStream( CUSTOM_JSPWIKI_CONFIG );
             } else {
-                context.log(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
+                LOG.info(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
             }
 
             Properties props = getDefaultProperties();
             if( propertyStream == null ) {
-                context.log("No custom property file found, relying on JSPWiki defaults.");
+                LOG.info("No custom property file found, relying on JSPWiki defaults.");
             } else {
                 props.load( propertyStream );
             }
 
             //this will add additional properties to the default ones:
-            context.log( "Loading cascading properties..." );
+            LOG.debug( "Loading cascading properties..." );
 
             //now load the cascade (new in 2.5)
             loadWebAppPropsCascade( context, props );
@@ -146,7 +146,7 @@ public final class PropertyReader {
 
             return props;
         } catch( Exception e ) {
-            context.log( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + 
+            LOG.error( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " +
                          e.getMessage() );
         } finally {
         	IOUtils.closeQuietly( propertyStream );
@@ -227,7 +227,7 @@ public final class PropertyReader {
      */
     private static void loadWebAppPropsCascade( ServletContext context, Properties defaultProperties ) {
         if( getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + "1" ) == null ) {
-            context.log( " No cascading properties defined for this context" );
+            LOG.debug( " No cascading properties defined for this context" );
             return;
         }
 
@@ -245,13 +245,13 @@ public final class PropertyReader {
             }
 
             try {
-                context.log( " Reading additional properties from " + propertyFile + " and merge to cascade." );
+                LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
                 Properties additionalProps = new Properties();
                 propertyStream = new FileInputStream( new File( propertyFile ) );
                 additionalProps.load(propertyStream);
                 defaultProperties.putAll(additionalProps);
             } catch( Exception e ) {
-                context.log( " " + Release.APPNAME +
+                LOG.error( " " + Release.APPNAME +
                              ": Unable to load and setup properties from " + propertyFile + "." +
                              e.getMessage() );
             } finally {

@@ -1,5 +1,15 @@
 2014-01-07  Harry Metske (metskem@apache.org)
 
+       * 2.10.0-svn-67
+
+       * PropertyReader was using context.log for its logging. Every user changing his prefs is causing
+         6 lines of logging to stdout which is cumbersome to get rid of. Changing this to log4j logging
+         and offering a way to use an external log4j.properties file so PropertyReader can use log4j
+         right away. (The cascaded property reading mechanism does not support "suppressing" properties
+         from the ini/jspwiki.properties, only overriding)
+
+2014-01-07  Harry Metske (metskem@apache.org)
+
        * 2.10.0-svn-66
 
        * JSPWIKI-810 - included the ReferringUndefinedPagesPlugin

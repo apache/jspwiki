@@ -451,15 +451,15 @@ public class WikiEngine
         m_properties = props;
 
         //
-        //  Initialized log4j.  However, make sure that
-        //  we don't initialize it multiple times.  Also, if
-        //  all of the log4j statements have been removed from
-        //  the property file, we do not do any property setting
-        //  either.q
+        //  Initialize log4j.  However, make sure that we don't initialize it multiple times.
+        //  By default we load the log4j config statements from jspwiki.properties, unless
+        //  the property jspwiki.use.external.logconfig=true, in that case we let log4j figure out the
+        //  logging configuration.
         //
         if( !c_configured )
         {
-            if( props.getProperty("log4j.rootCategory") != null )
+            String useExternalLogConfig = props.getProperty("jspwiki.use.external.logconfig");
+            if( useExternalLogConfig == null || useExternalLogConfig.equals("false"))
             {
                 PropertyConfigurator.configure( props );
             }
