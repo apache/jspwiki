@@ -18,11 +18,27 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.util.FileUtil;
@@ -250,7 +266,7 @@ public class VersioningFileProvider
             }
             finally
             {
-                if( in != null ) in.close();
+            	IOUtils.closeQuietly( in );
             }
         }
         
@@ -275,7 +291,7 @@ public class VersioningFileProvider
         }
         finally
         {
-            if( out != null ) out.close();
+        	IOUtils.closeQuietly( out );
         }
     }
 
@@ -360,14 +376,7 @@ public class VersioningFileProvider
                 }
                 finally
                 {
-                    try
-                    {
-                        if( in  != null ) in.close();
-                    }
-                    catch( Exception e ) 
-                    {
-                        log.fatal("Closing failed",e);
-                    }
+                	IOUtils.closeQuietly( in );
                 }
             }
             else
@@ -457,8 +466,8 @@ public class VersioningFileProvider
                 }
                 finally
                 {
-                    if( out != null ) out.close();
-                    if( in  != null ) in.close();
+                	IOUtils.closeQuietly( out );
+                	IOUtils.closeQuietly( in );
                 }
             }
 
@@ -733,15 +742,8 @@ public class VersioningFileProvider
             }
             finally
             {
-                try
-                {
-                    if( in != null ) in.close();
-                    if( out != null) out.close();
-                }
-                catch( IOException ex )
-                {
-                    log.error("Closing failed",ex);
-                }
+            	IOUtils.closeQuietly( in );
+            	IOUtils.closeQuietly( out );
             }
             
             return;
