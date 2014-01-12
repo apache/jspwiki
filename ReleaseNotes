@@ -27,7 +27,7 @@ Welcome to the stable version of Apache JSPWiki 2.10.0!
 Apache JSPWiki 2.10.0 is the first JSPWiki release made as an Apache TLP. This release
 features, among other things:
   * use of jspwiki-custom.properties to override specific values of jspwiki.properties file
-  * proxy support through X-Forwarded-For request header
+  * support of the X-Forwarded-For HTTP request header
   * merging and compression of css & js
   * upgrade of used libraries
     -> lucene to 4.6
