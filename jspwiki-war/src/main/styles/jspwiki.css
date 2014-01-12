@@ -289,9 +289,13 @@ fieldset {
 	padding:0.5em;
 	border:1px solid #ddd;
 }
+.wikiform option {
+    padding:0.1em 0.5em;
+}
+.wikiform input {
+    padding:0.5em;
+}
 .wikiform input, .wikiform option {
-	padding:0.5em;
-
 	color:#555;
 	border:1px solid #ddd;
 	-moz-border-radius:5px;

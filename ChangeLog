@@ -1,3 +1,9 @@
+2014-01-12  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.0-svn-68
+       
+       * Minor nit in jspwiki.css resulted in overly-tall popup menus on Preferences page. Spotted by Ichiro Furusato.
+       
 2014-01-07  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-67
