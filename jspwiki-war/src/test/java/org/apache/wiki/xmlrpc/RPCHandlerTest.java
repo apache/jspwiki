@@ -116,15 +116,15 @@ public class RPCHandlerTest extends TestCase
         Calendar cal = Calendar.getInstance();
         cal.setTime( d );
 
-        System.out.println("Real: "+directInfo.getLastModified() );
-        System.out.println("RPC:  "+d );
+        // System.out.println("Real: "+directInfo.getLastModified() );
+        // System.out.println("RPC:  "+d );
 
         // Offset the ZONE offset and DST offset away.  DST only
         // if we're actually in DST.
         cal.add( Calendar.MILLISECOND,
                  (cal.get( Calendar.ZONE_OFFSET )+
                   (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
-        System.out.println("RPC2: "+cal.getTime() );
+        // System.out.println("RPC2: "+cal.getTime() );
 
         assertEquals( "date", cal.getTime().getTime(),
                       directInfo.getLastModified().getTime() );

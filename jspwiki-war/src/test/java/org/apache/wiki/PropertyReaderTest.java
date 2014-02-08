@@ -42,7 +42,7 @@ public class PropertyReaderTest extends TestCase
         assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
         assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
         
-        System.out.println(p.getProperty("jspwiki.workDir"));
+//        System.out.println(p.getProperty("jspwiki.workDir"));
         
         assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
     }

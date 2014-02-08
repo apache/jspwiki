@@ -113,19 +113,19 @@ if ( !installer.adminExists() )
   <div class="block">
   
     <label><fmt:message key="install.jsp.basics.appname.label" /></label>
-    <input type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>"/><br />
+    <input type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>"/>
     <div class="description">
-      <fmt:message key="install.jsp.basics.appname.desc" />
-    </div>
+      <fmt:message key="install.jsp.basics.appname.desc"/>
+    </div> 
     
-    <label><fmt:message key="install.jsp.basics.baseurl.label" /></label>
-    <input type="text" name="<%=Installer.BASE_URL%>" size="40" value="<%=installer.getProperty( Installer.BASE_URL )%>"/><br />
+    <br/> <label><fmt:message key="install.jsp.basics.baseurl.label" /></label>
+    <input type="text" name="<%=Installer.BASE_URL%>" size="40" value="<%=installer.getProperty( Installer.BASE_URL )%>"/>
     <div class="description">
       <fmt:message key="install.jsp.basics.baseurl.desc" />
-    </div>
+    </div> 
     
-    <label><fmt:message key="install.jsp.basics.page.storage.label" /></label>
-    <input type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/><br />
+    <br/><label><fmt:message key="install.jsp.basics.page.storage.label" /></label>
+    <input type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/>
     <div class="description">
       <fmt:message key="install.jsp.basics.page.storage.desc" />
     </div>
@@ -174,19 +174,19 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
   <div class="block">
     <label><fmt:message key="install.jsp.adv.settings.logfile.label" /></label>
-    <input type="text" name="<%=Installer.LOG_DIR%>" value="<%=installer.getProperty( Installer.LOG_DIR )%>" size="40"/><br />
+    <input type="text" name="<%=Installer.LOG_FILE%>" value="<%=installer.getProperty( Installer.LOG_FILE )%>" size="40"/>
     <div class="description">
       <fmt:message key="install.jsp.adv.settings.logfile.desc" />
-    </div>
+    </div> <br/>
 
     <label><fmt:message key="install.jsp.adv.settings.workdir.label" /></label>
-    <input type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/><br />
+    <input type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>
     <div class="description">
       <fmt:message key="install.jsp.adv.settings.workdir.desc" />
     </div>
   </div>
   
-  <br /><br />
+  <br/>
   <div class="block">
     <div class="instructions">
       <fmt:message key="install.jsp.instr.desc" >
@@ -206,7 +206,7 @@ if ( !installer.adminExists() )
       {
     %>
        <h3><fmt:message key="install.jsp.validated.new.props" /></h3>
-       <pre><%=installer.getProperties()%></pre>
+       <pre><%=installer.getPropertiesList()%></pre>
    <%
      }
    %>

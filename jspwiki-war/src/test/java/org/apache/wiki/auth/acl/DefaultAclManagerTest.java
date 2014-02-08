@@ -129,7 +129,7 @@ public class DefaultAclManagerTest
         acl = "[{ALLOW view Alice}] Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
         assertTrue ( m.find() );
-        System.out.println( m.group() );
+//        System.out.println( m.group() );
         assertEquals( 2, m.groupCount() );
         assertEquals( "[{ALLOW view Alice}]", m.group(0) );
         assertEquals( "view", m.group(1) );
@@ -139,7 +139,7 @@ public class DefaultAclManagerTest
         acl = "Test text   [{   ALLOW   view   Alice  }]  Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
         assertTrue ( m.find() );
-        System.out.println( m.group() );
+//        System.out.println( m.group() );
         assertEquals( 2, m.groupCount() );
         assertEquals( "[{   ALLOW   view   Alice  }]", m.group(0) );
         assertEquals( "view", m.group(1) );
@@ -149,7 +149,7 @@ public class DefaultAclManagerTest
         acl = "Test text   [{   ALLOW   view  Alice  ,  Bob  }]  Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
         assertTrue ( m.find() );
-        System.out.println( m.group() );
+//        System.out.println( m.group() );
         assertEquals( 2, m.groupCount() );
         assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
         assertEquals( "view", m.group(1) );
@@ -159,7 +159,7 @@ public class DefaultAclManagerTest
         acl = "Test text   [{   ALLOW   view  Alice  ,  Bob  }]  Test text  [{ALLOW edit Betty}].";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
         assertTrue ( m.find() );
-        System.out.println( m.group() );
+//        System.out.println( m.group() );
         assertEquals( 2, m.groupCount() );
         assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
         assertEquals( "view", m.group(1) );

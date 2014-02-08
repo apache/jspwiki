@@ -65,7 +65,7 @@ public class RenderingManagerTest extends TestCase
         
         StopWatch sw = new StopWatch();
         
-        System.out.println("DOM cache speed test:");
+        // System.out.println("DOM cache speed test:");
         sw.start();
         
         for( int i = 0; i < 300; i++ )
@@ -84,7 +84,7 @@ public class RenderingManagerTest extends TestCase
         }
         
         sw.stop();
-        System.out.println("  Nocache took "+sw);
+        // System.out.println("  Nocache took "+sw);
 
         long nocachetime = sw.getTime();
         
@@ -104,10 +104,10 @@ public class RenderingManagerTest extends TestCase
         }
         
         sw.stop();
-        System.out.println("  Cache took "+sw);
+        // System.out.println("  Cache took "+sw);
         
         long speedup = nocachetime / sw.getTime();
-        System.out.println("  Approx speedup: "+speedup+"x");
+        //System.out.println("  Approx speedup: "+speedup+"x");
     }
 
     public static Test suite()
