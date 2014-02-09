@@ -1,6 +1,8 @@
 2014-02-08  Harry Metske (metskem@apache.org)
+       * 2.10.0-svn-70
 
        * Fixed JSPWIKI-817 - Install.jsp is broken ==> Translation corrections required (EN en NL done)
+
        * Removed a bunch of System.out.println() statements from TestCases.
 
 2014-01-13  Harry Metske (metskem@apache.org)
