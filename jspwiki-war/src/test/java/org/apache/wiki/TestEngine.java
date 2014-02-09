@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki;
@@ -69,7 +69,7 @@ public class TestEngine extends WikiEngine
      * Creates WikiSession with the privileges of the administrative user.
      * For testing purposes, obviously.
      * @return the wiki session
-     * @throws WikiSecurityException 
+     * @throws WikiSecurityException
      */
     public WikiSession adminSession() throws WikiSecurityException
     {
@@ -105,7 +105,7 @@ public class TestEngine extends WikiEngine
      * Creates WikiSession with the privileges of the Janne.
      * For testing purposes, obviously.
      * @return the wiki session
-     * @throws WikiSecurityException 
+     * @throws WikiSecurityException
      */
     public WikiSession janneSession() throws WikiSecurityException
     {
@@ -125,12 +125,12 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         super( new MockServletContext( "test" ), "test", cleanTestProps( props ) );
-        
+
         // Stash the WikiEngine in the servlet context
         ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
     }
-    
+
     /**
      * Creates a correctly-instantiated mock HttpServletRequest with an associated
      * HttpSession.
@@ -170,6 +170,25 @@ public class TestEngine extends WikiEngine
 
             if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
                 // System.out.println( "Deleting " + f.getAbsolutePath() );
+                deleteAll( f );
+            }
+        }
+    }
+
+    public static void emptyWikiDir() {
+        emptyWikiDir( null );
+    }
+
+    public static void emptyWikiDir(Properties properties) {
+        if (properties == null) {
+            properties = getTestProperties();
+        }
+
+        String wikidir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        if ( wikidir != null ) {
+            File f = new File( wikidir );
+
+            if (f.exists() && f.isDirectory()) {
                 deleteAll( f );
             }
         }
@@ -269,7 +288,7 @@ public class TestEngine extends WikiEngine
 
             if( f.exists() )
                 f.delete();
-            
+
             deleteAttachments( name );
             firePageEvent( WikiPageEvent.PAGE_DELETED, name );
         }
@@ -383,7 +402,7 @@ public class TestEngine extends WikiEngine
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Supplies a clean set of test properties for the TestEngine constructor.
      * @param props the properties supplied by callers
