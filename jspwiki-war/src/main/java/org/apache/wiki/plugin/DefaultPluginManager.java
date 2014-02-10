@@ -166,7 +166,9 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
     private static final String DEFAULT_FORMS_PACKAGE = "org.apache.wiki.forms";
 
-    private ArrayList<String>  m_searchPath = new ArrayList<String>();
+    private ArrayList<String> m_searchPath = new ArrayList<String>();
+
+    private ArrayList<String> m_externalJars = new ArrayList<String>();
 
     private Pattern m_pluginPattern;
 
@@ -192,6 +194,16 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
             while( tok.hasMoreTokens() ) {
                 m_searchPath.add( tok.nextToken().trim() );
+            }
+        }
+
+        String externalJars = props.getProperty( PROP_EXTERNALJARS );
+
+        if( externalJars != null ) {
+            StringTokenizer tok = new StringTokenizer( externalJars, "," );
+
+            while( tok.hasMoreTokens() ) {
+                m_externalJars.add( tok.nextToken().trim() );
             }
         }
 
@@ -253,7 +265,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *  @throws ClassNotFoundException if no such class exists.
      */
     private Class< ? > findPluginClass( String classname ) throws ClassNotFoundException {
-        return ClassUtil.findClass( m_searchPath, classname );
+        return ClassUtil.findClass( m_searchPath, m_externalJars, classname );
     }
 
     /**
@@ -531,7 +543,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
             m_pluginClassMap.put( name, pluginClass );
         }
 
-        pluginClass.initializePlugin( m_engine );
+        pluginClass.initializePlugin( m_engine , m_searchPath, m_externalJars);
     }
 
     private void registerPlugins() {
@@ -545,7 +557,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         //
         for( Element pluginEl : plugins ) {
             String className = pluginEl.getAttributeValue( "class" );
-            WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl );
+            WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl ,m_searchPath, m_externalJars);
 
             if( pluginInfo != null ) {
                 registerPlugin( pluginInfo );
@@ -557,7 +569,6 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *  Contains information about a bunch of plugins.
      *
      *
-     *  @since
      */
     // FIXME: This class needs a better interface to return all sorts of possible
     //        information from the plugin XML.  In fact, it probably should have
@@ -576,11 +587,13 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *  @param className Either a fully qualified class name, or a "short" name which is then
          *                   checked against the internal list of plugin packages.
          *  @param el A JDOM Element containing the information about this class.
+         *  @param searchPath A List of Strings, containing different package names.
+         *  @param externalJars the list of external jars to search
          *  @return A WikiPluginInfo object.
          */
-        protected static WikiPluginInfo newInstance( String className, Element el ) {
+        protected static WikiPluginInfo newInstance( String className, Element el, List<String> searchPath, List<String> externalJars ) {
             if( className == null || className.length() == 0 ) return null;
-            
+
             WikiPluginInfo info = new WikiPluginInfo( className );
             info.initializeFromXML( el );
             return info;
@@ -590,14 +603,16 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *  Initializes a plugin, if it has not yet been initialized.
          *
          *  @param engine The WikiEngine
+         *  @param searchPath A List of Strings, containing different package names.
+         *  @param externalJars the list of external jars to search
          */
-        protected void initializePlugin( WikiEngine engine ) {
+        protected void initializePlugin( WikiEngine engine , List<String> searchPath, List<String> externalJars) {
             if( !m_initialized ) {
                 // This makes sure we only try once per class, even if init fails.
                 m_initialized = true;
 
                 try {
-                    WikiPlugin p = newPluginInstance();
+                    WikiPlugin p = newPluginInstance(searchPath, externalJars);
                     if( p instanceof InitializablePlugin ) {
                         ( ( InitializablePlugin )p ).initialize( engine );
                     }
@@ -655,14 +670,17 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         /**
          *  Creates a new plugin instance.
          *
+         *  @param searchPath A List of Strings, containing different package names.
+         *  @param externalJars the list of external jars to search
+
          *  @return A new plugin.
          *  @throws ClassNotFoundException If the class declared was not found.
          *  @throws InstantiationException If the class cannot be instantiated-
          *  @throws IllegalAccessException If the class cannot be accessed.
          */
-        public WikiPlugin newPluginInstance() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        public WikiPlugin newPluginInstance(List<String> searchPath, List<String> externalJars) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
             if( m_clazz == null ) {
-                m_clazz = Class.forName(m_className);
+                m_clazz = ClassUtil.findClass(searchPath, externalJars ,m_className);
             }
 
             return (WikiPlugin) m_clazz.newInstance();
@@ -774,7 +792,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
                 String msg = "Plugin '" + pluginInfo.getName() + "' not compatible with this version of JSPWiki";
                 log.info( msg );
             } else {
-                plugin = pluginInfo.newPluginInstance();
+                plugin = pluginInfo.newPluginInstance(m_searchPath, m_externalJars);
             }
         } catch( ClassNotFoundException e ) {
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.couldnotfind" ), pluginName ), e );

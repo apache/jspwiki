@@ -30,10 +30,13 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 
 
 public interface PluginManager {
-	
-    /** The property name defining which packages will be searched for properties. */
+
+    /** The property name defining which packages will be searched for plugin classes. */
     String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
-    
+
+    /** The property name defining which external jars will be added to the classpath when searching for plugin classes. */
+    String PROP_EXTERNALJARS = "jspwiki.plugin.externalJars";
+
     /** This is the default package to try in case the instantiation fails. */
     String DEFAULT_PACKAGE = "org.apache.wiki.plugin";
 

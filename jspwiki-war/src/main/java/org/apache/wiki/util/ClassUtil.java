@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -36,6 +38,8 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.jdom2.Element;
 
@@ -55,6 +59,10 @@ public final class ClassUtil {
     public  static final String MAPPINGS = "ini/classmappings.xml";
     
     private static Map<String, String> c_classMappings = new Hashtable<String, String>();
+
+    private static boolean classLoaderSetup = false;
+    private static ClassLoader loader = null;
+
 
     /**
      *  Initialize the class mappings document.
@@ -88,23 +96,24 @@ public final class ClassUtil {
      *  attempt to find the class based on just the className parameter, but
      *  should that fail, will iterate through the "packages" -list, prefixes
      *  the package name to the className, and then tries to find the class
-     *  again. If that still fails, we try the old (pre-2.9) com.ecyrd.jspwiki package.
+     *  again.
      *
-     *  @param packages A List of Strings, containing different package names.
+     * @param packages A List of Strings, containing different package names.
      *  @param className The name of the class to find.
-     *  @return The class, if it was found.
+     * @return The class, if it was found.
      *  @throws ClassNotFoundException if this particular class cannot be found
      *          from the list.
      */
-    public static Class<?> findClass( List< String > packages, String className ) throws ClassNotFoundException {
-        ClassLoader loader = ClassUtil.class.getClassLoader();
+    public static Class<?> findClass( List< String > packages,  List< String > externaljars, String className ) throws ClassNotFoundException {
+        if (!classLoaderSetup) {
+            loader = setupClassLoader(externaljars);
+        }
 
         try {
             return loader.loadClass( className );
         } catch( ClassNotFoundException e ) {
             for( Iterator< String > i = packages.iterator(); i.hasNext(); ) {
                 String packageName = i.next();
-
                 try {
                     return loader.loadClass( packageName + "." + className );
                 } catch( ClassNotFoundException ex ) {
@@ -112,21 +121,44 @@ public final class ClassUtil {
                 }
             }
 
-            // try the old (pre 2.9) package name for compatibility :
-            try {
-                className = className.replaceFirst( "com\\.ecyrd\\.jspwiki", "org.apache.wiki" );
-                return loader.loadClass( className );
-            } catch( ClassNotFoundException ex ) {
-                // This is okay, if we fail we throw our own CNFE..
-            }
-
         }
 
         throw new ClassNotFoundException( "Class '" + className + "' not found in search path!" );
     }
-    
+
     /**
-     *  A shortcut for findClass when you only have a singular package to search.
+     * Setup the plugin classloader.
+     * Check if there are external JARS to add via property {@link org.apache.wiki.api.engine.PluginManager#PROP_EXTERNALJARS}
+     *
+     * @return the classloader that can load classes from the configured external jars or
+     *         ,if not specified, the classloader that loaded this class.
+     * @param externaljars
+     */
+    private static ClassLoader setupClassLoader(List<String> externaljars) {
+        classLoaderSetup = true;
+        log.info("setting up classloaders for external (plugin) jars");
+        if (externaljars.size() == 0) {
+            log.info("no external jars configured, using standard classloading");
+            return ClassUtil.class.getClassLoader();
+        }
+        URL[] urls = new URL[externaljars.size()];
+        int i = 0;
+        try {
+            for (String externaljar : externaljars) {
+                File jarFile = new File(externaljar);
+                URL ucl = jarFile.toURI().toURL();
+                urls[i++] = ucl;
+                log.info("added " + ucl + " to list of external jars");
+            }
+        } catch (MalformedURLException e) {
+            log.error("exception while setting up classloaders for external jars via property" + PluginManager.PROP_EXTERNALJARS + ", continuing without external jars.");
+            return ClassUtil.class.getClassLoader();
+        }
+        return new URLClassLoader(urls, ClassUtil.class.getClassLoader());
+    }
+
+    /**
+     *
      *  It will first attempt to instantiate the class directly from the className,
      *  and will then try to prefix it with the packageName.
      *
@@ -136,11 +168,12 @@ public final class ClassUtil {
      *  @throws ClassNotFoundException if this particular class cannot be found.
      */
 
-    public static Class<?> findClass( String packageName, String className ) throws ClassNotFoundException {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add( packageName );
-
-        return findClass( list, className );
+    public static Class<?> findClass(String packageName, String className) throws ClassNotFoundException {
+        try {
+            return ClassUtil.class.getClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            return ClassUtil.class.getClassLoader().loadClass(packageName + "." + className);
+        }
     }
     
     /**
