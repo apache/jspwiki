@@ -20,8 +20,6 @@
 package org.apache.wiki;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -29,15 +27,14 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import net.sf.ehcache.CacheManager;
+
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
-import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
 public class WikiEngineTest extends TestCase
@@ -95,16 +92,12 @@ public class WikiEngineTest extends TestCase
     {
         String tmpdir = System.getProperties().getProperty("java.io.tmpdir");
         String dirname = "non-existent-directory";
-
         String newdir = tmpdir + File.separator + dirname;
 
-        props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
-                           newdir );
-
+        props.setProperty( FileSystemProvider.PROP_PAGEDIR, newdir );
         new TestEngine( props );
 
-        File f = new File( newdir );
-
+        File f = new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) );
         assertTrue( "didn't create it", f.exists() );
         assertTrue( "isn't a dir", f.isDirectory() );
 
@@ -432,9 +425,9 @@ public class WikiEngineTest extends TestCase
     
             c = refMgr.findUnreferenced();
             assertEquals( "unreferenced count", 2, c.size() );
-            Iterator i = c.iterator();
-            String first = (String) i.next();
-            String second = (String) i.next();
+            Iterator< String > i = c.iterator();
+            String first = i.next();
+            String second = i.next();
             assertTrue( "unreferenced",            
                         (first.equals( NAME1 ) && second.equals( NAME1+"/TestAtt.txt"))
                         || (first.equals( NAME1+"/TestAtt.txt" ) && second.equals( NAME1 )) );

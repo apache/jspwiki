@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Locale;
 import java.util.Properties;
@@ -136,8 +135,7 @@ public class TestEngine extends WikiEngine
      * HttpSession.
      * @return the new request
      */
-    public MockHttpServletRequest newHttpRequest()
-    {
+    public MockHttpServletRequest newHttpRequest() {
         return newHttpRequest( "/Wiki.jsp" );
     }
 
@@ -147,8 +145,7 @@ public class TestEngine extends WikiEngine
      * @param path the path relative to the wiki context, for example "/Wiki.jsp"
      * @return the new request
      */
-    public MockHttpServletRequest newHttpRequest( String path )
-    {
+    public MockHttpServletRequest newHttpRequest( String path ) {
         MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
         request.setSession( new MockHttpSession( this.getServletContext() ) );
         request.addLocale( new Locale( "" ) );
@@ -411,6 +408,8 @@ public class TestEngine extends WikiEngine
     private static Properties cleanTestProps( Properties props )
     {
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir", 
+                           props.getProperty( "jspwiki.fileSystemProvider.pageDir" ) + System.currentTimeMillis() );
         return props;
     }
 
