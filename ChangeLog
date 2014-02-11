@@ -1,3 +1,11 @@
+2014-02-12  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.1-svn-4
+
+       * Fixed JSPWIKI-819: Consider replacing ECS with JDOM, thanks to Ichiro Furusato
+       
+       * TestEngine( Properties ) uses a different directory as page repo (JSPWIKI-813 related)
+
 2014-02-10  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-72
@@ -20,7 +28,7 @@
 
 2014-01-13  Harry Metske (metskem@apache.org)
 
-       * 2.10.0 - second RC 
+       * 2.10.0
        
        * 2.10.0-svn-69
 
