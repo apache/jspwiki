@@ -42,4 +42,21 @@
     <module>pt_BR</module>
     <module>zh_CN</module>
   </modules>
+  
+  <build>
+    <pluginManagement>
+	  <plugins>
+	    <plugin><!-- exclude bundled wikipages from RAT analysis -->
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <exclude>**/src/main/resources/*.txt</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+	  </plugins>
+	</pluginManagement>
+  </build>
 </project>
