@@ -38,7 +38,6 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.jdom2.Element;
