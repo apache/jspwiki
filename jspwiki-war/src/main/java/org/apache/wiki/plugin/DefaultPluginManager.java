@@ -16,33 +16,10 @@
     specific language governing permissions and limitations
     under the License.  
  */
+
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import org.apache.commons.lang.ClassUtils;
-import org.apache.ecs.xhtml.b;
-import org.apache.ecs.xhtml.div;
-import org.apache.ecs.xhtml.li;
-import org.apache.ecs.xhtml.pre;
-import org.apache.ecs.xhtml.ul;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
@@ -64,8 +41,29 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.util.XHTML;
+import org.apache.wiki.util.XhtmlUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -189,7 +187,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         super( engine );
         String packageNames = props.getProperty( PROP_SEARCHPATH );
 
-        if( packageNames != null ) {
+        if ( packageNames != null ) {
             StringTokenizer tok = new StringTokenizer( packageNames, "," );
 
             while( tok.hasMoreTokens() ) {
@@ -271,26 +269,28 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      *  Outputs a HTML-formatted version of a stack trace.
      */
-    private String stackTrace( Map< String, String > params, Throwable t ) {
-        div d = new div();
-        d.setClass( "debug" );
-        d.addElement( "Plugin execution failed, stack trace follows:" );
+    private String stackTrace( Map<String,String> params, Throwable t )
+    {
+        Element div = XhtmlUtil.element(XHTML.div,"Plugin execution failed, stack trace follows:");
+        div.setAttribute(XHTML.ATTR_class,"debug");
+        
+
         StringWriter out = new StringWriter();
-        t.printStackTrace( new PrintWriter( out ) );
-        d.addElement( new pre( out.toString() ) );
-        d.addElement( new b( "Parameters to the plugin" ) );
+        t.printStackTrace(new PrintWriter(out));
+        div.addContent(XhtmlUtil.element(XHTML.pre,out.toString()));        
+        div.addContent(XhtmlUtil.element(XHTML.b,"Parameters to the plugin"));
 
-        ul list = new ul();
-        for( Iterator<Map.Entry< String, String > > i = params.entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry< String, String > e = i.next();
+        Element list = XhtmlUtil.element(XHTML.ul);
+        
+        for( Iterator<Map.Entry<String,String>> i = params.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<String,String> e = i.next();
             String key = e.getKey();
-
-            list.addElement( new li( key + "'='" + e.getValue() ) );
+            list.addContent(XhtmlUtil.element(XHTML.li,key + "'='" + e.getValue()));
         }
 
-        d.addElement( list );
-
-        return d.toString();
+        div.addContent(list);
+        
+        return XhtmlUtil.serialize(div);
     }
 
     /**
@@ -678,6 +678,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *  @throws InstantiationException If the class cannot be instantiated-
          *  @throws IllegalAccessException If the class cannot be accessed.
          */
+        
         public WikiPlugin newPluginInstance(List<String> searchPath, List<String> externalJars) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
             if( m_clazz == null ) {
                 m_clazz = ClassUtil.findClass(searchPath, externalJars ,m_className);

@@ -16,17 +16,8 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+package org.apache.wiki.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,14 +29,26 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Utility class to parse XML files.
- *
+ *  Utility class to parse XML files.
+ *  <p>
+ *  This uses JDOM2 as its backing implementation.
+ *  </p>
+ *  
  * @since 2.10
  */
-public final class XmlUtil {
-	
+public final class XmlUtil
+{	
 	private static final Logger log = Logger.getLogger( XmlUtil.class );
 	
 	private XmlUtil() {}
@@ -58,31 +61,31 @@ public final class XmlUtil {
 	 * @param requestedNodes requestd nodes on the xml file
 	 * @return the requested nodes of the XML file.
 	 */
-	public static List< Element > parse( String xml, String requestedNodes ) {
+	public static List<Element> parse( String xml, String requestedNodes )
+	{
 		if( StringUtils.isNotEmpty( xml ) && StringUtils.isNotEmpty( requestedNodes ) ) {
-			Set< Element > readed = new HashSet< Element >();
+			Set<Element> readed = new HashSet<Element>();
 			SAXBuilder builder = new SAXBuilder();
 			try {
 				Enumeration< URL > resources = XmlUtil.class.getClassLoader().getResources( xml );
 				while( resources.hasMoreElements() ) {
 	                URL resource = resources.nextElement();
-	                
 	                log.debug( "reading " + resource.toString() );
 	                Document doc = builder.build( resource );
 	                XPathFactory xpfac = XPathFactory.instance();
-	                XPathExpression< Element > xp = xpfac.compile( requestedNodes, Filters.element() );
+	                XPathExpression<Element> xp = xpfac.compile( requestedNodes, Filters.element() );
 	                readed.addAll( xp.evaluate( doc ) ); // filter out repeated items
 	            }
-				return new ArrayList< Element >( readed );
+				return new ArrayList<Element>( readed );
 			} catch ( IOException ioe ) {
 				log.error( "Couldn't load all " + xml + " resources", ioe );
 			} catch ( JDOMException jdome ) {
 				log.error( "error parsing " + xml + " resources", jdome );
 			}
 		}
-		
-		return Collections.< Element >emptyList();
+		return Collections.<Element>emptyList();
 	}
+	
 	
 	/**
 	 * Parses the given stream and returns the requested nodes. If there's an error accessing or parsing the stream, an
@@ -92,23 +95,22 @@ public final class XmlUtil {
 	 * @param requestedNodes requestd nodes on the xml stream.
 	 * @return the requested nodes of the XML stream.
 	 */
-	public static List< Element > parse( InputStream xmlStream, String requestedNodes ) {
+	public static List<Element> parse( InputStream xmlStream, String requestedNodes )
+	{
 		if( xmlStream != null && StringUtils.isNotEmpty( requestedNodes ) ) {
 			SAXBuilder builder = new SAXBuilder();
 			try {
-                Document doc = builder.build( xmlStream );
+                Document doc = builder.build(xmlStream);
                 XPathFactory xpfac = XPathFactory.instance();
-                XPathExpression< Element > xp = xpfac.compile( requestedNodes, Filters.element() );
-                
+                XPathExpression< Element > xp = xpfac.compile(requestedNodes,Filters.element());
 				return xp.evaluate( doc );
 			} catch ( IOException ioe ) {
 				log.error( "Couldn't load all " + xmlStream + " resources", ioe );
 			} catch ( JDOMException jdome ) {
 				log.error( "error parsing " + xmlStream + " resources", jdome );
 			}
-		}
-		
-		return Collections.< Element >emptyList();
+		}		
+		return Collections.<Element>emptyList();
 	}
 
 }

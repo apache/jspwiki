@@ -23,10 +23,10 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
-import org.apache.wiki.util.TextUtil;
 
 /**
  * Represents an abstract feed.
@@ -191,15 +191,7 @@ public abstract class Feed {
      * @param s The String to format. Null is safe.
      * @return A formatted string.
      */
-    // FIXME: Should probably be replaced by a library method.
-    public static String format(String s) {
-        if (s != null) {
-            s = TextUtil.replaceString(s, "&", "&amp;");
-            s = TextUtil.replaceString(s, "<", "&lt;");
-            s = TextUtil.replaceString(s, ">", "&gt;");
-
-            return s.trim();
-        }
-        return null;
+    public static String format( String s ) {
+        return StringEscapeUtils.escapeXml( s );
     }
 }

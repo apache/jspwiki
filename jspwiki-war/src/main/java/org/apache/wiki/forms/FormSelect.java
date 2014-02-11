@@ -16,23 +16,23 @@
     specific language governing permissions and limitations
     under the License.  
  */
+
 package org.apache.wiki.forms;
+
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.XHTML;
+import org.apache.wiki.util.XhtmlUtil;
+import org.jdom2.Element;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.xhtml.option;
-import org.apache.ecs.xhtml.select;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.preferences.Preferences;
-
 /**
  *  Creates a Form select field.
- *  
  */
 public class FormSelect
     extends FormElement
@@ -49,35 +49,38 @@ public class FormSelect
         ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         Map< String, String > previousValues = null;
         
-        if( info != null )
+        if ( info != null )
         {
-            if( info.hide() )
+            if ( info.hide() )
             {
                 return "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }
 
-        if( previousValues == null )
+        if ( previousValues == null )
         {
             previousValues = new HashMap< String, String >();
         }
 
-        ConcreteElement field = buildSelect( params, previousValues, rb );
+        Element field = buildSelect( params, previousValues, rb );
 
         // We should look for extra params, e.g. width, ..., here.
-        return field.toString( ctx.getEngine().getContentEncoding() );
+        return XhtmlUtil.serialize(field); // ctx.getEngine().getContentEncoding()
     }
 
 
     /**
      * Builds a Select element.
      */
-    private select buildSelect( Map< String, String > pluginParams, Map< String, String > ctxValues, ResourceBundle rb )
-        throws PluginException
+    private Element buildSelect(
+            Map<String,String> pluginParams,
+            Map<String,String> ctxValues, 
+            ResourceBundle rb )
+            throws PluginException
     {
         String inputName = pluginParams.get( PARAM_INPUTNAME );
-        if( inputName == null ) {
+        if ( inputName == null ) {
             throw new PluginException( rb.getString( "formselect.namemissing" ) );
         }
     
@@ -88,30 +91,30 @@ public class FormSelect
         // some input application the default value.
         //
         String optionSeparator = pluginParams.get( "separator" );
-        if( optionSeparator == null ) {
+        if ( optionSeparator == null ) {
         	optionSeparator = ctxValues.get( "separator." + inputName);
         }
-        if( optionSeparator == null ) {
+        if ( optionSeparator == null ) {
         	optionSeparator = ctxValues.get( "select.separator" );
         }
-        if( optionSeparator == null ) {
+        if ( optionSeparator == null ) {
         	optionSeparator = ";";
         }
         
         String optionSelector = pluginParams.get( "selector" );
-        if( optionSelector == null ) {
+        if ( optionSelector == null ) {
         	optionSelector = ctxValues.get( "selector." + inputName );
         }
-        if( optionSelector == null ) {
+        if ( optionSelector == null ) {
         	optionSelector = ctxValues.get( "select.selector" );
         }
-        if( optionSelector == null ) {
+        if ( optionSelector == null ) {
         	optionSelector = "*";
         }
-        if( optionSelector.equals( optionSeparator ) ) {
+        if ( optionSelector.equals( optionSeparator ) ) {
         	optionSelector = null;
         }
-        if( inputValue == null ) {
+        if ( inputValue == null ) {
         	inputValue = "";
         }
 
@@ -119,8 +122,8 @@ public class FormSelect
         // that the plugin or something else has given us a better
         // list to display.
         boolean contextValueOverride = false;
-        if( previousValue != null ) {
-            if( previousValue.indexOf( optionSeparator ) != -1 ) {
+        if ( previousValue != null ) {
+            if ( previousValue.indexOf( optionSeparator ) != -1 ) {
                 inputValue = previousValue;
                 previousValue = null;
             } else {
@@ -134,7 +137,7 @@ public class FormSelect
         String[] options = inputValue.split( optionSeparator );
         int previouslySelected = -1;
         
-        option[] optionElements = new option[options.length];
+        Element[] optionElements = new Element[options.length];
         
         //
         //  Figure out which one of the options to select: prefer the one
@@ -145,26 +148,34 @@ public class FormSelect
             int indicated = -1;
             options[i] = options[i].trim();
             
-            if( optionSelector != null && options[i].startsWith( optionSelector ) ) {
+            if ( optionSelector != null && options[i].startsWith( optionSelector ) ) {
                 options[i] = options[i].substring( optionSelector.length() );
                 indicated = i;
             }
-            if( previouslySelected == -1 ) {
-                if( !contextValueOverride && indicated > 0 ) {
+            if ( previouslySelected == -1 ) {
+                if ( !contextValueOverride && indicated > 0 ) {
                     previouslySelected = indicated;
-                } else if( previousValue != null && options[i].equals( previousValue ) ) {
+                } else if ( previousValue != null && options[i].equals( previousValue ) ) {
                     previouslySelected = i;
                 }
             }
             
-            optionElements[i] = new option( options[i] );
-            optionElements[i].addElement( options[i] );
+            // huh?
+//          optionElements[i] = new option( options[i] );
+//          optionElements[i].addElement( options[i] );
+            
+            optionElements[i] = XhtmlUtil.element(XHTML.option,options[i]);
         }
 
-        if( previouslySelected > -1 ) {
-        	optionElements[previouslySelected].setSelected(true);
+        if ( previouslySelected > -1 ) {
+        	optionElements[previouslySelected].setAttribute(XHTML.ATTR_selected,"true");
         }
 
-        return new select( HANDLERPARAM_PREFIX + inputName, optionElements );
+        Element select = XhtmlUtil.element(XHTML.select);
+        select.setAttribute(XHTML.ATTR_name,HANDLERPARAM_PREFIX + inputName);
+        for ( Element option : optionElements ) {
+            select.addContent(option);
+        }
+        return select;
     }
 }

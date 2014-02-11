@@ -20,9 +20,13 @@ package org.apache.wiki.plugin;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -34,55 +38,50 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.util.XHTML;
+import org.apache.wiki.util.XhtmlUtil;
+import org.jdom2.Element;
 
 /**
  *  Returns the Recent Changes in the wiki being a date-sorted list of page names.
  *
- *  <p>Parameters : </p>
+ *  <p>Parameters: </p>
  *  <ul>
  *  <li><b>since</b> - show changes from the last n days, for example since=5 shows only the pages that were changed in the last five days</li>
  *  <li><b>format</b> - (full|compact) : if "full", then display a long version with all possible info. If "compact", then be as compact as possible.</li>
  *  <li><b>timeFormat</b> - the time format to use, the default is "HH:mm:ss"</li>
  *  <li><b>dateFormat</b> - the date format to use, the default is "dd.MM.yyyy"</li>
  *  </ul>
- *  
  */
-public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiPlugin
-{
+public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiPlugin {
+	
+    private static final Logger log = Logger.getLogger(RecentChangesPlugin.class);
+    
     /** Parameter name for the separator format.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_FORMAT = "format";
+    public static final String PARAM_FORMAT      = "format";
     /** Parameter name for the separator timeFormat.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TIME_FORMAT = "timeFormat";
     /** Parameter name for the separator dateFormat.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DATE_FORMAT = "dateFormat";
 
     /** How many days we show by default. */
-    private static final int    DEFAULT_DAYS = 100*365;
+    private static final int   DEFAULT_DAYS = 100*365;
     public static final String DEFAULT_TIME_FORMAT ="HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT ="dd.MM.yyyy";
 
-    private static Logger log = Logger.getLogger( RecentChangesPlugin.class );
-
-    private boolean isSameDay( Date a, Date b )
-    {
-        Calendar aa = Calendar.getInstance(); aa.setTime(a);
-        Calendar bb = Calendar.getInstance(); bb.setTime(b);
-
-        return aa.get( Calendar.YEAR ) == bb.get( Calendar.YEAR ) &&
-                aa.get( Calendar.DAY_OF_YEAR ) == bb.get( Calendar.DAY_OF_YEAR );
-    }
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
         int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
-        int      spacing  = 4;
+        String   spacing  = "4";
         boolean  showAuthor = true;
         boolean  showChangenote = true;
-        int      tablewidth = 4;
+        String   tablewidth = "4";
         
         WikiEngine engine = context.getEngine();
 
@@ -91,10 +90,10 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         //
         if( "compact".equals( params.get(PARAM_FORMAT) ) )
         {
-            spacing  = 0;
+            spacing  = "0";
             showAuthor = false;
             showChangenote = false;
-            tablewidth = 2;
+            tablewidth = "2";
         }
 
         Calendar sincedate = new GregorianCalendar();
@@ -103,21 +102,22 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         log.debug("Calculating recent changes from "+sincedate.getTime());
 
         // FIXME: Should really have a since date on the getRecentChanges method.
-        Collection   changes = engine.getRecentChanges();
+        Collection<WikiPage> changes = engine.getRecentChanges();
         super.initialize( context, params );
-        changes = super.filterCollection( changes );
+        changes = super.filterCollection(changes);
         
-        if( changes != null )
+        if ( changes != null )
         {
             Date olddate   = new Date(0);
 
             DateFormat fmt = getDateFormat( context, params );
             DateFormat tfmt = getTimeFormat( context, params );
 
-            table rt = new table();
-            rt.setCellPadding(spacing).setClass("recentchanges");
-
-            for( Iterator i = changes.iterator(); i.hasNext(); )
+            Element rt = XhtmlUtil.element(XHTML.table);
+            rt.setAttribute(XHTML.ATTR_class,"recentchanges");
+            rt.setAttribute(XHTML.ATTR_cellpadding,spacing);
+        
+            for( Iterator<WikiPage> i = changes.iterator(); i.hasNext(); )
             {
                 WikiPage pageref = (WikiPage) i.next();
 
@@ -130,51 +130,57 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                 
                 if( !isSameDay( lastmod, olddate ) )
                 {
-                    tr row = new tr();
-                    td col = new td();
+                    Element row = XhtmlUtil.element(XHTML.tr);
+                    Element col = XhtmlUtil.element(XHTML.td);
+                    col.setAttribute(XHTML.ATTR_colspan,tablewidth);
+                    col.setAttribute(XHTML.ATTR_class,"date");                    
+                    col.addContent(XhtmlUtil.element(XHTML.b,fmt.format(lastmod)));
                     
-                    col.setColSpan(tablewidth).setClass("date"); 
-                    col.addElement( new b().addElement(fmt.format(lastmod)) );
-
-                    rt.addElement(row);
-                    row.addElement(col);                    
+                    rt.addContent(row);
+                    row.addContent(col);                    
                     olddate = lastmod;
                 }
 
-                String link = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, 
+                String href = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, 
                                               pageref.getName() ) ;
                 
-                a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
+                Element link = XhtmlUtil.link(href,engine.beautifyTitle(pageref.getName()));
                 
-                tr row = new tr();
+                Element row = XhtmlUtil.element(XHTML.tr);
+                Element col = XhtmlUtil.element(XHTML.td);
+                col.setAttribute(XHTML.ATTR_width,"30%");
+                col.addContent(link);
                 
-                td col = new td().setWidth("30%").addElement(linkel);
-
                 //
                 //  Add the direct link to the attachment info.
                 //
                 if( pageref instanceof Attachment )
                 {
-                    linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
-                    linkel.setClass("infolink");
-                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
-
-                    col.addElement( linkel );
+                    link = XhtmlUtil.link(context.getURL(WikiContext.INFO,pageref.getName()),null);
+                    link.setAttribute(XHTML.ATTR_class,"infolink");
+                    
+                    Element img = XhtmlUtil.img(context.getURL(WikiContext.NONE,"images/attachment_small.png"),null);
+                    link.addContent(img);
+                    
+                    col.addContent(link);
                 }
 
                 
-                row.addElement(col);
-                rt.addElement(row);
+                row.addContent(col);
+                rt.addContent(row);
                 
                 if( pageref instanceof Attachment )
                 {
-                    row.addElement( new td(tfmt.format(lastmod)).setClass("lastchange") );
+                    Element td = XhtmlUtil.element(XHTML.td,tfmt.format(lastmod));
+                    td.setAttribute(XHTML.ATTR_class,"lastchange");
+                    row.addContent(td);
                 }
                 else
                 {
-                    td infocol = (td) new td().setClass("lastchange");
-                    infocol.addElement( new a(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)) );
-                    row.addElement(infocol);
+                    Element infocol = XhtmlUtil.element(XHTML.td);
+                    infocol.setAttribute(XHTML.ATTR_class,"lastchange");
+                    infocol.addContent(XhtmlUtil.link(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)));
+                    row.addContent(infocol);
                 }
 
                 //
@@ -185,35 +191,36 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                 {
                     String author = pageref.getAuthor();
 
-                    td authorinfo = new td();
-                    authorinfo.setClass("author");
+                    Element authorinfo = XhtmlUtil.element(XHTML.td);
+                    authorinfo.setAttribute(XHTML.ATTR_class,"author");
                     
                     if( author != null )
                     {
                         if( engine.pageExists(author) )
                         {
-                            authorinfo.addElement( new a(context.getURL(WikiContext.VIEW, author),author) );
+                            authorinfo.addContent(XhtmlUtil.link(context.getURL(WikiContext.VIEW, author),author));
                         }
                         else
                         {
-                            authorinfo.addElement(author);
+                            authorinfo.addContent(author);
                         }
                     }
                     else
                     {
-                        authorinfo.addElement( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
+                        authorinfo.addContent( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
                                                           .getString( "common.unknownauthor" ) );
                     }
 
-                    row.addElement( authorinfo );
+                    row.addContent(authorinfo);
                 }
 
                 // Change note
                 if( showChangenote )
                 {
                     String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
-                    
-                    row.addElement( new td(changenote != null ? changenote : "").setClass("changenote") );
+                    Element td_changenote = XhtmlUtil.element(XHTML.td,changenote);
+                    td_changenote.setAttribute(XHTML.ATTR_class,"changenote");
+                    row.addContent(td_changenote);
                 }
                 
                 //  Revert note
@@ -224,14 +231,20 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                 }
  */
             }
-
-            rt.setPrettyPrint(true);
-            return rt.toString();
-        }
-        
+            return XhtmlUtil.serialize(rt,true);
+        }        
         return "";
     }
 
+    
+    private boolean isSameDay( Date a, Date b )
+    {
+        Calendar aa = Calendar.getInstance(); aa.setTime(a);
+        Calendar bb = Calendar.getInstance(); bb.setTime(b);
+
+        return aa.get( Calendar.YEAR ) == bb.get( Calendar.YEAR ) 
+                && aa.get( Calendar.DAY_OF_YEAR ) == bb.get( Calendar.DAY_OF_YEAR );
+    }
     
 
     // TODO: Ideally the default behavior should be to return the default format for the default
@@ -254,24 +267,20 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     {
         String formatString = get(params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT);
 
-        if( "".equals(formatString.trim() ) )
+        if( formatString.trim().equals("") )
         {
             return Preferences.getDateFormat( context, TimeFormat.DATE );
         }
 
         return new SimpleDateFormat( formatString );
-
     }
 
 
-
-    private String get(Map<String, String> params, String defaultValue, String paramName)
+    private String get( Map<String, String> params, String defaultValue, String paramName )
     {
         String value = params.get(paramName);
-        return null == value ? defaultValue : value;
+        return value == null ? defaultValue : value;
     }
 
     
 }
-
-

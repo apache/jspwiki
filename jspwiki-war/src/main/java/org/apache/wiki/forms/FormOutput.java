@@ -16,11 +16,8 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.forms;
 
-import java.text.MessageFormat;
-import java.util.Map;
-import java.util.ResourceBundle;
+package org.apache.wiki.forms;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.engine.PluginManager;
@@ -30,10 +27,14 @@ import org.apache.wiki.plugin.DefaultPluginManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.FormUtil;
 
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 /**
  */
 public class FormOutput
-    extends FormElement
+        extends FormElement
 {
     /**
      * Executes the FormHandler specified in a Form 'output' plugin,
@@ -53,7 +54,6 @@ public class FormOutput
      * @param ctx {@inheritDoc}
      * @param params {@inheritDoc}
      * @return {@inheritDoc}
-     * @throws {@inheritDoc}
      */
     public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException

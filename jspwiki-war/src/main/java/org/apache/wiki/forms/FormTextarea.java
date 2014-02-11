@@ -16,25 +16,25 @@
     specific language governing permissions and limitations
     under the License.  
  */
+
 package org.apache.wiki.forms;
+
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.XHTML;
+import org.apache.wiki.util.XhtmlUtil;
+import org.jdom2.Element;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.xhtml.textarea;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.preferences.Preferences;
-
-
 /**
  *  Creates a Form text area element.   You may specify the size of the textarea
  *  by using the {@link #PARAM_COLS} and {@link #PARAM_ROWS} to signify the width
- *  and height of the area.
- *  
+ *  and height of the area. 
  */
 public class FormTextarea extends FormElement
 {
@@ -53,53 +53,61 @@ public class FormTextarea extends FormElement
         Map< String, String > previousValues = null;
         ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
-        if( info != null ) {
-            if( info.hide() ) {
+        if ( info != null ) {
+            if ( info.hide() ) {
                 return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }
 
-        if( previousValues == null ) {
+        if ( previousValues == null ) {
             previousValues = new HashMap< String, String >();
         }
 
-        ConcreteElement field = null;
-
-        field = buildTextArea( params, previousValues, rb );
+        Element field = buildTextArea( params, previousValues, rb );
 
         // We should look for extra params, e.g. width, ..., here.
-        return field.toString( ctx.getEngine().getContentEncoding() );
+        return XhtmlUtil.serialize(field); // ctx.getEngine().getContentEncoding()
     }
 
-    private textarea buildTextArea( Map< String, String > params, Map< String, String > previousValues, ResourceBundle rb )
-        throws PluginException
+    private Element buildTextArea(
+            Map<String,String> params,
+            Map<String,String> previousValues,
+            ResourceBundle rb )
+            throws PluginException
     {
-        String inputName = params.get( PARAM_INPUTNAME );
-        String rows = params.get( PARAM_ROWS );
-        String cols = params.get( PARAM_COLS );
+        String inputName = params.get(PARAM_INPUTNAME);
+        String rows = params.get(PARAM_ROWS);
+        String cols = params.get(PARAM_COLS);
 
-        if( inputName == null ) {
+        if ( inputName == null ) {
         	throw new PluginException( rb.getString( "formtextarea.namemissing" ) );
         }
 
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped
         // when the handler plugin is executed.
-        textarea field = new textarea( HANDLERPARAM_PREFIX + inputName, rows, cols);
-
-        if( previousValues != null )
+        Element field = XhtmlUtil.element(XHTML.textarea);
+        field.setAttribute(XHTML.ATTR_name,HANDLERPARAM_PREFIX + inputName);
+        if ( rows != null ) {
+            field.setAttribute(XHTML.ATTR_rows,rows);
+        }
+        if ( cols != null ) {            
+            field.setAttribute(XHTML.ATTR_cols,cols);
+        }
+        
+        if ( previousValues != null )
         {
             String oldValue = previousValues.get( inputName );
-            if( oldValue != null )
+            if ( oldValue != null )
             {
-                field.addElement( oldValue );
+                field.addContent(oldValue);
             }
             else
             {
-                oldValue = params.get( PARAM_VALUE );
-                if( oldValue != null ) {
-                	field.addElement( oldValue );
+                oldValue = params.get(PARAM_VALUE);
+                if ( oldValue != null ) {
+                	field.addContent(oldValue);
                 }
             }
         }

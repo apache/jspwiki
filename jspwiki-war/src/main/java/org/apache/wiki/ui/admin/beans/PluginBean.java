@@ -19,89 +19,86 @@
 package org.apache.wiki.ui.admin.beans;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.management.NotCompliantMBeanException;
 
-import org.apache.ecs.xhtml.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
+import org.apache.wiki.util.XHTML;
+import org.apache.wiki.util.XhtmlUtil;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
 
-public class PluginBean extends SimpleAdminBean
-{
+public class PluginBean extends SimpleAdminBean {
+	
     private WikiEngine m_engine;
+    
+    private static final String VER_WARNING = "<span class='warning'>This module is not compatible with this version of JSPWiki.</span>";
+    
+    /** to print <td></td> instead of <td /> */
+    private static final Format EXPAND_EMPTY_NODES = Format.getCompactFormat().setExpandEmptyElements( true );
 
-    public PluginBean(WikiEngine engine) throws NotCompliantMBeanException
-    {
+    public PluginBean( WikiEngine engine ) throws NotCompliantMBeanException {
         m_engine = engine;
     }
 
-    public String[] getAttributeNames()
-    {
+    public String[] getAttributeNames() {
         return new String[0];
     }
 
-    public String[] getMethodNames()
-    {
+    public String[] getMethodNames() {
         return new String[0];
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return "Plugins";
     }
 
-    public int getType()
-    {
+    public int getType() {
         return CORE;
     }
 
     @SuppressWarnings("unchecked")
-    public String doGet(WikiContext context)
-    {
+    public String doGet(WikiContext context) {
         PluginManager pm = m_engine.getPluginManager();
-        Collection<WikiPluginInfo> plugins = pm.modules();
-
-        div root = new div();
-
-        root.addElement( new h4("Plugins") );
-
-        table tb = new table().setBorder(1);
-        root.addElement(tb);
-
-        tr head = new tr();
-        head.addElement( new th("Name") );
-        head.addElement( new th("Alias") );
-        head.addElement( new th("Author") );
-        head.addElement( new th("Notes") );
-
-        tb.addElement(head);
-
-        for( Iterator<WikiPluginInfo> i = plugins.iterator(); i.hasNext(); )
-        {
-            tr  row = new tr();
-            tb.addElement( row );
-
-            WikiPluginInfo info = i.next();
-
-            row.addElement( new td(info.getName()) );
-            row.addElement( new td(info.getAlias()) );
-            row.addElement( new td(info.getAuthor()) );
-
-            String verWarning = "";
-            if( !(Release.isNewerOrEqual(info.getMinVersion()) && Release.isOlderOrEqual(info.getMaxVersion())) )
-            {
-                verWarning = "<span class='warning'>This module is not compatible with this version of JSPWiki.</span>";
-            }
-
-            row.addElement( new td(verWarning) );
+        Collection< WikiPluginInfo > plugins = pm.modules();
+        
+        Element root = XhtmlUtil.element( XHTML.div );
+        Element tb =  XhtmlUtil.element( XHTML.table ).setAttribute( "border", "1" );
+        
+        root.addContent( XhtmlUtil.element( XHTML.h4 ).addContent( "Plugins") )
+            .addContent( tb );
+        
+        Element trHead = XhtmlUtil.element( XHTML.tr );
+        trHead.addContent( XhtmlUtil.element( XHTML.th ).addContent( "Name" ) )
+              .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Alias" ) )
+              .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Author" ) )
+              .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Notes" ) );
+        
+        tb.addContent( trHead );
+        
+        for( WikiPluginInfo info : plugins ) {
+            Element tr = XhtmlUtil.element( XHTML.tr );
+            tr.addContent( XhtmlUtil.element( XHTML.td ).addContent( info.getName() ) ) 
+              .addContent( XhtmlUtil.element( XHTML.td ).addContent( info.getAlias() ) ) 
+              .addContent( XhtmlUtil.element( XHTML.td ).addContent( info.getAuthor() ) )
+              .addContent( XhtmlUtil.element( XHTML.td ).addContent( validPluginVersion( info ) ) );
+                
+            tb.addContent( tr );
         }
 
-        return root.toString();
+        return XhtmlUtil.serialize( root, EXPAND_EMPTY_NODES );
+    }
+
+    String validPluginVersion( WikiPluginInfo info ) {
+        return Release.isNewerOrEqual( info.getMinVersion() ) && Release.isOlderOrEqual( info.getMaxVersion() ) 
+               ? StringUtils.EMPTY 
+               : VER_WARNING;
     }
 
 }

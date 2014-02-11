@@ -123,11 +123,6 @@
     </dependency>
 
     <dependency>
-      <groupId>ecs</groupId>
-      <artifactId>ecs</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>

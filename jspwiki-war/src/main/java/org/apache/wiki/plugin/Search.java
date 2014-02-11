@@ -18,16 +18,6 @@
 */
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.ecs.xhtml.b;
-import org.apache.ecs.xhtml.table;
-import org.apache.ecs.xhtml.td;
-import org.apache.ecs.xhtml.th;
-import org.apache.ecs.xhtml.tr;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -35,6 +25,14 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.util.XHTML;
+import org.apache.wiki.util.XhtmlUtil;
+import org.jdom2.Element;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  *  The "Search" plugin allows you to access the JSPWiki search routines and show the displays in an array on your page. 
@@ -71,21 +69,22 @@ public class Search implements WikiPlugin
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map<String, String> params ) throws PluginException
     {
         int maxItems = Integer.MAX_VALUE;
-        Collection results = null;
+        Collection<SearchResult> results = null;
         
         String queryString = params.get( PARAM_QUERY );
         String set         = params.get( PARAM_SET );
         String max         = params.get( PARAM_MAX );
         
-        if( set == null ) set = DEFAULT_SETNAME;
-        if( max != null ) maxItems = Integer.parseInt( max );
+        if ( set == null ) set = DEFAULT_SETNAME;
+        if ( max != null ) maxItems = Integer.parseInt( max );
         
-        if( queryString == null )
+        if ( queryString == null )
         {
-            results = (Collection)context.getVariable( set );
+            results = (Collection<SearchResult>)context.getVariable( set );
         }
         else
         {
@@ -102,63 +101,78 @@ public class Search implements WikiPlugin
         
         String res = "";
         
-        if( results != null )
+        if ( results != null )
         {
-            res = renderResults( results, context, maxItems );
+            res = renderResults(results,context,maxItems);
         }
         
         return res;
     }
     
-    private Collection doBasicQuery( WikiContext context, String query )
+    private Collection<SearchResult> doBasicQuery( WikiContext context, String query )
         throws ProviderException, IOException
     {
         log.debug("Searching for string "+query);
 
-        Collection list = context.getEngine().findPages( query );
+        @SuppressWarnings("unchecked")
+        Collection<SearchResult> list = context.getEngine().findPages( query );
 
         return list;
     }
     
-    private String renderResults( Collection results, WikiContext context, int maxItems )
+    private String renderResults( Collection<SearchResult> results, WikiContext context, int maxItems )
     {
         WikiEngine engine = context.getEngine();
-        table t = new table();
-        t.setBorder(0);
-        t.setCellPadding(4);
-
-        tr row = new tr();
-        t.addElement( row );
         
-        row.addElement( new th().setWidth("30%").setAlign("left").addElement("Page") );
-        row.addElement( new th().setAlign("left").addElement("Score"));
-
+        Element table = XhtmlUtil.element(XHTML.table);
+        table.setAttribute(XHTML.ATTR_border,"0");
+        table.setAttribute(XHTML.ATTR_cellpadding,"4");
+        
+        Element row = XhtmlUtil.element(XHTML.tr);
+        table.addContent(row);
+        
+        Element th1 = XhtmlUtil.element(XHTML.th,"Page");
+        th1.setAttribute(XHTML.ATTR_width,"30%");
+        th1.setAttribute(XHTML.ATTR_align,"left");
+        row.addContent(th1);
+        
+        Element th2 = XhtmlUtil.element(XHTML.th,"Score");
+        th2.setAttribute(XHTML.ATTR_align,"left");
+        row.addContent(th2);
+        
         int idx = 0;
-        for( Iterator i = results.iterator(); i.hasNext() && idx++ <= maxItems; )
+        for ( Iterator<SearchResult> i = results.iterator(); i.hasNext() && idx++ <= maxItems; )
         {
-            SearchResult sr = (SearchResult) i.next();
-            row = new tr();
-            
-            td name = new td().setWidth("30%");
-            name.addElement( "<a href=\""+
-                             context.getURL( WikiContext.VIEW, sr.getPage().getName() )+
-                             "\">"+engine.beautifyTitle(sr.getPage().getName())+"</a>");
-            row.addElement( name );
-            
-            row.addElement( new td().addElement(""+sr.getScore()));
-            
-            t.addElement( row );
-        }
-        
-        if( results.isEmpty() )
-        {
-            row = new tr();
-            
-            row.addElement( new td().setColSpan(2).addElement( new b().addElement("No results")));
+            SearchResult sr = i.next();
+            row = XhtmlUtil.element(XHTML.tr);
 
-            t.addElement(row);
+            Element name = XhtmlUtil.element(XHTML.td);
+            name.setAttribute(XHTML.ATTR_width,"30%");
+            
+            name.addContent( XhtmlUtil.link(context.getURL( WikiContext.VIEW, sr.getPage().getName()),
+                    engine.beautifyTitle(sr.getPage().getName())) );
+ 
+            row.addContent(name);
+            
+            row.addContent(XhtmlUtil.element(XHTML.td,""+sr.getScore()));
+            
+            table.addContent(row);
         }
         
-        return t.toString();
+        if ( results.isEmpty() )
+        {
+            row = XhtmlUtil.element(XHTML.tr);
+            
+            Element td = XhtmlUtil.element(XHTML.td);
+            td.setAttribute(XHTML.ATTR_colspan,"2");
+            Element b = XhtmlUtil.element(XHTML.b,"No results");
+            td.addContent(b);
+            
+            row.addContent(td);
+
+            table.addContent(row);
+        }
+        
+        return XhtmlUtil.serialize(table);
     }
 }
