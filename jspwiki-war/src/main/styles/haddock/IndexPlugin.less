@@ -1,0 +1,37 @@
+/*
+Style: IndexPlugin
+
+DOM structure:
+    (start code)
+    div.index
+        div.header
+            a[href="#A"] A 
+            - 
+            a[href="#B"] B 
+            -
+        span.section
+            a[name="A"] A
+        div.body
+            a (, a)
+            
+    (end)
+    
+*/
+.index {
+
+    .header {
+        .btn; .btn-primary;  //also overwrite many .header styles
+        height:auto;    //overwrite .header style
+        font-size:110%;
+        margin-bottom:1em;
+        a { color:inherit; }        
+    }
+ 
+    > .section { display:block; }
+    
+    .section a {
+        .btn; .btn-default;        
+        margin:1em 0 .25em 0; 
+        float:none;
+    }
+}

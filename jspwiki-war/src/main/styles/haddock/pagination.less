@@ -1,0 +1,38 @@
+/*
+Style: JSPWiki Pagination
+	Used by InfoContent.jsp, AttachementTab.jsp
+
+DOM Structure
+(start code)
+    div.pagination  "Pagination"
+        span.cursor 1
+        a[onclick...] 2
+        ...
+        &nbsp;(Total items: nn)
+(end)
+BOOTSTRAP structure (not used)
+(start code)
+    ul.pagination
+        li.disabled a &laquo;
+        li.active 
+            a 1 
+            span.sr-only (current)
+        ...
+(end)
+*/
+.pagination {
+    margin: @line-height-computed 0;
+    padding: @padding-base-vertical @padding-base-horizontal;
+    background-color: @pagination-bg;
+    border: 1px solid @pagination-border;
+    border-radius: @border-radius-base;  
+
+    a,  .cursor {
+        padding:0.5em;
+        border:1px solid transparent;
+    }
+    .cursor, a:hover {
+        background-color:@pagination-border;
+        border: 1px solid @pagination-border;
+    }
+}

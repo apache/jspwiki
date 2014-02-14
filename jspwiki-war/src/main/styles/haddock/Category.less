@@ -1,0 +1,104 @@
+/*
+Style: Category
+
+Wiki markup:
+    %%category [JSPWikiStyles] /%
+
+DOM structure before:
+    (start code)
+    span.category
+        a.wikipage Category-Page
+    (end)
+
+DOM structure after:
+    (start code)
+    div|span.category
+        span
+            a.wikipage.categorylink[href=".."] Category-Page
+            div.popup (.hidden|.loading|.active)
+                div.title
+                    a.wikipage[href=".."]Category-Page
+                ul
+                    li
+                        a.hover
+                br
+                a.morelink ..and x more
+                br
+    (end)
+*/
+.category-link {
+    border-bottom:2px solid @wiki-category-link-color;
+    &:hover { text-decoration:none; }
+} 
+
+/*
+Style: cage
+   Used to capture absolute positioned popups, popovers, tootips, tips ... and 
+   automatically positions them relative to the visible part of the .cage
+DOM Structure:
+(start code)
+    span.cage
+      button xx
+       div.popup ...
+(end)
+*/
+.cage { position:relative; }
+
+
+/*
+Style: Popup
+    Reusable popup dialog box, with a list of hoverable links
+    IEx fallback using the half-transparent background image tip.png => fixme
+*/
+.popup {
+    position:absolute;
+    z-index:10;
+    background:@black;
+    background:@tooltip-bg;
+    border-radius:@border-radius-base;
+    .box-shadow( 2px 2px 4px @tooltip-bg );
+    _width:240px;
+
+    color:@white;
+    padding:.5em;    
+}
+
+
+.category .popup { 
+
+    margin-top:3px;  //slightly move popup down with 3px under the category-link
+    padding:0;
+
+    br { display:none; }
+
+    a {
+        display: block;
+        padding: 0.1em .75em;
+        color: @white;
+        text-decoration: none;
+        text-shadow: 1px 1px 0 @tooltip-bg;
+
+        &:hover {
+            background:@black;
+            background:fade(@tooltip-bg,25%);
+            border-radius:@border-radius-base;
+            _background-color:@black;
+        }
+    }
+
+    .categoryTitle { .hide; }
+    
+    .categoryText > ul {
+        margin:0;
+        padding:0;
+        list-style:none;
+        _background:url("@{imagePath}/tip.png") bottom right;
+    }
+    li {
+        margin:0;padding:0;
+    }
+
+}
+//.category .active { .... }
+
+

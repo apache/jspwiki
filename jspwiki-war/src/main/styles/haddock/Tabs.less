@@ -1,0 +1,29 @@
+/*
+Style: TabbedSections, Tabs, Pills
+
+DOM structure:  ( based on Bootstrap conventions, without [data-toggle=tab] )
+(start code)
+    ul.nav.nav-tabs(.nav-pills)
+        li
+            a FirstTab
+        li
+            a SecondTab
+        li
+            a ThirdTab
+
+    div.tab-content
+        div.tab-pane.active[id="FirstTab"] ... 
+        div.tab-pane[id="SecondTab"] ...
+        div.tab-pane[id="ThirdTab"] ...
+(end)
+*/
+
+//inherit from bootstrap/navs.less
+.tab-content { 
+
+    margin-bottom:@line-height-computed; //tabs could use some more bottom margin
+    
+    .tab-pane { .panel-body; } //inherit padding of a panel body
+    
+}  
+ 

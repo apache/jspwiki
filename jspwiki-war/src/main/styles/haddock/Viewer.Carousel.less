@@ -1,0 +1,55 @@
+/*
+Dynamic Style: Viewer.Carousel
+
+DOM Structure:
+    (start code)
+    div.carousel
+        div.carousel-progress
+        ol.carousel-indicators
+            li.active
+            li            
+        div.carousel-inner(.spin)        //img, object or iframe element is inserted here
+            div.item.active
+                <img..>
+                div.carousel-caption
+            div.item
+        a.controls.next
+        a.controls.prev
+    (end)
+*/
+
+//reuse bootstrap/carousel.less
+.carousel {
+
+    .viewport;
+    width:auto; 
+    //overflow:hidden; 
+    
+    //reveal indicators even on white backgrounds.
+    &:hover .carousel-indicators li { .box-shadow(@carousel-text-shadow); }
+ 
+    //only show the caption when hovering the mouse 
+    .carousel-caption { .opacity(0); .transition(.6s ease); }
+    &:hover .carousel-caption { .opacity(1); }
+
+    // reuse slimbox .controls, iso .carousel-controls , with simplified styling
+    .controls { 
+        &.prev { left: .5em; }
+        &.next { right: .5em; }        
+    }
+    &:hover .controls  { .opacity(@slimbox-control-opacity); }
+
+}
+
+.carousel-progress {
+    position:absolute;
+    bottom:0;
+    background:fade(@red,50%);
+    height:3px;
+    z-index:1;
+    width:0%;
+}
+.sliding > .carousel-progress {
+    .transition(width 10s linear);
+    width:100%;
+}

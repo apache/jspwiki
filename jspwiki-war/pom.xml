@@ -241,28 +241,48 @@
         <artifactId>wro4j-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>buildDefaultJsAndCss</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
               <!--<goal>jshint</goal>-->
             </goals>
+            <configuration>
+              <!--
+              <targetGroups>all</targetGroups>
+              <minimize>true</minimize>
+              <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
+              <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
+              <ignoreMissingResources>false</ignoreMissingResources>
+              -->
+              <minimize>true</minimize>
+              <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+              <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
+              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
+              <contextFolder>${basedir}/src/main/</contextFolder>
+              <wroFile>src/main/config/wro/wro.xml</wroFile>
+              <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
+            </configuration>
+          </execution>
+
+          <!-- HADDOCK template -->
+          <execution>
+            <id>buildHaddockJsAndCss</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <minimize>true</minimize>
+              <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+              <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
+              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/haddock/</cssDestinationFolder>
+              <contextFolder>${basedir}/src/main/</contextFolder>
+              <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
+              <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <!--
-          <targetGroups>all</targetGroups>
-          <minimize>true</minimize>
-          <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
-          <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
-          <ignoreMissingResources>false</ignoreMissingResources>
-          -->
-          <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-          <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
-          <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
-          <contextFolder>${basedir}/src/main/</contextFolder>
-          <wroFile>src/main/config/wro/wro.xml</wroFile>
-          <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
-        </configuration>
       </plugin>
 
       <!-- Compress certain CSS and JS files using the YUICompressor

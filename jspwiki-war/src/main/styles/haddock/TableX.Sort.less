@@ -1,0 +1,47 @@
+/*
+Dynamic Style: Sortable Tables
+
+Wiki markup:
+    %%sortable  ..table.. /%
+
+DOM structure:
+    div.sortable
+        table
+            tr
+                th.sort | th.up | th.down
+            tr
+                td
+                td
+*/
+.sortable {
+
+    th {
+        position:relative;
+        cursor:pointer;
+        padding-right:13px !important; //make room for the up/down arrows
+ 
+        &:hover { background-color: @wiki-hover; }
+        
+        //arrow to indicate the sort-direction
+        &:after {
+            .caret();
+            content:""; //needed to display the caret ico of :after or :before pseudo
+            visibility:hidden;
+        } 
+        &:hover:after { visibility:visible; } 
+
+        &.up:after,
+        &.down:after,
+        &.down:hover:after {
+            visibility:visible;
+            opacity:0.4;  //lighter color for the sorted column
+        }
+        &.up:after  {
+            border-top: 0;
+            border-bottom: @caret-width-base solid; //flip arrow direction
+        }
+
+    }
+
+}
+ 

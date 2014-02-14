@@ -1,0 +1,56 @@
+/*
+Style: FindContent.jsp, AJAXSearch.jsp
+
+DOM Structure:
+(start code)
+....
+	div.graphBars
+		div.zebra-table
+			table.wikitable
+				tr
+					th align=left Page
+					th align=left Score
+
+				tr
+		        	td
+		        		a.wikipage[href="..."] result1
+        			td
+        				span.gBar nn
+
+				tr
+					td[colspan=2]
+						div.fragment
+							... span.searchmatch ".."  ...
+
+				tr
+					td.nosearchresult[colspan=2] ...
+
+(end)
+*/
+
+form#searchform2 + div {
+
+	table { .table-condensed; }
+
+	.fragment {
+	    //inherit from bootstrap/code.less
+    	font-family: @font-family-monospace;
+    	font-size:80%;
+	    color: @pre-color;
+    	//white-space:pre;
+    	word-break: break-all;
+	    word-wrap: break-word;
+    	border-radius: @border-radius-base;
+    	
+  		overflow: scroll;
+	}
+	
+	.searchmatch {
+		color: @code-color;
+		background-color:@code-bg;
+	}
+	//.fragment_ellipsis { font-weight:bold; }  CHECKME ? not used anymore
+
+	.nosearchresult { .warning; display:table-cell; }
+
+ }

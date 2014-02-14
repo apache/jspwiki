@@ -1,0 +1,49 @@
+//
+// Support Left and Right Orientation : fav-left, fav-right, fav-slide?? 
+//
+// (default) left orientation
+/*
+.page    { float:right; }
+.sidebar { float:left; }
+* html .page    { margin-left:-3px; }  //ie6 hack -- Three Pixel Text Jog
+* html .sidebar { margin-right:-3px; }
+
+.fav-right .page    { float:left; }
+.fav-right .sidebar { float:right; };
+* html .fav-right .page    { margin-right:-3px; } //ie6 hack -- Three Pixel Text Jog
+* html .fav-right .sidebar { margin-left:-3px; }
+
+*/
+
+
+/*
+Section: sidebar
+	See Favorites.jsp
+
+DOM Structure:
+(start code)
+    div.sidebar
+    	div.leftmenu
+    	div.leftmenufooter
+    	div.wikiversion JSPWiki version-number
+			a.feed
+
+(end)
+*/
+
+//keep top-level lists close top the left margin
+.sidebar {
+	position:relative;
+	
+	> .close {
+	    position:absolute;
+	    right:@padding-base-horizontal/2;
+	    margin-top:-@padding-base-horizontal;	
+	}
+} 
+
+//TODO: move this to the pagination bar, in search???
+.cursor {
+    background-color:@gray-lighter;
+}
+

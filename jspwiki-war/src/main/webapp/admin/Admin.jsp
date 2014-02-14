@@ -45,14 +45,19 @@
     {
         %>
         <html>
-        <body>
+        <head>
+          <base href="../"/>
+          <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
+          <wiki:IncludeResources type="stylesheet"/>
+        </head>
+        <body class="container">
            <h1>Disabled</h1>
            <p>JSPWiki admin UI has been disabled.  This is an experimental feature, and is
            not guaranteed to work.  You may turn it on by specifying</p>
            <pre>
                jspwiki-x.adminui.enable=true
            </pre>
-           <p>in your <tt>jspwiki.properties</tt> file.</p>
+           <p>in your <tt>jspwiki-custom.properties</tt> file.</p>
            <p>Have a nice day.  Don't forget to eat lots of fruits and vegetables.</p>
         </body>
         </html>

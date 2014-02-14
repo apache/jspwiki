@@ -1,0 +1,83 @@
+/*
+Section: Main Content
+    Uses a minimal grid-system to display/hide the sidebar left from the main page container.
+    The sidebar slides in/out at the left, via a css transition, by adding/removing 
+    .active to the main content container. (adding .active, makes the sidebar visible)
+    The div.page element comes first in the DOM tree, before the div.sidebar.
+
+    TODO: [stack sidebar ico small devices]
+
+DOM Structure:
+(start code)
+    div.content[.active]
+        div.page
+        	div.page-content
+        	div.page-footer
+        div.sidebar
+(end)
+*/
+
+.content {
+    position:relative;
+    padding:0;
+    overflow:hidden;
+    clear:both;
+    .clearfix();
+}
+.page, .sidebar {
+    box-sizing: border-box;  // width% now includes border & padding
+   .transition(all 300ms);
+}
+.page {
+    float:right;
+    width:100%;
+}
+.sidebar {
+    float:left;
+    margin-left:-22%;
+    width:22%;
+    overflow-x:hidden;
+}
+ 
+.content.active {
+    .page { width:78%; }
+    .sidebar { margin-left:0; }
+}
+
+.sidebar { background:@wiki-sidebar-bg; } 
+.content { background: @wiki-page-bg; }
+
+.page-content, .sidebar {
+	padding:@padding-base-horizontal;
+	.clearfix;
+	& > h2 { margin-top:0;padding-top:0; } 
+} 
+
+/*
+Section: page-footer
+
+DOM Structure:
+(start code)
+	This page (revision-999) was last changed on
+    a[href="/Diff.jsp?page=Main&amp;r1=634&amp;r2=633"] 17-May-2013 19:36
+    by
+    a.wikipage page-author
+    a.feed[title='RSS feed for page Main'] &nbsp;
+    a.caretup[href="#top"][title="Go to top"] &laquo;
+(end)
+*/
+.page-footer {
+	display:block;
+	padding:.5em 0 0 0;
+    background:@wiki-page-bg;
+    text-align:right;
+}
+
+//reverse direction caret
+.caret-up {
+	.caret;
+    border-top: 0;
+    border-bottom: @caret-width-base solid;
+    content: "";
+}
+ 

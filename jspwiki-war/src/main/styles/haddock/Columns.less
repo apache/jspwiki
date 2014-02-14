@@ -1,0 +1,23 @@
+/*
+Style: Columns
+
+Wiki-markup:
+>    %%columns ... /%
+
+DOM structure:
+
+*/
+.columns {
+    .clearfix;
+    //  *width:100%; //ie6,ie7 hack
+    
+    .col {
+        float:left;
+        padding:0 0.5em 0.5em 0;
+    }
+}
+
+//ie6 and lower hack 
+//  * html .columns {  width:100%; }
+//ie7 hack 
+//  *:first-child+html .columns { width:100%; }

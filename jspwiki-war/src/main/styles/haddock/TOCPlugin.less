@@ -1,0 +1,47 @@
+/*
+Style: TableOfContentsPlugin
+
+    When a TOC plugin is invoked multiple times, only the first one renders the
+    collapsible table of contents box.
+    All subsequent invocations of the TOC plugin render a link to the toc. (a.toc)
+    This link has little use; so we just hide it.
+
+    Typical use-case: have a LeftMenu with a call of the TOC plugin.
+    When the main wiki-page already contains a TOC, the plugin only generates
+    a toc link (a.toc)
+
+DOM structure:
+    (begin)
+    div.toc
+        div.collapsebox
+            b.bullet xpand|clpse
+            h4#section-TOC Table Of Contents
+            div.xpand|clpse
+                ul
+                    li.toclevel-1
+                    li.toclevel-2
+                    li.toclevel-3
+    (end)
+*/
+.toc { 
+    width:60%; 
+    
+    ul { 
+        .list-unstyled;
+        li:hover { background:@dropdown-link-hover-bg; }
+        margin-bottom:0;
+    }
+    .toclevel-1 { padding-left:1.2em }
+    .toclevel-2 { padding-left:2.4em; }
+    .toclevel-3 { padding-left:4.6em; }    
+}
+.sidebar .toc { 
+    width:100%; 
+    .toclevel-1 { padding-left:.25em; }
+    .toclevel-2 { padding-left:.5em; }
+    .toclevel-3 { padding-left:.75em; }    
+}
+
+//Multiple occurrences of the TOC plugin are rendered as links (a.toc)
+a.toc { .hide; }
+

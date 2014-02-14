@@ -1,0 +1,34 @@
+/*
+Style: Tips
+
+Wiki-markup:
+> %%tip ... /%
+> %%tip-TipCaption ... /%
+
+DOM structure:
+    (start code)
+    span.tip.anchor "Tip Caption"
+
+    div style="...show/hide..." //FIXME
+        div.tip-top
+        div.tip
+            div.tip-title  "Tip Caption"
+            div.tip-text   " ...tip-body... "
+        div.tip-bottom
+    (end)
+    
+Bootstrap
+(start code)
+    div.tooltip.(top|left|right|bottom)
+        div.tooltip-inner
+        div.tooltip-arrow
+(end)
+*/ 
+
+.tip-link {
+    .category-link;
+    > [class^=tip] { .hidden; }
+}
+
+@tooltip-bg: rgba(0,0,0,.7);
+@tooltip-arrow-color: rgba(0,0,0,.7);

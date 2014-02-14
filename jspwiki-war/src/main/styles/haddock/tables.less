@@ -1,0 +1,46 @@
+// Tables
+//      Inherit from bootstrap/tables.less, with some minor tweaks
+
+// JSPWiki generates by default <table border="1">
+// BETTER: remove the border="1" from wikitables, and leave styling upto the css boys
+table[border="1"], 
+table[border="1"] th,
+table[border="1"] td { border:0; }
+
+.wikitable {
+
+    .table();  //inherit from bootstrap
+
+    // JSPWiki does not generate thead or tbody elements.
+    // Remove the top border from thead by default
+    // and add 2px to the bottom border for header rows
+    tr:first-child {
+        th, td { 
+            border-top: 0;
+        }
+        th {
+            border-bottom: 2px solid @table-border-color;
+        }
+    }
+    
+    // Put the top-border back
+    &.table-bordered {
+        tr:first-child {
+            th, td {
+                border-top: 1px solid @table-border-color;
+            }
+        }
+    }
+    
+    &.table-condensed {
+        th, td { 
+            padding: @table-condensed-cell-padding;
+        }
+
+    }
+    
+    &.table-fit { width:auto; }
+
+} 
+
+.zebra-table { .table-striped(); } 

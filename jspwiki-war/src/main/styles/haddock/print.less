@@ -1,0 +1,108 @@
+/*
+Section: Print-media
+    Styles to improve the page rendering during printing.
+    Printing displays the page-titel and page-content; other blocks
+    like the favorites, login-sections, search box, menu dropdowns etc. are hidden.
+
+    Tabbed sections are printed one after the other.
+    Accordion sections are printed one after the other.
+*/
+
+@media print {
+
+// #actionsTop, #actionsBottom, #favorites,
+// #addattachment, #findhelp,
+//.collapsebox .collapseOpen, .collapsebox .collapseClose,
+//.tabmenu 
+.watermark, .logo, .titlebox,
+.searchbox, .breadcrumb, .nav,
+a.editsection, a.hashlink,
+.table-filter .filterrow,
+.sidebar, .slmbx {
+    display:none;
+}
+#attachments, #addcomment,
+/*#pagelinks,*/
+#pagecontent, #editcontent, #previewcontent, #diffcontent, #infocontent,
+#findquery, #userPrefs,
+#pagecontent .tabmenu {
+    display:block;
+    visibility:visible;
+}
+
+tt,pre {
+    overflow:visible;
+    page-break-before: avoid;
+    page-break-inside: avoid;
+}
+
+// Show links as normal text
+a {
+    text-decoration:none;
+}
+/* Optional : print the href of each link
+a[href^=http]:after {
+    content: ' (' attr(href) ')';
+    color:grey;
+    font-family:"Courier New", Courier, mono; font-size:8pt;
+}
+*/
+
+// Give the content what it deserves. 
+html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
+    overflow:visible;
+}
+
+// checkme: ie hack 
+/*
+* html #previewcontent, * html #info, * html #pagecontent, 
+* html #attach, * html #findcontent {
+    overflow-x:visible;
+}
+*/
+
+/* use !important to overwrite css style on following specified blocks */
+/*.pagename, #header, #footer, #xpage {
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    float:none !important;
+    clear:both !important;
+    position:static !important;
+    overflow:visible !important;
+}
+*/
+.pagename {
+    font-size:250%;
+    margin-bottom:1.5em;
+    padding-bottom:0.5em;
+    border-bottom:1px solid #555;
+    color:#555;
+}
+
+/* hidden tabs are made visible during print
+ * when printing a page, also the attachment tab gets printed
+ */
+.hidetab {
+    display:block;
+    margin:1em 0;
+}
+.tabs {
+    border:none;
+}
+/* todo : open all accordion sections */
+
+
+// CHECK -- ff bug : avoid floats during printing 
+//.commentbox { float:none; }
+
+//FIXME: Page-break: force a new page with the explicit %%page-break style.
+.page-break {
+    height:0;
+    page-break-before:always;
+    margin:0;
+    /*border-top:none;*/
+}
+
+
+} // end of @media print

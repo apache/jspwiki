@@ -1,0 +1,181 @@
+/*
+Plugin: Viewer.Slimbox
+    SLIMBOX is a modal viewer for images, video, wikipages and external sites (iframe)
+
+Credit:
+    Inspired by Slimbox by Christophe Bleys (see http://www.digitalia.be/software/slimbox)
+    and the mediaboxAdvanced by John Einselen. (see http://iaian7.com/webcode/mediaboxAdvanced)
+    Adapted for JSPWIKI.
+
+DOM Structure:
+    DOM structure of the Slimbox viewer.
+    (start code)
+    div#slmbx
+        div.modal                //shaded background for viewport
+        div.viewport(.spin)      //img, object or iframe element is inserted here
+            a.controls.caption
+            a.controls.next
+            a.controls.prev
+            a.controls.close
+    (end)
+
+*/
+
+//slimbox button icon (right pointing triangle), added next to a slimbox activated link
+.slimbox-link:after { content:" "; }
+.slimbox-link:after,
+.slimbox-btn {
+
+    .caret();
+    border-left: @slimbox-btn-size solid @link-color;
+    border-top: @slimbox-btn-size/2 solid transparent;
+    border-bottom: @slimbox-btn-size/2 solid transparent;
+    border-right:0; 
+    margin-left: @slimbox-btn-size/2; 
+    &:hover { border-left-color: @link-hover-color; }
+
+    //overwrite button defaults
+    padding: 0;
+    background: transparent;
+    -webkit-appearance: none;
+}
+
+ 
+.slmbx { 
+    
+    display:none; 
+    .transition(all 2s ease);
+        
+    &.active { display:block; z-index:10; } 
+    
+    //modal transparent screen overlag -- TODO: reuse bootstrap/modal.less
+    .slmodal {
+        position:fixed;
+        _position:absolute; // check ie6 
+        top: 0;
+        right: 0;
+        bottom: 0; 
+        left: 0;
+        .opacity(0);
+
+        cursor:pointer;
+        background-color: @modal-backdrop-bg;
+        // Fade for backdrop
+        //&.fade { .opacity(0); }
+        //&.in { .opacity(.5); }
+    }
+    &.active .slmodal { .opacity(.5); }
+    
+    //modal viewport..
+    .viewport {
+        position:fixed;
+        _position:absolute; // ie
+        z-index:10;
+
+        margin:0;padding:0;border:none; //reset some viewer .viewport styles
+        
+        // centered viewport, slimbox.js will set width, height, and negative margins 
+        top:50%;
+        left:50%;
+        min-height:200px;
+        min-width:200px;
+
+        // transitions to support smooth background-image replacement and height/width resizing 
+        .transition(all .4s ease);
+
+        // default background setting, the actual background-image is set by slimbox.js 
+        background:transparent no-repeat center center;
+
+        .box-shadow (@slimbox-viewport-corona);
+
+        &:hover .controls { .opacity(@slimbox-control-opacity); }
+
+        &.loading .caption {
+            #gradient > .striped(@gray-lighter);
+            background-size: 40px 40px;
+            .animation(progress-bar-stripes 2s linear infinite);
+        }
+    }
+}
+
+.controls {
+
+    position:absolute;
+    .opacity(0);  //only visible on hover
+    .transition(all 1s ease); //smooth appearance on mouse hover 
+
+    font-family: @slimbox-font-family;
+    color: @slimbox-text-color;
+    background: @slimbox-control-bg;
+    .box-shadow (@slimbox-viewport-corona);
+    cursor:pointer;
+            
+    text-align: center;
+    text-shadow: @slimbox-text-shadow;
+    text-decoration: none;
+
+    &:hover, &:focus {
+        //.opacity(1);
+        opacity:1 !important; 
+        outline: none;
+        color: @slimbox-text-color;
+        text-decoration: none;
+        .opacity(.9);
+    }
+
+    &.next, &.prev, &.close { 
+        font-family: @slimbox-control-font-family;
+        line-height: @slimbox-control-line-height;    
+        font-size: @slimbox-font-size;
+        font-weight: 200;  //overwrite bold style of bootstrap/close.less
+        min-width: @slimbox-font-size;
+        height: @slimbox-font-size;
+
+        border-radius: @slimbox-font-size;
+        left: -@slimbox-font-size/2;
+    }
+    &.next, &.prev { top:50%; margin-top:-@slimbox-font-size/2; }
+    &.next { left:auto; right:-@slimbox-font-size/2; }
+    &.close { top:-@slimbox-font-size/2; }
+
+    &.caption {
+        top:100%;
+        width:100%;
+        padding:.25em;
+        margin:2px 0 0 0;
+    }
+            
+}
+    
+
+ 
+/*
+.slmbx iframe {
+    width:100%;
+    height:100%;
+    overflow:hidden; // make sure to hide overflow during resize transition 
+    background:@white;
+    //scrolling:overflow;
+    -webkit-overflow-scrolling: touch; //bounce effect on ios devices
+}
+iframe::-webkit-scrollbar { width: .5em; height: .5em; }
+iframe::-webkit-scrollbar-button { display:none; }
+iframe::-webkit-scrollbar-track {
+    background:#eee;
+    //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+//iframe::-webkit-scrollbar-track-piece { }
+iframe::-webkit-scrollbar-thumb {
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    background:#ccc;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.5);
+    -moz-box-shadow: inset 0 0 6px rgba(0,0,0,.5);
+    box-shadow: inset 0 0 6px rgba(0,0,0,.5);
+}
+//iframe::-webkit-scrollbar-thumb { } 
+//iframe::-webkit-scrollbar-thumb { } 
+//iframe::-webkit-scrollbar-corner { } 
+//iframe::-webkit-resizer { } 
+*/

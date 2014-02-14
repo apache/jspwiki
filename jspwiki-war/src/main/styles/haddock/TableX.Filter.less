@@ -1,0 +1,27 @@
+/*
+Dynamic Style: Table Filters
+
+Wiki markup:
+    %%table-filter  ..table.. /%
+
+DOM structure:
+    div.table-filter
+        div.filter-input
+            input[type=search][placeholder=..]
+            a.btn  //predefined filter shortcuts
+        table
+            tr
+                th
+            tr.visible
+                td.highlight  //type.less
+                td
+*/
+.filter-input {
+
+    background:url("@{imagePath}/icon-filter.gif") no-repeat 8px @line-height-computed*1.5;
+
+    padding:@line-height-computed 32px 0 32px;
+    
+    input { width:25%; display:inline; }
+    
+}

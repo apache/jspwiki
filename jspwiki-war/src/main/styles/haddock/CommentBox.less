@@ -1,0 +1,30 @@
+/*
+Style: Commentbox
+    Left floating comment box, with or without caption.
+
+DOM structure:
+    (start code)
+    
+    // Based on bootstrap/panel.less 
+    div.panel.panel-default(.panel-primary.panel-success.panel-info.panel-warning.panel-danger)
+      div.panel-header
+        h2.panel-title
+      div.panel-body
+      div.panel-footer
+    (end)
+*/
+
+.commentbox {
+
+    float:right;
+    //clear:right; //float subsequent boxes next to each-other
+    width:32%;
+    margin:0 0 .5em .5em;    
+    .small; 
+     
+}
+//need to avoid clash with floating 'handing' element, eg commentboxes, etc.
+pre, h2, h3, h4 { clear:right; }
+
+//fixme
+.collapsebox  { clear:right; }

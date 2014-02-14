@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<groups xmlns="http://www.isdc.ro/wro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+
+  <!-- HADDOCK Template groups -->
+  <group name="lib" abstract="true">
+    <js>/scripts/lib/mootools-core-1.4.5.js</js>
+    <js>/scripts/lib/mootools-more-1.4.0.1.js</js>
+    <js>/scripts/lib/prettify4mar13.js</js>
+  </group>
+
+  <group name="mooextend" abstract="true">
+    <js>/scripts/moo-extend/Behavior.js</js>
+    <js>/scripts/moo-extend/String.Extend.js</js>
+    <js>/scripts/moo-extend/Array.Extend.js</js>
+    <js>/scripts/moo-extend/Array.NaturalSort.js</js>
+    <js>/scripts/moo-extend/Element.Extend.js</js>
+    <js>/scripts/moo-extend/Element.Placeholder.js</js>
+    <js>/scripts/moo-extend/Color.js</js>
+    <js>/scripts/moo-extend/HighlightQuery.js</js>
+    <js>/scripts/moo-extend/Accesskey.js</js>
+    <js>/scripts/moo-extend/Cookie.Flags.js</js>
+    <js>/scripts/moo-extend/Tips.js</js>
+    <js>/scripts/moo-extend/Request.File.js</js>
+    <js>/scripts/moo-extend/Form.MultipleFile.js</js>
+    <js>/scripts/moo-extend/Form.File.js</js>
+  </group>
+
+  <group name="dynamic-styles" abstract="true">
+    <js>/scripts/dynamic-styles/Collapsible.js</js>
+    <js>/scripts/dynamic-styles/CommentBox.js</js>
+    <js>/scripts/dynamic-styles/Columns.js</js>
+    <js>/scripts/dynamic-styles/GraphBar.js</js>
+    <js>/scripts/dynamic-styles/Element.Reflect.js</js>
+    <js>/scripts/dynamic-styles/TableX.js</js>
+    <js>/scripts/dynamic-styles/TableX.Sort.js</js>
+    <js>/scripts/dynamic-styles/TableX.Filter.js</js>
+    <js>/scripts/dynamic-styles/TableX.Zebra.js</js>
+    <js>/scripts/dynamic-styles/Tabs.js</js>
+    <js>/scripts/dynamic-styles/Accordion.js</js>
+    <js>/scripts/dynamic-styles/Viewer.js</js>
+    <js>/scripts/dynamic-styles/Viewer.Slimbox.js</js>
+    <js>/scripts/dynamic-styles/Viewer.Carousel.js</js>
+  </group>
+
+  <group name="haddock">
+
+    <group-ref>lib</group-ref>
+    <group-ref>mooextend</group-ref>
+    <group-ref>dynamic-styles</group-ref>
+
+    <js>/scripts/wiki/Wiki.js</js>
+    <js>/scripts/wiki/Search.js</js>
+    <js>/scripts/wiki/Recents.js</js>
+    <js>/scripts/wiki/FindPages.js</js>
+    <js>/scripts/wiki/Category.js</js>
+    <js>/scripts/wiki/Dynamic-styles.js</js>
+
+    <css>/styles/haddock/jspwiki.less</css>
+  </group>
+
+  <group name="haddock-edit">
+    <group-ref>haddock</group-ref>
+    <!--TODO
+    <js>/scripts/moo-extend/Date.Extend.js</js>
+    <js>/scripts/moo-extend/Textarea.js</js>
+    <js>/scripts/wiki-edit/Dialog.js</js>
+    <js>/scripts/wiki-edit/SnipEditor.js</js>
+    <js>/scripts/wiki-edit/SnipEditor.Commands.js</js>
+    <js>/scripts/wiki-edit/SnipEditor.Sections.js</js>
+    <js>/scripts/wiki-edit/UndoRedo.js</js>
+    <js>/scripts/wiki-edit/wiki.edit.js</js>
+    -->
+  </group>
+
+  <group name="haddock-prefs">
+    <js>/scripts/wiki/prefs.js</js>
+    <!--<js>/scripts/wiki/group.js</js>-->
+  </group>
+
+</groups>
