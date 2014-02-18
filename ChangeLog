@@ -1,3 +1,21 @@
+2014-02-18  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.1-svn-6
+       
+       * Fixing the JSONRPCMAnager.emitJSONCall(..) so that it now renders 
+         the correct JSON RPC invocation javascript.
+                  
+         You can test the RPCSamplePlugin like this:
+         
+              [{RPCSamplePlugin
+
+              test
+              }]
+
+		 We are still getting error-code: 490, "No permission to access this AJAX method!"
+         when invoking a plugin generated json-rpc call.
+       
+
 2014-02-14  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.1-svn-5

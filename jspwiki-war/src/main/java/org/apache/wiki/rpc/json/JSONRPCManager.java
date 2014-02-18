@@ -77,11 +77,23 @@ public final class JSONRPCManager extends RPCManager {
      * @return generated JavasSript code snippet that calls the method
      */
     public static String emitJSONCall(WikiContext context, RPCCallable c, String function, String params) {
+
         StringBuffer sb = new StringBuffer();
-        sb.append("<script>");
-        sb.append("var result = jsonrpc." + getId(c) + "." + function + "(" + params + ");\r\n");
-        sb.append("document.write(result);\r\n");
-        sb.append("</script>");
+        String method = getId(c) + "." + function;
+        sb.append("<span class='json-result' id='"+ method + "'></span>"); //placeholder to add results of jsonrpc
+        sb.append("<script>\r\n");
+
+        //sb.append("var result = jsonrpc." + getId(c) + "." + function + "(" + params + ");\r\n");
+        //sb.append("document.write(result);\r\n");
+
+        sb.append("window.addEvent('domready', function(){  \r\n");
+        sb.append("  Wiki.jsonrpc('" + method + "',[" + params + "],function(result){ \r\n");
+        sb.append("    console.log(result);\r\n");
+        sb.append("    $('" + method + "').innerHTML = result;\r\n");
+        sb.append("  });\r\n");
+        sb.append("});\r\n");
+
+        sb.append("</script>\r\n");
 
         return sb.toString();
     }
@@ -130,10 +142,12 @@ public final class JSONRPCManager extends RPCManager {
      * @return the ID of the registered callable object
      */
     public static String registerJSONObject(WikiContext context, RPCCallable c) {
-        String id = getId(c);
-        getBridge(context).registerObject(id, c);
 
+        String id = getId(c);
+        
+        getBridge(context).registerObject(id, c);
         requestJSON(context);
+        
         return id;
     }
 
@@ -143,6 +157,9 @@ public final class JSONRPCManager extends RPCManager {
      * @param context The WikiContext.
      */
     public static void requestJSON(WikiContext context) {
+    
+        /* Deprecated.
+           All json stuff is in jspwiki-common.js; not need to inject jsonrpc.js
         TemplateManager.addResourceRequest(context,
                 TemplateManager.RESOURCE_SCRIPT,
                 context.getURL(WikiContext.NONE, "scripts/json-rpc/jsonrpc.js"));
@@ -151,6 +168,7 @@ public final class JSONRPCManager extends RPCManager {
         TemplateManager.addResourceRequest(context,
                 TemplateManager.RESOURCE_JSFUNCTION,
                 "jsonrpc = new JSONRpcClient(\"" + jsonurl + "\");");
+        */
 
         getBridge(context).registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
     }
