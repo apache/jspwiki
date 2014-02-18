@@ -108,7 +108,6 @@ var Wiki = {
         wiki.once = behavior.once.bind(behavior);
         wiki.update = behavior.update.bind(behavior);
 
-
         //wiki.get = function(name){ return wiki.prefs.get(name); };
         wiki.get = prefs.get.bind(prefs);
         //wiki.set = function(name,value){ return wiki.prefs.set(name,value); };

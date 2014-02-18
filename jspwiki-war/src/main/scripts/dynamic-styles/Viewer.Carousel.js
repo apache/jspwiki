@@ -61,7 +61,7 @@ Viewer.Carousel = new Class({
             t = 'transitionend';
 
         options = self.setOptions(options).options;
-        console.log('CAROUSEL Options: ',options);
+        //console.log('CAROUSEL Options: ',options);
         
         self.css3 = Element.Events[t] ? t : null;
         self.element = options.container;
@@ -72,8 +72,6 @@ Viewer.Carousel = new Class({
 
     build: function(elements, width, height){
 
-        console.log("CAROUSEL BUILD: ",elements.length,width,height);
-
         var self = this,
             items = [], indicators = [],
             cycle = self.options.cycle,
@@ -83,7 +81,6 @@ Viewer.Carousel = new Class({
 
         $$(elements).each( function(el,idx){ 
         
-            console.log(height,el.height, width, el.width);
             items.push('div.item',[ 
                 el, { styles: {
                     //add padding to center the item inside its container, but still fill 100% of the available space

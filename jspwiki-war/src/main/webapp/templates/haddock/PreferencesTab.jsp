@@ -138,7 +138,7 @@
   <div class="form-group">
   <label class="control-label form-col-20" for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label>
   
-  <select class="" id="prefOrientation" name="prefOrientation" onclick="Wiki.changeOrientation();"  data-pref="Orientation">
+  <select class="" id="prefOrientation" name="prefOrientation" data-pref="Orientation">
       <option value='fav-left' <c:if test='${"fav-left" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
       <option value='fav-right' <c:if test='${"fav-right" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
   </select>

@@ -19,43 +19,37 @@ DOM structure:
     outline:0;
     float:left;
     width:2em;
-
-    // normal bullet, without child lists
-    font-family:@font-family-monospace;
     line-height:1.4; //heuristic, for vertical
-    &:after { content:"\2022"; }
-    text-align:center;
-    color:@link-color;
     
-/*  TEXT BULLETS - obsolete
-    &.xpand:after { content:"-"; }
-    &.clpse:after { content:"+"; }
-*/
     // triangular bullets 
-    &.xpand, &.clpse {
-        cursor:pointer;
-        width:0;
-        height:0;
-        border:.4em solid transparent; 
-        border-radius: @border-radius-base; //smooth edges
+    width:0;
+    height:0;
+    border:.4em solid transparent; 
+    border-radius: @border-radius-base; //smooth edges
+    border-left-color: @text-color;
+    border-right: none;
+    margin: .3em .9em .3em .7em;
+        
+    &.clpse {
+        cursor: pointer;
+        border-left-color: @link-color;
+        &:hover { border-left-color: @link-hover-color; }
     }
     &.xpand {
-        border-top-color:@link-color;
-        border-bottom:none;
-        margin:.5em .6em .5em .6em;
-        &:hover { border-top-color:@link-hover-color; }
-    }
-    &.clpse {
-        border-left-color:@link-color;
-        border-right:none;
-        margin:.3em .9em .3em .7em;
-        &:hover { border-left-color:@link-hover-color; }
+        cursor: pointer;
+        border: .4em solid transparent; //reset
+        border-top-color: @link-color;
+        border-bottom: none;
+        margin: .5em .6em .5em .6em;
+        &:hover { border-top-color: @link-hover-color; }
     }
 
 }
+.xpand, .clpse { overflow:hidden; }
 
 
 // CHECKME: Make sure to print collapsed items as if they were not collapsed 
+//move to print.less
 @media print {
     div.clpse {
         display:block;
@@ -64,7 +58,6 @@ DOM structure:
     }
 }
 
-.xpand, .clpse { overflow:hidden; }
 
 /*
 TODO: Experimental - css3 animation iso mootools tween.
@@ -132,8 +125,8 @@ div[class^=collapsebox] {
 
     //coloured collapseboxes get white bullets    
     &:not(.panel-default) .bullet {
-        &.xpand, &.xpand:hover { border-top-color:@white; }
-        &.clpse, &.clpse:hover { border-left-color:@white; }
+        &.xpand, &.xpand:hover { border-top-color: @white; }
+        &.clpse, &.clpse:hover { border-left-color: @white; }
     }
 }
 

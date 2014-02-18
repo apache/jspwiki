@@ -1,5 +1,21 @@
 2014-02-18  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.10.1-svn-7  
+       
+       * Various small fixes on the HADDOCK template (jsp/css/js) :
+       
+       * Fixing %%category dropdowns which were clipped when inside a %%accordion.
+         Replacing js based animation by css3 animation to show/hide the popup.
+       
+       * Fixing bug when saving the Preferences (detected by Harry)
+       
+       * Changed fixed-width layout into fluid layout, occupying all screen real-estate.
+         (this could become a user-preference setting in the future)  
+         Slightly decreasing the size of the sidebar.
+       
+                  
+2014-02-18  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.1-svn-6
        
        * Fixing the JSONRPCMAnager.emitJSONCall(..) so that it now renders 

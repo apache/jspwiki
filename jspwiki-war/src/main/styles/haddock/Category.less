@@ -60,45 +60,46 @@ Style: Popup
     _width:240px;
 
     color:@white;
-    padding:.5em;    
-}
-
-
-.category .popup { 
-
-    margin-top:3px;  //slightly move popup down with 3px under the category-link
     padding:0;
+ 
+    .transition(all 1s ease);
+    .opacity(0);
+    visibility:hidden;
 
-    br { display:none; }
-
+    ul { .list-unstyled; }
     a {
         display: block;
         padding: 0.1em .75em;
         color: @white;
         text-decoration: none;
         text-shadow: 1px 1px 0 @tooltip-bg;
-
+ 
         &:hover {
             background:@black;
             background:fade(@tooltip-bg,25%);
             border-radius:@border-radius-base;
             _background-color:@black;
         }
-    }
-
-    .categoryTitle { .hide; }
+    } 
     
-    .categoryText > ul {
-        margin:0;
-        padding:0;
-        list-style:none;
-        _background:url("@{imagePath}/tip.png") bottom right;
+    &.loading {
+        height:1em; overflow:hidden;
+        .progress-striped .progress-bar;
+        .progress.active .progress-bar;
     }
-    li {
-        margin:0;padding:0;
-    }
-
 }
-//.category .active { .... }
+.category:hover .popup.loading, 
+.category:hover .popup.active { 
+    .opacity(.9); 
+    visibility:visible; 
+}
 
+.category .popup { 
+
+    margin-top:3px;  //slightly move popup down with 3px under the category-link
+
+    //FIXME: remove this from AJAXCategory.jsp
+    .categoryTitle { .hide; }
+     
+}
 
