@@ -34,6 +34,7 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -407,9 +408,10 @@ public class TestEngine extends WikiEngine
      */
     private static Properties cleanTestProps( Properties props )
     {
+        String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", 
-                           props.getProperty( "jspwiki.fileSystemProvider.pageDir" ) + System.currentTimeMillis() );
+                           pageDir.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis() );
         return props;
     }
 
