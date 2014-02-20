@@ -1,3 +1,14 @@
+2014-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.1-svn-8
+       
+       * [JSPWIKI-769 related] jspwiki-portable module, right now only Windows executable is generated, cfr. with
+         https://jspwiki-wiki.apache.org/Wiki.jsp?page=PortableBinaries
+       
+       * [JSPWIKI-817 related] Install.jsp is broken ==> Translation corrections (install.jsp.intro.[p1|p2|p3]) for ES
+       
+       * [JSPWIKI-821] TestEngine sometimes creates testrepositories with double timestamps after r1567444
+       
 2014-02-18  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.1-svn-7  
