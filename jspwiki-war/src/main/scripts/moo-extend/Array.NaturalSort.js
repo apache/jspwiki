@@ -67,7 +67,7 @@
             //2. Convert and store in type specific arrays (num,dmy,kmgt,nat)
 
             //CHECKME: some corner cases: numbers with leading zero's, confusing date string
-            if( /(?:^0\d+)|(^[^+-\d]+\d+$)/.test(val) ){ num=dmy=0; }
+            if( /(?:^0\d+)|(?:^[^\+\-\d]+\d+$)/.test(val) ){ num=dmy=0; }
 
             if( num && isNaN( num[i] = +val ) ) num=0;
 
