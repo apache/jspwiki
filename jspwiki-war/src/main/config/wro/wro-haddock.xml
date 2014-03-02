@@ -62,17 +62,25 @@
   </group>
 
   <group name="haddock-edit">
-    <group-ref>haddock</group-ref>
-    <!--TODO
+
     <js>/scripts/moo-extend/Date.Extend.js</js>
+    <js>/scripts/moo-extend/Array.Extend.HSV.js</js>
+    <js>/scripts/dialog/Dialog.js</js>
+    <js>/scripts/dialog/Dialog.Buttons.js</js>
+    <js>/scripts/dialog/Dialog.Color.js</js>
+    <js>/scripts/dialog/Dialog.Selection.js</js>
+    <js>/scripts/dialog/Dialog.Font.js</js>
+    <js>/scripts/dialog/Dialog.Chars.js</js>
+    <js>/scripts/dialog/Dialog.Find.js</js>
+
     <js>/scripts/moo-extend/Textarea.js</js>
-    <js>/scripts/wiki-edit/Dialog.js</js>
-    <js>/scripts/wiki-edit/SnipEditor.js</js>
-    <js>/scripts/wiki-edit/SnipEditor.Commands.js</js>
-    <js>/scripts/wiki-edit/SnipEditor.Sections.js</js>
     <js>/scripts/wiki-edit/UndoRedo.js</js>
-    <js>/scripts/wiki-edit/wiki.edit.js</js>
-    -->
+    <js>/scripts/wiki-edit/Snipe.js</js>
+    <js>/scripts/wiki-edit/Snipe.Commands.js</js>
+    <js>/scripts/wiki-edit/Snipe.Sections.js</js>
+    <js>/scripts/wiki-edit/Wiki.Snips.js</js>
+    <js>/scripts/wiki-edit/Wiki.Edit.js</js>
+
   </group>
 
   <group name="haddock-prefs">

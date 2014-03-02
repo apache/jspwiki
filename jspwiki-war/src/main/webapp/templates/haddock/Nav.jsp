@@ -84,10 +84,28 @@
   <wiki:CheckRequestContext context='view|upload|rename|edit'>
   <li id="info">
     <wiki:Link context="info" accessKey="i">
-      <fmt:message key='info.tab'/>
+      <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists> 
     </wiki:Link>
+  <wiki:PageExists>  
+  <ul class="dropdown-menu pull-right" data-hover-parent="li">
+      <li class="dropdown-header">This is version <span class="badge"><wiki:PageVersion /></span></li>
+      <li class="dropdown-header">Last Changed on:</span></li>
+    <wiki:CheckVersion mode="latest">
+      <li><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
+    </wiki:CheckVersion>
+    <wiki:CheckVersion mode="notlatest">
+      <li><wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
+    </wiki:CheckVersion>
+    <%--fixme: Author sometimes returns a link(ok) or a plain text(bad formatting) --%>
+    <li class="dropdown-header">By:</span></li>
+    <li><wiki:Author /></li> 
+    <li class="divider"></li> 
+    <li><wiki:RSSImageLink mode="wiki" /></li> 
+  </ul>
+  </wiki:PageExists>
   </li>
-  </wiki:CheckRequestContext>
+  </wiki:CheckRequestContext>  
+  
 
   <%-- edit --%>
   <wiki:CheckRequestContext context='view|info|diff|upload|rename'>
@@ -159,7 +177,7 @@
 
       <%-- VIEW RAW PAGE SOURCE --%>
       <wiki:PageExists>  
-      <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview' >
+      <wiki:CheckRequestContext context='view|info|diff|upload|preview' >
         <li>
           <wiki:CheckVersion mode="latest">
           <%--FIXME: wiki:Link doesnt support class=".." yet ; should be changed to className=".." --%>
@@ -226,7 +244,7 @@
       <%-- divider --%>
       <wiki:PageExists page="MoreMenu">
 
-        <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|prefs'>
+        <wiki:CheckRequestContext context='view|info|diff|upload|prefs'>
         <li class="divider "></li>
         </wiki:CheckRequestContext>
 

@@ -21,6 +21,7 @@ DOM Structure:
 
 */
 
+/*
 //slimbox button icon (right pointing triangle), added next to a slimbox activated link
 .slimbox-link:after { content:" "; }
 .slimbox-link:after,
@@ -38,6 +39,34 @@ DOM Structure:
     padding: 0;
     background: transparent;
     -webkit-appearance: none;
+    
+}
+*/
+//slimbox button icon-slimbox
+.slimbox-btn {
+    //overwrite button defaults
+    padding: 0;
+    background: transparent;
+    -webkit-appearance: none;
+    border:0;
+}
+.slimbox-link:after,
+.slimbox-btn:before {
+    font-family: 'FontJspwiki';
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	
+    color:@link-color;
+    margin-left:.25em;
+
+	content: "\e617";
+    text-decoration:none;
+    &:hover { text-decoration:none; }
+    overflow:hidden;
+    vertical-align:middle;
 }
 
  

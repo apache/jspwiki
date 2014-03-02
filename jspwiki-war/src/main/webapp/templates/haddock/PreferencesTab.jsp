@@ -100,7 +100,7 @@
   <div class="form-group">
   <label class="btn btn-default form-col-offset-20" for="prefSectionEditing">
     <input class="" id="prefSectionEditing" name="prefSectionEditing"  data-pref="SectionEditing"
-         type="checkbox" <c:if test='${"on" == prefs.SectionEditing}'>checked="checked"</c:if> >
+         type="checkbox" ${prefs.SectionEditing=='on' ? 'checked="checked"' : ''} >
       <fmt:message key="prefs.user.sectionediting"/>
   </label>
   <fmt:message key="prefs.user.sectionediting.text"/>
@@ -113,7 +113,7 @@
   
   <select class="" id="prefSkin" name="prefSkin" data-pref="SkinName">
     <c:forEach items="${skins}" var="i">
-      <option value='<c:out value='${i}'/>' <c:if test='${i == prefs.SkinName}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
+      <option value='${i}' ${prefs.SkinName==i ? 'selected="selected"' : ''} >${i}</option>
     </c:forEach>
   </select>
   
@@ -128,7 +128,7 @@
   
   <select class="" id="prefLanguage" name="prefLanguage" data-pref="Language">
     <c:forEach items='${languages}' var='lg'>
-      <option value="<c:out value='${lg.key}'/>" <c:if test='${fn:startsWith(prefLanguage,lg.key)}'>selected="selected"</c:if> ><c:out value="${lg.value}"/></option>
+      <option value="<c:out value='${lg.key}'/>" ${fn:startsWith(prefLanguage,lg.key) ? 'selected="selected"' : ''} >${lg.value}</option>
     </c:forEach>
   </select>
   
@@ -139,19 +139,26 @@
   <label class="control-label form-col-20" for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label>
   
   <select class="" id="prefOrientation" name="prefOrientation" data-pref="Orientation">
-      <option value='fav-left' <c:if test='${"fav-left" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
-      <option value='fav-right' <c:if test='${"fav-right" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
+      <option value='fav-left' ${prefs.Orientation=='fav-left' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.left"/></option>
+      <option value='fav-right' ${prefs.Orientation=='fav-right' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.right"/></option>
   </select>
   
   </div>
 
+  <div class="form-group">
+  <label class="control-label form-col-20" for="prefLayout"><fmt:message key="prefs.user.layout"/></label>  
+  <select class="" id="prefLayout" name="prefLayout" data-pref="Layout">
+      <option value='fluid' ${prefs.Layout=='fluid' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fluid"/></option>
+      <option value='fixed' ${prefs.Layout=='fixed' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fixed"/></option>
+  </select>
+  </div>
 
   <div class="form-group">
   <label class="control-label form-col-20" for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label>
   
   <select class="" id="prefTimeFormat" name="prefTimeFormat"  data-pref="DateFormat">
     <c:forEach items='${timeformats}' var='tf' >
-      <option value='<c:out value="${tf.key}"/>' <c:if test='${tf.key == prefs.DateFormat}'>selected="selected"</c:if> ><c:out value="${tf.value}"/></option>
+      <option value='<c:out value="${tf.key}"/>' ${prefs.DateFormat==tf.key ? 'selected="selected"' : ''} >${tf.value}</option>
     </c:forEach>
   </select>
   
@@ -162,7 +169,7 @@
   
   <select class="" id='prefTimeZone' name='prefTimeZone'  data-pref="TimeZone">
     <c:forEach items='${timezones}' var='tz'>
-      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
+      <option value='<c:out value="${tz.key}"/>' ${prefs.TimeZone==tz.key ? 'selected="selected"' : ''} >${tz.value}</option>
     </c:forEach>
   </select>
   

@@ -34,18 +34,18 @@ DOM structure:
     z-index:5;
     
     // ensure the searchbox submit button appears on the same horizontal line as the input field
-    input { width: 164px; }
+    
+    input { width: 0px;  .transition( all 1s ease ); padding-right:2em;}
+    
+    &:hover input { width:164px; }
 
 	// search icon button
+	// todo : use btn-group style iso absolute positioning
     button[type=submit] {
-        position:absolute;
-        top:12px;
-        right:3px;
-        width:16px;
-        height:16px;
-        border:none;
-        background: url("@{imagePath}/icon-search.png") no-repeat center;
-        overflow:hidden;
+        position:absolute;    
+        top:0;
+        right:0;
+        background:transparent;
     }
 }
 

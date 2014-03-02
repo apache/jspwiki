@@ -99,7 +99,7 @@ Element.implement({
     Example
     > $('li.dropdown-menu').onHover('ul');
     */
-    onHover: function( toggle ){
+    onHover: function( toggle, onOpen ){
 
         var element = this;
 
@@ -108,7 +108,7 @@ Element.implement({
              element.fade('hide');
 
              toggle.addEvents({
-                mouseenter: function(){ element.fade(0.9); toggle.addClass('open'); },
+                mouseenter: function(){ element.fade(0.9); toggle.addClass('open'); if(onOpen) onOpen(); },
                 mouseleave: function(){ element.fade(0);   toggle.removeClass('open'); }
             });
 
@@ -157,7 +157,8 @@ Element.implement({
 
         if( toggle == "buttons" ){
         
-            (toggle = function(){
+            (toggle = function(e){
+                //FIXME: differentiate between radioboxes and checkboxes !!
                 element.getElements(".active").removeClass("active");
                 element.getElements(":checked !").addClass("active");
             })();

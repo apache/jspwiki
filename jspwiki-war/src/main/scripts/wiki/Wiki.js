@@ -140,11 +140,15 @@ var Wiki = {
         wiki.add( '*[accesskey]', Accesskey )
 
             .add('*[data-toggle]', function(element){
+
                 element.onToggle( element.get('data-toggle') /*, 'active'*/ );
+
             })
 
             .add('*[data-hover-parent]', function(element){
+
                 element.onHover( element.get('data-hover-parent') /*, 'active'*/ );
+
             })
 
             .add('.searchbox .dropdown-menu', function(element){
@@ -214,9 +218,9 @@ var Wiki = {
 
         wiki.url = null;  //??check why this is needed
 
-        if ( wiki.Context!='preview' && wiki.EditPermission && (wiki.get('SectionEditing:checked')) ){
+        if ( wiki.Context!='preview' && wiki.EditPermission && (wiki.get('SectionEditing')) ){
 
-            wiki.addEditLinks( wiki.EditUrl );
+            wiki.addEditLinks( wiki.toUrl(wiki.PageName,true) );
 
         }
 
@@ -231,6 +235,13 @@ var Wiki = {
 
         //todo -- check bootstrap router concept
         //wiki.parseHash.periodical(500);
+
+        /*
+        wiki.jsonrpc("system.listMethods",[],function(result){
+            wiki.rpcRegister = result;
+            console.log("rpcRegister",result);
+        });
+        */
 
     },
 

@@ -55,9 +55,11 @@ BOOTSTRAP Style: %%alert .. /%
     .add('.alert', function(element){
 
         element.addClass('alert-warning alert-dismissable').grab(
+
             'button.close[type="button"][html="&times;"]'.slick()
                 .addEvent('click',function(){ element.dispose(); }),
             'top'
+
         );
 
     })
@@ -157,16 +159,13 @@ function filterJSPWikiLinks(element){
 wiki.once('body', function( elements ){
 
         //create singleton TheSlimbox
-        TheSlimbox = new Viewer.Slimbox();
-        /*TheSlimbox = new Viewer.Slimbox({ 
+        TheSlimbox = new Viewer.Slimbox({ 
             hints: {
                 //use defaults as much as possible
-                //btn: 'Click to view {0}', 
-                //caption: ' Direct link to {0}',    
                 btn: 'slimbox.btn'.localize(),
                 caption: 'slimbox.caption'.localize()
             }
-        });*/
+        });
     })
 
     // [ link-description | link-url | class='slimbox-link' ]
@@ -317,11 +316,11 @@ Example:
 Style: Reflection for images
 >    %%reflection-30-50    //size of reflection images is 30% height by 50% wide
 */
-    .add('div[class*=reflection]', function(element){
+    .add('[class^=reflection]', function(element){
 
         var args = "reflection".sliceArgs( element );
         
-        if(args) element.getElements('img').reflect({
+        if( args ) element.getElements('img').reflect({
             height:args[0]/100,
             width:args[1]/100
         });
@@ -406,16 +405,35 @@ FFS %%table-scrollable  (keep head fixed, max height for the table)
 
 /*
 Add BOOTSTRAP Styles
-    Scrollable pre area's
+    Scrollable area's
+    - pre   (%%scrollable {{{ ... }}})
 */
     .add('div.scrollable > pre', function(element){ 
 
-        element.addClass('pre-scrollable');  //bootstrap class
+        element.addClass('pre-scrollable');  //decorate pre elements with bootstrap class
 
     })
 
+/*
+Add BOOTSTRAP Font Icon style
+    Convert .icon-<icon-name> into appropriate class-name depending on the font family
 
-    .add('*[class^=list]', function(element){ 
+    Glyphicon :  .glyphicon.glyphicon-<icon-name>
+    Font-Awesome: .fa.fa-<icon-name>
+    FontJspwiki (via icomoon) : .icon-<icon-name>
+*/
+    .add('[class^=icon-]', function(element){
+
+        //element.className='glyphicon glyph'+element.className;
+        //element.className = 'fa fa-'+element.className.slice(5);
+
+    })
+
+/*
+Add BOOTSTRAP 
+
+*/
+    .add('[class^=list]', function(element){ 
     
         var args = "list".sliceArgs(element),
             lists = element.getElements("ul|ol");

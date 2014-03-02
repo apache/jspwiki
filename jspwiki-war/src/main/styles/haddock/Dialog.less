@@ -1,0 +1,168 @@
+/*
+Section: dialog
+	CSSdefs for the Mootools dialog plugin
+
+DOM structure:
+(start code)
+	div.dialog
+		a.close
+		div.caption ...  //optional, + drag handle
+		div.body ... 
+		div.buttons      //optional
+			div.btn ... 
+		div.resize 
+(end)
+*/
+
+/* Dialog main container */
+.dialog {
+
+	position:absolute;
+	.hide;
+	z-index: 10;
+
+    color:@white;
+    background:@tooltip-bg;
+    border-radius:@border-radius-base;
+    //.box-shadow( 2px 2px 4px @tooltip-bg );
+    .box-shadow(0 6px 12px rgba(0,0,0,.175)); 
+    
+    min-width: 160px;
+    padding:.5em 0;
+
+    //overwrite some bootstrap/close.less settings
+    .close {
+        position:absolute;
+        top:0; 
+        right:0.25em;
+        color:@white;
+        .opacity(1);
+    }
+
+    .caption {
+        margin-top:-.5em; //put flat with the top border, jump back over the padding
+    	text-align: center;
+	    padding: .25em 24px .25em .5em; /* leave space for the close button */
+    	//font-weight: bold;
+	    white-space: nowrap;
+    	overflow: hidden;
+       	border-radius:@border-radius-base;
+    	background:rgba(0,0,0,.2);	//black half transparent
+    }
+
+    .body {
+    	padding:.25em;
+	    .user-select(none);
+    }  
+
+}
+ 
+/*
+Style: Dialog.Selection, Dialog.Font, Dialog.Chars
+*/
+.dialog.selection {
+
+    .body { 
+        overflow:scroll; max-height:400px;
+        ul { 
+            .list-unstyled; 
+            margin:0;
+        }
+        li { 
+            cursor:pointer; 
+            white-space:nowrap; 
+            padding:0 1em; 
+            border-radius:@border-radius-base;
+        }
+        .hover { background-color: rgba(0,0,0,.2); }
+        .selected { 
+            background:@black;
+        }        
+    }
+
+}
+
+.dialog.chars {
+    td {
+	    
+    	text-align:center;
+	    cursor:pointer;
+    	padding:0.25em 0.5em;
+        border-radius: @border-radius-base;
+	    
+        &.hover { font-weight:bold; border-color:@black; }
+	}
+}
+
+
+/*
+Style: .dialog.color
+*/
+@dialog-color-size: 256px;
+
+.dialog.color {
+
+    .caption span {
+    	padding:0 1.5em;
+	    border-radius: 1em;
+	    color:#000;
+	    background-color:#fff;
+	    cursor:text;
+	    font-family:@font-family-monospace;
+    }
+    .body {
+	    position:relative; /*restrict cursor movement*/
+    	margin:1em;
+    	width: @dialog-color-size;
+	    height: @dialog-color-size;
+	    cursor: crosshair;
+	    background:url('@{imagePath}/circle-256.png') no-repeat center center;
+        //background-size: cover;
+
+    }
+    .cursor {
+    	position:absolute;
+	    background:url('@{imagePath}/cursor.gif') no-repeat;
+    	margin:-4px; /*half of height x weight */
+	    height:9px;
+    	left:@dialog-color-size/2; /* init at middle of img - mandatory for Drag */
+	    top:@dialog-color-size/2; /* init at middle of img - mandatory for Drag */
+	    width:9px;
+	    z-index:901;
+    }
+    .zone, {
+	    height:100%;
+    	width:100%;
+    }
+    /*
+    .resize {
+    	position:absolute;
+     	bottom:2px;
+	    right:2px;
+    	height: 0;
+	    width: 0;
+    	cursor: se-resize;
+	    opacity:0.5;
+        border-style: solid;
+        border-width: 0 0 16px 16px;
+        border-color: transparent transparent rgba(0,0,0,.2) transparent;
+    }
+    */
+    .btn-group { margin-top:-1em;}
+}
+
+ 
+.dialog.find {
+
+    padding:1em;
+    background-color: fade(@dropdown-bg,80%); //white background
+
+    .caption { margin:0 0 1em 0; }
+
+    .tbHITS {
+    	position:absolute;
+	    right:1.5em;
+	    color:#999;
+    }
+
+}

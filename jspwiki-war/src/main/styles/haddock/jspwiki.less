@@ -81,6 +81,13 @@ Stylesheet: JSPWiki
 @import "bootstrap/buttons.less";
  
 // Components: common
+//@import "bootstrap/glyphicons.less";
+//@import "fontawesome/font-awesome.less";
+//@import "fontjspwiki/font-jspwiki.less"; 
+@import "fontjspwiki/path.less";
+@import "fontjspwiki/core.less";
+@import "fontjspwiki/icons.less";
+
 //@import "bootstrap/component-animations.less";
 @import "bootstrap/input-groups.less";
 @import "bootstrap/dropdowns.less";
@@ -128,7 +135,10 @@ Stylesheet: JSPWiki
 @import "Template.Attach.less";
 @import "Template.Diff.less";
 @import "Template.Search.less";
+
+//todo:move to separate jspwiki-edit.less
 @import "Template.Edit.less";
+@import "Dialog.less";
 @import "Template.Preview.less";
  
 // JSPWiki: Plugins

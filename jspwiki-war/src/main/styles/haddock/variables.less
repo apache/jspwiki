@@ -34,7 +34,8 @@
 @black:  #111;
 
 
-@imagePath: "images";
+@imagePath: "./images";
+@icon-font-path: "./fonts/";
 
 
 // wiki color scheme
@@ -78,7 +79,7 @@
 @wiki-mark:   @orange; //mark search results, searchbars (amber), default graphbar
 
 // Misc.
-@wiki-link-createpage: red;
+@wiki-link-createpage: @red;
 @wiki-diff-add:        #9f9; //diff inserted lines
 @wiki-diff-delete:     #f93; //diff deleted lines
 @wiki-captcha-bg:      @light-grey;
@@ -110,3 +111,6 @@
 // Category
 @wiki-category-link-color: #545454;
 
+//Editor
+@wiki-preview : fade( @wiki-header-bg, 25%);
+@wiki-resizer:  @btn-primary-bg;

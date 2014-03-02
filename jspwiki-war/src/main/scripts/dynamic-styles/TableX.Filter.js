@@ -41,6 +41,7 @@ TableX.Filter = new Class({
             });
 
             ['div.form-group.filter-input',[
+                'span.icon-filter',
                 'input.form-control[type=search][placeholder="'+options.hint+'"]',{
                     attach: [ self, 'input' ],
                     events: {

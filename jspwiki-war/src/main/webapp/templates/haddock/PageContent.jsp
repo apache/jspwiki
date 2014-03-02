@@ -31,7 +31,7 @@
 <%-- This has been source ordered to come first in the markup (and on small devices)
      but to be to the right of the nav on larger screens --%>
 <div class="page-content">
-  
+
   <wiki:Include page="PageTab.jsp"/>
   
   <wiki:PageType type="attachment">
@@ -41,17 +41,8 @@
       </fmt:message>
     </div>
     <div><%-- insert the actual attachement, image, etc... --%>
-      <wiki:Translate>[<%= c.getPage().getName()%>]</wiki:Translate>
+      <wiki:Translate>[<%= WikiContext.findContext( pageContext ).getPage().getName() %>]</wiki:Translate>
     </div>
   </wiki:PageType>  
     
 </div> 
-<%--
-  <wiki:PageExists>
-  <wiki:PageType type="page">
-  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
-  </wiki:Tab>
-  </wiki:PageType>
-  </wiki:PageExists>
---%>

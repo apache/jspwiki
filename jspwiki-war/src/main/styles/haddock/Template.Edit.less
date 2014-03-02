@@ -1,210 +1,100 @@
-/* +++ 425 Edit/EditContent and CommentContent +++ */
-/*body.edit {
-}
-body.comment {
-}
-#edithelp {
-}*/
+/* 
+Edit.jsp, EditContent.jsp, CommentContent.jsp, plain.jsp
+
+*/
 
 input[name=changenote] {
     display:inline-block; 
     width:50%;
 }
 
-/* +++ 430 Edit/EditContent +++ */
-.textarea-resizer {
-    background:#eee url("@{imagePath}/resize-horizontal.gif") top center;
-    cursor:s-resize; /* css3 row-resize */
-    font-size:1px;
-    height:6px;
-    line-height:6px;
-    overflow:hidden;
-}
-
-#toolbuttons, #toolextra, #searchbar {
-    margin-left:1em;
-    clear:both;
-}
-#tools span {
-    float:left;
-    display:block;
-    padding:0.25em 0;
-    margin-right:1em;
-}
-#toolbuttons span {
-    border:1px solid #ddd /*#BORDER#*/;
-}
-
-.tool {
-    float:left;
-    margin:2px;
-    display:block;
-    background:transparent;
-    text-decoration: none;
-}
-.tool:hover {
-    background-color:#ddd !important;
-}
-#tools a.tool {
-    border:none;
-    background-repeat:no-repeat;
-    background-image:url("@{imagePath}/editor-strip.gif");
-    background-color:transparent;
-    height:16px;
-    width:16px;
-    text-indent:20px;
-    overflow:hidden;
-}
-
-#tbREDO        { background-position:0 0; width:auto !important;}
-#tbUNDO        { background-position:0 -16px; width:auto !important;}
-
-/*#tbOUTLINE    { background-position:0 0; width:auto !important;}
-#tbOUTLINE    {
-    width:auto !important;
-    background-image:url("images/book_open.png") !important;
-}
-*/
-/*
-label[for="edittoc"] {
-    background-repeat:no-repeat;
-    background-position:center left;
-    xxbackground-image:url("images/editor-strip.gif");
-    background-image:url("images/book_open.png") !important;
-    background-color:transparent;
-    padding:2px 0 2px 20px;
-}
-*/
-#tbH1         { background-position:0 -192px; }
-#tbH2         { background-position:0 -208px; }
-#tbH3         { background-position:0 -224px; }
-#tbB          { background-position:0 -176px; }
-#tbI          { background-position:0 -256px; }
-#tbLink       { background-position:0 -48px; }
-#tbMONO       { background-position:0 -160px; }
-/*
-#tbColor      { background-image:url("images/paintbrush.png");  }
-#tbBackground { background-image:url("images/paintcan.png");  }
-*/
-#tbPRE       { background-position:0 -64px; }
-#tbCODE       { background-position:0 -80px; }
-#tbHR         { background-position:0 -240px; }
-#tbBR         { background-position:0 -112px; }
-#tbDL         { background-position:0 -272px; }
-#tbSUP        { background-position:0 -336px; }
-#tbSUB        { background-position:0 -320px; }
-#tbSTRIKE     { background-position:0 -304px; }
-#tbUL         { background-position:0 -256px; }
-#tbOL         { background-position:0 -272px; }
-#tbLEFT       { background-position:0 -288px; }
-#tbCENTER     { background-position:0 -304px; }
-#tbRIGHT      { background-position:0 -320px; }
-#tbJUST       { background-position:0 -336px; }
-#tbQUOTE      { background-position:0 -272px; }
-#tbIMG        { background-position:0 -96px; }
-#tbTABLE      { background-position:0 -144px; }
-#tbTOC        { background-position:0 -32px; }
-#tbTAB        { background-position:0 -128px; }
-#tbSIGN        { background-position:0 -288px; }
-
-#tbDOREPLACE { background-image:url("@{imagePath}/doreplace.png") !important;  }
-
 .editor {
-    font:110% Monaco, "Courier New", Courier, monospace;
-    padding:4px;
-    width:99%;
-}
-#toctoc {
-    position:relative;
-    margin:0.5em 0;
-}
-#toctoc label {
-    display:block;
-    margin:0;
-    padding:0.5em;
-}
-#toctoc ul {
-    border:3px solid #eee;
-    width:auto;
-    overflow:auto;
-    height:150px;
-    list-style:none;
-    margin:0;
-    padding:0;
-}
-#toctoc a {
-    display:block;
-    padding:0 0.5em;
-    overflow:hidden;
-    white-space:nowrap;
+    font-family:@font-family-monospace;
+    padding:.5em;
+    
+	resize: none !important; // disable resizable textareas in Webkit 
+	//outline: 0 !important; // disable focus ring in Safari 
+	//-moz-appearance: none; // CHECKME: remove focus ring on FF
+
 }
 
-/* ie6 hack ensure moremenu remains properly aligned */
-* html #editorarea {
-    padding:4px 0;
+.ajaxpreview {
+    .hide;
+    background:@wiki-preview;
+    border-radius:@border-radius-base;
+    padding:.5em;
+    overflow:scroll;
+    
+    &.loading {
+        .progress-striped .progress-bar;
+        .progress.active .progress-bar;
+    }
 }
-/*ie7 hack */
-*:first-child+html #editorarea {
-    padding:4px 0;
-}
-#commentcontent, #editcontent {
+
+//Layout of editor and preview area 
+
+//always show the editor (and preview) areas at 100%
+.edit-area  .col-50,
+.edit-area + .resizer + .ajaxpreview.col-50 { width:100%; }
+
+//when livepreview is on, show the ajaxpreview area
+.edit-area.livepreview .ajaxpreview { .show; }
+.edit-area.livepreview  + .resizer + .ajaxpreview { .show; height:auto !important; }
+
+//when livepreview is on AND previewcolumn (side by side) is on, set width to 50%
+.edit-area.livepreview.previewcolumn .col-50 { width:50%; float:left; }
+
+
+.resizer {
+    background: @wiki-resizer; 
+	cursor:row-resize;
     width:100%;
+	height:8px;
+    line-height:8px;
+    margin-top:4px;
+    margin-bottom:.5em;
+    border-radius:4px;
+    z-index:3;
+
+    &.dragging {
+        .progress-striped .progress-bar;
+        .progress.active .progress-bar;
+    }
 }
 
-#searchbar {
-    display:block !important;
-}
-#searchbar span {
-    white-space:nowrap;
-}
-/*#searchbarhelp {
-}*/
-#findSuggestionMenu {
-    position:absolute;
-    color:white;
-    background-color:#000;
-    background-color:rgba(0,0,0,0.7);
-    -moz-border-radius:10px;
-    -webkit-border-radius:5px;
-    border-radius:10px;
-    -webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
-    box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
-    z-index:10;
-    font-size:85%;
-    overflow:hidden;
-}
-/* ie6 hack */
-* html #findSuggestionMenu {
-    background:url("@{imagePath}/tip.png") top left;
-}
-/* ie7 hack */
-*:first-child+html #findSuggestionMenu {
-    background:url("@{imagePath}/tip.png") top left;
+
+/*******************/
+
+//reset bootstrap/form.less style on labels inside dropdown menu-s
+.dropdown-menu {
+    max-height:400px;
+    overflow:scroll;
+    label { font-weight:normal; }
 }
 
-#findSuggestionMenu ul {
-    list-style:none;
-    margin:0;
-    padding:0;
-}
-#findSuggestionMenu li {
-    padding:0.25em 0.5em;
-    cursor:pointer;
-}
-#findSuggestionMenu .hover {
-    background-color:#000;
-    background-color:rgba(0,0,0,0.5);
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
-}
-/* ie6 hack */
-* html #findSuggestionMenu .hover {
-    background-color:black;
-}
-/* ie7 hack */
-*:first-child+html #findSuggestionMenu .hover {
-    background-color:black;
+.toolbar{
+
+    padding-bottom:1em;
+    .btn-group { 
+        border:1px solid @link-color;
+	    border-radius:@border-radius-base;
+    }
+    .btn-link:hover { text-decoration:none; }
+
 }
 
+// icons only, or text labels ?
+// [data-cmd] { &:after { content: " " attr(data-cmd);  } }
+
+[data-cmd='color'] { 
+    background:url("@{imagePath}/color-wheel.png") no-repeat center;  
+}
+[data-sections] {
+    .indent-0 {  }
+    .indent-1 { text-indent:.5em; }
+    .indent-2 { text-indent:1em; }    
+}
+
+//change the color of the section button (bookmark) when a section is selected
+.section-selected > .btn { color:@red; }
 

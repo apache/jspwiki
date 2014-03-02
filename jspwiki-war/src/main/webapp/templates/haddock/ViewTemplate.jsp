@@ -45,11 +45,11 @@
 
 <body class="context-<wiki:Variable var='requestcontext' />">
 
-<div class="container-fluid ${prefs.Orientation}">
+<div class="container${prefs.Layout=='fluid' ? '-fluid' : ''} ${prefs.Orientation}">
  
   <wiki:Include page="Header.jsp" />
   <wiki:Include page="Nav.jsp" />
-  <div class="content active" data-toggle="li#menu,.sidebar>.close" >
+  <div class="content active" data-toggle="li#menu,.sidebar>.close">
     <div class="page">
       <wiki:Content/>
       <wiki:Include page="PageInfo.jsp"/>

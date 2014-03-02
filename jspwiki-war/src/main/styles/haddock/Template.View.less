@@ -136,21 +136,25 @@ DOM structure:
 
 .copyright, .wiki-version { .small; }
 
-.feed {
-    background:url("@{imagePath}/jspwiki-strip.gif") no-repeat 0 0;
-    //background-repeat:no-repeat;
-    //background-position:0 0;
-    width:16px;
-    height:16px;
 
-	/*icon*/    
-    text-decoration:none;
-    overflow:hidden;
-    text-indent:16px;
+.feed {
+
+	//.@{fa-css-prefix};
     display:inline-block;
-    margin:0 .25em;
+    font-family:FontJspwiki;
+	font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;	
+	&:before { content: "\e610"; } //fixme -- re-use .icon-search
+	
+    text-decoration:none;
+    &:hover { text-decoration:none; }
+    overflow:hidden;
     vertical-align:middle;
-}
+} 
+
 
 
 // CHECKME

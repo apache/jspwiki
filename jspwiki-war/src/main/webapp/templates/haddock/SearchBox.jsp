@@ -40,7 +40,7 @@
   <button type="submit" 
     class="btn" name="searchSubmit" id="searchSubmit" 
   	value="<fmt:message key='find.submit.go'/>"
-  	title="<fmt:message key='find.submit.go'/>"></button>
+  	title="<fmt:message key='find.submit.go'/>"><span class="icon-search"></span></button>
 
   <ul class="dropdown-menu pull-right" data-hover-parent="span">
    <li class="dropdown-header">Quick Search results (type ahead)</li>

@@ -40,11 +40,7 @@
    WikiEngine engine = context.getEngine();
 
    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-   		context.getURL( WikiContext.NONE, "scripts/jspwiki-edit.js" ) );
-   /*merged by wro4j into one jspwiki-edit.js
-   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-   		context.getURL( WikiContext.NONE, "scripts/posteditor.js" ) );
-   */
+           context.getURL( WikiContext.NONE, "scripts/haddock-edit.js" ) );
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:CheckRequestContext context="edit">
@@ -80,14 +76,13 @@
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = "";  %>
 
-<div style="width:100%"> <%-- Required for IE6 on Windows --%>
+<%-- <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 
 <form action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
        class=""
           id="editform"
-    onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
 
@@ -98,150 +93,175 @@
   <%=SpamFilter.insertInputFields( pageContext )%>
   <input type="hidden" name="<%=SpamFilter.getHashFieldName(request)%>" value="<c:out value='${lastchange}' />" />
   
-  <input class="btn btn-primary" type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>"
-    accesskey="s"
-        title="<fmt:message key='editor.plain.save.title'/>" />
-  <input class="btn btn-primary" type="submit" name="preview" value="<fmt:message key='editor.plain.preview.submit'/>"
-    accesskey="v"
-        title="<fmt:message key='editor.plain.preview.title'/>" />
-  <input class="btn btn-danger pull-right" type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>"
-    accesskey="q"
-        title="<fmt:message key='editor.plain.cancel.title'/>" />
+  <input class="btn btn-primary" type="submit" name="ok" accesskey="s"
+         value="<fmt:message key='editor.plain.save.submit'/>"
+         title="<fmt:message key='editor.plain.save.title'/>" />
+<%--
+  <input class="btn btn-primary" type="submit" name="preview" accesskey="v"
+         value="<fmt:message key='editor.plain.preview.submit'/>"
+         title="<fmt:message key='editor.plain.preview.title'/>" />
+--%>
+  <input class="btn btn-danger pull-right" type="submit" name="cancel" accesskey="q"
+         value="<fmt:message key='editor.plain.cancel.submit'/>"
+         title="<fmt:message key='editor.plain.cancel.title'/>" />
 
   <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
        Normal user should never see this field, nor type anything in it. --%>
   <input class="hidden" type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" />
+
   <%--TODO
     <wiki:Permission permission="rename">
-    <tr>
-    <td><label for="renameto"><fmt:message key='editor.renameto'/></label></td>
-    <td><input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
-    &nbsp;&nbsp;
+    <div class="form-group form-inline">
+    <label for="renameto"><fmt:message key='editor.renameto'/></label>
+    <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
     <input type="checkbox" name="references" checked="checked" />
     <fmt:message key="info.updatereferrers"/>
-    FIXME</td>
-    </tr>
+    </div>
     </wiki:Permission>
   --%>
 
   <wiki:CheckRequestContext context="edit">
-  <input type="text" size="80" maxlength="80" 
-      class="form-control form-col-50"
-      name="changenote" id="changenote" 
-      placeholder="<fmt:message key='editor.plain.changenote'/>"
-      value="${changenote}"/>
+  <input class="form-control form-col-50" type="text" size="80" maxlength="80"
+         name="changenote" id="changenote" 
+         placeholder="<fmt:message key='editor.plain.changenote'/>"
+         value="${changenote}"/>
   </wiki:CheckRequestContext>
-
   <wiki:CheckRequestContext context="comment">
-	<label><fmt:message key="editor.commentsignature"/></label>
-
+    <label><fmt:message key="editor.commentsignature"/></label>
     <input class="form-control form-col-20" type="text" name="author" id="authorname" 
-        placeholder="<fmt:message key='editor.plain.name'/>"
-        value="${author}" />
-        
-    <label for="rememberme">
-        <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
-        <fmt:message key="editor.plain.remember"/>
+           placeholder="<fmt:message key='editor.plain.name'/>"
+           value="${author}" />
+    <label class="btn btn-default btn-sm" for="rememberme">
+      <input type="checkbox" name="remember" id="rememberme" 
+             <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
+      <fmt:message key="editor.plain.remember"/>
     </label>
-
     <input class="form-control form-col-20" type="text" name="link" id="link" size="24" 
-        placeholder="<fmt:message key='editor.plain.email'/>"
-        value="${link}" />
-
+           placeholder="<fmt:message key='editor.plain.email'/>"
+           value="${link}" />
   </wiki:CheckRequestContext>
 
   </div>  
   
+<div class="snipe">
 
-  <div id="tools" class="warning">
-      <%--<h4><fmt:message key='editor.plain.toolbar'/></h4>--%>
-      <div id="toolbuttons" class="form-group">
-      <span>
-	  <a href="#" class="tool" rel="" id="tbLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
-	  <a href="#" class="tool" rel="break" id="tbH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
-	  <a href="#" class="tool" rel="break" id="tbH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
-	  <a href="#" class="tool" rel="break" id="tbH3" title="<fmt:message key='editor.plain.tbH3.title'/>">h3</a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="" id="tbB" title="<fmt:message key='editor.plain.tbB.title'/>">bold</a>
-	  <a href="#" class="tool" rel="" id="tbI" title="<fmt:message key='editor.plain.tbI.title'/>">italic</a>
-	  <a href="#" class="tool" rel="" id="tbMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>">mono</a>
-	  <a href="#" class="tool" rel="" id="tbSUP" title="<fmt:message key='editor.plain.tbSUP.title'/>">sup</a>
-	  <a href="#" class="tool" rel="" id="tbSUB" title="<fmt:message key='editor.plain.tbSUB.title'/>">sub</a>
-	  <a href="#" class="tool" rel="" id="tbSTRIKE" title="<fmt:message key='editor.plain.tbSTRIKE.title'/>">strike</a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="" id="tbBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
-	  <a href="#" class="tool" rel="break" id="tbHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
-	  <a href="#" class="tool" rel="break" id="tbPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
-	  <a href="#" class="tool" rel="break" id="tbCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
-	  <a href="#" class="tool" rel="break" id="tbDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="break" id="tbTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>
-	  <a href="#" class="tool" rel="break" id="tbTAB" title="<fmt:message key='editor.plain.tbTAB.title'/>">tab</a>
-	  <a href="#" class="tool" rel="break" id="tbTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
-	  <a href="#" class="tool" rel="" id="tbIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
-	  <a href="#" class="tool" rel="break" id="tbQUOTE" title="<fmt:message key='editor.plain.tbQUOTE.title'/>">quote</a>
-	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
-      </span>
-      <span>
-      <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>"><fmt:message key='editor.plain.undo.submit'/></a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>"><fmt:message key='editor.plain.redo.submit'/></a>
-      </span>
-	  </div>
+<div class="toolbar row">
 
-	  <div id="toolextra" class="form-group hidden" >
-      <span>
-      <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>/>
-      <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
-      </span>
-      <span>
-      <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>/>
-      <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>
-      </span>
-	  </div>
+  <div class="btn-group">
 
-	  <div class="form-inline form-group" style="margin-bottom:0;" id="searchbar">
-  		
-        <%--<label for="tbFIND" ><fmt:message key="editor.plain.find"/></label>--%>
-  		<input class="form-control form-col-25" type="text"   name="tbFIND" id="tbFIND" size="16" placeholder="<fmt:message key='editor.plain.find'/>"/>
-		<%--<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/></label>--%>
-		<input class="form-control form-col-25" type="text"   name="tbREPLACE" id="tbREPLACE" size="16" placeholder="<fmt:message key='editor.plain.replace'/>"/>
-        <input class="btn btn-primary" type="button" name="doreplace" id="doreplace" value="<fmt:message key='editor.plain.find.submit' />" />
-        
-        <div class="btn-group">
-  		<label class="btn btn-default btn-xs" for="tbMatchCASE">
-  		  <input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
-  		  <fmt:message key="editor.plain.matchcase"/>
-  		</label>
-  		<label class="btn btn-default btn-xs" for="tbREGEXP" >
-  		  <input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
-  		  <fmt:message key="editor.plain.regexp"/>
-  		</label>
-  		<label  class="btn btn-default btn-xs" for="tbGLOBAL">
-  		  <input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
-  		  <fmt:message key="editor.plain.global"/>
-  		</label>
-  		</div>
-	  </div>
-	  
+  <div class="cage" style="float:left">
+    <div class="btn btn-link"><span class="icon-bookmark"><span class="caret"></span></div>
+    <ul class="dropdown-menu" data-sections="div">
+      <li><a>first</a></li>
+      <li><a>..</a></li>
+      <li><a class="dropdown-divider">..</a></li>
+      <li><a>..</a></li>
+    </ul>
   </div>
 
-  <textarea class="editor form-group form-control" id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"         
-            autofocus="autofocus"
-            rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+  <div class="btn btn-link" data-cmd="undo" title="<fmt:message key='editor.plain.undo.title'/>"><span class="icon-undo"></span></div>
+  <div class="btn btn-link" data-cmd="redo" title="<fmt:message key='editor.plain.redo.title'/>"><span class="icon-repeat"></span></div>
+  <div class="btn btn-link" data-cmd="find" title="<fmt:message key='editor.plain.find.title'/>"><span class="icon-search"></span></div>  
+
+  <div class="cage" style="float:left">
+    <div class="btn btn-link"><span class="icon-wrench"></span><span class="caret"></span></div>
+    <ul class="dropdown-menu" data-hover-parent=".cage">
+    <li><a><label for="autosuggest">
+        <input type="checkbox" data-cmd="autosuggest" id="autosuggest" />
+        <fmt:message key='editor.plain.autosuggest'/>
+    </label></a></li>
+    <li><a><label for="tabcompletion">
+        <input type="checkbox" data-cmd="tabcompletion" id="tabcompletion" />
+        <fmt:message key='editor.plain.tabcompletion'/>
+    </label></a></li>
+    <li><a><label for="smartpairs">
+        <input type="checkbox" data-cmd="smartpairs" id="smartpairs" />
+        <fmt:message key='editor.plain.smartpairs'/>
+    </label></a></li>
+    <li class="divider"></li>
+    <li><a><label for="livepreview">
+        <input type="checkbox" data-cmd="livepreview" id="livepreview"/>
+        <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh">
+    </label></a></li>
+    <li><a><label for="previewcolumn">
+        <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" />
+        Preview Side by Side <span class="icon-columns">
+    </label></a></li>
+    </ul>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <%--<div class="btn btn-link" data-cmd="h" title="<fmt:message key='editor.plain.tbH1.title'/>"><span class="icon-header"></span></div>--%>
+    <div class="btn btn-link" data-cmd="bold" title="<fmt:message key='editor.plain.tbB.title'/>"><span class="icon-bold"></span></div>
+    <div class="btn btn-link" data-cmd="italic" title="<fmt:message key='editor.plain.tbI.title'/>"><span class="icon-italic"></span></div>
+    <%--<div class="btn btn-link  tMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>"><i>mono</i></div>--%>
+    <div class="btn btn-link" data-cmd="css" title="<fmt:message key='editor.plain.tbCSS.title'/>"><span class="icon-tint"></span></div>
+    <div class="btn btn-link" data-cmd="font" title="<fmt:message key='editor.plain.tbFONT.title'/>"><span class="icon-font"></span></div>
+    <div class="btn btn-link" data-cmd="color" title="<fmt:message key='editor.plain.tbCOLOR.title'/>"><span class="icon-none"></span></div>
+    <%--<div class="btn btn-link  tPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>"><i>pre</i></div>--%>
+    <%--<div class="btn btn-link  tCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>"><i>code</i></div>--%>
+    <%--<div class="btn btn-link  tHR" title="<fmt:message key='editor.plain.tbHR.title'/>"><i>hr</i></div>--%>
+  </div>
+
+  <div class="btn-group">
+    <div class="btn btn-link" data-cmd="link" title="<fmt:message key='editor.plain.tbLink.title'/>"><span class="icon-link"></span></div>
+    <div class="btn btn-link" data-cmd="img" title="<fmt:message key='editor.plain.tbIMG.title'/>"><span class="icon-picture"></span></div>
+    <%--<div class="cmd btn btn-link" data-cmd="table" title="<fmt:message key='editor.plain.tbTABLE.title'/>"><i>table</i></div>--%>
+    <div class="btn btn-link" data-cmd="char" title="<fmt:message key='editor.plain.tbCHAR.title'/>"><span class="icon-euro"></div>
+    <div class="btn btn-link" data-cmd="plugin" title="<fmt:message key='editor.plain.tbPLUGIN.title'/>"><span class="icon-plus"></div>
+    <%--<div class="btn btn-link  tBR" title="<fmt:message key='editor.plain.tbBR.title'/>"><i>br</i></div>--%>
+    <%--<div class="cmd btn btn-link" data-cmd="sign" title="<fmt:message key='editor.plain.tbSIGN.title'/>"><span class="icon-user"></span></div>--%>
+    <%--<div class="cmd btn btn-link" data-cmd="acl" title="<fmt:message key='editor.plain.tbACL.title'/>"><span class="icon-lock"></span></div>--%>
+    <%--<div class="cmd tDL" title="<fmt:message key='editor.plain.tbDL.title'/>"><i>dl</i></div>--%>
+  </div>
+
+  <div class="dialog float find">
+    <div class="caption"><fmt:message key='editor.plain.find'/> &amp; <fmt:message key='editor.plain.replace'/> </div>
+      <div class="form-group">
+        <span class="tbHITS"></span>
+        <input class="form-control" type="text" name="tbFIND" size="16" 
+               placeholder="<fmt:message key='editor.plain.find'/>" />
+      </div>
+      <div class="form-group">      
+      <input class="form-control" type="text" name="tbREPLACE" size="16" 
+             placeholder="<fmt:message key='editor.plain.replace'/>" />
+      </div>
+      <div class="btn-group">      
+        <button class="btn btn-primary" type="button" name="replace">  
+          <fmt:message key='editor.plain.find.submit' /> first
+        </button>
+        <button class="btn btn-primary" type="button" name="replaceall">
+          <fmt:message key='editor.plain.global'/>
+        </button>
+        <label class="btn btn-default" for="tbMatchCASE">
+          <input type="checkbox" name="tbMatchCASE" id="tbMatchCASE"/>
+          <fmt:message key="editor.plain.matchcase"/>
+        </label>
+        <label class="btn btn-default" for="tbREGEXP">
+          <input type="checkbox" name="tbREGEXP" id="tbREGEXP"/>
+          <fmt:message key="editor.plain.regexp"/>
+        </label>
+      </div>
+       
+  </div>
+      
+</div><%-- end of .toolbar --%>
+
+  
+<div class="row edit-area">
+  <div class="col-50" >
+    <textarea class="editor form-control" id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"         
+                autofocus="autofocus"
+                rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+  </div>
+  <div class="ajaxpreview col-50" ></div>
+</div>
+<div class="resizer" title="<fmt:message key='editor.plain.edit.resize'/>"></div>
+
+</div><%-- end of .snipe --%>
 
 </form>
 
-<div class="form-control btn btn-primary" id="sneakpreviewheader">
-  <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%> />
-  <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>
-  <span id="previewSpin" class="spin" style="position:absolute;display:none;"></span>
-</div>
 
-<div id="sneakpreview" class="preview-content"></div>
-
-</div>
+<%-- </div>   ??CHECK: needed of IEx--%>

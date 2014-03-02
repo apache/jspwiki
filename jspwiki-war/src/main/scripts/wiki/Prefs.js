@@ -9,32 +9,37 @@ Javascript routines to support JSPWiki UserPreferences
     *  prefOrientation:'Orientation',
     *  editor:'editor',
     *  prefLanguage:'Language',
-    *  prefSectionEditing:'SectionEditing' =>checkbox 'on', T/F ???fixme
+    *  prefSectionEditing:'SectionEditing' =>checkbox 'on'
 */
-Wiki.once('.context-prefs form', function(forms){
+Wiki.once('#setCookie', function(form){
 
+        window.onbeforeunload = function(){
 
-    window.onbeforeunload = function(){
+            if( form.getElements('[data-pref]').some(function(el){
 
-        //a checkbox get('value') returns 'on' when checked; getDefaultValue() should also return 'on'
-        if( forms[1].getElements('[data-pref]').some(function(el){
-            //console.log(el.get('data-pref'),el.checked,el.get('name'), el.get('value') , el.getDefaultValue());
-            return (el.get('value') != el.getDefaultValue());
-        }) ) return 'prefs.areyousure'.localize();
-        
-        //return 'always popup dialog for testing';
+                //a checkbox.get('value') returns 'on' when checked; 
+                //so getDefaultValue() should also return 'on'
+                return (el.get('value') != el.getDefaultValue());
 
-    };
+            }) ) return 'prefs.areyousure'.localize();      
+        };
 
-    forms[1].addEvent('submit', function(){
+        form.addEvent('submit', function(e){
     
-        this.getElements('[data-pref]').each( function(el){
-            Wiki.set( el.get('data-pref'), el.get('value') ); 
+            this.getElements('[data-pref]').each( function(el){
+                Wiki.set( el.get('data-pref'), el.get('value') ); 
+            });
+            window.onbeforeunload = function(){};
+
         });
-        //alert("stop");
+    })
 
-    });
+    .once('#clearCookie', function(form){
 
-    forms[2].addEvent('submit', function(){ Wiki.erase(); });
+        form.addEvent('submit', function(){ 
 
+            window.onbeforeunload = function(){}; 
+            Wiki.erase(); 
+
+        });
 });

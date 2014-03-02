@@ -45,6 +45,7 @@
 </wiki:UserCheck>
 
 <%-- login button --%>
+<div class="btn-group">
 <wiki:UserCheck status="notAuthenticated">
   <wiki:CheckRequestContext context='!login'>
     <wiki:Permission permission="login">
@@ -75,3 +76,4 @@
     </a>
   </wiki:CheckRequestContext>
 </wiki:CheckRequestContext>
+</div>
