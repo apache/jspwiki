@@ -474,7 +474,6 @@
           <version>1.7.3</version>
           <configuration>
             <contextFolder>${project.basedir}/src/main/</contextFolder>
-            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
             <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
             <minimize>${minimize}</minimize>
             <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>

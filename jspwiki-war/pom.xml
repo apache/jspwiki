@@ -255,6 +255,7 @@
               <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
               <ignoreMissingResources>false</ignoreMissingResources>
               -->
+              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
               <wroFile>src/main/config/wro/wro.xml</wroFile>
             </configuration>
           </execution>
@@ -267,6 +268,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
+              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/haddock/</cssDestinationFolder>
               <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
             </configuration>
           </execution>
