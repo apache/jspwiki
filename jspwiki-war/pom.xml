@@ -255,13 +255,7 @@
               <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
               <ignoreMissingResources>false</ignoreMissingResources>
               -->
-              <minimize>true</minimize>
-              <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-              <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
-              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
-              <contextFolder>${basedir}/src/main/</contextFolder>
               <wroFile>src/main/config/wro/wro.xml</wroFile>
-              <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
             </configuration>
           </execution>
 
@@ -273,13 +267,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <minimize>true</minimize>
-              <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-              <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
-              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/haddock/</cssDestinationFolder>
-              <contextFolder>${basedir}/src/main/</contextFolder>
               <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
-              <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
             </configuration>
           </execution>
         </executions>
