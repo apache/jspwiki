@@ -41,6 +41,7 @@ public class ReferenceManagerTest extends TestCase
         super( s );
     }
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -48,7 +49,6 @@ public class ReferenceManagerTest extends TestCase
 
         // make sure that the reference manager cache is cleaned first
         TestEngine.emptyWorkDir(null);
-        CacheManager.getInstance().removalAll();
 
         engine = new TestEngine(props);
 
@@ -60,11 +60,17 @@ public class ReferenceManagerTest extends TestCase
         mgr = engine.getReferenceManager();
     }
 
+    @Override
     public void tearDown()
         throws Exception
     {
         // any wiki page that was created must be deleted!
         TestEngine.emptyWikiDir();
+
+        // jspwiki always uses a singleton CacheManager, so
+        // clear the cache at the end of every test case to avoid
+        // polluting another test case
+        CacheManager.getInstance().removalAll();
     }
 
     public void testNonExistant1()
