@@ -34,7 +34,9 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -56,6 +58,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.util.TextUtil;
+
 
 /**
  * This plugin counts the number of times a page has been viewed.<br/>
@@ -150,7 +153,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
      */
     private void cleanup()
     {
-
         log.info( "cleaning up PageView Manager" );
 
         c_singleton = null;
@@ -161,13 +163,11 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
      */
     public String execute( WikiContext context, Map<String, String> params ) throws PluginException
     {
-
         PageViewManager manager = c_singleton;
         String result = STR_EMPTY;
 
         if( manager != null )
         {
-
             result = manager.execute( context, params );
         }
 
@@ -214,7 +214,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          */
         public synchronized void initialize( WikiEngine engine )
         {
-
             log.info( "initializing PageView Manager" );
 
             m_workDir = engine.getWorkDir();
@@ -223,7 +222,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
             if( m_counters == null )
             {
-
                 // Load the counters into a collection
                 m_storage = new Properties();
                 m_counters = new TreeMap<String, Counter>();
@@ -239,7 +237,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
             }
 
             m_initialized = true;
-
         }
 
         /**
@@ -248,7 +245,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          */
         private synchronized void handleShutdown()
         {
-
             log.info( "handleShutdown: The counter store thread was shut down." );
 
             cleanup();
@@ -278,12 +274,10 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          */
         public void actionPerformed( WikiEvent event )
         {
-
             if( event instanceof WikiEngineEvent )
             {
                 if( event.getType() == WikiEngineEvent.SHUTDOWN )
                 {
-
                     log.info( "Detected wiki engine shutdown" );
                     handleShutdown();
                 }
@@ -311,8 +305,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         }
 
         /**
-         * Count a page hit, present a pages' counter or output a list of
-         * page counts.
+         * Count a page hit, present a pages' counter or output a list of page counts.
          * 
          * @param context the wiki context
          * @param params the plugin parameters
@@ -365,12 +358,11 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                 {
                     ReferenceManager refManager = engine.getReferenceManager();
 
-                    Iterator iter = refManager.findCreated().iterator();
+                    Iterator< String > iter = refManager.findCreated().iterator();
 
                     while ( iter != null && iter.hasNext() )
                     {
-
-                        String name = (String) iter.next();
+                        String name = iter.next();
                         boolean use = false;
 
                         for( int n = 0; !use && n < refer.length; n++ )
@@ -380,7 +372,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
                         if( use )
                         {
-                            Collection<String> refs = engine.getReferenceManager().findReferrers( name );
+                            Collection< String > refs = engine.getReferenceManager().findReferrers( name );
 
                             if( refs != null && !refs.isEmpty() )
                             {
@@ -476,22 +468,20 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                         StringBuffer buf = new StringBuffer( header );
                         MessageFormat fmt = new MessageFormat( line );
                         Object[] args = new Object[] { pagename, STR_EMPTY, STR_EMPTY };
-                        Iterator iter = sorted.entrySet().iterator();
+                        Iterator< Entry< String, Counter > > iter = sorted.entrySet().iterator();
 
                         while ( iter != null && 0 < entries && iter.hasNext() )
                         {
-
-                            Entry entry = (Entry) iter.next();
-                            String name = (String) entry.getKey();
+                            Entry< String, Counter > entry = iter.next();
+                            String name = entry.getKey();
 
                             // check minimum/maximum count
-                            final int value = ((Counter) entry.getValue()).getValue();
+                            final int value = entry.getValue().getValue();
                             boolean use = min <= value && value <= max;
 
                             // did we specify a refer-to page?
                             if( use && referrers != null )
                             {
-
                                 use = referrers.contains( name );
                             }
 
@@ -502,7 +492,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
                                 for( int n = 0; !use && n < include.length; n++ )
                                 {
-
                                     use = matcher.matches( name, include[n] );
                                 }
                             }
@@ -512,7 +501,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                             {
                                 for( int n = 0; use && n < exclude.length; n++ )
                                 {
-
                                     use &= !matcher.matches( name, exclude[n] );
                                 }
                             }
@@ -547,7 +535,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          */
         private Pattern[] compileGlobs( String name, String value ) throws PluginException
         {
-
             Pattern[] result = null;
 
             if( value != null && 0 < value.length() && !STR_GLOBSTAR.equals( value ) )
@@ -623,25 +610,15 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                     }
                     finally
                     {
-                        try
-                        {
-                            if( fis != null )
-                            {
-                                fis.close();
-                            }
-                        }
-                        catch( Exception ignore )
-                        {
-                            /* ignore */
-                        }
+                        IOUtils.closeQuietly( fis );
                     }
 
                     // Copy the collection into a sorted map
-                    Iterator iter = m_storage.entrySet().iterator();
+                    Iterator< Entry< Object, Object > > iter = m_storage.entrySet().iterator();
 
                     while ( iter != null && iter.hasNext() )
                     {
-                        Entry entry = (Entry) iter.next();
+                        Entry< ?, ? > entry = iter.next();
 
                         m_counters.put( (String) entry.getKey(), new Counter( (String) entry.getValue() ) );
                     }
@@ -681,17 +658,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                     }
                     finally
                     {
-                        try
-                        {
-                            if( fos != null )
-                            {
-                                fos.close();
-                            }
-                        }
-                        catch( Exception ignore )
-                        {
-                            /* ignore */
-                        }
+                        IOUtils.closeQuietly( fos );
                     }
                 }
             }
@@ -763,15 +730,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          */
         public void setValue( String value )
         {
-            try
-            {
-                m_count = Integer.parseInt( value );
-
-            }
-            catch( Exception ignore )
-            {
-                m_count = 0;
-            }
+            m_count = NumberUtils.toInt( value );
         }
 
         /**
