@@ -1,3 +1,7 @@
+2014-03-11  Harry Metske (metskem@apache.org)
+
+       * Fixed JSPWIKI-827 - Migrate the mvn_cheatsheet.txt to Markdown
+
 2014-03-03  Harry Metske (metskem@apache.org)
 
        * 2.10.1-svn-11
