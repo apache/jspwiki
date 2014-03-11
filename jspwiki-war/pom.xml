@@ -218,6 +218,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <systemPropertyVariables>
+              <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+          </systemPropertyVariables>          
           <excludes>
             <!-- time-consuming tests excluded by default -->
             <exclude>**/StressTestVersioningProvider.java</exclude>
@@ -350,6 +353,32 @@
             </resource>
           </webResources>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <!-- Unpack the JSP Wiki Pages -->
+          <execution>
+            <id>unpack-wikipages-private</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki.wikipages</groupId>
+                  <artifactId>jspwiki-wikipages-en</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+              </artifactItems>
+              <excludes>META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/jspwiki/data/jspwiki-files</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>  
       </plugin>
     </plugins>
   </build>

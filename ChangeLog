@@ -1,5 +1,9 @@
 2014-03-11  Harry Metske (metskem@apache.org)
 
+       * Fixed JSPWIKI-823 - set java.io.tmpdir to ${project.build.directory} in pom.xml
+
+2014-03-11  Harry Metske (metskem@apache.org)
+
        * Fixed JSPWIKI-827 - Migrate the mvn_cheatsheet.txt to Markdown
 
 2014-03-03  Harry Metske (metskem@apache.org)
