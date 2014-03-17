@@ -1,3 +1,9 @@
+2014-03-17  Harry Metske (metskem@apache.org)
+
+       * 2.10.1-svn-12
+
+       * Fixed JSPWIKI-833 - temp policy file is created with wrong content (thanks to Dietrich Schmidt)
+
 2014-03-11  Harry Metske (metskem@apache.org)
 
        * Fixed JSPWIKI-823 - set java.io.tmpdir to ${project.build.directory} in pom.xml

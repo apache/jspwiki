@@ -645,10 +645,9 @@ public class AuthenticationManager {
                 os = new FileOutputStream(tmpFile);
 
                 byte[] buff = new byte[1024];
-
-                while( is.read(buff) != -1 )
-                {
-                    os.write(buff);
+                int bytes = 0;
+                while ((bytes = is.read(buff)) != -1) {
+                    os.write(buff, 0, bytes);
                 }
 
                 path = tmpFile.toURI().toURL();
