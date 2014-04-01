@@ -54,7 +54,7 @@ import org.apache.wiki.WikiSession;
  */
 public class WebContainerAuthorizer implements WebAuthorizer
 {
-    private static final String J2EE_SCHEMA_24_NAMESPACE = "http://java.sun.com/xml/ns/j2ee";
+    private static final String J2EE_SCHEMA_25_NAMESPACE = "http://java.sun.com/xml/ns/javaee";
 
     protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
 
@@ -103,7 +103,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
             if ( m_webxml != null )
             {
                 // Add the J2EE 2.4 schema namespace
-                m_webxml.getRootElement().setNamespace( Namespace.getNamespace( J2EE_SCHEMA_24_NAMESPACE ) );
+                m_webxml.getRootElement().setNamespace( Namespace.getNamespace( J2EE_SCHEMA_25_NAMESPACE ) );
 
                 m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL )
                         && isConstrained( "/Login.jsp", Role.ALL );
@@ -240,13 +240,13 @@ public class WebContainerAuthorizer implements WebAuthorizer
         // (Note the crazy j: prefix to denote the 2.4 j2ee schema)
         selector = "//j:web-app/j:security-constraint[j:web-resource-collection/j:url-pattern=\"" + url + "\"]";
         xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
         List<?> constraints = xpath.selectNodes( root );
 
         // Get all constraints that match our Role pattern
         selector = "//j:web-app/j:security-constraint[j:auth-constraint/j:role-name=\"" + role.getName() + "\"]";
         xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
         List<?> roles = xpath.selectNodes( root );
 
         // If we can't find either one, we must not be constrained
@@ -333,7 +333,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
         // Get roles referred to by constraints
         String selector = "//j:web-app/j:security-constraint/j:auth-constraint/j:role-name";
         XPath xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
         List<?> nodes = xpath.selectNodes( root );
         for( Iterator<?> it = nodes.iterator(); it.hasNext(); )
         {
@@ -344,7 +344,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
         // Get all defined roles
         selector = "//j:web-app/j:security-role/j:role-name";
         xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
         nodes = xpath.selectNodes( root );
         for( Iterator<?> it = nodes.iterator(); it.hasNext(); )
         {

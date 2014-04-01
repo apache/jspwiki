@@ -1,3 +1,9 @@
+2014-04-01  Harry Metske (metskem@apache.org)
+
+       * 2.10.1-svn-13
+
+       * Fixed JSPWIKI-831 - Container managed authorization does not work in tomcat
+
 2014-03-17  Harry Metske (metskem@apache.org)
 
        * 2.10.1-svn-12
@@ -98,7 +104,7 @@
        * Various small fixes on the HADDOCK template (jsp/css/js) :
        
        * Fixing %%category dropdowns which were clipped when inside a %%accordion.
-         Replacing js based animation by css3 animation to show/hide the popup.
+         Replacing js based animation by2.10.1-svn-12 css3 animation to show/hide the popup.
        
        * Fixing bug when saving the Preferences (detected by Harry)
        
