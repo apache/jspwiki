@@ -4,6 +4,8 @@
        
        * Fixed JSPWIKI-832 - [Portable] Problems setting up multiple wikis using a shared JSPWiki libraries 
          (patch by Siegfried Goeschl - thanks!)
+       
+       * Upgraded selenium-*-drivers to 2.41.0
 
 2014-04-01  Harry Metske (metskem@apache.org)
 
