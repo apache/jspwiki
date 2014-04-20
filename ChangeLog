@@ -1,3 +1,10 @@
+2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.1-svn-14
+       
+       * Fixed JSPWIKI-832 - [Portable] Problems setting up multiple wikis using a shared JSPWiki libraries 
+         (patch by Siegfried Goeschl - thanks!)
+
 2014-04-01  Harry Metske (metskem@apache.org)
 
        * 2.10.1-svn-13

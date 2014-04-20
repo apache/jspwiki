@@ -94,23 +94,24 @@ public class CachingAttachmentProvider
     {
         log.info("Initing CachingAttachmentProvider");
 
-        if (m_cacheManager.cacheExists(ATTCOLLCACHE_NAME)) {
-            m_cache = m_cacheManager.getCache(ATTCOLLCACHE_NAME);
+        String attCollCacheName = engine.getApplicationName() + "." + ATTCOLLCACHE_NAME;
+        if (m_cacheManager.cacheExists(attCollCacheName)) {
+            m_cache = m_cacheManager.getCache(attCollCacheName);
         } else {
-            m_cache = new Cache(ATTCOLLCACHE_NAME, m_capacity, false, false, 0, 0);
+            m_cache = new Cache(attCollCacheName, m_capacity, false, false, 0, 0);
             m_cacheManager.addCache(m_cache);
         }
 
         //
         // cache for the individual Attachment objects, attachment name is key, the Attachment object is the cached object
         //
-        if (m_cacheManager.cacheExists(ATTCACHE_NAME)) {
-            m_attCache = m_cacheManager.getCache(ATTCACHE_NAME);
+        String attCacheName = engine.getApplicationName() + "." + ATTCACHE_NAME;
+        if (m_cacheManager.cacheExists(attCacheName)) {
+            m_attCache = m_cacheManager.getCache(attCacheName);
         } else {
-            m_attCache = new Cache(ATTCACHE_NAME, m_capacity, false, false, 0, 0);
+            m_attCache = new Cache(attCacheName, m_capacity, false, false, 0, 0);
             m_cacheManager.addCache(m_attCache);
         }
-
         //
         //  Find and initialize real provider.
         //

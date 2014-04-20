@@ -137,12 +137,13 @@ public class AttachmentManager
         //
         //  Create and initialize the provider.
         //
+        String cacheName = engine.getApplicationName() + "." + CACHE_NAME;
         try {
-            if (m_cacheManager.cacheExists(CACHE_NAME)) {
-                m_dynamicAttachments = m_cacheManager.getCache(CACHE_NAME);
+            if (m_cacheManager.cacheExists(cacheName)) {
+                m_dynamicAttachments = m_cacheManager.getCache(cacheName);
             } else {
-                log.info("cache with name " + CACHE_NAME + " not found in ehcache.xml, creating it with defaults.");
-                m_dynamicAttachments = new Cache(CACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
+                log.info("cache with name " + cacheName + " not found in ehcache.xml, creating it with defaults.");
+                m_dynamicAttachments = new Cache(cacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0);
                 m_cacheManager.addCache(m_dynamicAttachments);
             }
 

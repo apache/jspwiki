@@ -59,19 +59,19 @@
                                      (specified as LFU)
     -->
     <!-- the default JSPWiki caches -->
-    <cache name="jspwiki.renderingCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.renderingCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.pageCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.pageCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.pageTextCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.pageTextCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.pageHistoryCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.pageHistoryCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.attachmentsCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.attachmentsCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.attachmentCollectionsCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.attachmentCollectionsCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.dynamicAttachmentCache" maxElementsInMemory="1000" />
+    <cache name="JSPWiki.jspwiki.dynamicAttachmentCache" maxElementsInMemory="1000" />
 
-    <cache name="jspwiki.rssCache" maxElementsInMemory="250" />
+    <cache name="JSPWiki.jspwiki.rssCache" maxElementsInMemory="250" />
 </ehcache>

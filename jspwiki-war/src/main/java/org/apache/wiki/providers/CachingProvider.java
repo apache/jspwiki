@@ -100,27 +100,30 @@ public class CachingProvider implements WikiPageProvider {
         // engine is used for getting the search engine
         m_engine = engine;
 
-        if (m_cacheManager.cacheExists(CACHE_NAME)) {
-            m_cache = m_cacheManager.getCache(CACHE_NAME);
+        String cacheName = engine.getApplicationName() + "." + CACHE_NAME;
+        if (m_cacheManager.cacheExists(cacheName)) {
+            m_cache = m_cacheManager.getCache(cacheName);
         } else {
-            log.info("cache with name " + CACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_cache = new Cache(CACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
+            log.info("cache with name " + cacheName +  " not found in ehcache.xml, creating it with defaults.");
+            m_cache = new Cache(cacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0);
             m_cacheManager.addCache(m_cache);
         }
 
-        if (m_cacheManager.cacheExists(TEXTCACHE_NAME)) {
-            m_textCache= m_cacheManager.getCache(TEXTCACHE_NAME);
+        String textCacheName = engine.getApplicationName() + "." + TEXTCACHE_NAME;
+        if (m_cacheManager.cacheExists(textCacheName)) {
+            m_textCache= m_cacheManager.getCache(textCacheName);
         } else {
-            log.info("cache with name " + TEXTCACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_textCache = new Cache(TEXTCACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
+            log.info("cache with name " + textCacheName +  " not found in ehcache.xml, creating it with defaults.");
+            m_textCache = new Cache(textCacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0);
             m_cacheManager.addCache(m_textCache);
         }
 
-        if (m_cacheManager.cacheExists(HISTORYCACHE_NAME)) {
-            m_historyCache= m_cacheManager.getCache(HISTORYCACHE_NAME);
+        String historyCacheName = engine.getApplicationName() + "." + HISTORYCACHE_NAME;
+        if (m_cacheManager.cacheExists(historyCacheName)) {
+            m_historyCache= m_cacheManager.getCache(historyCacheName);
         } else {
-            log.info("cache with name " + HISTORYCACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_historyCache = new Cache(HISTORYCACHE_NAME, DEFAULT_CACHECAPACITY, false, false, 0, 0);
+            log.info("cache with name " + historyCacheName +  " not found in ehcache.xml, creating it with defaults.");
+            m_historyCache = new Cache(historyCacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0);
             m_cacheManager.addCache(m_historyCache);
         }
 

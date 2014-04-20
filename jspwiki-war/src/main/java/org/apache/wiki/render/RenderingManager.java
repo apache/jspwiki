@@ -107,11 +107,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
     {
         m_engine = engine;
 
-        if (m_cacheManager.cacheExists(DOCUMENTCACHE_NAME)) {
-            m_documentCache = m_cacheManager.getCache(DOCUMENTCACHE_NAME);
+        String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;
+
+        if (m_cacheManager.cacheExists(documentCacheName)) {
+            m_documentCache = m_cacheManager.getCache(documentCacheName);
         } else {
-            log.info("cache with name " + DOCUMENTCACHE_NAME +  " not found in ehcache.xml, creating it with defaults.");
-            m_documentCache = new Cache(DOCUMENTCACHE_NAME, DEFAULT_CACHESIZE, false, false, m_cacheExpiryPeriod, m_cacheExpiryPeriod);
+            log.info("cache with name " + documentCacheName +  " not found in ehcache.xml, creating it with defaults.");
+            m_documentCache = new Cache(documentCacheName, DEFAULT_CACHESIZE, false, false, m_cacheExpiryPeriod, m_cacheExpiryPeriod);
             m_cacheManager.addCache(m_documentCache);
         }
 
