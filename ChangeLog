@@ -1,5 +1,13 @@
 2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
+       * 2.10.1-svn-15
+       
+       * Fixed JSPWIKI-822 - NPE thrown by PluginContext#getText()
+       
+       * JSPWIKI-814 - VersioningFileProvider does migrate original page properties (thanks to Brian Burch)
+
+2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
        * 2.10.1-svn-14
        
        * Fixed JSPWIKI-832 - [Portable] Problems setting up multiple wikis using a shared JSPWiki libraries 
