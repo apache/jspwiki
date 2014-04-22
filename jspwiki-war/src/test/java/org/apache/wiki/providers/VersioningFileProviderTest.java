@@ -27,11 +27,13 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sf.ehcache.CacheManager;
 
 import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.auth.Users;
 import org.apache.wiki.util.FileUtil;
 
 // FIXME: Should this thingy go directly to the VersioningFileProvider,
@@ -41,56 +43,291 @@ public class VersioningFileProviderTest extends TestCase
 {
     public static final String NAME1 = "Test1";
 
-    Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
+    private static final String OLD_AUTHOR = "brian";
+    private static final String FAKE_HISTORY =
+                "#JSPWiki page properties for page " + NAME1 + "\n"
+                + "#Wed Jan 01 12:27:57 GMT 2012" + "\n"
+                + "author=" + OLD_AUTHOR + "\n";
 
-    TestEngine engine;
+    // we always use the same properties for this suite, but
+    // they can be changed by our tests and also TestEngine,
+    // and so must be reloaded from source for each test case
+    private Properties PROPS =
+            TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
+
+    // this is the testing page directory
+    private String files;
+
+    private TestEngine engine;
 
     public VersioningFileProviderTest( String s )
     {
         super( s );
     }
 
+    @Override
     public void setUp()
         throws Exception
     {
-        engine = new TestEngine(props);
+        // make sure that the reference manager cache is cleaned first
+        TestEngine.emptyWorkDir(null);
+
+        engine = new TestEngine(PROPS);
+        files = PROPS.getProperty( AbstractFileProvider.PROP_PAGEDIR );
     }
 
+    @Override
     public void tearDown()
     {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        // Remove all/any files and subdirs left in test page directory
+        TestEngine.deleteAll( new File(files) );
 
-        // Remove file
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-        f.delete();
-
-        f = new File( files, "OLD" );
-
-        TestEngine.deleteAll(f);
+        // jspwiki always uses a singleton CacheManager, so
+        // clear the cache at the end of every test case to avoid
+        // polluting another test case
+        CacheManager.getInstance().removalAll();
     }
 
-    /**
-     *  Checks if migration from FileSystemProvider to VersioningFileProvider
-     *  works by creating a dummy file without corresponding content in OLD/
+    /*
+     * Checks if a page created or last modified by FileSystemProvider
+     * will be seen by VersioningFileProvider as the "first" version.
      */
-    public void testMigration()
+    public void testMigrationInfoAvailable()
         throws IOException
     {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        // we cannot switch PageProviders within a single test, so the
+        // initial FileSystemProvider wiki page must be faked.
+        final String fakeWikiPage = "foobar";
+        injectFile(NAME1+AbstractFileProvider.FILE_EXT, fakeWikiPage);
 
-        Writer out = new FileWriter( f );
-        FileUtil.copyContents( new StringReader("foobar"), out );
-        out.close();
+       // also create an associated properties file with some history
+        injectFile(NAME1+FileSystemProvider.PROP_EXT, FAKE_HISTORY);
 
         String res = engine.getText( NAME1 );
+        assertEquals( "fetch latest should work", fakeWikiPage, res );
 
-        assertEquals( "latest did not work", "foobar", res );
+        WikiPage page = engine.getPage( NAME1, 1 );
+        assertEquals( "original version expected", 1, page.getVersion() );
+        assertEquals( "original author", OLD_AUTHOR, page.getAuthor() );
+    }
+
+    /*
+     * Checks if migration from FileSystemProvider to VersioningFileProvider
+     * works when a simple text file (without associated properties) exists,
+     * but there is not yet any corresponding history content in OLD/
+     */
+    public void testMigrationSimple()
+        throws IOException
+    {
+        // we cannot switch PageProviders within a single test, so the
+        // initial FileSystemProvider wiki page must be faked.
+        injectFile(NAME1+AbstractFileProvider.FILE_EXT, "foobar");
+
+        String res = engine.getText( NAME1 );
+        assertEquals( "fetch latest did not work", "foobar", res );
 
         res = engine.getText( NAME1, 1 ); // Should be the first version.
-
         assertEquals( "fetch by direct version did not work", "foobar", res );
+
+        WikiPage page = engine.getPage( NAME1 );
+        assertEquals( "original version expected", 1, page.getVersion() );
+        assertNull( "original author not expected", page.getAuthor() );
+    }
+
+    /*
+     * Checks if migration from FileSystemProvider to VersioningFileProvider
+     * works when a simple text file and its associated properties exist, but
+     * when there is not yet any corresponding history content in OLD/
+     */
+    public void testMigrationWithSimpleHistory()
+        throws IOException
+    {
+        // we cannot switch PageProviders within a single test, so the
+        // initial FileSystemProvider wiki page must be faked.
+        final String fakeWikiPage = "foobar";
+        injectFile(NAME1+AbstractFileProvider.FILE_EXT, fakeWikiPage);
+
+       // now create the associated properties file with some history
+        injectFile(NAME1+FileSystemProvider.PROP_EXT, FAKE_HISTORY);
+
+        String res = engine.getText( NAME1 );
+        assertEquals( "fetch latest did not work", fakeWikiPage, res );
+
+        res = engine.getText( NAME1, 1 ); // Should be the first version.
+        assertEquals( "fetch by direct version did not work", fakeWikiPage, res );
+
+        WikiPage page = engine.getPage( NAME1, 1 );
+        assertEquals( "original version expected", 1, page.getVersion() );
+        assertEquals( "original author", OLD_AUTHOR, page.getAuthor() );
+    }
+
+    /*
+     * Checks if migration from FileSystemProvider to VersioningFileProvider
+     * works when a simple text file and its associated properties exist, but
+     * when there is not yet any corresponding history content in OLD/.
+     * Update the wiki page and confirm the original simple history was
+     * assimilated into the newly-created properties.
+     */
+    public void testMigrationChangesHistory()
+        throws Exception
+    {
+        // we cannot switch PageProviders within a single test, so the
+        // initial FileSystemProvider wiki page must be faked.
+        final String fakeWikiPage = "foobar";
+        injectFile(NAME1+AbstractFileProvider.FILE_EXT, fakeWikiPage);
+
+       // also create an associated properties file with some history
+        injectFile(NAME1+FileSystemProvider.PROP_EXT, FAKE_HISTORY);
+
+        String result1 = engine.getText( NAME1 );
+        assertEquals( "latest should be initial", fakeWikiPage, result1 );
+
+        // now update the wiki page to create a new version
+        final String text = "diddo\r\n";
+        engine.saveText( NAME1, text );
+
+        // confirm the right number of versions have been recorded
+        Collection versionHistory = engine.getVersionHistory(NAME1);
+        assertEquals( "number of versions", 2, versionHistory.size() );
+
+        // fetch the updated page
+        String result2 = engine.getText( NAME1 );
+        assertEquals( "latest should be new version", text, result2 );
+        String result3 = engine.getText( NAME1, 2 ); // Should be the 2nd version.
+        assertEquals( "fetch new by version did not work", text, result3 );
+
+        // now confirm the original page has been archived
+        String result4 = engine.getText( NAME1, 1 );
+        assertEquals( "fetch original by version failed", fakeWikiPage, result4 );
+
+        WikiPage pageNew = engine.getPage( NAME1, 2 );
+        assertEquals( "new version", 2, pageNew.getVersion() );
+        assertEquals( "new author", "Guest", pageNew.getAuthor() );
+
+        WikiPage pageOld = engine.getPage( NAME1, 1 );
+        assertEquals( "old version", 1, pageOld.getVersion() );
+        assertEquals( "old author", OLD_AUTHOR, pageOld.getAuthor() );
+    }
+
+    /*
+     * Checks migration from FileSystemProvider to VersioningFileProvider
+     * works after multiple updates to a page with existing properties.
+     */
+    public void testMigrationMultiChangesHistory()
+        throws Exception
+    {
+        // we cannot switch PageProviders within a single test, so the
+        // initial FileSystemProvider wiki page must be faked.
+        final String fakeWikiPage = "foobar";
+        injectFile(NAME1+AbstractFileProvider.FILE_EXT, fakeWikiPage);
+
+       // also create an associated properties file with some history
+        injectFile(NAME1+FileSystemProvider.PROP_EXT, FAKE_HISTORY);
+
+        // next update the wiki page to create a version number 2
+        // with a different user name
+        final String text2 = "diddo\r\n";
+        engine.saveTextAsJanne( NAME1, text2 );
+
+        // finally update the wiki page to create a version number 3
+        final String text3 = "whateverNext\r\n";
+        engine.saveText( NAME1, text3 );
+
+        // confirm the right number of versions have been recorded
+        Collection versionHistory = engine.getVersionHistory(NAME1);
+        assertEquals( "number of versions", 3, versionHistory.size() );
+
+        // fetch the latest version of the page
+        String result = engine.getText( NAME1 );
+        assertEquals( "latest should be newest version", text3, result );
+        String result2 = engine.getText( NAME1, 3 );
+        assertEquals( "fetch new by version did not work", text3, result2 );
+
+        // confirm the original page was archived
+        String result3 = engine.getText( NAME1, 1 );
+        assertEquals( "fetch original by version failed", fakeWikiPage, result3 );
+
+        // confirm the first update was archived
+        String result4 = engine.getText( NAME1, 2 );
+        assertEquals( "fetch original by version failed", text2, result4 );
+
+        WikiPage pageNew = engine.getPage( NAME1 );
+        assertEquals( "newest version", 3, pageNew.getVersion() );
+        assertEquals( "newest author", "Guest", pageNew.getAuthor() );
+
+        WikiPage pageMiddle = engine.getPage( NAME1, 2 );
+        assertEquals( "middle version", 2, pageMiddle.getVersion() );
+        assertEquals( "middle author", Users.JANNE, pageMiddle.getAuthor() );
+
+        WikiPage pageOld = engine.getPage( NAME1, 1 );
+        assertEquals( "old version", 1, pageOld.getVersion() );
+        assertEquals( "old author", OLD_AUTHOR, pageOld.getAuthor() );
+    }
+
+    /*
+     * A variation of testMigrationMultiChangesHistory when caching
+     * is disabled.
+     */
+    public void testMigrationMultiChangesNoCache()
+        throws Exception
+    {
+        // discard the default engine, and get another with different properties
+        // note: the originating properties file is unchanged.
+        String cacheState = PROPS.getProperty( PageManager.PROP_USECACHE );
+        assertEquals( "should cache", "true", cacheState );
+        cacheState = "false";
+        PROPS.setProperty( PageManager.PROP_USECACHE, cacheState );
+        engine = new TestEngine(PROPS);
+
+        // the new TestEngine will have assigned a new page directory
+        files = PROPS.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+
+        // we cannot switch PageProviders within a single test, so the
+        // initial FileSystemProvider wiki page must be faked.
+        final String fakeWikiPage = "foobar";
+        injectFile(NAME1+AbstractFileProvider.FILE_EXT, fakeWikiPage);
+
+       // also create an associated properties file with some history
+        injectFile(NAME1+FileSystemProvider.PROP_EXT, FAKE_HISTORY);
+
+        // next update the wiki page to create a version number 2
+        // with a different user name
+        final String text2 = "diddo\r\n";
+        engine.saveTextAsJanne( NAME1, text2 );
+
+        // finally update the wiki page to create a version number 3
+        final String text3 = "whateverNext\r\n";
+        engine.saveText( NAME1, text3 );
+
+        // confirm the right number of versions have been recorded
+        Collection versionHistory = engine.getVersionHistory(NAME1);
+        assertEquals( "number of versions", 3, versionHistory.size() );
+
+        // fetch the latest version of the page
+        String result = engine.getText( NAME1 );
+        assertEquals( "latest should be newest version", text3, result );
+        String result2 = engine.getText( NAME1, 3 );
+        assertEquals( "fetch new by version did not work", text3, result2 );
+
+        // confirm the original page was archived
+        String result3 = engine.getText( NAME1, 1 );
+        assertEquals( "fetch original by version failed", fakeWikiPage, result3 );
+
+        // confirm the first update was archived
+        String result4 = engine.getText( NAME1, 2 );
+        assertEquals( "fetch original by version failed", text2, result4 );
+
+        WikiPage pageNew = engine.getPage( NAME1 );
+        assertEquals( "newest version", 3, pageNew.getVersion() );
+        assertEquals( "newest author", "Guest", pageNew.getAuthor() );
+
+        WikiPage pageMiddle = engine.getPage( NAME1, 2 );
+        assertEquals( "middle version", 2, pageMiddle.getVersion() );
+        assertEquals( "middle author", Users.JANNE, pageMiddle.getAuthor() );
+
+        WikiPage pageOld = engine.getPage( NAME1, 1 );
+        assertEquals( "old version", 1, pageOld.getVersion() );
+        assertEquals( "old author", OLD_AUTHOR, pageOld.getAuthor() );
     }
 
     public void testMillionChanges()
@@ -98,7 +335,7 @@ public class VersioningFileProviderTest extends TestCase
     {
         String text = "";
         String name = NAME1;
-        int    maxver = 100; // Save 100 versions.
+        int maxver = 100;           // Save 100 versions.
 
         for( int i = 0; i < maxver; i++ )
         {
@@ -247,10 +484,7 @@ public class VersioningFileProviderTest extends TestCase
 
         provider.deletePage( NAME1 );
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
+        File f = new File( files, NAME1+AbstractFileProvider.FILE_EXT );
         assertFalse( "file exists", f.exists() );
     }
 
@@ -353,5 +587,18 @@ public class VersioningFileProviderTest extends TestCase
     public static Test suite()
     {
         return new TestSuite( VersioningFileProviderTest.class );
+    }
+
+    /*
+     * Creates a file of the given name in the wiki page directory,
+     * containing the data provided.
+     */
+    private void injectFile(String fileName, String fileContent)
+        throws IOException
+    {
+        File ft = new File( files, fileName );
+        Writer out = new FileWriter( ft );
+        FileUtil.copyContents( new StringReader(fileContent), out );
+        out.close();
     }
 }

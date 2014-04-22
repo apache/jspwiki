@@ -353,6 +353,7 @@ public class TestEngine extends WikiEngine
      * Convenience method that saves a wiki page by constructing a fake
      * WikiContext and HttpServletRequest. We always want to do this using a
      * WikiContext whose subject contains Role.ADMIN.
+     * Note: the WikiPage author will have the default value of "Guest".
      * @param pageName
      * @param content
      * @throws WikiException
@@ -385,6 +386,7 @@ public class TestEngine extends WikiEngine
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
+        page.setAuthor(Users.JANNE);
         WikiContext context = new WikiContext( this, request, page );
         saveText( context, content );
     }
@@ -410,8 +412,9 @@ public class TestEngine extends WikiEngine
     {
         String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir", 
-                           pageDir.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis() );
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir",
+                           pageDir.replaceAll( "\\d", StringUtils.EMPTY )
+                           + System.currentTimeMillis() );
         return props;
     }
 

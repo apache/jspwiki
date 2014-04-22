@@ -255,13 +255,9 @@ public class VersioningFileProvider
 
                 props.load(in);
 
-                cp = new CachedProperties();
-                cp.m_page = page;
-                cp.m_lastModified = lastModified;
-                cp.m_props = props;
-                
+                cp = new CachedProperties( page, props, lastModified );
                 m_cachedProperties = cp; // Atomic
-                
+
                 return props;
             }
             finally
@@ -293,6 +289,15 @@ public class VersioningFileProvider
         {
         	IOUtils.closeQuietly( out );
         }
+
+        // The profiler showed the probability was very high that when
+        // calling for the history of a page the propertyfile would be
+        // read as much times as there were versions of that file.
+        // It is statistically likely the propertyfile will be examined
+        // many times before it is updated.
+        CachedProperties cp =
+                new CachedProperties( page, properties, propertyFile.lastModified() );
+        m_cachedProperties = cp; // Atomic
     }
 
     /**
@@ -440,12 +445,13 @@ public class VersioningFileProvider
             // "first"       = 1  ==> 2
 
             int versionNumber = (latest > 0) ? latest : 1;
+            boolean firstUpdate = (versionNumber == 1);
 
             if( oldFile != null && oldFile.exists() )
             {
                 InputStream in = null;
                 OutputStream out = null;
-                
+
                 try
                 {
                     in = new BufferedInputStream( new FileInputStream( oldFile ) );
@@ -484,14 +490,33 @@ public class VersioningFileProvider
             // FIXME: No rollback available.
             Properties props = getPageProperties( page.getName() );
 
-            props.setProperty( versionNumber+".author", (page.getAuthor() != null) ? page.getAuthor() : "unknown" );
-            
+            String authorFirst = null;
+            if ( firstUpdate )
+            {
+                // we might not yet have a versioned author because the
+                // old page was last maintained by FileSystemProvider
+                Properties props2 = getHeritagePageProperties( page.getName() );
+
+                // remember the simulated original author (or something)
+                // in the new properties
+                authorFirst = props2.getProperty( "1.author", "unknown" );
+                props.setProperty( "1.author", authorFirst );
+            }
+
+            String newAuthor = page.getAuthor();
+            if ( newAuthor == null )
+            {
+                newAuthor = ( authorFirst != null ) ? authorFirst : "unknown";
+            }
+            page.setAuthor(newAuthor);
+            props.setProperty( versionNumber + ".author", newAuthor );
+
             String changeNote = (String) page.getAttribute(WikiPage.CHANGENOTE);
             if( changeNote != null )
             {
                 props.setProperty( versionNumber+".changenote", changeNote );
             }
-            
+
             putPageProperties( page.getName(), props );
         }
         catch( IOException e )
@@ -569,14 +594,21 @@ public class VersioningFileProvider
             {
                 Properties props = getPageProperties( page );
                 String author = props.getProperty( realVersion+".author" );
-                if( author != null )
+                if ( author == null )
+                {
+                    // we might not have a versioned author because the
+                    // old page was last maintained by FileSystemProvider
+                    Properties props2 = getHeritagePageProperties( page );
+                    author = props2.getProperty( "author" );
+                }
+                if ( author != null )
                 {
                     p.setAuthor( author );
                 }
-                
+
                 String changenote = props.getProperty( realVersion+".changenote" );
                 if( changenote != null ) p.setAttribute( WikiPage.CHANGENOTE, changenote );
-                
+
             }
             catch( IOException e )
             {
@@ -633,6 +665,64 @@ public class VersioningFileProvider
         }
 
         return list;
+    }
+
+    /*
+     * Support for migration of simple properties created by the
+     * FileSystemProvider when coming under Versioning management.
+     * Simulate an initial version.
+     */
+    private Properties getHeritagePageProperties( String page )
+        throws IOException
+    {
+        File propertyFile = new File( getPageDirectory(),
+                        mangleName(page) + FileSystemProvider.PROP_EXT );
+        if ( propertyFile.exists() )
+        {
+            long lastModified = propertyFile.lastModified();
+
+            CachedProperties cp = m_cachedProperties;
+            if ( cp != null
+                && cp.m_page.equals(page)
+                && cp.m_lastModified == lastModified )
+            {
+                return cp.m_props;
+            }
+
+            InputStream in = null;
+            try
+            {
+                in = new BufferedInputStream(
+                            new FileInputStream( propertyFile ));
+
+                Properties props = new Properties();
+                props.load(in);
+
+                String originalAuthor = props.getProperty("author");
+                if ( originalAuthor.length() > 0 )
+                {
+                    // simulate original author as if already versioned
+                    // but put non-versioned property in special cache too
+                    props.setProperty( "1.author", originalAuthor );
+
+                    // The profiler showed the probability was very high
+                    // that when calling for the history of a page the
+                    // propertyfile would be read as much times as there were
+                    // versions of that file. It is statistically likely the
+                    // propertyfile will be examined many times before it is updated.
+                    cp = new CachedProperties( page, props, propertyFile.lastModified() );
+                    m_cachedProperties = cp; // Atomic
+                }
+
+                return props;
+            }
+            finally
+            {
+                IOUtils.closeQuietly( in );
+            }
+        }
+
+        return new Properties(); // Returns an empty object
     }
 
     /**
@@ -803,20 +893,53 @@ public class VersioningFileProvider
         // Move the file itself
         File fromFile = findPage( from );
         File toFile = findPage( to );
-        
+
         fromFile.renameTo( toFile );
-        
+
         // Move any old versions
         File fromOldDir = findOldPageDir( from );
         File toOldDir = findOldPageDir( to );
-        
+
         fromOldDir.renameTo( toOldDir );
     }
-    
+
+    /*
+     * The profiler showed that when calling the history of a page, the
+     * propertyfile was read just as many times as there were versions
+     * of that file. The loading of a propertyfile is a cpu-intensive job.
+     * This Class holds onto the last propertyfile read, because the
+     * probability is high that the next call will with ask for the same
+     * propertyfile. The time it took to show a historypage with 267
+     * versions dropped by 300%. Although each propertyfile in a history
+     * could be cached, there is likely to be little performance gain over
+     * simply keeping the last one requested.
+     */
     private static class CachedProperties
     {
         String m_page;
         Properties m_props;
         long m_lastModified;
+
+        /*
+         * Because a Constructor is inherently synchronised, there is
+         * no need to synchronise the arguments.
+         *
+         * @param engine WikiEngine instance
+         * @param props  Properties to use for initialization
+         */
+        public CachedProperties(String pageName, Properties props,
+                                long lastModified) {
+            if ( pageName == null )
+            {
+                throw new NullPointerException ( "pageName must not be null!" );
+            }
+            this.m_page = pageName;
+            if ( props == null )
+            {
+                throw new NullPointerException ( "properties must not be null!" );
+            }
+            m_props = props;
+            this.m_lastModified = lastModified;
+        }
     }
 }
