@@ -243,9 +243,9 @@ hsqldb-2.3.0.jar                            doc/LICENSE.hsqldb
 sqltool-2.3.0.jar                           doc/LICENSE.hsqldb
 jetty-all-8.1.12.v20130726.jar              LICENSE
 junit-4.11.jar                              doc/LICENSE.cpl
-selenium-chrome-driver-2.33.0.jar           LICENSE
-selenium-firefox-driver-2.33.0.jar          LICENSE
-selenium-ie-driver-2.33.0.jar               LICENSE
+selenium-chrome-driver-2.41.0.jar           LICENSE
+selenium-firefox-driver-2.41.0.jar          LICENSE
+selenium-ie-driver-2.41.0.jar               LICENSE
 stripes-1.5.7.jar                           LICENSE
 xercesImpl-2.6.2.jar                        LICENSE
 xml-apis-1.0.b2.jar                         LICENSE
