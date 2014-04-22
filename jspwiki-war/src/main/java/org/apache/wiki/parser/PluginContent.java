@@ -146,6 +146,11 @@ public class PluginContent extends Text {
         }
 
         WikiContext context = doc.getContext();
+        
+        if( context == null ) {
+            log.info( "WikiContext garbage-collected, cannot proceed" );
+            return getPluginName();
+        }
 
         Boolean wysiwygVariable = (Boolean) context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
         boolean wysiwygEditorMode = false;
