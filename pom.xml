@@ -54,8 +54,8 @@
   </scm>
 
   <modules>
-    <module>jspwiki-war</module>
     <module>jspwiki-wikipages</module>
+    <module>jspwiki-war</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
   </modules>
 
