@@ -19,6 +19,7 @@
 package org.apache.wiki.auth;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -606,6 +607,7 @@ public class AuthenticationManager {
      */
     protected static URL findConfigFile( WikiEngine engine, String name )
     {
+        log.info( "looking for " + name + " inside WEB-INF " );
         // Try creating an absolute path first
         File defaultFile = null;
         if( engine.getRootPath() != null )
@@ -636,9 +638,13 @@ public class AuthenticationManager {
         	InputStream is = null;
             try
             {
+                log.info( "looking for /" + name + " on classpath" );
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
                 //  
                 is = AuthenticationManager.class.getResourceAsStream( "/" + name );
+                if( is == null ) {
+                    throw new FileNotFoundException( name + " not found" );
+                }
                 File tmpFile = File.createTempFile( "temp." + name, "" );
                 tmpFile.deleteOnExit();
 
