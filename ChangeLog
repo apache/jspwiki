@@ -1,5 +1,15 @@
 2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
+       * 2.10.1-svn-16
+       
+       * First steps integrating Siegfried Goeschl's Wiki On A Stick (https://github.com/sgoeschl/apache-jspwiki - 
+         thanks!), portable module still pending. 
+       ** Fixes JSPWIKI-826 - [Portable] PropertyReader ignores the web app class loader
+       
+       * Lucene updated to 4.7.0
+
+2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
        * 2.10.1-svn-15
        
        * Fixed JSPWIKI-822 - NPE thrown by PluginContext#getText()
