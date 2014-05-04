@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.Properties;
@@ -399,7 +401,36 @@ public final class TextUtil {
         }
         return val.trim();
     }
-    
+
+    /**
+     *  Fetches a file path property from the set of Properties. If the
+     *  implementation fails to create the canonical path it just returns
+     *  the original value of the property which is a bit doggy.
+     *
+     *  @param props The Properties to search through
+     *  @param key   The property key
+     *  @param defval A default value to return, if the property does not exist.
+     *  @return the canonical path of the file or directory being referenced
+     *  @since 2.10.1
+     */
+    public static String getCanonicalFilePathProperty(Properties props, String key, String defval) {
+
+        String result;
+        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+
+        if( val == null ) {
+            val = defval;
+        }
+
+        try {
+            result = new File(new File(val.trim()).getCanonicalPath()).getAbsolutePath();
+        }
+        catch(IOException e) {
+            result = val.trim();
+        }
+        return result;
+    }
+
     /**
      *  Throws an exception if a property is not found.
      *

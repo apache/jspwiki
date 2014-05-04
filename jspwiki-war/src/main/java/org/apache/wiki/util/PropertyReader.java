@@ -31,6 +31,8 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import org.apache.wiki.Release;
 
@@ -122,7 +124,7 @@ public final class PropertyReader {
                 LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
                              "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
                 //  Use the custom property file at the default location
-                propertyStream = PropertyReader.class.getResourceAsStream( CUSTOM_JSPWIKI_CONFIG );
+                propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
             } else {
                 LOG.info(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
@@ -321,6 +323,77 @@ public final class PropertyReader {
                 properties.put(propertyName, propertyValue);
             }
         }
+    }
+
+    /**
+     * Locate a resource stored in the class path. Try first with "WEB-INF/classes"
+     * from the web app and fallback to "resourceName".
+     *
+     * @param context the servlet context
+     * @param resourceName the name of the resource
+     * @return the input stream of the resource or <b>null</b> if the resource was not found
+     */
+    public static InputStream locateClassPathResource( ServletContext context, String resourceName ) {
+        InputStream result;
+        String currResourceLocation;
+
+        // garbage in - garbage out
+        if( StringUtils.isEmpty( resourceName ) ) {
+            return null;
+        }
+
+        // try with web app class loader searching in "WEB-INF/classes"
+        currResourceLocation = createResourceLocation( "/WEB-INF/classes", resourceName );
+        result = context.getResourceAsStream( currResourceLocation );
+        if( result != null ) {
+            LOG.debug( " Successfully located the following classpath resource : " + currResourceLocation );
+            return result;
+        }
+
+        // if not found - try with the current class loader and the given name
+        currResourceLocation = createResourceLocation( "", resourceName );
+        result = PropertyReader.class.getResourceAsStream( currResourceLocation );
+        if( result != null ) {
+            LOG.debug( " Successfully located the following classpath resource : " + currResourceLocation );
+            return result;
+        }
+
+        LOG.debug( " Unable to resolve the following classpath resource : " + resourceName );
+
+        return result;
+    }
+
+    /**
+     * Create a resource location with proper usage of "/".
+     *
+     * @param path a path
+     * @param name a resource name
+     * @return a resource location
+     */
+    static String createResourceLocation( String path, String name ) {
+        Validate.notEmpty( name, "name is empty" );
+        StringBuilder result = new StringBuilder();
+
+        // strip an ending "/"
+        String sanitizedPath = ( path != null && !path.isEmpty() && path.endsWith( "/" ) ? path.substring( 0, path.length() - 1 ) : path );
+
+        // strip leading "/"
+        String sanitizedName = ( name.startsWith( "/" ) ? name.substring( 1, name.length() ) : name );
+
+        // append the optional path
+        if( sanitizedPath == null || sanitizedPath.isEmpty() ) {
+            result.append( "/" );
+        } else {
+            if( !sanitizedPath.startsWith( "/" ) ) {
+                result.append( "/" );
+            }
+            result.append( sanitizedPath );
+            result.append( "/" );
+        }
+
+        // append the name
+        result.append( sanitizedName );
+        return result.toString();
     }
 
 }

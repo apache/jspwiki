@@ -98,8 +98,8 @@ public abstract class AbstractFileProvider
                IOException, FileNotFoundException
     {
         log.debug("Initing FileSystemProvider");
-        m_pageDirectory = TextUtil.getStringProperty( properties, PROP_PAGEDIR, 
-                                                      System.getProperty( "user.home" ) + File.separator + "jspwiki-files" );
+        m_pageDirectory = TextUtil.getCanonicalFilePathProperty(properties, PROP_PAGEDIR,
+                System.getProperty("user.home") + File.separator + "jspwiki-files");
 
         File f = new File(m_pageDirectory);
 
@@ -122,7 +122,7 @@ public abstract class AbstractFileProvider
                 throw new IOException( "Page directory is not writable: " + f.getAbsolutePath() );
             }
         }
-        
+
         m_engine = engine;
 
         m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, 
