@@ -419,9 +419,9 @@ public class LuceneSearchProvider implements SearchProvider {
     {
         try
         {
-            Class clazz = ClassUtil.findClass( "", m_analyzerClass );
-            Constructor constructor = clazz.getConstructor( Version.LUCENE_46.getClass() );
-            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_46 );
+            Class< ? > clazz = ClassUtil.findClass( "", m_analyzerClass );
+            Constructor< ? > constructor = clazz.getConstructor( Version.LUCENE_47.getClass() );
+            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_47 );
             return analyzer;
         }
         catch( Exception e )
@@ -529,7 +529,7 @@ public class LuceneSearchProvider implements SearchProvider {
             LockObtainFailedException, IOException, ProviderException 
     {
         IndexWriter writer = null;
-        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_46, getLuceneAnalyzer() );
+        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_47, getLuceneAnalyzer() );
         writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
         writer = new IndexWriter( luceneDir, writerConfig );
         
@@ -620,7 +620,7 @@ public class LuceneSearchProvider implements SearchProvider {
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
-            QueryParser qp = new MultiFieldQueryParser( Version.LUCENE_46, queryfields, getLuceneAnalyzer() );
+            QueryParser qp = new MultiFieldQueryParser( Version.LUCENE_47, queryfields, getLuceneAnalyzer() );
 
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );

@@ -39,7 +39,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>1.6</jdk.version>
-    <lucene.version>4.6.0</lucene.version>
+    <lucene.version>4.7.0</lucene.version>
     <minimize>true</minimize> <!-- wro4j compression -->
   </properties>
 
