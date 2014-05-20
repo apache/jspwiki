@@ -253,7 +253,8 @@ yuicompressor-2.4.7.jar                     doc/LICENSE.yui
 
 JS LIBRARY                                  LICENSE FILE
 =============================================================================================================
-mootools.js                                 doc/LICENSE.mit
+mootools-core.js                            doc/LICENSE.mit
+mootools-more.js                            doc/LICENSE.mit
 prettify.js                                 LICENSE
 posteditor.js                               doc/LICENSE.mit 
 SlimBox                                     doc/LICENSE.mit 
