@@ -501,7 +501,7 @@
           <version>0.10</version>
           <configuration>
             <excludes>
-              <exclude>mvn_cheat-sheet.txt</exclude> <!-- handy list of maven commands; will be moved to site once we've switched to Maven -->
+              <exclude>mvn_cheat-sheet.md</exclude> <!-- handy list of maven commands; will be moved to site once we've switched to Maven -->
 			  <exclude>.svnignore</exclude>          <!-- svn exclusions -->
               <exclude>**/src/main/config/doc/LICENSE.*</exclude>    <!-- 3rd party License files -->
               <exclude>**/src/main/config/wikipages/**</exclude>     <!-- Default wikipages -->
