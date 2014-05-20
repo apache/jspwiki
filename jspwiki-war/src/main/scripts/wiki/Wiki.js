@@ -1,4 +1,4 @@
-/*!
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
