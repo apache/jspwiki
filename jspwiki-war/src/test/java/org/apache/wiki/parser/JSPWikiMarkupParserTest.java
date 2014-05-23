@@ -233,7 +233,19 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too<a class=\"hashlink\" href=\"#section-testpage-HeadingToo\">#</a></h4>\nThis should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
                       translate(src) );
     }
-    
+
+    // test hyperlink to a section with non-ASCII character in it
+    public void testHyperlinksNamed4()
+            throws Exception
+    {
+        newPage("HyperLink");
+
+        String src = "This should be a [HyperLink#headingwithnonASCIIZoltán]";
+
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingwithnonASCIIZolt_E1n\">HyperLink#headingwithnonASCIIZoltán</a>",
+                translate(src) );
+    }
+
     //
     //  Testing CamelCase hyperlinks
     //

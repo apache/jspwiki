@@ -1,3 +1,9 @@
+2014-05-23  Harry Metske (metskem@apache.org)
+
+       * 2.10.1-svn-17
+
+       * Fixed JSPWIKI-535 - direct links to sections with accents doesn't work
+
 2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.1-svn-16

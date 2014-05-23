@@ -257,11 +257,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         initialize();
     }
 
-    /**
-     *  @param m_engine The WikiEngine this reader is attached to.  Is
-     * used to figure out of a page exits.
-     */
-
     // FIXME: parsers should be pooled for better performance.
     @SuppressWarnings("unchecked")
     private void initialize()
@@ -1612,7 +1607,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     String matchedLink;
                     if( (matchedLink = linkExists( linkref )) != null )
                     {
-                        String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+wikifyLink(namedSection);
+                        String sectref = "section-"+m_engine.encodeName(matchedLink+"-"+wikifyLink(namedSection));
                         sectref = sectref.replace('%', '_');
                         makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
                     }
