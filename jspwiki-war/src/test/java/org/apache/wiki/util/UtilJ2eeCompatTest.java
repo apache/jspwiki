@@ -54,6 +54,13 @@ public class UtilJ2eeCompatTest extends TestCase
         assertTrue( UtilJ2eeCompat.useOutputStream( "Apache Tomcat/7.0.39", true ) );
     }
 
+    public void testWebSphere()
+    {
+        assertFalse( UtilJ2eeCompat.useOutputStream( "IBM WebSphere Application Server/8.5", true ) );
+        // Reinitialize
+        assertFalse( UtilJ2eeCompat.useOutputStream( "IBM WebSphere Application Server/8.5", true ) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( UtilJ2eeCompatTest.class );

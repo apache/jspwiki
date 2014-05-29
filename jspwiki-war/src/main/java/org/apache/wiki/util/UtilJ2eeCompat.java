@@ -27,27 +27,27 @@ public class UtilJ2eeCompat
 {
     private static Logger log = Logger.getLogger( UtilJ2eeCompat.class.getName() );
 
-    public static final String TOMCAT = "Apache Tomcat";
+    public static final String TOMCAT = "apache tomcat";
 
-    public static final String ORION = "Orion";
+    public static final String ORION = "orion";
 
-    public static final String RESIN = "Resin";
+    public static final String RESIN = "resin";
 
-    public static final String REX_IP = "TradeCity";
+    public static final String REX_IP = "tradecity";
 
-    public static final String OC4J = "Oracle";
+    public static final String OC4J = "oracle";
 
-    public static final String JRUN = "JRun";
+    public static final String JRUN = "jrun";
 
-    public static final String JETTY = "Jetty";
+    public static final String JETTY = "jetty";
 
-    public static final String WEBSPHERE = "Websphere";
+    public static final String WEBSPHERE = "websphere";
 
-    public static final String WEBLOGIC = "WebLogic";
+    public static final String WEBLOGIC = "weblogic";
 
-    public static final String GLASSFISH = "Sun Java System Application Server";
+    public static final String GLASSFISH = "sun java system application server";
 
-    public static final String JBOSS = "JBoss";
+    public static final String JBOSS = "jboss";
 
     /**
      * 
@@ -100,55 +100,55 @@ public class UtilJ2eeCompat
         m_serverInfo = serverInfo;
         // response.getWriter is the default
         boolean useStream = false;
-        if( serverInfo.indexOf( RESIN ) >= 0 )
+        if( serverInfo.toLowerCase().indexOf( RESIN ) >= 0 )
         {
             log.info( RESIN + " detected" );
             // use response.getOutputStream instead of response.getWriter
             useStream = true;
         }
-        else if( serverInfo.indexOf( REX_IP ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( REX_IP ) >= 0 )
         {
             log.info( REX_IP + " detected" );
         }
-        else if( serverInfo.indexOf( TOMCAT ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( TOMCAT ) >= 0 )
         {
             log.info( TOMCAT + " detected" );
             // use response.getOutputStream instead of response.getWriter
             useStream = true;
         }
-        else if( serverInfo.indexOf( JRUN ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( JRUN ) >= 0 )
         {
             log.info( JRUN + " detected" );
         }
-        else if( serverInfo.indexOf( JETTY ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( JETTY ) >= 0 )
         {
             log.info( JETTY + " detected" );
         }
-        else if( serverInfo.indexOf( ORION ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( ORION ) >= 0 )
         {
             log.info( ORION + " detected" );
         }
-        else if( serverInfo.indexOf( WEBSPHERE ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( WEBSPHERE ) >= 0 )
         {
             log.info( WEBSPHERE + " detected" );
         }
-        else if( serverInfo.indexOf( WEBLOGIC ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( WEBLOGIC ) >= 0 )
         {
             log.info( WEBLOGIC + " detected" );
             // use response.getOutputStream instead of response.getWriter
             useStream = true;
         }
-        else if( serverInfo.indexOf( GLASSFISH ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( GLASSFISH ) >= 0 )
         {
             log.info( GLASSFISH + " detected" );
         }
-        else if( serverInfo.indexOf( OC4J ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( OC4J ) >= 0 )
         {
             log.info( "Oracle Container for JEE detected" );
             // use response.getOutputStream instead of response.getWriter
             useStream = true;
         }
-        else if( serverInfo.indexOf( JBOSS ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( JBOSS ) >= 0 )
         {
             log.info( JBOSS + " detected" );
             // use response.getOutputStream instead of response.getWriter

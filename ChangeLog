@@ -1,3 +1,15 @@
+2014-05-29  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-1
+
+       * Fixed JSPWIKI-396 - by making the server signature comparison case insensitive (reported by Jürgen Weber)
+
+2014-04-23  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.1-svn-18
+
+       * Fixed JSPWIKI-841 - Container Managed Security Not Working
+
 2014-05-23  Harry Metske (metskem@apache.org)
 
        * 2.10.1-svn-17
