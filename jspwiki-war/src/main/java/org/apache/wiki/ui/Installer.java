@@ -28,13 +28,15 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.*;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -78,8 +80,7 @@ public class Installer
         m_engine = WikiEngine.getInstance( config );
         m_session = WikiSession.getWikiSession( m_engine, request );
         
-        // Get the servlet context, and file for properties
-        ServletContext context = config.getServletContext();
+        // Get the file for properties
         m_propertyFile = new File(TMP_DIR, PROPFILENAME);
         m_props = new Properties();
         
@@ -194,7 +195,6 @@ public class Installer
         return m_props.getProperty( key );
     }
     
-    @SuppressWarnings("deprecation")
     public void parseProperties () throws Exception
     {
         ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
@@ -226,10 +226,6 @@ public class Installer
         nullValue = m_props.getProperty( WORK_DIR, TMP_DIR );
         parseProperty( WORK_DIR, nullValue );
         sanitizePath( WORK_DIR );
-        
-        // Get/sanitize security property
-        nullValue = m_props.getProperty( AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS );
-        parseProperty( AuthenticationManager.PROP_SECURITY, nullValue );
         
         // Set a few more default properties, for easy setup
         m_props.setProperty( STORAGE_DIR, m_props.getProperty( PAGE_DIR ) );

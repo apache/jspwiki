@@ -104,8 +104,6 @@ public class UserManager {
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database;
 
-    private boolean          m_useJAAS      = true;
-
     /**
      * Constructs a new UserManager instance.
      */
@@ -118,12 +116,9 @@ public class UserManager {
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
-    @SuppressWarnings("deprecation")
     public void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
-
-        m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
 
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly
@@ -145,12 +140,6 @@ public class UserManager {
         // FIXME: Must not throw RuntimeException, but something else.
         if( m_database != null )
         {
-            return m_database;
-        }
-
-        if( !m_useJAAS )
-        {
-            m_database = new DummyUserDatabase();
             return m_database;
         }
 

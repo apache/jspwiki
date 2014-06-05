@@ -124,8 +124,6 @@ public class AuthorizationManager {
 
     private LocalPolicy                       m_localPolicy     = null;
 
-    private boolean                           m_useJAAS         = true;
-
     /**
      * Constructs a new AuthorizationManager instance.
      */
@@ -178,18 +176,6 @@ public class AuthorizationManager {
      */
     public boolean checkPermission( WikiSession session, Permission permission )
     {
-        if( !m_useJAAS )
-        {
-            //
-            //  Nobody can login, if JAAS is turned off.
-            //
-
-            if( permission == null || "login".equals( permission.getActions() ) )
-                return false;
-
-            return true;
-        }
-
         //
         //  A slight sanity check.
         //
@@ -473,14 +459,9 @@ public class AuthorizationManager {
      * @param properties the set of properties used to initialize the wiki engine
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
-    @SuppressWarnings("deprecation")
     public void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
-
-        m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( properties.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
-
-        if( !m_useJAAS ) return;
 
         //
         //  JAAS authorization continues
@@ -525,10 +506,12 @@ public class AuthorizationManager {
      * Returns <code>true</code> if JSPWiki's JAAS authorization system
      * is used for authorization in addition to container controls.
      * @return the result
+     * @deprecated functionality deprecated - returns true always. To be removed on 2.11.0
      */
+    @Deprecated
     protected boolean isJAASAuthorized()
     {
-        return m_useJAAS;
+        return true;
     }
 
     /**
@@ -628,8 +611,6 @@ public class AuthorizationManager {
      */
     protected boolean checkStaticPermission( final WikiSession session, final Permission permission )
     {
-        if( !m_useJAAS ) return true;
-
         Boolean allowed = (Boolean) WikiSession.doPrivileged( session, new PrivilegedAction<Boolean>()
         {
             public Boolean run()
@@ -681,11 +662,6 @@ public class AuthorizationManager {
      */
     public Principal resolvePrincipal( String name )
     {
-        if( !m_useJAAS )
-        {
-            return new UnresolvedPrincipal(name);
-        }
-
         // Check built-in Roles first
         Role role = new Role(name);
         if ( Role.isBuiltInRole( role ) )

@@ -22,7 +22,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.*;
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.KeyStore;
+import java.security.Permission;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.security.ProtectionDomain;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +42,11 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.auth.authorize.*;
+import org.apache.wiki.auth.authorize.Group;
+import org.apache.wiki.auth.authorize.GroupDatabase;
+import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -588,19 +598,6 @@ public final class SecurityVerifier
      */
     protected void verifyJaas()
     {
-        // See if JAAS is on
-        AuthorizationManager authMgr = m_engine.getAuthorizationManager();
-        if ( !authMgr.isJAASAuthorized() )
-        {
-            m_session.addMessage( ERROR_JAAS, "JSPWiki's JAAS-based authentication " +
-                    "and authorization system is turned off (your jspwiki.properties file " +
-                    "contains the setting 'jspwiki.security = container'. This " +
-                    "setting disables authorization checks and is meant for testing " +
-                    "and troubleshooting only. The test results on this page will not " +
-                    "be reliable as a result. You should set this to 'jaas' " +
-                    "so that security works properly." );
-        }
-        
         // Verify that the specified JAAS moduie corresponds to a class we can load successfully.
         String jaasClass = m_engine.getWikiProperties().getProperty( AuthenticationManager.PROP_LOGIN_MODULE );
         if ( jaasClass == null || jaasClass.length() == 0 )
@@ -612,7 +609,7 @@ public final class SecurityVerifier
         }
         
         // See if we can find the LoginModule on the classpath
-        Class c = null;
+        Class< ? > c = null;
         try
         {
             m_session.addMessage( INFO_JAAS, "The property '" + AuthenticationManager.PROP_LOGIN_MODULE +

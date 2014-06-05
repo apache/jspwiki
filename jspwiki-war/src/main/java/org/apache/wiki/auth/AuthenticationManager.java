@@ -100,14 +100,21 @@ public class AuthenticationManager {
      *  <p>
      *  Setting this is now deprecated - we do not guarantee that it works.
      *  
-     *  @deprecated
+     * @deprecated - to be removed on 2.11.0
      */
+    @Deprecated
     public  static final String                PROP_SECURITY       = "jspwiki.security";
 
-    /** Value specifying that the user wants to use the container-managed security, just like in JSPWiki 2.2. */
+    /** Value specifying that the user wants to use the container-managed security, just like in JSPWiki 2.2.
+     * @deprecated - to be removed on 2.11.0
+      */
+    @Deprecated
     public static final String                SECURITY_OFF      = "off";
 
-    /** Value specifying that the user wants to use the built-in JAAS-based system */
+    /** Value specifying that the user wants to use the built-in JAAS-based system.
+     * @deprecated - to be removed on 2.11.0
+     */
+    @Deprecated
     public static final String                SECURITY_JAAS     = "jaas";
 
     /** Whether logins should be throttled to limit brute-forcing attempts. Defaults to true. */
@@ -137,8 +144,9 @@ public class AuthenticationManager {
     /** Just to provide compatibility with the old versions.  The same
      *  as SECURITY_OFF.
      *
-     *  @deprecated use {@link #SECURITY_OFF} instead
+     *  @deprecated use {@link #SECURITY_OFF} instead - to be removed on 2.11.0
      */
+    @Deprecated
     protected static final String             SECURITY_CONTAINER = "container";
 
     /** The default {@link javax.security.auth.spi.LoginModule} class name to use for custom authentication. */
@@ -160,10 +168,7 @@ public class AuthenticationManager {
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
-    private boolean               m_useJAAS = true;
-
     /** Keeps a list of the usernames who have attempted a login recently. */
-    
     private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
     
     /**
@@ -180,9 +185,6 @@ public class AuthenticationManager {
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
-        // Should J2SE policies be used for authorization?
-        m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
-        
         // Should we allow cookies for assertions? (default: yes)
         m_allowsCookieAssertions = TextUtil.getBooleanProperty( props,
                                                               PROP_ALLOW_COOKIE_ASSERTIONS,
@@ -225,8 +227,6 @@ public class AuthenticationManager {
      */
     public boolean isContainerAuthenticated()
     {
-        if( !m_useJAAS ) return true;
-
         try
         {
             Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();

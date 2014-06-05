@@ -135,15 +135,6 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.security.title" /></h3>
   <div class="block">
   
-    <label><fmt:message key="install.jsp.security.sec.conf.label" /></label><br/>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked"/>
-      <fmt:message key="install.jsp.security.sec.conf.opt1" /><br/>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_OFF%>"/>
-      <fmt:message key="install.jsp.security.sec.conf.opt2" />
-   <div class="description">
-     <fmt:message key="install.jsp.security.sec.conf.desc" />
-   </div>
-  
     <% 
       if( validated )
       {
