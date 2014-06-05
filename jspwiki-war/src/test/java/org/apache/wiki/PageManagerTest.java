@@ -26,8 +26,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.PropertyConfigurator;
-
-import org.apache.wiki.PageManager;
 import org.apache.wiki.providers.CachingProvider;
 
 public class PageManagerTest extends TestCase
