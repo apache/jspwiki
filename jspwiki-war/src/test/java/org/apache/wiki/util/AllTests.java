@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.wiki.PropertyReaderTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.wiki.PropertyReaderTest;
 
 
 public class AllTests extends TestCase {
@@ -34,6 +34,7 @@ public class AllTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite("Utility suite tests");
 
+        suite.addTest( ByteUtilsTest.suite() );
         suite.addTest( ClassUtilTest.suite() );
         suite.addTest( CommentedPropertiesTest.suite() );
         suite.addTest( CryptoUtilTest.suite() );

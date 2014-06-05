@@ -18,19 +18,21 @@
  */
 package org.apache.wiki.auth.user;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.UUID;
 
-import org.apache.catalina.util.HexUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.ByteUtils;
 import org.apache.wiki.util.CryptoUtil;
 
 /**
@@ -54,7 +56,6 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @deprecated there is no need to call this method because the save, rename and
      * delete methods contain their own commit logic
      */
-    @SuppressWarnings("deprecation")
     public synchronized void commit() throws WikiSecurityException
     { }
 
@@ -213,7 +214,6 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param password the user's password (obtained from user input, e.g., a web form)
      * @return <code>true</code> if the supplied user password matches the
      * stored password
-     * @throws NoSuchAlgorithmException 
      * @see org.apache.wiki.auth.user.UserDatabase#validatePassword(java.lang.String,
      *      java.lang.String)
      */
@@ -341,7 +341,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
             MessageDigest md = MessageDigest.getInstance( "SHA" );
             md.update( text.getBytes("UTF-8") );
             byte[] digestedBytes = md.digest();
-            hash = HexUtils.convert( digestedBytes );
+            hash = ByteUtils.bytes2hex( digestedBytes );
         }
         catch( NoSuchAlgorithmException e )
         {
