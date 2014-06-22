@@ -50,7 +50,7 @@ public class FileSystemProviderTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        m_pagedir = System.getProperties().getProperty("java.io.tmpdir") + File.separatorChar + "jspwiki.test.pages";
+        m_pagedir = "." + File.separatorChar + "target" + File.separatorChar + "jspwiki.test.pages";
         props.setProperty( PageManager.PROP_PAGEPROVIDER, "FileSystemProvider" );
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, m_pagedir );
 
