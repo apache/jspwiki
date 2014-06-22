@@ -124,8 +124,8 @@ public class RecentChangesPluginTest extends TestCase {
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
 
-        assertEquals( "<table class=\"recentchanges\" cellpadding=\"4\"></table>", res );
-        assertEquals( "<table class=\"recentchanges\" cellpadding=\"4\" />", res );
+        assertTrue( "<table class=\"recentchanges\" cellpadding=\"4\"></table>".equals( res ) );
+        assertFalse( "<table class=\"recentchanges\" cellpadding=\"4\" />".equals( res ) );
     }
 
     public static Test suite() {
