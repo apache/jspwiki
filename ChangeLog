@@ -1,3 +1,9 @@
+2014-06-23  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.2-svn-3
+
+       * Fixed JSPWIKI-847 - Recent Changes Plugin breaks markup if generates an empty table, reported by Dave Koelmeyer
+       
 2014-06-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-2

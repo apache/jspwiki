@@ -32,7 +32,6 @@ import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
-import org.jdom2.output.Format;
 
 public class PluginBean extends SimpleAdminBean {
 	
@@ -40,9 +39,6 @@ public class PluginBean extends SimpleAdminBean {
     
     private static final String VER_WARNING = "<span class='warning'>This module is not compatible with this version of JSPWiki.</span>";
     
-    /** to print <td></td> instead of <td /> */
-    private static final Format EXPAND_EMPTY_NODES = Format.getCompactFormat().setExpandEmptyElements( true );
-
     public PluginBean( WikiEngine engine ) throws NotCompliantMBeanException {
         m_engine = engine;
     }
@@ -92,7 +88,7 @@ public class PluginBean extends SimpleAdminBean {
             tb.addContent( tr );
         }
 
-        return XhtmlUtil.serialize( root, EXPAND_EMPTY_NODES );
+        return XhtmlUtil.serialize( root, XhtmlUtil.EXPAND_EMPTY_NODES );
     }
 
     String validPluginVersion( WikiPluginInfo info ) {

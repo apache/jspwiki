@@ -24,8 +24,8 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import net.sf.ehcache.CacheManager;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -47,6 +47,7 @@ public class RecentChangesPluginTest extends TestCase {
         testEngine.saveText("TestPage01", "Some Text for testing 01");
         testEngine.saveText("TestPage02", "Some Text for testing 02");
         testEngine.saveText("TestPage03", "Some Text for testing 03");
+        testEngine.saveText("TestPage04", "Some Text for testing 04");
 
         manager = new DefaultPluginManager(testEngine, props);
     }
@@ -55,6 +56,7 @@ public class RecentChangesPluginTest extends TestCase {
         testEngine.deleteTestPage("TestPage01");
         testEngine.deleteTestPage("TestPage02");
         testEngine.deleteTestPage("TestPage03");
+        testEngine.deleteTestPage("TestPage04");
 
         TestEngine.emptyWorkDir();
     }
@@ -111,8 +113,23 @@ public class RecentChangesPluginTest extends TestCase {
         assertFalse(res.contains("<a href=\"/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
+    /**
+     * Test an empty recent changes table
+     * 
+     * @throws Exception
+     */
+    public void testNoRecentChanges() throws Exception {
+        context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage04"));
+
+        String res = manager.execute( context,
+                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
+
+        assertEquals( "<table class=\"recentchanges\" cellpadding=\"4\"></table>", res );
+        assertEquals( "<table class=\"recentchanges\" cellpadding=\"4\" />", res );
+    }
+
     public static Test suite() {
-        return new TestSuite(RecentChangesPluginTest.class);
+        return new TestSuite( RecentChangesPluginTest.class );
     }
     
 }
