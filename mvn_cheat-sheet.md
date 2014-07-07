@@ -1,9 +1,12 @@
+
+
 # 1. IDE Specific
 
 | Maven Command                                                     | Description                                                                                                               |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | mvn eclipse:eclipse                                               | generates Eclipse project files (alternatively, you could use m2e)                                                        |
 | mvn idea:idea                                                     | generates IDEA IntelliJ project files                                                                                     |
+
 
 # 2. Build Specific
 
@@ -23,11 +26,13 @@
 | mvn wro4j:run -Dminimize=false                                    | only merge the js & css files  (no compression)                                                                           |
 | mvn clean install -Dmaven.test.skip -Dminimize=false              | performs a build, skipping the tests and skip compression                                                                 |
 
+
 # 3. Reports Specific
+
 | Maven Command                                                     | Description                                                                                                               |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | mvn apache-rat:check                                              | creates an Apache RAT report. See: http://creadur.apache.org/rat/apache-rat-plugin/plugin-info.html                       |
 | mvn cobertura:cobertura                                           | generates a cobertura maven report. See: http://mojo.codehaus.org/cobertura-maven-plugin/usage.html                       |
 | mvn javadoc:javadoc                                               | creates javadocs; if graphviz binaries (www.graphviz.org) are found on $PATH, the javadocs will display some UML class/package level diagrams |
 | mvn sonar:sonar                                                   | generates a Sonar report. Expects a Sonar server running at http://localhost:9000/                                        | 
-| cd jspwiki-site; mvn test -Dtest=SiteGeneratorTest                | checks all language resource files for missing or unused translations                                                      |
+| cd jspwiki-site; mvn test -Dtest=SiteGeneratorTest                | checks all language resource files for missing or unused translations                                                     |

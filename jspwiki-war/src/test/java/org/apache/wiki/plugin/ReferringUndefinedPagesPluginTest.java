@@ -19,16 +19,17 @@ under the License.
 
 package org.apache.wiki.plugin;
 
+import java.util.Properties;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sf.ehcache.CacheManager;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
-
-import java.util.Properties;
 
 public class ReferringUndefinedPagesPluginTest extends TestCase {
     Properties props = TestEngine.getTestProperties();
@@ -40,7 +41,7 @@ public class ReferringUndefinedPagesPluginTest extends TestCase {
 	PluginManager manager;
 
 	public void setUp() throws Exception {
-        CacheManager.getInstance().clearAll();
+        CacheManager.getInstance().removalAll();
 		testEngine = new TestEngine(props);
 
         testEngine.saveText("TestPage01", "Some Text for testing 01 which refers [NonExistingPageA] ");

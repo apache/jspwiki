@@ -1,3 +1,10 @@
+2014-07-07  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.2-svn-4
+
+       * Dependencies' upgrade: EhCache to 2.6.9, SLF4J to 1.7.7, Selenium to 2.42.0, Stripes to 1.5.7-classloaderfix 
+         and Jetty to 8.1.15
+       
 2014-06-23  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-3

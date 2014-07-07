@@ -47,7 +47,7 @@ public class MassiveRepositoryTest extends TestCase {
 
         TestEngine.deleteAll(f);
 
-        CacheManager.getInstance().clearAll();
+        CacheManager.getInstance().removalAll();
 
         engine = new TestEngine(props);
     }
