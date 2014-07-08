@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
@@ -48,6 +49,7 @@ import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.search.SearchResultComparator;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
+
 
 /**
  *  Provides a simple directory based repository for Wiki pages.
@@ -125,8 +127,7 @@ public abstract class AbstractFileProvider
 
         m_engine = engine;
 
-        m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, 
-                                             DEFAULT_ENCODING );
+        m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, DEFAULT_ENCODING );
 
         String os = System.getProperty( "os.name" ).toLowerCase();
         
@@ -280,14 +281,7 @@ public abstract class AbstractFileProvider
                 }
                 finally
                 {
-                    try
-                    {
-                        if( in  != null ) in.close();
-                    }
-                    catch( Exception e ) 
-                    {
-                        log.fatal("Closing failed",e);
-                    }
+                    IOUtils.closeQuietly( in );
                 }
             }
             else
@@ -322,11 +316,11 @@ public abstract class AbstractFileProvider
         }
         catch( IOException e )
         {
-            log.error( "Saving failed" );
+            log.error( "Saving failed", e );
         }
         finally
         {
-            if( out != null ) out.close();
+            IOUtils.closeQuietly( out );
         }
     }
 
@@ -437,11 +431,7 @@ public abstract class AbstractFileProvider
             }
             finally
             {
-                try
-                {
-                    if( input != null ) input.close();
-                }
-                catch( IOException e ) {} // It's fine to fail silently.
+                IOUtils.closeQuietly( input );
             }
         }
 
