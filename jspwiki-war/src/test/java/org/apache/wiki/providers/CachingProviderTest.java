@@ -28,8 +28,8 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import net.sf.ehcache.CacheManager;
+
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
@@ -48,7 +48,7 @@ public class CachingProviderTest extends TestCase
         throws Exception
     {
         TestEngine.emptyWorkDir();
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
 
         Properties props2 = TestEngine.getTestProperties();
         testEngine = new TestEngine(props2);

@@ -230,7 +230,7 @@ lucene-memory-4.7.0.jar                     LICENSE
 mail-1.4.7.jar                              doc/LICENSE.cddl
 nekohtml-0.9.5.jar                          LICENSE
 oro-2.0.8.jar                               LICENSE
-ehcache-core-2.6.9.jar                      LICENSE
+ehcache-2.8.3.jar                           LICENSE
 sandler-0.5.jar                             doc/LICENSE.sandler
 servlet-api-2.5.jar                         doc/LICENSE.cddl
 slf4-api-1.7.7.jar                          doc/LICENSE.mit
@@ -248,7 +248,7 @@ junit-4.11.jar                              doc/LICENSE.cpl
 selenium-chrome-driver-2.42.0.jar           LICENSE
 selenium-firefox-driver-2.42.0.jar          LICENSE
 selenium-ie-driver-2.42.0.jar               LICENSE
-stripes-1.5.7-classloaderfix.jar            LICENSE
+stripes-1.5.8.jar                           LICENSE
 xercesImpl-2.6.2.jar                        LICENSE
 xml-apis-1.0.b2.jar                         LICENSE
 yuicompressor-2.4.7.jar                     doc/LICENSE.yui

@@ -67,7 +67,7 @@ public class WikiEngineTest extends TestCase
     {
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
 
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
 
         TestEngine.emptyWorkDir();
         m_engine = new TestEngine(props);        

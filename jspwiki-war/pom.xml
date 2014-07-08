@@ -70,8 +70,9 @@
 
     <dependency>
       <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
+      <artifactId>ehcache</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
@@ -87,10 +88,10 @@
       <artifactId>log4j</artifactId>
     </dependency>
 
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.metaparadigm</groupId>

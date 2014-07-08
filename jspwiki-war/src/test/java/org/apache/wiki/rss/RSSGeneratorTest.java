@@ -57,7 +57,7 @@ public class RSSGeneratorTest extends TestCase
     {
         props.setProperty( WikiEngine.PROP_BASEURL, "http://localhost/" );
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
         m_testEngine = new TestEngine(props);
     }
 
@@ -84,10 +84,10 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
-                                                   "TestBlog",
-                                                   new Date(0),
-                                                   new Date(Long.MAX_VALUE) );
+        List< ? > entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+                                                       "TestBlog",
+                                                        new Date(0),
+                                                        new Date(Long.MAX_VALUE) );
 
         Feed feed = new RSS10Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );
@@ -114,10 +114,10 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
-                                                   "TestBlog",
-                                                   new Date(0),
-                                                   new Date(Long.MAX_VALUE) );
+        List< ? > entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+                                                       "TestBlog",
+                                                        new Date(0),
+                                                        new Date(Long.MAX_VALUE) );
 
         Feed feed = new RSS20Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );

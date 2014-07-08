@@ -41,7 +41,7 @@ public class RecentChangesPluginTest extends TestCase {
     PluginManager manager;
 
     public void setUp() throws Exception {
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
         testEngine = new TestEngine(props);
 
         testEngine.saveText("TestPage01", "Some Text for testing 01");

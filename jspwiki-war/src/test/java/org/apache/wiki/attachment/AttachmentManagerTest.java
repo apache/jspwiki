@@ -55,7 +55,7 @@ public class AttachmentManagerTest extends TestCase
     {
         CacheManager m_cacheManager = CacheManager.getInstance();
         m_cacheManager.clearAll();
-        m_cacheManager.removalAll();
+        m_cacheManager.removeAllCaches();
 
         m_engine  = new TestEngine(props);
         m_manager = m_engine.getAttachmentManager();
@@ -244,7 +244,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Collection c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
+        Collection<?> c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
 
         assertEquals( "Length", 1, c.size() );
 

@@ -49,7 +49,7 @@ public class SearchManagerTest extends TestCase {
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
 
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
         m_engine = new TestEngine( props );
         m_mgr = m_engine.getSearchManager();
     }

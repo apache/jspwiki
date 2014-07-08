@@ -65,7 +65,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void setUp()
     throws Exception
     {
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
 
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         testEngine = new TestEngine( props );

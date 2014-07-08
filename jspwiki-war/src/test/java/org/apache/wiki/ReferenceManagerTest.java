@@ -13,7 +13,6 @@
  */
 package org.apache.wiki;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -22,7 +21,6 @@ import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import net.sf.ehcache.CacheManager;
 
 import org.apache.wiki.api.exceptions.WikiException;
@@ -70,7 +68,7 @@ public class ReferenceManagerTest extends TestCase
         // jspwiki always uses a singleton CacheManager, so
         // clear the cache at the end of every test case to avoid
         // polluting another test case
-        CacheManager.getInstance().removalAll();
+        CacheManager.getInstance().removeAllCaches();
     }
 
     public void testNonExistant1()
