@@ -189,14 +189,14 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             log.debug("Initializing page provider class " + m_provider);
             m_provider.initialize(m_engine, props);
         } catch (ClassNotFoundException e) {
-            log.error("Unable to locate provider class '" + classname + "'", e);
-            throw new WikiException("No provider class.", e);
+            log.error("Unable to locate provider class '" + classname + "' (" + e.getMessage() + ")", e);
+            throw new WikiException("No provider class. (" + e.getMessage() + ")", e);
         } catch (InstantiationException e) {
-            log.error("Unable to create provider class '" + classname + "'", e);
-            throw new WikiException("Faulty provider class.", e);
+            log.error("Unable to create provider class '" + classname + "' (" + e.getMessage() + ")", e);
+            throw new WikiException("Faulty provider class. (" + e.getMessage() + ")", e);
         } catch (IllegalAccessException e) {
-            log.error("Illegal access to provider class '" + classname + "'", e);
-            throw new WikiException("Illegal provider class.", e);
+            log.error("Illegal access to provider class '" + classname + "' (" + e.getMessage() + ")", e);
+            throw new WikiException("Illegal provider class. (" + e.getMessage() + ")", e);
         } catch (NoRequiredPropertyException e) {
             log.error("Provider did not found a property it was looking for: " + e.getMessage(), e);
             throw e;  // Same exception works.
