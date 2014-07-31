@@ -32,6 +32,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -538,6 +539,7 @@ public class UserManager {
         UserProfile otherProfile;
         String fullName = profile.getFullname();
         String loginName = profile.getLoginName();
+        String email = profile.getEmail();
 
         // It's illegal to use as a full name someone else's login name
         try
@@ -561,7 +563,20 @@ public class UserManager {
             {
                 Object[] args = { loginName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalloginname"),
-                                                                            args ) );
+                        args ) );
+            }
+        }
+        catch ( NoSuchPrincipalException e)
+        { /* It's clean */ }
+
+        // It's illegal to use multiple accounts with the same email
+        try
+        {
+            otherProfile = getUserDatabase().findByEmail( email );
+            if ( otherProfile != null && !profile.equals( otherProfile ) && StringUtils.lowerCase( email ).equals( StringUtils.lowerCase(otherProfile.getEmail() ) ) )
+            {
+                Object[] args = { email };
+                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.email.taken"), args ) );
             }
         }
         catch ( NoSuchPrincipalException e)

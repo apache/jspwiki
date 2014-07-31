@@ -1,3 +1,12 @@
+2014-07-31  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-5
+
+       * Fixed JSPWIKI-195 - do not allow more than one account with the same email address.
+          ==> a new key (security.error.email.taken) was added to CoreResources.properties
+
+       * minor encoding correction for the CoreResources_nl.properties
+
 2014-07-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-4

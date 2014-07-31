@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.auth.user;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,7 +87,7 @@ public final class DefaultUserProfile implements UserProfile
         {
             DefaultUserProfile u = (DefaultUserProfile) o;
             return  same( m_fullname, u.m_fullname ) && same( m_password, u.m_password )
-                    && same( m_loginName, u.m_loginName ) && same( m_email, u.m_email ) && same( m_wikiname,
+                    && same( m_loginName, u.m_loginName ) && same(StringUtils.lowerCase( m_email ), StringUtils.lowerCase( u.m_email ) ) && same( m_wikiname,
                     u.m_wikiname );
         }
 
@@ -98,7 +100,7 @@ public final class DefaultUserProfile implements UserProfile
                (m_password  != null ? m_password.hashCode()  : 0) ^
                (m_loginName != null ? m_loginName.hashCode() : 0) ^
                (m_wikiname  != null ? m_wikiname.hashCode()  : 0) ^
-               (m_email     != null ? m_email.hashCode()     : 0);
+               (m_email     != null ? StringUtils.lowerCase( m_email ).hashCode()     : 0);
     }
 
     /**

@@ -38,6 +38,7 @@ import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -623,11 +624,24 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         
         if( users == null ) return null;
-        
+
+        // check if we have to do a case insensitive compare
+        boolean caseSensitiveCompare = true;
+        if (matchAttribute.equals(EMAIL))
+        {
+            caseSensitiveCompare = false;
+        }
+
         for( int i = 0; i < users.getLength(); i++ )
         {
             Element user = (Element) users.item( i );
-            if ( user.getAttribute( matchAttribute ).equals( index ) )
+            String userAttribute = user.getAttribute( matchAttribute );
+            if (!caseSensitiveCompare)
+            {
+                userAttribute = StringUtils.lowerCase(userAttribute);
+                index = StringUtils.lowerCase(index);
+            }
+            if ( userAttribute.equals( index ) )
             {
                 UserProfile profile = newProfile();
                 

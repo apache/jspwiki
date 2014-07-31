@@ -144,8 +144,7 @@ public final class InputValidator
             if ( !valid )
             {
                 Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;[]#\\@{}%$" };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"),
-                                                                    args ) );
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"), args ) );
             }
             return valid;
         case EMAIL:
@@ -154,8 +153,7 @@ public final class InputValidator
             if ( !valid )
             {
                 Object[] args = { label };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.invalidemail"),
-                                                                    args ) );
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.invalidemail"), args ) );
             }
             return valid;
         case ID:
@@ -164,8 +162,7 @@ public final class InputValidator
             if ( !valid )
             {
                 Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"),
-                                                                    args ) );
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"), args ) );
             }
             return valid;
          default:
