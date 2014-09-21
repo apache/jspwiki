@@ -63,8 +63,14 @@ public class WikiPage
     /** A special variable name for storing a redirect note */
     public static final String REDIRECT = "redirect";
 
+    /** A special variable name for storing the author. */
+    public static final String AUTHOR = "author";
+    
     /** A special variable name for storing a changenote. */
     public static final String CHANGENOTE = "changenote";
+
+    /** A special variable name for storing a viewcount. */
+    public static final String VIEWCOUNT = "viewcount";
     
     private Acl m_accessList = null;
     

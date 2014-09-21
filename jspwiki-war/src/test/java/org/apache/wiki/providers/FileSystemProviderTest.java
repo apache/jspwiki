@@ -269,6 +269,33 @@ public class FileSystemProviderTest extends TestCase {
         assertFalse( "properties exist", f.exists() );
     }
 
+    public void testCustomProperties() throws Exception {
+        String pageDir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String pageName = "CustomPropertiesTest";
+        String fileName = pageName+FileSystemProvider.FILE_EXT;
+        File file = new File (pageDir,fileName);
+
+        assertFalse( file.exists() );
+        WikiPage testPage = new WikiPage(m_engine,pageName);
+        testPage.setAuthor("TestAuthor");
+        testPage.setAttribute("@test","Save Me");
+        testPage.setAttribute("@test2","Save You");
+        testPage.setAttribute("test3","Do not save");
+        m_provider.putPageText( testPage, "This page has custom properties" );
+        assertTrue("No such file", file.exists() );
+        WikiPage pageRetrieved = m_provider.getPageInfo( pageName, -1 );
+        String value = (String)pageRetrieved.getAttribute("@test");
+        String value2 = (String)pageRetrieved.getAttribute("@test2");
+        String value3 = (String)pageRetrieved.getAttribute("test3");
+        assertNotNull(value);
+        assertNotNull(value2);
+        assertNull(value3);
+        assertEquals("Save Me",value);
+        assertEquals("Save You",value2);
+        file.delete();
+        assertFalse( file.exists() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( FileSystemProviderTest.class );

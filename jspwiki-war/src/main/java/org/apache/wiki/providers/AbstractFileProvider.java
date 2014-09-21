@@ -31,11 +31,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
@@ -72,6 +75,29 @@ public abstract class AbstractFileProvider
     protected String m_encoding;
     
     protected WikiEngine m_engine;
+    
+    public static final String PROP_CUSTOMPROP_MAXLIMIT = "custom.pageproperty.max.allowed";
+    public static final String PROP_CUSTOMPROP_MAXKEYLENGTH = "custom.pageproperty.key.length";
+    public static final String PROP_CUSTOMPROP_MAXVALUELENGTH = "custom.pageproperty.value.length";
+
+    public static final int DEFAULT_MAX_PROPLIMIT = 200;
+    public static final int DEFAULT_MAX_PROPKEYLENGTH = 255;
+    public static final int DEFAULT_MAX_PROPVALUELENGTH = 4096;
+
+    /**
+     * This parameter limits the number of custom page properties allowed on a page
+     */
+    public static int MAX_PROPLIMIT = DEFAULT_MAX_PROPLIMIT;
+    /**
+     * This number limits the length of a custom page property key length
+     * The default value here designed with future JDBC providers in mind.
+     */
+    public static int MAX_PROPKEYLENGTH = DEFAULT_MAX_PROPKEYLENGTH;
+    /**
+     * This number limits the length of a custom page property value length
+     * The default value here designed with future JDBC providers in mind.
+     */
+    public static int MAX_PROPVALUELENGTH = DEFAULT_MAX_PROPVALUELENGTH;
 
     /**
      *  Name of the property that defines where page directories are.
@@ -135,6 +161,12 @@ public abstract class AbstractFileProvider
         {
             m_windowsHackNeeded = true;
         }
+        
+    	if (properties != null) {
+            MAX_PROPLIMIT = TextUtil.getIntegerProperty(properties,PROP_CUSTOMPROP_MAXLIMIT,DEFAULT_MAX_PROPLIMIT);
+            MAX_PROPKEYLENGTH = TextUtil.getIntegerProperty(properties,PROP_CUSTOMPROP_MAXKEYLENGTH,DEFAULT_MAX_PROPKEYLENGTH);
+            MAX_PROPVALUELENGTH = TextUtil.getIntegerProperty(properties,PROP_CUSTOMPROP_MAXVALUELENGTH,DEFAULT_MAX_PROPVALUELENGTH);
+    	}
         
         log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
     }
@@ -511,6 +543,95 @@ public abstract class AbstractFileProvider
         File f = findPage( pageName );
 
         f.delete();
+    }
+
+    /**
+     * Set the custom properties provided into the given page.
+     * 
+     * @since 2.10.2
+     */
+    protected void setCustomProperties(WikiPage page, Properties properties) {
+        Enumeration propertyNames = properties.propertyNames();
+    	while (propertyNames.hasMoreElements()) {
+    		String key = (String) propertyNames.nextElement();
+    		if (!key.equals(WikiPage.AUTHOR) && !key.equals(WikiPage.CHANGENOTE) && !key.equals(WikiPage.VIEWCOUNT)) {
+    			page.setAttribute(key, properties.get(key));
+    		}
+    	}
+    }
+
+    /**
+     * Get custom properties using {@link this.addCustomPageProperties}, validate them using {@link this.validateCustomPageProperties}
+     * and add them to default properties provided
+     * 
+     * @since 2.10.2
+     */
+    protected void getCustomProperties(WikiPage page, Properties defaultProperties) throws IOException {
+        Properties customPageProperties = addCustomProperties(page,defaultProperties);
+    	validateCustomPageProperties(customPageProperties);
+    	defaultProperties.putAll(customPageProperties);
+    }
+    
+    /**
+     * By default all page attributes that start with "@" are returned as custom properties.
+     * This can be overwritten by custom FileSystemProviders to save additional properties.
+     * CustomPageProperties are validated by {@link this.validateCustomPageProperties}
+     * 
+     * @since 2.10.2
+     * @param page the current page
+     * @param props the default properties of this page
+     * @return default implementation returns empty Properties. 
+     */
+    protected Properties addCustomProperties(WikiPage page, Properties props) {
+    	Properties customProperties = new Properties();
+    	if (page != null) {
+    		Map<String,Object> atts = page.getAttributes();
+    		for (String key : atts.keySet()) {
+    			Object value = atts.get(key);
+    			if (key.startsWith("@") && value != null) {
+    				customProperties.put(key,value.toString());
+    			}
+    		}
+    		
+    	}
+    	return customProperties;
+    }
+    
+    /**
+     * Default validation, validates that key and value is ASCII <code>StringUtils.isAsciiPrintable()</code> and within lengths set up in jspwiki-custom.properties.
+     * This can be overwritten by custom FileSystemProviders to validate additional properties
+     * See https://issues.apache.org/jira/browse/JSPWIKI-856
+     * @since 2.10.2
+     * @param customProperties the custom page properties being added
+     */
+    protected void validateCustomPageProperties(Properties customProperties) throws IOException {
+    	// Default validation rules
+    	if (customProperties != null && !customProperties.isEmpty()) {
+    		if (customProperties.size()>MAX_PROPLIMIT) {
+    			throw new IOException("Too many custom properties. You are adding "+customProperties.size()+", but max limit is "+MAX_PROPLIMIT);
+    		}
+            Enumeration propertyNames = customProperties.propertyNames();
+        	while (propertyNames.hasMoreElements()) {
+        		String key = (String) propertyNames.nextElement();
+        		String value = (String)customProperties.get(key);
+    			if (key != null) {
+    				if (key.length()>MAX_PROPKEYLENGTH) {
+    					throw new IOException("Custom property key "+key+" is too long. Max allowed length is "+MAX_PROPKEYLENGTH);
+    				}
+    				if (!StringUtils.isAsciiPrintable(key)) {
+    					throw new IOException("Custom property key "+key+" is not simple ASCII!");
+    				}
+    			}
+    			if (value != null) {
+    				if (value.length()>MAX_PROPVALUELENGTH) {
+						throw new IOException("Custom property key "+key+" has value that is too long. Value="+value+". Max allowed length is "+MAX_PROPVALUELENGTH);
+					}
+    				if (!StringUtils.isAsciiPrintable(value)) {
+    					throw new IOException("Custom property key "+key+" has value that is not simple ASCII! Value="+value);
+    				}
+    			}
+        	}
+    	}
     }
 
     /**

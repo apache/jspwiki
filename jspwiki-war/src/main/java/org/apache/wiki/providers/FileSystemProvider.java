@@ -18,11 +18,16 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
@@ -72,16 +77,26 @@ public class FileSystemProvider
         {
             String author = page.getAuthor();
             String changenote = (String)page.getAttribute( WikiPage.CHANGENOTE );
+            String viewcount = (String)page.getAttribute( WikiPage.VIEWCOUNT );
             
             if( author != null )
             {
-                props.setProperty( "author", author );
+                props.setProperty( WikiPage.AUTHOR, author );
             }
             
             if( changenote != null )
             {
-                props.setProperty( "changenote", changenote );
+                props.setProperty( WikiPage.CHANGENOTE, changenote );
             }
+
+            if( viewcount != null )
+            {
+                props.setProperty( WikiPage.VIEWCOUNT, viewcount );
+            }
+            
+            // Get additional custom properties from page and add to props
+            getCustomProperties(page, props);
+            	
             
             File file = new File( getPageDirectory(), 
                                   mangleName(page.getName())+PROP_EXT );
@@ -95,7 +110,7 @@ public class FileSystemProvider
             if( out != null ) out.close();
         }
     }
-
+    
     /**
      *  Gets basic metadata from file.
      */
@@ -116,13 +131,22 @@ public class FileSystemProvider
 
                 props.load(in);
 
-                page.setAuthor( props.getProperty( "author" ) );
+                page.setAuthor( props.getProperty( WikiPage.AUTHOR ) );
                 
-                String changenote = props.getProperty( "changenote" );
+                String changenote = props.getProperty( WikiPage.CHANGENOTE );
                 if( changenote != null )
                 {
                     page.setAttribute( WikiPage.CHANGENOTE, changenote );
                 }
+                
+                String viewcount = props.getProperty( WikiPage.VIEWCOUNT );
+                if( viewcount != null )
+                {
+                    page.setAttribute( WikiPage.VIEWCOUNT, viewcount );
+                }
+                
+                // Set the props values to the page attributes
+                setCustomProperties(page, props);
             }            
         }
         finally

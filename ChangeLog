@@ -1,3 +1,9 @@
+2014-09-21  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-7
+
+       * Fixed JSPWIKI-856 - Enhance FileSystemProvider to be able to save page attributes as properties, provided by David Vittor
+
 2014-08-12  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-6

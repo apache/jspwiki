@@ -517,6 +517,9 @@ public class VersioningFileProvider
                 props.setProperty( versionNumber+".changenote", changeNote );
             }
 
+            // Get additional custom properties from page and add to props
+            getCustomProperties(page, props);
+            
             putPageProperties( page.getName(), props );
         }
         catch( IOException e )
@@ -599,7 +602,7 @@ public class VersioningFileProvider
                     // we might not have a versioned author because the
                     // old page was last maintained by FileSystemProvider
                     Properties props2 = getHeritagePageProperties( page );
-                    author = props2.getProperty( "author" );
+                    author = props2.getProperty( WikiPage.AUTHOR );
                 }
                 if ( author != null )
                 {
@@ -609,6 +612,8 @@ public class VersioningFileProvider
                 String changenote = props.getProperty( realVersion+".changenote" );
                 if( changenote != null ) p.setAttribute( WikiPage.CHANGENOTE, changenote );
 
+                // Set the props values to the page attributes
+                setCustomProperties(p, props);
             }
             catch( IOException e )
             {
@@ -698,7 +703,7 @@ public class VersioningFileProvider
                 Properties props = new Properties();
                 props.load(in);
 
-                String originalAuthor = props.getProperty("author");
+                String originalAuthor = props.getProperty(WikiPage.AUTHOR);
                 if ( originalAuthor.length() > 0 )
                 {
                     // simulate original author as if already versioned
