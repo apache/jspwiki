@@ -1,3 +1,9 @@
+2014-11-04  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-8
+
+       * Fixed JSPWIKI-870 - JSPWiki does not start, if tomcat directory path contains a white space.
+
 2014-09-21  Harry Metske (metskem@apache.org)
 
        * 2.10.2-svn-7

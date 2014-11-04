@@ -477,7 +477,7 @@ public class AuthorizationManager {
             
             if (policyURL != null) 
             {
-                File policyFile = new File( policyURL.getPath() );
+                File policyFile = new File( policyURL.toURI().getPath() );
                 log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
                 m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
                 m_localPolicy.refresh();
@@ -495,7 +495,7 @@ public class AuthorizationManager {
                 throw wse;
             }
         }
-        catch ( PolicyException e )
+        catch ( Exception e)
         {
             log.error("Could not initialize local security policy: " + e.getMessage() );
             throw new WikiException( "Could not initialize local security policy: " + e.getMessage(), e );
