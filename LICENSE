@@ -228,13 +228,14 @@ lucene-core-4.7.0.jar                       LICENSE
 lucene-highlighter-4.7.0.jar                LICENSE
 lucene-memory-4.7.0.jar                     LICENSE
 mail-1.4.7.jar                              doc/LICENSE.cddl
-nekohtml-0.9.5.jar                          LICENSE
+nekohtml-1.9.21.jar                         LICENSE
 oro-2.0.8.jar                               LICENSE
 ehcache-2.8.3.jar                           LICENSE
 sandler-0.5.jar                             doc/LICENSE.sandler
 servlet-api-2.5.jar                         doc/LICENSE.cddl
 slf4-api-1.7.7.jar                          doc/LICENSE.mit
 slf4j-log4j-1.7.7.jar                       doc/LICENSE.mit
+xercesImpl-2.10.0.jar                       LICENSE
 xmlrpc-2.0.1.jar                            LICENSE
 
 TEST LIBRARY                                LICENSE FILE
@@ -249,7 +250,6 @@ selenium-chrome-driver-2.42.0.jar           LICENSE
 selenium-firefox-driver-2.42.0.jar          LICENSE
 selenium-ie-driver-2.42.0.jar               LICENSE
 stripes-1.5.8.jar                           LICENSE
-xercesImpl-2.6.2.jar                        LICENSE
 xml-apis-1.0.b2.jar                         LICENSE
 yuicompressor-2.4.7.jar                     doc/LICENSE.yui
 
