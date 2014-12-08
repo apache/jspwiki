@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>CFBundleDevelopmentRegion</key>
+<string>English</string>
+<key>CFBundleExecutable</key>
+<string>JavaAppLauncher</string>
+<key>CFBundleIconFile</key>
+<string>jspwiki.icns</string>
+<key>CFBundleIdentifier</key>
+<string>org.apache.jspwiki.jspwiki-portable</string>
+<key>CFBundleDisplayName</key>
+<string>Portable JSPWiki</string>
+<key>CFBundleInfoDictionaryVersion</key>
+<string>6.0</string>
+<key>CFBundleName</key>
+<string>woas</string>
+<key>CFBundlePackageType</key>
+<string>APPL</string>
+<key>CFBundleShortVersionString</key>
+<string>2.10.1-SNAPSHOT</string>
+<key>CFBundleSignature</key>
+<string>????</string>
+<key>CFBundleVersion</key>
+<string>1</string>
+<key>NSHumanReadableCopyright</key>
+<string></string>
+<key>LSApplicationCategoryType</key>
+<string>public.app-category.developer-tools</string>
+<key>JVMMainClassName</key>
+<string>org.apache.catalina.startup.Bootstrap</string>
+<key>JVMOptions</key>
+<array>
+<string>-Xmx96m</string>
+<string>-Duser.dir=$APP_ROOT/..</string>
+<string>-Dcatalina.home=$APP_ROOT/..</string>
+<string>-Dcatalina.base=$APP_ROOT/..</string>
+<string>-Djava.io.tmpdir=$APP_ROOT/../temp</string>
+</array>
+<key>JVMArguments</key>
+<array>
+</array>
+</dict>
+</plist>
+

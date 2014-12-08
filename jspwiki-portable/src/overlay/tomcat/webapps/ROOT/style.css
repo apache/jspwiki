@@ -1,0 +1,202 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+body {
+	background-color: white;
+	background-image: url('background.gif');
+	background-repeat: repeat-x;
+	color: black;
+	font-family: 'Tahoma', 'Lucida Sans', 'Arial', 'Helvetica', 'Sans-serif', 'sans';
+	font-size: 9pt;
+	line-height: 1.8em;
+	padding: 10px 10px 10px 10px;
+	margin: 10px 10px 10px 10px;
+}
+
+h1,h2,h3,h4,h5,h6,h7,h8 {
+	color: #E9601A;
+	font-weight: normal;
+}
+
+h1,h2 {
+	letter-spacing: -1px;
+	font-family: 'Trebuchet MS';
+}
+
+#extitle {
+	font-size: 12pt;
+	font-weight: bold;
+	color: #E9601A;
+	padding: 10px 10px 10px 10px;
+}
+
+.mark {
+	background-color: yellow;
+	margin: 5px;	
+}
+
+.feedbackPanelERROR {
+	color: red;
+	list-style: circle;
+	font-weight: bold;
+}
+
+.feedbackPanelINFO {
+	color: green;
+	list-style: circle;
+	font-weight: bold;
+}
+.nospam {
+	display : none;
+}
+
+.block {
+	padding: 10px;
+}
+
+.blockWithBorder {
+	border-width: thin;
+	border-style: dotted;
+	border-color: #E9601A;
+}
+
+#hellomessage {
+	font-size: 30pt;
+}
+
+#titleblock {
+	color: white;
+	font-weight: bold;
+	border-width: thin;
+	padding: 17px 2px 2px 6px;
+}
+
+#titleblock a {
+	color: #000;
+}
+
+h2 {
+	font-size: 1.25em;
+}
+
+h3 {
+	font-size: 1em;
+}
+
+a {
+	color: #E9601A;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+img {
+	border: none;
+}
+
+pre {
+	font-family: 'Lucida Sans', 'Helvetica', 'Sans serif', 'sans';
+}
+
+th {
+	background: #C3C3C3;
+	color: white;
+	font-weight: bold;
+}
+
+tr.b {
+	background: #F5F5F5;
+}
+
+tr.a {
+	background: #E6E6E5;
+}
+
+tr.none {
+	background: transparent;
+}
+
+a.none {
+	background: transparent;
+	padding-right: 0px;
+}
+
+.inputForm label {
+	display: block;
+	margin-top: 5px;
+}
+
+#numberRadioChoice label { display: inline !important; }
+
+.inputForm label.non {
+	display: inline !important;
+}
+
+.inputFormTable td {
+	vertical-align: top;
+	padding: 10px;
+}
+
+#nestedExampleTree {
+	width: 300px;
+}
+
+#feedbackPanel {
+	width: 600px;
+}
+
+#siteSelection {
+	width: 200px;
+}
+
+div.tabRowContent {
+	border-color: #DDDDDD;
+	border-style: solid;
+	border-width: 1px;
+	margin: 4px;
+	padding: 4px;
+}
+
+
+table.dataview {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #0079d6;
+	font-size: 1em;
+	font-family: arial;
+	}
+	
+table.dataview caption { text-align: left; }
+table.dataview tr { padding-top: 2px; padding-bottom: 2px; }
+table.dataview tr.even { background-color: #ffebcd; }
+table.dataview tr.odd { background-color: #fff; }
+table.dataview tr td { padding-left: 8px; padding-right: 30px; }
+table.dataview tr th { color: black; padding-top: 3px; padding-bottom: 3px; padding-left: 8px; padding-right: 30px; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; border-top: 1px solid #0079d6; text-align: left; white-space: nowrap; vertical-align: middle;}
+
+table.dataview tr th { background-position: right; background-repeat:no-repeat; }
+table.dataview tr th.wicket_orderDown {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
+table.dataview tr th.wicket_orderUp {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
+table.dataview tr th.wicket_orderNone {
+	background-image: url(displaytag/img/arrow_off.png);
+}
+table.dataview tr th a { font-weight: normal; }
+table.dataview #message { padding-left: 3px; }
+table.dataview caption { padding-bottom: 2px; }
+
