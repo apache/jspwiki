@@ -40,11 +40,23 @@ public class UtilJ2eeCompatTest extends TestCase
         assertTrue( UtilJ2eeCompat.useOutputStream( "Sun Java System Application Server 9.1_02" ) );
     }
 
-    public void testGlassfish()
+    public void testGlassfish3()
     {
-        assertFalse( UtilJ2eeCompat.useOutputStream( "Sun Java System Application Server 9.1_02", true ) );
+        assertFalse(UtilJ2eeCompat.useOutputStream("Oracle GlassFish Server 3.1.2", true));
         // Do not reinitialize
-        assertFalse( UtilJ2eeCompat.useOutputStream( "Sun Java System Application Server 9.1_02" ) );
+        assertFalse(UtilJ2eeCompat.useOutputStream("Oracle GlassFish Server 3.1.2"));
+    }
+
+    public void testGlassfish2() {
+        assertFalse(UtilJ2eeCompat.useOutputStream("GlassFish Server Open Source Edition  4.1", true));
+        // Do not reinitialize
+        assertFalse(UtilJ2eeCompat.useOutputStream("GlassFish Server Open Source Edition  4.1"));
+    }
+
+    public void testGlassfish1() {
+        assertFalse(UtilJ2eeCompat.useOutputStream("Sun Java System Application Server 9.1_02", true));
+        // Do not reinitialize
+        assertFalse(UtilJ2eeCompat.useOutputStream("Sun Java System Application Server 9.1_02"));
     }
 
     public void testTomcat()

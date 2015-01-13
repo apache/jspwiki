@@ -45,10 +45,11 @@ public class UtilJ2eeCompat
 
     public static final String WEBLOGIC = "weblogic";
 
-    public static final String GLASSFISH = "sun java system application server";
+    public static final String GLASSFISH_1 = "sun java system application server";
+
+    public static final String GLASSFISH_2 = "glassfish server";
 
     public static final String JBOSS = "jboss";
-
     /**
      * 
      */
@@ -138,9 +139,13 @@ public class UtilJ2eeCompat
             // use response.getOutputStream instead of response.getWriter
             useStream = true;
         }
-        else if( serverInfo.toLowerCase().indexOf( GLASSFISH ) >= 0 )
+        else if( serverInfo.toLowerCase().indexOf( GLASSFISH_1 ) >= 0 )
         {
-            log.info( GLASSFISH + " detected" );
+            log.info( GLASSFISH_1 + " detected" );
+        }
+        else if( serverInfo.toLowerCase().indexOf( GLASSFISH_2 ) >= 0 )
+        {
+            log.info( GLASSFISH_2 + " detected" );
         }
         else if( serverInfo.toLowerCase().indexOf( OC4J ) >= 0 )
         {
