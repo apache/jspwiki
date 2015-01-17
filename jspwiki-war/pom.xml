@@ -233,6 +233,29 @@
           </includes>
         </configuration>
       </plugin>
+      
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+          <additionalConfig>
+            <file>
+              <name>.checkstyle</name>
+              <location>./src/main/config/dev/jspwiki-checkstyle.xml</location>
+            </file>
+            <file>
+              <name>.settings/org.eclipse.jdt.core.prefs</name>
+              <location>./src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
+            </file>
+          </additionalConfig>
+          <additionalProjectnatures>
+            <projectnature>net.sourceforge.metrics.nature</projectnature>
+            <projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>
+          </additionalProjectnatures>
+        </configuration>
+      </plugin>
 
       <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
         Merge and compress CSS and JS files using the WRO4J.
