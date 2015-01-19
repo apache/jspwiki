@@ -141,6 +141,13 @@
        <load-on-startup>1</load-on-startup>
    </servlet>
 
+    <!-- WikiAjaxDispatcherServlet -->
+    <servlet>
+        <servlet-name>WikiAjaxDispatcherServlet</servlet-name>
+        <servlet-class>org.apache.wiki.WikiAjaxDispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
    <!--
        Attachment exchange handler.
      -->
@@ -159,7 +166,12 @@
        <servlet-name>WikiServlet</servlet-name>
        <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
-   
+
+    <servlet-mapping>
+        <servlet-name>WikiAjaxDispatcherServlet</servlet-name>
+        <url-pattern>/ajax/*</url-pattern>
+    </servlet-mapping>
+
    <servlet-mapping>
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
        <url-pattern>/JSON-RPC</url-pattern>

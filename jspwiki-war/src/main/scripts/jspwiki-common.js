@@ -219,6 +219,66 @@ function getAncestorByTagName( node, tagName ) {
 	}
 }
 
+/** AJAX Requests as per http://javapapers.com/ajax/getting-started-with-ajax-using-java/ **/
+/*
+ * creates a new XMLHttpRequest object which is the backbone of AJAX,
+ * or returns false if the browser doesn't support it
+ */
+function getXMLHttpRequest() {
+	var xmlHttpReq = false;
+	// to create XMLHttpRequest object in non-Microsoft browsers
+	if (window.XMLHttpRequest) {
+		xmlHttpReq = new XMLHttpRequest();
+	} else if (window.ActiveXObject) {
+		try {
+			// to create XMLHttpRequest object in later versions
+			// of Internet Explorer
+			xmlHttpReq = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (exp1) {
+			try {
+				// to create XMLHttpRequest object in older versions
+				// of Internet Explorer
+				xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (exp2) {
+				xmlHttpReq = false;
+			}
+		}
+	}
+	return xmlHttpReq;
+}
+
+/*
+ * AJAX call starts with this function
+ */
+function makeRequest(method,url,responseId,loading) {
+	var xmlHttpRequest = getXMLHttpRequest();
+	xmlHttpRequest.onreadystatechange = getReadyStateHandler(xmlHttpRequest,responseId,loading);
+	xmlHttpRequest.open(method, url, true);
+	xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlHttpRequest.send(null);
+}
+
+/*
+ * Returns a function that waits for the state change in XMLHttpRequest
+ */
+function getReadyStateHandler(xmlHttpRequest,responseId,loading) {
+	// an anonymous function returned
+	// it listens to the XMLHttpRequest instance
+	return function() {
+		if (xmlHttpRequest.readyState >=1 && xmlHttpRequest.readyState <4) {
+			document.getElementById(responseId).innerHTML = loading;
+		}
+		if (xmlHttpRequest.readyState == 4) {
+			if (xmlHttpRequest.status == 200) {
+				document.getElementById(responseId).innerHTML = xmlHttpRequest.responseText;
+			} else {
+				document.getElementById(responseId).innerHTML("HTTP error " + xmlHttpRequest.status + ": " + xmlHttpRequest.statusText);
+			}
+		}
+	};
+}
+/** End AJAX Requests **/
+
 
 /** 100 Wiki functions **/
 var Wiki = {
@@ -414,6 +474,12 @@ var Wiki = {
 
 	$jsonid : 10000,
 	jsonrpc: function(method, params, fn) {
+		$$('meta').each(function(el){
+			var n = el.getProperty('name') || '';
+			if( n.indexOf('wiki') == 0 ) this[n.substr(4)] = el.getProperty('content');
+		},this);
+
+		if (Wiki.JsonUrl) {
 		new Ajax( Wiki.JsonUrl, {
 			postBody: Json.toString({"id":Wiki.$jsonid++, "method":method, "params":params}),
 			method: 'post',
@@ -425,6 +491,7 @@ var Wiki = {
 				}
 			}
 		}).request();
+		}
 	}
 }
 

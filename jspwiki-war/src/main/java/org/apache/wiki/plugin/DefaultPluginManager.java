@@ -29,6 +29,7 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiAjaxDispatcherServlet;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
@@ -64,6 +65,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+import javax.servlet.http.HttpServlet;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -601,6 +604,8 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         
         /**
          *  Initializes a plugin, if it has not yet been initialized.
+         *  If the plugin extends {@link HttpServlet} it will automatically 
+         *  register it as AJAX using {@link WikiAjaxDispatcherServlet.register}.
          *
          *  @param engine The WikiEngine
          *  @param searchPath A List of Strings, containing different package names.
@@ -615,6 +620,9 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
                     WikiPlugin p = newPluginInstance(searchPath, externalJars);
                     if( p instanceof InitializablePlugin ) {
                         ( ( InitializablePlugin )p ).initialize( engine );
+                    }
+                    if( p instanceof HttpServlet ) {
+                    	WikiAjaxDispatcherServlet.register( (HttpServlet) p );
                     }
                 } catch( Exception e ) {
                     log.info( "Cannot initialize plugin " + m_className, e );
