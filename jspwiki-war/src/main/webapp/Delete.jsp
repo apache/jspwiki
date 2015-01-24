@@ -69,7 +69,7 @@
             session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
         }
 
-        response.sendRedirect(wiki.getURL( WikiContext.INFO, redirTo, null, false ));
+        response.sendRedirect(wiki.getURL( WikiContext.VIEW, redirTo, null, false ));
         return;
     }
     else if( delete != null )
@@ -91,7 +91,7 @@
             }
         }
         
-        response.sendRedirect(wiki.getURL( WikiContext.INFO, redirTo, null, false ));
+        response.sendRedirect(wiki.getURL( WikiContext.VIEW, redirTo, null, false ));
         return; 
     }
 
