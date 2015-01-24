@@ -87,7 +87,11 @@ public class Note implements WikiPlugin
         String resource = engine.getTemplateManager().findResource( ctx, 
                                                                     engine.getTemplateDir(), 
                                                                     commentImage );
-
+        
+        // JSPWIKI-876 Fixed error with Note Plugin. Only one preceding "/" is needed.
+        if (resource != null && resource.startsWith("/")) {
+        	resource = resource.substring(1);
+        }
         return ctx.getURL( WikiContext.NONE, resource );
     }
 
