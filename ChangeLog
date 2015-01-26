@@ -1,12 +1,24 @@
+2015-01-25  David Vittor (dvittor@apache.org)
+
+       * 2.10.2-svn-11
+
+       * Fixed JSPWIKI-876 - NotePlugin does not work on wiki without context
+       
+       * Fixed JSPWIKI-869 - JSPWiki Maven project cannot be imported into Eclipse
+       
+       * Updated JSPWIKI-867 - Deleting attachments should retain focus on the Attach tab
+       
+       * Updated JSPWIKI-566 - Some Ajax functionality added - not complete re-write yet
+
+2014-12-08  Siegfried Goeschl (sgoeschl@apache.org)
+
+       * Fixed JSPWIKI-829 - [Portable] Integrate jspwiki-portable into the jspwiki maven build
+
 2014-11-04  Harry Metske (metskem@apache.org)
 
        * 2.10.2-svn-10
 
        * Fixed JSPWIKI-874 - IllegalStateException running JSPWiki in Oracle Glassfish Server
-
-2014-12-08  Siegfried Goeschl (sgoeschl@apache.org)
-
-       * Fixed JSPWIKI-829 - [Portable] Integrate jspwiki-portable into the jspwiki maven build
 
 2014-11-04  Harry Metske (metskem@apache.org)
 
