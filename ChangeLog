@@ -3,6 +3,8 @@
        * 2.10.2-svn-12
        
        * Fixed JSPWIKI-566 - Complete rewrite of AJAX functionality for JSPWiki
+       
+       * Fixed JSPWIKI-502 & JSPWIKI-760 - Show Wikipages in Search without Authorization
 
 2015-01-25  David Vittor (dvittor@apache.org)
 

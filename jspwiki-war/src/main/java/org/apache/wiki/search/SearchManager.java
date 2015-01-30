@@ -51,6 +51,7 @@ import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -141,7 +142,11 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     			} else if (actionName.equals(AJAX_ACTION_PAGES)) {
     				List<Map<String,Object>> callResults = new ArrayList<Map<String,Object>>();
     				log.debug("Calling findPages() START");
-    				callResults = findPages(itemId, maxResults);
+    				WikiContext wikiContext = (WikiContext)req.getAttribute( WikiTagBase.ATTR_CONTEXT );
+    				if (wikiContext == null) {
+    					throw new ServletException("Cannot find wikiContext in the given request "+req);
+    				}
+    				callResults = findPages(itemId, maxResults, wikiContext);
     				log.debug("Calling findPages() DONE. "+callResults.size());
     				result = AjaxUtil.toJson(callResults);
     			}
@@ -208,7 +213,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List<Map<String,Object>> findPages( String searchString, int maxLength )
+        public List<Map<String,Object>> findPages( String searchString, int maxLength, WikiContext wikiContext )
         {
             StopWatch sw = new StopWatch();
             sw.start();
@@ -222,9 +227,9 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
                     Collection c;
 
                     if( m_searchProvider instanceof LuceneSearchProvider ) {
-                        c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
+                        c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0, wikiContext );
                     } else {
-                        c = m_searchProvider.findPages( searchString );
+                        c = m_searchProvider.findPages( searchString, wikiContext );
                     }
                     
                     int count = 0;
@@ -348,15 +353,16 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *  the query engine wants to use.
      *
      * @param query The query.  Null is safe, and is interpreted as an empty query.
+     * @param wikiContext the context within which to run the search
      * @return A collection of WikiPages that matched.
      * @throws ProviderException If the provider fails and a search cannot be completed.
      * @throws IOException If something else goes wrong.
      */
-    public Collection findPages( String query )
+    public Collection findPages( String query, WikiContext wikiContext )
         throws ProviderException, IOException
     {
         if( query == null ) query = "";
-        Collection c = m_searchProvider.findPages( query );
+        Collection c = m_searchProvider.findPages( query, wikiContext );
 
         return c;
     }

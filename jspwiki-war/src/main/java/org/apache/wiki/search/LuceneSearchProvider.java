@@ -67,6 +67,7 @@ import org.apache.lucene.util.Version;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
@@ -74,6 +75,8 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
@@ -590,10 +593,10 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages( String query )
+    public Collection findPages( String query, WikiContext wikiContext )
         throws ProviderException
     {
-        return findPages( query, FLAG_CONTEXTS );
+        return findPages( query, FLAG_CONTEXTS, wikiContext );
     }
 
     /**
@@ -610,7 +613,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @return A Collection of SearchResult instances
      *  @throws ProviderException if there is a problem with the backend
      */
-    public Collection findPages( String query, int flags )
+    public Collection findPages( String query, int flags, WikiContext wikiContext )
         throws ProviderException
     {
         IndexSearcher  searcher = null;
@@ -647,6 +650,8 @@ public class LuceneSearchProvider implements SearchProvider {
 
             ScoreDoc[] hits = searcher.search(luceneQuery, MAX_SEARCH_HITS).scoreDocs;
 
+            AuthorizationManager mgr = m_engine.getAuthorizationManager();
+
             list = new ArrayList<SearchResult>(hits.length);
             for ( int curr = 0; curr < hits.length; curr++ )
             {
@@ -662,6 +667,9 @@ public class LuceneSearchProvider implements SearchProvider {
                         // Currently attachments don't look nice on the search-results page
                         // When the search-results are cleaned up this can be enabled again.
                     }
+
+                    PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
+                    if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
 
                     int score = (int)(hits[curr].score * 100);
 
@@ -680,6 +688,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
                     SearchResult result = new SearchResultImpl( page, score, fragments );     
                     list.add(result);
+                }
                 }
                 else
                 {

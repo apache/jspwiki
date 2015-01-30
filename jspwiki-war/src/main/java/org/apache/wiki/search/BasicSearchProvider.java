@@ -26,11 +26,14 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.providers.WikiPageProvider;
 
 /**
@@ -144,7 +147,7 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection findPages( QueryItem[] query )
+    private Collection findPages( QueryItem[] query, WikiContext wikiContext )
     {
         TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
@@ -160,6 +163,8 @@ public class BasicSearchProvider implements SearchProvider
             return null;
         }
 
+        AuthorizationManager mgr = m_engine.getAuthorizationManager();
+
         Iterator it = allPages.iterator();
         while( it.hasNext() )
         {
@@ -168,6 +173,8 @@ public class BasicSearchProvider implements SearchProvider
                 WikiPage page = (WikiPage) it.next();
                 if (page != null)
                 {
+                    PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
+                    if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
                     String pageName = page.getName();
                     String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
                                          attachmentNames(page, " ");
@@ -178,6 +185,7 @@ public class BasicSearchProvider implements SearchProvider
                         res.add( comparison );
                     }
                 }
+            }
             }
             catch( ProviderException pe )
             {
@@ -195,9 +203,9 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages(String query)
+    public Collection findPages(String query, WikiContext wikiContext)
     {
-        return findPages(parseQuery(query));
+        return findPages(parseQuery(query), wikiContext);
     }
 
     /**

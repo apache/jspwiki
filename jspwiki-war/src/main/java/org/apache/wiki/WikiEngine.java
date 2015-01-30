@@ -1844,6 +1844,7 @@ public class WikiEngine
      *  a language of its own.
      *
      *  @param query The query string
+     *  @param wikiContext the context within which to run the search
      *  @return A Collection of SearchResult objects.
      *  @throws ProviderException If the searching failed
      *  @throws IOException       If the searching failed
@@ -1852,10 +1853,10 @@ public class WikiEngine
     //
     // FIXME: Should also have attributes attached.
     //
-    public Collection findPages( String query )
+    public Collection findPages( String query, WikiContext wikiContext )
         throws ProviderException, IOException
     {
-        Collection results = m_searchManager.findPages( query );
+        Collection results = m_searchManager.findPages( query, wikiContext );
 
         return results;
     }
