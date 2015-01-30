@@ -7,6 +7,8 @@
        * Fixed JSPWIKI-502 & JSPWIKI-760 - Show Wikipages in Search without Authorization
        
        * Fixed JSPWIKI-859 - Expose the WikiModuleInfo to the plugins and filters
+       
+       * Fixed JSPWIKI-866 - Additional parameters (url,version,desc,htmltemplate,authorurl) to jspwiki_module.xml WikiModuleInfo
 
 2015-01-25  David Vittor (dvittor@apache.org)
 
