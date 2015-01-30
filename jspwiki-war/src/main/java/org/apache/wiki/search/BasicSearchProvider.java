@@ -174,7 +174,8 @@ public class BasicSearchProvider implements SearchProvider
                 if (page != null)
                 {
                     PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
-                    if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
+                    // TODO: WikiContext should never be null
+                    if( wikiContext==null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
                     String pageName = page.getName();
                     String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
                                          attachmentNames(page, " ");

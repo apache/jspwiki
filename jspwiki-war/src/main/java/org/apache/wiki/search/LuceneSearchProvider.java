@@ -669,26 +669,25 @@ public class LuceneSearchProvider implements SearchProvider {
                     }
 
                     PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
-                    if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
-
-                    int score = (int)(hits[curr].score * 100);
-
-
-                    // Get highlighted search contexts
-                    String text = doc.get(LUCENE_PAGE_CONTENTS);
-
-                    String[] fragments = new String[0];
-                    if( text != null && highlighter != null )
-                    {
-                        TokenStream tokenStream = getLuceneAnalyzer()
-                        .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
-                        fragments = highlighter.getBestFragments(tokenStream, text, MAX_FRAGMENTS);
-
-                    }
-
-                    SearchResult result = new SearchResultImpl( page, score, fragments );     
-                    list.add(result);
-                }
+                    // TODO: WikiContext should never be null
+	                if( wikiContext==null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
+	
+	                    int score = (int)(hits[curr].score * 100);
+	
+	
+	                    // Get highlighted search contexts
+	                    String text = doc.get(LUCENE_PAGE_CONTENTS);
+	
+	                    String[] fragments = new String[0];
+	                    if( text != null && highlighter != null ) {
+	                        TokenStream tokenStream = getLuceneAnalyzer()
+	                        .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
+	                        fragments = highlighter.getBestFragments(tokenStream, text, MAX_FRAGMENTS);
+	                    }
+	
+	                    SearchResult result = new SearchResultImpl( page, score, fragments );     
+	                    list.add(result);
+	                }
                 }
                 else
                 {
