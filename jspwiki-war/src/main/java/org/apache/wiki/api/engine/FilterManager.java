@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.PageFilter;
+import org.apache.wiki.modules.WikiModuleInfo;
 
 public interface FilterManager
 {
@@ -114,10 +115,17 @@ public interface FilterManager
     
     /**
      * Returns a collection of modules currently managed by this ModuleManager.  Each
-     * entry is an instance of the WikiModuleInfo class.  This method should return something
+     * entry is an instance of the {@link WikiModuleInfo} class.  This method should return something
      * which is safe to iterate over, even if the underlying collection changes.
      * 
-     * @return A Collection of WikiModuleInfo instances.
+     * @return A Collection of {@link WikiModuleInfo} instances.
      */
     Collection modules();
+    
+    /**
+     * Returns the {@link WikiModuleInfo} information about the provided filterName.
+     * @param filterName
+     * @return The WikiModuleInfo
+     */
+    WikiModuleInfo getModuleInfo(String filterName);
 }

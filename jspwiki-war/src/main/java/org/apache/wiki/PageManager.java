@@ -48,6 +48,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
@@ -707,8 +708,16 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      */
     @Override
     public Collection modules() {
-        // TODO Auto-generated method stub
         return null;
+    }
+    
+    /**
+     * Returns null!
+     *  {@inheritDoc}
+     */
+    @Override
+    public WikiModuleInfo getModuleInfo(String moduleName) {
+    	return null;
     }
 
 

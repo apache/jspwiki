@@ -5,6 +5,8 @@
        * Fixed JSPWIKI-566 - Complete rewrite of AJAX functionality for JSPWiki
        
        * Fixed JSPWIKI-502 & JSPWIKI-760 - Show Wikipages in Search without Authorization
+       
+       * Fixed JSPWIKI-859 - Expose the WikiModuleInfo to the plugins and filters
 
 2015-01-25  David Vittor (dvittor@apache.org)
 

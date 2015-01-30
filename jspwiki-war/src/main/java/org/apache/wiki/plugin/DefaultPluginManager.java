@@ -785,6 +785,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection< WikiModuleInfo > modules() {
         Set< WikiModuleInfo > ls = new TreeSet< WikiModuleInfo >();
         
@@ -794,6 +795,14 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         }
         
         return ls;
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public WikiPluginInfo getModuleInfo(String moduleName) {
+        return m_pluginClassMap.get(moduleName);
     }
 
     /**

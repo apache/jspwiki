@@ -280,6 +280,7 @@ public class EditorManager extends ModuleManager {
         }
     }
 
+    @Override
     public Collection modules()
     {
         ArrayList<WikiModuleInfo> ls = new ArrayList<WikiModuleInfo>();
@@ -287,6 +288,14 @@ public class EditorManager extends ModuleManager {
         ls.addAll( m_editors.values() );
 
         return ls;
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public WikiEditorInfo getModuleInfo(String moduleName) {
+        return m_editors.get(moduleName);
     }
 
 }

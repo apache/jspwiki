@@ -50,6 +50,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.ClassUtil;
@@ -838,8 +839,18 @@ public class TemplateManager extends ModuleManager {
      *
      *  @return {@inheritDoc}
      */
+    @Override
     public Collection modules()
     {
         return new ArrayList();
+    }
+    
+    /**
+     *  Returns null!
+     *  {@inheritDoc}
+     */
+    @Override
+    public WikiModuleInfo getModuleInfo(String moduleName) {
+    	return null;
     }
 }
