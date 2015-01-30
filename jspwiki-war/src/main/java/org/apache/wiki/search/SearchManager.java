@@ -24,14 +24,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.ajax.AjaxUtil;
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -42,11 +51,8 @@ import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.rpc.RPCCallable;
-import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
-
 
 /**
  *  Manages searching the Wiki.
@@ -89,14 +95,61 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
                                             WikiPageEvent.PAGE_DELETE_REQUEST, this);
 
-        JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
+        //TODO: Replace with custom annotations. See JSPWIKI-566
+        WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
     }
 
     /**
      *  Provides a JSON RPC API to the JSPWiki Search Engine.
      */
-    public class JSONSearch implements RPCCallable
+    public class JSONSearch implements WikiAjaxServlet
     {
+		public static final String AJAX_ACTION_SUGGESTIONS = "suggestions";
+    	public static final String AJAX_ACTION_PAGES = "pages";
+    	public static final int DEFAULT_MAX_RESULTS = 20;
+    	public int maxResults = DEFAULT_MAX_RESULTS; 
+		
+		@Override
+		public String getServletMapping() {
+			return JSON_SEARCH;
+		}
+		
+    	@Override
+    	public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params)
+    			throws ServletException, IOException {
+    		String result = "";
+    		if (StringUtils.isNotBlank(actionName)) {
+    			if (params.size()<1) {
+    				return;
+    			}
+    			String itemId = params.get(0);
+    			log.debug("itemId="+itemId);
+    			if (params.size()>1) {
+    				String maxResultsParam  = params.get(1);
+    				log.debug("maxResultsParam="+maxResultsParam);
+    				if (StringUtils.isNotBlank(maxResultsParam) && StringUtils.isNumeric(maxResultsParam)) {
+    					maxResults = Integer.parseInt(maxResultsParam);
+    				}
+    			}
+
+    			if (actionName.equals(AJAX_ACTION_SUGGESTIONS)) {
+    				List<String> callResults = new ArrayList<String>();
+    				log.debug("Calling getSuggestions() START");
+    				callResults = getSuggestions(itemId, maxResults);
+    				log.debug("Calling getSuggestions() DONE. "+callResults.size());
+    				result = AjaxUtil.toJson(callResults);
+    			} else if (actionName.equals(AJAX_ACTION_PAGES)) {
+    				List<Map<String,Object>> callResults = new ArrayList<Map<String,Object>>();
+    				log.debug("Calling findPages() START");
+    				callResults = findPages(itemId, maxResults);
+    				log.debug("Calling findPages() DONE. "+callResults.size());
+    				result = AjaxUtil.toJson(callResults);
+    			}
+    		}
+    		log.debug("result="+result);
+    		resp.getWriter().write(result);
+    	}
+    	
         /**
          *  Provides a list of suggestions to use for a page name.
          *  Currently the algorithm just looks into the value parameter,
@@ -106,7 +159,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
          *  @param maxLength maximum number of suggestions
          *  @return the suggestions
          */
-        public List getSuggestions( String wikiName, int maxLength )
+        public List<String> getSuggestions( String wikiName, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
@@ -155,12 +208,12 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List findPages( String searchString, int maxLength )
+        public List<Map<String,Object>> findPages( String searchString, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
 
-            List<HashMap> list = new ArrayList<HashMap>(maxLength);
+            List<Map<String,Object>> list = new ArrayList<Map<String,Object>>(maxLength);
 
             if( searchString.length() > 0 )
             {
@@ -168,11 +221,12 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
                 {
                     Collection c;
 
-                    if( m_searchProvider instanceof LuceneSearchProvider )
+                    if( m_searchProvider instanceof LuceneSearchProvider ) {
                         c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
-                    else
+                    } else {
                         c = m_searchProvider.findPages( searchString );
-
+                    }
+                    
                     int count = 0;
                     for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
@@ -194,6 +248,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
             return list;
         }
     }
+
 
     /**
      *  This particular method starts off indexing and all sorts of various activities,

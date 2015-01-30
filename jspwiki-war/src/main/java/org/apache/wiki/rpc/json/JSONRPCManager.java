@@ -27,15 +27,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.RPCManager;
-import org.apache.wiki.ui.TemplateManager;
+
 import com.metaparadigm.jsonrpc.InvocationCallback;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
 
@@ -51,10 +51,13 @@ import com.metaparadigm.jsonrpc.JSONRPCBridge;
  * Due to some limitations of the JSON-RPC library, we do not use the
  * Global bridge object.
  *
+ * Deprecated: Use {@link WikiAjaxDispatcherServlet}
+ * 
  * @see org.apache.wiki.rpc.RPCCallable
  * @since 2.5.4
  */
 // FIXME: Must be mootool-ified.
+@Deprecated
 public final class JSONRPCManager extends RPCManager {
     private static final String JSONRPCBRIDGE = "JSONRPCBridge";
     private static HashMap<String, CallbackContainer> c_globalObjects = new HashMap<String, CallbackContainer>();

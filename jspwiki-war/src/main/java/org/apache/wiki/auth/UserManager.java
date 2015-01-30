@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth;
 
+import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
@@ -30,13 +31,18 @@ import java.util.WeakHashMap;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.ajax.AjaxUtil;
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -53,8 +59,6 @@ import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.rpc.RPCCallable;
-import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.MailUtil;
@@ -97,6 +101,8 @@ public class UserManager {
     protected static final String PREFS_FULL_NAME           = "prefs.fullname";
     protected static final String PREFS_EMAIL               = "prefs.email";
 
+    public static final String JSON_USERS = "users";
+
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** Associates wiki sessions with profiles */
@@ -125,7 +131,8 @@ public class UserManager {
         // TODO: it would be better if we did this in PageManager directly
         addWikiEventListener( engine.getPageManager() );
 
-        JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
+        //TODO: Replace with custom annotations. See JSPWIKI-566
+        WikiAjaxDispatcherServlet.registerServlet( JSON_USERS, new JSONUserModule(this), new AllPermission(null));
     }
 
     /**
@@ -843,7 +850,7 @@ public class UserManager {
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(session,type,profile));
         }
     }
-
+    
     /**
      *  Implements the JSON API for usermanager.
      *  <p>
@@ -851,9 +858,9 @@ public class UserManager {
      *  this gets reinstalled to the session when JSPWiki starts.  This means
      *  that it's not actually necessary to save anything.
      */
-    public static final class JSONUserModule implements RPCCallable
+    public static final class JSONUserModule implements WikiAjaxServlet
     {
-        private volatile UserManager m_manager;
+		private volatile UserManager m_manager;
         
         /**
          *  Create a new JSONUserModule.
@@ -862,6 +869,28 @@ public class UserManager {
         public JSONUserModule( UserManager mgr )
         {
             m_manager = mgr;
+        }
+        
+        @Override
+        public String getServletMapping() {
+        	return JSON_USERS;
+        }
+        
+        public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params) throws ServletException, IOException {
+        	try {
+        		String uid = null;
+            	if (params.size()<1) {
+            		return;
+            	}
+        		uid = params.get(0);
+	        	log.debug("uid="+uid);
+	        	if (StringUtils.isNotBlank(uid)) {
+		            UserProfile prof = getUserInfo(uid);
+		            resp.getWriter().write(AjaxUtil.toJson(prof));
+	        	}
+        	} catch (NoSuchPrincipalException e) {
+        		throw new ServletException(e);
+        	}
         }
         
         /**

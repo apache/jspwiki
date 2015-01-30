@@ -27,7 +27,7 @@ Class: Wiki.SearchBox
 
 Example:
 >    wiki.add('query', Wiki.SearchBox, {
->        rpc: function(value, callback){ wiki.jsonrpc('search.findPages', [value,20], callback },
+>        rpc: function(value, callback){ Wiki.ajaxJsonCall('/search/findPages',[value,'20'], callback },
 >        toUrl: wiki.toUrl
 >    });
 */

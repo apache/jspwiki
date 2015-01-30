@@ -1,3 +1,9 @@
+2015-01-30  David Vittor (dvittor@apache.org)
+
+       * 2.10.2-svn-12
+       
+       * Fixed JSPWIKI-566 - Complete rewrite of AJAX functionality for JSPWiki
+
 2015-01-25  David Vittor (dvittor@apache.org)
 
        * 2.10.2-svn-11

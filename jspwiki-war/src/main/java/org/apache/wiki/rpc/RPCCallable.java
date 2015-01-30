@@ -18,11 +18,16 @@
  */
 package org.apache.wiki.rpc;
 
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+
 /**
  *  Defines an interface for anything which can be called using the RPC methods.
  *
+ *  Deprecated. Use {@link WikiAjaxDispatcherServlet}
+ *
  *  @since  2.5.4
  */
+@Deprecated
 public interface RPCCallable
 {
 

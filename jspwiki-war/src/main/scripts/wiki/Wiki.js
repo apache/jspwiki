@@ -166,7 +166,7 @@ var Wiki = {
                 //activate Quick Navigation functionality
                 new wiki.Findpages(element,{
                     rpc: function(value, callback){
-                        wiki.jsonrpc('search.findPages', [value,16], callback); 
+                        Wiki.ajaxJsonCall('/search/pages',[value,'16'], callback); 
                     },
                     toUrl: wiki.toUrl.bind(wiki)
                 });
@@ -189,7 +189,7 @@ var Wiki = {
             .add('#files', Form.File, { 
                 max:1,  //CHECK: jspwiki v.2.10.x seems to only support 1 upload-file at a time ?? 
                 rpc: function(progressid, callback){
-                    wiki.jsonrpc('progressTracker.getProgress', [progressid], callback); 
+                    Wiki.ajaxJsonCall('/progressTracker',[progressId], callback); 
                 },
             });
 
@@ -423,18 +423,18 @@ var Wiki = {
         {{{ <meta name="wikiJsonUrl" content='/JSPWiki-pipo/JSON-RPC' /> }}}
 
     Supported rpc calls:
-        - {{search.findPages}} gets the list of pagenames with partial match
-        - {{progressTracker.getProgress}} get a progress indicator of attachment upload
-        - {{search.getSuggestions}} gets the list of pagenames with partial match
+    	- {{ajax/users/<userId>}} gets the details of the current user id
+        - {{ajax/search/pages/<text>}} gets the list of pagenames with partial match
+        - {{ajax/search/suggestions/<text>}} gets the list of pagenames with partial match
+        - {{ajax/progressTracker/<id>}} get a progress indicator of attachment upload
 
     Example:
         (start code)
-        Wiki.jsonrpc('search.findPages', ['Janne',20], function(result){
+        Wiki.ajaxJsonCall('/search/pages,[Janne,20]', function(result){
             //do something with the resulting json object
         });
         (end)
-        
-    */
+
     jsonid : 1e4, //seed
     jsonrpc: function(method, params, callback){
 
@@ -461,6 +461,7 @@ var Wiki = {
 
         }
     }
+    */
 
 };
 

@@ -20,6 +20,7 @@
 package org.apache.wiki.plugin;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
@@ -29,9 +30,10 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiAjaxDispatcherServlet;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
@@ -546,7 +548,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
             m_pluginClassMap.put( name, pluginClass );
         }
 
-        pluginClass.initializePlugin( m_engine , m_searchPath, m_externalJars);
+        pluginClass.initializePlugin( pluginClass, m_engine , m_searchPath, m_externalJars);
     }
 
     private void registerPlugins() {
@@ -580,6 +582,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     	
         private String    m_className;
         private String    m_alias;
+        private String    m_ajaxAlias;
         private Class<?>  m_clazz;
 
         private boolean m_initialized = false;
@@ -611,7 +614,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *  @param searchPath A List of Strings, containing different package names.
          *  @param externalJars the list of external jars to search
          */
-        protected void initializePlugin( WikiEngine engine , List<String> searchPath, List<String> externalJars) {
+        protected void initializePlugin( WikiPluginInfo info, WikiEngine engine , List<String> searchPath, List<String> externalJars) {
             if( !m_initialized ) {
                 // This makes sure we only try once per class, even if init fails.
                 m_initialized = true;
@@ -621,8 +624,12 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
                     if( p instanceof InitializablePlugin ) {
                         ( ( InitializablePlugin )p ).initialize( engine );
                     }
-                    if( p instanceof HttpServlet ) {
-                    	WikiAjaxDispatcherServlet.register( (HttpServlet) p );
+                    if( p instanceof WikiAjaxServlet ) {
+                    	WikiAjaxDispatcherServlet.registerServlet( (WikiAjaxServlet) p );
+                    	String ajaxAlias = info.getAjaxAlias();
+                    	if (StringUtils.isNotBlank(ajaxAlias)) {
+                    		WikiAjaxDispatcherServlet.registerServlet( info.getAjaxAlias(), (WikiAjaxServlet) p );
+                    	}
                     }
                 } catch( Exception e ) {
                     log.info( "Cannot initialize plugin " + m_className, e );
@@ -637,6 +644,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         protected void initializeFromXML( Element el ) {
             super.initializeFromXML( el );
             m_alias = el.getChildText( "alias" );
+            m_ajaxAlias = el.getChildText( "ajaxAlias" );
         }
 
         /**
@@ -673,6 +681,14 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          */
         public String getAlias() {
             return m_alias;
+        }
+        
+        /**
+         *  Returns the ajax alias name for this object.
+         *  @return An ajax alias name for the plugin.
+         */
+        public String getAjaxAlias() {
+            return m_ajaxAlias;
         }
 
         /**

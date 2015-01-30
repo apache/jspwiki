@@ -99,6 +99,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.jvnet.hudson</groupId>
       <artifactId>org.suigeneris.jrcs.diff</artifactId>
     </dependency>

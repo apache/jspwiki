@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.*;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 
 /**
  *  Handles all incoming servlet requests for XML-RPC calls.

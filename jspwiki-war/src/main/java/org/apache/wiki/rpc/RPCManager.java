@@ -18,11 +18,16 @@
  */
 package org.apache.wiki.rpc;
 
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+
 /**
  *  A base class for managing RPC calls.
  *  
  *  @since 2.5.4
+ *  
+ *  Deprecated. Use {@link WikiAjaxDispatcherServlet}
  */
+@Deprecated
 public class RPCManager
 {
     /**

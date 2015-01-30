@@ -148,6 +148,13 @@
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
        <servlet-class>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-class>
    </servlet>
+   
+    <!-- WikiAjaxDispatcherServlet -->
+    <servlet>
+        <servlet-name>WikiAjaxDispatcherServlet</servlet-name>
+        <servlet-class>org.apache.wiki.ajax.WikiAjaxDispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
    <!-- Atom Publishing Protocol -->
    <servlet>
@@ -210,6 +217,12 @@
        <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
    
+   <servlet-mapping>
+       <servlet-name>WikiAjaxDispatcherServlet</servlet-name>
+       <url-pattern>/ajax/*</url-pattern>
+       <url-pattern>/admin/ajax/*</url-pattern>
+   </servlet-mapping>
+    
    <servlet-mapping>
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
        <url-pattern>/JSON-RPC</url-pattern>

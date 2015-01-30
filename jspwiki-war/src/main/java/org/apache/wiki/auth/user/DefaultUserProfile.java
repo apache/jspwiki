@@ -39,25 +39,25 @@ public final class DefaultUserProfile implements UserProfile
 
     private static final String WHITESPACE = "\\s";
     
-    private Map<String,Serializable> m_attributes = new HashMap<String,Serializable>();
+    private Map<String,Serializable> attributes = new HashMap<String,Serializable>();
 
-    private Date     m_created   = null;
+    private Date     created   = null;
 
-    private String   m_email     = null;
+    private String   email     = null;
 
-    private String   m_fullname  = null;
+    private String   fullname  = null;
     
-    private Date m_lockExpiry = null;
+    private Date lockExpiry = null;
 
-    private String   m_loginName = null;
+    private String   loginName = null;
 
-    private Date     m_modified  = null;
+    private Date     modified  = null;
 
-    private String   m_password  = null;
+    private String   password  = null;
     
-    private String m_uid = null;
+    private String uid = null;
 
-    private String   m_wikiname  = null;
+    private String   wikiname  = null;
 
     /**
      * Private constructor to prevent direct instantiation.
@@ -86,9 +86,9 @@ public final class DefaultUserProfile implements UserProfile
         if ( ( o != null ) && ( o instanceof UserProfile ) )
         {
             DefaultUserProfile u = (DefaultUserProfile) o;
-            return  same( m_fullname, u.m_fullname ) && same( m_password, u.m_password )
-                    && same( m_loginName, u.m_loginName ) && same(StringUtils.lowerCase( m_email ), StringUtils.lowerCase( u.m_email ) ) && same( m_wikiname,
-                    u.m_wikiname );
+            return  same( fullname, u.fullname ) && same( password, u.password )
+                    && same( loginName, u.loginName ) && same(StringUtils.lowerCase( email ), StringUtils.lowerCase( u.email ) ) && same( wikiname,
+                    u.wikiname );
         }
 
         return false;
@@ -96,11 +96,11 @@ public final class DefaultUserProfile implements UserProfile
 
     public int hashCode()
     {
-        return (m_fullname  != null ? m_fullname.hashCode()  : 0) ^
-               (m_password  != null ? m_password.hashCode()  : 0) ^
-               (m_loginName != null ? m_loginName.hashCode() : 0) ^
-               (m_wikiname  != null ? m_wikiname.hashCode()  : 0) ^
-               (m_email     != null ? StringUtils.lowerCase( m_email ).hashCode()     : 0);
+        return (fullname  != null ? fullname.hashCode()  : 0) ^
+               (password  != null ? password.hashCode()  : 0) ^
+               (loginName != null ? loginName.hashCode() : 0) ^
+               (wikiname  != null ? wikiname.hashCode()  : 0) ^
+               (email     != null ? StringUtils.lowerCase( email ).hashCode()     : 0);
     }
 
     /**
@@ -110,7 +110,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public Date getCreated()
     {
-        return m_created;
+        return created;
     }
 
     /**
@@ -119,7 +119,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public String getEmail()
     {
-        return m_email;
+        return email;
     }
 
     /**
@@ -128,7 +128,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public String getFullname()
     {
-        return m_fullname;
+        return fullname;
     }
 
     /**
@@ -138,7 +138,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public Date getLastModified()
     {
-        return m_modified;
+        return modified;
     }
 
     /**
@@ -147,7 +147,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public String getLoginName()
     {
-        return m_loginName;
+        return loginName;
     }
 
     /**
@@ -161,7 +161,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public String getPassword()
     {
-        return m_password;
+        return password;
     }
 
     /**
@@ -170,7 +170,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public String getWikiName()
     {
-        return m_wikiname;
+        return wikiname;
     }
 
     /**
@@ -182,7 +182,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public boolean isNew()
     {
-        return  m_modified == null;
+        return  modified == null;
     }
 
     /**
@@ -191,7 +191,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setCreated(Date date)
     {
-        m_created = date;
+        created = date;
     }
 
     /**
@@ -200,7 +200,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setEmail( String email )
     {
-        m_email = email;
+    	this.email = email;
     }
 
     /**
@@ -209,12 +209,12 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setFullname( String arg )
     {
-        m_fullname = arg;
+        fullname = arg;
 
         // Compute wiki name
-        if ( m_fullname != null )
+        if ( fullname != null )
         {
-            m_wikiname = m_fullname.replaceAll(WHITESPACE, EMPTY_STRING);
+            wikiname = fullname.replaceAll(WHITESPACE, EMPTY_STRING);
         }
     }
 
@@ -225,7 +225,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setLastModified( Date date )
     {
-        m_modified = date;
+        modified = date;
     }
 
     /**
@@ -238,7 +238,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setLoginName( String name )
     {
-        m_loginName = name;
+        loginName = name;
     }
 
     /**
@@ -253,7 +253,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setPassword( String arg )
     {
-        m_password = arg;
+        password = arg;
     }
 
     /**
@@ -304,7 +304,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public Map<String,Serializable> getAttributes()
     {
-        return m_attributes;
+        return attributes;
     }
 
     /**
@@ -312,7 +312,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public Date getLockExpiry()
     {
-        return isLocked() ? m_lockExpiry : null;
+        return isLocked() ? lockExpiry : null;
     }
     
     /**
@@ -320,7 +320,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public String getUid()
     {
-        return m_uid;
+        return uid;
     }
 
     /**
@@ -328,12 +328,12 @@ public final class DefaultUserProfile implements UserProfile
      */
     public boolean isLocked()
     {
-        boolean locked =  m_lockExpiry != null && System.currentTimeMillis() < m_lockExpiry.getTime();
+        boolean locked =  lockExpiry != null && System.currentTimeMillis() < lockExpiry.getTime();
 
         // Clear the lock if it's expired already
-        if ( !locked && m_lockExpiry != null )
+        if ( !locked && lockExpiry != null )
         {
-            m_lockExpiry = null;
+            lockExpiry = null;
         }
         return locked;
     }
@@ -343,7 +343,7 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setLockExpiry( Date expiry )
     {
-        m_lockExpiry = expiry;
+    	this.lockExpiry = expiry;
     }
     
     /**
@@ -351,6 +351,6 @@ public final class DefaultUserProfile implements UserProfile
      */
     public void setUid( String uid )
     {
-        m_uid = uid;
+        this.uid = uid;
     }
 }

@@ -19,48 +19,46 @@
 package org.apache.wiki.plugin;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
- * @author David VIttor
- * @date 20/01/2015
  * @since 2.10.2-svn10
  */
-public class SampleAjaxPlugin extends HttpServlet implements WikiPlugin {
-	private static final long serialVersionUID = 1L;
+public class SampleAjaxPlugin implements WikiPlugin, WikiAjaxServlet {
+	
+	private static final String SERVLET_MAPPING = "SampleAjaxPlugin";
 
 	@Override
     public String execute(WikiContext context, Map<String, String> params) throws PluginException {
     	String id = Integer.toString(this.hashCode());
-        String baseUrl = context.getEngine().getBaseURL();
-        String url = baseUrl+"ajax/SampleAjaxPlugin";
-        String html= "<div onclick='makeRequest(\"GET\",\""+url+"\",\"result"+id+"\",\"Loading...\")' style='color: blue; cursor: pointer'>Press Me</div>\n"+
+        String html= "<div onclick='Wiki.ajaxHtmlCall(\"/"+SERVLET_MAPPING+"/ajaxAction\",[12,45],\"result"+id+"\",\"Loading...\")' style='color: blue; cursor: pointer'>Press Me</div>\n"+
                         "<div id='result"+id+"'></div>";
         return html;
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@Override
+	public String getServletMapping() {
+		return SERVLET_MAPPING;
+	}
+	
+	@Override
+	public void service(HttpServletRequest request, HttpServletResponse response, String actionName, List<String> params) throws ServletException, IOException {
         try {
             Thread.sleep(5000); // Wait 5 seconds
         } catch (Exception e) {}
-        resp.getWriter().print("You called by get!");
-    }
+        response.getWriter().print("You called! actionName="+actionName+" params="+params);		
+	}
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            Thread.sleep(5000); // Wait 5 seconds
-        } catch (Exception e) {}
-        resp.getWriter().print("You called by post!");
-    }
+
+
 }

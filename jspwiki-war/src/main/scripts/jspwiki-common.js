@@ -248,31 +248,37 @@ function getXMLHttpRequest() {
 }
 
 /*
- * AJAX call starts with this function
- */
-function makeRequest(method,url,responseId,loading) {
-	var xmlHttpRequest = getXMLHttpRequest();
-	xmlHttpRequest.onreadystatechange = getReadyStateHandler(xmlHttpRequest,responseId,loading);
-	xmlHttpRequest.open(method, url, true);
-	xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	xmlHttpRequest.send(null);
-}
-
-/*
  * Returns a function that waits for the state change in XMLHttpRequest
  */
-function getReadyStateHandler(xmlHttpRequest,responseId,loading) {
+function getReadyStateHandler(xmlHttpRequest,responseId,loading,callback) {
 	// an anonymous function returned
 	// it listens to the XMLHttpRequest instance
 	return function() {
 		if (xmlHttpRequest.readyState >=1 && xmlHttpRequest.readyState <4) {
-			document.getElementById(responseId).innerHTML = loading;
+			if (responseId && document.getElementById(responseId) != null) {
+				document.getElementById(responseId).innerHTML = loading;
+			}
 		}
 		if (xmlHttpRequest.readyState == 4) {
 			if (xmlHttpRequest.status == 200) {
-				document.getElementById(responseId).innerHTML = xmlHttpRequest.responseText;
+				if (responseId && document.getElementById(responseId) != null) {
+					document.getElementById(responseId).innerHTML = xmlHttpRequest.responseText;
+				} else {
+					// Javascript function JSON.parse to parse JSON data
+					var jsonResponse = xmlHttpRequest.responseText;
+					if (jsonResponse && jsonResponse.length>0) {
+			        	jsonResponse = JSON.parse(jsonResponse);
+					}
+			        callback(jsonResponse);
+				}
 			} else {
-				document.getElementById(responseId).innerHTML("HTTP error " + xmlHttpRequest.status + ": " + xmlHttpRequest.statusText);
+				var errorMsg = "HTTP error " + xmlHttpRequest.status + ": " + xmlHttpRequest.statusText;
+				if (responseId && document.getElementById(responseId) != null) {
+					document.getElementById(responseId).innerHTML(errorMsg);
+				} else {
+					console.log(errorMsg);
+					callback(errorMsg);
+				}
 			}
 		}
 	};
@@ -439,11 +445,11 @@ var Wiki = {
 	submitUpload: function(form, progress){
 		$('progressbar').setStyle('visibility','visible');
 		this.progressbar =
-		Wiki.jsonrpc.periodical(1000, this, ["progressTracker.getProgress",[progress],function(result){
-			result = result.stripScripts(); //xss vulnerability
-			if(!result.code) $('progressbar').getFirst().setStyle('width',result+'%').setHTML(result+'%');
+			Wiki.ajaxJsonCall.periodical(500, this, ["/progressTracker",[progress],function(result){
+			if(result) {
+				$('progressbar').getFirst().setStyle('width',result+'%').setHTML(result+'%');
+			}
 		}]);
-
 		return Wiki.submitOnce(form);
 	},
 
@@ -472,26 +478,65 @@ var Wiki = {
 		);
 	},
 
-	$jsonid : 10000,
-	jsonrpc: function(method, params, fn) {
-		$$('meta').each(function(el){
-			var n = el.getProperty('name') || '';
-			if( n.indexOf('wiki') == 0 ) this[n.substr(4)] = el.getProperty('content');
-		},this);
+	/*
+	 * AJAX call starts with these functions which rely on the Mootools Request.HTML and Request.JSON
+	 * http://mootools.net/core/docs/1.5.1/Request/Request.JSON
+	 */
+	/** Mootools version
+	ajaxHtmlCall:function(url, params, responseId, loading){
+		var update = document.getElementById(responseId);
+		if (update){ update.innerHTML = loading||'Loading...'; }
 
-		if (Wiki.JsonUrl) {
-		new Ajax( Wiki.JsonUrl, {
-			postBody: Json.toString({"id":Wiki.$jsonid++, "method":method, "params":params}),
-			method: 'post',
-			onComplete: function(result){
-				var r = Json.evaluate(result,true);
-				if(r){
-					if(r.result){ fn(r.result) }
-					else if(r.error){ fn(r.error) }
-				}
+		new Request.HTML({
+			url: this.JsonUrl + url,
+			method:'post',  // defaults to 'POST'
+			update: update
+		}).send({
+	        params: params
+	    });
+	},
+	ajaxJsonCall: function(url, params, callback){
+		//the Request.JSON does all encoding and decoding of the JSON automatically
+		new Request.JSON({
+			url: this.JsonURL + url,
+			method:'post', 
+			onSuccess: function(response){
+			    if(response.error){
+			        console.log(response.error);
+			        callback(null);
+			    } else {
+			        callback(response.result)
+			    }
+			},
+			onError: function(response){
+			        console.log(response.error);
+			        callback(null);
 			}
-		}).request();
+		}).send({
+	        params: params
+	    });
+	}
+	 */
+	
+	ajaxHtmlCall: function (url, params, responseId, loading) {
+		url = Wiki.JsonUrl + url;
+		if (!loading) {
+			loading = "Loading...";
 		}
+		var xmlHttpRequest = getXMLHttpRequest();
+		xmlHttpRequest.onreadystatechange = getReadyStateHandler(xmlHttpRequest,responseId,loading);
+		xmlHttpRequest.open('post', url, true);
+		xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		xmlHttpRequest.send("params="+params);
+	},
+
+	ajaxJsonCall: function (url, params, callback) {
+		url = Wiki.JsonUrl + url;
+		var xmlHttpRequest = getXMLHttpRequest();
+		xmlHttpRequest.onreadystatechange = getReadyStateHandler(xmlHttpRequest,null,null,callback);
+		xmlHttpRequest.open('post', url, true);
+		xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		xmlHttpRequest.send("params="+params);
 	}
 }
 
@@ -1005,20 +1050,20 @@ var SearchBox = {
 		$('searchTarget').setHTML('('+qv+') :');
 		$('searchSpin').show();
 
-		Wiki.jsonrpc('search.findPages', [qv,20], function(result){
-				$('searchSpin').hide();
-				if(!result.list) return;
-				var frag = new Element('ul');
+	   Wiki.ajaxJsonCall("/search/pages",[qv,'20'], function(result) {
+			$('searchSpin').hide();
+			if(!result) return;
+			var frag = new Element('ul');
 
-				result.list.each(function(el){
-					new Element('li').adopt(
-						new Element('a',{'href':Wiki.getUrl(el.map.page) }).setHTML(el.map.page),
-						new Element('span',{'class':'small'}).setHTML(" ("+el.map.score+")")
-					).inject(frag);
-				});
-				$('searchOutput').empty().adopt(frag);
-				Wiki.locatemenu( $('query'), $('searchboxMenu') );
-		});
+			result.each(function(el){
+				new Element('li').adopt(
+					new Element('a',{'href':Wiki.getUrl(el.page) }).setHTML(el.page),
+					new Element('span',{'class':'small'}).setHTML(" ("+el.score+")")
+				).inject(frag);
+			});
+			$('searchOutput').empty().adopt(frag);
+			Wiki.locatemenu( $('query'), $('searchboxMenu') );
+	   });
 	} ,
 
 	/* navigate to url, after smart pagename handling */
@@ -1469,7 +1514,7 @@ var Sortable =
 			/* chrome accepts numbers as valid Dates !! */
 			if(date) date = !isNaN(Date.parse(v)) && v.test(/[^\d]/);
 			if(ip4)  ip4  = v.test(/(?:\\d{1,3}\\.){3}\\d{1,3}/); //169.169.0.1
-			if(euro) euro = v.test(/^[£$€][0-9.,]+/);
+			if(euro) euro = v.test(/^[Â£$â‚¬][0-9.,]+/);
 			if(kmgt) kmgt = v.test(/(?:[0-9.,]+)\s*(?:[kmgt])b/);  //2 MB, 4GB, 1.2kb, 8Tb
 
 		});

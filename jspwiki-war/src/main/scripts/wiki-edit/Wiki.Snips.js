@@ -371,17 +371,14 @@ Wiki.Snips = {
                     if( !key || (key.trim()=='')) key = Wiki.PageName + '/';
 
                     //console.log('json lookup for '+key);
-                    Wiki.jsonrpc('search.getSuggestions', [key,30], function(result,exception){
-
-                      if( result.list && result.list[0] /*length!=0*/ ){
-                          dialog.setBody( result.list );
-                      } else {
-                          dialog.hide();
-                      }
-
-                    });
+             	   	Wiki.ajaxJsonCall("/search/suggestions",[key,30], function(result) {
+                       if( result && result.size()>0 ){
+                           dialog.setBody( result );
+                       } else {
+                           dialog.hide();
+                       }
+             	   	});
                 }
-
             }]
 
 

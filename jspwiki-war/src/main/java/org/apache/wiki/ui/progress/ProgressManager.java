@@ -18,14 +18,19 @@
  */
 package org.apache.wiki.ui.progress;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.wiki.rpc.RPCCallable;
-import org.apache.wiki.rpc.json.JSONRPCManager;
+import org.apache.log4j.Logger;
+import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+import org.apache.wiki.ajax.WikiAjaxServlet;
 
 /**
  *  Manages progressing items.  In general this class is used whenever JSPWiki
@@ -52,7 +57,8 @@ public class ProgressManager
      */
     public ProgressManager()
     {
-        JSONRPCManager.registerGlobalObject( JSON_PROGRESSTRACKER, new JSONTracker() );
+    	//TODO: Replace with custom annotations. See JSPWIKI-566
+        WikiAjaxDispatcherServlet.registerServlet( JSON_PROGRESSTRACKER, new JSONTracker() );
     }
 
     /**
@@ -117,7 +123,7 @@ public class ProgressManager
      *  Progress of zero (0) means that the progress has just started, and a progress of
      *  100 means that it is complete.
      */
-    public class JSONTracker implements RPCCallable
+    public class JSONTracker implements WikiAjaxServlet
     {
         /**
          *  Returns upload progress in percents so far.
@@ -128,6 +134,32 @@ public class ProgressManager
         public int getProgress( String progressId )
         {
             return ProgressManager.this.getProgress( progressId );
+        }
+        
+        public String getServletMapping() {
+        	return JSON_PROGRESSTRACKER;
+        }
+        
+        public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params)
+        		throws ServletException, IOException 
+        {
+        	log.debug("ProgressManager.doGet() START");
+        	if (params.size()<1) {
+        		return;
+        	}
+        	String progressId = params.get(0);
+        	log.debug("progressId="+progressId);
+        	String progressString = "";
+        	try {
+        		int progress = getProgress(progressId);
+        		progressString = Integer.toString(progress);
+        	} catch (IllegalArgumentException e) {
+        		// ignore
+        		log.debug("progressId "+progressId+" is no longer valid");
+        	}
+        	log.debug("progressString="+progressString);
+        	resp.getWriter().write(progressString);
+        	log.debug("ProgressManager.doGet() DONE");
         }
     }
 }

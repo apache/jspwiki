@@ -41,13 +41,13 @@ function refreshUserInfo()
 
    if( userid == '--New--' ) return;
 
-   Wiki.jsonrpc("users.getUserInfo", [userid], function(userprofile){
-      $('loginname').value = userprofile.loginName;
-      $('loginid').value = userprofile.loginName;
-      $('fullname').value = userprofile.fullname;
-      $('email').value = userprofile.email;
-      $('lastmodified').setHTML(constructdate(userprofile.lastModified));
-      $('creationdate').setHTML(constructdate(userprofile.created));
+   Wiki.ajaxJsonCall("/users",[userid], function(userprofile) {
+	   $('loginname').value = userprofile.loginName;
+	   $('loginid').value = userprofile.loginName;
+	   $('fullname').value = userprofile.fullname;
+	   $('email').value = userprofile.email;
+	   $('lastmodified').setHTML(constructdate(userprofile.lastModified));
+	   $('creationdate').setHTML(constructdate(userprofile.created));
    });
 }
 
