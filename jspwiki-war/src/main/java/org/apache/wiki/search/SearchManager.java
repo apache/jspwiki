@@ -142,8 +142,10 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     			} else if (actionName.equals(AJAX_ACTION_PAGES)) {
     				List<Map<String,Object>> callResults = new ArrayList<Map<String,Object>>();
     				log.debug("Calling findPages() START");
-    				// FIXME: JSPWIKI-502 In an AJAX call we do not have access to WikiContext and so the below is null.
-    				WikiContext wikiContext = (WikiContext)req.getAttribute( WikiTagBase.ATTR_CONTEXT );
+    				WikiContext wikiContext = m_engine.createContext(req, WikiContext.VIEW);
+    				if (wikiContext == null) {
+    					throw new ServletException("Could not create a WikiContext from the request "+req);
+    				}
     				callResults = findPages(itemId, maxResults, wikiContext);
     				log.debug("Calling findPages() DONE. "+callResults.size());
     				result = AjaxUtil.toJson(callResults);

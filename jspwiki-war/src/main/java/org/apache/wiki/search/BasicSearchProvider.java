@@ -153,12 +153,9 @@ public class BasicSearchProvider implements SearchProvider
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
         Collection allPages = null;
-        try
-        {
+        try {
             allPages = m_engine.getPageManager().getAllPages();
-        }
-        catch( ProviderException pe )
-        {
+        } catch( ProviderException pe ) {
             log.error( "Unable to retrieve page list", pe );
             return null;
         }
@@ -166,34 +163,26 @@ public class BasicSearchProvider implements SearchProvider
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
 
         Iterator it = allPages.iterator();
-        while( it.hasNext() )
-        {
-            try
-            {
+        while( it.hasNext() ) {
+            try {
                 WikiPage page = (WikiPage) it.next();
-                if (page != null)
-                {
+                if (page != null) {
+                	
                     PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
-                    // TODO: WikiContext should never be null
                     if( wikiContext==null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
-                    String pageName = page.getName();
-                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
-                                         attachmentNames(page, " ");
-                    SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
-
-                    if( comparison != null )
-                    {
-                        res.add( comparison );
-                    }
-                }
-            }
-            }
-            catch( ProviderException pe )
-            {
+	                    String pageName = page.getName();
+	                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
+	                                         attachmentNames(page, " ");
+	                    SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
+	
+	                    if( comparison != null ) {
+	                        res.add( comparison );
+	                    }
+	                }
+	            }
+            } catch( ProviderException pe ) {
                 log.error( "Unable to retrieve page from cache", pe );
-            }
-            catch( IOException ioe )
-            {
+            } catch( IOException ioe ) {
                 log.error( "Failed to search page", ioe );
             }
         }
@@ -204,16 +193,14 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages(String query, WikiContext wikiContext)
-    {
+    public Collection findPages(String query, WikiContext wikiContext) {
         return findPages(parseQuery(query), wikiContext);
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String getProviderInfo()
-    {
+    public String getProviderInfo() {
         return "BasicSearchProvider";
     }
 

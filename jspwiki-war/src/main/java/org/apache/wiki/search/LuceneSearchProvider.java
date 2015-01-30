@@ -669,8 +669,7 @@ public class LuceneSearchProvider implements SearchProvider {
                     }
 
                     PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
-                    // TODO: WikiContext should never be null
-	                if( wikiContext==null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
+	                if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
 	
 	                    int score = (int)(hits[curr].score * 100);
 	
