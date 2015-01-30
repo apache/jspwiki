@@ -19,9 +19,15 @@
 package org.apache.wiki.preferences;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -35,7 +41,8 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
-import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 /**
  *  Represents an object which is used to store user preferences.
@@ -132,25 +139,21 @@ public class Preferences
      *  @param prefs The default hashmap of preferences
      *  
      */
-    private static void parseJSONPreferences( HttpServletRequest request, Preferences prefs )
+	private static void parseJSONPreferences( HttpServletRequest request, Preferences prefs )
     {
         //FIXME: urlDecodeUTF8 should better go in HttpUtil ??
         String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
         
         if( prefVal != null )
         {
-            try
-            {
-                JSONObject jo = new JSONObject( prefVal );
-    
-                for( Iterator i = jo.keys(); i.hasNext(); )
-                {
-                    String key = TextUtil.replaceEntities( (String)i.next() );
-                    prefs.put(key, jo.getString(key) );
-                }
-            }
-            catch( ParseException e )
-            {
+            Gson gson=new Gson(); 
+            Map<String,String> map = new HashMap<String,String>();
+            // Convert prefVal JSON to a generic hashmap
+            map=gson.fromJson(prefVal, map.getClass());
+
+            for (String key : map.keySet()) {
+                key = TextUtil.replaceEntities( key );
+                prefs.put(key, map.get(key) );
             }
         }
     }

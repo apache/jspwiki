@@ -94,11 +94,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.metaparadigm</groupId>
-      <artifactId>json-rpc</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
     </dependency>

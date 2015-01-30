@@ -67,12 +67,6 @@
     <dependencies>       <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
       <!-- compile dependencies -->
       <dependency>
-        <groupId>com.metaparadigm</groupId>
-        <artifactId>json-rpc</artifactId>
-        <version>1.0</version>
-      </dependency>
-
-      <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>2.3.1</version>
