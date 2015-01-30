@@ -37,14 +37,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.util.TextUtil;
 
 /**
  * This provides a simple ajax servlet for handling /ajax/<ClassName> requests.
- * HttpServlet classes need to be registered using {@link WikiAjaxDispatcherServlet.registerServlet(HttpServlet)}
+ * HttpServlet classes need to be registered using {@link WikiAjaxDispatcherServlet.registerServlet(WikiAjaxServlet)}
  *
- * @since 2.10.2-svn10
+ * @since 2.10.2-svn12
  */
 public class WikiAjaxDispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -54,6 +55,9 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
 
     /**
      * {@inheritDoc}
+     * 
+     * This sets the AjaxPath to "/ajax/" as configured in "jspwiki.ajax.url.prefix".
+     * Note: Do not change this without also changing the web.xml file.
      */
     public void init(ServletConfig config)
             throws ServletException {
@@ -64,19 +68,26 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     }
 
     /**
-     * Register a servlet using the class simple name as the alias
+     * Register a {@link WikiAjaxServlet} using the servlet mapping as the alias
      */
     public static void registerServlet(WikiAjaxServlet servlet) {
     	registerServlet(servlet.getServletMapping(),servlet);
     }
     
     /**
-     * Register a servlet with an alias, using the default permission {@link PagePermission.VIEW}.
+     * Register a {@link WikiAjaxServlet} with a specific alias, and default permission {@link PagePermission.VIEW}.
      */
     public static void registerServlet(String alias, WikiAjaxServlet servlet) {
     	registerServlet(alias, servlet, PagePermission.VIEW);
     }
     
+    /**
+     * Regster a {@link WikiAjaxServlet} given an alias, the servlet, and the permission.
+     * Thie creates a temporary bundle object called {@link AjaxServletContainer} 
+     * @param alias the uri link to this servlet
+     * @param servlet the servlet being registered
+     * @param perm the permission required to execute the servlet.
+     */
     public static void registerServlet(String alias, WikiAjaxServlet servlet, Permission perm) {
     	log.info("WikiAjaxDispatcherServlet registering "+alias+"="+servlet+" perm="+perm);
         ajaxServlets.put(alias,new AjaxServletContainer(alias, servlet, perm));
@@ -101,7 +112,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     /**
      * The main method which get the requestURI "/ajax/<ServletName>", gets the 
      * {@link this.getServletName} and finds the servlet using {@link this.findServletByName}. 
-     * It then calls servlet.service().
+     * It then calls {@link WikiAjaxServlet.service} method.
      * @param req the inbound request
      * @param res the outbound response
      * @throws IOException
@@ -138,6 +149,13 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Validate the permission of the {@link WikiAjaxServlet} using the {@link AuthorizationManager.checkPermission}
+     * 
+     * @param req the servlet request
+     * @param container the container info of the servlet
+     * @return true if permission is valid
+     */
     private boolean validatePermission(HttpServletRequest req, AjaxServletContainer container) {
         WikiEngine e = WikiEngine.getInstance(req.getSession().getServletContext(), null);
         boolean valid = false;
@@ -148,7 +166,8 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     }
 
     /**
-     * Get the name of the servlet given the requestURI.
+     * Get the ServletName from the requestURI "/ajax/<ServletName>", using {@link AjaxUtil.getNextPathPath}.
+     * 
      * @param path The requestURI, which must contains "/ajax/<ServletName>" in the path
      * @return The ServletName for the requestURI, or null
      * @throws ServletException if the path is invalid
@@ -158,15 +177,21 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     }
     
     /**
-     * Find the servlet as registered in {@link WikiAjaxDispatcherServlet.register}.
+     * Find the {@link AjaxServletContainer} as registered in {@link WikiAjaxDispatcherServlet.registerServlet}.
      * 
      * @param servletName the name of the servlet from {@link this.getServletName}
      * @return The first servlet found, or null.
      */
-    public AjaxServletContainer findServletContainer(String servletAlias) {
+    private AjaxServletContainer findServletContainer(String servletAlias) {
     	return ajaxServlets.get(servletAlias);
     }
 
+    /**
+     * Find the {@link WikiAjaxServlet} given the servletAlias that it was registered with.
+     * 
+     * @param servletAlias the value provided to {@link this.registerServlet}
+     * @return
+     */
     public WikiAjaxServlet findServletByName(String servletAlias) {
     	AjaxServletContainer container = ajaxServlets.get(servletAlias);
     	if (container != null) {
