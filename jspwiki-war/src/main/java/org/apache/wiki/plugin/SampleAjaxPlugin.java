@@ -30,7 +30,6 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 
 /**
  * @since 2.10.2-svn10
@@ -41,8 +40,6 @@ public class SampleAjaxPlugin implements WikiPlugin, WikiAjaxServlet {
 
 	@Override
     public String execute(WikiContext context, Map<String, String> params) throws PluginException {
-		WikiPluginInfo info = context.getEngine().getPluginManager().getModuleInfo(this.getClass().getName());
-		System.out.println("info="+info);
     	String id = Integer.toString(this.hashCode());
         String html= "<div onclick='Wiki.ajaxHtmlCall(\"/"+SERVLET_MAPPING+"/ajaxAction\",[12,45],\"result"+id+"\",\"Loading...\")' style='color: blue; cursor: pointer'>Press Me</div>\n"+
                         "<div id='result"+id+"'></div>";
