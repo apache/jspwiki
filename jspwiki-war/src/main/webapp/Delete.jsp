@@ -25,6 +25,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.attachment.Attachment" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
@@ -69,7 +70,7 @@
             session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
         }
 
-        response.sendRedirect(wiki.getURL( WikiContext.VIEW, redirTo, null, false ));
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab"), false ),"&amp;","&" ));
         return;
     }
     else if( delete != null )
@@ -91,7 +92,7 @@
             }
         }
         
-        response.sendRedirect(wiki.getURL( WikiContext.VIEW, redirTo, null, false ));
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab"), false ),"&amp;","&" ));
         return; 
     }
 

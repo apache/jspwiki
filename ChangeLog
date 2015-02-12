@@ -1,3 +1,9 @@
+2015-02-12  David Vittor ()
+
+       * 2.10.2-svn-13
+
+       * Fixed JSPWIKI-867 - Deleting attachments should retain focus on the Attach tab
+
 2015-01-30  David Vittor (dvittor@apache.org)
 
        * 2.10.2-svn-12
