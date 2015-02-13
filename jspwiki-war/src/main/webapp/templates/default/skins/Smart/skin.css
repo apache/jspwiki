@@ -304,7 +304,7 @@ a.tool:hover, .btn:hover {
 /* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
 /* +++ 485 SearchBox +++ */
 #searchSubmit {
-	background: url(../../images/search.png) no-repeat center;
+	background: url(../../images/search.gif) no-repeat center;
 }
 #header a:link, #header a:visited, #recentSearches { 
 	color:#666;

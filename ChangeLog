@@ -3,6 +3,10 @@
        * 2.10.2-svn-13
 
        * Fixed JSPWIKI-867 - Deleting attachments should retain focus on the Attach tab
+       
+       * JSPWIKI-566 - problem with Cookie set preferences and the GSon.fromJson() parser
+       
+       * Fixed search icon in Smart Template "search.gif" instead of "search.png"
 
 2015-01-30  David Vittor (dvittor@apache.org)
 

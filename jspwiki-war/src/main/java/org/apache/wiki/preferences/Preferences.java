@@ -149,11 +149,15 @@ public class Preferences
             Gson gson=new Gson(); 
             Map<String,String> map = new HashMap<String,String>();
             // Convert prefVal JSON to a generic hashmap
-            map=gson.fromJson(prefVal, map.getClass());
+            map= (Map<String,String>) gson.fromJson(prefVal, map.getClass());
 
             for (String key : map.keySet()) {
                 key = TextUtil.replaceEntities( key );
-                prefs.put(key, map.get(key) );
+                // Sometimes this is not a String as it comes from the Cookie set by Javascript
+                Object value = map.get(key);
+                if (value != null) {
+                	prefs.put(key, value.toString() );
+                }
             }
         }
     }
