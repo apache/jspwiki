@@ -1,3 +1,9 @@
+2015-03-06  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-14
+
+       * Fixed JSPWIKI-878 (following up JSPWIKI-660) you can now also use environment variables to configure JSPWiki
+
 2015-02-12  David Vittor ()
 
        * 2.10.2-svn-13

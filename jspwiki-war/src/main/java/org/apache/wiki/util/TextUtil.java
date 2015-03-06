@@ -355,7 +355,10 @@ public final class TextUtil {
      *  @return The property value as an integer (or defVal).
      */
     public static int getIntegerProperty( Properties props,  String key, int defVal ) {
-        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+        String val = System.getProperties().getProperty(key, System.getenv(key));
+        if (val == null) {
+            val = props.getProperty(key);
+        }
         return parseIntParameter( val, defVal );
     }
 
@@ -375,7 +378,10 @@ public final class TextUtil {
      *  @since 2.0.11
      */
     public static boolean getBooleanProperty( Properties props, String key, boolean defval ) {
-        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+        String val = System.getProperties().getProperty(key, System.getenv(key));
+        if (val == null) {
+            val = props.getProperty(key);
+        }
         if( val == null ) {
             return defval;
         }
@@ -394,10 +400,13 @@ public final class TextUtil {
      *  @return The property value.
      *  @since 2.1.151
      */
-    public static String getStringProperty( Properties props, String key, String defval ) {
-        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
-        if( val == null ) {
-        	return defval;
+    public static String getStringProperty(Properties props, String key, String defval) {
+        String val = System.getProperties().getProperty(key, System.getenv(key));
+        if (val == null) {
+            val = props.getProperty(key);
+        }
+        if (val == null) {
+            return defval;
         }
         return val.trim();
     }
@@ -416,7 +425,10 @@ public final class TextUtil {
     public static String getCanonicalFilePathProperty(Properties props, String key, String defval) {
 
         String result;
-        String val = System.getProperties().getProperty( key, props.getProperty( key ) );
+        String val = System.getProperties().getProperty(key, System.getenv(key));
+        if (val == null) {
+            val = props.getProperty(key);
+        }
 
         if( val == null ) {
             val = defval;

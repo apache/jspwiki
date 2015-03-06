@@ -45,6 +45,7 @@ import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.Serializer;
+import org.apache.wiki.util.TextUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -282,7 +283,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         // Get database file location
-        String file = props.getProperty( PROP_USERDATABASE );
+        String file = TextUtil.getStringProperty(props, PROP_USERDATABASE, defaultFile.getAbsolutePath());
         if( file == null )
         {
             log.warn( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile  );
