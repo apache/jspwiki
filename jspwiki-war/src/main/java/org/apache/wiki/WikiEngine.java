@@ -458,7 +458,7 @@ public class WikiEngine
         //
         if( !c_configured )
         {
-            String useExternalLogConfig = props.getProperty("jspwiki.use.external.logconfig");
+            String useExternalLogConfig = TextUtil.getStringProperty(props,"jspwiki.use.external.logconfig","false");
             if( useExternalLogConfig == null || useExternalLogConfig.equals("false"))
             {
                 PropertyConfigurator.configure( props );
