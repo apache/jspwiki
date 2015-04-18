@@ -1,3 +1,9 @@
+2015-04-18  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-15
+
+       * Fixed JSPWIKI-880 Glassfish 4 Wrong Chars Solution - Brasil PT, thanks to Renato Grosz
+
 2015-03-06  Harry Metske (metskem@apache.org)
 
        * 2.10.2-svn-14

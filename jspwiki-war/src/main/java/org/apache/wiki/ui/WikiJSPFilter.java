@@ -263,20 +263,14 @@ public class WikiJSPFilter extends WikiServletFilter
     private static class MyServletResponseWrapper
         extends HttpServletResponseWrapper
     {
-        private CharArrayWriter m_output;
+        ByteArrayOutputStream m_output;
         private MyServletOutputStream m_servletOut;
         private PrintWriter m_writer;
-      
-        /** 
-         *  How large the initial buffer should be.  This should be tuned to achieve
-         *  a balance in speed and memory consumption.
-         */
-        private static final int INIT_BUFFER_SIZE = 4096;
-        
+
         public MyServletResponseWrapper( HttpServletResponse r, final String wiki_encoding )
                 throws UnsupportedEncodingException {
             super(r);
-            m_output = new CharArrayWriter( INIT_BUFFER_SIZE );
+            m_output = new ByteArrayOutputStream();
             m_servletOut = new MyServletOutputStream(m_output);
             m_writer = new PrintWriter(new OutputStreamWriter(m_servletOut, wiki_encoding), true);
         }
@@ -303,12 +297,12 @@ public class WikiJSPFilter extends WikiServletFilter
 
         class MyServletOutputStream extends ServletOutputStream
         {
-            CharArrayWriter m_buffer;
+            ByteArrayOutputStream m_buffer;
 
-            public MyServletOutputStream(CharArrayWriter aCharArrayWriter)
+            public MyServletOutputStream(ByteArrayOutputStream byteArrayOutputStream)
             {
                 super();
-                m_buffer = aCharArrayWriter;
+                m_buffer = byteArrayOutputStream;
             }
 
             @Override

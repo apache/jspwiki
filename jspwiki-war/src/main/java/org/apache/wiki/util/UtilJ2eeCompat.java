@@ -43,6 +43,8 @@ public class UtilJ2eeCompat
 
     public static final String WEBSPHERE = "websphere";
 
+    public static final String WEBSPHERE_LIBERTY = "SMF WebContainer";
+
     public static final String WEBLOGIC = "weblogic";
 
     public static final String GLASSFISH_1 = "sun java system application server";
@@ -132,6 +134,10 @@ public class UtilJ2eeCompat
         else if( serverInfo.toLowerCase().indexOf( WEBSPHERE ) >= 0 )
         {
             log.info( WEBSPHERE + " detected" );
+        }
+        else if( serverInfo.toLowerCase().indexOf( WEBSPHERE_LIBERTY ) >= 0 )
+        {
+            log.info( WEBSPHERE_LIBERTY + " detected" );
         }
         else if( serverInfo.toLowerCase().indexOf( WEBLOGIC ) >= 0 )
         {
