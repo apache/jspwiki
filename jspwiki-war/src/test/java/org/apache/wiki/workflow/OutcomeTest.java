@@ -58,20 +58,20 @@ public class OutcomeTest extends TestCase
         WikiEngine engine = new TestEngine(props);
         InternationalizationManager i18n = engine.getInternationalizationManager();
         String core = "templates.default";
-        Locale english = Locale.ENGLISH;
+        Locale rootLocale = Locale.ROOT;
         Outcome o;
 
         o = Outcome.DECISION_APPROVE;
-        assertEquals("Approve", i18n.get(core, english, o.getMessageKey()));
+        assertEquals("Approve", i18n.get(core, rootLocale, o.getMessageKey()));
 
         o = Outcome.DECISION_DENY;
-        assertEquals("Deny", i18n.get(core, english, o.getMessageKey()));
+        assertEquals("Deny", i18n.get(core, rootLocale, o.getMessageKey()));
 
         o = Outcome.DECISION_HOLD;
-        assertEquals("Hold", i18n.get(core, english, o.getMessageKey()));
+        assertEquals("Hold", i18n.get(core, rootLocale, o.getMessageKey()));
 
         o = Outcome.DECISION_REASSIGN;
-        assertEquals("Reassign", i18n.get(core, english, o.getMessageKey()));
+        assertEquals("Reassign", i18n.get(core, rootLocale, o.getMessageKey()));
     }
 
     public void testIsCompletion()

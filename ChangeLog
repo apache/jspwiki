@@ -1,3 +1,9 @@
+2015-05-31  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-16
+
+       * Fixed JSPWIKI-882 test-failure when using existing localized locale in OutComeTest (thanks to Marco Roeland)
+
 2015-04-18  Harry Metske (metskem@apache.org)
 
        * 2.10.2-svn-15
