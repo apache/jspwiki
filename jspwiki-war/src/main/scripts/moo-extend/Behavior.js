@@ -51,7 +51,7 @@ var Behavior = new Class({
 
     add: function(selector, behavior, options, once){
 
-        this.behaviors.push({s: selector, b: behavior, o: options, once:once});
+        this.behaviors.push({s: selector, b: behavior, o: options, once: once});
         return this;
 
     },
@@ -64,38 +64,44 @@ var Behavior = new Class({
 
     update: function(){
 
-        //console.log(this.behaviors);
-        var cache = "_bhvr", updated, type, nodes;
+        var cache = "_bhvr", updated, type, isClass, isFunction,
+            nodes, node, i = 0, j, item, behavior, options;
 
-        this.behaviors.each( function( behavior ){
+        while( item = this.behaviors[ i++ ] ){
 
-            nodes = $$(behavior.s);
-            type = typeOf(behavior.b);
-            //console.log("BEHAVIOR ", behavior.once?"ONCE ":"", nodes.length, behavior.s, typeOf(behavior.b) );
+            //console.log("BEHAVIOR ", item.once?"ONCE ":"", nodes.length, item.s, typeOf(item.b) );
+            options = item.o;
+            behavior = item.b;
+            type = typeOf(behavior);
+            isClass = ( type == "class" );
+            isFunction = ( type == "function" );
 
-            if( behavior.once && nodes[0] ){
+            nodes = $$(item.s); //selector
+            if( nodes[0] ){
 
-                if( type == 'class'){ new behavior.b(nodes, behavior.o); }
-                else if( type == 'function'){ behavior.b(nodes, behavior.o); }
+                if( item.once ){
 
-            } else {
+                    if( isClass ){ new behavior(nodes, options); }
+                    else if( isFunction ){ behavior(nodes, options); }
 
-                nodes.each( function(node){
+                } else {
 
-                    updated = node[cache] || (node[cache] = []);
+                    for( j=0; node = nodes[ j++ ]; ){
 
-                    if ( updated.indexOf(behavior) == -1 ){
+                        updated = node[cache] || (node[cache] = []);
 
-                        //if( type == 'string' ) node[behavior.b](behavior.o);
-                        if( type == 'class'){ new behavior.b(node, behavior.o); }
-                        else if( type == 'function'){ behavior.b.call(node, node, behavior.o); }
+                        if ( updated.indexOf(item) < 0 ){
 
-                        updated.push( behavior );
+                            //if( isString ) node[behavior](options);
+                            if( isClass ){ new behavior(node, options); }
+                            else if( isFunction ){ behavior.call(node, node, options); }
+
+                            updated.push( item );
+                        }
                     }
-                });
+                }
             }
-
-        })
+        }
 
         return this;
     }

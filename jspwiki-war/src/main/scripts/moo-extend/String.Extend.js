@@ -20,7 +20,7 @@
 */
 /*
 Mootools Extension: String.Extend.js
-	String-extensions: capitalize,() deCamelize(), trunc(), xsubs()
+    String-extensions: capitalize,() deCamelize(), trunc(), xsubs()
 */
 String.implement({
 
@@ -34,7 +34,7 @@ String.implement({
     */
     capitalize: function(){
         //fix mootools implementation , supporting i18n chars such as éàè, not matched by \b
-		//return String(this).replace(/\b[a-z]/g, function(match){
+        //return String(this).replace(/\b[a-z]/g, function(match){
         return this.replace(/(\s|^)\S/g, function(match){
             return match.toUpperCase();
         });
@@ -59,7 +59,7 @@ String.implement({
 
     Arguments:
         size - maximum length of the string, excluding the length of the elips
-        elips - (optional) replaces the truncated part (defaults to '...')
+        ellipsis - (optional) replaces the truncated part (defaults to '...')
 
     Alternative
         Use css propoerty
@@ -71,9 +71,9 @@ String.implement({
     > "this is a long string".trunc(7) === "this is..."
     > "this is a long string".trunc(7,'__') === "this is__"
     */
-    trunc: function (size, elips){
+    trunc: function (size, ellipsis){
 
-        return this.slice(0, size-1) + ((this.length<size) ? '' : (elips||'…'));
+        return this.slice(0, size-1) + ((this.length<size) ? '' : (ellipsis||'…'));
 
     },
 
@@ -92,20 +92,19 @@ String.implement({
         (start code)
         //initialize the translation strings
         String.I18N = {
-            "javascript.moreInfo":"More",
-            "javascript.imageInfo":"Image {0} of {1}",  //indexed parms
-            "javascript.imageInfo2":Image {imgCount} of {totalCount}"   //named parms
-            "javascript.curlyBraces":"Show \{Curly Braces}",  //escaped curly braces
+            "javascript.moreInfo": "More",
+            "javascript.imageInfo": "Image {0} of {1}",  //indexed parms
+            "javascript.imageInfo2": "Image {imgCount} of {totalCount}"   //named parms
+            "javascript.curlyBraces": "Show \{Curly Braces}",  //escaped curly braces
         }
         String.I18N.PREFIX="javascript.";
 
         "moreInfo".localize() === "More";
-        "imageInfo".localize(2,4) ===  "Image 2 of 4"
-        "imageInfo2".localize({totalCount:4, imgCount:2}) === "Image 2 of 4"
+        "imageInfo".localize(2, 4) ===  "Image 2 of 4"
+        "imageInfo2".localize({totalCount: 4, imgCount: 2}) === "Image 2 of 4"
         "curlyBraces".localize() === "Show {Curly Braces}"
 
         (end)
-
     */
     localize: function( params ){
 
@@ -137,18 +136,18 @@ String.implement({
         return this.substitute(object, regexp);
     },
 
-	/*
-	Function:slick(props)
-		Convert css selector into a new DOM Element
+    /*
+    Function:slick(props)
+        Fancy DOM Element builder
 
-	Example:
-	>	"input#someID.someClass1.someClass2[disabled=true]".slick({text:"Hi"});
-	*/
-	slick:function(props){
+    Example:
+    >    "input#someID.someClass1.someClass2[disabled=true]".slick({text:"Hi"});
+    */
+    slick: function(props){
 
-		return new Element(this+"", props);
+        return new Element(this + "", props);
 
-	},
+    },
 
     /*
     Function: sliceArgs
@@ -159,7 +158,7 @@ String.implement({
         > <command>.sliceArgs( args (, regexp) );
 
     Arguments:
-        args : (string) or dom-element with classname 
+        args : (string) or dom-element with classname
         regexp : (optional string) pattern match for the arguments, defaults (-\w+)*
 
     Example
@@ -170,35 +169,35 @@ String.implement({
     */
     sliceArgs: function(element, regexp){
 
-    	var args = element.grab /*isElement*/ ? element.className : element;
+        var args = element.grab /*isElement*/ ? element.className : element;
 
-        if( !regexp) regexp = "(^|\\s)"+this+"(-\\w+)*(?:\\s|$)"; //default '-' separated arguments
+        if( !regexp) regexp = "(?:^|\\s)("+this+"(?:-\\w+)*)(?:\\s|$)"; //default '-' separated arguments
 
         args = args.match( regexp );
-        return args && args[0].split('-').slice(1);
+        return args && args[1].split('-').slice(1);
 
     },
 
-	/*
-	Function: fetchContext    
-		Match an elements classname or string against one of the bootstrap contextual patterns.
-		Supported contexts: default, primary, success, info, warning, danger
-		
-		Return a (string) classname to invoke the contextual colors.
-		
-	Example
-	>	'panel'.fetchContext( 'accordion-danger') => 'panel panel-danger'
-	>	'panel'.fetchContext( 'commentbox-success') => 'panel panel-success'
+    /*
+    Function: fetchContext
+        Match an elements classname or string against one of the bootstrap contextual patterns.
+        Supported contexts: default, primary, success, info, warning, danger
 
-	*/
-	fetchContext : function(element){
-	
-	    var name = element.grab /*isElement*/ ? element.className : element;
+        Return a (string) classname to invoke the contextual colors.
+
+    Example
+    >    'panel'.fetchContext( 'accordion-danger') => 'panel panel-danger'
+    >    'panel'.fetchContext( 'commentbox-success') => 'panel panel-success'
+
+    */
+    fetchContext : function(element){
+
+        var name = element.grab /*isElement*/ ? element.className : element;
 
         name = (name.match( /\b(default|primary|success|info|warning|danger)(\b|$)/ )||[,'default'])[1];
 
-		return this+' '+this+'-'+name ;
-		
-	}
+        return this + ' ' + this + '-' + name ;
+
+    }
 
 });

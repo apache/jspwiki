@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -24,8 +24,8 @@
 <fmt:setBundle basename="templates.default"/>
 
 <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
-<div class="page-footer">
-  <wiki:PageExists>  
+<div class="page-footer visible-print">
+  <wiki:PageExists>
     <wiki:CheckVersion mode="latest">
       <fmt:message key="info.lastmodified">
         <fmt:param><wiki:PageVersion /></fmt:param>
@@ -39,10 +39,10 @@
         <fmt:param><wiki:Author /></fmt:param>
       </fmt:message>
     </wiki:CheckVersion>
-    <wiki:RSSImageLink mode="wiki" /> 
+    <wiki:RSSImageLink mode="wiki" />
     <a href="#top" title="<fmt:message key='actions.gototop'/>" class="btn">Top<span class="caret-up"><span></a>
   </wiki:PageExists>
 
-  <wiki:NoSuchPage><fmt:message key="actions.notcreated"/></wiki:NoSuchPage> 
+  <wiki:NoSuchPage><fmt:message key="actions.notcreated"/></wiki:NoSuchPage>
 </div>
 </wiki:CheckRequestContext>

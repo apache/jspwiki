@@ -1,0 +1,24 @@
+/*
+Style: RecentChangesPlugin
+
+DOM structure:
+
+*/
+.recentchanges {
+
+    table-layout:fixed;  // this renders faster
+    .table-hover;
+
+    td {
+        vertical-align:top;
+    }
+    td.date {
+        vertical-align:bottom;
+        background-color:@wiki-recentchanges-date-bg;
+    	border-radius: @border-radius-base;        
+        border:none;
+    }
+    tr.odd td {
+        background-color:transparent;
+    }
+}

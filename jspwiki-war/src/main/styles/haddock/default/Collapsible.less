@@ -1,0 +1,153 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Style: Collapsible
+    Generic support for Collapsible.List, Collapsible.Box
+
+DOM structure:
+(start code)
+    li
+        b.bullet
+        .. content ..
+    li
+        b.bullet(.clpse)(.xpand)
+        ul
+            li .. content ..
+            li .. content ..
+(end)
+*/
+.bullet {
+    display:inline-block;
+    outline:0;
+    float:left;
+    width:2em;
+    line-height:1.4; //heuristic, for vertical
+
+    // triangular bullets
+    width:0;
+    height:0;
+    border:.4em solid transparent;
+    border-radius: @border-radius-base; //smooth edges
+    border-left-color: @text-color;
+    border-right: none;
+    margin: .3em .9em .3em .7em;
+
+    &.clpse {
+        cursor: pointer;
+        border-left-color: @link-color;
+        &:hover { border-left-color: @link-hover-color; }
+    }
+    &.xpand {
+        cursor: pointer;
+        border: .4em solid transparent; //reset
+        border-top-color: @link-color;
+        border-bottom: none;
+        margin: .5em .6em .5em .6em;
+        &:hover { border-top-color: @link-hover-color; }
+    }
+
+}
+.xpand, .clpse { overflow:hidden; }
+
+
+// CHECKME: Make sure to print collapsed items as if they were not collapsed
+//move to print.less
+@media print {
+    div.clpse {
+        display:block;
+        height:auto !important;
+        //width:auto !important;
+    }
+}
+
+
+/*
+TODO: Experimental - css3 animation iso mootools tween.
+div.xpand { .transition(all .5s ease); height:auto; }
+div.clpse { .transition(all .5s ease); height:0; }
+*/
+
+
+/*
+Style: Collapsible.List
+>   %%collapse
+
+DOM structure:
+(start code)
+div.collapse
+    ul
+        li
+            b.bullet
+            .. li-text ..
+        li
+            b.bullet(.xpand)(.clpse)
+            .. li-text ..
+            ul.xpand|clpse
+                li ..collapsible content ..
+                li ..collapsible content ..
+(end)
+*/
+.collapse {
+
+    > ul, > ol { margin-left:-2em; }  // first ul/ol, shift left to create space for the bullets
+    ul, ol { list-style:none;  }
+
+    //li:not(.xpand), li:not(.clpse) { list-style:auto; .bullet {display:none;} }
+    li { white-space:nowrap; overflow:hidden; }  //assume li-items fit on one line
+
+}
+
+
+/*
+Style: Collapsible-Box
+>   %%collapsebox
+>   %%collapsebox-closed
+
+DOM structure:
+(start code)
+    //before
+    div.collapsebox
+        b.bullet.xpand|clpse'[click='...']
+        h1-4  title
+        .. collapsible content ..
+
+    //after
+    div.panel.panel-default
+        div.panel-heading
+            b.bullet.xpand|clpse[onclick="..."]
+            h4.panel-title title
+        div.panel-body.xpand|clpse
+            .. collapsible content ..
+(end)
+*/
+//re-use bootstrap/panels.less
+div[class^=collapsebox] {
+
+    > .panel-heading { padding-left:0; } //remove some left space next to the bullet
+
+    //coloured collapseboxes get white bullets
+    &:not(.panel-default) .bullet {
+        &.xpand, &.xpand:hover { border-top-color: @white; }
+        &.clpse, &.clpse:hover { border-left-color: @white; }
+    }
+}
+
+

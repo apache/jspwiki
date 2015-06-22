@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -86,10 +86,10 @@
     </div>
     <div class="form-group">
       <label><fmt:message key="group.members"/></label>
-      
+
       <textarea id="members" name="members" rows="10" cols="30"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="help-block"><fmt:message key="editgroup.memberlist"/></div>
-      
+
     </div>
 
 
@@ -101,7 +101,7 @@
   <wiki:Permission permission="viewGroup">
     <a class="btn btn-default" href="<wiki:Link format="url" jsp='Group.jsp'><wiki:Param name='group' value='<%=name%>'/></wiki:Link>" >
     <%=LocaleSupport.getLocalizedMessage(pageContext, "actions.viewgroup")%>
-  </a>         
+  </a>
   </wiki:Permission>
 
     <div class="help-block">
@@ -110,11 +110,10 @@
 
   </form>
 
-  <wiki:Permission permission="deleteGroup"> 
+  <wiki:Permission permission="deleteGroup">
   <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
-         class=""
-            id="deleteGroup"
-        onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>') && Wiki.submitOnce(this) );"
+         class="" id="deleteGroup"
+    data-modal="'<fmt:message key='grp.deletegroup.confirm'/>"
         method="POST" accept-charset="UTF-8">
       <input class="btn btn-danger" type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
       <input type="hidden" name="group" value="${param.group}" />

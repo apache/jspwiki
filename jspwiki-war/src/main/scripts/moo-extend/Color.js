@@ -47,8 +47,7 @@ Examples:
 
 !function(){
 
-var RGB = 'rgb',
-    VGA = "black#000 green#008000 silver#c0c0c0 lime#0f0 gray#808080 olive#808000 white#fff yellow#ff0 maroon#800000 navy#000080 red#f00 blue#00f purple#800080 teal#008080 fuchsia#f0f aqua#0ff",
+var VGA = "black#000 green#008000 silver#c0c0c0 lime#0f0 gray#808080 olive#808000 white#fff yellow#ff0 maroon#800000 navy#000080 red#f00 blue#00f purple#800080 teal#008080 fuchsia#f0f aqua#0ff",
     c0l0r = 'i'.slick(),
 
     Color = this.Color = new Type('Color', function(color){
@@ -59,14 +58,14 @@ var RGB = 'rgb',
 
     } else if (typeof color == 'string'){
 
-        if(color.test(/^[\da-f]{3,6}$/i)) color = "#"+color;
+        if(color.test(/^[\da-f]{3,6}$/i)){ color = "#"+color; }
         c0l0r.setStyle('color',''); //reset the template
         color = ( VGA.test( RegExp(color+"(#\\S+)","i" ) ) ? RegExp.$1 :
             color.match(/rgb/i) ? color.rgbToHex() :
                 c0l0r.setStyle('color',color).getStyle('color') ).hexToRgb(true);
 
     }
-    if(!color) return null;
+    if(!color){ return null; }
     color.rgb = color.slice(0, 3);
     color.hex = color.rgbToHex();
     return Object.append(color, this);
@@ -84,7 +83,7 @@ Color.implement({
         while( colors[0] ){
             color = new Color( colors.shift() );
             for (i=0; i < 3; i++){ rgb[i] = ((rgb[i] * alphaI) + (color[i] * alpha)).round(); }
-        };
+        }
         return new Color(rgb);
 
     },

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -43,70 +43,52 @@
         postURL = ctx.getURL( WikiContext.LOGIN, redir );
     }
 
-    boolean supportsCookieAuthentication = mgr.allowsCookieAuthentication();
 %>
+<c:set var="allowsCookieAuthentication" value="<%= mgr.allowsCookieAuthentication() %>" />
 <div class="page-content">
 
 <%-- Login functionality --%>
 <wiki:UserCheck status="notauthenticated">
 <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
-<div class="rightAccordion">
+<div class="accordion center form-col-50">
+
 
 <h4><fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h4>
 <form action="<%=postURL%>"
           id="login"
        class=""
-    onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
-
-  <div class="help-block"><fmt:message key="login.help"></fmt:message></div>
+    <%--<div class="help-block"><fmt:message key="login.help"></fmt:message></div>--%>
 
     <div class="form-group">
         <wiki:Messages div="error" topic="login"
                     prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
     </div>
     <div class="form-group">
-      <td><label class="control-label form-col-20" for="j_username"><fmt:message key="login.login"/></label></td>
-      <td><input autofocus="autofocus" class="form-control form-col-50" type="text" size="24" value="<wiki:Variable var='uid' default='' />"
-                 name="j_username" id="j_username" /></td>
+      <%--<label class="control-label form-col-20" for="j_username"><fmt:message key="login.login"/></label>--%>
+      <input autofocus="autofocus" class="form-control xform-col-50" type="text" size="24" value="<wiki:Variable var='uid' default='' />"
+                placeholder="<fmt:message key='login.login'/>"
+                 name="j_username" id="j_username" />
     </div>
     <div class="form-group">
-      <td><label class="control-label form-col-20"for="j_password"><fmt:message key="login.password"/></label></td>
-      <td><input class="form-control form-col-50" type="password" size="24"
-                 name="j_password" id="j_password" /></td>
+      <%--<label class="control-label form-col-20"for="j_password"><fmt:message key="login.password"/></label>--%>
+      <input class="form-control xform-col-50" type="password" size="24"
+                placeholder="<fmt:message key='login.password'/>"
+                 name="j_password" id="j_password" />
     </div>
-    <% if( supportsCookieAuthentication ) { %>
+    <c:if test="${allowsCookieAuthentication}">
     <div class="form-group">
-      <td><label class="control-label form-col-20" for="j_remember"><fmt:message key="login.remember"/></label></td>
-      <td><input type="checkbox"
-                 name="j_remember" id="j_remember" /></td>
+      <label class="control-label xform-col-20" for="j_remember"><fmt:message key="login.remember"/></label>
+      <input type="checkbox"
+             name="j_remember" id="j_remember" />
     </div>
-    <% } %>
+    </c:if>
     <div class="form-group">
         <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
-        <input class="btn btn-primary form-col-offset-20" type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
+        <input class="btn btn-primary btn-block xform-col-offset-20" type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
     </div>
-
-<%--
-    <div class="help-block">
-      <fmt:message key="login.lostpw"/>
-      <a href="#" onclick="$('menu-lostpassword').fireEvent('click');"
-                    title="<fmt:message key='login.lostpw.title'/>" >
-        <fmt:message key="login.lostpw.getnew"/>
-      </a>
-    </div>
-    <div class="help-block">
-      <fmt:message key="login.nopassword"/>
-      <a href="#" onclick="$('menu-profile').fireEvent('click');"
-                    title="<fmt:message key='login.registernow.title'/>" >
-        <fmt:message key="login.registernow">
-          <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
-        </fmt:message>
-      </a>
-    </div>
---%>
 
 </form>
 
@@ -132,7 +114,6 @@
   </c:when>
   <c:otherwise>
 
-
     <c:if test="${param.tab eq 'lostpassword'}" >
     <div class="form-group help-block">
         <wiki:Messages div="error" topic="resetpw"
@@ -140,14 +121,17 @@
         <wiki:Messages div="information" topic="resetpwok" />
     </div>
     </c:if>
+
     <div class="form-group">
-      <td><label class="control-label form-col-20" for="name"><fmt:message key="login.lostpw.name"/></label></td>
-      <td><input class="form-control form-col-50" type="text" size="24" name="name" id="name" /></td>
+      <%--<label class="control-label form-col-20" for="name"><fmt:message key="login.lostpw.name"/></label>--%>
+      <input class="form-control xform-col-50" type="text" size="24"
+                placeholder="<fmt:message key='login.lostpw.name'/>"
+                name="name" id="name" />
     </div>
-      <div class="help-block form-col-offset-20"><fmt:message key="login.lostpw.help"></fmt:message></div>
+    <%--<div class="help-block form-col-offset-20"><fmt:message key="login.lostpw.help"></fmt:message></div>--%>
     <div class="form-group">
         <input type="hidden" name="action" value="resetPassword"/>
-        <input class="btn btn-primary form-col-offset-20" type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />
+        <input class="btn btn-primary btn-block xform-col-offset-20" type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />
     </div>
 
 <%--

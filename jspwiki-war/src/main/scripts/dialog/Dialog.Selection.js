@@ -39,114 +39,115 @@ Example:
 		body:"a|b|c|d",
 		caption:"Snippet Dialog",
 		autoClose:true,
-		onClick:function(v){ alert('clicked '+v) }
+		onClick:function(v){ alert("clicked "+v) }
 	});
 	new Dialog.Selection({
 		body:[a,b,c,d],
 		caption:"Snippet Dialog",
-		onClick:function(v){ alert('clicked '+v) }
+		onClick:function(v){ alert("clicked "+v) }
 	});
 	new Dialog.Selection({
-		body:{'avalue':'a','bvalue':'b','cvalue':'c'},
+		body:{"avalue":"a","bvalue":"b","cvalue":"c"},
 		caption:"Snippet Dialog",
-		onClick:function(v){ alert('clicked '+v) }
+		onClick:function(v){ alert("clicked "+v) }
 	});
 	(end code)
 */
 Dialog.Selection = new Class({
 
 	Extends: Dialog,
-	
+
 	options: {
 		//onAction: function(value){},
 		//selected: <some value>
-		cssClass: 'dialog selection',
-		autoClose: true,
-		items: '.body li'
+		cssClass: "dialog selection",
+		autoClose: true
 	},
 
 	initialize:function( options ){
 
-        this.setClass('.selection',options);
-        this.selected = options.selected || '';
+        this.setClass(".selection",options);
+        this.selected = options.selected || "";
 		this.parent( options );
 
-        console.log('Dialog.Selection ', this.element.className);
+        //console.log("Dialog.Selection ", this.element.className);
 	},
 
 	setBody: function(content){
 
-		var self = this;
-console.log('Dialog.Selection body ',content);
-		if(!content){ content = self.options.body; }
+		var self = this, items=[];
 
-		//turn 'multi|value|string' into [array]
-		if( typeOf(content) == 'string' ){ content = content.split('|'); }
+        //console.log("Dialog.Selection body ",content);
+		if( !content ){ content = self.options.body; }
 
-		//turn [array] into {object} with name:value pairs
-		if( typeOf(content) == 'array' ){ content = content.associate(content); }
+		//convert "multi|value|string" into [array]
+		if( typeOf(content) == "string" ){ content = content.split("|"); }
 
-		//turn {object} in DOM elements (ul/li collection)
-		if( typeOf(content) == 'object' ){
-		
-			content = 'ul'.slick({ 
-				html: Object.keys(content).map( function(key){
-					return '<li title="'+key+'">'+content[key]/*.trunc(36)*/+'</li>';
-				})
+		//convert [array] into {object} with name:value pairs
+		if( typeOf(content) == "array" ){ content = content.associate(content); }
+
+		//convert {object} in DOM elements (ul/li collection)
+		if( typeOf(content) == "object" ){
+
+			Object.each(content, function(value, key){
+
+			    items.push( value == "" ?
+			        "li.divider" :
+			        "li.item[title=" + key + "]", {html: value}
+			    );
+
 			});
-			
+			content = ["ul",items].slick();
+
 		}
 
-		if( typeOf(content) == 'element' ){
+		if( typeOf( content ) == "element" ){
 
 			//first move the content elements into the body and highlight the selected item
 			self.parent( content ).setValue( self.selected );
 
 			//then add the click & hover event handlers
-			self.getItems().addEvents({
-				//click: self.action.bind(self),
-				click: function(){ self.action( this); },
-				mouseleave: function(){ this.removeClass('hover'); },
-				mouseenter: function(){ this.addClass('hover'); }
+			self.element.addEvent("click:relay(.item)", function(e){
+			    e.stop();
+                self.action( this.get("title") );
 			});
+
+
 		}
-		
+
 		return self;
 	},
-	
+
 	/*
 	Function: setValue
 		Store the selected value. (this.selected).
-		And highlight the selected item (if any) 
+		And highlight the selected item (if any)
 	*/
-	setValue: function(value){
+	setValue: function( value ){
 
-		var selected = "selected", els;
+		var self = this, selected = "selected", element;
 
-		//remove previous selected item, if any 
-		els = this.get('.'+selected); 
-		if(els){ els.removeClass(selected); } 
+		element = self.get("." + selected);
+		if( element ){ element.removeClass(selected); }
 
-		els = this.getItems('[title^='+value+']');
-		if(els[0]){ els[0].addClass(selected); }
+        //console.log("Dialog.Selection setValue",value);
+		element = self.get( ".item[title^=" + value + "]" );
+		if( element ){ element.addClass(selected); }
 
-		this[selected] = value;
+		self[selected] = value;
 
-		return this;	
+		return self;
 	},
 
 	getValue: function(){
-		return this.selected;	
+		return this.selected;
 	},
 
-	action: function(item){
-		var value = item.get('title');
-		this.setValue(value).parent(value);
-	},
+	action: function( value ){
 
+		//console.log("Dialog.Selection action() ",value);
+		this.setValue( value ).parent(value);
 
-	getItems: function( filter ){
-		return this.element.getElements(this.options.items+(filter||''));
 	}
 
 });

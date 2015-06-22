@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -53,10 +53,10 @@
 
       <ul class="list-group form-col-50">
         <li class="list-group-item droppable">
-          <label>Select files <%--or drop them here!--%></label>
+          <label>Select files <span class='canDragAndDrop'>or drop them here!</span></label>
           <input type="file" name="files" id="files" size="60"/>
           <a class="hidden delete btn btn-danger btn-xs pull-right">Delete</a>
-        </li> 
+        </li>
       </ul>
     </div>
     <div class="form-group">
@@ -66,11 +66,11 @@
     <div class="form-group">
     <input type="hidden" name="nextpage" value="<wiki:Link context='upload' format='url'/>" />
     <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
-    <input class="btn btn-primary form-col-offset-20 form-col-50" 
+    <input class="btn btn-primary form-col-offset-20 form-col-50"
            type="submit" name="upload" id="upload" disabled="disabled" value="<fmt:message key='attach.add.submit'/>" />
     <input type="hidden" name="action" value="upload" />
     </div>
-    <div class="hidden form-col-offset-20 form-col-80 progress progress-striped active">
+    <div class="hidden form-col-offset-20 form-col-50 progress progress-striped active">
       <div class="progress-bar" data-progressid="<%=progressId%>" style="width: 100%;"></div>
     </div>
 
@@ -91,9 +91,9 @@
            class="hidden"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
-        onsubmit="return(confirm('<fmt:message key="attach.deleteconfirm"/>') );" >
+      data-modal="<fmt:message key='attach.deleteconfirm'/>" >
 
-      <%--TODO: "nextpage" is not yet implemented in Delete.jsp 
+      <%--TODO: "nextpage" is not yet implemented in Delete.jsp
       <input type="hidden" name="nextpage" value="<wiki:Link context='upload' format='url'/>" />
       --%>
       <input class="btn btn-danger btn-xs" id="delete-all" name="delete-all" type="submit" value="Delete" />
@@ -139,9 +139,9 @@
       <wiki:Permission permission="delete">
       <td>
           <input type="button"
-                class="btn btn-danger btn-xs" 
+                class="btn btn-danger btn-xs"
                 value="<fmt:message key='attach.delete'/>"
-                  src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
+                  src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
               onclick="$('deleteForm').set('action',this.src); $('delete-all').click();" />
 
       </td>

@@ -41,8 +41,8 @@
   TemplateManager t = c.getEngine().getTemplateManager();
   pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
   pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
-  pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );
   pageContext.setAttribute( "timezones", t.listTimeZones(pageContext) );
+  pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );
   pageContext.setAttribute( "hasMultipleEditors", c.getEngine().getEditorManager().getEditorList().length > 1 );
 
 %>
@@ -63,12 +63,12 @@
 
   <div class="form-group">
   <label class="control-label form-col-20" for="assertedName"><fmt:message key="prefs.assertedname"/></label>
-  <input class="form-control form-col-50" type="text" id="assertedName" name="assertedName" size="20" 
+  <input class="form-control form-col-50" type="text" id="assertedName" name="assertedName" size="20"
           autofocus="autofocus"
          value="<wiki:UserProfile property='wikiname' />" />
   <%-- CHECK THIS
   <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='loginname'/>" />
-  --%>  
+  --%>
   </div>
 
   <wiki:UserCheck status="anonymous">
@@ -81,42 +81,43 @@
         </a>
       </fmt:param>
     </fmt:message>
-  </div>  
+  </div>
   </wiki:UserCheck>
 
   <c:if test='${hasMultipleEditors}'>
   <div class="form-group">
   <label class="control-label form-col-20" for="editor"><fmt:message key="edit.chooseeditor"/></label>
-  
+
     <select class="" id="editor" name="editor" data-pref="editor">
       <wiki:EditorIterator id="edt">
         <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
   </select>
-  
+
   </div>
   </c:if>
 
   <div class="form-group">
-  <label class="btn btn-default form-col-offset-20" for="prefSectionEditing">
+  <label class="control-label form-col-20" for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label>
+
+  <label class="btn btn-default" for="prefSectionEditing">
     <input class="" id="prefSectionEditing" name="prefSectionEditing"  data-pref="SectionEditing"
          type="checkbox" ${prefs.SectionEditing=='on' ? 'checked="checked"' : ''} >
-      <fmt:message key="prefs.user.sectionediting"/>
+      <fmt:message key="prefs.user.sectionediting.text"/>
   </label>
-  <fmt:message key="prefs.user.sectionediting.text"/>
-  
+
   </div>
 
   <c:if test='${not empty skins}'>
   <div class="form-group">
   <label class="control-label form-col-20" for="prefSkin"><fmt:message key="prefs.user.skin"/></label>
-  
+
   <select class="" id="prefSkin" name="prefSkin" data-pref="SkinName">
     <c:forEach items="${skins}" var="i">
       <option value='${i}' ${prefs.SkinName==i ? 'selected="selected"' : ''} >${i}</option>
     </c:forEach>
   </select>
-  
+
   </div>
   </c:if>
 
@@ -125,65 +126,63 @@
   <c:set var="prefLanguage" ><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
   <div class="form-group">
   <label class="control-label form-col-20" for="prefLanguage"><fmt:message key="prefs.user.language"/></label>
-  
+
   <select class="" id="prefLanguage" name="prefLanguage" data-pref="Language">
     <c:forEach items='${languages}' var='lg'>
       <option value="<c:out value='${lg.key}'/>" ${fn:startsWith(prefLanguage,lg.key) ? 'selected="selected"' : ''} >${lg.value}</option>
     </c:forEach>
   </select>
-  
+
   </div>
   </c:if>
 
   <div class="form-group">
-  <label class="control-label form-col-20" for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label>
-  
-  <select class="" id="prefOrientation" name="prefOrientation" data-pref="Orientation">
-      <option value='fav-left' ${prefs.Orientation=='fav-left' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.left"/></option>
-      <option value='fav-right' ${prefs.Orientation=='fav-right' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.right"/></option>
-  </select>
-  
-  </div>
+  <label class="control-label form-col-20" for="prefOrientation"><fmt:message key="prefs.user.layout"/></label>
 
-  <div class="form-group">
-  <label class="control-label form-col-20" for="prefLayout"><fmt:message key="prefs.user.layout"/></label>  
   <select class="" id="prefLayout" name="prefLayout" data-pref="Layout">
       <option value='fluid' ${prefs.Layout=='fluid' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fluid"/></option>
       <option value='fixed' ${prefs.Layout=='fixed' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fixed"/></option>
   </select>
+
+  <select class="" id="prefOrientation" name="prefOrientation" data-pref="Orientation">
+      <option value='fav-left' ${prefs.Orientation=='fav-left' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.left"/></option>
+      <option value='fav-right' ${prefs.Orientation=='fav-right' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.right"/></option>
+      <option value='fav-hidden' ${prefs.Orientation=='fav-hidden' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.hidden"/></option>
+  </select>
+
   </div>
 
   <div class="form-group">
   <label class="control-label form-col-20" for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label>
-  
+
   <select class="" id="prefTimeFormat" name="prefTimeFormat"  data-pref="DateFormat">
     <c:forEach items='${timeformats}' var='tf' >
       <option value='<c:out value="${tf.key}"/>' ${prefs.DateFormat==tf.key ? 'selected="selected"' : ''} >${tf.value}</option>
     </c:forEach>
   </select>
-  
+
   </div>
 
   <div class="form-group">
   <label class="control-label form-col-20" for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label>
-  
+
   <select class="" id='prefTimeZone' name='prefTimeZone'  data-pref="TimeZone">
     <c:forEach items='${timezones}' var='tz'>
       <option value='<c:out value="${tz.key}"/>' ${prefs.TimeZone==tz.key ? 'selected="selected"' : ''} >${tz.value}</option>
     </c:forEach>
   </select>
-  
+
   </div>
 
 
   <div class="form-group">
-  
+
     <input class="btn btn-primary form-col-offset-20" type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>"
       accesskey="s" />
     <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
     <input type="hidden" name="action" value="setAssertedName" />
     <p class="help-block form-col-offset-20"><fmt:message key='prefs.cookies'/></p>
-  
+
   </div>
 
 </form>

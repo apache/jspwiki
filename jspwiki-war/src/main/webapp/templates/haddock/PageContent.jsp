@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -30,19 +30,14 @@
 <%-- Main Content Section --%>
 <%-- This has been source ordered to come first in the markup (and on small devices)
      but to be to the right of the nav on larger screens --%>
-<div class="page-content">
+<div class="page-content <wiki:Variable var='page-styles' />">
 
   <wiki:Include page="PageTab.jsp"/>
-  
+
   <wiki:PageType type="attachment">
-    <div class="information">
-      <fmt:message key="info.backtoparentpage" >
-	    <fmt:param><wiki:Link page="<wiki:ParentPageName/>" ><wiki:ParentPageName/></wiki:Link></fmt:param>
-      </fmt:message>
-    </div>
     <div><%-- insert the actual attachement, image, etc... --%>
       <wiki:Translate>[<%= WikiContext.findContext( pageContext ).getPage().getName() %>]</wiki:Translate>
     </div>
-  </wiki:PageType>  
-    
-</div> 
+  </wiki:PageType>
+
+</div>

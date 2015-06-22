@@ -14,42 +14,36 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
-<%-- Powered by jswpwiki-common.js//SearchBox --%>
-
+<%-- Provides a simple searchbox --%>
+<%-- Powered by wiki/Findpages.js and wiki/Recents.js  --%>
 <form action="<wiki:Link jsp='Search.jsp' format='url'/>"
-  class="searchbox col6 offset6 pull-right form-inline" 
-  id="searchForm" 
+  class="form-inline searchbox pull-right"
+  id="searchForm"
   accept-charset="<wiki:ContentEncoding />">
 
-  <wiki:Include page="UserBox.jsp" />
-
-  <span>
-  <input type="text" size="20" 
-    class="form-control" name="query" id="query" 
-    autofocus="autofocus" 
+  <input type="text" size="20"
+        class="form-control" name="query" id="query"
     accesskey="f"
     placeholder="<fmt:message key='sbox.search.submit'/>" />
-  <button type="submit" 
-    class="btn" name="searchSubmit" id="searchSubmit" 
-  	value="<fmt:message key='find.submit.go'/>"
-  	title="<fmt:message key='find.submit.go'/>"><span class="icon-search"></span></button>
 
-  <ul class="dropdown-menu pull-right" data-hover-parent="span">
-   <li class="dropdown-header">Quick Search results (type ahead)</li>
-    <%-- see wiki/Searchbox.js
-        <li class="findpages"><a class="createpage" href="/wiki/B" >[Create] B</a></li>
-        <li class="findpages"><a class="createpage" href="/wiki/B&clone=Main" >[Create & clone this page] B</a></li>
-        <li class="findpages"><a href="/wiki/Brushed" >Brushed (99)</a></li>
-        <li class="findpages"><a href="/wiki/BrushedTemplate">BrushedTemplate (49)</a></li>
-        <li class="findpages"><a href="/wiki/BrushedSkins">BrushedSkins (29)</a></li>
+  <div class="btn"><span class="icon-search"></span><span class="caret"></span></div>
+
+  <ul class="dropdown-menu" data-hover-parent=".searchbox">
+    <li class="dropdown-header">
+    <button type="submit"
+           class="btn btn-primary btn-block" name="searchSubmit" id="searchSubmit"
+  	       value="<fmt:message key='find.submit.go'/>"> <fmt:message key='sbox.search.fullsearch'/> </span>
+    </button>
+    </li>
+    <%-- see wiki/Findpages.js
+        <li class="findpages"> ... </li>
     --%>
     <li class="divider"></li>
     <li class="dropdown-header"><fmt:message key="sbox.recentsearches"/></li>
@@ -59,6 +53,4 @@
         <li class="recents clear"><a>[Clear recent searches]</a></li>
     --%>
   </ul>
-  </span>
-  
 </form>

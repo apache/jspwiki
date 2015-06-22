@@ -85,9 +85,13 @@
 
 
 <wiki:PageType type="page">
-<%-- part 1 : normal wiki pages 
+<%-- part 1 : normal wiki pages
 
   <wiki:TabbedSection defaultTab="info">
+
+  FIXME!!! =>>>  <wiki:TabbedSection defaultTab="${param.tab}">
+  JSPWIKI-867) Deleting attachments should retain focus on the Attach
+
 
   <wiki:Tab id="pagecontent"
          title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>'
@@ -133,7 +137,7 @@
            class="form-group"
               id="renameform"
           method="post" accept-charset="<wiki:ContentEncoding />" >
-      
+
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input class="btn btn-primary" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input class="form-control form-col-50" type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
@@ -152,7 +156,7 @@
            class="form-group"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
-        onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
+      data-modal="<fmt:message key='info.confirmdelete'/>" >
       <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
             value="<fmt:message key='info.delete.submit'/>" />
     </form>
@@ -175,7 +179,7 @@
                        fmtkey="info.pagination"
                          href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
 
-    <div class="zebra-table sortable table-filter">
+    <div class="table-filter-hover-sort zebra-table">
     <table class="wikitable" >
       <tr>
         <th><fmt:message key="info.version"/></th>
@@ -242,11 +246,15 @@
       </tr>
       <tr>
       <td>
-      <wiki:Link><wiki:PageName /></wiki:Link>
-      <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
+        <div class="list-nostyle list-hover">
+          <wiki:Link><wiki:PageName /></wiki:Link>
+          <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
+        </div>
       </td>
       <td>
-      <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
+        <div class="list-nostyle list-hover">
+          <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
+        </div>
       </td>
       </tr>
       </table>
@@ -258,7 +266,7 @@
       <wiki:Include page="DiffTab.jsp"/>
       </div>
     </wiki:CheckRequestContext>
-    
+
   </div>
 
 
@@ -292,7 +300,7 @@
           <label>Select files <%--or drop them here!--%></label>
           <input type="file" name="files" id="files" size="60"/>
           <a class="hidden delete btn btn-danger btn-xs pull-right">Delete</a>
-        </li> 
+        </li>
       </ul>
     </div>
     <div class="form-group">
@@ -302,11 +310,11 @@
     <div class="form-group">
     <input type="hidden" name="nextpage" value="<wiki:Link context='info' format='url'/>" /><%-- *** --%>
     <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
-    <input class="btn btn-primary form-col-offset-20 form-col-50" 
+    <input class="btn btn-primary form-col-offset-20 form-col-50"
            type="submit" name="upload" id="upload" disabled="disabled" value="<fmt:message key='attach.add.submit'/>" />
     <%--<input type="hidden" name="action" value="upload" />--%>
     </div>
-    <div class="hidden form-col-offset-20 form-col-80 progress progress-striped active">
+    <div class="hidden form-col-offset-20 form-col-50 progress progress-striped active">
       <div class="progress-bar" data-progressid="<%=progressId%>" style="width: 100%;"></div>
     </div>
 
@@ -322,8 +330,8 @@
            class="form-group"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
-        onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') );" >
-     
+          data-modal="<fmt:message key='info.confirmdelete'/>" >
+
      <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
            value="<fmt:message key='info.deleteattachment.submit' />" />
     </form>
@@ -332,7 +340,7 @@
 <%-- FIXME why not add pagination here - number of attach versions of one page limited ?--%>
 <%--<h4><fmt:message key='info.attachment.history' /></h4>--%>
 
-  <div class="slimbox-attachments sortable table-filter-hover-sort table-filter">
+  <div class="table-filter-hover-sort slimbox-attachments">
   <table class="table">
     <tr>
       <th><fmt:message key="info.attachment.type"/></th>
@@ -398,7 +406,7 @@
 
 </wiki:PageType>
 
-</wiki:PageExists> 
+</wiki:PageExists>
 
 <wiki:NoSuchPage>
   <fmt:message key="common.nopage">

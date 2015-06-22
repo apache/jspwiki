@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -61,7 +61,7 @@
     modifier = group.getModifier();
     if ( group.getLastModified() != null )
     {
-      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ; 
+      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ;
     }
   }
   name = TextUtil.replaceEntities(name);
@@ -149,22 +149,21 @@
   <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
          class="wikiform"
             id="deleteGroup"
-        onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>') 
-        && Wiki.submitOnce(this) );"
+        data-modal="<fmt:message key='grp.deletegroup.confirm'/>"
         method="POST" accept-charset="UTF-8">
 
     <wiki:Permission permission="editGroup">
-      <a class="btn btn-primary" 
+      <a class="btn btn-primary"
           href="<wiki:Link format='url' jsp='EditGroup.jsp'><wiki:Param name='group' value='${param.group}' /></wiki:Link>" >
         <%=LocaleSupport.getLocalizedMessage(pageContext, "actions.editgroup")%>
       </a>
     </wiki:Permission>
 
-    <wiki:Permission permission="deleteGroup"> 
+    <wiki:Permission permission="deleteGroup">
       <input class="btn btn-danger" type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
       <input type="hidden" name="group" value="${param.group}" />
-    </wiki:Permission> 
-    
+    </wiki:Permission>
+
   </form>
 
 </div>

@@ -1,4 +1,4 @@
-/*!
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -32,7 +32,7 @@ Class: SnipEditor.Commands
     - click events on command buttons (.cmd.pop)
     - suggestion trigger (exec ???)
 
-    FYI - all DIALOGs are created as descendants of the Dialog class.
+    DIALOGs are created as descendants of the Dialog class.
     - Dialog : floating dialog panel
         - FormDialog : predef content with open/close handlers ???
         - Dialog.Selection : selectable list of items
@@ -44,16 +44,16 @@ Class: SnipEditor.Commands
 
 Options:
     container: DOM element  => contains commands([data-cmd])
-    dialogs - predefined set of dialog initialisators
+    dialogs - predefined set of dialog definitions
     // **event handlers**
-    onOpen - invoked after opening a DIALOG
-    onClose - invoked after closing a DIALOG
+    onOpen - invoked after opening any DIALOG
+    onClose - invoked after closing any DIALOG
     onAction - action call-back action(cmd,arguments)
 
 Properties
     - buttons : collection of DOM-elements with click handlers to either
         action() or toggle()
-    - dialogs : collection of dialog definitions [Dialog-class, {dialog parameters}]
+    - dialogs : collection of dialog definitions [Dialog-class, {options}]
 
 DOM structure:
     <div class="cmd tICON"><i>action command</i></div>
@@ -66,105 +66,111 @@ Snipe.Commands = new Class({
     Implements: [Events, Options],
 
     options: {
-        //onAction:function()...s
-        cmds:'cmd' //toolbar button data attribute
+        //onAction:function(command,value){ .. },
+        cmds: "data-cmd" //toolbar button data attribute
+        //relativeTo: document.body //default position of a dialog
         //dialogs:{ cmd1:dialog1, cmd2:dialog2, ...}
     },
-    btns: {},     //all cmd:buttons (dom element)
-    dlgs: {},     //all cmd:instantiated dialogs  (lazy activation)
-    dialogs: {},  //all cmd:dialogs
+    dlgs: {},  //all cmd:instantiated dialogs  (lazy activation)
+    btns: {},  //all buttons
+    dialogs: {},  //all cmd:dialogs  definitions
 
     initialize: function( container, options ){
 
-        var self = this.setOptions(options), 
-            attr = 'data-' + self.options.cmds,
-            command, 
+        var self = this.setOptions(options),
+            dataCmd = self.options.cmds,
+            command,
             dialog,
-            dialogs = options.dialogs||{};
+            dialogs = options.dialogs || {};
 
-        container.getElements('['+attr+']').each( function(el){
 
-            command = el.get(attr);
+        //add click buttons and dialogs
+        container.addEvent("click:relay([" + dataCmd + "])", function(event){
 
-            self.btns[command] = el.addEvent('click', self.click.pass(command,self));
+            var cmd = this.get( dataCmd ),
+                dlg = self.dlgs[ cmd ];
 
-            if( dialog = container.getElement('.dialog.' + command) ){
-            
-                if( dialogs[command] ){
+            dlg ? dlg.toggle() : self.action( cmd );
 
-                    dialogs[command][1].dialog = dialog;  
+            // input fields (eg checkboxes) keep the default behaviour; other click events are disabled
+            if( !this.match("input") ){ event.stop(); }
 
-                } else {
+        });
 
-                    dialogs[command] = dialog;
+        //see if there are any dialogs linked to a button. Eg: "div.dialog.<command>"
+        container.getElements("[" + dataCmd + "]").each( function(button){
 
-                }
+            command = button.get(dataCmd);
+            self.btns[command] = button;
+
+            if( dialog = container.getElement(".dialog." + command) ){
+
+                if( !dialogs[command] ){ dialogs[command] = [Dialog, {}]; }
+
+                options = dialogs[command][1];
+                //register the DOM dialog element, and move to top of DOM for proper absolute positioning
+                options.dialog = dialog.inject(document.body);
+                options.relativeTo = button;  //register the dialog positioning info
+
             }
         });
 
         self.addDialogs( dialogs );
+
     },
 
     /*
-    Funciton: addDialog
-        Add a new dialog.
-        The dialog is only created when invoking the command.
-        This happens through a button click or through the action() method.
+    Function: addDialog
+        Add a new dialogs.
 
     Arguments:
-        dialogs: {cmd1:dialog, cmd2:dialog-def...}
-        (dialog-def : array[Dialog-Class, {dialog parameters}]
-        relativeTo: create a dialog relative to a positioned object (eg. button, textarea-location)
+        newdialogs: {cmd:[Dialog-Class, {options}]..}
     */
-    addDialogs: function(newdialogs, relativeTo){
+    addDialogs: function( newdialogs ){
 
-        var self = this,
-            dialog,
-            command
-            dialogs = self.dialogs;
-        
+        var dialog,
+            command,
+            dialogs = this.dialogs;
+
         for( command in newdialogs ){
 
-            if( dialogs && dialogs[command] ){
-                console.log("AddDialogs - warning: double registration of => " + command);
+            if( dialogs[command] ){
+                console.log("Snipe.Commands addDialogs() - warning: double registration of => " + command);
             }
 
-            dialog = dialogs[command] = newdialogs[command];  //array of all dialogs
-            if( instanceOf( dialog, Dialog ) ){ self.attach(command,dialog); }
+            dialog = dialogs[command] = newdialogs[command];
 
-            //checkme ...
-            if( relativeTo ){ self.btns[ command ] = relativeTo; }
+            //note: make sure to initialize this.dialogs[command] prior to calling show()
+            if( instanceOf( dialog, Dialog ) ){ this.attach(dialog, command); }
 
-        };
-        //console.log('allDialogs: '+Object.keys(self.dialogs) );
+        }
+        //console.log("allDialogs: " + Object.keys(this.dialogs) );
     },
 
-    attach: function(command, dialog){
+    /*
+    Function: attach
+        Attach event-handlers to a dialogs
+    */
+    attach: function(dialog, command){
 
         var self = this,
-            actionHdl = function(v){ self.fireEvent('action', [command,v]); };
+            //fire ACTION event back to the invoker of the Snipe.Commands
+            actionHdl = function(value){ self.fireEvent("action", [command, value]); };
 
-        //console.log('attachDialog: '+command);
+        console.log("Snipe.Commands: attachDialog() ", command, dialog);
 
         return self.dlgs[command] = dialog.addEvents({
-            onOpen: self.openDialog.bind(self, command),
-            onClose: self.closeDialog.bind(self, command),
-            onAction: actionHdl,
-            onDrag: actionHdl
+            open: self.openDialog.bind(self, command),
+            close: self.closeDialog.bind(self, command),
+            action: actionHdl,
+            drag: actionHdl
         });
-    },
-
-    click: function( command ){
-
-        var dialog = this.dlgs[ command ];
-        dialog ? dialog.toggle() : this.action( command );
-
     },
 
     /*
     Function: action
-        Action handler for a simple command. Pass the 'action' event
-        up to the Snipe Editor.
+        Action handler for a simple command.
+        Send the "action" event back to the Snipe Editor.
 
     Arguments:
         command : command name
@@ -172,28 +178,28 @@ Snipe.Commands = new Class({
     */
     action: function( command, value ){
 
-        var self = this, 
-            active = 'active',
-            button = self.btns[command], 
-            dialog = self.dlgs[command];
+        var self = this,
+            active = "active",
+            button = self.btns[command],
+            dialog;
 
-        //console.log("Commands.action "+command+" value:"+value+" btn="+button+ " dlg="+dialog);
-        if( button ) button = document.id( button);
+        //console.log("Commands.action ", command, " value:", value, " btn=", button, " dlg=", dialog);
+        //if( button ) button = document.id( button);
 
-        if( button && button.match('.disabled') ){
+        if( button && button.match(".disabled") ){
 
-            //nothing to do here
+            //nothing to be done here
 
         } else if( self.dialogs[command] ){
 
-            if( !dialog ){ dialog = self.createDialog(command) }
-            if( value ){ dialog.setValue( value ); }
+            dialog = self.dlgs[command] || self.createDialog(command);
+            if( value != null ){ dialog.setValue( value ); }
             dialog.show();
 
         } else {
 
             if( button ){ button.addClass(active); }
-            self.fireEvent('action', [command, value] );
+            self.fireEvent("action", [command, value] );
             if( button ){ button.removeClass(active); }
 
         }
@@ -202,115 +208,97 @@ Snipe.Commands = new Class({
 
     /*
     Function: createDialog
-        Create a new dialog.
-        The name of the cmd determines the type (or class) of Dialog to be created
-        - cmd: Dialog[cmd] (eg cmd='font' : Dialog.Font)
-        - the name of the dialog equals the DOM ID of a predefined HTML dialog
-
-        - DOM Element: predefined DOM dialog
-        - [ Dialog-class, { dialog parameters } ]
-        - { dialog parameters } : the cmd determines the type of Dialog to create
-        - "string" : create a Dialog.Selection dialog
+        Create a new dialog, based on dialog creation parameters in this.dlgs :
+        - [ Dialog-class, { options } ]
+        - otherwise convert to Dialog.Selection dialog
 
 
     Arguments
-        cmd - (string) command
+        command - (string) command
 
         The open/close handlers will make sure only one dialog is open at the
-        same time. The open dialog is stored in {{this.activeCmd}}.
+        same time. The open dialog is stored in {{this.activecommand}}.
 
-        The key events 'action', 'drag', 'open' and 'close' are propagated upwards.
+        The key events "action", "drag", "open" and "close" are propagated upwards.
 
     Returns:
         The created dialog, which is also stored in this.dlgs[] repository.
 
     */
-    createDialog: function( cmd ){
+    createDialog: function( command ){
 
-        var self = this,
-            dlg,
-            btn = self.btns[cmd],
-            factory = Function.from( self.dialogs[cmd] )(),
-            type = typeOf(factory);
+        var dialog = Function.from( this.dialogs[command] )();
 
-        //console.log('Commands.createDialog() '+cmd+' '+ ' btn='+btn +" "+type);
+        //console.log("Snipe.Commands: createDialog() " + command + " ",dialog );
 
-        //expect factory to be [Dialog class,  {dialog options object}]
-        if( type != 'array' || factory.length != 2 ){
+        if( typeOf(dialog) != "array" ){ dialog = [ Dialog.Selection, { body: dialog } ]; }
 
-            factory = ( type == 'element' ) ?
-                [Dialog, {dialog:factory}] : [Dialog.Selection, {body:factory}];
-        }
+        if( !dialog[1].relativeTo ){ dialog[1].relativeTo = this.options.relativeTo || document.body; }
 
-        dlg = new factory[0]( Object.append( factory[1],{
-            //cssClass: 'dialog float',
-            autoClose: false, //fixme: suggestion dialog should not be autoclosed
-            relativeTo: btn   //button or textareaa
-            //draggable: true
-        }) );
+        dialog[1].autoClose = false; //checkme: suggest-dialogs should not be autoclose?
 
-        //Make sure that this.dlgs[cmd] gets initialized prior to calling show()
-        return self.attach(cmd, dlg);
+        //note: make sure to initialize this.dialogs[command] prior to calling show()
+        return this.attach( new dialog[0]( dialog[1] ), command);
     },
 
     /*
     Function: openDialog
         Opens a dialog. If already another dialog was open, that one will first be closed.
-        When a toolbar button exists, it will get the css class '.active'.
+        When a toolbar button exists, it will get the css class ".active".
 
         Note: make sure that this.dlgs[cmd] is initialized prior to calling show() !
 
     Argument:
         command - dialog to be opened
-        preOpen - ...
     */
-    openDialog: function(command, dialog){
+    openDialog: function(command){
 
-        var self = this, 
-            current = self.activeCmd, 
-            tmp;
+        var self = this,
+            activeDlg = self.activeDlg,
+            newDlg = self.dlgs[command],
+            button = self.btns[command];
 
-        //console.log('Commands.openDialog() ' + command + ' ' + self.activeCmd );
+        //console.log("Snipe.Commands: openDialog() " + command + " " + activeDlg);
 
-        if( ( current!=command ) && ( tmp = self.dlgs[current] ) ){ tmp.hide(); }
-        //toobar button will be deactivated by closeDialog()
+        if( activeDlg && (activeDlg != newDlg) ){ activeDlg.hide(); }
+        self.activeDlg = self.dlgs[command];
 
-        self.activeCmd = command;
-        if( tmp = self.btns[command] ){ $(tmp).addClass('active'); }
+        if( button ){ button.addClass("active"); }
 
-        self.fireEvent('open', command, dialog);
+        self.fireEvent("open", command);
+
     },
 
     /*
     Function: closeDialog
 
     Arguments:
-        cmd - (mandatory) dialog to be closed
+        command - (mandatory) dialog to be closed
     */
-    closeDialog: function(cmd, dialog){
+    closeDialog: function(command, dialog){
 
-        var self = this, 
-            btn = self.btns[cmd];
+        var self = this,
+            button = self.btns[command];
 
-        //console.log('Commands.closeDialog() ' + cmd + ' ' + self.activeCmd )
+        //console.log("Snipe.Commands: closeDialog() " + command )
 
-        if( cmd == self.activeCmd ){ self.activeCmd = null; }
-        if( btn ){ $(btn).removeClass('active'); }
+        if( self.dlgs[command] == self.activeDlg ){ self.activeDlg = null; }
 
-        self.fireEvent('close', cmd, dialog);
+        if( button ){ button.removeClass("active"); }
+
+        self.fireEvent("close", command);
+
     },
 
     /*
     Function: close
-        Close the active dialog, if any.
+        Close any active dialog.
     */
     close: function(){
 
-        var activeCmd = this.activeCmd;
-        if( activeCmd ){ this.dlgs[activeCmd].hide(); }
+        var activeDlg = this.activeDlg;
+        if( activeDlg ){ activeDlg.hide(); }
 
     }
 
 });
-
-

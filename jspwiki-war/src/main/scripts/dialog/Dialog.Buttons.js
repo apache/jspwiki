@@ -32,7 +32,7 @@ Dialog.Buttons = new Class({
 	initialize: function(options){
 
         this.setClass('.buttons',options);
-        console.log("Dialog.Buttons",options);
+        //console.log("Dialog.Buttons",options);
 		this.parent(options);
 		this.setButtons( this.options.buttons );
 
@@ -46,7 +46,7 @@ Dialog.Buttons = new Class({
 	Example:
 		(start code)
 			myDialog.setButtons(['Ok','Cancel']);
-			
+
 			//FIXME???
 			myDialog.setButtons({
 				Ok:function(){ callback( input.get('value') ); },
@@ -61,7 +61,7 @@ Dialog.Buttons = new Class({
 
 		btns.empty().adopt( buttons.map(function(b){
 
-			return 'a.btn.btn-link.btn-sm'.slick({
+			return 'a.btn.btn-default.btn-sm'.slick({
 				html: b.localize(),
 				events:{ click: self.action.bind(self,b) }
 			});

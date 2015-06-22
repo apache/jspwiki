@@ -39,21 +39,21 @@ Requires:
     - core/Elements
     - core/Array
 
-Example 
->   new Element('div',{ attach:this });      //this.element now refers to div
->   new Element('div',{ attach:[this] });    //this.element now refers to div
->   new Element('div',{ attach:[this,'myproperty'] }); //this.myproperty now refers to div
+Example
+>   new Element("div",{ attach:this });      //this.element now refers to div
+>   new Element("div",{ attach:[this] });    //this.element now refers to div
+>   new Element("div",{ attach:[this,"myproperty"] }); //this.myproperty now refers to div
 
 Example rendAr()
->   ['div',{attach:[this,'myproperty'] }].slick();
->   ['ul', ['li[text=One]','li[text=Two]','li[text=Three]']].slick();
+>   ["div",{attach:[this,"myproperty"] }].slick();
+>   ["ul", ["li[text=One]","li[text=Two]","li[text=Three]"]].slick();
 
 */
 Element.Properties.attach = {
 
     set: function( object ){
-        if(!object[0]) object = [object];
-        object[0][ object[1] || 'element' ] = this;
+        if(!object[0]){ object = [object]; }
+        object[0][ object[1] || "element" ] = this;
     }
 
 };
@@ -62,16 +62,16 @@ Array.implement({
 
     slick: function() {
 
-        var elements = [],type;
+        var elements = [], type;
 
         this.each( function(item){
-            if(item != null){ 
-            type = typeOf(item);
-            if ( type == 'elements' ) elements.append(item);
-            else if ( item.grab /*isElement*/ ) elements.push(item);
-            else if ( item.big  /*isString*/ ) elements.push(item.slick());
-            else if ( type == 'object' ) elements.getLast().set(item);
-            else if ( item.pop /*isArray*/ ) elements.getLast().adopt(item.slick());
+            if(item != null){
+                type = typeOf(item);
+                if ( type == "elements" ){ elements.append(item); }
+                else if ( item.grab /*isElement*/ ){ elements.push(item); }
+                else if ( item.big  /*isString*/ ){ elements.push(item.slick()); }
+                else if ( type == "object" ){ elements.getLast().set(item); }
+                else if ( item.pop /*isArray*/ ){ elements.getLast().adopt(item.slick()); }
             }
         });
 
@@ -80,22 +80,25 @@ Array.implement({
 
     /*
     Function: scale
-    
+
     Example
         [0,50,100].scale() == [0,0.5,1]
         [0,50,100].scale(2) == [0,1,2]
-        
+        [0.5].scale() == [0.5]
+        [0.5].scale(0, 2) == [0.25]
+
     */
-    scale: function( scale ) {
+    scale: function( minv, maxv ) {
 
-        var result = [],
-            i, len = this.length,
-            min = this.min(),
-            rmax = this.max() - min;
 
-        if( rmax == 0 ){ rmax = min; min = 0; }
+        var i, result = [],
+            len = this.length,
+            min = isNaN( minv ) ? ( len > 1 ? this.min() : 0 ) : minv ;
+            distance = ( isNaN( maxv ) ?  this.max() : maxv ) - min ;
 
-        for( i=0; i<len; i++) result[i] = (scale||1) * (this[i] - min) / rmax;
+        if( distance == 0 ){ distance = min; min = 0; }
+
+        for( i = 0; i < len; i++){ result[i] = ( this[i] - min ) / distance; }
 
         return result;
     },

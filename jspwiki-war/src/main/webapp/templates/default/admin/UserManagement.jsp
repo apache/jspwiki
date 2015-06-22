@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="java.util.*" %>
@@ -59,7 +59,7 @@ function addNew()
   $('email').value = "";
   $('lastmodified').innerHTML = "";
   $('creationdate').innerHTML = "";
- 
+
   var idlist=$('userid');
   var len = idlist.options.length;
   idlist.options[len] = new Option('--New--','--New--');
@@ -79,9 +79,9 @@ function addNew()
       </select>
    </div>
    <div id="useredit">
-   <form action="<wiki:Link jsp='admin/Admin.jsp' format='url'><wiki:Param name='tab-admin' value='users'/></wiki:Link>" 
+   <form action="<wiki:Link jsp='admin/Admin.jsp' format='url'><wiki:Param name='tab-admin' value='users'/></wiki:Link>"
        class="wikiform"
-          id="adminuserform" 
+          id="adminuserform"
     onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >

@@ -1,0 +1,250 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Section: dialog
+	CSSdefs for the Mootools dialog plugin
+
+DOM structure:
+(start code)
+	div.dialog
+		a.close
+		div.caption ...  //optional, + drag handle
+		div.body ...
+		div.buttons      //optional
+			div.btn ...
+		div.resize
+(end)
+*/
+
+/* Dialog main container */
+.dialog {
+
+	position:absolute;
+	.hide;
+	z-index: 10;
+
+    //inherit from .dropdown-menu
+    background-color: fade(@dropdown-bg,90%);
+    border: 1px solid @dropdown-fallback-border; // IE8 fallback
+    border: 1px solid @dropdown-border;
+    border-radius: @border-radius-base;
+    .box-shadow(0 6px 12px rgba(0,0,0,.175));
+    background-clip: padding-box;
+
+    min-width: 160px;
+
+    .caption {
+
+    	text-align: center;
+    	font-family: @wiki-logo-font-family;
+    	letter-spacing:1px;
+
+        padding:0.5em;
+
+	    white-space: nowrap;
+    	overflow: hidden;
+        border-bottom: 1px solid @dropdown-border;
+    }
+
+    //overwrite some bootstrap/close.less settings
+    .close {
+        position:absolute;
+        top:0;
+        right:0;
+
+        padding:0.25em 0.5em;
+
+    	font-family: @wiki-logo-font-family;
+    	font-weight: normal;
+        .opacity(1);
+
+        //.transition(all .5s ease);
+
+        &:hover {
+            font-weight: bolder;
+            //.rotate(-180deg);
+        }
+    }
+
+    .body {
+        padding:0.5em;
+	    .user-select(none);
+    }
+
+    .btn-group {
+        text-align:center;
+        padding:0.5em;
+    }
+
+}
+
+/*
+Style: Dialog.Selection, Dialog.Font, Dialog.Chars
+
+DOM structure:
+(start code)
+	div.dialog
+		a.close
+		div.caption ...  //optional, + drag handle
+		div.body ...
+
+		div.buttons      //optional
+			div.btn ...
+		div.resize
+(end)
+*/
+.dialog.selection {
+
+    .body {
+        padding: 0.25em 0 0 0;
+        overflow: scroll;
+        max-height: 300px;
+
+        ul {
+            .list-unstyled;
+            margin:0;
+        }
+        .item {
+            cursor:pointer;
+        	padding:0.25em 1em;
+            white-space:nowrap;
+
+            &:hover {
+                //inherit from dropdown-menu
+                //color: @dropdown-link-hover-color;
+                background-color: fade(@dropdown-link-hover-bg,75%);
+            }
+        }
+
+       .divider {
+            .nav-divider(@dropdown-divider-bg);
+        }
+
+        .selected {
+            //inherit from .dropdown-menu > .active > a
+            color: @dropdown-link-active-color;
+            text-decoration: none;
+            outline: 0;
+            background-color: @dropdown-link-active-bg;
+    	    .user-select(none);
+
+    	    &:hover { background-color: @dropdown-link-active-bg; }
+        }
+
+    }
+
+    &.dialog-horizontal .item { float: left; padding:0.5em; }
+    &.dialog-horizontal {
+        width: auto;
+        .body { padding: 0 2em 0 0.5em; } //reserve place for the .close button
+    }
+    //&.dialog-horizontal .item:nth-child(6n) { float: none;  }
+
+}
+.dialog.chars .item { text-align:center; }
+
+
+/*
+Style: .dialog.color
+*/
+@dialog-color-size: 256px;
+
+.dialog.color {
+
+    //#color display
+    .caption span {
+    	padding:0 1.5em;
+	    border-radius: 1em;
+	    color:#000;
+	    background-color:#fff;
+	    cursor:text;
+	    font-family: @font-family-monospace;
+    }
+    .body {
+	    position:relative; /*restrict cursor movement*/
+    	margin: 1em;
+    	width: @dialog-color-size;
+	    height: @dialog-color-size;
+	    cursor: crosshair;
+	    background:url('@{imagePath}/hue-wheel.png') no-repeat center center;
+
+        /* Hue wheel */
+        //background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+        //border-radius: 50%
+
+        //background-size: cover;
+
+    }
+    .cursor {
+    	position:absolute;
+	    background:url('@{imagePath}/cursor.gif') no-repeat;
+    	margin:-4px; /*half of height x weight */
+	    height:9px;
+    	left:@dialog-color-size/2; /* init at middle of img - mandatory for Drag */
+	    top:@dialog-color-size/2; /* init at middle of img - mandatory for Drag */
+	    width:9px;
+	    z-index:901;
+    }
+    .zone, {
+	    height:100%;
+    	width:100%;
+    }
+    /*
+    .resize {
+    	position:absolute;
+     	bottom:2px;
+	    right:2px;
+    	height: 0;
+	    width: 0;
+    	cursor: se-resize;
+	    opacity:0.5;
+        border-style: solid;
+        border-width: 0 0 16px 16px;
+        border-color: transparent transparent rgba(0,0,0,.2) transparent;
+    }
+    */
+
+    .btn-group { margin-top:-1em;}
+
+}
+
+
+.dialog.find {
+
+    .body { padding:1em; }
+
+    .tbHITS {
+    	position:absolute;
+
+        //FIXME: dimensions copied from forms/.form-control - should be other ways to inherit this
+        height: @input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
+        padding: @padding-base-vertical @padding-base-horizontal;
+        font-size: @font-size-base;
+        //line-height: @line-height-base;
+
+	    right: @padding-base-horizontal;
+	    color: @input-color;
+
+	    span { color: @red; }
+
+    }
+
+}

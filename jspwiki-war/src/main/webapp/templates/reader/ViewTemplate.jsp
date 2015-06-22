@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -39,6 +39,27 @@ String.I18N = LocalizedStrings;
 String.I18N.PREFIX = "javascript.";
 //]]></script>
 
+<meta name="wikiContext" content='<wiki:Variable var="requestcontext" />' />
+<wiki:Permission permission="edit"><meta name="wikiEditPermission" content="true"/></wiki:Permission>
+<meta name="wikiBaseUrl" content='<wiki:BaseURL />' />
+<meta name="wikiPageUrl" content='<wiki:Link format="url"  page="#$%"/>' />
+<meta name="wikiEditUrl" content='<wiki:EditLink format="url" page="#$%"/>' />
+<meta name="wikiCloneUrl" content='<wiki:EditLink format="url" page="#$%"/>&clone=<wiki:Variable var="pagename" />' />
+<meta name="wikiJsonUrl" content='<%=  WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "ajax" ) %>' /><%--unusual pagename--%>
+<meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
+<meta name="wikiUserName" content='<wiki:UserName />' />
+<meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
+<meta name="wikiApplicationName" content='<wiki:Variable var="ApplicationName" />' />
+<%--CHECKME
+    <wiki:link> seems not to lookup the right jsp from the right template directory
+    EG when a templatefile is not present, the generated link should point to the default template.
+    Solution for now: manually force the relevant links back to the default template
+--%>
+<meta name="wikiXHRSearch" content='<wiki:Link format="url" templatefile="../default/AJAXSearch.jsp" />' />
+<meta name="wikiXHRPreview" content='<wiki:Link format="url" templatefile="../default/AJAXPreview.jsp" />' />
+<meta name="wikiXHRCategories" content='<wiki:Link format="url" templatefile="../default/AJAXCategories.jsp" />' />
+
+
   <wiki:CheckVersion mode="notlatest">
     <meta name="robots" content="noindex,nofollow" />
   </wiki:CheckVersion>
@@ -59,9 +80,9 @@ String.I18N.PREFIX = "javascript.";
 
 <div class="container ${prefs.Orientation}">
 
-  <div class="pagename"><wiki:PageName /></div>
+  <div class="pagename"><wiki:Link><wiki:PageName/></wiki:Link></div>
   <div class="page"><wiki:Include page="PageTab.jsp"/></div>
-  
+
 </div>
 
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>

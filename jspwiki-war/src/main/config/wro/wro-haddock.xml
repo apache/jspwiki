@@ -23,8 +23,8 @@
 
   <!-- HADDOCK Template groups -->
   <group name="lib" abstract="true">
-    <js>/scripts/lib/mootools-core-1.4.5.js</js>
-    <js>/scripts/lib/mootools-more-1.4.0.1.js</js>
+    <js>/scripts/lib/mootools-core-1.5.1.js</js>
+    <js>/scripts/lib/mootools-more-1.5.1.js</js>
     <js>/scripts/lib/prettify4mar13.js</js>
   </group>
 
@@ -45,43 +45,47 @@
     <js>/scripts/moo-extend/Form.File.js</js>
   </group>
 
-  <group name="dynamic-styles" abstract="true">
-    <js>/scripts/dynamic-styles/Collapsible.js</js>
-    <js>/scripts/dynamic-styles/CommentBox.js</js>
-    <js>/scripts/dynamic-styles/Columns.js</js>
-    <js>/scripts/dynamic-styles/GraphBar.js</js>
-    <js>/scripts/dynamic-styles/Element.Reflect.js</js>
-    <js>/scripts/dynamic-styles/TableX.js</js>
-    <js>/scripts/dynamic-styles/TableX.Sort.js</js>
-    <js>/scripts/dynamic-styles/TableX.Filter.js</js>
-    <js>/scripts/dynamic-styles/TableX.Zebra.js</js>
-    <js>/scripts/dynamic-styles/Tabs.js</js>
-    <js>/scripts/dynamic-styles/Accordion.js</js>
-    <js>/scripts/dynamic-styles/Viewer.js</js>
-    <js>/scripts/dynamic-styles/Viewer.Slimbox.js</js>
-    <js>/scripts/dynamic-styles/Viewer.Carousel.js</js>
+  <group name="behaviors" abstract="true">
+    <js>/scripts/behaviors/AddCSS.js</js>
+    <js>/scripts/behaviors/Collapsible.js</js>
+    <js>/scripts/behaviors/CommentBox.js</js>
+    <js>/scripts/behaviors/Columns.js</js>
+    <js>/scripts/behaviors/GraphBar.js</js>
+    <js>/scripts/behaviors/Element.Reflect.js</js>
+    <js>/scripts/behaviors/Flip.js</js>
+    <js>/scripts/behaviors/TableX.js</js>
+    <js>/scripts/behaviors/TableX.Sort.js</js>
+    <js>/scripts/behaviors/TableX.Filter.js</js>
+    <js>/scripts/behaviors/TableX.Zebra.js</js>
+    <js>/scripts/behaviors/Tabs.js</js>
+    <js>/scripts/behaviors/Accordion.js</js>
+    <js>/scripts/behaviors/Viewer.js</js>
+    <js>/scripts/behaviors/Viewer.Slimbox.js</js>
+    <js>/scripts/behaviors/Viewer.Carousel.js</js>
   </group>
 
   <group name="haddock">
 
     <group-ref>lib</group-ref>
     <group-ref>mooextend</group-ref>
-    <group-ref>dynamic-styles</group-ref>
+    <group-ref>behaviors</group-ref>
 
     <js>/scripts/wiki/Wiki.js</js>
     <js>/scripts/wiki/Search.js</js>
     <js>/scripts/wiki/Recents.js</js>
     <js>/scripts/wiki/FindPages.js</js>
     <js>/scripts/wiki/Category.js</js>
-    <js>/scripts/wiki/Dynamic-styles.js</js>
+    <js>/scripts/wiki/Wiki.Behaviors.js</js>
 
-    <css>/styles/haddock/jspwiki.less</css>
+    <css>/styles/haddock/default/build.less</css>
   </group>
 
   <group name="haddock-edit">
 
     <js>/scripts/moo-extend/Date.Extend.js</js>
+    <js>/scripts/moo-extend/Function.Extend.js</js>
     <js>/scripts/moo-extend/Array.Extend.HSV.js</js>
+
     <js>/scripts/dialog/Dialog.js</js>
     <js>/scripts/dialog/Dialog.Buttons.js</js>
     <js>/scripts/dialog/Dialog.Color.js</js>
@@ -91,8 +95,9 @@
     <js>/scripts/dialog/Dialog.Find.js</js>
 
     <js>/scripts/moo-extend/Textarea.js</js>
-    <js>/scripts/wiki-edit/UndoRedo.js</js>
+    <js>/scripts/wiki-edit/Undoable.js</js>
     <js>/scripts/wiki-edit/Snipe.js</js>
+    <js>/scripts/wiki-edit/Snipe.Snips.js</js>
     <js>/scripts/wiki-edit/Snipe.Commands.js</js>
     <js>/scripts/wiki-edit/Snipe.Sections.js</js>
     <js>/scripts/wiki-edit/Wiki.Snips.js</js>

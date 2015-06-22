@@ -1,0 +1,95 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Style: DiffContent.jsp
+    CSS classes for the DIFF Providers "Traditional" and "External"
+
+DOM Structure:
+Traditional Diff provider
+    (start code)
+    div.collapsebox
+    h4
+    div.diffbody
+        table.diff
+            tr
+                td.diff
+            tr
+                td.diffadd
+            tr
+                td.diffrem
+(end)
+*/
+
+.diffbody {
+    margin:  (@line-height-computed/2);
+    table { width: 100%; }
+}
+
+/* .diffnote equals .information */
+.diffadd, .diffrem { font-family:@font-family-monospace; }
+.diffadd { background:@wiki-diff-add; }
+.diffrem { background:@wiki-diff-delete; text-decoration:line-through; }
+
+//td.diff    {  } //todo: diff information lines take page background
+
+
+/*
+Contextual Diff Provider
+(start code)
+    div.diffbody
+        div.diffnote
+        div.wikitext
+            ..
+            <br/>
+            a[name=change-1]
+                font[color=xxx]
+                    a.diff-insertion
+                strike
+                    font[color=xxx]
+                        a.diff-deletion
+            a.diff-nextprev[href=change-2]>>
+            ..
+            a.diff-nextprev[href=change-1]>>
+            a[name=change-2]
+            a.diff-nextprev[href=change-3]>>
+
+(end)
+*/
+.diffnote { margin:  (@line-height-computed/2) 0; }
+
+.diff-wikitext {
+    font-family:@font-family-monospace;
+    overflow:auto;
+    background-color: @pre-bg;
+    white-space:pre;
+
+    a[name^=change] { text-decoration:none; }
+    span { color:@text-color; }
+}
+
+.diff-insertion { background:@wiki-diff-add; }
+.diff-deletion { background:@wiki-diff-delete; }
+.diff-nextprev {
+    .btn;
+    .btn-default;
+    .btn-xs;  //xtra small
+    background:transparent;
+}

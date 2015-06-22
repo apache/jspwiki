@@ -35,11 +35,11 @@ Example:
 	(start code)
 	<script>
 		var cd = new Dialog.Color( {
-			relativeTo: $('colorButton'),
-			wheelImage:'circle.png',
-			onChange:function(color){ $('mytarget').setStyle('background',color); }
+			relativeTo: $("colorButton"),
+			wheelImage:"circle.png",
+			onChange:function(color){ $("mytarget").setStyle("background",color); }
 		});
-		$('colorButton').addEvent('click', cd.toggle.bind(cd));
+		$("colorButton").addEvent("click", cd.toggle.bind(cd));
 	</script>
 	(end code)
 */
@@ -51,10 +51,10 @@ Dialog.Color = new Class({
 		//onAction: function(color){},
 		//onDrag: function(color){},
 		//onResize: function(){},
-		color:'#ffffff', //initial color
-		//buttons:['Done'],
+		color:"#ffffff", //initial color
+		//buttons:["Done"],
 		//colors: [],  //todo: colors array with predef pallette
-		//colorImage: 'scripts-dev/main/src/styles/generated-css/images/circle-256.png',
+		//colorImage: "scripts-dev/main/src/styles/generated-css/images/circle-256.png",
 		resize:{x:[96,256]}  //min/max limits for the resizer
 	},
 
@@ -65,26 +65,26 @@ Dialog.Color = new Class({
 			showNow = options.showNow,
 			setHSV = self.setHSV.bind(this);
 
-        //options.cssClass = '.color'+(options.cssClass||'')
-        this.setClass('.color',options);
+        this.setClass(".color",options);
 
-		options.caption = 'span.color'.slick();
+		options.caption = "span.color".slick();
 		options.body = [
-			'div.cursor',
-			'div.zone' //img = 'img'.slick({'src':options.colorImage||self.options.colorImage})
+			"div.cursor",
+			"div.zone" //img = "img".slick({"src":options.colorImage||self.options.colorImage})
 		].slick();
+
         cursor = self.cursor = options.body[0];
 
 		options.showNow =false;
 		self.parent(options);
-		
-/*		body = self.get('.body').makeResizable({
-			handle: 'div.resize'.slick().inject(self.element),
+
+/*		body = self.get(".body").makeResizable({
+			handle: "div.resize".slick().inject(self.element),
 			limit: self.options.resize,
 			onDrag: function(){ self.resize(this.value.now.x); }
 		});
 */
-        
+
 		new Drag(cursor,{
 			handle:cursor.getNext(),
 			style:false,
@@ -102,14 +102,14 @@ Dialog.Color = new Class({
 
 		color = (color||this.options.color).hexToRgb(true) || [255,255,255];
 		this.hsv = color.rgb2hsv();
-		//console.log(color+" "+this.hsv);
+		//console.log("Dialog.Color setValue() ",color+" "+this.hsv, this.hsv.hsv2rgb() );
 		return this.moveCursor();
 
 	},
 
 	/*
 	Function: resize
-		Resize the dialog body and fire the 'resize' event.
+		Resize the dialog body and fire the "resize" event.
 		Only use one dimension to ensure a square color box
 
 	Arguments:
@@ -118,9 +118,9 @@ Dialog.Color = new Class({
 	/*
 	resize: function( width ){
 
-		this.get('.body').setStyles({height:width, width:width});
+		this.get(".body").setStyles({height:width, width:width});
 		this.moveCursor( );
-		this.fireEvent('resize');
+		this.fireEvent("resize");
 
 	},
     */
@@ -129,16 +129,16 @@ Dialog.Color = new Class({
 	Function: setHSV
 		Recalculate the HSV-color based on x/y mouse coordinates.
 		After recalculation, the color-wheel cursor is repositioned
-		and the 'onChange' event is fired.
+		and the "onChange" event is fired.
 
 	Arguments:
 		cursor - DOM element
-		e - mouse drag event's
+		e - mouse drag event"s
 	*/
 	setHSV: function( cursor, e ){
 
 		var self = this,
-			body = self.get('.body').getCoordinates(),
+			body = self.get(".body").getCoordinates(),
 			v = [e.page.x - body.left, e.page.y - body.top],
 			W = body.width,
 			W2 = W/2,
@@ -155,7 +155,7 @@ Dialog.Color = new Class({
 			];
 
 		self.moveCursor( );
-		self.fireEvent('drag', self.getHex() );
+		self.fireEvent("drag", self.getHex() );
 
 	},
 
@@ -183,11 +183,11 @@ Dialog.Color = new Class({
 		var self = this,
 			hsv = self.hsv,
 			hex = self.getHex(),
-			w2 = self.get('.body').getSize().x/2,
+			w2 = self.get(".body").getSize().x/2,
 			radius = (hsv[0] / 360) * (Math.PI*2),
 			hypothenuse = (hsv[1] + (100-hsv[2])) / 100*(w2/2);
 
-		self.get('.color').set({
+		self.get(".color").set({
 			html: hex,
 			styles: {
 				color: new Color(hex).invert().hex,

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -35,7 +35,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%! 
+<%!
   public void jspInit()
   {
     wiki = WikiEngine.getInstance( getServletConfig() );
@@ -49,30 +49,30 @@
   /* Create wiki context and check for authorization */
   WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
   if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
- 
+
   String query = request.getParameter( "query");
 
   if( (query != null) && ( !query.trim().equals("") ) )
   {
     try
-    { 
+    {
       Collection list = wiki.findPages( query, wikiContext );
 
       //  Filter down to only those that we actually have a permission to view
       AuthorizationManager mgr = wiki.getAuthorizationManager();
-  
+
       ArrayList items = new ArrayList();
-      
+
       for( Iterator i = list.iterator(); i.hasNext(); )
       {
         SearchResult r = (SearchResult)i.next();
-    
+
         WikiPage p = r.getPage();
-    
+
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try
-        {            
+        {
           if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) )
           {
             items.add( r );
@@ -80,7 +80,7 @@
         }
         catch( Exception e ) { log.error( "Searching for page "+p, e ); }
       }
-      
+
       pageContext.setAttribute( "searchresults", items, PageContext.REQUEST_SCOPE );
     }
     catch( Exception e )
@@ -106,21 +106,21 @@
 
   <p>
   <fmt:message key="find.externalsearch"/>
-    <a class="external" 
+    <a class="external"
         href="http://www.google.com/search?q=<c:out value='${param.query}'/>"
         title="Google Search '<c:out value='${param.query}'/>'"
        target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
-    |     
-    <a class="external" 
-        href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${param.query}'/>" 
+    |
+    <a class="external"
+        href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${param.query}'/>"
         title="Wikipedia Search '<c:out value='${param.query}'/>'"
        target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
   </p>
 
-  <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9" 
+  <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9"
                      fmtkey="info.pagination"
                     onclick="$('start').value=%s; SearchBox.runfullsearch();" />
-  
+
     <div class="graphBars">
     <div class="zebra-table">
     <table class="wikitable" >
@@ -139,14 +139,13 @@
 	  <c:if test="${param.details == 'on'}">
 <%
         String[] contexts = searchref.getContexts();
-        if( (contexts != null) && (contexts.length > 0) ) 
+        if( (contexts != null) && (contexts.length > 0) )
         {
-%>  
+%>
       <tr class="odd" >
-        <td colspan="2" >
-          <div class="fragment">
+        <td class="fragment" colspan="2">
 <%
-          for (int i = 0; i < contexts.length; i++) 
+          for (int i = 0; i < contexts.length; i++)
           {
 %>
             <%= (i > 0 ) ? "<span class='fragment_ellipsis'> ... </span>" : ""  %>
@@ -154,22 +153,21 @@
 <%
           }
 %>
-           </div>
          </td>
        </tr>
-<% 
+<%
         }
 %>
 	  </c:if><%-- details --%>
       </wiki:SearchResultIterator>
 
+      </table>
+
       <wiki:IfNoSearchResults>
-        <tr>
-          <td class="nosearchresult" colspan="2"><fmt:message key="find.noresults"/></td>
-        </tr>
+        <p class="warning"><fmt:message key="find.noresults"/></p>
       </wiki:IfNoSearchResults>
 
-      </table>
+
     </div>
     </div>
     ${pagination}

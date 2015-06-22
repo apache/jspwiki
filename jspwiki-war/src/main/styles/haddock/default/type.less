@@ -1,0 +1,420 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+
+//bootstrap
+p, .p {
+  margin: 0 0 (@line-height-computed / 2);
+}
+
+/*
+Headings:
+    The headings h2, h3 and h4 get a {{clear:left}} so they can appear
+    side by side with .commentboxes.
+
+    The {{.editsection}} and {{.hashlink}} define the styling of the
+    [[Edit] and # hash-hover link on each heading.
+
+DOM structure:
+(start code)
+    h2[id="section-..."] Header-Title
+        a.hashlink  #
+        a.edit-section[href="...&section=0"] [Edit]
+(end)
+*/
+
+.hashlink { margin-left: 1em; }
+.edit-section, .hashlink {
+
+    .btn; .btn-default; .btn-xs;
+    margin-right: .25em;
+    .transition(all 1s ease);
+    &:hover { .opacity(1); border-color:transparent; }
+
+}
+h2,h3,h4 {
+
+    .edit-section, .hashlink { .opacity(0); }
+    &:hover {
+        .edit-section, .hashlink { .opacity(.5); }
+    }
+
+}
+
+.sidebar .hashlink, .sidebar .editsection, .panel-title .hashlink { .hidden; }
+
+
+
+b, i {
+    color:inherit;
+}
+
+//used by HighlightQuery, TableX.Filter, ...
+mark,
+.highlight {
+    background-color: @highlight !important;
+}
+
+
+//CHECKME
+br { clear: both; }
+
+
+//CHECKME
+.tree, .tree ul {
+    list-style: none;
+}
+.tree ul li {
+    position: relative;
+}
+/* Inspired by: VM UI Framework */
+/* horizontal connecting lines */
+.tree ul li::before {
+    background: #222;
+    content: '';
+    height: 0.2em;
+    left: -1.5em;
+    position: absolute;
+    top: 0.9em;
+    width: 1em;
+}
+/* vertical connecting lines */
+.tree ul li::after {
+    background: #222;
+    content: '';
+    height: 100%;
+    left: -1.5em;
+    position: absolute;
+    top: 0;
+    width: 0.2em;
+}
+/* closing vertical connecting corner */
+.tree ul li:last-child::after {
+    height: 1em;
+}
+
+//dl { .dl-horizontal; }
+dl dd { margin-left:2em; }   //reset flat style of bootstrap/type
+
+
+.hr {
+  display: block;
+  margin-top: 10px 0;
+  border: 0;
+  border-top: 1px solid #eeeeee;
+}
+
+
+/*
+PRE and xflow:
+    Pre-formatted text and code blocks.
+
+    pre - preformatted block
+    .pre - preformatted inline block
+    tt - teletype, monospace inline block
+
+    The ''.xflow'' class ensures a browser compatible overflow of wide content.
+    By default the page height depends on the content, the width should not
+    go beyond the width of the display. So, if needed, add a horizontal scroll bar.
+    Does have some IE specific hacks.
+
+    Applicable to preformatted blocks (pre, tt, code), and the main page content
+    elements such as #pagecontent, #findcontent, #info, #attach, ...
+
+*/
+
+
+//inline code: jspwiki uses <tt> ; styles copied from bootstrap/code.less
+tt {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: @code-color;
+  background-color: @code-bg;
+  white-space: nowrap;
+  border-radius: @border-radius-base;
+}
+//  => reuse styling of pre
+
+//list-unstyled : bootstrap
+//list-hover
+.list-hover {
+    li:hover {
+        background-color:@dropdown-link-hover-bg;
+        a { text-decoration:none; }
+    }
+}
+.list-nostyle { list-style: none; }
+
+
+
+/*
+Links:
+    The reusable {{.hover}} class provides generic support for
+    mouse-hover styling on any DOM element. (IE only supports :hover on <a>)
+
+>   a:link { ... }
+>   a:hover { ... }
+>   a:focus { ... }
+>   a:visited { ... }
+>   a:active { ... }
+
+>   a.wikipage
+>   a.external
+>   a.interwiki
+>   a.createpage
+*/
+
+
+//generic behavior -- why not part of bootstrap ??
+a:hover { cursor:pointer; }
+
+//mimic :hover, for old ie cases which may not yet support :hover
+.hover { background-color:@wiki-hover; }
+
+.createpage {
+    color: @wiki-link-createpage;
+    border-bottom: 1px dashed @wiki-link-createpage;
+    &:hover {
+        color:darken(@wiki-link-createpage,10%);
+        text-decoration:none;
+    }
+}
+
+.infolink {
+    display:inline-block;
+    width:16px; height:16px;
+    vertical-align:text-bottom;
+}
+
+//TODO: Overrule standard small red arrow; replace by ...  FIXME
+img.outlink { display:none; }
+a.external:after {
+    content: "\279A";
+    //content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=");
+    //content:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAMAAADXEh96AAAAB3RJTUUH0wMUEC8DV5a0ngAAAAlwSFlzAAAK8AAACvABQqw0mAAAAwBQTFRFAAAAgAAAAIAAgIAAAACAgACAAICAwMDAwNzApsrw//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////vwoKCkgICA/wAAAP8A//8AAAD//wD/AP//////9ptMMgAAAAt0Uk5T/////////////wBKTwHyAAAAG0lEQVR42mPg4voJBAxcYJoBxgMSXGAKKA6lALPeEyZVnxeBAAAAAElFTkSuQmCC);
+}
+
+
+/*
+Interwiki link
+    Reader : show pages without sidebar,minimal header/footer
+    <a class="interwiki" href="Wiki.jsp?page=XXX&skin=reader">XXX</a>
+*/
+a.interwiki[href$="skin=reader"]:hover {
+    border-bottom: 1px dashed @link-hover-color;
+}
+a.interwiki[href$="skin=raw"]:hover {
+    border-bottom: 1px dotted @link-hover-color;
+}
+
+
+/*
+Footnotes
+*/
+.footnote, .footnoteref {
+    .small;
+    vertical-align:super;
+}
+.footnoteref { padding:0 .3em; }
+
+/*
+Images
+*/
+img {
+    border:0;
+    &.inline { .img-responsive; /*max-width:100%;*/ }
+}
+//img.inline
+//img.outlink
+//img.attlink
+
+// Utility class to support un-scaled, scrollable images,
+.scroll, .xflow {
+    overflow:scroll;
+
+    pre, img.inline { width:auto; max-width:none; }
+
+    pre { white-space: nowrap; }
+}
+
+
+
+/*
+Section: Reusable Styles
+    Various reusable css classes for small text, sub- and super-text,
+    strike-through formatting, centered text, quotes, ....
+
+    The standard error, warning and information boxes are defined here as well.
+*/
+
+//.sub { .small; vertical-align:sub; }
+//.sup { .small; vertical-align:super; }
+// Prevent impact on line-height See http://css-tricks.com/snippets/css/prevent-superscripts-and-subscripts-from-affecting-line-height/
+.sup, .sub {
+    .small;
+    //vertical-align: baseline; //standard.
+    position: relative;
+    top: -0.4em;
+}
+.sub { top: 0.4em; }
+
+
+.strike { text-decoration:line-through; }
+
+//see also bootstrap .text-center
+.center {
+    text-align:center;
+    table { text-align:left; }
+}
+
+// %%dropcaps .. /%
+// CSS3:  div.dropcap:first-child:first-letter. See http://css-tricks.com/snippets/css/drop-caps/
+div.dropcaps {
+    .p;
+    > span.dropcaps {
+        float:left;
+        color:@dropcaps-color;
+        padding:0 @table-cell-padding;
+        font-family:@dropcaps-font-family;
+        font-size:@dropcaps-font-size;
+        font-weight:@dropcaps-font-weight;
+        line-height:80%;
+        text-shadow:2px 2px 1px rgba(0,0,0,.25);
+    }
+}
+
+
+//%%quote .. /%
+//.quote is replaced by <blockquote>, to reuse bootstraps styling
+
+.page-break {
+    display:block;
+    height:2px;
+    /*background:url(page-break.jpg) 0 center repeat-x; */
+    border-top:2px dashed @table-border-color;
+    margin:1em 0;
+
+    &:hover:after {
+        content:"page break";
+        text-align:center;
+        display:block;
+        color:@table-border-color;
+        .small;
+    }
+
+}
+
+//checkme - should be defined in bootstrap
+.bg-success { background-color: @state-success-bg; }
+.bg-info    { background-color: @state-info-bg; }
+.bg-warning { background-color: @state-warning-bg; }
+.bg-danger  { background-color: @state-danger-bg; }
+
+
+.ltr { direction:ltr; }
+.rtl { direction:rtl; }
+
+//use bootstraps general .show, .hidden, .invisible
+//Classes used by the TASKS plugin  (.hide, .invisible)
+//ok in bootstrap
+
+//checkme: still used?
+.accesskey { text-decoration:underline; }
+
+.changenote { font-style: italic; }
+
+// used by info and attachment tables to display file sizes
+.nowrap-number { white-space:nowrap; }
+.text-right { text-align:right; }
+
+[class^=tangle-] { background: @yellow; }
+
+//TODO: why not use .panel iso .alert as base for these communication boxes
+.default, .success, .information, .info,  .warning, .error, .danger {
+    .alert;
+    clear:both;
+    display:block;
+}
+//support inline information blocks
+span.default, span.success, span.information, span.info,  span.warning, span.error, span.danger {
+    display:inline;
+    padding: .05em .25em;
+}
+
+.default {
+    .alert-variant(@btn-default-bg; @btn-default-border;@btn-default-color);
+}
+.success            { .alert-success; }
+.info, .information { .alert-info; }
+.warning            { .alert-warning; }
+.error, .danger     { .alert-danger; }
+
+//CHECKME: make sure to fill the table cell with the background color
+td .success, td .information, td .warning, td .error { margin:0; }
+//BETTER:  td > .alert { margin:0; }
+
+
+/*
+Style: CAPTCHA tables and images
+*/
+.asirraCaptcha img { width: @wiki-captcha-width; }
+.asirraCaptcha td {
+    background:@wiki-captcha-bg;
+    border:1px solid @table-border-color;
+    padding:1em;
+}
+
+
+/*
+Style: spin; loading animation
+    Reusable class to indicate background processing or loading of ajax content.
+
+    A background image is positioned at the right-hand side of the enclosing element.
+    Alternative: use CSS loading animation
+
+Example:
+>    span.spin (type ahead)
+
+*/
+.spin {
+    background:url("@{imagePath}/loading-bar.gif") no-repeat center center !important;
+    //width:16px;
+    //height:16px;
+    //margin:0 0.5em;*/
+}
+
+
+//utility class
+.under-construction {
+    display:block;
+    width:100%;
+    text-align:center;
+    .progress;
+    .progress-bar-variant(@yellow);
+    .progress-striped .progress-bar;
+    .progress.active .progress-bar;
+
+    &:after {
+        content:"UNDER CONSTRUCTION";
+        letter-spacing:1ex;
+        font-weight:bold;
+    }
+}
+

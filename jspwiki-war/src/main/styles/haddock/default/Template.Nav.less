@@ -1,0 +1,89 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Section: Page Navigation
+	Uses bootstrap styling with navigation pills, and a dropdown-menu.
+
+DOM Structure:
+(start code)
+div.row
+	ul.nav.nav-pills.pull-left
+		li
+			a.logo
+
+	ul.nav.nav-pills.pull-right
+		li.menu
+			a Menu
+    	li
+    		a Attach
+    	li
+    		a Info
+    	li[.disabled]
+    		a Edit
+    	li
+    		More
+    		span.caret
+    		ul.dropdown-menu.pull-right
+    			...
+
+(end)
+*/
+
+// ref. http://updates.html5rocks.com/2012/08/Stick-your-landings-position-sticky-lands-in-WebKit
+/*
+Note: avoid page-bump when sticky become 'fixed', by adding a spacer with its height
+
+(start code)
+    div.sticky(.stickyOn)
+        .. content ..
+        div.sticky-spacer[style="height:.."] //height calculated by js - same as content
+(end)
+
+*/
+.sticky {
+    display:block;
+
+    + .sticky-spacer { .hide; }
+
+    .pagename {
+        font-size: @wiki-logo-font-size;
+        line-height: 1;
+        .opacity(0);
+        .transition(all .5s ease);
+    }
+}
+
+.stickyOn {
+    top: 0;
+    z-index: 5;
+    position: fixed;
+    background: @dropdown-bg;
+    .opacity(.9);
+    .box-shadow(0 9px 12px -9px rgba(0,0,0,.175));
+
+    + .sticky-spacer { .show; }
+
+    .pagename { .opacity(1); }
+}
+
+//More-menu - add padding to unstyled lists, for proper menu look&feel
+.more-menu ul.list-unstyled { padding: 3px 20px;}
+

@@ -31,7 +31,7 @@ Credit:
 Arguments
     node - (DOM-element)
     query - (optional) query string, default is document referrer query string
-    template - (string) html template replacement string, default <span class='highlight'>$1</span>
+    template - (string) html template replacement string, default <mark>$&</mark>
 */
 function HighlightQuery( node, query, template ){
 
@@ -56,7 +56,7 @@ function HighlightQuery( node, query, template ){
                 if( regexp.test( s ) ){
 
                     n = new Element('span',{
-                        html: s.replace(regexp, template || "<span class='highlight'>$1</span>")
+                        html: s.replace(regexp, template || "<mark>$&</mark>")
                     });
                     frag = document.createDocumentFragment();
                     while( n.firstChild ) frag.appendChild( n.firstChild );

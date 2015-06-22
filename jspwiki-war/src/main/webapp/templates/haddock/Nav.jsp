@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -27,26 +27,25 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );
-  pageContext.setAttribute( "attachments", c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() ); 
-  String frontpage = c.getEngine().getFrontPage(); 
+  pageContext.setAttribute( "attachments", c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() );
+  String frontpage = c.getEngine().getFrontPage();
 %>
 
 <%-- navigation bar --%>
-<div class="row">
+<div class="row sticky">
 
 <ul class="nav nav-pills pull-left">
-  <li>
-    <a class="logo" href="<wiki:Link page='<%=frontpage%>' format='url' />"
-       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">apache jsp&#x03C9;iki</a>
+  <%-- toggle sidebar --%>
+  <li id="menu"><a href="#"><!--&#x2261;-->&#9776;</a></li>
+  <li class="pagename">
+    <wiki:CheckRequestContext context='view'><a href="#top"><wiki:PageName /></a></wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context='!view'><wiki:Link><wiki:PageName/></wiki:Link></wiki:CheckRequestContext>
   </li>
 </ul>
 
 <ul class="nav nav-pills pull-right">
 
-  <%-- toggle sidebar --%>
-  <li id="menu"><a href="#"><!--&#x2261;-->&#9776; Sidebar</a></li>
-
-  <%-- view --%>
+  <%-- view
   <wiki:CheckRequestContext context='info|diff|upload|rename|edit'>
   <li id="view">
     <wiki:PageType type="page">
@@ -54,25 +53,26 @@
         <fmt:message key="view.tab"/>
       </wiki:Link>
     </wiki:PageType>
-    <wiki:PageType type="attachment">
-      <%--
-      <wiki:Link page="<wiki:ParentPageName />" title="<fmt:message key='actions.viewparent'/>" >
-        <fmt:message key="view.tab"/> Parent
-      </wiki:Link>
-      --%>
-      <wiki:LinkToParent><fmt:message key="view.tab"/> Parent</wiki:LinkToParent>      
-    </wiki:PageType>
   </li>
   </wiki:CheckRequestContext>
-
+  --%>
+  <wiki:PageType type="attachment">
+      <li>
+      <wiki:LinkToParent><%-- <wiki:Link page="<wiki:ParentPageName/>" > --%>
+        <fmt:message key="info.backtoparentpage" >
+        <fmt:param><span class="label label-info label-sm"><wiki:ParentPageName/></span></fmt:param>
+        </fmt:message>
+      </wiki:LinkToParent>
+      </li>
+  </wiki:PageType>
 
   <%-- attachment --%>
   <wiki:CheckRequestContext context='view|info|rename|edit'>
   <wiki:PageType type="page">
   <li id="attach">
-    <wiki:Link context="upload" accessKey="a" title="<fmt:message key='actions.attach.title'/>" >
+    <wiki:Link context="upload" accessKey="a" >
         <fmt:message key='attach.tab'/>
-      <c:if test="${attachments > 0}">  
+      <c:if test="${attachments > 0}">
         <span class="badge">${ attachments }</span>
       </c:if>
     </wiki:Link>
@@ -84,9 +84,9 @@
   <wiki:CheckRequestContext context='view|upload|rename|edit'>
   <li id="info">
     <wiki:Link context="info" accessKey="i">
-      <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists> 
+      <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists>
     </wiki:Link>
-  <wiki:PageExists>  
+  <wiki:PageExists>
   <ul class="dropdown-menu pull-right" data-hover-parent="li">
       <li class="dropdown-header">This is version <span class="badge"><wiki:PageVersion /></span></li>
       <li class="dropdown-header">Last Changed on:</span></li>
@@ -98,31 +98,34 @@
     </wiki:CheckVersion>
     <%--fixme: Author sometimes returns a link(ok) or a plain text(bad formatting) --%>
     <li class="dropdown-header">By:</span></li>
-    <li><wiki:Author /></li> 
-    <li class="divider"></li> 
-    <li><wiki:RSSImageLink mode="wiki" /></li> 
+    <li><wiki:Author /></li>
+    <li class="divider"></li>
+    <li><wiki:RSSImageLink mode="wiki" /></li>
+
   </ul>
   </wiki:PageExists>
   </li>
-  </wiki:CheckRequestContext>  
-  
+  </wiki:CheckRequestContext>
+
 
   <%-- edit --%>
+  <wiki:PageType type="page">
   <wiki:CheckRequestContext context='view|info|diff|upload|rename'>
-	<li id="edit" 
+	<li id="edit"
 	  class="<wiki:Permission permission='!edit'>disabled</wiki:Permission>">
       <wiki:PageType type="page">
-        <wiki:Link context="edit" accessKey="e" title="<fmt:message key='actions.edit.title'/>" >
+        <wiki:Link context="edit" accessKey="e" >
           <fmt:message key='actions.edit'/>
         </wiki:Link>
       </wiki:PageType>
       <wiki:PageType type="attachment">
-        <wiki:Link context="edit" page="<wiki:ParentPageName />" accessKey="e" title="<fmt:message key='actions.editparent'/>" >
+        <wiki:Link context="edit" page="<wiki:ParentPageName />" accessKey="e" >
           <fmt:message key='actions.edit'/>
         </wiki:Link>
       </wiki:PageType>
     </li>
   </wiki:CheckRequestContext>
+  </wiki:PageType>
 
 
   <%-- help slimbox-link --%>
@@ -145,7 +148,7 @@
         <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
         </fmt:message>
         </div>
-      </wiki:NoSuchPage>  
+      </wiki:NoSuchPage>
     --%>
   </li>
   </wiki:CheckRequestContext>
@@ -175,28 +178,47 @@
     </wiki:Link>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
 
-      <%-- VIEW RAW PAGE SOURCE --%>
-      <wiki:PageExists>  
+      <wiki:PageExists>
       <wiki:CheckRequestContext context='view|info|diff|upload|preview' >
+
+        <%-- VIEW RAW PAGE SOURCE --%>
         <li>
           <wiki:CheckVersion mode="latest">
           <%--FIXME: wiki:Link doesnt support class=".." yet ; should be changed to className=".." --%>
-          <a class="slimbox-link" 
+          <a class="slimbox-link"
              href="<wiki:Link format='url'><wiki:Param name='skin' value='raw'/></wiki:Link>"><fmt:message key='actions.rawpage' />
           </a>
           </wiki:CheckVersion>
           <wiki:CheckVersion mode="notlatest">
-          <a class="slimbox-link" 
+          <a class="slimbox-link"
              href="<wiki:Link format='url' version='${param.version}'><wiki:Param name='skin' value='raw'/></wiki:Link>"><fmt:message key='actions.rawpage' />
           </a>
           </wiki:CheckVersion>
         </li>
+
+        <%-- Show Reader View --%>
+        <li>
+          <wiki:CheckVersion mode="latest">
+          <%--FIXME: wiki:Link doesnt support class=".." yet ; should be changed to className=".." --%>
+          <a class="reader-view"
+             href="<wiki:Link format='url'><wiki:Param name='skin' value='reader'/></wiki:Link>"><fmt:message key='actions.showreaderview' />
+          </a>
+          </wiki:CheckVersion>
+          <wiki:CheckVersion mode="notlatest">
+          <a class="reader-view"
+             href="<wiki:Link format='url' version='${param.version}'><wiki:Param name='skin' value='reader'/></wiki:Link>"><fmt:message key='actions.showreaderview' />
+          </a>
+          </wiki:CheckVersion>
+        </li>
+
       </wiki:CheckRequestContext>
-      </wiki:PageExists>  
+      </wiki:PageExists>
+
+
 
       <%-- ADD COMMENT --%>
       <wiki:CheckRequestContext context='view|info|diff|upload'>
-      <wiki:PageExists>  	
+      <wiki:PageExists>
       <wiki:Permission permission="comment">
         <wiki:PageType type="page">
           <li>
@@ -206,17 +228,17 @@
           </li>
         </wiki:PageType>
         <wiki:PageType type="attachment">
-          <li> 
+          <li>
             <%--
             <wiki:Link page="<wiki:ParentPageName />" context="comment" title="<fmt:message key='actions.comment.title' />">
               <fmt:message key="actions.comment" />
             </wiki:Link>
             --%>
-            <wiki:LinkToParent><fmt:message key="actions.comment" /> To Parent</wiki:LinkToParent>      
+            <wiki:LinkToParent><fmt:message key="actions.comment" /> To Parent</wiki:LinkToParent>
 	      </li>
         </wiki:PageType>
       </wiki:Permission>
-      </wiki:PageExists>  
+      </wiki:PageExists>
       </wiki:CheckRequestContext>
 
       <%-- WORKFLOW --%>
@@ -244,18 +266,18 @@
       <%-- divider --%>
       <wiki:PageExists page="MoreMenu">
 
-        <wiki:CheckRequestContext context='view|info|diff|upload|prefs'>
+        <wiki:CheckRequestContext context='view|info|diff|upload|prefs|workflow|createGroup'>
         <li class="divider "></li>
         </wiki:CheckRequestContext>
 
       <li class="more-menu"><wiki:InsertPage page="MoreMenu" /></li>
       </wiki:PageExists>
-      
+
     </ul>
   </li>
 
 </ul>
- 
+
 </div>
   <%--
   <wiki:PageExists>
@@ -264,6 +286,6 @@
     <wiki:Include page="AttachmentTab.jsp"/>
   </wiki:Tab>
   </wiki:PageType>
-    
+
   </wiki:PageExists>
   --%>

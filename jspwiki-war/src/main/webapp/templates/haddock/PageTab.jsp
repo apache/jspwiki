@@ -14,12 +14,13 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %><%--CHECK why is this needed --%>
 <fmt:setLocale value="${prefs.Language}" />
@@ -43,30 +44,30 @@
 <%-- If the page is an older version, then offer a note and a possibility
      to restore this version as the latest one. --%>
 <wiki:CheckVersion mode="notlatest">
-  <form action="<wiki:Link format='url' jsp='Wiki.jsp'/>" 
+  <form action="<wiki:Link format='url' jsp='Wiki.jsp'/>"
         method="get"  accept-charset='UTF-8'>
 
-    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />     
+    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <div class="error center">
       <label>
       <fmt:message key="view.oldversion">
         <fmt:param>
           <%--<wiki:PageVersion/>--%>
           <select id="version" name="version" onchange="this.form.submit();" >
-<% 
+<%
    int latestVersion = c.getEngine().getPage( pagename, WikiProvider.LATEST_VERSION ).getVersion();
 
    if( thisVersion == WikiProvider.LATEST_VERSION ) thisVersion = latestVersion; //should not happen
-     for( int i = 1; i <= latestVersion; i++) 
+     for( int i = 1; i <= latestVersion; i++)
      {
-%> 
+%>
           <option value="<%= i %>" <%= ((i==thisVersion) ? "selected='selected'" : "") %> ><%= i %></option>
 <%
-     }    
+     }
 %>
           </select>
         </fmt:param>
-      </fmt:message>  
+      </fmt:message>
       </label>
       <div>
       <a class="btn btn-primary" href="<wiki:Link format='url'/>">
@@ -82,10 +83,12 @@
 </wiki:CheckVersion>
 
 <%-- Inserts no text if there is no page. --%>
+<%
+//  pageContext.setAttribute( "sidebar", t.listSkins(pageContext, c.getTemplate() ) );
+%>
 <wiki:InsertPage />
 
-
-<%-- Inserts blogcomment if appropriate 
+<%-- Inserts blogcomment if appropriate
 <% if( !blogpage.equals("") ) { %>
 --%>
 
@@ -98,7 +101,7 @@
     <div class="weblogcomments"><wiki:InsertPage page="<%= blogcommentpage%>" /></div>
   </wiki:PageExists>
   <% }; %>
-  <div class="information">	
+  <div class="information">
 	<wiki:Link page="<%= mainblogpage %>"><fmt:message key="blog.backtomain"/></wiki:Link>&nbsp; &nbsp;
 	<wiki:Link context="comment" page="<%= blogcommentpage%>" ><fmt:message key="blog.addcomments"/></wiki:Link>
   </div>
@@ -108,6 +111,7 @@
 
 <wiki:NoSuchPage>
   <%-- FIXME: Should also note when a wrong version has been fetched. --%>
+  <%-- FIXME: Should add .createpage class to the EditLink, to color red. Not possible with wiki:EditLink --%>
   <div class="information" >
   <fmt:message key="common.nopage">
     <fmt:param><wiki:EditLink><fmt:message key="common.createit"/></wiki:EditLink></fmt:param>

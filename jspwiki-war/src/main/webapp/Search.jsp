@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -28,7 +28,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
-<%! 
+<%!
     Logger log = Logger.getLogger("JSPWikiSearch");
 %>
 
@@ -43,7 +43,7 @@
     Collection list = null;
     String query = request.getParameter( "query");
     String go    = request.getParameter("go");
-    
+
     if( query != null )
     {
         log.info("Searching for string "+query);
@@ -60,31 +60,31 @@
         {
             wikiContext.getWikiSession().addMessage( e.getMessage() );
         }
-        
+
         query = TextUtil.replaceEntities( query );
 
         pageContext.setAttribute( "query",
                                   query,
                                   PageContext.REQUEST_SCOPE );
-        
+
         //
         //  Did the user click on "go"?
-        //           
+        //
         if( go != null )
         {
             if( list != null && list.size() > 0 )
             {
                 SearchResult sr = (SearchResult) list.iterator().next();
-                
+
                 WikiPage wikiPage = sr.getPage();
-                
+
                 String url = wikiContext.getViewURL( wikiPage.getName() );
-                
+
                 response.sendRedirect( url );
-                
+
                 return;
             }
-        }                              
+        }
     }
 
     // Set the content type and include the response content

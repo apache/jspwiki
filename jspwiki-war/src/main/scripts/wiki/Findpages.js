@@ -21,27 +21,51 @@
 /*
 Class: Wiki.SearchBox
     ...
-    Adds/Removes 'li.findpages' elements to the dropdown menu.
+    Adds/Removes "li.findpages" elements to the dropdown menu.
     These elements are the results of the wiki rpc call, based on the query.
 
 
 Example:
->    wiki.add('query', Wiki.SearchBox, {
->        rpc: function(value, callback){ Wiki.ajaxJsonCall('/search/findPages',[value,'20'], callback },
+>    wiki.add("query", Wiki.Findpages, {
+>        rpc: function(value, callback){ Wiki.ajaxJsonCall("/search/findPages",[value,"20"], callback },
+>        rpc: function(value, callback){ wiki.jsonrpc("search.findPages", [value,20], callback },
 >        toUrl: wiki.toUrl
 >    });
+
+DOM Structure:
+(start code)
+
+      //only ico no full match with query : options to create/clone new page
+      li.findpages
+          a.createpage[href="/wiki/B"] [Create] B
+      li.findpages
+          a.createpage[href="/wiki/B&clone=Main]  [Create] B [based on] Main
+      //show all rpc results
+      li.findpages
+          a[href]
+
+(end)
 */
 Wiki.Findpages = new Class({
 
-    Binds:['search','action'],
+    Binds: ["search", "action"],
     Implements: Events,
 
     initialize: function(element, options){
 
-        this.rpc = options.rpc;
-        this.toUrl = options.toUrl;
-        this.query = element.getParent('form').query.observe( this.search );
-        this.element = element; //ul.dropdown menu
+        var self = this;
+
+        self.rpc = options.rpc;
+        self.toUrl = options.toUrl;
+        self.allowClone = options.allowClone;
+        self.query = element.getParent("form").query.observe( self.search );
+        self.element = element; //ul.dropdown menu
+
+        self.element.addEvent("click:relay([name=cloney])", function(){
+
+            this.getParent("a").href = self.toUrl(self.getValue(), true, this.checked);
+
+        });
 
     },
 
@@ -50,20 +74,25 @@ Wiki.Findpages = new Class({
     },
 
     empty: function(){
-        this.element.getElements('li.findpages').destroy();
+        this.element.getElements("li.findpages").destroy();
     },
 
     search: function(){
 
         var value = this.getValue();
 
-        if( (value == null) || (value.trim()=="") ){
+        if( (value == null) || (value.trim() == "") ){
 
             this.empty();
 
         } else {
 
-            this.rpc( 'name:'+value, this.action );
+            //this.rpc( "name:" + value, this.action );
+            this.rpc( value, this.action );
+            //for testing ...
+            //this.action([{"score":91,"page":"Collapsible List"},{"score":78,"page":"BrushedTemplateEditor"},{"score":78,"page":"BrushedTemplate"},{"score":78,"page":"BrushedTemplateScreenshots"},{"score":76,"page":"BrushedWikiPlugin"},{"score":76,"page":"BrushedTemplateTypography"},{"score":76,"page":"BrushedTemplateDiscussion"},{"score":74,"page":"BrushedTemplateIdeas"},{"score":71,"page":"BrushedTemplateTOC"},{"score":70,"page":"BrushedTemplateDiscussion2006"},{"score":68,"page":"BrushedTemplateMetadataEditor"},{"score":66,"page":"BrushedTemplateEval"},{"score":66,"page":"BrushedTemplateForms"},{"score":66,"page":"BrushedTemplateJSP"},{"score":66,"page":"BrushedTemplateToolbar"},{"score":65,"page":"BrushedTemplateListTable"}]);
+
+            //obsolete:
             //for testing ...
             //this.action({"id":10000,"result":{"javaClass":"java.util.ArrayList","list":[{"map":{"page":"BrushedTemplateCollapse","score":99},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplate","score":95},"javaClass":"java.util.HashMap"},{"map":{"page":"CollapsibleList","score":61},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateInGerman","score":55},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateDiscussion","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateScreenshots","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTypography","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedConditionalPlugin","score":48},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateDiscussion2006","score":45},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateMetadataEditor","score":44},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTablePlugin","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateColumns","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateCategories","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateToolbar","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTOC","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateAccordion","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTip","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateSlimbox","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateRoundedCorners","score":40},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedEditPageHelp","score":37},"javaClass":"java.util.HashMap"}]}});
 
@@ -75,43 +104,42 @@ Wiki.Findpages = new Class({
 
         var self = this,
             value = self.getValue(),
-            elements = [], content, btn = 'span.btn.btn-xs.btn-danger';
+            elements = [], item;
 
-        //helper function
-        function addLI( page, score, isEdit, isClone ){
+        if( result ){
 
-            content = [];
-            if( isClone ){
-                content.push(btn, {text: "Clone this page and Create".localize() });
-            } else if( isEdit ){
-                content.push(btn, {text: "Create".localize() });
-            }
-            content.push( 'span', {text:page});
-            if( score ) content.push('span.badge.pull-right', {text:score});
+            item = result[0];
 
-            elements.push( "li.findpages", [
-                ( isEdit ? "a.createpage" : "a" ), { href: self.toUrl(page, isEdit, isClone) }, 
-                content     
-            ]);
+            if( !item || item.page != value ){
 
-        }
+                elements.push( "li.findpages", [
+                    "a", { href: self.toUrl(value, true), title: "sbox.create".localize(value) }, [
+                        "span.createpage", { text: value }, [
+                            "div.btn.btn-danger.btn-xs.pull-right", [
+                               "input[type=checkbox][name=cloney]",
+                               "span", { text: "sbox.clone".localize() }
+                            ]
+                        ]
+                    ]
+                ]);
 
-        if( result.list ){
-
-            item = result.list[0];
-            if( !item || item.map.page!=value ){
-                addLI(value, 0, true);  //create new page
-                addLI(value, 0, true, true);  //clone current page into a new page
             }
 
-            while(result.list[0]){
-                item = result.list.shift().map; 
-                addLI(item.page, item.score);                
+            while( result[0] ){
+
+                item = result.shift();
+
+                elements.push( "li.findpages", [
+                    "a", { href: self.toUrl( item.page ) }, [
+                        "span", { text: item.page },
+                        "span.badge.pull-right", { text: item.score }
+                    ]
+                ]);
             }
 
 			self.empty();
-			if(elements[0]) elements.slick().inject( self.element.getFirst('.divider'), 'before' );
-            //self.fireEvent('complete');
+			if( elements[0] ){ elements.slick().inject( self.element.getFirst(".divider"), "before" ); }
+            //self.fireEvent("complete");
 
         }
     }

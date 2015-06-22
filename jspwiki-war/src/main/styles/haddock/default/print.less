@@ -1,0 +1,190 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Section: Print-media
+    Styles to improve the page rendering during printing.
+    Printing displays the page-titel and page-content; other blocks
+    like the favorites, login-sections, search box, menu dropdowns etc. are hidden.
+
+    Tabbed sections are printed one after the other.
+    Accordion sections are printed one after the other.
+*/
+
+@media print {
+
+/*
+Inherit parts of Bootstrap:print.less ;
+*/
+//
+// Basic print styles
+// --------------------------------------------------
+// Source: https://github.com/h5bp/html5-boilerplate/blob/master/css/main.css
+
+  * {
+    text-shadow: none !important;
+    //color: #000 !important; // Black prints faster: h5bp.com/s
+    //background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size:85%;
+    color:grey;
+    font-family:"Courier New", Courier, mono; font-size:8pt;
+  }
+
+  // Dont show links for images, or javascript/internal links
+  a[href^="javascript:"]:after,
+  a[href^="#"]:after {
+    content: "";
+  }
+
+  pre,
+  blockquote {
+    //border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group; // h5bp.com/t
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 2cm .5cm;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  // Chrome (OSX) fix for https://github.com/twbs/bootstrap/issues/11245
+  // Once fixed, we can just straight up remove this.
+  select {
+    background: #fff !important;
+  }
+
+  // Bootstrap components
+  .navbar {
+    display: none;
+  }
+
+/*
+  .table {
+    td,
+    th {
+      background-color: #fff !important;
+    }
+  }
+  .btn,
+  .dropup > .btn {
+    > .caret {
+      border-top-color: #000 !important;
+    }
+  }
+  .label {
+    border: 1px solid #000;
+  }
+*/
+
+  table, tt,pre {
+    overflow:visible;
+    page-break-before: avoid;
+    page-break-inside: avoid;
+  }
+
+  .table {
+    border-collapse: collapse !important;
+  }
+  .table-bordered {
+    th,
+    td {
+      border: 1px solid #ddd !important;
+    }
+  }
+
+
+/*
+JSPWiki print-specific styles
+*/
+.watermark, .logo, .titlebox, .searchbox, .breadcrumb, .nav, a.feed[href],
+.edit-section, .hashlink, .filter-input, .slmbx,
+a[href='#top'] {
+    display:none;
+}
+.header , .footer  {
+    background:transparent !important;
+    color:#000 !important;
+}
+.header { border-bottom:1px solid #555; }
+.footer { border-top:1px solid #555; }
+
+
+/* hidden tabs are made visible during print
+ * when printing a page, also the attachment tab gets printed
+ */
+.tabmenu {
+    display:block;
+    visibility:visible;
+}
+.hidetab {
+    display:block;
+    margin:1em 0;
+}
+.tabs { border:none; }
+//todo : open all accordion sections
+
+
+//CHECK -- ff bug : avoid floats during printing
+//.commentbox { float:none; }
+
+//FIXME: Page-break: force a new page with the explicit %%page-break style.
+.page-break {
+    //height:0;
+    page-break-before:always;
+    //border:none;
+    margin:0;
+}
+
+
+} /* end of @media print */

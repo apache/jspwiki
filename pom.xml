@@ -43,6 +43,7 @@
     <lucene.version>4.7.0</lucene.version>
     <selenium.version>2.42.0</selenium.version>
     <slf4j.version>1.7.7</slf4j.version>
+    <wro4j.version>1.7.8</wro4j.version>
     <minimize>true</minimize> <!-- wro4j compression -->
   </properties>
 
@@ -71,7 +72,7 @@
         <artifactId>gson</artifactId>
         <version>2.3.1</version>
       </dependency>
-      
+
       <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
@@ -478,10 +479,10 @@
         <plugin>
           <groupId>ro.isdc.wro4j</groupId>
           <artifactId>wro4j-maven-plugin</artifactId>
-          <version>1.7.3</version>
+          <version>${wro4j.version}</version>
           <configuration>
             <contextFolder>${project.basedir}/src/main/</contextFolder>
-            <extraConfigFile>src/main/config/wro/wro.properties</extraConfigFile>
+            <extraConfigFile>${project.basedir}/src/main/config/wro/wro.properties</extraConfigFile>
             <minimize>${minimize}</minimize>
             <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
             <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
@@ -663,7 +664,7 @@
       </build>
     </profile>
   </profiles>
-  
+
   <organization>
     <name>The Apache Software Foundation</name>
     <url>http://www.apache.org/</url>

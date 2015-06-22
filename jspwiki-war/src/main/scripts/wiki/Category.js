@@ -51,26 +51,26 @@ DOM structure after:
 Wiki.Category = function(element, pagename, xhrURL){
 
     function poppy(event){
-    
+
         var popup = this.getNext();
         event.stop();
-        popup.swapClass('hide', 'loading');
-        element.set('title','').removeEvents();
+        popup.swapClass("hide", "loading");
+        element.set("title", "").removeEvents();
 
         new Request.HTML({
-            url: xhrURL,
-            data: { page:pagename },
+            url: xhrURL, //+"?page="+pagename,
+            data: { page: decodeURIComponent(pagename) },
             update: popup,
-            onSuccess: function(){ popup.swapClass('loading', 'active'); }
-        }).send();    
+            onSuccess: function(){ popup.swapClass("loading", "active"); }
+        }).send();
     }
-    
-    ['span',['div.popup.hide']].slick().wraps(element,'top');
-    
+
+    ["span", ["div.popup.hide"]].slick().wraps(element, "top");
+
     element.set({
-        'class': 'category-link',
-        title: 'category.title'.localize( pagename ),
+        "class": "category-link",
+        title: "category.title".localize( pagename ),
         events: { click: poppy }
     });
 
-}
+};

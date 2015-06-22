@@ -45,7 +45,7 @@ Example
 Dialog.Font = new Class({
 
 	Extends:Dialog.Selection,
-	
+
 	options: {
 		fonts: {
 			'arial':'Arial',
@@ -54,6 +54,7 @@ Dialog.Font = new Class({
 			'garamond':'Garamond',
 			'georgia':'Georgia',
 			'helvetica':'Helvetica',
+			'HelveticaNeue-Light':'Helvetica Neue Light',
 			'impact':'Impact',
 			'times new roman':'Times',
 			'tahoma':'Tahoma',
@@ -66,14 +67,13 @@ Dialog.Font = new Class({
 
 		var self = this, fonts = options.fonts;
 
-        //options.cssClass = '.font'+(options.cssClass||'')
-        this.setClass('.font',options);
-		options.body = fonts ? fonts : self.options.fonts;
+        self.setClass('.font',options);
+		options.body = options.fonts || self.options.fonts;
 
 		self.parent(options);
 
-		self.getItems().each(function(li){
-			li.setStyle('font-family', li.get('title') );
+		self.element.getElements('.item').each( function( item ){
+			item.setStyle('font-family', item.get('title') );
 		});
 
 	}

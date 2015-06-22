@@ -55,7 +55,7 @@ Form.MultipleFile = new Class({
     _files: [],
 
     initialize: function(input, list, drop, options){
-    
+
         input = this.element = document.id(input);
         list = this.list = document.id(list);
         drop = document.id(drop);
@@ -77,17 +77,17 @@ Form.MultipleFile = new Class({
         });
 
         function activateDrop(event, isOn){
-            drop.ifClass(isOn, 'active', '');
+            drop.ifClass(isOn, 'active');
             self.fireEvent( event.type, event );
         };
 
         if(drop && (typeof document.body.draggable != 'undefined')){
-        
+
             input.addEvents({
             dragenter: function(event){ activateDrop(event,true); }, //self.fireEvent.bind(self, 'dragenter'),
             dragleave: function(event){ activateDrop(event,false); }, //self.fireEvent.bind(self, 'dragleave'),
             dragend: self.fireEvent.bind(self, 'dragend'),
-            dragover: function(event){ 
+            dragover: function(event){
                 event.preventDefault();
                 self.fireEvent(event.type, event);
             },
@@ -98,7 +98,7 @@ Form.MultipleFile = new Class({
                 activateDrop(event, false);
             }
             });
-/*        
+/*
             input.addEvents({
             dragenter: function(e){ activateDrop(true); console.log(e.type); self.fireEvent('dragenter'); },
             dragleave: self.fireEvent.bind(self, 'dragleave'),
@@ -121,10 +121,10 @@ Form.MultipleFile = new Class({
     },
 
     add: function(file){
-    
+
         this._files.push(file);
-        
-        var newItem = this.list.getFirst().clone(true,true);          
+
+        var newItem = this.list.getFirst().clone(true,true);
         newItem.getElement('input').destroy();
         newItem.getElement('label').set('html', file.name + "<b>"+file.size/1024+" Kb</b>" );
         newItem.getElement('.delete').removeClass('hidden').store('file',file);
@@ -148,7 +148,7 @@ Form.MultipleFile = new Class({
     },
 
     getFiles: function(){
-        return this._files;        
+        return this._files;
     }
 
 });

@@ -14,11 +14,12 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -34,11 +35,12 @@
 
 <body class="context-<wiki:Variable var='requestcontext' />">
 
-<div class="container ${prefs.Orientation}">
+<div class="container${prefs.Layout=='fluid' ? '-fluid' : ''}  ${prefs.Orientation}">
 
   <wiki:Include page="Header.jsp" />
   <wiki:Include page="Nav.jsp" />
-  <div class="content active" data-toggle="li#menu,.sidebar>.close" >
+  <c:set var="sidebar"><wiki:Variable var='sidebar' /></c:set>
+  <div class="content <c:if test='${sidebar != "off"}'>active</c:if>" data-toggle="li#menu,.sidebar>.close">
     <div class="page">
       <wiki:PageExists>
         <wiki:Include page="AttachmentTab.jsp"/>
@@ -48,7 +50,7 @@
     </div>
     <wiki:Include page="Sidebar.jsp"/>
   </div>
-  <wiki:Include page="Footer.jsp" />     
+  <wiki:Include page="Footer.jsp" />
 
 </div>
 </body>

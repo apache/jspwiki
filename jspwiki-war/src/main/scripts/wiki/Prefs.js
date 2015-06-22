@@ -23,43 +23,56 @@ Javascript routines to support JSPWiki UserPreferences
     PreferencesContent.jsp
     PreferencesTab.jsp
 
-    *  prefSkin:'SkinName',
-    *  prefTimeZone:'TimeZone',
-    *  prefTimeFormat:'DateFormat',
-    *  prefOrientation:'Orientation',
-    *  editor:'editor',
-    *  prefLanguage:'Language',
-    *  prefSectionEditing:'SectionEditing' =>checkbox 'on'
+    *  prefSkin:"SkinName",
+    *  prefTimeZone:"TimeZone",
+    *  prefTimeFormat:"DateFormat",
+    *  prefOrientation:"Orientation",
+    *  editor:"editor",
+    *  prefLanguage:"Language",
+    *  prefSectionEditing:"SectionEditing" =>checkbox "on"
 */
-Wiki.once('#setCookie', function(form){
+!function(wiki){
 
-        window.onbeforeunload = function(){
+    var datapref = "[data-pref]"; //data preference elements
 
-            if( form.getElements('[data-pref]').some(function(el){
+    function windowUnload( onbeforeunload ){
+        window.onbeforeunload = onbeforeunload || function(){};
+    }
 
-                //a checkbox.get('value') returns 'on' when checked; 
-                //so getDefaultValue() should also return 'on'
-                return (el.get('value') != el.getDefaultValue());
+    wiki.once("#setCookie", function(form){
 
-            }) ) return 'prefs.areyousure'.localize();      
-        };
+        windowUnload( function(){
 
-        form.addEvent('submit', function(e){
-    
-            this.getElements('[data-pref]').each( function(el){
-                Wiki.set( el.get('data-pref'), el.get('value') ); 
+            if( form.getElements( datapref ).some(function(el){
+
+                //a checkbox.get("value") returns "on" when checked;
+                //so getDefaultValue() should also return "on"
+                return (el.get("value") != el.getDefaultValue());
+
+            }) ){ return "prefs.areyousure".localize(); }
+        } );
+
+        form.addEvent("submit", function(){
+
+            this.getElements( datapref ).each( function(el){
+
+                wiki.prefs.set( el.get( datapref ), el.get("value") );
+
             });
-            window.onbeforeunload = function(){};
+            windowUnload();
 
         });
     })
 
-    .once('#clearCookie', function(form){
+    .once("#clearCookie", function(form){
 
-        form.addEvent('submit', function(){ 
+        form.addEvent("submit", function(){
 
-            window.onbeforeunload = function(){}; 
-            Wiki.erase(); 
+            windowUnload();
+            wiki.erase();
 
         });
-});
+
+    });
+
+}(Wiki);

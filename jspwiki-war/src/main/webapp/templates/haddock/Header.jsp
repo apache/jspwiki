@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -24,23 +24,39 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext(pageContext);
-  String frontpage = c.getEngine().getFrontPage(); 
+  String frontpage = c.getEngine().getFrontPage();
 %>
-<div class="titlebox"><wiki:InsertPage page="TitleBox"/></div>
+
+<wiki:Plugin plugin="IfPlugin" args="page='TitleBox' contains='\\\\S' " >[{InsertPage page=TitleBox class=titlebox }]</wiki:Plugin>
 
 <div class="header">
 
-  <div class="watermark">jsp&#x03C9;iki</div>
-<%--  <div class="application-logo" > 
-    <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
-       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">jsp&#x03C9;iki</a>
+  <div class="topline">
+
+    <span class="cage pull-left">
+    <a class="logo pull-left"
+       href="<wiki:Link page='<%=frontpage%>' format='url' />"
+       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
+
+        <wiki:PageExists page="LogoMenu">
+        <ul class="dropdown-menu" data-hover-parent=".cage"  style="color:black;">
+          <li class="logo-menu"><wiki:InsertPage page="LogoMenu" /></li>
+        </ul>
+        </wiki:PageExists>
+    </span>
+
+    <wiki:Include page="UserBox.jsp" />
+    <wiki:Include page="SearchBox.jsp" />
+
   </div>
---%>
 
-  <wiki:Include page="SearchBox.jsp" />
+  <div class="pagename">
+    <wiki:CheckRequestContext context='view'><wiki:PageName /></wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context='!view'><wiki:Link><wiki:PageName/></wiki:Link></wiki:CheckRequestContext>
+  </div>
 
-  <div class="pagename"><wiki:PageName /></div>
+  <div class="breadcrumb">
+    <fmt:message key="header.yourtrail"/><wiki:Breadcrumbs separator="<span class='divider'></span>" />
+  </div>
 
-  <div class="breadcrumb"><fmt:message key="header.yourtrail"/><wiki:Breadcrumbs /></div>
-  
 </div>

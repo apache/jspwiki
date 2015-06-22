@@ -20,11 +20,11 @@
 */
 
 /* SMART skin
- * Additional .css on top of jspwiki.css 
+ * Additional .css on top of jspwiki.css
  * Dirk Frederickx, May 07
  */
 
-/* COLOR scheme   
+/* COLOR scheme
 	#666 font-color
 	#eee code, comment, weblogentries, (light grey)
 	#d7d7d7 table header(darker grey)
@@ -69,7 +69,7 @@
 }
 #footer {
 	margin-top:1em;
-	margin-bottom:2em;	
+	margin-bottom:2em;
 }
 #favorites {
 	margin-top:0;
@@ -80,12 +80,12 @@
 }
 
 /* +++ 200 Generic stuff here +++ */
-* { 
+* {
 	color:#666;
 }
 
 /* +++ 210 Page titles, headings, and paragraphs +++ */
-#header .pagename { 
+#header .pagename {
 	color:white;
 }
 h2 {
@@ -97,7 +97,7 @@ h3 {
 h4 {
 	font-size:1.0em;
 }
-h2,h3,h4 { 
+h2,h3,h4 {
 	color:#c00;
 }
 .editsection a:link, .editsection a:active, .editsection a:visited {
@@ -126,7 +126,7 @@ legend, label {
 }
 
 /* +++ 240 Pre-formatted text blocks and code +++ */
-pre { 
+pre {
 	border:1px dashed #b6b6b6;
 	background-color:#fff7c0; /*light yellow */
 }
@@ -141,13 +141,13 @@ a.createpage {
 	color:#666;
 	border-bottom:1px dashed #c00;
 }
-a.createpage:hover { 
+a.createpage:hover {
 	border-bottom:1px solid #c00;
 }
 a.wikipage:hover {
 	border-bottom:1px solid #999;
 }
-.calendar a, .breadcrumbs a, .applicationlogo a { 
+.calendar a, .breadcrumbs a, .applicationlogo a {
 	border-bottom:none !important;
 }
 
@@ -163,7 +163,7 @@ a.wikipage:hover {
 	background-image:url(images/smart-logo.gif);
 	background-position:top left;
 }
-.applicationlogo a:hover { 
+.applicationlogo a:hover {
 	background-position:top left;
 }
 
@@ -185,7 +185,7 @@ a.wikipage:hover {
 	color:#c00;
 	border:1px solid #ccc;
 }
-.wikitable * td { 
+.wikitable * td {
 	padding:4px;
 	border:1px solid #ccc;
 }
@@ -203,14 +203,14 @@ a.wikipage:hover {
 /* +++ 425 Edit/EditContent and CommentContent +++ */
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
-	background:#fad112; 
+	background:#fad112;
 }
 #findSuggestionMenu {
 	color:#c30;
 	background-color:#fad112;
 	border:4px solid #fad112;
 }
-#findSuggestionMenu .hover { 
+#findSuggestionMenu .hover {
 	background-color:#fff7c0;
 }
 
@@ -229,14 +229,14 @@ a.wikipage:hover {
 	background:url(images/user_green.png)  2px 2px no-repeat;
 }
 /* +++ 450 FindContent / 450 Graph Bars +++ */
-.breadcrumbs { 
+.breadcrumbs {
 	padding:0;
-	height:1.5em; 
+	height:1.5em;
 	overflow:hidden;
 }
 .searchword, .cursor, .searchmatch {
 	background-color: #fad112;
-} 
+}
 .graphBar {
 	border-color:#fad112;
 }
@@ -268,7 +268,7 @@ a.wikipage:hover {
 	font-weight:bold;
 	color:#666;
 }
-#moremenu a:hover, a.action:hover, 
+#moremenu a:hover, a.action:hover,
 .userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
 	background-color:#fad112 !important;
 	color:#c00;
@@ -298,7 +298,7 @@ a.tool:hover, .btn:hover {
 }
 #sneakpreviewheader {
 	background-color:#fff7c0;
-}  
+}
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
 /* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
@@ -306,19 +306,19 @@ a.tool:hover, .btn:hover {
 #searchSubmit {
 	background: url(../../images/search.gif) no-repeat center;
 }
-#header a:link, #header a:visited, #recentSearches { 
+#header a:link, #header a:visited, #recentSearches {
 	color:#666;
 }
-#recentSearches div { 
+#recentSearches div {
 	color:#666;
 	text-decoration:none;
 }
-#searchboxMenu { 
+#searchboxMenu {
 	border:1px solid #b6b6b6;
 	top:3em;
 	/*right:0;*/
-} 
-#searchTools a:hover, #searchboxMenu li:hover { 
+}
+#searchTools a:hover, #searchboxMenu li:hover {
 	background:#fad112;
 }
 
@@ -327,7 +327,7 @@ a.tool:hover, .btn:hover {
 /* +++ 610 Image plugin +++ */
 /* +++ 203 image plugin stuff +++ */
 /* +++ 620 Index plugin +++ */
-.index .header { 
+.index .header {
 	color:#c00;
 	background:#fad112;
 	font-weight:bold;
@@ -399,7 +399,7 @@ table.calendar td.weekdays {
 /* +++ 900 "Special-effects" JavaScript styles +++ */
 /* +++ 905 Search highlights +++ */
 /* +++ 910 Tabbed Pages +++ */
-.tabs { 
+.tabs {
 	border:1px solid #b6b6b6;
 }
 .tabmenu a {
@@ -408,29 +408,29 @@ table.calendar td.weekdays {
 	margin:0 0 -1px 4px;
 	color:#666;
 }
-.tabmenu a:hover, .tabmenu a:hover u, .tabmenu a:hover .accesskey { 
+.tabmenu a:hover, .tabmenu a:hover u, .tabmenu a:hover .accesskey {
 	color:#c00;
 	background:#fff7c0;
 }
-.tabmenu a.activetab { 
+.tabmenu a.activetab {
 	border-bottom:1px solid white;
 }
-.tabmenu a.activetab, .tabmenu a.activetab u { 
+.tabmenu a.activetab, .tabmenu a.activetab u {
 	color:#666;
 }
 
 /* +++ 910 Accordion +++ */
-.accordion .toggle { 
+.accordion .toggle {
 	border: 2px solid #fff7c0;
 	background:#fff7c0;
 	font-size:11px;
 }
-.accordion, .tabbedAccordion { 
+.accordion, .tabbedAccordion {
 	border:1px solid #b6b6b6;
 }
 .accordion .toggle {
 }
-.togglemenu .toggle { 
+.togglemenu .toggle {
 	border:1px solid #b6b6b6;
 	margin-left:4px;
 }
@@ -450,8 +450,8 @@ table.calendar td.weekdays {
 	background:#fad112;
 }
 /* +++ 920 Collapsible lists +++ */
-.collapseBullet, .collapseOpen, .collapseClose { 
-	color:#c00; 
+.collapseBullet, .collapseOpen, .collapseClose {
+	color:#c00;
 }
 .collapseOpen:hover, .collapseClose:hover {
 	background:#fad112;
@@ -471,7 +471,7 @@ table.calendar td.weekdays {
 .quicklinks { font-size:12px;
 	padding:0 2px;
 }
-.quicklinks, .quicklinks a { 
+.quicklinks, .quicklinks a {
 	background:#fad112;
 	color:#c00;
 	border:none;
@@ -484,12 +484,12 @@ table.calendar td.weekdays {
 .categoryTitle, .categoryText {
 	background:#fad112;
 }
-.categoryPopup .hover { 
+.categoryPopup .hover {
 	background:#fff7c0;
 }
-.categoryLink:link, .categoryLink:active, .categoryLink:hover, .categoryLink:visited { 
+.categoryLink:link, .categoryLink:active, .categoryLink:hover, .categoryLink:visited {
 	border-bottom:2px solid #ffcc33 !important;
-} 
+}
 .categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
 	color:inherit;
 }

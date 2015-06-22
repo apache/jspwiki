@@ -40,49 +40,49 @@ Options:
 		When present, it overrules the caption and body elements.
 	caption - (optional) DOM element
 	body - (optional) DOM element
-	cssClass - css class for dialog box, default is 'dialog'
+	cssClass - css class for dialog box, default is "dialog"
 	style - (optional) additional css style for the dialog box
-	relativeTo - DOM element to position the dialog box
-	resize - resize callback, default null which implies no resize.
-	showNow - (default true) show the dialogbox at initialisation time
-	draggable - (default true) make the dialogbox draggable
+	relativeTo - the dialog will be positioned below the 'relativeTo' DOM element
+	showNow - (default false) show the dialogbox at initialisation time
+	draggable - (default false) make the dialogbox draggable
 
 Events:
+	onBeforeOpen- fires before the dialog gets shown
 	onOpen- fires when the dialog is shown
 	onClose - fires when the dialog is hidden
 	onResize - fires when the dialog is resized
 
 DOM Structure:
 	(start code)
-	<div class='dialog'>
-		<div class='caption'> ... </div>
-		<a class='close'>&#215<a>
-		<div class='body'> ... dialog main body ... </div>
-		<div class='buttons'> ... dialog buttons ... </div>
+	<div class="dialog">
+		<div class="caption"> ... </div>
+		<a class="close">&#215<a>
+		<div class="body"> ... dialog main body ... </div>
+		<div class="buttons"> ... dialog buttons ... </div>
 	</div>
 	(end)
 
 Example:
+    Create dialogs from Javascript
 	(start code)
 	var dialog = new Dialog({
-		caption:self.ApplicationName || 'JSPWiki',
-		showNow:false,
-		relativeTo:$('query')
+		caption:self.ApplicationName || "JSPWiki",
+		showNow:true,
+		body:"<p>This is a test dialog<br />Isn't this nice &amp; simple?</p>",
+		relativeTo:$("query")
 	});
-	dialog.setBody( $('some-dialog') ).show();
-
+	//adopt one or more DOM elements as body of the DIALOG
+	dialog.setBody( $("some-dialog") ).show();
 	(end)
 
 
 	(start code)
-	var button = $('colorButton');
+	var button = $("colorButton");
 	var cd = new Dialog.Color({
 		relativeTo:button,
-		onChange:function(color){ $('target').setStyle('background',color);}
+		onChange:function(color){ $("target").setStyle("background",color);}
 	});
-	button.addEvent('click', cd.toggle.bind(cd));
-
-	cd.dispose();
+	button.addEvent("click", cd.toggle.bind(cd));
 	(end)
 */
 var Dialog = new Class({
@@ -90,11 +90,12 @@ var Dialog = new Class({
 	Implements: [Events, Options],
 
 	options:{
-		cssShow: 'show',
+		cssShow: "show",
+		cssClass: "",
 		styles: {},
 		//dialog: DOM-element
-		//caption: ''
-		//body: 'innerHTML' or DOM-element
+		//caption: ""
+		//body: "innerHTML" or DOM-element
 		//autoClose: false,
 		//showNow: false,
 		//draggable: false
@@ -107,85 +108,114 @@ var Dialog = new Class({
 
 		var self = this, el;
 
-        //options.cssClass = '.dialog'+(options.cssClass||'');
-        this.setClass('.dialog',options);
-        //console.log(options.cssClass);
+        this.setClass(".dialog",options);
+		this.setOptions( options );
 
-		this.setOptions(options);
-		console.log("DIALOG Initialize ",this.options.cssClass);
-
+        console.log("Dialog.initialize");
 		options = self.options;
 
 		el = self.element = options.dialog || self.build(options);
 
-		el.getElements('.close').addEvent('click', self.hide.bind(self) );
+		el.getElements(".close").addEvent("click", self.hide.bind(self) );
 
 		//make dialog draggable; only possible when el is position absolute
-		if( (el.getStyle('position')=='absolute') && options.draggable ){
+		if( (el.getStyle("position") == "absolute") && options.draggable ){
 
 			new Drag(el,{
-				handle: (self.get('.caption') || el).setStyle('cursor','move')
+				handle: (self.get(".caption") || el).setStyle("cursor", "move")
 			});
 
 		}
 
-		//CHECKME: self.resetPosition();
 		self[ options.showNow ? "show": "hide"]();
 	},
 
 	toElement: function(){
+
 		return this.element;
-	},
-	/*
-	Function: get
-		Retrieve DOM elements inside the dialog container, based on a css selector.
-	Example:
-	>	this.get('.body');
-	>	this.get('.body li');
-	*/
-	get: function(selector){
-		return this.element.getElement(selector);
+
 	},
 
-    setClass: function(clazz,options){
-        options.cssClass = clazz+(options.cssClass||'');
+	/*
+	Function: get
+		Retrieve the first DOM element inside the dialog container, matching the css selector.
+	Example:
+	>	this.get(".body li");
+	*/
+
+	get: function(selector){
+
+		return this.element.getElement(selector);
+
+	},
+
+    setClass: function(clazz, options){
+
+        options.cssClass = clazz + (options.cssClass || "");
+        console.log("Dialog.setClass ", options.cssClass );
+
     },
 
 	destroy: function(){
+
 		this.element.destroy();
+
 	},
 
 	show: function(){
-	
-	console.log("DIALOG show",this.options.cssClass,this.element.className);
-		this.fireEvent('beforeOpen', this)
-			.setPosition()
-			.element.addClass(this.options.cssShow);
-		return this.fireEvent('open', this);
+
+	    //console.log("DIALOG show: cssShow:",this.options.cssShow," class: ",this.element.className, this.element);
+		this.fireEvent("beforeOpen", this);
+
+        //always recalculate the position of the dialog, unless draggable
+        //because the 'relativeTo' element could change (eg scroll,...)
+		if( !this.options.draggable || !this.hasPosition ){
+
+		    this.setPosition();
+		    this.hasPosition = true;
+
+		}
+
+		this.element.addClass(this.options.cssShow);
+
+	    return this.fireEvent("open", this);
+
 	},
 
 	hide: function(){
-		this.fireEvent('beforeClose', this)
-			.element.removeClass(this.options.cssShow);
-		return this.fireEvent('close', this);
+
+        //do not send unnecessary close events
+        if( this.hasPosition ){
+
+		    this.fireEvent("beforeClose", this)
+			    .element.removeClass(this.options.cssShow);
+
+		    this.fireEvent("close", this);
+
+		}
+		return this;
 	},
 
 	isVisible: function(){
+
 		return this.element.hasClass(this.options.cssShow);
+
 	},
 
 	toggle: function(){
-		return this[this.isVisible() ? 'hide' : 'show']();
+
+		return this[this.isVisible() ? "hide" : "show"]();
+
 	},
 
 	/*
 	Function: action
-		Fires the ''action'' event.
+		Fires the ""action"" event.
 		When the autoClose option is set, the dialog will also be hidden.
 	*/
 	action: function(value){
-		//console.log('action: '+value+" close:"+self.options.autoClose);
-		this.fireEvent('action', value);
+		console.log("Dialog action: ",value," close:"+this.options.autoClose);
+		this.fireEvent("action", value);
 		if( this.options.autoClose ){ this.hide(); }
 	},
 
@@ -195,26 +225,23 @@ var Dialog = new Class({
 	*/
 	build: function( options ){
 
-        //console.log("DIALOG build ",options.cssClass);
+        console.log("DIALOG build ",options.cssClass, options.styles);
 
 		var element = this.element = [
-		    'div'+options.cssClass, {styles:options.styles}, [
-			    'a.close',{ html:'&#215;'},
-			    'div.body'
+		    "div" + options.cssClass, {styles: options.styles}, [
+			    "a.close",{ html: "&#215;"},
+			    "div.body"
 			]
 		].slick().inject(document.body);
 
         if( options.relativeTo ){
 			//make sure to inject the dialog close to the relativeTo element
-			//so that any relative positioned parent doesn't intervene
-			element.inject($(options.relativeTo), 'before');
+			//so that any relative positioned parent doesn"t intervene
+			element.inject($(options.relativeTo), "before");
 		}
-		
-console.log("DIALOG build ",this.element.className);
+
 		this.setBody( options.body );
 		if( options.caption ) this.setCaption( options.caption );
-
-console.log("DIALOG build ",this.element.className);
 
 		return element;
 	},
@@ -226,18 +253,18 @@ console.log("DIALOG build ",this.element.className);
 		content - string or DOM element
 	Example:
 		> setBody( "this is a new dialog content");
-		> setBody( new Element('span',{'class','error'}).set('html','Error encountered') );
+		> setBody( new Element("span",{"class","error"}).set("html","Error encountered") );
 	*/
 	setBody: function(content){
 
-		var body = this.get('.body') || this.element,
+		var body = this.get(".body") || this.element,
 		    type = typeOf(content);
 
 		body.empty();
 
-		if( type=='string') body.set('html',content);
-		if( type=='element') body.adopt(content);
-		if( type=='elements') body.adopt(content);
+		if( type == "string" ){ body.set("html",content); }
+		if( type == "element" ){ body.adopt(content); }
+		if( type == "elements" ){ body.adopt(content); }
 
 		return this;
 	},
@@ -245,20 +272,20 @@ console.log("DIALOG build ",this.element.className);
 
 	setCaption: function(caption){
 
-		var cptn = this.get('.caption') ||'div.caption'.slick().inject(this.element,'top');
+		var cptn = this.get(".caption") ||"div.caption".slick().inject(this.element,"top");
 			type = typeOf(caption);
 
 		cptn.empty();
 
-		if( type=='string') cptn.set('html',caption);
-		if( type=='element') cptn.adopt(caption);
+		if( type == "string" ){ cptn.set("html",caption); }
+		if( type == "element" ){ cptn.adopt(caption); }
 
 		return this;
 	},
 
 	setValue: function(value){
 
-		console.log('DIALOG  '+value);
+		console.log("DIALOG  " + value);
 		return this.setBody(value);
 
 	},
@@ -278,32 +305,32 @@ console.log("DIALOG build ",this.element.className);
 		var w = window, ws, x, y, pos,
 			el = this.element;
 
-		if(!relativeTo){ relativeTo = this.options.relativeTo; }
-		pos = (relativeTo && 'getCoordinates' in relativeTo) ? relativeTo : document.id(relativeTo);
-		
-		if( el.getStyle('position') == 'absolute' ){
+		if( !relativeTo ){ relativeTo = this.options.relativeTo; }
 
-			if( pos ){
+		pos = (relativeTo && "getCoordinates" in relativeTo) ? relativeTo : document.id(relativeTo);
 
-				pos = pos.getCoordinates();
-				//console.log(JSON.encode(pos));
-				x = pos.left; y = pos.bottom; //align at the bottom of the relativeTo element
+		if( pos ){
 
-			} else {	// center dialog box
+			pos = pos.getCoordinates();  //relative to document,  for textarea, coord. of caret in ta
 
-				//todo: should be adjusted everytime the screen is resized or scrolled ?
-				ws = w.getScroll();
-				w = w.getSize();
-				pos = el.getCoordinates();
-				x = ws.x + w.x/2 - pos.width/2;
-				y = ws.y + w.y/2 - pos.height/2;
+			//console.log(JSON.encode(pos));
+			x = pos.left; y = pos.bottom; //align at the bottom of the relativeTo element
 
-			}
+		} else {	// center dialog box
 
-			el.setPosition({x:x,y:y});
-			//el.morph({left: x, top:y}); -- move this to css/transition
+			//todo: should be adjusted everytime the screen is resized or scrolled ?
+			ws = w.getScroll();
+			w = w.getSize();
+			pos = el.getCoordinates();
+			x = ws.x + w.x/2 - pos.width/2;
+			y = ws.y + w.y/2 - pos.height/2;
 
 		}
+
+        //console.log("Dialog: setPosition()  x:",x," y:",y, el, this.options.relativeTo, pos);
+		el.setPosition({x:x,y:y});
+		//el.morph({left: x, top:y}); -- move this to css/transition
+
 		return this;
 	}
 

@@ -35,48 +35,45 @@ Inherits from:
 Dialog.Chars = new Class({
 
 	Extends: Dialog.Selection,
-	
+
 	options: {
 		//onAction: function(value){},
-		items: '.body td',
 		chars: [
-			'nbsp|iexcl|cent|pound|curren|yen|brvbar|sect|uml|copy|ordf',
-			'laquo|not|reg|macr|deg|plusmn|sup2|sup3|acute|micro|para',
-			'middot|cedil|sup1|ordm|raquo|frac14|frac12|frac34|iquest|times|divide',
-			'Agrave|Aacute|Acirc|Atilde|Auml|Aring|AElig|Ccedil|Egrave|Eacute|Ecirc',
-			'Euml|Igrave|Iacute|Icirc|Iuml|ETH|Ntilde|Ograve|Oacute|Ocirc|Otilde',
-			'Ouml|Oslash|Ugrave|Uacute|Ucirc|Uuml|Yacute|THORN|szlig|agrave|aacute',
-			'acirc|atilde|auml|aring|aelig|ccedil|egrave|eacute|ecirc|euml|igrave',
-			'iacute|icirc|iuml|eth|ntilde|ograve|oacute|ocirc|otilde|ouml|oslash',
-			'ugrave|uacute|ucirc|uuml|thorn|yuml|OElig|oelig|Scaron|scaron|Yuml',
-			'ndash|mdash|lsquo|rsquo|ldquo|rdquo|dagger|Dagger|bull|hellip|permil',
-			'euro|trade|larr|uarr|rarr|darr|harr|crarr|loz|diams|infin'
+
+			'lsquo|rsquo|ldquo|rdquo|lsaquo|rsaquo|laquo|raquo|apos|quot|sbquo|bdquo',
+			'ndash|mdash|sect|para|dagger|Dagger|amp|lt|gt|copy|reg|trade',
+			'rarr|rArr|bull|middot|deg|plusmn|brvbar|times|divide|frac14|frac12|frac34',
+			'hellip|micro|cent|pound|euro|iquest|iexcl|uml|acute|cedil|circ|tilde',
+			'Agrave|Aacute|Acirc|Atilde|Auml|Aring|AElig|Ccedil|Egrave|Eacute|Ecirc|Euml',
+			'Igrave|Iacute|Icirc|Iuml|ETH|Ntilde|Ograve|Oacute|Ocirc|Otilde|Ouml|Oslash',
+			'OElig|Scaron|Ugrave|Uacute|Ucirc|Uuml|Yacute|Yuml|THORN|szlig|agrave|aacute',
+			'acirc|atilde|auml|aring|aelig|ccedil|egrave|eacute|ecirc|euml|igrave|iacute',
+			'icirc|iuml|eth|ntilde|ograve|oacute|ocirc|otilde|ouml|oslash|oelig|scaron',
+			'ugrave|uacute|ucirc|uuml|yacute|yuml|thorn|ordf|ordm|alpha|Omega|infin',
+		    'not|sup2|sup3|permil|larr|uarr|darr|harr|hArr|crarr|loz|diams'
 		]
 	},
 
 	initialize:function(options){
 
         this.setClass('.chars',options);
-        //options.cssClass = '.chars'+(options.cssClass||'')
 		this.parent(options);
 
 	},
 
 	setBody: function(){
 
-		/* inspired by smarkup */
-		var content = this.options.chars.map(function(line){
-
-			return '<tr>' +
-				line.split('|').map(function(c){
-					return '<td title="&amp;'+ c + ';">&'+ c + ';</td>';
-				}).join('') + '</tr>';
+        var rows = [];
+		this.options.chars.map( function(line){
+		    var cells = [];
+		    line.split('|').each( function(item){
+    			cells.push( 'td.item[title=&'+item+';]', {html:'&'+item+';'});
+		    });
+		    rows.push('tr',cells);
 
 		});
+		return this.parent( ['table',rows].slick() );
 
-		return this.parent( 
-		    'table'.slick({ html: '<tbody>'+content.join('')+'</tbody>' }) 
-		);
 	}
 
 });

@@ -1,3 +1,43 @@
+2015-06-22  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-17
+         
+       This is the third major check-in of the HADDOCK template, with mainly
+       stabilization fixes related for the plain editor, and many UI improvements.
+       The HADDOCK template is close to completion - go ahead and play with it. 
+       (group related JSPs still to be done) 
+
+       Summary of main changes:
+
+       * Many Suggestion dialogs are added to the plain editor:
+         links, link-options, images, acls, plugins, variables, %%styles, 
+         hexadecimal colors, fonts, symbols, %%icons, ...
+         You can create new suggestion dialogs via json snippets in Wiki.Snips.js
+
+       * Fixed [JSPWIKI-482] Wrong insert from the suggestion box 
+       
+       * The editor toolbar is simplified, as most functions are reachable via the
+         suggestion dialogs. The find & replace UI can be repositioned on the screen.
+       
+       * Sticky menu bar, which stays on top of the screen when scrolling down.
+       
+       * The Quick Navigation menu is redesigned to improve usability for creating
+         and cloning new pages.
+         [JSPWIKI-531] usability: hints on or mechanism for creating a page
+       
+       * New %%styles added:  %%dropcaps, %%flip, %%flop, %%addcss, %%progress,
+         %%scrollable-250 (limit the height of a code-block, so it becomes scrollable )
+
+       * Show READER view (also great for printing) has been added to the More menu.
+       
+       * [JSPWIKI-788] TabbedSection - support multiple tabbedSections in single 
+         document with same tab-identifiers
+
+       * Updated to the latest mootools v1.5.1
+       * Updated to wro4j 1.7.8
+
+       * Some additional i18n properties added -- but translation still to be done.
+
 2015-05-31  Harry Metske (metskem@apache.org)
 
        * 2.10.2-svn-16

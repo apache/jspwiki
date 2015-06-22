@@ -75,9 +75,6 @@
     </div>
 
     </div>
-    
-    <%-- loading progress bar / toggle .active class --%>
-    <span id="spin" class="spin" style="position:absolute;display:none;"></span>
 
 </form>
 
