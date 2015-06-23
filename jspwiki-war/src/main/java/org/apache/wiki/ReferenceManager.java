@@ -585,7 +585,7 @@ public class ReferenceManager
         WikiPage page = context.getPage();
 
         updateReferences( page.getName(),
-                          context.getEngine().scanWikiLinks( page, content ) );
+                          getEngine().scanWikiLinks( page, content ) );
 
         serializeAttrsToDisk( page );
     }
@@ -1178,4 +1178,12 @@ public class ReferenceManager
             }
         }
     }
+
+	public WikiEngine getEngine() {
+		return m_engine;
+	}
+
+	public void setEngine(WikiEngine engine) {
+		this.m_engine = engine;
+	}
 }

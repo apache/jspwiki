@@ -20,8 +20,6 @@ package org.apache.wiki.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,15 +30,42 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.VariableManager;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.acl.DefaultAclManager;
+import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.content.PageRenamer;
+import org.apache.wiki.diff.DifferenceManager;
+import org.apache.wiki.filters.DefaultFilterManager;
+import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.plugin.DefaultPluginManager;
+import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.rss.RSSGenerator;
+import org.apache.wiki.search.SearchManager;
+import org.apache.wiki.ui.EditorManager;
+import org.apache.wiki.ui.TemplateManager;
+import org.apache.wiki.ui.admin.DefaultAdminBeanManager;
+import org.apache.wiki.workflow.WorkflowManager;
 import org.jdom2.Element;
+import org.picocontainer.DefaultPicoContainer;
+import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.PicoContainer;
 
 /**
  *  Contains useful utilities for class file manipulation.  This is a static class,
@@ -58,8 +83,10 @@ public final class ClassUtil {
     public  static final String MAPPINGS = "ini/classmappings.xml";
     
     private static Map<String, String> c_classMappings = new Hashtable<String, String>();
+    
+    private static MutablePicoContainer picoContainer = new DefaultPicoContainer();
 
-    private static boolean classLoaderSetup = false;
+	private static boolean classLoaderSetup = false;
     private static ClassLoader loader = null;
 
 
@@ -68,6 +95,32 @@ public final class ClassUtil {
      */
     static {
     	List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
+
+        picoContainer.addComponent(PageManager.class);
+        picoContainer.addComponent(ReferenceManager.class);
+        picoContainer.addComponent(VariableManager.class);
+        picoContainer.addComponent(DefaultFilterManager.class);
+        picoContainer.addComponent(DefaultPluginManager.class);
+        picoContainer.addComponent(DefaultAdminBeanManager.class);
+        picoContainer.addComponent(AttachmentManager.class);
+        picoContainer.addComponent(AuthenticationManager.class);
+        picoContainer.addComponent(AuthorizationManager.class);
+        picoContainer.addComponent(UserManager.class);
+        picoContainer.addComponent(DefaultAclManager.class);
+        picoContainer.addComponent(GroupManager.class);
+        picoContainer.addComponent(DifferenceManager.class);
+        picoContainer.addComponent(RenderingManager.class);
+        picoContainer.addComponent(SearchManager.class);
+        picoContainer.addComponent(EditorManager.class);
+        picoContainer.addComponent(TemplateManager.class);
+        picoContainer.addComponent(WorkflowManager.class);
+        picoContainer.addComponent(InternationalizationManager.class);
+        picoContainer.addComponent(PageRenamer.class);
+        picoContainer.addComponent(RSSGenerator.class);
+        picoContainer.addComponent(WikiEngine.class);
+//        picoContainer.addComponent(DummyUserDatabase.class);
+//        picoContainer.addComponent(JDBCUserDatabase.class);
+//        picoContainer.addComponent(XMLUserDatabase.class);
 
         if( nodes.size() > 0 ) {
             for( Iterator< Element > i = nodes.iterator(); i.hasNext(); ) {
@@ -333,67 +386,86 @@ public final class ClassUtil {
     public static Object getMappedObject( String requestedClass, Object... initargs )
         throws WikiException
     {
-        try
-        {
-            Class<?> cl = getMappedClass( requestedClass );
-         
-            Constructor<?>[] ctors = cl.getConstructors();
-            
-            //
-            //  Try to find the proper constructor by comparing the
-            //  initargs array classes and the constructor types.
-            //
-            for( int c = 0; c < ctors.length; c++ )
-            {
-                Class<?>[] params = ctors[c].getParameterTypes();
-                
-                if( params.length == initargs.length )
-                {
-                    for( int arg = 0; arg < initargs.length; arg++ )
-                    {
-                        if( params[arg].isAssignableFrom(initargs[arg].getClass()))
-                        {
-                            //
-                            //  Ha, found it!  Instantiating and returning...
-                            //
-                            return ctors[c].newInstance(initargs);
-                        }
-                    }
-                }
+    	try {
+    		Object o = ClassUtil.getPicoContainer().getComponent(Class.forName(requestedClass));
+        	WikiEngine engine = null;
+        	Properties props = new Properties();
+			for (int i = 0; i < initargs.length; i++) {
+				if (initargs[i] instanceof WikiEngine) {
+					engine = (WikiEngine)initargs[i];
+				}
+				if (initargs[i] instanceof Properties) {
+					props = (Properties)initargs[i];
+				}
+			}
+			if (engine != null && o instanceof InternalModule) {
+				((InternalModule)o).initialize(engine, props);
             }
-            
-            //
-            //  No arguments, so we can just call a default constructor and
-            //  ignore the arguments.
-            //
-            Object o = cl.newInstance();
-            
-            return o;
-        }
-        catch( InstantiationException e )
-        {
-            log.info( "Cannot instantiate requested class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
-        catch (IllegalAccessException e)
-        {
-            log.info( "Cannot access requested class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
-        catch (IllegalArgumentException e)
-        {
-            log.info( "Illegal arguments when constructing new object", e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
-        catch (InvocationTargetException e)
-        {
-            log.info( "You tried to instantiate an abstract class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
+    		return o;
+    	} catch (ClassNotFoundException e) {
+    		throw new WikiException(e.getMessage());
+    	}
+//        try
+//        {
+//            Class<?> cl = getMappedClass( requestedClass );
+//         
+//            Constructor<?>[] ctors = cl.getConstructors();
+//            
+//            //
+//            //  Try to find the proper constructor by comparing the
+//            //  initargs array classes and the constructor types.
+//            //
+//            for( int c = 0; c < ctors.length; c++ )
+//            {
+//                Class<?>[] params = ctors[c].getParameterTypes();
+//                
+//                if( params.length == initargs.length )
+//                {
+//                    for( int arg = 0; arg < initargs.length; arg++ )
+//                    {
+//                        if( params[arg].isAssignableFrom(initargs[arg].getClass()))
+//                        {
+//                            //
+//                            //  Ha, found it!  Instantiating and returning...
+//                            //
+//                            return ctors[c].newInstance(initargs);
+//                        }
+//                    }
+//                }
+//            }
+//            
+//            //
+//            //  No arguments, so we can just call a default constructor and
+//            //  ignore the arguments.
+//            //
+//            Object o = cl.newInstance();
+//            
+//            return o;
+//        }
+//        catch( InstantiationException e )
+//        {
+//            log.info( "Cannot instantiate requested class "+requestedClass, e );
+//            
+//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
+//        }
+//        catch (IllegalAccessException e)
+//        {
+//            log.info( "Cannot access requested class "+requestedClass, e );
+//            
+//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            log.info( "Illegal arguments when constructing new object", e );
+//            
+//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
+//        }
+//        catch (InvocationTargetException e)
+//        {
+//            log.info( "You tried to instantiate an abstract class "+requestedClass, e );
+//            
+//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
+//        }
     }
 
     /**
@@ -427,4 +499,8 @@ public final class ClassUtil {
             throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
     }
+    
+    public static PicoContainer getPicoContainer() {
+		return picoContainer;
+	}
 }

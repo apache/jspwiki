@@ -19,6 +19,11 @@
 
 package org.apache.wiki.modules;
 
+import java.util.Properties;
+
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.WikiException;
+
 /**
  *  This is a simple interface which is implemented by a number of JSPWiki
  *  components to signal that they should not be included in things like
@@ -33,4 +38,5 @@ package org.apache.wiki.modules;
  */
 public interface InternalModule
 {
+	public void initialize(WikiEngine engine, Properties props) throws WikiException;
 }

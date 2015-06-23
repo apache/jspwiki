@@ -36,6 +36,7 @@ import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.modules.InternalModule;
 
 
 /**
@@ -45,7 +46,7 @@ import org.apache.wiki.event.WorkflowEvent;
  * Workflows.
  * </p>
  */
-public class WorkflowManager implements WikiEventListener {
+public class WorkflowManager implements WikiEventListener, InternalModule {
 
     private final DecisionQueue m_queue = new DecisionQueue();
 

@@ -29,6 +29,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
+import org.apache.wiki.util.ClassUtil;
 
 public class PageViewPluginTest extends TestCase
 
@@ -55,7 +56,7 @@ public class PageViewPluginTest extends TestCase
         testEngine.saveText( "TestPage01", "this is test page 01 [{PageViewPlugin}]" );
         testEngine.saveText( "TestPage02", "this is test page 02 [{PageViewPlugin}]" );
 
-        manager = new DefaultPluginManager( testEngine, props );
+        manager = (PluginManager)ClassUtil.getMappedObject(DefaultPluginManager.class.getName(), testEngine, props);
     }
 
     public void tearDown()

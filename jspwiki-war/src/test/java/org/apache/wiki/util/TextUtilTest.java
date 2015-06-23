@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.providers.AbstractFileProvider;
 
 public class TextUtilTest extends TestCase
 {
@@ -414,9 +415,9 @@ public class TextUtilTest extends TestCase
 
     public void testGetCanonicalFilePathProperty()
     {
-        String[] values = { "jspwiki.fileSystemProvider.pageDir", " ." + File.separator + "data" + File.separator + "private " };
+        String[] values = { AbstractFileProvider.PROP_PAGEDIR, " ." + File.separator + "data" + File.separator + "private " };
         Properties props = TextUtil.createProperties(values);
-        String path = TextUtil.getCanonicalFilePathProperty(props, "jspwiki.fileSystemProvider.pageDir", "NA");
+        String path = TextUtil.getCanonicalFilePathProperty(props, AbstractFileProvider.PROP_PAGEDIR, "NA");
         assertTrue( path.endsWith( File.separator + "data" + File.separator + "private" ) );
         assertFalse( path.endsWith( "." + File.separator + "data" + File.separator + "private" ) );
     }
@@ -426,7 +427,7 @@ public class TextUtilTest extends TestCase
         String defaultValue = System.getProperty( "user.home" ) + File.separator + "jspwiki-files";
         String[] values = {};
         Properties props = TextUtil.createProperties(values);
-        String path = TextUtil.getCanonicalFilePathProperty(props, "jspwiki.fileSystemProvider.pageDir", defaultValue);
+        String path = TextUtil.getCanonicalFilePathProperty(props, AbstractFileProvider.PROP_PAGEDIR, defaultValue);
         assertTrue(path.endsWith("jspwiki-files"));
     }
 

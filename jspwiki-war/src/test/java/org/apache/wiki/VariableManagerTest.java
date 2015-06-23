@@ -45,7 +45,7 @@ public class VariableManagerTest extends TestCase
         Properties props = TestEngine.getTestProperties();
         PropertyConfigurator.configure(props);
 
-        m_variableManager = new VariableManager( props );
+        m_variableManager = new VariableManager( );
         TestEngine testEngine = new TestEngine( props );
         m_context = new WikiContext( testEngine,
                                      new WikiPage( testEngine, PAGE_NAME ) );

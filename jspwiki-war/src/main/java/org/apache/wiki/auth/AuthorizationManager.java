@@ -58,6 +58,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
@@ -96,7 +97,7 @@ import org.freshcookies.security.policy.PolicyException;
  * @since 2.3
  * @see AuthenticationManager
  */
-public class AuthorizationManager {
+public class AuthorizationManager implements InternalModule {
 
     private static final Logger log = Logger.getLogger( AuthorizationManager.class );
     /**

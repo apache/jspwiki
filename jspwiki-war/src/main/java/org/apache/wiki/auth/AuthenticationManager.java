@@ -59,6 +59,7 @@ import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
 
@@ -75,7 +76,7 @@ import org.apache.wiki.util.TimedCounterList;
  * 
  * @since 2.3
  */
-public class AuthenticationManager {
+public class AuthenticationManager implements InternalModule {
 
     /** How many milliseconds the logins are stored before they're cleaned away. */
     private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
