@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 public class InternationalizationManagerTest extends TestCase
 {
-    InternationalizationManager i18n = new InternationalizationManager( null );
+    InternationalizationManager i18n = new InternationalizationManager( );
     
     protected void setUp() throws Exception
     {

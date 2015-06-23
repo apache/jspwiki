@@ -31,6 +31,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.util.ClassUtil;
 
 public class UndefinedPagesPluginTest extends TestCase
 {
@@ -54,7 +55,7 @@ public class UndefinedPagesPluginTest extends TestCase
         testEngine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
         context = new WikiContext( testEngine, new WikiPage(testEngine, "TestPage") );
-        manager = new DefaultPluginManager( testEngine, props );
+        manager = (PluginManager)ClassUtil.getMappedObject(DefaultPluginManager.class.getName(), testEngine, props);
     }
 
     public void tearDown()

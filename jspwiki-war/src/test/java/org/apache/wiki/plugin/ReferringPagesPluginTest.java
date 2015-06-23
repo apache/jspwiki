@@ -31,6 +31,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.util.ClassUtil;
 
 public class ReferringPagesPluginTest extends TestCase
 {
@@ -60,7 +61,7 @@ public class ReferringPagesPluginTest extends TestCase
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
         context = new WikiContext( engine, engine.newHttpRequest(), new WikiPage(engine,"TestPage") );
-        manager = new DefaultPluginManager( engine, props );
+        manager = (PluginManager)ClassUtil.getMappedObject(DefaultPluginManager.class.getName(), engine, props);
     }
 
     public void tearDown()

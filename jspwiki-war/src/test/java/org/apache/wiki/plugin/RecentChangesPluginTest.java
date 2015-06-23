@@ -30,6 +30,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
+import org.apache.wiki.util.ClassUtil;
 
 public class RecentChangesPluginTest extends TestCase {
     Properties props = TestEngine.getTestProperties();
@@ -49,7 +50,7 @@ public class RecentChangesPluginTest extends TestCase {
         testEngine.saveText("TestPage03", "Some Text for testing 03");
         testEngine.saveText("TestPage04", "Some Text for testing 04");
 
-        manager = new DefaultPluginManager(testEngine, props);
+        manager = (PluginManager)ClassUtil.getMappedObject(DefaultPluginManager.class.getName(), testEngine, props);
     }
 
     public void tearDown() {

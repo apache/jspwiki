@@ -410,11 +410,13 @@ public class TestEngine extends WikiEngine
      */
     private static Properties cleanTestProps( Properties props )
     {
-        String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
+        String pageDir = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir",
-                           pageDir.replaceAll( "\\d", StringUtils.EMPTY )
-                           + System.currentTimeMillis() );
+        if (pageDir != null) {
+	        props.setProperty( AbstractFileProvider.PROP_PAGEDIR,
+	                           pageDir.replaceAll( "\\d", StringUtils.EMPTY )
+	                           + System.currentTimeMillis() );
+        }
         return props;
     }
 
