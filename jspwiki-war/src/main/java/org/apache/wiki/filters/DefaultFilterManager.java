@@ -108,11 +108,10 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  @param props Properties to initialize the FilterManager with
      *  @throws WikiException If something goes wrong.
      */
-    public DefaultFilterManager( WikiEngine engine, Properties props )
-        throws WikiException
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
-        super( engine );
-        initialize( props );
+        super.initialize(engine, props);
+        initialize(props);
     }
 
     /**
@@ -138,7 +137,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
         m_pageFilters.add( f, priority );
     }
 
-    private void initPageFilter( String className, Properties props )
+    private void initPageFilter( String className, Properties props ) throws WikiException
     {
         try
         {
@@ -243,7 +242,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  
      * @param xmlStream stream to parse
      */
-    private void parseConfigFile( InputStream xmlStream ) {
+    private void parseConfigFile( InputStream xmlStream ) throws WikiException {
     	List< Element > pageFilters = XmlUtil.parse( xmlStream, "/pagefilters/filter" );
         for( Iterator< Element > i = pageFilters.iterator(); i.hasNext(); ) {
             Element f = i.next();

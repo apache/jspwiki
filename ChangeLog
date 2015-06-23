@@ -1,3 +1,9 @@
+2015-05-23  David Vittor (dvittor@apache.org)
+
+       * 2.10.2-svn-18
+
+       * Introducing the PicoContainer for Dependency Injection into the WikiEngine
+       
 2015-06-22  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-17

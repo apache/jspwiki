@@ -22,9 +22,10 @@ package org.apache.wiki.api.engine;
 import java.util.List;
 
 import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.ui.admin.AdminBean;
 
-public interface AdminBeanManager {
+public interface AdminBeanManager extends InternalModule {
 
 	void initialize();
 

@@ -45,6 +45,11 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-highlighter</artifactId>
     </dependency>
+    
+	<dependency>
+		<groupId>org.picocontainer</groupId>
+		<artifactId>picocontainer</artifactId>
+	</dependency>
 
     <dependency>
       <groupId>org.apache.lucene</groupId>

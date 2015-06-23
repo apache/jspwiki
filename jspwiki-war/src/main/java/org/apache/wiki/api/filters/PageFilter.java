@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Provides a definition for a page filter.  A page filter is a class
@@ -54,7 +55,7 @@ public interface PageFilter
      *                          the filter is not added to the internal queues.
      */
     void initialize( WikiEngine engine, Properties properties )
-        throws FilterException;
+        throws FilterException, WikiException;
 
     /**
      *  This method is called whenever a page has been loaded from the provider,

@@ -58,6 +58,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
@@ -76,7 +77,7 @@ import org.apache.wiki.workflow.WorkflowBuilder;
  * Provides a facade for obtaining user information.
  * @since 2.3
  */
-public class UserManager {
+public class UserManager implements InternalModule {
 
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
     private static final String SESSION_MESSAGES = "profile";
