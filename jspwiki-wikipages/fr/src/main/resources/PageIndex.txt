@@ -1,0 +1,5 @@
+Voici l'index de toutes les pages de ce Wiki, listées par ordre alphabétique.
+
+----
+
+[{INSERT IndexPlugin exclude='SandBox*'}]

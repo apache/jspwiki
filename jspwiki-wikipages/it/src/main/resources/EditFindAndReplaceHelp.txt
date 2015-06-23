@@ -1,0 +1,26 @@
+Potete usare i seguenti meta-caratteri nel campo 'Cerca':
+
+|.      |qualsiasi carattere salvo il ritorno a capo         |+       |una o piu volte
+|*      |zero o piu volte                                    |?       |zero o una volta
+|{n}    |esattamente n volte                                 |{n,m}   |al minimo n, al massimo m volte
+|~|     |pipe: {{a~|b}} a o b                                | -      |trattino, match un intervallo di caratteri
+|^      |inizio linea                                        |$       |fine linea
+|[[...] |uno dei caratteri in un insieme                     |[[^...] |uno dei caratteri NON nell'insieme
+|\b     |carattere terminatore di parola                     |\B      |carattere non terminatore
+|\d     |numero [[0-9]                                       |\D      |non numerico [[^0-9]
+|\s     |singolo spazio bianco                               |\S      |singolo carattere non di spaziatura
+|\w     |[[A-Za-z0-9_]                                       |\W      |[[^A-Za-z0-9_]
+|(...)  |i gruppi di rimpiazzo sono specificati con $1..$9   |\.      |escape del metacarattere
+
+Nel campo 'Rimpiazza con ' è possibile usare $1..$9  come riferimenti ai campi che hanno matchato nella sezione 'cerca'
+----
+Esempi:\\
+
+Cerca __/abc|def/__ troverà la parola 'abc' o la parola 'def'\\
+Cerca  __/bwiki/b__ troverà la parola 'wiki' ma non la parola 'jspwiki'.\\
+Cerca __^[[IVXMDCL]+\.__ troverà qualsiasi combinazione di numeri romani seguiti da un punto\\
+Cerca __/(-?\d+)(\d{3})/__ e rimpiazza con __$1,$2__ per inserire le virgole delle migliaia in grandi numeri. 
+
+Questa è la pagina [EditFindAndReplaceHelp]. 
+[Ulteriori informazioni sulle espressioni regolari |http://www.regular-expressions.info/javascript.html]
+e [RegExp Sandbox|http://www.regular-expressions.info/javascriptexample.html]\\

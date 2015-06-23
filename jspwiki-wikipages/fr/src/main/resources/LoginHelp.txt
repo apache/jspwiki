@@ -1,0 +1,53 @@
+Voici une aide rapide sur la manière de s'identifier auprès de __[{$applicationname}]__.
+Ce texte se trouve [ici|LoginHelp]. \\
+Vous pouvez lire plus d'informations sur les fonctionnalités de sécurité de JSPWiki dans
+ses [pages de documentation|Doc:Security].
+
+!!  Identification
+
+[JSPWiki|JSPWiki:JSPWiki] supporte de nombreux niveaux d'__authentification__ et de
+confiance. Un utilisateur peut être anonyme, avoir une identité "reconnue" grâce au
+cookies, être authentifié, ou être administrateur :
+
+|| Etat || Description || Le message de bienvenue est...
+| Anonyme | L'utilisateur n'est pas identifié, et ne fournit pas de cookie | "Bienvenue, (invité)"
+| Reconnu | Le navigateur de l'utilisateur contient un cookie nommé {{JSPWikiAssertedName}} | "Bienvenue, ''username'' (non authentifié)"
+| Authentifié | L'utilisateur est identifié par un identifiant et un mot de passe | "Bienvenue, ''username'' (authentifié)"
+
+Selon la politique de sécurité par défaut et les contrôles d'accès aux pages en vigueur,
+les utilisateurs peuvent (ou peuvent ne pas) avoir à s'authentifier. 
+
+Lorsque vous décidez de vous identifier — ou que cela vous est demandé, du fait soit d'un
+contrôle d'accès à une page, soit à la politique de sécurité — vous verrez s'afficher un
+formulaire Web standard avec deux champs de saisie pour un identifiant et un mot de passe. 
+Après avoir reçu le formulaire Web soumis, JSPWiki essaiera de vous identifier.
+
+!! Mot de passe perdu
+
+Si vous avez perdu votre mot de passe, vous pouvez en obtenir un nouveau, généré aléatoirement,
+qui vous sera envoyé à l'adresse e-mail indiquée dans votre Profil utilisateur.
+
+!! Inscrire un nouvel utilisateur
+
+Même si quelques Wikis sont anonymes, la plupart ne le sont pas. Souvent, les Wikis donnent
+la possibilité de se créer une identité particulière pour le site Web. JSPWiki inclut une
+page simple pour s'auto-inscrire, qui permet de renseigner et de gérer son propre profile Wiki.
+
+Par défaut, le formulaire d'inscription demande :
+
+* Un identifiant
+* Un mot de passe
+* Le "nom wiki" souhaité de l'utilisateur (e.g., JanneJalkanen). On peut ensuite utiliser
+ce nom dans les Listes de Contrôle d'Accès (ACL) ou les groupes Wiki.
+* L'adresse e-mail. Cette information optionnelle est utile lorsqu'il faut réinitialiser
+le mot de passe de quelqu'un (référez-vous au chapitre ''Mot de passe perdu'').
+
+Si l'authentification est prise en charge par un conteneur, l'identifiant n'est pas éditable :
+c'est le conteneur qui fournit cette information.
+
+Lorsque vous enregistrez votre profil, JSPWiki s'assure que votre nouvel identifiant, votre
+nom Wiki et votre nom complet ne sont pas déjà utilisés par quelqu'un d'autre. Si c'est le
+cas, JSPWiki vous permet de choisir des valeurs différentes.
+
+Une fois votre profil Wiki créé, vous pouvez le modifier grâce au lien ''Mes Préférences''.
+Par défaut, vous devez être authentifié pour éditer votre profil.

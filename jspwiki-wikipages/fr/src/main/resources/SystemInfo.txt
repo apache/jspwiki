@@ -1,0 +1,53 @@
+Voici quelques informations stratégiques (ou autres) concernant ce Wiki.  Toutes ces
+informations sont également disponibles dans des [variables Wiki|JSPWiki:WikiVariables] :
+vous pouvez les utiliser dans d'autres pages.
+   
+| __Nom d'application__               | [{$applicationname}]
+| __Adresse de base__                 | [{$baseurl}]
+| __Version de moteur JSPWiki__       | [{$jspwikiversion}] 
+| __Encodage des caractères__         | [{$encoding}]
+| __Nombre total de pages__           | [{$totalpages}]
+| __Durée d'activité__                | [{$uptime}]
+| __Fournisseur de pages courant__    | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Fournisseur d'attachements courant__ | [{$attachmentProvider}]\\ \\[{$attachmentProviderDescription}]
+| __Liens InterWiki disponibles__     | [{$interwikilinks}]
+| %%(white-space:nowrap)__Les images incorporées sont au format__/%     | [{$inlinedimages}]
+| %%(white-space:nowrap)__Chemin de recherche de plugins supplémentaire__/% | [{$pluginpath}]
+| __[Filtres de page|JSPWiki:PageFilters] installés__     |[{$pagefilters}]
+
+!Utilisabilité
+
+| __Titres rendus plus beaux ?__     | [{$jspwiki.breakTitleWithSpaces}]
+| __Formes plurielles anglaises ?__  | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Liens CamelCase utilisés ?__     | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __HTML autorisé dans les pages ?__ | [{$jspwiki.translatorReader.allowHTML}]
+
+!Support de RSS
+
+| __Génération de fichiers RSS ?__ | [{$jspwiki.rss.generate}]
+| __Nom du fichier RSS__ | [{$jspwiki.rss.fileName}]
+| __Fréquence de rafraichissement RSS__ |  [{$jspwiki.rss.interval}] sec.
+
+!Informations personnelles
+
+Ce que JSPWiki sait de vous :
+
+| __Nom d'utilisateur__  | [{$username}]
+| __Etat du login__      | [{$loginstatus}]
+
+----
+
+La page d'accueil de JSPWiki est [http://jspwiki.apache.org/]. Bienvenue !
+
+----
+
+!Pages en cours d'édition
+
+%%sortable
+[{ListLocksPlugin}]
+%%
+
+----
+!Infos utilisateur
+|Nombre total d'utilisateurs identifiés|[{SessionsPlugin}]
+|Sessions utilisateur actives |[{SessionsPlugin property=distinctUsers}]

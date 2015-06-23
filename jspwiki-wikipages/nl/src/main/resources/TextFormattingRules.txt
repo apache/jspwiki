@@ -1,0 +1,168 @@
+Op deze pagina vind je de wiki syntax die je voor JSPWiki moet gebruiken. Voor details over wat de verschillen zijn t.o.v. Wikipedia, kijk op [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki].
+
+[{TableOfContents }]
+\\
+Als je er achter bent hoe de editor werkt, moet je [WikiEtiquette] maar eens lezen, zodat je weet hoe je je nieuwe vaardigheden kunt toepassen. De [SandBox|http://sandbox.jspwiki.org] is een geschikte plaats om dat uit te proberen.
+!Quick Reference
+{{{
+----       = maak een horizontale lijn. De extra '-' wordt genegeerd.
+\\         = om een nieuwe regel te forceren.
+
+[link]     = maak een hyperlink naar een interne Wiki pagina met de naam 'Link'.
+[dit is ook een link] = maak een hyperlink naar een interne Wiki pagina genaamd
+             'DitIsOokEenLink' maar laat de link zien met spaties.
+[een voorbeeld|link] = maakt een hyperlink naar een interne Wiki pagina genaamd
+             'Link', maar laat de tekst 'een voorbeeld' zien in plaats van 'link'
+~GeenLink    = het maken van een CamelCase link niet gebruiken
+[1]        = maak een verwijzing naar een voetnoot nummer 1.
+[#1]       = markeer de voetnoot nummer 1.
+[[link]     = maak een '[link]'.
+
+!heading   = kleine heading met de tekst 'heading'
+!!heading  = medium heading met de tekst 'heading'
+!!!heading = grote heading met de tekst 'heading'
+
+''tekst''   = print 'tekst' cursief.
+__tekst__   = print 'tekst' vetgedrukt.
+{{tekst}}   = print 'tekst' in monospaced font.
+[tekst|]    = print 'tekst' onderstreept (dummy hyperlink)
+* tekst     = make a opsommings lijst item met 'tekst'
+# tekst     = make a genummerde opsommings lijst item met 'tekst'
+;term:ex   = make a definitie voor 'term' met uitleg 'ex'
+}}}
+
+! Tekst schrijven
+Om de Wiki te gebruiken hoef je helemaal niets te weten over de opmaak regels van Wiki. Je typt gewoon tekst, en maak een lege regel om een nieuwe paragraaf te beginnen. 
+Het is net als een email schrijven.
+Je kunt altijd "Bewerk deze pagina" (kijk aan de linker zijkant) doen, om te zien wat de verschillende effecten zijn op de pagina.
+
+!Hyperlinks
+De hyperlink kan ook een directe URL zijn die begint met  {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, or {{news:}}, in dat geval zal de link naar een externe bron verwijzen. Bijvoorbeeld, om naar java.sun.com te verwijzen, gebruik je simpelweg {{[[http://java.sun.com]}}, dat wordt dan  [http://java.sun.com/] of {{[[Java home page|http://java.sun.com]}}, dat wordt [Java home page|http://java.sun.com].
+Als je de link niet begint met een van bovengenoemde "protocollen", dan gaat de wiki uit van een normale link naar een wiki pagina, het eerste karakter van de pagina naam moet een letter zijn. Numerieke pagina namen zijn niet toegestaan. Als je vierkante haken wil gebruiken ({{[[]}})  in de pagina, zonder een link te maken, gebruik dan 2 vierkante haken achter elkaar. Dus de tekst  {{[[[Example Non-Link]}}, zal zichtbaar zijn als {{[[Example Non-Link]}}. 
+Om een pagina toe te voegen, maak je gewoon ergens een link die er naar toe wijst. Per slot van rekening heeft het niet veel zin om een pagina te hebben als je er niet bij kunt. Je ziet dan de pagina naam onderstreept met een rode stippel lijn als je op de pagina terugkomt. Klik er op en je hebt een nieuwe pagina ! 
+Het is toegestaan om bijna elk karakter te gebruiken in een [WikiName|JSPWiki:WikiName], zo lang het maar letters of cijfers zijn.
+Let wel, je kunt deze Wiki ook zo configureren dat standaard [CamelCase|JSPWiki:CamelCase] linking wordt ondersteund (als het wordt ondersteund, dan is het woord CamelCase een link, als het niet wordt voorafgegaan door '~~'). Standaard staat het uit, maar als die aardige administrator het heeft aangezet, CamelCase dan maar =).
+
+!Voetnoten
+Dit zijn een speciaal soort hyperlinks.
+Door in een hyperlink niets anders dan een nummer te gebruiken, maak je een link naar een voetnoot. 
+Kijk hieronder om een voetnoot te vinden.
+Je kunt ook een voetnot met een naam maken, net zoals je normale hyperlinks maakt, zoals {{[[Footnote name|1]}} als een andere manier om naar de eerste voetnoot [Footnote name|1] te verwijzen. Of je kunt de voetnaam naam zelf gebruiken[2].
+![InterWiki|JSPWiki:InterWiki] links
+Je kunt ook linken tussen verschillende wiki's zonder de URL te weten. Net zoals een link in de vorm {{[[Wiki:WikiPage]}} en JSPWiki zal zelf een link voor je maken. Bij voorbeeld, deze link verwijst naar de [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Kijk ook naar de [SystemInfo] pagina voor meer informatie over welke Wiki links beschikbaar zijn. 
+Als een [InterWiki|JSPWiki:InterWiki] link niet wordt ondersteund, krijg je er een melding van op de pagina wanneer je de pagina opslaat.
+
+!Plaatjes toevoegen.
+Je kunt elke plaatje invoegen in de wiki code door het plaatje ergens op een website te zetten, en door er simpel naar te verwijzen.
+Als je een link tekst opgeeft ({{[[this one here|http://example.com/example.png]}}) dan wordt het de ALT text voor degenen die geen plaatjes kunnen of willen zien. 
+De lijst met toegestane image types hangt van de wiki af, zie de [SystemInfo] pagina voor een lijst van de diverse image types.
+Het is ook mogelijk om de [Image plugin|JSPWiki:Image] te gebruiken, hiermee heb je wat meer controle over de plaatsing van het plaatje en de attributen ervan.
+Om een nieuwe regel te forceren na een plaatje, gebruik \\\ (drie backslashes achter elkaar, i.p.v. twee)
+
+!Opsommings lijsten
+Gebruik een sterretje (*) in de eerste kolom om een opsommingslijst te maken. Je kunt meerdere nivo's maken door meer sterretjes achter elkaar te gebruiken, bijvoorbeeld :
+{{{
+* Een \\ anderhalf
+* Twee
+* Drie
+** Drie.Een}}}
+maakt
+* Een \\ anderhalf
+* Twee
+* Drie
+** Drie.Een
+
+!Genummerde opsommings lijsten
+Net zoals bij gewone opsommingslijsten, maar gebruik nu een hekje (#) in plaats van een sterretje, zoals dit :
+{{{
+# Een \\ anderhalf
+# Twee
+# Drie
+## Drie.Een}}}
+maakt
+# Een \\ anderhalf
+# Twee
+# Drie
+## Drie.Een
+Als je lijst item op meerdere regels wilt gebruiken, begin dan de volgende regel met een spatie, en hij wordt automatisch toegevoegd aan het vorige item, bijvoorbeeld:
+{{{
+* Dit is een single-line item.
+* Dit is in feite een multi-line item.
+  We gaan verder met de tweede zin op zijn eigen regel 
+  We kunnen ook een derde zin beginnen
+* De derde regel is weer een single-line item 
+}}}
+geeft:
+* Dit is een single-line item.
+* Dit is in feite een multi-line item.
+  We gaan verder met de tweede zin op zijn eigen regel 
+  We kunnen ook een derde zin beginnen
+* De derde regel is weer een single-line item 
+
+!Definitie lijsten en opmerkingen
+Een makkelijke manier om definitie lijsten te maken is door de  ';:' -constructie te gebruiken:
+{{{
+;__Construct__:''Iets wat je gebruikt om iets mee te doen''
+}}}
+wordt opgemaakt als:
+;__Construct__:''Iets wat je gebruikt om iets mee te doen''
+Een ander aardig gebruik van ';:' is dat je snel even commentaar op andermans tekst kunt geven, door een lege 'term' in de definitie, zoals dit:
+{{{
+;:''Commentaar hier.''
+}}}
+wat zichtbaar wordt als:
+;:''Commentaar hier.''
+
+!Tekst effecten
+Je kunt __vetgedrukte__ of ''cursieve'' teksten gebruiken door respectievelijk twee underscores (_) of twee enkele quotes(') te gebruiken. 
+Als je op Windows werkt, let er dan op dat je de juiste quote gebruikt, er zit er nl. nog een op die er op lijkt, maar die het niet is.
+Een [underscore|] effect kan worden bereikt door een hyperlink te gebruiken die nergens naar wijst, zoals [[like this|] 
+
+!Preformatted tekst
+Als je preformatted tekst wilt gebruiken (zoals programma code), gebruik dan drie accolades ({) achter elkaar om te openen, en weer drie (}) om te sluiten. 
+!Tabellen
+Je kunt simpele tabllen maken door een rechtop staande streep ('|') , Gebruik dubbele strepen om een tabel heading te maken.   
+Voorbeeld:
+{{{
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+}}}
+geeft je de volgende tabel. Zie dat je in een tabel ook hyperlinks kunt gebruiken.
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+
+!CSS styles
+Alhoewel niet in overeenstemming met het keep it simple principe, CSS styles [kunnen inline worden gebruikt|JSPWiki:CSSInWikipages] voor die situaties waarbij je echt de nadruk op een bepaald gedeelte van een pagina wilt leggen.
+
+!Conflicten
+Als iemand toevallig dezelfde pagina wil wijzigen als jij op hetzelfde tijdstip, dan zorgt JSPWiki er voor dat je geen wijzigingen kunt doen en zal je een conflict pagina geven. Sorry, maar degene die de eerste wijzigingen maakt, die wint..... 
+__Waarschuwing:__ Als je de  Back knop van je browser gebruikt om terug te gaan naar Edit mode, dan zal je bijna zeker een conflict krijgen. Dit omdat je browser dan denkt dat ie de vorige versie van de tekst moet hebben.
+
+!Verwijderen van pagina's
+Dat kan niet. Je kunt natuurlijk alle links naar een pagina weghalen, waardoor ie onbereikbaar wordt.Of je kunt de administrator vragen om de pagina te verwijderen. Je kunt ook de [DELETEME|JSPWiki:DELETEME] link gebruiken.
+
+!Toevoegen van nieuwe pagina's
+Maak een link op een pagina die naar de nieuwe (nog niet bestaande) pagina verwijst door zijn [wiki naam|JSPWiki:WikiName] te gebruiken
+Klik op de link die nu een vraagteken (?) suffix moet hebben en je krijgt een editor window voor de nieuwe pagina.
+
+!Aliasing van een pagina
+Soms wil je dat een link naar een pagina direct naar een andere pagina gaat. Dit kan je doen met een [PageAlias].
+
+!Variabelen toevoegen
+Er zijn vele variabelen die je aan een pagina kan toevoegen. De basis vorm is:
+{{ [[{$variablename}], }}
+waar ''variablename'' de naam van de variabele is die je wilt invoegen. Variabele namen zijn case-insensitive - d.w.z., "pagename" is hetzelfde als  "paGeNamE" en "PageName".
+Je kunt de lijst van beschikbare variabelen zien op [WikiVariables|JSPWiki:WikiVariables].
+
+!Plugins gebruiken
+De standaard manier om een plugin op een pagina te gebruiken, is ::
+[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
+Meer informatie hierover is te vinden op  [JSPWikiPlugins | JSPWiki:JSPWikiPlugins].
+----
+[#1] Hier is de genoemde voetnoot.
+[2-De andere voetnoot|#2] De andere voetnoot. Zie je dat de naam anders is ?
+----
+Enig  [idee | JSPWiki:IdeasTextFormattingRules]?
+Nog [vragen | JSPWiki:TextFormattingRulesDiscussion]?

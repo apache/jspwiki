@@ -1,0 +1,13 @@
+Sometimes it's useful to have one page ''really'' mean some other page.  For example, you might have a page called "Page Aliases", but you would also like people to have it available under "Aliases".  In such a case, you can use a "page alias":
+
+Put the following on the "[PageAliases]" -page:  (We have an example page there, so if you click on it, you will be returned back here.)
+
+{{{
+[{SET alias='PageAlias'}]
+}}}
+
+Every time someone views the page "[PageAliases]", they will be automatically redirected to this page.  This is very useful if you want to be able to use the irregular plural forms, for example.  Normally, JSPWiki does properly recognize English language plural forms of page names, but it's not smart enough to recognize certain forms, such as "aliases".
+
+!Editing the alias/redirect pages
+
+Well, obviously you cannot click on the "Edit this page" -link, because you are redirected every time you try to view a page.  You can, however, edit the page directly by just writing {{Edit.jsp?page=''pagename''}} after the base URL. Alternatively, you can use the interWikiRef defined for editing, by default it is set to "Edit" (i.e., [[Edit Aliases Page|Edit:Aliases]) 

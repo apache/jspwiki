@@ -1,0 +1,14 @@
+Esta Wiki foi construída utilizando a tecnologia [JSP|http://java.sun.com/products/jsp] que torna bem mais fácil de se manter a wiki e melhor interface de usuário do que as outras Wikis baseadas na [wiki original|http://c2.com/cgi/wiki]. Um bean específico é responsável por traduzir o texto em HTML.
+
+A maioria das [regras de formatação de texto|TextFormattingRules] foram estilizadas de acordo com o [Sensei's Library|http://senseis.xmp.net], o melhor site sobre o assunto da internet. Eu acho as regras dele bem fáceis e simples.
+
+Esta wiki é disponível via a [Licença Apache, Versão 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Por favor veja [http://jspwiki.apache.org] para maiores informações.
+
+Se você está interessado no desenvolvimento da JSPWiki, a página principal do projeto é [http://jspwiki.apache.org]. E abaixo alguns links rápidos:
+
+* [Relatórios de bugs|JSPWiki:SubmitBugReport] - ou [olhe a lista de bugs abertos|JSPWiki:OpenBugs].
+* [Contribuir com novas idéias|JSPWiki:SubmitNewIdea].
+* Dê uma olhada no mais atualizado [FAQ da JSPWiki|JSPWiki:JSPWikiFAQ]
+* Procurar por [plugins|JSPWiki:ContributedPlugins] adicionais, [templates|JSPWiki:ContributedTemplates], [filtros|JSPWiki:ContributedFilters], [contribuintes|JSPWiki:ContributedProviders], ou [outras coisas legais|JSPWiki:ContributedCode].
+
+Boa sorte e obrigado por escolher a JSPWiki!

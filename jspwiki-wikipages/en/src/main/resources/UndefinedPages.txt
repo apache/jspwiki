@@ -1,0 +1,6 @@
+Here are the pages that have not yet been created.  Why don't you go and create
+a few?
+
+[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
+
+(Back to [Main]).

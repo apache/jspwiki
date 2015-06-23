@@ -1,0 +1,495 @@
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/* SMART skin
+ * Additional .css on top of jspwiki.css
+ * Dirk Frederickx, May 07
+ */
+
+/* COLOR scheme
+	#666 font-color
+	#eee code, comment, weblogentries, (light grey)
+	#d7d7d7 table header(darker grey)
+	#ccc table borders,
+	#d9e8ff edit background
+	#fad112 highlight colors, searchbars, ...  (amber)
+	#fff7c0 information (light blue)
+	#ffff80 warning (light yellow)
+	#ffe0e0 error (light pink)
+ */
+
+/* +++ 010 LAYOUT of main ID blocks +++ */
+#wikibody {
+	width:90%;
+	margin:auto;
+}
+#header, #footer {
+	margin:10px 0;
+	padding:4px !important;
+	background:#fad112 url(images/header-bg.gif);
+	width:auto;
+}
+#header {
+	height:100px;
+}
+#header .userbox {
+	display:none;
+}
+#header .pagename {
+    clear:left;
+}
+#header .searchbox {
+	margin-top:-24px;
+	margin-right:0.25em;
+}
+/* ie6 hack */
+* html #header .searchbox {
+	margin-top:0;
+}
+
+#actionsTop,#actionsBottom {
+}
+#footer {
+	margin-top:1em;
+	margin-bottom:2em;
+}
+#favorites {
+	margin-top:0;
+}
+#favorites .userbox {
+	border:1px solid #b6b6b6;
+	display:block;
+}
+
+/* +++ 200 Generic stuff here +++ */
+* {
+	color:#666;
+}
+
+/* +++ 210 Page titles, headings, and paragraphs +++ */
+#header .pagename {
+	color:white;
+}
+h2 {
+	font-size:1.6em;
+}
+h3 {
+	font-size:1.4em;
+}
+h4 {
+	font-size:1.0em;
+}
+h2,h3,h4 {
+	color:#c00;
+}
+.editsection a:link, .editsection a:active, .editsection a:visited {
+	border:none;
+	color:#ccc;
+}
+.editsection a:hover {
+	background:#fff7c0;
+	color:#999;
+}
+
+/* +++ 220 Lists and bullets +++ */
+/* +++ 225 Forms, Labels, form-values and form-help +++ */
+legend, label {
+	font-weight:bold;
+	font-size:100%;
+	color:#c00;
+}
+
+/* +++ 230 Horizontal rules +++ */
+.hr, hr {
+	border:none;
+	background-color:#ccc;
+	height:2px;
+	width:100%;
+}
+
+/* +++ 240 Pre-formatted text blocks and code +++ */
+pre {
+	border:1px dashed #b6b6b6;
+	background-color:#fff7c0; /*light yellow */
+}
+
+/* +++ 250 Hyperlinks +++ */
+a:link, a:visited, a:active {
+	color:inherit;
+	text-decoration:none;
+	border-bottom:1px solid #ccc;
+}
+a.createpage {
+	color:#666;
+	border-bottom:1px dashed #c00;
+}
+a.createpage:hover {
+	border-bottom:1px solid #c00;
+}
+a.wikipage:hover {
+	border-bottom:1px solid #999;
+}
+.calendar a, .breadcrumbs a, .applicationlogo a {
+	border-bottom:none !important;
+}
+
+/* +++ 260 Image styles, and Logo +++ */
+#header .applicationlogo {
+	position:static;
+	float:left;
+}
+.applicationlogo a {
+	height:32px;
+	width:120px;
+	margin:-4px 0;
+	background-image:url(images/smart-logo.gif);
+	background-position:top left;
+}
+.applicationlogo a:hover {
+	background-position:top left;
+}
+
+/* +++ 270 Footnotes and small text +++ */
+/* +++ 280 Convenience styles and info/warning/error dialogs +++ */
+.additinfo {
+	background-color:#fff7c0; /*light yellow */
+}
+
+/* +++ 290 Comment boxes (used on some pages) +++ */
+.commentbox {
+	border:1px dashed #b6b6b6;
+	background-color:#fff7c0; /*light yellow */
+}
+
+/* +++ 300 Wiki tables and zebra tables +++ */
+.wikitable * th {
+	padding:4px;
+	color:#c00;
+	border:1px solid #ccc;
+}
+.wikitable * td {
+	padding:4px;
+	border:1px solid #ccc;
+}
+.zebra-table tr.odd td {
+	background:#f7f7f7;
+}
+
+/* +++ 350 Attachments +++ */
+/* +++ 400 Styles for specific JSPs +++ */
+/* +++ 405 AttachmentTab.JSP +++ */
+/* +++ 410 CommentContent +++ */
+/* +++ 415 ConflictContent +++ */
+/* +++ 420 DiffContent and Diff Providers:Traditional and External +++ */
+/* +++ 421 Contextual diff provider +++ */
+/* +++ 425 Edit/EditContent and CommentContent +++ */
+/* +++ 430 Edit/EditContent +++ */
+.textarea-resizer {
+	background:#fad112;
+}
+#findSuggestionMenu {
+	color:#c30;
+	background-color:#fad112;
+	border:4px solid #fad112;
+}
+#findSuggestionMenu .hover {
+	background-color:#fff7c0;
+}
+
+
+/* +++ 440 Favorites +++ */
+.userbox .username {
+	padding:4px 0 4px 22px;
+}
+.username.anonymous {
+	background:url(images/user.png)  2px 2px no-repeat;
+}
+.username.asserted {
+	background:url(images/user_orange.png) 2px 2px no-repeat;
+}
+.username.authenticated {
+	background:url(images/user_green.png)  2px 2px no-repeat;
+}
+/* +++ 450 FindContent / 450 Graph Bars +++ */
+.breadcrumbs {
+	padding:0;
+	height:1.5em;
+	overflow:hidden;
+}
+.searchword, .cursor, .searchmatch {
+	background-color: #fad112;
+}
+.graphBar {
+	border-color:#fad112;
+}
+
+/* +++ 455 Footer +++ */
+.copyright {
+	color:#c00;
+	font-weight:bold;
+}
+
+/* +++ 460 Header +++ */
+.breadcrumbs, .breadcrumbs a:link, .breadcrumbs a:visited, .breadcrumbs a:active {
+	color:white !important;
+}
+
+/* +++ 465 InfoContent +++ */
+.pagination {
+	color:#c00;
+	background:#d7d7d7;
+	border:1px solid #ccc;
+}
+.pagination a:hover {
+	background-color:#fad112;
+}
+
+/* +++ 470 PageActions.jsp +++ */
+.pageactions a:link, .pageactions a:visited {
+	border-bottom:none;
+	font-weight:bold;
+	color:#666;
+}
+#moremenu a:hover, a.action:hover,
+.userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
+	background-color:#fad112 !important;
+	color:#c00;
+}
+.actionView a,
+.actionEdit a,
+.actionComment a,
+.actionInfo a,
+.actionLogin a,
+.actionLogout a,
+#actionsMoreLink a,
+#actionsBottom .actionPrefs a {
+	/*border-left:1px solid #b6b6b6;*/
+}
+a.tool:hover, .btn:hover {
+	background-color:#fad112 !important;
+}
+
+/* +++ 475 PageContent.jsp +++ */
+.banner {
+	background-image:url(images/header-bg.gif);
+	color:white;
+}
+.banner h2, .banner h3, .banner h4 {
+	color:white;
+	padding:0.5em 0.25em;
+}
+#sneakpreviewheader {
+	background-color:#fff7c0;
+}
+
+/* +++ 475 PreviewContent - "This is a preview" comment +++ */
+/* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
+/* +++ 485 SearchBox +++ */
+#searchSubmit {
+	background: url(../../images/search.gif) no-repeat center;
+}
+#header a:link, #header a:visited, #recentSearches {
+	color:#666;
+}
+#recentSearches div {
+	color:#666;
+	text-decoration:none;
+}
+#searchboxMenu {
+	border:1px solid #b6b6b6;
+	top:3em;
+	/*right:0;*/
+}
+#searchTools a:hover, #searchboxMenu li:hover {
+	background:#fad112;
+}
+
+/* +++ 490 ViewTemplate +++ */
+/* +++ 600 JSPWiki plugins +++ */
+/* +++ 610 Image plugin +++ */
+/* +++ 203 image plugin stuff +++ */
+/* +++ 620 Index plugin +++ */
+.index .header {
+	color:#c00;
+	background:#fad112;
+	font-weight:bold;
+}
+div.index .section a {
+	color:#c00;
+}
+
+/* +++ 625 Table of contents plugin +++ */
+.toc h4 {
+	background:transparent;
+    color:#666;
+    font-size:120%;
+}
+.toc li a {
+	color:#666;
+	border-bottom:none;
+	text-decoration:none;
+}
+
+/* +++ 630 Weblog and weblogarchive plugins +++ */
+.weblogentryheading, .weblogentrytitle {
+	background:#fff7c0;
+}
+.weblogentrytitle {
+	color:#c00;
+}
+.weblogentryfooter {
+	background:transparent;
+	border-top:1px solid #b6b6b6;
+}
+.weblogcommentstitle {
+	background:#fff7c0;
+	border-bottom:2px solid #fad112;
+	margin:0;
+}
+.weblogcomments {
+	background:#fff7c0;
+	margin:0;
+}
+
+/* +++ 640 RecentChangesPlugin +++ */
+table.recentchanges td {
+	border-bottom:1px solid #ccc;
+}
+table.recentchanges .date {
+	background-color:white !important;
+	border-bottom:2px solid #fad112;
+}
+
+/* +++ 800 JSPWiki JSP Taglibs +++ */
+/* +++ 805 CalendarTag +++ */
+table.calendar td.othermonth {
+	color:silver;
+}
+table.calendar a {
+	color:#c00;
+	font-weight:bold;
+}
+table.calendar td.month {
+	font-size:100%;
+}
+table.calendar td.weekdays {
+	font-size:0.8em;
+	padding:0 0.2em;
+	color:#c00;
+}
+
+/* +++ 900 "Special-effects" JavaScript styles +++ */
+/* +++ 905 Search highlights +++ */
+/* +++ 910 Tabbed Pages +++ */
+.tabs {
+	border:1px solid #b6b6b6;
+}
+.tabmenu a {
+	border:1px solid #b6b6b6;
+	border-bottom:none;
+	margin:0 0 -1px 4px;
+	color:#666;
+}
+.tabmenu a:hover, .tabmenu a:hover u, .tabmenu a:hover .accesskey {
+	color:#c00;
+	background:#fff7c0;
+}
+.tabmenu a.activetab {
+	border-bottom:1px solid white;
+}
+.tabmenu a.activetab, .tabmenu a.activetab u {
+	color:#666;
+}
+
+/* +++ 910 Accordion +++ */
+.accordion .toggle {
+	border: 2px solid #fff7c0;
+	background:#fff7c0;
+	font-size:11px;
+}
+.accordion, .tabbedAccordion {
+	border:1px solid #b6b6b6;
+}
+.accordion .toggle {
+}
+.togglemenu .toggle {
+	border:1px solid #b6b6b6;
+	margin-left:4px;
+}
+.accordion .toggle:hover, .togglemenu .toggle:hover {
+	color:#c00;
+	background:#fad112;
+}
+
+/* +++ 912 wiki columns +++ */
+/* +++ 915 Tips +++ */
+.tip-anchor {
+	border-bottom:2px solid #fad112;
+}
+.tip-title, .tip-text {
+	margin:0;
+	padding:4px 8px 8px;
+	background:#fad112;
+}
+/* +++ 920 Collapsible lists +++ */
+.collapseBullet, .collapseOpen, .collapseClose {
+	color:#c00;
+}
+.collapseOpen:hover, .collapseClose:hover {
+	background:#fad112;
+	color:#c00;
+}
+/* +++ collapsebox +++ */
+.collapsebox {
+	border:1px solid #b6b6b6;
+}
+.collapsetitle:hover {
+	background:#fff7c0;
+}
+
+/* +++ 930 Sortable tables +++ */
+
+/* +++ 940 SLIMBOX Attachment viewer etc. +++ */
+.quicklinks { font-size:12px;
+	padding:0 2px;
+}
+.quicklinks, .quicklinks a {
+	background:#fad112;
+	color:#c00;
+	border:none;
+}
+
+/* +++ 950 Categorised +++ */
+.categoryPopup {
+	border:3px solid #fad112;
+}
+.categoryTitle, .categoryText {
+	background:#fad112;
+}
+.categoryPopup .hover {
+	background:#fff7c0;
+}
+.categoryLink:link, .categoryLink:active, .categoryLink:hover, .categoryLink:visited {
+	border-bottom:2px solid #ffcc33 !important;
+}
+.categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
+	color:inherit;
+}

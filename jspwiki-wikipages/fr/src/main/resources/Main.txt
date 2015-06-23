@@ -1,0 +1,34 @@
+!!! Félicitations!
+
+Vous avez installé [JSPWiki|About] avec succès.
+
+Voici quelques pages qui ont été préparées pour vous :
+
+!Démarrage rapide
+
+* Pour faire des essais à volonté, essayez le [bac à sable|SandBox].
+* Pour un aperçu rapide de ce qu'est le Wiki, regardez du côté du [Wiki en une minute|OneMinuteWiki].
+* Pour quelques règles sur les bonnes habitudes à suivre dans un Wiki, voyez la [WikiEtiquette].
+
+!Problèmes d'installation
+
+* Si vous utilisez Microsoft Windows, ou que vous rencontrez des problèmes avec l'UTF-8, alors
+  vous devriez jeter un coup d'œil du côté des [astuces d'installation|InstallationTips] :
+  vous y trouverez plus d'informations.
+
+!Documentation
+
+* Pour découvrir comment on peut changer l'apparence du texte dans le Wiki, voyez du côté
+  des [règles de formatage du texte|TextFormattingRules], voire des 
+  [règles de formatage du texte complètes|FullTextFormattingRules].
+* Voici le point d'entrée de la [documentation JSPWiki|JSPWiki:JSPWikiDocumentation] complète.
+** Et voilà les [nouveautés de JSPWiki|JSPWiki:NewIn]!
+
+!Divers
+
+* Vous avez plusieurs moyens si vous voulez entrer en contact avec la [communauté|Community]
+  JSPWiki. Essayez-les!
+* Pour savoir de quoi ce wiki particulier retourne, cliquez sur le nom du Wiki en haut à
+  gauche de votre navigateur Web, ou voyez les [informations système|SystemInfo].
+
+Bon courage, et merci d'avoir choisi JSPWiki!

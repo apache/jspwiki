@@ -1,0 +1,5 @@
+WikiWiki è la parola Hawaiana che significa &quot;veloce&quot;.
+~ViteVite è la parola francese che significa &quot;veloceveloce&quot;.
+Wiki è anche un acronimo - What I Know Is (quello che io sò è)
+
+Una lista esaustiva di altri motori Wiki si può trovare sulla pagina [Wiki originali |http://c2.com/cgi/wiki?WikiEngines] di Ward Cunningham.

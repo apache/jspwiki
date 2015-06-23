@@ -1,0 +1,150 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Edit.jsp, EditContent.jsp, CommentContent.jsp, plain.jsp
+
+*/
+
+//should be part of normalise.less ; help also FF to set default to pre-wrap!
+textarea { white-space: pre-wrap; }
+
+//highlight  editor focus fields,  to catch attention to the cursor
+.editform, .dialog.find {
+
+    input[type="text"]:focus, textarea:focus {
+        background:@highlight;
+
+        //get rid of the default bootstrap highlight -- see forms.less and mixins/form-control-focus
+        //outline:0;
+        .box-shadow(none);
+        border: 1px solid @input-border;
+    }
+
+}
+.editform input[name=changenote] {
+    position: absolute;
+    z-index: 2;  //appear on top of the button group
+    width: 480px;
+}
+.editform .open + .editor-tools  {
+    opacity:0;
+}
+
+.editor {
+    font-family: @font-family-monospace;
+    padding: .5em;
+	resize: none !important; // disable resizable textareas in Webkit
+    background: @wiki-editor-bg;
+}
+
+//base styling similar to .page-content in Template.Content.less;
+.ajaxpreview {
+    .hide;
+    background: @wiki-preview-bg;
+    overflow: scroll;
+    padding: .5em 0 .5em @grid-gutter-width/2; //cannot use margin here, as width=50%
+
+    &.loading {
+        .progress-striped .progress-bar;
+        .progress.active .progress-bar;
+    }
+}
+
+//Layout of editor and preview area
+
+//default: show the editor (and preview) areas at 100%
+.edit-area  .col-50,
+.edit-area + .resizer + .ajaxpreview.col-50 { width:100%; }
+
+//when livepreview is on, show the ajaxpreview area
+.edit-area.livepreview .ajaxpreview { .show; }
+.edit-area.livepreview  + .resizer + .ajaxpreview { .show; height:auto !important; }
+
+//when livepreview is on AND previewcolumn (side by side) is on, set width to 50%
+.edit-area.livepreview.previewcolumn .col-50 { width:50%; float:left; }
+
+
+.resizer {
+    background: @wiki-resizer;
+	cursor:row-resize;
+    width:100%;
+	height:8px;
+    line-height:8px;
+    margin-top:4px;
+    margin-bottom:.5em;
+    border-radius:4px;
+    z-index:3;
+
+    &.dragging {
+        .progress-striped .progress-bar;
+        .progress.active .progress-bar;
+    }
+}
+
+
+//CHECK: move to dropdown.less ..
+//reset bootstrap/form.less style on labels inside dropdown menu-s
+.dropdown-menu {
+    max-height:400px;
+    overflow:scroll;
+    label { font-weight:normal; }
+}
+
+.toolbar {
+
+    padding-bottom: 1em;
+    .btn-group {
+        border:1px solid @link-color;
+	    border-radius:@border-radius-base;
+    }
+    .btn-link:hover { text-decoration:none; }
+
+}
+
+// icons only, or text labels ?
+// [data-cmd] { &:after { content: " " attr(data-cmd);  } }
+
+[data-cmd='find'] + .dropdown-menu {
+
+    padding:5px 20px;
+    background-color: fade(@dropdown-bg,80%); //white background
+
+    .tbHITS {
+    	position:absolute;
+	    right:1.5em;
+	    color:#999;
+    }
+
+}
+
+[data-cmd='color'] {
+    background:url("@{imagePath}/color-wheel.png") no-repeat center;
+}
+
+/* Section command button and dropdown */
+.section-selected > .btn { color:@red; }  //red section button (bookmark) when a section is selected
+
+[data-sections] {
+    //.indent-0 { }
+    .indent-1 { text-indent:.5em; }
+    .indent-2 { text-indent:1em; }
+}
+

@@ -1,0 +1,42 @@
+Aqui estão algumas informações estratégicas sobre esta Wiki em particular. Toda esta informação também está disponível em [Variáveis Wiki|JSPWiki:WikiVariables] para o caso de você quiser utilizá-la em outra página.
+
+| __Nome da Aplicação__                            | [{$applicationname}]
+| __Endereço Base__                                | [{$baseurl}]
+| __Versão da Engine da JSPWiki__                  | [{$jspwikiversion}] 
+| __Codificação dos caracteres__                   | [{$encoding}]
+| __Número Total de Páginas__                      | [{$totalpages}]
+| __Total de Sessões Ativas__                      | [{INSERT SessionsPlugin}]
+| __Usuários Wiki Ativos__                         | [{INSERT SessionsPlugin property=users}]
+| __Tempo de Atividade Atual__                     | [{$uptime}]
+| __Fornecedor de Páginas Atual__                  | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Fornecedor de Anexos Atual__                   | [{$jspwiki.attachmentProvider}]
+| __Links InterWiki Disponíveis__                  | [{$interwikilinks}]
+| __Extensões de Imagens Permitidas__              | [{$inlinedimages}]
+| __Caminho Adicional de Busca de Plugins__        | [{$pluginpath}]
+| __[Filtros de Página|PageFilters] Instalados__   | [{$pagefilters}]
+
+!Usabilidade
+
+| __Nós temos título bonitos?__            | [{$jspwiki.breakTitleWithSpaces}]
+| __Nós buscamos por palavras no plural?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Links CamelCase são usados?__          | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __O HTML é permitido nas páginas?__      | [{$jspwiki.translatorReader.allowHTML}]
+
+!Resumo de Aplicações Rich do Site
+
+| __Nós geramos arquivo RSS?__ | [{$jspwiki.rss.generate}]
+| __Se sim, qual o nome do arquivo?__ | [{$jspwiki.rss.fileName}]
+| __Quão frequente o RSS é atualizado?__ |  [{$jspwiki.rss.interval}]
+
+!Informações Pessoais
+
+Aqui está o que eu sei sobre você atualmente:
+
+| __Nome de usuário__    | [{$username}]
+| __Status do Login__    | [{$loginstatus}]
+
+!Lista das páginas que estão sendo editadas neste momento
+
+[{ListLocksPlugin}]
+
+A página principal da JSPWiki está em [http://jspwiki.apache.org/]. Bem Vindo!

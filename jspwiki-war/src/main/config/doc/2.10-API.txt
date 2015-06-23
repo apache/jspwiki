@@ -1,0 +1,184 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+#
+#  This file contains defaults for development.  If you are cross-
+#  developing in multiple environments, just change the defaults
+#  in this file.
+#
+#  Any changes in this file will be reflected in the default
+#  jspwiki.properties-file when it is run.
+#
+
+1. JSPWiki API
+==============
+
+The package org.apache.wiki.api aims to provide an API to extend JSPWiki. As for 2.10.x, it's still unfinished,
+with work still in progress.
+
+1.1. API modules
+----------------
+api
+ -> new package org.apache.wiki.api, which should compile without depending on other packages
+
+api.exceptions
+ -> new package org.apache.wiki.api.exceptions with copies of the original Exceptions declared by
+    the API methods
+      * moved o.a.w.NoRequiredPropertyException to o.a.w.api.exceptions.NoRequiredPropertyException
+      * moved o.a.w.NoSuchVariableException to o.a.w.api.exceptions.NoSuchVariableException
+      * moved o.a.w.filters.FilterException to o.a.w.api.exceptions.FilterException
+      * moved o.a.w.filters.RedirectException to o.a.w.api.exceptions.RedirectException
+      * moved o.a.w.plugin.PluginException to o.a.w.api.exceptions.PluginException
+      * moved o.a.w.providers.ProviderException to o.a.w.api.exceptions.ProviderException
+        
+api.filters
+ -> Interface and base classes needed to develop WikiFilters
+ -> cfr. with http://jspwiki-wiki.apache.org/Wiki.jsp?page=WikiFilters
+        
+api.plugin
+ -> Interfaces needed to develop WikiPlugins
+ -> cfr. with http://jspwiki-wiki.apache.org/WritingPlugins
+
+
+1.2. Other classes affected
+---------------------------
+@Deprecated
+ -> all classes / methods anotated with @Deprecated because of the API changes will be removed 
+    in 2.10 timeframe
+
+org.apache.wiki.PageManager
+ -> getActiveLocks() returns List<PageLock> instead of List (internally it was returning List<PageLock> anyway)
+
+org.apache.wiki.PageTimeComparator
+ -> moved to org.apache.wiki.util.comparators package
+
+org.apache.wiki.PropertyReader
+ -> moved to org.apache.wiki.util.PropertyReader
+
+org.apache.wiki.QueryItem 
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.SearchResult
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.SearchResultComparator 
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.SearchMatcher
+ -> moved to org.apache.wiki.search package
+
+org.apache.wiki.WikiContext
+ -> removed WikiContext.getBundle( String ) in favour of Preferences.getBundle( String )
+ -> removed WikiContext.getLocale( WikiContext ) in favour of Preferences.getLocale( WikiContext )
+ -> removed WikiContext.hasAccess( HttpServletResponse ) in favour of
+    AuthorizationManager.hasAccess( HttpServletResponse )
+ -> removed WikiContext.hasAccess( HttpServletResponse, boolean ) in favour of
+    AuthorizationManager.hasAccess( HttpServletResponse, boolean )
+    
+org.apache.wiki.WikiEngine
+ -> removed WikiEngine.getRequiredProperty( props, key ) in favour of  
+    TextUtil.getRequiredProperty( props, key )
+ -> moved WikiEngine.getPluginSearchPath() to PluginManager.getPluginSearchPath()
+    
+org.apache.wiki.FileUtil and org.apache.wiki.TextUtil
+ -> moved to org.apache.wiki.util.FileUtil and org.apache.wiki.util.TextUtil respectively
+
+org.apache.wiki.event.WorkflowEvent
+ -> removed getWorkflow() in favour of the generified WikiEvent#getSrc()
+
+org.apache.wiki.filters.FilterManager
+ -> new interface org.apache.wiki.api.engine.FilterManager
+ -> moved to org.apache.wiki.filters.DefaultFilterManager
+ -> WikiEngine.getFilterManager returns org.apache.wiki.api.engine.FilterManager
+
+org.apache.wiki.filters.BasicPageFilter
+ -> moved to new class org.apache.wiki.api.filter.BasicPageFilter
+ 
+org.apache.wiki.filters.PageFilter
+ -> moved to new interface org.apache.wiki.api.filter.PageFilter
+ -> all core wikifilters implementing the "old" interface now implement the new one
+
+org.apache.wiki.parser.JSPWikiMarkupParser
+ -> moved method public static Collection getImagePatterns( WikiEngine ) to
+    WikiEngine.getAllInlinedImagePatterns()
+ -> moved constants DEFAULT_INLINEPATTERN and PROP_INLINEIMAGEPTRN to WikiEngine
+
+org.apache.wiki.parser.PluginContent
+ -> getParameter returns String instead of Object ( internally, it was returning a String )
+ -> gains executeParse( WikiContext ), moved from o.a.w.p.PluginManager
+ -> gains PluginContent.executeParseLine( WikiContext, String, int ), moved from o.a.w.p.PluginManager
+
+org.apache.wiki.plugin.PluginManager
+ -> moved to org.apache.wiki.plugin.DefaultPluginManager
+ -> new interface org.apache.wiki.api.engine.PluginManager
+ -> removed public static boolean isPluginLink( String link )
+      * equivalent method on org.apache.wiki.parser.JSPWikiMarkupParser
+ -> removed public void executeParse( PluginContent content, WikiContext context )
+      * consider using PluginContent.executeParse( WikiContext ) instead
+ -> removed parsePluginLine( WikiContext, String, int )
+      * consider using PluginContent.executeParseLine( WikiContext, String, int ) instead
+ -> added public Pattern getPluginPattern(), which is part of the org.apache.wiki.api.engine.PluginManager API
+ -> WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public 
+    and part of the org.apache.wiki.api.engine.PluginManager API
+ -> WikiEngine.getPluginManager returns org.apache.wiki.api.engine.PluginManager
+ -> obtained PluginManager.getPluginSearchPath() from WikiEngine.getPluginSearchPath()
+
+org.apache.wiki.plugin.InitializablePlugin
+ -> moved to new interface org.apache.wiki.api.plugin.InitializablePlugin
+ -> all core wikiplugins and wikiforms implementing the "old" interface now implement the new one
+ 
+org.apache.wiki.plugin.ParserStagePlugin
+ -> moved to new interface org.apache.wiki.api.plugins.ParserStagePlugin
+ -> all core wikiplugins and wikiforms implementing the "old" interface now implement the new one
+ 
+org.apache.wiki.plugin.WikiPlugin
+ -> moved to new interface org.apache.wiki.api.plugins.WikiPlugin
+ -> all core wikiplugins and wikiforms implement the new interface
+
+org.apache.wiki.rss.Feed
+ -> receives static method getSiteName() from o.a.w.util.BlogUtil
+
+org.apache.wiki.ui.admin.AdminBeanManager
+ -> moved to new interface org.apache.wiki.ui.admin.DefaultAdminBeanManager
+ -> new interface org.apache.wiki.api.engine.AdminBeanManager
+ -> public static int getTypeFromString( String type ) not static anymore
+ 
+org.apache.wiki.util.BlogUtil
+ -> removed; its only method is moved to o.a.w.rss.Feed#getSiteName() 
+
+org.apache.wiki.util.HttpUtil
+ -> HttpUtil.createETag and HttpUtil.checkFor304 now receive String name, Date lastModified instead of WikiPage 
+ -> use wikipage.getName(), wikipage.getLastModified() to pass the appropiate objects
+
+org.apache.wiki.util.MailUtil
+ -> sendMessage(WikiEngine, String, String, String) changed to sendMessage(Properties, String, String, String) 
+ -> use WikiEngine.getWikiProperties() to pass the appropiate object
+
+org.apache.wiki.util.PageSorter
+ -> moved to o.a.w.PageSorter
+
+org.apache.wiki.util.ProviderConverter
+ -> moved to o.a.w.providers
+
+org.apache.wiki.util.Watchable
+ -> moved to org.apache.wiki package
+
+org.apache.wiki.util.WatchDog
+ -> moved to org.apache.wiki package
+ 
+org.apache.wiki.util.WikiBackgroundThread
+ -> moved to org.apache.wiki package

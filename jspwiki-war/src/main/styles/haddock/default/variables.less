@@ -1,0 +1,145 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+//  JSPWiki color scheme an typography
+
+// Better base colors. See - https://github.com/mrmrs/colors/blob/master/less/_variables.less
+@aqua:  #7FDBFF;
+@blue:  #0074D9;
+@navy:  #001F3F;
+@teal:  #39CCCC;
+@green: #2ECC40;
+@olive: #3D9970;
+@lime:  #01FF70;
+
+// Warm
+@yellow:  #FFDC00;
+@orange:  #FF851B;
+@red:     #FF4136;
+@fuchsia: #F012BE;
+@purple:  #B10DC9;
+@maroon:  #85144B;
+
+// Gray Scale
+@white:  #fff;
+@silver: #ddd;
+@gray:   #aaa;
+@black:  #111;
+
+
+//JSPWiki paths
+@imagePath: "./images";
+@icon-font-path: "./fonts/";
+
+// Might as well use the nicest Helvetica you can... http://css-tricks.com/snippets/css/better-helvetica/
+@font-family-sans-serif: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+//softer gray-tones
+@pre-bg:                      #f2f2f2;
+@pre-border-color:            #e5e5e5;
+@panel-default-border:        @pre-border-color;
+@panel-default-heading-bg:    @pre-bg;
+
+// JPSWiki variables
+// Main color scheme
+@wiki-header-bg:    @brand-primary; //#1976D2;
+@wiki-header-color: @white;
+@wiki-page-bg:      @white;
+@wiki-sidebar-bg:   #e5e8ed; ;
+@wiki-header-font-family: @font-family-sans-serif;
+
+
+//Layout ratios
+//ref. http://alistapart.com/article/content-out-layout
+// "The most famous irrational ratio in design is, of course, the golden ratio (...),
+//  which is derived from patterns in nature and the human form. "
+//
+@golden-ratio: 1.618; //phi
+@golden-square: @golden-ratio * @golden-ratio;
+
+//blurb layout :        1 | (1*phi*phi)
+//three section layout: 1 | (1*phi*phi) | 1
+@wiki-sidebar-width: percentage( 1 / (1 + @golden-square + 1) );  //21.6447%
+
+//wider layout :  1 | (1*phi)   => commentbox
+@wiki-commentbox-ratio: percentage( 1 / (1 + @golden-square) ); //27.6373%
+@wiki-commentbox-width: @wiki-commentbox-ratio * 100% / (100% - @wiki-sidebar-width);
+
+
+//Nav bar
+@wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+@wiki-logo-font-size:20px;
+@wiki-logo-padding:5px;
+@breadcrumb-color: @white;
+
+//TODO: Stacking...
+//@slimbox-index:100;
+//@dialog-index:110;
+
+// Forms
+@wikiFormFontColor: #007; //font color for input, textarea form element
+
+// Highlight
+@wiki-hover:  @dropdown-link-hover-bg;
+@highlight:   rgba(255, 255, 0, 0.05); //highlight in item lists, search filter, ...
+@wiki-mark:   @orange; //mark search results, searchbars (amber), default graphbar
+
+// Misc.
+@wiki-recentchanges-date-bg: @wiki-sidebar-bg;
+@wiki-link-createpage: @red;
+@wiki-diff-add:        #9f9; //diff inserted lines
+@wiki-diff-delete:     #f93; //diff deleted lines
+@wiki-captcha-bg:      @gray-lighter;
+@wiki-captcha-width:   125px;
+
+@pre-scrollable-max-height: 240px;  //bootstrap default is 340px
+
+@dropcaps-color:       @black;
+@dropcaps-font-size:   500%;
+@dropcaps-font-weight: thin;
+@dropcaps-font-family: @wiki-logo-font-family; //Georgia
+
+// Viewer
+@viewer-box-border-color:  @table-border-color;
+
+// Viewer.Slimbox
+@slimbox-viewport-corona:     7px 7px 70px rgba(255,255,255,.5);
+
+@slimbox-font-family:         @wiki-header-font-family;
+@slimbox-font-size:           40px; //@carousel-control-font-size; //20px;
+@slimbox-text-shadow:         1px 1px 0 rgba(0,0,0,.1);
+@slimbox-text-color:          @black;
+@slimbox-control-bg:          @white;
+@slimbox-control-opacity:     .7;
+@slimbox-control-font-family: @wiki-logo-font-family;
+@slimbox-control-line-height: 0.85; //heuristic, centering text in a circle
+@slimbox-btn-size:            10px;
+
+// Viewer.Carousel
+@carousel-progress-color: @red;
+@carousel-progress-size:  2px;
+
+// Category
+@wiki-category-link-color: #545454;
+
+//Editor
+@wiki-editor-bg : @white;
+@wiki-preview-bg : transparent; //@white;
+@wiki-resizer:  @btn-primary-bg;

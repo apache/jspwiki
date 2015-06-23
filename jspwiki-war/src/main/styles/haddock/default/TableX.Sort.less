@@ -1,0 +1,66 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Dynamic Style: Sortable Tables
+
+Wiki markup:
+    %%sortable  ..table.. /%
+
+DOM structure:
+    div.sortable
+        table
+            tr
+                th.sort | th.up | th.down
+            tr
+                td
+                td
+*/
+.sortable {
+
+    th {
+        position:relative;
+        cursor:pointer;
+        padding-right:13px !important; //make room for the up/down arrows
+
+        &:hover { background-color: @wiki-hover; }
+
+        //arrow to indicate the sort-direction
+        &:after {
+            .caret();
+            content:""; //needed to display the caret ico of :after or :before pseudo
+            visibility:hidden;
+        }
+        &:hover:after { visibility:visible; }
+
+        &.up:after,
+        &.down:after,
+        &.down:hover:after {
+            visibility:visible;
+            opacity:0.4;  //lighter color for the sorted column
+        }
+        &.up:after  {
+            border-top: 0;
+            border-bottom: @caret-width-base solid; //flip arrow direction
+        }
+
+    }
+
+}

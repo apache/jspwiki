@@ -1,0 +1,36 @@
+Wenn du Seiten bearbeitest, beachte bitte folgende Regeln:
+
+!!Allgemein
+
+* Sei freundlich - benimm dich nicht rüpelhaft und greife niemanden an.
+* Schreibe in einer einfach verständlichen Sprache und vermeide Umgangssprache oder Sprüche.
+* Lösche keine Beiträge anderer Personen (außer wenn du genau weißt was du tust).
+* Vermeide möglichst Abkürzungen. Falls du sie doch verwendest, erkläre sie.
+* __Vermeide den ''"hier klicken"'' Ausdruck!!__ Schreibe besser "Mehr Informationen über das Benehmen im Wiki findest du in [WikiEtiquette]". Ich empfehle das auch für externe Links.
+* Schreibe nur eigene Beiträge. Links sind in Ordnung, aber füge keine Abschnitte als Kopie ein (Urherberrechtsschutz!).
+* Tippfehler anderer zu korrigieren ist okay - das ist sogar eine gute Gewohnheit, denn es macht die Seiten besser lesbar.
+
+!!Kommentare
+
+* Es steht dir frei, auch anonym beizutragen, aber bevorzugterweise signierst du deine Kommentare mit deinem Namen (oder Pseudonym). Es ist allgemein üblich, der Signatur '--' voranzustellen, beispielsweise so: ''-- [Janne Jalkanen]'' (wenn wir gerade dabei sind: Erstelle doch deine eigene Wikiseite und stell dich uns vor!).
+* Eine gute Möglichkeit ist auch, die Signatur voranzustellen, zum Beispiel ''[Janne Jalkanen]: Ich bin der Meinung, dass...''.
+* Überlege zuerst, bevor du schreibst. Ein Wiki ist kein Chat, Forum oder News-Server. Dein Beitrag wird für immer und für alle sichtbar im Wiki stehen (Wenn du deinen Kommentar löschst, ist er in einer älteren Version der Seite immer noch sichtbar!).
+
+!!Erstellen von WikiNamen
+
+* Ein guter [WikiName|JSPWiki:WikiName] ist kurz und beschreibend. Wenn der Name treffend und leicht zu merken ist, werden viel mehr Leute dahin verlinken.
+* Auch wenn du einen ganzen Satz zu einem WikiNamen machen kannst, ist es besser, sich auf maximal fünf Worte zu beschränken.
+* Versuche stattdessen, WikiNamen wie Kapitelüberschriften in einem Buch zu benutzen.
+* Dieses Wiki erlaubt es dir, Seiten mit einem einzelnen Wort als Namen zu erzeugen. In der Regel ist es besser, mindestens zwei Worte zu verwenden.
+* __Kontrolliere die WikiNamen zweimal auf Tippfehler__ - andernfalls wird eine falsch benannte Seite erzeugt!
+
+!!Überarbeiten von Seiten
+
+Überarbeiten bedeutet Seiten zusammenzufassen, zu kürzen, sie übersichtlicher zu machen. Jeder der Lust dazu hat, kann das tun, aber ich empfehle, dass du das den regelmässigen (und erfahrenen) Besuchern dieses Wikis überlässt.
+
+* Sei objektiv - sowohl Pro wie auch Contra sollen korrekt wiedergegeben werden.
+* Sei vorsichtig mit signierten Beiträgen - ändere ihre Bedeutung nicht.
+* Gib Lob, wo ein Lob verdient ist.
+* Schreibe deine Zusammenfassung in der Dritten Person (er/sie sagt) oder im Plural (sie sagen) statt in der ersten Person singular (ich sage).
+
+''Dieser Text ist angelehnt an [Sensei's library|http://senseis.xmp.net/]. Danke!''

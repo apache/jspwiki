@@ -1,0 +1,547 @@
+[{TableOfContents title='Table des matières'}]
+
+!!!Référence rapide
+
+{{{
+----       = Insère un séparateur horizontal. Les '-' supplémentaires sont ignorés.
+\\         = Force un retour à la ligne, \\\=Force un retour à la ligne avec effacement.
+
+[lien]     = Insère un hyperlien vers une WikiPage interne appelée 'Lien'.
+[ceci est aussi un lien] = Insère un hyperlien vers une WikiPage interne appelée
+             'CeciEstAussiUnLien', en montrant un lien avec les espaces.
+[cliquez là|lien] = Insère un hyperlien vers une WikiPage interne appelée 'Lien',
+             mais affiche le texte 'cliquez là' plutôt que 'Lien' à l'utilisateur.
+~PasDeLien = Evite la création d'un lien pour le mot en CamelCase.
+[1]        = Insère une référence à une note de bas de page numérotée 1.
+[#1]       = Marque la note de bas de page numéro 1.
+[[link]    = Insère le texte '[link]'.
+
+!titre   = Insère un petit titre avec le texte 'titre'
+!!titre  = Insère un titre moyen avec le texte 'titre'
+!!!titre = Insère un titre gros avec le texte 'titre'
+
+''texte''   = Affiche 'texte' en italique.
+__texte__   = Affiche 'texte' en gras.
+{{texte}}   = Affiche 'texte' en police de caractères à taille fixe.
+[texte|]    = Affiche 'texte' en souligné (faux lien hypertexte)
+
+* texte     = Insère un item de liste à puces avec le 'texte'
+# texte     = Insère un item de liste à numéros avec le 'texte'
+;terme:ex   = Insère une définition pour le 'terme' avec l'explication 'ex'
+
+~[texte]    = Insère le texte [texte] tel quel, sans formatage
+~\\         = Insère un double backslash tel quel, sans interprétation
+~__mot      = Insère le texte __mot tel quel, sans formatage
+}}}
+
+!!!Ecrire du texte
+
+Il n'y a pas besoin de connaître quoi que ce soit sur les règles de formatage du texte Wiki pour utiliser un Wiki. Il suffit simplement d'écrire du texte normal, et d'utiliser une ligne vide pour marquer un paragraphe. C'est comme écrire un e-mail.
+
+Vous pouvez toujours éditer cette page avec le lien 'Edit' (en haut à droite du texte de la page) pour voir la manière dont les différents
+effets possibles sont utilisés dans cette page.
+
+!!Ajouter des images
+
+On peut insérer n'importe quelle image dans le code wiki : il suffit que l'image soit accessible quelque part sur le web dans un des formats reconnus, puis d'insérer un lien vers elle.
+Par exemple, ceci est une image [PNG] enfouie : [http://www.ecyrd.com/~jalkanen/test.png].
+
+Si vous spécifiez un texte lié ([[celui-ci|http://example.com/example.png]), celui-ci devient le texte ALTernatif affiché pour les utilisateurs qui ne peuvent ou ne veulent voir l'image.
+
+Vous pouvez aussi attacher une image, et y faire référence comme s'il s'agissait de n'importe quelle autre page. Vous pouvez consulter la page [WikiAttachments|JSPWiki:WikiAttachments] pour plus d'informations.
+
+Si vous avez besoin de plus de contrôle sur la présentation (ou des choses comme des légendes), regardez du côté du [plugin Image|JSPWiki:Image]. Il peut faire beaucoup plus que simplement insérer une image.
+
+La liste des types d'image acceptés dépend du Wiki (cf. la page [SystemInfo] pour consulter cette liste).
+
+!!Titres
+
+JSPWiki fournit trois niveaux de titres : un petit (qu'on crée en commençant la ligne par un unique point d'exclamation '!'), un moyen (deux points d'exclamation), et un grand (trois points d'exclamation).
+
+Tous les titres crée aussi une "ancre nommée": vous pouvez alors créer un lien vers ce titre dans cette page wiki depuis d'autres pages wiki. Voir les [Titres nommés|TitresNommes] pour plus d'information à ce sujet.
+
+!!Les listes
+!Listes à puces
+Utiliser un astérisque (*) dans la première colonne permet d'insérer un item de liste à puces. Plus il y a d'astérisques, plus le niveau d'imbrication de l'item est grand. Par exemple :
+{{{
+* Un
+* Deux
+* Trois
+** Trois.Un
+}}}
+
+crée :
+* Un
+* Deux
+* Trois
+** Trois.Un
+
+!Listes à numéros
+Cela fonctionne comme les listes à puces, sauf qu'on utilise un dièse (#) à la place de l'astérisque. Comme ceci :
+{{{
+# Un
+# Deux
+# Trois
+## Trois.Un
+}}}
+
+ce qui crée :
+# Un
+# Deux
+# Trois
+## Trois.Un
+
+Pour que l'item de liste soit sur plusieurs lignes, il suffit d'ajouter un ou plusieurs espaces en début de ligne, et la ligne sera automatiquement ajoutée à l'item précédent. Si cela vous paraît compliqué, éditez cette page pour voir le code de l'exemple ci-dessous.
+
+* Ceci est un item sur une seule ligne.
+* Ceci est en fait un item sur plusieurs lignes.
+  On continue l'item avec une seconde phrase sur sa propre ligne.
+  On peut même faire une troisième ligne de texte tant qu'on y est...
+  Remarquez cependant que toutes ces phrases se retrouvent dans le même item de liste !
+* Le troisième item est, lui, sur une seule ligne.
+
+!Listes rétractiles
+Le style {{%~%collapse}} transforme une liste ordinaire en arborescence que l'on peut réduire ou étendre à loisir.
+
+Cliquer sur la puce du l'item de liste va étendre ou réduire l'item et ses items imbriqués.\\
+En bonus, l'état des nœuds étendus/réduits sont mémorisés dans un cookie du navigateur, ce qui fait que vous n'avez pas à re-cliquer pour refaire votre extension/réduction en revenant sur la page, après avoir visité d'autres pages entretemps (les cookies sont enregistrés pour conserver les favoris et la page principale).
+
+Notez que :
+* Les sous-listes non ordonnées (avec des puces *) sont affichées étendues par défaut
+* Les sous-listes ordonnées (avec des puces #) sont affichées réduites par défaut
+
+Par exemple :
+{{{
+%%collapse
+* Europe
+** France
+*** Paris
+*** Lille
+** Allemagne
+* Asie
+## Japon
+### Tokyo
+### Kyoto
+/%
+}}}
+
+creates:
+%%collapse
+* Europe
+** France
+*** Paris
+*** Lille
+** Allemagne
+* Asie
+## Japon
+### Tokyo
+### Kyoto
+/%
+
+!Listes de définition et commentaires
+
+La manière la plus simple pour insérer une liste de définitions est d'utiliser l'outil ';:' :
+
+;__Outil__ : ''Quelque chose que vous utilisez pour faire un truc''
+
+L'outil {{;:}} a ceci de pratique que l'on peut aussi l'utiliser pour commenter rapidement le texte de quelqu'un d'autre : il suffit de ne pas préciser de terme dans la définition, comme ceci :
+{{{
+;:''Ceci est mon commentaire.''
+}}}
+
+Qui apparaîtra comme cela :
+;:''Ceci est mon commentaire.''
+
+!!Boites
+!Une boite tout simple
+Vous pouvez afficher du texte dans une boite grâce à CSS. Par exemple :
+{{{
+%%(border: 1px solid #aaa; margin:1em 2.5%; padding:0.5em; background:#f9f9f9)
+Voici du texte mis en boite.
+/%
+}}}
+
+crée :
+%%(border: 1px solid #aaa; margin:1em 2.5%; padding:0.5em; background:#f9f9f9)
+Voici du texte mis en boite.
+/%
+
+Consultez la section ''Styles'' de cette page pour plus de détails sur l'utilisation de CSS dans une page wiki.
+
+!Boites rétractiles
+
+Lorsqu'elle est fermée, seul le titre d'une boite rétractile est visible ; quand on l'ouvre, toute la boite devient visible. Une icône ouvrir/fermer (+) est placée sur le bord gauche de la boite, indiquant son état.
+Par exemple, le plugin [TableOfContents|JSPWiki:TableOfContents] affiche la table des matières dans une boite rétractile, par défaut.
+
+Le premier titre ({{!}}, {{!!}} ou {{!!!}}) devient le titre de la boite rétractile.
+Utiliser le style {{%~%collapsebox-closed}} pour que la boite soit fermée et non ouverte par défaut.
+
+{{{
+%%collapsebox-closed
+! Titre de la boite
+Voici le corps de la boite, avec une petite liste :
+* item 1
+* item 2
+/%
+}}}
+
+%%collapsebox-closed
+! Titre de la boite
+Voici le corps de la boite, avec une petite liste :
+* item 1
+* item 2
+/%
+
+!Boite surgissante en surimpression
+Une boite surgissante en surimpression permet d'afficher un lien vers une page, qui s'affichera dans un calque par dessus la page courante, sans quitter celle-ci. Il suffit pour cela de cliquer sur les chevrons du lien. Par exemple, on obtient %%slimbox [ce lien|TextFormattingRules]/%, par :
+{{{%%slimbox [ce lien|TextFormattingRules]/%}}}
+
+!!Effets sur le texte
+!Gras, italique
+Vous pouvez rendre le texte __gras__ ou ''italique'', en utilisant respectivement des double-soulignés (_) et des double-apostrophes ('). Sur un ordinateur sous Windows, assurez-vous que vous utilisez la bonne apostrophe, car il en existe une autre qui lui ressemble beaucoup, mais qui n'est pas la même.
+
+!Texte préformaté
+
+Pour insérer du texte préformaté (comme du code source), il suffit d'utiliser une triple accolade ouvrante ({) pour ouvrir un bloc, et une triple accolade fermante (}) pour le fermer. Vous en trouverez plusieurs exemples en éditant cette page.
+
+Lorsqu'il s'agit de code, mettez votre texte préformaté entre {{%~%prettify}} et {{/~%}}, pour ajouter un peu de couleur à votre code !
+
+!Ajouter du code Java
+Ne pas oublier la ligne blanche entre le nom du plugin et le code Java proprement dit.
+{{{
+[{Java2HtmlPlugin 
+
+public class HelloWorld {  
+  public static void main(String[] args) {
+    System.out.println("Hello World!");
+  }
+}
+}]
+}}}
+
+Autre solution : \\
+Uploader une classe et la référencer comme ceci :
+{{{
+[{Java2HtmlPlugin attachment='HelloWorld.java'}] 
+}}}
+
+On obtient ainsi :
+[{Java2HtmlPlugin 
+
+public class HelloWorld {  
+  public static void main(String[] args) {
+    System.out.println("Hello World!");
+  }
+}
+}]
+
+!!Colonnes
+
+%%columns
+!Méthode
+Pour afficher du texte sur plusieurs colonnes, il suffit de le mettre entre {{%~%columns}} et {{/~%}}.
+----
+!Séparateur de colonnes
+Pour séparer les colonnes, utilisez le quadruple tiret ({{---~-}}).
+/%
+
+!!Bulles de texte
+
+Il est très facile de faire apparaître une %%tip-bulle Cette bulle a été créée : {{%~%tip-bulle comme ceci ! /~%}}/% de texte (placez la souris au dessus du mot ''Bulle'' pour voir comment !)
+
+!!Sections à onglets
+
+Les pages wiki peuvent inclure des onglets similaires à ceux utilisés dans le mode d'édition ou information de page. Le formatage des onglets se personnalisent dans le jspwiki.css.
+
+Toutes les sections à onglets sont dans un ''%~%tabbedSection ... /~%'' et chaque onglet est à l'intérieur d'un ''%~%tab-''nomOnglet'' ... /~%''. Ici ''nomOnglet'' est le nom de l'onglet : il ne peut contenir que des caractères alphanumériques ou des tirets (pas d'autres signes de ponctuation ; l'espace insécable de code 160 est autorisé), et il ne peut pas commencer par un chiffre (à cause de restrictions sur les noms des classes CSS). Utiliser des mots capitalisés collés pour des noms d'onglets avec plusieurs mots.
+
+Lorsque la page wiki se charge, seul le premier onglet est visible. Le contenu de tous les autres onglets est caché, jusqu'à ce que vous cliquiez sur l'onglet correspondant.
+
+Voici un exemple :
+{{{
+%%tabbedSection
+%%tab-PremierOnglet
+Vous lisez là le texte du premier onglet
+/%
+%%tab-SecondOnglet
+Voici le texte du second onglet
+/%
+%%tab-TiersOnglet
+Ceci est le contenu du troisième onglet
+/%
+/%
+}}}
+
+Ce qui s'affiche comme ceci :
+%%tabbedSection
+%%tab-PremierOnglet
+Vous lisez là le texte du premier onglet
+/%
+%%tab-SecondOnglet
+Voici le texte du second onglet
+/%
+%%tab-TiersOnglet
+Ceci est le contenu du troisième onglet
+/%
+/%
+
+Pour un contenu d'onglets qui apparaît en accordéon, utilisez une section {{%~%tabbedAccordion}} au lieu d'une {{%~%tabbedSection}} :
+%%tabbedAccordion
+%%tab-PremierOnglet
+Vous lisez là le texte du premier onglet
+/%
+%%tab-SecondOnglet
+Voici le texte du second onglet
+/%
+%%tab-TiersOnglet
+Ceci est le contenu du troisième onglet
+/%
+/%
+
+Pour un contenu qui apparaît en accordéon sans onglets, utilisez une section {{%~%accordion}} au lieu d'une {{%~%tabbedSection}} :
+%%accordion
+%%tab-PremierOnglet
+Vous lisez là le texte du premier onglet
+/%
+%%tab-SecondOnglet
+Voici le texte du second onglet
+/%
+%%tab-TiersOnglet
+Ceci est le contenu du troisième onglet
+/%
+/%
+
+!!!Insérer des tas de liens
+
+Les liens font partie intégrante des Wikis.
+
+!!Insérer un lien vers une WikiPage
+
+Il suffit de taper le nom de la page entre crochets : [[Comme ceci]. Cela va automatiquement créer un lien vers une page.
+
+Ce Wiki peut être configuré pour supporter les liens CamelCase standards (s'ils sont supportés, le mot CamelCase devrait lui-même être un lien). Par défaut, le support de CamelCase est désactivé.
+
+!!Insérer des liens vers des sites externes
+
+Le lien peut aussi être une URL directe commençant par http:, ftp:, mailto:, https:, ou news:. Dans ce cas, le lien pointe vers une entité externe. Par exemple, pour pointer vers la page de garde java.sun.com, il suffit d'écrire [[http://java.sun.com] qui s'affichera [http://java.sun.com/], ou [[Home page Java|http://java.sun.com] qui s'affichera [Home page Java|http://java.sun.com].
+
+!!Notes de base de page
+
+Ceux-ci sont des hyperliens spéciaux. Un simple numéro à l'intérieur d'un hyperlien suffit à créer une référence à une note de base de page, comme ceci [[1] qui crée ce lien[1]. 
+Pour insérer la véritable note de bas de page, insérez juste un [[#1] là où vous voulez que votre note se trouve (regardez plus bas pour trouver la note de bas de page de cette page).
+
+Vous pouvez aussi créer une note de bas de page nommée, comme si vous créiez un hyperlien classique. Par exemple, ceci se réfère à la même note [Note de bas de page numéro 1|1] que la référence ci-dessus, mais cela se réfère à une autre note de bas de page[2].
+
+!!Liens inter-wiki
+
+On peut aussi insérer des liens entre différents Wikis sans connaître leur URL. En utilisant la forme [[Wiki:PageWiki], JSPWiki vous créera un lien inter-wiki. Par exemple, ce lien pointe vers les [Règles de formatage de texte JSPWiki|JSPWiki:TextFormattingRules]. Consultez la page [SystemInfo] pour plus d'informations sur la disponibilité des liens inter-wiki.
+
+Si un lien inter-wiki n'est pas supporté, une notification sera mise dans la page lorsqu'elle sera enregistrée.
+
+!!!Tableaux
+!!Tableaux standards
+On peut insérer des tableaux grâce à de simples tubes ('|'). Chaque ligne correspond alors à une ligne du tableau, à condition que :
+ * un double tube commence une cellule d'en-tête de tableau ;
+ * un tube unique commence une cellule classique de tableau.
+Le tableau se termine par une ligne qui n'est pas une ligne de tableau.
+
+Par exemple :
+{{{
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+}}}
+
+affiche le tableau suivant (notez comment on peut aussi insérer des liens dans un tableau) :
+
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+
+!!Tableaux triables
+Les colonnes d'un tableau peuvent être triées lorsque le tableau est mis à l'intérieur de tags ''%~%sortable ... /~%''. Par exemple :
+
+{{{
+%%sortable
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| __Cogner__  | Ciel
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+/%
+}}}
+
+affiche le tableau suivant :
+%%sortable
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| __Cogner__  | Ciel
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+/%
+
+!!Tableaux filtrables
+Les lignes d'un tableau peuvent être filtrées selon la valeur d'une colonne particulière, lorsque le tableau est mis à l'intérieur de tags ''%~%table-filter ... /~%''. Par exemple :
+
+{{{
+%%table-filter
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| __Cogner__  | Ciel
+| Cogner     | Barre
+/%
+}}}
+
+affiche le tableau suivant :
+%%table-filter
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| __Cogner__  | Ciel
+| Cogner     | Barre
+/%
+
+!!Colorisation des lignes
+
+Les lignes des (grands) tableaux peuvent être coloriées lorsque le tableau est mis à l'intérieur de tags ''%~%zebra-table ... /~%''. Par exemple :
+{{{
+%%zebra-table 
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| __Cogner__  | Ciel
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+/%
+}}}
+
+La syntaxe de base est la suivante :
+{{{
+%%zebra-table ... %%
+%%zebra-<couleurImpair> ... %%
+%%zebra-<couleurImpair>-<couleurPair> ... %%
+}}}
+On peut spécifier la couleur des lignes paires et/ou impaires grâce aux valeurs de
+[couleurs HTML hexadécimales|http://html-color-codes.com/] ou aux
+[Noms De Couleurs HTML|HTMLColorNames] comme ''aqua, black, ...'' et ''transparent''. 
+Lorsqu'aucune couleur n'est spécifiée, les lignes impaires se voient appliquer la classe CSS '.odd' et les lignes paires sont sur fond blanc.
+
+Voici un exemple de tableau zébré dans lequel les lignes impaires sont coloriées %%(background:#e0e0ff;) ''#e0e0ff'' %% : {{%~%zebra-e0e0ff}}
+%%zebra-e0e0ff
+|| Titre 1 || Titre 2
+| Donnée 1 | Donnée 2
+| Donnée 1 | Donnée 2
+| Donnée 1 | Donnée 2
+| Donnée 1 | Donnée 2
+| Donnée 1 | Donnée 2
+/% 
+
+!!Table des matières
+
+Il n'y a pas plus simple que de créer une table des matières. Il suffit d'écrire :
+{{{ [{TableOfContents}] }}}
+Vous trouverez, en haut de cette page wiki, comment une table des matières s'affiche.
+
+!!!Styles
+
+%%commentbox
+__Salut la compagnie !__\\
+Il est tout à fait possibles de mettre des boites de commentaires comme ci-dessus dans une page wiki. Cet exemple utilise le style "{{commentbox}}" tel que défini dans la feuille de styles "{{jspwiki.css}}" incluse. Pour insérer une boite comme celle-ci, écrivez simplement {{{%%commentbox <texte> %%}}}.
+%%
+En plus des styles simples représentés par le WikiMarkup, vous pouvez utiliser vos propres styles. Par exemple :
+{{{
+%%small
+Ceci est un petit écrit
+%%
+}}}
+utilise le style CSS appelé "{{small}}", tel que défini dans le fichier {{jspwiki.css}}. Ce genre de styles peuvent varier entre différents sites, et c'est à l'administrateur du site de définir les styles du site.
+
+Voici un certain nombre de styles disponibles :
+* {{%~%small}} -- Une police plus petite que la normale, %%small comme ceci %%
+* {{%~%sub}} -- Mise en indice, comme a%%sub ij %%= a%%sub ji%%
+* {{%~%sup}} -- Mise en exposant, comme 2%%sup 3 %%= 8
+* {{%~%strike}} -- Barre le texte, comme %%strike ce texte est à peine lisible %%
+* {{%~%ltr}} -- Formate le texte de gauche à droite
+* {{%~%rtl}} -- Formate le texte de droite à gauche
+
+Vous disposez également de quelques styles standards de paragraphe :
+%%information
+{{%~%information}} pour les messages d'information
+/%
+%%warning
+{{%~%warning}} pour les messages d'avertissement
+/%
+%%error
+{{%~%error}} pour les messages d'erreur
+/%
+%%quote
+{{%~%quote}} pour citer un texte
+/%
+%%center
+{{%~%center}} pour centrer le texte
+/%
+
+Enfin, vous pouvez définir à peu près n'importe quelle instruction de style CSS :
+{{{
+%%( font-size: 150%; color: red; )
+Salut, la Terre !
+%%
+}}}
+qui s'affichera :
+%%( font-size: 150%; color: red; )
+Salut, la Terre !
+%%
+
+__NOTE : __ N'oubliez pas de marquer la fin du texte sur lequel vous voulez appliquer votre style par %~% !
+
+!!!Gérer votre Wiki
+
+!!Conflits
+
+Si quelqu'un édite la même page en même temps que vous, JSPWiki vous préviendra au moment de modifier la page, et indiquera un conflit de page. Désolé, mais le premier qui enregistre ses modifications gagne...
+
+__Petit avertissement :__ Si vous utilisez le bouton Retour de votre navigateur pour revenir à la page d'édition, vous ferez très certainement face à un conflit avec vous-même. Simplement parce que le navigateur va penser qu'il est en train d'éditer une ancienne version de la page.
+
+!!Supprimer des pages
+
+Chaque page possède un lien "Plus d'infos...". En cliquant dessus, on arrive à une page qui permet, entre autres choses, de restaurer une ancienne version de la page ou de supprimer la page. A noter que votre administrateur peut avoir empêché arbitrairement la suppression de pages.
+
+!!Ajouter de nouvelles pages
+
+Créez un lien qui pointe vers une nouvelle (et inexistante) page à l'aide de son [NomWiki].
+Cliquez sur ce nouveau lien qui devrait être rouge et souligné de manière discontinue et vous obtiendrez un éditeur pour la nouvelle page.
+
+!!Attacher des fichiers
+
+Si l'administrateur du Wiki l'a configuré, il y a un lien "Attach file..." dans l'onglet "Attach" de chaque page. Cliquez sur ce lien et vous pourrez attacher des fichiers aux pages. Pour plus d'information, consultez [WikiAttachments|JSPWiki:WikiAttachments].
+
+!! Faire un renvoi automatique d'une page vers une autre
+Parfois, il est utile qu'une page signifie ''vraiment'' la même chose qu'une autre page. Par exemple, quand l'utilisateur ouvre la page "[LoginPageHelp]", il doit voir la même chose qu'en ouvrant la page "[LoginHelp]". Pour cela, on a utilisé un "alias de page" dans la page {{LoginPageHelp}}, qui redirige immédiatement l'utilisateur lorsqu'il ouvre la page "[LoginPageHelp]" :
+{{{[{SET alias='LoginHelp'}]}}}
+
+!Editer les pages avec un alias
+Evidemment, il n'y a pas de lien "Editer" sur une page avec alias, puisqu'on ne peut pas voir le contenu de cette page (on est immédiatement redirigé vers la cible de l'alias). On peut cependant éditer la page en ouvrant l'URL {{Edit.jsp?page=''pagename''}} après l'URL de base du Wiki dans la barre d'adresse du navigateur.
+
+!!!Variables, plugins, formulaires et autres fonctions spéciales
+
+!!Insérer des variables
+
+Il existe de nombreuses variables que vous pouvez insérer dans une page. La syntaxe de base est la suivante :
+
+{{ [[{$nomVariable}], }}
+
+où ''nomVariable'' est le nom de la variable que vous voulez insérer. Notez les noms de variable sont insensibles à la casse - autrement dit, "nompage" est identique à "nOMpAgE" ou "NomPage".
+
+Vous trouverez la liste des variables disponibles sur [WikiVariables|JSPWiki:WikiVariables].
+
+!!Insertion de plugins
+
+L'incantation de base pour inséer un plugin ressemble à ceci :
+
+{{{ [[{INSERT <classe plugin> WHERE param1=valeur, param2=valeur, ...}] }}}
+
+Vous trouverez plus d'information sur le sujet dans [JSPWikiPlugins|JSPWiki:JSPWikiPlugins].
+
+!!Insertion de formulaires
+
+Référez-vous à [WikiForms|JSPWiki:WikiForms].
+----
+
+[#1] Voici la note de bas de page que j'ai mentionnée.
+
+[L'autre note de bas de page|#2] L'autre note de bas de page. Notez comme son nom est différent !

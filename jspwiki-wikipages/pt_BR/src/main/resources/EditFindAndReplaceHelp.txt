@@ -1,0 +1,26 @@
+Você pode usar os seguintes caracteres especiais no campo 'Encontrar' no menu de edição:
+
+|.      |qualquer caracter exceto nova linha |+       |uma ou mais vezes
+|*      |zero ou mais vezes                  |?       |zero ou uma vez
+|{n}    |exatamente n vezes                  |{n,m}   |pelo menos n vezes e no máximo m vezes
+|~|     |pipe: {{a~|b}} procura por a ou b   | -      |hífen, procura um conjunto de caracteres
+|^      |inicio da linha                     |$       |fim da linha
+|[[...] |um dos caracteres do conjunto       |[[^...] |negação do conjunto de caracteres
+|\b     |palavra limitada                    |\B      |palavra não limitada
+|\d     |numeral [[0-9]                      |\D      |não numeral [[^0-9]
+|\s     |um caracter de espaço em branco     |\S      |um caracter que não é espaço em branco
+|\w     |[[A-Za-z0-9_]                       |\W      |[[^A-Za-z0-9_]
+|(...)  |agrupamentos são salvos como $1..$9 |\.      |escape de um caracter especial
+
+O campo 'Substituir' pode utilizar $1..$9 como uma referência aos parenteses do campo 'Encontrar'.
+----
+Exemplo:\\
+
+Encontrar __/abc|def/__ vai procurar a palavra 'abc' ou a palavra 'def'\\
+Encontrar  __/bwiki/b__ vai procurar a palavra 'wiki' mas não a palavra 'jspwiki'.\\
+Encontrar __^[[IVXMDCL]+\.__ vai procurar qualquer combinação de numerais romanos seguidos de um ponto final\\
+Encontrar __/(-?\d+)(\d{3})/__ e substituir por __$1,$2__ para inserir vírgulas em algarismos grandes.
+
+Esta é a página [Ajuda em Encontrar e Substituir|EditFindAndReplaceHelp].
+[Mais informações sobre expressões regulares em |http://www.regular-expressions.info/javascript.html]
+ e [Caixa de areia para expressões regulares|http://www.regular-expressions.info/javascriptexample.html]\\

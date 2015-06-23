@@ -1,0 +1,6 @@
+Aquí está el listado de las páginas que aún no han sido creadas.  ¿Por qué no vas y creas
+unas cuantas?
+
+[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
+
+(Vuelta a la página [Principal|Main]).

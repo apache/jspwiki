@@ -1,0 +1,235 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Section: Top level HTML structure
+
+DOM Structure:
+(start code)
+	div[.container|.container-fluid][.fav-left|.fav-right|.fav-hidden]
+		div.titlebox.alert
+		div.header
+		div.row							=>Template.Navs.less
+			ul.nav.nav-pills.pull-left
+			ul.nav.nav-pills.pull-right
+		div.content[.active]			=>Template.Content.less
+			div.page
+	        	div.page-content
+    	    	div.page-footer
+			div.sidebar					=>Template.Sidebar.less
+		div.footer
+(end)
+*/
+
+
+
+/*
+Section: Title box
+    The title box is an optional alert box at the top of the page, to put
+    web-site messages, alerts, new-flashes etc.
+    It contains the content of the [TitleBox] JSPWiki page.
+    Keep the styling minimal, as the TitleBox page itself can add any style it wants.
+*/
+//.titlebox { }
+
+
+/*
+Section: Header & Footer
+    See Header.jsp, SearchBox.jsp, UserBox.jsp, Footer.jsp
+
+DOM structure:
+(start code)
+    div.header
+      div.topline
+        div.application-logo
+            a.logo.href jspωiki  //link to the home page of this wiki
+
+        div.userbox
+            div.btn
+                span.icon-user
+                span.caret
+
+            ul.dropdown-menu[data-hover-parent="userbox"]
+                li
+      		        label.username.anonymous|asserted|authenticated
+      		    li
+                    a.btn.btn-link.login|logout  Log-in
+                    a.btn.btn-link.prefs  Prefs
+
+  		form#searchform.searchbox.pull-right.form-inline
+      		input#query.form-control[type="text"][placeholder="Quick Navigation"]
+
+      		button#searchSubmit.btn[type="submit"]
+
+		    ul.dropdown-menu.pull-right[data-hover-parent="searchbox"]
+		        li
+		        li.findpages ...
+		        li.divider
+		        li.recents ...
+		        li.recents.clear ...
+
+
+      div.pagename
+      div.breadcrumbs
+
+    ...
+
+    div.footer
+        div.application-logo
+        div.copyright
+    	div.wikiversion JSPWiki version-number
+			a.feed
+(end)
+*/
+
+.container-fluid {
+	//margin:0 1em;
+
+    .header > * {
+        padding-right:@padding-base-horizontal;
+    }
+
+    > .row > ul.nav {
+        padding-right: @padding-base-horizontal;
+    }
+
+    .page-content { margin:0 @padding-base-horizontal; }
+
+}
+
+.header, .footer {
+    .clearfix();
+	position: relative;
+    font-family: @wiki-header-font-family;
+    font-weight: 200;
+    letter-spacing: 1px;
+    color: @wiki-header-color;
+    a { color:inherit; }
+
+    background-color:@wiki-header-bg;
+    #gradient .radial(@wiki-header-bg; darken(@wiki-header-bg,20%));
+
+    //background-image:url(images/background.jpg);  //todo: read it from a cookie or so
+    background-size:cover; //or contain;
+    //background-position:50% 0;
+    //background-repeat:no-repeat;
+    background-attachment:fixed; //default=scroll
+
+	> * {
+	    padding: @padding-base-horizontal/4 0 @padding-base-horizontal/4 @padding-base-horizontal;
+	}
+}
+
+.topline {
+    .clearfix();
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    .btn [class^="icon-"]:before { font-size: 1.3em; }
+}
+
+a.logo {
+    position: relative;
+    display:block;
+    font-family: @wiki-logo-font-family;
+    font-size:75%; //@font-size-base* .75
+    font-weight: 200;
+    letter-spacing: 3px;
+    text-decoration: none;
+    padding:1px 1px @font-size-base 3px;
+    //border:1px solid @white;
+    //border-radius:.5em;
+    color:inherit;
+
+    b {
+        position: absolute;
+        font-size: 150%;   //@font-size-base
+        font-weight: 200;
+        line-height: 50%;
+        letter-spacing: 1px;
+        left: 0; top: 1em;
+        padding:0 3px;
+    }
+}
+
+
+.header .pagename,
+.header .breadcrumb {
+    .text-overflow();
+
+}
+
+.pagename {
+    font-family: @wiki-logo-font-family;
+    font-size: 3em;
+    text-align: center;
+    a { text-decoration:none; }
+}
+
+//JSPWiki-s breadcrumb - do not inherit bootstraps breadcrumbs
+.breadcrumb {
+    .small;
+    .transition(all .5s ease);
+    color:transparent;
+
+    .divider:before {
+        content:"\2022";   //&bull;
+        padding:0 .25em;
+    }
+}
+.header:hover .breadcrumb {
+    color:inherit;
+    //background:rgba(255,255,255,0.05);
+}
+
+.footer {
+    //background: @wiki-footer-bg;
+    padding:@padding-base-vertical @padding-base-horizontal;
+	text-align: center;
+
+}
+
+.copyright, .wiki-version { .small; }
+
+
+.feed {
+
+	//.@{fa-css-prefix};
+    display:inline-block;
+    font-family:FontJspwiki;
+	font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration:none;
+
+	&:before { content: "\e610"; } //fixme -- re-use .icon-search
+    &:hover { text-decoration:none; }
+
+    overflow:hidden;
+    vertical-align:middle;
+}
+
+
+// CHECKME
+// *** ConflictContent.jsp ***
+// #conflict
+// #conflictother
+// #conflictown
+

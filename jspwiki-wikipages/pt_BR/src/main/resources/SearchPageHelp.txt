@@ -1,0 +1,38 @@
+Esta página tem um pequeno resumo sobre a sintaxe do mecanismo de busca.
+O nome desta págna é [Ajuda da Página de Busca|Search Page Help].
+
+Utilize '+' para exigir uma palavra, '-' para proibir uma palavra.  Por exemplo:
+
+{{{
+          +java -emacs jsp
+}}}
+
+procura páginas que DEVEM ter a palavra "java" inclusa e NÃO DEVEM ter a palavra "emacs".
+E também, páginas que contenham a palavra "jsp" ficam na frente das palavras que não contenham.
+
+Todas as buscas são case insensitive (não diferencia maiúsculas de minúsculas). Se uma página contém os dois sinais
+de proibido e exigência, ela não é exibida.
+
+!! Tabela da sintaxe de busca
+
+Para maiores informações olhe em %%slimbox [Sintaxe de busca do  Lucene|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+
+|| termo  | procura por um termo   | {{hello}}
+|| "..."  | procura por um grupo de palavras | {{"hello dolly"}}
+|| ?      | qualquer caracter (o ? não pode ser o primeiro caracter da busca) | {{te?t}}
+|| *      | qualquer caracter ou caracteres (o * não pode ser o primeiro caracter da busca) | {{test*}}
+|| OR     | retorna a busca se qualquer uma das palavras existem | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND    | retorna a busca se ambas as palavras existem | {{"hello dolly" AND "dolly lucy"}}
+|| +      | exige que a palavra após o sinal "+" exista | {{+hello dolly}}
+|| -\\NOT | exclui resultados que contém o termo após o símbolo "-"  \\ também funciona com "NOT" ou "!" | {{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...)  | utilize parênteses para criar sub buscas | {{(hello OR dolly) AND website}}
+|| ~~     | buscas ''fuzzy'' para procurar por termos com escrita similar | {{roam~ }}
+|| ~n     | busca por ''proximidade'', com uma distância expressa em um número de palavras | {{"hello dolly"~10}}
+|| ^n     | fator de ''boost'' para aumentar a importância de palavras em uma busca | {{"hello dolly"^4 "dolly lucy"}}
+|| \      | caracteres especiais de escape: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} para buscar (1+1):2
+
+Você pode restringir o domínio de palavras usando prefixos na sua busca.
+|| author:''termo''      | procura por páginas modificadas pelo autor "termo" | {{author:~JohnFoo}}
+|| attachment:''termo''  | procura por páginas com anexos chamados "termo"    | {{attachment:brushed*}}
+|| name:''termo''        | procura por páginas chamadas "termo"               | {{name:Main}}
+|| content:''termo''     | procura por páginas com o conteúdo "termo"         | {{content:jspwiki}}

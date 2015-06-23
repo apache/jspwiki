@@ -1,0 +1,37 @@
+Ecco una breve informativa sul come autenticarsi a __[{$applicationname}]__. Questo testo si trova [quì|LoginHelp]. \\
+Maggiori informazioni sulle caratteristiche di JSPWiki per quanto concerne la sicurezza nella [documentazione|Doc:Security].
+
+!!  Login/Autenticazione
+
+JSPWiki mette a disposizione diversi livelli di __autenticazione__ e sicurezza. Gli utenti possono essere anonimi, avere identità "asserite" tramite cookies, essere autenticati, o essere amministratori:
+
+|| Stato || Descrizione || Cosa viene mostrato nel box utente nelle pagine..
+| Anonimo | L'utente non si è autenticato e il browser non ha fornito un cookie | "Salve (utente anonimo)"
+| Asserito | Il browser dell'utente ha fornito un cookie denominato {{~JSPWikiAssertedName}} | "Salve, ''username'' (non autenticato)"
+| Autenticato | Un utente che si è autenticato con una id e una password | "Salve, ''username'' (autenticato)"
+
+A seconda della politica di sicurezza impostata sul sistema, e dei sistemi di controllo sulle pagine in uso, gli utenti possono o meno essere obbligati ad autenticarsi. 
+
+Quando un utente decidi di autenticarsi - o è obbligato a farlo da un sistema degli accessi alle pagine o da una politica di sicurezza - gli/le viene presentata una form standard con un campo per specificare lo username e un campo - mascherato - per la password. Dopo aver ricevuto i dati attraverso la form, , JSPWiki verificherà le credenziali concedendo o meno l'accesso.
+
+!! Password dimenticate
+
+Se perdete la password, ne potete richiedere una nuova - che verrà generata in modo casuale e inviata all'indirizzo email associata al vostro profilo.
+
+!! Nuovi utenti
+
+Sebbene alcuni wiki siano anonimi, la maggior parte non lo sono. Spesso, i sistemi Wiki forniscono funzionalità per cui un utente possa 'auto-registrarsi'. 
+JSPWiki include un sistema base di auto-registrazione, che permette agli utenti di efinire e gestire un proprio profilo.
+
+Per default, la form richiede
+
+* Uno user ID
+* Una password
+* Un "nome wiki" preferito (e.g., JanneJalkanen). E' possibile usare questo nome, al posto dell'id, nelle liste di controllo degli accessi o nei gruppi Wiki
+* Un indirizzo E-mail. Usabile se occorre resettare la password. (Si veda 'Password dimenticate')
+
+Tuttavia, se sul wiki è impostato un sistema di gestione delle autorizzazioni basato sul container, lo  user ID non sarà modificabile, in quanto gestito dal container.
+
+Quando un utente salva il proprio profilo, JSPWiki verifica che user id, nome wiki e nome completo non siano già utilizzati. In questo caso, l'utente dovrà fornire valori diversi.
+
+Dopo che un utente avrà creato il proprio profilo, potrà modificarlo attraverso il link ''Preferenze''. Ovviamente, un utente deve essere autenticato per poterlo fare.

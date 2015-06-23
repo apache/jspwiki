@@ -1,0 +1,35 @@
+Ecco un veloce riepilogo degli elementi di formattazione che avete a disposizione
+{{{
+----                Linea orizzontale
+\\                  Ritorno a capo forzato
+[link]              Crea un link ipertestuale a "link", dove "link" può essere sia un nome 
+                    interno Wiki che un link esterno (http://)
+[testo|link]        Crea un link ipertestuale dove il testo del link è diverso dal link
+                    vero e proprio.
+[testo|wiki:link]   Crea un link ipertestuale dove il testo del link è diverso dal link
+                    vero e proprio, e il link punta a un diverso wiki. 
+
+*                   Lista puntata (deve essere il primo carattere della linea). Usatene di più (**) 
+                    per un innestamento più profondo.
+#                   Lista numerata (deve essere il primo carattere della linea). Usatene di più (**)
+                    per un innestamento più profondo.
+
+!, !!, !!!          Iniziate la linea con un punto esclamativo per marcare un intestazione.
+                    Più punti esclamativi implicano un'intestazione più rilevante.
+
+__testo__           Rende il testo in grassetto.
+''testo''           Rende il testo in corsivo (si noti che questi sono doppi singoli apici ('))
+{{testo}}           Rende il testo in una fonte mono spazio.
+;term:def           Definisce 'term' con 'def'.  Usatelo con 'term' vuoto per rendere commenti.
+
+|testo|altro testo  Rende una tabella. Usate barre doppie per le intestazioni.
+}}}
+
+Non usate HTML ... semplicemente non funziona.
+
+Per includere immagini, devono esistere sul web ed essere accessibili, in uno dei formati gestiti, e compariranno automaticamente. Per la lista dei formati gestiti, verificate tra le [informazioni di sistema | SystemInfo].
+
+Per marcare un blocco di codice mantenendo la formattazione, inseritelo tra parentesi graffe triple.
+
+''(Vi chiedete da dove arrivi questo testo? Da una pagina chiamata [Edit Page Help], che potete editare a sua volta!)''
+

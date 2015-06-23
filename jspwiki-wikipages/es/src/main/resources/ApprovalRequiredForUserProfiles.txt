@@ -1,0 +1,3 @@
+Los nuevos perfiles de usuario necesitan ser aprobados antes de ser dados de alta en el sistema. Tu petición ha sido enviada y será aprobada o denegada.
+
+Si has indicado una dirección de correo electrónico, uno de los administradores de la wiki te indicará cuándo se ha activado tu cuenta. Alternativamente, tal vez prefieras comprobar dentro de un rato si puedes identificarte en el sistema.

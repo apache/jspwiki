@@ -1,0 +1,7 @@
+Los [WikiNombres|WikiNames] se han escrito tradicionalmente usando "~InterCapping", también conocido como ~CamelCase (empezar con una letra mayúscula, y por lo menos otra letra mayúscula en la palabra enlazada). Esto hace que la creación de enlaces internos sea realmente sencilla.
+
+Sin emabrgo, en este [WikiWiki] los [enlaces|links] son escritos usando la notación [[enlace], dado que la notación original de enlaces mediante ~InterCapping es ocasionalmente confusa.  Aún así, los nombres todavía se adhieren al estándar [WikiWiki], si te fijas en la URL de la barra de direcciones.
+
+Los nombres son ''aplastados'', p.ej. [[Esto es un enlace] se transforma en [[EstoEsUnEnlace]. Sin embargo, los guiones bajos y los puntos se conservan, por lo que puedes tener enlaces como éste: [[Esto_es_un_enlace], o [[Esto.Es.Un.Enlace]. Todos los caracteres no alfanuméricos excepto '_' y '.' son eliminados (esto es, todos los caracteres que no sean letras ni números), por lo que [[John's page] se transforma en [[JohnsPage].  Esto te permite escribir frases normales y corrientes que son transformadas en enlaces, como cuando hablando sobre [Wiki etiqueta|Wiki etiquette].
+
+Un [WikiNombre|Wikiname] no puede ser un número. Los nombres numéricos son usado para las [notas al pie|TextFormattingRules].

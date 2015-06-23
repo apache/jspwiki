@@ -1,0 +1,38 @@
+Questa pagina riporta un breve somamrio della sintassi di ricerca.
+Questa pagina è denominata [Search Page Help].
+
+Usate '+' per includere forzare esplicitamente una parola, '-' per escluderla.  Per esempio:
+
+{{{
+          +java -emacs jsp
+}}}
+
+trova le pafine che DEVONO includere la parola "java", e NON devono includere la parola
+"emacs".  Inoltre, le pagine che contengono "jsp" avranno un peso maggiore di quelle che
+non la includono.
+
+Tutte le ricerche vengono effettuate senza tener conto di maiuscole e minuscole.
+
+!! Tabella della sintassi delle query
+
+Per informazioni più dettagliate si rimanda a %%slimbox [Lucene's query syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+
+|| termine  | trovare un singole termine è semplice | {{hello}}
+|| "..." | trovare un gruppo di parole | {{"hello dolly"}}
+|| ?     | ogni singolo carattere (il ? non può però essere il primo carattere in una stringa di ricerca) | {{te?t}}
+|| *     | qualsiasi sequenza di caratteri (l' * non può però essere il primo carattere in una stringa di ricerca) | {{test*}}
+|| OR    | trova una pagina se contiene uno qualsiasi dei termini | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND   | trova una pagina se contiene tutti i termini | {{"hello dolly" AND "dolly lucy"}}
+|| +     | impone che il termine successivo sia contenuto nella pagina | {{+hello dolly}}
+|| -\\NOT | impone che il termine successivo NON sia contenuto nella pagina \\ è possibile anche usare la parola NOT o il carattere ! | {{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...) | usate parentesi per comporre query booleane | {{(hello OR dolly) AND website}}
+|| ~~    | ricerca ''fuzzy'' - termini simili nello spelling | {{roam~ }}
+|| ~n    | ricerca di ''prossimità'', entro il numero specificato di parole | {{"hello dolly"~10}}
+|| ^n    | fattore di ''boost'' che incrementa l'importanza di uno specifico termine | {{"hello dolly"^4 "dolly lucy"}}
+|| \     | sequenze di escape per i caratteri speciali: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} to find (1+1):2
+
+Potete anche restringere il campo di applicazione tramite prefissi nella stringa, come segue:
+|| author:''term''     | trova le pagine modificate da un dato utente | {{author:~JohnFoo}}
+|| attachment:''term'' | trova le pagine filtrando solo sul nome degli allegati  | {{attachment:brushed*}}
+|| name:''term''       | trova le pagine filtrando solo sul nome della pagina  | {{name:Main}}
+|| content:''term''     | trova le pagine filtrando solo sul contenuto          | {{content:jspwiki}}

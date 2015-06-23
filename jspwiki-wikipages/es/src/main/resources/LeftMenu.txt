@@ -1,0 +1,11 @@
+* [Página principal|Main]
+* [Acerca de|...About]
+* [Noticias|News]
+* [Cambios Recientes|Recent Changes]
+* [WikiEtiqueta|WikiEtiquette]
+
+* [Buscar páginas|Search]
+* [Páginas sin usar|UnusedPages]
+* [Páginas sin definir|UndefinedPages]
+* [Índice|Page Index]
+* [Info. del sistema|SystemInfo]

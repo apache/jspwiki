@@ -1,0 +1,5 @@
+Folgende Änderungen wurden an den Wikiseiten innerhalb der letzten 30 Tage vorgenommen. Schau auf die [vollständigen letzten Änderungen|FullRecentChanges], um eine komplette Liste zu sehen.
+
+Dieser Server befindet sich in der Zeitzone ''[{INSERT CurrentTimePlugin format=zzzz}]'', wo es momentan der [{INSERT CurrentTimePlugin format='dd. MMMM yyyy \'um\' HH:mm \'Uhr\''}] ist.
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<groups xmlns="http://www.isdc.ro/wro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+
+  <!-- HADDOCK Template groups -->
+  <group name="lib" abstract="true">
+    <js>/scripts/lib/mootools-core-1.5.1.js</js>
+    <js>/scripts/lib/mootools-more-1.5.1.js</js>
+    <js>/scripts/lib/prettify4mar13.js</js>
+  </group>
+
+  <group name="mooextend" abstract="true">
+    <js>/scripts/moo-extend/Behavior.js</js>
+    <js>/scripts/moo-extend/String.Extend.js</js>
+    <js>/scripts/moo-extend/Array.Extend.js</js>
+    <js>/scripts/moo-extend/Array.NaturalSort.js</js>
+    <js>/scripts/moo-extend/Element.Extend.js</js>
+    <js>/scripts/moo-extend/Element.Placeholder.js</js>
+    <js>/scripts/moo-extend/Color.js</js>
+    <js>/scripts/moo-extend/HighlightQuery.js</js>
+    <js>/scripts/moo-extend/Accesskey.js</js>
+    <js>/scripts/moo-extend/Cookie.Flags.js</js>
+    <js>/scripts/moo-extend/Tips.js</js>
+    <js>/scripts/moo-extend/Request.File.js</js>
+    <js>/scripts/moo-extend/Form.MultipleFile.js</js>
+    <js>/scripts/moo-extend/Form.File.js</js>
+  </group>
+
+  <group name="behaviors" abstract="true">
+    <js>/scripts/behaviors/AddCSS.js</js>
+    <js>/scripts/behaviors/Collapsible.js</js>
+    <js>/scripts/behaviors/CommentBox.js</js>
+    <js>/scripts/behaviors/Columns.js</js>
+    <js>/scripts/behaviors/GraphBar.js</js>
+    <js>/scripts/behaviors/Element.Reflect.js</js>
+    <js>/scripts/behaviors/Flip.js</js>
+    <js>/scripts/behaviors/TableX.js</js>
+    <js>/scripts/behaviors/TableX.Sort.js</js>
+    <js>/scripts/behaviors/TableX.Filter.js</js>
+    <js>/scripts/behaviors/TableX.Zebra.js</js>
+    <js>/scripts/behaviors/Tabs.js</js>
+    <js>/scripts/behaviors/Accordion.js</js>
+    <js>/scripts/behaviors/Viewer.js</js>
+    <js>/scripts/behaviors/Viewer.Slimbox.js</js>
+    <js>/scripts/behaviors/Viewer.Carousel.js</js>
+  </group>
+
+  <group name="haddock">
+
+    <group-ref>lib</group-ref>
+    <group-ref>mooextend</group-ref>
+    <group-ref>behaviors</group-ref>
+
+    <js>/scripts/wiki/Wiki.js</js>
+    <js>/scripts/wiki/Search.js</js>
+    <js>/scripts/wiki/Recents.js</js>
+    <js>/scripts/wiki/FindPages.js</js>
+    <js>/scripts/wiki/Category.js</js>
+    <js>/scripts/wiki/Wiki.Behaviors.js</js>
+
+    <css>/styles/haddock/default/build.less</css>
+  </group>
+
+  <group name="haddock-edit">
+
+    <js>/scripts/moo-extend/Date.Extend.js</js>
+    <js>/scripts/moo-extend/Function.Extend.js</js>
+    <js>/scripts/moo-extend/Array.Extend.HSV.js</js>
+
+    <js>/scripts/dialog/Dialog.js</js>
+    <js>/scripts/dialog/Dialog.Buttons.js</js>
+    <js>/scripts/dialog/Dialog.Color.js</js>
+    <js>/scripts/dialog/Dialog.Selection.js</js>
+    <js>/scripts/dialog/Dialog.Font.js</js>
+    <js>/scripts/dialog/Dialog.Chars.js</js>
+    <js>/scripts/dialog/Dialog.Find.js</js>
+
+    <js>/scripts/moo-extend/Textarea.js</js>
+    <js>/scripts/wiki-edit/Undoable.js</js>
+    <js>/scripts/wiki-edit/Snipe.js</js>
+    <js>/scripts/wiki-edit/Snipe.Snips.js</js>
+    <js>/scripts/wiki-edit/Snipe.Commands.js</js>
+    <js>/scripts/wiki-edit/Snipe.Sections.js</js>
+    <js>/scripts/wiki-edit/Wiki.Snips.js</js>
+    <js>/scripts/wiki-edit/Wiki.Edit.js</js>
+
+  </group>
+
+  <group name="haddock-prefs">
+    <js>/scripts/wiki/prefs.js</js>
+    <!--<js>/scripts/wiki/group.js</js>-->
+  </group>
+
+</groups>

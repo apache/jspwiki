@@ -1,0 +1,230 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!--
+  This project builds a "WikiOnAStick" based on JSPWiki.
+-->
+<project name="woas" default="woas:info" basedir=".">
+
+  <!-- import environment variables -->
+  <property environment="env"/>
+
+  <!-- the build version if not overwritten by the caller -->
+  <property name="jspwiki.woas.version" value="2.10.1-SNAPSHOT" />
+  
+  <!-- define the temporary build directory -->
+  <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
+  
+  <!-- the temporary directory for the build -->
+  <property name="jspwiki.woas.unpack.dir" value="${jspwiki.woas.target.dir}/unpack" />
+
+  <!-- the directory where to build the exploded application -->
+  <property name="jspwiki.woas.assembly.dir" value="${jspwiki.woas.target.dir}/woas" />
+
+  <!-- the Tomcat version to use --> 
+  <property name="jspwiki.tomcat.version" value="7.0.52"/>
+
+  <!-- the Tomcat distribution to use --> 
+  <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
+
+  <!-- ############################################################## -->
+  <!-- General Targets                                                -->
+  <!-- ############################################################## -->
+  
+  <target name="info" description="builds the project">
+    <echo>jspwiki.woas.version = ${jspwiki.woas.version}</echo>
+    <echo>jspwiki.woas.assembly.dir = ${jspwiki.woas.assembly.dir}</echo>
+    <echo>jspwiki.woas.unpack.dir = ${jspwiki.woas.unpack.dir}</echo>
+    <echo>jspwiki.tomcat.distribution = ${jspwiki.tomcat.distribution}</echo>
+  </target>
+
+  <!-- ############################################################## -->
+  <!-- Misc                                                           -->
+  <!-- ############################################################## -->
+
+  <target name="woas:copy-woas" description="Prepares a customized JSPWiki installation">  
+    <!-- copy the exploded war for the "private" wiki -->
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/private" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
+    </copy>
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/private/WEB-INF/lib"/>    
+    <!-- copy the exploded war for the "public" wiki -->
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/public" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
+    </copy>
+    <!-- overlay the custom configuration for JSPWiki -->  
+    <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
+      <fileset dir="${basedir}/src/overlay/woas"/>
+    </copy>        
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/public/WEB-INF/lib"/>        
+  </target>  
+
+  <!-- ############################################################## -->
+  <!-- Tomcat 7 Distribution                                          -->
+  <!-- ############################################################## -->
+
+  <target name="woas:copy-tomcat-7" description="Prepares an unpacked Tomcat 7 deployment">
+    <!-- copy the stuff to the assembly directory -->
+    <copy todir="${jspwiki.woas.assembly.dir}">
+      <fileset dir="${jspwiki.woas.unpack.dir}/tomcat/${jspwiki.tomcat.distribution}"/>
+    </copy>
+    <!-- delete some undesired Tomcat stuff -->
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/docs"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/examples"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/host-manager"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/manager"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/ROOT"/>    
+    <!-- create a work dir for JSPs - see http://jetty.4.n6.nabble.com/jetty-users-How-to-change-the-extracted-directory-td4501308.html -->
+    <mkdir dir ="${jspwiki.woas.assembly.dir}/work"/>    
+    <!-- create a temp dir -->
+    <mkdir dir ="${jspwiki.woas.assembly.dir}/temp"/>    
+    <!-- copy customized Tomcat configuration data -->
+    <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
+      <fileset dir="${basedir}/src/overlay/tomcat"/>
+    </copy>
+    <!-- copy the JSPWiki libraries to tomcat -->
+    <copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/WEB-INF/lib"/>
+    </copy>
+    <!-- make the start scripts executable -->
+    <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>        
+    <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>        
+  </target>
+
+  <target name="woas:copy-tomcat-7-launchers" description="Copies the existing native launchers"> 
+    <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
+      <fileset dir="${basedir}/src/overlay/launchers/tomcat"/>
+    </copy>    
+    <!-- make the shell scripts executable -->
+    <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>    
+    <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>    
+    <!-- make the Mac OS X stub executable -->
+    <chmod file="${jspwiki.woas.assembly.dir}/woas.app/Contents/MacOS/*" perm="ugo+x"/>
+    <chmod file="${jspwiki.woas.assembly.dir}/woas-apple-jdk.app/Contents/MacOS/*" perm="ugo+x"/>
+  </target>
+
+  <!-- ############################################################## -->
+  <!-- Windows Native Launcher                                        -->
+  <!-- ############################################################## -->
+
+  <target name="woas:windows-app" description="creates an windows application wrapper">
+    <taskdef 
+      name="launch4j"
+      classname="net.sf.launch4j.ant.Launch4jTask"
+      classpath="${basedir}/src/resources/launch4j/launch4j-3.1.0-beta2.jar:${basedir}/src/resources/launch4j/xstream.jar" 
+    />
+    <launch4j>
+      <config 
+        headerType="console" 
+        outfile="${jspwiki.woas.assembly.dir}/woas.exe" 
+        errTitle="WikiOnAStick" 
+        chdir="." 
+        icon="${basedir}/src/resources/windows/jspwiki.ico"
+        jar="${basedir}/src/resources/tomcat/tomcat-launcher-7.0.52.jar"
+        >
+        <singleInstance mutexName="org.apache.jspwiki.jspwiki-portable" />
+        <jre minVersion="1.6.0" />
+        <versionInfo
+          fileVersion="2.1.10.1"
+          txtFileVersion="JSPWiki ${jspwiki.woas.version}"
+          fileDescription="WikiOnAStick"
+          copyright="Apache Software Licence 2.0"
+          productVersion="2.1.10.1"
+          txtProductVersion="JSPWiki ${jspwiki.woas.version}"
+          productName="WikiOnAStick"
+          companyName="Apache Software Foundation"
+          internalName="woas"
+          originalFilename="woas.exe"
+        />        
+      </config>  
+    </launch4j>
+  </target>
+
+  <!-- ############################################################## -->
+  <!-- Mac OS X Native Launcher                                       -->
+  <!-- ############################################################## -->
+
+ <target name="woas:mac-app">
+    <antcall target="woas:mac-app-apple-jdk"/>
+    <antcall target="woas:mac-app-oracle-jdk"/>
+ </target> 
+
+  <!--
+    Mac OS Java 6 Launcher - it uses the Apple JDK which should be available on the box
+  -->
+  <target name="woas:mac-app-apple-jdk" description="creates an Mac OS X application wrapper for Apple JDK 1.6+">
+    <echo>Building Mac OS X launcher for Apple JDK</echo>
+    <typedef 
+      name="jarbundler" 
+      classname="net.sourceforge.jarbundler.JarBundler" 
+      classpath="${basedir}/src/resources/jarbundler/jarbundler-2.2.0.jar" 
+    />   
+    <delete dir="${jspwiki.woas.assembly.dir}/woas-apple-jdk.app"/> 
+    <jarbundler 
+      dir="${jspwiki.woas.assembly.dir}"
+      name="woas-apple-jdk"
+      mainclass="org.apache.catalina.startup.Bootstrap" 
+      icon="${basedir}/src/resources/macos/jspwiki.icns"
+      jvmversion="1.6+"
+      stubfile="${basedir}/src/resources/macos/JavaApplicationStub"
+      version="${jspwiki.woas.version}"
+      vmoptions="-Xmx96m"
+      infostring="JSPWiki ${jspwiki.woas.version}">
+      <jarfileset dir="${basedir}/src/resources/tomcat">
+        <include name="tomcat-launcher-7.0.52.jar" />
+      </jarfileset>      
+    </jarbundler>
+    <chmod file="${jspwiki.woas.assembly.dir}/woas-apple-jdk.app/Contents/MacOS/WikiOnAStick" perm="ugo+x"/>
+  </target>  
+
+  <!--
+    See the following resources:
+    http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+    https://java.net/downloads/appbundler/appbundler.html
+  -->
+  <target name="woas:mac-app-oracle-jdk" description="creates an Mac  OS X application wrapper for Oracle JDK 1.7+">
+    <echo>Building Mac OS X launcher for Oracle JDK</echo>
+    <taskdef 
+      name="bundleapp" 
+      classname="com.oracle.appbundler.AppBundlerTask"
+      classpath="${basedir}/src/resources/appbundler/appbundler-1.0.jar" 
+    />
+    <delete dir="${jspwiki.woas.assembly.dir}/woas.app"/> 
+    <bundleapp 
+        outputdirectory="${jspwiki.woas.assembly.dir}"
+        name="woas"
+        copyright="Apache Software Licence 2.0"
+        displayname="Portable JSPWiki"
+        identifier="org.apache.jspwiki.jspwiki-portable"
+        icon="${basedir}/src/resources/macos/jspwiki.icns"
+        shortversion="${jspwiki.woas.version}"
+        applicationCategory="public.app-category.developer-tools"
+        mainclassname="org.apache.catalina.startup.Bootstrap">
+        <classpath file="${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/bootstrap.jar"/>
+        <classpath file="${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/tomcat-juli.jar"/>
+        <option value="-Xmx96m"/>
+        <option value="-Duser.dir=$APP_ROOT/.."/>
+        <option value="-Dcatalina.home=$APP_ROOT/.."/>
+        <option value="-Dcatalina.base=$APP_ROOT/.."/>
+        <option value="-Djava.io.tmpdir=$APP_ROOT/../temp"/>
+    </bundleapp>
+    <chmod file="${jspwiki.woas.assembly.dir}/woas.app/Contents/MacOS/JavaAppLauncher" perm="ugo+x"/>
+  </target>    
+
+</project>

@@ -1,0 +1,16 @@
+Diese WikiWiki-Software wurde unter Verwendung der [JSP|http://java.sun.com/products/jsp/]-Technologie erstellt, die es hoffentlich erleichtert, sie aktuell zu halten und hübscher aussehen zu lassen als die meisten der auf dem [Original|http://c2.com/cgi/wiki] basierenden Wikis. Eine eigene Bean führt die Übersetzung von Text nach HTML durch.
+
+Die meisten [Formatierungsregeln|TextFormattingRules] wurden nach Vorlage der [Sensei's Library|http://senseis.xmp.net], eine der besten Go-Sites im Internet, erstellt. Ich empfinde deren Formatierungsregeln als sehr einfach und klar verständlich.
+
+Diese WikiWiki-Software ist unter der [Version 2.0 der Apache License|http://www.apache.org/licenses/LICENSE-2.0] lizensiert. Weitere Informationen findest du unter [http://jspwiki.apache.org/].
+
+Wenn du dich für die JSPWiki-Entwicklung interessierst, besuche die Homepage des Projekts unter [http://jspwiki.apache.org/].
+
+Einige nützliche Links:
+
+* [Bug Reports|JSPWiki:SubmitBugReport] - oder [schau dir die Liste offener Bugs an|JSPWiki:OpenBugs].
+* [Trage neue Ideen bei|JSPWiki:SubmitNewIdea].
+* Schau dir die Liste häufig gestellter Fragen an: [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
+* Suche nach zusätzlichen [Plugins|JSPWiki:ContributedPlugins], [Templates|JSPWiki:ContributedTemplates], [Filtern|JSPWiki:ContributedFilters], [Providern|JSPWiki:ContributedProviders] oder [anderen coolen Dingen|JSPWiki:ContributedCode].
+
+Viel Spaß beim Hacken, und danke, dass du JSPWiki verwendest!

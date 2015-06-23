@@ -1,0 +1,34 @@
+Cette page donne un aperçu rapide de la syntaxe d'interrogation du moteur de recherche.
+On peut l'ouvrir directement [ici|SearchPageHelp].
+
+Utilisez '{{+}}' pour rendre un mot obligatoire, '{{-}}' pour l'interdire.  Par exemple :
+{{{+java -emacs jsp}}}
+
+trouve les pages qui __doivent__ contenir le mot "java", et __ne doivent pas__ contenir le mot "emacs". De plus, dans les résultats, les pages qui contiennent le mot "jsp" seront placées devant celles qui ne le contiennent pas.
+
+Les recherches sont toutes insensibles à la casse (différence majuscules/minuscules). Si une page contient à la fois un mot obligatoire et un mot interdit, elle ne sera pas prise en compte dans les résultats.
+
+!! Syntaxe des requêtes
+
+Plus plus d'information, vous pouvez vous référer à la %%slimbox [syntaxe des requêtes Lucene|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+
+|       || Description             || Exemple
+|| mot   | sélectionne les documents contenant un simple mot   | {{bonjour}}
+|| "..." | sélectionne les documents contenant une suite de mots | {{"bonjour jean"}}
+|| ?     | n'importe quel caractère, en un seul exemplaire (le {{?}} ne doit pas être le 1%%sup er/% caractère de la requête) | {{te?t}}
+|| *     | n'importe quel caractère, en un quelconque nombre d'exemplaires (le {{*}} ne doit pas être le 1%%sup er/% caractère de la requête) | {{test*}}
+|| OR    | sélectionne les documents qui contiennent l'un des deux mots ou suites de mots | {{"bonjour jean" bonjour}}\\{{"bonjour jean" OR bonjour}}
+|| AND   | sélectionne les documents qui contiennent les deux mots ou suites de mots | {{"bonjour jean" AND "jean charles"}}
+|| +     | ne sélectionne que les documents que s'ils contiennent le mot ou la suite de mots après le "{{+}}" | {{+bonjour jean}}
+|| -\\NOT\\! | rejette les documents qui contiennent le mot ou la suite de mots après le "{{-}}" \\ A la place de {{-}}, on peut aussi utiliser {{NOT}} ou {{!}} | {{"bonjour jean" -"jean charles"}}\\{{"bonjour jean" NOT "jean charles"}}
+|| (...) | Utilisez des parenthèses pour former des sous-requêtes | {{(bonjour OR jean) AND web}}
+|| ~~    | Recherche ''floue'' pour sélectionner les documents contenant des mots d'orthographe proche | {{cheva~~ }}
+|| ~~n    | Recherche de ''proximité'', par une distance exprimée en nombre de mots | {{"bonjour jean"~~10}}
+|| ^n    | Introduit un facteur d' ''accélération'' pour augmenter l'importance d'un mot ou d'une suite de mots dans une recherche | {{"bonjour jean"^4 "jean charles"}}
+|| \     | Echappe les caractères spéciaux : __ + - && ~|~| ! ( ) { } [[ ] ^ " ~~ * ? : \ __ | {{\(1\+1\)\:2}} pour rechercher {{(1+1):2}}
+
+Pour pouvez restreindre le domaine de recherche en préfixant votre requête :
+|| {{author:''terme''}} | rechercher les pages modifiées par un ou des auteurs particuliers | {{author:~~JeanMartin}}
+|| {{attachment:''terme''}} | rechercher les pages avec un certain nom d'attachement  | {{attachment:brushed*}}
+|| {{name:''terme''}}  | rechercher les pages avec un certain nom de page | {{name:Main}}
+|| {{content:''terme''}}  | rechercher les pages avec un certain contenu  | {{content:jspwiki}}

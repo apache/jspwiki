@@ -1,0 +1,30 @@
+!!!恭喜您！
+
+您已经成功安装了 [JSPWiki|About]。
+
+一些页面已经为您设好了：
+
+!马上开始
+
+* 如果想体验一下，试试[沙盒|SandBox]。
+* 如果想简单了解一下 Wiki 是什么，看看 [OneMinuteWiki]。
+* 如果想了解关于 Wiki 使用方面的指南的话，参阅 [WikiEtiquette]。
+
+!安装问题
+
+* 如果您在使用 Microsoft Windows，或者有 UTF-8 方面的麻烦，您可以参阅 [InstallationTips] 了解更多信息。
+
+!文档
+
+* 有关 Wiki 标记的全部特性，请参阅 [TextFormattingRules]。
+* 完整 JSPWiki 文档入口：[JSPWiki 文档|JSPWiki:JSPWikiDocumentation]
+** [JSPWiki 新特性|JSPWiki:NewIn].
+
+
+!其他
+
+* 有好几种途径可以和 JSPWiki [Community] 联系。去看看！
+* 想看看这个 wiki 是什么样的，可以点击浏览器左上角的 Wiki 名称，或者[点击此处|SystemInfo]。
+
+祝你好运，感谢选择 JSPWiki！
+

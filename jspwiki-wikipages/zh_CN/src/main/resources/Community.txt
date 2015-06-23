@@ -1,0 +1,45 @@
+[{TableOfContents}]
+
+!! 邮件列表
+在这个 wiki 之外有个用于讨论的 JSPWiki 邮件列表。很适合讨论诸如补丁、问题、开发等等的问题。
+
+目前有两个邮件列表：''jspwiki-users'' 和 ''jspwiki-dev''。
+
+!JSPWiki-user
+
+jspwiki-user 邮件列表由 Apache 托管。可以通过发送邮件到以下地址申请加入：[user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org]。邮件列表归档位于  [http://mail-archives.apache.org/mod_mbox/jspwiki-user/|http://mail-archives.apache.org/mod_mbox/jspwiki-user/]
+
+[以前的列表归档|http://www.ecyrd.com/pipermail/jspwiki-users/] 还在。另外，在 Nabble 上还有一个 [副归档|http://www.nabble.com/JspWiki---User-f2680.html]。
+
+!JSPWiki-dev
+
+这个列表主要针对 JSPWiki 开发者。如果担心满天飞的暗语的话，最好还是别加入。jspwiki-dev 列表由 Apache 托管，所以您可以通过给下面的地址发个邮件来加入：[dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org]。邮件列表归档位于 [http://mail-archives.apache.org/mod_mbox/jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/jspwiki-dev/]
+
+!JSPWiki-commits
+
+如果订阅了这个列表，你会在向 SVN 库提交了新的或修改过的文件时会收到邮件通知。
+jspwiki-commits 列表由 Apache 托管，您可以通过给下面的地址发送邮件加入：[commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org]。邮件列表归档位于 http://mail-archives.apache.org/mod_mbox/jspwiki-commits/
+
+!取消订阅
+
+取消订阅同样容易：您只需用订阅列表时使用的邮件地址给 <user|dev|commits>-unsubscribe@jspwiki.apache.org 发送邮件即可完成。
+
+如果您想探究一些有趣的问题的话，以前的 JSPWiki-dev（到 2007年10月）归档[还可以用|http://www.ecyrd.com/pipermail/jspwiki-dev/]。
+
+!! 其他资源
+
+! IrcChannel - 与开发者在线聊天！
+
+在 [Freenode|http://www.freenode.net] 上有个 JSPWiki [IRC|http://www.mirc.com/irc.html] 频道，名称为：#jspwiki. 如果有任何疑问，或者只是想聊聊，可以进去看看。
+
+需要注意的是，有些时段这个频道里面会相当安静，如果发了消息没有回复的话，属于正常，不要泄气。就在线等一会儿看看……
+
+频道上的常客；
+* [Janne Jalkanen|http://www.ecyrd.com/JSPWiki/wiki/JanneJalkanen] (Ecyrd)：时区为 GMT+2.
+
+! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
+
+另外，我还在 Facebook 上建了一个 JSPWiki 用户组作为娱乐。如果您是 Facebook 上的常客，可以去看看！
+
+（当然，我们不会用这个替换任何现有的站点。不过，每个人还有他们的亲友似乎也在 Facebook 上，我似乎觉得再加一个频道也不错）
+-- Janne 2007年9月17日

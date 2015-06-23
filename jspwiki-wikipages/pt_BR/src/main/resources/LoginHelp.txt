@@ -1,0 +1,36 @@
+Aqui está um pequeno guia de como se autenticar em __[{$applicationname}]__. Este texto está [nesta pagina|LoginHelp]. \\
+Você pode ler mais sobre as funcionalidade de segurança da JSPWiki em [páginas de documentação|Doc:Security].
+
+!!  Autenticação
+
+A JSPWiki suporta vários níveis de __autenticação__ e confiança. Usuários podem ser anônimos, terem identidades "identificadas" usando cookies, serem autenticados ou serem administradores:
+
+|| Status || Descrição || As boas vindas Mostra..
+| Anônimo | Usuário não autenticado, e não forneceu um cookie | "Bem vindo (anonymous guest)"
+| Identificado | Navegador do usuário contém um cookie chamado {{~JSPWikiAssertedName}} | "Bem vindo, ''nomedeusuario'' (não autenticado)"
+| Autenticado | Usuário autenticado com um login e senha | "Bem vindo, ''nomedeusuario'' (autenticado)"
+
+Dependendo da política padrão de segurança e do controle de acesso de páginas no lugar, usuários podem (ou não) serem obrigados a se autenticar.
+
+Quando um usuário decide se autenticar - ou é pedido a se autenticar por um controle de acesso a página (ACL) ou política de segurança - ele ou ela vê um formulário web padrão com campos para login e senha. Após receber o formulário preenchido, a JSPWiki tenta autenticar o usuário com os dados dos campos.
+
+!! Senha Perdida
+
+Se você perder sua senha, você pode pedir por uma nova senha aleatória que será enviada para o seu email salvo no seu Perfil de Usuário.
+
+!! Cadastrar Novo Usuário
+
+Enquanto algumas wikis são anônimas, muitas não são. Frequentemente, wikis dão a habilidade de criar uma identidade para o website à usuários. A JSPWiki inclui uma página básica de auto-cadastramento que permite aos usuários de configurar e gerenciar seus próprios perfis wiki.
+
+Por padrão, o formulário pede:
+
+* Um ID de usuário
+* Uma senha
+* O "nome wiki" desejado pelo usuário (e.g., JanneJalkanen). Você pode usar este nome em Listas de Controle de Acesso (ACLs) ou em grupos Wiiki.
+* Endereço de email. Este é usado quando você precisar resetar sua senha. (veja Senha Perdida)
+
+Se a autenticação pelo container for a utilizada, o ID do usuário não será editável; o próprio container irá fornecer este valor.
+
+Quando o usuário salva o perfil, a JSPWiki checa ele para ter certeza que o novo id de usuário, o nome wiki e o nome completo não estão sendo utilizados por outro usuário. Se estiverem, é dado ao usuário a oportunidade de escolher diferentes valores.
+
+Após o usuário criar um perfil wiki, ele ou ela pode alterá-lo depois indo no link ''Minhas Preferências''. Por padrão, usuários devem estar autenticados para poderem alterar os seus perfis.

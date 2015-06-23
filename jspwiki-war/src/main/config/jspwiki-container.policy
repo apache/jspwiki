@@ -1,0 +1,54 @@
+//  Licensed to the Apache Software Foundation (ASF) under one
+//  or more contributor license agreements.  See the NOTICE file
+//  distributed with this work for additional information
+//  regarding copyright ownership.  The ASF licenses this file
+//  to you under the Apache License, Version 2.0 (the
+//  "License"); you may not use this file except in compliance
+//  with the License.  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the License is distributed on an
+//  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//  KIND, either express or implied.  See the License for the
+//  specific language governing permissions and limitations
+//  under the License.
+
+// $Id: jspwiki-container.policy,v 1.1 2007-05-29 05:11:59 arj Exp $
+
+// ------ APPEND THE CONTENTS OF THIS FILE YOUR CONTAINER'S SECURITY POLICY ------
+
+// If you are running your servlet container with a security
+// policy already, you should simply append the contents
+// of this block into your global JVM policy. The following block
+// is designed for inclusion in typical Tomcat security policy
+// (for example: $CATALINA_HOME/conf/catalina.policy).
+
+// If you need to include JSPWiki permissions (e.g., PagePermission) in your
+// global policy (not shown in the block below), you MUST ALSO:
+//   1) sign the JSPWiki.jar file. We provide a sample Ant target that
+//      does this called 'signjar' (see the build.xml file).
+//   2) Copy the keystore used to sign the JAR to the same directory
+//      as the container security policy (e.g., from JSPWiki's etc/jspwiki.jks
+//      to $CATALINA_HOME/conf)
+//   3) Specify the name of the keystore in your container policy. That's
+//      this next line (which we have commented out):
+//
+// keystore "jspwiki.jks";
+
+// If you don't want or need to specify JSPWiki permissions in your global
+// security policy, then don't worry about the preceding paragraphs, jar-signing
+// or the keystore line... and just copy the rest of this file into the policy.
+// You will also want to adjust the 'codeBase' location to reflect your actual
+// JSPWiki.jar location. But don't change the permissions themselves, because
+// that will totally b0rk the system.
+
+grant codeBase ""file:${catalina.home}/webapps/JSPWiki/JSPWiki.jar" {
+    permission java.security.SecurityPermission   "getPolicy";
+    permission java.security.SecurityPermission   "setPolicy";
+    permission java.util.PropertyPermission       "java.security.auth.login.config", "write";
+    permission java.util.PropertyPermission       "java.security.policy", "read,write";
+    permission javax.security.auth.AuthPermission "getLoginConfiguration";
+    permission javax.security.auth.AuthPermission "setLoginConfiguration";
+};

@@ -1,0 +1,26 @@
+Puedes usar meta-caracteres en el campo de búsqueda:
+
+|.      |cualquier carácter salvo el retorno de línea   |+      |una o más veces
+|*      |cero o más veces              |?      |cero o una vez
+|{n}    |coincidir exactamente n veces             |{n,m}  |como mínimo n, como máximo m veces
+|~|    |tubería: {{a~|b}} coincide con a o con b  | -     |guión, coincidir con un rango de caracteres
+|^      |inicio de línea             |$      |fin de línea
+|[[...] |uno de los caracteres del grupo      |[[^...] |negación del grupo de caracteres
+|\b     |palabra límite                   |\B     |palabra no límitadora
+|\d     |numeral [[0-9]                  |\D     |no numeral [[^0-9]
+|\s     |carácter único, espacio en blanco              |\S     |carácter único, que no es espacio en blanco
+|\w     |[[A-Za-z0-9_]                   |\W     |[[^A-Za-z0-9_]
+|(...)  |agrupaciones disponibles como $1..$9   |\.     |escapar un meta-carácter
+
+El campo 'Reemplazar con' puede usar $1..$9  como referencia a los paréntesis del campo de búsqueda.
+----
+Ejemplo:\\
+
+Buscar __/abc|def/__ coincidirá con la palabra 'abc' o con la palabra 'def'\\
+Buscar  __/bwiki/b__ coincidirá con la palabra 'wiki' pero no con 'jspwiki'.\\
+Buscar __^[[IVXMDCL]+\.__ coincidirá con cualquier combinación de numerales romanos seguidos de un punto\\
+Busca __/(-?\d+)(\d{3})/__ y reemplaza con __$1,$2__ para insertar comas en enteros grandes.
+
+Ésta es la página de [Ayuda en la búsqueda y edición|EditFindAndReplaceHelp].
+[Más información sobre expresiones regulares |http://www.regular-expressions.info/javascript.html]
+y un [sitio para probar expresiones regulares|http://www.regular-expressions.info/javascriptexample.html]\\

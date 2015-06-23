@@ -1,0 +1,36 @@
+本页面简要介绍了搜索引擎查询语法。
+此页面名为 [Search Page Help]。
+
+使用 '+' 表示要求一个词，'-' 禁止一个词。例如：
+
+{{{
+          +java -emacs jsp
+}}}
+
+会查找__必须__包含单词 "java"，但可以不包含单词 "emacs"。另外，包含单词 "jsp" 的页面排在没有包含 "jsp" 的页面的前面。
+
+所有搜索都是不区分大小写。如果一个页面同时包含禁止和需要的关键字，则它不会显示。
+
+!! 查询语法表
+
+有关更多信息，请参阅 %%slimbox [Lucene 查询语法|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%。
+
+|| term  | 查找单个词容易   | {{hello}}
+|| "..." | 查找一组单词     | {{"hello dolly"}}
+|| ?     | 任意单个字符（? 不能是搜索字符串中的第一个字符）| {{te?t}}
+|| *     | 任意多个字符（* 不能是搜索字符串中的第一个字符 | {{test*}}
+|| OR    | 任意一个关键字存在则匹配文档 | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND   | 两个关键字同时存在则匹配文档 | {{"hello dolly" AND "dolly lucy"}}
+|| +     | 要求 "+" 后的关键字存在 | {{+hello dolly}}
+|| -\\NOT | 排除那些包含 "-" 号后关键字的文档 \\ 排除也支持 NOT 或者 !|{{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...) | 用括号表示子查询 | {{(hello OR dolly) AND website}}
+|| ~~    | ''模糊''搜索拼写相似的关键字 | {{roam~ }}
+|| ~n    | ''接近''搜索，在以单词个数表示的范围内搜素 | {{"hello dolly"~10}}
+|| ^n    | ''提高''因子增加搜素中的重要性 | {{"hello dolly"^4 "dolly lucy"}}
+|| \     | 转义特殊字符：__ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} to find (1+1):2
+
+可以在查询字符串前面加上前缀来限制搜索范围：
+|| author:''term''     | 查找由特定作者修改的页面       | {{author:~JohnFoo}}
+|| attachment:''term'' | 查找特定附件名                 | {{attachment:brushed*}}
+|| name:''term''       | 查找有特定页面名称的页面       | {{name:Main}}
+|| content:''term''    | 查找有特定内容的页面           | {{content:jspwiki}}

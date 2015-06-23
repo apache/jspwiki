@@ -1,0 +1,156 @@
+本页面描述了 JSPWiki 所使用的 wiki 语法。有关 JSPWiki 语法和 Wikipedia 的区别的详细信息，请参考 [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki]。
+
+[{TableOfContents }]
+\\
+如果您已经明白编辑器如何工作，那么您应该看看 [WikiEtiquette]，以便了解如何使用刚学到的技术。[沙盒|http://sandbox.jspwiki.org] 是一个用来练习的好地方。
+!快速参考
+{{{
+----       = 生成水平线。多余的 '-' 将被忽略。
+\\         = 强制换行
+
+[link]     = 创建一个到名为 "Link" 的内部 Wiki 页面的超链接。
+[this is also a link] = 创建一个到名为 'ThisIsAlsoALink' 的内部 Wiki 页面，链接则显示为带空格的输入内容。
+[a sample|link] = 创建一个到名为 "Link" 的内部 Wiki 页面的超链接，但给用户显示的是文本 "a sample"create a hyperlink to an  而非 "Link"。
+~NoLink    = 禁止给以驼峰字(CamelCase)形式书写的词创建链接。
+[1]        = 引用脚注 1。
+[#1]       = 标记为脚注 1。
+[link]     = 创建文本 '[link]'。
+
+!heading   = 文本为 'heading' 的小标题
+!!heading  = 文本为 'heading' 的中标题
+!!!heading = 文本为 'heading' 的大标题
+
+''text''   = 以斜体显示 'text'。
+__text__   = 以粗体显示 'text'。
+{{text}}   = 以等宽字体显示 'text'。
+[text|]    = 给 'text' 加上下划线（空白超链接）
+* text     = 给 'text' 加上项目符合
+# text     = 给 'text' 加上编号
+;term:ex   = 对 'term' 以解释 'ex' 做了定义
+}}}
+!撰写文本
+您不必了解有关 Wiki 文本格式化规则以使用 Wiki。只需要撰写正常的文本，然后用空行标记一个段落。
+就像写电子邮件一样。
+您始终可以编辑这个页面（看一下左边的侧栏）看看这个页面所使用的各种效果。
+!超链接
+链接也可以是直接以{{http:}}、{{ftp:}}、{{mailto:}}、{{https:}} 或 {{news:}} 开头的 URL，在这种情况下，链接指向外部实体。例如，要指向 ''java.sun.com'' 的主页，就要使用 {{[[http://java.sun.com]}}，它会是 [http://java.sun.com/] 或者使用 {{[[Java 主页|http://java.sun.com]}}，则会是 [Java 主页|http://java.sun.com]。
+如果链接不以上面的“协议”开头，那么 Wiki 会将其认作链接到 Wiki 空间中其他页面的普通链接，您需要以字母作为这个页面的第一个字符，纯粹数字的页面名是不允许的。如果要在页面中使用方括号（{{[[]}}）而不想创建链接，就用两个开口的方括号（{{[[[}}）。所以文本 {{[[[Example Non-Link]}}，会显示为 {{[[Example Non-Link]}}[[Murali]。
+要添加新页面，您只需要从其他地方创建一个指向它的链接即可。毕竟，要一个不能访问的页面意义不大！在返回到那个页面的时候，您会发现页面名称后面有个小问号。然后，点击这个问号，这样您就创建了一个页面。
+在一个 [WikiName|JSPWiki:WikiName] 中，几乎可以使用任何字符，不过他们要是字母或数字才行。
+另外有一点，本 Wiki 可以通过配置来支持标准的驼峰字 [CamelCase|JSPWiki:CamelCase] 连接（如果支持，只要不以 '~' 开头，单词 CamelCase 应该就是一个链接）。缺省情况下这个功能是关闭的，当然如果管理员已经将这个设置打开的话，那么 CamelCase 就是你要的了。
+!脚注
+脚注是一种特殊类型的超链接。创建脚注十分简单，只需在脚注要引用到的超链接中加入数字即可，例如 {{[[1]}}。
+实际使用的时候，把脚注 {{[[#1]}} 放到应指向的位置。
+如下所示。
+您还可以创建一个带名字的脚注，方法和创建普通超链接相同。比如 {{[[Footnote name|1]}}，也是引用第一个脚注 [Footnote name|1]的一种方式。也可以把自定义的名字用作脚注本身，如“Footnote name[2]”。
+![InterWiki|JSPWiki:InterWiki] 链接
+您还可以在不同的 Wiki 之间做链接，不一定要知道具体的 URL。只需要使用此格式“{{[[Wiki:WikiPage]}}”，JSPWiki 会自动帮您创建链接。例如，这个链接是指向 [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]。关于哪些 WiKi 链接可用的更多信息，可查看 [SystemInfo] 页面。
+如果不支持 [InterWiki|JSPWiki:InterWiki] 链接，当您保存这个页面时会收到通知。
+!添加图片
+您可以把图片嵌入到 wiki 代码里，只要该图片在网络上可用，并且符合以下格式，然后只需链接过去。
+如果指定链接文本（{{[[this one here|http://example.com/example.png]}}），对于无法查看或不想查看图片的人，即可显示 ALT 文本。
+允许的图片类型取决于 Wiki。您可以查看 [SystemInfo] 页面获取图片类型列表。
+还可以使用 [Image plugin|JSPWiki:Image] 格式控制图片的位置和属性。
+要在图片后添加空行，可以使用三个反斜杠（\ \ \）。
+!符号列表
+可以在第一列使用一个星号（*）来添加符号列表。增加星号数量可添加更多的缩进。例如：
+{{{
+* One \\ one and a half
+* Two
+* Three
+** Three.One}}}
+creates
+* One \\ one and a half
+* Two
+* Three
+** Three.One
+!数字列表
+与符号列表类似，只要把星号换成井号（#）。例如：
+{{{
+# One \\ one and a half
+# Two
+# Three
+## Three.One
+}}}
+creates
+# One \\ one and a half
+# Two
+# Three
+## Three.One
+如果您想在把列表中的项写到多个行中，只需在下一行中添加一个或多个空格，该行即会自动添加到前一个中。
+例如：
+{{{
+* This is a single-line item.
+* This is actually a multi-line item.
+  We continue the second sentence on a line on a line of its own.
+  We might as well do a third line while we're at it...
+  Notice, however, as all these sentences get put inside a single item!
+* The third line is again a single-line item for your convenience.
+}}}
+显示结果是：
+* This is a single-line item.
+* This is actually a multi-line item.
+  We continue the second sentence on a line on a line of its own.
+  We might as well do a third line while we're at it...
+  Notice, however, as all these sentences get put inside a single item!
+* The third line is again a single-line item for your convenience.
+!定义列表和注释
+定义列表的一个简单方法是使用 ';:' -construct：
+{{{
+;__Construct__:''Something you use to do something with''
+}}}
+显示结果是：
+;__Construct__:''Something you use to do something with''
+用 ';:' 的另一个好处是，您可以用它在别人的文本上添加简短的注释，方法是在定义中放一个空的 'term'，例如：{{{
+;:''Comment here.''
+}}}
+显示出来的结果是
+;:''Comment here.''
+!文本效果
+您可以使用 __bold__ 文本或 ''italic'' 文本，方法是分别使用两个下划线（_）和两个单引号（'）。如果您使用的是 Windows 电脑，请确保使用了正确的单引号，因为有另外一个看起来很像，但实际上是错误的。
+下划线 [underscore|] 效果可以用超链接来实现，但并不链接到其他地方，如 [[like this|]
+!格式化文本
+如果您想添加一些已经含有固定格式的文本（比如代码），只需使用三个连续的括号“({)”新开始一个区域，然后用三个连续的括号“(})”结束这一区域。编辑此页面做个例子。
+({)java.package.pseudocode.class(})
+!表
+您可以做一些简单的表格，使用竖线 ('|')。双竖线符号表示开始一张表，单竖线符号表示书写表中的行。
+可以用表以外的行结束该表。
+例如：
+{{{
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+}}}
+会显示成以下表。注意在表的内部是如何使用链接的。
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+!CSS 样式
+如果不想像多数文本那样遵循简单的原则，可以在行内使用 CSS 样式 [can be used inline |JSPWiki:CSSInWikipages] 对页面中想要特别强调的部分做修饰。
+!冲突
+如果有人和您同时对某页面进行编辑，JSPWiki 会阻止您进行修改并显示冲突页面。遗憾的是，首先修改的人会修改成功...
+__警告信息：__ 如果您使用浏览器的后退按钮返回编辑页面，通常会引起冲突。这是因为浏览器会认为您还是编辑以前的页面。
+!删除页面
+这是不可能的。当然，您可以删除对该页面的所有链接，这样这个页面就无法访问了。或电子邮件给管理员，我会帮您删除此页面。您也可以添加一个 [DELETEME|JSPWiki:DELETEME] 链接。
+!添加新页面
+可以创建一个链接指向新的页面（尚未存在的），方法是使用它的Wiki名字，如 [WikiName|JSPWiki:WikiName].
+如果现在单击该新链接，会显示一个问号 (?) 后缀，您将获取新页面的编辑权限。
+-- [Asser|JSPWiki:Asser]
+!页面别名识别
+有时候您想链接到某个 wiki 页面，以便立即浏览到其他页面。这可以使用“页面别名”来进行。
+!插入变量
+可以在页面上插入很多种变量。基本的格式为：
+{{ [[{$variablename}], }}
+其中 ''variablename'' 是要插入的变量的名称。注意变量名称是不区分大小写的 - 即“pagename”和“paGeNamE”以及“PageName”都是一样的。
+您可以在此页面查看可用的变量列表：[WikiVariables|JSPWiki:WikiVariables]。
+
+!插入插件
+插入插件的基本语法如下：
+[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
+可查看此页面获取更多信息：[JSPWikiPlugins | JSPWiki:JSPWikiPlugins].
+----
+[#1] 这是我提到过的脚注。
+[2-The other footnote|#2] 另外一个脚注。注意到名字的区别了吗？
+----
+有任何意见吗 [意见 | JSPWiki:IdeasTextFormattingRules]？
+有任何问题吗 [问题 | JSPWiki:TextFormattingRulesDiscussion]？

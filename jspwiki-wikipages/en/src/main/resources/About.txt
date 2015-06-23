@@ -1,0 +1,16 @@
+This Wiki is done using [JSP|http://java.sun.com/products/jsp] technology, 
+which hopefully makes it very easy to keep up to date and looking better than most of the Wikis based on the [original one|http://c2.com/cgi/wiki].  A custom bean handles the translation of text into HTML.
+
+Most of the [editing markers|TextFormattingRules] have been styled according to the [Sensei's Library|http://senseis.xmp.net], the best Go sites in the Internet.  I find their markup very easy, yet clear.
+
+This wiki is available under the [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Please
+see [http://jspwiki.apache.org] for further information.
+
+If you are interested in the JSPWiki development, the home page for JSPWiki is at [http://jspwiki.apache.org].  Some quick links:
+
+* [Bug Reports|JSPWiki:SubmitBugReport] - or [look at the list of open bugs|JSPWiki:OpenBugs].
+* [Contribute new ideas|JSPWiki:SubmitNewIdea].
+* Take a look at the most up-to-date [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
+* Look for additional [plugins|JSPWiki:ContributedPlugins], [templates|JSPWiki:ContributedTemplates], [filters|JSPWiki:ContributedFilters], [providers|JSPWiki:ContributedProviders], or [other cool stuff|JSPWiki:ContributedCode].
+
+Happy hacking, and thanks for choosing JSPWiki!

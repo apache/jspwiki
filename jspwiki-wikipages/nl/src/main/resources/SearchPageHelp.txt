@@ -1,0 +1,37 @@
+Deze pagina geeft een kort overzicht van de zoekmachine query syntax
+Deze pagina heet [Search Page Help].
+
+Gebruik '+' om aan te geven dat een woord moet voorkomen, '-' om aan te geven dat een woord niet mag voorkomen.
+
+{{{
+          +java -emacs jsp
+}}}
+
+vind pagina's die het woord "java" MOETEN bevatten, en die het woord "emacs"  NIET MAG bevatten
+ En, pagina's met het woord "jsp" worden als eerste gerangschikt.
+
+Alle zoekopdrachten zijn hoofdletter gevoelig. Als een pagina zowel benodigde als verboden keywords bevat, wordt hij niet getoond.
+
+!! Query syntax tabel
+
+Voor meer informatie kijk op %%slimbox [Lucene's query syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+
+|| term  | een enkelvoudige term zoeken is een makkie   | {{hello}}
+|| "..." | zoek een groep woorden | {{"hello dolly"}}
+|| ?     | een enkel karakter (het vraagteken mag niet het eerste karakter van een search zijn) | {{te?t}}
+|| *     | 1 of meerdere karakter(s) (het sterretje mag niet het eerste karakter van een search zijn) | {{test*}}
+|| OR    | match documenten als een van de twee termen voorkomt | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND   | match documenten indien beide termen voorkomen | {{"hello dolly" AND "dolly lucy"}}
+|| +     | de term na het "+" teken moet voorkomen | {{+hello dolly}}
+|| -\\NOT | exclude documenten die de term bevatten na het "-" teken \\ je kan ook  NOT of ! gebruiken | {{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...) | gebruik haakjes om sub queries te maken | {{(hello OR dolly) AND website}}
+|| ~~    | ''fuzzy'' voor het zoeken van termen die qua spelling gelijkend zijn | {{roam~ }}
+|| ~n    | ''proximity'' zoek binnen een bepaald aantal woorden | {{"hello dolly"~10}}
+|| ^n    | ''boost'' om aan te geven welke term belangrijker is in het zoekargument | {{"hello dolly"^4 "dolly lucy"}}
+|| \     | escapen van speciale karakters: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} to find (1+1):2
+
+Je kan het zoek bereik beperken door het prefixen van je query:
+|| author:''term''     | zoek pagina's die door een bepaalde auteur als laatste zijn gewijzigd| {{author:~JohnFoo}}
+|| attachment:''term'' | zoek pagina's met een bepaalde attachment naam  | {{attachment:brushed*}}
+|| name:''term''       | zoek pagina's met een bepaalde naam        | {{name:Main}}
+|| content:''term''     | zoek pagina's met een bepaalde inhoud          | {{content:jspwiki}}

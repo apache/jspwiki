@@ -1,0 +1,37 @@
+Hier een korte uitleg over hoe in te loggen op  __[{$applicationname}]__.  Deze tekst is  [hier|LoginHelp]. \\
+Je kunt meer lezen over JSPWiki's security features op de [documentatie pagina's|Doc:Security].
+
+!!  Inloggen
+
+JSPWiki ondersteunt meerdere niveaus van  __authentication__  en trust. Gebruikers kunnen anoniem zijn ,  "asserted" identities hebben gebruikmakend van cookies, geauthenticeerd zijn, or administrator zijn:
+
+|| Status || Omschrijving || De gebruikers groet...
+| Anoniem | Gebruiker is niet ingelogd, en heeft geen browser cookie | "Hallo (anonieme gast)"
+| Asserted | Gebruiker heeft een cookie {{~JSPWikiAssertedName}} | "Hallo, ''username'' (niet ingelogd)"
+| Authenticated | Gebruiker is ingelogd met een userid/password | "Hallo, ''username'' (geauthenticeerde gebruiker)"
+
+Afhankelijk van de default security policy en de pagina beveiliging, kunnen gebruikers verzocht worden om in te loggen. 
+
+Wanneer een gebruiker inlogt - of gevraagd wordt dat te doen vanwege een pagina beveiliging of de security policy - krijgt hij een standaard web formulier waarop een userid en gemaskeerd wachtwoord veld staat. Na het invullen hiervan en op de submit knop drukken, zal JSPWiki pogen je in te loggen.
+
+!! Wachtwoord vergeten
+
+Als je je wachtwoord kwijt bent, kun je om een nieuwe random wachtwoord vragen, deze wordt gestuurd naar het email adres dat in je User Profile staat. 
+
+!! Registreren van een nieuwe gebruiker
+
+Alhoewel sommige wikis anoniem zijn, zijn sommigen dat niet. Vaak geven wikis de mogelijkheid om een identiteit aan te maken. 
+JSPWiki heeft een basic zelf-registratie pagina waarmee je je eigen wiki profile kunt maken en beheren.
+
+Standaard vraagt dit formulier om :
+
+* Een user ID
+* Een wachtwoord
+* De gewenste "wiki name" (e.g., HarryMetske). Je kunt deze naam gebruiken in  Access Control Lists of Wiki Groups
+* Email adres. Dit wordt gebruikt om een vergeten wachtwoord te resetten. (zie Lost Password)
+
+Als container-managed authentication wordt gebruikt, zal het user ID niet te wijzigen zijn, de container schrijft dit voor.
+
+Wanneer de gebruiker een profiel opslaat, zal JSPWiki controleren of het nieuwe user ID, wiki naam en full naam niet al in gebruik zijn door iemand anders. Als dat wel zo is, krijg je de kans om iets anders te kiezen.
+
+Nadat de gebruiker een wiki profiel heeft gemaakt, kan hij het later weer wijzgen via de "My Prefs" link. Standaard moet je geauthenticeerd zijn om je eigen profiel te wijzigen.

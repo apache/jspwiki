@@ -1,0 +1,37 @@
+Aqui está um pequeno lembre dos elementos que você tem a sua disposição:
+{{{
+----             Barra Horizontal
+\\               Força quebra de linha
+[link]           Cria hiperlink para "linkar" páginas, onde "link" pode ser uma página 
+				 interna ou um link externo (http://)
+[text|link]      Cria um hiperlink onde "text" é o nome do link que será exibido e 
+			     "link" é o hiperlink
+[text|wiki:link] Cria um hiperlink onde "text" é o nome do link que será exibido e 
+			     "link" é o hiperlink e o hiperlink aponta para a wiki nomeada.
+				 Suporta linkagem entre Wikis.
+
+*                Cria uma lista (deve estar na primeira coluna). Use mais asteriscos 
+				 para outros níveis na lista (**, ***, etc).
+#                Cria uma lista numerada (deve estar na primeira coluna). Use mais
+				 cerquilhas para outros níves na lista (##, ###, etc).
+
+!, !!, !!!       Começe uma linha com um ponto de exclamação (!) para tornar esta linha 
+				 um cabeçalho.
+                 Mais pontos de exclamação tornam o cabeçalho maior.
+
+__text__         Coloca "text" em negrito.
+''text''         Coloca "text" em itálico (note que é utilizado aspas simples ('))
+{{text}}         Coloca "text" em fonte mono espaçada (todas as letras com o mesmo tamanho.
+;term:def        Define um termo 'term' a sua definição 'def'.  Use o campo 'term' vazio para fazer pequenos comentários.
+
+|text|more text  Cria uma tabela onde "text" e "more text" são textos dentro de células na primeir alinha. 
+				 Barras duplas para fazer o cabeçalho da tabela.
+}}}
+
+Não tente usar HTML, simplesmente não irá funcionar.
+
+Para inserir imagens basta apenas torná-las disponíveis na web usando uma das extensões aceitas e ela serão alinhadas automaticamente. Para ver a lista de extensões aceitas vá para [Informação de Sistema|SystemInfo].
+
+Para fazer um bloco de código, use triplas chaves ({) para abrir e triplas chaves (}) para fechar.
+
+''(Imaginando de onde veio este texto? Ele está em uma página chamada [Ajuda em Edição de Páginas|Edit Page Help] que você também pode editar!)''

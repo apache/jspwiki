@@ -1,0 +1,42 @@
+下面是一些战略性的图表和其他有关这个 Wiki 的有趣信息。如果您打算在其他页面上使用 Wiki 变量，所有这些信息可以在 [WikiVariables|JSPWiki:WikiVariables] 页面找到。
+
+| __应用名称__               | [{$applicationname}]
+| __基本地址__                   | [{$baseurl}]
+| __JSPWiki 引擎版本__         | [{$jspwikiversion}]
+| __字符编码__             | [{$encoding}]
+| __总页面数__          | [{$totalpages}]
+| __总活动会话数__          | [{INSERT SessionsPlugin}]
+| __活动的 Wiki 用户__              | [{INSERT SessionsPlugin property=users}]
+| __到目前为止的运行时间__                 | [{$uptime}]
+| __当前页面提供程序__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __当前附件提供程序__    | [{$jspwiki.attachmentProvider}]
+| __可用的 InterWiki 链接__      | [{$interwikilinks}]
+| __嵌入式图像__             | [{$inlinedimages}]
+| __其他插件搜索路径__  | [{$pluginpath}]
+| __已安装的 [PageFilters]__        | [{$pagefilters}]
+
+!使用情况
+
+| __我们美化标题吗？__ | [{$jspwiki.breakTitleWithSpaces}]
+| __我们匹配英语复数形式吗？__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __使用了 CamelCase 链接吗？__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __页面允许 HTML 吗？__ | [{$jspwiki.translatorReader.allowHTML}]
+
+!RichSiteSummary
+
+| __我们生成 RSS 文件吗？__ | [{$jspwiki.rss.generate}]
+| __如果生成，那文件名是？__ | [{$jspwiki.rss.fileName}]
+| __RSS 更新的频率如何？__ |  [{$jspwiki.rss.interval}]
+
+!个人信息
+
+下面是我目前所知道的关于你的情况：
+
+| __用户名__    | [{$username}]
+| __登录状态__ | [{$loginstatus}]
+
+!目前在编辑的页面
+
+[{ListLocksPlugin}]
+
+JSPWiki 主页是 [http://jspwiki.apache.org/]. 欢迎使用 JSPWiki！

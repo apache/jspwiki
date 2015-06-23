@@ -1,0 +1,39 @@
+Hier ist eine kurze Hilfeseite zum Thema "Anmelden bei [{$applicationname}]". Diesen Text gibts auf dieser [Seite|LoginHelp].\\
+Details zu den Sicherheitsfeatures von JSPWiki gibt es in der [JSPWiki-Dokumentation|Doc:Security].
+
+!!Anmeldung
+
+JSPWiki unterstützt mehrere Authentifizierungs- und Vertrauensabstufungen. Benutzer können anonym sein (''Anonymous''), via Cookies eine "angenommene" Identität haben (''Asserted''), authentifiziert sein (''Authenticated'') oder Administratoren sein:
+
+|| Status || Beschreibung || Die Begrüßung zeigt...
+| Anonymous | Benutzer ist nicht angemeldet und verfügt über kein Cookie | "Willkommen! (unbekannter Gast)"
+| Asserted | Der Browser des Benutzers enthält ein Cookie namens {{~JSPWikiAssertedName}} | "Willkommen, ''Benutzername''! (nicht angemeldet)"
+| Authenticated | Benutzer hat sich mit Benutzernamen und Passwort angemeldet | "Willkommen, ''Benutzername''! (authentifiziert)"
+
+In Abhängigkeit von den Sicherheits- und Zugriffskontrolleinstellungen des Wikis und einzelner Seiten müssen sich Benutzer manchmal anmelden, manchmal auch nicht.
+
+Wenn du dich dazu entschließt, dich anzumelden (oder aufgrund von Sicherheits- oder Zugriffskontrolleinstellungen aufgefordert wirst, dies zu tun), siehst du ein Formular mit zwei Feldern: Benutzername und Passwort.
+Nachdem du diese Felder ausgefüllt hast und auf "Anmeldung" geklickt hast, wird JSPWiki versuchen, dich anzumelden.
+
+!!Passwort vergessen?
+
+Wenn du dein Passwort vergessen hast und in deinem Benutzerprofil eine E-Mail-Adresse angegeben hast, kannst du dir im Tab "Neues Passwort anfordern" ein neues Passwort an diese Adresse schicken lassen. Bitte ändere dieses von JSPWiki generierte Passwort baldmöglichst.
+
+!!Neuen Benutzer registrieren
+
+Auch wenn es einige Wikis gibt, die anonym nutzbar sind: Viele sind dies nicht. Oft ermöglichen Wikis es ihren Benutzern, ein Benutzerprofil anzulegen. JSPWiki enthält eine einfache Benutzerregistrierungsseite, die dir ermöglicht, ein Benutzerprofil anzulegen und zu verwalten.
+
+Standardmäßig enthält die Seite folgende Einträge:
+
+* Benutzername
+* Passwort
+* Voller Name (z.B. Janne Jalkanen). Du kannst diesen Namen in Zugriffskontrolllisten oder Wiki-Gruppen verwenden.
+* E-Mail-Adresse, kann zum Anfordern eines neuen Passworts verwendet werden.
+
+Falls ''container-managed''-Authentifizierung aktiviert ist, kann der Benutzername nicht geändert werden, da der Container diesen Wert übermitteln wird.
+
+Wenn du das Profil speicherst, überprüft JSPWiki deine Angaben um sicherzustellen, dass die gewünschten Werte nicht bereits in Verwendung sind. Sollte dies der Fall sein, so kannst du deine Angaben nochmals ändern.
+
+Zu einem späteren Zeitpunkt kann das Benutzerprofil jederzeit geändert werden, indem man auf "Meine Einstellungen" klickt. Standardmäßig muss man hierfür authentifiziert sein.
+
+[{ALLOW view All}]

@@ -1,0 +1,34 @@
+Quanto estiver [editando páginas|TextFormattingRules] tenha sempre as seguintes regras em mente:
+
+!!Geral
+* Seja legal - não seja rude ou ofensivo.
+* Escreva de um jeito que seja fácil de entender e evite gírias ou frases locais. Muitos dos que vão ler o seu texto podem não entende-las.
+* Não remova contribuições de outras pessoas (a não ser que você saiba o que está fazendo)
+* Não use muitas siglas (ou pelo menos tenha uma página explicando cada um)
+* __Evite a frase ''"clique aqui"''!!"__ Não diga: "Mais informações sobre etiqueta podem ser achadas [aqui|WikiEtiquette]", no lugar disso, diga: "Mais informações sobre etiqueta podem ser achadas em [Etiqueta Wiki|WikiEtiquette]". Eu sugiro evitar isso em links externos também.
+* Contribua apenas com material original. Links tudo bem, mas não copie e cole conteúdos protegidos por copyright.
+* Corrigir erros de digitação é bom - na verdade, é até um bom hábito, tornando a página mais fácil de ler.
+
+!!Sobre comentários
+
+* Vcê está livre para contribuir anonimamente, mas é preferido que você assine seus comentários com o seu nome. É comum colocar '--' antes da sua assinatura, como em: ''-- [Janne Jalkanen]'' (você é livre para criar a sua própria página wiki e nos dizer mais sobre você.)
+* Outro modo é colocar o seu nome primeiro, como em: ''[Janne Jalkanen] : Eu gostaria de dizer que...''
+* Pense antes de você comentar. A [Wiki|WikiWiki] não é um mecanismo de conversação instantânea.  E tampouco é ums ervidor de notícias.  O que você escrever aqui ficará para sempre (se você deletar os eu comentário, ele ainda estará disponpivel na versão antiga da página) para qualquer pessoa ver e comentar.
+
+!!Criando WikiNames (NomesWiki)
+* Um bom [WikiName] é pequeno e descritivo. Se o nome tem lógica e é simples, várias pessoas iram usá-lo.
+* Mesmo que você possa usar uma sentença inteira e juntá-la para formar um [WikiName], é melhor utilizar no máximo 5 palavras.
+* No lugar disso, tente usar [WikiName]s como se fossem títulos dos capítulos de um livro.
+* Esta Wiki permite você criar páginas com apenas uma palavra como nome, mas tente sempre utilizar pelo menos duas - nós não queremos limitar o universo de nomes :-).
+* __Sempre cheque duas vezes os [WikiName]s para erros de digitação__ - porque senão alguém criará uma página com o nome errado! Estas páginas são ruins pois a criação de links para elas requerem mais esforço do que se fosse para uma página com um [WikiName] lógico e correto.
+
+!!Refatorando páginas
+
+Refatorar é o processo onde você resume uma página, diminuindo o seu tamanho, tornando-a mais acessível. Qualquer um que sinta vontade por fazer isso, mas sugerimos que você deixe para usuários mais experientes.
+
+* Seja objetivo - tantos os prós quando os contras devem ser representados corretamente.
+* Tenha cuidado com contribuições assinadas - não altere o significado delas.
+* Dê crédito onde crédito é adequado.
+* Use a terceira pessoa do singular ou do plural no lugar da primeira pessoa do singular no seu resumo.
+
+(Obrigado à [Sensei's library|http://senseis.xmp.net/] por este texto inicial.)

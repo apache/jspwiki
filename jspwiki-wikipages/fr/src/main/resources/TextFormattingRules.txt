@@ -1,0 +1,302 @@
+Cette page décrit la syntaxe wiki utilisée par JSPWiki. Pour plus de détails sur les
+différences entre la syntaxe de JSPWiki et celle de Wikipedia, veuillez vous référer
+à la page en anglais [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki].
+
+Vous trouverez également une version plus complète (et beaucoup plus longue !) des
+règles de formatage dans la [liste complète des règles de formatage|FullTextFormattingRules].
+
+[{TableOfContents title='Table des matières'}]
+\\
+Une fois que vous aurez compris comment fonctionne l'éditeur, une petite lecture de
+la page [WikiEtiquette] est plus que recommandée, pour que vous sachiez quelle est
+la meilleure manière d'utiliser vos connaissances nouvellement acquises. Le
+[bac à sable|SandBox] est le meilleur endroit pour faire des essais.
+
+!Référence rapide
+{{{
+----       = Insère un séparateur horizontal. Les '-' supplémentaires sont ignorés.
+\\         = Force un retour à la ligne.
+
+[lien]     = Insère un hyperlien vers une WikiPage interne appelée 'Lien'.
+[ceci est aussi un lien] = Insère un hyperlien vers une WikiPage interne appelée
+             'CeciEstAussiUnLien', en montrant un lien avec les espaces.
+[cliquez là|lien] = Insère un hyperlien vers une WikiPage interne appelée 'Lien',
+             mais affiche le texte 'cliquez là' plutôt que 'Lien' à l'utilisateur.
+~PasDeLien = Evite la création d'un lien pour le mot en CamelCase.
+[1]        = Insère une référence à une note de bas de page numérotée 1.
+[#1]       = Marque la note de bas de page numéro 1.
+[[link]    = Insère le texte '[link]'.
+
+!titre   = Insère un petit titre avec le texte 'titre'
+!!titre  = Insère un titre moyen avec le texte 'titre'
+!!!titre = Insère un titre gros  avec le texte 'titre'
+
+''texte''   = Affiche 'texte' en italique.
+__texte__   = Affiche 'texte' en gras.
+{{texte}}   = Affiche 'texte' en police de caractères à taille fixe.
+[texte|]    = Affiche 'texte' en souligné (faux lien hypertexte)
+
+* texte     = Insère un item de liste à puces avec le 'texte'
+# texte     = Insère un item de liste à numéros avec le 'texte'
+;terme:ex   = Insère une définition pour le 'terme' avec l'explication 'ex'
+}}}
+
+!Ecrire du texte
+
+Il n'y a pas besoin de connaître quoi que ce soit sur les règles de formatage du texte
+Wiki pour utiliser un Wiki. Il suffit simplement d'écrire du texte normal, et d'utiliser
+une ligne vide pour marquer un paragraphe. C'est comme écrire un e-mail.
+
+Vous pouvez toujours éditer cette page avec le lien 'Edit' (en haut du texte de la page)
+pour voir la manière dont les différents effets possibles sont utilisés dans cette page.
+
+!Insérer un lien vers une WikiPage
+
+Il suffit de taper le nom de la page entre crochets : [[Comme ceci]. Cela va
+automatiquement créer un lien vers une page.
+
+!Insérer des liens
+
+Le lien peut aussi être une URL directe commençant par http:, ftp:, mailto:, https:,
+ou news:. Dans ce cas, le lien pointe vers une entité externe. Par exemple, pour
+pointer vers la page de garde java.sun.com, il suffit d'écrire [[http://java.sun.com]
+qui s'affichera [http://java.sun.com/], ou [[Home page Java|http://java.sun.com] qui
+s'affichera [Home page Java|http://java.sun.com].
+
+Si votre lien ne commence pas par l'un des "protocoles" ci-dessus, le wiki supposera
+qu'il s'agit d'un lien normal vers une autre page de l'espace wiki. Il faudra juste
+que le premier caractère du nom de la page soit une lettre, car des noms de page
+purement numeriques sont interdits. Si vous voulez utiliser des crochets ({{[[]}})
+dans votre page sans créer de lie hypertexte, doublez votre crochet ouvrant.
+Ainsi, le texte {{[[[Exemple Non-Lien]}} apparaîtra comme ceci : {{[[Exemple Non-Lien]}}.
+
+Pour ajouter une nouvelle page, il vous suffit de créer un lien vers celle-ci depuis
+toute autre page (alors même que la nouvelle page n'existe pas encore !).
+Vous verrez alors le nom de la page être souligné de rouge pointillé dans le lien
+vers votre nouvelle page. Cliquez dessus, et votre page est créée !
+
+Il est possible d'utiliser à peu près n'importe quel caractère à l'intérieur d'un
+[Nom Wiki|JSPWiki:WikiName], tant qu'il s'agit de lettres ou de chiffres.
+
+Ce Wiki peut être configuré pour supporter les liens CamelCase standards (s'ils
+sont supportés, le mot CamelCase devrait lui-même être un lien). Par défaut, le
+support de CamelCase est désactivé.
+
+!!Notes de base de page
+
+Ceux-ci sont des hyperliens spéciaux. Un simple numéro à l'intérieur d'un hyperlien
+suffit à créer une référence à une note de base de page, comme ceci [[1] qui crée ce
+lien[1]. Pour insérer la véritable note de bas de page, insérez juste un [[#1] là où
+vous voulez que votre note se trouve (regardez plus bas pour trouver la note de bas
+de page de cette page).
+
+Vous pouvez aussi créer une note de bas de page nommée, comme si vous créiez un
+hyperlien classique. Par exemple, ceci se réfère à la même note
+[Note de bas de page numéro 1|1] que la référence ci-dessus, mais cela se réfère
+à une autre note de bas de page[2].
+
+!Liens [inter-wiki|JSPWiki:InterWiki]
+
+On peut aussi insérer des liens entre différents Wikis sans connaître leur URL.
+En utilisant la forme [[Wiki:PageWiki], JSPWiki vous créera un lien inter-wiki.
+Par exemple, ce lien pointe vers les
+[Règles de formatage de texte JSPWiki|JSPWiki:TextFormattingRules]. Consultez
+la page [SystemInfo] pour plus d'informations sur la disponibilité des liens
+inter-wiki.
+
+Si un lien inter-wiki n'est pas supporté, une notification sera mise dans la page
+lorsqu'elle sera enregistrée.
+
+!Ajouter des images
+
+On peut insérer n'importe quelle image dans le code wiki : il suffit que l'image soit
+accessible quelque part sur le web dans un des formats reconnus, puis d'insérer un lien
+vers elle.
+
+Si vous spécifiez un texte lié ([[celui-ci|http://example.com/example.png]), celui-ci
+devient le texte ALTernatif affiché pour les utilisateurs qui ne peuvent ou ne veulent
+voir l'image.
+
+Vous pouvez aussi attacher une image, et y faire référence comme s'il s'agissait de
+n'importe quelle autre page. Vous pouvez consulter la page
+[WikiAttachments|JSPWiki:WikiAttachments] pour plus d'informations.
+
+Si vous avez besoin de plus de contrôle sur la présentation (ou des choses comme des
+légendes), regardez du côté du [plugin Image|JSPWiki:Image].
+Il peut faire beaucoup plus que simplement insérer une image.
+
+La liste des types d'image acceptés dépend du Wiki (cf. la page [Infos système|SystemInfo]
+pour consulter cette liste).
+
+!Listes à puces
+
+Utiliser un astérisque (*) dans la première colonne permet d'insérer un item de liste
+à puces. Plus il y a d'astérisques, plus le niveau d'imbrication de l'item est grand.
+Par exemple :
+{{{
+* Un \\ Un et demi
+* Deux
+* Trois
+** Trois.Un
+}}}
+
+crée :
+* Un \\ Un et demi
+* Deux
+* Trois
+** Trois.Un
+
+!Listes à numéros
+
+Cela fonctionne comme les listes à puces, sauf qu'on utilise un dièse (#) à la place
+de l'astérisque. Comme ceci :
+{{{
+# Un \\ Un et demi
+# Deux
+# Trois
+## Trois.Un
+}}}
+
+ce qui crée :
+# Un \\ Un et demi
+# Deux
+# Trois
+## Trois.Un
+
+Pour que l'item de liste soit sur plusieurs lignes, il suffit d'ajouter un ou plusieurs
+espaces en début de ligne, et la ligne sera automatiquement ajoutée à l'item précédent.
+Par exemple :
+{{{
+* Ceci est un item sur une seule ligne.
+* Ceci est en fait un item sur plusieurs lignes.
+  On continue l'item avec une seconde phrase sur sa propre ligne.
+  On peut même faire une troisième ligne de texte tant qu'on y est...
+  Remarquez cependant que toutes ces phrases se retrouvent dans le même item de liste !
+* Le troisième item est, lui, sur une seule ligne.
+}}}
+ce qui donne :
+* Ceci est un item sur une seule ligne.
+* Ceci est en fait un item sur plusieurs lignes.
+  On continue l'item avec une seconde phrase sur sa propre ligne.
+  On peut même faire une troisième ligne de texte tant qu'on y est...
+  Remarquez cependant que toutes ces phrases se retrouvent dans le même item de liste !
+* Le troisième item est, lui, sur une seule ligne.
+
+!Listes de définition et commentaires
+
+La manière la plus simple pour insérer une liste de définitions est d'utiliser l'outil
+';:' :
+
+;__Outil__ : ''Quelque chose que vous utilisez pour faire un truc''
+
+L'outil {{;:}} a ceci de pratique que l'on peut aussi l'utiliser pour commenter
+rapidement le texte de quelqu'un d'autre : il suffit de ne pas préciser de terme dans
+la définition, comme ceci :
+{{{
+;:''Ceci est mon commentaire.''
+}}}
+
+Qui apparaîtra comme cela :
+;:''Ceci est mon commentaire.''
+
+!Effets sur le texte
+
+Vous pouvez rendre le texte __gras__ ou ''italique'', en utilisant respectivement des
+double-soulignés (_) et des double-apostrophes ('). Sur un ordinateur sous Windows,
+assurez-vous que vous utilisez la bonne apostrophe, car il en existe une autre qui lui
+ressemble beaucoup, mais qui n'est pas la même.
+
+Vous pouvez aussi [souligner|] votre texte en créant un lien hypertexte qui ne pointe
+vers rien, [[comme ceci|].
+
+!Texte préformaté
+
+Pour insérer du texte préformaté (comme du code source), il suffit d'utiliser une triple
+accolade ouvrante ({) pour ouvrir un bloc, et une triple accolade fermante (}) pour le
+fermer. Vous en trouverez plusieurs exemples en éditant cette page.
+
+!Tableaux
+
+On peut insérer des tableaux grâce à de simples tubes ('|'). Chaque ligne correspond
+alors à une ligne du tableau, à condition que :
+ * un double tube commence une cellule d'en-tête de tableau ;
+ * un tube unique commence une cellule classique de tableau.
+Le tableau se termine par une ligne qui n'est pas une ligne de tableau.
+
+Par exemple :
+{{{
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+}}}
+
+affiche le tableau suivant (notez comment on peut aussi insérer des liens dans un
+tableau) :
+
+|| Titre 1 || Titre 2
+| ''Gober'' | Barre
+| [Page principale|Main]     | [Entraînez-vous ici|Sandbox]
+
+!Styles CSS
+
+Bien qu'ils contreviennent à la règle de simplicité du Wiki, les styles CSS
+sont utilisables [au sein des pages Wikis|JSPWiki:CSSInWikipages] pour les cas
+ particuliers où vous voulez mettre en évidence un morceau de page.
+
+!Conflits
+
+Si quelqu'un édite la même page en même temps que vous, JSPWiki vous préviendra
+au moment de modifier la page, et indiquera un conflit de page. Désolé, mais le
+premier qui enregistre ses modifications gagne...
+
+__Petit avertissement :__ Si vous utilisez le bouton "Retour" de votre navigateur
+pour revenir à la page d'édition, vous ferez très certainement face à un conflit
+avec vous-même. Simplement parce que le navigateur va penser qu'il est en train
+d'éditer une ancienne version de la page.
+
+!Supprimer des pages
+
+Normalement, ce n'est pas possible pour un utilisateur normal. On peut bien sûr
+supprimer tous les liens vers une page, ce qui la rend inaccessible. Mais seul
+l'administrateur est habilité à réellement supprimer la page. Pour cela, vous
+pouvez lui envoyer un e-mail, ou bien, à la rigueur, ajouter un lien vers la page
+[DELETEME|JSPWiki:DELETEME].
+
+!Ajouter de nouvelles pages
+
+Créez un lien qui pointe vers une nouvelle (et inexistante) page à l'aide de
+son [nom Wiki|JSPWiki:WikiName].
+Cliquez sur ce nouveau lien qui devrait être rouge et souligné de manière
+discontinue et vous obtiendrez un éditeur pour la nouvelle page.
+
+
+! Faire un renvoi automatique d'une page vers une autre
+
+Il est possible que vous vouliez qu'un nom de page Wiki soit en fait un autre nom pour
+une page Wiki existante. C'est ce qu'on appelle un [alias de page|PageAlias].
+
+!Insérer des variables
+
+Il existe de nombreuses variables que vous pouvez insérer dans une page. La syntaxe de
+base est la suivante :
+{{ [[{$nomVariable}], }}
+où ''nomVariable'' est le nom de la variable que vous voulez insérer. Notez les noms de
+variable sont insensibles à la casse - autrement dit, "nompage" est identique à "nOMpAgE"
+ou "NomPage".
+
+Toutes les variables prédéfinies sont dans [WikiVariables|JSPWiki:WikiVariables].
+
+!!Insérer des plugins
+
+L'incantation de base pour insérer un plugin ressemble à ceci :
+
+{{{ [[{INSERT <classe plugin> WHERE param1=valeur, param2=valeur, ...}] }}}
+
+Vous trouverez plus d'information sur le sujet dans [JSPWikiPlugins|JSPWiki:JSPWikiPlugins].
+
+----
+[#1] Voici la note de bas de page que j'ai mentionnée.\\
+[L'autre note de bas de page|#2] L'autre note de bas de page. Notez comme son nom est différent !
+----
+Des [idées|JSPWiki:IdeasTextFormattingRules] ?
+Des [questions|JSPWiki:TextFormattingRulesDiscussion] ?

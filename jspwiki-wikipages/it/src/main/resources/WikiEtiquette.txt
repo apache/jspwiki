@@ -1,0 +1,34 @@
+Durante la [modifica delle pagine|TextFormattingRules] seguite queste regole:
+
+!!Generali
+* Inserite contenuti appropriati - non siate maleducati o offensivi
+* Scrivete in modo semplice e facilmente comprensibile, evitando modi di dire o frasi colloquiali. Chi legge potrebbe non essere madrelingua nel vostro linguaggio.
+* Non eliminate contributi introdotti da altre persone (a meno che non sappiate molto bene quello che state facendo)
+* Non abusate degli acronimi (oppure aggiungete una pagina che ne spiega il significato)
+* __Evitate la frase ''"clicca qui"''!!__ Non scrivete: "Ulteriori informazioni sulla WikiEtiquette si trovano [qui|WikiEtiquette]" ma piuttosto: but use "Ulteriori informazioni si possono trovare a [WikiEtiquette]". Lo stesso dovrebbe valere anche per link esterni.
+* Aggiungete materiale originale; inserire un collegamento può essere accettabile, ma evitate il copia-incolla, soprattutto di materiale che potrebbe essere coperto da copy right.
+* La correzione di eventuali errori di battitura trovati è invece incoraggiata - è un ottima abitudine che rende le pagine più leggibili.
+
+!!I commenti
+
+* Potete commentare liberamente ed in forma anonima, ma è preferibile che marchiate i vostri commenti con il vostro nome (o utente). E' uso comune prefissare la vostra 'firma' con '--' come in : ''-- [Janne Jalkanen]'' (Già che ci siete, potete creare una vostra pagina dove vi presentate.)
+* Un altra buona pratica è quella di mettere prima dei commenti il vostro nome, come in : ''[Janne Jalkanen] : vorrei notare che ...''
+* Riflettete prima di inserire un commento.  [WikiWiki] non è un sistema di messaggistica e neanche un servizio di news. Quello che scrivete resterà nel sistema per sempre (anche cancellando un commento, questo resterà nelle versioni precedenti mantenute dal sistema) e sarà visibile sempre da tutti.
+
+!!Come creare un Nome Wiki
+* Un buon [Nome Wiki | WikiName] è breve e descrittivo. Se il nome è significativo e facile da ricordare, sarà più facile creare collegamenti.
+* Sebbene sia tecnicamente possibile creare un [Nome Wiki | WikiName] a partire da un intera frase, è buona prassi limitarsi ad un massimo di 5 parole.
+* Tentate di definire un [Nome Wiki | WikiName] con lo stesso criterio con cui scegliereste un titolo per un libro.
+* Questo Wiki vi permette di creare pagine che hanno come nome una singola parola; può essere però preferibile usarne almeno due - talora una sola può essere ambigua :-).
+* __Controllate con attenzione i [Nomi Wiki | WikiName] riguardo errori di battitura__ - altrimenti rischiate di creare pagine con nomi scorretti!  Le pagine con nomi scorretti sono un problema, perchè collegarle richiede molta più attenzione.
+
+!!Ristrutturare le pagine
+
+La ristrutturazione è il processo attraverso cui una pagina viene rivista e riassunta in modo da renderla più accessibile. Chiunque ritiene che una pagina debba essere ristrutturata dovrebbe poterlo fare, anche se suggeriamo che quest'attività sia lasciata agli utenti più esperti.
+
+* Siate obiettivi - su qualsiasi argomento vanno evidenziati correttamente diversi punti di vista.
+* Fate attenzione nel modificare eventuali contributi firmati da altri, non cambiatene il significato se non appropriatamente.
+* Riconoscete i crediti altrui quando dovuti.
+* Usate la terza persona, o il plurale, piuttosto che la prima persona.
+
+(I nostri ringraziamenti a [Sensei's library|http://senseis.xmp.net/] usato come fonte per queste note.)

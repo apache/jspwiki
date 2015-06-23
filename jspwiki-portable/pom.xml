@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.apache.jspwiki</groupId>
+    <artifactId>jspwiki-builder</artifactId>
+    <version>2.10.2-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jspwiki-portable</artifactId>
+  <name>Apache JSPWiki portable</name>
+
+  <properties>
+    <jspwiki.woas.language>en</jspwiki.woas.language>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.4.1</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/logs</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>woas:copy-woas</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <property name="jspwiki.woas.version" value="${project.version}"/>
+                <ant antfile="${basedir}/build.xml" target="info"/>
+                <ant antfile="${basedir}/build.xml" target="woas:copy-woas"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>          
+          <execution>
+            <id>woas:copy-tomcat-7</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <target>
+                <property name="jspwiki.woas.version" value="${project.version}"/>
+                <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>woas:copy-launchers</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <target>
+                <property name="jspwiki.woas.version" value="${project.version}"/>
+                <ant antfile="${basedir}/build.xml" target="info"/>
+                <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7-launchers"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <!-- Unpack the JSP Wiki web archive -->
+          <execution>
+            <id>unpack-jspwiki-war</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki</groupId>
+                  <artifactId>jspwiki-war</artifactId>
+                  <version>${project.version}</version>
+                  <type>war</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/unpack/jspwiki-war</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Unpack the JSP Wiki Pages for the "private" wiki -->
+          <execution>
+            <id>unpack-wikipages-private</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki.wikipages</groupId>
+                  <artifactId>jspwiki-wikipages-${jspwiki.woas.language}</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+              </artifactItems>
+              <excludes>META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/woas/data/private</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Unpack the JSP Wiki Pages for the "public" wiki -->
+          <execution>
+            <id>unpack-wikipages-public</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki.wikipages</groupId>
+                  <artifactId>jspwiki-wikipages-${jspwiki.woas.language}</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+              </artifactItems>
+              <excludes>META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/woas/data/public</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Unpack the tomcat distribution -->
+          <execution>
+            <id>unpack-tomcat-zip</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>7.0.52</version>
+                  <type>zip</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/unpack/tomcat</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <!-- Create the installed/released artifacts -->
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <configuration>
+              <tarLongFileMode>gnu</tarLongFileMode>
+              <descriptors>
+                <descriptor>${basedir}/src/main/assembly/woas-dist.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

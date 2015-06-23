@@ -1,0 +1,35 @@
+Este es un pequeño resumen de los elementos que tienes tu disposición:
+{{{
+----                Regla horizontal
+\\                  Fuerza salto de línea
+[enlace]            Crea un hipervínculo a "enlace", dónde "enlace" puede ser tanto un WikiNombre
+                    interno como un enlace externo (http://)
+[texto|enlace]      Crea un hipervínculo dónde el texto enlazado es diferente del enlace en si.
+[texto|wiki:enlace] Crea un hipervínculo dónde el texto enlazado es diferente del enlace en si,
+                    y el hipervínculo apunta a una Wiki nombrada.
+                    Esto soporta el enlazado interWiki.
+
+*                   Crea una lista sin numerar (debe estar en la primera columna). Usa más (**, ***)
+                    para indentaciones anidadas.
+#                   Crea una lista sin numerar (debe estar en la primera columna). Usa más (##, ###)
+                    para indentaciones anidadas.
+
+!, !!, !!!          Comienza una línea con un signo de exclamación (!) para crear un encabezado.
+                    Más signos de exclamación significan encabezados más grandes.
+
+__texto__           Texto en negrita.
+''texto''           Texto en cursiva (fíjate que son comillas simples ('))
+{{texto}}           Texto monoespaciado.
+;termino:definicion Define 'termino' con 'definicion'.  Úsalo con un 'termino' vacío para realizar comentarios cortos.
+
+|texto|mas texto    Crea una tabla. Barras dobles para encabezados de la tabla.
+}}}
+
+No intentes usar HTML, no va a funcionar.
+
+Para embeber imágenes simplemente súbelas a la web en uno de los formatos permitidos y quedarán insertadas automáticamente. Para ver una lista de formatos permitidos, comprueba la [información del sistema|SystemInfo].
+
+Para generar un bloque de código, usa { triples para abrir, y } triples para cerrar.
+
+''(¿te preguntas de dónde viene este texto?  está todo en una página llamada [Ayuda de Edición de Página|Edit Page Help], ¡que también puedes editar!)''
+

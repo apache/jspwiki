@@ -1,0 +1,179 @@
+Esta página descreve a sintaxe wiki utilizada na JSPWiki. Para detalhes sobre as diferenças desta com a sintaxe da Wikipedia, por favor vá para [Migração da MediaWiki|JSPWiki:MigratingFromMediaWiki].
+
+[{TableOfContents }]
+\\
+Depois que você entender como o editor funciona, você pode ler sobre a [Etiqueta Wiki|WikiEtiquette] para que você saiba como usar suas novas habilidades. A [Caixa de areia|http://sandbox.jspwiki.org] é um ótimo lugar para você testar elas.
+!Guia Rápido de Referência
+{{{
+----       = faz uma barra horizontal. Caracteres '-' são ignorados
+\\         = força a quebra de uma linha
+
+[link]     = cria um link para uma página interna da JSPWiki chamada 'link'.
+[isto tambem e um link] = cria um link para uma página interna da JSPWiki chamada 'IstoTambemEUmLink' mas mostra o link com os espaços.
+[um exemplo|link] = cria um link para uma página interna da JSPWiki chamada 'link', mas mostra o texto 'um exemplo' para o usuário em vez de 'link'.
+~NoLink    = desabilita a criação de link para a palavra em CamelCase.
+[1]        = faz a referência a uma nota de rodapé de número 1.
+[#1]       = marca a nota de rodapé número 1.
+[[link]    = cria o texto '[link]'.
+
+!cabeçalho   = cabeçalho pequeno com o texto 'cabeçalho'
+!!cabeçalho  = cabeçalho médio com o texto 'cabeçalho'
+!!!cabeçalho = cabeçalho grande com o texto 'cabeçalho'
+
+''texto''   = imprime 'texto' em itálico.
+__texto__   = imprime 'texto' em negrito.
+{{texto}}   = imprime 'texto' em fonte mono espaçada (letras com o mesmo tamanho).
+[texto|]    = imprime 'texto' sublinhado (hiperlink falso)
+* texto     = cria um item de uma lista com o texto 'texto'
+# texto     = cria um item de uma lista numerada com o texto 'texto'
+;term:ex    = cria uma definição para um 'term' com a explicação 'ex'
+}}}
+!Escrevendo textos
+Você não precisa saber absolutamente nada sobre as regras de formatação de texto da Wiki para usar a Wiki. Apenas escreva um texto normal e utilize uma linha em brando para marcar o paragrafo.
+É igual a escrever um email.
+Você pode sempre Editar esta página (olhe na barra superior a esquerda) para ver como os diferentes efeitos alteram a página.
+
+!Hiperlinks
+O link também pode ser uma URL direta iniciando com {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, ou {{news:}}, onde neste caso o link aponta para uma entidade externa. Por exemplo, para apontar para o site java.sun.com, use {{[[http://java.sun.com]}}, que se transforma em [http://java.sun.com/] ou {{[[Java home page|http://java.sun.com]}}, que se transforma em [Java home page|http://java.sun.com].
+
+Se você não iniciar o link com um dos protocolos acima, a wiki assumirá um link normal para outra página interna do espaço wiki, você precisa usar uma letra como o primeiro caracter da página, nomes de página puramente numéricos não são permitidos. Se você quer usar colchetes ({{[[]}}) na página sem criar hiperlinks, use dois colchetes abertos. Assim o texto {{[[[Exemplo de não link]}}, vai aparecer como {{[[Exemplo de não link]}}.
+
+Para adicionar uma nova página basta você criar um link para ela de qualquer lugar. Afinal de contas, não faz muito sentido você ter uma página sem ter um link para acessar ela! Você vai ver então o nome da página criada sublinhado em vermelho quando voltar para a visualização da página. Clique no nome e pronto, você criou uma nova página!
+É permitido usar quase qualquer tipo de caracter dentro de um [WikiName|JSPWiki:WikiName], desde que ele seja uma letra ou número.
+Note tamém que esta Wiki pode ser configurada para suportar links em [CamelCase|JSPWiki:CamelCase] (se estiver configurada, a palavra CamelCase será um link, isso se não começar com '~~'). Por padrão, essa configuração está desligada, mas se o seu administrador a ligou, bem, ai é CamelCase até você não aguentar mais =).
+
+!Notas de Rodapé
+Estas são um tipo especial de hiperlink. Usando nada mais do que um número 
+dentro de um hiperlink você cria uma referência para uma nota de rodapé, por exemplo
+assim {{[1]}}, que cria uma nota de rodapé[1]. Para criar a real nota de rodapé,
+basta por {{[[#1]}} no lugar em que você queira que a nota de rodapé aponte.
+Olha para baixo para achar a nota de rodapé. você também pode fazer uma nota
+de rodapé com nome, assim como se você estivesse fazendo um hiperlink, como
+por exemplo {{[[Nota de rodapé X|1]}} é uma outra forma de referenciar a primeira
+nota de rodapé [Nota de rodapé X|1]. Ou você mesmo pode por o nome da nota de rodapé[2].
+
+!Links [InterWiki|JSPWiki:InterWiki] (entre diferentes wikis)
+Você também pode criar links entre Wikis que não conheça a URL. Apenas crie o link no formato {{[[Wiki:PaginaWiki]}} e a
+JSPWiki irá criar o link apra você. Por exemplo, este link aponta para as [Regras de Formatação da JSPWiki |JSPWiki:TextFormattingRules]. Dê uma olhada em [Informações do Sistema|SystemInfo] para mais informações sobre quais links para Wikis estão disponíveis. Se um link [InterWiki|JSPWiki:InterWiki] não estiver disponível você receberá uma notificação quando salvar a página.
+
+!Inserindo figuras
+Você pode inserir uma imagem no código wiki tornando a imagem disponível na internet em uma das extensões permitidas, e então criando um link para ela.
+Se você especificar um texto no link ({{[[isto aqui|http://example.com/example.png]}}), o seu texto se tornará uma descrição da imagem para aqueles que não podem ou não querem ver a imagem.
+A lista de imagens aceitas depende da Wiki. Dê uma olhada em [Informações do Sistema|SystemInfo] para uma lista dos diferentes tipos de imagem.
+Também é possível utilizar o [plugin de Imagem|JSPWiki:Image] para se ter mais controle sobre a localização e os atributos da imagem.
+Para forçar uma atualização após uma imagem, use \ \ \ (três barras invertidas consecutivas).
+
+!Listas
+Utilize um asterisco (*) na primeira columa para criar o primeiro item de uma lista. Utilize mais asteriscos para criar itens em diferentes níveis da lista. Por exemplo:
+{{{
+* Um \\ um e meio
+* Dois
+* Três
+** Três.Um}}}
+cria:
+* Um \\ um e meio
+* Dois
+* Três
+** Três.Um
+
+!Listas numeradas
+Iguais as listas normais, mas utilizam a cerquilha (#) no lugar do asterisco. Assim:
+{{{
+# Um \\ um e meio
+# Dois
+# Três
+## Três.Um
+}}}
+cria
+# Um \\ um e meio
+# Dois
+# Três
+## Três.Um
+Se você quiser escrever um item da lista com múltiplas linhas, basta apenas adicionar um ou mais espaços na próxima linha e a
+linha vai ser criada automaticamente para o próximo item. Por exemplo:
+{{{
+* Este é um item de uma única linha
+* Este é um item com múltiplas linhas
+  Nós continuamos a segunda frase numa linha abaixo a primeira.
+  Nós podemos até fazer uma terceira linha...
+  Perceba, no entanto, que todas essas frases ficam dentro de um item apenas da linha!
+* E esta frase se torna um novo item da lista para a sua conveniência.
+}}}
+produz:
+* Este é um item de uma única linha
+* Este é um item com múltiplas linhas
+  Nós continuamos a segunda frase numa linha abaixo a primeira.
+  Nós podemos até fazer uma terceira linha...
+  Perceba, no entanto, que todas essas frases ficam dentro de um item apenas da linha!
+* E esta frase se torna um novo item da lista para a sua conveniência.
+
+!Listas de definições e comentários
+Um jeito simples de se criar listas de definições é usando o ';:'
+{{{
+;__Casa__:''Lugar onde as pessoas vivem.''
+}}}
+se torna:
+;__Casa__:''Lugar onde as pessoas vivem.''
+Um outro uso para o ';:' é que você pode criar rapidamente um comentário no texto de outra pessoa, basta ter um 'termo' vazio no campo da definição, por exemplo:
+{{{
+;:''Comente aqui.''
+}}}
+Vai ser visto como:
+;:''Comente aqui.''
+
+!Efeitos de texto
+Você pode utilizar textos em __negrito__ ou em ''itálico'' utilizando dois sublinhados (_) ou duas astas simples ('), respectivamente. Se você estiver em um computador com Windows, tenha certeza que você está utilizando a aspas correta, já que existem dois tipos bem parecidos. Um efeito de [negrito|] pode ser produzido utilizando-se um hiperlink para nenhum lugar, [[assim por exemplo|].
+
+!Textos pré-formatados
+Se você quiser adicionar textos pré-formatados (código fonte por exemplo) basta utilizar três chaves ({) consecutivas para abri o bloco e para fechar outras três chaves (}) consecutivas. Edite esta página como exemplo.
+
+!Tabelas
+Você pode criar tavelas simples utilizando barras ('|'). Use barras duplas
+para criar o cabeçalho da tabela, e barras simples para criar células
+comuns da tabela. Termine com uma linha que não é uma tabela.
+Por exemplo:
+{{{
+|| Cabeçalho 1 || Cabeçalho 2
+| ''Gobble'' | Bar \\ foo
+| [Home] | [Caixa de areia|SandBox]
+}}}
+cria a seguinte tabela. Note que você pode usar links dentro de tabelas também.
+|| Cabeçalho 1 || Cabeçalho 2
+| ''Gobble'' | Bar \\ foo
+| [Home] | [Caixa de areia|SandBox]
+
+!Estilos CSS
+Enquanto ainda não segue o princípio da simplicidade, estilos CSS [podem ser utilizados|JSPWiki:CSSInWikipages]
+na linha para aqueles casos especiais que você realmente precisa enfatizar uma parte da página.
+
+!Conflitos
+Se alguém editar a mesma página que você está editando no mesmo tempo, a JSPWiki não deixará você salvar suas alterações e irá mostrar uma página de conflito. Me desculpe por dizer, mas o primeiro que salvar ganha...
+__Um aviso:__ Se você utilizar o botão Voltar do seu navegador para voltar à página de edição você vai receber um conflito muito provavelmente.Isto acontece porque o seu navegador ainda está editando uma versão antiga da página.
+
+!Removendo páginas
+Isto não é possível. Você pode, é claro, remover todos os links para a página, o que a tornará inacessível. Ou você pode enviar um email para o administrador, e ela a removerá. Você pode talbém adicionar um link [REMOVAME|JSPWiki:DELETEME].
+
+!Criando novas páginas
+Crie um link que aponte para uma nova (não existente) página usando o [WikiName|JSPWiki:WikiName] desejado.
+Clique nesse novo link que deve ter uma interrogação (?) e você irá para o editor da nova página. --[Asser|JSPWiki:Asser]
+
+!Pseudônimos
+Algumas vezes você pode querer que qualquer link com um determinado nome vá imediatamente para uma página diferente. Isto pode ser feito usando um [Pseudônimo|PageAlias].
+
+!Inserindo variáveis
+Existem várias variáveis que você pode inserir em uma página. O formato básico é:
+{{ [[{$nomedavariavel}], }}
+onde ''nomedavariavel'' é o nome da variável que você quer inserir. Note que nomes de variáveis são case-insensitive - ou seja, "nomedavariavel" é o mesmo que "nomeDaVariavel" e "NomeDaVariavel".
+Você pode ver a lista completa de variáveis existentes em [Variáveis Wiki|JSPWiki:WikiVariables].
+
+!Inserindo plugins
+O formato básico para inserir um plugin é assim:
+[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
+Mais informações em [Plugins da JSPWiki| JSPWiki:JSPWikiPlugins].
+
+----
+[#1] Aqui está a nota de rodapé mencionada anteriormente.
+[2-A outra nota de rodapé|#2] A outra nota de rodapé. Percebeu que agora o nome é diferente?
+----
+Alguma [idéia | JSPWiki:IdeasTextFormattingRules]?
+Alguma [pergunta | JSPWiki:TextFormattingRulesDiscussion]?

@@ -1,0 +1,43 @@
+Hier zijn een paar strategische cijfers en andere interessante zaken over deze Wiki.  
+Al deze informatie is ook beschikbaar in [Wiki Variabelen||JSPWiki:WikiVariables], als je ze op een andere pagina wil gebruiken.
+
+| __Applicatie naam__               | [{$applicationname}]
+| __Base address__                   | [{$baseurl}]
+| __JSPWiki Engine Versie__         | [{$jspwikiversion}] 
+| __Character Encoding__             | [{$encoding}]
+| __Totaal Aantal Pagina's__          | [{$totalpages}]
+| __Totaal Aantal Sessies__          | [{INSERT SessionsPlugin}]
+| __Actieve Wiki Gebruikers__              | [{INSERT SessionsPlugin property=users}]
+| __Huidige Uptime__                 | [{$uptime}]
+| __Actieve Page Provider__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Actieve Attachment Provider__    | [{$jspwiki.attachmentProvider}]
+| __Beschikbare InterWiki links__      | [{$interwikilinks}]
+| __Inlined images zijn__             | [{$inlinedimages}]
+| __Extra Plugin Zoek Pad__  | [{$pluginpath}]
+| __Geïnstalleerde [PageFilters]__        | [{$pagefilters}]
+
+!Bruikbaarheid
+
+| __Maken we titels mooier?__ | [{$jspwiki.breakTitleWithSpaces}]
+| __Matchen we plurale vormen ?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __CamelCase in gebruik ?__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __Is HTML toegestaan op pagina's?__ | [{$jspwiki.translatorReader.allowHTML}]
+
+!RichSiteSummary
+
+| __Genereren we RSS files?__ | [{$jspwiki.rss.generate}]
+| __Zoja, wat is de file naam?__ | [{$jspwiki.rss.fileName}]
+| __Hoe vaak wordt de RSS ververst?__ |  [{$jspwiki.rss.interval}]
+
+!Persoonlijke informatie
+
+Dit is wat ik nu van je weet:
+
+| __User naam__    | [{$username}]
+| __Login status__ | [{$loginstatus}]
+
+!Pagina's die momenteel worden bewerkt:
+
+[{ListLocksPlugin}]
+
+JSPWiki home page zit op [http://jspwiki.apache.org/]. Welkom!

@@ -1,0 +1,7 @@
+[WikiNames(NomesWiki)|WikiNames] são tradicionalmente escritos usando ~InterCapping, também conhecido como ~CamelCase (começa com letra maiúscula e pelo menos mais uma letra maiúscula no meio da palavra). Isto torna a criação de hiperlinks internos bem fácil.
+
+Entretando, nesta [WikiWiki] os [links] são escritos usando a notação de [[link], já que o estilo original ~InterCapping de links costuma ser um pouco confuso.  Os nomes ainda obedecem ao padrão [WikiWiki], olhe a URL no topo da página.
+
+Nomes são ''juntados'', i.e. [[Isto e um link] vira [[IstoEUmLink]. Entretanto sublinhados e pontos são mantidos, ou seja, você pode ter links assim: [[Isto_e_um_link] ou [[Isto.e.um.link]. Todos os caracteres que não são alfa-numéricos, com excessão de '_' e '.', serão removidos (ou seja, todos os caracteres que  não são letras ou números serão removidos), assim [[John's page] vira [[JohnsPage]. Isto permite você escrever sentenças normalmente que serão utilizadas como link, assim como está dito em [Etiqueta Wiki|WikiEtiquette]
+
+Um WikiName não pode ser um número. Nomes numéricos são utilizados para [notas de rodapé|TextFormattingRules].

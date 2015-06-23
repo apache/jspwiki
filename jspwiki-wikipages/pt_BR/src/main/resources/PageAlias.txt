@@ -1,0 +1,13 @@
+Algumas vezes pode ser útil ter uma página que "signifique" outra página. Por exemplo, você pode ter uma página chamada "Pseudônimos de páginas" mas também querer que as pessoas possam acessar esse conteúdo pela página "Pseudônimos". Nestes casos, você pode utilizar um "pseudônimo de página":
+
+Coloque o seguinte na página de "[Acronimos|PageAliases]": (Nós temos uma ´página exeplo lá, então se você clicar no link será redirecionado para aqui.)
+
+{{{
+[{SET alias='Acrônimo'}]
+}}}
+
+Toda vez que alguém visitar a página "[Acronimos|PageAliases]", será automaticamente redirecionado para esta página. Isto é muito útil se você quiser utilizar as formas irregulares do plural por exemplo. Normalmente, a JSPWiki reconhece páginas com o nome em inglês e no plural e assim consegue redirecionar páginas com o nome no plural para páginas que tenham o nome no singular, mas não consegue reconhecer certas formas mais complexas do plural.
+
+!Editando os acrônimos/redirecionando páginas
+
+Bem, obviamente você não pode clicar no link "Editar esta página", porque você será redirecionado toda vez que tentar visualizar a página. Mas você pode editar a página diretamente digitanto {{Edit.jsp?page=''nomedapagina''}} na URL da página. Alternativamente você pode usar o interWikiRef definido para edição, por padrão ele é setadp para "Editar". (i.e., [[Página de edição de acrônimos|Edit:Aliases])

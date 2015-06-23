@@ -1,0 +1,14 @@
+本 Wiki 采用了 [JSP|http://java.sun.com/products/jsp] 技术，这样的技术使得 Wiki 非常容易更新，并且似乎比大多数基于[原始版本|http://c2.com/cgi/wiki]的 Wiki 要更好。定制的 bean 负责将文本转换成 HTML 内容。
+
+大多数[编辑标记|TextFormattingRules]根据 [Sensei's Library|http://senseis.xmp.net] 设计，它是互联网上最好的 GO 站点之一。我觉得他们的标记非常容易，而且清晰。
+
+本 Wiki（JSPWiki）的许可协议是 [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]。请参考 [http://jspwiki.apache.org] 了解更多信息。
+
+如果您对 JSPWiki 开发感兴趣，JSPWiki 的主页是 [http://jspwiki.apache.org]。下面是一些快速链接：
+
+* [缺陷报告|JSPWiki:SubmitBugReport] 或者[看一下 Open 缺陷的列表|JSPWiki:OpenBugs].
+* [贡献新的想法|JSPWiki:SubmitNewIdea]。
+* 看一下最新的 [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
+* 寻找其他的[插件|JSPWiki:ContributedPlugins]、[模板|JSPWiki:ContributedTemplates]、[过滤器|JSPWiki:ContributedFilters]、[提供程序|JSPWiki:ContributedProviders] 或者[其他比较酷的东西|JSPWiki:ContributedCode]。
+
+祝定制(hacking)愉快，感谢您选择了 JSPWiki！

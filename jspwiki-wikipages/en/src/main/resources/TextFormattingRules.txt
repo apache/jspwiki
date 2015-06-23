@@ -1,0 +1,167 @@
+This page describes the wiki syntax used by JSPWiki. For details about how this differs from the syntax used by Wikipedia, please see [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki].
+
+[{TableOfContents }]
+\\
+When you've figured out how the editor works, then you should read [WikiEtiquette] so that you would know how to use your newly acquired skills. The [SandBox|http://sandbox.jspwiki.org] is a great place to try them out.
+!Quick Reference
+{{{
+----       = make a horizontal ruler. Extra '-' is ignored.
+\\         = force a line break
+
+[link]     = create a hyperlink to an internal WikiPage called 'Link'.
+[this is also a link] = create a hyperlink to an internal WikiPage called
+             'ThisIsAlsoALink' but show the link as typed with spaces.
+[a sample|link] = create a hyperlink to an internal WikiPage called
+             'Link', but display the text 'a sample' to the
+             user instead of 'Link'.
+~NoLink    = disable link creation for the word in CamelCase.
+[1]        = make a reference to a footnote numbered 1.
+[#1]       = mark the footnote number 1.
+[[link]     = create text '[link]'.
+
+!heading   = small heading with text 'heading'
+!!heading  = medium heading with text 'heading'
+!!!heading = large heading with text 'heading'
+
+''text''   = print 'text' in italic.
+__text__   = print 'text' in bold.
+{{text}}   = print 'text' in monospaced font.
+[text|]    = print 'text' underscored (dummy hyperlink)
+* text     = make a bulleted list item with 'text'
+# text     = make a numbered list item with 'text'
+;term:ex   = make a definition for 'term' with the explanation 'ex'
+}}}
+!Writing text
+You don't need to know anything about the Wiki text formatting rules to use Wiki. Just write normal text, and then use an empty line to mark a paragraph.
+It's just like writing an email.
+You can always Edit this page (look at the left sidebar) to see how the different
+effects on this page are used.
+!Hyperlinks
+The link can also be a direct URL starting with {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, or {{news:}}, in which case the link points to an external entity. For example, to point at the java.sun.com home page, use {{[[http://java.sun.com]}}, which becomes [http://java.sun.com/] or {{[[Java home page|http://java.sun.com]}}, which becomes [Java home page|http://java.sun.com].
+If you do not start the link with one of the above "protocols", the wiki assumes a normal link to another page in the wiki space, you need to use a letter as the first character of the page, purely numeric page names are not allowed. If you want to use square brackets ({{[[]}}) in the page without creating a hyperlink, use two opening square brackets. So the text {{[[[Example Non-Link]}}, will appear as {{[[Example Non-Link]}}.
+To add a new page you just create a link to it from somewhere else. After all, there isn't much point in having a page if you can't access it! You'll then see the page name underlined with a red-dashed line when you return to that page. Then click on it and you have created a new page!
+It's allowed to use almost any kind of characters inside a [WikiName|JSPWiki:WikiName], as long
+as they are letters or numbers.
+Note also that this Wiki can be configured to support standard [CamelCase|JSPWiki:CamelCase] linking (if it's supported, the word CamelCase should be a link, if it doesn't start with '~~'). It's off by default, but if your friendly administrator has turned it on, then well, CamelCase all you want =).
+!Footnotes
+These are a special kind of hyperlink. By using nothing but a number inside
+a hyperlink you create a reference to a footnote, like this {{[[1]}}, which
+creates a footnote[1]. To make the actual footnote, you just put a {{[[#1]}}
+where you want that footnote to point at. Look below to find the footnote.
+You can also make a named footnote, just as if you were doing a normal hyperlink, such as {{[[Footnote name|1]}} as another way of referring to the first footnote[Footnote name|1]. Or you can put the custom name at the footnote itself[2].
+![InterWiki|JSPWiki:InterWiki] links
+You can also do links between different Wikis without knowing the URL. Just use a link in the form {{[[Wiki:WikiPage]}} and JSPWiki will create a link for you. For example, this link points to the [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Check the [SystemInfo] page for more information on which Wiki links are available.
+If an [InterWiki|JSPWiki:InterWiki] link is not supported, you'll get a notification of it on the page when
+you save your page.
+!Adding pictures
+You can embed
+any image in the wiki code by putting the image available somewhere on the web in one of the allowed formats, and then just linking to it.
+If you specify a link text ({{[[this one here|http://example.com/example.png]}}) it becomes
+the ALT text for those who either can't or don't want to view images.
+The list of accepted image types depends on the Wiki. See the [SystemInfo]
+page for a list of the different image types.
+It is also possible to use the [Image plugin|JSPWiki:Image] to gain more control over the image placement and attributes.
+To force a flush after an image, use \ \ \ (that is, three consecutive backslashes instead of two).
+!Bulleted lists
+Use an asterisk (*) in the first column to make bulleted lists. Use more asterisks for deeper indentation. For example:
+{{{
+* One \\ one and a half
+* Two
+* Three
+** Three.One}}}
+creates
+* One \\ one and a half
+* Two
+* Three
+** Three.One
+!Numbered lists
+Just like with bulleted lists, but use a hash (#) instead of the asterisk. Like this:
+{{{
+# One \\ one and a half
+# Two
+# Three
+## Three.One
+}}}
+creates
+# One \\ one and a half
+# Two
+# Three
+## Three.One
+If you want to write the list item on multiple lines, just add one or more spaces on the next line and the line will be automatically added to the
+previous item. For example:
+{{{
+* This is a single-line item.
+* This is actually a multi-line item.
+  We continue the second sentence on a line on a line of its own.
+  We might as well do a third line while we're at it...
+  Notice, however, as all these sentences get put inside a single item!
+* The third line is again a single-line item for your convenience.
+}}}
+produces:
+* This is a single-line item.
+* This is actually a multi-line item.
+  We continue the second sentence on a line on a line of its own.
+  We might as well do a third line while we're at it...
+  Notice, however, as all these sentences get put inside a single item!
+* The third line is again a single-line item for your convenience.
+!Definition lists and comments
+A simple way to make definition lists is to use the ';:' -construct:
+{{{
+;__Construct__:''Something you use to do something with''
+}}}
+is rendered as:
+;__Construct__:''Something you use to do something with''
+Another nice use for the ';:' is that you can use it to comment shortly on other people's text, by having an empty 'term' in the definition, like this:
+{{{
+;:''Comment here.''
+}}}
+Which would be seen as
+;:''Comment here.''
+!Text effects
+You may use __bold__ text or ''italic'' text, by using two underscores (_) and two single quotes ('), respectively. If you're on a Windows computer, make sure that you are using the correct quote sign, as there is one that looks the same, but really isn't.
+A [underscore|] effect can be produced by using a hyperlink to nowhere, [[like this|]
+!Preformatted text
+If you want to add preformatted text (like code) just use three consecutive braces ({) to open a block, and three consecutive braces (}) to close a block. Edit this page for an example.
+!Tables
+You can do simple tables by using pipe signs ('|'). Use double pipe
+signs to start the heading of a table, and single pipe signs to then
+write the rows of the table. End with a line that is not a table.
+For example:
+{{{
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+}}}
+gives you the following table. Note how you can use links also inside tables.
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+!CSS styles
+While not in line with the keep it simple principle, CSS styles [can be used inline|JSPWiki:CSSInWikipages] for those special occasions when you really need to emphasize part of a page.
+!Conflicts
+If someone happens to edit the same page as you at the same time, JSPWiki will prevent you from doing changes and show a conflict page instead. Sorry to say, but the first one to make changes wins...
+__A word of warning:__ If you use the Back button of your browser to go into the Edit page, you will almost certainly get a conflict. This is because the browser thinks it's still editing an earlier copy of the page.
+!Deleting pages
+This is not possible. You can, of course, remove all the links to that page, which makes it inaccessible. Or you can email the administrator, and I'll remove the page. You may also add a [DELETEME|JSPWiki:DELETEME] link.
+!Adding new pages
+Create a link that points to a new (not existing) page using its [WikiName|JSPWiki:WikiName].
+Click that new link, which should now have a question mark (?) suffix and
+you will get an editor for the new page. -- [Asser|JSPWiki:Asser]
+!Aliasing a Page
+Sometimes you want any link to a wiki page to immediately traverse to a different page. This can be done using a [PageAlias].
+!Inserting variables
+There are many possible variables you can insert on a page. The basic form is:
+{{ [[{$variablename}], }}
+where ''variablename'' is the name of the variable you want to insert. Note that variable names are case-insensitive - that is, "pagename" is the same as "paGeNamE" and "PageName".
+You can see the list of available of variables at [WikiVariables|JSPWiki:WikiVariables].
+
+!Inserting plugins
+The basic incantation to insert a plugin looks like this:
+[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
+There is more information in [JSPWikiPlugins | JSPWiki:JSPWikiPlugins].
+----
+[#1] Here's the footnote I mentioned.
+[2-The other footnote|#2] The other footnote. Note how its name is different?
+----
+Any [ideas | JSPWiki:IdeasTextFormattingRules]?
+Any [questions | JSPWiki:TextFormattingRulesDiscussion]?

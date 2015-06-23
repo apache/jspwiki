@@ -1,0 +1,42 @@
+Quì sono elencate le informazioni rilevanti per questo Wiki. Tutte le informazioni sono anche disponibili nelle [WikiVariables|JSPWiki:WikiVariables] se le voleste utilizzare all'interno di una specifica pagina.
+
+| __Nome dell' applicazione__                     | [{$applicationname}]
+| __URL base__                                    | [{$baseurl}]
+| __Versione di JSPWiki__                         | [{$jspwikiversion}] 
+| __Codifica dei caratteri__                      | [{$encoding}]
+| __Numero Totale di pagine__                     | [{$totalpages}]
+| __Numero di sessioni attive__                   | [{INSERT SessionsPlugin}]
+| __Utenti Wiki attivi__                          | [{INSERT SessionsPlugin property=users}]
+| __Uptime fino a questo momento__                | [{$uptime}]
+| __Page Provider corrente__                      | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Attachment Provider corrente__                | [{$jspwiki.attachmentProvider}]
+| __Link InterWiki definiti__                     | [{$interwikilinks}]
+| __Le immagini inline sono__                     | [{$inlinedimages}]
+| __Cammino di ricerca dei plugin non standard__  | [{$pluginpath}]
+| __[PageFilters] istallati__                     | [{$pagefilters}]
+
+!Usabilità
+
+| __Abbellimento dei titoli?__          | [{$jspwiki.breakTitleWithSpaces}]
+| __Gestione forme plurali inglesi?__   | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Abilitazione sintassi CamelCase ?__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __Abilitazione HTML nelle pagine?__   | [{$jspwiki.translatorReader.allowHTML}]
+
+!RSS
+
+| __Generazione file RSS?__                | [{$jspwiki.rss.generate}]
+| __Se RSS abilitato, il nome del file è__ | [{$jspwiki.rss.fileName}]
+| __Frequenza di aggiornamento__           |  [{$jspwiki.rss.interval}]
+
+!Informazioni Utente
+
+Ecco cosa sappiamo di tè in questo momento
+
+| __User name__    | [{$username}]
+| __Login status__ | [{$loginstatus}]
+
+!Lista delle pagine modificate in questo momento
+
+[{ListLocksPlugin}]
+
+La home page di JSPWiki è a: [http://jspwiki.apache.org/]. Benvenuto!

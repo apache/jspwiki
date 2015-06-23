@@ -1,0 +1,11 @@
+!Hiya!  E benvenuti nel Wiki!
+
+WikiWiki è una parola Hawayana e significa "veloce".  L'idea originaria di WikiWiki era stata quella di creare un ambiente collaborativo agile e volece ma persistente.
+
+Chiunque può contribuire, anche in modo anonimo. Si, potete cancellare quello che è stato scritto da altri, addirittura pagine intere, ma, sorprendentemente, wiki [funziona|WikiWikiWeb:WhyWikiWorks].
+
+Quando modificate, potete (e dovete!) creare facilmente hyperlinks semplicemente mettendo una parola tra parentesi quadre, [[così]. Se la pagina che intendete riferire non esiste, la pagina mostrerà il nome sottolineato, seguito da un punto di domanda.  Così: [QuestaPaginaNonEsiste]. (Per favore, se seguite questo link, non create la pagina o rovinerete il nostro esempio ...)
+
+WikiNames che contengono spazi o caratteri di sottolineatura sono compattati e capitalizzati, così[[This is a link] diventa [[ThisIsALink].
+
+Wiki è e deve essere semplice. Questo è il motivo per cui non occorre HTML complesso. Potete ottenere alcuni effetti tipografici, come __grassetto__ e ''corsivo'', ma niente di davvero complesso. La struttura è l'obiettivo del wiki stesso. Trovate più informazioni in [TextFormattingRules].

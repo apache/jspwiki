@@ -1,0 +1,5 @@
+Estas são as alterações feitas à essas páginas nos últimos 30 dias. Cheque a página [Todas as mudanças recentes|FullRecentChanges] para uma lista completa de todas as páginas mudadas.
+
+Este servidor está em [{INSERT CurrentTimePlugin format=zzzz}] e a hora aqui é [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

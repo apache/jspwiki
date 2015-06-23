@@ -1,0 +1,3 @@
+Las ediciones de la página deben ser aprobadas antes de ser aplicadas. Tu petición ha sido enviada y será aprobada o denegada.
+
+Puedes verificar el estado de tu petición identificándote en el sistema (si no lo estás ya) y haciendo click en el enlace correspondiente a "Flujos de ejecución".

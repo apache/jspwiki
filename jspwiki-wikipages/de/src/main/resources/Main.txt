@@ -1,0 +1,24 @@
+!!!Herzlichen Glückwunsch!
+
+Du hast [JSPWiki|About] erfolgreich installiert!
+
+Du hast bereits einige Seiten eingerichtet...
+
+!Schnellstart
+
+* Um das Wiki auszuprobieren, spiele im [Sandkasten|SandBox].
+* Eine Kurzbeschreibung darüber, was ein Wiki ist, gibt es unter [OneMinuteWiki].
+* Rat zur angemessenen Verhaltensweise in Wikis findest du in der [WikiEtikette|WikiEtiquette].
+
+!Dokumentation
+
+* Eine Beschreibung der Wiki-Formatierungsmöglichkeiten findest du in den [Formatierungsregeln|TextFormattingRules].
+* Einstiegspunkt für die vollständige [JSPWiki-Dokumentation|JSPWiki:JSPWikiDocumentation]
+** [Neue Features von JSPWiki|JSPWiki:NewIn]
+
+!Verschiedenes
+
+* Es gibt verschiedene Möglichkeiten, mit der JSPWiki [Community] in Kontakt zu treten. Schau's dir an!
+* Um Details über dieses spezielle Wiki herauszufinden, gehe auf [Über dieses Wiki|About] oder [Systeminformationen|SystemInfo].
+
+Viel Spaß und danke, dass du JSPWiki verwendest!

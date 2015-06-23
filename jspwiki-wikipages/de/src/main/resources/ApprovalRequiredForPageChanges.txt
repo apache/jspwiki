@@ -1,0 +1,9 @@
+%%information
+__In diesem Wiki bedürfen Seitenänderungen einer Überprüfung, bevor sie aktiv geschaltet werden.
+
+Deine Änderungen wurden übertragen und werden demnächst überprüft.__
+
+Du kannst den aktuellen Status dieses Vorgangs überprüfen, indem du dich anmeldest (sofern du es nicht schon bist) und auf den "Workflow"-Link klickst.
+%%
+
+[{ALLOW view All}]

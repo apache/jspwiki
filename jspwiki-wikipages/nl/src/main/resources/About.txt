@@ -1,0 +1,20 @@
+Deze Wiki werkt met [JSP|http://java.sun.com/products/jsp] technologie.
+Waarmee het hopelijk erg makkelijk is om bij te blijven, en het er beter uit ziet dan de meeste Wiki's gebaseerd op de  [originale|http://c2.com/cgi/wiki].
+Een custom bean zorgt voor de vertaling van wiki tekst naar html.
+
+De meeste [editing markers|TextFormattingRules] zijn gestyleerd volgens de [Sensei's Library|http://senseis.xmp.net], the best Go sites in the Internet.
+Ik vind de opmaak erg makkelijk en duidelijk.
+
+Deze wiki is beschikbaar onder de [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0].
+Zie [http://jspwiki.apache.org] voor meer informatie.
+
+Als je geïnteresseerd bent in JSPWiki ontwikkeling, de home page voor JSPWiki zit op [http://jspwiki.apache.org]. 
+Een paar snelle links:
+
+* [Openstaande bugs|https://issues.apache.org/jira/browse/JSPWIKI]
+* [Nieuwe bug aanmelden|https://issues.apache.org/jira/secure/CreateIssue.jspa?pid=12310732&issuetype=1]
+* [Nieuwe Ideen aandragen|JSPWiki:SubmitNewIdea].
+* Kijk op de FAQ's [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
+* Zoek naar extra plugins [plugins|JSPWiki:ContributedPlugins], [templates|JSPWiki:ContributedTemplates], [filters|JSPWiki:ContributedFilters], [providers|JSPWiki:ContributedProviders], of [other cool stuff|JSPWiki:ContributedCode].
+
+Happy hacking, en bedankt voor het kiezen van JSPWiki!

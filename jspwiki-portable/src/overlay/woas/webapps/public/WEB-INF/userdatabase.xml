@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+    <user uid="362a046a-e68d-4db9-8752-5ff7d17c61cb" loginName="admin" wikiName="Admin" fullName="Admin" email="" password="{SSHA}pkqSSWniW3lmyicqw5PBKFXjjd8sc3LqykqLVw==" created="2014.03.29 at 18:21:54:458 CET" lastModified="2014.03.29 at 18:21:54:458 CET" lockExpiry="" >
+    </user>
+    <user uid="a7c51790-104f-45ab-a7b4-795190e3b5f5" loginName="user" wikiName="User" fullName="User" email="" password="{SSHA}Hp78lHv+wm1TQXcV/OLsILwyrKZF8ufJj2vR9w==" created="2014.03.29 at 18:24:40:488 CET" lastModified="2014.03.29 at 18:24:40:488 CET" lockExpiry="" >
+    </user>
+</users>

@@ -1,0 +1,39 @@
+Diese Seite gibt einen Kurzüberblick über die Abfragesyntax der Suchmaschine. Falls du diese Seite bearbeiten willst: sie heißt [SearchPageHelp].
+
+Ein vorangestelltes '+' bedeutet, dass ein Wort vorkommen muss, ein '-' dagegen, dass das Wort nicht vorkommen darf. Zum Beispiel findet
+
+{{{
+     +java -emacs jsp
+}}}
+
+Seiten, in denen das Wort "java" vorkommen __muss__, das Wort "emacs" aber __nicht__ vorkommen __darf__. Außerdem werden Seiten in denen das Wort "jsp" vorkommt als relevanter eingestuft.
+
+Enthält eine Seite sowohl mit '-' als auch mit '+' markierte Suchwörter, so taucht sie nicht in der Ergebnisliste auf.
+
+Die Groß-/Kleinschreibung wird niemals beachtet.
+
+!!Anfragesyntaxtabelle
+
+Details gibt es unter %%slimbox [Apache Lucene - Query Parser Syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]%%.
+
+|| term  | ein einfaches Wort finden | {{hello}}
+|| "..." | eine Folge von Wörtern finden | {{"hello dolly"}}
+|| ?     | ein beliebiges einzelnes Zeichen (Das Fragezeichen darf nicht das erste Zeichen einer Suchanfrage sein) | {{te?t}}
+|| *     | beliebige Zeichenketten (Der Stern darf nicht das erste Zeichen einer Suchanfrage sein) | {{test*}}
+|| OR    | Seite wird gefunden, wenn einer mehrerer Terme enthalten ist | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND   | Seite wird gefunden, wenn alle Terme enthalten sind | {{"hello dolly" AND "dolly lucy"}}
+|| +     | Term nach dem '+' muss enthalten sein | {{+hello dolly}}
+|| -\\NOT\\! | Term nach dem '-' darf nicht enthalten sein\\ Alternativen: NOT oder ! | {{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...) | Schachtelung von Anfragen | {{(hello OR dolly) AND website}}
+|| ~~    | ''unscharfe'' Suchanfragen. Finden von Wörtern, die ähnlich geschrieben werden. | {{roam~ }}
+|| ~n    | ''Umgebungssuche'' innerhalb einer Umgebung einer festlegbaren Anzahl von Wörtern | {{"hello dolly"~10}}
+|| ^n    | ''Verstärkungsfaktor'' um Wichtigkeiten in einer Suchanfrage abzustufen | {{"hello dolly"^4 "dolly lucy"}}
+|| \     | ''Escapen'' von Zeichen mit Sonderbedeutung: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} to find (1+1):2
+
+Du kannst die Suche folgendermaßen auf einzelne Bereiche einschränken:
+|| author:''term''     | sucht nur in der Liste der Autoren | {{author:~JohnFoo}}
+|| attachment:''term'' | sucht nur in den Anhängen          | {{attachment:brushed*}}
+|| name:''term''       | sucht nur im Seitennamen           | {{name:Main}}
+|| content:''term''    | sucht nur im Seiteninhalt          | {{content:jspwiki}}
+
+[{ALLOW view All}]

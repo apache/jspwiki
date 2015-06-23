@@ -1,0 +1,13 @@
+Talvolta è utile far si che una pagina si riferisca in realtà ad un altra entità. Per esempio, potete avere una pagina chiamata "Page Aliases", ma volere che la gente la trovi anche agganciata semplicemente al nome "Aliases". In questi casi, potete usare un "page alias":
+
+Per ottenerlo, inerite il seguente testo nella pagina "[PageAliases]":  (abbiamo un esmpio proprio quà, così se cliccate sul link ritornerete esattamente quì.)
+
+{{{
+[{SET alias='PageAlias'}]
+}}}
+
+Ogni volta che qualcuno richiederà la pagina "[PageAliases]", verrà automaticamente rediretto su questa pagina.  Questo è ad esempio molto utile se volete poter usare forme irregolari di plurale: normalmente JSPWiki riconosce correttamente le forme inglesi di plurale regolare, ma non quelle irregolari come appunto "aliases".
+
+!Modifiche della pagina rediretta/di alias
+
+Ovviamente non potete selezionare direttamente il link "Modifica questa pagina", perchè sareste rediretti. Tuttavia potete ottenere lo stesso effetto scrivendo {{Edit.jsp?page=''pagename''}} dopo l'URL base nella barra del browser. In alternativa, potete usare un interWikiRef definito in modo specifico per l'editing, per default definito come  "Edit" (i.e., [[Modifica la pagina di alias|Edit:Aliases]) 

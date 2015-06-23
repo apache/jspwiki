@@ -1,0 +1,112 @@
+//  Licensed to the Apache Software Foundation (ASF) under one
+//  or more contributor license agreements.  See the NOTICE file
+//  distributed with this work for additional information
+//  regarding copyright ownership.  The ASF licenses this file
+//  to you under the Apache License, Version 2.0 (the
+//  "License"); you may not use this file except in compliance
+//  with the License.  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the License is distributed on an
+//  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//  KIND, either express or implied.  See the License for the
+//  specific language governing permissions and limitations
+//  under the License.
+
+// $Id: jspwiki.policy,v 1.23 2007-07-06 10:36:36 jalkanen Exp $
+//
+// This file contains the local security policy for JSPWiki.
+// It provides the permissions rules for the JSPWiki
+// environment, and should be suitable for most purposes.
+// JSPWiki will load this policy when the wiki webapp starts.
+//
+// As noted, this is the 'local' policy for this instance of JSPWiki.
+// You can also use the standard Java 2 security policy mechanisms
+// to create a consolidated 'global policy' (JVM-wide) that will be checked first,
+// before this local policy. This is ideal for situations in which you are
+// running multiple instances of JSPWiki in your web container.
+// To set a global security policy for all running instances of JSPWiki,
+// you will need to specify the location of the global policy by setting the
+// JVM system property 'java.security.policy' in the command line script
+// you use to start your web container. See the documentation
+// pages at http://doc.jspwiki.org/2.4/wiki/InstallingJSPWiki. If you
+// don't know what this means, don't worry about it.
+//
+// Also, if you are running JSPWiki with a security policy, you will probably
+// want to copy the contents of the file jspwiki-container.policy into your
+// container's policy. See that file for more details.
+//
+// ------ EVERYTHING THAT FOLLOWS IS THE 'LOCAL' POLICY FOR YOUR WIKI ------
+
+// The first policy block grants privileges that all users need, regardless of
+// the roles or groups they belong to. Everyone can register with the wiki and
+// log in. Everyone can edit their profile after they authenticate.
+// Everyone can also view all wiki pages unless otherwise protected by an ACL.
+// If that seems too loose for your needs, you can restrict page-viewing
+// privileges by moving the PagePermission 'view' grant to one of the other blocks.
+
+grant principal org.apache.wiki.auth.authorize.Role "All" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "view";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "login";
+};
+
+
+// The second policy block is extremely loose, and unsuited for public-facing wikis.
+// Anonymous users are allowed to create, edit and comment on all pages.
+//
+// Note: For Internet-facing wikis, you are strongly advised to remove the
+// lines containing the "modify" and "createPages" permissions; this will make
+// the wiki read-only for anonymous users.
+
+// Note that "modify" implies *both* "edit" and "upload", so if you wish to
+// allow editing only, then replace "modify" with "edit".
+
+grant principal org.apache.wiki.auth.authorize.Role "Anonymous" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "modify";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "createPages";
+};
+
+
+// This next policy block is also pretty loose. It allows users who claim to
+// be someone (via their cookie) to create, edit and comment on all pages,
+// as well as upload files.
+// They can also view the membership list of groups.
+
+grant principal org.apache.wiki.auth.authorize.Role "Asserted" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "modify";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "createPages";
+    permission org.apache.wiki.auth.permissions.GroupPermission "*:*", "view";
+};
+
+
+// Authenticated users can do most things: view, create, edit and
+// comment on all pages; upload files to existing ones; create and edit
+// wiki groups; and rename existing pages. Authenticated users can also
+// edit groups they are members of.
+
+grant principal org.apache.wiki.auth.authorize.Role "Authenticated" {
+    permission org.apache.wiki.auth.permissions.PagePermission "*:*", "modify,rename";
+    permission org.apache.wiki.auth.permissions.GroupPermission "*:*", "view";
+    permission org.apache.wiki.auth.permissions.GroupPermission "*:<groupmember>", "edit";
+    permission org.apache.wiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
+};
+
+
+// Administrators (principals or roles possessing AllPermission)
+// are allowed to delete any page, and can edit, rename and delete
+// groups. You should match the permission target (here, 'JSPWiki')
+// with the value of the 'jspwiki.applicationName' property in
+// jspwiki.properties. Two administative groups are set up below:
+// the wiki group "Admin" (stored by default in wiki page GroupAdmin)
+// and the container role "Admin" (managed by the web container).
+
+grant principal org.apache.wiki.auth.GroupPrincipal "Admin" {
+    permission org.apache.wiki.auth.permissions.AllPermission "*";
+};
+grant principal org.apache.wiki.auth.authorize.Role "Admin" {
+    permission org.apache.wiki.auth.permissions.AllPermission "*";
+};

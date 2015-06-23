@@ -1,0 +1,3 @@
+Estas páginas estão isoladas, ou seja, não possuem ligação com nenhuma outra página da wiki (exceto aquelas que são geradas automaticamente).
+
+[{INSERT org.apache.wiki.plugin.UnusedPagesPlugin}]

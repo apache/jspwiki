@@ -1,0 +1,30 @@
+!!!Gefeliciteerd!
+
+Je hebt JSPWiki goed geïnstalleerd [JSPWiki|About].
+
+Je moet een paar pagina's gaan maken:
+
+!Quick start
+
+* Om dingetjes te testen, probeer de [Sandbox].
+* Voor een korte blik op wat Wiki is, kijk op [OneMinuteWiki].
+* Voor een handleiding over goede gewoontes met wiki, zie [WikiEtiquette].
+
+!Installatie issues
+
+* If you run Microsoft Windows, or you are having trouble with UTF-8 then you probably want to take a look
+* Als je Microsoft Windows gebruikt, of als je problemen hebt met UTF-8, dan moet je misschien even kijken naar [InstallationTips] voor meer informatie..
+
+!Documentatie
+
+* Voor alle Wiki opmaak mogelijkheden, zie [TextFormattingRules].
+* Ingang voor de volledige  [JSPWikiDocumentation|JSPWiki:JSPWikiDocumentation]
+** [JSPWiki nieuwe features|JSPWiki:NewIn].
+
+!Diversen
+
+* Er zijn diverse manieren om met de JSPWiki [Community] in contact te komen, kijk daar even !
+* Om te zien waar deze wiki over gaat, klik op de Wiki naam in de linker bovenhoek van je browser window, of [klik hier|SystemInfo].
+
+Het beste, en bedankt voor het kiezen van JSPWiki!
+

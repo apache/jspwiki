@@ -1,0 +1,46 @@
+[{TableOfContents}]
+
+!! Mailing Lists
+There's a JSPWiki mailing list for discussion that is occurring off this wiki.  It is very good for discussing things like patches, problems, development, etc.
+
+There are currently three email lists, ''jspwiki-users'', ''jspwiki-dev'' and ''jspwiki-commits''.
+
+!JSPWiki-user
+
+The jspwiki-user mailing list is hosted at Apache.  You can join it by sending an email to [user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org]. The list archives are at [http://mail-archives.apache.org/mod_mbox/jspwiki-user/|http://mail-archives.apache.org/mod_mbox/jspwiki-user/]
+
+The [old list archives|http://www.ecyrd.com/pipermail/jspwiki-users/] are also available. There's also a [secondary archive|http://www.nabble.com/JspWiki---User-f2680.html] on Nabble.
+
+!JSPWiki-dev
+
+This is the list for JSPWiki developers.  Do not join if you fear geek-talk.  The jspwiki-dev list is hosted at Apache, so you join by sending an email to [dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org].  The list archives are at [http://mail-archives.apache.org/mod_mbox/jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/jspwiki-dev/]
+
+!JSPWiki-commits
+
+If you subscribe to this list you will get emailed when (a committer) commits new or changed files to the SVN repository.
+The jspwiki-commits list is hosted at Apache, join it by sending an email to [commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org].  
+The list archives are at http://mail-archives.apache.org/mod_mbox/jspwiki-commits/
+
+!Unsubscribing
+
+Unsubscribing is equally easy: you can just send an email to <user|dev|commits>-unsubscribe@jspwiki.apache.org from the same email address that you originally subscribed from. 
+
+The old JSPWiki-dev archives (up until Oct. 2007) are [also available|http://www.ecyrd.com/pipermail/jspwiki-dev/], if you want to peruse some interesting issues.
+
+!! Other resources
+
+! IrcChannel - chat live with the developers!
+
+There is a JSPWiki [IRC|http://www.mirc.com/irc.html] channel on [Freenode|http://www.freenode.net], called #jspwiki. Drop by if you have any questions, or just want to chat.
+
+Note that the channel is pretty quiet at certain times of the day, so don't be discouraged if you don't get an answer.  Just hang around for a while...
+
+Regulars on the channel:
+* [Janne Jalkanen|http://www.ecyrd.com/JSPWiki/wiki/JanneJalkanen] (Ecyrd): Lives on GMT+2.
+
+! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
+
+Just for fun, I create a JSPWiki Users group at Facebook.  If you're a regular Facebook user, drop by!
+
+(And no, we're not planning to replace any existing site with it.  But since everyone and their cousin seems to be on Facebook, I figured that it's probably not a bad idea to add an extra channel)
+-- Janne 17/09/07

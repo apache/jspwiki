@@ -1,0 +1,39 @@
+This page gives a quick overview of the search engine query syntax.
+This page is called [Search Page Help].
+
+Use '+' to require a word, '-' to forbid a word.  For example:
+
+{{{
+          +java -emacs jsp
+}}}
+
+finds pages that MUST include the word "java", and MAY NOT include
+the word "emacs".  Also, pages that contain the word "jsp" are
+ranked before the pages that don't.
+
+All searches are case insensitive.  If a page contains both
+forbidden and required keywords, it is not shown.
+
+!! Query syntax table
+
+For more info look at %%slimbox [Lucene's query syntax|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+
+|| term  | find a single Term is easy   | {{hello}}
+|| "..." | find a group of words | {{"hello dolly"}}
+|| ?     | any single character (the ? can not be the 1st character of a search) | {{te?t}}
+|| *     | any multiple character (the * can not be the 1st character of a search) | {{test*}}
+|| OR    | match document if either of the terms exist | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND   | match documents where both terms exists | {{"hello dolly" AND "dolly lucy"}}
+|| +     | requires that the term after the "+" symbol exist | {{+hello dolly}}
+|| -\\NOT | exclude documents that contain the term after the "-" symbol \\ exclude also supported with NOT or ! | {{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...) | use parentheses to form sub queries | {{(hello OR dolly) AND website}}
+|| ~~    | ''fuzzy'' searchs to match terms similar in spelling | {{roam~ }}
+|| ~n    | ''proximity'' search, within a distance expressed in number of words | {{"hello dolly"~10}}
+|| ^n    | ''boost'' factor to increase importance in a search | {{"hello dolly"^4 "dolly lucy"}}
+|| \     | escape special characters: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} to find (1+1):2
+
+You can restrict the search domain by prefixing your query:
+|| author:''term''     | find pages modified by certain author(s) | {{author:~JohnFoo}}
+|| attachment:''term'' | find pages with certain attachment name  | {{attachment:brushed*}}
+|| name:''term''       | find pages with certain page name        | {{name:Main}}
+|| content:''term''     | find pages with certain content          | {{content:jspwiki}}

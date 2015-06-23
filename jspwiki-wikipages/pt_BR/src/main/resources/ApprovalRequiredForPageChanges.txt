@@ -1,0 +1,3 @@
+Edições de páginas necessitam de aprovação antes delas ficarem ativas. Seu pedido foi enviado para ser aprovado ou rejeitado.
+
+Você pode checar o status do seu pedido se autenticando na wiki (se você ainda não o fez) e clicando no link "Fluxo de Trabalho".
