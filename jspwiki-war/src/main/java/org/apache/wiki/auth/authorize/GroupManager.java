@@ -46,7 +46,6 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 
@@ -66,7 +65,7 @@ import org.apache.wiki.util.ClassUtil;
  * </p>
  * @since 2.4.19
  */
-public class GroupManager implements Authorizer, WikiEventListener, InternalModule {
+public class GroupManager implements Authorizer, WikiEventListener {
 
     /** Key used for adding UI messages to a user's WikiSession. */
     public static final String  MESSAGES_KEY       = "group";

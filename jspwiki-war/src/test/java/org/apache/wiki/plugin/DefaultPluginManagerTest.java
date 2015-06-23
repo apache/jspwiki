@@ -53,8 +53,7 @@ public class DefaultPluginManagerTest extends TestCase
     {
         engine = new TestEngine(props);
         context = new WikiContext( engine, new WikiPage(engine, "Testpage") );
-        manager = new DefaultPluginManager();
-        manager.initialize(engine, props);
+        manager = new DefaultPluginManager( engine, props );
     }
 
     public void tearDown() throws ProviderException
@@ -87,8 +86,7 @@ public class DefaultPluginManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
-        DefaultPluginManager m = new DefaultPluginManager( );
-        m.initialize(engine, props);
+        DefaultPluginManager m = new DefaultPluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin2 WHERE text=foobar}");
 
@@ -100,8 +98,7 @@ public class DefaultPluginManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
-        DefaultPluginManager m = new DefaultPluginManager( );
-        m.initialize(engine, props);
+        DefaultPluginManager m = new DefaultPluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin3 WHERE text=foobar}");
 
@@ -114,8 +111,7 @@ public class DefaultPluginManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
-        DefaultPluginManager m = new DefaultPluginManager(  );
-        m.initialize(engine, props);
+        DefaultPluginManager m = new DefaultPluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin WHERE text=foobar}");
 

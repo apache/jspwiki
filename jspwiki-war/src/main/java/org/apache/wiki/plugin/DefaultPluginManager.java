@@ -36,7 +36,6 @@ import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.modules.ModuleManager;
@@ -189,8 +188,8 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *  @param engine WikiEngine which owns this manager.
      *  @param props Contents of a "jspwiki.properties" file.
      */
-    public void initialize( WikiEngine engine, Properties props ) throws WikiException {
-        super.initialize( engine, props );
+    public DefaultPluginManager( WikiEngine engine, Properties props ) {
+        super( engine );
         String packageNames = props.getProperty( PROP_SEARCHPATH );
 
         if ( packageNames != null ) {

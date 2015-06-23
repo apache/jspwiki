@@ -32,10 +32,8 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.comparators.PageTimeComparator;
 
@@ -56,7 +54,7 @@ import org.apache.wiki.util.comparators.PageTimeComparator;
  */
 // FIXME: Limit diff and page content size.
 // FIXME3.0: This class would need a bit of refactoring.  Method names, e.g. are confusing.
-public class RSSGenerator implements InternalModule
+public class RSSGenerator
 {
     static Logger              log = Logger.getLogger( RSSGenerator.class );
     private WikiEngine         m_engine;
@@ -164,7 +162,8 @@ public class RSSGenerator implements InternalModule
      *  @param properties The properties.
      *  @throws NoRequiredPropertyException If something is missing from the given property set.
      */
-    public void initialize( WikiEngine engine, Properties properties ) throws WikiException
+    public RSSGenerator( WikiEngine engine, Properties properties )
+        throws NoRequiredPropertyException
     {
         m_engine = engine;
 

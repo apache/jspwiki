@@ -20,7 +20,6 @@ package org.apache.wiki;
 
 import java.util.Properties;
 
-import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.util.PropertyReader;
 
 import junit.framework.Test;
@@ -35,16 +34,16 @@ public class PropertyReaderTest extends TestCase
         
         p.put("var.basedir", "/p/mywiki");
 
-        p.put(AbstractFileProvider.PROP_PAGEDIR, "$basedir/www/");
+        p.put("jspwiki.fileSystemProvider.pageDir", "$basedir/www/");
         p.put("jspwiki.basicAttachmentProvider.storageDir", "$basedir/www/");
         p.put("jspwiki.workDir", "$basedir/wrk/");
         p.put("jspwiki.xyz", "test basedir"); //don't touch this
 
         PropertyReader.expandVars(p);
         
-        assertTrue( p.getProperty(AbstractFileProvider.PROP_PAGEDIR).equals("/p/mywiki/www/") );
+        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
         assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty(AbstractFileProvider.PROP_PAGEDIR).equals("/p/mywiki/www/") );
+        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
         assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
         assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
         
@@ -60,7 +59,7 @@ public class PropertyReaderTest extends TestCase
         //this time, declare the var at the end... (should overwrite this one);
         p.put("var.basedir", "xxx");
         
-        p.put(AbstractFileProvider.PROP_PAGEDIR, "$basedir/www/");
+        p.put("jspwiki.fileSystemProvider.pageDir", "$basedir/www/");
         p.put("jspwiki.basicAttachmentProvider.storageDir", "$basedir/www/");
         p.put("jspwiki.workDir", "$basedir/wrk/");
         p.put("jspwiki.xyz", "test basedir"); //don't touch this
@@ -71,9 +70,9 @@ public class PropertyReaderTest extends TestCase
         
         PropertyReader.expandVars(p);
         
-        assertTrue( p.getProperty(AbstractFileProvider.PROP_PAGEDIR).equals("/p/mywiki/www/") );
+        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
         assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty(AbstractFileProvider.PROP_PAGEDIR).equals("/p/mywiki/www/") );
+        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
         assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
         assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
         

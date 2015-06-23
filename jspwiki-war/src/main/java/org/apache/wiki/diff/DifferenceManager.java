@@ -26,14 +26,13 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.util.ClassUtil;
 
 
 /**
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
  */
-public class DifferenceManager implements InternalModule {
+public class DifferenceManager {
     private static final Logger log = Logger.getLogger(DifferenceManager.class);
 
     /**
@@ -49,7 +48,7 @@ public class DifferenceManager implements InternalModule {
      * @param engine The WikiEngine.
      * @param props  A set of properties.
      */
-    public void initialize(WikiEngine engine, Properties props) {
+    public DifferenceManager(WikiEngine engine, Properties props) {
         loadProvider(props);
 
         initializeProvider(engine, props);

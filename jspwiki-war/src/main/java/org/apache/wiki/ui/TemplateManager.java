@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
@@ -144,9 +143,9 @@ public class TemplateManager extends ModuleManager {
      *  @param engine The owning engine.
      *  @param properties The property list used to initialize this.
      */
-    public void initialize( WikiEngine engine, Properties props ) throws WikiException
+    public TemplateManager( WikiEngine engine, Properties properties )
     {
-        super.initialize(engine,props);
+        super(engine);
 
         //
         //  Uses the unlimited cache.

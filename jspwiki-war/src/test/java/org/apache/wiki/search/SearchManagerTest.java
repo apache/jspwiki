@@ -30,7 +30,6 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.providers.AbstractFileProvider;
 
 public class SearchManagerTest extends TestCase {
 	
@@ -43,12 +42,12 @@ public class SearchManagerTest extends TestCase {
     protected void setUp() throws Exception {
         Properties props = TestEngine.getTestProperties();
         String workDir = props.getProperty( "jspwiki.workDir" );
-        String workRepo = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
         
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
-        props.setProperty( AbstractFileProvider.PROP_PAGEDIR, workRepo + System.currentTimeMillis() );
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
 
         CacheManager.getInstance().removeAllCaches();
         m_engine = new TestEngine( props );

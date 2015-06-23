@@ -88,10 +88,16 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *  @param properties The list of Properties.
      *  @throws FilterException If it cannot be instantiated.
      */
-    public SearchManager(  )
+    public SearchManager( WikiEngine engine, Properties properties )
         throws FilterException
     {
+        initialize( engine, properties );
 
+        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
+                                            WikiPageEvent.PAGE_DELETE_REQUEST, this);
+
+        //TODO: Replace with custom annotations. See JSPWIKI-566
+        WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
     }
 
     /**
@@ -276,13 +282,6 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         {
             log.error( e.getMessage(), e );
         }
-        
-        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
-                WikiPageEvent.PAGE_DELETE_REQUEST, this);
-
-		//TODO: Replace with custom annotations. See JSPWIKI-566
-		WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
-
     }
 
     private void loadSearchProvider(Properties properties)

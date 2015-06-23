@@ -23,7 +23,6 @@ import java.util.Properties;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Provides a base implementation of a PageFilter.  None of the callbacks
@@ -42,7 +41,7 @@ public class BasicPageFilter
      *  {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties properties )
-        throws FilterException, WikiException
+        throws FilterException
     {
         m_engine = engine;
     }

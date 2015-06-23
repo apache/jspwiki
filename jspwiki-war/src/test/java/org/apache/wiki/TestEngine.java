@@ -130,7 +130,7 @@ public class TestEngine extends WikiEngine
         ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
     }
-    
+
     /**
      * Creates a correctly-instantiated mock HttpServletRequest with an associated
      * HttpSession.
@@ -410,13 +410,11 @@ public class TestEngine extends WikiEngine
      */
     private static Properties cleanTestProps( Properties props )
     {
-        String pageDir = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        if (pageDir != null) {
-	        props.setProperty( AbstractFileProvider.PROP_PAGEDIR,
-	                           pageDir // TODO: Is this really required? .replaceAll( "\\d", StringUtils.EMPTY )
-	                           + System.currentTimeMillis() );
-        }
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir",
+                           pageDir.replaceAll( "\\d", StringUtils.EMPTY )
+                           + System.currentTimeMillis() );
         return props;
     }
 

@@ -42,7 +42,6 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.util.ClassUtil;
@@ -57,7 +56,7 @@ import org.apache.wiki.util.ClassUtil;
  *
  *  @since 1.9.28
  */
-public class AttachmentManager implements InternalModule
+public class AttachmentManager
 {
     /**
      *  The property name for defining the attachment provider class name.
@@ -105,11 +104,12 @@ public class AttachmentManager implements InternalModule
      */
 
     // FIXME: Perhaps this should fail somehow.
-    public void initialize( WikiEngine engine, Properties props )
+    public AttachmentManager( WikiEngine engine, Properties props )
     {
         String classname;
 
         m_engine = engine;
+
 
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.

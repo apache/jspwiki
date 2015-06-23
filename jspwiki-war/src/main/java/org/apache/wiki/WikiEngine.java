@@ -174,8 +174,6 @@ public class WikiEngine
 
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
-    
-    private static Properties staticProps = new Properties();
 
     /** Compares pages by name */
     private PageSorter     m_pageSorter = null;
@@ -392,11 +390,10 @@ public class WikiEngine
      *  @param properties A set of properties to use to initialize this WikiEngine.
      *  @throws WikiException If the initialization fails.
      */
-    public WikiEngine( )
+    public WikiEngine( Properties properties )
         throws WikiException
     {
-    	m_properties = staticProps;
-//        initialize( properties );
+        initialize( properties );
     }
 
     /**
@@ -447,12 +444,11 @@ public class WikiEngine
     /**
      *  Does all the real initialization.
      */
-    public void initialize( Properties props )
+    private void initialize( Properties props )
         throws WikiException
     {
         m_startTime  = new Date();
         m_properties = props;
-        WikiEngine.staticProps = props;
 
         //
         //  Initialize log4j.  However, make sure that we don't initialize it multiple times.
@@ -568,30 +564,36 @@ public class WikiEngine
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
             m_attachmentManager = (AttachmentManager)ClassUtil.getMappedObject(AttachmentManager.class.getName(), this, props );
-            m_variableManager   = (VariableManager)ClassUtil.getMappedObject(VariableManager.class.getName(), this, props );
-            m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
-            m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName(), this, props );
+            m_variableManager   = (VariableManager)ClassUtil.getMappedObject(VariableManager.class.getName(), props );
+            // m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+            m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName());
 
             m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
 
-            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName(), this, props );
-            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedObject( AuthorizationManager.class.getName(), this, props );
-            m_userManager           = (UserManager) ClassUtil.getMappedObject(UserManager.class.getName(), this, props );
-            m_groupManager          = (GroupManager) ClassUtil.getMappedObject(GroupManager.class.getName(), this, props );
+            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName());
+            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedObject( AuthorizationManager.class.getName());
+            m_userManager           = (UserManager) ClassUtil.getMappedObject(UserManager.class.getName());
+            m_groupManager          = (GroupManager) ClassUtil.getMappedObject(GroupManager.class.getName());
 
-            m_editorManager     = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName(), this , props );
+            m_editorManager     = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName(), this );
+            m_editorManager.initialize( props );
 
             m_progressManager   = new ProgressManager();
 
             // Initialize the authentication, authorization, user and acl managers
 
+            m_authenticationManager.initialize( this, props );
+            m_authorizationManager.initialize( this, props );
+            m_userManager.initialize( this, props );
+            m_groupManager.initialize( this, props );
             m_aclManager = getAclManager();
 
             // Start the Workflow manager
-            m_workflowMgr = (WorkflowManager)ClassUtil.getMappedObject(WorkflowManager.class.getName(), this, props);
+            m_workflowMgr = (WorkflowManager)ClassUtil.getMappedObject(WorkflowManager.class.getName());
+            m_workflowMgr.initialize(this, props);
 
             m_internationalizationManager = (InternationalizationManager)
-                ClassUtil.getMappedObject(InternationalizationManager.class.getName(), this, props);
+                ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
 
             m_templateManager   = (TemplateManager)
                 ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
@@ -602,13 +604,13 @@ public class WikiEngine
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event listeners,
             // it must be called lastly, so that all object references in the engine
-            // are available to the initialize() method
-//            m_filterManager     = (FilterManager)
-//                ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+            // are availabe to the initialize() method
+            m_filterManager     = (FilterManager)
+                ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
 
             // RenderingManager depends on FilterManager events.
 
-//            m_renderingManager.initialize( this, props );
+            m_renderingManager.initialize( this, props );
 
             //
             //  ReferenceManager has the side effect of loading all
@@ -724,7 +726,6 @@ public class WikiEngine
             {
                 m_referenceManager =
                     (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
-                m_referenceManager.setEngine(this);
                 m_referenceManager.initialize( pages );
             }
 

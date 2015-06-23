@@ -26,10 +26,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.wiki.api.engine.FilterManager;
-import org.apache.wiki.filters.DefaultFilterManager;
 import org.apache.wiki.providers.CachingProvider;
-import org.apache.wiki.util.ClassUtil;
 
 public class PageManagerTest extends TestCase
 {
@@ -57,7 +54,7 @@ public class PageManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "true" );
-        PageManager m = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), engine, props);
+        PageManager m = new PageManager( engine, props );
 
         assertTrue( m.getProvider() instanceof CachingProvider );
     }
@@ -66,7 +63,7 @@ public class PageManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "false" );
-        PageManager m = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), engine, props);
+        PageManager m = new PageManager( engine, props );
 
         assertTrue( !(m.getProvider() instanceof CachingProvider) );
     }

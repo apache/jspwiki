@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import javax.management.DynamicMBean;
 import javax.management.InstanceAlreadyExistsException;
@@ -39,17 +38,14 @@ import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.PluginManager;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.WikiModuleInfo;
-import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.admin.beans.CoreBean;
 import org.apache.wiki.ui.admin.beans.PluginBean;
 import org.apache.wiki.ui.admin.beans.SearchManagerBean;
 import org.apache.wiki.ui.admin.beans.UserBean;
-import org.apache.wiki.util.ClassUtil;
 
 
 /**
@@ -67,7 +63,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 
     private static Logger log = Logger.getLogger(DefaultAdminBeanManager.class);
 
-    public void initialize( WikiEngine engine, Properties props ) {
+    public DefaultAdminBeanManager( WikiEngine engine ) {
         log.info("Using JDK 1.5 Platform MBeanServer");
         m_mbeanServer = MBeanServerFactory15.getServer();
 
@@ -184,14 +180,9 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         } catch( NotCompliantMBeanException e ) {
             log.error( e.getMessage(), e );
         }
-        try {
-	        EditorManager em = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName() );
-	        registerBeans( em.modules() );
-	        PluginManager pm = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName() );
-	        registerBeans( pm.modules() );
-        } catch (WikiException e) {
-        	e.printStackTrace();
-        }
+        registerBeans( m_engine.getEditorManager().modules() );
+        PluginManager pm = m_engine.getPluginManager();
+        registerBeans( pm.modules() );
     }
 
     /* (non-Javadoc)

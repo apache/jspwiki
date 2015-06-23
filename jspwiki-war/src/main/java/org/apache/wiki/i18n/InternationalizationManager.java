@@ -21,11 +21,9 @@ package org.apache.wiki.i18n;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.modules.InternalModule;
 
 
 /**
@@ -33,7 +31,7 @@ import org.apache.wiki.modules.InternalModule;
  *
  *  @since 2.6
  */
-public class InternationalizationManager implements InternalModule {
+public class InternationalizationManager {
 
     /** The name of the ResourceBundle which contains any and all JSPWiki core
      *  resource strings.  It's value is {@value}.
@@ -52,7 +50,7 @@ public class InternationalizationManager implements InternalModule {
      *
      *  @param engine To which engine this belongs to
      */
-    public void initialize( WikiEngine engine, Properties props )
+    public InternationalizationManager( WikiEngine engine )
     {
     }
 

@@ -47,9 +47,8 @@ public class DefaultFilterManagerTest extends TestCase {
     }
 
     public void testInitFilters() throws Exception {
-        DefaultFilterManager m = new DefaultFilterManager( );
-        m.initialize(engine, props);
-        
+        FilterManager m = new DefaultFilterManager( engine, props );
+
         List l = m.getFilterList();
 
         assertEquals("Wrong number of filters", 2, l.size());
@@ -65,8 +64,7 @@ public class DefaultFilterManagerTest extends TestCase {
     }
 
     public void testInitParams() throws Exception {
-        DefaultFilterManager m = new DefaultFilterManager( );
-        m.initialize(engine, props);
+        FilterManager m = new DefaultFilterManager( engine, props );
 
         List l = m.getFilterList();
 

@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
@@ -82,18 +81,22 @@ public class EditorManager extends ModuleManager {
     /** Known attribute name for storing the user edited text inside a session or a page context */
     public static final String       ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
 
-    private             Map<String, WikiEditorInfo>  m_editors = new HashMap<String, WikiEditorInfo>();
+    private             Map<String, WikiEditorInfo>  m_editors;
 
     private static      Logger       log             = Logger.getLogger( EditorManager.class );
+
+    public EditorManager( WikiEngine engine )
+    {
+        super(engine);
+    }
 
     /**
      *  Initializes the EditorManager.  It also registers any editors it can find.
      *
      *  @param props  Properties for setup.
      */
-    public void initialize( WikiEngine engine, Properties props ) throws WikiException
+    public void initialize( Properties props )
     {
-    	super.initialize(engine, props);
         registerEditors();
     }
 

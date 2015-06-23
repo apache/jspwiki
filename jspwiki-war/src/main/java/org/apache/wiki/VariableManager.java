@@ -43,7 +43,7 @@ import org.apache.wiki.preferences.Preferences;
  *
  *  @since 1.9.20.
  */
-public class VariableManager implements InternalModule
+public class VariableManager
 {
     private static Logger log = Logger.getLogger( VariableManager.class );
    
@@ -64,7 +64,7 @@ public class VariableManager implements InternalModule
      *  Creates a VariableManager object using the property list given.
      *  @param props The properties.
      */
-    public void initialize( WikiEngine engine, Properties props )
+    public VariableManager( Properties props )
     {
     }
 

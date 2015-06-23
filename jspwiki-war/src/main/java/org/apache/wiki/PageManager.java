@@ -165,13 +165,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @param props  Properties to use for initialization
      * @throws WikiException If anything goes wrong, you get this.
      */
-    public PageManager() {
-    	
-    }
-    
-    @Override
-    public void initialize(WikiEngine engine, Properties props) throws WikiException {
-        super.initialize(engine, props);
+    public PageManager(WikiEngine engine, Properties props) throws WikiException {
+        super(engine);
         String classname;
         m_engine = engine;
         boolean useCache = "true".equals(props.getProperty(PROP_USECACHE));
