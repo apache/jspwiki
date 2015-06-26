@@ -19,6 +19,7 @@ export CATALINA_BASE=${JSPWIKI_HOME}
 export CATALINA_OUT=${CATALINA_BASE}/logs/catalina.out
 export CATALINA_TMPDIR=${CATALINA_BASE}/temp
 export CATALINA_OPTS="-Xmx128m"
+# export CATALINA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000 -Xmx128m"
 
 # invoke the Tomcat start script from the JSPWIKI_HOME
 # in order to use relative path names
