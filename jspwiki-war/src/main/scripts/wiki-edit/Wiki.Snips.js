@@ -446,6 +446,7 @@ Wiki.Snips = {
                 pills:"Pills",
                 prettify: "Prettify syntax highlighter",
                 scrollable: "Scrollable Preformatted block",
+                "scrollable-image": "Scrollable Wide Images",
                 //reflection: "Image with reflection",
                 slimbox: "Slimbox Viewer <span class='icon-slimbox'></span>",
                 //"under-construction": "<div class='under-construction'> </div>",

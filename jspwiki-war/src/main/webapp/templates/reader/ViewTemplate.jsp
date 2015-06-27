@@ -59,16 +59,10 @@ String.I18N.PREFIX = "javascript.";
 <meta name="wikiXHRPreview" content='<wiki:Link format="url" templatefile="../default/AJAXPreview.jsp" />' />
 <meta name="wikiXHRCategories" content='<wiki:Link format="url" templatefile="../default/AJAXCategories.jsp" />' />
 
-
-  <wiki:CheckVersion mode="notlatest">
-    <meta name="robots" content="noindex,nofollow" />
-  </wiki:CheckVersion>
-  <wiki:CheckRequestContext context="diff|info">
-    <meta name="robots" content="noindex,nofollow" />
-  </wiki:CheckRequestContext>
-  <wiki:CheckRequestContext context="!view">
-    <meta name="robots" content="noindex,follow" />
-  </wiki:CheckRequestContext>
+<link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
+<%-- ie6 needs next line --%>
+<link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
+<meta name="robots" content="noindex,nofollow" />
 
 <%-- FIXME: for now, reuse haddock's stylesheet --%>
 <link rel="stylesheet" media="screen, projection, print" type="text/css"
@@ -76,12 +70,13 @@ String.I18N.PREFIX = "javascript.";
 
 </head>
 
-<body class="context-<wiki:Variable var='requestcontext' />">
+<body class="reader context-<wiki:Variable var='requestcontext' default='' />" >
 
 <div class="container ${prefs.Orientation}">
 
   <div class="pagename"><wiki:Link><wiki:PageName/></wiki:Link></div>
   <div class="page"><wiki:Include page="PageTab.jsp"/></div>
+  <div class="copyright center"><wiki:InsertPage page="CopyrightNotice"/></div>
 
 </div>
 

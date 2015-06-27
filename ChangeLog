@@ -1,3 +1,14 @@
+2015-06-27  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-18
+         
+       Small fixes and tweaks on haddock template
+       * Few improvements of the Reader template
+       * SLIMBOX support for interwiki links
+       * Small style tweaks
+       * Fix UserBox issue in non-default language
+       
+
 2015-06-26  Siegfried Goeschl (sgoeschl@apache.org)
 
        * Fixed JSPWIKI-888 Enable cache timeouts for Portable JSPWiki.

@@ -35,7 +35,7 @@ DOM structure:
     (start code)
     div#slmbx
         div.modal               //semi transparent screen overlay
-        div.viewport(.spin)     //img, object or iframe element is inserted here
+        div.viewport(.loading)  //img, object or iframe element is inserted here
             a.controls.caption
             a.controls.next
             a.controls.prev
@@ -56,9 +56,8 @@ Viewer.Slimbox = new Class({
             close: "&times;",
             next: "&gt;",  //&#171;  Next
             prev: "&lt;",  //&#187;  Previous
-            nofm: "[{0}/{1}]",              //[page/#pages]
-            size: " ({0}px &times; {1}px)",  // (height x width)
-            caption: " Go to {0}"
+            nofm: "[{0}/{1}]&nbsp;",     //[page/#pages]
+            size: "Size: {0}px x {1}px"  // (height x width)
         },
         keys: {
             close: ["esc", "x", "c"],
@@ -85,7 +84,7 @@ Viewer.Slimbox = new Class({
                 "div.slmodal", { events: { click: clickFn } },
                 "div.viewport", { attach: [self, "viewport"], events: { "click:relay(a)": clickFn } }, [
                     //insert viewable iframe/object/img ...
-                    controls + "caption",
+                    controls + "caption.external",
                     controls + "next", { html: hints.next },
                     controls + "prev", { html: hints.prev },
                     controls + "close", { html: hints.close }
@@ -262,7 +261,8 @@ Viewer.Slimbox = new Class({
         self.get(".caption").set({
             href: url,
             html: ( many ? hints.nofm.xsubs( cursor + 1, max)  : "" ) +
-                    hints.caption.xsubs( el.title || el.alt || el.get("text")/*||""*/)
+                    (el.title || el.alt || el.get("text") || ""  )
+
         });
 
         self.viewport.addClass("loading");
@@ -290,8 +290,8 @@ Viewer.Slimbox = new Class({
 
         self.preload = preload;
 
-        //append viewport dimensions in px to the caption
-        caption.set("html", caption.get("html") + self.options.hints.size.xsubs(width, height) );
+        //caption.set("html", caption.get("html") + self.options.hints.size.xsubs(width, height) );
+        caption.set("title", self.options.hints.size.xsubs(width, height) );
 
         // viewport has css set to { top:50%, left:50% } for automatic centered positioning
         viewport

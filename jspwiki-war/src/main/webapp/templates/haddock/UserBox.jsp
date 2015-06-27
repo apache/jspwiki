@@ -40,13 +40,18 @@
     <li>
       <wiki:UserCheck status="anonymous">
         <wiki:LinkTo page="UserPreferences">
-          <span class="icon-user"> <fmt:message key="fav.greet.${loginstatus}"/>
+          <span class="icon-user"> <fmt:message key="fav.greet.anonymous"/>
         </wiki:LinkTo>
       </wiki:UserCheck>
       <wiki:UserCheck status="known"><%-- asserted or authenticated --%>
         <wiki:LinkTo page="${username}">
           <span class="icon-user">
-            <fmt:message key="fav.greet.${loginstatus}"><fmt:param>${username}</fmt:param></fmt:message>
+            <wiki:UserCheck status="asserted">
+              <fmt:message key="fav.greet.asserted"><fmt:param>${username}</fmt:param></fmt:message>
+            </wiki:UserCheck>
+            <wiki:UserCheck status="authenticated">
+              <fmt:message key="fav.greet.authenticated"><fmt:param>${username}</fmt:param></fmt:message>
+            </wiki:UserCheck>
           </span>
         </wiki:LinkTo>
       </wiki:UserCheck>

@@ -44,7 +44,7 @@
   </wiki:CheckRequestContext>
 </head>
 
-<body class="context-<wiki:Variable var='requestcontext' />">
+<body class="context-<wiki:Variable var='requestcontext' default='' />">
 
 <div class="container${prefs.Layout=='fluid' ? '-fluid' : ''} ${prefs.Orientation}">
 

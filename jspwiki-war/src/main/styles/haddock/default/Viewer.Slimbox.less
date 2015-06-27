@@ -116,7 +116,7 @@ DOM Structure:
         //&.fade { .opacity(0); }
         //&.in { .opacity(.5); }
     }
-    &.active .slmodal { .opacity(.5); }
+    &.active .slmodal { .opacity(@slimbox-backdrop-opacity); }
 
     //modal viewport..
     .viewport {
@@ -136,7 +136,8 @@ DOM Structure:
         .transition(all .4s ease);
 
         // default background setting, the actual background-image is set by slimbox.js
-        background:transparent no-repeat center center;
+        //background:transparent no-repeat center center;
+        background:rgba(255,255,255,.3) no-repeat center center;
 
         .box-shadow (@slimbox-viewport-corona);
 
@@ -159,7 +160,7 @@ DOM Structure:
     font-family: @slimbox-font-family;
     color: @slimbox-text-color;
     background: @slimbox-control-bg;
-    .box-shadow (@slimbox-viewport-corona);
+    //.box-shadow (@slimbox-viewport-corona);
     cursor:pointer;
 
     text-align: center;

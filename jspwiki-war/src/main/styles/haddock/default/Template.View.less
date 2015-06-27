@@ -58,7 +58,7 @@ DOM structure:
 (start code)
     div.header
       div.topline
-        div.application-logo
+        div.pull-left
             a.logo.href jspωiki  //link to the home page of this wiki
 
         div.userbox
@@ -74,13 +74,13 @@ DOM structure:
                     a.btn.btn-link.prefs  Prefs
 
   		form#searchform.searchbox.pull-right.form-inline
-      		input#query.form-control[type="text"][placeholder="Quick Navigation"]
-
-      		button#searchSubmit.btn[type="submit"]
+      		input#query.form-control[type="text"][placeholder="To search, type ahead"]
 
 		    ul.dropdown-menu.pull-right[data-hover-parent="searchbox"]
-		        li
-		        li.findpages ...
+		        li.dropdown-header
+              		button#searchSubmit.btn[type="submit"] For full search, hit enter...
+		        li.findpages ...create & clone buttons
+		        li.findpages ...other search results
 		        li.divider
 		        li.recents ...
 		        li.recents.clear ...
@@ -110,9 +110,10 @@ DOM structure:
         padding-right: @padding-base-horizontal;
     }
 
-    .page-content { margin:0 @padding-base-horizontal; }
 
 }
+
+.titlebox.alert { margin:0; }
 
 .header, .footer {
     .clearfix();
@@ -180,6 +181,9 @@ a.logo {
     text-align: center;
     a { text-decoration:none; }
 }
+.reader .pagename {
+    font-size: 6em;
+}
 
 //JSPWiki-s breadcrumb - do not inherit bootstraps breadcrumbs
 .breadcrumb {
@@ -197,6 +201,7 @@ a.logo {
     //background:rgba(255,255,255,0.05);
 }
 
+
 .footer {
     //background: @wiki-footer-bg;
     padding:@padding-base-vertical @padding-base-horizontal;
@@ -206,6 +211,9 @@ a.logo {
 
 .copyright, .wiki-version { .small; }
 
+.reader .copyright {
+    margin: 2em 0;
+}
 
 .feed {
 

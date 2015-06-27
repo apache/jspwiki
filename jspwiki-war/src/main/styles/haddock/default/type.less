@@ -246,7 +246,7 @@ img {
 //img.attlink
 
 // Utility class to support un-scaled, scrollable images,
-.scroll, .xflow {
+.scroll, .scrollable-image {
     overflow:scroll;
 
     pre, img.inline { width:auto; max-width:none; }
@@ -379,25 +379,6 @@ Style: CAPTCHA tables and images
     background:@wiki-captcha-bg;
     border:1px solid @table-border-color;
     padding:1em;
-}
-
-
-/*
-Style: spin; loading animation
-    Reusable class to indicate background processing or loading of ajax content.
-
-    A background image is positioned at the right-hand side of the enclosing element.
-    Alternative: use CSS loading animation
-
-Example:
->    span.spin (type ahead)
-
-*/
-.spin {
-    background:url("@{imagePath}/loading-bar.gif") no-repeat center center !important;
-    //width:16px;
-    //height:16px;
-    //margin:0 0.5em;*/
 }
 
 

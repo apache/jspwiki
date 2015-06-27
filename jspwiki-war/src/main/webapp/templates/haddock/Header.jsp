@@ -27,13 +27,13 @@
   String frontpage = c.getEngine().getFrontPage();
 %>
 
-<wiki:Plugin plugin="IfPlugin" args="page='TitleBox' contains='\\\\S' " >[{InsertPage page=TitleBox class=titlebox }]</wiki:Plugin>
+<wiki:Plugin plugin="IfPlugin" args="page='TitleBox' contains='\\\\S' " >[{InsertPage page=TitleBox class='titlebox alert' }]</wiki:Plugin>
 
 <div class="header">
 
   <div class="topline">
 
-    <span class="cage pull-left">
+    <div class="cage pull-left">
     <a class="logo pull-left"
        href="<wiki:Link page='<%=frontpage%>' format='url' />"
        title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
@@ -43,7 +43,7 @@
           <li class="logo-menu"><wiki:InsertPage page="LogoMenu" /></li>
         </ul>
         </wiki:PageExists>
-    </span>
+    </div>
 
     <wiki:Include page="UserBox.jsp" />
     <wiki:Include page="SearchBox.jsp" />

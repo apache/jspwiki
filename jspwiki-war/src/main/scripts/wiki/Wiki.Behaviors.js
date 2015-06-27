@@ -243,8 +243,9 @@ function filterJSPWikiLinks(element){
             //    img:not([src$=/attachment_small.png]):not(.outlink)  ::jspwiki small icons
             //    a[href].attachment,
             //    a[href].external,
-            //    a[href].wikipage
-            "img:not([src$=/attachment_small.png]):not(.outlink),a[href].attachment,a[href].external,a[href].wikipage"
+            //    a[href].wikipage,
+            //    a[href].interwiki
+            "img:not([src$=/attachment_small.png]):not(.outlink),a[href].attachment,a[href].external,a[href].wikipage, a[href].interwiki"
         );
 }
 
@@ -255,7 +256,7 @@ wiki.once("body", function( /*elements*/ ){
             hints: {
                 //use defaults as much as possible
                 btn: "slimbox.btn".localize(),
-                caption: " Go to: {0}" //FIXME: "slimbox.caption".localize()
+                size: "slimbox.size".localize()
             }
         });
     })

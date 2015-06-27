@@ -52,8 +52,8 @@
 @font-family-sans-serif: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 
 //softer gray-tones
-@pre-bg:                      #f2f2f2;
-@pre-border-color:            #e5e5e5;
+@pre-bg:                      #f7f7f9; //#f2f2f2;
+@pre-border-color:            #e1e1e8; //#e5e5e5;
 @panel-default-border:        @pre-border-color;
 @panel-default-heading-bg:    @pre-bg;
 
@@ -120,7 +120,11 @@
 @viewer-box-border-color:  @table-border-color;
 
 // Viewer.Slimbox
-@slimbox-viewport-corona:     7px 7px 70px rgba(255,255,255,.5);
+@slimbox-viewport-corona:     0 0 5em 1em rgba(255,255,255,.5);
+//@slimbox-viewport-corona:  2px 2px 10px rgba(0,0,0,.5), 0 0 0 4000px rgba(0,0,0,.3);
+//@slimbox-viewport-corona: 0 0 5em 1em rgba(255,255,255,.5),0 0 0 999em rgba(255,255,255,.7);
+//@slimbox-viewport-corona: 0 0 5em 1em rgba(255,255,255,.5),0 0 0 999em rgba(0,0,0,.3);
+@slimbox-backdrop-opacity: 0.3;
 
 @slimbox-font-family:         @wiki-header-font-family;
 @slimbox-font-size:           40px; //@carousel-control-font-size; //20px;

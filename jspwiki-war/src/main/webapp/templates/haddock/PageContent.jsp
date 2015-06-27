@@ -30,7 +30,7 @@
 <%-- Main Content Section --%>
 <%-- This has been source ordered to come first in the markup (and on small devices)
      but to be to the right of the nav on larger screens --%>
-<div class="page-content <wiki:Variable var='page-styles' />">
+<div class="page-content <wiki:Variable var='page-styles' default='' />">
 
   <wiki:Include page="PageTab.jsp"/>
 

@@ -408,8 +408,7 @@ var Wiki = {
                 //encoding: utf-8,
                 onSuccess: function( responseText ){
 
-                    //var x = JSON.decode( responseText );
-                    //console.log(x.length,responseText,x);
+                    console.log(responseText, JSON.decode( responseText ) );
                     callback( JSON.parse( responseText ) )
 
                 },

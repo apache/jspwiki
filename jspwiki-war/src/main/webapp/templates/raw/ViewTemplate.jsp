@@ -14,10 +14,15 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
+<%-- ie6 needs next line --%>
+<link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
+
 <% response.setContentType("text/plain; charset=UTF-8"); %>
 <pre>
 <wiki:InsertPage mode="plain"/>

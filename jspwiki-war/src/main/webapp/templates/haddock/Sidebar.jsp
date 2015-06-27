@@ -27,17 +27,6 @@
 <div class="sidebar">
   <button class="close" type="button">&times;</button>
 
-<%-- move this to the content of the LeftMenu page
-<wiki:UserCheck status="known">
-<wiki:Translate>[{If page='{$username}Favorites' exists='true'
-
-%%accordion
-! [My Favorites|{$username}Favorites]
-[{InsertPage page='{$username}Favorites' }]
-%% }]
-</wiki:Translate>
-</wiki:UserCheck>
---%>
   <wiki:Permission permission="view">
 
   <div class="leftmenu">
