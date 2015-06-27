@@ -73,7 +73,7 @@
     <js>/scripts/wiki/Wiki.js</js>
     <js>/scripts/wiki/Search.js</js>
     <js>/scripts/wiki/Recents.js</js>
-    <js>/scripts/wiki/FindPages.js</js>
+    <js>/scripts/wiki/Findpages.js</js>
     <js>/scripts/wiki/Category.js</js>
     <js>/scripts/wiki/Wiki.Behaviors.js</js>
 
