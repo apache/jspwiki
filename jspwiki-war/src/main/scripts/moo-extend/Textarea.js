@@ -264,7 +264,7 @@ var Textarea = new Class({
         }
         ta.focus();
         ta.scrollTop = scrollTop;
-        ta.fireEvent("change");
+        //ta.fireEvent("change");
         return this;
 
     },

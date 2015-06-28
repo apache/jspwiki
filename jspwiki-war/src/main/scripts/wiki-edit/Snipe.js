@@ -180,7 +180,7 @@ var Snipe = new Class({
 
         });
 
-        //catch shortcut keys when focus on toolbar and/or textarea
+        //catch shortcut keys when focus anywhere on the snipe editor (toolbar, textarea..)
         container.addEvent("keydown", self.shortcut);
 
     },
@@ -315,8 +315,7 @@ var Snipe = new Class({
             txta = self.textarea,
             el = txta.toElement(),
             key = e.key,
-            caret = txta.getSelectionRange(),
-            scroll = el.getScroll();
+            caret = txta.getSelectionRange();
 
         el.focus();
 
@@ -333,8 +332,6 @@ var Snipe = new Class({
             self.smartPairs(e, txta, caret);
 
         }
-
-        el.scrollTo(scroll);
 
     },
 
@@ -641,6 +638,8 @@ var Snipe = new Class({
 
             this.reset();
         }
+
+        self.fireEvent("change"); //Potential change of the textarea, to be debounced by receiver -- CHECKME
 
     },
 
@@ -972,7 +971,7 @@ console.log(this.context.suggest);
         el.scrollLeft = state.scrollLeft;
         txta.setSelectionRange( state.cursor.start, state.cursor.end );
 
-        //self.fireEvent("change");
+        self.fireEvent("change");
     }
 
 });

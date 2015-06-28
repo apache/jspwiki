@@ -1,5 +1,18 @@
 2015-06-28  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.10.2-svn-20
+       
+       * JSPWIKI-891: Fixed annoying jumping behaviour in Firefox of the Haddock editor
+
+       * JSPWIKI-885: LivePreview doesn't work
+         The HADDOCK template has refresh mechanism based on "change events". 
+         (no periodic refreshes, like the default template)
+         Improved trigger mechanism to catch all keystrokes; and at the same time
+         reducing the debounce period (read - refresh time-out) to 1sec.
+         
+
+2015-06-28  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.2-svn-19
        
        More Haddock template fixes
