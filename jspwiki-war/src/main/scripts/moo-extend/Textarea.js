@@ -248,7 +248,6 @@ var Textarea = new Class({
             start = ta.selectionStart;
             end = ta.selectionEnd;
             v = ta.value;
-            //ta.value = v.substr(0, start) + value + v.substr(end);
             ta.value = v.slice(0, start) + value + v.substr(end);
             ta.selectionStart = start;
             ta.selectionEnd = start + value.length;

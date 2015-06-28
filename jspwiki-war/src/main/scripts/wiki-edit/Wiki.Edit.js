@@ -54,12 +54,13 @@ wiki.add("#editform", function( element ){
         snippets: wiki.Snips,
         directsnips: wiki.DirectSnips,
 
+/*
         onChange: ( function(){
             console.log("change event");
             if( preview ){ livepreview(); }
         } ).debounce(),
-
-        onChange: livepreview.debounce(),
+*/
+        onChange: livepreview.debounce(1000),
 
         onConfig: config  //configuration callback
 
@@ -93,6 +94,9 @@ wiki.add("#editform", function( element ){
         config(cmd);
 
     });
+
+    //livepreview();
+    //livepreview.periodical(5000);
 
 
 });

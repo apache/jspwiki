@@ -1,3 +1,18 @@
+2015-06-28  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-19
+       
+       More Haddock template fixes
+
+       * JSPWIKI-890 (Haddock template) popups dissappear when trying to get 
+         your mouse to it. Removed the space between the menu and the dropdown.
+
+       * JSPWIKI-887 Slimbox image style for embedded images fixed to show 
+         readable link description even in case of missing *title* or *alt* attributes.
+
+       * Updated JSPWikiFont, fixing display issues in FireFox.
+       
+         
 2015-06-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-18

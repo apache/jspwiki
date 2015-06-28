@@ -280,7 +280,7 @@ wiki.once("body", function( /*elements*/ ){
 
             "a.attachment".slick({
                 href: img.src,
-                html: img.title || img.alt
+                html: img.title || img.alt || img.src
             }).replaces( img );
         });
 

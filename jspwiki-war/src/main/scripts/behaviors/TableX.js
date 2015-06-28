@@ -45,7 +45,7 @@ var TableX = new Class({
 
             if( !table.match('table') ||
                 ( ( minSize>0 )&&( table.rows.length < minSize ) ) ){
-                console.log("Error TableX size: ",table," minSize:",minSize);
+                console.log("Warning TableX size: ",table," minSize:",minSize);
                 return false;
             }
 

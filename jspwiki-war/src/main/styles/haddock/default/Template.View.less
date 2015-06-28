@@ -144,6 +144,9 @@ DOM structure:
     .btn [class^="icon-"]:before { font-size: 1.3em; }
 }
 
+/* For hover-dropdowns, make sure there is no space between the button and the menu */
+.dropdown-menu[data-hover-parent] { margin-top: 0; }
+
 a.logo {
     position: relative;
     display:block;
