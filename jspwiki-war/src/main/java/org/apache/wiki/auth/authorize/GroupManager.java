@@ -123,12 +123,12 @@ public class GroupManager extends WikiInternalModule implements Authorizer, Wiki
      * it could not be initialized. In that case, this method throws
      * a {@link org.apache.wiki.api.exceptions.WikiException}. The GroupDatabase
      * is lazily initialized.
-     * @throws org.apache.wiki.auth.WikiSecurityException if the GroupDatabase could
+     * @throws org.apache.wiki.auth.WikiException if the GroupDatabase could
      * not be initialized
      * @return the current GroupDatabase
      * @since 2.3
      */
-    public GroupDatabase getGroupDatabase() throws WikiSecurityException
+    public GroupDatabase getGroupDatabase() throws WikiException
     {
         if ( m_groupDatabase != null )
         {
@@ -147,11 +147,14 @@ public class GroupManager extends WikiInternalModule implements Authorizer, Wiki
                 dbClassName = XMLGroupDatabase.class.getName();
             }
             log.info( "Attempting to load group database class " + dbClassName );
-            Class<?> dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
-            m_groupDatabase = (GroupDatabase) dbClass.newInstance();
-            m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
+            m_groupDatabase = ClassUtil.getWikiProvider(GroupDatabase.class, m_engine, m_engine.getWikiProperties(), "org.apache.wiki.auth.authorize", dbClassName, null, true);
+            
+//            Class<?> dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
+//            m_groupDatabase = (GroupDatabase) dbClass.newInstance();
+//            m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
             log.info( "Group database initialized." );
         }
+/*
         catch( ClassNotFoundException e )
         {
             log.error( "GroupDatabase class " + dbClassName + " cannot be found.", e );
@@ -170,13 +173,13 @@ public class GroupManager extends WikiInternalModule implements Authorizer, Wiki
             dbInstantiationError = "Access GroupDatabase class " + dbClassName + " denied";
             cause = e;
         }
+*/
         catch( NoRequiredPropertyException e )
         {
             log.error( "Missing property: " + e.getMessage() + "." );
             dbInstantiationError = "Missing property: " + e.getMessage();
             cause = e;
         }
-
         if( dbInstantiationError != null )
         {
             throw new WikiSecurityException( dbInstantiationError + " Cause: " + (cause != null ? cause.getMessage() : ""), cause );

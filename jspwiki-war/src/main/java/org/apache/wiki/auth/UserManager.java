@@ -154,19 +154,26 @@ public class UserManager extends WikiInternalModule {
 
         try
         {
-            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(),
-                                                          PROP_DATABASE );
+            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
-            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
-            m_database = (UserDatabase) dbClass.newInstance();
-            m_database.initialize( m_engine, m_engine.getWikiProperties() );
+            
+            m_database = ClassUtil.getWikiProvider(UserDatabase.class, m_engine, m_engine.getWikiProperties(), USERDATABASE_PACKAGE, dbClassName, new DummyUserDatabase(), true);
+            
+//            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
+//            m_database = (UserDatabase) dbClass.newInstance();
+//            m_database.initialize( m_engine, m_engine.getWikiProperties() );
             log.info("UserDatabase initialized.");
         }
         catch( NoRequiredPropertyException e )
         {
             log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
         }
+        catch( WikiException e )
+        {
+            log.error( "Exception initializing user database: " + e.getMessage() );
+        }
+/*
         catch( ClassNotFoundException e )
         {
             log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
@@ -183,6 +190,7 @@ public class UserManager extends WikiInternalModule {
         {
             log.error( "Exception initializing user database: " + e.getMessage() );
         }
+*/
         finally
         {
             if( m_database == null )

@@ -504,7 +504,7 @@ public final class SecurityVerifier
         {
             db = m_engine.getGroupManager().getGroupDatabase();
         }
-        catch ( WikiSecurityException e )
+        catch ( WikiException e )
         {
             m_session.addMessage( ERROR_GROUPS, "Could not retrieve GroupManager: " + e.getMessage() );
         }
