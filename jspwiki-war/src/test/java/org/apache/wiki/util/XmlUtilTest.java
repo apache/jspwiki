@@ -61,7 +61,7 @@ public class XmlUtilTest extends TestCase {
      	assertEquals( 0, elements.size() );
      	
      	elements = XmlUtil.parse( ClassUtil.MAPPINGS, "/classmappings/mapping" );
-     	assertEquals( 19, elements.size() );
+     	assertEquals( 23, elements.size() );
     }
     
     public void testParseFromStream() throws FileNotFoundException {

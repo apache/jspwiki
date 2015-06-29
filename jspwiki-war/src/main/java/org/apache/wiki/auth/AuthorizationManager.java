@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -58,12 +59,10 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
-import org.freshcookies.security.policy.PolicyException;
 
 /**
  * <p>Manages all access control and authorization; determines what authenticated
@@ -97,7 +96,7 @@ import org.freshcookies.security.policy.PolicyException;
  * @since 2.3
  * @see AuthenticationManager
  */
-public class AuthorizationManager implements InternalModule {
+public class AuthorizationManager extends WikiInternalModule {
 
     private static final Logger log = Logger.getLogger( AuthorizationManager.class );
     /**
@@ -121,16 +120,7 @@ public class AuthorizationManager implements InternalModule {
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
     private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
 
-    private WikiEngine                        m_engine          = null;
-
     private LocalPolicy                       m_localPolicy     = null;
-
-    /**
-     * Constructs a new AuthorizationManager instance.
-     */
-    public AuthorizationManager()
-    {
-    }
 
     /**
      * Returns <code>true</code> or <code>false</code>, depending on
@@ -460,20 +450,20 @@ public class AuthorizationManager implements InternalModule {
      * @param properties the set of properties used to initialize the wiki engine
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
-    public void initialize( WikiEngine engine, Properties properties ) throws WikiException
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
-        m_engine = engine;
+        super.initialize(engine, props);
 
         //
         //  JAAS authorization continues
         //
-        m_authorizer = getAuthorizerImplementation( properties );
-        m_authorizer.initialize( engine, properties );
+        m_authorizer = getAuthorizerImplementation( props );
+        m_authorizer.initialize( engine, props );
 
         // Initialize local security policy
         try
         {
-            String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
+            String policyFileName = props.getProperty( POLICY, DEFAULT_POLICY );
             URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
             
             if (policyURL != null) 

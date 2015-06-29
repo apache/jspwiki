@@ -39,4 +39,6 @@ import org.apache.wiki.api.exceptions.WikiException;
 public interface InternalModule
 {
 	public void initialize(WikiEngine engine, Properties props) throws WikiException;
+	
+	public boolean isInitialized();
 }

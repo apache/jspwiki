@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -51,6 +50,7 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Outcome;
@@ -146,13 +146,11 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      */
     public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
-    static Logger log = Logger.getLogger(PageManager.class);
-
     private WikiPageProvider m_provider;
 
     protected HashMap<String, PageLock> m_pageLocks = new HashMap<String, PageLock>();
 
-    private WikiEngine m_engine;
+    private SearchManager m_searchManager;
 
     private int m_expiryTime = 60;
 
@@ -165,15 +163,14 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @param props  Properties to use for initialization
      * @throws WikiException If anything goes wrong, you get this.
      */
-    public PageManager() {
-    	
+    public PageManager(SearchManager searchManager) {
+    	m_searchManager = searchManager;
     }
     
     @Override
     public void initialize(WikiEngine engine, Properties props) throws WikiException {
-        super.initialize(engine, props);
-        String classname;
-        m_engine = engine;
+         super.initialize(engine, props);
+        m_searchManager.initialize(engine, props);
         boolean useCache = "true".equals(props.getProperty(PROP_USECACHE));
 
         m_expiryTime = TextUtil.parseIntParameter(props.getProperty(PROP_LOCKEXPIRY), 60);
@@ -181,6 +178,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.
         //
+        String classname;
         if (useCache) {
             classname = "org.apache.wiki.providers.CachingProvider";
         } else {
@@ -274,7 +272,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
                 //  Make sure that it no longer exists in internal data structures either.
                 //
                 WikiPage dummy = new WikiPage(m_engine, pageName);
-                m_engine.getSearchManager().pageRemoved(dummy);
+                m_searchManager.pageRemoved(dummy);
                 m_engine.getReferenceManager().pageRemoved(dummy);
             }
         }

@@ -24,9 +24,10 @@ import java.util.List;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.PageFilter;
+import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.modules.WikiModuleInfo;
 
-public interface FilterManager
+public interface FilterManager extends InternalModule
 {
     /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
     String PROP_FILTERXML = "jspwiki.filterConfig";

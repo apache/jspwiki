@@ -27,11 +27,12 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 
 
-public interface PluginManager {
+public interface PluginManager extends InternalModule {
 
     /** The property name defining which packages will be searched for plugin classes. */
     String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";

@@ -30,13 +30,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WorkflowEvent;
-import org.apache.wiki.modules.InternalModule;
 
 
 /**
@@ -46,7 +46,7 @@ import org.apache.wiki.modules.InternalModule;
  * Workflows.
  * </p>
  */
-public class WorkflowManager implements WikiEventListener, InternalModule {
+public class WorkflowManager extends WikiInternalModule implements WikiEventListener {
 
     private final DecisionQueue m_queue = new DecisionQueue();
 
@@ -106,8 +106,6 @@ public class WorkflowManager implements WikiEventListener, InternalModule {
         return new ArrayList<Workflow>( m_completed );
     }
 
-    private WikiEngine m_engine = null;
-
     /**
      * Initializes the WorkflowManager using a specfied WikiEngine and
      * properties. Any properties that begin with
@@ -123,9 +121,9 @@ public class WorkflowManager implements WikiEventListener, InternalModule {
      * @param engine the wiki engine to associate with this WorkflowManager
      * @param props the wiki engine's properties
      */
-    public void initialize( WikiEngine engine, Properties props )
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
-        m_engine = engine;
+        super.initialize(engine, props);
 
         // Identify the workflows requiring approvals
         for ( Iterator<?> it = props.keySet().iterator(); it.hasNext(); )

@@ -18,11 +18,13 @@
  */
 package org.apache.wiki.url;
 
-import java.util.Properties;
 import java.io.IOException;
+import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Provides an interface through which JSPWiki constructs URLs.
@@ -44,7 +46,7 @@ public interface URLConstructor
      *  @param properties Properties used to initialize
      */
     void initialize( WikiEngine engine,
-                            Properties properties );
+                            Properties properties ) throws WikiException;
 
     /**
      *  Constructs the URL with a bunch of parameters.

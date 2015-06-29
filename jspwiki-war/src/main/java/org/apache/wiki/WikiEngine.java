@@ -175,8 +175,6 @@ public class WikiEngine
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
     
-    private static Properties staticProps = new Properties();
-
     /** Compares pages by name */
     private PageSorter     m_pageSorter = null;
     
@@ -386,20 +384,6 @@ public class WikiEngine
 
 
     /**
-     *  Instantiate the WikiEngine using a given set of properties.
-     *  Use this constructor for testing purposes only.
-     *
-     *  @param properties A set of properties to use to initialize this WikiEngine.
-     *  @throws WikiException If the initialization fails.
-     */
-    public WikiEngine( )
-        throws WikiException
-    {
-    	m_properties = staticProps;
-//        initialize( properties );
-    }
-
-    /**
      *  Instantiate using this method when you're running as a servlet and
      *  WikiEngine will figure out where to look for the property
      *  file.
@@ -452,7 +436,6 @@ public class WikiEngine
     {
         m_startTime  = new Date();
         m_properties = props;
-        WikiEngine.staticProps = props;
 
         //
         //  Initialize log4j.  However, make sure that we don't initialize it multiple times.
@@ -546,10 +529,6 @@ public class WikiEngine
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
         
-        // Initialize the page name comparator now as it may be used while
-        // initializing other modules
-        initPageSorter( props );
-
         //
         //  Initialize the important modules.  Any exception thrown by the
         //  managers means that we will not start up.
@@ -564,22 +543,23 @@ public class WikiEngine
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
             
-            m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
-            m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
-            m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
-            m_attachmentManager = (AttachmentManager)ClassUtil.getMappedObject(AttachmentManager.class.getName(), this, props );
-            m_variableManager   = (VariableManager)ClassUtil.getMappedObject(VariableManager.class.getName(), this, props );
-            m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
-            m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName(), this, props );
+            m_pageSorter        = ClassUtil.getInternalModule(PageSorter.class, this, props );
+            m_pageManager       = ClassUtil.getInternalModule(PageManager.class, this, props );
+            m_pluginManager     = ClassUtil.getInternalModule(PluginManager.class, this, props );
+            m_differenceManager = ClassUtil.getInternalModule(DifferenceManager.class, this, props );
+            m_attachmentManager = ClassUtil.getInternalModule(AttachmentManager.class, this, props );
+            m_variableManager   = ClassUtil.getInternalModule(VariableManager.class, this, props );
+            m_filterManager     = ClassUtil.getInternalModule(FilterManager.class, this, props );
+            m_renderingManager  = ClassUtil.getInternalModule(RenderingManager.class, this, props );
 
-            m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
+            m_searchManager     = ClassUtil.getInternalModule(SearchManager.class, this, props );
 
-            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName(), this, props );
-            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedObject( AuthorizationManager.class.getName(), this, props );
-            m_userManager           = (UserManager) ClassUtil.getMappedObject(UserManager.class.getName(), this, props );
-            m_groupManager          = (GroupManager) ClassUtil.getMappedObject(GroupManager.class.getName(), this, props );
+            m_authenticationManager = ClassUtil.getInternalModule(AuthenticationManager.class, this, props );
+            m_authorizationManager  = ClassUtil.getInternalModule(AuthorizationManager.class, this, props );
+            m_userManager           = ClassUtil.getInternalModule(UserManager.class, this, props );
+            m_groupManager          = ClassUtil.getInternalModule(GroupManager.class, this, props );
 
-            m_editorManager     = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName(), this , props );
+            m_editorManager     = ClassUtil.getInternalModule(EditorManager.class, this , props );
 
             m_progressManager   = new ProgressManager();
 
@@ -588,16 +568,13 @@ public class WikiEngine
             m_aclManager = getAclManager();
 
             // Start the Workflow manager
-            m_workflowMgr = (WorkflowManager)ClassUtil.getMappedObject(WorkflowManager.class.getName(), this, props);
+            m_workflowMgr = ClassUtil.getInternalModule(WorkflowManager.class, this, props);
 
-            m_internationalizationManager = (InternationalizationManager)
-                ClassUtil.getMappedObject(InternationalizationManager.class.getName(), this, props);
+            m_internationalizationManager = ClassUtil.getInternalModule(InternationalizationManager.class, this, props);
 
-            m_templateManager   = (TemplateManager)
-                ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
+            m_templateManager   = ClassUtil.getInternalModule(TemplateManager.class, this, props );
 
-            m_adminBeanManager = (AdminBeanManager)
-                ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
+            m_adminBeanManager = ClassUtil.getInternalModule(AdminBeanManager.class,this, props);
 
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event listeners,
@@ -618,7 +595,7 @@ public class WikiEngine
             //  initReferenceManager is indirectly using m_filterManager, therefore
             //  it has to be called after it was initialized.
             //
-            initReferenceManager();
+            initReferenceManager(props);
 
             //
             //  Hook the different manager routines into the system.
@@ -648,27 +625,25 @@ public class WikiEngine
             log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: " + e.getMessage(), e );
             throw new WikiException(e.getMessage(), e );
         }
-        catch( Exception e )
-        {
-            // Final catch-all for everything
-            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
-            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + 
-                                     "; please check log files for better information.", e );
-        }
+//        catch( Exception e )
+//        {
+//            // Final catch-all for everything
+//            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
+//            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + 
+//                                     "; please check log files for better information.", e );
+//        }
         
         //
         //  Initialize the good-to-have-but-not-fatal modules.
         //
         try
         {
-            if( TextUtil.getBooleanProperty( props,
-                                             RSSGenerator.PROP_GENERATE_RSS,
-                                             false ) )
+            if( TextUtil.getBooleanProperty( props, RSSGenerator.PROP_GENERATE_RSS, false ) )
             {
-                m_rssGenerator = (RSSGenerator)ClassUtil.getMappedObject(RSSGenerator.class.getName(), this, props );
+                m_rssGenerator = ClassUtil.getInternalModule(RSSGenerator.class, this, props );
             }
 
-            m_pageRenamer = (PageRenamer)ClassUtil.getMappedObject(PageRenamer.class.getName(), this, props );
+            m_pageRenamer = ClassUtil.getInternalModule(PageRenamer.class, this, props );
         }
         catch( Exception e )
         {
@@ -679,8 +654,7 @@ public class WikiEngine
         // Start the RSS generator & generator thread
         if( m_rssGenerator != null )
         {
-            m_rssFile = TextUtil.getStringProperty( props,
-                    RSSGenerator.PROP_RSSFILE, "rss.rdf" );
+            m_rssFile = TextUtil.getStringProperty( props, RSSGenerator.PROP_RSSFILE, "rss.rdf" );
             File rssFile=null;
             if (m_rssFile.startsWith(File.separator))
             {
@@ -711,7 +685,7 @@ public class WikiEngine
      *  @throws WikiException If the reference manager initialization fails.
      */
     @SuppressWarnings("unchecked")
-    public void initReferenceManager() throws WikiException
+    private void initReferenceManager(Properties props) throws WikiException
     {
         try
         {
@@ -722,9 +696,7 @@ public class WikiEngine
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
             {
-                m_referenceManager =
-                    (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
-                m_referenceManager.setEngine(this);
+            	m_referenceManager = ClassUtil.getInternalModule(ReferenceManager.class, this, props );
                 m_referenceManager.initialize( pages );
             }
 
@@ -1999,10 +1971,9 @@ public class WikiEngine
      *  @since 1.6.1
      *  @return The current PluginManager instance
      */
-    @SuppressWarnings("unchecked")
-    public < T extends PluginManager > T getPluginManager()
+    public PluginManager getPluginManager()
     {
-        return (T)m_pluginManager;
+        return m_pluginManager;
     }
 
     /**
@@ -2094,10 +2065,9 @@ public class WikiEngine
      *  @since 2.1.88
      *  @return The current FilterManager instance
      */
-    @SuppressWarnings("unchecked")
-    public < T extends FilterManager > T getFilterManager()
+    public FilterManager getFilterManager()
     {
-        return (T)m_filterManager;
+        return m_filterManager;
     }
 
     /**
@@ -2489,15 +2459,6 @@ public class WikiEngine
     public WatchDog getCurrentWatchDog()
     {
         return WatchDog.getCurrentWatchDog(this);
-    }
-    
-    /**
-     * Initialize the page name comparator.
-     */
-    private void initPageSorter( Properties props )
-    {
-        m_pageSorter = new PageSorter();
-        m_pageSorter.initialize( props );
     }
     
     /**

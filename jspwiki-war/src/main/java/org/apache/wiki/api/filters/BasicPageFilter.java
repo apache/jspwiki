@@ -18,12 +18,10 @@
  */
 package org.apache.wiki.api.filters;
 
-import java.util.Properties;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Provides a base implementation of a PageFilter.  None of the callbacks
@@ -31,21 +29,9 @@ import org.apache.wiki.api.exceptions.WikiException;
  *  and implement only methods that you need.
  *
  */
-public class BasicPageFilter
+public class BasicPageFilter extends WikiInternalModule
     implements PageFilter
 {
-    protected WikiEngine m_engine;
-  
-    /**
-     *  If you override this, you should call super.initialize() first.
-     *  
-     *  {@inheritDoc}
-     */
-    public void initialize( WikiEngine engine, Properties properties )
-        throws FilterException, WikiException
-    {
-        m_engine = engine;
-    }
 
     /**
      *  {@inheritDoc}

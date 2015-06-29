@@ -24,9 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
@@ -35,7 +35,6 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.comparators.PageTimeComparator;
 
@@ -56,11 +55,8 @@ import org.apache.wiki.util.comparators.PageTimeComparator;
  */
 // FIXME: Limit diff and page content size.
 // FIXME3.0: This class would need a bit of refactoring.  Method names, e.g. are confusing.
-public class RSSGenerator implements InternalModule
+public class RSSGenerator extends WikiInternalModule
 {
-    static Logger              log = Logger.getLogger( RSSGenerator.class );
-    private WikiEngine         m_engine;
-
     private String             m_channelDescription = "";
     private String             m_channelLanguage    = "en-us";
     private boolean            m_enabled = true;
@@ -166,7 +162,7 @@ public class RSSGenerator implements InternalModule
      */
     public void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
-        m_engine = engine;
+        super.initialize(engine, properties);
 
         // FIXME: This assumes a bit too much.
         if( engine.getBaseURL() == null || engine.getBaseURL().length() == 0 )

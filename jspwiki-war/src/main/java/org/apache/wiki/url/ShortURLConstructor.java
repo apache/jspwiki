@@ -24,10 +24,10 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -58,7 +58,7 @@ public class ShortURLConstructor
     
     /** {@inheritDoc} */
     public void initialize( WikiEngine engine, 
-                            Properties properties )
+                            Properties properties ) throws WikiException
     {
         super.initialize( engine, properties );
         

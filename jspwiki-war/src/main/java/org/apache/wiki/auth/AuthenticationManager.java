@@ -44,6 +44,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.Role;
@@ -59,7 +60,6 @@ import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
 
@@ -76,7 +76,7 @@ import org.apache.wiki.util.TimedCounterList;
  * 
  * @since 2.3
  */
-public class AuthenticationManager implements InternalModule {
+public class AuthenticationManager extends WikiInternalModule {
 
     /** How many milliseconds the logins are stored before they're cleaned away. */
     private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
@@ -164,8 +164,6 @@ public class AuthenticationManager implements InternalModule {
     /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
     private boolean                     m_allowsCookieAuthentication = false;
 
-    private WikiEngine                         m_engine            = null;
-    
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
@@ -183,7 +181,7 @@ public class AuthenticationManager implements InternalModule {
     @SuppressWarnings("unchecked")
     public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
-        m_engine = engine;
+    	super.initialize(engine, props);
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
         // Should we allow cookies for assertions? (default: yes)
@@ -210,6 +208,7 @@ public class AuthenticationManager implements InternalModule {
         catch (ClassNotFoundException e)
         {
             e.printStackTrace();
+            log.error(e,e);
             throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
         

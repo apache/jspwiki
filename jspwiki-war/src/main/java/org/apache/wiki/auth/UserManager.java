@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
@@ -58,7 +59,6 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
@@ -77,7 +77,7 @@ import org.apache.wiki.workflow.WorkflowBuilder;
  * Provides a facade for obtaining user information.
  * @since 2.3
  */
-public class UserManager implements InternalModule {
+public class UserManager extends WikiInternalModule {
 
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
     private static final String SESSION_MESSAGES = "profile";
@@ -86,10 +86,6 @@ public class UserManager implements InternalModule {
     private static final String PARAM_PASSWORD = "password";
     private static final String PARAM_LOGINNAME = "loginname";
     private static final String UNKNOWN_CLASS = "<unknown>";
-
-    private WikiEngine m_engine;
-
-    private static Logger log = Logger.getLogger(UserManager.class);
 
     /** Message key for the "save profile" message. */
     public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
@@ -103,6 +99,8 @@ public class UserManager implements InternalModule {
     protected static final String PREFS_EMAIL               = "prefs.email";
 
     public static final String JSON_USERS = "users";
+    
+    private static Logger log = Logger.getLogger(UserManager.class);
 
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
@@ -124,9 +122,9 @@ public class UserManager implements InternalModule {
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
-    public void initialize( WikiEngine engine, Properties props )
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
-        m_engine = engine;
+        super.initialize(engine, props);
 
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly

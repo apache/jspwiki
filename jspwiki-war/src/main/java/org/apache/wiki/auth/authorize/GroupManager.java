@@ -29,9 +29,9 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -46,7 +46,6 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 
@@ -66,16 +65,12 @@ import org.apache.wiki.util.ClassUtil;
  * </p>
  * @since 2.4.19
  */
-public class GroupManager implements Authorizer, WikiEventListener, InternalModule {
+public class GroupManager extends WikiInternalModule implements Authorizer, WikiEventListener {
 
     /** Key used for adding UI messages to a user's WikiSession. */
     public static final String  MESSAGES_KEY       = "group";
 
     private static final String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
-
-    static final Logger         log                = Logger.getLogger( GroupManager.class );
-
-    protected WikiEngine        m_engine;
 
     protected WikiEventListener m_groupListener;
 

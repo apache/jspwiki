@@ -29,15 +29,14 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
@@ -53,13 +52,9 @@ import org.apache.wiki.parser.WikiDocument;
  *
  *  @since  2.4
  */
-public class RenderingManager implements WikiEventListener, InternalModule
+public class RenderingManager extends WikiInternalModule implements WikiEventListener
 {
-    private static Logger log = Logger.getLogger( RenderingManager.class );
-
     private              int    m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
-
-    private          WikiEngine m_engine;
 
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
@@ -102,10 +97,10 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *  @param properties A list of properties to get parameters from.
      *  @throws WikiException If the manager could not be initialized.
      */
-    public void initialize( WikiEngine engine, Properties properties )
+    public void initialize( WikiEngine engine, Properties props )
         throws WikiException
     {
-        m_engine = engine;
+        super.initialize(engine, props);
 
         String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;
 
@@ -117,7 +112,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
             m_cacheManager.addCache(m_documentCache);
         }
 
-        String renderImplName = properties.getProperty( PROP_RENDERER );
+        String renderImplName = props.getProperty( PROP_RENDERER );
         if( renderImplName == null )
         {
             renderImplName = DEFAULT_RENDERER;

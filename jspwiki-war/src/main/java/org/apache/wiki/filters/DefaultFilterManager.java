@@ -99,8 +99,6 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     private Map< String, PageFilterInfo > m_filterClassMap = new HashMap< String, PageFilterInfo >();
 
-    private static final Logger log = Logger.getLogger(DefaultFilterManager.class);
-
     /**
      *  Constructs a new FilterManager object.
      *  

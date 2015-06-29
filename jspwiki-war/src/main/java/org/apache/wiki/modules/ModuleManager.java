@@ -19,16 +19,14 @@
 package org.apache.wiki.modules;
 
 import java.util.Collection;
-import java.util.Properties;
 
 import org.apache.wiki.Release;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.WikiInternalModule;
 
 /**
  *  Superclass for all JSPWiki managers for modules (plugins, etc).
  */
-public abstract class ModuleManager implements InternalModule
+public abstract class ModuleManager extends WikiInternalModule
 {
 
     /**
@@ -36,10 +34,6 @@ public abstract class ModuleManager implements InternalModule
      *  (Each plugin should include this property-file in its jar-file)
      */
     public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
-        
-    protected WikiEngine m_engine;
-    
-    protected Properties m_properties;
     
     private boolean m_loadIncompatibleModules = false;
     
@@ -50,11 +44,6 @@ public abstract class ModuleManager implements InternalModule
      */
     public ModuleManager(  ) {
         
-    }
-    
-    public void initialize( WikiEngine engine, Properties props ) throws WikiException {
-    	m_engine = engine;
-    	m_properties = props;
     }
     
     /**

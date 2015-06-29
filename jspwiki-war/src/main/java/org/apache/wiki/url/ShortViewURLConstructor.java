@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  A specific URL constructor that returns easy-to-grok URLs for
@@ -39,7 +40,7 @@ public class ShortViewURLConstructor
      *  {@inheritDoc}
      */
     public void initialize( WikiEngine engine, 
-                            Properties properties )
+                            Properties properties ) throws WikiException
     {
         super.initialize( engine, properties );
     }

@@ -44,6 +44,7 @@ import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -51,7 +52,6 @@ import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -60,9 +60,7 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 2.2.21.
  */
-public class SearchManager extends BasicPageFilter implements InternalModule, WikiEventListener {
-
-    private static final Logger log = Logger.getLogger(SearchManager.class);
+public class SearchManager extends BasicPageFilter implements WikiEventListener {
 
     private static final String DEFAULT_SEARCHPROVIDER  = "org.apache.wiki.search.LuceneSearchProvider";
     
@@ -258,9 +256,9 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      * @throws FilterException if the search provider failed to initialize
      */
     public void initialize(WikiEngine engine, Properties properties)
-        throws FilterException
+        throws WikiException
     {
-        m_engine = engine;
+        super.initialize(engine, properties);
 
         loadSearchProvider(properties);
 

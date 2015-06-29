@@ -24,10 +24,10 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -45,11 +45,8 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 2.8
  */
-public class PageRenamer
+public class PageRenamer extends WikiInternalModule
 {
-
-    private static final Logger log = Logger.getLogger( PageRenamer.class );
-    
     private boolean m_camelCase = false;
     
     /**

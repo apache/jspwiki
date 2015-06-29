@@ -35,16 +35,20 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.PageManager;
+import org.apache.wiki.PageSorter;
+import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.providers.CachingAttachmentProvider;
 import org.apache.wiki.providers.WikiAttachmentProvider;
+import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.util.ClassUtil;
 
 /**
@@ -57,7 +61,7 @@ import org.apache.wiki.util.ClassUtil;
  *
  *  @since 1.9.28
  */
-public class AttachmentManager implements InternalModule
+public class AttachmentManager extends WikiInternalModule
 {
     /**
      *  The property name for defining the attachment provider class name.
@@ -81,8 +85,13 @@ public class AttachmentManager implements InternalModule
 
     static Logger log = Logger.getLogger( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
-    private WikiEngine             m_engine;
+    private SearchManager          m_searchManager;
+    private PageManager            m_pageManager;
+    private ReferenceManager       m_referenceManager;
+    private PageSorter             m_pageSorter;
     private CacheManager m_cacheManager = CacheManager.getInstance();
+    
+    private boolean initialized = false;
 
     private Cache m_dynamicAttachments;
     /** Name of the page cache. */
@@ -104,21 +113,30 @@ public class AttachmentManager implements InternalModule
      *  its configuration.  Typically this is the "jspwiki.properties".
      */
 
+    public AttachmentManager(SearchManager searchManager, ReferenceManager referenceManager, PageManager pageManager, PageSorter pageSorter) {
+    	m_searchManager = searchManager;
+    	m_pageManager = pageManager;
+    	m_referenceManager = referenceManager;
+    	m_pageSorter = pageSorter;
+    }
+    
     // FIXME: Perhaps this should fail somehow.
-    public void initialize( WikiEngine engine, Properties props )
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
-        String classname;
-
-        m_engine = engine;
-
+        super.initialize(engine, props);
+    	m_searchManager.initialize(engine, props);
+    	m_pageManager.initialize(engine, props);
+    	m_referenceManager.initialize(engine, props);
+    	m_pageSorter.initialize(engine, props);
+    	
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.
         //
         boolean useCache = "true".equals(props.getProperty( PageManager.PROP_USECACHE ));
-
+        String classname;
         if( useCache )
         {
-            classname = "org.apache.wiki.providers.CachingAttachmentProvider";
+            classname = CachingAttachmentProvider.class.getName();
         }
         else
         {
@@ -151,7 +169,9 @@ public class AttachmentManager implements InternalModule
 
             m_provider = (WikiAttachmentProvider) providerclass.newInstance();
 
-            m_provider.initialize(m_engine, props);
+            m_provider.initialize(engine, props);
+            
+            initialized = true;
         } catch( ClassNotFoundException e )
         {
             log.error( "Attachment provider class not found",e);
@@ -174,6 +194,11 @@ public class AttachmentManager implements InternalModule
             log.error( "Attachment provider reports IO error", e );
             m_provider = null;
         }
+    }
+    
+    @Override
+    public boolean isInitialized() {
+    	return initialized;
     }
 
     /**
@@ -280,7 +305,7 @@ public class AttachmentManager implements InternalModule
             // this can't be an attachment
             if(parentPage.length() == 0) return null;
 
-            currentPage = m_engine.getPage( parentPage );
+            if (context!=null) currentPage = context.getEngine().getPage( parentPage );
 
             //
             // Go check for legacy name
@@ -347,7 +372,7 @@ public class AttachmentManager implements InternalModule
         //
         if( atts instanceof List )
         {
-            m_engine.getPageSorter().sortPages( (List) atts );
+            m_pageSorter.sortPages( (List) atts );
         }
 
         return atts;
@@ -505,7 +530,7 @@ public class AttachmentManager implements InternalModule
         //  Checks if the actual, real page exists without any modifications
         //  or aliases.  We cannot store an attachment to a non-existent page.
         //
-        if( !m_engine.getPageManager().pageExists( att.getParentName() ) )
+        if( !m_pageManager.pageExists( att.getParentName() ) )
         {
             // the caller should catch the exception and use the exception text as an i18n key
             throw new ProviderException(  "attach.parent.not.exist"  );
@@ -513,13 +538,13 @@ public class AttachmentManager implements InternalModule
         
         m_provider.putAttachmentData( att, in );
 
-        m_engine.getReferenceManager().updateReferences( att.getName(),
+        m_referenceManager.updateReferences( att.getName(),
                                                          new java.util.Vector() );
 
         WikiPage parent = new WikiPage( m_engine, att.getParentName() );
         m_engine.updateReferences( parent );
 
-        m_engine.getSearchManager().reindexPage( att );
+        m_searchManager.reindexPage( att );
     }
 
     /**
@@ -604,10 +629,10 @@ public class AttachmentManager implements InternalModule
         if( m_provider == null ) return;
 
         m_provider.deleteAttachment( att );
+        
+        m_searchManager.pageRemoved( att );
 
-        m_engine.getSearchManager().pageRemoved( att );
-
-        m_engine.getReferenceManager().clearPageEntries( att.getName() );
+        m_referenceManager.clearPageEntries( att.getName() );
 
     }
 

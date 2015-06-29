@@ -123,4 +123,20 @@
     <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>
     <mappedClass>org.apache.wiki.workflow.WorkflowManager</mappedClass>
   </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.url.URLConstructor</requestedClass>
+    <mappedClass>org.apache.wiki.url.DefaultURLConstructor</mappedClass>
+  </mapping>  
+  <mapping>
+    <requestedClass>org.apache.wiki.content.PageRenamer</requestedClass>
+    <mappedClass>org.apache.wiki.content.PageRenamer</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.PageSorter</requestedClass>
+    <mappedClass>org.apache.wiki.PageSorter</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.rss.RSSGenerator</requestedClass>
+    <mappedClass>org.apache.wiki.rss.RSSGenerator</mappedClass>
+  </mapping>
 </classmappings>

@@ -34,9 +34,9 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -58,20 +58,18 @@ import org.apache.wiki.util.ClassUtil;
  *
  *  @since  2.5.52
  */
-public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanManager {
+public class DefaultAdminBeanManager extends WikiInternalModule implements WikiEventListener, AdminBeanManager {
 	
-    private WikiEngine m_engine;
     private ArrayList< AdminBean >  m_allBeans;
 
     private MBeanServer m_mbeanServer = null;
 
-    private static Logger log = Logger.getLogger(DefaultAdminBeanManager.class);
-
-    public void initialize( WikiEngine engine, Properties props ) {
-        log.info("Using JDK 1.5 Platform MBeanServer");
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException {
+    	super.initialize(engine, props);
+        
+    	log.info("Using JDK 1.5 Platform MBeanServer");
+        
         m_mbeanServer = MBeanServerFactory15.getServer();
-
-        m_engine = engine;
 
         if( m_mbeanServer != null ) {
             log.info( m_mbeanServer.getClass().getName() );

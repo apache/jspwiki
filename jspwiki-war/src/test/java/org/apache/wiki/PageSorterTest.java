@@ -25,6 +25,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.comparators.HumanComparator;
 import org.apache.wiki.util.comparators.LocaleComparator;
 
@@ -36,60 +39,71 @@ import org.apache.wiki.util.comparators.LocaleComparator;
  */
 public class PageSorterTest extends TestCase
 {
-    public static Test suite()
+    private Properties props = TestEngine.getTestProperties();
+
+    private TestEngine engine;
+
+	public static Test suite()
     {
         return new TestSuite( PageSorterTest.class );
     }
+    
+    public void setUp() throws Exception
+    {
+        PropertyConfigurator.configure(props);
+        engine = new TestEngine(props);
+    }
 
-    public void testPageSorterBadProperty()
+
+    public void testPageSorterBadProperty() throws WikiException
     {
         // Initialised with a broken property
-        PageSorter sorter = new PageSorter();
+        PageSorter sorter = ClassUtil.getInternalModule(PageSorter.class, engine, props);
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "haha.this.isnt.a.class" );
-        sorter.initialize( props );
+        sorter.initialize( engine, props );
         assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
-    public void testPageSorterDefaultConstructor()
+    public void testPageSorterDefaultConstructor() throws WikiException
     {
         // Check uninitialised behaviour
-        PageSorter sorter = new PageSorter();
+        PageSorter sorter = ClassUtil.getInternalModule(PageSorter.class, engine, props);
         assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
-    public void testPageSorterHumanComparator()
+    public void testPageSorterHumanComparator() throws WikiException
     {
         // Initialised with the human comparator
-        PageSorter sorter = new PageSorter();
+        PageSorter sorter = ClassUtil.getInternalModule(PageSorter.class, engine, props);
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, HumanComparator.class.getPackage().getName() + ".HumanComparator" );
-        sorter.initialize( props );
+        sorter.initialize( engine, props );
         assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "HumanComparator" );
-        sorter.initialize( props );
+        sorter.initialize( engine, props );
         assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
     }
 
-    public void testPageSorterLocaleComparator()
+    public void testPageSorterLocaleComparator() throws WikiException
     {
         // Initialised with the human comparator
-        PageSorter sorter = new PageSorter();
+        PageSorter sorter = ClassUtil.getInternalModule(PageSorter.class, engine, props);
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, LocaleComparator.class.getPackage().getName() + ".LocaleComparator" );
-        sorter.initialize( props );
+        sorter.initialize( engine, props );
         assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "LocaleComparator" );
-        sorter.initialize( props );
+        sorter.initialize( engine, props );
         assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
-    public void testPageSorterNoProperty()
+    public void testPageSorterNoProperty() throws WikiException
     {
         // Initialised without the necessary property
-        PageSorter sorter = new PageSorter();
+        PageSorter sorter = ClassUtil.getInternalModule(PageSorter.class, engine, props);
         Properties props = new Properties();
-        sorter.initialize( props );
+        sorter.initialize( engine, props );
         assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 }

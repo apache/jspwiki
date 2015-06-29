@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
@@ -43,10 +42,8 @@ import org.apache.wiki.preferences.Preferences;
  *
  *  @since 1.9.20.
  */
-public class VariableManager implements InternalModule
+public class VariableManager extends WikiInternalModule
 {
-    private static Logger log = Logger.getLogger( VariableManager.class );
-   
     // FIXME: These are probably obsolete.
     public static final String VAR_ERROR = "error";
     public static final String VAR_MSG   = "msg";
@@ -60,14 +57,6 @@ public class VariableManager implements InternalModule
         "jspwiki.auth.masterpassword"
     };
     
-    /**
-     *  Creates a VariableManager object using the property list given.
-     *  @param props The properties.
-     */
-    public void initialize( WikiEngine engine, Properties props )
-    {
-    }
-
     /**
      *  Returns true if the link is really command to insert
      *  a variable.

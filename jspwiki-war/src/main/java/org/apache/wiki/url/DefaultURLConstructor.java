@@ -26,9 +26,10 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.TextUtil;
@@ -40,11 +41,9 @@ import org.apache.wiki.util.TextUtil;
  *  
  *  @since 2.2
  */
-public class DefaultURLConstructor
+public class DefaultURLConstructor extends WikiInternalModule
     implements URLConstructor
 {
-    protected WikiEngine m_engine;
-
     /**
      *  Contains the absolute path of the JSPWiki Web application without the
      *  actual servlet (which is the m_urlPrefix).
@@ -55,10 +54,8 @@ public class DefaultURLConstructor
      * 
      * {@inheritDoc}
      */
-    public void initialize( WikiEngine engine, 
-                            Properties properties )
-    {
-        m_engine = engine;
+    public void initialize( WikiEngine engine, Properties properties ) throws WikiException {
+        super.initialize(engine, properties);
 
         String baseurl = engine.getBaseURL();
 

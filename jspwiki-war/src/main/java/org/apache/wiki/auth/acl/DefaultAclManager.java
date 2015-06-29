@@ -32,13 +32,14 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.PageLock;
 import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.PrincipalComparator;
@@ -52,12 +53,9 @@ import org.apache.wiki.render.RenderingManager;
  *
  * @since 2.3
  */
-public class DefaultAclManager implements AclManager {
-
-    private static final Logger log = Logger.getLogger(DefaultAclManager.class);
+public class DefaultAclManager extends WikiInternalModule implements AclManager {
 
     private AuthorizationManager m_auth = null;
-    private WikiEngine m_engine = null;
     private static final String PERM_REGEX = "(" +
             PagePermission.COMMENT_ACTION + "|" +
             PagePermission.DELETE_ACTION + "|" +
@@ -75,19 +73,16 @@ public class DefaultAclManager implements AclManager {
      */
     public static final Pattern ACL_PATTERN = Pattern.compile(ACL_REGEX);
 
-    /**
-     * Initializes the AclManager with a supplied wiki engine and properties.
-     *
-     * @param engine the wiki engine
-     * @param props  the initialization properties
-     * @see org.apache.wiki.auth.acl.AclManager#initialize(org.apache.wiki.WikiEngine,
-     *      java.util.Properties)
-     */
-    public void initialize(WikiEngine engine, Properties props) {
-        m_auth = engine.getAuthorizationManager();
-        m_engine = engine;
+    public DefaultAclManager(AuthorizationManager authorizationManager) {
+        m_auth = authorizationManager;
     }
 
+    @Override
+    public void initialize(WikiEngine engine, Properties props) throws WikiException {
+    	super.initialize(engine, props);
+    	m_auth.initialize(engine, props);
+    }
+    
     /**
      * A helper method for parsing textual AccessControlLists. The line is in
      * form "ALLOW <permission> <principal>, <principal>, <principal>". This

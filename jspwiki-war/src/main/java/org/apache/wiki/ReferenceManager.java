@@ -38,19 +38,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
+import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.TextUtil;
 
@@ -130,7 +131,7 @@ import org.apache.wiki.util.TextUtil;
 
 public class ReferenceManager
     extends BasicPageFilter
-    implements InternalModule, WikiEventListener
+    implements WikiEventListener
 {
     /** Maps page wikiname to a Collection of pages it refers to. The Collection
      *  must contain Strings. The Collection may contain names of non-existing
@@ -146,12 +147,7 @@ public class ReferenceManager
     private Map<String,Set<String>> m_referredBy;
     private Map<String,Set<String>> m_unmutableReferredBy;
 
-    /** The WikiEngine that owns this object. */
-    private WikiEngine     m_engine;
-
     private boolean        m_matchEnglishPlurals = false;
-
-    private static Logger log = Logger.getLogger(ReferenceManager.class);
 
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
@@ -160,29 +156,7 @@ public class ReferenceManager
     private static final long serialVersionUID = 4L;
 
     /**
-     *  Builds a new ReferenceManager.
-     *
-     *  @param engine The WikiEngine to which this is managing references to.
-     */
-    public ReferenceManager( WikiEngine engine )
-    {
-        m_refersTo   = new HashMap<String,Collection<String>>();
-        m_referredBy = new HashMap<String,Set<String>>();
-        m_engine = engine;
-
-        m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(),
-                                                             WikiEngine.PROP_MATCHPLURALS,
-                                                             m_matchEnglishPlurals );
-
-        //
-        //  Create two maps that contain unmutable versions of the two basic maps.
-        //
-        m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
-        m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
-    }
-
-    /**
-     *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
+     *  Does a full reference update. Does not sync; assumes that you do it afterwards.
      */
     private void updatePageReferences( WikiPage page ) throws ProviderException
     {
@@ -203,6 +177,26 @@ public class ReferenceManager
         internalUpdateReferences( page.getName(), res );
     }
 
+    /**
+     * Initialize the ReferenceManager
+     */
+    public void initialize( WikiEngine engine, Properties properties ) throws FilterException, WikiException
+    {
+        super.initialize(engine, properties);
+        m_refersTo   = new HashMap<String,Collection<String>>();
+        m_referredBy = new HashMap<String,Set<String>>();
+
+        m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(),
+                                                             WikiEngine.PROP_MATCHPLURALS,
+                                                             m_matchEnglishPlurals );
+
+        //
+        //  Create two maps that contain unmutable versions of the two basic maps.
+        //
+        m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
+        m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
+    }
+    
     /**
      *  Initializes the entire reference manager with the initial set of pages
      *  from the collection.

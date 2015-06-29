@@ -414,7 +414,7 @@ public class TestEngine extends WikiEngine
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
         if (pageDir != null) {
 	        props.setProperty( AbstractFileProvider.PROP_PAGEDIR,
-	                           pageDir.replaceAll( "\\d", StringUtils.EMPTY )
+	                           pageDir // TODO: .replaceAll( "\\d", StringUtils.EMPTY )
 	                           + System.currentTimeMillis() );
         }
         return props;

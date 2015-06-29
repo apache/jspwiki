@@ -22,13 +22,15 @@ import java.util.Properties;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.modules.InternalModule;
 
 /**
  *  Specifies how to parse and return ACLs from wiki pages.
  *  @since 2.3
  */
-public interface AclManager
+public interface AclManager extends InternalModule
 {
 
     /**
@@ -36,7 +38,7 @@ public interface AclManager
      * @param engine the wiki engine
      * @param props the initialization properties
      */
-    void initialize( WikiEngine engine, Properties props );
+    void initialize( WikiEngine engine, Properties props ) throws WikiException;
 
     /**
      * A helper method for parsing textual AccessControlLists. The line is in

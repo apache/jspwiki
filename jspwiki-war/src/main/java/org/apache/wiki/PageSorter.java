@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.comparators.JavaNaturalComparator;
 
@@ -35,23 +35,20 @@ import org.apache.wiki.util.comparators.JavaNaturalComparator;
  * <b>Note</b> - this class is deliberately not null safe. Never call any of the
  * methods with a null argument!
  */
-public class PageSorter implements Comparator
+public class PageSorter extends WikiInternalModule implements Comparator
 {
-    private static Logger log = Logger.getLogger( PageSorter.class );
-
     // The name of the property that specifies the desired page name comparator
     protected static final String PROP_PAGE_NAME_COMPARATOR = "jspwiki.pageNameComparator.class";
 
-    private Comparator<String> m_comparator;
+    private Comparator<String> m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
 
     /**
      * Default constructor uses Java "natural" ordering.
      */
-    public PageSorter()
-    {
-        m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
+    public PageSorter( ) {
+    	m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
     }
-
+    
     /**
      * Construct with a particular comparator.
      * 
@@ -142,22 +139,24 @@ public class PageSorter implements Comparator
      * 
      * @param props this WikiEngine's properties.
      */
-    @SuppressWarnings( "unchecked" )
-    public void initialize( Properties props )
+    @Override
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
+    	super.initialize(engine, props);
         // Default is Java natural order
         m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
         String className = props.getProperty( PROP_PAGE_NAME_COMPARATOR );
-        if( className != null && className.length() > 0 )
+        if( className != null && className.length() > 0 ) {
             try
             {
-                m_comparator = (Comparator<String>) ClassUtil.findClass( "org.apache.wiki.util.comparators", className )
-                    .newInstance();
+                m_comparator = (Comparator<String>) 
+                		ClassUtil.findClass( "org.apache.wiki.util.comparators", className ).newInstance();
             }
             catch( Exception e )
             {
                 log.error( "Falling back to default \"natural\" comparator", e );
             }
+        }
     }
 
     /**

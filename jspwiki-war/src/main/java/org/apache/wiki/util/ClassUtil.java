@@ -37,31 +37,10 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.PageManager;
-import org.apache.wiki.ReferenceManager;
-import org.apache.wiki.VariableManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.attachment.AttachmentManager;
-import org.apache.wiki.auth.AuthenticationManager;
-import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.UserManager;
-import org.apache.wiki.auth.acl.DefaultAclManager;
-import org.apache.wiki.auth.authorize.GroupManager;
-import org.apache.wiki.content.PageRenamer;
-import org.apache.wiki.diff.DifferenceManager;
-import org.apache.wiki.filters.DefaultFilterManager;
-import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
-import org.apache.wiki.plugin.DefaultPluginManager;
-import org.apache.wiki.render.RenderingManager;
-import org.apache.wiki.rss.RSSGenerator;
-import org.apache.wiki.search.SearchManager;
-import org.apache.wiki.ui.EditorManager;
-import org.apache.wiki.ui.TemplateManager;
-import org.apache.wiki.ui.admin.DefaultAdminBeanManager;
-import org.apache.wiki.workflow.WorkflowManager;
 import org.jdom2.Element;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
@@ -96,6 +75,7 @@ public final class ClassUtil {
     static {
     	List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
 
+/*
         picoContainer.addComponent(PageManager.class);
         picoContainer.addComponent(ReferenceManager.class);
         picoContainer.addComponent(VariableManager.class);
@@ -117,19 +97,24 @@ public final class ClassUtil {
         picoContainer.addComponent(InternationalizationManager.class);
         picoContainer.addComponent(PageRenamer.class);
         picoContainer.addComponent(RSSGenerator.class);
-        picoContainer.addComponent(WikiEngine.class);
+//        picoContainer.addComponent(WikiEngine.class);
 //        picoContainer.addComponent(DummyUserDatabase.class);
 //        picoContainer.addComponent(JDBCUserDatabase.class);
 //        picoContainer.addComponent(XMLUserDatabase.class);
-
+*/
         if( nodes.size() > 0 ) {
             for( Iterator< Element > i = nodes.iterator(); i.hasNext(); ) {
                 Element f = i.next();
             
                 String key = f.getChildText("requestedClass");
                 String className = f.getChildText("mappedClass");
-                
-                c_classMappings.put( key, className );
+
+                try {
+                	picoContainer.addComponent(Class.forName(className));
+                } catch (ClassNotFoundException e) {
+                	log.fatal(e,e);
+                }
+//                c_classMappings.put( key, className );
                 
                 log.debug("Mapped class '"+key+"' to class '"+className+"'");
             }
@@ -360,10 +345,17 @@ public final class ClassUtil {
     public static Object getMappedObject( String requestedClass )
         throws WikiException
     {
-        Object[] initargs = {};
-        return getMappedObject(requestedClass, initargs );
+//    	WikiEngine engine = WikiEngine.getInstance(context,null);
+//    	Properties props = engine.getWikiProperties();
+        return getMappedObject(requestedClass, null, null );
     }
 
+    public static <T extends InternalModule> T getInternalModule( Class<T> type, WikiEngine engine, Properties props ) throws WikiException {
+    	InternalModule module = (InternalModule) getPicoContainer().getComponent(type);
+    	module.initialize(engine, props);
+    	return type.cast(module);
+    }
+    
     /**
      *  This method is used to locate and instantiate a mapped class.
      *  You may redefine anything in the resource file which is located in your classpath
@@ -383,22 +375,12 @@ public final class ClassUtil {
      *  @throws WikiException If the class cannot be found or instantiated.  The error is logged.
      *  @since 2.5.40
      */
-    public static Object getMappedObject( String requestedClass, Object... initargs )
+    public static Object getMappedObject( String requestedClass, WikiEngine engine, Properties props )
         throws WikiException
     {
     	try {
     		Object o = ClassUtil.getPicoContainer().getComponent(Class.forName(requestedClass));
-        	WikiEngine engine = null;
-        	Properties props = new Properties();
-			for (int i = 0; i < initargs.length; i++) {
-				if (initargs[i] instanceof WikiEngine) {
-					engine = (WikiEngine)initargs[i];
-				}
-				if (initargs[i] instanceof Properties) {
-					props = (Properties)initargs[i];
-				}
-			}
-			if (engine != null && o instanceof InternalModule) {
+			if (engine != null && props != null && o instanceof InternalModule) {
 				((InternalModule)o).initialize(engine, props);
             }
     		return o;

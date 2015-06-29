@@ -21,11 +21,9 @@ package org.apache.wiki.i18n;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.WikiInternalModule;
 
 
 /**
@@ -33,7 +31,7 @@ import org.apache.wiki.modules.InternalModule;
  *
  *  @since 2.6
  */
-public class InternationalizationManager implements InternalModule {
+public class InternationalizationManager extends WikiInternalModule {
 
     /** The name of the ResourceBundle which contains any and all JSPWiki core
      *  resource strings.  It's value is {@value}.
@@ -46,15 +44,6 @@ public class InternationalizationManager implements InternalModule {
     public static final String DEF_TEMPLATE = "templates.default";
     // public static final String JSPWIKI_BUNDLE = "jspwiki";
     // public static final String PLUGINS_BUNDLE = "plugins";
-
-    /**
-     *  Constructs a new InternationalizationManager.
-     *
-     *  @param engine To which engine this belongs to
-     */
-    public void initialize( WikiEngine engine, Properties props )
-    {
-    }
 
     /**
      *  Returns a String from the CORE_BUNDLE using English as the default
