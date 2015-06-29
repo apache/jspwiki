@@ -43,6 +43,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.FileUtil;
@@ -112,8 +113,7 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties properties ) 
-        throws NoRequiredPropertyException,
-               IOException
+        throws NoRequiredPropertyException, WikiException
     {
         m_engine = engine;
         m_storageDir = TextUtil.getCanonicalFilePathProperty(properties, PROP_STORAGEDIR,
@@ -139,13 +139,13 @@ public class BasicAttachmentProvider
         // Some sanity checks
         //
         if( !f.exists() ) 
-            throw new IOException("Could not find or create attachment storage directory '"+m_storageDir+"'");
+            throw new WikiException("Could not find or create attachment storage directory '"+m_storageDir+"'");
 
         if( !f.canWrite() ) 
-            throw new IOException("Cannot write to the attachment storage directory '"+m_storageDir+"'");
+            throw new WikiException("Cannot write to the attachment storage directory '"+m_storageDir+"'");
         
         if( !f.isDirectory() )
-            throw new IOException("Your attachment storage points to a file, not a directory: '"+m_storageDir+"'");
+            throw new WikiException("Your attachment storage points to a file, not a directory: '"+m_storageDir+"'");
     }
 
     /**

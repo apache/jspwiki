@@ -18,7 +18,6 @@
  */
 package org.apache.wiki;
 
-import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.api.engine.FilterManager;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -178,37 +176,40 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.
         //
-        String classname;
+        String providerClassName;
         if (useCache) {
-            classname = "org.apache.wiki.providers.CachingProvider";
+            providerClassName = "org.apache.wiki.providers.CachingProvider";
         } else {
-            classname = TextUtil.getRequiredProperty(props, PROP_PAGEPROVIDER);
+            providerClassName = TextUtil.getRequiredProperty(props, PROP_PAGEPROVIDER);
         }
 
+        m_provider = ClassUtil.getWikiProvider(WikiPageProvider.class, engine, props, "org.apache.wiki.providers", providerClassName, null, true);
+        
+        /*
         try {
-            log.debug("Page provider class: '" + classname + "'");
-            Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
+            log.debug("Page provider class: '" + providerClassName + "'");
+            Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", providerClassName);
             m_provider = (WikiPageProvider) providerclass.newInstance();
 
             log.debug("Initializing page provider class " + m_provider);
             m_provider.initialize(m_engine, props);
         } catch (ClassNotFoundException e) {
-            log.error("Unable to locate provider class '" + classname + "' (" + e.getMessage() + ")", e);
+            log.error("Unable to locate provider class '" + providerClassName + "' (" + e.getMessage() + ")", e);
             throw new WikiException("No provider class. (" + e.getMessage() + ")", e);
         } catch (InstantiationException e) {
-            log.error("Unable to create provider class '" + classname + "' (" + e.getMessage() + ")", e);
+            log.error("Unable to create provider class '" + providerClassName + "' (" + e.getMessage() + ")", e);
             throw new WikiException("Faulty provider class. (" + e.getMessage() + ")", e);
         } catch (IllegalAccessException e) {
-            log.error("Illegal access to provider class '" + classname + "' (" + e.getMessage() + ")", e);
+            log.error("Illegal access to provider class '" + providerClassName + "' (" + e.getMessage() + ")", e);
             throw new WikiException("Illegal provider class. (" + e.getMessage() + ")", e);
         } catch (NoRequiredPropertyException e) {
             log.error("Provider did not found a property it was looking for: " + e.getMessage(), e);
             throw e;  // Same exception works.
         } catch (IOException e) {
-            log.error("An I/O exception occurred while trying to create a new page provider: " + classname, e);
+            log.error("An I/O exception occurred while trying to create a new page provider: " + providerClassName, e);
             throw new WikiException("Unable to start page provider: " + e.getMessage(), e);
         }
-
+		*/
     }
 
     /**

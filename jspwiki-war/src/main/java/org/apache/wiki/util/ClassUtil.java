@@ -26,10 +26,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -38,7 +36,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.engine.PluginManager;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.modules.InternalModule;
 import org.jdom2.Element;
@@ -61,8 +61,6 @@ public final class ClassUtil {
      */
     public  static final String MAPPINGS = "ini/classmappings.xml";
     
-    private static Map<String, String> c_classMappings = new Hashtable<String, String>();
-    
     private static MutablePicoContainer picoContainer = new DefaultPicoContainer();
 
 	private static boolean classLoaderSetup = false;
@@ -75,33 +73,6 @@ public final class ClassUtil {
     static {
     	List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
 
-/*
-        picoContainer.addComponent(PageManager.class);
-        picoContainer.addComponent(ReferenceManager.class);
-        picoContainer.addComponent(VariableManager.class);
-        picoContainer.addComponent(DefaultFilterManager.class);
-        picoContainer.addComponent(DefaultPluginManager.class);
-        picoContainer.addComponent(DefaultAdminBeanManager.class);
-        picoContainer.addComponent(AttachmentManager.class);
-        picoContainer.addComponent(AuthenticationManager.class);
-        picoContainer.addComponent(AuthorizationManager.class);
-        picoContainer.addComponent(UserManager.class);
-        picoContainer.addComponent(DefaultAclManager.class);
-        picoContainer.addComponent(GroupManager.class);
-        picoContainer.addComponent(DifferenceManager.class);
-        picoContainer.addComponent(RenderingManager.class);
-        picoContainer.addComponent(SearchManager.class);
-        picoContainer.addComponent(EditorManager.class);
-        picoContainer.addComponent(TemplateManager.class);
-        picoContainer.addComponent(WorkflowManager.class);
-        picoContainer.addComponent(InternationalizationManager.class);
-        picoContainer.addComponent(PageRenamer.class);
-        picoContainer.addComponent(RSSGenerator.class);
-//        picoContainer.addComponent(WikiEngine.class);
-//        picoContainer.addComponent(DummyUserDatabase.class);
-//        picoContainer.addComponent(JDBCUserDatabase.class);
-//        picoContainer.addComponent(XMLUserDatabase.class);
-*/
         if( nodes.size() > 0 ) {
             for( Iterator< Element > i = nodes.iterator(); i.hasNext(); ) {
                 Element f = i.next();
@@ -114,7 +85,6 @@ public final class ClassUtil {
                 } catch (ClassNotFoundException e) {
                 	log.fatal(e,e);
                 }
-//                c_classMappings.put( key, className );
                 
                 log.debug("Mapped class '"+key+"' to class '"+className+"'");
             }
@@ -327,6 +297,52 @@ public final class ClassUtil {
         }
     }
     
+    public static <T extends InternalModule> T getInternalModule( Class<T> classType, WikiEngine engine, Properties props ) throws WikiException {
+    	InternalModule module = (InternalModule) getPicoContainer().getComponent(classType);
+    	module.initialize(engine, props);
+    	return classType.cast(module);
+    }
+    
+    public static <T extends WikiProvider> T getWikiProvider( Class<T> classType, WikiEngine engine, Properties props, String packageName, String providerClassName, WikiProvider defaultProvider, boolean throwException) throws WikiException {
+    	WikiProvider provider = defaultProvider;
+    	
+    	String defaultProviderClassName = defaultProvider != null ? defaultProvider.getClass().getName() : null;
+        String errorMessageLoad = "Failed loading WikiProvider "+providerClassName+", will use "+defaultProviderClassName+". ";
+        
+        try {
+            Class<?> providerClass = ClassUtil.findClass(packageName, providerClassName);
+            provider = (WikiProvider) providerClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            log.warn("no class for WikiProvider "+providerClassName+" "+e.getMessage(), e);
+            if (throwException) { throw new WikiException(errorMessageLoad+e.getMessage()); }
+        } catch (InstantiationException e) {
+        	log.warn("Faulty class WikiProvider "+providerClassName+" "+e.getMessage(), e);
+            if (throwException) { throw new WikiException(errorMessageLoad+e.getMessage()); }
+        } catch (IllegalAccessException e) {
+        	log.warn("Illegal class WikiProvider "+providerClassName+" "+e.getMessage(), e);
+            if (throwException) { throw new WikiException(errorMessageLoad+e.getMessage()); }
+        }
+
+        if (null == provider) {
+        	provider = defaultProvider;
+        } else {
+	        String errorMessageInit = "Failed initializing WikiProvider "+providerClassName+", will use "+defaultProviderClassName+". ";
+	        try {
+	        	provider.initialize(engine, props);
+	        } catch (NoRequiredPropertyException e) {
+	            log.warn(errorMessageInit+e.getMessage(), e);
+	            if (throwException) { throw new WikiException(errorMessageInit+e.getMessage()); }
+	            provider = defaultProvider;
+	        } catch (WikiException e) {
+	            log.warn(errorMessageInit+e.getMessage(), e);
+	            if (throwException) { throw new WikiException(errorMessageInit+e.getMessage()); }
+	            provider = defaultProvider;
+	        }
+        }
+        
+        return classType.cast(provider);
+    }
+
     /**
      *  This method is used to locate and instantiate a mapped class.
      *  You may redefine anything in the resource file which is located in your classpath
@@ -348,12 +364,6 @@ public final class ClassUtil {
 //    	WikiEngine engine = WikiEngine.getInstance(context,null);
 //    	Properties props = engine.getWikiProperties();
         return getMappedObject(requestedClass, null, null );
-    }
-
-    public static <T extends InternalModule> T getInternalModule( Class<T> type, WikiEngine engine, Properties props ) throws WikiException {
-    	InternalModule module = (InternalModule) getPicoContainer().getComponent(type);
-    	module.initialize(engine, props);
-    	return type.cast(module);
     }
     
     /**
@@ -387,99 +397,6 @@ public final class ClassUtil {
     	} catch (ClassNotFoundException e) {
     		throw new WikiException(e.getMessage());
     	}
-//        try
-//        {
-//            Class<?> cl = getMappedClass( requestedClass );
-//         
-//            Constructor<?>[] ctors = cl.getConstructors();
-//            
-//            //
-//            //  Try to find the proper constructor by comparing the
-//            //  initargs array classes and the constructor types.
-//            //
-//            for( int c = 0; c < ctors.length; c++ )
-//            {
-//                Class<?>[] params = ctors[c].getParameterTypes();
-//                
-//                if( params.length == initargs.length )
-//                {
-//                    for( int arg = 0; arg < initargs.length; arg++ )
-//                    {
-//                        if( params[arg].isAssignableFrom(initargs[arg].getClass()))
-//                        {
-//                            //
-//                            //  Ha, found it!  Instantiating and returning...
-//                            //
-//                            return ctors[c].newInstance(initargs);
-//                        }
-//                    }
-//                }
-//            }
-//            
-//            //
-//            //  No arguments, so we can just call a default constructor and
-//            //  ignore the arguments.
-//            //
-//            Object o = cl.newInstance();
-//            
-//            return o;
-//        }
-//        catch( InstantiationException e )
-//        {
-//            log.info( "Cannot instantiate requested class "+requestedClass, e );
-//            
-//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-//        }
-//        catch (IllegalAccessException e)
-//        {
-//            log.info( "Cannot access requested class "+requestedClass, e );
-//            
-//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            log.info( "Illegal arguments when constructing new object", e );
-//            
-//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-//        }
-//        catch (InvocationTargetException e)
-//        {
-//            log.info( "You tried to instantiate an abstract class "+requestedClass, e );
-//            
-//            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-//        }
-    }
-
-    /**
-     *  Finds a mapped class from the c_classMappings list.  If there is no
-     *  mappped class, will use the requestedClass.
-     *  
-     *  @param requestedClass
-     *  @return A Class object which you can then instantiate.
-     *  @throws WikiException
-     */
-    private static Class< ? > getMappedClass( String requestedClass )
-        throws WikiException
-    {
-        String mappedClass = c_classMappings.get( requestedClass );
-        
-        if( mappedClass == null )
-        {
-            mappedClass = requestedClass;
-        }
-        
-        try
-        {
-            Class< ? > cl = Class.forName(mappedClass);
-            
-            return cl;
-        }
-        catch (ClassNotFoundException e)
-        {
-            log.info( "Cannot find requested class", e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
     }
     
     public static PicoContainer getPicoContainer() {

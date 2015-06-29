@@ -21,7 +21,6 @@ package org.apache.wiki.providers;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -33,6 +32,7 @@ import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.FileUtil;
 
 
@@ -226,7 +226,7 @@ public class FileSystemProviderTest extends TestCase {
 
                 fail( "Wiki did not warn about wrong property." );
             }
-            catch( IOException e )
+            catch( WikiException e )
             {
                 // This is okay.
             }

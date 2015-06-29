@@ -42,7 +42,6 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.parser.MarkupParser;
@@ -91,8 +90,6 @@ public class AttachmentManager extends WikiInternalModule
     private PageSorter             m_pageSorter;
     private CacheManager m_cacheManager = CacheManager.getInstance();
     
-    private boolean initialized = false;
-
     private Cache m_dynamicAttachments;
     /** Name of the page cache. */
     public static final String CACHE_NAME = "jspwiki.dynamicAttachmentCache";
@@ -133,20 +130,17 @@ public class AttachmentManager extends WikiInternalModule
         //  If user wants to use a cache, then we'll use the CachingProvider.
         //
         boolean useCache = "true".equals(props.getProperty( PageManager.PROP_USECACHE ));
-        String classname;
-        if( useCache )
-        {
-            classname = CachingAttachmentProvider.class.getName();
-        }
-        else
-        {
-            classname = props.getProperty( PROP_PROVIDER );
+        String providerClassName;
+        if( useCache ) {
+            providerClassName = CachingAttachmentProvider.class.getName();
+        } else {
+            providerClassName = props.getProperty( PROP_PROVIDER );
         }
 
         //
         //  If no class defined, then will just simply fail.
         //
-        if( classname == null )
+        if( providerClassName == null )
         {
             log.info( "No attachment provider defined - disabling attachment support." );
             return;
@@ -156,22 +150,23 @@ public class AttachmentManager extends WikiInternalModule
         //  Create and initialize the provider.
         //
         String cacheName = engine.getApplicationName() + "." + CACHE_NAME;
+        if (m_cacheManager.cacheExists(cacheName)) {
+            m_dynamicAttachments = m_cacheManager.getCache(cacheName);
+        } else {
+            log.info("cache with name " + cacheName + " not found in ehcache.xml, creating it with defaults.");
+            m_dynamicAttachments = new Cache(cacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0);
+            m_cacheManager.addCache(m_dynamicAttachments);
+        }
+        
+        m_provider = ClassUtil.getWikiProvider(WikiAttachmentProvider.class, engine, props, "org.apache.wiki.providers", providerClassName, null, true);
+        /*
         try {
-            if (m_cacheManager.cacheExists(cacheName)) {
-                m_dynamicAttachments = m_cacheManager.getCache(cacheName);
-            } else {
-                log.info("cache with name " + cacheName + " not found in ehcache.xml, creating it with defaults.");
-                m_dynamicAttachments = new Cache(cacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0);
-                m_cacheManager.addCache(m_dynamicAttachments);
-            }
-
-            Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-
+            Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", providerClassName);
+            
             m_provider = (WikiAttachmentProvider) providerclass.newInstance();
 
             m_provider.initialize(engine, props);
             
-            initialized = true;
         } catch( ClassNotFoundException e )
         {
             log.error( "Attachment provider class not found",e);
@@ -194,13 +189,9 @@ public class AttachmentManager extends WikiInternalModule
             log.error( "Attachment provider reports IO error", e );
             m_provider = null;
         }
+        */
     }
     
-    @Override
-    public boolean isInitialized() {
-    	return initialized;
-    }
-
     /**
      *  Returns true, if attachments are enabled and running.
      *

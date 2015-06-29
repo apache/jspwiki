@@ -18,17 +18,25 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.TreeSet;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.QueryItem;
@@ -94,7 +102,8 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException, IOException {
+        throws NoRequiredPropertyException, WikiException 
+    {
         log.debug("Initing CachingProvider");
 
         // engine is used for getting the search engine
@@ -133,12 +142,18 @@ public class CachingProvider implements WikiPageProvider {
         //
         //  Find and initialize real provider.
         //
-        String classname = TextUtil.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
+        String providerClassName = TextUtil.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
+        try {
+        	m_provider = ClassUtil.getWikiProvider(WikiPageProvider.class, engine, properties, "org.apache.wiki.providers", providerClassName, null, true);
+        } catch (WikiException e) {
+            log.error(e,e);
+            throw new IllegalArgumentException("no provider class", e);
+        }
 
-
+        /*
         try
         {
-            Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
+            Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", providerClassName);
 
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
@@ -147,19 +162,20 @@ public class CachingProvider implements WikiPageProvider {
         }
         catch( ClassNotFoundException e )
         {
-            log.error("Unable to locate provider class "+classname,e);
+            log.error("Unable to locate provider class "+providerClassName,e);
             throw new IllegalArgumentException("no provider class", e);
         }
         catch( InstantiationException e )
         {
-            log.error("Unable to create provider class "+classname,e);
+            log.error("Unable to create provider class "+providerClassName,e);
             throw new IllegalArgumentException("faulty provider class", e);
         }
         catch( IllegalAccessException e )
         {
-            log.error("Illegal access to provider class "+classname,e);
+            log.error("Illegal access to provider class "+providerClassName,e);
             throw new IllegalArgumentException("illegal provider class", e);
         }
+        */
     }
 
 

@@ -39,16 +39,16 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.util.TextUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.TextUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -469,5 +469,10 @@ public class XMLGroupDatabase implements GroupDatabase
             log.error( "Could not save database: " + m_file + ". Check the file permissions" );
         }
     }
+
+	@Override
+	public String getProviderInfo() {
+		return getClass().getName();
+	}
 
 }

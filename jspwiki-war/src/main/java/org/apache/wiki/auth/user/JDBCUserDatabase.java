@@ -565,6 +565,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             {
             }
         }
+        initialized = true;
         log.info( "JDBCUserDatabase initialized from JNDI DataSource: " + jndiName );
 
         // Determine if the datasource supports commits
@@ -932,5 +933,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         return profile;
 
     }
+
+	@Override
+	public String getProviderInfo() {
+		return getClass().getName();
+	}
 
 }

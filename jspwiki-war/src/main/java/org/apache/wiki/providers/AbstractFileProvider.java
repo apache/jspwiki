@@ -46,6 +46,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.search.SearchMatcher;
 import org.apache.wiki.search.SearchResult;
@@ -122,8 +123,7 @@ public abstract class AbstractFileProvider
      *  @throws IOException In case the specified page directory is a file, not a directory.
      */
     public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException, FileNotFoundException
+        throws NoRequiredPropertyException, WikiException
     {
         log.debug("Initing FileSystemProvider");
         m_pageDirectory = TextUtil.getCanonicalFilePathProperty(properties, PROP_PAGEDIR,
@@ -135,7 +135,7 @@ public abstract class AbstractFileProvider
         {
             if( !f.mkdirs() )
             {
-                throw new IOException( "Failed to create page directory " + f.getAbsolutePath() + " , please check property "
+                throw new WikiException( "Failed to create page directory " + f.getAbsolutePath() + " , please check property "
                                        + PROP_PAGEDIR );
             }
         }
@@ -143,11 +143,11 @@ public abstract class AbstractFileProvider
         {
             if( !f.isDirectory() )
             {
-                throw new IOException( "Page directory is not a directory: " + f.getAbsolutePath() );
+                throw new WikiException( "Page directory is not a directory: " + f.getAbsolutePath() );
             }
             if( !f.canWrite() )
             {
-                throw new IOException( "Page directory is not writable: " + f.getAbsolutePath() );
+                throw new WikiException( "Page directory is not writable: " + f.getAbsolutePath() );
             }
         }
 

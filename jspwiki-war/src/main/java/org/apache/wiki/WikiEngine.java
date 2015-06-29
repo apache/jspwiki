@@ -81,6 +81,7 @@ import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.progress.ProgressManager;
+import org.apache.wiki.url.DefaultURLConstructor;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PropertyReader;
@@ -539,27 +540,24 @@ public class WikiEngine
         try
         {
             Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
-                    TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+                    TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, DefaultURLConstructor.class.getName() ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
             
-            m_pageSorter        = ClassUtil.getInternalModule(PageSorter.class, this, props );
-            m_pageManager       = ClassUtil.getInternalModule(PageManager.class, this, props );
-            m_pluginManager     = ClassUtil.getInternalModule(PluginManager.class, this, props );
-            m_differenceManager = ClassUtil.getInternalModule(DifferenceManager.class, this, props );
-            m_attachmentManager = ClassUtil.getInternalModule(AttachmentManager.class, this, props );
-            m_variableManager   = ClassUtil.getInternalModule(VariableManager.class, this, props );
-            m_filterManager     = ClassUtil.getInternalModule(FilterManager.class, this, props );
-            m_renderingManager  = ClassUtil.getInternalModule(RenderingManager.class, this, props );
-
-            m_searchManager     = ClassUtil.getInternalModule(SearchManager.class, this, props );
-
+            m_pageSorter            = ClassUtil.getInternalModule(PageSorter.class, this, props );
+            m_pageManager           = ClassUtil.getInternalModule(PageManager.class, this, props );
+            m_pluginManager         = ClassUtil.getInternalModule(PluginManager.class, this, props );
+            m_differenceManager     = ClassUtil.getInternalModule(DifferenceManager.class, this, props );
+            m_attachmentManager     = ClassUtil.getInternalModule(AttachmentManager.class, this, props );
+            m_variableManager       = ClassUtil.getInternalModule(VariableManager.class, this, props );
+            m_filterManager         = ClassUtil.getInternalModule(FilterManager.class, this, props );
+            m_renderingManager      = ClassUtil.getInternalModule(RenderingManager.class, this, props );
+            m_searchManager         = ClassUtil.getInternalModule(SearchManager.class, this, props );
             m_authenticationManager = ClassUtil.getInternalModule(AuthenticationManager.class, this, props );
             m_authorizationManager  = ClassUtil.getInternalModule(AuthorizationManager.class, this, props );
             m_userManager           = ClassUtil.getInternalModule(UserManager.class, this, props );
             m_groupManager          = ClassUtil.getInternalModule(GroupManager.class, this, props );
-
-            m_editorManager     = ClassUtil.getInternalModule(EditorManager.class, this , props );
+            m_editorManager         = ClassUtil.getInternalModule(EditorManager.class, this , props );
 
             m_progressManager   = new ProgressManager();
 
@@ -568,13 +566,13 @@ public class WikiEngine
             m_aclManager = getAclManager();
 
             // Start the Workflow manager
-            m_workflowMgr = ClassUtil.getInternalModule(WorkflowManager.class, this, props);
+            m_workflowMgr           = ClassUtil.getInternalModule(WorkflowManager.class, this, props);
 
             m_internationalizationManager = ClassUtil.getInternalModule(InternationalizationManager.class, this, props);
 
-            m_templateManager   = ClassUtil.getInternalModule(TemplateManager.class, this, props );
+            m_templateManager       = ClassUtil.getInternalModule(TemplateManager.class, this, props );
 
-            m_adminBeanManager = ClassUtil.getInternalModule(AdminBeanManager.class,this, props);
+            m_adminBeanManager      = ClassUtil.getInternalModule(AdminBeanManager.class,this, props);
 
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event listeners,
@@ -625,13 +623,13 @@ public class WikiEngine
             log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: " + e.getMessage(), e );
             throw new WikiException(e.getMessage(), e );
         }
-//        catch( Exception e )
-//        {
-//            // Final catch-all for everything
-//            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
-//            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + 
-//                                     "; please check log files for better information.", e );
-//        }
+        catch( Exception e )
+        {
+            // Final catch-all for everything
+            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
+            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + 
+                                     "; please check log files for better information.", e );
+        }
         
         //
         //  Initialize the good-to-have-but-not-fatal modules.
@@ -2317,14 +2315,19 @@ public class WikiEngine
         {
             try
             {
-                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL,
-                                                     DefaultAclManager.class.getName() );
-                m_aclManager = (AclManager)ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
-                m_aclManager.initialize( this, m_properties );
+                String providerClassName = TextUtil.getStringProperty( m_properties, PROP_ACL_MANAGER_IMPL, DefaultAclManager.class.getName() );
+                Class<AclManager> aclclass = (Class<AclManager>) ClassUtil.findClass("org.apache.wiki.auth.acl", providerClassName);
+                m_aclManager = ClassUtil.getInternalModule(aclclass, this, m_properties);
+//                m_aclManager = (AclManager)ClassUtil.getMappedObject(classname, this, m_properties); // TODO: I am not sure whether this is the right call
             }
-            catch ( WikiException we )
+            catch ( ClassNotFoundException e )
             {
-                log.fatal( "unable to instantiate class for AclManager: " + we.getMessage() );
+                log.fatal( "unable to find class for AclManager: " + e.getMessage() );
+                throw new InternalWikiException("Cannot find AclManager, please check logs.");
+            }
+            catch ( WikiException e )
+            {
+                log.fatal( "unable to instantiate class for AclManager: " + e.getMessage() );
                 throw new InternalWikiException("Cannot instantiate AclManager, please check logs.");
             }
         }

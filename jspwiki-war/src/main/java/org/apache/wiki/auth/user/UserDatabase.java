@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.Properties;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -30,7 +31,7 @@ import org.apache.wiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @since 2.3
  */
-public interface UserDatabase
+public interface UserDatabase extends WikiProvider
 {
 
     /**

@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.io.IOException;
 
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  A generic Wiki provider for all sorts of things that the Wiki can
@@ -46,7 +47,7 @@ public interface WikiProvider
      */
     void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
-               IOException;
+               WikiException;
 
     /**
      *  Return a valid HTML string for information.  May

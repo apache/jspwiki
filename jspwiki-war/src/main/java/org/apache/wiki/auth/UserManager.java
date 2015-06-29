@@ -724,6 +724,11 @@ public class UserManager extends WikiInternalModule {
         {
         }
 
+		@Override
+		public String getProviderInfo() {
+			return getClass().getName();
+		}
+
     }
 
     // workflow task inner classes....................................................

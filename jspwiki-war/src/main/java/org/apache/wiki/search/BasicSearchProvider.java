@@ -31,6 +31,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -51,7 +52,7 @@ public class BasicSearchProvider implements SearchProvider
      *  {@inheritDoc}
      */
     public void initialize(WikiEngine engine, Properties props)
-            throws NoRequiredPropertyException, IOException
+            throws NoRequiredPropertyException, WikiException
     {
         m_engine = engine;
     }

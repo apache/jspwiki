@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -84,7 +85,7 @@ public class ExternalDiffProvider implements DiffProvider
      * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
     public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException, IOException
+        throws NoRequiredPropertyException, WikiException
     {
         m_diffCommand = properties.getProperty( PROP_DIFFCOMMAND );
 

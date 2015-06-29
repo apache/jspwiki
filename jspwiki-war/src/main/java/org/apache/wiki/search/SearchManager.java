@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -50,7 +49,6 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
@@ -260,20 +258,7 @@ public class SearchManager extends BasicPageFilter implements WikiEventListener 
     {
         super.initialize(engine, properties);
 
-        loadSearchProvider(properties);
-
-        try
-        {
-            m_searchProvider.initialize(engine, properties);
-        }
-        catch (NoRequiredPropertyException e)
-        {
-            log.error( e.getMessage(), e );
-        }
-        catch (IOException e)
-        {
-            log.error( e.getMessage(), e );
-        }
+        loadSearchProvider(engine, properties);
         
         WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
                 WikiPageEvent.PAGE_DELETE_REQUEST, this);
@@ -283,7 +268,7 @@ public class SearchManager extends BasicPageFilter implements WikiEventListener 
 
     }
 
-    private void loadSearchProvider(Properties properties)
+    private void loadSearchProvider(WikiEngine engine, Properties properties)
     {
         //
         // See if we're using Lucene, and if so, ensure that its
@@ -304,13 +289,30 @@ public class SearchManager extends BasicPageFilter implements WikiEventListener 
             {
                 m_searchProvider = new BasicSearchProvider();
             }
+            try
+            {
+                m_searchProvider.initialize(engine, properties);
+            }
+            catch (NoRequiredPropertyException e)
+            {
+                log.error( e.getMessage(), e );
+            }
+            catch (WikiException e)
+            {
+                log.error( e.getMessage(), e );
+            }
             log.debug("useLucene was set, loading search provider " + m_searchProvider);
             return;
         }
 
-        String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER,
-                                                           DEFAULT_SEARCHPROVIDER );
-
+        String providerClassName = TextUtil.getStringProperty( properties, PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
+        try {
+        	m_searchProvider = ClassUtil.getWikiProvider(SearchProvider.class, engine, properties, "org.apache.wiki.search", providerClassName, new BasicSearchProvider(), false);
+        } catch (WikiException e) {
+            log.error(e,e);
+            throw new IllegalArgumentException("no provider class", e);
+        }
+        /*
         try
         {
             Class providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
@@ -334,6 +336,7 @@ public class SearchManager extends BasicPageFilter implements WikiEventListener 
             // FIXME: Make a static with the default search provider
             m_searchProvider = new BasicSearchProvider();
         }
+        */
         log.debug("Loaded search provider " + m_searchProvider);
     }
 

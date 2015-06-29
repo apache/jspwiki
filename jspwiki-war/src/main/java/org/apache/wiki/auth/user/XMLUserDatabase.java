@@ -817,4 +817,9 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             element.setAttribute( attribute, value );
         }
     }
+
+	@Override
+	public String getProviderInfo() {
+		return getClass().getName();
+	}
 }

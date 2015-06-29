@@ -20,16 +20,24 @@ package org.apache.wiki.providers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.QueryItem;
@@ -89,8 +97,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException
+        throws NoRequiredPropertyException, WikiException
     {
         log.info("Initing CachingAttachmentProvider");
 
@@ -115,11 +122,17 @@ public class CachingAttachmentProvider
         //
         //  Find and initialize real provider.
         //
-        String classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
-        
+        String providerClassName = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
+        try {
+        	m_provider = ClassUtil.getWikiProvider(WikiAttachmentProvider.class, engine, properties, "org.apache.wiki.providers", providerClassName, null, true);
+        } catch (WikiException e) {
+            log.error(e,e);
+            throw new IllegalArgumentException("no provider class", e);
+        }
+        /*
         try
-        {            
-            Class<?> providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
+        {
+            Class<?> providerclass = ClassUtil.findClass( "org.apache.wiki.providers", providerClassName);
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
@@ -128,20 +141,20 @@ public class CachingAttachmentProvider
         }
         catch( ClassNotFoundException e )
         {
-            log.error("Unable to locate provider class "+classname,e);
+            log.error("Unable to locate provider class "+providerClassName,e);
             throw new IllegalArgumentException("no provider class", e);
         }
         catch( InstantiationException e )
         {
-            log.error("Unable to create provider class "+classname,e);
+            log.error("Unable to create provider class "+providerClassName,e);
             throw new IllegalArgumentException("faulty provider class", e);
         }
         catch( IllegalAccessException e )
         {
-            log.error("Illegal access to provider class "+classname,e);
+            log.error("Illegal access to provider class "+providerClassName,e);
             throw new IllegalArgumentException("illegal provider class", e);
         }
-
+		*/
     }
 
     /**

@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.Properties;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiSecurityException;
 
@@ -29,7 +30,7 @@ import org.apache.wiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing wiki groups.
  * @since 2.4.22
  */
-public interface GroupDatabase
+public interface GroupDatabase extends WikiProvider
 {
     /**
      * No-op method that in previous versions of JSPWiki was intended to 

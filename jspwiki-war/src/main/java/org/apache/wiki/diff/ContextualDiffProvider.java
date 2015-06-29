@@ -19,7 +19,6 @@
 
 package org.apache.wiki.diff;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -29,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
@@ -114,7 +114,7 @@ public class ContextualDiffProvider implements DiffProvider {
      *      
      * {@inheritDoc}
      */
-    public void initialize(WikiEngine engine, Properties properties) throws NoRequiredPropertyException, IOException
+    public void initialize(WikiEngine engine, Properties properties) throws NoRequiredPropertyException, WikiException
     {
         String configuredLimit = properties.getProperty(PROP_UNCHANGED_CONTEXT_LIMIT, 
                                                         Integer.toString(LIMIT_MAX_VALUE));

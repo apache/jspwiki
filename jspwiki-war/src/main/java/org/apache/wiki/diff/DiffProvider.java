@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.diff;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  *  Provides an SPI for creating a diff between two page versions.
@@ -59,7 +59,7 @@ public interface DiffProvider extends WikiProvider
          *  {@inheritDoc}
          */
         public void initialize(WikiEngine engine, Properties properties) 
-            throws NoRequiredPropertyException, IOException
+            throws NoRequiredPropertyException, WikiException
         {
         }
 

@@ -41,6 +41,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.FileUtil;
 
 /**
@@ -86,8 +87,7 @@ public class VersioningFileProvider
      *  {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException
+        throws NoRequiredPropertyException, WikiException
     {
         super.initialize( engine, properties );
         // some additional sanity checks :
@@ -96,18 +96,18 @@ public class VersioningFileProvider
         {
             if (!oldpages.mkdirs())
             {
-                throw new IOException("Failed to create page version directory " + oldpages.getAbsolutePath());
+                throw new WikiException("Failed to create page version directory " + oldpages.getAbsolutePath());
             }
         }
         else
         {
             if (!oldpages.isDirectory())
             {
-                throw new IOException("Page version directory is not a directory: " + oldpages.getAbsolutePath());
+                throw new WikiException("Page version directory is not a directory: " + oldpages.getAbsolutePath());
             }
             if (!oldpages.canWrite())
             {
-                throw new IOException("Page version directory is not writable: " + oldpages.getAbsolutePath());
+                throw new WikiException("Page version directory is not writable: " + oldpages.getAbsolutePath());
             }
         }
         log.info("Using directory " + oldpages.getAbsolutePath() + " for storing old versions of pages");

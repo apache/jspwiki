@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiInternalModule;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -40,7 +41,7 @@ import org.apache.wiki.util.CryptoUtil;
  * profiles, building Principal collections and hashing passwords.
  * @since 2.3
  */
-public abstract class AbstractUserDatabase implements UserDatabase
+public abstract class AbstractUserDatabase extends WikiInternalModule implements UserDatabase
 {
 
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );

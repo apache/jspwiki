@@ -694,4 +694,9 @@ public class JDBCGroupDatabase implements GroupDatabase {
 		}
 	}
 
+	@Override
+	public String getProviderInfo() {
+		return getClass().getName();
+	}
+
 }

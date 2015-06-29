@@ -19,16 +19,15 @@
 
 package org.apache.wiki.diff;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiInternalModule;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 
 /**
@@ -54,13 +53,18 @@ public class DifferenceManager extends WikiInternalModule {
     	
     	super.initialize(engine, props);
         
-    	loadProvider(props);
-
-        initializeProvider(engine, props);
+    	
+        String providerClassName = TextUtil.getStringProperty( props, PROP_DIFF_PROVIDER, TraditionalDiffProvider.class.getName());
+        m_provider = ClassUtil.getWikiProvider(DiffProvider.class, engine, props, "org.apache.wiki.diff", providerClassName, new DiffProvider.NullDiffProvider(), false);
+    	
+//    	loadProvider(props);
+//
+//        initializeProvider(engine, props);
 
         log.info("Using difference provider: " + m_provider.getProviderInfo());
     }
 
+    /*
     private void loadProvider(Properties props) {
         String providerClassName = props.getProperty(PROP_DIFF_PROVIDER,
                 TraditionalDiffProvider.class.getName());
@@ -93,6 +97,7 @@ public class DifferenceManager extends WikiInternalModule {
             m_provider = new DiffProvider.NullDiffProvider(); //doesn't need init'd
         }
     }
+    */
 
     /**
      * Returns valid XHTML string to be used in any way you please.
