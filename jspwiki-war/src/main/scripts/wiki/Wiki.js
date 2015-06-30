@@ -316,7 +316,7 @@ var Wiki = {
     cleanPageName: function( pagename ){
 
         //\w is short for [A-Z_a-z0-9_]
-        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD()&+, =.$ ]/g, "");
+        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
 
     },
 

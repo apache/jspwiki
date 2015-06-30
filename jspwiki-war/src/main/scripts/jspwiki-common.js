@@ -363,7 +363,8 @@ var Wiki = {
 	//allow letters, digits and punctuation chars: ()&+,-=._$
 	cleanLink: function(p){
 		return p.trim().replace(/\s+/g,' ')
-				.replace(/[^0-9A-Za-z\u00C0-\u1FFF\u2800-\uFFFD()&+,-=._$ ]/g, '');
+                .replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
+
 	},
 
 	changeOrientation: function(){
@@ -499,7 +500,7 @@ var Wiki = {
 		//the Request.JSON does all encoding and decoding of the JSON automatically
 		new Request.JSON({
 			url: this.JsonURL + url,
-			method:'post', 
+			method:'post',
 			onSuccess: function(response){
 			    if(response.error){
 			        console.log(response.error);
@@ -517,7 +518,7 @@ var Wiki = {
 	    });
 	}
 	 */
-	
+
 	ajaxHtmlCall: function (url, params, responseId, loading) {
 		url = Wiki.JsonUrl + url;
 		if (!loading) {

@@ -1,5 +1,13 @@
 2015-06-30  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.10.2-svn-22
+       
+       * [JSPWIKI-894] Section editing using Haddock template appears broken.
+         Fixed.  Also fixed for the default template.
+       
+
+2015-06-30  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.2-svn-21
        
        HADDOCK Template fixes:
