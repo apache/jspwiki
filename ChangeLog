@@ -1,3 +1,14 @@
+2015-06-30  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-21
+       
+       HADDOCK Template fixes:
+
+       * JSPWIKI-892  Haddock editor when launched is always at bottom of window in Firefox
+       
+       * Fixing latest update of Icon Styles
+
+
 2015-06-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-20

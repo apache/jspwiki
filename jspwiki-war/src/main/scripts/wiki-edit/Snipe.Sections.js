@@ -225,7 +225,7 @@ Snipe.Sections = new Class({
 
         }
 
-        work.value = "";  //FIXME google chrome  43.0.2357.65 bug -- if omitted, the textarea is displayed EMPTY!! ??
+        //work.value = "";  //FIXME google chrome  43.0.2357.65 bug -- if omitted, the textarea is displayed EMPTY!! ??
         work.value = main.slice(begin, end);
         self.begin = begin;
         self.end = end;
