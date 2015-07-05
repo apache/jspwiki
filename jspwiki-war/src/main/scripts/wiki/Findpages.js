@@ -61,7 +61,7 @@ Wiki.Findpages = new Class({
         self.query = element.getParent("form").query.observe( self.search );
         self.element = element; //ul.dropdown menu
 
-        self.element.addEvent("click:relay([name=cloney])", function(){
+        self.element.addEvent("click:relay(#cloney)", function(e){
 
             this.getParent("a").href = self.toUrl(self.getValue(), true, this.checked);
 
@@ -114,12 +114,10 @@ Wiki.Findpages = new Class({
 
                 elements.push( "li.findpages", [
                     "a", { href: self.toUrl(value, true), title: "sbox.create".localize(value) }, [
-                        "span.createpage", { text: value }, [
-                            "div.btn.btn-danger.btn-xs.pull-right", [
-                               "input[type=checkbox][name=cloney]",
-                               "span", { text: "sbox.clone".localize() }
-                            ]
-                        ]
+                        "label.btn.btn-danger.btn-xs.pull-right", { for:"cloney", text: "sbox.clone".localize()}, [
+                            "input#cloney[name=cloney][type=checkbox]"
+                        ],
+                        "span.createpage", { text: value }
                     ]
                 ]);
 
@@ -131,8 +129,8 @@ Wiki.Findpages = new Class({
 
                 elements.push( "li.findpages", [
                     "a", { href: self.toUrl( item.page ) }, [
-                        "span", { text: item.page },
-                        "span.badge.pull-right", { text: item.score }
+                        "span.badge.pull-right", { text: item.score },
+                        "span", { text: item.page }
                     ]
                 ]);
             }

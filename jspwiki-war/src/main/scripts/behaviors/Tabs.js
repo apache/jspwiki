@@ -63,11 +63,11 @@ DOM structure after:  (based on Bootstrap conventions)
 (start code)
     ul.nav.nav-tabs(.nav-pills)
         li
-            a[href="#home"] FirstTab
+            a FirstTab
         li
-            a[href="#profile"] SecondTab
+            a SecondTab
         li
-            a[href="#messages"] ThirdTab
+            a ThirdTab
 
     div.tab-content
         div.tab-pane.active[id="FirstTab"] ...
@@ -94,15 +94,21 @@ var Tab = new Class({
 
         while( pane = panes[i++] ){
 
-            items.push("li", [ "a", { text: this.getName( pane ) } ]);
-
+            items.push("li", [
+                "a", {
+                    id: String.uniqueID(),
+                    text: this.getName( pane ),
+                    events: { click: this.show}
+                }
+            ]);
         }
 
         if( items[0] ){
 
             items[0] += ".active";
 
-            [this.options.nav, {events: {"click:relay(a)": this.show}}, items]
+            [this.options.nav, {}, items]
+//            [this.options.nav, {events: {"click:relay(a)": this.show}}, items]
                 .slick()
                 .inject(container, "before");
 
@@ -161,16 +167,26 @@ var Tab = new Class({
     /*
     Click-handler to toggle the visibilities of the tab panes.
     */
-    show: function(event){
+    show: function( event ){
 
         var active = "active",
             nav = this.getParent("ul"),
-            index = nav.getElements("a").indexOf(this);
+            index = nav.getElements("a").indexOf(this),
+            tabpane;
 
-        event.stop();
+
         nav.getChildren().removeClass(active)[index].addClass(active);
-        nav.getNext().getChildren().removeClass(active)[index].addClass(active);
+
+        tabpane = nav.getNext().getChildren().removeClass(active)[index].addClass( active );
+
+        if( event ){
+
+            event.stop();
+
+        }
+
 
     }
+
 
 });

@@ -198,7 +198,7 @@ Viewer.LIB.append([
 
     //add some mp3/audio player here
 
-    ["facebook.com", function(url){
+    ["facebook.com/v/", function(url){
           url = "http://www.facebook.com/v/" + url.split("v=")[1].split("&")[0];
           return {
             url: url,
@@ -237,7 +237,8 @@ Viewer.LIB.append([
         };
     }],
 
-    ["dailymotion.com", function(url){
+
+    ["dailymotion.com/video", function(url){
         return {
             src: "http://www.dailymotion.com/embed/video/" + url.split("/")[4].split("_")[0],
             //url:url,
@@ -310,6 +311,18 @@ Viewer.LIB.append([
             src: url + "embedded/",
             width: 800,
             height: 250
+        };
+    }],
+
+
+//http://codepen.io/loktar00/pen/fczsA
+//<iframe src="//codepen.io/loktar00/embed/fczsA?height=350&amp;theme-id=1&amp;default-tab=result" ></iframe>
+
+    ["http://codepen.io/[^/]/pen/", function(url){
+        return {
+            src: url.replace("/pen/","/embed/")+"?height=400",
+            width: 800,
+            height: 400
         };
     }],
 

@@ -85,15 +85,14 @@ DOM Structure:
 
       li.findpages
         a[title="Create <page>"]
+          label.btn.btn-danger.btn-xs.pull-right
+            input#cloney.pull-left[type=checkbox]  Clone this page
           span.createpage  <page-name>
-            div.btn.btn-danger.btn-xs.pull-right
-              input[type=checkbox][name=cloney]
-                span   Clone this page
 
       li.findpages
           a[href]
-            span <page>
             span.badge.pull-right <score>
+            span <page>
 
       li.divider
 
@@ -105,6 +104,12 @@ DOM Structure:
 (end)
 */
 
-.findpages  .pull-right { margin-left: 1em; }  //minimal space text and badge/buttons
-.findpages  a[href*="&clone="] .createpage { font-weight:bold; }
-.findpages [name=cloney] { margin-right:.5em; }
+.findpages {
+
+    a[href*="&clone="] .createpage { font-weight:bold; }
+
+    //some space between checkbox, .btn, .badge and text
+    .pull-right { margin-left:.5em; }
+    #cloney { margin-left:.5em;}
+
+}

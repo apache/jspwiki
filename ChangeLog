@@ -1,3 +1,16 @@
+2015-07-05  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-23
+       
+       * [JSPWIKI-895] Haddock template links contain raw URL information when printed
+         including a few tweaks on the print css
+          
+       * [JSPWIKI-518] Saving after editing a section will return you to that  section
+
+       * Improved formatting of the Quick Navigation drop-down to show the text and the 
+         search score on a single line.  (Firefox)
+
+   
 2015-06-30  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-22

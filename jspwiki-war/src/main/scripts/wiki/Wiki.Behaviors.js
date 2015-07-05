@@ -117,8 +117,8 @@ Behavior:Accordion
 >   %%accordion .. /%
 >   %%leftAccordion .. /%
 >   %%rightAccordion .. /%
->   %%pillsAccordion .. /%
 >   %%tabbedAccordion .. /%
+>   %%pillsAccordion .. /%
 */
     .add("[class^=accordion]", Accordion)
     .add("[class^=leftAccordion]", Accordion, { type: "pills", position: "pull-left" })

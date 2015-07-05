@@ -45,11 +45,18 @@ Inherit parts of Bootstrap:print.less ;
     box-shadow: none !important;
   }
 
+  .pagename {
+    font-size:@font-size-h1;
+    line-height:1;
+    margin-bottom:1em;
+  }
+
   a,
   a:visited {
     text-decoration: underline;
   }
 
+/* seems too intrusive
   a[href]:after {
     content: " (" attr(href) ")";
     font-size:85%;
@@ -62,6 +69,7 @@ Inherit parts of Bootstrap:print.less ;
   a[href^="#"]:after {
     content: "";
   }
+*/
 
   pre,
   blockquote {
@@ -182,7 +190,7 @@ a[href='#top'] {
 .page-break {
     //height:0;
     page-break-before:always;
-    //border:none;
+    border:none;
     margin:0;
 }
 
