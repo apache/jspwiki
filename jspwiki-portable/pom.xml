@@ -59,7 +59,7 @@
             <configuration>
               <target>
                 <property name="jspwiki.woas.version" value="${project.version}"/>
-                <ant antfile="${basedir}/build.xml" target="info"/>
+                <ant antfile="${basedir}/build.xml" target="woas:info"/>
                 <ant antfile="${basedir}/build.xml" target="woas:copy-woas"/>
               </target>
             </configuration>
@@ -86,7 +86,7 @@
             <configuration>
               <target>
                 <property name="jspwiki.woas.version" value="${project.version}"/>
-                <ant antfile="${basedir}/build.xml" target="info"/>
+                <ant antfile="${basedir}/build.xml" target="woas:info"/>
                 <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7-launchers"/>
               </target>
             </configuration>

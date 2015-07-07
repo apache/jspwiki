@@ -47,7 +47,7 @@
   <!-- General Targets                                                -->
   <!-- ############################################################## -->
   
-  <target name="info" description="builds the project">
+  <target name="woas:info" description="builds the project">
     <echo>jspwiki.woas.version = ${jspwiki.woas.version}</echo>
     <echo>jspwiki.woas.assembly.dir = ${jspwiki.woas.assembly.dir}</echo>
     <echo>jspwiki.woas.unpack.dir = ${jspwiki.woas.unpack.dir}</echo>
