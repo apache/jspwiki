@@ -19,7 +19,6 @@
 
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.rpc.json.*" %>
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
