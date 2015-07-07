@@ -30,10 +30,6 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-import net.sourceforge.stripes.mock.MockHttpSession;
-import net.sourceforge.stripes.mock.MockServletContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -50,6 +46,10 @@ import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
+
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpSession;
+import net.sourceforge.stripes.mock.MockServletContext;
 
 /**
  *  Simple test engine that always assumes pages are found.
@@ -234,14 +234,13 @@ public class TestEngine extends WikiEngine
 
                 if( files != null )
                 {
-                    for( int i = 0; i < files.length; i++ )
-                    {
-                        if( files[i].isDirectory() )
+                    for (File file2 : files) {
+                        if( file2.isDirectory() )
                         {
-                            deleteAll(files[i]);
+                            deleteAll(file2);
                         }
 
-                        files[i].delete();
+                        file2.delete();
                     }
                 }
             }
@@ -284,8 +283,9 @@ public class TestEngine extends WikiEngine
             // Remove the property file, too
             f = new File( files, mangleName(name)+".properties" );
 
-            if( f.exists() )
-                f.delete();
+            if( f.exists() ) {
+				f.delete();
+			}
 
             deleteAttachments( name );
             firePageEvent( WikiPageEvent.PAGE_DELETED, name );
@@ -411,10 +411,11 @@ public class TestEngine extends WikiEngine
     private static Properties cleanTestProps( Properties props )
     {
         String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
+        String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir",
-                           pageDir.replaceAll( "\\d", StringUtils.EMPTY )
-                           + System.currentTimeMillis() );
+        		           pageDir.substring( 0, pageDir.lastIndexOf( '/' ) ) +
+        		           stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis() );
         return props;
     }
 

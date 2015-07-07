@@ -92,7 +92,7 @@ public class WikiEngineTest extends TestCase
     public void testNonExistentDirectory()
         throws Exception
     {
-        String tmpdir = "." + File.separator  + "target";
+        String tmpdir = "./target";
         String dirname = "non-existent-directory";
         String newdir = tmpdir + File.separator + dirname;
 
