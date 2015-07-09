@@ -42,7 +42,7 @@ public class FormClose
     public String execute( WikiContext ctx, Map< String, String > params )
         throws PluginException
     {
-        StringBuffer tags = new StringBuffer();
+    	StringBuilder tags = new StringBuilder();
         tags.append( "</form>\n" );
         tags.append( "</div>" );
 
