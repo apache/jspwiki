@@ -19,7 +19,12 @@
 
 package org.apache.wiki.parser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.jdom2.Attribute;
@@ -540,7 +545,7 @@ public class LinkParser
          */
         public String toString()
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append( '[' );
             sb.append( m_text );
 
