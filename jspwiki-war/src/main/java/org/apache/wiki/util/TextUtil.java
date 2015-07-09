@@ -47,7 +47,7 @@ public final class TextUtil {
      *  @return the URL-encoded string
      */
     protected static String urlEncode( byte[] rs ) {
-        StringBuffer result = new StringBuffer(rs.length*2);
+    	StringBuilder result = new StringBuilder(rs.length*2);
 
         // Does the URLEncoding.  We could use the java.net one, but
         // it does not eat byte[]s.
@@ -262,7 +262,7 @@ public final class TextUtil {
         if ( src == null || dest == null ) throw new NullPointerException();
         if ( src.length() == 0 ) return orig;
 
-        StringBuffer res = new StringBuffer( orig.length() + 20 ); // Pure guesswork
+        StringBuilder res = new StringBuilder( orig.length() + 20 ); // Pure guesswork
         int start = 0;
         int end = 0;
         int last = 0;
@@ -291,7 +291,7 @@ public final class TextUtil {
     public static String replaceString( String orig, int start, int end, String text ) {
         if( orig == null ) return null;
 
-        StringBuffer buf = new StringBuffer(orig);
+        StringBuilder buf = new StringBuilder(orig);
         buf.replace( start, end, text );
         return buf.toString();
     }
@@ -307,7 +307,7 @@ public final class TextUtil {
     public static String replaceStringCaseUnsensitive( String orig, String src, String dest ) {
         if( orig == null ) return null;
 
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         int start        = 0;
         int end          = 0;
         int last         = 0;

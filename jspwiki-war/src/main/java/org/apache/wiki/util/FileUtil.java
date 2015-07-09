@@ -145,7 +145,7 @@ public final class FileUtil
                 result.append( line+"\n");
             }
 
-            StringBuffer error = new StringBuffer();
+            StringBuilder error = new StringBuilder();
             while( (line = stderr.readLine()) != null )
             {
                 error.append( line+"\n");
