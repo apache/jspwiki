@@ -446,11 +446,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
     protected void callHeadingListenerChain( Heading param )
     {
-        List list = m_headingListenerChain;
+        List< HeadingListener > list = m_headingListenerChain;
 
-        for( Iterator i = list.iterator(); i.hasNext(); )
+        for( Iterator< HeadingListener > i = list.iterator(); i.hasNext(); )
         {
-            HeadingListener h = (HeadingListener) i.next();
+            HeadingListener h = i.next();
 
             h.headingAdded( m_context, param );
         }
@@ -679,9 +679,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             link = link.toLowerCase();
 
-            for( Iterator i = m_inlineImagePatterns.iterator(); i.hasNext(); )
+            for( Iterator< Pattern >  i = m_inlineImagePatterns.iterator(); i.hasNext(); )
             {
-                if( m_inlineMatcher.matches( link, (Pattern) i.next() ) )
+                if( m_inlineMatcher.matches( link, i.next() ) )
                     return true;
             }
         }
@@ -2925,7 +2925,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         //
         //  Add the paragraph tag to the first paragraph
         //
-        List kids = rootElement.getContent();
+        List< Content > kids = rootElement.getContent();
 
         if( rootElement.getChild("p") != null )
         {
@@ -2933,13 +2933,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
             int idxOfFirstContent = 0;
             int count = 0;
 
-            for( Iterator i = kids.iterator(); i.hasNext(); count++ )
+            for( Iterator< Content > i = kids.iterator(); i.hasNext(); count++ )
             {
-                Content c = (Content) i.next();
+                Content c = i.next();
                 if( c instanceof Element )
                 {
-                    String name = ((Element)c).getName();
-                    if( isBlockLevel(name) ) break;
+                    String name = ( ( Element )c ).getName();
+                    if( isBlockLevel( name ) ) break;
                 }
 
                 if( !(c instanceof ProcessingInstruction) )
@@ -2957,9 +2957,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
             {
                 Element newel = new Element("p");
 
-                for( Iterator i = ls.iterator(); i.hasNext(); )
+                for( Iterator< Content > i = ls.iterator(); i.hasNext(); )
                 {
-                    Content c = (Content) i.next();
+                    Content c = i.next();
 
                     c.detach();
                     newel.addContent(c);
