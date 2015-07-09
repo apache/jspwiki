@@ -1,3 +1,12 @@
+2015-07-09  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.2-svn-24
+
+       * Minor improvements: 
+       ** Use of StringBuilder over StringBuffer whenever possible.
+       ** SLF4J upgraded to 1.7.12
+       ** JUnit upgraded to 4.12, Jetty upgraded to 8.1.15
+
 2015-07-05  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-23
