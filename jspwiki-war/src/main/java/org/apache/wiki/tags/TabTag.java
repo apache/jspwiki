@@ -19,6 +19,8 @@
 
 package org.apache.wiki.tags;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspTagException;
 
 import org.apache.wiki.util.TextUtil;
@@ -129,7 +131,7 @@ public class TabTag extends WikiTagBase
 
         if( !parent.isStateGenerateTabBody() ) return SKIP_BODY;
 
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
 
         sb.append( "<div id=\""+ getId() + "\"" );
 
@@ -154,11 +156,11 @@ public class TabTag extends WikiTagBase
     /**
      * {@inheritDoc}
      */
-    public int doEndTag() throws javax.servlet.jsp.JspTagException
+    public int doEndTag() throws JspTagException
     {
         TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if( parent.isStateFindDefaultTab() )
         {
@@ -199,7 +201,7 @@ public class TabTag extends WikiTagBase
         {
             pageContext.getOut().write( sb.toString() );
         }
-        catch( java.io.IOException e )
+        catch( IOException e )
         {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }
