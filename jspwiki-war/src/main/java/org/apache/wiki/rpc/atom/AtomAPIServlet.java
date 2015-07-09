@@ -150,8 +150,8 @@ public class AtomAPIServlet extends HttpServlet
 
             WikiContext context = new WikiContext( m_engine, request, entryPage );
 
-            StringBuffer text = new StringBuffer();
-            text.append( "!"+title.getBody() );
+            StringBuilder text = new StringBuilder();
+            text.append( "!" + title.getBody() );
             text.append( "\n\n" );
             text.append( content.getBody() );
 

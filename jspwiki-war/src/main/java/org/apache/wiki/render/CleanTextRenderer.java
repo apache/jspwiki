@@ -23,12 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.parser.WikiDocument;
 import org.jdom2.JDOMException;
 import org.jdom2.Text;
 import org.jdom2.xpath.XPath;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.parser.WikiDocument;
 
 /**
  *  A simple renderer that just renders all the text() nodes
@@ -61,7 +60,7 @@ public class CleanTextRenderer
     public String getString()
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
         
         try
         {
