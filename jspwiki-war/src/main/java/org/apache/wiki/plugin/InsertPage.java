@@ -79,7 +79,7 @@ public class InsertPage
     {
         WikiEngine engine = context.getEngine();
 
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
 
         String clazz        = params.get( PARAM_CLASS );
         String includedPage = params.get( PARAM_PAGENAME );

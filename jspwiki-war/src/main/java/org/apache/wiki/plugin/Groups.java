@@ -57,7 +57,7 @@ public class Groups
         Principal[] groups = groupMgr.getRoles();
         Arrays.sort( groups, COMPARATOR );
 
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         
         for ( int i = 0; i < groups.length; i++ )
         {

@@ -162,7 +162,7 @@ public class TableOfContents
             return "<a href=\"#section-TOC\" class=\"toc\">"+rb.getString("tableofcontents.title")+"</a>";
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("<div class=\"toc\">\n");
         sb.append("<div class=\"collapsebox\">\n");

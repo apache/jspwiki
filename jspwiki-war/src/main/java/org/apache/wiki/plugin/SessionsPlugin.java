@@ -64,7 +64,7 @@ public class SessionsPlugin
         if ( "users".equals( prop ) )
         {
             Principal[] principals = WikiSession.userPrincipals( engine );
-            StringBuffer s = new StringBuffer();
+            StringBuilder s = new StringBuilder();
             for ( int i = 0; i < principals.length; i++ )
             {
                 s.append(principals[i].getName() + ", ");
@@ -101,11 +101,11 @@ public class SessionsPlugin
             }
             //
             //
-            StringBuffer s = new StringBuffer();
-            Iterator entries = distinctPrincipals.entrySet().iterator();
+            StringBuilder s = new StringBuilder();
+            Iterator<Map.Entry<String, Integer>> entries = distinctPrincipals.entrySet().iterator();
             while (entries.hasNext())
             {
-                Map.Entry entry = (Map.Entry)entries.next();
+                Map.Entry<String, Integer> entry = entries.next();
                 s.append( entry.getKey().toString() + "(" + entry.getValue().toString() + "), " );
             }
             // remove the last comma and blank :
