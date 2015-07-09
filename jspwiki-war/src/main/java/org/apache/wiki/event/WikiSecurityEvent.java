@@ -24,8 +24,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import org.apache.wiki.event.WikiEvent;
-
 /**
  * <p>Event class for security events: login/logout, wiki group adds/changes, and
  * authorization decisions. When a WikiSecurityEvent is constructed, the
@@ -207,7 +205,7 @@ public final class WikiSecurityEvent extends WikiEvent
      */
     public String toString()
     {
-        StringBuffer msg = new StringBuffer();
+    	StringBuilder msg = new StringBuilder();
         msg.append( "WikiSecurityEvent." );
         msg.append(  eventName( getType() ) );
         Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115

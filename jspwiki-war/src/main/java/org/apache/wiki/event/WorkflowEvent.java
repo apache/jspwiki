@@ -80,7 +80,7 @@ public final class WorkflowEvent extends WikiEvent {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        StringBuffer msg = new StringBuffer();
+    	StringBuilder msg = new StringBuilder();
         msg.append( "WorkflowEvent." );
         msg.append( eventName( getType() ) );
         Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115

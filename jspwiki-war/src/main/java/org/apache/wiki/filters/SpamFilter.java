@@ -37,8 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import net.sf.akismet.Akismet;
-
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -70,6 +68,8 @@ import org.suigeneris.jrcs.diff.delta.ChangeDelta;
 import org.suigeneris.jrcs.diff.delta.DeleteDelta;
 import org.suigeneris.jrcs.diff.delta.Delta;
 import org.suigeneris.jrcs.diff.myers.MyersDiff;
+
+import net.sf.akismet.Akismet;
 
 
 /**
