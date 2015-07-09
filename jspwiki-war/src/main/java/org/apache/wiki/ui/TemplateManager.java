@@ -676,7 +676,7 @@ public class TemplateManager extends ModuleManager {
      */
     private static String getJSLocalizedStrings( WikiContext context )
     {
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
 
         sb.append( "var LocalizedStrings = {\n");
 

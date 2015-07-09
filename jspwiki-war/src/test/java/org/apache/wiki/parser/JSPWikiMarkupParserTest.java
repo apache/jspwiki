@@ -29,11 +29,6 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -46,6 +41,11 @@ import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.stress.Benchmark;
 import org.apache.wiki.util.TextUtil;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import net.sf.ehcache.CacheManager;
 
 public class JSPWikiMarkupParserTest extends TestCase
 {
@@ -2599,7 +2599,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String deadlySpammerText = "zzz <a href=\"http://ring1.gmum.net/frog-ringtone.html\">frogringtone</a> zzz http://ring1.gmum.net/frog-ringtone.html[URL=http://ring1.gmum.net/frog-ringtone.html]frog ringtone[/URL] frogringtone<br>";
 
-        StringBuffer death = new StringBuffer( 20000 );
+        StringBuilder death = new StringBuilder( 20000 );
 
         for( int i = 0; i < 1000; i++ )
         {

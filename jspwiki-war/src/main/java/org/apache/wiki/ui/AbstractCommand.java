@@ -145,7 +145,7 @@ public abstract class AbstractCommand implements Command
     private String removeSubstitutions(String jsp)
     {
         //return jsp.replaceAll( "\u0025[a-z|A-Z]", "" );
-        StringBuffer newjsp = new StringBuffer( jsp.length() );
+    	StringBuilder newjsp = new StringBuilder( jsp.length() );
         for( int i = 0; i < jsp.length(); i++ )
         {
             char c = jsp.charAt(i);

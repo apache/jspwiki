@@ -18,12 +18,12 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.wiki.api.exceptions.WikiException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sf.ehcache.CacheManager;
-
-import org.apache.wiki.api.exceptions.WikiException;
 
 /**
  * The ReferenceManager maintains all hyperlinks between wiki pages.
@@ -378,7 +378,7 @@ public class ReferenceManagerTest extends TestCase
      */
     public static String dumpReferenceManager( ReferenceManager rm )
     {
-        StringBuffer buf = new StringBuffer();
+    	StringBuilder buf = new StringBuilder();
         try
         {
             buf.append( "================================================================\n" );
