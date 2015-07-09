@@ -389,10 +389,10 @@ public final class CommandResolver
         }
 
         // Find special page reference?
-        for( Iterator i = m_specialPages.entrySet().iterator(); i.hasNext(); )
+        for( Iterator< Map.Entry< String, Command > > i = m_specialPages.entrySet().iterator(); i.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) i.next();
-            Command specialCommand = (Command) entry.getValue();
+            Map.Entry< String, Command > entry = i.next();
+            Command specialCommand = entry.getValue();
             if ( specialCommand.getJSP().equals( jsp ) )
             {
                 return specialCommand;

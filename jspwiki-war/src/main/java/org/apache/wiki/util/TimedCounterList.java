@@ -157,7 +157,7 @@ public class TimedCounterList<T> extends AbstractList<T>
         
         try
         {
-            for( CounterItem i : m_list )
+            for( CounterItem< T > i : m_list )
             {
                 if( i.m_obj.equals( obj ) )
                 {
