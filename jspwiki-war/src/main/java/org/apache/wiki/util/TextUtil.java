@@ -492,7 +492,7 @@ public final class TextUtil {
      *  @return Normalized data
      */
     public static String normalizePostData( String postData ) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for( int i = 0; i < postData.length(); i++ ) {
             switch( postData.charAt(i) ) {
@@ -567,11 +567,11 @@ public final class TextUtil {
      *  @since 2.1.127
      */
     public static String beautifyString( String s, String space ) {
-        StringBuffer result = new StringBuffer();
-
         if( s == null || s.length() == 0 ) {
         	return "";
         }
+
+        StringBuilder result = new StringBuilder();
 
         int cur     = s.charAt( 0 );
         int curKind = getCharKind( cur );
@@ -706,7 +706,7 @@ public final class TextUtil {
      *  @since 2.1.98.
      */
     public static String repeatString( String what, int times ) {
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
         for( int i = 0; i < times; i++ ) {
             sb.append( what );
         }
@@ -722,7 +722,7 @@ public final class TextUtil {
      *  @return the ASCII string
      */
     public static String native2Ascii( String s ) {
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
         for( int i = 0; i < s.length(); i++ ) {
             char aChar = s.charAt(i);
             if( ( aChar < 0x0020 ) || ( aChar > 0x007e ) ) {
@@ -755,7 +755,7 @@ public final class TextUtil {
      * @since 2.3.87
      */
     public static String toHexString( byte[] bytes ) {
-        StringBuffer sb = new StringBuffer( bytes.length * 2 );
+    	StringBuilder sb = new StringBuilder( bytes.length * 2 );
         for( int i = 0; i < bytes.length; i++ ) {
             sb.append( toHex( bytes[i] >> 4 ) );
             sb.append( toHex( bytes[i] ) );
