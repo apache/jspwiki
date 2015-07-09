@@ -317,7 +317,7 @@ public class Group
      */
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
         sb.append( "(Group " + getName() + ")" );
         return sb.toString();
     }

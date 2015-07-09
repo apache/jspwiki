@@ -62,7 +62,6 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
-import org.freshcookies.security.policy.PolicyException;
 
 /**
  * <p>Manages all access control and authorization; determines what authenticated
@@ -485,13 +484,12 @@ public class AuthorizationManager {
             }
             else
             {
-                StringBuffer sb = new StringBuffer( "JSPWiki was unable to initialize the " );
-                sb.append( "default security policy (WEB-INF/jspwiki.policy) file. " );
-                sb.append( "Please ensure that the jspwiki.policy file exists in the default location. " );
-                sb.append( "This file should exist regardless of the existance of a global policy file. " );
-                sb.append( "The global policy file is identified by the java.security.policy variable. " );
-                WikiSecurityException wse = new WikiSecurityException( sb.toString() );
-                log.fatal( sb.toString(), wse );
+                String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " + 
+                            "Please ensure that the jspwiki.policy file exists in the default location. " + 
+                		    "This file should exist regardless of the existance of a global policy file. " +
+                            "The global policy file is identified by the java.security.policy variable. ";
+                WikiSecurityException wse = new WikiSecurityException( sb );
+                log.fatal( sb, wse );
                 throw wse;
             }
         }
