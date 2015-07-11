@@ -44,20 +44,21 @@ Example:
 
 function Accesskey(element){
 
-    var accesskey = 'accesskey',
-        key = element.get(accesskey),
-        title = element.get('title');
+    var accesskey = "accesskey",
+        key = element.get( accesskey ).slice(0,1),
+        title = element.get( "title" );
 
-    if( key && !element.getElement('span.'+accesskey) ){
+    if( key && !element.getElement( "span." + accesskey ) ){
+
 
         element.set({
             html: element.get('html').replace(
-                RegExp( '('+key+')', 'i'),
-                "<span class='"+accesskey+"'>$1</span>"
+                RegExp( "^([^<]*)(" + key + ")", "i" ),
+                "$1<span class='" + accesskey + "'>$2</span>"
             )
         });
 
-        if(title){ element.set('title', title + ' ['+key+']'); }
+        if(title){ element.set( "title", title + " [" + key + "]" ); }
 
         //console.log("ACCESSKEY ::",key, element.get('text'), element.get('title') );
 

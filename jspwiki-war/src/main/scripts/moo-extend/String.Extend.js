@@ -118,6 +118,39 @@ String.implement({
 
     },
 
+
+    /*
+    Function: setHash
+        Set HASH without page jump
+
+	Example:
+	>	"here is a new hash".setHash();
+    */
+    setHash:function( ){
+
+        if( history.pushState ){
+
+            //history.pushState( state-object, title-ffs, "#" + hash );
+            history.pushState( null, "", "#" + this);
+
+        }
+
+        else {
+
+            var el = $( this ),
+                id = el && el.id;
+
+            el && el.removeAttribute( id );
+
+            location.hash = "#" + this ;
+
+            el && el.setAttribute("id", id);
+
+        }
+
+    },
+
+
     /*
     Function: xsubs (extended Substitute)
         Equal to substitute(), but also supports anonymous arguments.

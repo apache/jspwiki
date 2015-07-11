@@ -1,3 +1,25 @@
+2015-07-12  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-25
+       
+       * [JSPWIKI-896] Haddock template – user preferences are not saved.
+         haddock-pref.js was not properly included into the build, due to lowercase 
+         issue in wro-haddock.xml.
+         
+       * [JSPWIKI-518] Saving after editing a section will return you to that  section.
+         Fixed missing commits on wiki.js. Should work now.
+        
+       * Fixed issue with Accesskey
+       
+       * [JSPWIKI-433] Allow back button for TAB keys.
+         It is now also possible to click a link to a hidden pane of a tabbed section
+         (eg from the Table Of Contents) to automatically open that TAB pane.
+
+       * Added a "title" attribute to the pagename in the header.  In case a very long 
+         pagename is truncated (with ellipsis ...) you can still see the full 
+         pagename when you hover the mouse over the pagename.
+
+
 2015-07-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-24

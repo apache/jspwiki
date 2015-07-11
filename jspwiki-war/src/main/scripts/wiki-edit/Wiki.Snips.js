@@ -613,7 +613,7 @@ Wiki.Snips = {
             plugin: [ Dialog.Selection, {
                 caption: "Plugin",
                 body: {
-                "ALLOW permission principal ": "Page Access Rights",
+                "ALLOW permission principal ": "Page Access Rights <span class='icon-unlock-alt' />",
                 "SET name='value'":"Set a Wiki variable",
                 "$varname":"Get a Wiki variable",
                 "If name='value' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
@@ -660,10 +660,10 @@ Wiki.Snips = {
             selectInline: [Dialog.Selection, {
                 cssClass: ".dialog-horizontal",
                 body:{
-                    "__bold__":"bold",
-                    "''italic''":"italic",
-                    "{{mono}}":"mono",
-                    "[link]":"link"
+                    "__bold__":"<b>bold</b>",
+                    "''italic''":"<i>italic</i>",
+                    "{{mono}}":"<tt>mono</tt>",
+                    "[description|{link}|options]":"<span class='icon-link'/>"
                 }
             }]
         },

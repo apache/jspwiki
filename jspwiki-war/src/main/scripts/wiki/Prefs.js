@@ -33,38 +33,43 @@ Javascript routines to support JSPWiki UserPreferences
 */
 !function(wiki){
 
-    var datapref = "[data-pref]"; //data preference elements
+    var datapref = "*[data-pref]"; //data preference elements
+
+    function getValue( el ){
+        return (el.match("[type=checkbox]")  ? el.checked : el.value );
+    }
 
     function windowUnload( onbeforeunload ){
         window.onbeforeunload = onbeforeunload || function(){};
     }
 
-    wiki.once("#setCookie", function(form){
+    wiki.add("#setCookie", function(form){
 
         windowUnload( function(){
 
-            if( form.getElements( datapref ).some(function(el){
+            if( form.getElements( datapref ).some( function(el){
 
-                //a checkbox.get("value") returns "on" when checked;
-                //so getDefaultValue() should also return "on"
-                return (el.get("value") != el.getDefaultValue());
+                return ( getValue(el) != el.getDefaultValue() );
 
             }) ){ return "prefs.areyousure".localize(); }
+
         } );
 
         form.addEvent("submit", function(){
 
             this.getElements( datapref ).each( function(el){
 
-                wiki.prefs.set( el.get( datapref ), el.get("value") );
+                //console.log( el.get( "data-pref" ), el.value, el.getDefaultValue(),getValue(el) );
+                wiki.prefs.set( el.get( "data-pref" ), getValue(el) );
 
             });
+
             windowUnload();
 
         });
     })
 
-    .once("#clearCookie", function(form){
+    .add("#clearCookie", function(form){
 
         form.addEvent("submit", function(){
 

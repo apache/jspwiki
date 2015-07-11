@@ -36,8 +36,6 @@ var Textarea = new Class({
 
     Implements: [Options, Events],
 
-    //options: { onChange:function(e){} );
-
     initialize: function(el, options){
 
         var self = this,

@@ -102,7 +102,7 @@
 
   <label class="btn btn-default" for="prefSectionEditing">
     <input class="" id="prefSectionEditing" name="prefSectionEditing"  data-pref="SectionEditing"
-         type="checkbox" ${prefs.SectionEditing=='on' ? 'checked="checked"' : ''} >
+         type="checkbox" ${prefs.SectionEditing ? 'checked="checked"' : ''} >
       <fmt:message key="prefs.user.sectionediting.text"/>
   </label>
 

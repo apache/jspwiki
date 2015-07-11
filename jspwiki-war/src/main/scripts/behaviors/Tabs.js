@@ -96,9 +96,9 @@ var Tab = new Class({
 
             items.push("li", [
                 "a", {
-                    id: String.uniqueID(),
-                    text: this.getName( pane ),
-                    events: { click: this.show}
+                    //id: String.uniqueID(),
+                    text: this.getName( pane )
+                    //events: { click: this.show }
                 }
             ]);
         }
@@ -107,12 +107,13 @@ var Tab = new Class({
 
             items[0] += ".active";
 
-            [this.options.nav, {}, items]
-//            [this.options.nav, {events: {"click:relay(a)": this.show}}, items]
+            [this.options.nav, {events: {"click:relay(a)": this.show}}, items]
                 .slick()
                 .inject(container, "before");
 
-            panes.addClass("tab-pane")[0].addClass("active");
+            panes.addEvent("popstate", this.popstate )
+                 .addClass("tab-pane")[0].addClass("active");
+
             container.addClass("tab-content");
 
         }
@@ -167,26 +168,33 @@ var Tab = new Class({
     /*
     Click-handler to toggle the visibilities of the tab panes.
     */
-    show: function( event ){
+    show: function( ){
 
         var active = "active",
             nav = this.getParent("ul"),
             index = nav.getElements("a").indexOf(this),
-            tabpane;
+            panes = nav.getNext();
 
+        nav.getChildren().removeClass( active )[ index ].addClass( active );
+        panes.getChildren().removeClass( active )[ index ].addClass( active ).id.setHash();
 
-        nav.getChildren().removeClass(active)[index].addClass(active);
+    },
 
-        tabpane = nav.getNext().getChildren().removeClass(active)[index].addClass( active );
+    /*
+    Popstate handler triggered when the #hash is changed of a tabpane
+    */
+    popstate: function( ){
 
-        if( event ){
+        var active = "active",
+            panes = this.getParent(),
+            nav = panes.getPrevious(),
+            index = this.getAllPrevious().length;
 
-            event.stop();
+        //console.log("popstate event", this.id, index );
 
-        }
-
+        nav.getChildren().removeClass( active )[ index ].addClass( active );
+        panes.getChildren().removeClass( active )[ index ].addClass( active );
 
     }
-
 
 });

@@ -164,7 +164,12 @@ var Wiki = {
 
             });
 
-        window.addEvent( "domready", wiki.domready.bind(wiki) );
+
+
+        window.addEvents({
+            popstate: wiki.popstate,
+            domready: wiki.domready.bind(wiki)
+        });
 
     },
 
@@ -192,14 +197,59 @@ var Wiki = {
             wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
         }
 
-        wiki.srcollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [-1])[0] );
+        //console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
+        wiki.srcollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
 
         wiki.update();  // initialize all registered behaviors
 
-        //FIXME: -- check bootstrap router concept, or History class
-        //wiki.parseHash.periodical(500);
         wiki.autofocus();
 
+        //on page-load, also read the #hash and fire popstate events
+        wiki.popstate();
+
+
+    },
+
+    /*
+    Function: popstate
+        When pressing the back-button, the "popstate" event is fired.
+
+        Behaviors (such as Tabs or Accordions) can push the ID of their
+        visible content on the window.location hash.
+        This ID can be retrieved when the back-button is pressed.
+
+        The popstate function will fire a internal 'popstate' event
+        on the target DOM element.
+
+        When clicking a link inside a hidden content (tab, accordion), the
+        popstate event is 'bubbled' up the DOM tree.
+
+    */
+    popstate: function(){
+
+        var target = $(location.hash.slice(1)),
+            events,
+            popstate = "popstate";
+
+        console.log( popstate, location.hash, target );
+
+        //only send popstate events to targets within the main page; eg not sidebar
+        if( target && target.getParent(".page") ){
+
+            while( !target.hasClass("page") ){
+
+                events = target.retrieve("events"); //mootools specific
+
+                if( events && events[ popstate ] ){
+
+                    target.fireEvent( popstate );
+
+                }
+
+                target = target.getParent();
+
+            }
+        }
     },
 
     autofocus: function(){
@@ -279,6 +329,7 @@ var Wiki = {
 
         if( element ){
             pos = element.getPosition();
+            //console.log("SCROLL TO ", element,pos );
             window.scrollTo(pos.x, pos.y);
         }
 
@@ -318,42 +369,6 @@ var Wiki = {
         //\w is short for [A-Z_a-z0-9_]
         return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
 
-    },
-
-    /*
-    Function: parseHash
-        Periodic validation of #hash to ensure hidden screen sections are displayed.
-        (eg tabs, accordions, ...)
-    FIXME:
-        Add handling of BACK button for tabs ??
-        Use concept of ROUTER from backbone ??
-    */
-    parseHash: function(){
-
-        var h = location.hash;
-
-        if( this.url == location.href ){ return; }
-        this.url = location.href;
-        if( !h /*|| h===""*/ ){ return; }
-        h = $( h.slice(1) );
-/*
-        //if( h.isVisible() ) return;
-        //arr=this.getParents(...);  //tabs, accordion, pills, collapsible, ...
-        while( typeOf( h ) == "element" ){
-            if( h.hasClass("hidetab") ){
-                TabbedSection.click.apply($("menu-" + h.id));
-            } else if( h.hasClass("tab") ){
-                // accordion -- need to find accordion toggle object
-                h.fireEvent("onShow");
-            } else if( !h.isVisible() ){
-                //alert("not visible"+el.id);
-                //fixme need to find the correct toggler
-                el.show(); //eg collapsedBoxes: fixme
-            }
-            h = h.getParent();
-        }
-        location = location.href; // now jump to the #hash
-*/
     },
 
     /*

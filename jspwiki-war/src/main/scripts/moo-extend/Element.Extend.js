@@ -337,7 +337,10 @@ console.log(message);
 
                 if( type == "checkbox" ){   //checkbox.get-value = returns "on" on some browsers, T/F on others
 
-                    return ("input[type=checkbox]" + (self.defaultChecked?":checked":"")).slick().get("value");
+                    //console.log("pipo", self.get("value"), self.value, self.checked, self.defaultChecked);
+                    //console.log("input[type=checkbox]" + (self.defaultChecked ? ":checked" : "")).slick().get("value") );
+                    //return ("input[type=checkbox]" + (self.defaultChecked ? ":checked" : "")).slick().get("value");
+                    return self.defaultChecked;
 
                 }
 

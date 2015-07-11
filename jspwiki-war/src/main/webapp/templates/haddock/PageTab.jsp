@@ -112,9 +112,9 @@
 <wiki:NoSuchPage>
   <%-- FIXME: Should also note when a wrong version has been fetched. --%>
   <%-- FIXME: Should add .createpage class to the EditLink, to color red. Not possible with wiki:EditLink --%>
-  <div class="information" >
+  <div class="error" >
   <fmt:message key="common.nopage">
-    <fmt:param><wiki:EditLink><fmt:message key="common.createit"/></wiki:EditLink></fmt:param>
+    <fmt:param><a class="createpage" href="<wiki:EditLink format='url'/>"><fmt:message key="common.createit"/></a></fmt:param>
   </fmt:message>
   </div>
 </wiki:NoSuchPage>

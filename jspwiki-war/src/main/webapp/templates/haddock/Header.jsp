@@ -50,7 +50,7 @@
 
   </div>
 
-  <div class="pagename">
+  <div class="pagename" title="<wiki:PageName />">
     <wiki:CheckRequestContext context='view'><wiki:PageName /></wiki:CheckRequestContext>
     <wiki:CheckRequestContext context='!view'><wiki:Link><wiki:PageName/></wiki:Link></wiki:CheckRequestContext>
   </div>

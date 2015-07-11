@@ -106,7 +106,7 @@
   </group>
 
   <group name="haddock-prefs">
-    <js>/scripts/wiki/prefs.js</js>
+    <js>/scripts/wiki/Prefs.js</js>
     <!--<js>/scripts/wiki/group.js</js>-->
   </group>
 
