@@ -1,0 +1,3 @@
+Это – все изменения, произведенные на этих страницах. Намного более короткий список доступен в [RecentChanges].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin}]

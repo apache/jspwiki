@@ -1,0 +1,11 @@
+* [Главная страница|Main]
+* [О вики|About]
+* [Новости|News]
+* [Недавние Изменения|Recent Changes]
+* [WikiEtiquette|WikiEtiquette]
+
+* [Поиск страниц|Search]
+* [Неиспользуемые страницы|UnusedPages]
+* [Неопределенные страницы|UndefinedPages]
+* [Индекс страниц|Page Index]
+* [Системная Информация|SystemInfo]

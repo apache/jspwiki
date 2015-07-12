@@ -1,0 +1,5 @@
+Это – алфавитный список всех страниц в этой Wiki.
+
+----
+
+[{INSERT IndexPlugin exclude='SandBox-*'}]

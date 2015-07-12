@@ -1,0 +1,5 @@
+Вот страницы, которые еще не были созданы. Почему бы Вам не создать некоторые?
+
+[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
+
+(Назад к [Main]).

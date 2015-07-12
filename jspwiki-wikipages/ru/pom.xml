@@ -20,44 +20,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <groupId>org.apache.jspwiki</groupId>
-    <artifactId>jspwiki-builder</artifactId>
+    <groupId>org.apache.jspwiki.wikipages</groupId>
+    <artifactId>jspwiki-wikipages-builder</artifactId>
     <version>2.10.2-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jspwiki-wikipages-builder</artifactId>
-  <groupId>org.apache.jspwiki.wikipages</groupId>
-  <name>Apache JSPWiki initial wiki pages builder</name>
-  <packaging>pom</packaging>
+  <artifactId>jspwiki-wikipages-ru</artifactId>
+  <name>Apache JSPWiki initial wiki pages (ru)</name>
 
-  <modules>
-    <module>de</module>
-    <module>en</module>
-    <module>es</module>
-    <module>fi</module>
-    <module>fr</module>
-    <module>it</module>
-    <module>nl</module>
-    <module>pt_BR</module>
-    <module>ru</module>
-    <module>zh_CN</module>
-  </modules>
-  
-  <build>
-    <pluginManagement>
-	  <plugins>
-	    <plugin><!-- exclude bundled wikipages from RAT analysis -->
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.11</version>
-          <configuration>
-            <excludes>
-              <exclude>**/src/main/resources/*.txt</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-	  </plugins>
-	</pluginManagement>
-  </build>
 </project>
