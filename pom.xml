@@ -511,14 +511,16 @@
             <excludes>
               <exclude>mvn_cheat-sheet.md</exclude> <!-- handy list of maven commands; will be moved to site once we've switched to Maven -->
               <exclude>.svnignore</exclude>          <!-- svn exclusions -->
-              <exclude>**/src/main/config/doc/LICENSE.*</exclude>    <!-- 3rd party License files -->
-              <exclude>**/src/main/config/wikipages/**</exclude>     <!-- Default wikipages -->
-              <exclude>**/src/main/config/dev/OldChangeLog</exclude> <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
-              <exclude>**/src/main/scripts/posteditor.js</exclude>   <!-- minified file -->
-              <exclude>**/src/main/webapp/scripts/*.js</exclude>     <!-- minified files -->
-              <exclude>**/src/main/scripts/lib/*.js</exclude>        <!-- 3rd party js files -->
-              <exclude>**/src/test/resources/TextFormattingRules.txt</exclude> <!-- test input data -->
-              <exclude>**/src/test/resources/test-repo/*.txt</exclude> <!-- web tests input data -->
+              <exclude>**/src/main/config/doc/LICENSE.*</exclude>               <!-- 3rd party License files -->
+              <exclude>**/src/main/config/wikipages/**</exclude>                <!-- Default wikipages -->
+              <exclude>**/src/main/config/dev/OldChangeLog</exclude>            <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
+              <exclude>**/src/main/scripts/posteditor.js</exclude>              <!-- minified file -->
+              <exclude>**/src/main/scripts/moo-extend/Request.File.js</exclude> <!-- MIT licensed -->
+              <exclude>**/src/main/styles/haddock/fontjspwiki/**</exclude>      <!-- MIT/OFL licensed -->
+              <exclude>**/src/main/webapp/scripts/*.js</exclude>                <!-- minified files -->
+              <exclude>**/src/main/scripts/lib/*.js</exclude>                   <!-- 3rd party js files -->
+              <exclude>**/src/test/resources/TextFormattingRules.txt</exclude>  <!-- test input data -->
+              <exclude>**/src/test/resources/test-repo/*.txt</exclude>          <!-- web tests input data -->
               <exclude>**/src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude> <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
             </excludes>
           </configuration>
