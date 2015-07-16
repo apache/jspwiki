@@ -76,23 +76,26 @@
 
 <%-- <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 
-<form action="<wiki:CheckRequestContext
+<form method="post" accept-charset="<wiki:ContentEncoding/>"
+      action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
        class="editform"
           id="editform"
-      method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
 
-  <div class="snipe">
-
-
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
-  <div class="form-inline form-group">
   <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
   <input type="hidden" name="action" value="save" />
   <%=SpamFilter.insertInputFields( pageContext )%>
-  <input type="hidden" name="<%=SpamFilter.getHashFieldName(request)%>" value="<c:out value='${lastchange}' />" />
+  <input type="hidden" name="<%=SpamFilter.getHashFieldName(request)%>" value="${lastchange}" />
+  <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
+       Normal user should never see this field, nor type anything in it. --%>
+  <input class="hidden" type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" />
+
+
+  <div class="snipe">
+  <div class="form-inline form-group">
 
   <span class="cage">
     <input class="btn btn-primary" type="submit" name="ok" accesskey="s"
@@ -223,10 +226,6 @@
   <input class="btn btn-danger pull-right" type="submit" name="cancel" accesskey="q"
          value="<fmt:message key='editor.plain.cancel.submit'/>"
          title="<fmt:message key='editor.plain.cancel.title'/>" />
-
-  <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
-       Normal user should never see this field, nor type anything in it. --%>
-  <input class="hidden" type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" />
 
   <%--TODO: allow page rename as part of an edit session
     <wiki:Permission permission="rename">

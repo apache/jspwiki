@@ -46,7 +46,7 @@
 
 <body class="context-<wiki:Variable var='requestcontext' default='' />">
 
-<div class="container${prefs.Layout=='fluid' ? '-fluid' : ''} ${prefs.Orientation}">
+<div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation}">
 
   <wiki:Include page="Header.jsp" />
   <wiki:Include page="Nav.jsp" />

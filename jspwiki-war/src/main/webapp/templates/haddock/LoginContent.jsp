@@ -53,8 +53,8 @@
 
 <div class="accordion center form-col-50">
 
+<h3><fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
-<h4><fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h4>
 <form action="<%=postURL%>"
           id="login"
        class=""
@@ -62,10 +62,9 @@
 
     <%--<div class="help-block"><fmt:message key="login.help"></fmt:message></div>--%>
 
-    <div class="form-group">
-        <wiki:Messages div="error" topic="login"
-                    prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
-    </div>
+    <wiki:Messages div="error from-group" topic="login"
+                prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+
     <div class="form-group">
       <%--<label class="control-label form-col-20" for="j_username"><fmt:message key="login.login"/></label>--%>
       <input autofocus="autofocus" class="form-control xform-col-50" type="text" size="24" value="<wiki:Variable var='uid' default='' />"
@@ -94,14 +93,14 @@
 
 
 <%-- Lost pasword functionality --%>
-<h4><%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%></h4>
+<h3><%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%></h3>
 
 <form action="<wiki:Link jsp='LostPassword.jsp' format='url'><wiki:Param name='tab' value='lostpassword'/></wiki:Link>"
           id="lostpw"
        class=""
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
-  <%--<h4><fmt:message key="login.lostpw.heading" /></h4>--%>
+  <%--<h3><fmt:message key="login.lostpw.heading" /></h3>--%>
 
   <c:choose>
   <c:when test="${passwordreset == 'done' }">
@@ -161,11 +160,13 @@
 </wiki:UserCheck>
 
 <%-- Register new user profile --%>
+
 <wiki:Permission permission='editProfile'>
-<h4><%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%></h4>
+<h3><%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%></h3>
   <wiki:Include page='ProfileTab.jsp'/>
 </wiki:Permission>
 
 </div>
+
 </div>
 

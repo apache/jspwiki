@@ -102,10 +102,6 @@
   }
 
 %>
-
-<h3><fmt:message key="group.tab" /></h3>
-
-
 <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>'/>
 
 <div class="form-group">

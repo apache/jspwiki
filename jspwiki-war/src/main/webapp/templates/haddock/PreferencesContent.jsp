@@ -26,33 +26,28 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext context = WikiContext.findContext( pageContext );
-  TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/haddock-prefs.js" );
-  //TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts-dev/src/main/scripts/wiki/Prefs.js" );
+  TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
+          context.getURL( WikiContext.NONE, "scripts/haddock-prefs.js" ) );
 %>
-
 <div class="page-content">
 <div class="rightAccordion">
 
+  <h3><fmt:message key="prefs.tab.prefs" /></h3>
   <wiki:Include page="PreferencesTab.jsp" />
 
-  <wiki:UserCheck status="authenticated">
+  <%-- <wiki:UserCheck status="authenticated"> --%>
   <wiki:Permission permission="editProfile">
-     <wiki:Include page="ProfileTab.jsp" />
-  <%--
-  <li><a>
-  <%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.profile")%>
-  </a></li>
-  --%>
+  <%-- <wiki:UserProfile property="exists"> --%>
+    <h3><fmt:message key="prefs.tab.profile"/></h3>
+    <wiki:Include page="ProfileTab.jsp" />
+    <%-- <%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.profile")%> --%>
+  <%-- </wiki:UserProfile> --%>
   </wiki:Permission>
-  </wiki:UserCheck>
+  <%-- </wiki:UserCheck> --%>
 
   <wiki:Permission permission="createGroups"> <%-- FIXME check right permissions --%>
+    <h3><fmt:message key="group.tab" /></h3>
     <wiki:Include page="GroupTab.jsp" />
-  <%--
-  <li><a>
-  <%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>
-  </a></li>
-     --%>
   </wiki:Permission>
 
 </div>

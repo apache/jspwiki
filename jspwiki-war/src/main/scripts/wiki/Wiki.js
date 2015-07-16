@@ -27,20 +27,14 @@
 /*
 Script: wiki.js
     Javascript routines to support JSPWiki, a JSP-based WikiWiki clone.
-License:
-    http://www.apache.org/licenses/LICENSE-2.0
-Since:
-    v.2.10.0
+
 Dependencies:
-    Based on http://mootools.net/ v1.4.5
+    Based on http://mootools.net/
     * mootools-core.js : v1.5.1 excluding the Compatibility module
     * mootools-more.js : v1.5.1 including...
         Class.Binds, Hash, Element.Shortcuts, Fx.Elements, Fx.Accordion, Drag,
         Drag.Move, Hash.Cookie, Swiff
-Core Wiki Routines:
-    *    [Wiki] object (page parms, UserPrefs and setting focus)
-    *    [WikiSlimbox]
-    *    [SearchBox]: remember 10 most recent search topics
+
 Depends on :
     moo-extend/Behaviour.js
     moo-extend/Element.Extend.js
@@ -57,6 +51,7 @@ Depends on :
     wiki/Search.js
     wiki/Prefs.js
 */
+
 //"use strict";
 
 /*
@@ -68,22 +63,19 @@ var Wiki = {
     initialize: function(){
 
         var wiki = this,
-            behavior = new Behavior(),
-            m,
-            implement = function(object, methods){
+            behavior = new Behavior();
 
-                while( m = methods.pop() ){
-                    wiki[m] = object[m].bind(object);
-                }
+        wiki.add = behavior.add.bind(behavior);
+        wiki.once = behavior.once.bind(behavior);
+        wiki.update = behavior.update.bind(behavior);
 
-            };
 
-        implement(behavior, ["add", "once", "update"]);
-
+        // add core jspwiki behaviors; needed to support the default template jsp's
         wiki.add( "[accesskey]", Accesskey )
 
             //.add("input[placeholder]", function(element){ element.placeholderX(); })
 
+            //toggle effect:  toggle .active class on this element when clicking toggle element
             //.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
             .add( "[data-toggle]", function(element){
                 element.onToggle( element.get("data-toggle") );
@@ -91,31 +83,34 @@ var Wiki = {
 
             //generate modal confirmation boxes, eg prompting to execute
             //unrecoverable actions such as deleting a page or attachment
+            //.add("[data-toggle]", "onModal", {attr:"data-modal"})
             .add( "[data-modal]", function(element){
                 element.onModal( element.get("data-modal") );
             })
 
-            //add hover effects: show/hide this element when hovering over its parent element
+            //hover effects: show/hide this element when hovering over its parent element
+            //.add("[data-toggle]", "onHover", {attr:"data-hover-parent"})
             .add( "[data-hover-parent]", function(element){
                 element.onHover( element.get("data-hover-parent") );
             })
 
             //make navigation bar sticky (simulate position:sticky; )
+            //.add("[data-toggle]", "onSticky" )
             .add( ".sticky", function( element ){
                 element.onSticky();
             })
 
-            // Highlight previous search-query (in cookie) or referrer page's search query
+            //highlight previous search query in cookie or referrer page search query
             .add( ".page-content", function(element){
 
-                var previousQuery = "PrevQuery",
-                    prefs = wiki.prefs;
+                var previousQuery = "PrevQuery";
 
-                HighlightQuery( element, prefs.get(previousQuery) );
-                prefs.erase(previousQuery);
+                HighlightQuery( element, wiki.prefs.get(previousQuery) );
+                wiki.prefs.erase(previousQuery);
 
             })
 
+            //activate quick navigation searchbox
             .add( ".searchbox .dropdown-menu", function(element){
 
                 var recentSearch = "RecentSearch", prefs = wiki.prefs;
@@ -139,21 +134,22 @@ var Wiki = {
                         return /view|preview|info|attach/.test( wiki.Context );
                     }
                 });
-
             })
 
+            //activate ajax search routines on Search.jsp
             .add( "#searchform2", function( form ){
 
                 wiki.search = new wiki.Search( form, {
+
                     xhrURL: wiki.XHRSearch,
                     onComplete: function(){
                         //console.log(form.query.get("value"));
                         wiki.prefs.set("PrevQuery", form.query.get("value"));
                     }
                 });
-
             })
 
+            //activate attachment upload routines
             .add( "#files", Form.File, {
 
                 //TODO: jspwiki v.2.10.x seems now to only support 1 upload-file at a time
@@ -161,9 +157,7 @@ var Wiki = {
                 rpc: function(progressid, callback){
                     wiki.jsonrpc("/progressTracker", [progressid], callback);
                 }
-
             });
-
 
 
         window.addEvents({
@@ -180,13 +174,15 @@ var Wiki = {
         - initialize the section Links
         - when the "referrer" url (previous page) contains a "section=" parameter,
           scroll the wiki page to the right section
-        - (FIXME) invoke periodical url hash parser
     */
     domready: function(){
 
         var wiki = this;
 
+        wiki.dropdowns();
+
         wiki.meta();
+
         wiki.prefs = new Hash.Cookie("JSPWikiUserPrefs", {
             path: wiki.BasePath,
             duration: 20
@@ -194,34 +190,36 @@ var Wiki = {
 
         //wiki.url = null;  //CHECK:  why this is needed?
         if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
+
             wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
+
         }
 
         //console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
+        //FFS : refactor -- why not use the standard #section-ID funtionalities
         wiki.srcollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
 
-        wiki.update();  // initialize all registered behaviors
-
-        wiki.autofocus();
+        // initialize all registered behaviors
+        wiki.update();
 
         //on page-load, also read the #hash and fire popstate events
         wiki.popstate();
 
+        wiki.autofocus();
 
     },
 
     /*
     Function: popstate
         When pressing the back-button, the "popstate" event is fired.
+        This popstate function will fire a internal 'popstate' event
+        on the target DOM element.
 
         Behaviors (such as Tabs or Accordions) can push the ID of their
         visible content on the window.location hash.
         This ID can be retrieved when the back-button is pressed.
 
-        The popstate function will fire a internal 'popstate' event
-        on the target DOM element.
-
-        When clicking a link inside a hidden content (tab, accordion), the
+        When clicking a link referring to hidden content (tab, accordion), the
         popstate event is 'bubbled' up the DOM tree.
 
     */
@@ -231,7 +229,7 @@ var Wiki = {
             events,
             popstate = "popstate";
 
-        console.log( popstate, location.hash, target );
+        //console.log( popstate, location.hash, target );
 
         //only send popstate events to targets within the main page; eg not sidebar
         if( target && target.getParent(".page") ){
@@ -310,6 +308,58 @@ var Wiki = {
     },
 
     /*
+    Function: dropdowns
+        Adapt dropdown extensions suchs as moremenu,  logomenu, ...
+        to fit to the bootstrap .dropdown-menu class structure
+    */
+    //fixthosebootstrapdropdownmenus
+    //ftbddm
+    dropdowns: function(){
+
+        $$( "ul.dropdown-menu > li > ul" ).each( function(ul){
+
+            var li, parentLi = ul.getParent();
+
+            while( li = ul.getFirst("li") ){
+
+                if( li.innerHTML.trim() == "----" ){
+
+                    li.addClass( "divider" );
+
+                } else if( !li.getFirst() || !li.getFirst("a") ){
+
+                    li.addClass( "dropdown-header" );
+
+                }
+                li.inject(parentLi, "before");
+
+            }
+            ul.dispose();
+
+        });
+
+        /* (deprecated) "pre-HADDOCK" moremenu style
+              Consists of a list of links, with \\ delimitters
+              Each <p> becomes a set of li, one for each link
+              The block is terminated with a divider, if more <p's> are coming
+        */
+        $$( "ul.dropdown-menu > li.more-menu > p" ).each( function(element){
+
+            var parentLi = element.getParent();
+
+            element.getElements('a').each( function(link){
+                ['li',[link]].slick().inject(parentLi, "before");
+            });
+            if( element.getNext('p *,hr') ){
+                'li.divider'.slick().inject(parentLi, "before") ;
+            }
+            element.dispose();
+
+        });
+
+    },
+
+    /*
     Function: getSections
         Returns the list of all section headers, excluding the header of the Table Of Contents.
     */
@@ -375,6 +425,7 @@ var Wiki = {
     Function: addEditLinks
         Add to each Section title (h2/h3/h4) a quick edit link.
         FFS: should better move server side
+        FFS: add section #hash to automatically go back to the section being edited
     */
     addEditLinks: function( url ){
 
@@ -384,7 +435,7 @@ var Wiki = {
 
         this.getSections().each( function(element, index){
 
-            element.grab("a.edit-section".slick({ html: description, href: url+index }));
+            element.grab("a.editsection".slick({ html: description, href: url + index }));
 
         });
 

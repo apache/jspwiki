@@ -44,6 +44,8 @@ wiki.add("#editform", function( element ){
 
     onbeforeunload( );
 
+    if(!textarea) return;
+
     snipe = new Snipe( textarea, {
 
         container: editform,
@@ -195,7 +197,8 @@ wiki.add("#editform", function( element ){
         var text = snipe.toElement().get("value"),
             loading = "loading";
 
-    console.log("**** change event");
+        console.log("**** change event", new Date().getSeconds(), previewcache, text.length );
+
         if( !(getFormElement("[data-cmd=livepreview]") || {}).checked ){
 
             //cleanup the preview area

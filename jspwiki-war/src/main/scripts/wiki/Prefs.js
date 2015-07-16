@@ -31,52 +31,58 @@ Javascript routines to support JSPWiki UserPreferences
     *  prefLanguage:"Language",
     *  prefSectionEditing:"SectionEditing" =>checkbox "on"
 */
-!function(wiki){
+!function( wiki ){
 
-    var datapref = "*[data-pref]"; //data preference elements
+    var datapref = "*[data-pref]"; //data preference form elements
 
     function getValue( el ){
-        return (el.match("[type=checkbox]")  ? el.checked : el.value );
+        return ( el.match( "[type=checkbox]" ) ? el.checked : el.value );
     }
 
     function windowUnload( onbeforeunload ){
         window.onbeforeunload = onbeforeunload || function(){};
     }
 
-    wiki.add("#setCookie", function(form){
+    wiki.add("#preferences", function( form ){
 
+        //when leaving this pages check for changed preferences. If so, ask first.
         windowUnload( function(){
 
             if( form.getElements( datapref ).some( function(el){
 
+                //if(getValue(el) != el.getDefaultValue()){ console.log(getValue(el) + " " + el.get('data-pref'));}
                 return ( getValue(el) != el.getDefaultValue() );
 
             }) ){ return "prefs.areyousure".localize(); }
 
-        } );
+        });
 
-        form.addEvent("submit", function(){
+        //save & clear button handlers
+        //form.getElements("[name=action]").addEvent( function(event){..});
+        form.action[0].onclick = form.action[1].onclick = function(event){
 
-            this.getElements( datapref ).each( function(el){
+            switch( event.target.value ){
 
-                //console.log( el.get( "data-pref" ), el.value, el.getDefaultValue(),getValue(el) );
-                wiki.prefs.set( el.get( "data-pref" ), getValue(el) );
+                case "setAssertedName" :
 
-            });
+                    form.getElements( datapref ).each( function(el){
 
+                        wiki.prefs.set( el.get( "data-pref" ), getValue(el) );
+
+                    });
+                    break;
+
+                default :  //"clearAssertedName"
+
+                    //FFS: no need for an AreYouSure dialog ??
+                    wiki.prefs.empty();
+
+            };
+
+            //on normal submit, leave the page without asking confirmation
             windowUnload();
 
-        });
-    })
-
-    .add("#clearCookie", function(form){
-
-        form.addEvent("submit", function(){
-
-            windowUnload();
-            wiki.erase();
-
-        });
+        };
 
     });
 

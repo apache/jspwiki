@@ -588,13 +588,13 @@ DOM Structure:
 
 (end)
 */
-    .once("*[class^=tip]", function(tips){
+    .once("span[class^=tip],div[class^=tip]", function(tips){
 
         var caption, more = "tip.default.title".localize();
 
         tips = tips.map( function(tip){
 
-            caption = (tip.className.split("-")[1]||more).deCamelize();
+            caption = (tip.className.split("-")[1] || more).deCamelize();
             return "a.tip-link".slick({ text: caption }).wraps(tip);
 
         });

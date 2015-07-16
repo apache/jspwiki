@@ -36,12 +36,12 @@ DOM structure:
 (start code)
     h2[id="section-..."] Header-Title
         a.hashlink  #
-        a.edit-section[href="...&section=0"] [Edit]
+        a.editsection[href="...&section=0"] [Edit]
 (end)
 */
 
 .hashlink { margin-left: 1em; }
-.edit-section, .hashlink {
+.editsection, .hashlink {
 
     .btn; .btn-default; .btn-xs;
     margin-right: .25em;
@@ -51,9 +51,9 @@ DOM structure:
 }
 h2,h3,h4 {
 
-    .edit-section, .hashlink { .opacity(0); }
+    .editsection, .hashlink { .opacity(0); }
     &:hover {
-        .edit-section, .hashlink { .opacity(.5); }
+        .editsection, .hashlink { .opacity(.5); }
     }
 
 }
@@ -66,7 +66,7 @@ b, i {
     color:inherit;
 }
 
-//used by HighlightQuery, TableX.Filter, ...
+//used by Search.jsp, HighlightQuery, TableX.Filter, ...
 mark,
 .highlight {
     background-color: @highlight !important;
@@ -223,6 +223,8 @@ a.interwiki[href$="skin=reader"]:hover {
 a.interwiki[href$="skin=raw"]:hover {
     border-bottom: 1px dotted @link-hover-color;
 }
+
+a.reader-view > [class^="icon-"] { color:@link-color; }
 
 
 /*

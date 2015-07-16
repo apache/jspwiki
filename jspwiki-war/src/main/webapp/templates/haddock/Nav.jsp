@@ -173,9 +173,7 @@
 
   <%-- more menu --%>
   <li id="more">
-    <wiki:Link page="MoreMenu" >
-      <fmt:message key="actions.more"/><span class="caret"></span>
-    </wiki:Link>
+    <a href="#"><fmt:message key="actions.more"/><span class="caret"></span></a>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
 
       <wiki:PageExists>
@@ -202,18 +200,19 @@
           <%--FIXME: wiki:Link doesnt support class=".." yet ; should be changed to className=".." --%>
           <a class="reader-view"
              href="<wiki:Link format='url'><wiki:Param name='skin' value='reader'/></wiki:Link>"><fmt:message key='actions.showreaderview' />
+             <span class="icon-leanpub" />
           </a>
           </wiki:CheckVersion>
           <wiki:CheckVersion mode="notlatest">
           <a class="reader-view"
              href="<wiki:Link format='url' version='${param.version}'><wiki:Param name='skin' value='reader'/></wiki:Link>"><fmt:message key='actions.showreaderview' />
+             <span class="icon-leanpub" />
           </a>
           </wiki:CheckVersion>
         </li>
 
       </wiki:CheckRequestContext>
       </wiki:PageExists>
-
 
 
       <%-- ADD COMMENT --%>
@@ -256,7 +255,7 @@
       <wiki:CheckRequestContext context='!creategroup' >
       <wiki:Permission permission="createGroups">
         <li>
-          <wiki:Link jsp="NewGroup.jsp" title="<fmt:message key='actions.creategroup.title' />">
+          <wiki:Link jsp="NewGroup.jsp" title="<fmt:message key='actions.creategroup.title'/>" >
             <fmt:message key='actions.creategroup' />
           </wiki:Link>
         </li>
@@ -266,9 +265,15 @@
       <%-- divider --%>
       <wiki:PageExists page="MoreMenu">
 
-        <wiki:CheckRequestContext context='view|info|diff|upload|prefs|workflow|createGroup'>
-        <li class="divider "></li>
+        <wiki:CheckRequestContext context='view|info|diff|upload|workflow|createGroup'>
+          <li class="divider "></li>
         </wiki:CheckRequestContext>
+        <wiki:CheckRequestContext context='prefs|edit'>
+          <wiki:UserCheck status="authenticated">
+            <li class="divider "></li>
+          </wiki:UserCheck>
+        </wiki:CheckRequestContext>
+
 
       <li class="more-menu"><wiki:InsertPage page="MoreMenu" /></li>
       </wiki:PageExists>

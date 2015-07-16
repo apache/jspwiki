@@ -32,12 +32,12 @@ span.cage.pull-right.user-<loginstatus>
 
   ul.dropdown-menu.pull-right[data-hover-parent=".cage"]
 
-    li.dropdown-header
+    li
       span.icon-user
       label.username  User greeting
-
+    li.divider
     li.dropdown-header
-      div.btn-group.btn-group-justified
+      div.btn-group-vertical.btn-block
         a.login  Login | Logout
         a.pref  User Preferences
 
@@ -46,9 +46,10 @@ span.cage.pull-right.user-<loginstatus>
 
 .userbox {
 
-    &:hover > .btn { color: inherit; }
-
-	li { font-family: @wiki-logo-font-family; }
+    //re-apply default <a.btn> style inside a dropdown-menu.
+    .btn-primary {
+        .btn-primary;
+    }
 
 }
 

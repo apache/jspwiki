@@ -1,3 +1,28 @@
+2015-07-16  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-27
+
+       More Haddock Template tweaks:
+       
+       * Removed annoying scroll-bars from the dropdown menu's which appeared in some browsers
+
+       * Improved rendering of inserted dropdown's like the MoreMenu and HomeMenu, 
+         to make them better fit with bootstrap dropdown menu's.
+
+       * Few fixes of the layout of the UserPreferences menu, and some refactoring
+         of the UserPreferences.jsp and the Login.jsp. 
+       
+       * Fixed an editor bug causing the Live Preview to slow down after some time.
+
+       WYSIWYG editor in JSPWiki
+
+       * Refreshed the WYSIWIG editor with the latest stable version of the 
+         CKeditor v4.5.1. (replacement of FCK) Standard version, with BootstrapCK4 skin.
+         The update was done for both for the default and the Haddock template.
+         FFS: server side translation from wiki-markup to HTML needs more work. 
+         ( WysiwygEditingRenderer.getString() often crashes )
+         
+       
 2015-07-13  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-26
