@@ -257,6 +257,12 @@ Wiki.add("[name=htmlPageText]", function( element){
       //allowedContent:"div(tabs)",
       //allowedContent:" ... ",
       disallowedContent:"h1;h5;h6;blockquote",
+      /*
+      protectedSouce:[
+        /<a class="hashlink"[^>]+>#<\/a>/g,
+        /<img class="outlink"[^>]+>/g
+      ],
+      */
       language: Wiki.prefs.get( "Language" ), //"${prefs.Language}",
       height: Wiki.prefs.get( "EditorCookie" ),
       startupFocus: true

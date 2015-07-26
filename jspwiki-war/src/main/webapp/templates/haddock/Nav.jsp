@@ -56,28 +56,19 @@
   </li>
   </wiki:CheckRequestContext>
   --%>
-  <wiki:PageType type="attachment">
-      <li>
-      <wiki:LinkToParent><%-- <wiki:Link page="<wiki:ParentPageName/>" > --%>
-        <fmt:message key="info.backtoparentpage" >
-        <fmt:param><span class="label label-info label-sm"><wiki:ParentPageName/></span></fmt:param>
-        </fmt:message>
-      </wiki:LinkToParent>
-      </li>
-  </wiki:PageType>
 
   <%-- attachment --%>
-  <wiki:CheckRequestContext context='view|info|rename|edit'>
-  <wiki:PageType type="page">
+  <wiki:CheckRequestContext context='view|info|diff|rename|edit'>
   <li id="attach">
-    <wiki:Link context="upload" accessKey="a" >
-        <fmt:message key='attach.tab'/>
-      <c:if test="${attachments > 0}">
-        <span class="badge">${ attachments }</span>
-      </c:if>
+    <c:set var="page">
+      <wiki:PageType type="page"><wiki:PageName/></wiki:PageType>
+      <wiki:PageType type="attachment"><wiki:ParentPageName/></wiki:PageType>
+    </c:set>
+    <wiki:Link page="${page}" context="upload" accessKey="a" >
+      <fmt:message key='attach.tab'/>
+      <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
     </wiki:Link>
   </li>
-  </wiki:PageType>
   </wiki:CheckRequestContext>
 
   <%-- info --%>
@@ -221,7 +212,7 @@
       <wiki:Permission permission="comment">
         <wiki:PageType type="page">
           <li>
-            <wiki:Link context="comment" title="<fmt:message key='actions.comment.title' />">
+            <wiki:Link context="comment">
               <fmt:message key="actions.comment" />
             </wiki:Link>
           </li>
@@ -244,14 +235,14 @@
       <wiki:CheckRequestContext context='!workflow'>
       <wiki:UserCheck status="authenticated">
         <li>
-          <wiki:Link jsp='Workflow.jsp' title="<fmt:message key='actions.workflow.title' />">
+          <wiki:Link jsp="Workflow.jsp">
             <fmt:message key='actions.workflow' />
           </wiki:Link>
         </li>
       </wiki:UserCheck>
       </wiki:CheckRequestContext>
 
-      <%-- GROUPS --%>
+      <%-- GROUPS : moved to the UserBox.jsp
       <wiki:CheckRequestContext context='!creategroup' >
       <wiki:Permission permission="createGroups">
         <li>
@@ -261,11 +252,12 @@
         </li>
       </wiki:Permission>
       </wiki:CheckRequestContext>
+      --%>
 
       <%-- divider --%>
       <wiki:PageExists page="MoreMenu">
 
-        <wiki:CheckRequestContext context='view|info|diff|upload|workflow|createGroup'>
+        <wiki:CheckRequestContext context='view|info|diff|upload|createGroup'>
           <li class="divider "></li>
         </wiki:CheckRequestContext>
         <wiki:CheckRequestContext context='prefs|edit'>

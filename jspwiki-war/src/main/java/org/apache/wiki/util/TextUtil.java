@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.util;
 
@@ -32,14 +32,14 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
  *  Contains a number of static utility methods.
  */
 public final class TextUtil {
-	
+
     static final String   HEX_DIGITS = "0123456789ABCDEF";
 
     /**
      *  Private constructor prevents instantiation.
      */
     private TextUtil() {}
-    
+
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
      *  its functionality.
@@ -91,11 +91,11 @@ public final class TextUtil {
      *  Bug parade, bug #4257115</A> for more information.
      *  <P>
      *  Thanks to CJB for this fix.
-     *  
+     *
      *  @param bytes The byte array containing the bytes of the string
      *  @param encoding The encoding in which the string should be interpreted
      *  @return A decoded String
-     *  
+     *
      *  @throws UnsupportedEncodingException If the encoding is unknown.
      *  @throws IllegalArgumentException If the byte array is not a valid string.
      */
@@ -142,7 +142,7 @@ public final class TextUtil {
 
     /**
      *  As java.net.URLEncoder class, but this does it in UTF8 character set.
-     *  
+     *
      *  @param text The text to decode
      *  @return An URLEncoded string.
      */
@@ -164,7 +164,7 @@ public final class TextUtil {
 
     /**
      *  As java.net.URLDecoder class, but for UTF-8 strings.  null is a safe value and returns null.
-     *  
+     *
      *  @param utf8 The UTF-8 encoded string
      *  @return A plain, normal string.
      */
@@ -186,7 +186,7 @@ public final class TextUtil {
      * Provides encoded version of string depending on encoding. Encoding may be UTF-8 or ISO-8859-1 (default).
      *
      * <p>This implementation is the same as in FileSystemProvider.mangleName().
-     * 
+     *
      * @param data A string to encode
      * @param encoding The encoding in which to encode
      * @return An URL encoded string.
@@ -209,7 +209,7 @@ public final class TextUtil {
      * Provides decoded version of string depending on encoding. Encoding may be UTF-8 or ISO-8859-1 (default).
      *
      * <p>This implementation is the same as in FileSystemProvider.unmangleName().
-     * 
+     *
      * @param data The URL-encoded string to decode
      * @param encoding The encoding to use
      * @return A decoded string.
@@ -295,7 +295,7 @@ public final class TextUtil {
         buf.replace( start, end, text );
         return buf.toString();
     }
-    
+
     /**
      *  Replaces a string with an other string. Case insensitive matching is used
      *
@@ -311,7 +311,7 @@ public final class TextUtil {
         int start        = 0;
         int end          = 0;
         int last         = 0;
-        
+
         String origCaseUnsn = orig.toLowerCase();
         String srcCaseUnsn = src.toLowerCase();
 
@@ -329,7 +329,7 @@ public final class TextUtil {
 
     /**
      *  Parses an integer parameter, returning a default value if the value is null or a non-number.
-     *  
+     *
      *  @param value The value to parse
      *  @param defvalue A default value in case the value is not a number
      *  @return The parsed value (or defvalue).
@@ -345,7 +345,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Gets an integer-valued property from a standard Properties list.  If the value does not exist, or is a 
+     *  Gets an integer-valued property from a standard Properties list.  If the value does not exist, or is a
      *  non-integer, returns defVal.
      *
      *  @since 2.1.48.
@@ -363,10 +363,10 @@ public final class TextUtil {
     }
 
     /**
-     *  Gets a boolean property from a standard Properties list. Returns the default value, in case the key has not 
+     *  Gets a boolean property from a standard Properties list. Returns the default value, in case the key has not
      *  been set.
      *  <P>
-     *  The possible values for the property are "true"/"false", "yes"/"no", or "on"/"off".  Any value not 
+     *  The possible values for the property are "true"/"false", "yes"/"no", or "on"/"off".  Any value not
      *  recognized is always defined as "false".
      *
      *  @param props   A list of properties to search.
@@ -390,8 +390,8 @@ public final class TextUtil {
     }
 
     /**
-     *  Fetches a String property from the set of Properties.  This differs from Properties.getProperty() in a 
-     *  couple of key respects: First, property value is trim()med (so no extra whitespace back and front), and 
+     *  Fetches a String property from the set of Properties.  This differs from Properties.getProperty() in a
+     *  couple of key respects: First, property value is trim()med (so no extra whitespace back and front), and
      *  well, that's it.
      *
      *  @param props The Properties to search through
@@ -461,7 +461,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Returns true, if the string "val" denotes a positive string.  Allowed values are "yes", "on", and "true".  
+     *  Returns true, if the string "val" denotes a positive string.  Allowed values are "yes", "on", and "true".
      *  Comparison is case-insignificant. Null values are safe.
      *
      *  @param val Value to check.
@@ -480,14 +480,14 @@ public final class TextUtil {
     /**
      *  Makes sure that the POSTed data is conforms to certain rules.  These rules are:
      *  <UL>
-     *  <LI>The data always ends with a newline (some browsers, such as NS4.x series, does not send a newline at 
+     *  <LI>The data always ends with a newline (some browsers, such as NS4.x series, does not send a newline at
      *      the end, which makes the diffs a bit strange sometimes.
      *  <LI>The CR/LF/CRLF mess is normalized to plain CRLF.
      *  </UL>
      *
-     *  The reason why we're using CRLF is that most browser already return CRLF since that is the closest thing to 
+     *  The reason why we're using CRLF is that most browser already return CRLF since that is the closest thing to
      *  a HTTP standard.
-     *  
+     *
      *  @param postData The data to normalize
      *  @return Normalized data
      */
@@ -547,7 +547,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more 
+     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more
      *  readable format.
      *
      *  @param s String to be beautified.
@@ -558,7 +558,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more 
+     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more
      *  readable format.
      *
      *  @param s String to be beautified.
@@ -606,7 +606,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Creates a Properties object based on an array which contains alternatively a key and a value.  It is useful 
+     *  Creates a Properties object based on an array which contains alternatively a key and a value.  It is useful
      *  for generating default mappings. For example:
      *  <pre>
      *     String[] properties = { "jspwiki.property1", "value1",
@@ -697,7 +697,7 @@ public final class TextUtil {
     }
 
     /**
-     *  A simple routine which just repeates the arguments.  This is useful for creating something like a line or 
+     *  A simple routine which just repeates the arguments.  This is useful for creating something like a line or
      *  something.
      *
      *  @param what String to repeat
@@ -715,7 +715,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Converts a string from the Unicode representation into something that can be embedded in a java 
+     *  Converts a string from the Unicode representation into something that can be embedded in a java
      *  properties file.  All references outside the ASCII range are replaced with \\uXXXX.
      *
      *  @param s The string to convert
@@ -747,7 +747,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Generates a hexadecimal string from an array of bytes.  For example, if the array contains 
+     *  Generates a hexadecimal string from an array of bytes.  For example, if the array contains
      *  { 0x01, 0x02, 0x3E }, the resulting string will be "01023E".
      *
      * @param bytes A Byte array
@@ -765,8 +765,8 @@ public final class TextUtil {
     }
 
     /**
-     *  Returns true, if the argument contains a number, otherwise false. In a quick test this is roughly the same 
-     *  speed as Integer.parseInt() if the argument is a number, and roughly ten times the speed, if the argument 
+     *  Returns true, if the argument contains a number, otherwise false. In a quick test this is roughly the same
+     *  speed as Integer.parseInt() if the argument is a number, and roughly ten times the speed, if the argument
      *  is NOT a number.
      *
      *  @since 2.4
@@ -793,7 +793,7 @@ public final class TextUtil {
 
     /** Length of password. @see #generateRandomPassword() */
     public static final int PASSWORD_LENGTH = 8;
-    
+
     /**
      * Generate a random String suitable for use as a temporary password.
      *

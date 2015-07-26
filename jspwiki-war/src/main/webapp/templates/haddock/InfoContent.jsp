@@ -17,7 +17,6 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -26,9 +25,11 @@
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="java.security.Permission" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
@@ -73,38 +74,30 @@
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
 
   /* round to start of block: 0-19 becomes 0; 20-39 becomes 20 ... */
-  if( startitem > -1 ) startitem = ((startitem)/pagesize) * pagesize;
+  if( startitem > -1 ) startitem = ( startitem / pagesize ) * pagesize;
 
   /* startitem drives the pagination logic */
   /* startitem=-1:show all; startitem=0:show block 1-20; startitem=20:block 21-40 ... */
 %>
+<%--
+FIXME
+When deleting an Attachment, the Delete.jsp still redirects to InfoContent.jsp, iso Upload.jsp !
+As we currently do not want to touch the top-level JSP's and keep them compatible with the
+defaul template,  let's fix this here
+--%>
+<c:choose>
+<c:when test="${param.tab == 'attach'}"><wiki:Include page="AttachmentTab.jsp"/></c:when>
+<c:otherwise>
 
 <div class="page-content">
 
 <wiki:PageExists>
 
-
 <wiki:PageType type="page">
-<%-- part 1 : normal wiki pages
-
-  <wiki:TabbedSection defaultTab="info">
-
-  FIXME!!! =>>>  <wiki:TabbedSection defaultTab="${param.tab}">
-  JSPWIKI-867) Deleting attachments should retain focus on the Attach
-
-
-  <wiki:Tab id="pagecontent"
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>'
-     accesskey="v"
-	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
-      <%--<wiki:Include page="PageTab.jsp"/> -->
-  </wiki:Tab>
---%>
-
   <div class="form-frame">
   <p>
   <fmt:message key='info.lastmodified'>
-    <fmt:param><wiki:PageVersion >1</wiki:PageVersion></fmt:param>
+    <fmt:param><span class="badge"><wiki:PageVersion >1</wiki:PageVersion></span></fmt:param>
     <fmt:param>
       <a href="<wiki:DiffLink format='url' version='latest' newVersion='previous' />"
         title="<fmt:message key='info.pagediff.title' />" >
@@ -142,7 +135,7 @@
       <input class="btn btn-primary" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input class="form-control form-col-50" type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
       <label class="btn btn-default" for="references">
-        <input class="checkbox-inline" type="checkbox" name="references" id="references" checked="checked" />
+        <input type="checkbox" name="references" id="references" checked="checked" />
         <fmt:message key="info.updatereferrers"/>
       </label>
     </form>
@@ -168,19 +161,15 @@
   </div>
 
 
-  <div class="tabbedAccordion">
-    <div class="tab-History">
-	<%--
-    <wiki:CheckVersion mode="first"><fmt:message key="info.noversions"/></wiki:CheckVersion>
-	--%>
-    <%-- if( itemcount > 1 ) { --%>
+  <div class="tabs">
+    <h4 id="history">History</h4>
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
                          href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
 
-    <div class="table-filter-hover-sort zebra-table">
-    <table class="wikitable" >
+    <div class="table-filter-sort-condensed-striped">
+    <table class="table" >
       <tr>
         <th><fmt:message key="info.version"/></th>
         <th><fmt:message key="info.date"/></th>
@@ -191,84 +180,75 @@
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
-      <% if( ( startitem == -1 ) ||
-             (  ( currentPage.getVersion() > startitem )
-             && ( currentPage.getVersion() <= startitem + pagesize ) ) )
-         {
-       %>
+      <c:set var="first" value="<%= startitem %>"/>
+      <c:set var="last" value="<%= startitem + pagesize %>"/>
+      <c:if test="${ first == -1 || ((currentPage.version > first ) && (currentPage.version <= last )) }">
       <tr>
         <td>
-          <wiki:Link version="<%=Integer.toString(currentPage.getVersion())%>">
+          <wiki:Link version="${currentPage.version}">
             <wiki:PageVersion/>
           </wiki:Link>
         </td>
 
-	    <td class="nowrap" jspwiki:sortvalue="<%= currentPage.getLastModified().getTime() %>">
-        <fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+	    <td class="nowrap" jspwiki:sortvalue="${currentPage.lastModified.time}">
+        <fmt:formatDate value="${currentPage.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </td>
-        <td class="nowrap text-right">
+
+        <td class="nowrap">
           <c:set var="ff"><wiki:PageSize /></c:set>
           <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
         </td>
         <td><wiki:Author /></td>
 
-        <td>
+        <td class="nowrap">
           <wiki:CheckVersion mode="notfirst">
             <wiki:DiffLink version="current" newVersion="previous"><fmt:message key="info.difftoprev"/></wiki:DiffLink>
             <wiki:CheckVersion mode="notlatest"> | </wiki:CheckVersion>
           </wiki:CheckVersion>
-
           <wiki:CheckVersion mode="notlatest">
             <wiki:DiffLink version="latest" newVersion="current"><fmt:message key="info.difftolast"/></wiki:DiffLink>
           </wiki:CheckVersion>
         </td>
 
-         <td class="changenote">
-           <% String changenote = (String) currentPage.getAttribute( WikiPage.CHANGENOTE );  %>
-		   <%= (changenote==null) ? "" : changenote  %>
-         </td>
+        <c:set var="changenote" value="<%= (String)currentPage.getAttribute( WikiPage.CHANGENOTE ) %>" />
+        <td class="changenote">${changenote}</td>
 
       </tr>
-      <% } %>
+      </c:if>
       </wiki:HistoryIterator>
 
     </table>
     </div>
     ${pagination}
-    <%-- } /* itemcount > 1 */ --%>
 
-    </div>
-    <div class="tab-PageReferences">
-      <table class="wikitable table-condensed">
+    <h4 id="page-refs">Page References</h4>
+    <table class="table">
       <tr>
       <th><fmt:message key="info.tab.incoming" /></th>
       <th><fmt:message key="info.tab.outgoing" /></th>
       </tr>
       <tr>
       <td>
-        <div class="list-nostyle list-hover">
+        <div class="tree list-hover">
           <wiki:Link><wiki:PageName /></wiki:Link>
           <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
         </div>
       </td>
       <td>
-        <div class="list-nostyle list-hover">
+        <div class="tree list-hover">
           <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
         </div>
       </td>
       </tr>
-      </table>
-    </div>
+    </table>
 
     <%-- DIFF section --%>
     <wiki:CheckRequestContext context='diff'>
-      <div class="tab-Difference">
+      <h4 data-activePane id="diff">Difference</h4>
       <wiki:Include page="DiffTab.jsp"/>
-      </div>
     </wiki:CheckRequestContext>
 
   </div>
-
 
 </wiki:PageType>
 
@@ -277,12 +257,11 @@
 <wiki:PageType type="attachment">
 <%
   int MAXATTACHNAMELENGTH = 30;
-  String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
-
+<c:set var="progressId" value="<%= c.getEngine().getProgressManager().getNewProgressIdentifier() %>" />
 <wiki:Permission permission="upload">
 
-  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
+  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='${progressId}'/></wiki:Link>"
          class="accordion-close"
             id="uploadform"
         method="post" accept-charset="<wiki:ContentEncoding/>"
@@ -315,7 +294,7 @@
     <%--<input type="hidden" name="action" value="upload" />--%>
     </div>
     <div class="hidden form-col-offset-20 form-col-50 progress progress-striped active">
-      <div class="progress-bar" data-progressid="<%=progressId%>" style="width: 100%;"></div>
+      <div class="progress-bar" data-progressid="${progressId}" style="width: 100%;"></div>
     </div>
 
   </form>
@@ -324,28 +303,34 @@
   <div class="block-help bg-warning"><fmt:message key="attach.add.permission"/></div>
 </wiki:Permission>
 
-<wiki:Permission permission="delete">
-  <%--<h4><fmt:message key="info.deleteattachment"/></h4>--%>
-    <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
+
+<form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="form-group"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
           data-modal="<fmt:message key='info.confirmdelete'/>" >
 
-     <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
+  <c:set var="parentPage"><wiki:ParentPageName/></c:set>
+  <a class="btn btn-default" href="<wiki:Link page='${parentPage}' format='url' />" >
+    <fmt:message key="info.backtoparentpage" >
+      <fmt:param>${parentPage}</fmt:param>
+    </fmt:message>
+  </a>
+
+  <wiki:Permission permission="delete">
+    <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
            value="<fmt:message key='info.deleteattachment.submit' />" />
-    </form>
-</wiki:Permission>
+  </wiki:Permission>
+</form>
 
-<%-- FIXME why not add pagination here - number of attach versions of one page limited ?--%>
+<%-- TODO why no pagination here - number of attach versions of one page limited ?--%>
 <%--<h4><fmt:message key='info.attachment.history' /></h4>--%>
-
-  <div class="table-filter-hover-sort slimbox-attachments">
+  <div class="slimbox-attachments table-filter-sort-condensed-striped">
   <table class="table">
     <tr>
-      <th><fmt:message key="info.attachment.type"/></th>
-      <%--<th><fmt:message key="info.attachment.name"/></th>--%>
       <th><fmt:message key="info.version"/></th>
+      <th><fmt:message key="info.attachment.type"/></th>
+      <th><fmt:message key="info.attachment.name"/></th>
       <th><fmt:message key="info.size"/></th>
       <th><fmt:message key="info.date"/></th>
       <th><fmt:message key="info.author"/></th>
@@ -358,31 +343,25 @@
     </tr>
 
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
-    <%
-      String name = att.getName(); //att.getFileName();
-      int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
-
-      String sname = name;
-      if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
-    %>
     <tr>
-      <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
-      <%--<td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>--%>
-      <%--FIXME classs parameter throws java exception
-      <td><wiki:Link version='<%=Integer.toString(att.getVersion())%>'
-                       title="<%= name %>"
-                       class="attachment" ><wiki:PageVersion /></wiki:Link></td>
-      --%>
-      <td class="center"><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />"
-                       title="<%= name %>"
-                       class="attachment" ><wiki:PageVersion /></a></td>
-      <td class="nowrap text-right">
-        <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+
+      <td><wiki:LinkTo version="${att.version}"><wiki:PageVersion /></wiki:LinkTo></td>
+
+      <%-- see styles/fontjspwiki/icon.less : icon-file-<....>-o  --%>
+      <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
+      <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
+      <td class="attach-type"><span class="icon-file-${type}-o">${type}</span></td>
+
+      <td class="attach-name">${att.fileName}</td>
+
+      <td class="nowrap">
+        <fmt:formatNumber value='${att.size/1000.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td class="nowrap" jspwiki:sortvalue="<%= att.getLastModified().getTime() %>">
-	  <fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+
+	  <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
+	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 	  </td>
+
       <td><wiki:Author /></td>
       <%--
       // FIXME: This needs to be added, once we figure out what is going on.
@@ -394,10 +373,10 @@
          </td>
       </wiki:Permission>
       --%>
-      <td class='changenote'>
-        <% String changenote = (String) att.getAttribute( WikiPage.CHANGENOTE ); %>
-		<%= (changenote==null) ? "" : changenote  %>
-      </td>
+
+      <c:set var="changenote" value="<%= (String)att.getAttribute( WikiPage.CHANGENOTE ) %>" />
+      <td class="changenote">${changenote}</td>
+
     </tr>
     </wiki:HistoryIterator><%-- </wiki:AttachmentsIterator> --%>
 
@@ -415,3 +394,6 @@
 </wiki:NoSuchPage>
 
 </div>
+
+</c:otherwise>
+</c:choose>

@@ -17,37 +17,42 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  WikiContext context = WikiContext.findContext( pageContext );
-  TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-          context.getURL( WikiContext.NONE, "scripts/haddock-prefs.js" ) );
-%>
-<div class="page-content">
-<div class="rightAccordion">
 
-  <h3><fmt:message key="prefs.tab.prefs" /></h3>
+<div class="page-content">
+<div class="tabs">
+
+  <h3 id="section-prefs">
+    <fmt:message key="prefs.tab.prefs" />
+  </h3>
   <wiki:Include page="PreferencesTab.jsp" />
 
   <%-- <wiki:UserCheck status="authenticated"> --%>
   <wiki:Permission permission="editProfile">
-  <%-- <wiki:UserProfile property="exists"> --%>
-    <h3><fmt:message key="prefs.tab.profile"/></h3>
+  <wiki:UserProfile property="exists">
+    <c:set var="profileTab" value="${param.tab == 'profile' ? 'data-activePane' : ''}"/>
+    <h3 ${profileTab} id="section-profile"><fmt:message key="prefs.tab.profile"/></h3>
     <wiki:Include page="ProfileTab.jsp" />
     <%-- <%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.profile")%> --%>
-  <%-- </wiki:UserProfile> --%>
+  </wiki:UserProfile>
   </wiki:Permission>
   <%-- </wiki:UserCheck> --%>
 
-  <wiki:Permission permission="createGroups"> <%-- FIXME check right permissions --%>
-    <h3><fmt:message key="group.tab" /></h3>
+  <wiki:Permission permission="createGroups"><%-- use WikiPermission --%>
+    <c:set var="groupTab" value="${param.tab == 'groups' ? 'data-activePane' : ''}"/>
+    <wiki:CheckRequestContext context='viewGroup|editGroup|createGroup'>
+       <c:set var="groupTab">data-activePane</c:set>
+    </wiki:CheckRequestContext>
+    <h3 ${groupTab} id="section-groups"><fmt:message key="group.tab" /></h3>
     <wiki:Include page="GroupTab.jsp" />
+
   </wiki:Permission>
 
 </div>

@@ -398,7 +398,7 @@ console.log(message);
 
             while( next = group.nextSibling ){
 
-                if( ( next.nodeType != 3 ) && next.match(start) ){  //start a new group
+                if( ( next.nodeType == 1 ) && next.match(start) ){  //start a new group
 
                     if( firstGroupDone ){ group = grab.slick(); } //make a new group
                     if( replacesFn ){ replacesFn(group, next); }

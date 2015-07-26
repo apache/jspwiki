@@ -285,20 +285,23 @@ Section: Reusable Styles
     text-align:center;
     table { text-align:left; }
 }
+.justify {
+    text-align:justify;
+}
 
 // %%dropcaps .. /%
 // CSS3:  div.dropcap:first-child:first-letter. See http://css-tricks.com/snippets/css/drop-caps/
 div.dropcaps {
     .p;
     > span.dropcaps {
-        float:left;
-        color:@dropcaps-color;
-        padding:0 @table-cell-padding;
-        font-family:@dropcaps-font-family;
-        font-size:@dropcaps-font-size;
-        font-weight:@dropcaps-font-weight;
-        line-height:80%;
-        text-shadow:2px 2px 1px rgba(0,0,0,.25);
+        float: left;
+        color: @dropcaps-color;
+        padding-right: @table-cell-padding;
+        font-family: @dropcaps-font-family;
+        font-size: @dropcaps-font-size;
+        font-weight: @dropcaps-font-weight;
+        line-height: 80%;
+        text-shadow: 2px 2px 1px rgba(0,0,0,.25);
     }
 }
 
@@ -340,11 +343,9 @@ div.dropcaps {
 //checkme: still used?
 .accesskey { text-decoration:underline; }
 
-.changenote { font-style: italic; }
+.changenote { max-width:240px; font-style: italic; }
 
-// used by info and attachment tables to display file sizes
-.nowrap-number { white-space:nowrap; }
-.text-right { text-align:right; }
+.nowrap { white-space:nowrap; }
 
 [class^=tangle-] { background: @yellow; }
 

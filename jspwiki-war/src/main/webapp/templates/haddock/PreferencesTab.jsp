@@ -44,8 +44,7 @@
 
 %>
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
-       class=""
-          id="preferences"  <%-- setCookie --%>
+          id="preferences"  <%-- see Prefs.js; setCookie --%>
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
   <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
@@ -53,6 +52,7 @@
   <div class="form-group ">
 
     <span class="form-col-20 control-label"></span>
+
     <span class="dropdown" style="display:inline-block" >
       <button class="btn btn-primary" type="submit" name="action" value="setAssertedName">
         <fmt:message key='prefs.save.prefs.submit'/>
@@ -76,7 +76,8 @@
   <c:if test="${param.tab eq 'prefs'}" >
   <div class="">
     <span class="form-col-20 control-label"></span>
-    <wiki:Messages div="error form-col-50" topic="prefs" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.prefs")%>'/>
+    <fmt:message key="prefs.errorprefix.prefs" var="msg"/>
+    <wiki:Messages div="alert alert-danger form-col-50" topic="prefs" prefix="${msg}" />
   </div>
   </c:if>
 

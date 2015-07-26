@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -24,8 +24,8 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<% 
-  WikiContext context = WikiContext.findContext( pageContext ); 
+<%
+  WikiContext context = WikiContext.findContext( pageContext );
   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/jspwiki-prefs.js" );
 %>
 
@@ -42,7 +42,7 @@
   </wiki:Tab>
   </wiki:Permission>
   </wiki:UserCheck>
-  
+
   <wiki:Permission permission="createGroups"> <!-- FIXME check right permissions -->
   <wiki:Tab id="group" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>' accesskey="g" >
     <wiki:Include page="GroupTab.jsp" />

@@ -232,11 +232,11 @@ var Wiki = {
         //console.log( popstate, location.hash, target );
 
         //only send popstate events to targets within the main page; eg not sidebar
-        if( target && target.getParent(".page") ){
+        if( target && target.getParent(".page-content") ){
 
-            while( !target.hasClass("page") ){
+            while( !target.hasClass("page-content") ){
 
-                events = target.retrieve("events"); //mootools specific
+                events = target.retrieve("events"); //mootools specific - to read registered events on elements
 
                 if( events && events[ popstate ] ){
 
@@ -309,11 +309,9 @@ var Wiki = {
 
     /*
     Function: dropdowns
-        Adapt dropdown extensions suchs as moremenu,  logomenu, ...
-        to fit to the bootstrap .dropdown-menu class structure
+        Parse wikipages such ase MoreMenu, HomeMenu to act as bootstrap
+        compatible dropdown menu items.
     */
-    //fixthosebootstrapdropdownmenus
-    //ftbddm
     dropdowns: function(){
 
         $$( "ul.dropdown-menu > li > ul" ).each( function(ul){

@@ -87,43 +87,65 @@ var Tab = new Class({
 
         this.setOptions( options );
 
-        var panes = this.getPanes( container ),
-            pane,
+        var panes = this.getPanes( container ), pane,
+            navs = [], //collection of li for the tab navigation section
             i = 0,
-            items = []; //collection of li for the tab navigation section
+            activePos = 0;
 
-        while( pane = panes[i++] ){
-
-            items.push("li", [
-                "a", {
-                    //id: String.uniqueID(),
-                    text: this.getName( pane )
-                    //events: { click: this.show }
-                }
-            ]);
+        function activate( index ){
+            var active = "active";
+            navs.removeClass( active )[ index ].addClass( active );
+            panes.removeClass( active )[ index ].addClass( active );
         }
 
-        if( items[0] ){
+        //handle th click events on the nav element
+        function show(){
+            var index = navs.indexOf( this.getParent('li') );
+            activate( index );
+            panes[ index ].id.setHash();
+        }
 
-            items[0] += ".active";
+        //handling of popstate event on the pane element when the url#hash changes
+        function popstate(){
+            var index = this.getAllPrevious().length;
+            console.log("popstate event", this.id, index );
+            activate( index );
+        }
 
-            [this.options.nav, {events: {"click:relay(a)": this.show}}, items]
+        //prepare the navigation section of the tabs
+        while( pane = panes[i++] ){
+
+            if( pane.match(".active") ){ activePos = i-1; }
+
+            navs.push("li", [ "a", { html: this.getName( pane ) } ]);
+        }
+        //build the DOM
+        if( navs[0] ){
+
+            navs = [this.options.nav, { events: { "click:relay(a)": show } }, navs ]
                 .slick()
-                .inject(container, "before");
+                .inject(container, "before")
+                .getChildren();
 
-            panes.addEvent("popstate", this.popstate )
-                 .addClass("tab-pane")[0].addClass("active");
+            panes.addClass("tab-pane").addEvent("popstate", popstate );
 
             container.addClass("tab-content");
 
-        }
+            activate( activePos );
 
+        }
     },
 
     getName: function(pane){
 
-        var name = pane.className.slice(4).deCamelize();
-        if( !pane.id ){ pane.id = name; } //CHECKME : support #<tab-name> urls ; eg h1 id="section-Tabbed+Section-Usage"
+        var name = pane.get("data-pane") || pane.className.slice(4).deCamelize();
+
+        if( !pane.id ){
+            console.log("red alert", name)
+            //pane.id = name;
+        }
+
+
         return name;
 
     },
@@ -142,59 +164,28 @@ var Tab = new Class({
 
         var isPane = "[class^=tab-]",
             first = container.getFirst(),
-            header = first.get("tag"),
+            header = first && first.get("tag"),
             hasPane = first && first.match(isPane);  //predefined tab-panel containers
 
-        //avoid double runs -- obsolete, covered by behavior
+        //avoid double runs -- ok, covered by behavior
         //if( first.match("> .nav.nav-tabs") ) return null;
 
-        if( (!hasPane) && ( header.test(/h1|h2|h3|h4/) ) ){     //replace header by tab-panel containers
+        if( (!hasPane) && header && ( header.test(/h1|h2|h3|h4/) ) ){     //replace header by tab-panel containers
 
             //first remove unwanted elements from the header
-            container.getChildren(header).getElements(".hashlink,.edit-section,.labels")
+            container.getChildren(header).getElements(".hashlink,.editsection,.labels")
                 .each(function( el ){ el.destroy(); });
 
             //then create div.tab-<pane-title> groups
             container.groupChildren(header, "div", function(pane, caption){
                 pane.addClass( "tab-" + caption.get("text").trim().replace(/\s+/g, "-").camelCase() );
+                pane.set("data-pane", caption.get("html").stripScripts());
+                if( caption.match("[data-activePane]") ){ pane.addClass("active"); }
                 pane.id = caption.id;
             });
 
         }
         return container.getChildren(isPane);
-
-    },
-
-    /*
-    Click-handler to toggle the visibilities of the tab panes.
-    */
-    show: function( ){
-
-        var active = "active",
-            nav = this.getParent("ul"),
-            index = nav.getElements("a").indexOf(this),
-            panes = nav.getNext();
-
-        nav.getChildren().removeClass( active )[ index ].addClass( active );
-        panes.getChildren().removeClass( active )[ index ].addClass( active ).id.setHash();
-
-    },
-
-    /*
-    Popstate handler triggered when the #hash is changed of a tabpane
-    */
-    popstate: function( ){
-
-        var active = "active",
-            panes = this.getParent(),
-            nav = panes.getPrevious(),
-            index = this.getAllPrevious().length;
-
-        //console.log("popstate event", this.id, index );
-
-        nav.getChildren().removeClass( active )[ index ].addClass( active );
-        panes.getChildren().removeClass( active )[ index ].addClass( active );
-
     }
 
 });

@@ -17,11 +17,11 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.user.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -37,7 +37,7 @@
       action="<wiki:CheckRequestContext
      context='login'><wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='tab'
        value='profile'/></wiki:Link></wiki:CheckRequestContext><wiki:CheckRequestContext
-     context='prefs'><wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab'
+     context='!login'><wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab'
        value='profile'/></wiki:Link></wiki:CheckRequestContext>"
        class=""
           id="editProfile">
@@ -63,7 +63,15 @@
   <c:if test="${param.tab eq 'profile'}" >
   <div class="">
     <span class="form-col-20 control-label"></span>
-    <wiki:Messages div="error form-col-50" topic="profile" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.profile")%>'/>
+    <fmt:message key="prefs.errorprefix.profile" var="msg"/>
+    <wiki:Messages div="alert alert-danger form-col-50" topic="profile" prefix="${msg}" />
+    <%-- seems not to work .?
+    <wiki:Messages div="error form-col-50" prefix="<fmt:message key='prefs.errorprefix.profile' />" topic="profile"  />
+    this is ok..
+    <wiki:Messages div="error form-col-50" topic="profile" >
+      <jsp:attribute name="prefix" ><fmt:message key="prefs.errorprefix.profile"/></jsp:attribute>
+    </wiki:Messages>
+    --%>
   </div>
   </c:if>
 

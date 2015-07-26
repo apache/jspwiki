@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.ui;
 
@@ -104,7 +104,7 @@ public final class InputValidator
         if ( isBlank( input ) )
         {
             ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
-            
+
             m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.cantbenull"),
                                                                 label ) );
             return false;
@@ -143,7 +143,9 @@ public final class InputValidator
             valid = !matcher.find();
             if ( !valid )
             {
-                Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;[]#\\@{}%$" };
+                //MessageTag already invokes replaceEntities()
+                //Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;[]#\\@{}%$" };
+                Object[] args = { label, "\'\"<>;&[]#\\@{}%$" };
                 m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"), args ) );
             }
             return valid;
@@ -161,7 +163,9 @@ public final class InputValidator
             valid = !matcher.find();
             if ( !valid )
             {
-                Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
+                //MessageTag already invokes replaceEntities()
+                //Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
+                Object[] args = { label, "\'\"<>;&{}" };
                 m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"), args ) );
             }
             return valid;

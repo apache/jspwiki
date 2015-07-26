@@ -52,7 +52,11 @@
 
   <div class="pagename" title="<wiki:PageName />">
     <wiki:CheckRequestContext context='view'><wiki:PageName /></wiki:CheckRequestContext>
-    <wiki:CheckRequestContext context='!view'><wiki:Link><wiki:PageName/></wiki:Link></wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context='!view'>
+      <wiki:CheckRequestContext context='viewGroup|createGroup|editGroup'><span class="icon-group"></span></wiki:CheckRequestContext>
+        <wiki:PageType type="attachment"><span class="icon-paper-clip"></span></wiki:PageType>
+      <wiki:Link><wiki:PageName/></wiki:Link>
+    </wiki:CheckRequestContext>
   </div>
 
   <div class="breadcrumb">

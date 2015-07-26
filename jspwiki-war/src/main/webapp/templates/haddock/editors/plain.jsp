@@ -37,10 +37,9 @@
    WikiContext context = WikiContext.findContext( pageContext );
    WikiEngine engine = context.getEngine();
 
-   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           context.getURL( WikiContext.NONE, "scripts/haddock-edit.js" ) );
    String usertext = EditorManager.getEditedText( pageContext );
 %>
+<wiki:RequestResource type="script" resource="scripts/haddock-edit.js" />
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%

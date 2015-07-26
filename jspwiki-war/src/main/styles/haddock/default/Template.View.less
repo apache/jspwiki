@@ -148,28 +148,24 @@ DOM structure:
 .dropdown-menu[data-hover-parent] { margin-top: 0; }
 
 a.logo {
-    position: relative;
-    display:block;
+    display: block;
     font-family: @wiki-logo-font-family;
-    //font-size:75%; //@font-size-base* .75
     font-weight: 200;
-    letter-spacing: 3px;
+    letter-spacing: .3em;
     text-decoration: none;
-    //padding:1px 1px @font-size-base 3px;
-    padding:1px 1px 20px 3px;
-    //border:1px solid @white;
-    //border-radius:.5em;
-    color:inherit;
+    padding: 0.15em 0.1em .25em .45em;
+    //border: 1px solid @white;
+    //border-radius: .5em;
+    color: inherit;
 
     b {
-        position: absolute;
         font-size: 150%;   //@font-size-base
-        font-weight: 200;
+        font-weight: inherit;
         line-height: 50%;
-        letter-spacing: 1px;
-        left: 0; top: 1em;
-        padding:0 3px;
+        letter-spacing: .08em;
     }
+    b:before { content:"\A"; white-space:pre ;}
+
 }
 
 

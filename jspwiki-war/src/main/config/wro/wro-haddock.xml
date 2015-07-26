@@ -76,6 +76,7 @@
     <js>/scripts/wiki/Findpages.js</js>
     <js>/scripts/wiki/Category.js</js>
     <js>/scripts/wiki/Wiki.Behaviors.js</js>
+    <js>/scripts/wiki/Prefs.js</js>
 
     <css>/styles/haddock/default/build.less</css>
   </group>
@@ -103,11 +104,6 @@
     <js>/scripts/wiki-edit/Wiki.Snips.js</js>
     <js>/scripts/wiki-edit/Wiki.Edit.js</js>
 
-  </group>
-
-  <group name="haddock-prefs">
-    <js>/scripts/wiki/Prefs.js</js>
-    <!--<js>/scripts/wiki/group.js</js>-->
   </group>
 
 </groups>

@@ -50,7 +50,7 @@ Javascript routines to support JSPWiki UserPreferences
 
             if( form.getElements( datapref ).some( function(el){
 
-                //if(getValue(el) != el.getDefaultValue()){ console.log(getValue(el) + " " + el.get('data-pref'));}
+                //if(getValue(el) != el.getDefaultValue()){ console.log(el.get('data-pref'),getValue(el),el.getDefaultValue());}
                 return ( getValue(el) != el.getDefaultValue() );
 
             }) ){ return "prefs.areyousure".localize(); }

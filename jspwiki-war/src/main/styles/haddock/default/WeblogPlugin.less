@@ -26,6 +26,10 @@ DOM structure:
 (start code)
 (end)
 */
+
+a[href*="NewBlogEntry.jsp"] { .btn; .btn-primary; }
+
+
 .weblog {
     margin:0 2em;
     clear:both;
@@ -36,15 +40,16 @@ DOM structure:
 .weblogentryheading {
     padding:0.25em 0.5em;
     font-size:90%;
-    background:#e0e0e0;
+    font-family: @wiki-logo-font-family;
     float:right;
 }
 .weblogentrytitle {
+    margin-bottom:.5em;
     padding:0.25em 0.5em;
-    font-size:120%;
-    line-height:1.2;
-    font-weight:bold;
-    background:#e0e0e0;
+    font-size:150%;
+    font-family: @wiki-logo-font-family;
+    line-height:1.5;
+    border-bottom:1px solid @wiki-sidebar-bg;
 }
 .weblogentrybody {
     margin-left:0.5em;
@@ -53,7 +58,7 @@ DOM structure:
 .weblogentryfooter {
     font-size:90%;
     padding:0.25em 0.5em;
-    border-bottom:3px solid #e0e0e0;
+    //border-bottom:3px solid @pre-bg;
     clear:both;
 }
 /*.weblogarchive {
@@ -71,11 +76,11 @@ DOM structure:
     margin-left:0 !important;
 }
 .archiveyear:after {
-    content:" AD"
+    content:" AD";
 }
 
 .weblogcommentstitle {
-    background:#e0e0e0;
+    background:@pre-bg;
     margin:1em 0.5em 0 0.5em;
     padding:0.5em;
     font-weight:bold;

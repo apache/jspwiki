@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.tags;
 
@@ -50,7 +50,7 @@ import org.apache.wiki.util.TextUtil;
  *  @since 2.3.50
  */
 public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
-    
+
 	static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( LinkTag.class );
 
@@ -79,6 +79,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         super.initTag();
         m_version = m_class = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
         m_context = WikiContext.VIEW;
+        m_containedParams = new HashMap<String, String>();
         m_absolute = false;
     }
 

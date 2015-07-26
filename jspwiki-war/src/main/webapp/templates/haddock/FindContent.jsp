@@ -36,10 +36,10 @@
 
     <input type="text"
            name="query" id="query2"
-           class="form-group form-control"
-          value="<c:out value='${query}'/>"
-          placeholder="<fmt:message key="find.input" />"
-          autofocus="autofocus"
+          class="form-group form-control"
+          value="${query}"
+    placeholder="<fmt:message key="find.input" />"
+      autofocus="autofocus"
            size="32" />
 
     <div class="form-inline form-group">

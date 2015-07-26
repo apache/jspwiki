@@ -44,13 +44,9 @@ DOM Structure:
     padding:0;
     overflow:hidden;
     clear:both;
-    .clearfix();
+    .hyphens(auto);
+    //.clearfix();
 }
-.page, .sidebar {
-    //box-sizing: border-box;  // width% now includes border & padding : already default in bootstrap
-   .transition(all 300ms);
-}
-
 .page {
     float:right;
     width:100%;
@@ -59,8 +55,24 @@ DOM Structure:
     float:left;
     width:@wiki-sidebar-width;
     margin-left:-@wiki-sidebar-width;
+    padding:@padding-base-horizontal;
+    //padding-left:@padding-base-horizontal;
+    //padding-right:@padding-base-horizontal;
     overflow-x:hidden;
 }
+.page, .sidebar {
+    //box-sizing: border-box;  //width% now includes border & padding : already default in bootstrap
+   .transition(all 300ms);
+
+    /*Solution to make .sidebar and .page of equal height
+      using the "One True Layout Method" -- See https://css-tricks.com/fluid-width-equal-height-columns/
+      NOK: when jumping to in-page anchors
+    */
+    // margin-bottom: -99998em;
+    //padding-bottom: 99999em;
+    //& > *:last-child { padding-bottom:1em; }
+}
+
 
 /* FIXME
 .fav-right {
@@ -72,20 +84,24 @@ DOM Structure:
 }
 */
 
+.sidebar { background:@wiki-sidebar-bg; }
+.content {
+    background: @wiki-page-bg;
+}
 .content.active {
     .page { width:100%-@wiki-sidebar-width; }
     .sidebar { margin-left:0; }
 }
 
-.sidebar { background:@wiki-sidebar-bg; padding:@padding-base-horizontal;  }
-.content { background: @wiki-page-bg; }
 
 .page-content, .sidebar, .ajaxpreview {
 	.clearfix;
-	& > h2, & > h3, & > h4,  { margin-top:0; }
+	& > *:first-child { margin-top:0;}
+	//& > h2, & > h3, & > h4,  { margin-top:0; }
 }
 .page-content {
-    margin:0 @padding-base-horizontal  @padding-base-vertical @padding-base-horizontal;
+    //margin:0 @padding-base-horizontal  @padding-base-vertical @padding-base-horizontal;
+    margin:0 @padding-base-horizontal;
 }
 
 

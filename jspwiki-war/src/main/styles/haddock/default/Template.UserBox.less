@@ -46,14 +46,44 @@ span.cage.pull-right.user-<loginstatus>
 
 .userbox {
 
-    //re-apply default <a.btn> style inside a dropdown-menu.
+    //re-apply default <a.btn> style inside a dropdown-menu
     .btn-primary {
         .btn-primary;
     }
 
 }
 
-
-.user-anonymous li .icon-user { .text-danger; }
-.user-asserted li .icon-user { .text-warning; }
 .user-authenticated li .icon-user { .text-success; }
+.user-asserted li .icon-user { .text-warning; }
+.user-anonymous li .icon-user { .text-danger; }
+
+
+/*
+Section: Login
+    LoginContent.jsp
+*/
+
+.context-login {
+  //hide the navigation TABs and only show the tab panels
+  .page-content > ul.nav { display:none; }
+}
+
+.login-form {
+    background: @wiki-login-bg;
+    max-width: @wiki-login-width;
+    padding: 2em;
+    margin: 0 auto;
+    border-radius: .5em;
+
+    hr { border-color:@gray; }
+
+    .login-header {
+        text-align:center;
+        .lead;
+    }
+
+    .login-ref {
+        text-align:right;
+    }
+
+}

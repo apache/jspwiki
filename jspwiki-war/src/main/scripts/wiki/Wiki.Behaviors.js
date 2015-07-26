@@ -475,14 +475,13 @@ Behavior: Table behaviors
 
             if( arg.test("striped|bordered|hover|condensed|fit")){
 
-                element.addClass("table-"+arg);
+                tables.addClass("table-"+arg);
 
             }
 
             else if( arg == "filter" ){
 
-                tables.each( function(t){ new T.Filter(t, {hint: "filter.hint".localize()}); });
-                //new T.Filter(element,{ list:["one$","James"], hint:hints.filter});
+                tables.each( function(t){ new T.Filter(t, {hint: "filter.hint".localize() /*list:["predef1"...]*/}); });
 
             }
 

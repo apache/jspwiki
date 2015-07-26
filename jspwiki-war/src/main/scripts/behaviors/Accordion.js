@@ -119,15 +119,14 @@ var Accordion = new Class({
         while( pane = panes[i++] ){
 
             name = this.getName(pane);
-
             if( nav ){ //tabs or pills style accordion
 
-                nav.grab( toggle = ["li", [ "a", {text: name} ]].slick() );
+                nav.grab( toggle = ["li", [ "a", {text: name, id: String.uniqueID()} ]].slick() );
                 if( type == "pills" ) { pane.addClass( panelCSS ); }
 
             } else {  //standard accordion
 
-                toggle = "div.panel-heading".slick({ text: name });
+                toggle = "div.panel-heading".slick({ html: name, id: String.uniqueID() });
                 "div".slick({"class": panelCSS}).wraps( pane ).grab( toggle, "top" );
 
             }
@@ -142,19 +141,25 @@ var Accordion = new Class({
 
             //height: true,
             display: this.options.closed ? -1 : 0, // initial display status
-            alwaysHide: !nav,   //allow closing all panes
-            initialDisplayFx: false,   //do not show effect on initial display
+            alwaysHide: !nav, //allow closing all panes
+            initialDisplayFx: false, //do not show effect on initial display
+
             onComplete: function(){
                 var el = $(this.elements[this.current]);
                 if(el.offsetHeight > 0){ el.setStyle("height", "auto"); }
             },
+
             onActive: function(toggle, content){
+
                 toggle.addClass(active);
                 content.addClass(active);
+
             },
             onBackground: function(toggle, content){
+
                 toggle.removeClass(active);
                 content.removeClass(active);
+
             }
 
         });
