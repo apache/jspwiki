@@ -1,5 +1,9 @@
 2015-08-02  Dirk Frederickx (brushed AT apache DOT org)
 
+       * Fixed the unit tests for HtmlStringToWikiTranslatorTest
+
+2015-08-02  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.2-svn-29
 
        Some more Haddock template "tweaks":
