@@ -453,13 +453,13 @@ public class XHtmlElementToWikiTranslator
                 {
                     m_out.print( "%%( text-decoration:underline; )" );
                     print( e );
-                    m_out.print( "%%" );
+                    m_out.print( "/%" );
                 }
                 else if( n.equals( "strike" ) )
                 {
                     m_out.print( "%%strike " );
                     print( e );
-                    m_out.print( "%%" );
+                    m_out.print( "/%" );
                     // NOTE: don't print a space before or after the double percents because that can break words into two.
                     // For example: %%(color:red)ABC%%%%(color:green)DEF%% is different from %%(color:red)ABC%% %%(color:green)DEF%%
                 }
@@ -467,13 +467,13 @@ public class XHtmlElementToWikiTranslator
                 {
                     m_out.print( "%%sup " );
                     print( e );
-                    m_out.print( "%%" );
+                    m_out.print( "/%" );
                 }
                 else if( n.equals( "sub" ) )
                 {
                     m_out.print( "%%sub " );
                     print( e );
-                    m_out.print( "%%" );
+                    m_out.print( "/%" );
                 }
                 else if( n.equals("dl") )
                 {
