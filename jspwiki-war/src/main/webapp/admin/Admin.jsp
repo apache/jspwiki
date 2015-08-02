@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -27,8 +27,8 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
-<%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+<%!
+    Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
     String bean = request.getParameter("bean");
@@ -36,7 +36,7 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.ADMIN );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
-    
+
     //
     //  This is an experimental feature, so we will turn it off unless the
     //  user really wants to.
@@ -70,14 +70,14 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "admin/AdminTemplate.jsp" );
-    
+
     pageContext.setAttribute( "engine", wiki, PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( "context", wikiContext, PageContext.REQUEST_SCOPE );
 
     if( request.getMethod().equalsIgnoreCase("post") && bean != null )
     {
         AdminBean ab = wiki.getAdminBeanManager().findBean( bean );
-        
+
         if( ab != null )
         {
             ab.doPost( wikiContext );
@@ -87,5 +87,5 @@
             wikiContext.getWikiSession().addMessage( "No such bean "+bean+" was found!" );
         }
     }
-    
+
 %><wiki:Include page="<%=contentPage%>" />

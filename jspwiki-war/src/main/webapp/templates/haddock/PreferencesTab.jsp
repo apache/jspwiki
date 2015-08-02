@@ -33,18 +33,17 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
   WikiContext c = WikiContext.findContext( pageContext );
   TemplateManager t = c.getEngine().getTemplateManager();
-  pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
-  pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
-  pageContext.setAttribute( "timezones", t.listTimeZones(pageContext) );
-  pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );
-  pageContext.setAttribute( "hasMultipleEditors", c.getEngine().getEditorManager().getEditorList().length > 1 );
-
 %>
+<c:set var="skins"       value="<%= t.listSkins(pageContext, c.getTemplate() ) %>" />
+<c:set var="languages"   value="<%= t.listLanguages(pageContext) %>" />
+<c:set var="timezones"   value="<%= t.listTimeZones(pageContext) %>" />
+<c:set var="timeformats" value="<%= t.listTimeFormats(pageContext) %>" />
+<c:set var="editors"     value="<%= c.getEngine().getEditorManager().getEditorList() %>" />
+
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
-          id="preferences"  <%-- see Prefs.js; setCookie --%>
+          id="preferences"  <%-- used by Prefs.js to set/reset the userpreferences cookie --%>
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
   <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
@@ -85,8 +84,8 @@
     <label class="control-label form-col-20" for="assertedName"><fmt:message key="prefs.assertedname"/></label>
     <span class="dropdown form-col-50">
     <input class="form-control" type="text" id="assertedName" name="assertedName" size="20"
-          autofocus="autofocus"
-         value="<wiki:UserProfile property='wikiname' />" />
+       autofocus="autofocus"
+           value="<wiki:UserProfile property='wikiname' />" />
     <%-- CHECK THIS
     <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='loginname'/>" />
     --%>
@@ -107,13 +106,14 @@
     </span>
   </div>
 
-  <c:if test='${hasMultipleEditors}'>
+  <c:if test='${fn.length(editors)>1}'>
   <div class="form-group">
     <label class="control-label form-col-20" for="editor"><fmt:message key="edit.chooseeditor"/></label>
     <select class="" id="editor" name="editor" data-pref="editor">
-      <wiki:EditorIterator id="edt">
-        <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
-      </wiki:EditorIterator>
+      <%-- no need to use EditorIterator tags--%>
+      <c:forEach items="${editors}" var="edt">
+        <option value='${edt}' ${prefs.editor==edt ? 'selected="selected"' : ''} >${edt}</option>
+      </c:forEach>
     </select>
   </div>
   </c:if>

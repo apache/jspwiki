@@ -248,12 +248,11 @@ img {
 //img.attlink
 
 // Utility class to support un-scaled, scrollable images,
-.scroll, .scrollable-image {
+.scrollable-image {
+
     overflow:scroll;
+    img.inline { width:auto; max-width:none; }
 
-    pre, img.inline { width:auto; max-width:none; }
-
-    pre { white-space: nowrap; }
 }
 
 

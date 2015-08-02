@@ -48,27 +48,23 @@ table[border="1"] td { border:0; }
 
 }
 
-.table-condensed .wikitable {
+.wikitable.table-condensed  {
 
     th, td { padding: @table-condensed-cell-padding; }
 
 }
 
-.table-bordered {
-    border:none;
-
-    .wikitable {
+.wikitable.table-bordered {
         border: 1px solid @table-border-color;
 
         tr:first-child {
             th, td { border-top: 1px solid @table-border-color; }
         }
-    }
 }
 
 .table-fit .wikitable {  width:auto; }
 
-.table-striped .wikitable {
+.table-striped.wikitable {
   > tbody > tr:nth-child(odd) {
     > td,
     > th {

@@ -88,13 +88,15 @@
     <form action="tbd"
            class="hidden"
             name="deleteForm" id="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />"
-      data-modal="<fmt:message key='attach.deleteconfirm'/>" >
+          method="post" accept-charset="<wiki:ContentEncoding />" >
 
       <%--TODO: "nextpage" is not yet implemented in Delete.jsp
       --%>
       <input type="hidden" name="nextpage" value="<wiki:Link context='upload' format='url'/>" />
-      <input class="btn btn-danger btn-xs" id="delete-all" name="delete-all" type="submit" value="Delete" />
+      <input id="delete-all" name="delete-all" type="submit"
+        data-modal="+ .modal"
+             value="Delete" />
+      <div class="modal"><fmt:message key='attach.deleteconfirm'/></div>
 
     </form>
   </wiki:Permission>
@@ -108,7 +110,7 @@
       <th><fmt:message key="info.size"/></th>
       <th><fmt:message key="info.date"/></th>
       <th><fmt:message key="info.author"/></th>
-      <wiki:Permission permission="delete"><th><fmt:message key="info.actions"/></th></wiki:Permission>
+      <th><fmt:message key="info.actions"/></th>
       <th><fmt:message key="info.changenote"/></th>
     </tr>
 

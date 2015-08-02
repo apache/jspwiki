@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.htmltowiki;
 
@@ -55,7 +55,7 @@ public class XHtmlElementToWikiTranslator
 
     /**
      *  Create a new translator using the default config.
-     *  
+     *
      *  @param base The base element from which to start translating.
      *  @throws IOException If reading of the DOM tree fails.
      *  @throws JDOMException If the DOM tree is faulty.
@@ -67,7 +67,7 @@ public class XHtmlElementToWikiTranslator
 
     /**
      *  Create a new translator using the specified config.
-     *  
+     *
      *  @param base The base element from which to start translating.
      *  @param config The config to use.
      *  @throws IOException If reading of the DOM tree fails.
@@ -83,7 +83,7 @@ public class XHtmlElementToWikiTranslator
 
     /**
      *  FIXME: I have no idea what this does...
-     * 
+     *
      *  @return Something.
      */
     public String getWikiString()
@@ -215,11 +215,11 @@ public class XHtmlElementToWikiTranslator
                 {
                     if( n.equals( "div" ) )
                     {
-                        m_out.print( "\n%%\n" );
+                        m_out.print( "\n/%\n" );
                     }
                     else
                     {
-                        m_out.print( "%%" );
+                        m_out.print( "/%" );
                     }
                 }
                 if( monospace )
@@ -239,11 +239,11 @@ public class XHtmlElementToWikiTranslator
                 {
                     if( n.equals( "div" ) )
                     {
-                        m_out.print( "\n%%\n" );
+                        m_out.print( "\n/%\n" );
                     }
                     else if( n.equals( "span" ) )
                     {
-                        m_out.print( "%%" );
+                        m_out.print( "/%" );
                     }
                 }
             }
@@ -308,7 +308,7 @@ public class XHtmlElementToWikiTranslator
                         // element is a table cell or list item, a newline character would break the markup.
                         // We also check that this isn't being done inside a plugin body.
                         //
-                        if( parentElementName.matches( "p|div" ) 
+                        if( parentElementName.matches( "p|div" )
                             && !base.getText().matches( "(?s).*\\[\\{.*\\}\\].*" ) )
                         {
                             m_out.print( " \\\\\n" );
@@ -391,13 +391,13 @@ public class XHtmlElementToWikiTranslator
                                     {
                                         // convert "#ref-PageName-1" to just "1"
                                         String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" );
-                                        
+
                                         // remove the brackets around "[1]"
                                         String textValue = e.getValue().substring( 1, (e.getValue().length() - 1) );
-                                        
+
                                         if( href.equals( textValue ) ){ // handles the simplest case. Example: [1]
                                             print( e );
-                                        }                                        
+                                        }
                                         else{ // handles the case where the link text is different from the href. Example: [something|1]
                                             m_out.print( "[" + textValue + "|" + href + "]" );
                                         }

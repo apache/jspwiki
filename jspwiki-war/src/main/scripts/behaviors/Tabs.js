@@ -141,7 +141,6 @@ var Tab = new Class({
         var name = pane.get("data-pane") || pane.className.slice(4).deCamelize();
 
         if( !pane.id ){
-            console.log("red alert", name)
             //pane.id = name;
         }
 

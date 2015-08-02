@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.render;
 
@@ -67,7 +67,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     private static final int    DEFAULT_CACHESIZE = 1000;
     private static final String VERSION_DELIMITER = "::";
     private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
-    
+
     /** The name of the default renderer. */
     public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
 
@@ -150,9 +150,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     }
 
     /**
-     *  Returns the default Parser for this context.
-     *
-     *  @param context the wiki context
+     *  Returns the default Paxt
      *  @param pagedata the page data
      *  @return A MarkupParser instance.
      */
@@ -232,7 +230,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * Returns a WikiRenderer instance, initialized with the given
      * context and doc. The object is an XHTMLRenderer, unless overridden
      * in jspwiki.properties with PROP_RENDERER.
-     * 
+     *
      * @param context The WikiContext
      * @param doc The document to render
      * @return A WikiRenderer for this document, or null, if no such renderer could be instantiated.

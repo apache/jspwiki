@@ -218,36 +218,60 @@ Element.implement({
     Function onModal
         Open a modal dialog with ""message"".
 
-        Used on forms (submit) or form-elements (click) to get a
-        confirmation prior to executing the default behaviour of the event.
-        TODO: use DOM based modal dialog rather then JS confirm(..)
+        Used on clickable elements (input, button, a.href) to get a
+        confirmation prior to executing the default behaviour of the CLICK.
 
     Example:
     (start code)
-        <form data-modal="Are your really sure?" ... > .. </form>
+        <a href="..." data-modal=".modal">
+             <div class=".modal">Are your really sure?</div>
+        </a>
 
         behavior.add("[data-modal]", function(element){
             element.onModal( element.get("data-modal") );
         });
-
     (end)
 
     */
-    onModal: function( message ){
+    onModal: function( selector ){
 
-        this.addEvent( this.match("form") ? "submit" : "click", function( /*event*/ ){
+        var self = this,
+            modal = self.getElement(selector);
 
-console.log(message);
+        function doSelfEvent(event){
 
-            return window.confirm(message);
-            /*
-            TODO
-            build modal dialog
-            modalbody.set("html",message);
-            return modaldialog.show();
-            */
+            modal.addClass( "active" );
+            document.body.addClass( "show-modal" );
+            event.preventDefault(); //postpone the click event
+        }
 
-        });
+        function doModalEvent(){
+
+            modal.removeClass( "active" );
+            document.body.removeClass( "show-modal" );
+
+            if( this.hasClass("btn-primary") ){
+                self.removeEvent( "click", doSelfEvent ).click();
+            }
+        }
+
+        if( modal ){
+
+            //build a pretty modal dialog
+            if( !modal.getElement("> modal-footer") ){
+                modal.grab([
+                    "div.modal-footer", [
+                        "button.btn.btn-primary", { text: "Confirm" },
+                        "button.btn.btn-danger", { text: "Cancel" },
+                    ]
+                ].slick());
+            }
+            //move it at the top of the document for easy css styling
+            modal.inject( document.getBackdrop(), "before" )
+                 .addEvent( "click:relay(.btn)",  doModalEvent );
+
+            self.addEvent( "click" , doSelfEvent );
+        }
     },
 
     /*
@@ -451,6 +475,18 @@ console.log(message);
             }
 
         });
+
+    }
+
+});
+
+
+Document.implement({
+
+    getBackdrop : function(){
+
+        var body = document.body;
+        return body.getElement(".backdrop") || "div.backdrop".slick().inject(body);
 
     }
 

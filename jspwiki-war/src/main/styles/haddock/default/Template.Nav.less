@@ -84,6 +84,11 @@ Note: avoid page-bump when sticky become 'fixed', by adding a spacer with its he
     .pagename { .opacity(1); }
 }
 
-//More-menu - add padding to unstyled lists, for proper menu look&feel
-.more-menu ul.list-unstyled { padding: 3px 20px;}
-
+/* make sure the anchors remains visible, even below the fixed header elements */
+.page-content > [id^="section-"]:not(#section-TOC):before {
+  display: block;
+  content: " ";
+  margin-top: -50px; //approximate size of the fixed navigation block
+  height: 50px;
+  visibility: hidden;
+}

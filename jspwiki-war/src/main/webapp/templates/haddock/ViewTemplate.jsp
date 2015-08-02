@@ -50,9 +50,11 @@
 
   <wiki:Include page="Header.jsp" />
   <wiki:Include page="Nav.jsp" />
+
   <c:set var="sidebar"><wiki:Variable var='sidebar' /></c:set>
+  <c:set var="sidebar" value="${ (sidebar!='off') and (prefs.Orientation!='fav-hidden') ? 'on' : 'off' }" />
   <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup'>
-      <c:set var="sidebar">off</c:set>
+    <c:set var="sidebar">off</c:set>
   </wiki:CheckRequestContext>
 
   <div class="content <c:if test='${sidebar != "off"}'>active</c:if>" data-toggle="li#menu,.sidebar>.close">

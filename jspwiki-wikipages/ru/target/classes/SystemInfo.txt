@@ -1,0 +1,44 @@
+Вот некоторые стратегические числа и другие интересные вещи об этой конкретной Wiki.
+Вся эта информация также доступна в [WikiVariables|JSPWiki:WikiVariables],
+если Вы хотите использовать их на какой-либо другой странице.
+
+| __Имя приложения__                     | [{$applicationname}]
+| __Базовый адрес__                      | [{$baseurl}]
+| __Версия Процессора JSPWiki__          | [{$jspwikiversion}] 
+| __Кодировка символов__                 | [{$encoding}]
+| __Общее Количество Страниц__           | [{$totalpages}]
+| __Количество Активных Сеансов__        | [{INSERT SessionsPlugin}]
+| __Активные Пользователи Wiki__         | [{INSERT SessionsPlugin property=users}]
+| __Текущее Время Работы__               | [{$uptime}]
+| __Текущий Провайдер Страниц__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Текущий Присоединяемый Провайдер__   | [{$jspwiki.attachmentProvider}]
+| __Доступные меж-Wiki соединения__      | [{$interwikilinks}]
+| __Встроенные изображения__             | [{$inlinedimages}]
+| __Дополнительный Путь Поиска Плагина__ | [{$pluginpath}]
+| __Установленный [PageFilters]__        | [{$pagefilters}]
+
+! Удобство пользования
+
+| __Мы украшаем заголовки?__ | [{$jspwiki.breakTitleWithSpaces}]
+| __Мы соответствуем английским множественным формам?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Используются ли ссылки CamelCase?__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __HTML допускается на страницах?__    | [{$jspwiki.translatorReader.allowHTML}]
+
+! RichSiteSummary
+
+| __Мы генерируем файлы RSS?__ | [{$jspwiki.rss.generate}]
+| __Если мы делаем это, то какое имя файла?__ | [{$jspwiki.rss.fileName}]
+| __Как часто RSS обновляется?__ | [{$jspwiki.rss.interval}]
+
+! Личная информация
+
+Вот то, что я знаю о Вас в настоящий момент:
+
+| __Имя пользователя__ | [{$username}]
+| __Состояние входа в систему__ | [{$loginstatus}]
+
+! Список страниц, отредактированных в настоящий момент
+
+[{ListLocksPlugin}]
+
+Домашняя страница JSPWiki – [http://jspwiki.apache.org/]. Добро пожаловать!

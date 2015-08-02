@@ -1,0 +1,18 @@
+Эта Wiki выполнена с использованием технологии [JSP|http://java.sun.com/products/jsp], 
+что, как мы надеемся, делает очень легким усовершенствование и выглядит лучше чем большинство Wiki,
+основанных на [оригинальной wiki|http://c2.com/cgi/wiki].
+Настраиваемый узел обрабатывает преобразование текста в HTML.
+
+Большинство [маркеров редактирования|TextFormattingRules] было разработано согласно [Библиотеке Sensei|http://senseis.xmp.net], лучшие Go сайты в Интернете. Я считаю их разметку очень легкой, тем не менее очевидной.
+
+Эта wiki доступна под [Лицензией Apache, Версии 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Пожалуйста,
+см. [http://jspwiki.apache.org] для дополнительной информации.
+
+Если Вы интересуетесь разработкой JSPWiki, домашняя страница для JSPWiki в [http://jspwiki.apache.org]. Некоторые быстрые ссылки:
+
+* [Протокол Багов|JSPWiki:SubmitBugReport] - или [взгляните на список открытых багов|JSPWiki:OpenBugs].
+* [Внесение новых идей|JSPWiki:SubmitNewIdea].
+* Рассмотрите наиболее актуальные [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
+* Ищите дополнительные [плагины|JSPWiki:ContributedPlugins], [шаблоны|JSPWiki:ContributedTemplates], [фильтры|JSPWiki:ContributedFilters], [провайдеры|JSPWiki:ContributedProviders], или [другой современный материал|JSPWiki:ContributedCode].
+
+Удачи в исследовании, и спасибо за выбор JSPWiki!

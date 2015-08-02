@@ -27,6 +27,12 @@
 <fmt:setBundle basename="templates.default"/>
 
 <div class="page-content">
+
+<wiki:UserCheck status="notAuthenticated">
+  <wiki:Include page="PreferencesTab.jsp" />
+</wiki:UserCheck>
+
+<wiki:UserCheck status="authenticated">
 <div class="tabs">
 
   <h3 id="section-prefs">
@@ -34,7 +40,6 @@
   </h3>
   <wiki:Include page="PreferencesTab.jsp" />
 
-  <%-- <wiki:UserCheck status="authenticated"> --%>
   <wiki:Permission permission="editProfile">
   <wiki:UserProfile property="exists">
     <c:set var="profileTab" value="${param.tab == 'profile' ? 'data-activePane' : ''}"/>
@@ -43,7 +48,6 @@
     <%-- <%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.profile")%> --%>
   </wiki:UserProfile>
   </wiki:Permission>
-  <%-- </wiki:UserCheck> --%>
 
   <wiki:Permission permission="createGroups"><%-- use WikiPermission --%>
     <c:set var="groupTab" value="${param.tab == 'groups' ? 'data-activePane' : ''}"/>
@@ -52,8 +56,9 @@
     </wiki:CheckRequestContext>
     <h3 ${groupTab} id="section-groups"><fmt:message key="group.tab" /></h3>
     <wiki:Include page="GroupTab.jsp" />
-
   </wiki:Permission>
 
 </div>
+</wiki:UserCheck>
+
 </div>

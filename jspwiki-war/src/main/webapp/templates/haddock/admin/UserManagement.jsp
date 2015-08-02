@@ -137,8 +137,8 @@ function addNew()
 
      </table>
    <div id="useractions">
-     <input type="submit" name="action" value="Remove"
-      data-modal="Are you sure you wish to remove this user?" />
+     <input type="submit" name="action" value="Remove" data-modal="+ .modal" />
+     <div class="modal">"Are you sure you wish to remove this user?</div>
      <input type="button" value="Add" onclick="javascript:addNew()"/>
    </div>
    </form>

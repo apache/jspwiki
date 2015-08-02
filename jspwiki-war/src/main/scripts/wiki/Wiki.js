@@ -60,6 +60,8 @@ Class: Wiki
 */
 var Wiki = {
 
+    version: "haddock01",  //used to validate compatible preference cookies
+
     initialize: function(){
 
         var wiki = this,
@@ -187,6 +189,12 @@ var Wiki = {
             path: wiki.BasePath,
             duration: 20
         });
+
+        if( wiki.version != wiki.prefs.get('version') ){
+            wiki.prefs.empty();
+            wiki.prefs.set("version", wiki.version);
+        }
+
 
         //wiki.url = null;  //CHECK:  why this is needed?
         if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){

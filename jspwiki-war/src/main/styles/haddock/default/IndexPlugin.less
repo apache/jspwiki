@@ -41,16 +41,20 @@ DOM structure:
 
     .header {
         .btn; .btn-primary;
-        font-size:125%;
-        a { color:inherit; }
-        .box-shadow(1px 1px 8px @brand-primary);
+        border: none;
+        font-size: 0; /*hide the " - " separators of the plugin! */
+        overflow: scroll;
+        a {
+            color: inherit;
+            font-size: @font-size-large;
+            padding: @padding-base-vertical/2 @padding-base-horizontal/2;
+        }
     }
 
     > .section {
         .h1;
-        display:block;
+        display: block;
         margin-top: @line-height-computed;
         margin-bottom: (@line-height-computed / 2);
     }
-
 }

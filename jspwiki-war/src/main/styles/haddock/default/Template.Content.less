@@ -40,12 +40,12 @@ DOM Structure:
 */
 
 .content {
-    //position:relative;  => dont, otherwise suggestion dialogs are clipped
+    /* position:relative;  => dont, otherwise suggestion dialogs are clipped */
     padding:0;
     overflow:hidden;
     clear:both;
     .hyphens(auto);
-    //.clearfix();
+    .transition(all .3s);
 }
 .page {
     float:right;
@@ -62,37 +62,58 @@ DOM Structure:
 }
 .page, .sidebar {
     //box-sizing: border-box;  //width% now includes border & padding : already default in bootstrap
-   .transition(all 300ms);
-
-    /*Solution to make .sidebar and .page of equal height
-      using the "One True Layout Method" -- See https://css-tricks.com/fluid-width-equal-height-columns/
-      NOK: when jumping to in-page anchors
-    */
-    // margin-bottom: -99998em;
-    //padding-bottom: 99999em;
+   .transition(all .3s);
     //& > *:last-child { padding-bottom:1em; }
 }
 
 
-/* FIXME
-.fav-right {
-    .page    { float:left; }
-    .sidebar { float:right; margin-left:0; margin-right:-@wiki-sidebar-width;}
-}
-.fav-hidden {
-    .sidebar { .hide();  }
-}
-*/
-
-.sidebar { background:@wiki-sidebar-bg; }
-.content {
-    background: @wiki-page-bg;
-}
 .content.active {
     .page { width:100%-@wiki-sidebar-width; }
     .sidebar { margin-left:0; }
 }
+.content {
+    background: @wiki-page-bg;  //page background color
+    position: relative;  //prepare for the :after element to give the sidebar another color
+}
+.content:after {
+    content: " ";
+    position: absolute; top: 0; left: 0; bottom: 0;
+    background: @wiki-sidebar-bg;
+    .transition (all .3s);
+    width: @wiki-sidebar-width;
+}
+.content:not(.active):after {
+    width: 0;
+}
+.sidebar {
+    z-index:1;  //ontop of the content:after element !
+}
 
+/*
+Put sidebar at the right side
+- FFS: also move toggle buttons to other side ?
+*/
+.fav-right {
+    .content:after {
+        right:0; left:auto;
+    }
+    .page    {
+        float:left;
+    }
+    .sidebar {
+        float: right;
+        margin-left: 0;
+        margin-right: -@wiki-sidebar-width;
+    }
+    .content.active {
+        .sidebar { margin-right:0; }
+    }
+}
+/*
+Main logic to hide the sidebar is in ViewTemplate.jsp.
+We may just hide the on/off toggle in css
+*/
+//.fav-hidden #menu {  .hide; }
 
 .page-content, .sidebar, .ajaxpreview {
 	.clearfix;

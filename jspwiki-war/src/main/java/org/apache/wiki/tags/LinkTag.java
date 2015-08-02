@@ -55,7 +55,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     private static final Logger log = Logger.getLogger( LinkTag.class );
 
     private String m_version = null;
-    private String m_class   = null;
+    private String m_cssClass= null;
     private String m_style   = null;
     private String m_title   = null;
     private String m_target  = null;
@@ -77,7 +77,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     public void initTag()
     {
         super.initTag();
-        m_version = m_class = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
+        m_version = m_cssClass = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
         m_context = WikiContext.VIEW;
         m_containedParams = new HashMap<String, String>();
         m_absolute = false;
@@ -109,9 +109,9 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         m_version = arg;
     }
 
-    public void setClass( String arg )
+    public void setCssClass( String arg )
     {
-        m_class = arg;
+        m_cssClass = arg;
     }
 
     public void setStyle( String style )
@@ -425,7 +425,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
             StringBuilder sb = new StringBuilder( 20 );
 
-            sb.append( (m_class != null)   ? "class=\""+m_class+"\" " : "" );
+            sb.append( (m_cssClass != null)   ? "class=\""+m_cssClass+"\" " : "" );
             sb.append( (m_style != null)   ? "style=\""+m_style+"\" " : "" );
             sb.append( (m_target != null ) ? "target=\""+m_target+"\" " : "" );
             sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );

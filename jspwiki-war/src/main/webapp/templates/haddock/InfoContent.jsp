@@ -148,10 +148,11 @@ defaul template,  let's fix this here
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="form-group"
               id="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />"
-      data-modal="<fmt:message key='info.confirmdelete'/>" >
+          method="post" accept-charset="<wiki:ContentEncoding />" >
       <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
+        data-modal="+ .modal"
             value="<fmt:message key='info.delete.submit'/>" />
+      <div class="modal"><fmt:message key='info.confirmdelete'/></div>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!delete">
@@ -307,19 +308,20 @@ defaul template,  let's fix this here
 <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="form-group"
               id="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />"
-          data-modal="<fmt:message key='info.confirmdelete'/>" >
+          method="post" accept-charset="<wiki:ContentEncoding />" >
 
   <c:set var="parentPage"><wiki:ParentPageName/></c:set>
-  <a class="btn btn-default" href="<wiki:Link page='${parentPage}' format='url' />" >
+  <a class="btn btn-primary" href="<wiki:Link page='${parentPage}' format='url' />" >
     <fmt:message key="info.backtoparentpage" >
-      <fmt:param>${parentPage}</fmt:param>
+      <fmt:param><span class="badge">${parentPage}</span></fmt:param>
     </fmt:message>
   </a>
 
   <wiki:Permission permission="delete">
     <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
+      data-modal="+ .modal"
            value="<fmt:message key='info.deleteattachment.submit' />" />
+    <div class="modal"><fmt:message key='info.confirmdelete'/></div>
   </wiki:Permission>
 </form>
 
@@ -388,9 +390,11 @@ defaul template,  let's fix this here
 </wiki:PageExists>
 
 <wiki:NoSuchPage>
+  <div class="danger">
   <fmt:message key="common.nopage">
-    <fmt:param><wiki:EditLink><fmt:message key="common.createit"/></wiki:EditLink></fmt:param>
+    <fmt:param><a class="createpage" href="<wiki:EditLink format='url'/>"><fmt:message key="common.createit"/></a></fmt:param>
   </fmt:message>
+  </div>
 </wiki:NoSuchPage>
 
 </div>

@@ -18,7 +18,6 @@
 --%>
 
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -26,8 +25,10 @@
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
@@ -79,6 +80,9 @@
       action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
+
+     <%--action="<wiki:Link context=${context} format='url'/>"--%>
+
        class="editform"
           id="editform"
      enctype="application/x-www-form-urlencoded" >
@@ -134,7 +138,8 @@
       </label>
     </div>
     --%>
-    <div class="btn-group config">
+
+`    <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
       <button class="btn btn-default dropdown-toggle"><span class="icon-wrench"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
@@ -182,6 +187,30 @@
 
       </ul>
     </div>
+
+    <%-- --%>
+    <c:set var="editors" value="<%= context.getEngine().getEditorManager().getEditorList() %>" />
+    <c:if test='${fn:length(editors)>1}'>
+`   <div class="btn-group config">
+      <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
+      <button class="btn btn-default dropdown-toggle"><span class="icon-pencil"></span><span class="caret"></span></button>
+      <ul class="dropdown-menu" data-hover-parent="div">
+        <c:forEach items="${editors}" var="edt">
+          <c:choose>
+            <c:when test="${edt != prefs.editor}">
+              <li>
+                <wiki:Link context="edit"><wiki:Param name="editor" value="${edt}" />${edt}</wiki:Link>
+              </li>
+            </c:when>
+            <c:otherwise>
+              <li class="dropdown-header">${edt}</li>
+            </c:otherwise>
+          </c:choose>
+      </c:forEach>
+      </ul>
+    </div>
+    </c:if>
+
   </div>
 
       <div class="dialog float find">

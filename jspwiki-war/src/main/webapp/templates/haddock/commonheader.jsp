@@ -39,6 +39,14 @@
 --%>
 <%-- CSS stylesheet --%>
 
+<%-- Localized JS; must come before any css, to avoid blocking immediate execution --%>
+<%-- var LocalizedStrings= { "javascript.<xx>":"...", etc. } --%>
+<script type="text/javascript">//<![CDATA[
+<wiki:IncludeResources type="jslocalizedstrings"/>
+String.I18N = LocalizedStrings;
+String.I18N.PREFIX = "javascript.";
+//]]></script>
+
 <link rel="stylesheet" type="text/css" media="screen, projection, print"
      href="<wiki:Link format='url' templatefile='haddock.css'/>" />
 
@@ -47,20 +55,7 @@
 
 <%-- JAVASCRIPT --%>
 
-<script type="text/javascript">//<![CDATA[
-/* Localized javascript strings: LocalizedStrings[] */
-<wiki:IncludeResources type="jslocalizedstrings"/>
-String.I18N = LocalizedStrings;
-String.I18N.PREFIX = "javascript.";
-
-//TODO: Load JS resources parallel with other resources.
-
-
-
-//]]></script>
-
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
-
+<script async src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
 
 <wiki:IncludeResources type="script"/>
 
@@ -110,8 +105,8 @@ String.I18N.PREFIX = "javascript.";
   WikiContext c = WikiContext.findContext( pageContext );
   String frontpage = c.getEngine().getFrontPage();
 %>
-<link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontpage%>' />" title="Front page" />
-
+<link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontpage%>' />"
+    title="Front page" />
 <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='haddock.css'/>"
     title="Standard" />
 <link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
@@ -122,8 +117,8 @@ String.I18N.PREFIX = "javascript.";
 <wiki:CheckRequestContext context='view|info|diff|upload'>
   <wiki:Permission permission="edit">
     <wiki:PageType type="page">
-    <link rel="alternate" type="application/x-wiki"
-          href="<wiki:EditLink format='url' />"
+      <link rel="alternate" type="application/x-wiki"
+           href="<wiki:EditLink format='url' />"
           title="<fmt:message key='actions.edit.title'/>" />
     </wiki:PageType>
   </wiki:Permission>

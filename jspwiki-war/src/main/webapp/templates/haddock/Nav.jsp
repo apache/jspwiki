@@ -17,11 +17,12 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
@@ -59,7 +60,9 @@
 
   <%-- attachment --%>
   <wiki:CheckRequestContext context='view|info|diff|rename|edit'>
-  <li id="attach">
+  <wiki:PageExists>
+  <li id="attach"
+   class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
     <c:set var="page">
       <wiki:PageType type="page"><wiki:PageName/></wiki:PageType>
       <wiki:PageType type="attachment"><wiki:ParentPageName/></wiki:PageType>
@@ -69,15 +72,16 @@
       <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
     </wiki:Link>
   </li>
+  </wiki:PageExists>
   </wiki:CheckRequestContext>
 
   <%-- info --%>
   <wiki:CheckRequestContext context='view|upload|rename|edit'>
+  <wiki:PageExists>
   <li id="info">
     <wiki:Link context="info" accessKey="i">
       <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists>
     </wiki:Link>
-  <wiki:PageExists>
   <ul class="dropdown-menu pull-right" data-hover-parent="li">
       <li class="dropdown-header">This is version <span class="badge"><wiki:PageVersion /></span></li>
       <li class="dropdown-header">Last Changed on:</span></li>
@@ -87,15 +91,21 @@
     <wiki:CheckVersion mode="notlatest">
       <li><wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
     </wiki:CheckVersion>
-    <%--fixme: Author sometimes returns a link(ok) or a plain text(bad formatting) --%>
     <li class="dropdown-header">By:</span></li>
-    <li><wiki:Author /></li>
+    <li>
+      <%-- wiki:Author sometimes returns a link(ok) or a plain text, we always need a link! --%>
+      <c:set var="author"><wiki:Author/></c:set>
+      <c:choose>
+        <c:when test="${ fn:contains(author,'href=')}">${author}</c:when>
+        <c:otherwise><a href="#">${author}</a></c:otherwise>
+      </c:choose>
+    </li>
     <li class="divider"></li>
     <li><wiki:RSSImageLink mode="wiki" /></li>
 
   </ul>
-  </wiki:PageExists>
   </li>
+  </wiki:PageExists>
   </wiki:CheckRequestContext>
 
 
@@ -166,39 +176,38 @@
   <li id="more">
     <a href="#"><fmt:message key="actions.more"/><span class="caret"></span></a>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
-
       <wiki:PageExists>
       <wiki:CheckRequestContext context='view|info|diff|upload|preview' >
 
         <%-- VIEW RAW PAGE SOURCE --%>
         <li>
           <wiki:CheckVersion mode="latest">
-          <%--FIXME: wiki:Link doesnt support class=".." yet ; should be changed to className=".." --%>
-          <a class="slimbox-link"
-             href="<wiki:Link format='url'><wiki:Param name='skin' value='raw'/></wiki:Link>"><fmt:message key='actions.rawpage' />
-          </a>
+            <wiki:Link cssClass="slimbox-link">
+              <wiki:Param name='skin' value='raw'/>
+              <fmt:message key='actions.rawpage' />
+            </wiki:Link>
           </wiki:CheckVersion>
           <wiki:CheckVersion mode="notlatest">
-          <a class="slimbox-link"
-             href="<wiki:Link format='url' version='${param.version}'><wiki:Param name='skin' value='raw'/></wiki:Link>"><fmt:message key='actions.rawpage' />
-          </a>
+            <wiki:Link cssClass="slimbox-link" version='${param.version}'>
+              <wiki:Param name='skin' value='raw'/>
+              <fmt:message key='actions.rawpage' />
+            </wiki:Link>
           </wiki:CheckVersion>
         </li>
 
         <%-- Show Reader View --%>
         <li>
           <wiki:CheckVersion mode="latest">
-          <%--FIXME: wiki:Link doesnt support class=".." yet ; should be changed to className=".." --%>
-          <a class="reader-view"
-             href="<wiki:Link format='url'><wiki:Param name='skin' value='reader'/></wiki:Link>"><fmt:message key='actions.showreaderview' />
-             <span class="icon-leanpub" />
-          </a>
+            <wiki:Link cssClass="reader-view">
+              <wiki:Param name='skin' value='reader'/>
+              <fmt:message key='actions.showreaderview' /><span class="icon-leanpub" />
+            </wiki:Link>
           </wiki:CheckVersion>
           <wiki:CheckVersion mode="notlatest">
-          <a class="reader-view"
-             href="<wiki:Link format='url' version='${param.version}'><wiki:Param name='skin' value='reader'/></wiki:Link>"><fmt:message key='actions.showreaderview' />
-             <span class="icon-leanpub" />
-          </a>
+            <wiki:Link cssClass="reader-view" version="${param.version}">
+              <wiki:Param name='skin' value='reader'/>
+              <fmt:message key='actions.showreaderview' /><span class="icon-leanpub" />
+            </wiki:Link>
           </wiki:CheckVersion>
         </li>
 
@@ -276,7 +285,8 @@
 </ul>
 
 </div>
-  <%--
+
+<%--
   <wiki:PageExists>
   <wiki:PageType type="page">
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
@@ -285,4 +295,4 @@
   </wiki:PageType>
 
   </wiki:PageExists>
-  --%>
+--%>

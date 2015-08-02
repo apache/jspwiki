@@ -99,10 +99,12 @@
 <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
       class="hidden"
         name="deleteGroupForm" id="deleteGroupForm"
-  data-modal="<fmt:message key='grp.deletegroup.confirm'/>"
       method="POST" accept-charset="UTF-8">
   <input type="hidden" name="group" value="${group.name}" />
-  <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
+  <input type="submit" name="ok"
+   data-modal="+ .modal"
+        value="<fmt:message key="actions.deletegroup"/>" />
+  <div class="modal"><fmt:message key='grp.deletegroup.confirm'/></div>
 </form>
 
 <div class="table-filter-sort-condensed-striped">

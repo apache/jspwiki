@@ -1,0 +1,5 @@
+WikiWiki является гавайским для &quot;quick&quot;.
+~ViteVite является французским для &quot;quickquick&quot;.
+У Wiki также есть акроним – 'What I Know Is',
+
+Достаточно всесторонний список других Wiki-процессоров доступен в [оригинальной Wiki | http://c2.com/cgi/wiki? WikiEngines] от Ward Cunningham.

@@ -1,3 +1,72 @@
+2015-08-02  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-29
+
+       Some more Haddock template "tweaks":
+
+       * Hide the attach & info navigation menu's for non-existing page
+
+       * Improved the Info dropdown when no Author page exists.
+
+       * Section titles remain visible, even with a sticky navigation menu.
+         Eg. when clicking a table of contents entry, you should end up
+         with a visible section header just below the sticky menu line.
+
+       * Fixed: the top border of a TABLE was gone.
+
+       * Added a version check on the user-preference cookie to be more robust ico changes.
+         (hopefully no more cookie clean-up is needed when upgrading JSPWiki)
+
+       * Sidebar:
+         - The sidebar height now extends till the bottom of the page
+         - 3 Sidebar modes are now working: left(default), right and hidden
+
+       * Fixed the <wiki:Link> tag to support "cssClass" as attribute. 
+
+       * [JSPWIKI-430] All confirmation dialogs are now build with regular DOM elements. 
+         (check out the Log-out or Delete confirmation dialogs to see the improvement) 
+  
+  
+       WYSIWYG editors:
+
+       * Added support for the WYSIWYG editor TinyMCE.jsp
+
+       * Improved server side handling of HtmlStringToWiki translation
+
+       * [JSPWIKI-622] Added an editor selection switch to the editor toolbar. 
+         It is now possible to switch between editors (plain, or other installed 
+         wysiwyg editors) while in Edit. (no need to go first via the Preferences screen)
+
+
+
+2015-07-26  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-28
+
+       Haddock Template commit of the remaining JSP's: UI for handling groups,
+       workflow UI, and refactored JSP's for Login/Lostpw/Register.
+       This concludes the re-design of all the haddock template JSP's.
+       
+       Other changes:
+
+       * Fixed page redirections and improved the back button handling.
+         Eg. Attachment DELETE will get you now back to the ATTACH view, 
+         not the INFO view.  See also [JSPWIKI-867]
+
+       * Tabs & Accordion toggles can now include other markup, rather than only text. 
+
+       * Added CSS3-based automatic text hyphenation for browsers who support this.
+         (also works with none justified text)
+
+       * Attachment Upload UI improved: attachment types are represented by icons 
+         from the icon-font.
+
+       * Attachment Info page to access version information on attachments
+         should now be more user-friendly, with an extra INFO action button.
+         (iso a hidden link via the version number)
+
+
+
 2015-07-16  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-27

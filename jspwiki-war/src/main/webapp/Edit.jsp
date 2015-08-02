@@ -263,6 +263,23 @@
 
     log.info("Editing page "+pagereq+". User="+user+", host="+HttpUtil.getRemoteAddress(request) );
 
+
+    //
+    // switch the target editor type (plain, wysiwyg-editor...) when opening the editor
+    // by means of an optional url parameter &editor=plain
+    //
+    String editor = request.getParameter(EditorManager.PARA_EDITOR);
+    if( editor != null )
+    {
+        log.info("Switching Editor type to: " + editor );
+
+        Preferences prefs = (Preferences)session.getAttribute( Preferences.SESSIONPREFS );
+        if( prefs != null )
+        {
+            prefs.put( EditorManager.PARA_EDITOR, editor );
+        }
+    }
+
     //
     //  Determine and store the date the latest version was changed.  Since
     //  the newest version is the one that is changed, we need to track

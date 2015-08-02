@@ -78,7 +78,7 @@ wiki.add("#editform", function( element ){
 
     }
 
-    resizer( snipe.toElement(), getFormElement(".resizer"), "EditorCookie" );
+    resizer( snipe.toElement(), getFormElement(".resizer"), "editorHeight" );
 
     //Initialize the configuration checkboxes
     //Read the wiki-prefs cookie values.
@@ -119,13 +119,16 @@ wiki.add("#editform", function( element ){
         Install an onbeforeunload handler, which is called ""before"" the page unloads.
         The user gets a warning in case the textarea was changed, without saving.
 
-        The onbeforeunload handler is automatically removed on regular exit of the page.
+        The onbeforeunload handler then gets removed on regular exit of the page.
     */
     function onbeforeunload( ){
 
-        window.onbeforeunload = function(){
+        window.onbeforeunload = function(event){
+
             if( textarea.value != textarea.defaultValue ){
+
                 return "edit.areyousure".localize();
+
             }
         };
 

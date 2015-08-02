@@ -17,7 +17,6 @@
     under the License.
 --%>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
@@ -30,8 +29,10 @@
 
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
@@ -164,41 +165,31 @@
   </span>
 
 
-  <div class="btn-group editor-tools">
-  <%--
-      <!-- note: 'dropdown-toggle' is only here to style the last button properly! -->
-      <button class="btn btn-default dropdown-toggle"><span class="icon-wrench"></span><span class="caret"></span></button>
+  <%--<div class="btn-group editor-tools">--%>
+
+    <c:set var="editors" value="<%= engine.getEditorManager().getEditorList() %>" />
+    <c:if test='${fn:length(editors)>1}'>
+`   <div class="btn-group config">
+      <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
+      <button class="btn btn-default dropdown-toggle"><span class="icon-pencil"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
-            <li>
-              <a>
-                <label for="autosuggest">
-                  <input type="checkbox" data-cmd="autosuggest" id="autosuggest" />
-                  <fmt:message key='editor.plain.autosuggest'/>
-                </label>
-              </a>
-            </li>
-
-            <li class="divider"></li>
-            <li>
-              <a>
-                <label for="livepreview">
-                  <input type="checkbox" data-cmd="livepreview" id="livepreview"/>
-                  <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh"/>
-                </label>
-              </a>
-            </li>
-            <li>
-              <a>
-                <label for="previewcolumn">
-                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" />
-                  <fmt:message key='editor.plain.sidebysidepreview'/> <span class="icon-columns"/>
-                </label>
-              </a>
-            </li>
-
+        <c:forEach items="${editors}" var="edt">
+          <c:choose>
+            <c:when test="${edt != prefs.editor}">
+              <li>
+                <wiki:Link context="edit"><wiki:Param name="editor" value="${edt}" />${edt}</wiki:Link>
+              </li>
+            </c:when>
+            <c:otherwise>
+              <li class="dropdown-header">${edt}</li>
+            </c:otherwise>
+          </c:choose>
+      </c:forEach>
       </ul>
---%>
-  </div>
+    </div>
+    </c:if>
+
+  <%--</div>--%>
 
 
   <%-- is PREVIEW functionality still needed - with livepreview ?

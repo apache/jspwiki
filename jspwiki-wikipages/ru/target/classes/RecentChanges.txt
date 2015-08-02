@@ -1,0 +1,7 @@
+Это – изменения, произведенные в этих страницах в течение последних 30 дней.
+Проверьте [FullRecentChanges] для полного списока всех измененных страниц.
+
+Этот сервер живет на [{INSERT CurrentTimePlugin format=zzzz}] и время здесь,
+[{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]
