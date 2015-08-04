@@ -1,3 +1,9 @@
+2015-08-04  David Vittor (dvittor@apache.org)
+
+       * 2.10.2-svn-30
+
+       * [JSPWIKI-900]: Fixed Problem with the WikiFormsPlugin Text Area
+
 2015-08-02  Dirk Frederickx (brushed AT apache DOT org)
 
        * Fixed the unit tests for HtmlStringToWikiTranslatorTest
@@ -266,7 +272,7 @@
 
        * Fixed JSPWIKI-878 (following up JSPWIKI-660) you can now also use environment variables to configure JSPWiki
 
-2015-02-12  David Vittor ()
+2015-02-12  David Vittor (dvittor@apache.org)
 
        * 2.10.2-svn-13
 
