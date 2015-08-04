@@ -48,6 +48,10 @@ function AddCSS( element ){
 
         css = css.replace( /<p>|<\/p>/gi, "" ); //jspwiki inserts <p/> for empty lines
 
+        css = css.replace( /&amp;/g, "&" )
+                 .replace( /&gt;/g, ">" )
+                 .replace( /&lt;/g, "<" );
+
         css = "style[type=text/css]".slick({text: css});
 
         /*

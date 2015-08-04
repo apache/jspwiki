@@ -250,8 +250,8 @@ Element.implement({
             modal.removeClass( "active" );
             document.body.removeClass( "show-modal" );
 
-            if( this.hasClass("btn-primary") ){
-                self.removeEvent( "click", doSelfEvent ).click();
+            if( this.match(".btn-primary") ){
+                self.removeEvent( "click" , doSelfEvent ).click();
             }
         }
 

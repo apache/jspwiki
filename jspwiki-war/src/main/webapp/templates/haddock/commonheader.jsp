@@ -55,7 +55,7 @@ String.I18N.PREFIX = "javascript.";
 
 <%-- JAVASCRIPT --%>
 
-<script async src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
+<script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
 
 <wiki:IncludeResources type="script"/>
 

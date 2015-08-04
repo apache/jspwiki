@@ -1,3 +1,17 @@
+2015-08-04  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-31  Haddock Template small fixes
+
+       * Loading error on hadock.js and haddock-edit.js fixed. (async attribute)
+         Was breaking all editing js functions !
+       
+       * IEx tweaks 
+         - remove unnecessary scrollbars
+         - attempt to resolve the broken icon-fonts on IE11
+
+       * %%add-css style fix to handle special html entities 
+
+
 2015-08-04  David Vittor (dvittor@apache.org)
 
        * 2.10.2-svn-30
