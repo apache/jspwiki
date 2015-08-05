@@ -102,7 +102,7 @@
           <!-- Unpack the JSP Wiki web archive -->
           <execution>
             <id>unpack-jspwiki-war</id>
-            <phase>generate-resources</phase>
+            <phase>package</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
