@@ -53,7 +53,7 @@
         <executions>
           <execution>
             <id>woas:copy-woas</id>
-            <phase>package</phase>
+            <phase>process-resources</phase>
             <configuration>
               <target>
                 <property name="jspwiki.woas.version" value="${project.version}"/>
@@ -102,7 +102,7 @@
           <!-- Unpack the JSP Wiki web archive -->
           <execution>
             <id>unpack-jspwiki-war</id>
-            <phase>package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -121,7 +121,7 @@
           <!-- Unpack the JSP Wiki Pages for the "private" wiki -->
           <execution>
             <id>unpack-wikipages-private</id>
-            <phase>package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -140,7 +140,7 @@
           <!-- Unpack the JSP Wiki Pages for the "public" wiki -->
           <execution>
             <id>unpack-wikipages-public</id>
-            <phase>package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
