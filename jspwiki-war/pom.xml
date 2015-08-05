@@ -385,7 +385,7 @@
           <!-- Unpack the JSP Wiki Pages -->
           <execution>
             <id>unpack-wikipages-private</id>
-            <phase>generate-resources</phase>
+            <phase>package</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
