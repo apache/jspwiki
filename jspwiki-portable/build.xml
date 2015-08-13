@@ -116,7 +116,6 @@
     <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>    
     <!-- make the Mac OS X stub executable -->
     <chmod file="${jspwiki.woas.assembly.dir}/woas.app/Contents/MacOS/*" perm="ugo+x"/>
-    <chmod file="${jspwiki.woas.assembly.dir}/woas-apple-jdk.app/Contents/MacOS/*" perm="ugo+x"/>
   </target>
 
   <!-- ############################################################## -->
@@ -161,37 +160,8 @@
   <!-- ############################################################## -->
 
  <target name="woas:mac-app">
-    <antcall target="woas:mac-app-apple-jdk"/>
     <antcall target="woas:mac-app-oracle-jdk"/>
  </target> 
-
-  <!--
-    Mac OS Java 6 Launcher - it uses the Apple JDK which should be available on the box
-  -->
-  <target name="woas:mac-app-apple-jdk" description="creates an Mac OS X application wrapper for Apple JDK 1.6+">
-    <echo>Building Mac OS X launcher for Apple JDK</echo>
-    <typedef 
-      name="jarbundler" 
-      classname="net.sourceforge.jarbundler.JarBundler" 
-      classpath="${basedir}/src/resources/jarbundler/jarbundler-2.2.0.jar" 
-    />   
-    <delete dir="${jspwiki.woas.assembly.dir}/woas-apple-jdk.app"/> 
-    <jarbundler 
-      dir="${jspwiki.woas.assembly.dir}"
-      name="woas-apple-jdk"
-      mainclass="org.apache.catalina.startup.Bootstrap" 
-      icon="${basedir}/src/resources/macos/jspwiki.icns"
-      jvmversion="1.6+"
-      stubfile="${basedir}/src/resources/macos/JavaApplicationStub"
-      version="${jspwiki.woas.version}"
-      vmoptions="-Xmx96m"
-      infostring="JSPWiki ${jspwiki.woas.version}">
-      <jarfileset dir="${basedir}/src/resources/tomcat">
-        <include name="tomcat-launcher-7.0.52.jar" />
-      </jarfileset>      
-    </jarbundler>
-    <chmod file="${jspwiki.woas.assembly.dir}/woas-apple-jdk.app/Contents/MacOS/WikiOnAStick" perm="ugo+x"/>
-  </target>  
 
   <!--
     See the following resources:
