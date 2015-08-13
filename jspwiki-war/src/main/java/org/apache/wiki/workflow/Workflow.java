@@ -126,7 +126,7 @@ import org.apache.wiki.event.WorkflowEvent;
  * <ul>
  * <li><strong>Named attributes</strong> are simple key-value pairs that
  * Workflow participants can get or set. Keys are Strings; values can be any
- * Object. Named attributes are set with {@link #setAttribute(String, Serializable)}
+ * Object. Named attributes are set with {@link #setAttribute(String, Object)}
  * and retrieved with {@link #getAttribute(String)}.</li>
  * <li><strong>Message arguments</strong> are used in combination with
  * JSPWiki's {@link org.apache.wiki.i18n.InternationalizationManager} to
@@ -380,13 +380,13 @@ public class Workflow implements Serializable
      *            the name of the attribute
      * @return the value
      */
-    public final synchronized Serializable getAttribute( String attr )
+    public final synchronized Object getAttribute( String attr )
     {
         if ( m_attributes == null )
         {
             return null;
         }
-        return (Serializable) m_attributes.get( attr );
+        return m_attributes.get( attr );
     }
 
     /**
@@ -599,7 +599,7 @@ public class Workflow implements Serializable
      * @param obj
      *            the value
      */
-    public final synchronized void setAttribute(String attr, Serializable obj )
+    public final synchronized void setAttribute(String attr, Object obj )
     {
         if ( m_attributes == null )
         {

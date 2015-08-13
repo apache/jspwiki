@@ -35,7 +35,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.*;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
@@ -74,7 +77,7 @@ public class AttachmentServlet extends HttpServlet {
     private static final int BUFFER_SIZE = 8192;
 
     private static final long serialVersionUID = 3257282552187531320L;
-    
+
     private WikiEngine m_engine;
     private static final Logger log = Logger.getLogger( AttachmentServlet.class );
 
@@ -105,7 +108,7 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Initializes the servlet from WikiEngine properties.
-     *   
+     *
      */
     public void init( ServletConfig config ) throws ServletException {
         String tmpDir;
@@ -116,12 +119,12 @@ public class AttachmentServlet extends HttpServlet {
         tmpDir         = m_engine.getWorkDir()+File.separator+"attach-tmp";
 
         m_maxSize        = TextUtil.getIntegerProperty( props,
-                                                        AttachmentManager.PROP_MAXSIZE,
-                                                        Integer.MAX_VALUE );
+                AttachmentManager.PROP_MAXSIZE,
+                Integer.MAX_VALUE );
 
         String allowed = TextUtil.getStringProperty( props,
-                                                     AttachmentManager.PROP_ALLOWEDEXTENSIONS,
-                                                     null );
+                AttachmentManager.PROP_ALLOWEDEXTENSIONS,
+                null );
 
         if( allowed != null && allowed.length() > 0 )
             m_allowedPatterns = allowed.toLowerCase().split("\\s");
@@ -129,8 +132,8 @@ public class AttachmentServlet extends HttpServlet {
             m_allowedPatterns = new String[0];
 
         String forbidden = TextUtil.getStringProperty( props,
-                                                       AttachmentManager.PROP_FORDBIDDENEXTENSIONS,
-                                                       null );
+                AttachmentManager.PROP_FORDBIDDENEXTENSIONS,
+                null );
 
         if( forbidden != null && forbidden.length() > 0 )
             m_forbiddenPatterns = forbidden.toLowerCase().split("\\s");
@@ -148,7 +151,7 @@ public class AttachmentServlet extends HttpServlet {
         }
 
         log.debug( "UploadServlet initialized. Using " +
-                   tmpDir + " for temporary storage." );
+                tmpDir + " for temporary storage." );
     }
 
     private boolean isTypeAllowed( String name )
@@ -174,7 +177,7 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Implements the OPTIONS method.
-     *  
+     *
      *  @param req The servlet request
      *  @param res The servlet response
      */
@@ -188,12 +191,12 @@ public class AttachmentServlet extends HttpServlet {
     /**
      *  Serves a GET with two parameters: 'wikiname' specifying the wikiname
      *  of the attachment, 'version' specifying the version indicator.
-     *  
+     *
      */
 
     // FIXME: Messages would need to be localized somehow.
     public void doGet( HttpServletRequest  req, HttpServletResponse res )
-        throws IOException, ServletException
+            throws IOException, ServletException
     {
         WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
 
@@ -264,7 +267,7 @@ public class AttachmentServlet extends HttpServlet {
                 //
 
                 res.addHeader( "Content-Disposition",
-                               "inline; filename=\"" + att.getFileName() + "\";" );
+                        "inline; filename=\"" + att.getFileName() + "\";" );
 
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
@@ -298,11 +301,11 @@ public class AttachmentServlet extends HttpServlet {
                     log.debug( msg );
                 }
                 if( nextPage != null ) {
-                	res.sendRedirect( validateNextPage( nextPage, m_engine.getURL( WikiContext.ERROR, "", null, false ) ) );
+                    res.sendRedirect( validateNextPage( nextPage, m_engine.getURL( WikiContext.ERROR, "", null, false ) ) );
                 }
 
             } else {
-            	msg = "Attachment '" + page + "', version " + ver + " does not exist.";
+                msg = "Attachment '" + page + "', version " + ver + " does not exist.";
 
                 log.info( msg );
                 res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
@@ -311,7 +314,7 @@ public class AttachmentServlet extends HttpServlet {
         catch( ProviderException pe )
         {
             msg = "Provider error: "+pe.getMessage();
-            
+
             log.debug("Provider failed while reading", pe);
             //
             //  This might fail, if the response is already committed.  So in that
@@ -324,7 +327,7 @@ public class AttachmentServlet extends HttpServlet {
         }
         catch( NumberFormatException nfe )
         {
-        	log.warn( "Invalid version number: " + version );
+            log.warn( "Invalid version number: " + version );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
         }
         catch( SocketException se )
@@ -344,7 +347,7 @@ public class AttachmentServlet extends HttpServlet {
             //
             msg = "Error: " + ioe.getMessage();
             log.debug("I/O exception during download",ioe);
-            
+
             try
             {
                 res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
@@ -403,10 +406,10 @@ public class AttachmentServlet extends HttpServlet {
      * two parts. The first, named 'page', is the WikiName identifier
      * for the parent file. The second, named 'content', is the binary
      * content of the file.
-     * 
+     *
      */
     public void doPost( HttpServletRequest  req, HttpServletResponse res )
-        throws IOException, ServletException
+            throws IOException, ServletException
     {
         try
         {
@@ -430,21 +433,21 @@ public class AttachmentServlet extends HttpServlet {
      */
     private String validateNextPage( String nextPage, String errorPage )
     {
-         if( nextPage.indexOf("://") != -1 )
-         {
-             // It's an absolute link, so unless it starts with our address, we'll
-             // log an error.
-             
-             if( !nextPage.startsWith( m_engine.getBaseURL() ) )
-             {
-                 log.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
-                 nextPage = errorPage;
-             }
-         }
-         
-         return nextPage;
+        if( nextPage.indexOf("://") != -1 )
+        {
+            // It's an absolute link, so unless it starts with our address, we'll
+            // log an error.
+
+            if( !nextPage.startsWith( m_engine.getBaseURL() ) )
+            {
+                log.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
+                nextPage = errorPage;
+            }
+        }
+
+        return nextPage;
     }
-    
+
     /**
      *  Uploads a specific mime multipart input set, intercepts exceptions.
      *
@@ -452,7 +455,7 @@ public class AttachmentServlet extends HttpServlet {
      *  @return The page to which we should go next.
      *  @throws RedirectException If there's an error and a redirection is needed
      *  @throws IOException If upload fails
-     * @throws FileUploadException 
+     * @throws FileUploadException
      */
     protected String upload( HttpServletRequest req ) throws RedirectException, IOException {
         String msg     = "";
@@ -467,11 +470,11 @@ public class AttachmentServlet extends HttpServlet {
         {
             throw new RedirectException( "Not a file upload", errorPage );
         }
-        
+
         try
         {
             FileItemFactory factory = new DiskFileItemFactory();
-            
+
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
             WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
@@ -488,11 +491,11 @@ public class AttachmentServlet extends HttpServlet {
             }
             upload.setProgressListener( pl );
             List<FileItem> items = upload.parseRequest( req );
-            
+
             String   wikipage   = null;
             String   changeNote = null;
             FileItem actualFile = null;
-            
+
             for( FileItem item : items )
             {
                 if( item.isFormField() )
@@ -530,7 +533,7 @@ public class AttachmentServlet extends HttpServlet {
 
             if( actualFile == null )
                 throw new RedirectException( "Broken file upload", errorPage );
-            
+
             //
             // FIXME: Unfortunately, with Apache fileupload we will get the form fields in
             //        order.  This means that we have to gather all the metadata from the
@@ -543,14 +546,14 @@ public class AttachmentServlet extends HttpServlet {
             String filename = actualFile.getName();
             long   fileSize = actualFile.getSize();
             InputStream in  = actualFile.getInputStream();
-            
+
             try
             {
                 executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
             }
             finally
             {
-            	IOUtils.closeQuietly( in );
+                IOUtils.closeQuietly( in );
             }
 
         }
@@ -577,7 +580,7 @@ public class AttachmentServlet extends HttpServlet {
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
-            throw new RedirectException( msg, e.getMessage() );
+            throw new IOException( msg, e );
         }
         finally
         {
@@ -608,8 +611,8 @@ public class AttachmentServlet extends HttpServlet {
                                      String filename, String errorPage,
                                      String parentPage, String changenote,
                                      long contentLength )
-        throws RedirectException,
-               IOException, ProviderException
+            throws RedirectException,
+            IOException, ProviderException
     {
         boolean created = false;
 
@@ -622,9 +625,9 @@ public class AttachmentServlet extends HttpServlet {
             // this is a kludge, the exception that is caught here contains the i18n key
             // here we have the context available, so we can internationalize it properly :
             throw new RedirectException (Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
-                                                    .getString( e.getMessage() ), errorPage );
+                    .getString( e.getMessage() ), errorPage );
         }
-        
+
         //
         //  FIXME: This has the unfortunate side effect that it will receive the
         //  contents.  But we can't figure out the page to redirect to
@@ -637,13 +640,13 @@ public class AttachmentServlet extends HttpServlet {
             {
                 // FIXME: Does not delete the received files.
                 throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
-                                             errorPage );
+                        errorPage );
             }
 
             if( !isTypeAllowed(filename) )
             {
                 throw new RedirectException( "Files of this type may not be uploaded to this wiki",
-                                             errorPage );
+                        errorPage );
             }
         }
 
@@ -658,7 +661,7 @@ public class AttachmentServlet extends HttpServlet {
             log.error("File could not be opened.");
 
             throw new RedirectException("File could not be opened.",
-                                        errorPage);
+                    errorPage);
         }
 
         //
@@ -687,7 +690,7 @@ public class AttachmentServlet extends HttpServlet {
 
         Permission permission = PermissionFactory.getPagePermission( att, "upload" );
         if( m_engine.getAuthorizationManager().checkPermission( context.getWikiSession(),
-                                                                permission ) )
+                permission ) )
         {
             if( user != null )
             {
@@ -698,7 +701,7 @@ public class AttachmentServlet extends HttpServlet {
             {
                 att.setAttribute( WikiPage.CHANGENOTE, changenote );
             }
-            
+
             try
             {
                 m_engine.getAttachmentManager().storeAttachment( att, data );
@@ -708,11 +711,11 @@ public class AttachmentServlet extends HttpServlet {
                 // this is a kludge, the exception that is caught here contains the i18n key
                 // here we have the context available, so we can internationalize it properly :
                 throw new ProviderException( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
-                                                        .getString( pe.getMessage() ) );
+                        .getString( pe.getMessage() ) );
             }
 
             log.info( "User " + user + " uploaded attachment to " + parentPage +
-                      " called "+filename+", size " + att.getSize() );
+                    " called "+filename+", size " + att.getSize() );
         }
         else
         {
@@ -724,11 +727,11 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Provides tracking for upload progress.
-     *  
+     *
      */
     private static class UploadListener
-       extends    ProgressItem
-       implements ProgressListener
+            extends    ProgressItem
+            implements ProgressListener
     {
         public long m_currentBytes;
         public long m_totalBytes;
