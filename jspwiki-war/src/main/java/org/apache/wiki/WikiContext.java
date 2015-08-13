@@ -18,6 +18,7 @@
  */
 package org.apache.wiki;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ import org.apache.wiki.ui.WikiCommand;
  *
  */
 public class WikiContext
-    implements Cloneable, Command
+    implements Cloneable, Command, Serializable
 {
     private    Command m_command = null;
 

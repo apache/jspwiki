@@ -35,10 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.ProgressListener;
+import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
@@ -580,7 +577,7 @@ public class AttachmentServlet extends HttpServlet {
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
-            throw new IOException( msg, e );
+            throw new RedirectException( msg, e.getMessage() );
         }
         finally
         {
