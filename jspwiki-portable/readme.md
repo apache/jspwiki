@@ -24,6 +24,34 @@ This project builds a ready-to-use JSP Wiki distribution
 * Based on Tomcat 7.0.52 as servlet engine
 * Using HTTP port 9627 to avoid conflicts with existing servers running on port 80 and/or 8080
 
+# 2. Creating The Native Launchers
+
+The native launchers are under version control and can be re-created manually.
+
+## 2.1 Native Windows Launcher
+
+```
+jspwiki-portable> mvn clean generate-resources
+
+jspwiki-portable> ant woas:create-windows-app
+Buildfile: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/build.xml
+
+woas:download-launch4j-for-mac:
+    [mkdir] Created dir: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j
+      [get] Getting: http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.8/launch4j-3.8-macosx-x86.tgz
+      [get] To: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.8-macosx-x86.tgz
+    [untar] Expanding: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.8-macosx-x86.tgz into /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack
+   [delete] Deleting: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.8-macosx-x86.tgz
+
+woas:create-windows-app:
+ [launch4j] Compiling resources
+ [launch4j] Linking
+ [launch4j] Wrapping
+ [launch4j] Successfully created /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/woas/woas.exe
+     [echo] Created /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/woas/woas.exe ...
+```
+The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
+
 # 3. Current State
 
 ## 3.1 Mac OS X
