@@ -44,6 +44,7 @@
   <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
 
   <property name="jspwiki.launch4j.install.dir" value="${jspwiki.woas.unpack.dir}/launch4j"/>
+  <property name="jspwiki.appbundler.install.dir" value="${jspwiki.woas.unpack.dir}/appbundler"/>
 
   <!-- ############################################################## -->
   <!-- General Targets                                                -->
@@ -128,7 +129,7 @@
   <!-- Windows Native Launcher                                        -->
   <!-- ############################################################## -->
 
-  <target name="woas:create-windows-app" depends="woas:download-launch4j-for-mac" description="Create an windows application wrapper">
+  <target name="woas:create-windows-app" description="Create an windows application wrapper">
     <taskdef 
       name="launch4j"
       classname="net.sf.launch4j.ant.Launch4jTask"
@@ -180,7 +181,7 @@
     <taskdef 
       name="bundleapp" 
       classname="com.oracle.appbundler.AppBundlerTask"
-      classpath="${basedir}/src/resources/appbundler/appbundler-1.0.jar" 
+      classpath="${jspwiki.appbundler.install.dir}/appbundler-1.0.jar" 
     />
     <delete dir="${jspwiki.woas.assembly.dir}/woas.app"/> 
     <bundleapp 
@@ -223,6 +224,12 @@
         <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.8-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
         <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.8-macosx-x86.tgz"/>
         <chmod dir="${jspwiki.launch4j.install.dir}/bin" includes="*" perm="ugo+x"/>
+    </target>
+
+    <target name="woas:download-appbundler-for-mac" description="Download the Mac OS X appbundler library">
+        <delete dir="${jspwiki.appbundler.install.dir}"/>
+        <mkdir dir="${jspwiki.appbundler.install.dir}"/>
+        <get src="https://java.net/downloads/appbundler/appbundler-1.0.jar" dest="${jspwiki.appbundler.install.dir}"/>
     </target>
 
 </project>

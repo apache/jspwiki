@@ -26,9 +26,15 @@ This project builds a ready-to-use JSP Wiki distribution
 
 # 2. Creating The Native Launchers
 
-The native launchers are under version control and can be re-created manually.
+The native launchers are under version control and can be re-created manually. In other words there are not automatically build because
 
-## 2.1 Native Windows Launcher
+* Considering the complex setup I'm glad that it works on the JSPWiki committer boxes
+* Downloading all the stuff is time-consuming and would slow the build for everyone
+* There should be some manual testing before promoting the native launchers
+
+## 2.1 Creating The Windows Launcher
+
+Run the following commands
 
 ```
 jspwiki-portable> mvn clean generate-resources
@@ -49,6 +55,29 @@ woas:create-windows-app:
  [launch4j] Wrapping
  [launch4j] Successfully created /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/woas/woas.exe
      [echo] Created /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/woas/woas.exe ...
+```
+The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
+
+## 2.2 Creating The Mac OS X Launcher
+
+Run the following commands
+
+```
+jspwiki-portable> mvn clean generate-resources
+
+jspwiki-portable> ant woas:download-appbundler-for-mac woas:mac-app-oracle-jdk
+Buildfile: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/build.xml
+
+woas:download-appbundler-for-mac:
+    [mkdir] Created dir: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/appbundler
+      [get] Getting: https://java.net/downloads/appbundler/appbundler-1.0.jar
+      [get] To: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/appbundler/appbundler-1.0.jar
+
+woas:mac-app-oracle-jdk:
+     [echo] Building Mac OS X launcher for Oracle JDK
+[bundleapp] Creating app bundle: woas
+
+BUILD SUCCESSFUL
 ```
 The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
 
