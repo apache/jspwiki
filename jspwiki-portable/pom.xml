@@ -118,9 +118,9 @@
               <outputDirectory>${project.build.directory}/unpack/jspwiki-war</outputDirectory>
             </configuration>
           </execution>
-          <!-- Unpack the JSP Wiki Pages for the "private" wiki -->
+          <!-- Unpack the JSP Wiki Pages for the "personal" wiki -->
           <execution>
-            <id>unpack-wikipages-private</id>
+            <id>unpack-wikipages-personal</id>
             <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
@@ -134,12 +134,12 @@
                 </artifactItem>
               </artifactItems>
               <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/woas/data/private</outputDirectory>
+              <outputDirectory>${project.build.directory}/woas/data/personal</outputDirectory>
             </configuration>
           </execution>
-          <!-- Unpack the JSP Wiki Pages for the "public" wiki -->
+          <!-- Unpack the JSP Wiki Pages for the "department" wiki -->
           <execution>
-            <id>unpack-wikipages-public</id>
+            <id>unpack-wikipages-department</id>
             <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
@@ -153,7 +153,7 @@
                 </artifactItem>
               </artifactItems>
               <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/woas/data/public</outputDirectory>
+              <outputDirectory>${project.build.directory}/woas/data/department</outputDirectory>
             </configuration>
           </execution>
           <!-- Unpack the tomcat distribution -->

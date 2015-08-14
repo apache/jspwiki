@@ -102,7 +102,7 @@ mvn clean package
 
 # 3. The Public Wiki
 
-To secure the "public" wiki the following accounts were created
+To secure the "department" wiki the following accounts were created
 
 * "admin", "lEtMeIn"
 * "user", "user" 

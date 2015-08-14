@@ -66,20 +66,20 @@
   <!-- ############################################################## -->
 
   <target name="woas:copy-woas" description="Prepares a customized JSPWiki installation">  
-    <!-- copy the exploded war for the "private" wiki -->
-    <copy todir="${jspwiki.woas.assembly.dir}/webapps/private" overwrite="true">
+    <!-- copy the exploded war for the "personal" wiki -->
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/personal" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
     </copy>
-    <delete dir="${jspwiki.woas.assembly.dir}/webapps/private/WEB-INF/lib"/>    
-    <!-- copy the exploded war for the "public" wiki -->
-    <copy todir="${jspwiki.woas.assembly.dir}/webapps/public" overwrite="true">
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/personal/WEB-INF/lib"/>    
+    <!-- copy the exploded war for the "department" wiki -->
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/department" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
     </copy>
     <!-- overlay the custom configuration for JSPWiki -->  
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/woas"/>
     </copy>        
-    <delete dir="${jspwiki.woas.assembly.dir}/webapps/public/WEB-INF/lib"/>        
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/department/WEB-INF/lib"/>        
   </target>  
 
   <!-- ############################################################## -->
