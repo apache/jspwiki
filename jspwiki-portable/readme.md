@@ -37,9 +37,9 @@ The native launchers are under version control and can be re-created manually. I
 Run the following commands
 
 ```
-jspwiki-portable> mvn clean generate-resources
+jspwiki-portable> mvn clean package
 
-jspwiki-portable> ant woas:create-windows-app
+jspwiki-portable> ant woas:download-launch4j-for-mac woas:create-windows-app
 Buildfile: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/build.xml
 
 woas:download-launch4j-for-mac:
@@ -55,6 +55,8 @@ woas:create-windows-app:
  [launch4j] Wrapping
  [launch4j] Successfully created /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/woas/woas.exe
      [echo] Created /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/woas/woas.exe ...
+
+BUILD SUCCESSFUL
 ```
 The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
 
@@ -63,7 +65,7 @@ The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay
 Run the following commands
 
 ```
-jspwiki-portable> mvn clean generate-resources
+jspwiki-portable> mvn clean package
 
 jspwiki-portable> ant woas:download-appbundler-for-mac woas:mac-app-oracle-jdk
 Buildfile: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/build.xml

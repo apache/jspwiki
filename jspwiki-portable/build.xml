@@ -135,6 +135,7 @@
       classname="net.sf.launch4j.ant.Launch4jTask"
       classpath="${jspwiki.launch4j.install.dir}/launch4j.jar:${jspwiki.launch4j.install.dir}/lib/xstream.jar"
     />
+    <delete file="${jspwiki.woas.assembly.dir}/woas.exe"/>
     <launch4j bindir="${jspwiki.launch4j.install.dir}/bin">
       <config
         headerType="console" 
@@ -160,7 +161,6 @@
         />        
       </config>  
     </launch4j>
-    <echo>Created ${jspwiki.woas.assembly.dir}/woas.exe ...</echo>
   </target>
 
   <!-- ############################################################## -->
