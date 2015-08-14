@@ -100,12 +100,31 @@ Over the time Jetty's memory foot-print become larger and larger so I moved back
 mvn clean package
 ```
 
-# 3. The Public Wiki
+# 3. The Pre-configured Wikis
 
-To secure the "department" wiki the following accounts were created
+## 3.1 Personal Wiki
 
-* "admin", "lEtMeIn"
-* "user", "user" 
+This configuration makes the following assumptions
+
+* You are the one and only user of JSPWiki
+* You don't need to authenticate for working with JSPWiki
+* Using *BasicSearchProvider* reg-exp grepping
+* No page versioning
+* Registered users with admin rights
+    * "user", "user" 
+
+# 3.2 Department Public Wiki
+
+This configuration makes the following assumptions
+
+* A group of mostly trust-worthy people are using the wiki
+* Anonymous users have with read-only access
+* Using *VersioningFileProvider*
+* *LuceneSearchProvider* only picks up changes through JSPWiki
+* Registered users with read/write access
+    * "admin", "lEtMeIn"
+    * "user", "user" 
+
 
 
 
