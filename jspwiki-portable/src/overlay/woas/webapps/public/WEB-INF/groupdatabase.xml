@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<groups>
+  <group name="Admin" creator="Admin" created="2015.08.14 at 21:48:29:549 CEST" modifier="Admin" lastModified="2015.08.14 at 21:48:29:549 CEST">
+    <member principal="admin" />
+  </group>
+</groups>
