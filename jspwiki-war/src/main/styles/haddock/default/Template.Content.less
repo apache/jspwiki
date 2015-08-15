@@ -42,7 +42,7 @@ DOM Structure:
 .content {
     /* position:relative;  => dont, otherwise suggestion dialogs are clipped */
     padding:0;
-    overflow:hidden;
+    overflow:hidden; //checkme
     clear:both;
     .hyphens(auto);
     .transition(all .3s);
@@ -61,11 +61,10 @@ DOM Structure:
     overflow-x:hidden;
 }
 .page, .sidebar {
-    //box-sizing: border-box;  //width% now includes border & padding : already default in bootstrap
+    //box-sizing: border-box;  //width% now includes border & padding : already part of bootstrap
    .transition(all .3s);
     //& > *:last-child { padding-bottom:1em; }
 }
-
 
 .content.active {
     .page { width:100%-@wiki-sidebar-width; }
@@ -115,7 +114,8 @@ We may just hide the on/off toggle in css
 */
 //.fav-hidden #menu {  .hide; }
 
-.page-content, .sidebar, .ajaxpreview {
+
+.page-content, .sidebar {
 	.clearfix;
 	& > *:first-child { margin-top:0;}
 	//& > h2, & > h3, & > h4,  { margin-top:0; }

@@ -59,8 +59,9 @@ textarea { white-space: pre-wrap; }
 .ajaxpreview {
     .hide;
     background: @wiki-preview-bg;
-    overflow: scroll;
     padding: 0 0 .5em @grid-gutter-width/2; //cannot use margin here, as width=50%
+    overflow: scroll;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
 
     &.loading {
         .progress-striped .progress-bar;
@@ -117,6 +118,27 @@ textarea { white-space: pre-wrap; }
 
 }
 
+/*
+Horizontal Dropdown Menu (based on bootstrap)
+FIXME: used a hack to fix the min-width of the default dropdown menu ; there must be a better way !
+*/
+ul.dropdown-menu.dropdown-menu-horizontal {
+
+	margin-right: -1000px;
+
+    .list-unstyled();
+
+    > li {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
+    > li a { padding: @padding-base-vertical @padding-base-horizontal/2; }
+    > li:first-child { padding-left: @padding-base-horizontal; }
+    > li:last-child { padding-right: @padding-base-horizontal; }
+
+}
+
 // icons only, or text labels ?
 // [data-cmd] { &:after { content: " " attr(data-cmd);  } }
 
@@ -144,5 +166,23 @@ textarea { white-space: pre-wrap; }
     //.indent-0 { }
     .indent-1 { text-indent:.5em; }
     .indent-2 { text-indent:1em; }
+}
+
+
+/*
+General styles to support wysiwyg editors
+*/
+.editform.wysiwyg {
+
+    .ajaxpreview {
+        padding:1em;
+        //font-size: 90%;
+        font-family: @font-family-monospace;
+        white-space: pre-wrap;  //Lines are broken at newline characters, at <br>, and as necessary to fill line boxes.
+        border:1px solid silver;
+        word-wrap:normal;
+
+    }
+
 }
 

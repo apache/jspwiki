@@ -109,11 +109,16 @@
     {
         //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
         pageAsHtml = renderingManager.getHTML( context, usertext );
+
+        //FFS !! seems more stable,  and runs pre and post translate filters as well
+        //pageAsHtml = engine.textToHTML( context, usertext );
+
     }
         catch( Exception e )
     {
         pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
         //pageAsHtml = e.toString() + "\n" + usertext; //error
+        e.printStackTrace();
     }
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
@@ -123,6 +128,7 @@
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
+   /*FSS not used
    String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
@@ -130,13 +136,13 @@
    {
        protocol = "https://";
    }
-
+   */
 %>
 <form method="post" accept-charset="<wiki:ContentEncoding/>"
       action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
-       class="editform"
+       class="editform wysiwyg"
           id="editform"
      enctype="application/x-www-form-urlencoded" >
 
@@ -165,12 +171,35 @@
       </wiki:CheckRequestContext>
   </span>
 
+  <div class="btn-group editor-tools">
 
-  <%--<div class="btn-group editor-tools">--%>
+    <div class="btn-group config">
+      <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
+      <button class="btn btn-default dropdown-toggle"><span class="icon-wrench"></span><span class="caret"></span></button>
+      <ul class="dropdown-menu" data-hover-parent="div">
+            <li>
+              <a>
+                <label for="livepreview">
+                  <input type="checkbox" data-cmd="livepreview" id="livepreview"/>
+                  <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh"/>
+                </label>
+              </a>
+            </li>
+            <li>
+              <a>
+                <label for="previewcolumn">
+                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" />
+                  <fmt:message key='editor.plain.sidebysidepreview'/> <span class="icon-columns"/>
+                </label>
+              </a>
+            </li>
+
+      </ul>
+    </div>
 
     <c:set var="editors" value="<%= engine.getEditorManager().getEditorList() %>" />
     <c:if test='${fn:length(editors)>1}'>
-`   <div class="btn-group config">
+   <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
       <button class="btn btn-default dropdown-toggle"><span class="icon-pencil"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
@@ -190,7 +219,7 @@
     </div>
     </c:if>
 
-  <%--</div>--%>
+  </div>
 
   <div class="form-group pull-right">
 
@@ -234,7 +263,14 @@
     </div>
   </wiki:CheckRequestContext>
 
-  <textarea name="htmlPageText"><%=pageAsHtml%></textarea>
+
+  <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
+      <div class="col-50">
+        <textarea name="htmlPageText"
+             autofocus="autofocus"><%=pageAsHtml%></textarea>
+      </div>
+      <div class="ajaxpreview col-50" >Preview comes here</div>
+  </div>
 
 </form>
 <script type="text/javascript">
@@ -242,26 +278,57 @@
 
 Wiki.add("[name=htmlPageText]", function( element){
 
+    function containerHeight(){ return $(editor.getContainer()).getStyle("height"); }
+    function editorHeight(){ return $(editor.getContentAreaContainer()).getStyle("height"); }
+    function editorContent(){ return editor.getContent(); }
+    function previewContent(value){ preview.set("text", value); }
+    function resizePreview(){ preview.setStyle("height", containerHeight()); }
+
+    var form = element.form,
+        editor,
+        preview = form.getElement(".ajaxpreview"),
+        resizer = form.getElement(".resizer"),
+        resizeCookie = "editorHeight",
+
+        html2markup = Wiki.getXHRPreview( editorContent, previewContent );
+
+    $$("[data-cmd^=live]:checked").addEvent("configured", html2markup);
+    Wiki.configuration( form );
+
+
+
     element.value = element.value
         .replace( /<a class="hashlink"[^>]+>#<\/a>/g, "" )
         .replace( /<img class="outlink"[^>]+>/g, "" );     // <img class="outlink" src="/..../images/out.png" alt=""
 
     tinymce.init({
       selector: "textarea[name=htmlPageText]",
+      //content_css : "template/haddock/haddock.css",
       //extended_valid_elements: "...]",
       //invalid_elements: blockquote ...",
       language: Wiki.prefs.get( "Language" ), //"${prefs.Language}",
-      height: Wiki.prefs.get( "EditorCookie" ),
+      height: Wiki.prefs.get( resizeCookie ),
+      content_css: $("main-stylesheet").href,
       //plugins from the standard 4.2.2. package
       plugins: 'anchor charmap code fullscreen image insertdatetime link lists media paste preview searchreplace table wordcount',
 
-      setup : function(editor) {
+      setup: function( ed ){
 
-        console.log("Editor: " + editor.id + " is now initialized.");
-        editor.on("ResizeEditor", (function(e){
-           //console.log(e, e.target, e.width, e.height);
-           //Wiki.prefs.set("EditorCookie", e.height);
-        }).debounce() );
+        editor = ed;
+
+        editor.on("init", function(){
+            // container height is apparently not yet properly initialized at this time - ugh!
+            (function () {
+                resizePreview();
+                html2markup();
+            }).delay(100);
+        });
+        editor.on("ResizeEditor", function(){
+           Wiki.prefs.set(resizeCookie, editorHeight() );
+           resizePreview();
+        });
+        editor.on("change", html2markup );
+
       }
     });
 });

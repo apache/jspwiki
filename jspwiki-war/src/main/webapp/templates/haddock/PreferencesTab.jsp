@@ -106,7 +106,7 @@
     </span>
   </div>
 
-  <c:if test='${fn.length(editors)>1}'>
+  <c:if test='${fn:length(editors)>1}'>
   <div class="form-group">
     <label class="control-label form-col-20" for="editor"><fmt:message key="edit.chooseeditor"/></label>
     <select class="" id="editor" name="editor" data-pref="editor">

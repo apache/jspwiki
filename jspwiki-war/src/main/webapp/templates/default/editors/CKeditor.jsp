@@ -121,6 +121,7 @@
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
+   /*not used
    String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
@@ -128,12 +129,13 @@
    {
        protocol = "https://";
    }
+   */
 %>
 <form method="post" accept-charset="<wiki:ContentEncoding/>"
       action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
-       class="editform"
+       class="editform wysiwyg"
           id="editform"
      enctype="application/x-www-form-urlencoded" >
 
@@ -239,16 +241,19 @@ render: function( page, name ){
           disallowedContent:"h1;h5;h6;blockquote",
           language: Wiki.prefs.get( "Language" ),
           height: Wiki.prefs.get( "EditorCookie" ),
-          startupFocus: true
+          startupFocus: true,
+          contentsCss: $("main-stylesheet").href,
+
+          on: {
+            instanceReady : function(eventReady) {
+
+                eventReady.editor.on( "resize", ( debounce( function( eventResize ){
+                   Wiki.prefs.set("EditorCookie", eventResize.data.contentsHeight);
+                }) ) );
+            }
+          }
         });
 
-        CKEDITOR.on("instanceReady",function(eventReady) {
-
-            eventReady.editor.on( "resize", ( debounce( function( eventResize ){
-               Wiki.prefs.set("EditorCookie", eventResize.data.contentsHeight);
-            }) ) );
-
-        });
     });
 }
 

@@ -185,10 +185,10 @@ Element.implement({
     (end)
 
     */
-    onToggle: function( toggle, active ){
+    onToggle: function( toggle, callback ){
 
-        var element = this;
-        active = active || "active";
+        var element = this,
+            active = "active";
 
         if( toggle == "buttons" ){
 
@@ -207,6 +207,10 @@ Element.implement({
             document.getElements(toggle).addEvent("click", function(event){
                 event.stop();
                 element.toggleClass( active );
+
+                if( callback ){
+                    callback( element.hasClass(active) );
+                }
             });
 
         }
@@ -266,7 +270,7 @@ Element.implement({
                     ]
                 ].slick());
             }
-            //move it at the top of the document for easy css styling
+            //move it just before the backdrop element for easy css styling
             modal.inject( document.getBackdrop(), "before" )
                  .addEvent( "click:relay(.btn)",  doModalEvent );
 

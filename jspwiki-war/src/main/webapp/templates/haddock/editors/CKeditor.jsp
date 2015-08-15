@@ -122,6 +122,7 @@
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
+   /*FFS not used
    String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
@@ -129,13 +130,13 @@
    {
        protocol = "https://";
    }
-
+   */
 %>
 <form method="post" accept-charset="<wiki:ContentEncoding/>"
       action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
-       class="editform"
+       class="editform wysiwyg"
           id="editform"
      enctype="application/x-www-form-urlencoded" >
 
@@ -165,11 +166,35 @@
   </span>
 
 
-  <%--<div class="btn-group editor-tools">--%>
+  <div class="btn-group editor-tools">
+
+    <div class="btn-group config">
+      <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
+      <button class="btn btn-default dropdown-toggle"><span class="icon-wrench"></span><span class="caret"></span></button>
+      <ul class="dropdown-menu" data-hover-parent="div">
+            <li>
+              <a>
+                <label for="livepreview">
+                  <input type="checkbox" data-cmd="livepreview" id="livepreview"/>
+                  <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh"/>
+                </label>
+              </a>
+            </li>
+            <li>
+              <a>
+                <label for="previewcolumn">
+                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" />
+                  <fmt:message key='editor.plain.sidebysidepreview'/> <span class="icon-columns"/>
+                </label>
+              </a>
+            </li>
+
+      </ul>
+    </div>
 
     <c:set var="editors" value="<%= engine.getEditorManager().getEditorList() %>" />
     <c:if test='${fn:length(editors)>1}'>
-`   <div class="btn-group config">
+   <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
       <button class="btn btn-default dropdown-toggle"><span class="icon-pencil"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
@@ -189,7 +214,7 @@
     </div>
     </c:if>
 
-  <%--</div>--%>
+  </div>
 
 
   <%-- is PREVIEW functionality still needed - with livepreview ?
@@ -231,13 +256,37 @@
     </div>
   </wiki:CheckRequestContext>
 
-  <textarea name="htmlPageText"><%=pageAsHtml%></textarea>
+  <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
+      <div class="col-50">
+        <textarea name="htmlPageText"
+             autofocus="autofocus"><%=pageAsHtml%></textarea>
+      </div>
+      <div class="ajaxpreview col-50" >Preview comes here</div>
+  </div>
 
 </form>
 <script type="text/javascript">
 //<![CDATA[
 
 Wiki.add("[name=htmlPageText]", function( element){
+
+    function containerHeight(){ return $(editor.container.$).getStyle("height"); }
+    function editorHeight(){ return $(editor.ui.contentsElement.$).getStyle("height"); }
+    function editorContent(){ return editor.getData(); }
+    function previewContent(value){ preview.set("text", value); }
+    function resizePreview(){ preview.setStyle("height", containerHeight()); }
+
+    var form = element.form,
+        editor,
+        preview = form.getElement(".ajaxpreview"),
+        resizer = form.getElement(".resizer"),
+        resizeCookie = "editorHeight",
+
+        html2markup = Wiki.getXHRPreview( editorContent, previewContent );
+
+    $$("[data-cmd^=live]:checked").addEvent("configured", html2markup);
+    Wiki.configuration( form );
+
 
     element.value = element.value
         .replace( /<a class="hashlink"[^>]+>#<\/a>/g, "" )
@@ -248,25 +297,26 @@ Wiki.add("[name=htmlPageText]", function( element){
       //allowedContent:"div(tabs)",
       //allowedContent:" ... ",
       disallowedContent:"h1;h5;h6;blockquote",
-      /*
-      protectedSouce:[
-        /<a class="hashlink"[^>]+>#<\/a>/g,
-        /<img class="outlink"[^>]+>/g
-      ],
-      */
       language: Wiki.prefs.get( "Language" ), //"${prefs.Language}",
-      height: Wiki.prefs.get( "EditorCookie" ),
-      startupFocus: true
+      height: Wiki.prefs.get( resizeCookie ),
+      startupFocus: true,
+      contentsCss: $("main-stylesheet").href,
+      //resize_enabled: false,
+
+      on: {
+        instanceReady: function(event) {
+            editor = event.editor;
+            resizePreview();
+            html2markup();
+        },
+        resize: function(){
+            Wiki.prefs.set(resizeCookie, editorHeight());
+            resizePreview();
+        },
+        change: html2markup
+      }
+
     });
-
-    CKEDITOR.on("instanceReady",function(eventReady) {
-
-        eventReady.editor.on("resize", (function(eventResize){
-           Wiki.prefs.set("EditorCookie", eventResize.data.contentsHeight);
-        }).debounce() );
-
-    });
-
 });
 
 //]]>

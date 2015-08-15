@@ -58,6 +58,7 @@ DOM structure:
 (start code)
     div.header
       div.topline
+        div.pagename
         div.pull-left
             a.logo.href jspωiki  //link to the home page of this wiki
 
@@ -86,7 +87,6 @@ DOM structure:
 		        li.recents.clear ...
 
 
-      div.pagename
       div.breadcrumbs
 
     ...
@@ -116,7 +116,7 @@ DOM structure:
 .titlebox.alert { margin:0; }
 
 .header, .footer {
-    .clearfix();
+    .clearfix;
 	position: relative;
     font-family: @wiki-header-font-family;
     font-weight: 200;
@@ -179,6 +179,9 @@ a.logo {
     font-size: 3em;
     text-align: center;
     a { text-decoration:none; }
+
+    line-height: 1;
+    padding: 0.1em .5em;
 }
 .reader .pagename {
     font-size: 6em;
@@ -202,11 +205,32 @@ a.logo {
 
 
 .footer {
-    //background: @wiki-footer-bg;
-    padding:@padding-base-vertical @padding-base-horizontal;
+    //background: @wiki-footer-bg; //reuse header background
+    padding: @padding-base-horizontal;
 	text-align: center;
 
 }
+
+
+/*
+Section: Sticky Footer
+This seciontCSS add-on will ensure to stick the footer to the bottom of the window
+even when there’s not enough content to fill the page.
+
+Credits: https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
+*/
+
+
+body > .container-fluid,
+body > .container {
+  display: flex;
+  min-height: 100vh;
+  flex-flow: column;
+}
+.content {
+  flex: 1;
+}
+
 
 .copyright, .wiki-version { .small; }
 

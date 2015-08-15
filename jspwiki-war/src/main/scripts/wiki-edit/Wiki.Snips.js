@@ -599,9 +599,9 @@ Wiki.Snips = {
         },
 
 
-//        plugin: "\n[{{plugin}}]\n",
+        plugin: "\n[{{plugin}}]\n",
 
-        plugin: {
+        pluginDlg: {
             //match [{plugin}]  do not match [[{
             //match '[{' + 'any char except \n, or }]' at end of the string
             //note: do not include the [ in the matched string
@@ -610,7 +610,7 @@ Wiki.Snips = {
                 pfx: "(^|[^\\[])\\[\\{([^\\[\\]\\n\\r]*)(?:\\|\\])?$",
                 match: "^([^\\[\\]\\n\\r]*)\\}\\]"
             },
-            plugin: [ Dialog.Selection, {
+            pluginDlg: [ Dialog.Selection, {
                 caption: "Plugin",
                 body: {
                 "ALLOW permission principal ": "Page Access Rights <span class='icon-unlock-alt' />",
@@ -663,7 +663,8 @@ Wiki.Snips = {
                     "__bold__":"<b>bold</b>",
                     "''italic''":"<i>italic</i>",
                     "{{mono}}":"<tt>mono</tt>",
-                    "[description|{link}|options]":"<span class='icon-link'/>"
+                    "[description|{link}|options]":"<span class='icon-link'/>",
+                    "[{Image src='${image.jpg}'}]":"<span class='icon-picture'/>"
                 }
             }]
         },

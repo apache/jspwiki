@@ -133,9 +133,11 @@ Snipe.Sections = new Class({
             sections = this.sections,
 
             addItem = function(indent,name,offset){
+
                 data.push("li" + (offset==current ? ".active" : ""),[
                     "a.indent-" + indent + ".section" + offset, { html:name }
                 ]);
+
             };
 
         addItem(0, options.all ,-2);
@@ -227,6 +229,7 @@ Snipe.Sections = new Class({
 
         //work.value = "";  //FIXME google chrome  43.0.2357.65 bug -- if omitted, the textarea is displayed EMPTY!! ??
         work.value = main.slice(begin, end);
+        work.setSelectionRange(0,0); //why not go via Textarea()..., for better bw compat.
         self.begin = begin;
         self.end = end;
 

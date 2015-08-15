@@ -1443,6 +1443,9 @@ table.calendar tr.weekdays {
 }
 
 /* +++ 900 "Special-effects" JavaScript styles +++ */
+.add-css  {
+    display:none;
+}
 
 /* +++ 910 Tabbed Pages +++ */
 /* use absolute position trick to avoid page bump when inserting tabmenu

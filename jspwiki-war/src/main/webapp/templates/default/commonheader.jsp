@@ -38,7 +38,7 @@
    can be included).
 --%>
 <%-- CSS stylesheet --%>
-<link rel="stylesheet" media="screen, projection, print" type="text/css"
+<link rel="stylesheet" media="screen, projection, print" type="text/css"  id="main-stylesheet"
      href="<wiki:Link format='url' templatefile='jspwiki.css'/>"/>
 <%-- put this at the top, to avoid double load when not yet cached --%>
 <link rel="stylesheet" type="text/css" media="print"

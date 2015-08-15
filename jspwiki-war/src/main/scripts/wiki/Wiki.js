@@ -60,7 +60,7 @@ Class: Wiki
 */
 var Wiki = {
 
-    version: "haddock01",  //used to validate compatible preference cookies
+    version: "haddock02",  //used to validate compatible preference cookies
 
     initialize: function(){
 
@@ -160,7 +160,6 @@ var Wiki = {
                     wiki.jsonrpc("/progressTracker", [progressid], callback);
                 }
             });
-
 
         window.addEvents({
             popstate: wiki.popstate,
@@ -446,6 +445,124 @@ var Wiki = {
         });
 
     },
+
+
+    configuration: function( form ){
+
+        var wiki = this,
+            editarea = form.getElement(".edit-area"),
+            preview = form.getElement(".ajaxpreview");
+
+        function onConfig(){ config(this, this.getAttribute("data-cmd")); }
+
+        function config( el, cmd ){
+
+            var checked = el.checked, previewcontainer;
+
+            //console.log("CONFIG EVENT", el, cmd );
+
+            //editor DOM manipulation, to toggle row/column live-preview layout
+            //FFS: should be do-able via css only
+            if( cmd.test( /livepreview|previewcolumn/ ) ){
+
+                previewcontainer = editarea.ifClass(checked, cmd);
+
+                if( cmd == "livepreview" ){
+
+                    //disable the previewcolumn toolbar cmd
+                    form.getElement("[data-cmd=previewcolumn]").disabled = !checked;
+
+                } else {
+
+                    if( !checked ){ previewcontainer = previewcontainer.getParent(); }
+                    previewcontainer.grab( preview );
+                }
+            }
+
+            wiki.prefs.set(cmd, checked);  //persist in the pref cookie
+            el.fireEvent("configured");
+        }
+
+        form.getElements(".config [data-cmd]").each( function( element ){
+
+            var cmd = element.getAttribute("data-cmd");
+            element.checked = !!wiki.prefs.get(cmd);  //read wiki preferences cookie
+            element.addEvent("click", onConfig );
+            config( element, cmd );
+
+        });
+    },
+
+    getXHRPreview: function( getContent, putPreview ){
+
+        var wiki = this;
+
+        return (function(){
+
+            new Request({
+                url: wiki.XHRHtml2Markup,
+                data: {
+                    htmlPageText: getContent()
+                },
+                onSuccess: function(responseText){
+                    putPreview( responseText.trim() );
+                },
+                onFailure: function(e){
+                    putPreview("Sorry, HTML to Wiki Markup conversion failed :=() ",e);
+                }
+            }).send();
+
+        }).debounce();
+
+    },
+
+    /*
+    Function: resizer
+        Resize the target element, by dragging a .resizer handle.
+        More elements can be resized via the callback.
+        The .resizer can specify a prefs cookie to retrieve/store the height.
+        Used by the plain and wysiwyg editor.
+
+    Arguments:
+        target - DOM element to be resized
+        callback - function, to allow resizing of more elements
+
+    Globals:
+        wiki - main wiki object, to get/set preference fields
+        textarea - resizable textarea (DOM element)
+        preview - preview (DOM element)
+    */
+    resizer: function( target, callback ){
+
+        var wiki = this,
+            handle = document.getElement(".resizer"),
+            pref = handle.getAttribute("data-resize-cookie"),
+            h;
+
+        function helpdragging(add){ handle.ifClass(add, "dragging"); }
+
+        //targets.setStyle(height, options.initial || "100%" );
+        if( pref ){
+            h = Wiki.prefs.get(pref) || 300;
+            target.setStyle("height", h );
+            callback( h );
+        }
+
+        target.makeResizable({
+            handle: handle,
+            modifiers: { x: null },
+            onDrag: function(){
+                h = this.value.now.y;
+                callback(h);
+                if(pref){ Wiki.prefs.set(pref, h); }
+            },
+            onBeforeStart: helpdragging.pass(true),
+            onComplete: helpdragging.pass(false),
+            onCancel: helpdragging.pass(false)
+        });
+
+    },
+
 
     /*
     Function: jsonrpc

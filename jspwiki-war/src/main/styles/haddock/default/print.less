@@ -91,7 +91,7 @@ Inherit parts of Bootstrap:print.less ;
   }
 
   @page {
-    margin: 2cm .5cm;
+    margin: 2cm 1cm;
   }
 
   p,
@@ -135,6 +135,7 @@ Inherit parts of Bootstrap:print.less ;
   }
 */
 
+header, footer,
   table, tt,pre {
     overflow:visible;
     page-break-before: avoid;
@@ -153,20 +154,50 @@ Inherit parts of Bootstrap:print.less ;
 
 
 /*
+
 JSPWiki print-specific styles
+
 */
-.watermark, .logo, .titlebox, .searchbox, .breadcrumb, .nav, a.feed[href],
-.edit-section, .hashlink, .filter-input, .slmbx,
+
+.sidebar { display: none; }
+.content:after { display:none; }  //hide sidebar background color
+.content.active .page { width:100%; }  //nok in chrome
+
+//chome bug see https://code.google.com/p/chromium/issues/detail?id=412281
+.content, .page, .sidebar  { .transition(none); }
+
+
+//FF hack,  was printing only the first page
+//See https://bugzilla.mozilla.org/show_bug.cgi?id=258397#c13
+//Remove overflow on content,  and remove sticky footer (flex)
+.content {
+    overflow: visible;
+    flex: none;
+}
+body > .container-fluid,
+body > .container {
+    display: block;
+    flex-flow: initial;
+}
+
+.userbox, .titlebox, .searchbox, .breadcrumb, .row.sticky,
+a.feed[href], .editsection, .hashlink, .filter-input, .slmbx,
+.index .header,
 a[href='#top'] {
     display:none;
 }
-.header , .footer  {
-    background:transparent !important;
-    color:#000 !important;
+.header, .footer {
+    background: none !important; //overwrite all background-xxx settings on header & footer
+    color: inherit;
 }
-.header { border-bottom:1px solid #555; }
-.footer { border-top:1px solid #555; }
+//.footer { margin-top: 1em; }  //CHECKME
 
+//show long pagenames without ellipsis  (undo text-overflow)
+.header .pagename {
+  overflow: visible;
+  //text-overflow: ellipsis;
+  white-space: normal;
+}
 
 /* hidden tabs are made visible during print
  * when printing a page, also the attachment tab gets printed

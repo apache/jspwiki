@@ -29,6 +29,7 @@
   </group>
 
   <group name="mooextend" abstract="true">
+    <js>/scripts/moo-extend/Function.Extend.js</js>
     <js>/scripts/moo-extend/Behavior.js</js>
     <js>/scripts/moo-extend/String.Extend.js</js>
     <js>/scripts/moo-extend/Array.Extend.js</js>
@@ -84,7 +85,6 @@
   <group name="haddock-edit">
 
     <js>/scripts/moo-extend/Date.Extend.js</js>
-    <js>/scripts/moo-extend/Function.Extend.js</js>
     <js>/scripts/moo-extend/Array.Extend.HSV.js</js>
 
     <js>/scripts/dialog/Dialog.js</js>

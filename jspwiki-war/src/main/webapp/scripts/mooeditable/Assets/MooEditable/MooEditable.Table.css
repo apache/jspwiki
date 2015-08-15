@@ -1,0 +1,52 @@
+
+.mooeditable-ui-toolbar .tableadd-item .button-icon {
+	background: transparent url(Other/table-add.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tableedit-item .button-icon {
+	background: transparent url(Other/table-edit.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablerowadd-item .button-icon {
+	background: transparent url(Other/table-rowadd.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablerowedit-item .button-icon {
+	background: transparent url(Other/table-rowedit.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablerowspan-item .button-icon {
+	background: transparent url(Other/table-rowspan.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablerowsplit-item .button-icon {
+	background: transparent url(Other/table-rowsplit.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablerowspan-item .button-icon {
+	background: transparent url(Other/table-rowspan.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablerowdelete-item .button-icon {
+	background: transparent url(Other/table-rowdelete.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablecoladd-item .button-icon {
+	background: transparent url(Other/table-coladd.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablecoledit-item .button-icon {
+	background: transparent url(Other/table-coledit.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablecolspan-item .button-icon {
+	background: transparent url(Other/table-colspan.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablecolsplit-item .button-icon {
+	background: transparent url(Other/table-colsplit.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablecoldelete-item .button-icon {
+	background: transparent url(Other/table-coldelete.png) no-repeat center center;
+}

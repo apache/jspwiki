@@ -15,7 +15,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 -->
 
 <!--
@@ -35,7 +35,16 @@
       <minVersion>2.4</minVersion>
       <adminBean>org.apache.wiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
-<!-- 
+   <!--
+       Experimental wysiwyg editor, based on mooeditable
+   -->
+   <editor name="wysiwyg">
+      <author>MooEditable</author>
+      <path>editors/wysiwyg.jsp</path>
+      <minVersion>2.10</minVersion>
+   </editor>
+
+<!--
    <editor name="WikiWizard">
       <author>i3G Institut Hochschule Heilbronn</author>
       <path>editors/WikiWizard.jsp</path>
@@ -59,5 +68,5 @@
       <author>Janne Jalkanen</author>
       <minVersion>2.6</minVersion>
    </filter>
-   
+
 </modules>

@@ -102,8 +102,7 @@
 
   <span class="cage">
     <input class="btn btn-primary" type="submit" name="ok" accesskey="s"
-           value="<fmt:message key='editor.plain.save.submit'/>"
-           title="<fmt:message key='editor.plain.save.title'/>" />
+           value="<fmt:message key='editor.plain.save.submit'/>" />
 
       <wiki:CheckRequestContext context="edit">
       <input class="form-control" data-hover-parent="span" type="text" size="80" maxlength="80"
@@ -114,6 +113,7 @@
   </span>
 
   <div class="btn-group editor-tools">
+
     <div class="btn-group sections">
       <button class="btn btn-default"><span class="icon-bookmark"><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
@@ -123,25 +123,36 @@
             <li><a>..</a></li>
       </ul>
     </div>
-    <button class="btn btn-default" data-cmd="undo" title="<fmt:message key='editor.plain.undo.title'/>"><span class="icon-undo"></span></button>
-    <button class="btn btn-default" data-cmd="redo" title="<fmt:message key='editor.plain.redo.title'/>"><span class="icon-repeat"></span></button>
-    <button class="btn btn-default" data-cmd="find" title="<fmt:message key='editor.plain.find.title'/>"><span class="icon-search"></span></button>
-    <%--
-    <div class="btn-group config" data-toggle="buttons">
-      <label class="btn btn-default" for="livepreview">
-        <input type="checkbox" data-cmd="livepreview" id="livepreview"/><span class="icon-refresh">
-      </label>
-    </div>
-    <div class="btn-group config" data-toggle="buttons">
-      <label class="btn btn-default" for="previewcolumn">
-        <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" /><span class="icon-columns"/>
-      </label>
-    </div>
-    --%>
 
-`    <div class="btn-group config">
+    <div class="btn-group formatting-options">
+      <button class="btn btn-default"><span class="icon-tint" /><span class="caret" /></button>
+      <ul class="dropdown-menu dropdown-menu-horizontal" data-hover-parent="div">
+        <li><a href="#" data-cmd="bold" title="<fmt:message key='editor.plain.tbB.title' />"><b>bold</b></a></li>
+        <li><a href="#" data-cmd="italic" title="<fmt:message key='editor.plain.tbI.title' />"><i>italic</i></a></li>
+        <li><a href="#" data-cmd="mono" title="<fmt:message key='editor.plain.tbMONO.title' />"><tt>mono</tt></a></li>
+        <li><a href="#" data-cmd="sub" title="<fmt:message key='editor.plain.tbSUB.title' />">a<span class="sub">sub</span></a></li>
+        <li><a href="#" data-cmd="sup" title="<fmt:message key='editor.plain.tbSUP.title' />">a<span class="sup">sup</span></a></li>
+        <li><a href="#" data-cmd="strike" title="<fmt:message key='editor.plain.tbSTRIKE.title' />"><span class="strike">strike</span></a></li>
+        <li><a href="#" data-cmd="link" title="<fmt:message key='editor.plain.tbLink.title'/>"><span class="icon-link"/></a></li>
+        <li><a href="#" data-cmd="img" title="<fmt:message key='editor.plain.tbIMG.title'/>"><span class="icon-picture"/></a></li>
+        <li><a href="#" data-cmd="plugin" title="<fmt:message key='editor.plain.tbPLUGIN.title'/>"><span class="icon-puzzle-piece"/></a></li>
+        <li><a href="#" data-cmd="font" title="<fmt:message key='editor.plain.tbFONT.title' />">Font<span class="caret" /></a></li>
+        <li><a href="#" data-cmd="chars" title="<fmt:message key='editor.plain.tbCHARS.title' />"><span class="icon-euro"/><span class="caret" /></a></li>
+<%--
+--%>
+       </ul>
+     </div>
+
+
+    <fmt:message key='editor.plain.undo.title' var='msg'/>
+    <button class="btn btn-default" data-cmd="undo" title="${msg}"><span class="icon-undo"></span></button>
+    <fmt:message key='editor.plain.redo.title' var='msg'/>
+    <button class="btn btn-default" data-cmd="redo" title="${msg}"><span class="icon-repeat"></span></button>
+    <button class="btn btn-default" data-cmd="find"><span class="icon-search" /></button>
+
+    <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
-      <button class="btn btn-default dropdown-toggle"><span class="icon-wrench"></span><span class="caret"></span></button>
+      <button class="btn btn-default"><span class="icon-wrench"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
             <li>
               <a>
@@ -188,12 +199,11 @@
       </ul>
     </div>
 
-    <%-- --%>
     <c:set var="editors" value="<%= context.getEngine().getEditorManager().getEditorList() %>" />
     <c:if test='${fn:length(editors)>1}'>
-`   <div class="btn-group config">
+   <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
-      <button class="btn btn-default dropdown-toggle"><span class="icon-pencil"></span><span class="caret"></span></button>
+      <button class="btn btn-default"><span class="icon-pencil"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
         <c:forEach items="${editors}" var="edt">
           <c:choose>
@@ -296,7 +306,9 @@
       <div class="ajaxpreview col-50"></div>
     </div>
 
-    <div class="resizer" title="<fmt:message key='editor.plain.edit.resize'/>"></div>
+    <div class="resizer"
+          data-resize-cookie="editorHeight"
+         title="<fmt:message key='editor.plain.edit.resize'/>"></div>
 
   </div><%-- end of .snipe --%>
 

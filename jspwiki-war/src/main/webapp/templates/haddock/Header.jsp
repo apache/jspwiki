@@ -35,7 +35,7 @@
 
     <div class="cage pull-left">
     <a class="logo pull-left"
-       href="<wiki:Link page='<%=frontpage%>' format='url' />"
+        href="<wiki:Link page='<%=frontpage%>' format='url' />"
        title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
 
         <wiki:PageExists page="HomeMenu">
@@ -48,17 +48,16 @@
     <wiki:Include page="UserBox.jsp" />
     <wiki:Include page="SearchBox.jsp" />
 
-  </div>
-
-  <div class="pagename" title="<wiki:PageName />">
+    <div class="pagename" title="<wiki:PageName />">
     <wiki:CheckRequestContext context='view'><wiki:PageName /></wiki:CheckRequestContext>
     <wiki:CheckRequestContext context='!view'>
       <wiki:CheckRequestContext context='viewGroup|createGroup|editGroup'><span class="icon-group"></span></wiki:CheckRequestContext>
-        <wiki:PageType type="attachment"><span class="icon-paper-clip"></span></wiki:PageType>
+      <wiki:PageType type="attachment"><span class="icon-paper-clip"></span></wiki:PageType>
       <wiki:Link><wiki:PageName/></wiki:Link>
     </wiki:CheckRequestContext>
-  </div>
+    </div>
 
+  </div>
   <div class="breadcrumb">
     <fmt:message key="header.yourtrail"/><wiki:Breadcrumbs separator="<span class='divider'></span>" />
   </div>

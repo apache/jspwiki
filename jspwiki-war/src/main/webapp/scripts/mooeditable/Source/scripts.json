@@ -1,0 +1,67 @@
+{
+
+	"MooEditable": {
+	
+		"MooEditable": {
+			"deps": ["MooEditable"],
+			"desc": "Class for creating a WYSIWYG editor, for contentEditable-capable browsers."
+		},
+	
+		"MooEditable.UI.MenuList": {
+			"deps": ["MooEditable"],
+			"desc": "UI Class to create a menu list (select) element."
+		},
+	
+		"MooEditable.UI.ButtonOverlay": {
+			"deps": ["MooEditable"],
+			"desc": "UI Class to create a button element with a popup overlay."
+		},
+	
+		"MooEditable.Extras": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to include more (simple) toolbar buttons."
+		},
+	
+		"MooEditable.Group": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to have multiple instances on a page controlled by one toolbar."
+		},
+		
+		"MooEditable.Forecolor": {
+			"deps": ["MooEditable", "MooEditable.UI.ButtonOverlay"],
+			"desc": "Extends MooEditable to change the color of the text from a list a predefined colors."
+		},
+		
+		"MooEditable.Smiley": {
+			"deps": ["MooEditable", "MooEditable.UI.ButtonOverlay"],
+			"desc": "Extends MooEditable to insert smiley/emoticons."
+		},
+		
+		"MooEditable.Table": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to insert table with manipulation options."
+		},
+		
+		"MooEditable.Image": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to insert image with manipulation options."
+		},
+		
+		"MooEditable.Flash": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to embed Flash."
+		},
+		
+		"MooEditable.Charmap": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable with a characters map"
+		},
+		
+		"MooEditable.Pagebreak": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable with pagebreak plugin"
+		}
+		
+	}
+
+}

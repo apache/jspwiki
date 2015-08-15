@@ -331,6 +331,8 @@ function collapseFn(element, cookie){
         list = "collapse",
         box = list + "box";
 
+    cookie = cookie || wiki.PageName;
+
     cookie = new Cookie.Flags("JSPWikiCollapse" + cookie, {path: wiki.BasePath, duration: 20});
 
     if( clazz == list ){
@@ -347,7 +349,7 @@ function collapseFn(element, cookie){
 }
 
 wiki
-    .add(".page div[class^=collapse]", collapseFn, wiki.PageName )
+    .add(".page div[class^=collapse]", collapseFn )
     .add(".sidebar div[class^=collapse]", collapseFn, "Sidebar")
 
 /*
@@ -371,7 +373,7 @@ Behavior:Columns
 
 >    %%columns(-width) .. /%
 */
-    .add( "div[class*=columns]", Columns, { prefix: "columns" } )
+    .add( "div[class|=columns]", Columns, { prefix: "columns" } )
 
 /*
 Dynamic Style: Code-Prettifier
@@ -402,7 +404,7 @@ Example:
         }).inject(element, "before");
 
     })
-    .add("[class*=prettify-nonum] pre, [class*=prettify-nonum] code", function(element){
+    .add("[class|=prettify-nonum] pre, [class|=prettify-nonum] code", function(element){
 
         element.addClass("prettyprint");
 
@@ -446,7 +448,7 @@ Behavior: Table behaviors
 (end)
 
 */
-    .add(".zebra,div[class*=zebra]", function(element){
+    .add(".zebra,div[class|=zebra]", function(element){
 
         var args = "zebra".sliceArgs(element);
 
@@ -504,7 +506,7 @@ Behavior: Scrollable pre area with maximum size (based on BOOTSTRAP)
 >   %%scrollable-150 {{{ ... }}}    //max-height=150px
 
 */
-    .add("[class*=scrollable]", function(element){
+    .add("[class|=scrollable]", function(element){
 
         var maxHeight = "scrollable".sliceArgs(element)[0] || "240";
 
@@ -535,7 +537,7 @@ Behavior: List (based on BOOTSTRAP)
 >   %%list-unstyled-hover-group-nostyle
 
 */
-    .add("[class*=list]", function(element){
+    .add("[class|=list]", function(element){
 
         var args = "list".sliceArgs(element),
             lists = element.getElements("ul|ol");
@@ -638,8 +640,8 @@ Behavior:Flip, Flop
 >    %%flip(-w<idth>-h<eight>-primary-info-success-warning-danger-error) .. /%
 >    %%flop(-w<idth>-h<eight>-primary-info-success-warning-danger-error) .. /%
 */
-    .add( "div[class*=flip]", Flip, { prefix: "flip" } )
-    .add( "div[class*=flop]", Flip, { prefix: "flop" } );
+    .add( "div[class|=flip]", Flip, { prefix: "flip" } )
+    .add( "div[class|=flop]", Flip, { prefix: "flop" } );
 
 
 }( Wiki );

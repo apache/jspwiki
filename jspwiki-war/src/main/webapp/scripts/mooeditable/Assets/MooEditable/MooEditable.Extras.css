@@ -1,0 +1,14 @@
+.mooeditable-ui-toolbar .justifycenter-item .button-icon,
+.mooeditable-ui-toolbar .justifyright-item .button-icon,
+.mooeditable-ui-toolbar .justifyfull-item .button-icon,
+.mooeditable-ui-toolbar .justifyleft-item .button-icon{
+	background-image: url(images/mooeditable-extras-toolbarbuttons-tango.png);
+}
+
+.mooeditable-ui-toolbar .justifycenter-item .button-icon{ background-position: 0 0; } 
+.mooeditable-ui-toolbar .justifyfull-item .button-icon{ background-position: 0 -16px; } 
+.mooeditable-ui-toolbar .justifyleft-item .button-icon{ background-position: 0 -32px; } 
+.mooeditable-ui-toolbar .justifyright-item .button-icon{ background-position: 0 -48px; } 
+
+.mooeditable-ui-toolbar .removeformat-item .button-icon { background: transparent url(Other/removeformat.png) no-repeat center center; }
+.mooeditable-ui-toolbar .insertHorizontalRule-item .button-icon { background: transparent url(Other/hr.png) no-repeat center center; }

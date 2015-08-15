@@ -1,3 +1,44 @@
+2015-08-16  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-32  Haddock Template updates & WYSIWYG editing
+       
+       Haddock Template:
+
+       * [JSPWIKI-902] Printing improvements for the HADDOCK template,
+         hiding sidebar, userbox, wrapping long page-names, and a few other tweaks.
+
+       * The Page Footer now sticks to the bottom of the screen, even for short pages
+
+       * Fixed an issue with the persistence of the status of collapsible lists
+
+       * Added fixes for IE compatibility for the bootstrap css framework.
+
+       * [JSPWIKI-892] Haddock editor should put the cursor at the top of the textarea,
+         also when opening the editor with a certain section
+
+       * Improved the header layout (suggestion of Harry) moving the quick search field
+         into the searchbox dropdown.
+
+       * [JSPWIKI-908] The basic editor toolbar icons (bold, italic, link, etc..)
+         are back in the plain editor of HADDOCK.
+
+
+       WYSIWYG further enhancements
+
+       * (experimental) Included a plain vanilla wysiwyg editor to JSPWiki.
+         This editor is based on mooEditable, MIT licensed.
+         This editor is unfortunately not compatible with the default template.
+
+         You can still add your own wysiwyg editor to JSPWiki -- hooks are provided
+         for TinyMCE and CKeditor.
+         
+       * Added ajax-based live-preview for wysiwyg editors to the Haddock Template.
+         When editing in wysiwyg mode, you now get immediately a preview of the wiki markup.
+         (similar to the live-preview mode of the plain editor)
+
+       * The wysiwyg editors are now resizable, just like the plain editor..
+       
+
 2015-08-04  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-31  Haddock Template small fixes

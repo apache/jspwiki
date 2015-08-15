@@ -47,7 +47,7 @@ String.I18N = LocalizedStrings;
 String.I18N.PREFIX = "javascript.";
 //]]></script>
 
-<link rel="stylesheet" type="text/css" media="screen, projection, print"
+<link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
      href="<wiki:Link format='url' templatefile='haddock.css'/>" />
 
 <wiki:IncludeResources type="stylesheet"/>
@@ -65,6 +65,11 @@ String.I18N.PREFIX = "javascript.";
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<%--
+BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-ie-compatibility-modes
+--%>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
 <%-- COOKIE read client preferences --%>
 <%
    Preferences.setupPreferences(pageContext);
@@ -80,6 +85,7 @@ String.I18N.PREFIX = "javascript.";
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />
 <meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
+<meta name="wikiApplicationName" content='<wiki:Variable var="ApplicationName" />' />
 <%--CHECKME
     <wiki:link> seems not to lookup the right jsp from the right template directory
     EG when a templatefile is not present, the generated link should point to the default template.
@@ -88,8 +94,7 @@ String.I18N.PREFIX = "javascript.";
 <meta name="wikiXHRSearch" content='<wiki:Link format="url" templatefile="../default/AJAXSearch.jsp" />' />
 <meta name="wikiXHRPreview" content='<wiki:Link format="url" templatefile="../default/AJAXPreview.jsp" />' />
 <meta name="wikiXHRCategories" content='<wiki:Link format="url" templatefile="../default/AJAXCategories.jsp" />' />
-<meta name="wikiApplicationName" content='<wiki:Variable var="ApplicationName" />' />
-
+<meta name="wikiXHRHtml2Markup" content='<wiki:Link format="url" jsp="XHRHtml2Markup.jsp" />' />
 
 <script type="text/javascript">//<![CDATA[
 <wiki:IncludeResources type="jsfunction"/>

@@ -56,13 +56,7 @@ wiki.add("#editform", function( element ){
         snippets: wiki.Snips,
         directsnips: wiki.DirectSnips,
 
-/*
-        onChange: ( function(){
-            console.log("change event");
-            if( preview ){ livepreview(); }
-        } ).debounce(),
-*/
-        onChange: livepreview.debounce(1000),
+        onChange: livepreview.debounce(500),
 
         onConfig: config  //configuration callback
 
@@ -78,7 +72,7 @@ wiki.add("#editform", function( element ){
 
     }
 
-    resizer( snipe.toElement(), getFormElement(".resizer"), "editorHeight" );
+    wiki.resizer( snipe.toElement(), function(h){ preview.setStyle("height", h); });
 
     //Initialize the configuration checkboxes
     //Read the wiki-prefs cookie values.
@@ -96,9 +90,6 @@ wiki.add("#editform", function( element ){
         config(cmd);
 
     });
-
-    //livepreview();
-    //livepreview.periodical(5000);
 
 
 });
@@ -210,12 +201,12 @@ wiki.add("#editform", function( element ){
                 previewcache = null;
             }
 
-        } else if( previewcache != text.length ){
+        } else if( previewcache != text ){
 
-            previewcache = text.length;
+            previewcache = text;
             //return preview.set("html",preview.get("html")+" Lorem ipsum"); //test code
 
-            console.log("**** invoke Request.HTML ",wiki.XHRPreview)
+            //console.log("**** invoke Request.HTML ",previewcache, wiki.XHRPreview)
             new Request.HTML({
                 url: wiki.XHRPreview,
                 data: {
