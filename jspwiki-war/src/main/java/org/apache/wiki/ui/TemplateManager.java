@@ -272,7 +272,7 @@ public class TemplateManager extends ModuleManager {
             }
         }
 
-        log.info( "Final name = "+name );
+        if( log.isDebugEnabled() ) log.debug( "Final name = "+name );
         return name;
     }
 
