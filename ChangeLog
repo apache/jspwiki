@@ -1,3 +1,8 @@
+2015-08-22  Harry Metske (metskem@apache.org)
+
+       * 2.10.2-svn-33  Fixed JSPWIKI-910 support configuring jspwiki with envvars
+                        having dots replaced with underscores in the varnames
+
 2015-08-16  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-32  Haddock Template updates & WYSIWYG editing

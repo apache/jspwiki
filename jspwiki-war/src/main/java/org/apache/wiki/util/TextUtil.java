@@ -25,6 +25,7 @@ import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 
 
@@ -345,7 +346,13 @@ public final class TextUtil {
     }
 
     /**
-     *  Gets an integer-valued property from a standard Properties list.  If the value does not exist, or is a
+     *  Gets an integer-valued property from a standard Properties list.
+     *
+     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
+     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
+     *  dots with underscores.
+     *
+     *  If the value does not exist, or is a
      *  non-integer, returns defVal.
      *
      *  @since 2.1.48.
@@ -355,7 +362,7 @@ public final class TextUtil {
      *  @return The property value as an integer (or defVal).
      */
     public static int getIntegerProperty( Properties props,  String key, int defVal ) {
-        String val = System.getProperties().getProperty(key, System.getenv(key));
+        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
         if (val == null) {
             val = props.getProperty(key);
         }
@@ -365,6 +372,9 @@ public final class TextUtil {
     /**
      *  Gets a boolean property from a standard Properties list. Returns the default value, in case the key has not
      *  been set.
+     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
+     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
+     *  dots with underscores.
      *  <P>
      *  The possible values for the property are "true"/"false", "yes"/"no", or "on"/"off".  Any value not
      *  recognized is always defined as "false".
@@ -378,7 +388,7 @@ public final class TextUtil {
      *  @since 2.0.11
      */
     public static boolean getBooleanProperty( Properties props, String key, boolean defval ) {
-        String val = System.getProperties().getProperty(key, System.getenv(key));
+        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
         if (val == null) {
             val = props.getProperty(key);
         }
@@ -391,8 +401,11 @@ public final class TextUtil {
 
     /**
      *  Fetches a String property from the set of Properties.  This differs from Properties.getProperty() in a
-     *  couple of key respects: First, property value is trim()med (so no extra whitespace back and front), and
-     *  well, that's it.
+     *  couple of key respects: First, property value is trim()med (so no extra whitespace back and front).
+     *
+     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
+     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
+     *  dots with underscores.
      *
      *  @param props The Properties to search through
      *  @param key   The property key
@@ -401,7 +414,7 @@ public final class TextUtil {
      *  @since 2.1.151
      */
     public static String getStringProperty(Properties props, String key, String defval) {
-        String val = System.getProperties().getProperty(key, System.getenv(key));
+        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
         if (val == null) {
             val = props.getProperty(key);
         }
@@ -412,8 +425,13 @@ public final class TextUtil {
     }
 
     /**
-     *  Fetches a file path property from the set of Properties. If the
-     *  implementation fails to create the canonical path it just returns
+     *  Fetches a file path property from the set of Properties.
+     *
+     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
+     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
+     *  dots with underscores.
+     *
+     *  If the implementation fails to create the canonical path it just returns
      *  the original value of the property which is a bit doggy.
      *
      *  @param props The Properties to search through
@@ -425,7 +443,7 @@ public final class TextUtil {
     public static String getCanonicalFilePathProperty(Properties props, String key, String defval) {
 
         String result;
-        String val = System.getProperties().getProperty(key, System.getenv(key));
+        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
         if (val == null) {
             val = props.getProperty(key);
         }
