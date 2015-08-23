@@ -62,7 +62,6 @@ String.I18N.PREFIX = "javascript.";
 <%--TODO:
 <!--[if lte IE 8]><script src="js/libs/selectivizr.js"></script><![endif]-->
 --%>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <%--

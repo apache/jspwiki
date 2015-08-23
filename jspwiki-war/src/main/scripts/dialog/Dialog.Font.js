@@ -36,7 +36,7 @@ Inherits from:
 Example
 	(start code)
 	dialog= new Dialog.Font({
-		fonts:{'Font name1':'font1', 'Font name2':'font2'},
+		fonts:{"Font name1":"font1", "Font name2":"font2"},
 		caption:"Select a Font",
 		onSelect:function(value){ alert( value ); }
 	});
@@ -48,18 +48,23 @@ Dialog.Font = new Class({
 
 	options: {
 		fonts: {
-			'arial':'Arial',
-			'comic sans ms':'Comic Sans',
-			'courier new':'Courier New',
-			'garamond':'Garamond',
-			'georgia':'Georgia',
-			'helvetica':'Helvetica',
-			'HelveticaNeue-Light':'Helvetica Neue Light',
-			'impact':'Impact',
-			'times new roman':'Times',
-			'tahoma':'Tahoma',
-			'trebuchet ms':'Trebuchet',
-			'verdana':'Verdana'
+			"arial, helvetica, sans-serif": "Sans Serif",
+			"times new roman, serif": "Serif",
+			"monospace": "Fixed Width",
+			"arial black, sans-serif": "Wide",
+			"arial narrow, sans-serif": "Narrow",
+			"divider1": "",
+			"comic sans ms": "Comic Sans",
+			"courier new": "Courier New",
+			"garamond": "Garamond",
+			"georgia": "Georgia",
+			"helvetica": "Helvetica",
+			"HelveticaNeue-Light": "Helvetica Neue Light",
+			"impact": "Impact",
+			"times new roman": "Times New Roman",
+			"tahoma": "Tahoma",
+			"trebuchet ms": "Trebuchet",
+			"verdana": "Verdana"
 		}
 	},
 
@@ -67,13 +72,13 @@ Dialog.Font = new Class({
 
 		var self = this, fonts = options.fonts;
 
-        self.setClass('.font',options);
+        self.setClass(".font", options);
 		options.body = options.fonts || self.options.fonts;
 
 		self.parent(options);
 
-		self.element.getElements('.item').each( function( item ){
-			item.setStyle('font-family', item.get('title') );
+		self.element.getElements(".item").each( function( item ){
+			item.setStyle("font-family", item.get("title") );
 		});
 
 	}

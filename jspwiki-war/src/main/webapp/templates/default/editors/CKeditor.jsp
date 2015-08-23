@@ -230,11 +230,6 @@ render: function( page, name ){
 
     $ES("[name=htmlPageText]", page).each( function(element){
 
-
-        element.value = element.value
-            .replace( /<a class="hashlink"[^>]+>#<\/a>/g, "" )
-            .replace( /<img class="outlink"[^>]+>/g, "" );     // <img class="outlink" src="/..../images/out.png" alt="">
-
     	CKEDITOR.replace(element,{
           //uiColor: "#e5e8ed",
           //allowedContent:" ...  ",

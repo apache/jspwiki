@@ -110,16 +110,19 @@
         //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
         pageAsHtml = renderingManager.getHTML( context, usertext );
 
-        //FFS !! seems more stable,  and runs pre and post translate filters as well
-        //pageAsHtml = engine.textToHTML( context, usertext );
-
     }
         catch( Exception e )
     {
-        pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
-        //pageAsHtml = e.toString() + "\n" + usertext; //error
-        e.printStackTrace();
+        pageAsHtml = "<div class='error'>Error in converting wiki-markup to well-formed HTML <br/>" + e.toString() +  "</div>";
+
+        /*
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        e.printStackTrace(pw);
+        pageAsHtml += "<pre>" + sw.toString() + "</pre>";
+        */
     }
+
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for TinyMCE has been rendered.
@@ -127,6 +130,7 @@
 
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
+
 
    /*FSS not used
    String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
@@ -281,7 +285,6 @@ Wiki.add("[name=htmlPageText]", function( element){
     function containerHeight(){ return $(editor.getContainer()).getStyle("height"); }
     function editorHeight(){ return $(editor.getContentAreaContainer()).getStyle("height"); }
     function editorContent(){ return editor.getContent(); }
-    function previewContent(value){ preview.set("text", value); }
     function resizePreview(){ preview.setStyle("height", containerHeight()); }
 
     var form = element.form,
@@ -290,16 +293,11 @@ Wiki.add("[name=htmlPageText]", function( element){
         resizer = form.getElement(".resizer"),
         resizeCookie = "editorHeight",
 
-        html2markup = Wiki.getXHRPreview( editorContent, previewContent );
+        html2markup = Wiki.getXHRPreview( editorContent, preview );
 
     $$("[data-cmd^=live]:checked").addEvent("configured", html2markup);
     Wiki.configuration( form );
 
-
-
-    element.value = element.value
-        .replace( /<a class="hashlink"[^>]+>#<\/a>/g, "" )
-        .replace( /<img class="outlink"[^>]+>/g, "" );     // <img class="outlink" src="/..../images/out.png" alt=""
 
     tinymce.init({
       selector: "textarea[name=htmlPageText]",

@@ -112,7 +112,12 @@
         catch( Exception e )
     {
         pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
-        //pageAsHtml = e.toString() + "\n" + usertext; //error
+        /*
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        e.printStackTrace(pw);
+        pageAsHtml += "<pre>" + sw.toString() + "</pre>";
+        */
     }
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
@@ -273,7 +278,6 @@ Wiki.add("[name=htmlPageText]", function( element){
     function containerHeight(){ return $(editor.container.$).getStyle("height"); }
     function editorHeight(){ return $(editor.ui.contentsElement.$).getStyle("height"); }
     function editorContent(){ return editor.getData(); }
-    function previewContent(value){ preview.set("text", value); }
     function resizePreview(){ preview.setStyle("height", containerHeight()); }
 
     var form = element.form,
@@ -282,15 +286,10 @@ Wiki.add("[name=htmlPageText]", function( element){
         resizer = form.getElement(".resizer"),
         resizeCookie = "editorHeight",
 
-        html2markup = Wiki.getXHRPreview( editorContent, previewContent );
+        html2markup = Wiki.getXHRPreview( editorContent, preview );
 
     $$("[data-cmd^=live]:checked").addEvent("configured", html2markup);
     Wiki.configuration( form );
-
-
-    element.value = element.value
-        .replace( /<a class="hashlink"[^>]+>#<\/a>/g, "" )
-        .replace( /<img class="outlink"[^>]+>/g, "" );     // <img class="outlink" src="/..../images/out.png" alt="">
 
 	CKEDITOR.replace(element,{
       //uiColor: "#e5e8ed",

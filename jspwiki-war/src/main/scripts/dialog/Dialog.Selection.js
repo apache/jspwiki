@@ -112,7 +112,6 @@ Dialog.Selection = new Class({
                 self.action( this.get("title") );
 			});
 
-
 		}
 
 		return self;

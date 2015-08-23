@@ -52,11 +52,8 @@
     String usertext = EditorManager.getEditedText(pageContext);
 
 %>
-<wiki:RequestResource type="stylesheet" resource="scripts/mooeditable/Assets/MooEditable/MooEditable.css" />
-<wiki:RequestResource type="stylesheet" resource="scripts/mooeditable/Assets/MooEditable/MooEditable.Extras.css" />
-<wiki:RequestResource type="script" resource="scripts/mooeditable/Source/MooEditable/MooEditable.js" />
-<wiki:RequestResource type="script" resource="scripts/mooeditable/Source/MooEditable/MooEditable.UI.MenuList.js" />
-<wiki:RequestResource type="script" resource="scripts/mooeditable/Source/MooEditable/MooEditable.Extras.js" />
+<wiki:RequestResource type="stylesheet" resource="templates/haddock/haddock-wysiwyg.css" />
+<wiki:RequestResource type="script" resource="scripts/haddock-wysiwyg.js" />
 
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
@@ -108,8 +105,13 @@
     }
         catch( Exception e )
     {
-        pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
-        //pageAsHtml = e.toString() + "\n" + usertext; //error
+        pageAsHtml = "<div class='error'>Error in converting wiki-markup to well-formed HTML <br/>" + e.toString() +  "</div>";
+        /*
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        e.printStackTrace(pw);
+        pageAsHtml += "<pre>" + sw.toString() + "</pre>";
+        */
     }
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
@@ -277,7 +279,6 @@ Wiki.add("[name=htmlPageText]", function( element){
     function containerHeight(){ return editor.container.getStyle("height"); }
     function editorHeight(){ return editor.iframe.getStyle("height"); }
     function editorContent(){ return editor.getContent(); }
-    function previewContent(value){ preview.set("text", value); }
     function resizePreview(){ preview.setStyle("height", containerHeight()); }
 
     var form = element.form,
@@ -286,16 +287,10 @@ Wiki.add("[name=htmlPageText]", function( element){
         resizer = form.getElement(".resizer"),
         resizeCookie = "editorHeight",
 
-        html2markup = Wiki.getXHRPreview( editorContent, previewContent );
+        html2markup = Wiki.getXHRPreview( editorContent, preview );
 
     $$("[data-cmd^=live]:checked").addEvent("configured", html2markup);
     Wiki.configuration( form );
-
-    element.value = element.value
-        .replace( /<a class="hashlink"[^>]+>#<\/a>/g, "" )
-        .replace( /<img class="outlink"[^>]+>/g, "" );     // <img class="outlink" src="/..../images/out.png" alt=""
-
-
 
     element.mooEditable({
         dimensions:{

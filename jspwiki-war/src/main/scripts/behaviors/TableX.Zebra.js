@@ -34,7 +34,9 @@ TableX.Zebra = function(table, options){
 
     function stripe(){
 
-        this.rows.filter( Element.isVisible ).each( function(row, j){
+        this.rows.filter( function(el){
+            return el.getStyle("display") != "none";
+        }).each( function(row, j){
 
             j &= 1; //0,1,0,1...
 
@@ -56,7 +58,7 @@ TableX.Zebra = function(table, options){
 
     if ( hasColors ){ colors = colors.map( function(c){ return new Color(c); }); }
 
-    //console.log("ZEBRA ",options.colors, colors[0],colors[1]);
+    //console.log("ZEBRA ",hasColors, options.colors, colors[0], colors[1]);
     stripe.call( new TableX(table, { onRefresh: stripe }) );
 
 };

@@ -493,11 +493,13 @@ var Wiki = {
         });
     },
 
-    getXHRPreview: function( getContent, putPreview ){
+    getXHRPreview: function( getContent, previewElement ){
 
-        var wiki = this;
+        var wiki = this, loading = "loading";
 
         return (function(){
+
+            previewElement.addClass(loading);
 
             new Request({
                 url: wiki.XHRHtml2Markup,
@@ -505,7 +507,7 @@ var Wiki = {
                     htmlPageText: getContent()
                 },
                 onSuccess: function(responseText){
-                    putPreview( responseText.trim() );
+                    previewElement.removeClass(loading).set("text", responseText.trim() );
                 },
                 onFailure: function(e){
                     putPreview("Sorry, HTML to Wiki Markup conversion failed :=() ",e);
