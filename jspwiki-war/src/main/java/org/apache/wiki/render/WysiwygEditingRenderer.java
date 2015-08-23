@@ -121,14 +121,11 @@ public class WysiwygEditingRenderer
                              && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                         {
 
-                            if( classValue.equals( EDITPAGE ) )
+                            Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
+                            if( titleAttr != null )
                             {
-                                Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
-                                if( titleAttr != null )
-                                {
                                     // remove the title since we don't want to eventually save the default undefined page title.
                                     titleAttr.detach();
-                                }
                             }
 
                             String newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
