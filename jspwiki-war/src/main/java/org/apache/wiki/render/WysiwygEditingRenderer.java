@@ -97,15 +97,13 @@ public class WysiwygEditingRenderer
 
                         //if( classValue.equals( WIKIPAGE )
                         //    || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
-                        if( classValue.equals( WIKIPAGE )
-                            && ( hrefAttr != null )
-                            && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) )
+                        if( //classValue.equals( WIKIPAGE ) &&
+                            ( hrefAttr != null )
+                        &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
                         {
                             // Remove the leading url string so that users will only see the
                             // wikipage's name when editing an existing wiki link.
                             // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
-
-                            // Avoid to do this twice -- due to some caching by the RenderingManager
 
                             String newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
 
@@ -118,15 +116,19 @@ public class WysiwygEditingRenderer
                             hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
 
                         }
-                        else if( classValue.equals( EDITPAGE )
-                                 && ( hrefAttr != null )
-                                 &&  hrefAttr.getValue().startsWith( editPageLinkUrl ) )
+                        else if( //classValue.equals( EDITPAGE ) &&
+                                ( hrefAttr != null )
+                             && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                         {
-                            Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
-                            if( titleAttr != null )
+
+                            if( classValue.equals( EDITPAGE ) )
                             {
-                                // remove the title since we don't want to eventually save the default undefined page title.
-                                titleAttr.detach();
+                                Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
+                                if( titleAttr != null )
+                                {
+                                    // remove the title since we don't want to eventually save the default undefined page title.
+                                    titleAttr.detach();
+                                }
                             }
 
                             String newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
