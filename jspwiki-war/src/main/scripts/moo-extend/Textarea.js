@@ -159,7 +159,7 @@ var Textarea = new Class({
             //textarea.focus();
 
         }
-        ta.fireEvent("change");
+        //ta.fireEvent("change");
         return this;
     },
 

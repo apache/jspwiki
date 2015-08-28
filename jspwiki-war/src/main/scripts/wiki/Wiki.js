@@ -203,8 +203,7 @@ var Wiki = {
         }
 
         //console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
-        //FFS : refactor -- why not use the standard #section-ID funtionalities
-        wiki.srcollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
+        wiki.scrollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
 
         // initialize all registered behaviors
         wiki.update();
@@ -373,19 +372,17 @@ var Wiki = {
     },
 
     /*
-    Function: srcollTo
+    Function: scrollTo
         Scrolls the page to the section previously being edited - if any
         Section counting starts at 1??
     */
-    srcollTo: function( index ){
+    scrollTo: function( index ){
 
         //console.log("Scroll to section ", index, ", Number of sections:", this.getSections().length );
-        var element = this.getSections()[index], pos;
+        var element = this.getSections()[index];
 
         if( element ){
-            pos = element.getPosition();
-            //console.log("SCROLL TO ", element,pos );
-            window.scrollTo(pos.x, pos.y);
+            location.replace( "#" + element.get("id") );
         }
 
     },
@@ -495,7 +492,9 @@ var Wiki = {
 
     getXHRPreview: function( getContent, previewElement ){
 
-        var wiki = this, loading = "loading";
+        var wiki = this,
+            loading = "loading",
+            preview = function(p){ previewElement.removeClass(loading).set("text", p);};
 
         return (function(){
 
@@ -507,10 +506,10 @@ var Wiki = {
                     htmlPageText: getContent()
                 },
                 onSuccess: function(responseText){
-                    previewElement.removeClass(loading).set("text", responseText.trim() );
+                    preview( responseText.trim() );
                 },
                 onFailure: function(e){
-                    putPreview("Sorry, HTML to Wiki Markup conversion failed :=() ",e);
+                    preview( "Sorry, HTML to Wiki Markup conversion failed :=() " + e );
                 }
             }).send();
 

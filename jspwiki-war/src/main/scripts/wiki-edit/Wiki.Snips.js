@@ -199,12 +199,13 @@ Wiki.Snips = {
         autosuggest: { event: 'config' },
         tabcompletion: { event: 'config' },
         previewcolumn: { event: 'config' },
+        wysiwyg: { event: 'config' },
 
 
         // Simple shortcuts
         br: {
             key: "shift+enter",
-            snippet: "\\\\ "
+            snippet: "\\\\\n"
         },
         hr: "\n----\n",
         lorem: "This is is just some sample. Don’t even bother reading it; you will just waste your time. Why do you keep reading? Do I have to use Lorem Ipsum to stop you? OK, here goes: Lorem ipsum dolor sit amet, consectetur adipi sicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Still reading? Gosh, you’re impossible. I’ll stop here to spare you.",
@@ -212,21 +213,21 @@ Wiki.Snips = {
 
 
         // simple inline tab completion commands
-        bold:   { key:'b', snippet: "__{bold}__ " },
-        italic: { key:'i', snippet: "''{italic}'' " },
+        bold:   { key: "b", snippet: "__{bold}__ " },
+        italic: { key: "i", snippet: "''{italic}'' " },
 
-        mono:   "\\{\\{{monospaced text}}} ",
+        mono:   { key: "m", snippet: "\\{\\{{monospaced text}}} " },
         sub:    "%%sub {subscript text}/% ",
         sup:    "%%sup {superscript text}/% ",
         strike: "%%strike {strikethrough text}/% ",
 
         // simple block tab completion commands
-        quote:  "\n%%quote \n{.}\n/%\n",
+        quote:  "\n%%quote \n{Quoted text}\n/%\n",
         dl:     "\n;{term}:{definition-text} ",
         pre:    "\n\\{\\{\\{\n{some preformatted block}\n}}}\n",
         code:   "\n%%prettify \n\\{\\{\\{\n{/* some code block */}\n}}}\n/%\n",
-        table:  "\n||heading-1||heading-2\n| cell11   | cell12\n| cell21   | cell22\n",
-        //xflow:  "\n%%xflow\n{wide content}\n/%\n ",
+        table:  "\n||{heading-1} ||heading-2\n|cell11     |cell12\n|cell21     |cell22\n",
+        t: { synonym: "table" },
 
         me: { alias: 'sign'},
         sign: function(){
@@ -660,9 +661,9 @@ Wiki.Snips = {
             selectInline: [Dialog.Selection, {
                 cssClass: ".dialog-horizontal",
                 body:{
-                    "__bold__":"<b>bold</b>",
-                    "''italic''":"<i>italic</i>",
-                    "{{mono}}":"<tt>mono</tt>",
+                    "__{bold}__":"<b>bold</b>",
+                    "''{italic}''":"<i>italic</i>",
+                    "\\{\\{{monospaced text}}} ":"<tt>mono</tt>",
                     "[description|{link}|options]":"<span class='icon-link'/>",
                     "[{Image src='${image.jpg}'}]":"<span class='icon-picture'/>"
                 }

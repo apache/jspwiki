@@ -219,7 +219,7 @@ var Snipe = new Class({
         Set/Reset some of the options of the snip-editor.
 
     Arguments:
-        item - snippets|tabcompletion|directsnips|smartpairs|autosuggest
+        item - snippets|directsnips|autosuggest|tabcompletion|smartpair
         value - new value
     Returns
         this Snipe object
@@ -403,7 +403,7 @@ var Snipe = new Class({
     "delete": function(e, txta, caret) {
 
         var tab = this.options.tab;
-            console.log("delete key");
+        //console.log("delete key");
 
         if( caret.thin && !txta.getTillEnd().indexOf(tab) /*index==0*/ ){
 
@@ -442,8 +442,7 @@ var Snipe = new Class({
                 txta.setSelectionRange(caret.start - cmd.length, caret.start)
                     .setSelection("");
 
-                //now invoke the corresponding actions
-                self.commands.action( cmd );
+                return self.commands.action( cmd );
             }
 
         }
@@ -710,8 +709,7 @@ var Snipe = new Class({
             caret = txta.getSelectionRange(),
             s, p;
 
-        //console.log("Snipe.action "+cmd+" ("+args+") snipText=["+snip.text+"] snipParms=["+snip.parms+"] ");
-        console.log("Snipe:action() "+cmd+" ["+args+"]");
+        //console.log("Snipe:action() "+cmd+" ["+args+"]");
 
         if( snip = self.snippets.get(cmd) ){
 

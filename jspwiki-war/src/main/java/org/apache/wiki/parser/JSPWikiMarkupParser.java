@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.parser;
 
@@ -81,7 +81,7 @@ import org.jdom2.Verifier;
  *  @since  2.4
  */
 public class JSPWikiMarkupParser extends MarkupParser {
-	
+
     /** Name of the outlink image; relative path to the JSPWiki directory. */
     private static final String OUTLINK_IMAGE = "images/out.png";
 
@@ -192,7 +192,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private int                    m_rowNum              = 1;
 
     private Heading                m_lastHeading         = null;
-    
+
     /**
      *  This list contains all IANA registered URI protocol
      *  types as of September 2004 + a few well-known extra types.
@@ -247,7 +247,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     /**
      *  Creates a markup parser.
-     *  
+     *
      *  @param context The WikiContext which controls the parsing
      *  @param in Where the data is read from.
      */
@@ -506,6 +506,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             case EDIT:
                 el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" );
                 el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), link ) );
+
                 break;
 
             case EMPTY:
@@ -744,7 +745,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Writes HTML for error message.  Does not add it to the document, you
      *  have to do it yourself.
-     *  
+     *
      *  @param error The error string.
      *  @return An Element containing the error.
      */
@@ -913,20 +914,20 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //  If the following is an XML entity reference (&#.*;) we'll
                 //  leave it as it is; otherwise we'll replace it with an &amp;
                 //
-                
+
                 boolean isEntity = false;
                 StringBuilder entityBuf = new StringBuilder();
-                
+
                 if( i < buf.length() -1 )
                 {
                     for( int j = i; j < buf.length(); j++ )
                     {
                         char ch2 = buf.charAt(j);
-                        
+
                         if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' )
                         {
                             entityBuf.append(ch2);
-                            
+
                             if( ch2 == ';' )
                             {
                                 isEntity = true;
@@ -939,17 +940,17 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         }
                     }
                 }
-                
-                if( isEntity ) 
+
+                if( isEntity )
                 {
                     tmpBuf.append( entityBuf );
                     i = i + entityBuf.length() - 1;
                 }
-                else 
+                else
                 {
                     tmpBuf.append("&amp;");
                 }
-                
+
             }
             else
             {
@@ -1124,7 +1125,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         title = MarkupParser.wikifyLink( title );
 
         hd.m_titleSection = m_engine.encodeName(title);
-        
+
         if( m_titleSectionCounter.containsKey( hd.m_titleSection ) )
         {
             Integer count = m_titleSectionCounter.get( hd.m_titleSection );
@@ -1141,7 +1142,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                            "-"+hd.m_titleSection;
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '/', '_' );
-        
+
         return hd.m_titleAnchor;
     }
 
@@ -1169,8 +1170,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  Returns XHTML for the heading. 
-     *  
+     *  Returns XHTML for the heading.
+     *
      *  @param level The level of the heading.  @see Heading
      *  @param title the title for the heading
      *  @param hd a List to which heading should be added
@@ -1204,7 +1205,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             throw new InternalWikiException("Illegal heading type "+level);
         }
 
-        
+
         return el;
     }
 
@@ -1426,14 +1427,14 @@ public class JSPWikiMarkupParser extends MarkupParser {
     {
         addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
     }
-    
+
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
     private Element handleHyperlinks( String linktext, int pos )
     {
         ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
-        
+
         StringBuilder sb = new StringBuilder(linktext.length()+80);
 
         if( isAccessRule( linktext ) )
@@ -1926,7 +1927,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         callHeadingListenerChain( hd );
 
         m_lastHeading = hd;
-        
+
         if( el != null ) pushElement(el);
 
         return el;
@@ -2375,7 +2376,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
             //  Check if there is an attempt to do something nasty
             //
-            
+
             try
             {
                 style = StringEscapeUtils.unescapeHtml(style);
@@ -2629,7 +2630,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
 
             int skip = IGNORE;
-            
+
             //
             //  Do the actual parsing and catch any errors.
             //
@@ -2640,10 +2641,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
             catch( IllegalDataException e )
             {
                 log.info("Page "+m_context.getPage().getName()+" contains data which cannot be added to DOM tree: "+e.getMessage());
-                
+
                 makeError("Error: "+cleanupSuspectData(e.getMessage()) );
             }
-            
+
             //
             //   The idea is as follows:  If the handler method returns
             //   an element (el != null), it is assumed that it has been
@@ -2678,24 +2679,24 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private String cleanupSuspectData( String s )
     {
         StringBuilder sb = new StringBuilder( s.length() );
-        
+
         for( int i = 0; i < s.length(); i++ )
         {
             char c = s.charAt(i);
-            
+
             if( Verifier.isXMLCharacter( c ) ) sb.append( c );
             else sb.append( "0x"+Integer.toString(c,16).toUpperCase() );
         }
-        
+
         return sb.toString();
     }
-    
+
     /** The token is a plain character. */
     protected static final int CHARACTER = 0;
-    
+
     /** The token is a wikimarkup element. */
     protected static final int ELEMENT   = 1;
-    
+
     /** The token is to be ignored. */
     protected static final int IGNORE    = 2;
 
@@ -2733,9 +2734,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
 
             // FIXME: This is not really very fast
-            
+
             closeHeadings();
-              
+
             popElement("dl"); // Close definition lists.
             if( m_istable )
             {
@@ -2894,7 +2895,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Parses the entire document from the Reader given in the constructor or
      *  set by {@link #setInputReader(Reader)}.
-     *  
+     *
      *  @return A WikiDocument, ready to be passed to the renderer.
      *  @throws IOException If parsing cannot be accomplished.
      */

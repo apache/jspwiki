@@ -62,10 +62,11 @@ textarea { white-space: pre-wrap; }
     padding: 0 0 .5em @grid-gutter-width/2; //cannot use margin here, as width=50%
     overflow: scroll;
     -ms-overflow-style: -ms-autohiding-scrollbar;
+    border: 2px dashed transparent;
 
     &.loading {
         //FFS: walking ant animation ?
-        border: 2px dashed red !important;
+        border: 2px dashed red;
     }
 }
 
