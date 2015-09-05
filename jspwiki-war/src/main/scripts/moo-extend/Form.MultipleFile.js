@@ -126,7 +126,7 @@ Form.MultipleFile = new Class({
 
         var newItem = this.list.getFirst().clone(true,true);
         newItem.getElement('input').destroy();
-        newItem.getElement('label').set('html', file.name + "<b>"+file.size/1024+" Kb</b>" );
+        newItem.getElement('label').set('html', file.name + "<b>"+(file.size/1024).toFixed(1)+" kB</b>" );
         newItem.getElement('.delete').removeClass('hidden').store('file',file);
         newItem.removeClass('droppable');
         this.list.grab(newItem);

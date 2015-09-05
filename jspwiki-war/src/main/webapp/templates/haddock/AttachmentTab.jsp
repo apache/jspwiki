@@ -56,7 +56,7 @@
       <ul class="list-group form-col-50">
         <li class="list-group-item droppable">
           <label>Select files <span class='canDragAndDrop'>or drop them here!</span></label>
-          <input type="file" name="files" id="files" size="60"/>
+          <input type="file" name="files" id="files" size="60" multiple="multiple"/>
           <a class="hidden delete btn btn-danger btn-xs pull-right">Delete</a>
         </li>
       </ul>

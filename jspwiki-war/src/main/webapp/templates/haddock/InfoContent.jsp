@@ -86,7 +86,9 @@ As we currently do not want to touch the top-level JSP's and keep them compatibl
 defaul template,  let's fix this here
 --%>
 <c:choose>
-<c:when test="${param.tab == 'attach'}"><wiki:Include page="AttachmentTab.jsp"/></c:when>
+<c:when test="${param.tab == 'attach'}">
+  <wiki:Include page="AttachmentTab.jsp"/>
+</c:when>
 <c:otherwise>
 
 <div class="page-content">
@@ -305,7 +307,7 @@ defaul template,  let's fix this here
 </wiki:Permission>
 
 
-<form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
+<form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
            class="form-group"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />" >

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.     
+    under the License.
  */
 package org.apache.wiki.attachment;
 
@@ -494,7 +494,8 @@ public class AttachmentServlet extends HttpServlet {
 
             String   wikipage   = null;
             String   changeNote = null;
-            FileItem actualFile = null;
+            //FileItem actualFile = null;
+            List<FileItem> fileItems = new java.util.ArrayList<FileItem>();
 
             for( FileItem item : items )
             {
@@ -527,33 +528,32 @@ public class AttachmentServlet extends HttpServlet {
                 }
                 else
                 {
-                    actualFile = item;
+                    fileItems.add( item );
                 }
             }
 
-            if( actualFile == null )
+            if( fileItems.size() == 0 )
+            {
                 throw new RedirectException( "Broken file upload", errorPage );
 
-            //
-            // FIXME: Unfortunately, with Apache fileupload we will get the form fields in
-            //        order.  This means that we have to gather all the metadata from the
-            //        request prior to actually touching the uploaded file itself.  This
-            //        is because the changenote appears after the file upload box, and we
-            //        would not have this information when uploading.  This also means
-            //        that with current structure we can only support a single file upload
-            //        at a time.
-            //
-            String filename = actualFile.getName();
-            long   fileSize = actualFile.getSize();
-            InputStream in  = actualFile.getInputStream();
+            } else {
 
-            try
-            {
-                executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
-            }
-            finally
-            {
-                IOUtils.closeQuietly( in );
+                for( FileItem actualFile : fileItems ){
+
+                    String filename = actualFile.getName();
+                    long   fileSize = actualFile.getSize();
+                    InputStream in  = actualFile.getInputStream();
+
+                    try
+                    {
+                        executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
+                    }
+                    finally
+                    {
+                        IOUtils.closeQuietly( in );
+                    }
+
+                }
             }
 
         }

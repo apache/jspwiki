@@ -51,26 +51,26 @@
 
     <div class="btn-group" data-toggle="buttons">
       <label class="btn btn-default btn-xs" >
-        <input type="checkbox" name="details" id="details" <c:if test='${param.details == "on"}'>checked='checked'</c:if> />
+        <input type="checkbox" name="details" id="details" ${param.details == "on" ? "checked='checked'" : ""} />
         <fmt:message key="find.details" />
     </label>
     </div>
 
     <div class="btn-group" data-toggle="buttons">
       <label class="btn btn-default btn-xs">
-        <input type="radio" name="scope" <c:if test='${empty param.scope}'>checked='checked'</c:if> value=""><fmt:message key='find.scope.all' />
-      </label>
-      <label class="btn btn-default btn-xs" >
-        <input type="radio" name="scope" id="x" <c:if test='${param.scope eq "author:"}'>checked='checked'</c:if> value="author:"><fmt:message key='find.scope.authors' />
+        <input type="radio" name="scope" ${empty param.scope ? "checked='checked'" : ""} value=""><fmt:message key='find.scope.all' />
       </label>
       <label class="btn btn-default btn-xs">
-        <input type="radio" name="scope" <c:if test='${param.scope eq "name:"}'>checked='checked'</c:if> value="name:"><fmt:message key='find.scope.pagename' />
+        <input type="radio" name="scope" ${param.scope eq "author:" ? "checked='checked'" : ""} value="author:"><fmt:message key='find.scope.authors' />
       </label>
       <label class="btn btn-default btn-xs">
-        <input type="radio" name="scope" <c:if test='${param.scope eq "contents:"}'>checked='checked'</c:if> value="contents:" ><fmt:message key='find.scope.content' />
+        <input type="radio" name="scope" ${param.scope eq "name:" ? "checked='checked'" : ""} value="name:"><fmt:message key='find.scope.pagename' />
       </label>
       <label class="btn btn-default btn-xs">
-        <input type="radio" name="scope" <c:if test='${param.scope eq "attachment:"}'>checked='checked'</c:if> value="attachment:" ><fmt:message key='find.scope.attach' />
+        <input type="radio" name="scope" ${param.scope eq "contents:" ? "checked='checked'" : ""} value="contents:" ><fmt:message key='find.scope.content' />
+      </label>
+      <label class="btn btn-default btn-xs">
+        <input type="radio" name="scope" ${param.scope eq "attachment:" ? "checked='checked'" : ""} value="attachment:" ><fmt:message key='find.scope.attach' />
       </label>
     </div>
 

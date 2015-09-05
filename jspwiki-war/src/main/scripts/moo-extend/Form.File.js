@@ -121,8 +121,8 @@ Form.File = new Class({
 
             submit = function(event){
                 if (event) event.preventDefault();
-                 inputFiles.getFiles().each(function(file){
-                    uploadReq.append(name, file);
+                 inputFiles.getFiles().each(function(file,i){
+                    uploadReq.append(name+"-"+i, file);
                 });
                 uploadReq.send();
             };
@@ -181,12 +181,22 @@ Form.File = new Class({
                 //this event can only be received on the first input[type=file]
                 var input = this,
                     item = input.getParent(options.item),
-                    newItem = item.clone(true, true);
+                    newItem = item.clone(true, true),
+                    fileNames = "";
+
+                for( var i=0; i< input.files.length; i++){
+                    var file = input.files[i];
+                    fileNames += file.name.replace(/.*[\\\/]/, "")
+                              + " <span class='badge'>" + ( file.size / 1024 ).toFixed(1) + " kB</span><br />";
+                  }
 
                 input.set("id",String.uniqueID());
-                item.getElement("label").set("text", input.value.replace(/.*[\\\/]/, "") );
+                input.set("name",String.uniqueID());
+                input.set ("title","");
+                item.getElement("label").set("html", fileNames );
                 item.getElement(".delete").removeClass("hidden");
                 item.removeClass("droppable");
+
                 list.grab(newItem,"top");
                 self.update(+1);
             },

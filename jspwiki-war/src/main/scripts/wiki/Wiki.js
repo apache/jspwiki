@@ -154,8 +154,7 @@ var Wiki = {
             //activate attachment upload routines
             .add( "#files", Form.File, {
 
-                //TODO: jspwiki v.2.10.x seems now to only support 1 upload-file at a time
-                max: 1,
+                max: 8,
                 rpc: function(progressid, callback){
                     wiki.jsonrpc("/progressTracker", [progressid], callback);
                 }

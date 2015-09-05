@@ -88,7 +88,7 @@ var Snipe = new Class({
 
     Implements: [Options, Events, Undoable],
 
-    Binds: ["sync","shortcut","keystroke","suggest","select","action"],
+    Binds: ["sync","shortcut","keystroke","suggest","action"],
 
     options: {
         tab: "    ", //default tab = 4 spaces
@@ -141,6 +141,7 @@ var Snipe = new Class({
                     var s = textarea.getSelectionRange();
                     self.fireEvent("beforeChange");
                     s.thin ? work.value = v : textarea.setSelection(v);
+                    //self.fireEvent("change");
                 }
             }
         }];
@@ -149,7 +150,7 @@ var Snipe = new Class({
 
         //Snipe.Commands takes care of capturing commands.
         //Commands are entered via tab-completion, button clicks, or a dialog.
-        //Snipe.Commands also ensures that at most one dialog is open at the same time.
+        //Snipe.Commands ensures that at most one dialog is open at the same time.
         self.commands = new Snipe.Commands( container, {
             //onOpen: function( /*command*/ ){ work.focus(); },
             onClose: function( /*command*/ ){ work.focus(); },
@@ -172,9 +173,8 @@ var Snipe = new Class({
             //blur: self.reset.bind(self), //(and hide any open dialogs; and update the preview area...)
             keyup: self.suggest.debounce(), //(250, true)
             click: self.suggest.debounce(),
-            //select: self.select.debounce(),
             change: function( parm ){
-                //console.log("bubble change event from textarea");
+                //console.log("change :", parm);
                 self.fireEvent("change",parm);
             }
 
@@ -204,7 +204,7 @@ var Snipe = new Class({
         Retrieve some of the public properties or options of the snip-editor.
 
     Arguments:
-        item - textarea|snippets|tabcompletion|directsnips|smartpairs|autosuggest
+        item - mainarea|textarea|snippets|directsnips|autosuggest|tabcompletion|smartpairs
     */
     get: function(item){
 
@@ -627,53 +627,19 @@ var Snipe = new Class({
 
             if ( suggest = this.snippets.matchSuggest() ){
 
-                console.log( "Snipe.suggest ",suggest );
+                //console.log( "Snipe.suggest ",suggest );
                 this.setContext( null/*snip*/, suggest );
                 return this.commands.action( suggest.cmd , suggest.pfx );
 
             }
             //close suggest dialog if one is still open
-            //is this ok??
-
+            //CHECKME: this.commands.close();
             this.reset();
         }
 
-        self.fireEvent("change"); //Potential change of the textarea, to be debounced by receiver -- CHECKME
-
-    },
-
-
-    /*
-    Method: select
-        Selection snippets are dialog-boxes appearing when you select some text.
-        When clicking items in the SELECTION dialogs, content is inserted
-        in the textarea.
-
-        Selection commands (lowest priority vs. other snippets)
-        - selectInline: "bold|italic|mono|link",
-        - selectBlock:  "code|prettify"
-        - selectStartOfLine: "!!!h1|!!h2|!h3|bold|italic|mono|link|plugin"
-
-    */
-    select: function(e){
-
-        var self = this,
-            txta = self.textarea,
-            selection = txta.getSelectionRange(),
-            cmd = "selectInline";
-
-        if( !txta.getSelectionRange().thin ){
-
-            if( txta.isCaretAtStartOfLine() ){
-
-                cmd = txta.isCaretAtEndOfLine() ? "selectBlock" : "selectStartOfLine";
-
-            }
-
-            console.log("SELECT COMMAND", cmd );
-            //return this.commands.action( cmd );
-
-        }
+        self.fireEvent("change");
+        //CHECKME: Potential change of the textarea, to be debounced by receiver -- CHECKME
+        //FIXME: FIRE-EVENT to be done when a snippet is inserted
 
     },
 
@@ -714,13 +680,11 @@ var Snipe = new Class({
         if( snip = self.snippets.get(cmd) ){
 
             if( snip.event ){
-                console.log("Snipe:action() fire-event: ",snip.event);
+                //console.log("Snipe:action() fire-event: ",snip.event);
                 return self.fireEvent(snip.event, arguments);
             }
 
             this.fireEvent("beforeChange");
-
-            //$(txta).focus();  CHECKME
 
             if( snip.suggest ){
 
@@ -753,40 +717,24 @@ var Snipe = new Class({
 
                 if( !caret.thin ){
                     p = snip.parms.shift();
-                        s = s.replace( p, txta.getSelection() );
-                    }
+                    s = s.replace( p, txta.getSelection() );
+                }
 
             }
 
             txta.setSelection( s );
 
-            //next action
-            if( false && snip.parms[1] ){
+            //when no selection, move caret after the inserted snippet,
+            //otherwise leave the selection unchanged
 
-                //this snippet has one or more parameters left
-                //store the active snip and process the next {parameter}
-                //checkme !!
+            if( caret.thin ){
 
-                if( !self.hasContext() ){ self.setContext( snip ); }
-
-                caret = txta.getSelectionRange(); //update new caret
-
-                self.nextAction( txta, caret );
-
-
-            } else {
-
-                //when no selection, move caret after the inserted snippet,
-                //otherwise leave the selection unchanged
-                if( caret.thin ){
-
+                    console.log("move after", s.length, caret.start + s.length);
                     txta.setSelectionRange( caret.start + s.length );
 
-                }
-
-                self.reset();
-
             }
+
+            self.reset(); //CHECKME
 
         }
 
@@ -805,14 +753,13 @@ var Snipe = new Class({
     Arguments:
         txta - Textarea object
         snip - Snippet object
-        caret - Caret object {start, end, thin}
+        caret - Object {start, end, thin}
 
     Returns:
-        - (string) replacement string for the selection.
-            By default, returns snip.text
+        - (string) replacement string for the selection. By default, returns snip.text
         - the snip.parms will be set to [] is toggle was executed successfully
-        Eventually the selection will be extended if the
-        prefix and suffix were just outside the selection.
+
+        The selection will be extended if the prefix and suffix were just outside the selection.
     */
     toggleSnip: function(txta, snip, caret){
 
@@ -821,9 +768,13 @@ var Snipe = new Class({
             arr = s.trim().split( snip.parms[0] ),
             fst = arr[0],
             lst = arr[1],
-            re = new RegExp( "^\\s*" + fst.trim().escapeRegExp() + "\\s*(.*)\\s*" + lst.trim().escapeRegExp() + "\\s*$" );
+            re = new RegExp( "^\\s*"
+                           + fst.trim().escapeRegExp()
+                           + "\\s*(.*)\\s*"
+                           + lst.trim().escapeRegExp()
+                           + "\\s*$" );
 
-        if( (fst+lst)!="" ){
+        if( (fst + lst) != "" ){
 
             s = txta.getSelection();
             snip.parms = [];
@@ -834,17 +785,19 @@ var Snipe = new Class({
                 s = s.replace( re, "$1" );
 
             // if pfx/sfx are matched just outside the selection: extend selection
-            } else if( txta.getFromStart().test(fst.escapeRegExp()+"$") && txta.getTillEnd().test("^"+lst.escapeRegExp()) ){
+            } else if( txta.getFromStart().test(fst.escapeRegExp() + "$")
+                    && txta.getTillEnd().test("^" + lst.escapeRegExp() ) ){
 
-                txta.setSelectionRange(caret.start-fst.length, caret.end+lst.length);
+                txta.setSelectionRange( caret.start - fst.length, caret.end + lst.length);
 
             // otherwise, insert snippet and set caret between pfx and sfx
             } else {
 
-                txta.setSelection( fst+lst ).setSelectionRange( caret.start + fst.length );
+                txta.setSelection( fst + lst ).setSelectionRange( caret.start + fst.length );
             }
         }
         return s;
+
     },
 
     /*

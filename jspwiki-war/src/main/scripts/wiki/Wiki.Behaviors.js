@@ -92,7 +92,24 @@ wiki.add("*[class^=progress]", function(element){
 
 */
 
-})
+    })
+
+/*
+Behavior: pie
+
+Credit: Lea Verou,  Static Pie
+
+%%pie 20% /%
+%%pie-red-blue 20% /%
+%%pie-red-blue-r50 20% /%
+
+*/
+    .add(".pie", function(pie){
+
+	    pie.style.animationDelay = '-' + parseFloat(pie.textContent) + 's';
+	    pie.setAttribute('data-percent', parseFloat(pie.textContent)+"%");
+
+    })
 
 /*
 Behavior:%%graphBar .. /%
@@ -373,7 +390,7 @@ Behavior:Columns
 
 >    %%columns(-width) .. /%
 */
-    .add( "div[class|=columns]", Columns, { prefix: "columns" } )
+    .add( "div[class~=columns]", Columns, { prefix: "columns" } )
 
 /*
 Dynamic Style: Code-Prettifier
@@ -404,7 +421,7 @@ Example:
         }).inject(element, "before");
 
     })
-    .add("[class|=prettify-nonum] pre, [class|=prettify-nonum] code", function(element){
+    .add("[class~=prettify-nonum] pre, [class~=prettify-nonum] code", function(element){
 
         element.addClass("prettyprint");
 
@@ -453,6 +470,7 @@ Behavior: Table behaviors
         var args = "zebra".sliceArgs(element);
 
         element.getElements("table").each(function(table){
+            //console.log("zebra", args, table);
             new T.Zebra(table, { colors: args });
         });
 

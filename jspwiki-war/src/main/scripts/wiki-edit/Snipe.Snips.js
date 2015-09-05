@@ -17,13 +17,15 @@
 */
 /*
 Snippet:
-    init - initialize snippets; detect shortcut-keys, and suggest dialogs
-    get - retrieve and validate the snippet. Return false when not found.
+    init - initialize snippets; detect shortcut-keys, and suggestion dialogs
+
+    get - retrieve and validate a snippet. Returns false when not found.
+
     inScope - check whether a snippet is inScope at the current cursor position
     toggle - ...
 
-
-    suggest - match suggestion dialog => fireEvent(action,cmd)
+    match - retrieve snippet based on cmd entered at cursor position
+    matchSuggest - retrieve suggestion dialog based on cmd entered at cursor position
     shortcut -  match key => fireEvent(action,cmd)
 
 Example
@@ -107,7 +109,7 @@ Snipe.Snips = new Class({
         var cmd, fromStart = this.workarea.getFromStart();
 
         for( cmd in this.snips ){
-            if( fromStart.test( cmd+"$" ) ) return cmd;
+            if( fromStart.test( cmd + "$" ) ) return cmd;
         }
 
         return false;
@@ -131,6 +133,11 @@ Snipe.Snips = new Class({
             caret = workarea.getSelectionRange(),
             fromStart = workarea.getFromStart();
 
+        //"selectInline", "selectBlock", "selectStartOfLine";
+
+        var SOL = workarea.isCaretAtStartOfLine();
+        var EOL = workarea.isCaretAtEndOfLine();
+
         for( cmd in snips ){
 
             snip = snips[cmd];
@@ -147,7 +154,7 @@ Snipe.Snips = new Class({
                         console.log("SUGGEST Prefix ", cmd, suggest.pfx, pfx.getLast() );
                         pfx = pfx.getLast(); //match last (x)
                         result = workarea.slice( caret.start - pfx.length )
-                                        .match( suggest.match );
+                                         .match( suggest.match );
 
                         console.log("SUGGEST Match ", suggest.match, result );
 
@@ -180,16 +187,10 @@ Snipe.Snips = new Class({
         Retrieve and validate the snippet.
         Returns false when the snippet is not found or not in scope.
 
-
     Arguments:
         snips - snippet collection object for lookup of the cmd
         cmd - snippet key. If not present, retrieve the cmd from
             the textarea just to the left of the caret. (i.e. tab-completion)
-
-    Returns:
-        Return a snippet object or false.
-        - false
-        - snippet object
 
     Example:
         (start code)

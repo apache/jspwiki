@@ -28,9 +28,8 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );
-  pageContext.setAttribute( "attachments", c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() );
-  String frontpage = c.getEngine().getFrontPage();
 %>
+<c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
 
 <%-- navigation bar --%>
 <div class="row sticky">
@@ -59,7 +58,7 @@
   --%>
 
   <%-- attachment --%>
-  <wiki:CheckRequestContext context='view|info|diff|rename|edit'>
+  <wiki:CheckRequestContext context='view|info|upload|rename|diff|rename|edit'>
   <wiki:PageExists>
   <li id="attach"
    class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
@@ -76,34 +75,33 @@
   </wiki:CheckRequestContext>
 
   <%-- info --%>
-  <wiki:CheckRequestContext context='view|upload|rename|edit'>
+  <wiki:CheckRequestContext context='view|info|upload|rename|edit'>
   <wiki:PageExists>
   <li id="info">
     <wiki:Link context="info" accessKey="i">
       <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists>
     </wiki:Link>
-  <ul class="dropdown-menu pull-right" data-hover-parent="li">
+    <ul class="dropdown-menu pull-right" data-hover-parent="li">
       <li class="dropdown-header">This is version <span class="badge"><wiki:PageVersion /></span></li>
       <li class="dropdown-header">Last Changed on:</span></li>
-    <wiki:CheckVersion mode="latest">
-      <li><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
-    </wiki:CheckVersion>
-    <wiki:CheckVersion mode="notlatest">
-      <li><wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
-    </wiki:CheckVersion>
-    <li class="dropdown-header">By:</span></li>
-    <li>
-      <%-- wiki:Author sometimes returns a link(ok) or a plain text, we always need a link! --%>
-      <c:set var="author"><wiki:Author/></c:set>
-      <c:choose>
-        <c:when test="${ fn:contains(author,'href=')}">${author}</c:when>
-        <c:otherwise><a href="#">${author}</a></c:otherwise>
-      </c:choose>
-    </li>
-    <li class="divider"></li>
-    <li><wiki:RSSImageLink mode="wiki" /></li>
-
-  </ul>
+      <wiki:CheckVersion mode="latest">
+        <li><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
+      </wiki:CheckVersion>
+      <wiki:CheckVersion mode="notlatest">
+        <li><wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
+      </wiki:CheckVersion>
+      <li class="dropdown-header">By:</span></li>
+      <li>
+        <%-- wiki:Author sometimes returns a link(ok) or a plain text, we always need a link! --%>
+        <c:set var="author"><wiki:Author/></c:set>
+        <c:choose>
+          <c:when test="${ fn:contains(author,'href=')}">${author}</c:when>
+          <c:otherwise><a href="#">${author}</a></c:otherwise>
+        </c:choose>
+      </li>
+      <li class="divider"></li>
+      <li><wiki:RSSImageLink mode="wiki" /></li>
+    </ul>
   </li>
   </wiki:PageExists>
   </wiki:CheckRequestContext>

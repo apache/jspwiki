@@ -25,7 +25,7 @@
 <%@ page import="org.apache.wiki.*" %>
 
 <div class="sidebar">
-  <button class="close" type="button">&times;</button>
+  <%--<button class="close" type="button">&times;</button>--%>
 
   <wiki:Permission permission="view">
 

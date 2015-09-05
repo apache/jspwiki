@@ -21,16 +21,14 @@ DirectSnippet definitions for JSPWiki, aka ''smartpairs''.
 These snippets are directly expanded on keypress.
 */
 Wiki.DirectSnips = {
-
     '"' : '"',
     '(' : ')',
     '[' : ']',
     '{' : '}',
-    '%%' : ' /%',
     "'" : {
-        snippet:"'",
-        scope:{
-            "[{":"}]"  //plugin parameters
+        snippet: "'",
+        scope: {
+            "[{" : "}]"  //plugin parameters
           }
     }
 };
@@ -39,7 +37,6 @@ Wiki.DirectSnips = {
 Function: snippets
 
         Definitions for the JSPWiki editor commands.
-
 
         A command consists of triggers, attributes, snippets, events and dialogs.
 
@@ -208,7 +205,7 @@ Wiki.Snips = {
             snippet: "\\\\\n"
         },
         hr: "\n----\n",
-        lorem: "This is is just some sample. Don’t even bother reading it; you will just waste your time. Why do you keep reading? Do I have to use Lorem Ipsum to stop you? OK, here goes: Lorem ipsum dolor sit amet, consectetur adipi sicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Still reading? Gosh, you’re impossible. I’ll stop here to spare you.",
+        lorem: "This is just some sample. Don’t even bother reading it; you will just waste your time. Why do you keep reading? Do I have to use Lorem Ipsum to stop you? OK, here goes: Lorem ipsum dolor sit amet, consectetur adipi sicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Still reading? Gosh, you’re impossible. I’ll stop here to spare you.",
         Lorem: { synonym: "lorem" },
 
 
@@ -508,17 +505,16 @@ Wiki.Snips = {
                 caption: "Wiki Link",
                 onOpen: function( dialog ){
 
-
                     var //dialog = this,
                         key = dialog.getValue();
 
-                    if( !key || (key.trim()=='') ){ key = Wiki.PageName + '/'; }
+                    //if empty link, than fetch list of attachments of this page
+                    if( !key || (key.trim()=='') ){ key = Wiki.PageName + "/"; }
 
-                    //console.log('json lookup for '+key);
                     Wiki.jsonrpc("/search/suggestions", [key, 30], function( result ){
 
-                        console.log("jsonrpc result", result );
-                        if( result[1] /*length>1*/ ){
+                        //console.log("jsonrpc result", result );
+                        if( result[0] /* length > 0 */ ){
 
                             dialog.setBody( result );
 
@@ -647,12 +643,66 @@ Wiki.Snips = {
 
         },
 
-        //FIXME
+        selectBlock: {
+            suggest: function(workarea, caret, fromStart){
+
+                var cmd;
+
+                if(!caret.thin
+                && workarea.isCaretAtStartOfLine()
+                && workarea.isCaretAtEndOfLine() ){
+
+                     console.log("got block selection" );
+                     return { pfx:"xx", match:workarea.getSelection() }
+                }
+            },
+
+            selectBlock: [Dialog.Selection, {
+                cssClass: ".dialog-horizontal",
+                body:{
+                    "\\{\\{\\{\n{code block}\n}}}": "<span style='font-family:monospace;'>code</span>",
+                    "%%prettify\n\\{\\{\\{\n{pretiffied code block}\n}}}/%": "<span class='pun' style='font-family:monospace;'>prettify</span>"
+                }
+            }]
+        },
+
+        selectStartOfLine: {
+            suggest: function(workarea, caret, fromStart){
+
+                var cmd;
+
+                if(!caret.thin
+                && workarea.isCaretAtStartOfLine()
+                && !workarea.isCaretAtEndOfLine() ){
+
+                     console.log("got start of line selection", caret);
+                     return { pfx:"xx", match:workarea.getSelection() }
+                }
+            },
+
+            selectStartOfLine: [Dialog.Selection, {
+                cssClass: ".dialog-horizontal",
+                body:{
+                    "!!!{header}": "H1",
+                    "!!{header}": "H2",
+                    "!{header}": "H3",
+                    "__{bold}__": "<b>bold</b>",
+                    "''{italic}''": "<i>italic</i>",
+                    "\\{\\{{monospaced text}}} ": "<tt>mono</tt>",
+                    "[description|{link}|options]": "<span class='icon-link'/>",
+                    "[{Image src='${image.jpg}'}]": "<span class='icon-picture'/>"
+                }
+            }]
+        },
         //Commands triggered by the selection of substrings:
         //    lowest priority vs. other snippets
         selectInline: {
-            suggest: function(workarea,caret,fromStart){
+            suggest: function(workarea, caret, fromStart){
+
+                var cmd;
+
                 if(!caret.thin){
+
                      console.log("got selection", caret);
                      return { pfx:"xx", match:workarea.getSelection() }
                 }
@@ -668,9 +718,8 @@ Wiki.Snips = {
                     "[{Image src='${image.jpg}'}]":"<span class='icon-picture'/>"
                 }
             }]
-        },
-        selectBlock:  "code|prettify",
-        selectStartOfLine: "!!!h1|!!h2|!h3|bold|italic|mono|link|plugin"
+        }
+
 
 }
 

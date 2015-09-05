@@ -18,14 +18,15 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="org.apache.wiki.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext(pageContext);
-  String frontpage = c.getEngine().getFrontPage();
 %>
+<c:set var="frontpage" value="<%= c.getEngine().getFrontPage() %>" />
 
 <wiki:Plugin plugin="IfPlugin" args="page='TitleBox' contains='\\\\S' " >[{InsertPage page=TitleBox class='titlebox alert' }]</wiki:Plugin>
 
@@ -35,8 +36,8 @@
 
     <div class="cage pull-left">
     <a class="logo pull-left"
-        href="<wiki:Link page='<%=frontpage%>' format='url' />"
-       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
+        href="<wiki:Link page='${frontpage}' format='url' />"
+       title="<fmt:message key='actions.home.title' ><fmt:param>${frontpage}</fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
 
         <wiki:PageExists page="HomeMenu">
         <ul class="dropdown-menu" data-hover-parent=".cage"  style="color:black;">

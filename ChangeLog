@@ -1,3 +1,19 @@
+2015-09-05  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-36  Improved Attachment upload in the HADDOCK template
+
+       * Fixed the AttachementServlet so you can now select multiple files
+         before pressing the upload button.  You can also use 
+		 drap & drop if your browser supports it.
+ 
+        * [JSPWIKI-903] Fixed a page redirect issue when deleting an 
+         attachment from the Attachment info page.  
+
+       * Fixed the zebra-stripes of the FIND AJAXSearch.jsp
+       
+       * Few small improvements on the plain editor suggestion dialogs.
+       
+
 2015-08-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-35 

@@ -123,7 +123,7 @@
 
     <div class="graphBars">
     <div class="zebra-table">
-    <table class="wikitable" >
+    <table class="wikitable  table-striped" >
 
       <tr>
          <th align="left"><fmt:message key="find.results.page"/></th>
