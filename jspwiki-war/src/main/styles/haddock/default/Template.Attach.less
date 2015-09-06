@@ -26,21 +26,26 @@ DOM Structure:
 form#uploadform
     ul.list-group
         li.droppable
+            a.hidden.delete.btn.btn-danger Delete
             label
                 span.canDragAndDrop
             input[type="file"][disabled=""][name="file0"][id=""]
-            a.hidden.delete.btn.btn-danger Delete
         li.active
+            a.hidden.delete.btn.btn-danger Delete
             span file-name-1
             input.done[type="file"][name="file1"][id=""]
-            a Delete
         li.active
+            a.hidden.delete.btn.btn-danger Delete
             span file-name-2
             input.done[type="file"][name="file2"][id=""]
-            a Delete
     (end)
 */
 
+//loading animation
+#uploadform input[type=submit]:focus {
+    .progress-striped .progress-bar;
+    .progress.active .progress-bar;
+}
 #uploadform ul.list-group {
 
     margin-bottom:0;
@@ -72,8 +77,8 @@ form#uploadform
         }
     }
     a.delete { position:relative; z-index:2; } //should be on top of the input block
-    b { .label; .label-info; margin-left:1em; }
-
+    li > label { display:inline; font-weight:normal; }
+    .badge { font-size:80%; font-weight:normal;}
 }
 
 form.legacy .canDragAndDrop { .hide; }

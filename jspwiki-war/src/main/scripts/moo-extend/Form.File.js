@@ -30,6 +30,17 @@ Credit:
 */
 !function(){
 
+
+function readableFileSize(bytes, precision){
+
+    var exp = " KMGT".split(""), K = 1024;
+    while( bytes >= K ){
+        bytes /= K;
+        exp.shift();
+    }
+    return bytes.toFixed(precision || 1) + " " + ( exp[0] || "" ) + "B";
+}
+
 //"use strict";
 if (!this.Form) this.Form = {};
 var Form = this.Form;
@@ -187,7 +198,7 @@ Form.File = new Class({
                 for( var i=0; i< input.files.length; i++){
                     var file = input.files[i];
                     fileNames += file.name.replace(/.*[\\\/]/, "")
-                              + " <span class='badge'>" + ( file.size / 1024 ).toFixed(1) + " kB</span><br />";
+                              + " <span class='badge'>" + readableFileSize( file.size )+ "</span><br />";
                   }
 
                 input.set("id",String.uniqueID());

@@ -55,9 +55,9 @@
 
       <ul class="list-group form-col-50">
         <li class="list-group-item droppable">
+          <a class="hidden delete btn btn-danger btn-xs pull-right">Delete</a>
           <label>Select files <span class='canDragAndDrop'>or drop them here!</span></label>
           <input type="file" name="files" id="files" size="60" multiple="multiple"/>
-          <a class="hidden delete btn btn-danger btn-xs pull-right">Delete</a>
         </li>
       </ul>
     </div>
@@ -120,14 +120,16 @@
       <%-- see styles/fontjspwiki/icon.less : icon-file-<....>-o  --%>
       <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
       <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
+
       <td class="attach-type"><span class="icon-file-${type}-o">${type}</span></td>
 
-      <td class="attach-name">${att.fileName}</td>
+      <td class="attach-name" title="${att.fileName}">${att.fileName}</td>
 
       <td><wiki:LinkTo><wiki:PageVersion /></wiki:LinkTo></td>
 
-      <td class="nowrap">
-        <fmt:formatNumber value='${att.size/1000.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+      <td class="nowrap" title="${att.size} bytes">
+        <%-- <fmt:formatNumber value='${att.size/1024.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/> --%>
+        <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( att.getSize() ) %>
       </td>
 
       <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
