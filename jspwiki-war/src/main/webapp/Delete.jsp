@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -23,13 +23,13 @@
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.attachment.Attachment" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
-<%! 
+<%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 
@@ -76,24 +76,32 @@
     else if( delete != null )
     {
         log.info("Deleting a range of pages from "+pagereq);
-        
+
         for( Enumeration params = request.getParameterNames(); params.hasMoreElements(); )
         {
             String paramName = (String)params.nextElement();
-            
+
             if( paramName.startsWith("delver") )
             {
                 int version = Integer.parseInt( paramName.substring(7) );
-                
+
                 WikiPage p = wiki.getPage( pagereq, version );
-                
+
                 log.debug("Deleting version "+version);
                 wiki.deleteVersion( p );
             }
         }
-        
-        response.sendRedirect( TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab"), false ),"&amp;","&" ));
-        return; 
+
+        response.sendRedirect(
+            TextUtil.replaceString(
+                wiki.getURL(
+                    WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab"), false
+                ),"&amp;","&"
+            )
+        );
+
+
+        return;
     }
 
     // Set the content type and include the response content

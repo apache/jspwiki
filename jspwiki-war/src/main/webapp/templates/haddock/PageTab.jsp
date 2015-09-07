@@ -40,6 +40,11 @@
 		mainblogpage = pagename.substring(0, pagename.indexOf("_blogentry_"));
 	}
 %>
+<c:choose>
+<c:when test="${param.tab == 'attach'}">
+  <wiki:Include page="AttachmentTab.jsp"/>
+</c:when>
+<c:otherwise>
 
 <%-- If the page is an older version, then offer a note and a possibility
      to restore this version as the latest one. --%>
@@ -118,3 +123,6 @@
   </fmt:message>
   </div>
 </wiki:NoSuchPage>
+
+</c:otherwise>
+</c:choose>

@@ -1,3 +1,9 @@
+2015-09-07  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.2-svn-38
+
+       * [JSPWIKI-903] Fixed a page redirect after attachment delete.
+       
 2015-09-06  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-37  Few Attachment tweaks in the HADDOCK template

@@ -51,7 +51,7 @@ form#uploadform
     margin-bottom:0;
     vertical-align:top;
 
-    //hide the input[type=file] elements, they will be invoke to Form.Upload.js
+    //hide the input[type=file] elements
     li input[type=file] {
         position:absolute;
         top:0;
@@ -77,8 +77,8 @@ form#uploadform
         }
     }
     a.delete { position:relative; z-index:2; } //should be on top of the input block
-    li > label { display:inline; font-weight:normal; }
-    .badge { font-size:80%; font-weight:normal;}
+    li label { display:inline; font-weight:normal; }
+    li label .badge { font-size:80%; font-weight:normal;}
 }
 
 form.legacy .canDragAndDrop { .hide; }

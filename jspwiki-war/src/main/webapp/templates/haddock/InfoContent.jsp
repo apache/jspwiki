@@ -79,18 +79,6 @@
   /* startitem drives the pagination logic */
   /* startitem=-1:show all; startitem=0:show block 1-20; startitem=20:block 21-40 ... */
 %>
-<%--
-FIXME
-When deleting an Attachment, the Delete.jsp still redirects to InfoContent.jsp, iso Upload.jsp !
-As we currently do not want to touch the top-level JSP's and keep them compatible with the
-defaul template,  let's fix this here
---%>
-<c:choose>
-<c:when test="${param.tab == 'attach'}">
-  <wiki:Include page="AttachmentTab.jsp"/>
-</c:when>
-<c:otherwise>
-
 <div class="page-content">
 
 <wiki:PageExists>
@@ -169,7 +157,10 @@ defaul template,  let's fix this here
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
-                         href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
+                         href='<%=c.getURL(WikiContext.INFO, wikiPage.getName(), "start=%s")%>' />
+
+    <c:set var="first" value="<%= startitem %>"/>
+    <c:set var="last" value="<%= startitem + pagesize %>"/>
 
     <div class="table-filter-sort-condensed-striped">
     <table class="table" >
@@ -183,8 +174,6 @@ defaul template,  let's fix this here
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
-      <c:set var="first" value="<%= startitem %>"/>
-      <c:set var="last" value="<%= startitem + pagesize %>"/>
       <c:if test="${ first == -1 || ((currentPage.version > first ) && (currentPage.version <= last )) }">
       <tr>
         <td>
@@ -197,9 +186,10 @@ defaul template,  let's fix this here
         <fmt:formatDate value="${currentPage.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </td>
 
-        <td class="nowrap">
-          <c:set var="ff"><wiki:PageSize /></c:set>
-          <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+        <c:set var="pageSize"><wiki:PageSize /></c:set>
+        <td class="nowrap" title="${pageSize} bytes">
+          <%--<fmt:formatNumber value='${pageSize/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>--%>
+          <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( currentPage.getSize() ) %>
         </td>
         <td><wiki:Author /></td>
 
@@ -358,8 +348,9 @@ defaul template,  let's fix this here
 
       <td class="attach-name">${att.fileName}</td>
 
-      <td class="nowrap">
-        <fmt:formatNumber value='${att.size/1000.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+      <td class="nowrap" title="${att.size} bytes">
+        <%-- <fmt:formatNumber value='${att.size/1024.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/> --%>
+        <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( att.getSize() ) %>
       </td>
 
 	  <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
@@ -400,6 +391,3 @@ defaul template,  let's fix this here
 </wiki:NoSuchPage>
 
 </div>
-
-</c:otherwise>
-</c:choose>

@@ -28,12 +28,6 @@
   id="searchForm"
   accept-charset="<wiki:ContentEncoding />">
 
-<%--
-  <input type="text" size="20"
-        class="form-control" name="query" id="query"
-    accesskey="f"
-    placeholder="<fmt:message key='sbox.search.submit'/>" />
---%>
   <div class="btn"><span class="icon-search"></span><span class="caret"></span></div>
 
   <ul class="dropdown-menu" data-hover-parent=".searchbox">

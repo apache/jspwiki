@@ -25,7 +25,7 @@ Class: SnipEditor.Commands
 
     It will make sure that only one dialog is open at the same time.
     It intializes and caches the dialogs, handles the show/hide/toggle
-    of dialogs, and passes action events back to the SnipEditor.
+    of dialogs, and passes action events back to the Snipe Editor.
 
     Dialogs can be opened by means of
     - external command triggers: exec
@@ -45,10 +45,11 @@ Class: SnipEditor.Commands
 Options:
     container: DOM element  => contains commands([data-cmd])
     dialogs - predefined set of dialog definitions
+    relativeTo - relative position of the dialog (default is document.body)
     // **event handlers**
-    onOpen - invoked after opening any DIALOG
-    onClose - invoked after closing any DIALOG
-    onAction - action call-back action(cmd,arguments)
+    onOpen - fired after opening any DIALOG
+    onClose - fired after closing any DIALOG
+    onAction - action call-back action(cmd, arguments)
 
 Properties
     - buttons : collection of DOM-elements with click handlers to either
@@ -72,7 +73,7 @@ Snipe.Commands = new Class({
         //dialogs:{ cmd1:dialog1, cmd2:dialog2, ...}
     },
     dlgs: {},  //all cmd:instantiated dialogs  (lazy activation)
-    btns: {},  //all buttons
+    btns: {},  //all button DOM elements
     dialogs: {},  //all cmd:dialogs  definitions
 
     initialize: function( container, options ){
@@ -149,7 +150,7 @@ Snipe.Commands = new Class({
 
     /*
     Function: attach
-        Attach event-handlers to a dialogs
+        Attach event-handlers to a dialog
     */
     attach: function(dialog, command){
 
