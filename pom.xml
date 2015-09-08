@@ -520,8 +520,12 @@
               <exclude>**/src/main/config/wikipages/**</exclude>                <!-- Default wikipages -->
               <exclude>**/src/main/config/dev/OldChangeLog</exclude>            <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
               <exclude>**/src/main/scripts/posteditor.js</exclude>              <!-- minified file -->
+              <exclude>**/src/main/scripts/wiki-wysiwyg/**</exclude>            <!-- MooEditable src, MIT licensed -->
+              <exclude>**/src/main/webapp/scripts/mooeditable/**</exclude>      <!-- MooEditable src, MIT licensed -->
               <exclude>**/src/main/scripts/moo-extend/Request.File.js</exclude> <!-- MIT licensed -->
               <exclude>**/src/main/styles/haddock/fontjspwiki/**</exclude>      <!-- MIT/OFL licensed -->
+              <exclude>**/src/main/webapp/templates/haddock/fonts/FontJspwiki.*</exclude><!-- MIT/OFL licensed -->
+              <exclude>**/src/main/webapp/templates/reader/fonts/FontJspwiki.*</exclude> <!-- MIT/OFL licensed -->
               <exclude>**/src/main/webapp/scripts/*.js</exclude>                <!-- minified files -->
               <exclude>**/src/main/scripts/lib/*.js</exclude>                   <!-- 3rd party js files -->
               <exclude>**/src/test/resources/TextFormattingRules.txt</exclude>  <!-- test input data -->
