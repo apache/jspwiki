@@ -258,6 +258,7 @@ yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LI
 
 JS LIBRARY                                  LICENSE FILE
 =============================================================================================================
+MooEditable                                 ./jspwiki-war/src/main/scripts/wiki-wysiwyg/LICENSE
 mootools-core.js                            ./jspwiki-war/src/main/config/doc/LICENSE.mit
 mootools-more.js                            ./jspwiki-war/src/main/config/doc/LICENSE.mit
 prettify.js                                 LICENSE
