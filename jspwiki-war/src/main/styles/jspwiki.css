@@ -160,7 +160,7 @@ body {
 	background:white;
 	margin: 0;
 	/*font: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;*/
-	font:76%/140% Verdana,Arial,Helvetica,sans-serif;
+	font:12px/140% Verdana,Arial,Helvetica,sans-serif;
 }
 table {
 	border-collapse:collapse;
@@ -317,8 +317,8 @@ fieldset {
 
 /* +++ 240 Pre-formatted text blocks and code +++ */
 code, tt, pre {
-	font:110% Monaco, "Courier New", Courier, monospace;
-	overflow:auto;
+	font: Monaco, "Courier New", Courier, monospace;
+	overflow: auto;
 }
 pre {
 	clear:both;
