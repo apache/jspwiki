@@ -67,7 +67,6 @@ public class TranslationsCheck
         catch( FileNotFoundException e )
         {
             System.err.println("Unable to locate "+"/CoreResources_" + suffix + ".properties");
-            e.printStackTrace();
         }
 
         try
