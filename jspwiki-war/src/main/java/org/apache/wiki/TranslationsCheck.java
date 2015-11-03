@@ -57,8 +57,7 @@ public class TranslationsCheck
         }
 
         System.out.println("Using code base " + Release.VERSTR);
-        System.out.println("Internationalization property file differences between 'default en' and '"
-                + suffix + "' following:\n");
+        System.out.println("Internationalization property file differences between 'default en' and '" + suffix + "' following:\n");
 
         try
         {
@@ -68,6 +67,7 @@ public class TranslationsCheck
         catch( FileNotFoundException e )
         {
             System.err.println("Unable to locate "+"/CoreResources_" + suffix + ".properties");
+            e.printStackTrace();
         }
 
         try
@@ -88,7 +88,7 @@ public class TranslationsCheck
 
             System.out.println("Duplicates overall (two or more occurences):");
             System.out.println("--------------------------------------------");
-            Iterator iter = duplProps.iterator();
+            Iterator< String > iter = duplProps.iterator();
             if (duplProps.size() == 0)
                 System.out.println("(none)");
             else
@@ -111,10 +111,11 @@ public class TranslationsCheck
         int missing = 0, outdated = 0;
         // Standard Properties
         Properties p1 = new Properties();
-        p1.load(new FileInputStream(new File(base + source1)));
+        
+        p1.load( TranslationsCheck.class.getClassLoader().getResourceAsStream( base + source1 ) );
 
         Properties p2 = new Properties();
-        p2.load(new FileInputStream(new File(base + source2)));
+        p2.load( TranslationsCheck.class.getClassLoader().getResourceAsStream( base + source2 ) );
 
         String msg = "Checking " + source2 + "...";
         System.out.println(msg);
@@ -172,7 +173,7 @@ public class TranslationsCheck
     private static List<String> sortedNames(Properties p)
     {
         List<String> list = new ArrayList<String>();
-        Enumeration iter = p.propertyNames();
+        Enumeration<?> iter = p.propertyNames();
         while (iter.hasMoreElements())
         {
             list.add( (String)iter.nextElement() );
@@ -185,9 +186,9 @@ public class TranslationsCheck
     public static int detectDuplicates(String source) throws IOException
     {
         Properties p = new Properties();
-        p.load(new FileInputStream(new File(base + source)));
+        p.load( TranslationsCheck.class.getClassLoader().getResourceAsStream( base + source ) );
 
-        Enumeration iter = p.propertyNames();
+        Enumeration<?> iter = p.propertyNames();
         String currentStr;
         while (iter.hasMoreElements())
         {
