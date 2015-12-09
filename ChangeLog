@@ -1,3 +1,9 @@
+2015-12-09  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.2-svn-40
+
+       * JSPWIKI-923: doreplace.png image is missing from CleanBlue skin
+
 2015-09-19  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-39

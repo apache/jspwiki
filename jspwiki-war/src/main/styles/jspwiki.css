@@ -760,8 +760,6 @@ label[for="edittoc"] {
 #tbTAB		{ background-position:0 -128px; }
 #tbSIGN		{ background-position:0 -288px; }
 
-#tbDOREPLACE { background-image:url("images/doreplace.png") !important;  }
-
 .editor {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	padding:4px;

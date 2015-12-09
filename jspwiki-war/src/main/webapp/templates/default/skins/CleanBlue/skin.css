@@ -764,7 +764,6 @@ a.tool:hover,
 #tbTOC { background-position: 0 -32px }
 #tbTAB { background-position: 0 -128px }
 #tbSIGN { background-position: 0 -288px }
-#tbDOREPLACE { background-image: url("images/doreplace.png") !important ; }
 #doreplace {
   padding: 1px 0.6em 2px 0.6em; 
   border-radius: 5px; -moz-border-radius: 5px ;
