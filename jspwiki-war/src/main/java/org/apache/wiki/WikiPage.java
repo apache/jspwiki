@@ -259,7 +259,7 @@ public class WikiPage
     }
     
     /**
-     *  Returns the wiki nanme for this page
+     *  Returns the wiki name for this page
      *  
      *  @return The name of the wiki.
      */
