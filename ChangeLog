@@ -1,3 +1,9 @@
+2016-02-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.2-svn-41
+
+       * JSPWIKI-852: JSPWikiMarkupParser should report on which page a plugin was missing
+
 2015-12-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-40

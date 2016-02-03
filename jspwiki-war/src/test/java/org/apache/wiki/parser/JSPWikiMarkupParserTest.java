@@ -1836,6 +1836,14 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         assertEquals( "Test {INSERT SamplePlugin\n\na+b{}\nGlob.\n}", translate(src) );
     }
+    
+    public void testMissingPlugin() throws Exception {
+    	String src="Test [{SamplePlugino foo='bar'}]";
+    	
+    	assertEquals( "Test JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino" +
+    			      "<span class=\"error\">JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino</span>", 
+    			      translate( src ) );
+    }
 
     public void testVariableInsert()
     throws Exception
