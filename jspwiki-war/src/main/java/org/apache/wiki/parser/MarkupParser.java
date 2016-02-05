@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.jdom2.Element;
 
 /**
  *   Provides an abstract class for the parser instances.
@@ -242,6 +243,19 @@ public abstract class MarkupParser
             m_pos--;
             m_in.unread( c );
         }
+    }
+    
+    /**
+     *  Writes HTML for error message.  Does not add it to the document, you
+     *  have to do it yourself.
+     *
+     *  @param error The error string.
+     *  @return An Element containing the error.
+     */
+
+    public static Element makeError( String error )
+    {
+        return new Element("span").setAttribute("class","error").addContent(error);
     }
 
     /**

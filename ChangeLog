@@ -1,3 +1,11 @@
+2016-02-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.2-svn-42
+
+       * JSPWIKI-570: Cannot use another MarkupParser - hardcoded references to 
+         RenderingManager and JSPWikiMarkupParser - thanks to Piotr Tarnowski for all the 
+         analysis at JSPWIKI-570
+
 2016-02-02  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-41

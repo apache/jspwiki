@@ -427,4 +427,23 @@ public final class ClassUtil {
             throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
     }
+    
+    /**
+     * checks if {@code srcClassName} is a subclass of {@code parentClassname}.
+     * 
+     * @param srcClassName expected subclass.
+     * @param parentClassName expected parent class.
+     * @return {@code true} if {@code srcClassName} is a subclass of {@code parentClassname}, {@code false} otherwise.
+     */
+    public static boolean assignable( String srcClassName, String parentClassName ) {
+    	try {
+			Class< ? > src = Class.forName( srcClassName );
+			Class< ? > parent = Class.forName( parentClassName );
+			return parent.isAssignableFrom( src );
+		} catch( Exception e ) {
+			log.error( e.getMessage(), e );
+		}
+    	return false;
+    }
+    
 }

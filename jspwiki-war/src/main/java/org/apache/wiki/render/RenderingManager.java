@@ -41,6 +41,8 @@ import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.util.ClassUtil;
+
 
 /**
  *  This class provides a facade towards the differing rendering routines.  You should
@@ -57,28 +59,32 @@ public class RenderingManager implements WikiEventListener, InternalModule
 {
     private static Logger log = Logger.getLogger( RenderingManager.class );
 
-    private              int    m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
+    private int        m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
 
-    private          WikiEngine m_engine;
+    private WikiEngine m_engine;
 
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
     /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
     private static final int    DEFAULT_CACHESIZE = 1000;
     private static final String VERSION_DELIMITER = "::";
+    private static final String PROP_PARSER       = "jspwiki.renderingManager.markupParser";
     private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
 
     /** The name of the default renderer. */
+    public static final String DEFAULT_PARSER = JSPWikiMarkupParser.class.getName();
+    
+    /** The name of the default renderer. */
     public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
 
-    /**
-     *  Stores the WikiDocuments that have been cached.
-     */
+    /** Stores the WikiDocuments that have been cached. */
     private Cache m_documentCache;
+    
     /** Name of the regular page cache. */
     public static final String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
 
-    private         Constructor m_rendererConstructor;
+    private Constructor< ? > m_rendererConstructor;
+    private String m_markupParserClass = DEFAULT_PARSER;
 
     /**
      *  Name of the WikiContext variable which is set to Boolean.TRUE or Boolean.FALSE
@@ -106,6 +112,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
         throws WikiException
     {
         m_engine = engine;
+        
+        m_markupParserClass = properties.getProperty( PROP_PARSER, DEFAULT_PARSER );
+        if( !ClassUtil.assignable( m_markupParserClass, MarkupParser.class.getName() ) ) {
+        	log.warn( m_markupParserClass + " does not subclass " + MarkupParser.class.getName() + " reverting to default markup parser." );
+        	m_markupParserClass = DEFAULT_PARSER;
+        }
+        log.info( "Using " + m_markupParserClass + " as markup parser." );
 
         String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;
 
@@ -117,31 +130,21 @@ public class RenderingManager implements WikiEventListener, InternalModule
             m_cacheManager.addCache(m_documentCache);
         }
 
-        String renderImplName = properties.getProperty( PROP_RENDERER );
-        if( renderImplName == null )
-        {
-            renderImplName = DEFAULT_RENDERER;
-        }
-        Class[] rendererParams = { WikiContext.class, WikiDocument.class };
-        try
-        {
+        String renderImplName = properties.getProperty( PROP_RENDERER, DEFAULT_RENDERER );
+        
+        Class< ? >[] rendererParams = { WikiContext.class, WikiDocument.class };
+        try {
             Class< ? > c = Class.forName( renderImplName );
             m_rendererConstructor = c.getConstructor( rendererParams );
-        }
-        catch( ClassNotFoundException e )
-        {
+        } catch( ClassNotFoundException e ) {
             log.error( "Unable to find WikiRenderer implementation " + renderImplName );
-        }
-        catch( SecurityException e )
-        {
+        } catch( SecurityException e ) {
             log.error( "Unable to access the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
-        }
-        catch( NoSuchMethodException e )
-        {
+        } catch( NoSuchMethodException e ) {
             log.error( "Unable to locate the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
         }
-        if( m_rendererConstructor == null )
-        {
+        
+        if( m_rendererConstructor == null ) {
             throw new WikiException( "Failed to get WikiRenderer '" + renderImplName + "'." );
         }
         log.info( "Rendering content with " + renderImplName + "." );
@@ -154,11 +157,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *  @param pagedata the page data
      *  @return A MarkupParser instance.
      */
-    public MarkupParser getParser( WikiContext context, String pagedata )
-    {
-        MarkupParser parser = new JSPWikiMarkupParser( context, new StringReader(pagedata) );
-
-        return parser;
+    public MarkupParser getParser( WikiContext context, String pagedata ) {
+    	try {
+			return ( MarkupParser )ClassUtil.getMappedObject( m_markupParserClass, context, new StringReader( pagedata ) );
+		} catch( WikiException e ) {
+			log.error( "unable to get an instance of " + m_markupParserClass + " (" + e.getMessage() + "), returning default markup parser." );
+			return new JSPWikiMarkupParser( context, new StringReader( pagedata ) );
+		}
     }
 
     /**
@@ -284,7 +289,6 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      * @param event {@inheritDoc}
      */
-    @SuppressWarnings("deprecation")
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN) )

@@ -60,7 +60,7 @@ public class ClassUtilTest extends TestCase
     public void testFindClass()
         throws Exception
     {
-        Class foo = ClassUtil.findClass( "org.apache.wiki", "WikiPage" );
+        Class< ? > foo = ClassUtil.findClass( "org.apache.wiki", "WikiPage" );
 
         assertEquals( foo.getName(), "org.apache.wiki.WikiPage" );
     }
@@ -73,13 +73,21 @@ public class ClassUtilTest extends TestCase
     {
         try
         {
-            Class foo = ClassUtil.findClass( "org.apache.wiki", "MubbleBubble" );
-            fail("Found class:"+foo);
+            Class< ? > foo = ClassUtil.findClass( "org.apache.wiki", "MubbleBubble" );
+            fail( "Found class:" + foo );
         }
         catch( ClassNotFoundException e )
         {
             // Expected
         }
+    }
+    
+    public void testAssignable() {
+    	assertTrue( ClassUtil.assignable( "org.apache.wiki.parser.JSPWikiMarkupParser", "org.apache.wiki.parser.MarkupParser" ) );
+    	assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
+    	assertFalse( ClassUtil.assignable( null, "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
+    	assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", null ) );
+    	assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.WikiEngine" ) );
     }
 
     public static Test suite()

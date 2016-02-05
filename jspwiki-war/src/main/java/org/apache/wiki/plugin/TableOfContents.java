@@ -19,7 +19,6 @@
 package org.apache.wiki.plugin;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -33,7 +32,7 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
-import org.apache.wiki.parser.JSPWikiMarkupParser;
+import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
@@ -220,28 +219,23 @@ public class TableOfContents
         try
         {
             String wikiText = engine.getPureText( page );
-            boolean runFilters = 
-                "true".equals(engine.getVariableManager().getValue(context,WikiEngine.PROP_RUNFILTERS,"true"));
+            boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, WikiEngine.PROP_RUNFILTERS, "true" ) );
             
-            try
-            {
-                if( runFilters ) 
-                {
-                    FilterManager fm = engine.getFilterManager();
-                    wikiText = fm.doPreTranslateFiltering( context, wikiText );
-                }
-            }
-            catch(Exception e) 
-            {
-                log.error("Could not construct table of contents: Filter Error", e);
-                throw new PluginException("Unable to construct table of contents (see logs)");
+            if( runFilters ) {
+				try {
+					FilterManager fm = engine.getFilterManager();
+					wikiText = fm.doPreTranslateFiltering(context, wikiText);
+
+				} catch (Exception e) {
+					log.error("Could not construct table of contents: Filter Error", e);
+					throw new PluginException("Unable to construct table of contents (see logs)");
+				}
             }
             
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
-            JSPWikiMarkupParser parser = new JSPWikiMarkupParser( context,
-                                                                  new StringReader(wikiText) );
+            
+            MarkupParser parser = engine.getRenderingManager().getParser( context, wikiText );
             parser.addHeadingListener( this );
-
             parser.parse();
 
             sb.append( "<ul>\n"+m_buf.toString()+"</ul>\n" );

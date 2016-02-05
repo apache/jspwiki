@@ -89,7 +89,7 @@
 <%
     if( usertext == null ) usertext = "";
 
-    RenderingManager renderingManager = new RenderingManager();
+    RenderingManager renderingManager = engine.getRenderingManager();
 
     // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
     Properties copyOfWikiProperties = new Properties();

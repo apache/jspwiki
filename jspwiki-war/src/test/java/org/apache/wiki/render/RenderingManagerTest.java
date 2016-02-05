@@ -32,23 +32,20 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
-public class RenderingManagerTest extends TestCase
-{
+public class RenderingManagerTest extends TestCase {
+	
     RenderingManager m_manager;
     TestEngine       m_engine;
     
-    protected void setUp() throws Exception
-    {
+    protected void setUp() throws Exception {
         CacheManager.getInstance().removeAllCaches();
         Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         
-        m_manager = new RenderingManager();
-        m_manager.initialize( m_engine, props );
+        m_manager = m_engine.getRenderingManager();
     }
 
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
         m_engine.deletePage( "TestPage" );
     }
         
