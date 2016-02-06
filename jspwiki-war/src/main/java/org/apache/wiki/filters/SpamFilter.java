@@ -77,8 +77,10 @@ import net.sf.akismet.Akismet;
  *
  *  Parameters:
  *  <ul>
- *    <li>wordlist - Page name where the regexps are found.  Use [{SET spamwords='regexp list separated with spaces'}] on
+ *    <li>wordlist - Page name where the spamword regexps are found.  Use [{SET spamwords='regexp list separated with spaces'}] on
  *     that page.  Default is "SpamFilterWordList".
+ *    <li>IPlist - Page name where the IP regexps are found.  Use [{SET ips='regexp list separated with spaces'}] on
+ *     that page.  Default is "SpamFilterIPList".
  *    <li>blacklist - The name of an attachment containing the list of spam patterns, one per line. Default is
  *        "SpamFilterWordList/blacklist.txt"</li>
  *    <li>errorpage - The page to which the user is redirected.  Has a special variable $msg which states the reason. Default is "RejectedMessage".
@@ -106,6 +108,7 @@ public class SpamFilter extends BasicPageFilter {
     private static final String ATTR_SPAMFILTER_SCORE = "spamfilter.score";
     private static final String REASON_REGEXP = "Regexp";
     private static final String REASON_IP_BANNED_TEMPORARILY = "IPBannedTemporarily";
+    private static final String REASON_IP_BANNED_PERMANENTLY = "IPBannedPermanently";
     private static final String REASON_BOT_TRAP = "BotTrap";
     private static final String REASON_AKISMET = "Akismet";
     private static final String REASON_TOO_MANY_URLS = "TooManyUrls";
@@ -114,11 +117,16 @@ public class SpamFilter extends BasicPageFilter {
     private static final String REASON_UTF8_TRAP = "UTF8Trap";
 
     private static final String LISTVAR = "spamwords";
-    
+    private static final String LISTIPVAR = "ips";
+
     /** The filter property name for specifying the page which contains the list of spamwords.
      *  Value is <tt>{@value}</tt>. */
     public static final String  PROP_WORDLIST              = "wordlist";
-    
+
+    /** The filter property name for specifying the page which contains the list of IPs to ban.
+     *  Value is <tt>{@value}</tt>. */
+    public static final String  PROP_IPLIST              = "IPlist";
+
     /** The filter property name for the page to which you are directed if Herb rejects your
      *  edit.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_ERRORPAGE             = "errorpage";
@@ -164,6 +172,7 @@ public class SpamFilter extends BasicPageFilter {
     private static final String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
 
     private String          m_forbiddenWordsPage = "SpamFilterWordList";
+    private String          m_forbiddenIPsPage   = "SpamFilterIPList";
     private String          m_errorPage          = "RejectedMessage";
     private String          m_blacklist          = "SpamFilterWordList/blacklist.txt";
 
@@ -171,6 +180,7 @@ public class SpamFilter extends BasicPageFilter {
     private PatternCompiler m_compiler = new Perl5Compiler();
 
     private Collection<Pattern> m_spamPatterns = null;
+    private Collection<Pattern> m_IPPatterns = null;
 
     private Date            m_lastRebuild = new Date( 0L );
 
@@ -233,6 +243,7 @@ public class SpamFilter extends BasicPageFilter {
     @Override
     public void initialize( WikiEngine engine, Properties properties ) {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST, m_forbiddenWordsPage );
+        m_forbiddenIPsPage = properties.getProperty( PROP_IPLIST, m_forbiddenIPsPage);
         m_errorPage = properties.getProperty( PROP_ERRORPAGE, m_errorPage );
         m_limitSinglePageChanges = TextUtil.getIntegerProperty( properties,
                                                                 PROP_PAGECHANGES,
@@ -314,6 +325,7 @@ public class SpamFilter extends BasicPageFilter {
         if( !ignoreThisUser( context ) ) {
             checkBanList( context, change );
             checkSinglePageChange( context, content, change );
+            checkIPList( context );
             checkPatternList( context, content, change );
         }
 
@@ -684,22 +696,29 @@ public class SpamFilter extends BasicPageFilter {
      */
     private void refreshBlacklists( WikiContext context ) {
         try {
-            WikiPage source = context.getEngine().getPage( m_forbiddenWordsPage );
-            Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
 
             boolean rebuild = false;
 
             //
-            //  Rebuild, if the page or the attachment has changed since.
+            //  Rebuild, if the spam words page, the attachment or the IP ban page has changed since.
             //
-            if( source != null ) {
-                if( m_spamPatterns == null || m_spamPatterns.isEmpty() || source.getLastModified().after( m_lastRebuild ) ) {
+            WikiPage sourceSpam = context.getEngine().getPage( m_forbiddenWordsPage );
+            if( sourceSpam != null ) {
+                if( m_spamPatterns == null || m_spamPatterns.isEmpty() || sourceSpam.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
                 }
             }
 
+            Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
             if( att != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || att.getLastModified().after( m_lastRebuild ) ) {
+                    rebuild = true;
+                }
+            }
+
+            WikiPage sourceIPs = context.getEngine().getPage( m_forbiddenIPsPage );
+            if( sourceIPs != null ) {
+                if( m_IPPatterns == null || m_IPPatterns.isEmpty() || sourceIPs.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
                 }
             }
@@ -710,10 +729,14 @@ public class SpamFilter extends BasicPageFilter {
             //
             if( rebuild ) {
                 m_lastRebuild = new Date();
-                m_spamPatterns = parseWordList( source,
-                                                ( source != null ) ? ( String )source.getAttribute( LISTVAR ) : null );
+                m_spamPatterns = parseWordList( sourceSpam,
+                                                ( sourceSpam != null ) ? ( String )sourceSpam.getAttribute( LISTVAR ) : null );
 
                 log.info( "Spam filter reloaded - recognizing " + m_spamPatterns.size() + " patterns from page " + m_forbiddenWordsPage );
+
+                m_IPPatterns = parseWordList( sourceIPs,
+                        ( sourceIPs != null ) ? ( String )sourceIPs.getAttribute( LISTIPVAR ) : null );
+                log.info( "IP filter reloaded - recognizing " + m_IPPatterns.size() + " patterns from page " + m_forbiddenIPsPage );
 
                 if( att != null ) {
                     InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
@@ -764,6 +787,40 @@ public class SpamFilter extends BasicPageFilter {
 
                 log.info( "SPAM:Regexp (" + uid + "). Content matches the spam filter '" + p.getPattern() + "'" );
                 checkStrategy( context, REASON_REGEXP, "Herb says '" + p.getPattern() + "' is a bad spam word and I trust Herb! (Incident code " + uid + ")" );
+            }
+        }
+    }
+
+
+    /**
+     *  Does a check against a pattern list of IPs.
+     *
+     *  @param context
+     *  @throws RedirectException
+     */
+    private void checkIPList( WikiContext context ) throws RedirectException {
+        //
+        //  If we have no IP patterns defined, or we're trying to save
+        //  the page containing the IP patterns, just return.
+        //
+        if( m_IPPatterns == null || context.getPage().getName().equals( m_forbiddenIPsPage ) ) {
+            return;
+        }
+
+        String remoteIP = HttpUtil.getRemoteAddress( context.getHttpRequest() );
+        log.info("Attempting to match remoteIP " + remoteIP + " against " + m_IPPatterns.size() + " patterns");
+
+        for( Pattern p : m_IPPatterns ) {
+             log.debug("Attempting to match remoteIP with " + p.getPattern());
+
+            if( m_matcher.contains( remoteIP, p ) ) {
+
+                //  IP filter has a match.
+                //
+                String uid = log( context, REJECT, REASON_IP_BANNED_PERMANENTLY + "(" + p.getPattern() + ")", remoteIP );
+
+                log.info( "SPAM:Regexp (" + uid + "). remoteIP matches the IP filter '" + p.getPattern() + "'" );
+                checkStrategy( context, REASON_IP_BANNED_PERMANENTLY, "Herb says '" + p.getPattern() + "' is a banned IP and I trust Herb! (Incident code " + uid + ")" );
             }
         }
     }
