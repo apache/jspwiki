@@ -17,14 +17,12 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.10.2-SNAPSHOT</version>
+    <version>2.10.2</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -56,9 +54,9 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <property name="jspwiki.woas.version" value="${project.version}"/>
-                <ant antfile="${basedir}/build.xml" target="woas:info"/>
-                <ant antfile="${basedir}/build.xml" target="woas:copy-woas"/>
+                <property name="jspwiki.woas.version" value="${project.version}" />
+                <ant antfile="${basedir}/build.xml" target="woas:info" />
+                <ant antfile="${basedir}/build.xml" target="woas:copy-woas" />
               </target>
             </configuration>
             <goals>
@@ -70,8 +68,8 @@
             <phase>prepare-package</phase>
             <configuration>
               <target>
-                <property name="jspwiki.woas.version" value="${project.version}"/>
-                <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7"/>
+                <property name="jspwiki.woas.version" value="${project.version}" />
+                <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7" />
               </target>
             </configuration>
             <goals>
@@ -83,9 +81,9 @@
             <phase>prepare-package</phase>
             <configuration>
               <target>
-                <property name="jspwiki.woas.version" value="${project.version}"/>
-                <ant antfile="${basedir}/build.xml" target="woas:info"/>
-                <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7-launchers"/>
+                <property name="jspwiki.woas.version" value="${project.version}" />
+                <ant antfile="${basedir}/build.xml" target="woas:info" />
+                <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-7-launchers" />
               </target>
             </configuration>
             <goals>
