@@ -18,6 +18,9 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*eslint-env browser*/
+/*global Element */
+
 /*
 Moo-extend: String-extensions
     Element: ifClass(), addHover(),onHover(), hoverUpdate(), getDefaultValue(), observe()
@@ -130,7 +133,7 @@ Element.implement({
 
         var element = this;
 
-        if( toggle = element.getParent(toggle) ){
+        if( (toggle = element.getParent(toggle)) ){
 
              element.fade("hide");  //CHECKME : is this sill needed, menu should be hidden/visible depending on .open
 
@@ -192,7 +195,7 @@ Element.implement({
 
         if( toggle == "buttons" ){
 
-            toggle = function(event){
+            toggle = function( /*event*/ ){
                 //FIXME: differentiate between radioboxes and checkboxes
                 element.getElements("." + active).removeClass(active);
                 //console.log(element.getElements(":checked !>").length, element);
@@ -228,7 +231,7 @@ Element.implement({
     Example:
     (start code)
         <a href="..." data-modal=".modal">
-             <div class=".modal">Are your really sure?</div>
+             <div class="modal">Are your really sure?</div>
         </a>
 
         behavior.add("[data-modal]", function(element){
@@ -254,7 +257,7 @@ Element.implement({
             modal.removeClass( "active" );
             document.body.removeClass( "show-modal" );
 
-            if( this.match(".btn-primary") ){
+            if( this.match(".btn-success") ){
                 self.removeEvent( "click" , doSelfEvent ).click();
             }
         }
@@ -265,8 +268,8 @@ Element.implement({
             if( !modal.getElement("> modal-footer") ){
                 modal.grab([
                     "div.modal-footer", [
-                        "button.btn.btn-primary", { text: "Confirm" },
-                        "button.btn.btn-danger", { text: "Cancel" },
+                        "button.btn.btn-success", { text: "Confirm" },  //FIXME: i18n
+                        "button.btn.btn-danger", { text: "Cancel" }
                     ]
                 ].slick());
             }
@@ -365,14 +368,12 @@ Element.implement({
 
                 if( type == "checkbox" ){   //checkbox.get-value = returns "on" on some browsers, T/F on others
 
-                    //console.log("pipo", self.get("value"), self.value, self.checked, self.defaultChecked);
-                    //console.log("input[type=checkbox]" + (self.defaultChecked ? ":checked" : "")).slick().get("value") );
-                    //return ("input[type=checkbox]" + (self.defaultChecked ? ":checked" : "")).slick().get("value");
                     return self.defaultChecked;
 
                 }
 
                 if( !"radio|hidden|text|password".test(type) ){ break; }
+                // falls through
 
             case "textarea":
 
@@ -424,7 +425,7 @@ Element.implement({
         //need at least one start element to get going
         if( this.getElement(start) ){
 
-            while( next = group.nextSibling ){
+            while( (next = group.nextSibling) ){
 
                 if( ( next.nodeType == 1 ) && next.match(start) ){  //start a new group
 
@@ -444,14 +445,83 @@ Element.implement({
     },
 
     /*
+    Function: mapTextNodes
+
+        Walk all text nodes recursively and map their value via a callback function.
+
+    Arguments:
+        fn - callback function returning the processed textnodes (string)
+        includePreCodeNodes - (bool) skip/process html <PRE> or <CODE> nodes
+                                     which contain pre-formatted text
+        includedEmptyNodes - (bool) skip/process empty text nodes
+
+    */
+    mapTextNodes: function(fn, includePreCodeNodes, includeEmptyNodes){
+
+        var dummy = new Element("p"),
+            hasHTML = RegExp( /</ ),
+            notEmpty = RegExp( /\S/ ),
+            isPreCode = RegExp( /pre|code/i );
+
+        function mapTextNodes( parent ){
+
+            var n, next = parent.firstChild, s, frag;
+
+            while( next ){
+
+                n = next;
+                next = n.nextSibling; //prepare for next iteration
+
+                if( n.nodeType == 3 /* #text */ ){
+
+                    if( includeEmptyNodes || notEmpty.test(n.nodeValue) ){
+
+                        s = fn( n.nodeValue );
+
+                        if( hasHTML.test(s) ){
+
+                            //seems like we are trying to replace text with some complex html
+                            dummy.innerHTML = s;
+                            //console.log("HAS HTML",s);
+                            //fixme: this also converts all entities of the original PRE string !! can we avoid this?
+
+                            frag = document.createDocumentFragment();
+                            while( dummy.firstChild ){ frag.appendChild( dummy.firstChild ); }
+
+                            parent.replaceChild( frag, n );
+
+                        } else {
+
+                            //console.log("PLAIN TEXT",s);
+                            n.nodeValue = s;
+                            //n.textContent = s;
+                            //n.innerText = s;
+
+                        }
+
+                    }
+
+                } else if ( includePreCodeNodes || !isPreCode.test(n.nodeName) ){
+
+                    mapTextNodes( n );
+
+                }
+            }
+        }
+
+        mapTextNodes(this);
+
+		return this;
+	},
+
+    /*
     Function: observe
         Observe a dom element for changes, and trigger a callback function.
 
     Arguments:
         fn - callback function
-        options - (object)
-        options.event - (string) event-type to observe, default = "keyup"
-        options.delay - (number) timeout in ms, default = 300ms
+        delay - (number) timeout in ms, default = 300ms
+        event - (string) event-type to observe, default = "keyup"
 
     Example:
     >    $(formInput).observe(function(){
@@ -459,17 +529,19 @@ Element.implement({
     >    });
 
     */
-    observe: function(callback, options){
+    observe: function(callback, delay, event){
+    //observe: function(callback, options){
 
         var element = this,
-            value = element.get("value"),
-            event = (options && options.event) || "keyup",
-            delay = (options && options.delay) || 300,
+            value = element.value,
             timer = null;
+
+        if( isNaN(delay) ){ event = delay; delay = 300; }
+        event = event || "keyup";
 
         return element.set({autocomplete: "off"}).addEvent(event, function(){
 
-            var v = element.get("value");
+            var v = element.value;
 
             if( v != value ){
                 value = v;

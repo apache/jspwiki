@@ -18,6 +18,8 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*eslint-env browser*/
+/*global typeOf, instanceOf, Class, Options, Events, Snipe, Dialog  */
 /*
 Class: SnipEditor.Commands
     This class preprocesses all command triggers, such as
@@ -104,7 +106,7 @@ Snipe.Commands = new Class({
             command = button.get(dataCmd);
             self.btns[command] = button;
 
-            if( dialog = container.getElement(".dialog." + command) ){
+            if( (dialog = container.getElement(".dialog." + command)) ){
 
                 if( !dialogs[command] ){ dialogs[command] = [Dialog, {}]; }
 
@@ -158,7 +160,7 @@ Snipe.Commands = new Class({
             //fire ACTION event back to the invoker of the Snipe.Commands
             actionHdl = function(value){ self.fireEvent("action", [command, value]); };
 
-        console.log("Snipe.Commands: attachDialog() ", command, dialog);
+        //console.log("Snipe.Commands: attachDialog() ", command, dialog);
 
         return self.dlgs[command] = dialog.addEvents({
             open: self.openDialog.bind(self, command),
@@ -236,7 +238,7 @@ Snipe.Commands = new Class({
 
         if( !dialog[1].relativeTo ){ dialog[1].relativeTo = this.options.relativeTo || document.body; }
 
-        dialog[1].autoClose = false; //checkme: suggest-dialogs should not be autoclose?
+        dialog[1].autoClose = false;
 
         //note: make sure to initialize this.dialogs[command] prior to calling show()
         return this.attach( new dialog[0]( dialog[1] ), command);
@@ -276,7 +278,7 @@ Snipe.Commands = new Class({
     Arguments:
         command - (mandatory) dialog to be closed
     */
-    closeDialog: function(command, dialog){
+    closeDialog: function(command /*, dialog*/){
 
         var self = this,
             button = self.btns[command];

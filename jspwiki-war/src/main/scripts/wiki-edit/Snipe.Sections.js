@@ -15,6 +15,8 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*eslint-env browser*/
+/*global $, Class, Events, Snipe  */
 /*
 Class: SnipEditor.Sections
     This dialog displays the list of page sections.
@@ -59,7 +61,7 @@ Snipe.Sections = new Class({
     Binds: ["show","update","action"],
 
     options: {
-        //snipe:snip-editor
+        //snipe: snip-editor
         //parser: function(text){ returns [[title,start,depth]..] }
         all: "( all )".localize(),
         startOfPage: "Start of Page".localize()
@@ -76,10 +78,9 @@ Snipe.Sections = new Class({
         self.list = element.getElement("ul").addEvent("click:relay(a)", self.action);
 
         self.main = snipe.get("mainarea");
-        self.work = $(snipe.get("textarea")).addEvents({
-            keyup: self.update,
-            change: self.update
-        });
+        self.work = $( snipe.get("textarea") );
+
+        snipe.addEvent( "change", self.update.debounce(500) );
 
         self.parse();
         self.action( location.search );  //url?section=0..n
@@ -167,6 +168,8 @@ Snipe.Sections = new Class({
     */
     update: function(){
 
+        //console.log("****Snipe.Sections : change main");
+
         var self = this,
             main = self.main,
             work = self.work.value,
@@ -181,6 +184,7 @@ Snipe.Sections = new Class({
         self.end = self.begin + work.length;
 
         self.parse();
+        self.show();
 
     },
 

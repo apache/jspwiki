@@ -154,6 +154,9 @@ this.Viewer = {
 };
 
 var AdobeFlashPlayer = "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000";
+//Avoid Mixed Content errors by requesting the resource from whatever protocol
+//the browser is viewing that current page
+var protocol = location.protocol + "//";
 
 Viewer.LIB.append([
 
@@ -164,7 +167,7 @@ Viewer.LIB.append([
     //google viewer for common formats
     [".(tiff|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar)$", function(url){
         return {
-            src: "http://docs.google.com/viewer?embedded=true&url=" + encodeURIComponent(url), //url,
+            src: protocol+"docs.google.com/viewer?embedded=true&url=" + encodeURIComponent(url), //url,
             width: 850,
             height: 500
         };
@@ -199,7 +202,7 @@ Viewer.LIB.append([
     //add some mp3/audio player here
 
     ["facebook.com/v/", function(url){
-          url = "http://www.facebook.com/v/" + url.split("v=")[1].split("&")[0];
+          url = protocol+"www.facebook.com/v/" + url.split("v=")[1].split("&")[0];
           return {
             url: url,
             movie: url,
@@ -211,7 +214,7 @@ Viewer.LIB.append([
 
     ["flickr.com", function(url){
         return {
-            url: "http://www.flickr.com/apps/video/stewart.swf",
+            url: protocol+"www.flickr.com/apps/video/stewart.swf",
             classid: AdobeFlashPlayer,
             width: 500,
             height: 375,
@@ -222,7 +225,7 @@ Viewer.LIB.append([
     ["youtube.com/watch", function(url){
         return {
             //src: "http://www.youtube.com/embed/"+url.split("v=")[1],
-            url: "http://www.youtube.com/v/" + url.split("v=")[1],
+            url: protocol+"www.youtube.com/v/" + url.split("v=")[1],
             width: 640,
             height: 385  //385
         };
@@ -231,7 +234,7 @@ Viewer.LIB.append([
     //youtube playlist
     ["youtube.com/view", function(url){
         return {
-            url: "http://www.youtube.com/p/" + url.split("p=")[1],
+            url: protocol+"www.youtube.com/p/" + url.split("p=")[1],
             width: 480,
             height: 385
         };
@@ -240,7 +243,7 @@ Viewer.LIB.append([
 
     ["dailymotion.com/video", function(url){
         return {
-            src: "http://www.dailymotion.com/embed/video/" + url.split("/")[4].split("_")[0],
+            src: protocol+"www.dailymotion.com/embed/video/" + url.split("/")[4].split("_")[0],
             //url:url,
             width: 480,
             height: 270 //381
@@ -250,7 +253,7 @@ Viewer.LIB.append([
     ["metacafe.com/watch", function(url){
         //http://www.metacafe.com/watch/<id>/<title>/ => http://www.metacafe.com/fplayer/<id>/<title>.swf
         return {
-            url: "http://www.metacafe.com/fplayer/" + url.split("/")[4] + "/.swf?playerVars=autoPlay=no",
+            url: protocol+"www.metacafe.com/fplayer/" + url.split("/")[4] + "/.swf?playerVars=autoPlay=no",
             //url:"http://www.metacafe.com/fplayer/" + url.split("watch/")[1].slice(0,-1) +".swf?playerVars=autoPlay=no",
             width: 400,        //540    600
             height: 350        //304    338
@@ -268,7 +271,7 @@ Viewer.LIB.append([
     ["veoh.com/watch/", function(url){
         //url: "http://www.veoh.com/static/swf/webplayer/WebPlayer.swf?version=AFrontend.5.5.2.1001&permalinkId="+url.split("watch/")[1]+"&player=videodetailsembedded&videoAutoPlay=false&id=anonymous",
         return {
-            url: "http://www.veoh.com/veohplayer.swf?permalinkId=" + url.split("watch/")[1] + "&player=videodetailsembedded&videoAutoPlay=false&id=anonymous",
+            url: protocol+"www.veoh.com/veohplayer.swf?permalinkId=" + url.split("watch/")[1] + "&player=videodetailsembedded&videoAutoPlay=false&id=anonymous",
             width: 410,
             height: 341
         };
@@ -279,7 +282,7 @@ Viewer.LIB.append([
     //http://www.ted.com/talks/doris_kim_sung_metal_that_breathes.html
     //<iframe src="http://embed.ted.com/talks/doris_kim_sung_metal_that_breathes.html" width="560" height="315" frameborder="0" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
         return {
-            src: "http://embed.ted.com/talks/" + url.split("/")[4],
+            src: protocol+"embed.ted.com/talks/" + url.split("/")[4],
             width: 853, //640, //560,
             height: 480, //360, //315
             scrolling: "no"
@@ -296,17 +299,17 @@ Viewer.LIB.append([
         };
     }],
 
-    ["http://vimeo.com/", function(url){
+    ["https?://vimeo.com/", function(url){
         return {
             //html5 compatible --- use iframe
             //src: "http://player.vimeo.com/video/" + url.split("/")[3],
-            url: "http://www.vimeo.com/moogaloop.swf?server=www.vimeo.com&amp;clip_id=" + url.split("/")[3],
+            url: protocol+"www.vimeo.com/moogaloop.swf?server=www.vimeo.com&amp;clip_id=" + url.split("/")[3],
             width: 640,
             height: 360
         };
     }],
 
-    ["http://jsfiddle.net/", function(url){
+    ["https?://jsfiddle.net/", function(url){
         return {
             src: url + "embedded/",
             width: 800,
@@ -318,7 +321,7 @@ Viewer.LIB.append([
 //http://codepen.io/loktar00/pen/fczsA
 //<iframe src="//codepen.io/loktar00/embed/fczsA?height=350&amp;theme-id=1&amp;default-tab=result" ></iframe>
 
-    ["http://codepen.io/[^/]/pen/", function(url){
+    ["https?://codepen.io/[^/]/pen/", function(url){
         return {
             src: url.replace("/pen/","/embed/")+"?height=400",
             width: 800,

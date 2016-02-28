@@ -18,6 +18,10 @@
     specific language governing permissions and limitations
     under the License.
 */
+
+/*eslint-env browser*/
+/*global $, typeOf */
+
 /*
 Mootools Extension: String.Extend.js
     String-extensions: capitalize,() deCamelize(), trunc(), xsubs()
@@ -112,7 +116,7 @@ String.implement({
 
         return ( I18N[I18N.PREFIX + this] || this ).substitute(
 
-            ( typeOf(params) == 'object' ) ? params : Array.from(arguments)
+            ( typeOf(params) == "object" ) ? params : Array.from(arguments)
 
         );
 
@@ -162,7 +166,7 @@ String.implement({
     */
     xsubs: function(object, regexp){
 
-        if( typeOf(object) != 'object' ){
+        if( typeOf(object) != "object" ){
             object = Array.from(arguments);
             regexp = null;
         }
@@ -207,7 +211,7 @@ String.implement({
         if( !regexp) regexp = "(?:^|\\s)("+this+"(?:-\\w+)*)(?:\\s|$)"; //default '-' separated arguments
 
         args = args.match( regexp );
-        return args && args[1].split('-').slice(1);
+        return args && args[1].split("-").slice(1);
 
     },
 
@@ -229,7 +233,7 @@ String.implement({
 
         name = (name.match( /\b(default|primary|success|info|warning|danger)(\b|$)/ )||[,'default'])[1];
 
-        return this + ' ' + this + '-' + name ;
+        return this + " " + this + "-" + name ;
 
     }
 

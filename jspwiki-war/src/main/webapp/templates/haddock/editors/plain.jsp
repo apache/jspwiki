@@ -101,7 +101,7 @@
   <div class="form-inline form-group">
 
   <span class="cage">
-    <input class="btn btn-primary" type="submit" name="ok" accesskey="s"
+    <input class="btn btn-success" type="submit" name="ok" accesskey="s"
            value="<fmt:message key='editor.plain.save.submit'/>" />
 
       <wiki:CheckRequestContext context="edit">
@@ -212,7 +212,7 @@
               </li>
             </c:when>
             <c:otherwise>
-              <li class="dropdown-header">${edt}</li>
+              <li class="active"><a>${edt}</a></li>
             </c:otherwise>
           </c:choose>
       </c:forEach>

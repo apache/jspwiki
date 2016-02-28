@@ -72,8 +72,7 @@ BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-i
 <%-- COOKIE read client preferences --%>
 <%
    Preferences.setupPreferences(pageContext);
- %>
-
+%>
 <meta name="wikiContext" content='<wiki:Variable var="requestcontext" />' />
 <wiki:Permission permission="edit"><meta name="wikiEditPermission" content="true"/></wiki:Permission>
 <meta name="wikiBaseUrl" content='<wiki:BaseURL />' />
@@ -94,6 +93,7 @@ BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-i
 <meta name="wikiXHRPreview" content='<wiki:Link format="url" templatefile="../default/AJAXPreview.jsp" />' />
 <meta name="wikiXHRCategories" content='<wiki:Link format="url" templatefile="../default/AJAXCategories.jsp" />' />
 <meta name="wikiXHRHtml2Markup" content='<wiki:Link format="url" jsp="XHRHtml2Markup.jsp" />' />
+<meta name="wikiXHRMarkup2Wysiwyg" content='<wiki:Link format="url" jsp="XHRMarkup2Wysiwyg.jsp" />' />
 
 <script type="text/javascript">//<![CDATA[
 <wiki:IncludeResources type="jsfunction"/>

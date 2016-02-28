@@ -30,7 +30,7 @@ textarea { white-space: pre-wrap; }
 .editform, .dialog.find {
 
     input[type="text"]:focus, textarea:focus {
-        background:@highlight;
+        background:@wiki-editor-focus;
 
         //get rid of the default bootstrap highlight -- see forms.less and mixins/form-control-focus
         //outline:0;
@@ -53,6 +53,8 @@ textarea { white-space: pre-wrap; }
     padding: .5em;
 	resize: none !important; // disable resizable textareas in Webkit
     background: @wiki-editor-bg;
+    color:inherit;
+    font-size:90%;
 }
 
 //base styling similar to .page-content in Template.Content.less;
@@ -163,7 +165,7 @@ ul.dropdown-menu.dropdown-menu-horizontal {
 /* Section command button and dropdown */
 .section-selected > .btn { color:@red; }  //red section button (bookmark) when a section is selected
 
-[data-sections] {
+.sections {
     //.indent-0 { }
     .indent-1 { text-indent:.5em; }
     .indent-2 { text-indent:1em; }

@@ -18,6 +18,12 @@
     specific language governing permissions and limitations
     under the License.
 */
+
+/*eslint-env browser*/
+/*global $$, Wiki, Cookie,
+         TableX, GraphBar, Tab, Accordion, Viewer, Collapsible,
+         prettyPrint, CommentBox, Columns, Tips, Flip, AddCSS */
+
 /*
 Wiki.Behaviours
     Contains all behaviours added by default to JSPWiki.
@@ -106,8 +112,8 @@ Credit: Lea Verou,  Static Pie
 */
     .add(".pie", function(pie){
 
-	    pie.style.animationDelay = '-' + parseFloat(pie.textContent) + 's';
-	    pie.setAttribute('data-percent', parseFloat(pie.textContent)+"%");
+        pie.style.animationDelay = '-' + parseFloat(pie.textContent) + 's';
+        pie.setAttribute('data-percent', parseFloat(pie.textContent)+"%");
 
     })
 
@@ -180,6 +186,21 @@ Behavior: Quote (based on Bootstrap)
 
     })
 
+
+    .add(".caps", function(element){
+
+        element.mapTextNodes( function(s){ return s.toLowerCase(); });
+
+    })
+
+
+    //FIXME  under construction
+    .add(".typography", function(element){
+
+        element.mapTextNodes( function(s){ return s.replace( /---/g, "&mdash;" );  });
+
+
+    })
 
 /*
 Behavior: Viewer
@@ -542,13 +563,14 @@ Behavior: Font Icon style (based on BOOTSTRAP)
     //Font-Awesome: .fa.fa-<icon-name>
     FontJspwiki (via icomoon) : .icon-<icon-name>
 */
-    .add("[class^=icon-]", function(element){
+/*
+    .add("[class^=icon-]", function( element ){
 
         //element.className="glyphicon glyph"+element.className;
         //element.className = "fa fa-"+element.className.slice(5);
 
     })
-
+*/
 /*
 Behavior: List (based on BOOTSTRAP)
 
@@ -651,6 +673,64 @@ Behavior: Add-CSS
 >   %%add-css [some-remote-wiki-page] /%
 */
     .add(".add-css", AddCSS)
+
+
+
+/*
+Behavior: Invisibles
+    Show hidden characters such as tabs and line breaks.
+    Credit: http://prismjs.com/plugins/show-invisibles/
+
+CSS:
+(start code)
+.token.tab:not(:empty):before,
+.token.cr:before,
+.token.lf:before { color: hsl(24, 20%, 85%); }
+
+.token.tab:not(:empty):before { content: '\21E5'; }
+.token.cr:before { content: '\240D'; }
+.token.lf:before { content: '\240A'; }
+(end)
+*/
+    .add(".invisibles pre", function(element){
+
+        var token = "<span class='token {0}'>$&</span>";
+
+        element.innerHTML = element.innerHTML
+            .replace( /\t/g, token.xsubs("tab") )
+            .replace( /\n/g, token.xsubs("lf") )
+            .replace( /\r/g, token.xsubs("cr") );
+
+    })
+
+
+/*
+Experimental
+svg pie,
+credit: lea verou
+
+*/
+    .add(".pie2", function( pie ){
+
+        var p = parseFloat(pie.textContent),
+            NS = "http://www.w3.org/2000/svg",
+            svg = document.createElementNS(NS, "svg"),
+            circle = document.createElementNS(NS, "circle"),
+            title = document.createElementNS(NS, "title");
+
+        circle.setAttribute("r", 16);
+        circle.setAttribute("cx", 16);
+        circle.setAttribute("cy", 16);
+        circle.setAttribute("stroke-dasharray", p + " 100");
+
+        svg.setAttribute("viewBox", "0 0 32 32");
+        title.textContent = pie.textContent;
+        pie.textContent = "";
+        svg.appendChild(title);
+        svg.appendChild(circle);
+        pie.appendChild(svg);
+
+    })
 
 /*
 Behavior:Flip, Flop

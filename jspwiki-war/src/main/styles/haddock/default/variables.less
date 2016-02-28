@@ -44,12 +44,21 @@
 @black:  #111;
 
 
+//Apache new logo styles
+/*
+COLORS: Red: #d22027 | Dark Gray: #6d6e70
+TYPEFACES:
+"APACHE" wordmark = Raleway Regular [tracking set to -40]
+"THE",  "SOFTWARE FOUNDATION" & URL = Montserrat Light [tracking set to 215]
+*/
+
 //JSPWiki paths
 @imagePath: "./images";
 @icon-font-path: "./fonts/";
 
 // Might as well use the nicest Helvetica you can... http://css-tricks.com/snippets/css/better-helvetica/
-@font-family-sans-serif: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+@font-family-sans-serif: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", HelveticaNeue, Segoe UI, Helvetica, Arial, sans-serif;
+@font-size-base: 16px;
 
 //softer gray-tones
 @pre-bg:                      #f7f7f9; //#f2f2f2;
@@ -61,7 +70,7 @@
 
 // JPSWiki variables
 // Main color scheme
-@wiki-header-bg:    @brand-primary; //#1976D2;
+@wiki-header-bg:    #4A89DC; //@brand-primary;
 @wiki-header-color: @white;
 @wiki-page-bg:      @white;
 @wiki-sidebar-bg:   #e5e8ed;
@@ -91,6 +100,7 @@
 @wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;
 @wiki-logo-font-size: 20px;
 @wiki-logo-padding: 5px;
+@wiki-logo-image: url("@{imagePath}/feather-small.png");
 @breadcrumb-color: @white;
 
 //TODO: Stacking...
@@ -109,16 +119,17 @@
 @wiki-recentchanges-date-bg: @wiki-sidebar-bg;
 @wiki-link-createpage: @red;
 @wiki-diff-bg:         @pre-bg;
-@wiki-diff-add:        #9f9; //diff inserted lines
-@wiki-diff-delete:     #f93; //diff deleted lines
+@wiki-diff-add:        @state-success-bg; //#eaffea; //#9f9; //diff inserted lines
+@wiki-diff-delete:     @state-danger-bg; //#fdd; //#f93; //diff deleted lines
 @wiki-captcha-bg:      @gray-lighter;
 @wiki-captcha-width:   125px;
+
 
 @pre-scrollable-max-height: 240px;  //bootstrap default is 340px
 
 @dropcaps-color:       @text-color;
 @dropcaps-font-size:   500%;
-@dropcaps-font-weight: thin;
+@dropcaps-font-weight: 700;
 @dropcaps-font-family: @wiki-logo-font-family; //Georgia
 
 // Viewer
@@ -152,3 +163,4 @@
 @wiki-editor-bg : @white;
 @wiki-preview-bg : transparent; //@white;
 @wiki-resizer:  @btn-primary-bg;
+@wiki-editor-focus: rgba(243, 156, 18, 0.1);

@@ -18,6 +18,10 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*eslint-env browser*/
+/*global Class, Options, Events  */
+/*exported Textarea */
+
 /*
 Class: Textarea
     The textarea class enriches a TEXTAREA element, and provides cross browser
@@ -39,9 +43,15 @@ var Textarea = new Class({
     initialize: function(el, options){
 
         var self = this,
-            ta = self.ta = document.id(el);
+            ta = self.ta = document.id(el),
+            fireChange = function( event ){
+                console.log('hi');
+                self.fireEvent("change", event);
+            };
 
         self.setOptions(options);
+
+        //ta.addEvents({ change: fireChange, keyup: fireChange });
 
         //Create a shadow div to support getCoordinates() of any character in the textarea
         //This only works if the textarea font is monospace (?)
@@ -159,7 +169,7 @@ var Textarea = new Class({
             //textarea.focus();
 
         }
-        //ta.fireEvent("change");
+        ta.fireEvent("change");
         return this;
     },
 
@@ -262,7 +272,7 @@ var Textarea = new Class({
         }
         ta.focus();
         ta.scrollTop = scrollTop;
-        //ta.fireEvent("change");
+        ta.fireEvent("change");
         return this;
 
     },
@@ -334,8 +344,8 @@ var Textarea = new Class({
             value = ta.value,
             el, t, l, w, h;
 
-        //default character offset is the caret (cursor or begin of the selection)
-        if( !offset ){ offset = this.getSelectionRange().end; }
+        //default character offset is the position of the caret (cursor or begin of the selection)
+        if( offset == undefined ){ offset = this.getSelectionRange().end; }
 
         el = taShadow.set({
             styles: {

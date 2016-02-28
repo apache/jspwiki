@@ -1,3 +1,23 @@
+2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-1  Various small fixes on the HADDOCK template 
+
+       * Fix %%viewer "Mixed content" error  (avoid serving http content via https )
+       * Fix visibility if the Titlebox page has no content
+       * Add fallback for IE, when the browser doesn't support FLEXBOX support
+       * Fix scrollbars on prettified sections on windows (IE, Chrome)
+       * Add fallback font (SegoeUI) for windows because Helvetica Neue is not supported
+
+       * Fix consistency of the styling of the "OK" buttons in many forms.
+       * Fix indentation of section dropdown entries (plain editor)
+       * Fix sorting by dates in the Attachment and Info view  
+       * JSPWIKI-921: increase legibility of the plain editor
+       * JSPWIKI-928: fix odd fonts in the user control panel pop-up window
+       * Add new Apache feather.png as logo background
+       
+       * Upgrade to mootools 1.6.0
+       
+
 2016-02-05  Harry Metske (metskem@apache.org)
 
        * 2.10.2-svn-43

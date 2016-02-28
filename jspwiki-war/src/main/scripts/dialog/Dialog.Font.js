@@ -18,6 +18,8 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*global Class, Dialog  */
+/*exported Dialog.Font */
 /*
 Class: Dialog.Font
 	The Dialog.Font is a Dialog.Selection object, to selecting a font.
@@ -68,9 +70,9 @@ Dialog.Font = new Class({
 		}
 	},
 
-	initialize:function(options){
+	initialize:function( options ){
 
-		var self = this, fonts = options.fonts;
+		var self = this;
 
         self.setClass(".font", options);
 		options.body = options.fonts || self.options.fonts;

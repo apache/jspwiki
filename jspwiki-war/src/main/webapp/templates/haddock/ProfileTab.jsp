@@ -47,7 +47,7 @@
   <div class="form-group">
     <span class="form-col-20 control-label"></span>
     <span class="dropdown" style="display:inline-block" >
-      <button class="btn btn-primary" type="submit" name="action" value="saveProfile">
+      <button class="btn btn-success" type="submit" name="action" value="saveProfile">
         <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
         <wiki:UserProfile property="new"><fmt:message key='prefs.newprofile' /></wiki:UserProfile>   <%-- prefs.save.submit??--%>
       </button>

@@ -127,11 +127,20 @@ var GraphBar = new Class({
 
             if( bars && bars[0] ){
 
-                data = bars.toNatural().scale(options.minv, options.maxv);
+                data = bars.toNatural();
 
-                for( i = 0, len = bars.length; i < len; i++){
+                for( i = 0, len = data.length; i < len; i++){
 
-                    self.render( bars[i], data[i], (i + 1) / len );
+                    //if( data[i][0] ){ data[i] = data [i][0]; }
+                    data[i] = data[i][0] || data[i];
+
+                }
+
+                data = data.scale(options.minv, options.maxv)
+
+                for( i = 0; i < len; i++){
+
+                    self.render( bars[i], data[i], i / (len-1) );
 
                 }
 
@@ -181,6 +190,7 @@ var GraphBar = new Class({
         size = max - min;
         options.offset = (size > 0) ? min : max;
         options.size = size.abs();
+        //console.log(max, min,size,options)
 
         return options;
     },
@@ -221,14 +231,17 @@ var GraphBar = new Class({
 
 
         //color mixer
+        var c =color1;
         if( !isProgress && color2 ){ color1 = color1.mix(color2, 100 * (isGauge ? val : percent)); }
+console.log(c,color1, val, percent, c, c  && c.mix(color2,0),isGauge );
 
         val = val * 100;
+
 
         //first calculate the bar sizes: group-bar, bar1, (optional) bar2
         css = isProgress ?
             [offset + size, val + "%", (100 - val) + "%"] :
-                [offset + val / 100 * (offset + size), "100%" ];
+                [offset + val / 100 * (/*offset + */ size), "100%" ];
 
         //then convert sizes to bar css styles
         css = css.map( function(barsize){

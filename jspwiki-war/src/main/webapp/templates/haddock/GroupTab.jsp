@@ -85,7 +85,7 @@
     <div class="help-block form-col-offset-20"><fmt:message key="editgroup.memberlist"/></div>
     <%--<p class="help-block form-col-offset-20"><fmt:message key="grp.formhelp"/></p>--%>
 
-    <input class="btn btn-primary form-col-offset-20" type="submit" value="<fmt:message key='grp.savenewgroup'/>" />
+    <input class="btn btn-success form-col-offset-20" type="submit" value="<fmt:message key='grp.savenewgroup'/>" />
 
 
   </form>

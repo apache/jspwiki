@@ -96,6 +96,9 @@ var Tab = new Class({
             var active = "active";
             navs.removeClass( active )[ index ].addClass( active );
             panes.removeClass( active )[ index ].addClass( active );
+
+            //navs.set("aria-selected", false)[ index ].set("aria-selected", true);
+            //panes.set("aria-hidden", true)[ index ].set("aria-hidden", false);
         }
 
         //handle th click events on the nav element
@@ -108,7 +111,7 @@ var Tab = new Class({
         //handling of popstate event on the pane element when the url#hash changes
         function popstate(){
             var index = this.getAllPrevious().length;
-            console.log("popstate event", this.id, index );
+            //console.log("popstate event", this.id, index );
             activate( index );
         }
 

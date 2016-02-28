@@ -28,7 +28,8 @@
 %>
 <c:set var="frontpage" value="<%= c.getEngine().getFrontPage() %>" />
 
-<wiki:Plugin plugin="IfPlugin" args="page='TitleBox' contains='\\\\S' " >[{InsertPage page=TitleBox class='titlebox alert' }]</wiki:Plugin>
+<c:set var="titlebox"><wiki:InsertPage page="TitleBox" /></c:set>
+<c:if test="${!empty titlebox}"><div class="titlebox alert">${titlebox}</div></c:if>
 
 <div class="header">
 
@@ -50,12 +51,9 @@
     <wiki:Include page="SearchBox.jsp" />
 
     <div class="pagename" title="<wiki:PageName />">
-    <wiki:CheckRequestContext context='view'><wiki:PageName /></wiki:CheckRequestContext>
-    <wiki:CheckRequestContext context='!view'>
       <wiki:CheckRequestContext context='viewGroup|createGroup|editGroup'><span class="icon-group"></span></wiki:CheckRequestContext>
       <wiki:PageType type="attachment"><span class="icon-paper-clip"></span></wiki:PageType>
       <wiki:Link><wiki:PageName/></wiki:Link>
-    </wiki:CheckRequestContext>
     </div>
 
   </div>

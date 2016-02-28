@@ -26,6 +26,8 @@ Class: Wiki.Edit
     It uses an enhanced textarea based on the [Snipe] class.
 */
 
+/*eslint-env browser*/
+/*global Wiki, Snipe, Request */
 
 !function( wiki ){
 
@@ -58,7 +60,7 @@ wiki.add("#editform", function( element ){
 
         onChange: livepreview.debounce(500),
 
-        onConfig: config  //configuration callback
+        onConfig: config  //configuration callbacks
 
     });
 
@@ -73,6 +75,13 @@ wiki.add("#editform", function( element ){
     }
 
     wiki.resizer( snipe.toElement(), function(h){ preview.setStyle("height", h); });
+
+    /*
+    $$("config[data-cmd]:checked").addEvent("configured", function(){
+        snipe.set(this.getAttribute("data-cmd"), this.checked).fireEvent("change") );
+    });
+    wiki.configuration( form );
+    */
 
     //Initialize the configuration checkboxes
     //Read the wiki-prefs cookie values.
@@ -111,10 +120,13 @@ wiki.add("#editform", function( element ){
         The user gets a warning in case the textarea was changed, without saving.
 
         The onbeforeunload handler then gets removed on regular exit of the page.
+
+        wiki.editOBU(textarea);
+
     */
     function onbeforeunload( ){
 
-        window.onbeforeunload = function(event){
+        window.onbeforeunload = function(){
 
             if( textarea.value != textarea.defaultValue ){
 
@@ -127,58 +139,7 @@ wiki.add("#editform", function( element ){
     }
 
 
-    /*
-    Function: resizer
-        Activate the resize handle of the input textarea.
-        While dragging the resize handle, update the textarea and the
-        preview area. Store the new height in the "EditorSize" prefs cookie.
-
-    Arguments:
-        element - draggable resize handle (DOM element)
-        options - { cookie: name of the cookie to persist the editor size across pageloads }
-
-    Globals:
-        wiki - main wiki object, to get/set preference fields
-        textarea - resizable textarea (DOM element)
-        preview - preview (DOM element)
-    */
-    function resizer( resizableTextarea, handle, cookie ){
-
-        var height = "height",
-            size = wiki.prefs.get(cookie),
-            y;
-
-        function helpdragging(add){ handle.ifClass(add, "dragging"); }
-
-        if( size ){
-
-            resizableTextarea.setStyle(height, size);
-            preview.setStyle(height, size);
-
-        }
-
-        if( handle ){
-
-            //console.log("resizer ",textarea,preview);
-            resizableTextarea.makeResizable({
-                handle: handle,
-                modifiers: { x: null },
-                onDrag: function(){
-                    y = this.value.now.y;
-                    preview.setStyle(height, y);
-                    wiki.prefs.set(cookie, y);
-                },
-                onBeforeStart: helpdragging.pass(true),
-                onComplete: helpdragging.pass(false),
-                onCancel: helpdragging.pass(false)
-
-            });
-
-        }
-    }
-
-
-    /*
+   /*
     Function: livepreview
         Linked as onChange handler to the SnipEditor.
         Make AJAX call to the backend to convert the contents of the textarea
@@ -191,11 +152,12 @@ wiki.add("#editform", function( element ){
         var text = snipe.toElement().get("value"),
             loading = "loading";
 
-        console.log("**** change event", new Date().getSeconds(), previewcache, text.length );
+        console.log("**** change event", new Date().getSeconds() );
 
         if( !(getFormElement("[data-cmd=livepreview]") || {}).checked ){
 
             //cleanup the preview area
+            console.log("cleanup");
             if( previewcache ){
                 preview.empty();
                 previewcache = null;

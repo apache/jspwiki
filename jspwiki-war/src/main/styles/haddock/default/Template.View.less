@@ -45,7 +45,7 @@ Section: Title box
     The title box is an optional alert box at the top of the page, to put
     web-site messages, alerts, new-flashes etc.
     It contains the content of the [TitleBox] JSPWiki page.
-    Keep the styling minimal, as the TitleBox page itself can add any style it wants.
+    Keep the styling minimal, so the TitleBox page itself can add any style it wants.
 */
 //.titlebox { }
 
@@ -118,14 +118,11 @@ DOM structure:
 .header, .footer {
     .clearfix;
 	position: relative;
-    font-family: @wiki-header-font-family;
-    font-weight: 200;
-    letter-spacing: 1px;
     color: @wiki-header-color;
     a { color:inherit; }
 
     background-color:@wiki-header-bg;
-    #gradient .radial(@wiki-header-bg; darken(@wiki-header-bg,20%));
+    //#gradient .radial(@wiki-header-bg; darken(@wiki-header-bg,20%));
 
     //background-image:url(images/background.jpg);  //todo: read it from a cookie or so
     background-size:cover; //or contain;
@@ -154,9 +151,12 @@ a.logo {
     letter-spacing: .3em;
     text-decoration: none;
     padding: 0.15em 0.1em .25em .45em;
-    //border: 1px solid @white;
+    border: 1px solid @white;
     //border-radius: .5em;
     color: inherit;
+    background-image: @wiki-logo-image;
+    background-size: cover;
+    background-repeat: no-repeat;
 
     b {
         font-size: 150%;   //@font-size-base
@@ -221,13 +221,26 @@ Credits: https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
 */
 
 
-body > .container-fluid,
-body > .container {
+body.can-flex > .container-fluid,
+body.can-flex > .container {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
+
   min-height: 100vh;
+
+  -webkit-flex-flow: column;
+  -moz-flex-flow: column;
+  -ms-flex-flow: column;
   flex-flow: column;
 }
-.content {
+body.can-flex .content {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 

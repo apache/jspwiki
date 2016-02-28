@@ -18,62 +18,64 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*global Class, Dialog  */
+/*exported Dialog.Chars */
 /*
 Class: Dialog.Chars
-	The Dialog.Chars is a Dialog object, to support selection of special
-	characters.
+    The Dialog.Chars is a Dialog object, to support selection of special
+    characters.
 
 Arguments:
-	options - optional, see options below
+    options - optional, see options below
 
 Options:
-	others - see Dialog options
+    others - see Dialog options
 
 Inherits from:
-	[Dialog]
+    [Dialog]
 */
 Dialog.Chars = new Class({
 
-	Extends: Dialog.Selection,
+    Extends: Dialog.Selection,
 
-	options: {
-		//onAction: function(value){},
-		chars: [
+    options: {
+        //onAction: function(value){},
+        chars: [
 
-			'lsquo|rsquo|ldquo|rdquo|lsaquo|rsaquo|laquo|raquo|apos|quot|sbquo|bdquo',
-			'ndash|mdash|sect|para|dagger|Dagger|amp|lt|gt|copy|reg|trade',
-			'rarr|rArr|bull|middot|deg|plusmn|brvbar|times|divide|frac14|frac12|frac34',
-			'hellip|micro|cent|pound|euro|iquest|iexcl|uml|acute|cedil|circ|tilde',
-			'Agrave|Aacute|Acirc|Atilde|Auml|Aring|AElig|Ccedil|Egrave|Eacute|Ecirc|Euml',
-			'Igrave|Iacute|Icirc|Iuml|ETH|Ntilde|Ograve|Oacute|Ocirc|Otilde|Ouml|Oslash',
-			'OElig|Scaron|Ugrave|Uacute|Ucirc|Uuml|Yacute|Yuml|THORN|szlig|agrave|aacute',
-			'acirc|atilde|auml|aring|aelig|ccedil|egrave|eacute|ecirc|euml|igrave|iacute',
-			'icirc|iuml|eth|ntilde|ograve|oacute|ocirc|otilde|ouml|oslash|oelig|scaron',
-			'ugrave|uacute|ucirc|uuml|yacute|yuml|thorn|ordf|ordm|alpha|Omega|infin',
-		    'not|sup2|sup3|permil|larr|uarr|darr|harr|hArr|crarr|loz|diams'
-		]
-	},
+            'lsquo|rsquo|ldquo|rdquo|lsaquo|rsaquo|laquo|raquo|apos|quot|sbquo|bdquo',
+            'ndash|mdash|sect|para|dagger|Dagger|amp|lt|gt|copy|reg|trade',
+            'rarr|rArr|bull|middot|deg|plusmn|brvbar|times|divide|frac14|frac12|frac34',
+            'hellip|micro|cent|pound|euro|iquest|iexcl|uml|acute|cedil|circ|tilde',
+            'Agrave|Aacute|Acirc|Atilde|Auml|Aring|AElig|Ccedil|Egrave|Eacute|Ecirc|Euml',
+            'Igrave|Iacute|Icirc|Iuml|ETH|Ntilde|Ograve|Oacute|Ocirc|Otilde|Ouml|Oslash',
+            'OElig|Scaron|Ugrave|Uacute|Ucirc|Uuml|Yacute|Yuml|THORN|szlig|agrave|aacute',
+            'acirc|atilde|auml|aring|aelig|ccedil|egrave|eacute|ecirc|euml|igrave|iacute',
+            'icirc|iuml|eth|ntilde|ograve|oacute|ocirc|otilde|ouml|oslash|oelig|scaron',
+            'ugrave|uacute|ucirc|uuml|yacute|yuml|thorn|ordf|ordm|alpha|Omega|infin',
+            'not|sup2|sup3|permil|larr|uarr|darr|harr|hArr|crarr|loz|diams'
+        ]
+    },
 
-	initialize:function(options){
+    initialize:function(options){
 
         this.setClass('.chars',options);
-		this.parent(options);
+        this.parent(options);
 
-	},
+    },
 
-	setBody: function(){
+    setBody: function(){
 
         var rows = [];
-		this.options.chars.map( function(line){
-		    var cells = [];
-		    line.split('|').each( function(item){
-    			cells.push( 'td.item[title=&'+item+';]', {html:'&'+item+';'});
-		    });
-		    rows.push('tr',cells);
+        this.options.chars.map( function(line){
+            var cells = [];
+            line.split('|').each( function(item){
+                cells.push( 'td.item[title=&'+item+';]', {html:'&'+item+';'});
+            });
+            rows.push('tr',cells);
 
-		});
-		return this.parent( ['table',rows].slick() );
+        });
+        return this.parent( ['table',rows].slick() );
 
-	}
+    }
 
 });

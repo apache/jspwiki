@@ -33,21 +33,21 @@
 <c:set var="diffprovider" value='<%= c.getEngine().getVariable(c,"jspwiki.diffProvider") %>' />
 <wiki:PageExists>
 <form action="<wiki:Link jsp='Diff.jsp' format='url' />"
-       class="diffbody"
+       class="diffbody form-inline"
       method="get" accept-charset="UTF-8">
   <input type="hidden" name="page" value="<wiki:PageName />" />
 
   <p class="btn btn-lg btn-primary btn-block">
        <fmt:message key="diff.difference">
          <fmt:param>
-           <select id="r1" name="r1" onchange="this.form.submit();" >
+           <select class="form-control" id="r1" name="r1" onchange="this.form.submit();" >
            <c:forEach items="${history}" var="i">
              <option value="${i.version}" ${i.version == olddiff ? 'selected="selected"' : ''} >${i.version}</option>
            </c:forEach>
            </select>
          </fmt:param>
          <fmt:param>
-           <select id="r2" name="r2" onchange="this.form.submit();" >
+           <select class="form-control" id="r2" name="r2" onchange="this.form.submit();" >
            <c:forEach items="${history}" var="i">
              <option value="${i.version}" ${i.version == newdiff ? 'selected="selected"' : ''} >${i.version}</option>
            </c:forEach>

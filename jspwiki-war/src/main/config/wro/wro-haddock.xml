@@ -23,8 +23,8 @@
 
   <!-- HADDOCK Template groups -->
   <group name="lib" abstract="true">
-    <js>/scripts/lib/mootools-core-1.5.1.js</js>
-    <js>/scripts/lib/mootools-more-1.5.1.js</js>
+    <js>/scripts/lib/mootools-core-1.6.0.js</js>
+    <js>/scripts/lib/mootools-more-1.6.0.js</js>
     <js>/scripts/lib/prettify4mar13.js</js>
   </group>
 

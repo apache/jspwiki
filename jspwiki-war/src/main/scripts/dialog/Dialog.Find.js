@@ -18,6 +18,8 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*global Class, Dialog  */
+/*exported Dialog.Find */
 /*
 Function: Dialog.Find
     Perform the find and replace operation on either the full textarea

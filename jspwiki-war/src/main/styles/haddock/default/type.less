@@ -39,13 +39,6 @@ DOM structure:
         a.editsection[href="...&section=0"] [Edit]
 (end)
 */
-/* The original jspwiki margins on headers were  somewhat larger then bootstrap
-h2,h3,h4 {
-    margin:1em 0 0.5em 0;
-    line-height:1.5;
-}
-*/
-
 .hashlink { margin-left: 1em; }
 .editsection, .hashlink {
 
@@ -55,6 +48,13 @@ h2,h3,h4 {
     &:hover { .opacity(1); border-color:transparent; }
 
 }
+
+/* The original jspwiki margins on headers were  somewhat larger then bootstrap
+h2,h3,h4 {
+    margin:1em 0 0.5em 0;
+    line-height:1.5;
+}
+*/
 h2,h3,h4 {
 
     .editsection, .hashlink { .opacity(0); }
@@ -117,14 +117,14 @@ br { clear: both; }
 }
 
 //dl { .dl-horizontal; }
-dl dd { margin-left:2em; }   //reset flat style of bootstrap/type
+dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
 
 
 .hr {
   display: block;
-  margin-top: 10px 0;
+  margin-top: 10px;
   border: 0;
-  border-top: 1px solid #eeeeee;
+  border-top: 1px solid @hr-border;
 }
 
 
@@ -283,6 +283,8 @@ Section: Reusable Styles
 .sub { top: 0.4em; }
 
 
+.caps { font-variant: small-caps; }
+
 .strike { text-decoration:line-through; }
 
 //see also bootstrap .text-center
@@ -317,15 +319,15 @@ div.dropcaps {
 .page-break {
     display:block;
     height:2px;
-    /*background:url(page-break.jpg) 0 center repeat-x; */
-    border-top:2px dashed @table-border-color;
+    // background:url(page-break.jpg) 0 center repeat-x;
+    border-top:1px dashed @table-border-color;
     margin:1em 0;
 
     &:hover:after {
-        content:"page break";
-        text-align:center;
-        display:block;
-        color:@table-border-color;
+        content: "page break";
+        text-align: center;
+        display: block;
+        color: @table-border-color;
         .small;
     }
 

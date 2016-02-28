@@ -122,7 +122,7 @@
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
-      <input class="btn btn-primary" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
+      <input class="btn btn-success" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input class="form-control form-col-50" type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
       <label class="btn btn-default" for="references">
         <input type="checkbox" name="references" id="references" checked="checked" />
@@ -282,7 +282,7 @@
     <div class="form-group">
     <input type="hidden" name="nextpage" value="<wiki:Link context='info' format='url'/>" /><%-- *** --%>
     <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
-    <input class="btn btn-primary form-col-offset-20 form-col-50"
+    <input class="btn btn-success form-col-offset-20 form-col-50"
            type="submit" name="upload" id="upload" disabled="disabled" value="<fmt:message key='attach.add.submit'/>" />
     <%--<input type="hidden" name="action" value="upload" />--%>
     </div>

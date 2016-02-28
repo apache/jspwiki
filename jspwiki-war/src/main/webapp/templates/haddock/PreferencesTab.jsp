@@ -53,7 +53,7 @@
     <span class="form-col-20 control-label"></span>
 
     <span class="dropdown" style="display:inline-block" >
-      <button class="btn btn-primary" type="submit" name="action" value="setAssertedName">
+      <button class="btn btn-success" type="submit" name="action" value="setAssertedName">
         <fmt:message key='prefs.save.prefs.submit'/>
       </button>
       <ul class="dropdown-menu" data-hover-parent=".dropdown">

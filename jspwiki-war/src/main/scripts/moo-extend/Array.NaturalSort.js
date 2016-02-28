@@ -118,7 +118,7 @@ Array.implement({
             if( !isNaN(column) ){ val = ( isNode ? val.getChildren() : val )[column]; }
 
             //retrieve the value and convert to string
-            val = ("" + (isNode ? val.get("text") || val.get("title") : val)).trim();
+            val = ("" + (isNode ? val.getAttribute("jspwiki:sortvalue") || val.get("text") || val.get("title") : val)).trim();
 
 
             //2. Convert and store in type specific arrays (num, dmy, kmgt, nat)
@@ -126,7 +126,7 @@ Array.implement({
             //CHECKME: some corner cases: numbers with leading zero's, confusing date string
             if( /(?:^0\d+)|(?:^[^\+\-\d]+\d+$)/.test(val) ){ num = dmy = 0; }
 
-//remove non numeric tail : replace( /[\w].*$/,'');
+            //remove non numeric tail : replace( /[\w].*$/,'');
             if( num && isNaN( num[i] = +val ) ){ num = 0; }
             //if( num && isNaN( num[i] = + val.replace(/[\W].*$/,"") ) ){ num = 0; }
 

@@ -18,12 +18,12 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*eslint-env browser*/
+/*global Class, Options, Events, Wiki, GraphBar  */
+/*exported Wiki.Search, SearchBox */
 /*
 Class: Wiki.Search
     ...
-
-Depends:
-    Graphbar
 
 DOM Structure:
     (start code)

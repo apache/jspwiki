@@ -77,12 +77,16 @@ Color.implement({
 
         var colors = Array.slice(arguments),
             alpha = ( (typeOf(colors.getLast()) == 'number') ? colors.pop() : 50 )/100,
-            alphaI = 1-alpha,
+            alphaI = 1 - alpha,
             rgb = this.slice(), i, color;
 
         while( colors[0] ){
+
             color = new Color( colors.shift() );
-            for (i=0; i < 3; i++){ rgb[i] = ((rgb[i] * alphaI) + (color[i] * alpha)).round(); }
+            for (i = 0; i < 3; i++){
+                rgb[i] = ((rgb[i] * alphaI) + (color[i] * alpha)).round();
+            }
+
         }
         return new Color(rgb);
 

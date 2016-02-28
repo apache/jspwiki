@@ -18,6 +18,8 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*global Class, Dialog  */
+/*exported Dialog.Buttons */
 /*
 
 */
@@ -56,8 +58,8 @@ Dialog.Buttons = new Class({
 	*/
 	setButtons: function( buttons ){
 
-		var self = this,
-		    btns = self.get('.btn-group') || 'div.btn-group'.slick().inject(self.element);
+        var self = this,
+            btns = self.get('.btn-group') || 'div.btn-group'.slick().inject(self.element);
 
 		btns.empty().adopt( buttons.map(function(b){
 

@@ -68,6 +68,8 @@ Form.File = new Class({
         var form,
             isXHR20 = false; //force old browser -- FIXME:  "FormData" in window;
 
+        //isXHR20 = "FormData" in window;
+
         input = document.id(input);
         form = input.getParent("form");
         if(!form) return false;
@@ -146,6 +148,7 @@ Form.File = new Class({
             var files = inputFiles.getFiles();
 
             while( files[0] ){ inputFiles.remove( files.shift() ); }
+
             /*
             for (var i = 0; i < files.length; i++){
                 inputFiles.remove(files[i]);

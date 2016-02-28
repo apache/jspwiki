@@ -20,8 +20,8 @@
 */
 
 
-/*jshint forin:false, noarg:true, noempty:true, undef:true, unused:true, plusplus:false, immed:false, browser:true, mootools:true */
-/*global HighlightQuery, Behavior */
+/*eslint-env browser*/
+/*global $, $$, Form, Hash, Behavior, HighlightQuery, Accesskey */
 /*exported  Wiki */
 
 /*
@@ -73,7 +73,9 @@ var Wiki = {
 
 
         // add core jspwiki behaviors; needed to support the default template jsp's
-        wiki.add( "[accesskey]", Accesskey )
+        wiki.add( "body", wiki.caniuse )
+
+            .add( "[accesskey]", Accesskey )
 
             //.add("input[placeholder]", function(element){ element.placeholderX(); })
 
@@ -84,7 +86,7 @@ var Wiki = {
             })
 
             //generate modal confirmation boxes, eg prompting to execute
-            //unrecoverable actions such as deleting a page or attachment
+            //an unrecoverable action such as deleting a page or attachment
             //.add("[data-toggle]", "onModal", {attr:"data-modal"})
             .add( "[data-modal]", function(element){
                 element.onModal( element.get("data-modal") );
@@ -97,12 +99,12 @@ var Wiki = {
             })
 
             //make navigation bar sticky (simulate position:sticky; )
-            //.add("[data-toggle]", "onSticky" )
-            .add( ".sticky", function( element ){
+            //.add(".sticky", "onSticky" )
+            .add( ".sticky", function(element){
                 element.onSticky();
             })
 
-            //highlight previous search query in cookie or referrer page search query
+            //highlight previous search query in cookie or referrer page
             .add( ".page-content", function(element){
 
                 var previousQuery = "PrevQuery";
@@ -127,11 +129,10 @@ var Wiki = {
 
                 //activate Quick Navigation functionality
                 new wiki.Findpages(element, {
-
                     rpc: function(value, callback){
                         wiki.jsonrpc("/search/pages", [value, 16], callback);
                     },
-                    toUrl: wiki.toUrl.bind( wiki ),
+                    toUrl: wiki.toUrl.bind(wiki),
                     allowClone: function(){
                         return /view|preview|info|attach/.test( wiki.Context );
                     }
@@ -139,10 +140,9 @@ var Wiki = {
             })
 
             //activate ajax search routines on Search.jsp
-            .add( "#searchform2", function( form ){
+            .add( "#searchform2", function(form){
 
                 wiki.search = new wiki.Search( form, {
-
                     xhrURL: wiki.XHRSearch,
                     onComplete: function(){
                         //console.log(form.query.get("value"));
@@ -153,9 +153,9 @@ var Wiki = {
 
             //activate attachment upload routines
             .add( "#files", Form.File, {
-
                 max: 8,
                 rpc: function(progressid, callback){
+                    //console.log("progress", progressid);
                     wiki.jsonrpc("/progressTracker", [progressid], callback);
                 }
             });
@@ -164,6 +164,27 @@ var Wiki = {
             popstate: wiki.popstate,
             domready: wiki.domready.bind(wiki)
         });
+
+
+
+    },
+
+    caniuse: function( body ){
+
+        //Modernizr.addTest('flexbox', testAllProps('flexBasis', '1px', true));
+        var hasNativeFlex = document.createElement('b');
+
+        //hasNativeFlex.style.cssText = "flex-basis:1px;";
+        //if(!!hasNativeFlex.style.length){
+        //   console.log("i can flex");
+        //}
+        //
+
+        hasNativeFlex.style.display = "flex";
+        if( hasNativeFlex.style.display == "flex" ){
+            //console.log("i can flex");
+            body.addClass("can-flex");
+        };
 
     },
 
@@ -188,7 +209,7 @@ var Wiki = {
             duration: 20
         });
 
-        if( wiki.version != wiki.prefs.get('version') ){
+        if( wiki.version != wiki.prefs.get("version") ){
             wiki.prefs.empty();
             wiki.prefs.set("version", wiki.version);
         }
@@ -243,9 +264,9 @@ var Wiki = {
 
                 events = target.retrieve("events"); //mootools specific - to read registered events on elements
 
-                if( events && events[ popstate ] ){
+                if( events && events[popstate] ){
 
-                    target.fireEvent( popstate );
+                    target.fireEvent(popstate);
 
                 }
 
@@ -323,15 +344,15 @@ var Wiki = {
 
             var li, parentLi = ul.getParent();
 
-            while( li = ul.getFirst("li") ){
+            while( (li = ul.getFirst("li")) ){
 
                 if( li.innerHTML.trim() == "----" ){
 
-                    li.addClass( "divider" );
+                    li.addClass("divider");
 
                 } else if( !li.getFirst() || !li.getFirst("a") ){
 
-                    li.addClass( "dropdown-header" );
+                    li.addClass("dropdown-header");
 
                 }
                 li.inject(parentLi, "before");
@@ -442,7 +463,9 @@ var Wiki = {
 
     },
 
-
+    /*
+    Function: configuration
+    */
     configuration: function( form ){
 
         var wiki = this,
@@ -519,8 +542,8 @@ var Wiki = {
     /*
     Function: resizer
         Resize the target element, by dragging a .resizer handle.
-        More elements can be resized via the callback.
-        The .resizer can specify a prefs cookie to retrieve/store the height.
+        Multiple elements can be resized via the callback.
+        The .resizer element can specify a prefs cookie to retrieve/store the height.
         Used by the plain and wysiwyg editor.
 
     Arguments:
@@ -534,7 +557,7 @@ var Wiki = {
     */
     resizer: function( target, callback ){
 
-        var wiki = this,
+        var prefs = this.prefs,
             handle = document.getElement(".resizer"),
             pref = handle.getAttribute("data-resize-cookie"),
             h;
@@ -543,7 +566,7 @@ var Wiki = {
 
         //targets.setStyle(height, options.initial || "100%" );
         if( pref ){
-            h = Wiki.prefs.get(pref) || 300;
+            h = prefs.get(pref) || 300;
             target.setStyle("height", h );
             callback( h );
         }
@@ -554,7 +577,7 @@ var Wiki = {
             onDrag: function(){
                 h = this.value.now.y;
                 callback(h);
-                if(pref){ Wiki.prefs.set(pref, h); }
+                if(pref){ prefs.set(pref, h); }
             },
             onBeforeStart: helpdragging.pass(true),
             onComplete: helpdragging.pass(false),
@@ -587,27 +610,27 @@ var Wiki = {
 
         if( this.JsonUrl ){
 
-            console.log(method, JSON.stringify(params) );
+            //console.log(method, JSON.stringify(params) );
 
-    		//NOTE:  this is half a JSON rpc ... responseText is JSON formatted
+            //NOTE:  this is half a JSON rpc ... only responseText is JSON formatted
             new Request({
-    			url: this.JsonUrl + method,
-	    		//method:"post"     //defaults to "POST"
+                url: this.JsonUrl + method,
+                //method:"post"     //defaults to "POST"
                 //urlEncoded: true, //content-type header = www-form-urlencoded + encoding
                 //encoding: utf-8,
                 onSuccess: function( responseText ){
 
-                    console.log(responseText, JSON.decode( responseText ) );
+                    //console.log(responseText, JSON.parse( responseText ) );
                     callback( JSON.parse( responseText ) )
 
                 },
                 onError: function(error){
                     //console.log(error);
-                    throw new Error("Wiki rpc error: " + error);
                     callback( null );
+                    throw new Error("Wiki rpc error: " + error);
                 }
 
-    		}).send( "params=" + params );
+            }).send( "params=" + params );
 
             /* obsolete
             new Request.JSON({

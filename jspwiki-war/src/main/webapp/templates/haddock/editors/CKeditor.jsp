@@ -95,7 +95,7 @@
 <%
     if( usertext == null ) usertext = "";
 
-    RenderingManager renderingManager = engine.getRenderingManager();
+    RenderingManager renderingManager = new RenderingManager();
 
     // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
     Properties copyOfWikiProperties = new Properties();
@@ -211,7 +211,7 @@
               </li>
             </c:when>
             <c:otherwise>
-              <li class="dropdown-header">${edt}</li>
+              <li class="active"><a>${edt}</a></li>
             </c:otherwise>
           </c:choose>
       </c:forEach>

@@ -66,7 +66,7 @@
       <input class="form-control form-col-50" type="text" name="changenote" id="changenote" maxlength="80" size="60" />
     </div>
     <div class="form-group">
-      <input class="btn btn-primary form-col-offset-20 form-col-50"
+      <input class="btn btn-success form-col-offset-20 form-col-50"
              type="submit" name="upload" id="upload" disabled="disabled" value="<fmt:message key='attach.add.submit'/>" />
     </div>
     <div class="hidden form-col-offset-20 form-col-50 progress progress-striped active">

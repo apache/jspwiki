@@ -77,6 +77,7 @@ var Behavior = new Class({
             isFunction = ( type == "function" );
 
             nodes = $$(item.s); //selector
+
             if( nodes[0] ){
 
                 if( item.once ){

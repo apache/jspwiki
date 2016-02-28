@@ -96,7 +96,7 @@
 
     <div class="form-group">
       <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
-      <input class="btn btn-primary btn-block"
+      <input class="btn btn-success btn-block"
               type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
     </div>
 
@@ -155,7 +155,7 @@
     </div>
     <div class="form-group">
       <input type="hidden" name="action" value="resetPassword"/>
-      <input class="btn btn-primary btn-block" type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />
+      <input class="btn btn-success btn-block" type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />
     </div>
 
     <hr />
@@ -254,7 +254,7 @@
   </div>
 
   <div class="form-group">
-    <button class="btn btn-primary btn-block" type="submit" name="action" value="saveProfile">
+    <button class="btn btn-success btn-block" type="submit" name="action" value="saveProfile">
       <fmt:message key='prefs.newprofile' />
     </button>
   </div>

@@ -16,6 +16,9 @@
     under the License.
 */
 
+/*eslint-env browser*/
+/*global Wiki, Dialog, Request  */
+
 /*
 DirectSnippet definitions for JSPWiki, aka ''smartpairs''.
 These snippets are directly expanded on keypress.
@@ -37,150 +40,6 @@ Wiki.DirectSnips = {
 Function: snippets
 
         Definitions for the JSPWiki editor commands.
-
-        A command consists of triggers, attributes, snippets, events and dialogs.
-
-        Following commands are predefined by the snipe editor:
-        - find : toggles the find and replace dialog
-        - sections : toggle sections dropdown dialog, which allows to switch
-            between certain sections of the document or the whole document
-        - undo : undo last command, set the editor to the previous stable state
-        - redo : revert last undo command
-
-
-Snippet Triggers :
-
-        Triggers can be click events, TAB-key, suggestion dialogs and shortcut-keys (ctrl+/meta+).
-
-        CLICK event:
-        Click events are attached to DOM elements with a {{data-cmd="cmd"}} attribute.
-
-        TAB key:
-        Enter a command followed by the TAB key.
-        TAB-completion can be turned on/off via the 'tabcompletion' flag.
-
-        KEYUP event, may trigger a suggestion dialog:
-        Suggestion dialogs are opened when the cursor is located 'inside' a command keyword.
-        Match function determines a valid suggestion command.
-
-        - the suggest(txta,caret) function validates the suggestion context
-          It returns true/false and can modify the snippet with
-             - snip.start : begin offset of the matched prefix
-             - snip.match : matched prefix (string)
-             - snip.tail: (optional) replaceable tail
-
-
-Snippet Attributes :
-        - initialize: function(cmd, snip){ return snippet } called once during initialisation
-        - key: shortcut key  (ctrl-key or meta-key)
-        - scope: returns TRUE when the command appears inside certain start and end pattern
-        - nscope: set to TRUE when the command is not inside certain start and end pattern
-        - cmdId: (wysiwyg mode only) corresponding commandIdentifier
-        - synonym:
-
-Snippet actions
-        Text, Event, Dialog (will be opened prior to insertion of the text)
-
-Snippet Text:
-        The snippet text contains the text to be inserted or replaced.
-        Add '\n' at the start or end of the snippet, if it need to appear on a new line.
-        - a {.description} (start with dot) will be replaced by the selected text, if any
-        - a {parameter} (not dot) will become the selected text AFTER insertion of the snippet
-        The snippet text can also be replace by a javascript function, so any manipulation
-        of the textarea is possible.
-
-Snippet Event :
-
-        Fires an event back to the invoking Object (Wiki.Edit in our case)
-        Example:
-            smartpairs: { event: 'config' }
-
-Snippet dialog:
-
-        Snippet dialog carry the name of the command.
-        (btw -- you do use unique names, do you?)
-        - <dialog-name>: [ Dialog.SubClass, {dialog-parameters, event-handlers} ]
-        - <dialog-name>: "dialog initialization string"
-          This is a short notation for Dialog.Selection, or..
-          [Selection, "put here your dialog initialization string"]
-
-        The Dialog Classes are subclass of Dialog. (eg. Dialog.Selection)
-
-
-Examples:
-
-    bold: '__{.bold}__'
-    bold: { snippet: '__{.bold}__' }
-
-    toc: { snippet: '\n[{TableOfContents}]\n' }
-
-    newline: {
-        key:'shift+enter',
-        snippet: '\\\\\n'
-    }
-    br: { synonym: 'newline' }
-
-
-    acl: {
-        nscope: { "[{" : "}]" },
-        snippet: "[{ALLOW {permission} {principal}  }]"
-     },
-     permission: {
-        scope: { "[{ALLOW" : "}]" },
-        suggest: 'ALLOW\s+(\w+)',
-        permission: "view|edit|delete"  //selection dialog
-     },
-     principal: {
-        scope: { "[{ALLOW" : "}]" },
-        suggest: 'ALLOW\s+\w+\s+(\w+)',
-        principals: [Dialog.Selection, {
-             onOpen: function(){ this.setBody( AJAX-request list of principals ); }
-        ]
-     },
-
-    link: {
-        key:'l',
-        scope: { '[':']' , '[':'\n' },
-        nscope: { '[{':'\n', '[[','\n' },
-        snippet: '[{.description} | {pagenameOrUrl} | linkAttributes ] ",
-        commandIdentifier:'createlink'
-    },
-    linkDlg: {
-        scope: { '[':']' , '[':'\n' },
-        //match [link] or [link,  do not match [{, [[
-        //match '[' + 'any char except \n, [, { or ]' at end of the string
-        suggest: '|?([^\\n\\|\\]\\[\\{]+)',
-        linkDlg: [Dialog.Link, {
-            onOpen: function(){
-                AJAX-retrieval of link suggestions
-            }
-         }]
-        ****
-            suggest: function(txta, caret){
-                //match [link] or [link,  do not match [{, [[
-                //match '[' + 'any char except \n, [, { or ]' at end of the string
-                var result = txta.getFromStart().match( /\[([^\[\{\]\n\r]*)$/ ),
-                    link;
-
-                if( result ){
-                    link = result[1].split('|').getLast(); //exclude "text|" prefix
-                    result = {
-                        start: caret.start - link.length ,
-                        //if no input yet, then get list attachments of this wikipage
-                        match: link,
-                        tail: txta.slice( caret.start ).search( /[\n\r\]]/ )
-                    };
-                }
-                return result;
-            },
-        ****
-    }
-    linkAttributes: {
-        scope: { '|':']'},
-        suggest: ...,
-        linkAttributes: 'class='', newpage ....'
-    }
-
 */
 
 Wiki.Snips = {
@@ -191,12 +50,12 @@ Wiki.Snips = {
         redo: { key: "y", event: "redo" },
 
         // Configuration commands
+        wysiwyg: { event: 'config' },
         smartpairs: { event: 'config' },
         livepreview: { event: 'config' },
         autosuggest: { event: 'config' },
         tabcompletion: { event: 'config' },
         previewcolumn: { event: 'config' },
-        wysiwyg: { event: 'config' },
 
 
         // Simple shortcuts
@@ -206,33 +65,47 @@ Wiki.Snips = {
         },
         hr: "\n----\n",
         lorem: "This is just some sample. Don’t even bother reading it; you will just waste your time. Why do you keep reading? Do I have to use Lorem Ipsum to stop you? OK, here goes: Lorem ipsum dolor sit amet, consectetur adipi sicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Still reading? Gosh, you’re impossible. I’ll stop here to spare you.",
-        Lorem: { synonym: "lorem" },
+        Lorem: { alias: "lorem" },
 
 
         // simple inline tab completion commands
-        bold:   { key: "b", snippet: "__{bold}__ " },
-        italic: { key: "i", snippet: "''{italic}'' " },
+        bold:   { key: "b", snippet: "__{bold}__" },
+        italic: { key: "i", snippet: "''{italic}''" },
 
-        mono:   { key: "m", snippet: "\\{\\{{monospaced text}}} " },
+        mono:   { key: "m", snippet: "{{{monospaced text}}} " },
         sub:    "%%sub {subscript text}/% ",
         sup:    "%%sup {superscript text}/% ",
         strike: "%%strike {strikethrough text}/% ",
 
         // simple block tab completion commands
-        quote:  "\n%%quote \n{Quoted text}\n/%\n",
-        dl:     "\n;{term}:{definition-text} ",
-        pre:    "\n\\{\\{\\{\n{some preformatted block}\n}}}\n",
-        code:   "\n%%prettify \n\\{\\{\\{\n{/* some code block */}\n}}}\n/%\n",
+        quote:  "\n%%quote\n{Quoted text}\n/%\n",
+        dl:     "\n;{term}:definition-text ",
+        pre:    "\n{{{\n{some preformatted block}\n}}}\n",
+        code:   "\n%%prettify \n{{{\n{/* some code block */}\n}}}\n/%\n",
         table:  "\n||{heading-1} ||heading-2\n|cell11     |cell12\n|cell21     |cell22\n",
-        t: { synonym: "table" },
+        t: { alias: "table" },
 
-        me: { alias: 'sign'},
+        me: { alias: "sign"},
         sign: function(){
             var name = Wiki.UserName || 'UserName';
             return "\n\\\\ &mdash;" + name + ", "+ new Date().toISOString() + "\\\\ \n";
         },
 
-        date: function(k) {
+        hDlg: {
+            suggest: { pfx:"(^|\n)([!]{1,3})$", match:"^([!]{1,3})(?:[^!])"},
+            hDlg: [Dialog.Selection, {
+                match: "=",  //exact match
+                body: {
+                    "!!!": "<span style='font-size:30px;xline-height:1;'>Header</span>",
+                    "!!": "<span style='font-size:24px;xline-height:30px;'>Title</span>",
+                    "!": "<span style='font-size:18px;xline-height:30px;'>Sub-title</span>",
+                    "{text}": "Normal Paragraph"
+                }
+            }]
+        },
+
+        now: { alias: "date" },
+        date: function( ){
             return new Date().toISOString()+' ';
             //return "[{Date value='" + d.toISOString() + "' }]"
             //return "[{Date " + d.toISOString() + " }]"
@@ -243,12 +116,10 @@ Wiki.Snips = {
                 "%%(":")",
                 "%%tabbedSection":"/%"
             },
-            snippet:"%%tabbedSection \n%%tab-{tabTitle1}\n{tab content 1}\n/%\n%%tab-{tabTitle2}\n{tab content 2}\n/%\n/%\n "
+            snippet:"%%tabbedSection \n%%tab-{tabTitle1}\ntab content 1\n/%\n%%tab-tabTitle2\ntab content 2\n/%\n/%\n "
         },
 
-
-
-        img: "\n[{Image src='img.jpg' width='400px' height='300px' align='{left}' }]\n ",
+        img: "\n[{Image src='{img.jpg}' width='400px' height='300px' align='left' }]\n ",
 
         imgSrcDlg:{
             scope: { "[{Image":"}]" },
@@ -258,16 +129,13 @@ Wiki.Snips = {
                 caption: "Image Source",
                 onOpen: function( dialog ){
 
-                    var //dialog = this,
-                        key = dialog.getValue();
+                    var key = dialog.getValue();
 
                     if( !key || (key.trim()=='') ){ key = Wiki.PageName + '/'; }
 
-                    //console.log('json lookup for '+key);
-             	   	//Wiki.ajaxJsonCall("/search/suggestions",[key,30], function(result) {
                     Wiki.jsonrpc("/search/suggestions", [key, 30], function( result ){
 
-                        console.log('jsonrpc result', result );
+                        //console.log('jsonrpc result', result );
                         if( result[1] /*length>1*/ ){
 
                             dialog.setBody( result );
@@ -282,18 +150,17 @@ Wiki.Snips = {
             }]
         },
 
-/*
         imgAlignDlg: {
             scope: { "[{Image":"}]" },
             suggest: "align='\\w+'",
             imgAlignDlg: "left|center|right"
         },
-*/
 
         font: {
-            nScope: { "%%(":")", },
-            snippet: "%%(font-family:{font};) body /% ",
+            nScope: { "%%(":")" },
+            snippet: "%%(font-family:{font};) body /% "
         },
+
         fontDlg: {
             scope: { "%%(":")" },
             suggest: { pfx: "font-family:([^;\\)\\n\\r]*)$", match:"^([^;\\)\\n\\r]*)" },
@@ -308,14 +175,13 @@ Wiki.Snips = {
             colorDlg: [ Dialog.Color , {} ]
          },
 
-        symbol: { synonym: "chars" },
+        symbol: { alias: "chars" },
         chars: "&entity;",
 
         charsDlg: {
             suggest: '&\\w+;?',
             charsDlg: [ Dialog.Chars, { caption:"Special Chars".localize() }]
         },
-
 
         icon: "%%icon-{}search /%",
         iconDlg: {
@@ -375,7 +241,7 @@ Wiki.Snips = {
                     success:"<span class='success'>success</span>",
                     info:"<span class='info'>info</span>",
                     warning:"<span class='warning'>warning</span>",
-                    error:"<span class='error'>error</span>",
+                    error:"<span class='error'>error</span>"
                 }
             }]
         },
@@ -414,10 +280,9 @@ Wiki.Snips = {
             }]
         },
 
-
         cssDlg: {
             scope: { "%%":"/%" },
-            suggest: {pfx:"%%([\\da-zA-Z-_]*)$", match:"^[\\da-zA-Z-_]*"},
+            suggest: {pfx:"%%([\\da-zA-Z-_]*)$", match:"^[\\da-zA-Z-_]+"},
             cssDlg: {
                 "(css:value;)":"any css definitions",
                 "default":"contextual backgrounds",
@@ -448,13 +313,6 @@ Wiki.Snips = {
                 tabs:"Tabs",
                 viewer: "Media Viewer"
 
-//inline styles
-                //bold
-                //italic
-//                small:"<span class='small'>Smaller</span> text",
-//                sub:"2<span class='sub'>8</span> Sub-Script",
-//                sup:"2<span class='sup'>3</span> Super-Script",
-//                strike:"<span class='strike'>strikethrough</span>",
 //block styles
 //                quote:"<div class='quote'>Quoted paragraph</div>",
 //                lead:"<span class='lead'>LEAD text</span>",
@@ -465,9 +323,8 @@ Wiki.Snips = {
 
         link: {
             key:'l',
-            commandIdentifier:'createlink',
-            //snippet: "[{description|}{pagename or url}|{attributes}] ",
-            snippet: "[{pagename or url}] "
+            wysiwyg:'createlink',
+            snippet: "[description|{pagename or url}|options] "
         },
 
 
@@ -478,12 +335,12 @@ Wiki.Snips = {
             },
             linkPart3: {
                 //"class='category'": "Category link",
-                "class='viewer'": "View Linked content",
-                "class='slimbox'": "Add Slimbox link <span class='icon-slimbox'/> ",
-                "class='slimbox-link'": "Replace by Slimbox Link <span class='icon-slimbox'/> ",
+                "class='viewer'": "Embedded Viewer",
+                "class='slimbox'": "Add a Slimbox Link <span class='icon-slimbox'/> ",
+                "class='slimbox-link'": "Change to Slimbox Link <span class='icon-slimbox'/> ",
                 "divide1": "",
-                "class='btn btn-primary'": "Button Style",
-                "class='btn btn-xs btn-primary'": "Small Button Style",
+                "class='btn btn-primary'": "Button style (normal)",
+                "class='btn btn-xs btn-primary'": "Button style (small)",
                 "divide2": "",
                 "target='_blank'": "Open link in new tab"
             }
@@ -496,8 +353,8 @@ Wiki.Snips = {
             //match '[' + 'any char except \n, [, { or ]' at end of the string
             //note: do not include the [ in the matched string
             suggest: {
-                pfx: "\\[(?:[^\\|\\]]+\\|)?([^\\|\\[\\{\\]\\n\\r]*)$",
-                match: "^([^\\|\\[\\{\\]\\n\\r]*)(?:\\]|\\|)"
+                pfx: "\\[(?:[^\\|\\]]+\\|)?([^\\|\\[{\\]\\n\\r]*)$",
+                match: "^([^\\|\\[{\\]\\n\\r]*)(?:\\]|\\|)"
             },
 
             linkDlg: [ Dialog.Selection, {
@@ -534,14 +391,13 @@ Wiki.Snips = {
             variableDlg: "applicationname|baseurl|encoding|inlinedimages|interwikilinks|jspwikiversion|loginstatus|uptime|pagename|pageprovider|pageproviderdescription|page-styles|requestcontext|totalpages|username"
         },
 
-
         // Page access rights
-        allow: { synonym: "acl" },
-        acl: "\n[{ALLOW {permission} {principal} }]\n",
+        allow: { alias: "acl" },
+        acl: "\n[{ALLOW {permission} principal }]\n",
 
         permission: {
             scope:{ '[{ALLOW':'}]'},
-            suggest: { pfx:"ALLOW (\\w+)$", match:"^\\w+" },
+            suggest: { pfx:"ALLOW (\\w*)$", match:"^\\w+" },
             permission: [Dialog.Selection, {
                 cssClass:".dialog-horizontal",
                 body:"view|edit|modify|comment|rename|upload|delete"
@@ -579,22 +435,21 @@ Wiki.Snips = {
 
         toc: {
             nScope: { "[{":"}]" },
-            snippet:"\n[\\{TableOfContents }]\n"
+            snippet:"\n[~{TableOfContents }]\n"
         },
 
         tocParams: {
             scope:{ '[{TableOfContents':'}]'},
             suggest: "\\s",
             tocParams: [Dialog.Selection, {
-                caption: "TOC additional parameters",
+                caption: "TOC options",
                 body:{
-                " title='Page contents' ":"title",
+                " title='{Page contents}' ":"title",
                 " numbered='true' ":"numbered",
-                " prefix='Chap. ' ":"chapter prefix"
+                " prefix='{Chap. }' ":"chapter prefix"
                 }
             }]
         },
-
 
         plugin: "\n[{{plugin}}]\n",
 
@@ -602,18 +457,18 @@ Wiki.Snips = {
             //match [{plugin}]  do not match [[{
             //match '[{' + 'any char except \n, or }]' at end of the string
             //note: do not include the [ in the matched string
-            //snippet: "\n[{{plugin}}]\n",
             suggest: {
-                pfx: "(^|[^\\[])\\[\\{([^\\[\\]\\n\\r]*)(?:\\|\\])?$",
+                pfx: "(^|[^\\[])\\[{(\\w*)(?:\\|\\])?$",
+                //pfx: "(^|[^\\[])\\[{([^\\[\\]\\n\\r]*)(?:\\|\\])?$",
                 match: "^([^\\[\\]\\n\\r]*)\\}\\]"
             },
             pluginDlg: [ Dialog.Selection, {
                 caption: "Plugin",
                 body: {
-                "ALLOW permission principal ": "Page Access Rights <span class='icon-unlock-alt' />",
-                "SET name='value'":"Set a Wiki variable",
-                "$varname":"Get a Wiki variable",
-                "If name='value' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
+                "ALLOW {permission} principal ": "Page Access Rights <span class='icon-unlock-alt' />",
+                "SET {name}='value'":"Set a Wiki variable",
+                "${varname}":"Get a Wiki variable",
+                "If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
                 "SET alias='${pagename}'":"Page Alias",
                 "SET sidebar='off'":"Collapse Sidebar",
                 //"Table":"Advanced Tables",
@@ -631,7 +486,7 @@ Wiki.Snips = {
                 "RecentChangesPlugin":"Displays the recent changed pages",
                 "ReferredPagesPlugin page='{pagename}' type='local|external|attachment' depth='1..8' include='regexp' exclude='regexp'":"Incoming Links (referred pages)",
                 "ReferringPagesPlugin page='{pagename}' separator=',' include='regexp' exclude='regexp'":"Outgoing Links (referring pages)",
-                "Search query='Janne' max='10'":"Insert a Search query",
+                "Search query='{Janne}' max='10'":"Insert a Search query",
                 "TableOfContents ":"Table Of Contents ",
                 "UndefinedPagesPlugin":"List pages that are missing",
                 "UnusedPagesPlugin":"List pages that have been orphaned",
@@ -644,67 +499,68 @@ Wiki.Snips = {
         },
 
         selectBlock: {
-            suggest: function(workarea, caret, fromStart){
+            suggest: function(workarea, caret /*, fromStart*/){
 
-                var cmd;
+                var selection = workarea.getSelection();
 
-                if(!caret.thin
-                && workarea.isCaretAtStartOfLine()
-                && workarea.isCaretAtEndOfLine() ){
+                if( !caret.thin
+                  && workarea.isCaretAtStartOfLine()
+                  && workarea.isCaretAtEndOfLine()
+                  && selection.slice(0,-1).indexOf("\n") > -1 ){
 
-                     console.log("got block selection" );
-                     return { pfx:"xx", match:workarea.getSelection() }
+                     //console.log("got block selection" );
+                     return { pfx:"", match:workarea.getSelection() }
                 }
             },
 
             selectBlock: [Dialog.Selection, {
                 cssClass: ".dialog-horizontal",
                 body:{
-                    "\\{\\{\\{\n{code block}\n}}}": "<span style='font-family:monospace;'>code</span>",
-                    "%%prettify\n\\{\\{\\{\n{pretiffied code block}\n}}}/%": "<span class='pun' style='font-family:monospace;'>prettify</span>"
+                    "\n{{{\n{code block}\n}}}\n": "<span style='font-family:monospace;'>code</span>",
+                    "\n%%scrollable\n{{{\n{code block}\n}}}/%\n": "<span style='font-family:monospace;'>scrollable-code</span>",
+                    "\n%%prettify\n{{{\n{pretiffied code block}\n}}}/%\n": "<span class='pun' style='font-family:monospace;'>prettify</span>"
                 }
             }]
         },
 
         selectStartOfLine: {
-            suggest: function(workarea, caret, fromStart){
+            suggest: function(workarea, caret/*, fromStart*/ ){
 
-                var cmd;
+                var selection = workarea.getSelection();
 
-                if(!caret.thin
-                && workarea.isCaretAtStartOfLine()
-                && !workarea.isCaretAtEndOfLine() ){
+                if( !caret.thin
+                  && workarea.isCaretAtStartOfLine()
+                  && workarea.isCaretAtEndOfLine() ){
 
-                     console.log("got start of line selection", caret);
-                     return { pfx:"xx", match:workarea.getSelection() }
+                     //console.log("got start of line selection", caret);
+                     return { pfx:"", match:selection }
                 }
             },
 
             selectStartOfLine: [Dialog.Selection, {
                 cssClass: ".dialog-horizontal",
                 body:{
-                    "!!!{header}": "H1",
-                    "!!{header}": "H2",
-                    "!{header}": "H3",
+                    "\n!!!{header}": "H1",
+                    "\n!!{header}": "H2",
+                    "\n!{header}": "H3",
                     "__{bold}__": "<b>bold</b>",
                     "''{italic}''": "<i>italic</i>",
-                    "\\{\\{{monospaced text}}} ": "<tt>mono</tt>",
+                    "{{{monospaced text}}} ": "<tt>mono</tt>",
+                    "{{{{code}}}}\n": "<span style='font-family:monospace;'>code</span>",
                     "[description|{link}|options]": "<span class='icon-link'/>",
-                    "[{Image src='${image.jpg}'}]": "<span class='icon-picture'/>"
+                    "[{Image src='${image.jpg}'}]": "<span class='icon-picture'/>",
+                    "\n[{{plugin}}]\n": "<span class='icon-puzzle-piece'></span>"
                 }
             }]
         },
         //Commands triggered by the selection of substrings:
         //    lowest priority vs. other snippets
         selectInline: {
-            suggest: function(workarea, caret, fromStart){
-
-                var cmd;
+            suggest: function(workarea, caret/*, fromStart*/ ){
 
                 if(!caret.thin){
-
-                     console.log("got selection", caret);
-                     return { pfx:"xx", match:workarea.getSelection() }
+                     //console.log("got selection", caret);
+                     return { pfx:"", match:workarea.getSelection() }
                 }
             },
 
@@ -713,13 +569,13 @@ Wiki.Snips = {
                 body:{
                     "__{bold}__":"<b>bold</b>",
                     "''{italic}''":"<i>italic</i>",
-                    "\\{\\{{monospaced text}}} ":"<tt>mono</tt>",
-                    "[description|{link}|options]":"<span class='icon-link'/>",
-                    "[{Image src='${image.jpg}'}]":"<span class='icon-picture'/>"
+                    "{{{monospaced text}}}":"<tt>mono</tt>",
+                    "{{{{code}}}}\n": "<span style='font-family:monospace;'>code</span>",
+                    "[description|{pagename or url}|options]":"<span class='icon-link'/>",
+                    "[{Image src='{image.jpg}'}]":"<span class='icon-picture'/>"
                 }
             }]
         }
-
 
 }
 
