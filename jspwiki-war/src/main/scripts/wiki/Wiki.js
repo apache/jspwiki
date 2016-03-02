@@ -174,17 +174,16 @@ var Wiki = {
         //Modernizr.addTest('flexbox', testAllProps('flexBasis', '1px', true));
         var hasNativeFlex = document.createElement('b');
 
-        //hasNativeFlex.style.cssText = "flex-basis:1px;";
-        //if(!!hasNativeFlex.style.length){
-        //   console.log("i can flex");
-        //}
-        //
-
-        hasNativeFlex.style.display = "flex";
-        if( hasNativeFlex.style.display == "flex" ){
-            //console.log("i can flex");
-            body.addClass("can-flex");
+        hasNativeFlex.style.cssText = "flex-basis:1px;";
+        if(!!hasNativeFlex.style.length){
+           console.log("i can flex");
         };
+
+        //hasNativeFlex.style.display = "flex";
+        //if( hasNativeFlex.style.display == "flex" ){
+            //console.log("i can flex");
+        //    body.addClass("can-flex");
+        //};
 
     },
 

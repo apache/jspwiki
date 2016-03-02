@@ -1,5 +1,19 @@
 2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.10.3-svn-2  Few more small fixes on the HADDOCK template 
+
+       * Added 2 new inter wiki references :
+         [Raw:MainPage] for displaying the raw wikimarkup of a page 
+         [Reader:MainPage] to display a simplified reader view of a page 
+             (no left menu, layout fit for printing) 
+         
+       * Fixing JS error on <IE11 : missing Array.from() (compatibility with mootools 1.5.1)
+
+       * Fix for flexbox feature test  (IE)
+      
+       
+2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.3-svn-1  Various small fixes on the HADDOCK template 
 
        * Fix %%viewer "Mixed content" error  (avoid serving http content via https )

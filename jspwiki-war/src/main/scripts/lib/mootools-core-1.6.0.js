@@ -1,4 +1,4 @@
-/* MooTools: the javascript framework. license: MIT-style license. copyright: Copyright (c) 2006-2016 [Valerio Proietti](http://mad4milk.net/).*/ 
+/* MooTools: the javascript framework. license: MIT-style license. copyright: Copyright (c) 2006-2016 [Valerio Proietti](http://mad4milk.net/).*/
 /*!
 Web Build: http://mootools.net/core/builder/e426a9ae7167c5807b173d5deff673fc
 */
@@ -147,6 +147,9 @@ String.convert = function(item){
 	return item + '';
 };
 
+/*<1.5compat>*/
+Array.from = Array.convert;
+/*</1.5compat>*/
 
 
 Function.from = Function.convert;
@@ -183,7 +186,7 @@ var Type = this.Type = function(name, object){
 			object.prototype.$family = (function(){
 				return lower;
 			}).hide();
-			
+
 		}
 	}
 
@@ -1202,7 +1205,7 @@ this.Events = new Class({
 	addEvent: function(type, fn, internal){
 		type = removeOn(type);
 
-		
+
 
 		this.$events[type] = (this.$events[type] || []).include(fn);
 		if (internal) fn.internal = true;
