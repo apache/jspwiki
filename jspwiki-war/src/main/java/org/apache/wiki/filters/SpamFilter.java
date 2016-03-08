@@ -81,6 +81,7 @@ import net.sf.akismet.Akismet;
  *     that page.  Default is "SpamFilterWordList".
  *    <li>IPlist - Page name where the IP regexps are found.  Use [{SET ips='regexp list separated with spaces'}] on
  *     that page.  Default is "SpamFilterIPList".
+ *    <li>maxpagenamelength - Maximum page name length. Default is 100.
  *    <li>blacklist - The name of an attachment containing the list of spam patterns, one per line. Default is
  *        "SpamFilterWordList/blacklist.txt"</li>
  *    <li>errorpage - The page to which the user is redirected.  Has a special variable $msg which states the reason. Default is "RejectedMessage".
@@ -114,6 +115,7 @@ public class SpamFilter extends BasicPageFilter {
     private static final String REASON_TOO_MANY_URLS = "TooManyUrls";
     private static final String REASON_SIMILAR_MODIFICATIONS = "SimilarModifications";
     private static final String REASON_TOO_MANY_MODIFICATIONS = "TooManyModifications";
+    private static final String REASON_PAGENAME_TOO_LONG = "PageNameTooLong";
     private static final String REASON_UTF8_TRAP = "UTF8Trap";
 
     private static final String LISTVAR = "spamwords";
@@ -125,7 +127,11 @@ public class SpamFilter extends BasicPageFilter {
 
     /** The filter property name for specifying the page which contains the list of IPs to ban.
      *  Value is <tt>{@value}</tt>. */
-    public static final String  PROP_IPLIST              = "IPlist";
+    public static final String  PROP_IPLIST                = "IPlist";
+
+    /** The filter property name for specifying the maximum page name length.
+     *  Value is <tt>{@value}</tt>. */
+    public static final String  PROP_MAX_PAGENAME_LENGTH   = "maxpagenamelength";
 
     /** The filter property name for the page to which you are directed if Herb rejects your
      *  edit.  Value is <tt>{@value}</tt>. */
@@ -173,6 +179,7 @@ public class SpamFilter extends BasicPageFilter {
 
     private String          m_forbiddenWordsPage = "SpamFilterWordList";
     private String          m_forbiddenIPsPage   = "SpamFilterIPList";
+    private String          m_pageNameMaxLength  = "100";
     private String          m_errorPage          = "RejectedMessage";
     private String          m_blacklist          = "SpamFilterWordList/blacklist.txt";
 
@@ -244,6 +251,7 @@ public class SpamFilter extends BasicPageFilter {
     public void initialize( WikiEngine engine, Properties properties ) {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST, m_forbiddenWordsPage );
         m_forbiddenIPsPage = properties.getProperty( PROP_IPLIST, m_forbiddenIPsPage);
+        m_pageNameMaxLength = properties.getProperty( PROP_MAX_PAGENAME_LENGTH, m_pageNameMaxLength);
         m_errorPage = properties.getProperty( PROP_ERRORPAGE, m_errorPage );
         m_limitSinglePageChanges = TextUtil.getIntegerProperty( properties,
                                                                 PROP_PAGECHANGES,
@@ -327,6 +335,7 @@ public class SpamFilter extends BasicPageFilter {
             checkSinglePageChange( context, content, change );
             checkIPList( context );
             checkPatternList( context, content, change );
+            checkPageName( context, content, change);
         }
 
         if( !m_stopAtFirstMatch ) {
@@ -339,6 +348,23 @@ public class SpamFilter extends BasicPageFilter {
 
         log( context, ACCEPT, "-", change.toString() );
         return content;
+    }
+
+    private void checkPageName(WikiContext context, String content, Change change) throws RedirectException {
+        WikiPage page = context.getPage();
+        String pageName = page.getName();
+        int maxlength = Integer.valueOf(m_pageNameMaxLength);
+        if ( pageName.length() > maxlength) {
+            //
+            //  Spam filter has a match.
+            //
+
+            String uid = log( context, REJECT, REASON_PAGENAME_TOO_LONG + "(" + m_pageNameMaxLength + ")" , pageName);
+
+            log.info("SPAM:PageNameTooLong (" + uid + "). The length of the page name is too large (" + pageName.length() + " , limit is " + m_pageNameMaxLength + ")");
+            checkStrategy( context, REASON_PAGENAME_TOO_LONG, "Herb says '" + pageName + "' is a bad pageName and I trust Herb! (Incident code " + uid + ")" );
+
+        }
     }
 
     private void checkStrategy( WikiContext context, String error, String message ) throws RedirectException {
@@ -819,7 +845,7 @@ public class SpamFilter extends BasicPageFilter {
                 //
                 String uid = log( context, REJECT, REASON_IP_BANNED_PERMANENTLY + "(" + p.getPattern() + ")", remoteIP );
 
-                log.info( "SPAM:Regexp (" + uid + "). remoteIP matches the IP filter '" + p.getPattern() + "'" );
+                log.info( "SPAM:IPBanList (" + uid + "). remoteIP matches the IP filter '" + p.getPattern() + "'" );
                 checkStrategy( context, REASON_IP_BANNED_PERMANENTLY, "Herb says '" + p.getPattern() + "' is a banned IP and I trust Herb! (Incident code " + uid + ")" );
             }
         }

@@ -1,3 +1,9 @@
+2016-03-08  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-svn-3
+
+       * Added MaxPageNameLengtj support in SpamFilter
+
 2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-2  Few more small fixes on the HADDOCK template 
