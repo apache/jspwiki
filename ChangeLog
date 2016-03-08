@@ -2,7 +2,7 @@
 
        * 2.10.3-svn-3
 
-       * Added MaxPageNameLengtj support in SpamFilter
+       * Added MaxPageNameLength support in SpamFilter
 
 2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
 
