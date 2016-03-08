@@ -1,3 +1,16 @@
+2016-03-08  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-4  Few more small fixes related to the HADDOCK template 
+       
+       * Few fixes on well formed HTML (SearchBox.jsp, PageInfo.jsp, Nav.jsp)
+       
+       * Fixed some missing localizations in Nav.jsp. 
+
+       * Various improvements of the JSPWiki Weblog implementation and css styling.
+
+       * Only show scrollbars on prettified blocks when appropriate (WINDOWS issues)
+       
+
 2016-03-08  Harry Metske (metskem@apache.org)
 
        * 2.10.3-svn-3

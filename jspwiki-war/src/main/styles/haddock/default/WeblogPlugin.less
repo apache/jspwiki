@@ -24,47 +24,64 @@ Style: WeblogPlugins
 
 DOM structure:
 (start code)
+    div.weblog
+        div.weblogentry
+            div.weblogentryheading   time-stamp
+            div.weblogentrytitle     title
+            div.weblogentrybody
+            div.weblogentryfooter
+                By
+                a[href]  author
+                a[href]  Permalink
+                a[href]  comments-link
 (end)
 */
 
-a[href*="NewBlogEntry.jsp"] { .btn; .btn-primary; }
+//Create new blog entry
+a[href*="NewBlogEntry.jsp"] { .btn; .btn-xs; .btn-success; }
 
-
+//Weblog entries
 .weblog {
-    margin:0 2em;
     clear:both;
 }
 .weblogentry {
-    margin:0.5em 0;
+    margin:(@line-height-computed / 2) 0;
 }
 .weblogentryheading {
-    padding:0.25em 0.5em;
-    font-size:90%;
-    font-family: @wiki-logo-font-family;
+    padding:@padding-base-vertical @padding-base-horizontal;
+    .small;
     float:right;
+    .badge;
 }
 .weblogentrytitle {
-    margin-bottom:.5em;
-    padding:0.25em 0.5em;
-    font-size:150%;
-    font-family: @wiki-logo-font-family;
-    line-height:1.5;
-    border-bottom:1px solid @wiki-sidebar-bg;
+    .h1;
+    margin-bottom:(@line-height-computed / 2);
+    border-bottom: 2px solid @pre-bg;
+
+    .hashlink {  .hidden;  }
 }
 .weblogentrybody {
-    margin-left:0.5em;
+    .p;
+    //padding:@padding-base-vertical @padding-base-horizontal;
     clear:both;
 }
 .weblogentryfooter {
-    font-size:90%;
-    padding:0.25em 0.5em;
-    //border-bottom:3px solid @pre-bg;
+    .small;
+    padding:@padding-base-vertical @padding-base-horizontal;
+    background-color:@pre-bg;
     clear:both;
+
+    a {
+        .btn;
+        .btn-xs;
+    }
+    a[href*="_blogentry_"] { .btn-primary;  }
+    a[href*="_comments_"] { .btn-success;  }
+
 }
-/*.weblogarchive {
-}
-.weblogarchive ul {
-}*/
+
+//.weblogarchive {  }
+//.weblogarchive ul {  }
 .weblogarchive li {
     margin-left:1em;
     display:block;
@@ -79,16 +96,33 @@ a[href*="NewBlogEntry.jsp"] { .btn; .btn-primary; }
     content:" AD";
 }
 
+/*
+DOM Structure of page with name <blog-name>_blogentry_<timestamp>-SEQ#
+
+div.weblogcommenstitle
+div.weblogcomments
+    div.comment-template
+    p
+    p
+        --
+        a.outlink
+        , timestamp
+    p
+    hr
+    <repeat for each comment>
+
+*/
 .weblogcommentstitle {
-    background:@pre-bg;
-    margin:1em 0.5em 0 0.5em;
-    padding:0.5em;
-    font-weight:bold;
-    font-size:120%;
-    line-height:1.1;
+    .h4;
+    margin:(@line-height-computed/2) 0;
+    clear:both;
 }
+
 .weblogcomments {
-    background:#f9f9f9/*#COMMENT#*/;
-    margin:0 0.5em 1em 0.5em;
-    padding:1em;
+    padding-left: 2em;
+    .comment-template {
+    }
+    > p:nth-of-type(3n+2) {
+        .weblogentryfooter;
+    }
 }

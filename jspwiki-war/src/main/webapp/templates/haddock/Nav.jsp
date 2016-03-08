@@ -82,15 +82,15 @@
       <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists>
     </wiki:Link>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
-      <li class="dropdown-header">This is version <span class="badge"><wiki:PageVersion /></span></li>
-      <li class="dropdown-header">Last Changed on:</span></li>
+      <li class="dropdown-header"><fmt:message key="info.version"/> : <span class="badge"><wiki:PageVersion /></span></li>
+      <li class="dropdown-header"><fmt:message key="info.date"/> : </li>
       <wiki:CheckVersion mode="latest">
         <li><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
       </wiki:CheckVersion>
       <wiki:CheckVersion mode="notlatest">
         <li><wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
       </wiki:CheckVersion>
-      <li class="dropdown-header">By:</span></li>
+      <li class="dropdown-header"><fmt:message key="info.author"/> : </li>
       <li>
         <%-- wiki:Author sometimes returns a link(ok) or a plain text, we always need a link! --%>
         <c:set var="author"><wiki:Author/></c:set>
@@ -198,13 +198,13 @@
           <wiki:CheckVersion mode="latest">
             <wiki:Link cssClass="reader-view">
               <wiki:Param name='skin' value='reader'/>
-              <fmt:message key='actions.showreaderview' /><span class="icon-leanpub" />
+              <fmt:message key='actions.showreaderview' /><span class="icon-leanpub" ></span>
             </wiki:Link>
           </wiki:CheckVersion>
           <wiki:CheckVersion mode="notlatest">
             <wiki:Link cssClass="reader-view" version="${param.version}">
               <wiki:Param name='skin' value='reader'/>
-              <fmt:message key='actions.showreaderview' /><span class="icon-leanpub" />
+              <fmt:message key='actions.showreaderview' /><span class="icon-leanpub" ></span>
             </wiki:Link>
           </wiki:CheckVersion>
         </li>
@@ -231,7 +231,7 @@
               <fmt:message key="actions.comment" />
             </wiki:Link>
             --%>
-            <wiki:LinkToParent><fmt:message key="actions.comment" /> To Parent</wiki:LinkToParent>
+            <wiki:LinkToParent><fmt:message key="actions.addcommenttoparent" /></wiki:LinkToParent>
 	      </li>
         </wiki:PageType>
       </wiki:Permission>

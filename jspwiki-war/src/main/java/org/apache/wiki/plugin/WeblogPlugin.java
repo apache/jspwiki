@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -118,7 +118,7 @@ public class WeblogPlugin
 
     /**
      *  Create an entry name based on the blogname, a date, and an entry number.
-     *  
+     *
      *  @param pageName Name of the blog
      *  @param date The date (in ddMMyy format)
      *  @param entryNum The entry number.
@@ -133,7 +133,7 @@ public class WeblogPlugin
 
     /**
      *  Return just the basename for entires without date and entry numebr.
-     *  
+     *
      *  @param pageName The name of the blog.
      *  @return A formatted name.
      */
@@ -144,7 +144,7 @@ public class WeblogPlugin
 
     /**
      *  Returns the entry page without the entry number.
-     *  
+     *
      *  @param pageName Blog name.
      *  @param date The date.
      *  @return A base name for the blog entries.
@@ -166,7 +166,7 @@ public class WeblogPlugin
         int        numDays = DEFAULT_DAYS;
         WikiEngine engine = context.getEngine();
         AuthorizationManager mgr = engine.getAuthorizationManager();
-        
+
         //
         //  Parse parameters.
         //
@@ -274,12 +274,12 @@ public class WeblogPlugin
             Collections.sort( blogEntries, new PageDateComparator() );
 
             sb.append("<div class=\"weblog\">\n");
-            
+
             for( Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
             {
                 WikiPage p = i.next();
 
-                if( mgr.checkPermission( context.getWikiSession(), 
+                if( mgr.checkPermission( context.getWikiSession(),
                                          new PagePermission(p, PagePermission.VIEW_ACTION) ) )
                 {
                     addEntryHTML(context, entryFormat, hasComments, sb, p);
@@ -299,7 +299,7 @@ public class WeblogPlugin
 
     /**
      *  Generates HTML for an entry.
-     *  
+     *
      *  @param context
      *  @param entryFormat
      *  @param hasComments  True, if comments are enabled.
@@ -307,7 +307,7 @@ public class WeblogPlugin
      *  @param entry
      *  @throws ProviderException
      */
-    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments, StringBuilder buffer, WikiPage entry) 
+    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments, StringBuilder buffer, WikiPage entry)
         throws ProviderException
     {
         WikiEngine engine = context.getEngine();
@@ -356,7 +356,7 @@ public class WeblogPlugin
         //  Append footer
         //
         buffer.append("<div class=\"weblogentryfooter\">\n");
-            
+
         String author = entry.getAuthor();
 
         if( author != null )
@@ -387,7 +387,7 @@ public class WeblogPlugin
             //  has changed.
             //
             buffer.append( "&nbsp;&nbsp;" );
-            buffer.append( "<a target=\"_blank\" href=\""+
+            buffer.append( "<a href=\""+
                        entryCtx.getURL(WikiContext.COMMENT,
                                        commentPageName,
                                        "nc="+numComments)+
@@ -477,8 +477,8 @@ public class WeblogPlugin
         }
     }
 
-    /** 
-     *  Mark us as being a real weblog. 
+    /**
+     *  Mark us as being a real weblog.
      *  {@inheritDoc}
      */
     public void executeParser(PluginContent element, WikiContext context, Map<String, String> params)

@@ -40,7 +40,7 @@
       </fmt:message>
     </wiki:CheckVersion>
     <wiki:RSSImageLink mode="wiki" />
-    <a href="#top" title="<fmt:message key='actions.gototop'/>" class="btn">Top<span class="caret-up"><span></a>
+    <a href="#top" title="<fmt:message key='actions.gototop'/>" class="btn">Top<span class="caret-up"></span></a>
   </wiki:PageExists>
 
   <wiki:NoSuchPage><fmt:message key="actions.notcreated"/></wiki:NoSuchPage>

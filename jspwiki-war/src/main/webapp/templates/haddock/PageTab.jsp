@@ -17,29 +17,19 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%--
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %><%--CHECK why is this needed --%>
+
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-	WikiContext c = WikiContext.findContext( pageContext );
-   	WikiPage p = c.getPage();
-	String pagename = p.getName();
-    int thisVersion = p.getVersion();
 
-	/* check possible permalink (blogentry) pages */
-	String blogcommentpage="";
-	String mainblogpage="";
-	if( pagename.indexOf("_blogentry_") != -1 )
-	{
-		blogcommentpage = TextUtil.replaceString( pagename, "blogentry", "comments" );
-		mainblogpage = pagename.substring(0, pagename.indexOf("_blogentry_"));
-	}
-%>
+
 <c:choose>
 <c:when test="${param.tab == 'attach'}">
   <wiki:Include page="AttachmentTab.jsp"/>
@@ -49,77 +39,82 @@
 <%-- If the page is an older version, then offer a note and a possibility
      to restore this version as the latest one. --%>
 <wiki:CheckVersion mode="notlatest">
+  <%
+    WikiContext c = WikiContext.findContext( pageContext );
+  %>
+  <c:set var="thisVersion" value="<%= c.getPage().getVersion() %>" />
+  <c:set var="latestVersion" value="<%= c.getEngine().getPage( c.getPage().getName(), WikiProvider.LATEST_VERSION ).getVersion() %>" />
+
   <form action="<wiki:Link format='url' jsp='Wiki.jsp'/>"
         method="get"  accept-charset='UTF-8'>
 
-    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
+    <input type="hidden" name="page" value="${param.page}" />
     <div class="error center">
       <label>
       <fmt:message key="view.oldversion">
         <fmt:param>
           <%--<wiki:PageVersion/>--%>
           <select id="version" name="version" onchange="this.form.submit();" >
-<%
-   int latestVersion = c.getEngine().getPage( pagename, WikiProvider.LATEST_VERSION ).getVersion();
-
-   if( thisVersion == WikiProvider.LATEST_VERSION ) thisVersion = latestVersion; //should not happen
-     for( int i = 1; i <= latestVersion; i++)
-     {
-%>
-          <option value="<%= i %>" <%= ((i==thisVersion) ? "selected='selected'" : "") %> ><%= i %></option>
-<%
-     }
-%>
+          <c:forEach begin="1" end="${latestVersion == -1 ? thisVersion : latestVersion }" var="version">
+            <option value="${version}" ${(thisVersion==version) ? 'selected="selected"':''} >${version}</option>
+          </c:forEach>
           </select>
         </fmt:param>
       </fmt:message>
       </label>
       <div>
-      <a class="btn btn-primary" href="<wiki:Link format='url'/>">
+      <wiki:Link cssClass="btn btn-primary">
         <fmt:message key="view.backtocurrent"/>
-      </a>
-      <a class="btn btn-danger" href="<wiki:Link format='url' context='edit' version='<%= Integer.toString(thisVersion) %>'/>">
+      </wiki:Link>
+      <wiki:Link cssClass="btn btn-danger" context="edit" version="${thisVersion}">
         <fmt:message key="view.restore"/>
-      </a>
+      </wiki:Link>
       </div>
     </div>
-
   </form>
 </wiki:CheckVersion>
 
+
+<%--
+ISWEBLOG= <%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %>
+--%>
 <%-- Inserts no text if there is no page. --%>
-<%
-//  pageContext.setAttribute( "sidebar", t.listSkins(pageContext, c.getTemplate() ) );
-%>
 <wiki:InsertPage />
 
-<%-- Inserts blogcomment if appropriate
-<% if( !blogpage.equals("") ) { %>
---%>
+<%-- Inserts blogcomment if appropriate. --%>
+<c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_blogentry_')}" />
+<c:set var="blogcommentpage" value="${fn:replace(param.page,'_blogentry_','_comments_')}" />
+<c:if test="${not empty mainblogpage}">
+<wiki:PageExists page="${mainblogpage}">
 
-<% if( ! mainblogpage.equals("") ) { %>
-<wiki:PageExists page="<%= mainblogpage%>">
-
-  <% if( ! blogcommentpage.equals("") ) { %>
-  <wiki:PageExists page="<%= blogcommentpage%>">
-	<div class="weblogcommentstitle"><fmt:message key="blog.commenttitle"/></div>
-    <div class="weblogcomments"><wiki:InsertPage page="<%= blogcommentpage%>" /></div>
-  </wiki:PageExists>
-  <% }; %>
-  <div class="information">
-	<wiki:Link page="<%= mainblogpage %>"><fmt:message key="blog.backtomain"/></wiki:Link>&nbsp; &nbsp;
-	<wiki:Link context="comment" page="<%= blogcommentpage%>" ><fmt:message key="blog.addcomments"/></wiki:Link>
+  <hr />
+  <div class="pull-right">
+      <wiki:Link cssClass="btn btn-xs btn-primary"  page="${mainblogpage}" >
+         <fmt:message key="blog.backtomain"><fmt:param>${mainblogpage}</fmt:param></fmt:message>
+      </wiki:Link>
+      <wiki:Link cssClass="btn btn-xs btn-success"  context="comment" page="${blogcommentpage}" >
+        <span class="icon-plus"></span> <fmt:message key="blog.addcomments"/>
+      </wiki:Link>
   </div>
 
+  <c:if test="${not empty blogcommentpage}">
+  <wiki:PageExists page="${blogcommentpage}">
+    <div class="weblogcommentstitle clearfix">
+    <hr />
+      <fmt:message key="blog.commenttitle"/>
+    </div>
+    <div class="weblogcomments"><wiki:InsertPage page="${blogcommentpage}" /></div>
+  </wiki:PageExists>
+  </c:if>
+
 </wiki:PageExists>
-<% }; %>
+</c:if>
 
 <wiki:NoSuchPage>
   <%-- FIXME: Should also note when a wrong version has been fetched. --%>
-  <%-- FIXME: Should add .createpage class to the EditLink, to color red. Not possible with wiki:EditLink --%>
   <div class="error" >
   <fmt:message key="common.nopage">
-    <fmt:param><a class="createpage" href="<wiki:EditLink format='url'/>"><fmt:message key="common.createit"/></a></fmt:param>
+    <fmt:param><wiki:Link cssClass="createpage" context="edit"><fmt:message key="common.createit"/></wiki:Link></fmt:param>
   </fmt:message>
   </div>
 </wiki:NoSuchPage>

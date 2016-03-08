@@ -39,7 +39,7 @@
     <li class="dropdown-header">
     <button type="submit"
            class="btn btn-primary btn-block" name="searchSubmit" id="searchSubmit"
-  	       value="<fmt:message key='find.submit.go'/>"> <fmt:message key='sbox.search.fullsearch'/> </span>
+  	       value="<fmt:message key='find.submit.go'/>"> <fmt:message key='sbox.search.fullsearch'/>
     </button>
     </li>
     <%-- see wiki/Findpages.js
