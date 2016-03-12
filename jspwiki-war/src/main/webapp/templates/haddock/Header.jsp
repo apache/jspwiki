@@ -20,6 +20,7 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="org.apache.wiki.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
@@ -53,7 +54,13 @@
     <div class="pagename" title="<wiki:PageName />">
       <wiki:CheckRequestContext context='viewGroup|createGroup|editGroup'><span class="icon-group"></span></wiki:CheckRequestContext>
       <wiki:PageType type="attachment"><span class="icon-paper-clip"></span></wiki:PageType>
-      <wiki:Link><wiki:PageName/></wiki:Link>
+      <wiki:Link>
+        <c:choose>
+        <c:when test="${not empty fn:substringBefore(param.page,'_blogentry_')}">${fn:replace(fn:replace(param.page,'_blogentry_',' ['),'_','#')}]</c:when>
+        <c:when test="${not empty fn:substringBefore(param.page,'_comments_')}">${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}]</c:when>
+        <c:otherwise><wiki:PageName/></c:otherwise>
+        </c:choose>
+      </wiki:Link>
     </div>
 
   </div>

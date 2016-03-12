@@ -38,6 +38,11 @@
    can be included).
 --%>
 <%-- CSS stylesheet --%>
+<%--
+BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-ie-compatibility-modes
+--%>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
 
 <%-- Localized JS; must come before any css, to avoid blocking immediate execution --%>
 <%-- var LocalizedStrings= { "javascript.<xx>":"...", etc. } --%>
@@ -64,10 +69,6 @@ String.I18N.PREFIX = "javascript.";
 --%>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<%--
-BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-ie-compatibility-modes
---%>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <%-- COOKIE read client preferences --%>
 <%

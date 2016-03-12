@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -311,6 +313,8 @@ public class WeblogPlugin
         throws ProviderException
     {
         WikiEngine engine = context.getEngine();
+        ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+
         buffer.append("<div class=\"weblogentry\">\n");
 
         //
@@ -372,7 +376,7 @@ public class WeblogPlugin
         }
 
         buffer.append("By "+author+"&nbsp;&nbsp;");
-        buffer.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">Permalink</a>" );
+        buffer.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">"+rb.getString("weblogentryplugin.permalink")+"</a>" );
         String commentPageName = TextUtil.replaceString( entry.getName(),
                                                          "blogentry",
                                                          "comments" );
@@ -387,13 +391,16 @@ public class WeblogPlugin
             //  has changed.
             //
             buffer.append( "&nbsp;&nbsp;" );
+
+            String addcomment = rb.getString("weblogentryplugin.addcomment");
+
             buffer.append( "<a href=\""+
                        entryCtx.getURL(WikiContext.COMMENT,
                                        commentPageName,
                                        "nc="+numComments)+
-                       "\">Comments? ("+
-                       numComments+
-                       ")</a>" );
+                       "\">"+
+                       MessageFormat.format(addcomment, numComments)
+                       +"</a>" );
         }
 
         buffer.append("</div>\n");

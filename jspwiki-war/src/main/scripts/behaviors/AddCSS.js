@@ -44,7 +44,7 @@ function AddCSS( element ){
         //xss protection: remove invalid url's;  only allow url([wiki-attachement])
         css = css.replace( /url\(\<[^i][^)]*\)/gi, "url(invalid)" ); //remove url(<a...)
         css = css.replace( /url\([^<][^)]*\)/gi, "url(invalid)" );  //remove url(xxx)
-        css = css.replace( /url\(<img class="inline" src="([^"]+)[^>]+>\)/gi, "url($1)" );
+        css = css.replace( /url\(<img class="inline" .*?src="([^"]+)[^>]*>\)/gi, "url($1)" );
 
         css = css.replace( /<p>|<\/p>/gi, "" ); //jspwiki inserts <p/> for empty lines
 

@@ -164,7 +164,7 @@ a.logo {
         line-height: 50%;
         letter-spacing: .08em;
     }
-    b:before { content:"\A"; white-space:pre ;}
+    b:before { content:"\A"; white-space:pre ;}  //carriage return hack
 
 }
 
@@ -251,6 +251,7 @@ body.can-flex .content {
 
 .reader .copyright {
     margin: 2em 0;
+    clear:both;
 }
 
 .feed {

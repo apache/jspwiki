@@ -78,35 +78,51 @@
 <%--
 ISWEBLOG= <%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %>
 --%>
+<%--  IF BLOCOMMENT PAGE:  insert back buttons to mainblog and blogentry permalink --%>
+<c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_comments_')}" />
+<c:set var="blogentrypage" value="${fn:replace(param.page,'_comments_','_blogentry_')}" />
+<c:if test="${not empty mainblogpage}">
+<wiki:PageExists page="${mainblogpage}">
+  <p></p>
+  <div class="pull-right">
+      <wiki:Link cssClass="btn btn-xs btn-default"  page="${mainblogpage}" >
+         <fmt:message key="blog.backtomain"><fmt:param>${mainblogpage}</fmt:param></fmt:message>
+      </wiki:Link>
+      <wiki:Link cssClass="btn btn-xs btn-primary" page="${blogentrypage}" >
+        <fmt:message key="blog.permalink" />
+      </wiki:Link>
+  </div>
+  <div class="weblogcommentstitle">
+    <fmt:message key="blog.commenttitle"/>
+  </div>
+</wiki:PageExists>
+</c:if>
+
 <%-- Inserts no text if there is no page. --%>
 <wiki:InsertPage />
 
-<%-- Inserts blogcomment if appropriate. --%>
+<%-- IF BLOGENTRY PAGE: insert blogcomment if appropriate. --%>
 <c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_blogentry_')}" />
 <c:set var="blogcommentpage" value="${fn:replace(param.page,'_blogentry_','_comments_')}" />
 <c:if test="${not empty mainblogpage}">
 <wiki:PageExists page="${mainblogpage}">
-
-  <hr />
+  <p></p>
   <div class="pull-right">
-      <wiki:Link cssClass="btn btn-xs btn-primary"  page="${mainblogpage}" >
+      <wiki:Link cssClass="btn btn-xs btn-default"  page="${mainblogpage}" >
          <fmt:message key="blog.backtomain"><fmt:param>${mainblogpage}</fmt:param></fmt:message>
       </wiki:Link>
-      <wiki:Link cssClass="btn btn-xs btn-success"  context="comment" page="${blogcommentpage}" >
+      <wiki:Link cssClass="btn btn-xs btn-default"  context="comment" page="${blogcommentpage}" >
         <span class="icon-plus"></span> <fmt:message key="blog.addcomments"/>
       </wiki:Link>
   </div>
-
   <c:if test="${not empty blogcommentpage}">
   <wiki:PageExists page="${blogcommentpage}">
-    <div class="weblogcommentstitle clearfix">
-    <hr />
+    <div class="weblogcommentstitle">
       <fmt:message key="blog.commenttitle"/>
     </div>
     <div class="weblogcomments"><wiki:InsertPage page="${blogcommentpage}" /></div>
   </wiki:PageExists>
   </c:if>
-
 </wiki:PageExists>
 </c:if>
 

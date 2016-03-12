@@ -64,8 +64,7 @@ wiki.add("#editform", function( element ){
 
     });
 
-    if( wiki.Context == "edit"
-    && ( sectionsDropDown = getFormElement(".sections") ) ){
+    if( sectionsDropDown = getFormElement(".sections") ){
 
         new Snipe.Sections( sectionsDropDown, {
            snipe: snipe,

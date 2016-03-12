@@ -62,7 +62,6 @@ a[href*="NewBlogEntry.jsp"] { .btn; .btn-xs; .btn-success; }
 }
 .weblogentrybody {
     .p;
-    //padding:@padding-base-vertical @padding-base-horizontal;
     clear:both;
 }
 .weblogentryfooter {
@@ -71,12 +70,9 @@ a[href*="NewBlogEntry.jsp"] { .btn; .btn-xs; .btn-success; }
     background-color:@pre-bg;
     clear:both;
 
-    a {
-        .btn;
-        .btn-xs;
-    }
+    a { .btn; .btn-xs; }
     a[href*="_blogentry_"] { .btn-primary;  }
-    a[href*="_comments_"] { .btn-success;  }
+    a[href*="_comments_"] { .btn-default;  }
 
 }
 
@@ -92,37 +88,33 @@ a[href*="NewBlogEntry.jsp"] { .btn; .btn-xs; .btn-success; }
     text-decoration:none;
     margin-left:0 !important;
 }
-.archiveyear:after {
-    content:" AD";
-}
+//.archiveyear:after { content:" AD"; }
 
 /*
 DOM Structure of page with name <blog-name>_blogentry_<timestamp>-SEQ#
 
 div.weblogcommenstitle
 div.weblogcomments
-    div.comment-template
-    p
-    p
-        --
+    ...
+    p.signature
         a.outlink
         , timestamp
-    p
     hr
     <repeat for each comment>
 
 */
 .weblogcommentstitle {
     .h4;
-    margin:(@line-height-computed/2) 0;
-    clear:both;
+    margin:(@line-height-computed) 0;
+    border-bottom:1px solid @hr-border;
 }
-
 .weblogcomments {
     padding-left: 2em;
-    .comment-template {
-    }
-    > p:nth-of-type(3n+2) {
-        .weblogentryfooter;
+}
+.signature {
+    margin:(@line-height-computed/2) 0;
+    .weblogentryfooter;
+    &:before {
+        content:"—"; //&mdash;
     }
 }

@@ -1,3 +1,16 @@
+2016-03-12  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-5  
+
+       * %%ADD-CSS: fix regexp for inline images on IE.
+       
+       * Fix posting of comments in the Haddock template
+       
+       * Fixed some missing localization of the weblogplugin.
+         Few more tweaks of the styling of weblog entries & comments.
+       
+
+       
 2016-03-08  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-4  Few more small fixes related to the HADDOCK template 
