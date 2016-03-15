@@ -1,3 +1,10 @@
+2016-03-15  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-svn-6
+
+       * Fixed JSPWIKI-931 VersioningFileProvider sets page author to "unknown" when it should be an authenticated user
+
+
 2016-03-12  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-5  

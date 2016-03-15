@@ -491,7 +491,9 @@ public class VersioningFileProvider
             Properties props = getPageProperties( page.getName() );
 
             String authorFirst = null;
-            if ( firstUpdate )
+            // if the following file exists, we are NOT migrating from FileSystemProvider
+            File pagePropFile = new File(getPageDirectory() + File.separator + PAGEDIR + File.separator + mangleName(page.getName()) + File.separator + "page" + FileSystemProvider.PROP_EXT);
+            if ( firstUpdate && ! pagePropFile.exists())
             {
                 // we might not yet have a versioned author because the
                 // old page was last maintained by FileSystemProvider
