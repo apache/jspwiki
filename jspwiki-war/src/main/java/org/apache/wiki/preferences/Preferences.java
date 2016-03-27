@@ -77,12 +77,12 @@ public class Preferences
      */
     public static void setupPreferences( PageContext pageContext )
     {
-        HttpSession session = pageContext.getSession();
+       // HttpSession session = pageContext.getSession();
 
-        if( session.getAttribute( SESSIONPREFS ) == null )
-        {
+        //if( session.getAttribute( SESSIONPREFS ) == null )
+        //{
             reloadPreferences( pageContext );
-        }
+        //}
     }
 
     /**
@@ -151,7 +151,7 @@ public class Preferences
             Gson gson=new Gson();
             Map<String,String> map = new HashMap<String,String>();
             // Convert prefVal JSON to a generic hashmap
-            map= (Map<String,String>) gson.fromJson(prefVal, map.getClass());
+            map = (Map<String,String>) gson.fromJson(prefVal, map.getClass());
 
             for (String key : map.keySet()) {
                 key = TextUtil.replaceEntities( key );

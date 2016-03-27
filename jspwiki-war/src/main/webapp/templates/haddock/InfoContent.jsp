@@ -302,13 +302,14 @@
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
+<%-- See Nav.jsp  "view" menu item
   <c:set var="parentPage"><wiki:ParentPageName/></c:set>
   <a class="btn btn-primary" href="<wiki:Link page='${parentPage}' format='url' />" >
     <fmt:message key="info.backtoparentpage" >
       <fmt:param><span class="badge">${parentPage}</span></fmt:param>
     </fmt:message>
   </a>
-
+--%>
   <wiki:Permission permission="delete">
     <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
       data-modal="+ .modal"

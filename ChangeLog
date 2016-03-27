@@ -1,3 +1,27 @@
+2016-03-27  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-7  Few more small fixes on the HADDOCK template 
+
+       * [JSPWIKI-918] HADDOCK: the "view" menu is back as a better way
+         to navigate back to the main page from "Attach" or "Info" views.
+         (also removed the ugly "Back to Parent Page" button)
+       
+       * [JSPWIKI-901] : Undo/Redo doesn't work in HADDOCK editor
+
+       * [WeblogPlugin] : added support for filtering weblog entries according to weblog
+            start-date and number of days. Now you can select weblog entries
+            from a link from the WeblogArchive plugin. 
+       
+       * [JSPWIKI-897] : Long page names in Haddock don't wrap gracefully
+            Fixing printing issues with long page names. 
+
+       * Replace the attachment info icon, for not-inlined attachments 
+
+       * [JSPWIKI-904]: HADDOCK – the display status of the LeftMenu is retained,
+         also after a page refresh.  (by means of a new "Sidebar" user-pref cookie)
+         The "Hide-Sidebar" option is obsolete and thus removed from the UserPreferences.
+
+ 
 2016-03-15  Harry Metske (metskem@apache.org)
 
        * 2.10.3-svn-6

@@ -60,7 +60,7 @@ Class: Wiki
 */
 var Wiki = {
 
-    version: "haddock02",  //used to validate compatible preference cookies
+    version: "haddock03",  //used to validate compatible preference cookies
 
     initialize: function(){
 
@@ -82,7 +82,14 @@ var Wiki = {
             //toggle effect:  toggle .active class on this element when clicking toggle element
             //.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
             .add( "[data-toggle]", function(element){
-                element.onToggle( element.get("data-toggle") );
+
+                element.onToggle( element.get("data-toggle"), function(isActive){
+                    var pref = element.get("data-toggle-pref");
+                    if( pref ){
+                        //console.log(pref, isActive);
+                        wiki.prefs.set(pref, isActive ? "active" : "");
+                    }
+                });
             })
 
             //generate modal confirmation boxes, eg prompting to execute

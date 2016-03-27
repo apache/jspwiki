@@ -104,12 +104,28 @@
     <input class="btn btn-success" type="submit" name="ok" accesskey="s"
            value="<fmt:message key='editor.plain.save.submit'/>" />
 
-      <wiki:CheckRequestContext context="edit">
+    <wiki:CheckRequestContext context="edit">
       <input class="form-control" data-hover-parent="span" type="text" size="80" maxlength="80"
              name="changenote" id="changenote"
              placeholder="<fmt:message key='editor.plain.changenote'/>"
              value="${changenote}" />
-      </wiki:CheckRequestContext>
+    </wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context="comment">
+      <div class="commentsignature form-inline form-group" data-hover-parent="span">
+        <label><fmt:message key="editor.commentsignature"/></label>
+        <input class="form-control" type="text" name="author" id="authorname"
+             placeholder="<fmt:message key='editor.plain.name'/>"
+             value="${author}" />
+        <label class="btn btn-default btn-xs" for="rememberme">
+          <input type="checkbox" name="remember" id="rememberme"
+            <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
+          <fmt:message key="editor.plain.remember"/>
+        </label>
+        <input class="form-control" type="text" name="link" id="link" size="24"
+               placeholder="<fmt:message key='editor.plain.email'/>"
+               value="${link}" />
+      </div>
+    </wiki:CheckRequestContext>
   </span>
 
   <div class="btn-group editor-tools">
@@ -276,25 +292,6 @@
   --%>
 
   </div>
-
-  <wiki:CheckRequestContext context="comment">
-    <div class="info">
-    <label><fmt:message key="editor.commentsignature"/></label>
-    <input class="form-control form-col-20" type="text" name="author" id="authorname"
-           placeholder="<fmt:message key='editor.plain.name'/>"
-           value="${author}" />
-    <label class="btn btn-default btn-sm" for="rememberme">
-      <input type="checkbox" name="remember" id="rememberme"
-             <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
-      <fmt:message key="editor.plain.remember"/>
-    </label>
-    <input class="form-control form-col-20" type="text" name="link" id="link" size="24"
-           placeholder="<fmt:message key='editor.plain.email'/>"
-           value="${link}" />
-    </div>
-  </wiki:CheckRequestContext>
-
-
 
     <div class="row edit-area"><%-- .livepreview  .previewcolumn--%>
       <div class="col-50">

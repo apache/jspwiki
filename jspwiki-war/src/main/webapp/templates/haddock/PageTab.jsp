@@ -80,10 +80,10 @@ ISWEBLOG= <%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*A
 --%>
 <%--  IF BLOCOMMENT PAGE:  insert back buttons to mainblog and blogentry permalink --%>
 <c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_comments_')}" />
-<c:set var="blogentrypage" value="${fn:replace(param.page,'_comments_','_blogentry_')}" />
 <c:if test="${not empty mainblogpage}">
 <wiki:PageExists page="${mainblogpage}">
   <p></p>
+  <c:set var="blogentrypage" value="${fn:replace(param.page,'_comments_','_blogentry_')}" />
   <div class="pull-right">
       <wiki:Link cssClass="btn btn-xs btn-default"  page="${mainblogpage}" >
          <fmt:message key="blog.backtomain"><fmt:param>${mainblogpage}</fmt:param></fmt:message>
@@ -103,10 +103,10 @@ ISWEBLOG= <%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*A
 
 <%-- IF BLOGENTRY PAGE: insert blogcomment if appropriate. --%>
 <c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_blogentry_')}" />
-<c:set var="blogcommentpage" value="${fn:replace(param.page,'_blogentry_','_comments_')}" />
 <c:if test="${not empty mainblogpage}">
 <wiki:PageExists page="${mainblogpage}">
   <p></p>
+  <c:set var="blogcommentpage" value="${fn:replace(param.page,'_blogentry_','_comments_')}" />
   <div class="pull-right">
       <wiki:Link cssClass="btn btn-xs btn-default"  page="${mainblogpage}" >
          <fmt:message key="blog.backtomain"><fmt:param>${mainblogpage}</fmt:param></fmt:message>

@@ -46,8 +46,8 @@ Wiki.Snips = {
 
         // Snipe predefined commands
         find: { key: "f" },
-        undo: { key: "z", event: "undo" },
-        redo: { key: "y", event: "redo" },
+        undo: { event: "undo" },
+        redo: { event: "redo" },
 
         // Configuration commands
         wysiwyg: { event: 'config' },

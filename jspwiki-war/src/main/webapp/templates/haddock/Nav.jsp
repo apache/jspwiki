@@ -45,27 +45,23 @@
 
 <ul class="nav nav-pills pull-right">
 
-  <%-- view
-  <wiki:CheckRequestContext context='info|diff|upload|rename|edit'>
-  <li id="view">
-    <wiki:PageType type="page">
-      <wiki:Link>
-        <fmt:message key="view.tab"/>
-      </wiki:Link>
-    </wiki:PageType>
-  </li>
-  </wiki:CheckRequestContext>
-  --%>
-
-  <%-- attachment --%>
-  <wiki:CheckRequestContext context='view|info|upload|rename|diff|rename|edit'>
-  <wiki:PageExists>
-  <li id="attach"
-   class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
     <c:set var="page">
       <wiki:PageType type="page"><wiki:PageName/></wiki:PageType>
       <wiki:PageType type="attachment"><wiki:ParentPageName/></wiki:PageType>
     </c:set>
+
+  <%-- view --%>
+  <wiki:CheckRequestContext context='info|diff|upload|rename|edit'>
+  <li id="view">
+    <wiki:Link page="${page}" ><fmt:message key="view.tab"/></wiki:Link>
+  </li>
+  </wiki:CheckRequestContext>
+
+  <%-- attachment --%>
+  <wiki:CheckRequestContext context='view|info|rename|diff|rename|edit'>
+  <wiki:PageExists>
+  <li id="attach"
+   class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
     <wiki:Link page="${page}" context="upload" accessKey="a" >
       <fmt:message key='attach.tab'/>
       <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>

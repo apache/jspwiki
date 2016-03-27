@@ -44,6 +44,14 @@ textarea { white-space: pre-wrap; }
     z-index: 2;  //appear on top of the button group
     width: 480px;
 }
+
+
+.editform .commentsignature {
+    position: absolute;
+    z-index: 2;  //appear on top of the button group
+}
+
+
 .editform .open + .editor-tools  {
     opacity:0;
 }
@@ -59,15 +67,19 @@ textarea { white-space: pre-wrap; }
 
 //base styling similar to .page-content in Template.Content.less;
 .ajaxpreview {
+
+    &:empty:before {
+        content:"PREVIEW";
+    }
+
     .hide;
     background: @wiki-preview-bg;
     padding: 0 0 .5em @grid-gutter-width/2; //cannot use margin here, as width=50%
-    overflow: scroll;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+    overflow: auto;
+    //-ms-overflow-style: -ms-autohiding-scrollbar;
     border: 2px dashed transparent;
 
     &.loading {
-        //FFS: walking ant animation ?
         border: 2px dashed red;
     }
 }

@@ -456,7 +456,13 @@ public class WeblogPlugin
                 try
                 {
                     WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
-                    result.add( firstVersion );
+
+                    Date d = firstVersion.getLastModified();
+
+                    if( d.after(start) && d.before(end) )
+                    {
+                        result.add( firstVersion );
+                    }
                 }
                 catch( Exception e )
                 {

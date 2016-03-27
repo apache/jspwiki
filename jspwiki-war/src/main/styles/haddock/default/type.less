@@ -93,9 +93,9 @@ br { clear: both; }
 /* Inspired by: VM UI Framework */
 /* horizontal connecting lines */
 .tree ul li::before {
-    background: #222;
+    background: @table-border-color;
     content: '';
-    height: 0.2em;
+    height: 1px;
     left: -1.5em;
     position: absolute;
     top: 0.9em;
@@ -103,13 +103,13 @@ br { clear: both; }
 }
 /* vertical connecting lines */
 .tree ul li::after {
-    background: #222;
+    background: @table-border-color;
     content: '';
     height: 100%;
     left: -1.5em;
     position: absolute;
     top: 0;
-    width: 0.2em;
+    width: 1px;
 }
 /* closing vertical connecting corner */
 .tree ul li:last-child::after {
@@ -203,11 +203,6 @@ a:hover { cursor:pointer; }
     }
 }
 
-.infolink {
-    display:inline-block;
-    width:16px; height:16px;
-    vertical-align:text-bottom;
-}
 
 //TODO: Overrule standard small red arrow; replace by ...  FIXME
 img.outlink { display:none; }
@@ -215,6 +210,15 @@ a.external:after {
     content: "\279A";
     //content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=");
     //content:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAMAAADXEh96AAAAB3RJTUUH0wMUEC8DV5a0ngAAAAlwSFlzAAAK8AAACvABQqw0mAAAAwBQTFRFAAAAgAAAAIAAgIAAAACAgACAAICAwMDAwNzApsrw//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////vwoKCkgICA/wAAAP8A//8AAAD//wD/AP//////9ptMMgAAAAt0Uk5T/////////////wBKTwHyAAAAG0lEQVR42mPg4voJBAxcYJoBxgMSXGAKKA6lALPeEyZVnxeBAAAAAElFTkSuQmCC);
+}
+a.attachment + a.infolink,
+a.attachment + button + a.infolink {
+   .icon--all;
+   &:after {
+        margin-left:.1em;
+        content:"\e614"; //.icon-paper-clip
+    }
+    > img { display:none; }
 }
 
 
@@ -252,6 +256,7 @@ img {
 //img.inline
 //img.outlink
 //img.attlink
+
 
 // Utility class to support un-scaled, scrollable images,
 .scrollable-image {
@@ -397,6 +402,7 @@ Style: CAPTCHA tables and images
     display:block;
     width:100%;
     text-align:center;
+    padding:0 1em;
     .progress;
     .progress-bar-variant(@yellow);
     .progress-striped .progress-bar;

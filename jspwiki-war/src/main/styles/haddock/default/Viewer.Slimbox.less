@@ -49,27 +49,18 @@ DOM Structure:
     background: transparent;
     -webkit-appearance: none;
     border:0;
+
 }
 .slimbox-link:after,
 .slimbox-btn:before {
-    // copied from   font/jspwiki/core.less
-    // fixme:  better use .icon-slimbox ?
-    font-family: 'FontJspwiki';
-	font-style: normal;
-	font-weight: normal;
 
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+   .icon--all;
 
     color:@link-color;
     margin-left:.25em;
 
-	content: "\e617";
-    &:hover { text-decoration:none; }
+	content: "\e617"; //.icon-slimbox
     overflow:hidden;
-
-    position:relative;
-    top:.1em;
 }
 
 

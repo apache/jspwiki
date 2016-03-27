@@ -51,16 +51,12 @@
   <wiki:Include page="Header.jsp" />
   <wiki:Include page="Nav.jsp" />
 
-  <c:set var="sidebar"><wiki:Variable var='sidebar'  /></c:set>
-  <c:set var="sidebar" value="${ (sidebar!='off') and (prefs.Orientation!='fav-hidden') ? 'on' : 'off' }" />
+  <c:set var="sidebar"><wiki:Variable var='sidebar' /></c:set><%-- page variable setting--%>
+  <c:set var="sidebar" value="${not sidebar ? prefs.Sidebar : sidebar }" />
   <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup'>
-    <c:set var="sidebar">off</c:set>
+    <c:set var="sidebar" value="" />
   </wiki:CheckRequestContext>
-
-  <%--<div class="content <c:if test='${sidebar != "off"}'>active</c:if>"  --%>
-  <div class="content ${sidebar != 'off' ? 'active' : '' } SIDEBAR_${prefs.Sidebar}"
-        data-toggle="li#menu,.sidebar>.close"
-        data-toggle-cookie="Sidebar">
+  <div class="content ${sidebar}" data-toggle="li#menu,.sidebar>.close" data-toggle-pref="Sidebar" >
     <div class="page">
       <wiki:Content/>
       <wiki:Include page="PageInfo.jsp"/>
