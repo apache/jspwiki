@@ -1,3 +1,22 @@
+2016-04-03  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-8  Few more fixes on the HADDOCK template 
+       
+       * Reorganize the attachment detail view, changing the
+         order of columns to a more logical format.
+       
+       * Improve the rendering of the RecentChanges page 
+
+       * Fix the font for text in buttons with an icon 
+
+       * Fix the popup dialog position in the plain editor
+         in case the textarea contains '<', '>' or '&' characters.
+
+       * Hide the section-editlinks for weblog comments.
+
+       * Fix the handling of the editor-type switch in the editor.
+       
+
 2016-03-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-7  Few more small fixes on the HADDOCK template 

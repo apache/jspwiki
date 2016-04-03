@@ -215,8 +215,8 @@
     </div>
 
     <c:set var="editors" value="<%= context.getEngine().getEditorManager().getEditorList() %>" />
-    <c:if test='${fn:length(editors)>1}'>
-   <div class="btn-group config">
+    <c:if test='${fn:length(editors) > 1}'>
+    <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
       <button class="btn btn-default"><span class="icon-pencil"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
@@ -224,7 +224,7 @@
           <c:choose>
             <c:when test="${edt != prefs.editor}">
               <li>
-                <wiki:Link context="edit"><wiki:Param name="editor" value="${edt}" />${edt}</wiki:Link>
+                <wiki:Link context="edit" cssClass="editor-type">${edt}</wiki:Link>
               </li>
             </c:when>
             <c:otherwise>
@@ -303,7 +303,7 @@
     </div>
 
     <div class="resizer"
-          data-resize-cookie="editorHeight"
+    data-pref="editorHeight"
          title="<fmt:message key='editor.plain.edit.resize'/>"></div>
 
   </div><%-- end of .snipe --%>

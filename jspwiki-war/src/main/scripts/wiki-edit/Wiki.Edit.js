@@ -36,6 +36,7 @@ var editform,
     snipe,
     preview,
     previewcache,
+    isLivePreview,
     sectionsDropDown;
 
 wiki.add("#editform", function( element ){
@@ -43,6 +44,7 @@ wiki.add("#editform", function( element ){
     editform = element;
     textarea = getFormElement(".editor");
     preview = getFormElement(".ajaxpreview");
+    isLivePreview = getFormElement("[data-cmd=livepreview]") || {};
 
     onbeforeunload( );
 
@@ -57,10 +59,7 @@ wiki.add("#editform", function( element ){
         },
         snippets: wiki.Snips,
         directsnips: wiki.DirectSnips,
-
-        onChange: livepreview.debounce(500),
-
-        onConfig: config  //configuration callbacks
+        onChange: livepreview.debounce(500)
 
     });
 
@@ -68,37 +67,15 @@ wiki.add("#editform", function( element ){
 
         new Snipe.Sections( sectionsDropDown, {
            snipe: snipe,
-           parser: jspwikiSectionParser  //jspwiki section parser callback
+           parser: jspwikiSectionParser  //callback
         });
-
     }
 
+    wiki.configPrefs( editform, function(cmd, isChecked){
+        snipe.set(cmd, isChecked); //and snipe will fire the change event
+    });
+
     wiki.resizer( snipe.toElement(), function(h){ preview.setStyle("height", h); });
-
-    /*
-    $$("config[data-cmd]:checked").addEvent("configured", function(){
-        snipe.set(this.getAttribute("data-cmd"), this.checked).fireEvent("change") );
-    });
-    wiki.configuration( form );
-    */
-
-    //Initialize the configuration checkboxes
-    //Read the wiki-prefs cookie values.
-    //EG: tabcompletion, smartpairs, autosuggest, livepreview, previewcolumn..
-    editform.getElements(".config [data-cmd]").each( function( configElement ){
-
-        var cmd = configElement.getAttribute("data-cmd");
-
-        configElement.checked = !!wiki.prefs.get(cmd);  //read wiki preferences cookie
-
-        configElement.getParent().ifClass(configElement.checked, 'active');
-
-        //wiki.Snips[ cmd ] = { event: 'config' };
-        //console.log(cmd, configElement.checked);
-        config(cmd);
-
-    });
-
 
 });
 
@@ -134,7 +111,9 @@ wiki.add("#editform", function( element ){
             }
         };
 
-        editform.addEvent("submit", function(){ window.onbeforeunload = null; });
+        editform.addEvent("submit", function(){
+            window.onbeforeunload = null;
+        });
     }
 
 
@@ -153,7 +132,7 @@ wiki.add("#editform", function( element ){
 
         console.log("**** change event", new Date().getSeconds() );
 
-        if( !(getFormElement("[data-cmd=livepreview]") || {}).checked ){
+        if( !isLivePreview.checked ){
 
             //cleanup the preview area
             console.log("cleanup");
@@ -186,75 +165,6 @@ wiki.add("#editform", function( element ){
 
         }
     }
-
-    /*
-    Function: config
-        Change the configuration of the snip-editor, and store it
-        in the wiki-prefs. (cookie)
-        The configuration is read from DOM checkbox elements.
-        The name of the DOM checkboxes correponds with the cookie names,
-        and the cookienames correspond with the snip-editor state attribute, if applicable.
-
-        - invoked by initconfig, to initialize checkboxes with cookie values.
-        - invoked when the config cmd checkboxes are clicked (ref. snippet commands)
-
-    Argument:
-        cmd - which configuration command has been triggered or needs to be initialized.
-    */
-    function config( cmd ){
-
-        var el = getFormElement("[data-cmd=" + cmd + "]"),
-            state,
-            previewcontainer;
-
-        //console.log("CONFIG EVENT", cmd, arguments);
-
-        if( el ){
-
-            state = el.checked;
-            wiki.prefs.set(cmd, state);  //persist in the pref cookie
-
-            if( cmd.test( /livepreview|previewcolumn/ ) ){
-
-                previewcontainer = getFormElement(".edit-area").ifClass(state, cmd);
-
-                if( cmd == "livepreview" ){
-
-                    //disable the previewcolumn toolbar cmd
-                    getFormElement("[data-cmd=previewcolumn]").disabled = !state;
-
-                } else {
-
-                    /* Toggle the position of the preview-area in the dom
-
-                    1. HORIZONTAL SIDE BY SIDE VIEW
-                    div.snip
-                        div.toolbar
-                        div.edit-area.livepreview.previewcolumn
-                            div.col-50
-                            div.col-50.ajaxpreview
-                        div.resizer
-
-                    2. VERTICAL VIEW
-                    div.snip
-                        div.toolbar
-                        div.edit-area.livepreview
-                            div.col-50
-                        div.resizer
-                        div.col-50.ajaxpreview
-                    */
-
-                    if( !state ){ previewcontainer = previewcontainer.getParent(); }
-                    previewcontainer.grab(preview);
-
-                }
-            }
-
-            snipe.set(cmd, state).fireEvent("change");
-
-        }
-    }
-
 
     /*
     Function: jspwikiSectionParser

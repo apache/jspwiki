@@ -104,11 +104,11 @@
   <div class="slimbox-attachments table-filter-striped-sort-condensed">
   <table class="table">
     <tr>
-      <th><fmt:message key="info.attachment.type"/></th>
       <th><fmt:message key="info.attachment.name"/></th>
       <th><fmt:message key="info.version"/></th>
-      <th><fmt:message key="info.size"/></th>
       <th><fmt:message key="info.date"/></th>
+      <th><fmt:message key="info.size"/></th>
+      <th><fmt:message key="info.attachment.type"/></th>
       <th><fmt:message key="info.author"/></th>
       <th><fmt:message key="info.actions"/></th>
       <th><fmt:message key="info.changenote"/></th>
@@ -121,20 +121,20 @@
       <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
       <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
 
-      <td class="attach-type"><span class="icon-file-${type}-o">${type}</span></td>
+      <td class="attach-name" title="${att.fileName}"><wiki:LinkTo>${att.fileName}</wiki:LinkTo></td>
 
-      <td class="attach-name" title="${att.fileName}">${att.fileName}</td>
+      <td><wiki:PageVersion /></td>
 
-      <td><wiki:LinkTo><wiki:PageVersion /></wiki:LinkTo></td>
+      <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
+        <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+      </td>
 
       <td class="nowrap" title="${att.size} bytes">
         <%-- <fmt:formatNumber value='${att.size/1024.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/> --%>
         <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( att.getSize() ) %>
       </td>
 
-      <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
-        <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
-      </td>
+      <td class="attach-type"><span class="icon-file-${fn:toLowerCase(type)}-o"></span>${type}</td>
 
       <td><wiki:Author /></td>
 

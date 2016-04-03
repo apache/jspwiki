@@ -70,9 +70,10 @@
            <fmt:message key="actions.prefs" />
           </wiki:Link>
           <wiki:Permission permission="createGroups">
-          <wiki:Link cssClass="btn btn-default btn-block icon-group" jsp="UserPreferences.jsp">
+          <wiki:Link cssClass="btn btn-default btn-block" jsp="UserPreferences.jsp">
             <wiki:Param name='redirect' value='${redirect}'/>
             <wiki:Param name='tab' value='groups'/>
+            <span class="icon-group"></span>
             <fmt:message key="actions.groups" />
           </wiki:Link>
           </wiki:Permission>
@@ -84,7 +85,8 @@
       <wiki:UserCheck status="notAuthenticated">
         <wiki:CheckRequestContext context='!login'>
         <wiki:Permission permission="login">
-          <wiki:Link cssClass="btn btn-primary btn-block login icon-signin" jsp="Login.jsp">
+          <wiki:Link cssClass="btn btn-primary btn-block login" jsp="Login.jsp">
+            <span class="icon-signin"></span>
             <wiki:Param name='redirect' value='${redirect}'/>
           <fmt:message key="actions.login" />
         </wiki:Link>
@@ -103,8 +105,8 @@
       --%>
       <wiki:UserCheck status="authenticated">
         <a href="<wiki:Link jsp='Logout.jsp' format='url' />"
-          class="btn btn-default btn-block logout icon-signout"
-     data-modal=".modal">
+          class="btn btn-default btn-block logout" data-modal=".modal">
+            <span class="icon-signout"></span>
           <fmt:message key="actions.logout"/>
           <div class="modal"><fmt:message key='actions.confirmlogout'/></div>
         </a>

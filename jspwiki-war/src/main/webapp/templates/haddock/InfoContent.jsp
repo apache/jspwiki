@@ -323,11 +323,11 @@
   <div class="slimbox-attachments table-filter-sort-condensed-striped">
   <table class="table">
     <tr>
-      <th><fmt:message key="info.version"/></th>
-      <th><fmt:message key="info.attachment.type"/></th>
       <th><fmt:message key="info.attachment.name"/></th>
-      <th><fmt:message key="info.size"/></th>
+      <th><fmt:message key="info.version"/></th>
       <th><fmt:message key="info.date"/></th>
+      <th><fmt:message key="info.size"/></th>
+      <th><fmt:message key="info.attachment.type"/></th>
       <th><fmt:message key="info.author"/></th>
       <%--
       <wiki:Permission permission="upload">
@@ -340,23 +340,23 @@
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
     <tr>
 
-      <td><wiki:LinkTo version="${att.version}"><wiki:PageVersion /></wiki:LinkTo></td>
+      <td class="attach-name"><wiki:LinkTo version="${att.version}">${att.fileName}</wiki:LinkTo></td>
 
-      <%-- see styles/fontjspwiki/icon.less : icon-file-<....>-o  --%>
-      <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
-      <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
-      <td class="attach-type"><span class="icon-file-${type}-o">${type}</span></td>
+      <td><wiki:PageVersion /></td>
 
-      <td class="attach-name">${att.fileName}</td>
+	  <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
+	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+	  </td>
 
       <td class="nowrap" title="${att.size} bytes">
         <%-- <fmt:formatNumber value='${att.size/1024.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/> --%>
         <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( att.getSize() ) %>
       </td>
 
-	  <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
-	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
-	  </td>
+      <%-- see styles/fontjspwiki/icon.less : icon-file-<....>-o  --%>
+      <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
+      <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
+      <td class="attach-type"><span class="icon-file-${fn:toLowerCase(type)}-o"></span>${type}</td>
 
       <td><wiki:Author /></td>
       <%--

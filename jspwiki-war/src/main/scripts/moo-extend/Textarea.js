@@ -341,7 +341,7 @@ var Textarea = new Class({
         var ta = this.ta,
             //make sure the shadow element is always just before of the textarea
             taShadow = this.taShadow.inject(ta, "before"),
-            value = ta.value,
+            value = ta.value.replace(/[<>&]/g,"X"),
             el, t, l, w, h;
 
         //default character offset is the position of the caret (cursor or begin of the selection)

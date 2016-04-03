@@ -77,7 +77,7 @@ public class Preferences
      */
     public static void setupPreferences( PageContext pageContext )
     {
-       // HttpSession session = pageContext.getSession();
+        //HttpSession session = pageContext.getSession();
 
         //if( session.getAttribute( SESSIONPREFS ) == null )
         //{
@@ -113,6 +113,7 @@ public class Preferences
                                                           java.util.TimeZone.getDefault().getID() ) );
 
         prefs.put("Orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
+        prefs.put("Sidebar", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sidebar", "active" ) );
 
         prefs.put("Layout", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.layout", "fluid" ) );
 
@@ -120,7 +121,7 @@ public class Preferences
                                                           getLocale( ctx ).toString() ) );
 
         prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting",
-                                                          "" ) );
+                                                          "true" ) );
 
         // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
         // disabling it until knowing why it's happening

@@ -30,13 +30,17 @@ DOM structure:
     .table-hover;
 
     td {
-        vertical-align:top;
-    }
-    td.date {
-        vertical-align:bottom;
-        background-color:@wiki-recentchanges-date-bg;
-    	border-radius: @border-radius-base;
-        border:none;
+        &:first-child:not(.date) {
+            padding-left:2em;
+        }
+        &.date {
+            border-bottom:2px solid @wiki-recentchanges-date-bg;
+            padding-top:1em;
+        }
+        &.changenote {
+            .small;
+            font-style:normal;
+        }
     }
     tr.odd td {
         background-color:transparent;

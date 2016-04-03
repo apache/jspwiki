@@ -58,7 +58,7 @@ Javascript routines to support JSPWiki UserPreferences
         });
 
         //save & clear button handlers
-        //form.getElements("[name=action]").addEvent( function(event){..});
+        //form.getElements("[name=action]").addEvent( function(event){
         form.action[0].onclick = form.action[1].onclick = function(event){
 
             switch( event.target.value ){

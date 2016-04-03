@@ -111,6 +111,11 @@ div.weblogcomments
 }
 .weblogcomments {
     padding-left: 2em;
+    /*
+    Hide the incorrect section-edit links because the comments are actually stored
+    in another page with name "<blog-name>_comments_<timestamp>-SEQ#"
+    */
+    .editsection { .hide; }
 }
 .signature {
     margin:(@line-height-computed/2) 0;

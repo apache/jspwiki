@@ -226,7 +226,7 @@ var Snipe = new Class({
         if( /snippets|directsnips|autosuggest|tabcompletion|smartpairs/.test(item) ){
             this.options[item] = value;
         }
-        return this;
+        return this.fireEvent("change");
     },
 
     /*

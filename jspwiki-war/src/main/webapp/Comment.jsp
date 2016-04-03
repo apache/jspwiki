@@ -210,10 +210,8 @@
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
 
-            pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
+            pageText.append("\n\n%%signature\n"+signature+", "+fmt.format(cal.getTime())+"\n/%");
 
-            //SimpleDateFormat fmt = new SimpleDateFormat( "YYYY-MM-DDThh:mm" ); //ISO-8601 format
-            //pageText.append("\n\n--"+signature+", [{Date value='"+fmt.format(cal.getTime())+"' }]");
         }
 
         if( TextUtil.isPositive(remember) )

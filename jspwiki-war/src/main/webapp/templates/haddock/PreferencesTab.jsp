@@ -41,12 +41,13 @@
 <c:set var="timezones"   value="<%= t.listTimeZones(pageContext) %>" />
 <c:set var="timeformats" value="<%= t.listTimeFormats(pageContext) %>" />
 <c:set var="editors"     value="<%= c.getEngine().getEditorManager().getEditorList() %>" />
+<c:set var="redirect"><wiki:Variable var='redirect' default='<%=c.getEngine().getFrontPage() %>' /></c:set>
 
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
           id="preferences"  <%-- used by Prefs.js to set/reset the userpreferences cookie --%>
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
-  <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
+  <input type="hidden" name="redirect" value="${redirect}" />
 
   <div class="form-group ">
 
@@ -62,9 +63,9 @@
     </span>
 
     <span class="dropdown" style="display:inline-block" >
-      <button class="btn btn-danger" type="submit" name="action" value="clearAssertedName"
+      <button class="btn btn-default" type="submit" name="action" value="clearAssertedName"
        <%--<wiki:UserCheck status="anonymous">disabled</wiki:UserCheck>--%>
-       ><fmt:message key='prefs.clear.submit'/></button>
+       ><span class="icon-trash-o"></span> <fmt:message key='prefs.clear.submit'/></button>
         <ul class="dropdown-menu" data-hover-parent=".dropdown">
           <li class="dropdown-header"><fmt:message key="prefs.clear.description" /></li>
         </ul>
@@ -73,7 +74,7 @@
   </div>
 
   <c:if test="${param.tab eq 'prefs'}" >
-  <div class="">
+  <div>
     <span class="form-col-20 control-label"></span>
     <fmt:message key="prefs.errorprefix.prefs" var="msg"/>
     <wiki:Messages div="alert alert-danger form-col-50" topic="prefs" prefix="${msg}" />

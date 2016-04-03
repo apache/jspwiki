@@ -152,7 +152,7 @@
   <div class="form-inline form-group">
 
   <span class="cage">
-    <input class="btn btn-primary" type="submit" name="ok" accesskey="s"
+    <input class="btn btn-success" type="submit" name="ok" accesskey="s"
            value="<fmt:message key='editor.plain.save.submit'/>"
            title="<fmt:message key='editor.plain.save.title'/>" />
 
@@ -201,7 +201,7 @@
           <c:choose>
             <c:when test="${edt != prefs.editor}">
               <li>
-                <wiki:Link context="edit"><wiki:Param name="editor" value="${edt}" />${edt}</wiki:Link>
+                <wiki:Link context="edit" cssClass="editor-type">${edt}</wiki:Link>
               </li>
             </c:when>
             <c:otherwise>
@@ -267,7 +267,7 @@
   </div>
 
   <div class="resizer"
-        data-resize-cookie="editorHeight"
+   data-pref="editorHeight"
        title="<fmt:message key='editor.plain.edit.resize'/>"></div>
 
 </form>
@@ -289,8 +289,9 @@ Wiki.add("[name=htmlPageText]", function( element){
 
         html2markup = Wiki.getXHRPreview( editorContent, preview );
 
-    $$("[data-cmd^=live]:checked").addEvent("configured", html2markup);
-    Wiki.configuration( form );
+    Wiki.configPrefs( form, function(cmd, isChecked){
+        if(isChecked && (cmd=="livepreview")){ html2markup(); }
+    });
 
     element.mooEditable({
         dimensions:{

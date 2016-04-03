@@ -209,6 +209,8 @@ var Wiki = {
             duration: 20
         });
 
+        //Object.each(wiki.prefs.hash, function(item,key){ console.log("PREFS  ",key,"=>",item); });
+
         if( wiki.version != wiki.prefs.get("version") ){
             wiki.prefs.empty();
             wiki.prefs.set("version", wiki.version);
@@ -464,52 +466,85 @@ var Wiki = {
     },
 
     /*
-    Function: configuration
+    Function: configPrefs  (sofar only used in edit mode)
+        Initialize the configuration checkboxes from the wiki prefs cookie.
+        Save any change to the checkboxes back into the wiki prefs cookie.
+        Also take care of switching between different editor types, saving the
+        new editor type into the wiki prefs cookie.
+
+        EG: tabcompletion, smartpairs, autosuggest, livepreview, previewcolumn. editor-type
     */
-    configuration: function( form ){
+    configPrefs: function( form, onChangeFn ){
 
-        var wiki = this,
-            editarea = form.getElement(".edit-area"),
-            preview = form.getElement(".ajaxpreview");
+        var wiki = this;
 
-        function onConfig(){ config(this, this.getAttribute("data-cmd")); }
+        function onCheck(){
 
-        function config( el, cmd ){
+            var cmd = this.getAttribute("data-cmd"),
+                isChecked = this.checked;
 
-            var checked = el.checked, previewcontainer;
+            wiki.toggleLivePreview(form, cmd, isChecked);
+            wiki.prefs.set(cmd, isChecked);  //persist in the pref cookie
+            if( onChangeFn ){ onChangeFn(cmd, isChecked); }
 
-            //console.log("CONFIG EVENT", el, cmd );
-
-            //editor DOM manipulation, to toggle row/column live-preview layout
-            //FFS: should be do-able via css only
-            if( cmd.test( /livepreview|previewcolumn/ ) ){
-
-                previewcontainer = editarea.ifClass(checked, cmd);
-
-                if( cmd == "livepreview" ){
-
-                    //disable the previewcolumn toolbar cmd
-                    form.getElement("[data-cmd=previewcolumn]").disabled = !checked;
-
-                } else {
-
-                    if( !checked ){ previewcontainer = previewcontainer.getParent(); }
-                    previewcontainer.grab( preview );
-                }
-            }
-
-            wiki.prefs.set(cmd, checked);  //persist in the pref cookie
-            el.fireEvent("configured");
         }
 
-        form.getElements(".config [data-cmd]").each( function( element ){
+        //Handle all configuration checkboxes
+        form.getElements("[type=checkbox][data-cmd]").each( function( el ){
 
-            var cmd = element.getAttribute("data-cmd");
-            element.checked = !!wiki.prefs.get(cmd);  //read wiki preferences cookie
-            element.addEvent("click", onConfig );
-            config( element, cmd );
+            el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
+            el.addEvent("click", onCheck );
+            onCheck.apply(el);
 
         });
+
+        //Persist the selected editor type in the pref cookie
+        form.getElements("a.editor-type").addEvent("click", function(){
+            wiki.prefs.set("editor", this.get("text"));
+        });
+
+    },
+
+
+    toggleLivePreview: function( container, cmd, state ){
+
+        if( cmd.test( /livepreview|previewcolumn/ ) ){
+
+            var previewcontainer = container.getElement(".edit-area").ifClass(state, cmd),
+                ajaxpreview = container.getElement(".ajaxpreview");
+
+            if( cmd == "livepreview" ){
+
+                //disable the previewcolumn toolbar cmd checkbox
+                container.getElement("[data-cmd=previewcolumn]").disabled = !state;
+
+            } else {
+
+                /* Toggle the position of the preview-area in the dom
+
+                1. HORIZONTAL SIDE BY SIDE VIEW
+                div.snip
+                    div.toolbar
+                    div.edit-area.livepreview.previewcolumn
+                        div.col-50
+                        div.col-50.ajaxpreview
+                    div.resizer
+
+                2. VERTICAL VIEW
+                div.snip
+                    div.toolbar
+                    div.edit-area.livepreview
+                        div.col-50
+                    div.resizer
+                    div.col-50.ajaxpreview
+                */
+
+                if( !state ){ previewcontainer = previewcontainer.getParent(); }
+                previewcontainer.grab(ajaxpreview);
+
+            }
+        }
+
     },
 
     getXHRPreview: function( getContent, previewElement ){
@@ -559,7 +594,7 @@ var Wiki = {
 
         var prefs = this.prefs,
             handle = document.getElement(".resizer"),
-            pref = handle.getAttribute("data-resize-cookie"),
+            pref = handle.getAttribute("data-pref"),
             h;
 
         function helpdragging(add){ handle.ifClass(add, "dragging"); }
