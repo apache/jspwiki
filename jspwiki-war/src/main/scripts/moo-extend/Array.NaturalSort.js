@@ -118,8 +118,7 @@ Array.implement({
             if( !isNaN(column) ){ val = ( isNode ? val.getChildren() : val )[column]; }
 
             //retrieve the value and convert to string
-            val = ("" + (isNode ? val.getAttribute("jspwiki:sortvalue") || val.get("text") || val.get("title") : val)).trim();
-
+            val = ("" + (isNode ? val.getAttribute("data-sortvalue") || val.get("text") || val.get("title") : val)).trim();
 
             //2. Convert and store in type specific arrays (num, dmy, kmgt, nat)
 

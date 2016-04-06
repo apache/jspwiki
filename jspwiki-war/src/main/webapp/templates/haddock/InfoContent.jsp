@@ -182,7 +182,7 @@
           </wiki:Link>
         </td>
 
-	    <td class="nowrap" jspwiki:sortvalue="${currentPage.lastModified.time}">
+	    <td class="nowrap" data-sortvalue="${currentPage.lastModified.time}">
         <fmt:formatDate value="${currentPage.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </td>
 
@@ -344,7 +344,7 @@
 
       <td><wiki:PageVersion /></td>
 
-	  <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
+	  <td class="nowrap" data-sortvalue="${att.lastModified.time}">
 	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 	  </td>
 

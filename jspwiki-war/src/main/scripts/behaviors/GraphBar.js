@@ -137,6 +137,7 @@ var GraphBar = new Class({
                 }
 
                 data = data.scale(options.minv, options.maxv)
+                console.log(data);
 
                 for( i = 0; i < len; i++){
 
@@ -233,7 +234,8 @@ var GraphBar = new Class({
         //color mixer
         var c =color1;
         if( !isProgress && color2 ){ color1 = color1.mix(color2, 100 * (isGauge ? val : percent)); }
-console.log(c,color1, val, percent, c, c  && c.mix(color2,0),isGauge );
+
+        //console.log(c,color1, val, percent, c, c  && c.mix(color2,0),isGauge );
 
         val = val * 100;
 

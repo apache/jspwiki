@@ -250,9 +250,23 @@ Footnotes
 Images
 */
 img {
-    border:0;
     &.inline { .img-responsive; /*max-width:100%;*/ }
 }
+img { position:relative;}
+img:before {
+   content:"\e607  ";
+   font-family: FontJspwiki;
+   color:@red;
+}
+img:after {
+    content: "Broken Image: [" attr(alt) "]";
+    position: absolute;
+    display:inline-block; width:100%;height:100%;
+    background:@white;
+    left:20px;padding-top:.5em;
+    color:@red;
+}
+
 //img.inline
 //img.outlink
 //img.attlink

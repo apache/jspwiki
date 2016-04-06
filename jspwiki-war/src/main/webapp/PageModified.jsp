@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -26,7 +26,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
-<%! 
+<%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 
@@ -41,11 +41,9 @@
 
     // Make the user and conflicting text presentable for display.
     usertext = StringEscapeUtils.escapeXml( usertext );
-    usertext = TextUtil.replaceString( usertext, "\n", "<br />" );
 
     String conflicttext = wiki.getText(pagereq);
     conflicttext = StringEscapeUtils.escapeXml( conflicttext );
-    conflicttext = TextUtil.replaceString( conflicttext, "\n", "<br />" );
 
     pageContext.setAttribute( "conflicttext",
                               conflicttext,

@@ -22,22 +22,24 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<div class="page-content">
+<div class="page-content prettify">
 
-<h4><%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.oops.title")%></h4>
+<h4><fmt:message key="conflict.oops.title"/></h4>
   <div class="error">
     <fmt:message key="conflict.oops" />
   </div>
-  <fmt:message key="conflict.goedit" >
-    <fmt:param><wiki:EditLink><wiki:PageName /></wiki:EditLink></fmt:param>
-  </fmt:message>
-
-<h4><%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.modified")%></h4>
-
-  <pre><%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%></pre>
-
-<h4><%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.yourtext")%></h4>
-
-  <pre><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></pre>
+  <wiki:Link cssClass="btn btn-primary btn-block" context="edit" >
+    <fmt:message key="conflict.goedit" >
+      <fmt:param><wiki:PageName /></fmt:param>
+    </fmt:message>
+  </wiki:Link>
+<br />
+<div class="columns">
+<h4><fmt:message key="conflict.modified"/></h4>
+  <pre>${conflicttext}</pre>
+<hr />
+<h4><fmt:message key="conflict.yourtext"/></h4>
+  <pre>${usertext}</pre>
+</div>
 
 </div>

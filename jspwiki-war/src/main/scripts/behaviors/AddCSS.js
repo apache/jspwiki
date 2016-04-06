@@ -40,10 +40,23 @@ function AddCSS( element ){
         //collect all css to be inserted
         while( item = elements.shift() ){ css += item.innerHTML; }
 
+        //allow google fonts @import url(https://fonts.googleapis.com/css?family=XXXX);
+        css = css.replace( /@import url\(https:\/\/fonts.googleapis.com\/css\?family=/gi, "@imp@rt" );
+
         //magic to replace the inline wiki-image links to css url()
         //xss protection: remove invalid url's;  only allow url([wiki-attachement])
         css = css.replace( /url\(\<[^i][^)]*\)/gi, "url(invalid)" ); //remove url(<a...)
         css = css.replace( /url\([^<][^)]*\)/gi, "url(invalid)" );  //remove url(xxx)
+
+        //xss protection: remove @import statements
+        css = css.replace( /@import/gi, "invalid" );
+
+        //allow google fonts
+        css = css.replace( /@imp@rt/g, "@import url(https://fonts.googleapis.com/css?family=");
+
+        //xss protection: remove IE dynamic properties
+        css = css.replace( /expression|behavior/gi,"invalid" );
+
         css = css.replace( /url\(<img class="inline" .*?src="([^"]+)[^>]*>\)/gi, "url($1)" );
 
         css = css.replace( /<p>|<\/p>/gi, "" ); //jspwiki inserts <p/> for empty lines

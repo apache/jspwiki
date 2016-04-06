@@ -1,3 +1,15 @@
+2016-04-06  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-9  Few fixes on the HADDOCK template 
+       
+       * improved styling of broken image links
+       
+       * [JSPWIKI-394] Haddock: "page modified" markup differs to the original edits
+         Improved styling of the PageModified/Conflict jsp's
+       
+       * Allow google-fonts in %%add-css
+
+
 2016-04-03  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-8  Few more fixes on the HADDOCK template 

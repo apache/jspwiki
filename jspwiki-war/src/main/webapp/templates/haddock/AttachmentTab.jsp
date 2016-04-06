@@ -125,7 +125,7 @@
 
       <td><wiki:PageVersion /></td>
 
-      <td class="nowrap" jspwiki:sortvalue="${att.lastModified.time}">
+      <td class="nowrap" data-sortvalue="${att.lastModified.time}">
         <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
       </td>
 

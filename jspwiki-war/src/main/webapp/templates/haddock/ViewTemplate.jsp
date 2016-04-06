@@ -53,7 +53,7 @@
 
   <c:set var="sidebar"><wiki:Variable var='sidebar' /></c:set><%-- page variable setting--%>
   <c:set var="sidebar" value="${not sidebar ? prefs.Sidebar : sidebar }" />
-  <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup'>
+  <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
     <c:set var="sidebar" value="" />
   </wiki:CheckRequestContext>
   <div class="content ${sidebar}" data-toggle="li#menu,.sidebar>.close" data-toggle-pref="Sidebar" >
