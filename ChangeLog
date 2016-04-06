@@ -4,7 +4,7 @@
        
        * improved styling of broken image links
        
-       * [JSPWIKI-394] Haddock: "page modified" markup differs to the original edits
+       * [JSPWIKI-934] Haddock: "page modified" markup differs to the original edits
          Improved styling of the PageModified/Conflict jsp's
        
        * Allow google-fonts in %%add-css
