@@ -1,3 +1,9 @@
+2016-04-17  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-svn-10
+
+       * Fixed JSPWIKI-935  RenderingManager uses ehcache if "jspwiki.usePageCache = false"
+
 2016-04-06  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-9  Few fixes on the HADDOCK template 
