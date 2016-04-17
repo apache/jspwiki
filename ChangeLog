@@ -1,5 +1,11 @@
 2016-04-17  Harry Metske (metskem@apache.org)
 
+       * 2.10.3-svn-11
+
+       * Fixed JSPWIKI-936 error when remove page with link (Fix by Andrew Krasnoff)
+
+2016-04-17  Harry Metske (metskem@apache.org)
+
        * 2.10.3-svn-10
 
        * Fixed JSPWIKI-935  RenderingManager uses ehcache if "jspwiki.usePageCache = false"

@@ -2182,12 +2182,17 @@ public class WikiEngine
             }
             else
             {
+                Collection<String> refTo = m_referenceManager.findRefersTo(pageName);
+
                 if (m_attachmentManager.hasAttachments( p ))
                 {
                     Collection attachments = m_attachmentManager.listAttachments( p );
                     for( Iterator atti = attachments.iterator(); atti.hasNext(); )
                     {
-                        m_attachmentManager.deleteAttachment( (Attachment)(atti.next()) );
+                        Attachment attachment = (Attachment)atti.next();
+                        refTo.remove(attachment.getName());
+
+                        m_attachmentManager.deleteAttachment( attachment );
                     }
                 }
                 m_pageManager.deletePage( p );
