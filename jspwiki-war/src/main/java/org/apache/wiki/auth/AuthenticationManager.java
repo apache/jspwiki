@@ -628,6 +628,7 @@ public class AuthenticationManager {
 
         }
 
+        
         // Ok, the absolute path didn't work; try other methods
 
         URL path = null;
@@ -638,6 +639,12 @@ public class AuthenticationManager {
         	InputStream is = null;
             try
             {
+            	URL url = engine.getServletContext().getResource("/WEB-INF/" + name);
+            	if (url != null)
+            	{
+            		return url;
+            	}
+            	
                 log.info( "looking for /" + name + " on classpath" );
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
                 //  

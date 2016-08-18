@@ -1,5 +1,11 @@
 2016-08-18  Harry Metske (metskem@apache.org)
 
+       * 2.10.3-svn-13
+
+       * Fixed JSPWIKI-1029 WebLogic does not find the properties file, fix by Jürgen Weber.
+
+2016-08-18  Harry Metske (metskem@apache.org)
+
        * 2.10.3-svn-12
 
        * Fixed JSPWIKI-396 UTF-8 characters in wiki pages incorrectly rendered if served by Weblogic
