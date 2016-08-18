@@ -1,3 +1,10 @@
+2016-08-18  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-svn-12
+
+       * Fixed JSPWIKI-396 UTF-8 characters in wiki pages incorrectly rendered if served by Weblogic
+         A rigorous fix by Jürgen Weber, ditched UtilJ2eeCompat, introduced new property "jspwiki.nofilterencoding".
+
 2016-04-17  Harry Metske (metskem@apache.org)
 
        * 2.10.3-svn-11
