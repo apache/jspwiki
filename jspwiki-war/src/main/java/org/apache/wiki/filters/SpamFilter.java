@@ -275,7 +275,7 @@ public class SpamFilter extends BasicPageFilter {
             m_urlPattern = m_compiler.compile( URL_REGEXP );
         } catch( MalformedPatternException e ) {
             log.fatal( "Internal error: Someone put in a faulty pattern.", e );
-            throw new InternalWikiException( "Faulty pattern." );
+            throw new InternalWikiException( "Faulty pattern." , e);
         }
 
         m_akismetAPIKey = TextUtil.getStringProperty( properties,

@@ -378,7 +378,7 @@ public class WikiEngine
             {
                 context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
                 log.error( "ERROR: Failed to create a Wiki engine, stacktrace follows " , e);
-                throw new InternalWikiException( "No wiki engine, check logs." );
+                throw new InternalWikiException( "No wiki engine, check logs." , e);
             }
 
         }
@@ -1280,7 +1280,7 @@ public class WikiEngine
         }
         catch( UnsupportedEncodingException e )
         {
-            throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." );
+            throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." , e);
         }
     }
 
@@ -1300,7 +1300,7 @@ public class WikiEngine
         }
         catch( UnsupportedEncodingException e )
         {
-            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
+            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.", e);
         }
     }
 
@@ -2365,7 +2365,7 @@ public class WikiEngine
             catch ( WikiException we )
             {
                 log.fatal( "unable to instantiate class for AclManager: " + we.getMessage() );
-                throw new InternalWikiException("Cannot instantiate AclManager, please check logs.");
+                throw new InternalWikiException("Cannot instantiate AclManager, please check logs.", we);
             }
         }
         return m_aclManager;

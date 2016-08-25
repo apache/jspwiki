@@ -241,7 +241,7 @@ public abstract class AbstractFileProvider
         }
         catch( UnsupportedEncodingException e ) 
         {
-            throw new InternalWikiException("Faulty encoding; should never happen");
+            throw new InternalWikiException("Faulty encoding; should never happen", e);
         }
     }
     

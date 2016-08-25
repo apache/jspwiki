@@ -38,4 +38,16 @@ public class InternalWikiException extends RuntimeException
     {
         super( msg );
     }
+
+	public InternalWikiException(String message, Throwable cause)
+	{
+		super(message, cause);
+	}
+
+	public InternalWikiException(Throwable cause)
+	{
+		super(cause);
+	}
+    
+    
 }

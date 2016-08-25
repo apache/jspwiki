@@ -270,7 +270,7 @@ public class PluginContent extends Text {
             }
         } catch (ClassCastException e) {
             log.error("Invalid type offered in parsing plugin arguments.", e);
-            throw new InternalWikiException("Oops, someone offered !String!");
+            throw new InternalWikiException("Oops, someone offered !String!", e);
         } catch (NoSuchElementException e) {
             String msg = "Missing parameter in plugin definition: " + commandline;
             log.warn(msg, e);

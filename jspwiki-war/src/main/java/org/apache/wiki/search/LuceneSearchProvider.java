@@ -767,7 +767,7 @@ public class LuceneSearchProvider implements SearchProvider {
             }
             catch( InterruptedException e )
             {
-                throw new InternalWikiException("Interrupted while waiting to start.");
+                throw new InternalWikiException("Interrupted while waiting to start.", e);
             }
 
             m_watchdog.enterState("Full reindex");

@@ -1,3 +1,9 @@
+2016-08-25  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-svn-14
+
+       * Fixed JSPWIKI-1031 provide stacktrace when throwing InternalWikiException, fix by Jürgen Weber.
+
 2016-08-18  Harry Metske (metskem@apache.org)
 
        * 2.10.3-svn-13

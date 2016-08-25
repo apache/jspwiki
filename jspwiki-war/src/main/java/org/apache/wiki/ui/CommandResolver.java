@@ -459,7 +459,7 @@ public final class CommandResolver
         catch( IOException e )
         {
             m_log.error( "Unable to create context", e );
-            throw new InternalWikiException( "Big internal booboo, please check logs." );
+            throw new InternalWikiException( "Big internal booboo, please check logs." , e);
         }
 
         // Didn't resolve; return null

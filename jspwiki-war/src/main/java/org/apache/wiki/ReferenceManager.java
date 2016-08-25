@@ -412,7 +412,7 @@ public class ReferenceManager
         }
         catch (UnsupportedEncodingException e)
         {
-            throw new InternalWikiException("AAAAGH!  UTF-8 is gone!  My eyes!  It burns...!");
+            throw new InternalWikiException("AAAAGH!  UTF-8 is gone!  My eyes!  It burns...!", e);
         }
 
         return TextUtil.toHexString(dig)+".cache";

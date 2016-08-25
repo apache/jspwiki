@@ -429,7 +429,7 @@ public final class SecurityVerifier
             // If we couldn't evaluate constraints it means
             // there's some sort of IO mess or parsing issue
             LOG.error( "Malformed XML in web.xml", e );
-            throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage() );
+            throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage() , e);
         }
 
         s.append( "</tbody>\n" );

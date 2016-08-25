@@ -224,7 +224,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
             m_pluginPattern = compiler.compile( PLUGIN_INSERT_PATTERN );
         } catch( MalformedPatternException e ) {
             log.fatal( "Internal error: someone messed with pluginmanager patterns.", e );
-            throw new InternalWikiException( "PluginManager patterns are broken" );
+            throw new InternalWikiException( "PluginManager patterns are broken" , e);
         }
 
     }

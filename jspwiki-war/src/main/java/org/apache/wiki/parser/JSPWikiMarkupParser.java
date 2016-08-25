@@ -308,7 +308,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             catch( MalformedPatternException e )
             {
                 log.fatal("Internal error: Someone put in a faulty pattern.",e);
-                throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader");
+                throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader", e);
             }
             m_engine.setAttribute( CAMELCASE_PATTERN, m_camelCasePattern );
         }
@@ -1149,7 +1149,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         catch( IOException e )
         {
             log.fatal("CleanTranslator not working", e);
-            throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() );
+            throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() , e);
         }
 
         return outTitle;
