@@ -122,7 +122,7 @@ public class MailUtilTest extends TestCase
                 System.out.println("Reason: "+e.getMessage());
                 return;
             }
-            if( e == null )
+            if( e.getCause() == null )
             {
                 System.out.println("Reason: "+e.getMessage());
                 System.out.println("I could not test whether mail sending works, we let the test pass anyway.");
