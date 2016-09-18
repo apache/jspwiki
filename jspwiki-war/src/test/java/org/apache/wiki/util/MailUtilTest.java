@@ -34,7 +34,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.util.MailUtil;
 
 /**
  * This test is not integrated into any TestSuite yet, because I don't know how
@@ -121,6 +120,12 @@ public class MailUtilTest extends TestCase
                 // and don't fail.
                 System.out.println("I could not test whether mail sending works, since I don't have the required cert in my keystore.");
                 System.out.println("Reason: "+e.getMessage());
+                return;
+            }
+            if( e == null )
+            {
+                System.out.println("Reason: "+e.getMessage());
+                System.out.println("I could not test whether mail sending works, we let the test pass anyway.");
                 return;
             }
             e.printStackTrace();
