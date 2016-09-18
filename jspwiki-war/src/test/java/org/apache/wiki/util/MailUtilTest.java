@@ -124,7 +124,7 @@ public class MailUtilTest extends TestCase
                 return;
             }
             e.printStackTrace();
-            fail( "Unknown problem (check the console for error report)" );
+            fail( "Unknown problem, cause=" + e.getCause() + " (check the console for error report)" );
         }
         catch (Exception e)
         {
