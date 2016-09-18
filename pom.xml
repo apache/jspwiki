@@ -52,9 +52,9 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/jspwiki/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/jspwiki/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/jspwiki/trunk</url>
+    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/jspwiki.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/jspwiki.git</developerConnection>
+    <url>https://git-wip-us.apache.org/repos/asf?p=jspwiki.git;a=summary</url>
   </scm>
 
   <modules>
@@ -515,7 +515,7 @@
           <configuration>
             <excludes>
               <exclude>mvn_cheat-sheet.md</exclude> <!-- handy list of maven commands; will be moved to site once we've switched to Maven -->
-              <exclude>.svnignore</exclude>          <!-- svn exclusions -->
+              <exclude>.gitignore</exclude>          <!-- git exclusions -->
               <exclude>**/src/main/config/doc/LICENSE.*</exclude>               <!-- 3rd party License files -->
               <exclude>**/src/main/config/wikipages/**</exclude>                <!-- Default wikipages -->
               <exclude>**/src/main/config/dev/OldChangeLog</exclude>            <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
