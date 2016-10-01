@@ -1,3 +1,6 @@
+2016-09-16  Harry Metske (metskem@apache.org)
+       * Fixed JSPWIKI-1033 - Incorrect relative navigations (reported by Niklas Polke)
+
 2016-09-16  David Vittor (dvittor@apache.org)
        * Test commit to our new git repo.
 

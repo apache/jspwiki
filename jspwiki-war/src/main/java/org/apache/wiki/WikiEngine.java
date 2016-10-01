@@ -829,7 +829,7 @@ public class WikiEngine
         {
             pageName = getFrontPage();
         }
-        return getURLConstructor().makeURL( WikiContext.VIEW, pageName, true, null );
+        return getURLConstructor().makeURL(WikiContext.VIEW, pageName, "absolute".equals(PROP_REFSTYLE), null);
     }
 
     /**
