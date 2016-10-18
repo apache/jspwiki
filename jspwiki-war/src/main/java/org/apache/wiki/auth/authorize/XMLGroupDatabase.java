@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -102,15 +103,19 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private Document              m_dom            = null;
 
-    private DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
+    private final DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
 
-    private DateFormat            m_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
+    private final DateFormat            m_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
+
+    private final DateFormat            m_format_en         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z", Locale.ENGLISH);
+
+    private final DateFormat			  m_format_de = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z", Locale.GERMAN);
 
     private File                  m_file           = null;
 
     private WikiEngine            m_engine         = null;
 
-    private Map<String, Group>                   m_groups         = new HashMap<String, Group>();
+    private final Map<String, Group>                   m_groups         = new HashMap<>();
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -121,20 +126,22 @@ public class XMLGroupDatabase implements GroupDatabase
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
+    @Override
     @SuppressWarnings("deprecation")
     public void commit() throws WikiSecurityException
     { }
 
     /**
-      * Looks up and deletes a {@link Group} from the group database. If the
+     * Looks up and deletes a {@link Group} from the group database. If the
      * group database does not contain the supplied Group. this method throws a
      * {@link NoSuchPrincipalException}. The method commits the results
      * of the delete to persistent storage.
      * @param group the group to remove
-    * @throws WikiSecurityException if the database does not contain the
+     * @throws WikiSecurityException if the database does not contain the
      * supplied group (thrown as {@link NoSuchPrincipalException}) or if
      * the commit did not succeed
      */
+    @Override
     public void delete( Group group ) throws WikiSecurityException
     {
         String index = group.getName();
@@ -160,6 +167,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @return the wiki groups
      * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
+    @Override
     public Group[] groups() throws WikiSecurityException
     {
         buildDOM();
@@ -177,6 +185,7 @@ public class XMLGroupDatabase implements GroupDatabase
      *             located, parsed, or opened
      * @throws WikiSecurityException if the database could not be initialized successfully
      */
+    @Override
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
         m_engine = engine;
@@ -221,6 +230,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @param modifier the user who saved the Group
      * @throws WikiSecurityException if the Group could not be saved successfully
      */
+    @Override
     public void save( Group group, Principal modifier ) throws WikiSecurityException
     {
         if ( group == null || modifier == null )
@@ -375,8 +385,8 @@ public class XMLGroupDatabase implements GroupDatabase
         String modified = groupNode.getAttribute( LAST_MODIFIED );
         try
         {
-            group.setCreated( m_format.parse( created ) );
-            group.setLastModified( m_format.parse( modified ) );
+            group.setCreated(parseDate(created));
+            group.setLastModified(parseDate(modified));
         }
         catch ( ParseException e )
         {
@@ -389,12 +399,25 @@ public class XMLGroupDatabase implements GroupDatabase
             catch ( ParseException e2)
             {
                 log.warn( "Could not parse 'created' or 'lastModified' " + "attribute for " + " group'"
-                          + group.getName() + "'." + " It may have been tampered with." );
+                        + group.getName() + "'." + " It may have been tampered with." );
             }
         }
         group.setCreator( creator );
         group.setModifier( modifier );
         return group;
+    }
+
+    private Date parseDate(String created) throws ParseException {
+        // first try english, then for compatibility, default and german
+        try {
+            return m_format_en.parse(created);
+        } catch (ParseException e1) {
+            try {
+                return m_format.parse(created);
+            } catch (ParseException e2) {
+                return m_format_de.parse(created);
+            }
+        }
     }
 
     private void saveDOM() throws WikiSecurityException
@@ -422,11 +445,11 @@ public class XMLGroupDatabase implements GroupDatabase
                 io.write( CREATOR );
                 io.write( "=\"" + StringEscapeUtils.escapeXml( group.getCreator() ) + "\" " );
                 io.write( CREATED );
-                io.write( "=\"" + m_format.format( group.getCreated() ) + "\" " );
+                io.write( "=\"" + m_format_en.format( group.getCreated() ) + "\" " );
                 io.write( MODIFIER );
                 io.write( "=\"" + group.getModifier() + "\" " );
                 io.write( LAST_MODIFIED );
-                io.write( "=\"" + m_format.format( group.getLastModified() ) + "\"" );
+                io.write( "=\"" + m_format_en.format( group.getLastModified() ) + "\"" );
                 io.write( ">\n" );
 
                 // Write each member as a <member> node

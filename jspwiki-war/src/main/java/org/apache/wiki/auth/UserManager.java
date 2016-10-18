@@ -88,7 +88,7 @@ public class UserManager {
 
     private WikiEngine m_engine;
 
-    private static Logger log = Logger.getLogger(UserManager.class);
+    private static final Logger log = Logger.getLogger(UserManager.class);
 
     /** Message key for the "save profile" message. */
     public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
@@ -295,7 +295,7 @@ public class UserManager {
      * {@link org.apache.wiki.workflow.DecisionRequiredException}. All other WikiException
      * indicate a condition that is not normal is probably due to mis-configuration
      */
-    public void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException
+    public void setUserProfile( WikiSession session, UserProfile profile ) throws WikiException
     {
         // Verify user is allowed to save profile!
         Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
@@ -309,10 +309,9 @@ public class UserManager {
 
         // Check if another user profile already has the fullname or loginname
         UserProfile oldProfile = getUserProfile( session );
-        boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null )
-            ? false
-            : !( oldProfile.getFullname().equals( profile.getFullname() ) &&
-                 oldProfile.getLoginName().equals( profile.getLoginName() ) );
+        boolean nameChanged = !(oldProfile == null || oldProfile.getFullname() == null) && !(oldProfile.getFullname()
+                .equals(profile.getFullname()) &&
+                oldProfile.getLoginName().equals(profile.getLoginName()));
         UserProfile otherProfile;
         try
         {
@@ -580,7 +579,7 @@ public class UserManager {
         try
         {
             otherProfile = getUserDatabase().findByEmail( email );
-            if ( otherProfile != null && !profile.equals( otherProfile ) && StringUtils.lowerCase( email ).equals( StringUtils.lowerCase(otherProfile.getEmail() ) ) )
+            if ( otherProfile != null && !profile.getUid().equals( otherProfile.getUid() ) && StringUtils.lowerCase( email ).equals( StringUtils.lowerCase(otherProfile.getEmail() ) ) )
             {
                 Object[] args = { email };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.email.taken"), args ) );
@@ -614,6 +613,7 @@ public class UserManager {
          * No-op.
          * @throws WikiSecurityException never...
          */
+        @Override
         public void commit() throws WikiSecurityException
         {
             // No operation
@@ -624,6 +624,7 @@ public class UserManager {
          * @param loginName the login name to delete
          * @throws WikiSecurityException never...
          */
+        @Override
         public void deleteByLoginName( String loginName ) throws WikiSecurityException
         {
             // No operation
@@ -635,6 +636,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByEmail(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -646,6 +648,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByFullName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -657,6 +660,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByLoginName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -668,6 +672,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -678,6 +683,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByWikiName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -688,6 +694,7 @@ public class UserManager {
          * @return a zero-length array
          * @throws WikiSecurityException never...
          */
+        @Override
         public Principal[] getWikiNames() throws WikiSecurityException
         {
             return new Principal[0];
@@ -700,6 +707,7 @@ public class UserManager {
          * @param props the properties used to initialize the wiki engine
          * @throws NoRequiredPropertyException never...
          */
+        @Override
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
         }
@@ -711,6 +719,7 @@ public class UserManager {
          * @throws DuplicateUserException never...
          * @throws WikiSecurityException never...
          */
+        @Override
         public void rename( String loginName, String newName ) throws DuplicateUserException, WikiSecurityException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -721,6 +730,7 @@ public class UserManager {
          * @param profile the user profile
          * @throws WikiSecurityException never...
          */
+        @Override
         public void save( UserProfile profile ) throws WikiSecurityException
         {
         }
@@ -772,6 +782,7 @@ public class UserManager {
          * task completed successfully
          * @throws WikiException if the save did not complete for some reason
          */
+        @Override
         public Outcome execute() throws WikiException
         {
             // Retrieve user profile
@@ -860,7 +871,7 @@ public class UserManager {
      */
     public static final class JSONUserModule implements WikiAjaxServlet
     {
-		private volatile UserManager m_manager;
+		private final UserManager m_manager;
         
         /**
          *  Create a new JSONUserModule.
@@ -876,6 +887,7 @@ public class UserManager {
         	return JSON_USERS;
         }
         
+        @Override
         public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params) throws ServletException, IOException {
         	try {
         		String uid = null;

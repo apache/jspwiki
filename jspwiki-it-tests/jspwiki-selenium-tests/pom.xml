@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki.it</groupId>
     <artifactId>jspwiki-it-builder</artifactId>
-    <version>2.10.3-SNAPSHOT</version>
+    <version>2.10.3d-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
@@ -34,7 +34,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.jspwiki</groupId>
-      <artifactId>jspwiki-war</artifactId>
+      <artifactId>jspwiki-knowwe-war</artifactId>
       <version>${project.version}</version>
       <type>war</type>
     </dependency>

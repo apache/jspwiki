@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements.  See the NOTICE file
   distributed with this work for additional information
@@ -17,392 +16,409 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>org.apache.jspwiki</groupId>
-    <artifactId>jspwiki-builder</artifactId>
-    <version>2.10.3-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>org.apache.jspwiki</groupId>
+		<artifactId>jspwiki-knowwe-builder</artifactId>
+		<version>2.10.3d-SNAPSHOT</version>
+	</parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>jspwiki-war</artifactId>
-  <name>Apache JSPWiki Main War</name>
-  <packaging>war</packaging>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>jspwiki-knowwe-war</artifactId>
+	<name>Apache JSPWiki Main War for KnowWE</name>
+	<packaging>war</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>xmlrpc</groupId>
-      <artifactId>xmlrpc</artifactId>
-    </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>xmlrpc</groupId>
+			<artifactId>xmlrpc</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-queryparser</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-highlighter</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-highlighter</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-analyzers-common</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sourceforge</groupId>
-      <artifactId>sandler</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>net.sourceforge</groupId>
+			<artifactId>sandler</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>oro</groupId>
-      <artifactId>oro</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.jvnet.hudson</groupId>
-      <artifactId>org.suigeneris.jrcs.diff</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom2</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.jvnet.hudson</groupId>
+			<artifactId>org.suigeneris.jrcs.diff</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.freshcookies</groupId>
-      <artifactId>freshcookies-security</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.freshcookies</groupId>
+			<artifactId>freshcookies-security</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sourceforge</groupId>
-      <artifactId>akismet-java</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>net.sourceforge</groupId>
+			<artifactId>akismet-java</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sourceforge.nekohtml</groupId>
-      <artifactId>nekohtml</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sourceforge.stripes</groupId>
-      <artifactId>stripes</artifactId>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>net.sourceforge.nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>net.sourceforge.stripes</groupId>
+			<artifactId>stripes</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>sqltool</artifactId>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.eclipse.jetty.aggregate</groupId>
-      <artifactId>jetty-all</artifactId>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>sqltool</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+		<dependency>
+			<groupId>org.eclipse.jetty.aggregate</groupId>
+			<artifactId>jetty-all</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-  <build>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
     <finalName>JSPWiki</finalName>
-    <plugins>
-      <!-- With below plugin can deploy to an embedded Tomcat instance via:
-         mvn clean install tomcat7:run-war [-Dmaven.test.skip]
-         ...or standalone by adding a <server /> entry "myTomcat":
-         http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
-         and running tomcat7:redeploy instead of run-war in
-         string above.
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-         Either way, JSPWiki URL will be
-         http://localhost:8080/JSPWiki
-      -->
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <configuration>
-          <server>myTomcat</server>
-          <url>http://localhost:8080/manager/text</url>
-          <path>/${project.build.finalName}</path>
-        </configuration>
-      </plugin>
+			<!-- With below plugin can deploy to an embedded Tomcat instance via:
+			   mvn clean install tomcat7:run-war [-Dmaven.test.skip]
+			   ...or standalone by adding a <server /> entry "myTomcat":
+			   http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
+			   and running tomcat7:redeploy instead of run-war in
+			   string above.
 
-      <!-- Surefire plugin (running unit tests):
-         http://maven.apache.org/surefire/maven-surefire-plugin/
+			   Either way, JSPWiki URL will be
+			   http://localhost:8080/JSPWiki
+			-->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<server>myTomcat</server>
+					<url>http://localhost:8080/manager/text</url>
+					<path>/${project.build.finalName}</path>
+				</configuration>
+			</plugin>
 
-         Individual tests can be run command line via:
-         mvn clean test -Dtest=WikiEngineTest,AclImplTest,...
+			<!-- Surefire plugin (running unit tests):
+			   http://maven.apache.org/surefire/maven-surefire-plugin/
 
-         All tests can be skipped via -Dmaven.test.skip
-       -->
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemPropertyVariables>
-              <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-          </systemPropertyVariables>          
-          <excludes>
-            <!-- time-consuming tests excluded by default -->
-            <exclude>**/StressTestVersioningProvider.java</exclude>
-            <exclude>**/StressTestSpeed.java</exclude>
-            <exclude>**/MassiveRepositoryTest.java</exclude>
-          </excludes>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <downloadJavadocs>true</downloadJavadocs>
-          <additionalConfig>
-            <file>
-              <name>.checkstyle</name>
-              <location>./src/main/config/dev/jspwiki-checkstyle.xml</location>
-            </file>
-            <file>
-              <name>.settings/org.eclipse.jdt.core.prefs</name>
-              <location>./src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
-            </file>
-          </additionalConfig>
-          <additionalProjectnatures>
-            <projectnature>net.sourceforge.metrics.nature</projectnature>
-            <projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>
-          </additionalProjectnatures>
-        </configuration>
-      </plugin>
+			   Individual tests can be run command line via:
+			   mvn clean test -Dtest=WikiEngineTest,AclImplTest,...
 
-      <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
-        Merge and compress CSS and JS files using the WRO4J.
-        - use UglifyJS for JS compression
-        - use Less as advanced CSS preprocessor
-      -->
+			   All tests can be skipped via -Dmaven.test.skip
+			 -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+					</systemPropertyVariables>
+					<excludes>
+						<!-- time-consuming tests excluded by default -->
+						<exclude>**/StressTestVersioningProvider.java</exclude>
+						<exclude>**/StressTestSpeed.java</exclude>
+						<exclude>**/MassiveRepositoryTest.java</exclude>
+					</excludes>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 
-      <plugin>
-        <groupId>ro.isdc.wro4j</groupId>
-        <artifactId>wro4j-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>buildDefaultJsAndCss</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>run</goal>
-              <!--<goal>jshint</goal>-->
-            </goals>
-            <configuration>
-              <!--
-              <targetGroups>all</targetGroups>
-              <minimize>true</minimize>
-              <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
-              <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
-              <ignoreMissingResources>false</ignoreMissingResources>
-              -->
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<additionalConfig>
+						<file>
+							<name>.checkstyle</name>
+							<location>./src/main/config/dev/jspwiki-checkstyle.xml</location>
+						</file>
+						<file>
+							<name>.settings/org.eclipse.jdt.core.prefs</name>
+							<location>./src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
+						</file>
+					</additionalConfig>
+					<additionalProjectnatures>
+						<projectnature>net.sourceforge.metrics.nature</projectnature>
+						<projectnature>net.sf.eclipsecs.core.CheckstyleNature</projectnature>
+					</additionalProjectnatures>
+				</configuration>
+			</plugin>
+
+			<!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
+			  Merge and compress CSS and JS files using the WRO4J.
+			  - use UglifyJS for JS compression
+			  - use Less as advanced CSS preprocessor
+			-->
+
+			<plugin>
+				<groupId>ro.isdc.wro4j</groupId>
+				<artifactId>wro4j-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>buildDefaultJsAndCss</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+							<!--<goal>jshint</goal>-->
+						</goals>
+						<configuration>
+							<!--
+							<targetGroups>all</targetGroups>
+							<minimize>true</minimize>
+							<cssDestinationFolder>d:/static/css/</cssDestinationFolder>
+							<jsDestinationFolder>d:/static/js/</jsDestinationFolder>
+							<ignoreMissingResources>false</ignoreMissingResources>
+							-->
               <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
-              <wroFile>src/main/config/wro/wro.xml</wroFile>
-            </configuration>
-          </execution>
+							<wroFile>src/main/config/wro/wro.xml</wroFile>
+						</configuration>
+					</execution>
 
-          <!-- HADDOCK template -->
-          <execution>
-            <id>buildHaddockJsAndCss</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
+					<!-- HADDOCK template -->
+					<execution>
+						<id>buildHaddockJsAndCss</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
               <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/haddock/</cssDestinationFolder>
-              <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+							<wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-      <!-- Compress certain CSS and JS files using the YUICompressor
-         (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>yuicompressor-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>compressJSfiles</id>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <excludeResources>true</excludeResources>
-          <nosuffix>true</nosuffix>
-          <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
-          *** relying on jslint-maven-plugin instead, which allows
-               better customization ***
-          <jswarn>false</jswarn>
-        </configuration>
-      </plugin>
-      -->
+			<!-- Compress certain CSS and JS files using the YUICompressor
+			   (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
+			<plugin>
+			  <groupId>net.alchim31.maven</groupId>
+			  <artifactId>yuicompressor-maven-plugin</artifactId>
+			  <executions>
+				<execution>
+				  <id>compressJSfiles</id>
+				  <goals>
+					<goal>compress</goal>
+				  </goals>
+				</execution>
+			  </executions>
+			  <configuration>
+				<excludeResources>true</excludeResources>
+				<nosuffix>true</nosuffix>
+				<webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
+				*** relying on jslint-maven-plugin instead, which allows
+					 better customization ***
+				<jswarn>false</jswarn>
+			  </configuration>
+			</plugin>
+			-->
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jslint-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>checkJSPWikiFiles</id>
-            <goals>
-              <goal>jslint</goal>
-            </goals>
-            <configuration>
-              <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
-              <failOnIssues>false</failOnIssues>
-              <excludes>
-                <exclude>prettify.js</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-          <!-- Some third party JSs have many multiple number of VARs per function
-               block, are outside of our control so suppressing such messages -->
-          <execution>
-            <id>checkThirdParty</id>
-            <goals>
-              <goal>jslint</goal>
-            </goals>
-            <configuration>
-              <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
-              <failOnIssues>false</failOnIssues>
-              <includes>
-                 <include>prettify.js</include>
-              </includes>
-              <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jslint-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>checkJSPWikiFiles</id>
+						<goals>
+							<goal>jslint</goal>
+						</goals>
+						<configuration>
+							<sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
+							<failOnIssues>false</failOnIssues>
+							<excludes>
+								<exclude>prettify.js</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- Some third party JSs have many multiple number of VARs per function
+						 block, are outside of our control so suppressing such messages -->
+					<execution>
+						<id>checkThirdParty</id>
+						<goals>
+							<goal>jslint</goal>
+						</goals>
+						<configuration>
+							<sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
+							<failOnIssues>false</failOnIssues>
+							<includes>
+								<include>prettify.js</include>
+							</includes>
+							<allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <attachClasses>true</attachClasses>
-          <webResources>
-            <!-- Output directory configured above with the YUICompressor Maven plugin
-            <resource>
-              <directory>${project.build.directory}/generated-sources/yuicompress</directory>
-            </resource>
-            -->
-            <resource>
-              <directory>${project.build.directory}/generated-sources/wro</directory>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<attachClasses>true</attachClasses>
+					<webResources>
+						<!-- Output directory configured above with the YUICompressor Maven plugin
+						<resource>
+						  <directory>${project.build.directory}/generated-sources/yuicompress</directory>
+						</resource>
+						-->
+						<resource>
+							<directory>${project.build.directory}/generated-sources/wro</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <!-- Unpack the JSP Wiki Pages -->
-          <execution>
-            <id>unpack-wikipages-private</id>
-            <phase>package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.jspwiki.wikipages</groupId>
-                  <artifactId>jspwiki-wikipages-en</artifactId>
-                  <version>${project.version}</version>
-                </artifactItem>
-              </artifactItems>
-              <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/jspwiki/data/jspwiki-files</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>  
-      </plugin>
-    </plugins>
-  </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<!-- Unpack the JSP Wiki Pages -->
+					<execution>
+						<id>unpack-wikipages-private</id>
+						<phase>package</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.apache.jspwiki.wikipages</groupId>
+									<artifactId>jspwiki-wikipages-en</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+							</artifactItems>
+							<excludes>META-INF/**</excludes>
+							<outputDirectory>${project.build.directory}/jspwiki/data/jspwiki-files</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

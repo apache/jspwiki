@@ -46,7 +46,7 @@ public class XmlUtilTest extends TestCase {
      	assertEquals( 1, elements.size() );
 
      	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/editor" );
-     	assertEquals( 2, elements.size() );
+     	assertEquals( 1, elements.size() ); // reduced to one, since wysiwyg was is deactivated for now
 
      	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/heck" );
      	assertEquals( 0, elements.size() );

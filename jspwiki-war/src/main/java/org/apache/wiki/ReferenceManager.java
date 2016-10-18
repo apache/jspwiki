@@ -147,14 +147,15 @@ public class ReferenceManager
     private Map<String,Set<String>> m_unmutableReferredBy;
 
     /** The WikiEngine that owns this object. */
-    private WikiEngine     m_engine;
+    private final WikiEngine     m_engine;
 
     private boolean        m_matchEnglishPlurals = false;
 
-    private static Logger log = Logger.getLogger(ReferenceManager.class);
+    private static final Logger log = Logger.getLogger(ReferenceManager.class);
 
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
+	private static final String SERIALIZATION_PROPERTY  = "jspwiki.referenceManager.serialize";
 
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 4L;
@@ -313,6 +314,10 @@ public class ReferenceManager
                                             WikiPageEvent.PAGE_DELETED, this);
     }
 
+    private boolean doSerialize() {
+		return "true".equals(m_engine.getWikiProperties().getProperty(SERIALIZATION_PROPERTY, "true"));
+	}
+
     /**
      *  Reads the serialized data from the disk back to memory.
      *  Returns the date when the data was last written on disk
@@ -322,6 +327,8 @@ public class ReferenceManager
         throws IOException,
                ClassNotFoundException
     {
+		if (!doSerialize()) return Long.MIN_VALUE;
+
         ObjectInputStream in = null;
         long saved = 0L;
 
@@ -366,6 +373,8 @@ public class ReferenceManager
      */
     private synchronized void serializeToDisk()
     {
+    	if (!doSerialize()) return;
+
         ObjectOutputStream out = null;
 
         try
@@ -426,6 +435,8 @@ public class ReferenceManager
         throws IOException,
                ClassNotFoundException
     {
+		if (!doSerialize()) return Long.MIN_VALUE;
+
         ObjectInputStream in = null;
         long saved = 0L;
 
@@ -503,6 +514,8 @@ public class ReferenceManager
      */
     private synchronized void serializeAttrsToDisk( WikiPage p )
     {
+		if (!doSerialize()) return;
+
         ObjectOutputStream out = null;
         StopWatch sw = new StopWatch();
         sw.start();
@@ -580,7 +593,8 @@ public class ReferenceManager
      *  @param context {@inheritDoc}
      *  @param content {@inheritDoc}
      */
-    public void postSave( WikiContext context, String content )
+    @Override
+    public void postSave(WikiContext context, String content )
     {
         WikiPage page = context.getPage();
 
@@ -1166,6 +1180,7 @@ public class ReferenceManager
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )

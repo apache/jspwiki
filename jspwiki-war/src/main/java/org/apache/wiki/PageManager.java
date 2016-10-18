@@ -148,11 +148,11 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 
     static Logger log = Logger.getLogger(PageManager.class);
 
-    private WikiPageProvider m_provider;
+    private final WikiPageProvider m_provider;
 
     protected HashMap<String, PageLock> m_pageLocks = new HashMap<String, PageLock>();
 
-    private WikiEngine m_engine;
+    private final WikiEngine m_engine;
 
     private int m_expiryTime = 60;
 
@@ -497,7 +497,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      */
     public boolean pageExists(String pageName) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
-            throw new ProviderException("Illegal page name");
+            return false;
         }
 
         return m_provider.pageExists(pageName);
@@ -514,7 +514,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      */
     public boolean pageExists(String pageName, int version) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
-            throw new ProviderException("Illegal page name");
+            return false;
         }
 
         if (version == WikiProvider.LATEST_VERSION) {
@@ -565,6 +565,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             setName("JSPWiki Lock Reaper");
         }
 
+        @Override
         public void backgroundTask() throws Exception {
             synchronized (m_pageLocks) {
                 Collection<PageLock> entries = m_pageLocks.values();
@@ -730,6 +731,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      *
      * @param event The event
      */
+    @Override
     public void actionPerformed(WikiEvent event) {
         if (!(event instanceof WikiSecurityEvent)) {
             return;
@@ -761,7 +763,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
                         pagesChanged++;
                     }
                 }
-                log.info("Profile name change for '" + newPrincipal.toString() +
+                log.info("Profile name change for '" + newPrincipal +
                         "' caused " + pagesChanged + " page ACLs to change also.");
             } catch (ProviderException e) {
                 // Oooo! This is really bad...

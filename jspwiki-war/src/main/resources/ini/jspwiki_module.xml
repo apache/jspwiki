@@ -38,12 +38,13 @@
    <!--
        Experimental wysiwyg editor, based on mooeditable
    -->
+   <!--
    <editor name="wysiwyg">
       <author>MooEditable</author>
       <path>editors/wysiwyg.jsp</path>
       <minVersion>2.10</minVersion>
    </editor>
-
+-->
 <!--
    <editor name="WikiWizard">
       <author>i3G Institut Hochschule Heilbronn</author>

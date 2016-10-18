@@ -63,7 +63,6 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
@@ -127,11 +126,12 @@ public class LuceneSearchProvider implements SearchProvider {
     /** The maximum number of hits to return from searches. */
     public static final int MAX_SEARCH_HITS = 99999;
     
-    private static String c_punctuationSpaces = StringUtils.repeat(" ", MarkupParser.PUNCTUATION_CHARS_ALLOWED.length() );
+    private static final String c_punctuationSpaces = StringUtils.repeat(" ", MarkupParser.PUNCTUATION_CHARS_ALLOWED.length() );
 
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void initialize(WikiEngine engine, Properties props)
             throws NoRequiredPropertyException, IOException
     {
@@ -221,7 +221,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
                 log.info("Starting Lucene reindexing, this can take a couple of minutes...");
 
-                Directory luceneDir = new SimpleFSDirectory(dir, null);
+                Directory luceneDir = new SimpleFSDirectory(dir.toPath());
                 
                 try
                 {
@@ -394,7 +394,7 @@ public class LuceneSearchProvider implements SearchProvider {
             pageRemoved( page );
 
             // Now add back the new version.
-            luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory).toPath());
             writer = getIndexWriter( luceneDir );
             
             luceneIndexPage( page, text, writer );
@@ -423,8 +423,8 @@ public class LuceneSearchProvider implements SearchProvider {
         try
         {
             Class< ? > clazz = ClassUtil.findClass( "", m_analyzerClass );
-            Constructor< ? > constructor = clazz.getConstructor( Version.LUCENE_47.getClass() );
-            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_47 );
+            Constructor< ? > constructor = clazz.getConstructor();
+            Analyzer analyzer = (Analyzer) constructor.newInstance();
             return analyzer;
         }
         catch( Exception e )
@@ -508,12 +508,13 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
-    public void pageRemoved( WikiPage page )
+    @Override
+    public void pageRemoved(WikiPage page )
     {
         IndexWriter writer = null;
         try
         {
-            Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory).toPath());
             writer = getIndexWriter( luceneDir );
             Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
@@ -528,11 +529,11 @@ public class LuceneSearchProvider implements SearchProvider {
         }
     }
     
-    IndexWriter getIndexWriter( Directory luceneDir ) throws CorruptIndexException, 
-            LockObtainFailedException, IOException, ProviderException 
+    IndexWriter getIndexWriter( Directory luceneDir ) throws
+            IOException, ProviderException
     {
         IndexWriter writer = null;
-        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_47, getLuceneAnalyzer() );
+        IndexWriterConfig writerConfig = new IndexWriterConfig( getLuceneAnalyzer() );
         writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
         writer = new IndexWriter( luceneDir, writerConfig );
         
@@ -546,7 +547,7 @@ public class LuceneSearchProvider implements SearchProvider {
         {
             if( writer != null ) 
             {
-                writer.close( true );
+                writer.close( );
             }
         }
         catch( IOException e )
@@ -561,7 +562,8 @@ public class LuceneSearchProvider implements SearchProvider {
      *
      *  @param page WikiPage to add to the update queue.
      */
-    public void reindexPage( WikiPage page )
+    @Override
+    public void reindexPage(WikiPage page )
     {
         if( page != null )
         {
@@ -593,7 +595,8 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages( String query, WikiContext wikiContext )
+    @Override
+    public Collection findPages(String query, WikiContext wikiContext )
         throws ProviderException
     {
         return findPages( query, FLAG_CONTEXTS, wikiContext );
@@ -623,7 +626,9 @@ public class LuceneSearchProvider implements SearchProvider {
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
-            QueryParser qp = new MultiFieldQueryParser( Version.LUCENE_47, queryfields, getLuceneAnalyzer() );
+
+            QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+            qp.setAllowLeadingWildcard(true);
 
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
@@ -638,7 +643,7 @@ public class LuceneSearchProvider implements SearchProvider {
             try
             {
                 File dir = new File(m_luceneDirectory);
-                Directory luceneDir = new SimpleFSDirectory(dir, null);
+                Directory luceneDir = new SimpleFSDirectory(dir.toPath());
                 IndexReader reader = DirectoryReader.open(luceneDir);
                 searcher = new IndexSearcher(reader);
             }
@@ -730,6 +735,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getProviderInfo()
     {
         return "LuceneSearchProvider";
@@ -756,6 +762,7 @@ public class LuceneSearchProvider implements SearchProvider {
             setName("JSPWiki Lucene Indexer");
         }
 
+        @Override
         public void startupTask() throws Exception
         {
             m_watchdog = getEngine().getCurrentWatchDog();
@@ -776,6 +783,7 @@ public class LuceneSearchProvider implements SearchProvider {
             m_watchdog.exitState();
         }
 
+        @Override
         public void backgroundTask() throws Exception
         {
             m_watchdog.enterState("Emptying index queue", 60);
@@ -800,9 +808,9 @@ public class LuceneSearchProvider implements SearchProvider {
     private static class SearchResultImpl
         implements SearchResult
     {
-        private WikiPage m_page;
-        private int      m_score;
-        private String[] m_contexts;
+        private final WikiPage m_page;
+        private final int      m_score;
+        private final String[] m_contexts;
 
         public SearchResultImpl( WikiPage page, int score, String[] contexts )
         {
@@ -811,6 +819,7 @@ public class LuceneSearchProvider implements SearchProvider {
             m_contexts = contexts != null ? contexts.clone() : null;
         }
 
+        @Override
         public WikiPage getPage()
         {
             return m_page;
@@ -819,15 +828,18 @@ public class LuceneSearchProvider implements SearchProvider {
         /* (non-Javadoc)
          * @see org.apache.wiki.SearchResult#getScore()
          */
+        @Override
         public int getScore()
         {
             return m_score;
         }
 
 
+        @Override
         public String[] getContexts()
         {
             return m_contexts;
         }
     }
+
 }
