@@ -1,3 +1,13 @@
+Forked from [apache/jspwiki](https://github.com/apache/jspwiki)
+
+## Why does this JSPWiki Fork exist?
+
+This fork of JSPWiki is used by [denkbares/d3web-KnowWE](https://github.com/denkbares/d3web-KnowWE).
+KnowWE quite heavily relies on JSPWiki for some time now and this fork 
+allows to easily add some KnowWE specific fixes and improvements. 
+The aim is to keep this fork as close as possible to the original.
+
+
 # Apache JSPWiki 2.10 - Documentation
 
     Licensed to the Apache Software Foundation (ASF) under one
