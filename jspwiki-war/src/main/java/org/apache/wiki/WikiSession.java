@@ -104,7 +104,7 @@ public final class WikiSession implements WikiEventListener
 
     private static final String ALL                   = "*";
 
-    private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<WikiSession>();
+    private static Map<Thread, WikiSession> c_guestSession = new WeakHashMap<>();
 
     private final Subject       m_subject             = new Subject();
 
@@ -783,13 +783,13 @@ public final class WikiSession implements WikiEventListener
 
     private static WikiSession staticGuestSession( WikiEngine engine )
     {
-        WikiSession session = c_guestSession.get();
+        WikiSession session = c_guestSession.get(Thread.currentThread());
 
         if( session == null )
         {
             session = guestSession( engine );
 
-            c_guestSession.set( session );
+            c_guestSession.put( Thread.currentThread(), session );
         }
 
         return session;
