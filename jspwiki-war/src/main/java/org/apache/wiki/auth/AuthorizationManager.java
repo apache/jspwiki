@@ -105,7 +105,7 @@ public class AuthorizationManager {
 
     /** Property that supplies the security policy file name, in WEB-INF. */
     protected static final String             POLICY      = "jspwiki.policy.file";
-    
+
     /** Name of the default security policy file, in WEB-INF. */
     protected static final String             DEFAULT_POLICY      = "jspwiki.policy";
 
@@ -117,7 +117,7 @@ public class AuthorizationManager {
     private Authorizer                        m_authorizer      = null;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
-    private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
+    private final Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
 
     private WikiEngine                        m_engine          = null;
 
@@ -471,10 +471,18 @@ public class AuthorizationManager {
         // Initialize local security policy
         try
         {
-            String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
+            String policyFileName = engine.getServletContext().getInitParameter(POLICY);
+
+            if (policyFileName == null) {
+                policyFileName = System.getProperty( POLICY );
+            }
+			if (policyFileName == null) {
+				policyFileName = properties.getProperty(POLICY, DEFAULT_POLICY);
+			}
+
             URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
-            
-            if (policyURL != null) 
+
+            if (policyURL != null)
             {
                 File policyFile = new File( policyURL.toURI().getPath() );
                 log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
@@ -484,8 +492,8 @@ public class AuthorizationManager {
             }
             else
             {
-                String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " + 
-                            "Please ensure that the jspwiki.policy file exists in the default location. " + 
+                String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " +
+                            "Please ensure that the jspwiki.policy file exists in the default location. " +
                 		    "This file should exist regardless of the existance of a global policy file. " +
                             "The global policy file is identified by the java.security.policy variable. ";
                 WikiSecurityException wse = new WikiSecurityException( sb );
@@ -611,7 +619,8 @@ public class AuthorizationManager {
     {
         Boolean allowed = (Boolean) WikiSession.doPrivileged( session, new PrivilegedAction<Boolean>()
         {
-            public Boolean run()
+            @Override
+			public Boolean run()
             {
                 try
                 {
