@@ -169,7 +169,7 @@ public class AuthenticationManager {
     private boolean                            m_storeIPAddress    = true;
 
     /** Keeps a list of the usernames who have attempted a login recently. */
-    private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
+    private final TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
     
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
@@ -607,12 +607,12 @@ public class AuthenticationManager {
      */
     protected static URL findConfigFile( WikiEngine engine, String name )
     {
-        log.info( "looking for " + name + " inside WEB-INF " );
+        log.info( "looking for " + name + " as absolute path" );
         // Try creating an absolute path first
         File defaultFile = null;
         if( engine.getRootPath() != null )
         {
-            defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + name );
+            defaultFile = new File( name );
         }
         if ( defaultFile != null && defaultFile.exists() )
         {
