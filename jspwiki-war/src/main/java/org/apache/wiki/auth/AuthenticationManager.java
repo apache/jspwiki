@@ -72,7 +72,7 @@ import org.apache.wiki.util.TimedCounterList;
  * (currently ten minutes), and each login attempt during that time incurs a penalty
  * of 2^login attempts milliseconds - that is, 10 login attempts incur a login penalty of 1.024 seconds.
  * The delay is currently capped to 20 seconds.
- * 
+ *
  * @since 2.3
  */
 public class AuthenticationManager {
@@ -81,7 +81,7 @@ public class AuthenticationManager {
     private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
 
     private static final long MAX_LOGIN_DELAY         = 20*1000L; // 20 seconds
-    
+
     /** The name of the built-in cookie assertion module */
     public static final String                 COOKIE_MODULE       =  CookieAssertionLoginModule.class.getName();
 
@@ -90,16 +90,16 @@ public class AuthenticationManager {
 
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
-    
+
     /** If this jspwiki.properties property is <code>true</code>, allow cookies to be used for authentication. */
     public static final String                 PROP_ALLOW_COOKIE_AUTH = "jspwiki.cookieAuthentication";
-    
+
     /**
      *  This property determines whether we use JSPWiki authentication or not.
      *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
      *  <p>
      *  Setting this is now deprecated - we do not guarantee that it works.
-     *  
+     *
      * @deprecated - to be removed on 2.11.0
      */
     @Deprecated
@@ -130,14 +130,14 @@ public class AuthenticationManager {
 
     /** The {@link javax.security.auth.spi.LoginModule} to use for custom authentication. */
     protected static final String                 PROP_LOGIN_MODULE = "jspwiki.loginModule.class";
-    
+
     /** Empty Map passed to JAAS {@link #doJAASLogin(Class, CallbackHandler, Map)} method. */
     protected static final Map<String,String> EMPTY_MAP = Collections.unmodifiableMap( new HashMap<String,String>() );
-    
+
     /** Class (of type LoginModule) to use for custom authentication. */
     protected Class<? extends LoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;
-    
-    /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}; 
+
+    /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)};
      * initialized by {@link #initialize(WikiEngine, Properties)}. */
     protected Map<String,String> m_loginModuleOptions = new HashMap<String,String>();
 
@@ -151,7 +151,7 @@ public class AuthenticationManager {
 
     /** The default {@link javax.security.auth.spi.LoginModule} class name to use for custom authentication. */
     private static final String                 DEFAULT_LOGIN_MODULE = "org.apache.wiki.auth.login.UserDatabaseLoginModule";
-    
+
     /** Empty principal set. */
     private static final Set<Principal> NO_PRINCIPALS = new HashSet<Principal>();
 
@@ -164,13 +164,13 @@ public class AuthenticationManager {
     private boolean                     m_allowsCookieAuthentication = false;
 
     private WikiEngine                         m_engine            = null;
-    
+
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
     /** Keeps a list of the usernames who have attempted a login recently. */
     private final TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
-    
+
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -189,12 +189,12 @@ public class AuthenticationManager {
         m_allowsCookieAssertions = TextUtil.getBooleanProperty( props,
                                                               PROP_ALLOW_COOKIE_ASSERTIONS,
                                                               true );
-        
+
         // Should we allow cookies for authentication? (default: no)
         m_allowsCookieAuthentication = TextUtil.getBooleanProperty( props,
                                                                     PROP_ALLOW_COOKIE_AUTH,
                                                                     false );
-        
+
         // Should we throttle logins? (default: yes)
         m_throttleLogins = TextUtil.getBooleanProperty( props,
                                                         PROP_LOGIN_THROTTLING,
@@ -211,7 +211,7 @@ public class AuthenticationManager {
             e.printStackTrace();
             throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
-        
+
         // Initialize the LoginModule options
         initLoginModuleOptions( props );
     }
@@ -292,14 +292,14 @@ public class AuthenticationManager {
         {
             // Create a callback handler
             handler = new WebContainerCallbackHandler( m_engine, request );
-            
+
             // Execute the container login module, then (if that fails) the cookie auth module
             Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
             if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
             {
                 principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
             }
-            
+
             // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
             if ( principals.size() > 0 )
             {
@@ -308,7 +308,7 @@ public class AuthenticationManager {
                 {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
                 }
-                
+
                 // Add all appropriate Authorizer roles
                 injectAuthorizerRoles( session, authorizationMgr.getAuthorizer(), request );
             }
@@ -335,11 +335,11 @@ public class AuthenticationManager {
                 return true;
             }
         }
-        
+
         // If by some unusual turn of events the Anonymous login module doesn't work, login failed!
         return false;
     }
-    
+
     /**
      * Attempts to perform a WikiSession login for the given username/password
      * combination using JSPWiki's custom authentication mode. This method is identical to
@@ -358,7 +358,7 @@ public class AuthenticationManager {
     {
         return login( session, null, username, password );
     }
-    
+
     /**
      * Attempts to perform a WikiSession login for the given username/password
      * combination using JSPWiki's custom authentication mode. In order to log in,
@@ -392,13 +392,13 @@ public class AuthenticationManager {
         {
             delayLogin(username);
         }
-        
+
         CallbackHandler handler = new WikiCallbackHandler(
                 m_engine,
                 null,
                 username,
                 password );
-        
+
         // Execute the user's specified login module
         Set<Principal> principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
         if (principals.size() > 0)
@@ -408,22 +408,22 @@ public class AuthenticationManager {
             {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
             }
-            
+
             // Add all appropriate Authorizer roles
             injectAuthorizerRoles( session, m_engine.getAuthorizationManager().getAuthorizer(), null );
-            
+
             return true;
         }
         return false;
     }
-    
+
     /**
      *  This method builds a database of login names that are being attempted, and will try to
      *  delay if there are too many requests coming in for the same username.
      *  <p>
      *  The current algorithm uses 2^loginattempts as the delay in milliseconds, i.e.
      *  at 10 login attempts it'll add 1.024 seconds to the login.
-     *  
+     *
      *  @param username The username that is being logged in
      */
     private void delayLogin( String username )
@@ -432,11 +432,11 @@ public class AuthenticationManager {
         {
             m_lastLoginAttempts.cleanup( LASTLOGINS_CLEANUP_TIME );
             int count = m_lastLoginAttempts.count( username );
-            
+
             long delay = Math.min( 1<<count, MAX_LOGIN_DELAY );
             log.debug( "Sleeping for "+delay+" ms to allow login." );
             Thread.sleep( delay );
-            
+
             m_lastLoginAttempts.add( username );
         }
         catch( InterruptedException e )
@@ -508,7 +508,7 @@ public class AuthenticationManager {
     {
         return m_allowsCookieAuthentication;
     }
-    
+
     /**
      * Determines whether the supplied Principal is a "role principal".
      * @param principal the principal to test
@@ -540,9 +540,9 @@ public class AuthenticationManager {
      * {@link javax.security.auth.spi.LoginModule}, and returns a Set of
      * Principals that results from a successful login. The LoginModule is instantiated,
      * then its {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}
-     * method is called. The parameters passed to <code>initialize</code> is a 
+     * method is called. The parameters passed to <code>initialize</code> is a
      * dummy Subject, an empty shared-state Map, and an options Map the caller supplies.
-     * 
+     *
      * @param clazz
      *            the LoginModule class to instantiate
      * @param handler
@@ -607,14 +607,19 @@ public class AuthenticationManager {
      */
     protected static URL findConfigFile( WikiEngine engine, String name )
     {
-        log.info( "looking for " + name + " as absolute path" );
+        log.info( "looking for " + name + " inside WEB-INF " );
         // Try creating an absolute path first
         File defaultFile = null;
         if( engine.getRootPath() != null )
         {
+            defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + name );
+        }
+        if( defaultFile == null || !defaultFile.exists() )
+        {
+       		log.info( "looking for " + name + " as complete path" );
             defaultFile = new File( name );
         }
-        if ( defaultFile != null && defaultFile.exists() )
+        if ( defaultFile.exists() )
         {
             try
             {
@@ -628,26 +633,27 @@ public class AuthenticationManager {
 
         }
 
-        
+
         // Ok, the absolute path didn't work; try other methods
 
         URL path = null;
-        
+
         if( engine.getServletContext() != null )
         {
         	OutputStream os = null;
         	InputStream is = null;
             try
             {
+				log.info( "looking for servlet context resource /WEB-INF/" + name );
             	URL url = engine.getServletContext().getResource("/WEB-INF/" + name);
             	if (url != null)
             	{
             		return url;
             	}
-            	
+
                 log.info( "looking for /" + name + " on classpath" );
                 //  create a tmp file of the policy loaded as an InputStream and return the URL to it
-                //  
+                //
                 is = AuthenticationManager.class.getResourceAsStream( "/" + name );
                 if( is == null ) {
                     throw new FileNotFoundException( name + " not found" );
@@ -674,7 +680,7 @@ public class AuthenticationManager {
             {
                log.error( "failed to load security policy from file " + name + ",stacktrace follows", e );
             }
-            finally 
+            finally
             {
             	IOUtils.closeQuietly( is );
             	IOUtils.closeQuietly( os );
@@ -739,7 +745,7 @@ public class AuthenticationManager {
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,target));
         }
     }
-    
+
     /**
      * Initializes the options Map supplied to the configured LoginModule every time it is invoked.
      * The properties and values extracted from
@@ -761,7 +767,7 @@ public class AuthenticationManager {
                 if ( optionKey.length() > 0 )
                 {
                     String optionValue = props.getProperty( propName );
-                    
+
                     // Make sure the key is unique before stashing the key/value pair
                     if ( m_loginModuleOptions.containsKey( optionKey ) )
                     {
@@ -772,7 +778,7 @@ public class AuthenticationManager {
             }
         }
     }
-    
+
     /**
      * After successful login, this method is called to inject authorized role Principals into the WikiSession.
      * To determine which roles should be injected, the configured Authorizer
@@ -799,7 +805,7 @@ public class AuthenticationManager {
                     log.debug("Added authorizer role " + role.getName() + "." );
                 }
             }
-            
+
             // If web authorizer, test the request.isInRole() method also
             else if ( request != null && authorizer instanceof WebAuthorizer )
             {
