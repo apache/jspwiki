@@ -1,3 +1,6 @@
+2016-12-03  Harry Metske (metskem@apache.org)
+       * Fixed JSPWIKI-1036 - Search for non-Latin characters fails (reported by Peter Paessler)
+
 2016-09-16  Harry Metske (metskem@apache.org)
        * Fixed JSPWIKI-1033 - Incorrect relative navigations (reported by Niklas Polke)
 
