@@ -85,14 +85,17 @@ DOM Structure:
 
       li.findpages
         a[title="Create <page>"]
-          label.btn.btn-danger.btn-xs.pull-right
-            input#cloney.pull-left[type=checkbox]  Clone this page
-          span.createpage  <page-name>
+          div.search-flex
+            div.createpage.search-flex-left  <page-name>
+            div.btn.btn-danger.btn-xs.search-flex-right
+              input#cloney.pull-left[type=checkbox]  Clone this page
+
 
       li.findpages
           a[href]
-            span.badge.pull-right <score>
-            span <page>
+            div.search-flex
+              div.search-flex-left <page>
+              div.badge.search-flex-right <score>
 
       li.divider
 
@@ -111,5 +114,9 @@ DOM Structure:
     //some space between checkbox, .btn, .badge and text
     .pull-right { margin-left:.5em; }
     #cloney { margin-left:.5em;}
+
+    .search-flex { display: flex; }
+    .search-flex-left { margin-right: 10px; }
+    .search-flex-right { margin-left: auto!important; }
 
 }
