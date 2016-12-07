@@ -139,7 +139,7 @@ Element.implement({
 
              toggle.addEvents({
                 mouseenter: function(){
-                    element.fade(0.9);
+                    element.fade(1);
                     toggle.addClass("open");
                     if(onOpen){ onOpen(); }
                 },
