@@ -1,3 +1,12 @@
+2016-12-11  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-17
+
+       * Allow concatenation of css-styles (classes) by using a "." separator,
+         which is useful when adopting styles from the bootstrap framework
+
+         EG. %%btn.btn-primary.btn-xs This looks like a small Button /%
+
 2016-12-03  Harry Metske (metskem@apache.org)
        * Fixed JSPWIKI-1036 - Search for non-Latin characters fails (reported by Peter Paessler)
 
@@ -43,26 +52,26 @@
 
 2016-04-06  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-9  Few fixes on the HADDOCK template 
-       
+       * 2.10.3-svn-9  Few fixes on the HADDOCK template
+
        * improved styling of broken image links
-       
+
        * [JSPWIKI-934] Haddock: "page modified" markup differs to the original edits
          Improved styling of the PageModified/Conflict jsp's
-       
+
        * Allow google-fonts in %%add-css
 
 
 2016-04-03  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-8  Few more fixes on the HADDOCK template 
-       
+       * 2.10.3-svn-8  Few more fixes on the HADDOCK template
+
        * Reorganize the attachment detail view, changing the
          order of columns to a more logical format.
-       
-       * Improve the rendering of the RecentChanges page 
 
-       * Fix the font for text in buttons with an icon 
+       * Improve the rendering of the RecentChanges page
+
+       * Fix the font for text in buttons with an icon
 
        * Fix the popup dialog position in the plain editor
          in case the textarea contains '<', '>' or '&' characters.
@@ -70,32 +79,32 @@
        * Hide the section-editlinks for weblog comments.
 
        * Fix the handling of the editor-type switch in the editor.
-       
+
 
 2016-03-27  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-7  Few more small fixes on the HADDOCK template 
+       * 2.10.3-svn-7  Few more small fixes on the HADDOCK template
 
        * [JSPWIKI-918] HADDOCK: the "view" menu is back as a better way
          to navigate back to the main page from "Attach" or "Info" views.
          (also removed the ugly "Back to Parent Page" button)
-       
+
        * [JSPWIKI-901] : Undo/Redo doesn't work in HADDOCK editor
 
        * [WeblogPlugin] : added support for filtering weblog entries according to weblog
             start-date and number of days. Now you can select weblog entries
-            from a link from the WeblogArchive plugin. 
-       
-       * [JSPWIKI-897] : Long page names in Haddock don't wrap gracefully
-            Fixing printing issues with long page names. 
+            from a link from the WeblogArchive plugin.
 
-       * Replace the attachment info icon, for not-inlined attachments 
+       * [JSPWIKI-897] : Long page names in Haddock don't wrap gracefully
+            Fixing printing issues with long page names.
+
+       * Replace the attachment info icon, for not-inlined attachments
 
        * [JSPWIKI-904]: HADDOCK – the display status of the LeftMenu is retained,
          also after a page refresh.  (by means of a new "Sidebar" user-pref cookie)
          The "Hide-Sidebar" option is obsolete and thus removed from the UserPreferences.
 
- 
+
 2016-03-15  Harry Metske (metskem@apache.org)
 
        * 2.10.3-svn-6
@@ -105,29 +114,29 @@
 
 2016-03-12  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-5  
+       * 2.10.3-svn-5
 
        * %%ADD-CSS: fix regexp for inline images on IE.
-       
+
        * Fix posting of comments in the Haddock template
-       
+
        * Fixed some missing localization of the weblogplugin.
          Few more tweaks of the styling of weblog entries & comments.
-       
 
-       
+
+
 2016-03-08  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-4  Few more small fixes related to the HADDOCK template 
-       
+       * 2.10.3-svn-4  Few more small fixes related to the HADDOCK template
+
        * Few fixes on well formed HTML (SearchBox.jsp, PageInfo.jsp, Nav.jsp)
-       
-       * Fixed some missing localizations in Nav.jsp. 
+
+       * Fixed some missing localizations in Nav.jsp.
 
        * Various improvements of the JSPWiki Weblog implementation and css styling.
 
        * Only show scrollbars on prettified blocks when appropriate (WINDOWS issues)
-       
+
 
 2016-03-08  Harry Metske (metskem@apache.org)
 
@@ -137,21 +146,21 @@
 
 2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-2  Few more small fixes on the HADDOCK template 
+       * 2.10.3-svn-2  Few more small fixes on the HADDOCK template
 
        * Added 2 new inter wiki references :
-         [Raw:MainPage] for displaying the raw wikimarkup of a page 
-         [Reader:MainPage] to display a simplified reader view of a page 
-             (no left menu, layout fit for printing) 
-         
+         [Raw:MainPage] for displaying the raw wikimarkup of a page
+         [Reader:MainPage] to display a simplified reader view of a page
+             (no left menu, layout fit for printing)
+
        * Fixing JS error on <IE11 : missing Array.from() (compatibility with mootools 1.5.1)
 
        * Fix for flexbox feature test  (IE)
-      
-       
+
+
 2016-02-28  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.3-svn-1  Various small fixes on the HADDOCK template 
+       * 2.10.3-svn-1  Various small fixes on the HADDOCK template
 
        * Fix %%viewer "Mixed content" error  (avoid serving http content via https )
        * Fix visibility if the Titlebox page has no content
@@ -161,13 +170,13 @@
 
        * Fix consistency of the styling of the "OK" buttons in many forms.
        * Fix indentation of section dropdown entries (plain editor)
-       * Fix sorting by dates in the Attachment and Info view  
+       * Fix sorting by dates in the Attachment and Info view
        * JSPWIKI-921: increase legibility of the plain editor
        * JSPWIKI-928: fix odd fonts in the user control panel pop-up window
        * Add new Apache feather.png as logo background
-       
+
        * Upgrade to mootools 1.6.0
-       
+
 
 2016-02-05  Harry Metske (metskem@apache.org)
 
@@ -199,7 +208,7 @@
 
        * 2.10.2-svn-39
 
-       * [JSPWIKI-916] Pre-formatted text within a list renders 
+       * [JSPWIKI-916] Pre-formatted text within a list renders
          to an unpleasantly small font size, due to relative font sizing.
 
 2015-09-07  Dirk Frederickx (brushed AT apache DOT org)
@@ -207,7 +216,7 @@
        * 2.10.2-svn-38
 
        * [JSPWIKI-903] Fixed a page redirect after attachment delete.
-       
+
 2015-09-06  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-37  Few Attachment tweaks in the HADDOCK template
@@ -222,21 +231,21 @@
        * 2.10.2-svn-36  Improved Attachment upload in the HADDOCK template
 
        * Fixed the AttachementServlet so you can now select multiple files
-         before pressing the upload button.  You can also use 
+         before pressing the upload button.  You can also use
 		 drap & drop if your browser supports it.
- 
-        * [JSPWIKI-903] Fixed a page redirect issue when deleting an 
-         attachment from the Attachment info page.  
+
+        * [JSPWIKI-903] Fixed a page redirect issue when deleting an
+         attachment from the Attachment info page.
 
        * Fixed the zebra-stripes of the FIND AJAXSearch.jsp
-       
+
        * Few small improvements on the plain editor suggestion dialogs.
-       
+
 
 2015-08-28  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.2-svn-35 
-       
+       * 2.10.2-svn-35
+
        * [JSPWIKI-912] Haddock Template: fixing the position of headers
          below the fixed navigation bar, when returning from a section edit.
 
@@ -244,12 +253,12 @@
 2015-08-23  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-34  WYSIWYG improvements
-       
-       * Added the wysiwyg editor to the wro4j build process 
-       
+
+       * Added the wysiwyg editor to the wro4j build process
+
        * Improved the stability of the  WysiwygEditingRenderer
-       
-       
+
+
 
 2015-08-22  Harry Metske (metskem@apache.org)
 
@@ -259,7 +268,7 @@
 2015-08-16  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-32  Haddock Template updates & WYSIWYG editing
-       
+
        Haddock Template:
 
        * [JSPWIKI-902] Printing improvements for the HADDOCK template,
@@ -289,13 +298,13 @@
 
          You can still add your own wysiwyg editor to JSPWiki -- hooks are provided
          for TinyMCE and CKeditor.
-         
+
        * Added ajax-based live-preview for wysiwyg editors to the Haddock Template.
          When editing in wysiwyg mode, you now get immediately a preview of the wiki markup.
          (similar to the live-preview mode of the plain editor)
 
        * The wysiwyg editors are now resizable, just like the plain editor..
-       
+
 
 2015-08-04  Dirk Frederickx (brushed AT apache DOT org)
 
@@ -303,12 +312,12 @@
 
        * Loading error on hadock.js and haddock-edit.js fixed. (async attribute)
          Was breaking all editing js functions !
-       
-       * IEx tweaks 
+
+       * IEx tweaks
          - remove unnecessary scrollbars
          - attempt to resolve the broken icon-fonts on IE11
 
-       * %%add-css style fix to handle special html entities 
+       * %%add-css style fix to handle special html entities
 
 
 2015-08-04  David Vittor (dvittor@apache.org)
@@ -344,20 +353,20 @@
          - The sidebar height now extends till the bottom of the page
          - 3 Sidebar modes are now working: left(default), right and hidden
 
-       * Fixed the <wiki:Link> tag to support "cssClass" as attribute. 
+       * Fixed the <wiki:Link> tag to support "cssClass" as attribute.
 
-       * [JSPWIKI-430] All confirmation dialogs are now build with regular DOM elements. 
-         (check out the Log-out or Delete confirmation dialogs to see the improvement) 
-  
-  
+       * [JSPWIKI-430] All confirmation dialogs are now build with regular DOM elements.
+         (check out the Log-out or Delete confirmation dialogs to see the improvement)
+
+
        WYSIWYG editors:
 
        * Added support for the WYSIWYG editor TinyMCE.jsp
 
        * Improved server side handling of HtmlStringToWiki translation
 
-       * [JSPWIKI-622] Added an editor selection switch to the editor toolbar. 
-         It is now possible to switch between editors (plain, or other installed 
+       * [JSPWIKI-622] Added an editor selection switch to the editor toolbar.
+         It is now possible to switch between editors (plain, or other installed
          wysiwyg editors) while in Edit. (no need to go first via the Preferences screen)
 
 
@@ -369,19 +378,19 @@
        Haddock Template commit of the remaining JSP's: UI for handling groups,
        workflow UI, and refactored JSP's for Login/Lostpw/Register.
        This concludes the re-design of all the haddock template JSP's.
-       
+
        Other changes:
 
        * Fixed page redirections and improved the back button handling.
-         Eg. Attachment DELETE will get you now back to the ATTACH view, 
+         Eg. Attachment DELETE will get you now back to the ATTACH view,
          not the INFO view.  See also [JSPWIKI-867]
 
-       * Tabs & Accordion toggles can now include other markup, rather than only text. 
+       * Tabs & Accordion toggles can now include other markup, rather than only text.
 
        * Added CSS3-based automatic text hyphenation for browsers who support this.
          (also works with none justified text)
 
-       * Attachment Upload UI improved: attachment types are represented by icons 
+       * Attachment Upload UI improved: attachment types are represented by icons
          from the icon-font.
 
        * Attachment Info page to access version information on attachments
@@ -395,26 +404,26 @@
        * 2.10.2-svn-27
 
        More Haddock Template tweaks:
-       
+
        * Removed annoying scroll-bars from the dropdown menu's which appeared in some browsers
 
-       * Improved rendering of inserted dropdown's like the MoreMenu and HomeMenu, 
+       * Improved rendering of inserted dropdown's like the MoreMenu and HomeMenu,
          to make them better fit with bootstrap dropdown menu's.
 
        * Few fixes of the layout of the UserPreferences menu, and some refactoring
-         of the UserPreferences.jsp and the Login.jsp. 
-       
+         of the UserPreferences.jsp and the Login.jsp.
+
        * Fixed an editor bug causing the Live Preview to slow down after some time.
 
        WYSIWYG editor in JSPWiki
 
-       * Refreshed the WYSIWIG editor with the latest stable version of the 
+       * Refreshed the WYSIWIG editor with the latest stable version of the
          CKeditor v4.5.1. (replacement of FCK) Standard version, with BootstrapCK4 skin.
          The update was done for both for the default and the Haddock template.
-         FFS: server side translation from wiki-markup to HTML needs more work. 
+         FFS: server side translation from wiki-markup to HTML needs more work.
          ( WysiwygEditingRenderer.getString() often crashes )
-         
-       
+
+
 2015-07-13  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-26
@@ -424,22 +433,22 @@
 2015-07-12  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-25
-       
+
        * [JSPWIKI-896] Haddock template – user preferences are not saved.
-         haddock-pref.js was not properly included into the build, due to lowercase 
+         haddock-pref.js was not properly included into the build, due to lowercase
          issue in wro-haddock.xml.
-         
+
        * [JSPWIKI-518] Saving after editing a section will return you to that  section.
          Fixed missing commits on wiki.js. Should work now.
-        
+
        * Fixed issue with Accesskey
-       
+
        * [JSPWIKI-433] Allow back button for TAB keys.
          It is now also possible to click a link to a hidden pane of a tabbed section
          (eg from the Table Of Contents) to automatically open that TAB pane.
 
-       * Added a "title" attribute to the pagename in the header.  In case a very long 
-         pagename is truncated (with ellipsis ...) you can still see the full 
+       * Added a "title" attribute to the pagename in the header.  In case a very long
+         pagename is truncated (with ellipsis ...) you can still see the full
          pagename when you hover the mouse over the pagename.
 
 
@@ -447,7 +456,7 @@
 
        * 2.10.2-svn-24
 
-       * Minor improvements: 
+       * Minor improvements:
        ** Use of StringBuilder over StringBuffer whenever possible.
        ** SLF4J upgraded to 1.7.12
        ** JUnit upgraded to 4.12, Jetty upgraded to 8.1.15
@@ -455,73 +464,73 @@
 2015-07-05  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-23
-       
+
        * [JSPWIKI-895] Haddock template links contain raw URL information when printed
          including a few tweaks on the print css
-          
+
        * [JSPWIKI-518] Saving after editing a section will return you to that  section
 
-       * Improved formatting of the Quick Navigation drop-down to show the text and the 
+       * Improved formatting of the Quick Navigation drop-down to show the text and the
          search score on a single line.  (Firefox)
 
-   
+
 2015-06-30  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-22
-       
+
        * [JSPWIKI-894] Section editing using Haddock template appears broken.
          Fixed.  Also fixed for the default template.
-       
+
 
 2015-06-30  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-21
-       
+
        HADDOCK Template fixes:
 
        * JSPWIKI-892  Haddock editor when launched is always at bottom of window in Firefox
-       
+
        * Fixing latest update of Icon Styles
 
 
 2015-06-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-20
-       
+
        * JSPWIKI-891: Fixed annoying jumping behaviour in Firefox of the Haddock editor
 
        * JSPWIKI-885: LivePreview doesn't work
-         The HADDOCK template has refresh mechanism based on "change events". 
+         The HADDOCK template has refresh mechanism based on "change events".
          (no periodic refreshes, like the default template)
          Improved trigger mechanism to catch all keystrokes; and at the same time
          reducing the debounce period (read - refresh time-out) to 1sec.
-         
+
 
 2015-06-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-19
-       
+
        More Haddock template fixes
 
-       * JSPWIKI-890 (Haddock template) popups dissappear when trying to get 
+       * JSPWIKI-890 (Haddock template) popups dissappear when trying to get
          your mouse to it. Removed the space between the menu and the dropdown.
 
-       * JSPWIKI-887 Slimbox image style for embedded images fixed to show 
+       * JSPWIKI-887 Slimbox image style for embedded images fixed to show
          readable link description even in case of missing *title* or *alt* attributes.
 
        * Updated JSPWikiFont, fixing display issues in FireFox.
-       
-         
+
+
 2015-06-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-18
-         
+
        Small fixes and tweaks on haddock template
        * Few improvements of the Reader template
        * SLIMBOX support for interwiki links
        * Small style tweaks
        * Fix UserBox issue in non-default language
-       
+
 
 2015-06-26  Siegfried Goeschl (sgoeschl@apache.org)
 
@@ -530,36 +539,36 @@
 2015-06-22  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.2-svn-17
-         
+
        This is the third major check-in of the HADDOCK template, with mainly
        stabilization fixes related for the plain editor, and many UI improvements.
-       The HADDOCK template is close to completion - go ahead and play with it. 
-       (group related JSPs still to be done) 
+       The HADDOCK template is close to completion - go ahead and play with it.
+       (group related JSPs still to be done)
 
        Summary of main changes:
 
        * Many Suggestion dialogs are added to the plain editor:
-         links, link-options, images, acls, plugins, variables, %%styles, 
+         links, link-options, images, acls, plugins, variables, %%styles,
          hexadecimal colors, fonts, symbols, %%icons, ...
          You can create new suggestion dialogs via json snippets in Wiki.Snips.js
 
-       * Fixed [JSPWIKI-482] Wrong insert from the suggestion box 
-       
+       * Fixed [JSPWIKI-482] Wrong insert from the suggestion box
+
        * The editor toolbar is simplified, as most functions are reachable via the
          suggestion dialogs. The find & replace UI can be repositioned on the screen.
-       
+
        * Sticky menu bar, which stays on top of the screen when scrolling down.
-       
+
        * The Quick Navigation menu is redesigned to improve usability for creating
          and cloning new pages.
          [JSPWIKI-531] usability: hints on or mechanism for creating a page
-       
+
        * New %%styles added:  %%dropcaps, %%flip, %%flop, %%addcss, %%progress,
          %%scrollable-250 (limit the height of a code-block, so it becomes scrollable )
 
        * Show READER view (also great for printing) has been added to the More menu.
-       
-       * [JSPWIKI-788] TabbedSection - support multiple tabbedSections in single 
+
+       * [JSPWIKI-788] TabbedSection - support multiple tabbedSections in single
          document with same tab-identifiers
 
        * Updated to the latest mootools v1.5.1
@@ -590,21 +599,21 @@
        * 2.10.2-svn-13
 
        * Fixed JSPWIKI-867 - Deleting attachments should retain focus on the Attach tab
-       
+
        * JSPWIKI-566 - problem with Cookie set preferences and the GSon.fromJson() parser
-       
+
        * Fixed search icon in Smart Template "search.gif" instead of "search.png"
 
 2015-01-30  David Vittor (dvittor@apache.org)
 
        * 2.10.2-svn-12
-       
+
        * Fixed JSPWIKI-566 - Complete rewrite of AJAX functionality for JSPWiki
-       
+
        * Fixed JSPWIKI-502 & JSPWIKI-760 - Show Wikipages in Search without Authorization
-       
+
        * Fixed JSPWIKI-859 - Expose the WikiModuleInfo to the plugins and filters
-       
+
        * Fixed JSPWIKI-866 - Additional parameters (url,version,desc,htmltemplate,authorurl) to jspwiki_module.xml WikiModuleInfo
 
 2015-01-25  David Vittor (dvittor@apache.org)
@@ -612,11 +621,11 @@
        * 2.10.2-svn-11
 
        * Fixed JSPWIKI-876 - NotePlugin does not work on wiki without context
-       
+
        * Fixed JSPWIKI-869 - JSPWiki Maven project cannot be imported into Eclipse
-       
+
        * Updated JSPWIKI-867 - Deleting attachments should retain focus on the Attach tab
-       
+
        * Updated JSPWIKI-566 - Some Ajax functionality added - not complete re-write yet
 
 2014-12-08  Siegfried Goeschl (sgoeschl@apache.org)
@@ -666,25 +675,25 @@
 
        * 2.10.2-svn-4
 
-       * Dependencies' upgrade: EhCache to 2.6.9, SLF4J to 1.7.7, Selenium to 2.42.0, Stripes to 1.5.7-classloaderfix 
+       * Dependencies' upgrade: EhCache to 2.6.9, SLF4J to 1.7.7, Selenium to 2.42.0, Stripes to 1.5.7-classloaderfix
          and Jetty to 8.1.15
-       
+
 2014-06-23  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-3
 
        * Fixed JSPWIKI-847 - Recent Changes Plugin breaks markup if generates an empty table, reported by Dave Koelmeyer
-       
+
 2014-06-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.2-svn-2
 
        * Fixed JSPWIKI-843 - generate test-jars
-       
+
        * Fixed JSPWIKI-844 - Replace org.apache.catalina dependency by applying Ichiro's patch. Thanks!
-       
+
        * Fixed JSPWIKI-311 - Cannot save user profile in container managed authentication mode
-       
+
        * Applied patch on JSPWIKI-841, which solves part of the issue, on unsuccesful login there is no error message
          with container managed authentication
 
@@ -703,28 +712,28 @@
 2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.1-svn-16
-       
-       * First steps integrating Siegfried Goeschl's Wiki On A Stick (https://github.com/sgoeschl/apache-jspwiki - 
-         thanks!), portable module still pending. 
+
+       * First steps integrating Siegfried Goeschl's Wiki On A Stick (https://github.com/sgoeschl/apache-jspwiki -
+         thanks!), portable module still pending.
        ** Fixes JSPWIKI-826 - [Portable] PropertyReader ignores the web app class loader
-       
+
        * Lucene updated to 4.7.0
 
 2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.1-svn-15
-       
+
        * Fixed JSPWIKI-822 - NPE thrown by PluginContext#getText()
-       
+
        * JSPWIKI-814 - VersioningFileProvider does migrate original page properties (thanks to Brian Burch)
 
 2014-04-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.1-svn-14
-       
-       * Fixed JSPWIKI-832 - [Portable] Problems setting up multiple wikis using a shared JSPWiki libraries 
+
+       * Fixed JSPWIKI-832 - [Portable] Problems setting up multiple wikis using a shared JSPWiki libraries
          (patch by Siegfried Goeschl - thanks!)
-       
+
        * Upgraded selenium-*-drivers to 2.41.0
 
 2014-04-01  Harry Metske (metskem@apache.org)
@@ -755,25 +764,25 @@
 
 2014-03-02  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.1-svn-10  
-       
-       This is the second major check-in of the HADDOCK template, with 
+       * 2.10.1-svn-10
+
+       This is the second major check-in of the HADDOCK template, with
        fixes and improvements mainly related to the plain editor.
 
-       * Livepreview has been fixed, with ajax based on the fly page rendering. 
-         The livepreview area can now also be displayed side-by-side next to the editor textarea, 
+       * Livepreview has been fixed, with ajax based on the fly page rendering.
+         The livepreview area can now also be displayed side-by-side next to the editor textarea,
          so you can immediately see the rendered wiki-markup during edit.
 
-       * Suggestion dialog boxes are shown while you type to assist entrance of more advanced 
+       * Suggestion dialog boxes are shown while you type to assist entrance of more advanced
          wiki-markup such as links, %%styles, colors, fonts, plugins, and symbols.
          (but still heavily under development)
 
        * Section Editing has been improved: you can choose which part of the page you want to edit.
 
-       * All icons are now based on an icon Font, replacing the FamFamFam icon set. 
+       * All icons are now based on an icon Font, replacing the FamFamFam icon set.
          Based on Font Awesome by Dave Gandy - http://fontawesome.iohttp://fontawesome.io/icons/
 
-       * The find & replace UI has been enhanced, showing number of occurrences, 
+       * The find & replace UI has been enhanced, showing number of occurrences,
          supporting regular expressions, and supporting replacement for the first or all matches.
 
        * Text is automatically indented based on the indentation level of the previous line.
@@ -785,72 +794,72 @@
 
 
        Fixing following editor related JIRA tickets :
-       
-       * [JSPWIKI-382]  Remove posteditor.js
-      
-       * [JSPWIKI-482]  Wrong insert from the suggestion box  
 
-       * [JSPWIKI-443]  Full screen editor. 
+       * [JSPWIKI-382]  Remove posteditor.js
+
+       * [JSPWIKI-482]  Wrong insert from the suggestion box
+
+       * [JSPWIKI-443]  Full screen editor.
          Added a collapsible sidebar, and a side-by-side display of the live-preview area.
 
-       * [JSPWIKI-336]  section selection box not working properly. Fixed. 
+       * [JSPWIKI-336]  section selection box not working properly. Fixed.
 
-       * Fixed the User-Preference page-unload event. 
-       
+       * Fixed the User-Preference page-unload event.
 
-       Other changes : 
+
+       Other changes :
 
        * New "layout" user-preference to switch between fluid or fixed-width page layout.
- 
-       * Added a info drop-down menu with a summary of the page-info. 
+
+       * Added a info drop-down menu with a summary of the page-info.
          This is similar to page-footer section, but now accessible at the top of the page.
-          
+
        * Replacing all *.png based icons by an icon font.  (eg. slimbox, filter, rss-feed )
 
 
 2014-02-20  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.1-svn-9  
-       
+       * 2.10.1-svn-9
+
        * JS fix in haddock template : RegExp expression cause FF to crash.
-       
+
 
 2014-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.1-svn-8
-       
+
        * [JSPWIKI-769 related] jspwiki-portable module, right now only Windows executable is generated, cfr. with
          https://jspwiki-wiki.apache.org/Wiki.jsp?page=PortableBinaries
-       
+
        * [JSPWIKI-817 related] Install.jsp is broken ==> Translation corrections (install.jsp.intro.[p1|p2|p3]) for ES
-       
+
        * [JSPWIKI-821] TestEngine sometimes creates testrepositories with double timestamps after r1567444
-       
+
 2014-02-18  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.10.1-svn-7  
-       
+       * 2.10.1-svn-7
+
        * Various small fixes on the HADDOCK template (jsp/css/js) :
-       
+
        * Fixing %%category dropdowns which were clipped when inside a %%accordion.
          Replacing js based animation by2.10.1-svn-12 css3 animation to show/hide the popup.
-       
+
        * Fixing bug when saving the Preferences (detected by Harry)
-       
+
        * Changed fixed-width layout into fluid layout, occupying all screen real-estate.
-         (this could become a user-preference setting in the future)  
+         (this could become a user-preference setting in the future)
          Slightly decreasing the size of the sidebar.
-       
-                  
+
+
 2014-02-18  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.1-svn-6
-       
-       * Fixing the JSONRPCMAnager.emitJSONCall(..) so that it now renders 
+
+       * Fixing the JSONRPCMAnager.emitJSONCall(..) so that it now renders
          the correct JSON RPC invocation javascript.
-                  
+
          You can test the RPCSamplePlugin like this:
-         
+
               [{RPCSamplePlugin
 
               test
@@ -858,38 +867,38 @@
 
 		 We are still getting error-code: 490, "No permission to access this AJAX method!"
          when invoking a plugin generated json-rpc call.
-       
+
 
 2014-02-14  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.1-svn-5
 
          Introducing the HADDOCK template, a new template/ui for Apache JSPWiki.
-         
-         This template contains various UI improvements and JSP simplifications, 
-         a major redesign of the JSPWiki CSS stylesheet based on BOOTSTRAP 
-         (now modularly build with LESS) and a rework of the javascript routines 
+
+         This template contains various UI improvements and JSP simplifications,
+         a major redesign of the JSPWiki CSS stylesheet based on BOOTSTRAP
+         (now modularly build with LESS) and a rework of the javascript routines
          based on mootools v1.4.x. (also the js is now split into modular class files)
- 
+
          Be aware: this is a first commit -- expect things to be broken.
          More work is needed on the plain editor; the Group UI is to be fixed.
          Validation has been done against Safari, Chrome & FF;  IE testing is left
-         to the adventurous user. 
+         to the adventurous user.
 
-         HADDOCK lives peacefully next to the default template. To activate the new 
+         HADDOCK lives peacefully next to the default template. To activate the new
          template, add following line to your jspwiki-custom.properties:
 
               jspwiki.templateDir = haddock
-         
+
 
        * [JSPWIKI-504] New default look for 3.0
-       
-       * [JSPWIKI-431] Attachment Upload, support upload of multiple files, drag&drop, 
-              improved progress bars. 
+
+       * [JSPWIKI-431] Attachment Upload, support upload of multiple files, drag&drop,
+              improved progress bars.
               However the server functionality to upload multiple files is
               currently broken. FFS
-               
-       * [JSPWIKI-432] Simplify Tabbed Section Markup 
+
+       * [JSPWIKI-432] Simplify Tabbed Section Markup
               Still maintaining backwards compatibility with the current %%tabbedSection
               markup.
 
@@ -900,12 +909,12 @@
                mootools-more-1.4.0.1
                prettify (dd. 4 mar 2013)
 
-       * [JSPWIKI-798] Refactoring the JSPWiki main CSS stylesheet - 
+       * [JSPWIKI-798] Refactoring the JSPWiki main CSS stylesheet -
                now based on the BOOTSTRAP CSS Framework
 
        * [JSPWIKI-430] DOM based popups to replace regular js alert or prompt dialog boxes
-               Also the edit/clone UI has been refactored. 
-               Some delete confirmation dialog boxes are still to be converted. 
+               Also the edit/clone UI has been refactored.
+               Some delete confirmation dialog boxes are still to be converted.
 
        * [JSPWIKI-429] Improved SLIMBOX to support Youtube, flash and other formats.
                 You can now also 'slimbox' another wiki-page or an external url.
@@ -918,14 +927,14 @@
        * [JSPWIKI-693] style issues
 
        * [JSPWIKI-463] display error in default template
-       
+
        * [JSPWIKI-449] Menuhide functionality is illogical
                 The sidebar (aka Favorites) can be shown/hidden via a toggle button.
                 By default, the sidebar is hidden in the Edit/Comment view, to give
                 maximum square-meters to the edit text-area.
-                
+
        * [JSPWIKI-512] CSS Error with Firefox 2.0.20
-                
+
        *  Upgrade wro4j to latest version 1.7.3
 
 2014-02-12  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -933,7 +942,7 @@
        * 2.10.1-svn-4
 
        * Fixed JSPWIKI-819: Consider replacing ECS with JDOM, thanks to Ichiro Furusato
-       
+
        * TestEngine( Properties ) uses a different directory as page repo (JSPWIKI-813 related)
 
 2014-02-10  Harry Metske (metskem@apache.org)
@@ -959,7 +968,7 @@
 2014-01-13  Harry Metske (metskem@apache.org)
 
        * 2.10.0
-       
+
        * 2.10.0-svn-69
 
        * added new CleanBlue skin, contributed by Ichiro Furusato.
@@ -967,9 +976,9 @@
 2014-01-12  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-68
-       
+
        * Minor nit in jspwiki.css resulted in overly-tall popup menus on Preferences page. Spotted by Ichiro Furusato.
-       
+
 2014-01-07  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-67
@@ -989,9 +998,9 @@
 2014-01-02  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-65
-       
+
        * JSPWIKI-731: replaced all http://www.jspwiki.org references with TLP homepage
-       
+
 2014-01-01  Harry Metske (metskem@apache.org)
 
        * 2.10.0-svn-64
@@ -1001,17 +1010,17 @@
 2013-12-31  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-63
-       
-       * Special page reference RecentChanges giving a blank page (due to non-existent JSP) instead  
+
+       * Special page reference RecentChanges giving a blank page (due to non-existent JSP) instead
          of required WikiPage.
-       
+
 2013-12-30  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-62
-       
+
        * JSPWIKI-809: PageCache has hardcoded limit of 1000 and doesn't fail gracefully
-       
-       * Attachment servlet would perform unsafe redirection on doGet if a nextpage param was provided 
+
+       * Attachment servlet would perform unsafe redirection on doGet if a nextpage param was provided
          (JSPWIKI-46 related)
 
 2013-12-28  Harry Metske (metskem@apache.org)
@@ -1031,9 +1040,9 @@
        * 2.10.0-svn-59
 
        * Big bunch of Sonar warnings fixed.
-       
+
        * o.a.w.PropertyReader moved to o.a.w.util.PropertyReader
-       
+
        * Workaround for testing Hsql - thanks to Marco Roeland
 
 2013-12-22  Glen Mazza (gmazza AT apache DOT org)
@@ -1052,16 +1061,16 @@
 
 2013-12-22  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.10.0-rc2-3 
-       
+       * 2.10.0-rc2-3
+
        * fixed lots of EmptyStackException while checking WatchDogs' state
-       
+
 2013-12-22  Harry Metske (metskem@apache.org)
 
        * 2.10.0-rc2-2
-       
+
        * fixed NPE when using custom policy file
-       
+
 2013-12-21  Harry Metske (metskem@apache.org)
 
        * 2.10.0-rc2-1
@@ -1070,74 +1079,74 @@
 
 2013-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.10.0 - first RC 
-       
+       * 2.10.0 - first RC
+
        * 2.10.0-svn-57
-       
+
        * JSPWIKI-758: dropped support for RCS (as per 2.9.1 notes on UPGRADING document)
-       
+
        * moved o.a.w.providers.ProviderException to o.a.w.api.exceptions.ProviderException
-         
+
 2013-12-16  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-56
-       
-       * decoupled o.a.w.util from o.a.w, cfr. with $SVN/jspwiki-war/src/main/config/2.10-API.txt 
+
+       * decoupled o.a.w.util from o.a.w, cfr. with $SVN/jspwiki-war/src/main/config/2.10-API.txt
          for details
-       
+
        * wikipages for each language are zipped in their respective submodule
-       
+
        * removed remaining build.xml from war submodule, all artifacts are generated from maven now
-         
+
 2013-12-15  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-55
-       
+
        * JSPWIKI-155: AuthenticationManager, AuthorizationManager, DefaultFilterManager, GroupManager
          and UserManager not final anymore
-         
+
        * Introduced utility class to parse xml files.
-       
+
        * DefaultFilterManager closes stream on .initialize(Properties props) if needed
-         
+
 2013-12-11  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-54
-       
-       * retaking JSPWIKI-155, extracted interface o.a.w.api.engine.AdminBeanManager, cfr. with  
+
+       * retaking JSPWIKI-155, extracted interface o.a.w.api.engine.AdminBeanManager, cfr. with
          $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
-         
+
 2013-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-53
-       
-       * some more refactorings before moving into JSPWIKI-155, cfr. with 
+
+       * some more refactorings before moving into JSPWIKI-155, cfr. with
          $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
-         
+
 2013-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-52
-       
-       * second wave of removing deprecated classes / methods, cfr. with 
+
+       * second wave of removing deprecated classes / methods, cfr. with
          $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
-         
+
 2013-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-51
-       
-       * first wave of removing deprecated classes / methods, cfr. with 
+
+       * first wave of removing deprecated classes / methods, cfr. with
          $SVN/jspwiki-war/src/main/config/2.10-API.txt for details
-         
-       * Brought back Installer.INSTALL_WARNING constant, got lost somewhere in time and was still 
+
+       * Brought back Installer.INSTALL_WARNING constant, got lost somewhere in time and was still
          being used by Install.jsp
-       
+
 2013-12-01  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-50
 
        * Broke cycle between o.a.w.parser and o.a.w.api.engine packages:
        ** added public Pattern getPluginPattern() to o.a.w.api.engine.PluginManager
-       ** moved PluginContent parsePluginLine( WikiContext context, String commandline, int pos ) from 
+       ** moved PluginContent parsePluginLine( WikiContext context, String commandline, int pos ) from
           o.a.w.api.engine.PluginManager to equivalent-static method on o.a.w.parser.PluginContent
        ** deleted deprecated public static boolean isPluginLink( String link ) from o.a.w.api.engine.PluginManager,
           consider using equivalent method on o.a.w.parser.JSPWikiMarkupParser
@@ -1153,7 +1162,7 @@
        * 2.10.0-svn-48
 
        * JSPWIKI-804: SpamFilter should support X-Forwarded-For header in the banlist
-         
+
        * Lucene upgraded to 4.6, minor upgrades on plugin versions
 
 2013-11-25  Harry Metske (metskem@apache.org)
@@ -1184,29 +1193,29 @@
        * 2.10.0-svn-44
 
        * Added jspwiki.login.throttling (default true, as in Java code) to default jspwiki.properties
-       
+
        * Removed unnecessary config from IT test's jspwiki-custom.properties.
-        
+
 2013-08-24  Glen Mazza (gmazza AT apache DOT org)
 
        * No revision number (IT tests change only)
 
-       * jspwiki-it-test-container-jdbc test now working, so all five IT test submodules are working 
+       * jspwiki-it-test-container-jdbc test now working, so all five IT test submodules are working
          (except for RenameProfile which fails with all tests).
 
        * renamed the two "container" tests to more descriptive "cma" (container-managed authentication).
-        
+
 2013-08-22  Glen Mazza (gmazza AT apache DOT org)
 
        * No revision number (IT tests change only)
 
        * For IT tests switched to Brian Matthew's inmemdb-maven-plugin used by Roller, creates an in-memory
-         HSQLDB database with a lifespan that of the IT tests themselves (so no Ant tasks and no DB drop 
+         HSQLDB database with a lifespan that of the IT tests themselves (so no Ant tasks and no DB drop
          scripts needed).
 
        * jspwiki-it-test-custom-jdbc test now working, only one still not operative is -container-jdbc,
          which is up from 0 to 25 percent working.
-        
+
 2013-08-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-43
@@ -1217,14 +1226,14 @@
 
        * Changed some internal constants from "propertyfile" to "custom" so they more accurately reflect
          their meaning in 2.10.
-        
+
 2013-08-17  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-42
 
        * Updated code from using org.hsqldb.jdbcDriver to org.hsqldb.jdbc.JDBCDriver
 
-       * Switched from inaccurate NoRequiredPropertyException to somewhat better WikiSecurityException 
+       * Switched from inaccurate NoRequiredPropertyException to somewhat better WikiSecurityException
          for database errors in JDBCGroup/UserDatabase (former was giving confusing error messages
          when the underlying problem was just DB-related).
 
@@ -1232,7 +1241,7 @@
 
        * Renamed HsqlDbUtils to HsqlDBUtilsIT in it-tests, to fully ensure HsqlDBUtils in jspwiki-war
          isn't being run instead.
-        
+
 2013-08-15  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-41
@@ -1240,7 +1249,7 @@
        * Removed "incubator" from JSPWiki taglib URI, removed deprecated in 2004 RSSLinkTag
 
        * Some simplifications to web.xml put in, taking advantage of 2.5 web.xml format.
-        
+
 2013-08-15  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-40
@@ -1251,21 +1260,21 @@
 
        * Removed jdbc.properties file in favor of configuring it in jspwiki-custom.properties.
 
-       * jspwiki.policy file in test updated to more recent structure used by the integrated 
+       * jspwiki.policy file in test updated to more recent structure used by the integrated
          tests module, subsequently removed from latter as it's unneeded there.
-        
+
 2013-08-14  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-39
 
-       * Cleaned out unused config in IT tests, centralized common config 
+       * Cleaned out unused config in IT tests, centralized common config
          to Selenium IT module's custom properties file.
 
-       * Patches to the three non-JDBC IT tests made so they're now all running 
+       * Patches to the three non-JDBC IT tests made so they're now all running
          except for one test (RenameProfile), two JDBC IT tests still inoperative.
 
        * Removed config references to long-discontinued "jspwiki.admin.user" value.
-        
+
 2013-08-13  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-38
@@ -1273,7 +1282,7 @@
        * Updated all the test/*-custom.properties files, removed all non-necessary configuration items
 
        * Removed no-longer-needed file filtering from the jspwiki WAR pom.
-        
+
 2013-08-11  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-37
@@ -1283,40 +1292,40 @@
 
        * Removed some values from our jspwiki-custom.properties files where the defaults in jspwiki.properties
          are sufficient.
-        
+
 2013-08-09  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-36
 
        * Introducted new jspwiki-custom.properties file, which can be placed in test/resources for JUnit tests
-         or externally to the WAR (for Tomcat, $CATALINA_HOME/lib) and will be picked up automatically by 
+         or externally to the WAR (for Tomcat, $CATALINA_HOME/lib) and will be picked up automatically by
          JSPWiki.  Only those elements that you're changing from default src/main/resources/ini/jspwiki.properties
          need addition to the custom properties file.  I still need to convert the Selenium tests to the new format.
 
        * Renamed jspwiki.properties, _rcs.properties, and _vers.properties file with new -custom suffix in src/test/resources
          (can be named anything as JUnit tests hardcode the names).  Removed elements that are the same as those
          in the default jspwiki.properties file.
-        
+
 2013-08-08  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-35
 
        * Partial revert of Jetty to v. 8.1.12 so it can still run with the JDK 6 used by Jenkins.
-        
+
 2013-08-07  Glen Mazza (gmazza AT apache DOT org)
 
-       * 2.10.0-svn-34find 
+       * 2.10.0-svn-34find
 
        * Upgrade from Jetty used in unit test cases from v. 7.6.7 to v. 9.0.4
-        
+
 2013-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-33
 
-       * JSPWIKI-799: jenkins build fails because of SearchManagerTest. It was reusing the same page directory  
+       * JSPWIKI-799: jenkins build fails because of SearchManagerTest. It was reusing the same page directory
          as other tests, indexing pages created on other tests, depending on the test execution order.
-         
-       * Use of Lucene 4.4 *Fields on LuceneSearchProvider to instantiate Fields, instead of using deprecated 
+
+       * Use of Lucene 4.4 *Fields on LuceneSearchProvider to instantiate Fields, instead of using deprecated
          constructor + Field.Index
 
 2013-08-04  Harry Metske (metskem@apache.org)
@@ -1351,26 +1360,26 @@
          by other means when needed.
 
        * Removed "incubating" references in pom.xml
-        
+
 2013-08-01  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.0-svn-27
 
-       * JSPWIKI-761 : Implementing the WRO4J ( Web Resource Optimizer for Java ) Build-time solution 
-       through the wro4j maven plugin. 
+       * JSPWIKI-761 : Implementing the WRO4J ( Web Resource Optimizer for Java ) Build-time solution
+       through the wro4j maven plugin.
           - replacing YUI-Compressor for JS by UglifyJS (better compression)
           - introducing the LESS CSS preprocessor supporting advanced css authoring capabilities (variables, mixins, ...)
           - merging JS and CSS files to reduce the number of resources needed at page-load.
 
-       You can now build with or without minification of the JS and CSS files to ease development 
-       by using -Dminimize = true | false. (ref. mvn_cheat-sheet.txt)  
-        
+       You can now build with or without minification of the JS and CSS files to ease development
+       by using -Dminimize = true | false. (ref. mvn_cheat-sheet.txt)
+
 2013-08-01  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-26
 
        * Removed org.apache.wiki.WikiException in favour of org.apache.wiki.api.exceptions.WikiException
-         
+
 2013-07-31  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-25
@@ -1378,12 +1387,12 @@
        * Added missing Lucene dependency for testing, changed location of
          userdatabase.xml and groupdatabase.xml to get more of the Selenium
          tests running.
-         
+
 2013-07-30  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-24
 
-       * JSPWIKI-791: Upgrade Lucene from 3.6.0 to 4.4.0       
+       * JSPWIKI-791: Upgrade Lucene from 3.6.0 to 4.4.0
 
 2013-07-28  Harry Metske (metskem@apache.org)
 
@@ -1411,7 +1420,7 @@
 
        * Combined our two maven-war-plugin definitions in jspwiki-war, added a Maven 3 requirement to the base POM
          so we can run mvn versions:display-[plugin|dependency]-updates
-       
+
        * Tightened up SearchManagerTest, now deleting page created after each test (was failing on Jenkins although
          for some reason still working fine on my computer).
 
@@ -1420,47 +1429,47 @@
        * 2.10.0-svn-20
 
        * Some Sonar fixes on minor matters.
-       
+
 2013-07-15  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-19
 
        * Some Sonar complaints removed regarding redundant final declarations within
          final classes.
-       
+
 2013-07-14  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-18
-       
-       * Fixed the 160-170 Sonar complaints about redundant methods/variables redundantly being 
+
+       * Fixed the 160-170 Sonar complaints about redundant methods/variables redundantly being
          declared "public" or "public static final" within interfaces, also removed unused imports.
          Pre-commit we're at 77.5% rules compliance (ranked 69 of 87 Apache projects).
- 
+
        * Moved POM dependency scope declarations out of root pom and into jspwiki-war pom.
 
 2013-07-11  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-17
-       
-       * Moved jspwiki.tld to releases/META-INF/ so it becomes part of the JSPWiki JAR instead of 
+
+       * Moved jspwiki.tld to releases/META-INF/ so it becomes part of the JSPWiki JAR instead of
          standalone file
- 
-       * Upgraded jspwiki.tld from JSP 1.1 to JSP 2.1 (requires Tomcat 6 or higher), new URL for taglib 
+
+       * Upgraded jspwiki.tld from JSP 1.1 to JSP 2.1 (requires Tomcat 6 or higher), new URL for taglib
          includes "incubator" but can be quickly changed should JSPWiki become TLP.
 
 2013-07-11  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.10.0-svn-16
-       
+
        * Upgraded JSTL to 1.2 (which includes standard, so could remove that dependency)
-      
+
        * Removed jstl-fmt.tld, oscache.tld in favor of versions within their respective JARs
 
 2013-07-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-15
-       
-       * JSPWIKI-772: Move site to trunk so content generated from source gets 
+
+       * JSPWIKI-772: Move site to trunk so content generated from source gets
          built automatically
 
 2013-07-03  Glen Mazza (gmazza AT apache DOT org)
@@ -1469,7 +1478,7 @@
 
        * Switched from org.jdom:jdom:1.2 to org.jdom:jdom2:2.0.5, to JUnit 4.11
 
-       * Updated Maven cheat sheet to provide debugging info 
+       * Updated Maven cheat sheet to provide debugging info
 
        * Moved filters file from src/main/filters to src/test/filters as test
          is the only place using it.
@@ -1480,7 +1489,7 @@
 
        * 2.10.0-svn-13
 
-       * Switched from jdom:jdom:1.0 to org.jdom:jdom:1.2, removed 
+       * Switched from jdom:jdom:1.0 to org.jdom:jdom:1.2, removed
          tomcat:jasper-runtime dependency
 
 2013-06-26  Glen Mazza (gmazza AT apache DOT org)
@@ -1495,7 +1504,7 @@
 
        * 2.10.0-svn-11
 
-       * Switched jslint checking from yuicompressor-maven-plugin to jslint-maven-plugin 
+       * Switched jslint checking from yuicompressor-maven-plugin to jslint-maven-plugin
          (former uses out-of-date jslint version from 2010, and latter allows more customization
          options)
 
@@ -1521,7 +1530,7 @@
        * 2.10.0-svn-8
 
        * removed some deprecated classes (related to JSPWIKI-303), targetted to be removed
-         on 2.10. Specifically: 
+         on 2.10. Specifically:
            - o.a.w.FileUtil: in favour of o.a.w.util.FileUtil
            - o.a.w.TextUtil: in favour of o.a.w.util.TextUtil
            - o.a.w.filters.FilterManager: in favour of o.a.w.filters.DefaultFilterManager
@@ -1539,7 +1548,7 @@
 
        * 2.10.0-svn-6
 
-       * Update to Chinese, Portuguese, French and Italian language files.      
+       * Update to Chinese, Portuguese, French and Italian language files.
 
 2013-06-05  Harry Metske (metskem@apache.org)
 
@@ -1554,7 +1563,7 @@
 
        * Removed further webtest-related configuration from jspwiki-war/build.xml;
          updated parameters so ant dist still works.
-       
+
        * Updated o.a.w.TranslationsCheck to make less chatty
 
        * Removed unused translations from Italian and German resource files.
@@ -1566,7 +1575,7 @@
        * JSPWIKI-771: inherit ASF parent pom. Deleted release profile in favour of
          apache-release and gpg configuration (both present on parent pom);
          added <ciManagement/>, <issueManagement/> and <mailingLists/> sections.
-       
+
        * fixed runtime NPE on WikiJSPFilter (m_engine used before having been initialized)
 
 2013-06-01  Harry Metske (metskem@apache.org)
@@ -1580,35 +1589,35 @@
        * 2.10.0-svn-1
 
        * JSPWIKI-770: added jspwiki-it-test-container and jspwiki-it-test-container-jdbc
-         selenium maven execution. Still some bits of refactor remaining + the IT 
+         selenium maven execution. Still some bits of refactor remaining + the IT
          tests are assuming english language, but the base configuration is finished
-       
+
        * artifact checksums created on release profile
 
 2013-05-27  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.0-svn-0
 
-       * Maven multimodule build (related to JSPWIKI-768, JSPWIKI-769, 
+       * Maven multimodule build (related to JSPWIKI-768, JSPWIKI-769,
          JSPWIKI-770 and JSPWIKI-771)
 
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-14
-       
+
        * Had Ant webtests and dist targets now write
          to target/ant-webtests and target/ant-dist
          respectively instead of non-Mavenized folder
        * Removed ant clean target in favor
-         of mvn clean. 
+         of mvn clean.
 
-       * Selenium tests folder moved to 
+       * Selenium tests folder moved to
          src/test/config; deleted now-unused tests folder.
 
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-13
-       
+
        * Adjusted exclusions in Apache Rat, nonvital
          i18n stuff removed from build.xml, HSQLDB now
          writing temp files to target instead of base
@@ -1617,7 +1626,7 @@
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-12
-       
+
        * Removed Cobertura and Sonar tasks from Ant build
          and placed into Maven project (relying on config
          in MVN3_BRANCH with comments added.)
@@ -1625,53 +1634,53 @@
 2013-05-23  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-11
-       
+
        * Remove unused .externalToolBuilders, .fbprefs folders
          OldChangeLog out of root directory and now under config/dev,
          build.properties deleted, JDBC config notes moved from
          build.xml to JDBCUserDatabase.java, removed no longer used
-         etc/WEB-INF folder, jartests target gone from build.xml. 
+         etc/WEB-INF folder, jartests target gone from build.xml.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-10
-       
-       * Removed the war target from the Ant build.xml, 
+
+       * Removed the war target from the Ant build.xml,
          the Ant webtests and dist targets run fine with
          the results from mvn clean install.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-9
-       
-       * Removed the unit test targets from the Ant build.xml, 
-         the Ant war, webtests, and dist targets run 
+
+       * Removed the unit test targets from the Ant build.xml,
+         the Ant war, webtests, and dist targets run
          fine with the results from mvn clean install.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-8
-       
-       * Removed the Compile and Compile test targets from the Ant 
+
+       * Removed the Compile and Compile test targets from the Ant
          build.xml, the Ant tests, war, webtests, and dist targets
          run fine with the results from mvn clean install.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-7
-       
-       * Moved the javadoc and Rat plugins from MVN3_BRANCH to 
+
+       * Moved the javadoc and Rat plugins from MVN3_BRANCH to
          trunk and removed corresponding javadoc and rat code from
          the Ant script; "ant dist" will now use the javadoc generated
-         from Maven.  Note additional configuration for javadoc plugin 
+         from Maven.  Note additional configuration for javadoc plugin
          still present in MVN3_BRANCH; that can be moved over as part
          of the move to submodules.
 
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-6
-       
-       * Moved to one source of record for JSPWiki's 
+
+       * Moved to one source of record for JSPWiki's
          dependencies (the Maven pom.xml file), it will
          now be needed to run "mvn clean install [-Dmaven.test.skip]"
          prior to running any of the Ant tasks, in
@@ -1686,65 +1695,65 @@
 2013-05-22  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-5
-       
+
        * Mavenized location of doc directory; rat, javadoc,
-         and releases folder now under target.         
+         and releases folder now under target.
 
 2013-05-20  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-4
-       
+
        * Mavenized location of src/wikipages files
 
 2013-05-19  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-3
-       
+
        * Mavenized location of src/webdocs files
 
 2013-05-18  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-2
-       
+
        * Mavenized locations of remaining etc/ files.
        * Defaulting storageDir to same "jspwiki-files" dir as pageDir.
 
 2013-05-18  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-1
-       
-       * Removed filtering within DB and DB test creation scripts although 
+
+       * Removed filtering within DB and DB test creation scripts although
          retained it within JDBC[User|Group]Database.java for users
          wishing to use different table/column names.
 
 2013-05-16  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.2-incubating-0
-       
-       * Mavenized location of jdbc.properties.tmpl, routed JDBC tests 
+
+       * Mavenized location of jdbc.properties.tmpl, routed JDBC tests
          from tests/etc/db to target/etc/db, removed unused Ant API-difference
          detector & switched to Maven Clirr plugin equivalent.
 
 2013-05-06  Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.1-incubating-10
-       
+
        * Mavenized locations of most tests/etc/ files -> src/test/resources
 
 2013-05-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-incubating-9
-       
-       * Refactored TemplateManager#listLanguages(PageContext pageContext) so it doesn't search for 
+
+       * Refactored TemplateManager#listLanguages(PageContext pageContext) so it doesn't search for
          i18n files under a specific jar filename
-       
+
 2013-05-03 Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.1-incubating-8
 
        * Moved test jspwiki{_vers, _rcs}.properties, filter.xml to Maven test/resources
          location; activated Maven filtering for those files and updated build.xml and
-         pom.xml to point to new location for these files. 
+         pom.xml to point to new location for these files.
 
 2013-05-02 Glen Mazza (gmazza AT apache DOT org)
 
@@ -1754,21 +1763,21 @@
        * slight renaming of web.xml files generated in build.xml for readability
 
        * Added Maven-only filters.properties to src/main/filters (not yet used)
-        
+
 2013-04-30 Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.1-incubating-7
 
        * Moved WAR resources from previous commit to correct src/main/webapps/WEB-INF location, fixed pom.xml
          to stop duplicating those resources in both webapps and webapps/WEB-INF
-         
+
 
 2013-04-30 Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.1-incubating-6
 
        * Moved WAR resources that don't require modification from etc/ to Mavenized src/main/webapps location.
-         
+
        * removed unused etc/dtd folder
 
 2013-04-29 Glen Mazza (gmazza AT apache DOT org)
@@ -1776,16 +1785,16 @@
        * 2.9.1-incubating-5
 
        * Moved i18n resource files to Mavenized location.
-         
+
        * Updated build.xml and pom.xml for new i18n source locations
 
 2013-04-25 Glen Mazza (gmazza AT apache DOT org)
 
        * 2.9.1-incubating-4
 
-       * Moved ini folders from etc/ and tests/etc to 
+       * Moved ini folders from etc/ and tests/etc to
          Mavenized locations src/[main|test]/resources/ini
-         
+
        * Updated build.xml and pom.xml for new ini source locations
 
 2013-04-24 Glen Mazza (gmazza AT apache DOT org)
@@ -1793,7 +1802,7 @@
        * 2.9.1-incubating-3
 
        * Moved JSPWiki source and test source to Mavenized locations
-         
+
        * Updated build.xml and pom.xml for new JSPWiki source locations
 
 2013-04-23  Dirk Frederickx (brushed AT apache DOT org)
@@ -1811,7 +1820,7 @@
 2013-04-14 Glen Mazza (gmazza AT apache DOT org)
 
        * Start of Selenium plugin (just testing prior to it moving into its own module)
-         
+
        * Tomcat 5.x JSP precompilation option removed from build.xml
 
        * Selenium TestSuite.html tests renamed to CamelCase to allow export-to-Java to work.
@@ -1819,7 +1828,7 @@
 2013-04-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-incubating-0
-       
+
 2013-04-04 Glen Mazza (gmazza AT apache DOT org)
 
        * Updated pom.xml by removing Jaxen transitive dependencies and providing
@@ -1847,7 +1856,7 @@
 2013-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * JSPWIKI-651: added m2e configuration to pom.xml
-       
+
 2013-03-20  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-31
@@ -1873,19 +1882,19 @@
 2013-02-19  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-29
-       
+
        * JSPWIKI-764: ChangeLog published on site
-       
-       * Upgraded version of maven's tomcat plugin to latest available (JSPWIKI-651 related) 
-       
+
+       * Upgraded version of maven's tomcat plugin to latest available (JSPWIKI-651 related)
+
 2013-02-19  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-28
-       
+
        * JSPWIKI-762: Drop TranslatorReader
-       
-       * JSPWIKI-763: Requirement of at least Java 6 to build 
-       
+
+       * JSPWIKI-763: Requirement of at least Java 6 to build
+
 2013-02-15  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-27
@@ -1901,60 +1910,60 @@
 2013-02-12  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-25
-       
+
        * JSPWIKI-759 Resin 4 Compatibility (thanks to Paul Cowan)
-       
+
        * build.xml tweak: shut down the Jetty test server after the last webtest
 
 2013-02-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-24
-       
-       * Decoupled (for 2.10 scope) Preferences from WikiContext, effectively meaning that the following 
+
+       * Decoupled (for 2.10 scope) Preferences from WikiContext, effectively meaning that the following
          methods are now deprecated
            - WikiContext#getBundle( String ) in favour of Preferences#getBundle( WikiContext, String )
            - WikiContext#getLocale( WikiContext ) in favour of Preferences#getLocale( WikiContext )
-           - WikiContext#hasAccess( HttpServletResponse ) in favour of 
+           - WikiContext#hasAccess( HttpServletResponse ) in favour of
              AuthorizationManager#hasAccess( HttpServletResponse )
-           - WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of 
+           - WikiContext#hasAccess( HttpServletResponse, boolean ) in favour of
              AuthorizationManager#hasAccess( HttpServletResponse, boolean )
-             
+
        * Decoupled (for 2.10 scope) org.apache.wiki.event from org.apache.wiki.workflow, by deprecating
            - WorkflowEvent#getWorkflow() in favour of WikiEvent#getSrc()
-             
+
        * Added latest pom.xml from JSPWIKI-651 - Convert JSPWiki to a Maven project. Check associated
          JIRA for details
 
 2013-01-28  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-23
-       
+
        * Dutch localization updates in follow up on JSPWIKI-143 and JSPWIKI-150
 
 2013-01-28  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-22
-       
+
        * JSPWIKI-143: Unlocalized messages in user management
-       
+
        * JSPWIKI-150: Unlocalized content at workflow's notification for creating a new user
-       
+
        * Minor refactor to HsqlDbUtils init checks
-       
-       * deprecated 
-           - JSPWikiMarkupParser.getImagePatterns( WikiEngine ) in favour of 
+
+       * deprecated
+           - JSPWikiMarkupParser.getImagePatterns( WikiEngine ) in favour of
              WikiEngine.getAllInlinedImagePatterns()
-           - UserManager.SaveUserProfileTask( WikiEngine ) in favour of 
+           - UserManager.SaveUserProfileTask( WikiEngine ) in favour of
              UserManager.SaveUserProfileTask( WikiEngine, Locale )
 
 2013-01-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.1-svn-21
-       
-       * JSPWIKI-712, fixing entities encoding in change-note, author and link fields. 
+
+       * JSPWIKI-712, fixing entities encoding in change-note, author and link fields.
          Part 2 : more fixes when adding page comments. (as pointed out by Harry)
-         
-       * Improved styling of form buttons, fixing presentation issues in Chrome.       
+
+       * Improved styling of form buttons, fixing presentation issues in Chrome.
 
 2013-01-26  Glen Mazza
        * Removed no longer needed StressTestRCSProvider.java,
@@ -1963,13 +1972,13 @@
 2013-01-26  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-20
-       
+
        * JSPWIKI-758 - deprecate RCS support.
-       
+
 2013-01-24 Glen Mazza
 
-       * Minor tweak to testSerialization() in AclImplTest so it will work with both Maven and Ant 
-         running the test. 
+       * Minor tweak to testSerialization() in AclImplTest so it will work with both Maven and Ant
+         running the test.
 
 2013-01-22 Glen Mazza
 
@@ -1979,22 +1988,22 @@
 2013-01-20  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.1-svn-19
-       
-       * JSPWIKI-712, fixing entities encoding in change-note, author and link fields. 
+
+       * JSPWIKI-712, fixing entities encoding in change-note, author and link fields.
 
 2013-01-15  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-18
-       
+
        * fixed JSPWIKI-712  Entities in ChangeNote should be decoded when "keep editing"
 
 2013-01-14  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-17
-       
+
        * fixed JSPWIKI-659  NotSerializableException on Tomcat restart , UserManager not Serializable
-         We now no longer put JSONRPCBridge in the HttpSession. Long term solution is to migrate to 
-         jackson. 
+         We now no longer put JSONRPCBridge in the HttpSession. Long term solution is to migrate to
+         jackson.
 
 2013-01-12 Glen Mazza (gmazza@apache.org)
 
@@ -2004,30 +2013,30 @@
 2013-01-10  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-16
-         
+
        * some additional changes regarding org.apache.wiki.api.engine.PluginManager (cfr. $SVN/trunk/doc/2.10-API.txt):
            - @Deprecated public void executeParse(PluginContent content, WikiContext context)
                + consider using PluginContent.executeParse(WikiContext) instead
-           - WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public and part 
+           - WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) is now public and part
              of the org.apache.wiki.api.engine.PluginManager API
 
 2013-01-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-15
-       
-       * fixed JSPWIKI-757 Have default file direction location be in relative directory instead of 
+
+       * fixed JSPWIKI-757 Have default file direction location be in relative directory instead of
          hardcoded /p/dir1/dir2.If jspwiki.fileSystemProvider.pageDir in jspwiki.properties isn't
          provided, it will default to ${user.home}/jspwiki-files
-         
+
        * new API package org.apache.wiki.api.engine, intended to hold WikiEngine, its managers and
          related classes. FilterManager and PluginManager moved there (cfr. JSPWIKI-155, JSPWIKI-303
          and $SVN/trunk/doc/2.10-API.txt).
-       
-       * org.apache.wiki.FileUtil and org.apache.wiki.TextUtil Moved to equivalent classes under 
-         org.apache.wiki.util. Original classes marked with @Deprecated and forwarding to the new 
+
+       * org.apache.wiki.FileUtil and org.apache.wiki.TextUtil Moved to equivalent classes under
+         org.apache.wiki.util. Original classes marked with @Deprecated and forwarding to the new
          ones until 2.10
- 
-       * deprecated WikiEngine.getRequiredProperty( props, key ) in favour of 
+
+       * deprecated WikiEngine.getRequiredProperty( props, key ) in favour of
          TextUtil.getRequiredProperty( props, key ). The former will be deleted in 2.10 scope
 
 2013-01-08 Glen Mazza (gmazza@apache.org)
@@ -2037,39 +2046,39 @@
 2013-01-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-14
-       
-       * Global use of org.apache.wiki.api.exceptions.WikiException instead of org.apache.wiki.WikiException, 
+
+       * Global use of org.apache.wiki.api.exceptions.WikiException instead of org.apache.wiki.WikiException,
          as part of JSPWiki API (cfr. JSPWIKI-303).
-       
-       * Corrected the displayed version of commons-httpclient, we are downloading 3.1, but it was 
-         named 3.0.1 (it is needed to either delete commons-httpclient-3.0.1.jar or run ant 
+
+       * Corrected the displayed version of commons-httpclient, we are downloading 3.1, but it was
+         named 3.0.1 (it is needed to either delete commons-httpclient-3.0.1.jar or run ant
          clean-deps to ensure that the old jar goes away)
-       
-       * Some minor refactors to expose generified collections at Acl and AclEntry, and adding 
+
+       * Some minor refactors to expose generified collections at Acl and AclEntry, and adding
          missing serialVersionUID at org.apache.wiki.workflow
 
 2013-01-06  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-13
-       
-       * fixed JSPWIKI-533  proper handling of page deletes and renames for the Breadcrumb trail 
+
+       * fixed JSPWIKI-533  proper handling of page deletes and renames for the Breadcrumb trail
 
 2013-01-06  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-12
-       
+
        * fixed JSPWIKI-439 Localization of JSPWiki
 
 2013-01-02  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-11
-       
+
        * JSPWIKI-513 - Remove DAV support from JSPWiki
 
 2013-01-01  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-10
-       
+
        * webtests now also use HsqlDbUtils (just like the normal tests), also removed redundant
          hsqldb ant tasks from build.xml
 
@@ -2085,73 +2094,73 @@
            - build.xml was missing a lot of tasks and macros, required to properly startup hsqldb (don't know how/why)
            - JDBCGroupDatabase : NamingExceptions do not have a cause, we now log the exception itself
            - removed the semicolon from the License in .ddl files (they cause syntax errors)
-        
+
 2012-12-26  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-8
-        
-       * Filters API (org.apache.wiki.api.filters), as part of JSPWiki API (cfr. JSPWIKI-303). 
+
+       * Filters API (org.apache.wiki.api.filters), as part of JSPWiki API (cfr. JSPWIKI-303).
          Check UPGRADING document for details
-         
+
        * Plugin API moved to its own sub-package, org.apache.wiki.api.plugin
-         
-       * explicit access to API interfaces to get rid of "cannot dereference error with 
+
+       * explicit access to API interfaces to get rid of "cannot dereference error with
          generics" errors at builds.a.o (cfr. http://stackoverflow.com/q/4144623)
-       
+
 2012-12-26  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-7
-        
+
        * fixed JSPWIKI-663 (Christmas 2012 patch, thanks to Glen Mazza),
-         Rename page - page index still shows attachment with old page name, also patched the 
-         WikiPageRenameEvent handling code in PageViewPlugin 
- 
+         Rename page - page index still shows attachment with old page name, also patched the
+         WikiPageRenameEvent handling code in PageViewPlugin
+
 2012-12-14  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-6
-        
+
        * initial commit for JSPWiki API (cfr. JSPWIKI-303), mostly focused on plugin API. Check
          UPGRADING document for details
-        
+
 2012-12-12  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-5
-        
+
        * fixed JSPWIKI-742 NullPointerException in PriorityList (reported by Rakesh K. Cherukuri)
-       
+
        * minor updates to build.xml to properly handle build failures (I am not an ant expert...)
- 
+
  2012-12-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * Sonar Ant task executed even if there are tests failures
-       
+
        * When building jspwiki.properties, jspwiki.baseURL defaults to http://localhost:8080/JSPWiki/
-       
+
 2012-12-08  Harry Metske <metskem@apache.org>
 
        * 2.9.1-svn-4
-       
+
        * fixed JSPWIKI-754 Have PageViewPlugin work with page renames (thanks to Glen Mazza)
-       
+
 2012-12-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.1-svn-3
-       
-       * Added generics to WikiPlugin.execute( WikiContext, Map< String, String > ) 
+
+       * Added generics to WikiPlugin.execute( WikiContext, Map< String, String > )
        and propagated the change to all plugins. Cfr. with UPGRADING document for details.
-       
+
 2012-12-02   Harry Metske <metskem@apache.org>
-       
+
        * 2.9.1-svn-2
-       
+
        * fixed JSPWIKI-753 Consolidate TestEngine.deleteTestPage to single, non-static method (thanks to Glen Mazza)
 
 2012-12-02   Harry Metske <metskem@apache.org>
-       
+
        * 2.9.1-svn-1
-       
+
        * fixed JSPWIKI-665 Page View Plugin and page renames and deletions (thanks to Glen Mazza)
-       
+
  2012-11-22  Florian Holeczek (florianh AT apache DOT org)
 
        * version switch to 2.9.1-svn-0
@@ -2159,13 +2168,13 @@
 2012-11-17  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * JSPWIKI-751: deleted guitests target
-       
+
        * Upgraded Sonar Ant Tasks to 2.0
 
 2012-11-01  Florian Holeczek (florianh AT apache DOT org)
 
        * 2.9.0-incubating (preparing release)
-       
+
        * added generation of .sha1 checksum files
 
 2012-10-30  Florian Holeczek (florianh AT apache DOT org)
@@ -2177,7 +2186,7 @@
        * 2.9.0-incubating-14
 
        * JSPWIKI-750: PageViewPluginTest is failing very often when using a JDK 7
-       
+
        * minor documentation and logging fixes to PageViewPlugin
 
 2012-10-22  Florian Holeczek (florianh AT apache DOT org)
@@ -2187,7 +2196,7 @@
 2012-10-22  Florian Holeczek (florianh AT apache DOT org)
 
        * 2.9.0-incubating-13
-       
+
        * fixed CommentedPropertiesTest, which broke because of the recent license header changes
 
 2012-10-22  Florian Holeczek (florianh AT apache DOT org)
@@ -2197,9 +2206,9 @@
        * added license headers to further files
 
 2012-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * ensure correct information on cobertura reports.
-       
+
 2012-10-21  Florian Holeczek (florianh AT apache DOT org)
 
        * some further fixes to license headers
@@ -2211,15 +2220,15 @@
        * some fixes for JSPWIKI-749 and CheckStyle version 5.6
 
 2012-10-09  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
-       * added Apache License Header to files which were missing it 
+
+       * added Apache License Header to files which were missing it
          (cfr. with http://s.apache.org/EDd).
 
 2012-10-08  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * Added rat-report task. It requires at least Apache Ant 1.7.1, though.
-       
-       * .java files now conform strictly to Apache License Header (cfr. with 
+
+       * .java files now conform strictly to Apache License Header (cfr. with
          http://s.apache.org/EDd).
 
 2012-09-25  Florian Holeczek (florianh AT apache DOT org)
@@ -2229,99 +2238,99 @@
        * minor update to LICENSE file (YUI Compressor version number)
 
 2012-09-23  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * upgraded Yui compressor to 2.4.7, 2.4.2 from Central is broken. Thanks to Peter Hormanns
          for noticing.
-       
+
 2012-09-18  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * tomcat jars downgraded to 5.5.23 so they can be downloaded from Central. Completes JSPWIKI-746
          and therefore closes JSPWIKI-744
-         
-       * jetty upgraded to 7.6.7.v20120910 and selenium-server downloaded from their site, to avoid 
+
+       * jetty upgraded to 7.6.7.v20120910 and selenium-server downloaded from their site, to avoid
          downloading anything from svn.apache.org during build time
 
 2012-09-10   Harry Metske <metskem@apache.org>
-       
+
        * 2.9.0-incubating-12
-       
+
        * rewrote TestContainer to jetty version 7
-       
-       * upgraded to selenium-server-standalone-2.25.0.jar 
+
+       * upgraded to selenium-server-standalone-2.25.0.jar
 
 2012-09-06  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * 2.9.0-incubating-11
-       
+
        * upgraded jrcs-diff to 0.4.2, as part of JSPWIKI-746
-       
+
        * JSPWIKI-747: Dependencies currently unavailable at Central repo
 
 2012-08-29  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * no version bump
-       
+
        * JSPWIKI-745: Dependencies currently downloadable from Central repo
-       
+
 2012-08-09  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * 2.9.0-incubating-10
-       
+
        * ant clean target cleans all generated files
-       
+
        * junit reports are generated inside of ${tests.report} instead of inside ${tests.src}
-       
-       * dependencies are downloaded from Central repo whenever is possible, in order to avoid 
+
+       * dependencies are downloaded from Central repo whenever is possible, in order to avoid
          the maintenance of a libraries' svn directory.
-      
-       * ${libs.opt} set to tests/libs-opt in order to avoid downloading of opt files every time a 
+
+       * ${libs.opt} set to tests/libs-opt in order to avoid downloading of opt files every time a
          clean is made
-         
+
        * maven-ant-tasks aren't used to download opt-libs anymore
-       
-       * HSQL connections are handled inside the appropiate unit tests in order to ensure HSQL 
-         server shutdown. Hypersonic is updated to 1.8.0.10 
-      
+
+       * HSQL connections are handled inside the appropiate unit tests in order to ensure HSQL
+         server shutdown. Hypersonic is updated to 1.8.0.10
+
        * added clean-deps target to remove all lib's directories. Useful to remove old jars
          if the dependencies get updated. This target needs to be run at least once to
          ensure that old jars don't remain in classpath
-              
+
 2012-07-22  Florian Holeczek (florianh AT apache DOT org)
 
        * 2.9.0-incubating-9
-       
+
        * JSPWIKI-731: replaced some occurences of www.jspwiki.org by jspwiki.apache.org (XML namespaces)
-       
+
        * some updates to release documentation
 
 2012-07-20  Florian Holeczek (florianh AT apache DOT org)
 
        * 2.9.0-incubating-8
-       
+
        * Several fixes and improvements for quite some localization resources. Special thanks go to Christophe Dupriez!
 
 2012-07-18  Juan Pablo Santos (juanpablo AT apache DOT org)
-       
+
        * 2.9.0-incubating-7
-       
+
        * JSPWIKI-738: Dependencies should not be distributed with source archive
-       
+
        * Small refactor in LuceneSearchProvider
 
 2012-07-16  Florian Holeczek (florianh AT apache DOT org)
 
        * no version bump
-       
+
        * synchronized windows to unix build files
 
 2012-07-07  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.0-incubating-6
-       
+
        * Fixing JSPWIKI-733 Box rounded corners missing in Firefox 13 for PlainVanilla skin elements etc.
-         Add unprefixed border-radius and box-shadow to jspwiki.css. 
+         Add unprefixed border-radius and box-shadow to jspwiki.css.
          (ref. https://bugzilla.mozilla.org/show_bug.cgi?id=693510   Gecko 2.0 dropped support for -moz-prefix.)
-       
+
        * Fixing JSPWIKI-734 ShortURLConstructor causes Syntax Error when loading jspwiki-edit.js
 
 2012-06-05  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -2343,7 +2352,7 @@
 2012-05-02  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.9.0-incubating-1, fixing JSPWIKI-683 Sortable Tables.
-       
+
        * second ASF release candidate build.
 
 2012-04-21  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -2353,63 +2362,63 @@
 2012-04-18  Harry Metske <metskem@apache.org>
 
        * 2.9.0-svn-9
-        
+
        * fixed JSPWIKI-726 drop the 2 case-sensitive tests in WikiEngineTest.testSpacedNames1
-        
+
 2012-04-14  Harry Metske <metskem@apache.org>
 
        * 2.9.0-svn-8
-        
+
        * fixed JSPWIKI-725 Return to original page attachments list after deleting one attachment
-        
+
 2012-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)
-        
+
        * 2.9.0-svn-7
-        
+
        * fixed JSPWIKI-722 Build broken under jdk 1.7
 
 2012-02-22  Harry Metske <metskem@apache.org>
 
        * 2.9.0-svn-6
-        
+
        * fixed JSPWIKI-721 Log FileNotFoundException on missing attachment
 
 2012-02-12  Juan Pablo Santos (juanpablo AT apache DOT org)
-        
+
        * 2.9.0-svn-5
-        
-       * small refactor on ClassUtil.getMappedObject: it uses varargs so we can take away 
-         a couple of methods. Also /etc/ini/classmappings.xml file is fully populated with  
-         all ClassUtil.getMappedObject calls 
-        
+
+       * small refactor on ClassUtil.getMappedObject: it uses varargs so we can take away
+         a couple of methods. Also /etc/ini/classmappings.xml file is fully populated with
+         all ClassUtil.getMappedObject calls
+
 2012-02-07  Juan Pablo Santos (juanpablo AT apache DOT org)
-        
-       * tests are now part of the main build. Also, they can be desactivated through 
+
+       * tests are now part of the main build. Also, they can be desactivated through
          jspwiki.test.skip property (i.e.: ant clean dist -Djspwiki.test.skip=true)
-        
+
 2012-02-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.9.0-svn-4
-       
-       * taken back <signeddist/> goal from 3.0 branch in order to be able to accomplish 
+
+       * taken back <signeddist/> goal from 3.0 branch in order to be able to accomplish
          JSPWIKI-557
-       
+
 2012-02-01  Harry Metske <metskem@apache.org>
 
        * 2.9.0-svn-3
-       
+
        * fixed JSPWIKI-719 (plugin compatibility with com.ecyrd.jspwiki)
-       
+
        * draft ReleaseNotes
 
 2012-01-29  Florian Holeczek <florianh@apache.org>
 
        * 2.9.0-svn-2
-       
+
        * corrected some minor errors which emerged from package renaming
 
 2012-01-25  Harry Metske <metskem@apache.org>
 
        * 2.9.0-svn-1
-       
+
        * release bump because of package rename

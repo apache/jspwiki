@@ -1456,9 +1456,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 if( !m_wysiwygEditorMode )
                 {
                     ResourceBundle rbPlugin = Preferences.getBundle( m_context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
-                    return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ), 
-                    		                                            m_context.getRealPage().getWiki(), 
-                    		                                            m_context.getRealPage().getName(), 
+                    return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ),
+                    		                                            m_context.getRealPage().getWiki(),
+                    		                                            m_context.getRealPage().getName(),
                     		                                            e.getMessage() ) ) );
                 }
             }
@@ -2317,6 +2317,19 @@ public class JSPWikiMarkupParser extends MarkupParser {
             {
                 pushBack( ch );
                 clazz = readUntil( " \t\n\r" );
+                //Note: ref.https://www.w3.org/TR/CSS21/syndata.html#characters
+                //CSS Classnames can contain only the characters [a-zA-Z0-9] and
+                //ISO 10646 characters U+00A0 and higher, plus the "-" and the "_".
+                //They cannot start with a digit, two hyphens, or a hyphen followed by a digit.
+
+                //(1) replace '.' by spaces, allowing multiple classnames on a div or span
+                //(2) remove any invalid character
+                if( clazz != null){
+
+                    clazz = clazz.replace('.', ' ')
+                                 .replaceAll("[^\\s-_\\w\\x200-\\x377]+","");
+
+                }
                 ch = nextToken();
 
                 //
@@ -2407,7 +2420,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
 
             if( style != null ) el.setAttribute("style", style);
-            if( clazz != null ) el.setAttribute("class", clazz );
+            if( clazz != null ) el.setAttribute("class", clazz);
             el = pushElement( el );
 
             return el;
