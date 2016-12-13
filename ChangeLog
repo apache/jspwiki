@@ -1,5 +1,11 @@
 2016-12-13  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.10.3-svn-19
+
+       * JSPWIKI-1032 : Use image "src" attribute instead of "href"
+
+2016-12-13  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.3-svn-18
 
        * [JSPWIKI-1037] UI will not display with IE 9 or IE10.

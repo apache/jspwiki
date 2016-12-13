@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -46,8 +46,9 @@ import org.apache.wiki.util.TextUtil;
  *  <li><b>style</b> - the style attribute of the image</li>
  *  <li><b>class</b> - the associated class for the image</li>
  *  <li><b>border</b> - the border for the image</li>
+ *  <li><b>title</b> - the title for the image, can be presented as a tooltip to the user</li>
  *  </ul>
- *  
+ *
  *  @since 2.1.4.
  */
 // FIXME: It is not yet possible to do wiki internal links.  In order to
@@ -79,6 +80,8 @@ public class Image
     //    public static final String PARAM_MAP      = "map";
     /** The parameter name for setting the border.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_BORDER   = "border";
+    /** The parameter name for setting the title.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_TITLE   = "title";
 
     /**
      *  This method is used to clean away things like quotation marks which
@@ -108,6 +111,7 @@ public class Image
         String cssclass= getCleanParameter( params, PARAM_CLASS );
         // String map     = getCleanParameter( params, PARAM_MAP );
         String border  = getCleanParameter( params, PARAM_BORDER );
+        String title   = getCleanParameter( params, PARAM_TITLE );
 
         if( src == null )
         {
@@ -141,42 +145,44 @@ public class Image
         result.append( "<table border=\"0\" class=\""+cssclass+"\"" );
         //if( align != null ) result.append(" align=\""+align+"\"");
         //if( style != null ) result.append(" style=\""+style+"\"");
-        
+
         //
         //  Do some magic to make sure centering also work on FireFox
         //
-        if( style != null ) 
+        if( style != null )
         {
             result.append(" style=\""+style);
 
             // Make sure that we add a ";" to the end of the style string
             if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
-                
-            if( align != null && align.equals("center") ) 
+
+            if( align != null && align.equals("center") )
             {
                 result.append(" margin-left: auto; margin-right: auto;");
             }
-                
+
             result.append("\"");
         }
         else
         {
             if( align != null && align.equals("center") ) result.append(" style=\"margin-left: auto; margin-right: auto;\"");
         }
-        
+
+        if( title != null ) result.append(" title=\""+title+"\"");
+
         if( align != null && !(align.equals("center")) ) result.append(" align=\""+align+"\"");
-        
+
         result.append( ">\n" );
 
-        if( caption != null ) 
+        if( caption != null )
         {
             result.append("<caption align=bottom>"+TextUtil.replaceEntities(caption)+"</caption>\n");
         }
 
 
         result.append( "<tr><td>" );
-       
-        if( link != null ) 
+
+        if( link != null )
         {
             result.append("<a href=\""+link+"\"");
             if( target != null )
@@ -187,7 +193,7 @@ public class Image
         }
 
         result.append( "<img src=\""+src+"\"" );
-       
+
         if( ht != null )     result.append(" height=\""+ht+"\"");
         if( wt != null )     result.append(" width=\""+wt+"\"");
         if( alt != null )    result.append(" alt=\""+alt+"\"");
@@ -211,7 +217,7 @@ public class Image
                 || s.equals("_top") )
         {
             return true;
-        } 
+        }
         else if( s.length() > 0 ) // check [a-zA-z]
         {
             char c = s.charAt(0);
