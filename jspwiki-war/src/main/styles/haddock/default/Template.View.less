@@ -38,8 +38,6 @@ DOM Structure:
 (end)
 */
 
-
-
 /*
 Section: Title box
     The title box is an optional alert box at the top of the page, to put
@@ -79,7 +77,7 @@ DOM structure:
 
 		    ul.dropdown-menu.pull-right[data-hover-parent="searchbox"]
 		        li.dropdown-header
-              		button#searchSubmit.btn[type="submit"] For full search, hit enter...
+                    button#searchSubmit.btn[type="submit"] For full search, hit enter...
 		        li.findpages ...create & clone buttons
 		        li.findpages ...other search results
 		        li.divider
@@ -221,6 +219,13 @@ even when there’s not enough content to fill the page.
 
 Credits: https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
 */
+
+body.can-flex {
+  //hack for IE-bug :  see https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
+  display: flex;
+  min-height: 100vh;
+  flex-flow: column;
+}
 
 body.can-flex > .container-fluid,
 body.can-flex > .container {
