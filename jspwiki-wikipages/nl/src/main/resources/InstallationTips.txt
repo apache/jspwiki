@@ -57,7 +57,7 @@ Het onderste gedeelte van het linker menu is (niet erg verrassend) genaamd [Left
 
 ![RSS|http://blogspace.com/rss/] feed aanzetten
 
-In je  jspwiki.properties -file, moet je de "jspwiki.rss.generate" op "true" zetten, en ook de "jspwiki.baseURL" moet een valide waarde hebben. Anders kan RSS niet weten hoe de links er uit moeten zien....:-)
+In je  jspwiki.properties -file, moet je de "jspwiki.rss.generate" op "true" zetten.
 
 !Ik hou niet van ~DingenAanElkaarGeplakt in de pagina titels.  Wat nu?
 

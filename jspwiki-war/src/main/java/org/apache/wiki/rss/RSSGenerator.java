@@ -155,24 +155,14 @@ public class RSSGenerator
     private static final int MAX_CHARACTERS             = Integer.MAX_VALUE-1;
 
     /**
-     *  Initialize the RSS generator for a given WikiEngine.  Currently the only 
-     *  required property is <tt>{@value org.apache.wiki.WikiEngine#PROP_BASEURL}</tt>.
+     *  Initialize the RSS generator for a given WikiEngine.
      *  
      *  @param engine The WikiEngine.
      *  @param properties The properties.
-     *  @throws NoRequiredPropertyException If something is missing from the given property set.
      */
     public RSSGenerator( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException
     {
         m_engine = engine;
-
-        // FIXME: This assumes a bit too much.
-        if( engine.getBaseURL() == null || engine.getBaseURL().length() == 0 )
-        {
-            throw new NoRequiredPropertyException( "RSS requires jspwiki.baseURL to be set!",
-                                                   WikiEngine.PROP_BASEURL );
-        }
 
         m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION,
                                                        m_channelDescription );

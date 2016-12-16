@@ -145,9 +145,6 @@ public class WikiEngine
     Double negative, cause for most servers you don't need the property */
     public static final String PROP_NO_FILTER_ENCODING     = "jspwiki.nofilterencoding";    
 
-    /** The name for the base URL to use in all references. */
-    public static final String PROP_BASEURL      = "jspwiki.baseURL";
-
     /** The name for the property which allows you to set the current reference
      *  style.  The value is {@value}.
      */

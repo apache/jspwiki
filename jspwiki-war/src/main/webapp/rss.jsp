@@ -56,7 +56,7 @@
     // Redirect if baseURL not set or RSS generation not on
     if( wiki.getBaseURL().length() == 0 )
     {
-        response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate RSS" );
+        response.sendError( 500, "The baseURL could not be determined for this wiki - cannot generate RSS" );
         return;
     }
     

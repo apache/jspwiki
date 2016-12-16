@@ -42,7 +42,6 @@ public class ShortURLConstructorTest extends TestCase
     private URLConstructor getConstructor( String baseURL, String prefix )
         throws WikiException
     {
-        props.setProperty( WikiEngine.PROP_BASEURL, baseURL );
         if( prefix != null ) props.setProperty( ShortURLConstructor.PROP_PREFIX, prefix );
         
         testEngine = new TestEngine(props);
