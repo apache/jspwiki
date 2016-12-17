@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 /*
  * (C) Janne Jalkanen 2005
@@ -84,7 +84,7 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List< ? > entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+        List< ? > entries = blogplugin.findBlogEntries( m_testEngine,
                                                        "TestBlog",
                                                         new Date(0),
                                                         new Date(Long.MAX_VALUE) );
@@ -114,7 +114,7 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List< ? > entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+        List< ? > entries = blogplugin.findBlogEntries( m_testEngine,
                                                        "TestBlog",
                                                         new Date(0),
                                                         new Date(Long.MAX_VALUE) );

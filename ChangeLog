@@ -1,4 +1,8 @@
-2016-12-13  Dirk Frederickx (brushed AT apache DOT org)
+2016-12-17  Dirk Frederickx (brushed AT apache DOT org)
+
+       * Fixing RSSGenerator test with latest WeblogPlugin changes
+
+2016-12-17  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-20  Various HADDOCK updates & fixes.
 
