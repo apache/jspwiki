@@ -66,7 +66,7 @@ public class ReferringUndefinedPagesPluginTest extends TestCase {
 	 */
 	public void testSimple() throws Exception {
 		String res = manager.execute(context, "{INSERT ReferringUndefinedPagesPlugin}");
-		assertTrue(res.contains("href=\"/Wiki.jsp?page=TestPage01\""));
+		assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
 	}
 
 	/**
@@ -76,9 +76,9 @@ public class ReferringUndefinedPagesPluginTest extends TestCase {
 	 */
 	public void testParmInClude() throws Exception {
 		String res = manager.execute(context, "{INSERT ReferringUndefinedPagesPlugin} include='TestPage02*'}"); 
-		assertFalse(res.contains("href=\"/Wiki.jsp?page=TestPage01\""));
-		assertTrue(res.contains("href=\"/Wiki.jsp?page=TestPage02\""));
-        assertFalse(res.contains("href=\"/Wiki.jsp?page=TestPage03\""));
+		assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
+		assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage02\""));
+        assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage03\""));
 	}
 
     /**
@@ -89,9 +89,9 @@ public class ReferringUndefinedPagesPluginTest extends TestCase {
     public void testParmExClude() throws Exception {
         String res = manager.execute(context,"{INSERT ReferringUndefinedPagesPlugin} exclude='TestPage02*'}");
 
-        assertTrue(res.contains("href=\"/Wiki.jsp?page=TestPage01\""));
-        assertFalse(res.contains("href=\"/Wiki.jsp?page=TestPage02\""));
-        assertTrue(res.contains("href=\"/Wiki.jsp?page=TestPage03\""));
+        assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
+        assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage02\""));
+        assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage03\""));
     }
 
     /**
@@ -102,9 +102,9 @@ public class ReferringUndefinedPagesPluginTest extends TestCase {
     public void testParmMax() throws Exception {
         String res = manager.execute(context,"{INSERT ReferringUndefinedPagesPlugin} max='2'}");
 
-        assertTrue(res.contains("href=\"/Wiki.jsp?page=TestPage01\""));
-        assertTrue(res.contains("href=\"/Wiki.jsp?page=TestPage02\""));
-        assertFalse(res.contains("href=\"/Wiki.jsp?page=TestPage03\""));
+        assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
+        assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage02\""));
+        assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage03\""));
         assertTrue(res.contains("...and 1 more"));
     }
 

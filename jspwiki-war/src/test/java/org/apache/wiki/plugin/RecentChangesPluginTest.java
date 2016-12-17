@@ -74,9 +74,9 @@ public class RecentChangesPluginTest extends TestCase {
         // we don't want to compare the complete html returned, but check if
         // certain Strings are present and other Strings are not present
         assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
-        assertTrue(res.contains("<a href=\"/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
-        assertTrue(res.contains("<a href=\"/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
-        assertTrue(res.contains("<a href=\"/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
+        assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
+        assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
+        assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
     /**
@@ -91,9 +91,9 @@ public class RecentChangesPluginTest extends TestCase {
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
 
         assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
-        assertFalse(res.contains("<a href=\"/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
-        assertTrue(res.contains("<a href=\"/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
-        assertFalse(res.contains("<a href=\"/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
+        assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
+        assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
+        assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
     /**
@@ -108,9 +108,9 @@ public class RecentChangesPluginTest extends TestCase {
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
 
         assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
-        assertTrue(res.contains("<a href=\"/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
-        assertTrue(res.contains("<a href=\"/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
-        assertFalse(res.contains("<a href=\"/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
+        assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
+        assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
+        assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
     /**
