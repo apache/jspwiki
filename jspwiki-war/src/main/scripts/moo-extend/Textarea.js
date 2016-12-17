@@ -78,6 +78,9 @@ var Textarea = new Class({
     toElement: function(){
         return this.ta;
     },
+    focus: function(){
+        this.ta.focus();
+    },
 
     /*
     Function: getValue
@@ -85,6 +88,12 @@ var Textarea = new Class({
     */
     getValue: function(){
         return this.ta.value;
+    },
+
+    setValue: function(value){
+        this.ta.value = value;
+        this.setSelectionRange(0,0);
+        return this;
     },
     /*
     Function: slice

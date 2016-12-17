@@ -1,5 +1,47 @@
 2016-12-13  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.10.3-svn-20  Various HADDOCK updates & fixes.
+
+       * JSPWiki BLOGS
+         Final update of the styling of JSPWiki's BLOGs.
+         Also the fancy weblog calendar is now back in the sidebar
+         when viewing a blog post.
+
+       * Add-Comment JSP refactored:
+         When adding a comment to a wiki-page, you will see the content of the main page
+         at the top of the editing screen,  so you know what your are commenting on.
+         Improved hover menu on the SAVE/POST button for entering the change-note and
+         comment-signature fields.
+
+       * Plain Editor:
+         Many JS improvements related to the handling of text snippets.
+         Several style updates to the editor and the auto-suggest dialogs.
+
+       * Small refactoring of the Install.jsp to fit the bootstrap framework.
+
+       * %%columns-<width>: fix the broken width parameter
+
+       * %%graphbars: fix support for HTML-color-names (chrome, FF)
+
+       * [JSPWIKI-979]: fix support for %%small {{{ preformatted text blocks }}}
+
+       * [JSPWIKI-937]: fix handling of broken image links (also for FF)
+         Fix for rendering of the attachement icon, e.g. in RecentChanges page.
+
+       * Improved visualisation of interwiki links for Edit, Raw, Reader and Groups.
+
+       * The Delete group command now gets you back to the Group view pages,  so it is
+         easier for issuing subsequent group commands. (create,edit,delete)
+
+       * Added %%maps to generate google maps viewer by simply including the address.
+
+       * Few html5 FORM improvements: required fields, email input type, ...
+
+       * Updated to bootstrap 3.3.7.
+
+
+2016-12-13  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.10.3-svn-19
 
        * JSPWIKI-1032 : Use image "src" attribute instead of "href"

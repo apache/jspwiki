@@ -27,7 +27,6 @@ DOM structure:
 .recentchanges {
 
     table-layout:fixed;  // this renders faster
-    .table-hover;
 
     td {
         &:first-child:not(.date) {
@@ -37,12 +36,7 @@ DOM structure:
             border-bottom:2px solid @wiki-recentchanges-date-bg;
             padding-top:1em;
         }
-        &.changenote {
-            .small;
-            font-style:normal;
-        }
+
     }
-    tr.odd td {
-        background-color:transparent;
-    }
+
 }

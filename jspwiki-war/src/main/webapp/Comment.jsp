@@ -183,6 +183,7 @@
         }
 
         String commentText = EditorManager.getEditedText(pageContext);
+        //log.info("comment text"+commentText);
 
         //
         //  WYSIWYG editor sends us its greetings
@@ -208,7 +209,7 @@
             }
 
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
+            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext , TimeFormat.DATETIME);
 
             pageText.append("\n\n%%signature\n"+signature+", "+fmt.format(cal.getTime())+"\n/%");
 

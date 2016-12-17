@@ -61,7 +61,9 @@ Wiki.Category = function(element, pagename, xhrURL){
             url: xhrURL, //+"?page="+pagename,
             data: { page: decodeURIComponent(pagename) },
             update: popup,
-            onSuccess: function(){ popup.swapClass("loading", "active"); }
+            onSuccess: function(){
+                popup.swapClass("loading", "active");
+            }
         }).send();
     }
 

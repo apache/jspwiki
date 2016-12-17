@@ -76,22 +76,23 @@ Snipe.Snips = new Class({
                 if( typeOf(suggest) == "string" ){
 
                     snip.suggest = {
-                        pfx: RegExp( suggest + "$" ),
+                        lback: RegExp( suggest + "$" ),
                         match: RegExp( "^" + suggest )
                     }
-                    //console.log( snip.suggest );
+
                 }
 
                 self.suggestions[cmd] = snip;
 
-            } else {
-
-                //otherwise regular snippet
+             //otherwise regular snippet
+             //} else {
 
             }
 
             //check for snip dialogs -- they have the same name as the command
-            if( snip[cmd] ){ self.dialogs[cmd] = snip[cmd]; }
+            //TODO better:  use the dialog property !
+            if( snip[cmd] ){ self.dialogs[cmd] = snip[cmd]; }  //deprecated
+            if( snip.dialog ){ self.dialogs[cmd] = snip.dialog; }
 
             snips[cmd] = snip;
 
@@ -110,7 +111,7 @@ Snipe.Snips = new Class({
 
         for( cmd in this.snips ){
 
-            if( fromStart.test( cmd + "$" ) ){ return cmd; }
+            if( fromStart.endsWith( cmd ) ){ return cmd; }
 
         }
 
@@ -120,7 +121,7 @@ Snipe.Snips = new Class({
 
     /*
     Function: matchSuggest
-        Lookup a cmd enter just in front of the caret/cursor of the workarea..
+        Lookup a cmd which matches the suggestion look-back and match reg-exps.
 
         snip.suggest => {
             start: (number) start position,
@@ -130,16 +131,11 @@ Snipe.Snips = new Class({
     */
     matchSuggest: function(){
 
-        var cmd, snip, pfx, match, result, suggest,
+        var cmd, snip, lback, match, result, suggest,
             suggestions = this.suggestions,
             workarea = this.workarea,
             caret = workarea.getSelectionRange(),
             fromStart = workarea.getFromStart();
-
-        //"selectInline", "selectBlock", "selectStartOfLine";
-
-        //var SOL = workarea.isCaretAtStartOfLine();
-        //var EOL = workarea.isCaretAtEndOfLine();
 
         for( cmd in suggestions ){
 
@@ -149,23 +145,23 @@ Snipe.Snips = new Class({
 
                 suggest = snip.suggest;
 
-                if( suggest.pfx ){
+                if( suggest.lback ){
 
-                    pfx = fromStart.match( suggest.pfx );
+                    lback = fromStart.match( suggest.lback );
 
-                    if( pfx ){
+                    if( lback ){
 
-                        console.log("SUGGEST Prefix ", cmd, suggest.pfx, pfx.getLast() );
-                        pfx = pfx.getLast(); //match last (x)
+                        //console.log("SUGGEST Look-Back ", cmd, suggest.lback, lback.getLast() );
+                        lback = lback.getLast(); //match last (x)
 
-                        match = workarea.slice( caret.start - pfx.length )
+                        match = workarea.slice( caret.start - lback.length )
                                          .match( suggest.match );
 
-                        console.log("SUGGEST Match ", suggest.match, match );
+                        //console.log("SUGGEST Match ", suggest.match, match );
 
                         if( match ){
 
-                            result = { pfx: pfx, match: match.getLast() } ;
+                            result = { lback: lback, match: match.getLast() } ;
 
                         }
 
@@ -251,9 +247,9 @@ Snipe.Snips = new Class({
             for( pattern in patterns ){
 
                 pos = text.lastIndexOf( pattern );
+
                 if( (pos > -1) && (text.indexOf( patterns[pattern], pos ) == -1) ){
                         return inscope;
-
                 }
             }
             return !inscope;

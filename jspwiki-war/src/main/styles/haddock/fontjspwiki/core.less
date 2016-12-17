@@ -26,7 +26,7 @@
 	font-weight: normal;
 	font-variant: normal;
 	text-transform: none;
-	line-height: @line-height-base;
+	line-height: 1; //@line-height-base;
 
     position:relative;
     top:.1em;
@@ -36,4 +36,15 @@
 	-moz-osx-font-smoothing: grayscale;
 
 	&:hover { text-decoration:none; }
+}
+.icon--text {
+    position:relative;
+    top:-0.7em;
+    font-family:@font-family-monospace;
+    font-size:65%;
+    color:@white;
+    padding:0 2px 1px;
+    margin-left:1px;
+    background-color:@link-color;
+    border-radius:@border-radius-small;
 }

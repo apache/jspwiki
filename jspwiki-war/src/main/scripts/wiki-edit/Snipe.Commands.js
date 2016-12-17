@@ -86,7 +86,6 @@ Snipe.Commands = new Class({
             dialog,
             dialogs = options.dialogs || {};
 
-
         //add click buttons and dialogs
         container.addEvent("click:relay([" + dataCmd + "])", function(event){
 
@@ -97,6 +96,7 @@ Snipe.Commands = new Class({
 
             // input fields (eg checkboxes) keep the default behaviour; other click events are disabled
             if( !this.match("input") ){ event.stop(); }
+
 
         });
 
@@ -234,9 +234,17 @@ Snipe.Commands = new Class({
 
         //console.log("Snipe.Commands: createDialog() " + command + " ",dialog );
 
-        if( typeOf(dialog) != "array" ){ dialog = [ Dialog.Selection, { body: dialog } ]; }
+        if( typeOf(dialog) != "array" ){
 
-        if( !dialog[1].relativeTo ){ dialog[1].relativeTo = this.options.relativeTo || document.body; }
+            dialog = [ Dialog.Selection, { body: dialog } ];
+
+        }
+
+        if( !dialog[1].relativeTo ){
+
+            dialog[1].relativeTo = this.options.relativeTo || document.body;
+
+        }
 
         dialog[1].autoClose = false;
 
@@ -262,7 +270,6 @@ Snipe.Commands = new Class({
             button = self.btns[command];
 
         //console.log("Snipe.Commands: openDialog() " + command + " " + activeDlg);
-
         if( activeDlg && (activeDlg != newDlg) ){ activeDlg.hide(); }
         self.activeDlg = self.dlgs[command];
 
@@ -284,7 +291,6 @@ Snipe.Commands = new Class({
             button = self.btns[command];
 
         //console.log("Snipe.Commands: closeDialog() " + command )
-
         if( self.dlgs[command] == self.activeDlg ){ self.activeDlg = null; }
 
         if( button ){ button.removeClass("active"); }

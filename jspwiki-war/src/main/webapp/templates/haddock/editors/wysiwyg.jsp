@@ -54,7 +54,7 @@
 %>
 <wiki:RequestResource type="stylesheet" resource="templates/haddock/haddock-wysiwyg.css" />
 <wiki:RequestResource type="script" resource="scripts/haddock-wysiwyg.js" />
-
+<c:set var='context'><wiki:Variable var='requestcontext' /></c:set>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
@@ -152,19 +152,41 @@
 
   <div class="form-inline form-group">
 
-  <span class="cage">
-    <input class="btn btn-success" type="submit" name="ok" accesskey="s"
-           value="<fmt:message key='editor.plain.save.submit'/>"
-           title="<fmt:message key='editor.plain.save.title'/>" />
-
-      <wiki:CheckRequestContext context="edit">
-      <input class="form-control" data-hover-parent="span" type="text" size="80" maxlength="80"
-             name="changenote" id="changenote"
+    <div class="form-group dropdown">
+    <button class="btn btn-success" type="submit" name="ok" accesskey="s">
+      <fmt:message key='editor.plain.save.submit${ context == "edit" ? "" : ".comment" }'/>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" data-hover-parent="div">
+      <li class="dropdown-header">
+        <input class="form-control" type="text" name="changenote" id="changenote" size="80" maxlength="80"
              placeholder="<fmt:message key='editor.plain.changenote'/>"
              value="${changenote}" />
+      </li>
+      <wiki:CheckRequestContext context="comment">
+      <li class="divider" />
+      <li class="dropdown-header">
+        <fmt:message key="editor.commentsignature"/>
+      </li>
+      <li class="dropdown-header">
+        <input class="form-control" type="text" name="author" id="authorname"  size="80" maxlength="80"
+             placeholder="<fmt:message key='editor.plain.name'/>"
+             value="${author}" />
+      </li>
+      <li  class="dropdown-header">
+        <label class="btn btn-default btn-xs" for="rememberme">
+          <input type="checkbox" name="remember" id="rememberme" ${ remember ? "checked='checked'" : "" } />
+          <fmt:message key="editor.plain.remember"/>
+        </label>
+      </li>
+      <li  class="dropdown-header">
+        <input class="form-control" type="text" name="link" id="link" size="80" maxlength="80"
+               placeholder="<fmt:message key='editor.plain.email'/>"
+               value="${link}" />
+      </li>
       </wiki:CheckRequestContext>
-  </span>
-
+    </ul>
+    </div>
 
   <div class="btn-group editor-tools">
 
@@ -241,34 +263,15 @@
 
   </div>
 
-  <wiki:CheckRequestContext context="comment">
-    <div class="info">
-    <label><fmt:message key="editor.commentsignature"/></label>
-    <input class="form-control form-col-20" type="text" name="author" id="authorname"
-           placeholder="<fmt:message key='editor.plain.name'/>"
-           value="${author}" />
-    <label class="btn btn-default btn-sm" for="rememberme">
-      <input type="checkbox" name="remember" id="rememberme"
-             <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
-      <fmt:message key="editor.plain.remember"/>
-    </label>
-    <input class="form-control form-col-20" type="text" name="link" id="link" size="24"
-           placeholder="<fmt:message key='editor.plain.email'/>"
-           value="${link}" />
-    </div>
-  </wiki:CheckRequestContext>
-
-
   <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
-      <div class="col-50">
+      <div>
         <textarea name="htmlPageText"
              autofocus="autofocus"><%=pageAsHtml%></textarea>
       </div>
-      <div class="ajaxpreview col-50">Preview comes here</div>
+      <div class="ajaxpreview">Preview comes here</div>
   </div>
 
-  <div class="resizer"
-   data-pref="editorHeight"
+  <div class="resizer" data-pref="editorHeight"
        title="<fmt:message key='editor.plain.edit.resize'/>"></div>
 
 </form>
@@ -297,16 +300,17 @@ Wiki.add("[name=htmlPageText]", function( element){
     element.mooEditable({
         dimensions:{
             x: "100%",
-            y: "100%"//Wiki.prefs.get( resizeCookie )
+            y: "100%"
         },
         extraCSS: "body{padding:.5em;}",
   		externalCSS: $("main-stylesheet").href,
   		onAttach: function(){
 
   		    editor = this;
+            Wiki.resizer(resizer, $$(editor.iframe), resizePreview );
             resizePreview();
             html2markup();
-            Wiki.resizer( editor.iframe, resizePreview );
+
   		},
   		onChange: html2markup,
   		onEditorKeyUp: html2markup,

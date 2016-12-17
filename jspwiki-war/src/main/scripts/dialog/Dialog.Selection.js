@@ -70,9 +70,16 @@ Dialog.Selection = new Class({
 
     initialize:function( options ){
 
-        this.setClass(".selection",options);
-        this.selected = options.selected || "";
-        this.parent( options );
+        var self = this;
+
+        self.setClass(".selection",options);
+        self.selected = options.selected || "";
+        self.parent( options );
+
+        self.element.addEvent("click:relay(.item)", function(e){
+            e.stop();
+            self.action( this.get("title") );
+        });
 
         //console.log("Dialog.Selection ", this.element.className);
     },
@@ -107,14 +114,9 @@ Dialog.Selection = new Class({
 
         if( typeOf( content ) == "element" ){
 
-            //first move the content elements into the body and highlight the selected item
-            self.parent( content ).setValue( self.selected );
-
-            //then add the click & hover event handlers
-            self.element.addEvent("click:relay(.item)", function(e){
-                e.stop();
-                self.action( this.get("title") );
-            });
+            //first move the content elements into the body and then highlight the selected item
+            self.parent( content )
+                .setValue( self.selected );
 
         }
 
@@ -128,13 +130,24 @@ Dialog.Selection = new Class({
     */
     setValue: function( value ){
 
-        var self = this, selected = "selected", element;
+        var self = this, selected = "selected", element,
+            target = ".item[title" + self.options.match + value + "]";
 
+        /*ffs
+        if( self.hasClass("dialog-filtered") ){
+
+            if( value == "" ){
+                this.element.getElements(".item,.divider").show();
+            } else {
+                this.element.getElements(".item,.divider").hide();
+                this.element.getElements(target).show();
+            }
+        }
+        */
         element = self.get("." + selected);
         if( element ){ element.removeClass(selected); }
 
-        //console.log("Dialog.Selection setValue", value);
-        element = self.get( ".item[title" + self.options.match + value + "]" );
+        element = self.get( target );
         if( element ){ element.addClass(selected); }
 
         self[selected] = value;

@@ -102,9 +102,10 @@ var TableX = new Class({
                 if( $(r.cells[col]).get('text').trim() == fieldName ){
 
                     //take this COLUMN
-                    for( i=1; i < tlen; i++)
+                    for( i=1; i < tlen; i++){
                         //result.push( new Element('span').wraps(table.rows[i].cells[col]) );
-                        result.push( rows[i].cells[col] );
+                        result[result.length] = rows[i].cells[col];
+                    }
                     return result;
                 }
             }

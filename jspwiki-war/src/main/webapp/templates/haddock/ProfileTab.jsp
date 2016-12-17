@@ -80,7 +80,7 @@
        <label class="control-label form-col-20" for="loginname"><fmt:message key="prefs.loginname"/></label>
 
        <wiki:UserProfile property="canChangeLoginName">
-           <input class="form-control form-col-50" type="text" name="loginname" id="loginname"
+           <input class="form-control form-col-50" type="text" name="loginname" id="loginname" required
                   size="20" value="<wiki:UserProfile property='loginname' />" />
        </wiki:UserProfile>
        <wiki:UserProfile property="!canChangeLoginName">
@@ -103,11 +103,11 @@
             <label class="control-label form-col-20" for="password0">Old</label>&nbsp;
             <input type="password" name="password0" id="password0" size="20" value="" />
        --%>
-       <input class="form-control form-col-50" type="password" name="password" id="password" size="20" value="" />
+       <input class="form-control form-col-50" type="password" name="password" id="password" size="20" value="" required/>
      </div>
      <div class="form-group">
        <label class="control-label form-col-20" for="password2"><fmt:message key="prefs.password2"/></label>
-       <input class="form-control form-col-50" type="password" name="password2" id="password2" size="20" value="" />
+       <input class="form-control form-col-50" type="password" name="password2" id="password2" size="20" value="" required/>
        <%-- extra validation ? min size, allowed chars? password-strength js routing --%>
      </div>
      </wiki:UserProfile>
@@ -116,7 +116,7 @@
      <div class="form-group">
        <label class="control-label form-col-20" for="fullname"><fmt:message key="prefs.fullname"/></label>
        <span class="dropdown form-col-50">
-         <input class="form-control" type="text" name="fullname" id="fullname" size="20"
+         <input class="form-control" type="text" name="fullname" id="fullname" size="20" required
                 value="<wiki:UserProfile property='fullname' />" />
          <ul class="dropdown-menu" data-hover-parent=".dropdown">
            <li class="dropdown-header"><fmt:message key="prefs.fullname.description"/></li>
@@ -128,7 +128,7 @@
      <div class="form-group">
        <label class="control-label form-col-20" for="email"><fmt:message key="prefs.email"/></label>
        <span class="dropdown form-col-50">
-         <input class="form-control" type="text" name="email" id="email" size="20"
+         <input class="form-control" type="email" name="email" id="email" size="20"
                 value="<wiki:UserProfile property='email' />" />
          <ul class="dropdown-menu" data-hover-parent=".dropdown">
            <li class="dropdown-header"><fmt:message key="prefs.email.description"/></li>

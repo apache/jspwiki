@@ -52,7 +52,7 @@ function Flip(element, options){
             arg = args.pop();
             if( !arg.indexOf("w") /*index==0*/ ){ css.width = arg.slice(1).toInt(); }
             else if( !arg.indexOf("h") /*index==0*/ ){ css.height = arg.slice(1).toInt(); }
-            else if( arg.test(/none|default|success|info|warning|danger/ )){ frontback.push(arg); }
+            else if( arg.test(/none|default|success|info|warning|danger/ )){ frontback[frontback.length] = arg; }
 
         }
 

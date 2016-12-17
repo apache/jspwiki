@@ -51,14 +51,14 @@
     </c:set>
 
   <%-- view --%>
-  <wiki:CheckRequestContext context='info|diff|upload|rename|edit|conflict'>
+  <wiki:CheckRequestContext context='info|diff|upload|rename|edit|comment|conflict'>
   <li id="view">
     <wiki:Link page="${page}" ><fmt:message key="view.tab"/></wiki:Link>
   </li>
   </wiki:CheckRequestContext>
 
   <%-- attachment --%>
-  <wiki:CheckRequestContext context='view|info|rename|diff|rename|edit|conflict'>
+  <wiki:CheckRequestContext context='view|info|rename|diff|rename|edit|comment|conflict'>
   <wiki:PageExists>
   <li id="attach"
    class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
@@ -71,7 +71,7 @@
   </wiki:CheckRequestContext>
 
   <%-- info --%>
-  <wiki:CheckRequestContext context='view|info|upload|rename|edit|conflict'>
+  <wiki:CheckRequestContext context='view|info|upload|rename|edit|comment|conflict'>
   <wiki:PageExists>
   <li id="info">
     <wiki:Link context="info" accessKey="i">
@@ -192,15 +192,15 @@
         <%-- Show Reader View --%>
         <li>
           <wiki:CheckVersion mode="latest">
-            <wiki:Link cssClass="reader-view">
+            <wiki:Link cssClass="interwiki">
               <wiki:Param name='skin' value='reader'/>
-              <fmt:message key='actions.showreaderview' /> <span class="icon-leanpub" ></span>
+              <fmt:message key='actions.showreaderview' />
             </wiki:Link>
           </wiki:CheckVersion>
           <wiki:CheckVersion mode="notlatest">
-            <wiki:Link cssClass="reader-view" version="${param.version}">
+            <wiki:Link cssClass="interwiki" version="${param.version}">
               <wiki:Param name='skin' value='reader'/>
-              <fmt:message key='actions.showreaderview' /> <span class="icon-leanpub" ></span>
+              <fmt:message key='actions.showreaderview' />
             </wiki:Link>
           </wiki:CheckVersion>
         </li>
@@ -216,6 +216,7 @@
         <wiki:PageType type="page">
           <li>
             <wiki:Link context="comment">
+              <span class="icon-plus"></span>
               <fmt:message key="actions.comment" />
             </wiki:Link>
           </li>
