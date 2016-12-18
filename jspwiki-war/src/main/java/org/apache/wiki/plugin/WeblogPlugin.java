@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -268,7 +269,7 @@ public class WeblogPlugin
 
         try
         {
-            List<WikiPage> blogEntries = findBlogEntries( engine.getPageManager(),
+            List<WikiPage> blogEntries = findBlogEntries( engine,
                                                           weblogName,
                                                           startTime.getTime(),
                                                           stopTime.getTime() );
@@ -375,7 +376,7 @@ public class WeblogPlugin
             author = "AnonymousCoward";
         }
 
-        buffer.append("By "+author+"&nbsp;&nbsp;");
+        buffer.append( MessageFormat.format( rb.getString("weblogentryplugin.postedby"), author));
         buffer.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">"+rb.getString("weblogentryplugin.permalink")+"</a>" );
         String commentPageName = TextUtil.replaceString( entry.getName(),
                                                          "blogentry",
@@ -428,35 +429,34 @@ public class WeblogPlugin
      *  Attempts to locate all pages that correspond to the
      *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
      *
-     *  @param mgr A PageManager which is used to get the pages
+     *  @param engine WikiEngine which is used to get the pages
      *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
      *  @param start The date which is the first to be considered
      *  @param end   The end date which is the last to be considered
      *  @return a list of pages with their FIRST revisions.
      *  @throws ProviderException If something goes wrong
      */
-    public List findBlogEntries( PageManager mgr,
+    public List findBlogEntries( WikiEngine engine,
                                  String baseName, Date start, Date end )
         throws ProviderException
     {
-        Collection everyone = mgr.getAllPages();
+        PageManager mgr = engine.getPageManager();
+        Set allPages = engine.getReferenceManager().findCreated();
+
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
 
-        for( Iterator i = everyone.iterator(); i.hasNext(); )
+        for( Iterator i = allPages.iterator(); i.hasNext(); )
         {
-            WikiPage p = (WikiPage)i.next();
-
-            String pageName = p.getName();
+            String pageName = (String)i.next();
 
             if( pageName.startsWith( baseName ) )
             {
                 try
                 {
                     WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
-
                     Date d = firstVersion.getLastModified();
 
                     if( d.after(start) && d.before(end) )

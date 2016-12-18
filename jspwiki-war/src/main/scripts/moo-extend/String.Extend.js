@@ -57,6 +57,14 @@ String.implement({
         return this.replace(/([a-z\xe0-\xfd])([A-Z\xc0-\xdd])/g,"$1 $2");
     },
 
+	//ES6 polyfill
+	startsWith: function( match ){
+		return !this.indexOf(match);
+	},
+	endsWith: function( match ){
+		return this.slice( -match.length ) == match ;
+	},
+
     /*
     Function: trunc
         Truncate a string to a maximum length
@@ -202,6 +210,9 @@ String.implement({
         > "zebra".sliceArgs( "zebra-eee-ffa" ); //returns ['eee','ffa']
         > "zebra".sliceArgs( "horse" );  //returns null
         > "zebra".sliceArgs( "zebra" );  //returns []
+        > "zebra".sliceArgs( "horse zebra-eee-ffa" ); //returns ['eee','ffa']
+        > "zebra".sliceArgs( "zebra-eee-ffa monkey" ); //returns ['eee','ffa']
+        > "zebra".sliceArgs( "horse zebra-eee-ffa monkey" ); //returns ['eee','ffa']
 
     */
     sliceArgs: function(element, regexp){
@@ -223,8 +234,8 @@ String.implement({
         Return a (string) classname to invoke the contextual colors.
 
     Example
-    >    'panel'.fetchContext( 'accordion-danger') => 'panel panel-danger'
-    >    'panel'.fetchContext( 'commentbox-success') => 'panel panel-success'
+    >    "panel".fetchContext( "accordion-danger") => 'panel panel-danger'
+    >    "panel".fetchContext( "commentbox-success") => 'panel panel-success'
 
     */
     fetchContext : function(element){

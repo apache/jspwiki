@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -45,7 +45,7 @@ import org.apache.wiki.util.TextUtil;
  *  <ul>
  *  <li><b>page</b> - the page name</li>
  *  </ul>
- *  
+ *
  *  @since 1.9.21
  */
 public class WeblogArchivePlugin implements WikiPlugin
@@ -71,7 +71,7 @@ public class WeblogArchivePlugin implements WikiPlugin
         String weblogName = params.get( PARAM_PAGE );
 
         if( weblogName == null ) weblogName = context.getPage().getName();
-        
+
 
         m_monthUrlFormat = new SimpleDateFormat("'"+
                                                 context.getURL( WikiContext.VIEW, weblogName,
@@ -80,7 +80,7 @@ public class WeblogArchivePlugin implements WikiPlugin
         StringBuilder sb = new StringBuilder();
 
         sb.append( "<div class=\"weblogarchive\">\n" );
-        
+
 
         //
         //  Collect months that have blog entries
@@ -123,13 +123,14 @@ public class WeblogArchivePlugin implements WikiPlugin
             }
 
             sb.append( "</ul>\n" );
-            sb.append( "</div>\n" );
         }
         catch( ProviderException ex )
         {
             log.info( "Cannot get archive", ex );
             sb.append("Cannot get archive: "+ex.getMessage());
         }
+
+        sb.append( "</div>\n" );
 
         return sb.toString();
     }
@@ -143,9 +144,9 @@ public class WeblogArchivePlugin implements WikiPlugin
 
         WeblogPlugin pl = new WeblogPlugin();
 
-        List blogEntries = pl.findBlogEntries( engine.getPageManager(),
+        List blogEntries = pl.findBlogEntries( engine,
                                                page, new Date(0L), new Date() );
-        
+
         for( Iterator i = blogEntries.iterator(); i.hasNext(); )
         {
             WikiPage p = (WikiPage) i.next();
@@ -188,7 +189,7 @@ public class WeblogArchivePlugin implements WikiPlugin
 
     }
 
-    
+
     /**
      * This is a simple comparator for ordering weblog archive entries.
      * Two dates in the same month are considered equal.
@@ -197,14 +198,14 @@ public class WeblogArchivePlugin implements WikiPlugin
         implements Comparator
     {
 
-        public int compare( Object a, Object b ) 
+        public int compare( Object a, Object b )
         {
-            if( a == null || b == null || 
+            if( a == null || b == null ||
                 !(a instanceof Calendar) || !(b instanceof Calendar) )
             {
                 throw new ClassCastException( "Invalid calendar supplied for comparison." );
             }
-                    
+
             Calendar ca = (Calendar) a;
             Calendar cb = (Calendar) b;
             if( ca.get( Calendar.YEAR ) == cb.get( Calendar.YEAR ) &&
@@ -213,7 +214,8 @@ public class WeblogArchivePlugin implements WikiPlugin
                 return 0;
             }
 
-            return cb.getTime().before( ca.getTime() ) ? 1 : -1;
+            //sort recent dates first
+            return cb.getTime().before( ca.getTime() ) ? -1 : 1;
         }
     }
 }

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.xmlrpc;
 
@@ -56,10 +56,10 @@ import org.apache.xmlrpc.XmlRpcException;
 public class MetaWeblogHandler
     implements WikiRPCHandler
 {
-    private static Logger log = Logger.getLogger( MetaWeblogHandler.class ); 
+    private static Logger log = Logger.getLogger( MetaWeblogHandler.class );
 
     private WikiContext m_context;
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -87,13 +87,13 @@ public class MetaWeblogHandler
         {
             AuthenticationManager amm = m_context.getEngine().getAuthenticationManager();
             AuthorizationManager mgr = m_context.getEngine().getAuthorizationManager();
-        
+
             if( amm.login( m_context.getWikiSession(), m_context.getHttpRequest(), username, password ) )
             {
                 if( !mgr.checkPermission( m_context.getWikiSession(), PermissionFactory.getPagePermission( page, permission ) ))
                 {
                     throw new XmlRpcException( 1, "No permission" );
-                }   
+                }
             }
             else
             {
@@ -110,7 +110,7 @@ public class MetaWeblogHandler
     /**
      *  JSPWiki does not support categories, therefore JSPWiki
      *  always returns an empty list for categories.
-     *  
+     *
      *  @param blogid The id of the blog.
      *  @param username The username to use
      *  @param password The password
@@ -165,7 +165,7 @@ public class MetaWeblogHandler
         {
             title = pageText.substring( 0, firstLine );
         }
-            
+
         if( title.trim().length() == 0 ) title = page.getName();
 
         // Remove wiki formatting
@@ -179,7 +179,7 @@ public class MetaWeblogHandler
 
     /**
      *  Returns a list of the recent posts to this weblog.
-     *  
+     *
      *  @param blogid The id of the blog.
      *  @param username The username to use
      *  @param password The password
@@ -210,7 +210,7 @@ public class MetaWeblogHandler
         {
             WeblogPlugin plugin = new WeblogPlugin();
 
-            List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine().getPageManager(), 
+            List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine(),
                                                             blogid,
                                                             new Date(0L),
                                                             new Date());
@@ -238,13 +238,13 @@ public class MetaWeblogHandler
 
     /**
      *  Adds a new post to the blog.
-     *  
+     *
      *  @param blogid The id of the blog.
      *  @param username The username to use
      *  @param password The password
      *  @param content As per Metaweblogapi contract
      *  @param publish This parameter is ignored for JSPWiki.
-     *  @return Returns an empty string 
+     *  @return Returns an empty string
      *  @throws XmlRpcException If something goes wrong
      */
     public String newPost( String blogid,
@@ -256,7 +256,7 @@ public class MetaWeblogHandler
     {
         log.info("metaWeblog.newPost() called");
         WikiEngine engine = m_context.getEngine();
-        
+
         WikiPage page = engine.getPage( blogid );
         checkPermissions( page, username, password, "createPages" );
 
@@ -293,16 +293,16 @@ public class MetaWeblogHandler
      *  Creates an attachment and adds it to the blog.  The attachment
      *  is created into the main blog page, not the actual post page,
      *  because we do not know it at this point.
-     *  
+     *
      *  @param blogid The id of the blog.
      *  @param username The username to use
      *  @param password The password
      *  @param content As per the MetaweblogAPI contract
-     *  @return As per the MetaweblogAPI contract 
+     *  @return As per the MetaweblogAPI contract
      *  @throws XmlRpcException If something goes wrong
-     *  
+     *
      */
-    public Hashtable newMediaObject( String blogid, 
+    public Hashtable newMediaObject( String blogid,
                                      String username,
                                      String password,
                                      Hashtable content )

@@ -77,8 +77,6 @@ var Wiki = {
 
             .add( "[accesskey]", Accesskey )
 
-            //.add("input[placeholder]", function(element){ element.placeholderX(); })
-
             //toggle effect:  toggle .active class on this element when clicking toggle element
             //.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
             .add( "[data-toggle]", function(element){
@@ -94,15 +92,21 @@ var Wiki = {
 
             //generate modal confirmation boxes, eg prompting to execute
             //an unrecoverable action such as deleting a page or attachment
-            //.add("[data-toggle]", "onModal", {attr:"data-modal"})
+            //.add("[data-modal]", "onModal", {attr:"data-modal"})
             .add( "[data-modal]", function(element){
                 element.onModal( element.get("data-modal") );
             })
 
-            //hover effects: show/hide this element when hovering over its parent element
+            //hover effects: show/hide this element when hovering over the parent element
             //.add("[data-toggle]", "onHover", {attr:"data-hover-parent"})
             .add( "[data-hover-parent]", function(element){
                 element.onHover( element.get("data-hover-parent") );
+            })
+
+            //resize the "data-resize" elements when dragging this element
+            //.add( "[data-resize]", wiki.resizer.bind(wiki) )
+            .add( "[data-resize]", function(element){
+                wiki.resizer(element, $$(element.get("data-resize")) );
             })
 
             //make navigation bar sticky (simulate position:sticky; )
@@ -111,7 +115,7 @@ var Wiki = {
                 element.onSticky();
             })
 
-            //highlight previous search query in cookie or referrer page
+            //highlight previous search query retreived from a cookie or referrer page
             .add( ".page-content", function(element){
 
                 var previousQuery = "PrevQuery";
@@ -178,13 +182,18 @@ var Wiki = {
 
     caniuse: function( body ){
 
+        //Is not really needed anymore,  since we added a css "hack" to workaround an IE bug
+        //Still kept here as a placeholder for future feature-sniffing
+
+
         //Modernizr.addTest('flexbox', testAllProps('flexBasis', '1px', true));
         var hasNativeFlex = document.createElement('b');
 
         hasNativeFlex.style.cssText = "flex-basis:1px;";
-        if(!!hasNativeFlex.style.length){
+        if( hasNativeFlex.style.length ){
             body.addClass("can-flex");
-        };
+        }
+
 
     },
 
@@ -218,6 +227,7 @@ var Wiki = {
 
 
         //wiki.url = null;  //CHECK:  why this is needed?
+        //console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
         if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
 
             wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
@@ -337,8 +347,8 @@ var Wiki = {
 
     /*
     Function: dropdowns
-        Parse wikipages such ase MoreMenu, HomeMenu to act as bootstrap
-        compatible dropdown menu items.
+        Parse special wikipages such ase MoreMenu, HomeMenu
+        and format them as bootstrap compatible dropdown menus.
     */
     dropdowns: function(){
 
@@ -366,18 +376,18 @@ var Wiki = {
 
         /* (deprecated) "pre-HADDOCK" moremenu style
               Consists of a list of links, with \\ delimitters
-              Each <p> becomes a set of li, one for each link
-              The block is terminated with a divider, if more <p's> are coming
+              Each <p> becomes a set of <li>, one for each link
+              The block is terminated with a divider, if more <p>'s are coming
         */
         $$( "ul.dropdown-menu > li.more-menu > p" ).each( function(element){
 
             var parentLi = element.getParent();
 
             element.getElements('a').each( function(link){
-                ['li',[link]].slick().inject(parentLi, "before");
+                ["li",[link]].slick().inject(parentLi, "before");
             });
-            if( element.getNext('p *,hr') ){
-                'li.divider'.slick().inject(parentLi, "before") ;
+            if( element.getNext("p *,hr") ){
+                "li.divider".slick().inject(parentLi, "before") ;
             }
             element.dispose();
 
@@ -390,7 +400,9 @@ var Wiki = {
         Returns the list of all section headers, excluding the header of the Table Of Contents.
     */
     getSections: function(){
+
         return $$(".page-content [id^=section]:not(#section-TOC)");
+
     },
 
     /*
@@ -500,7 +512,9 @@ var Wiki = {
 
         //Persist the selected editor type in the pref cookie
         form.getElements("a.editor-type").addEvent("click", function(){
+
             wiki.prefs.set("editor", this.get("text"));
+
         });
 
     },
@@ -544,7 +558,6 @@ var Wiki = {
 
             }
         }
-
     },
 
     getXHRPreview: function( getContent, previewElement ){
@@ -575,7 +588,7 @@ var Wiki = {
     },
 
     /*
-    Function: resizer
+    Behavior: resizer
         Resize the target element, by dragging a .resizer handle.
         Multiple elements can be resized via the callback.
         The .resizer element can specify a prefs cookie to retrieve/store the height.
@@ -590,37 +603,85 @@ var Wiki = {
         textarea - resizable textarea (DOM element)
         preview - preview (DOM element)
     */
-    resizer: function( target, callback ){
+    /*
+    wiki.add(".resizer",function(element){...}
 
-        var prefs = this.prefs,
-            handle = document.getElement(".resizer"),
-            pref = handle.getAttribute("data-pref"),
-            h;
 
-        function helpdragging(add){ handle.ifClass(add, "dragging"); }
+    [data-resize] : resize target,  can be multiple elements
 
-        //targets.setStyle(height, options.initial || "100%" );
+    div.resizer[data-resize=".pagecontent"] => for add-comment sections
+    div.resizer[data-resize=".ajaxpreview,.snipeable"][data-pref=editorHeight]
+    */
+    resizer: function( handle, targets, dragCallback ){
+
+        var pref = handle.get("data-pref"),
+            prefs = this.prefs,
+            target;
+
+        function showDragState(add){ handle.ifClass(add, "dragging"); }
+
+        if( !targets[0] ){ return; }
+
+        //set the initial size of the targets
         if( pref ){
-            h = prefs.get(pref) || 300;
-            target.setStyle("height", h );
-            callback( h );
+            targets.setStyle("height", prefs.get(pref) || 300 );
         }
+
+        target = targets.pop();
 
         target.makeResizable({
             handle: handle,
             modifiers: { x: null },
             onDrag: function(){
-                h = this.value.now.y;
-                callback(h);
-                if(pref){ prefs.set(pref, h); }
+                var h = this.value.now.y;
+                if( pref ){ prefs.set(pref, h); }
+                if( targets ){ targets.setStyle("height", h); }
+                if( dragCallback ){ dragCallback(h); }
             },
-            onBeforeStart: helpdragging.pass(true),
-            onComplete: helpdragging.pass(false),
-            onCancel: helpdragging.pass(false)
+            onBeforeStart: showDragState.pass(true),
+            onComplete: showDragState.pass(false),
+            onCancel: showDragState.pass(false)
         });
 
     },
 
+
+    pageDialog: function( caption, method ){
+
+        var wiki = this;
+
+        return [ Dialog.Selection, {
+
+            caption: caption,
+
+            onOpen: function( dialog ){
+
+                var key = dialog.getValue();
+
+                //if empty link, than fetch list of attachments of the open page
+                if( !key || (key.trim()=='') ){
+
+                    key = wiki.PageName + "/";
+
+                }
+
+                wiki.jsonrpc( method, [key, 30], function( result ){
+
+                    //console.log("jsonrpc result", result, !!result[0] );
+                    if( result[0] /* length > 0 */ ){
+
+                        dialog.setBody( result );
+
+                    } else {
+
+                        dialog.hide();
+
+                    }
+                });
+            }
+        }];
+
+    },
 
     /*
     Function: jsonrpc
@@ -652,10 +713,11 @@ var Wiki = {
                 url: this.JsonUrl + method,
                 //method:"post"     //defaults to "POST"
                 //urlEncoded: true, //content-type header = www-form-urlencoded + encoding
-                //encoding: utf-8,
+                //encoding: "utf-8",
+                //encoding: "ISO-8859-1",
                 onSuccess: function( responseText ){
 
-                    //console.log(responseText, JSON.parse( responseText ) );
+                    console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
                     callback( JSON.parse( responseText ) )
 
                 },

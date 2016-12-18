@@ -41,7 +41,10 @@
 <%--
 BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-ie-compatibility-modes
 --%>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="<wiki:ContentEncoding />">
+<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
 <%-- Localized JS; must come before any css, to avoid blocking immediate execution --%>
@@ -64,10 +67,6 @@ String.I18N.PREFIX = "javascript.";
 
 <wiki:IncludeResources type="script"/>
 
-<%--TODO:
-<!--[if lte IE 8]><script src="js/libs/selectivizr.js"></script><![endif]-->
---%>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 <%-- COOKIE read client preferences --%>
@@ -100,8 +99,6 @@ String.I18N.PREFIX = "javascript.";
 <wiki:IncludeResources type="jsfunction"/>
 //]]></script>
 
-<meta charset="<wiki:ContentEncoding />">
-<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
 <link rel="search" href="<wiki:LinkTo format='url' page='Search'/>"
     title='Search <wiki:Variable var="ApplicationName" />' />
 <link rel="help"   href="<wiki:LinkTo format='url' page='TextFormattingRules'/>"
