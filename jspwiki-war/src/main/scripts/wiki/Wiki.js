@@ -199,7 +199,9 @@ var Wiki = {
         //support for flexbox is broken in IE, let's do it the hard-way
         console.log(navigator.appVersion);
 
-        if ( !navigator.appVersion.match(/MSIE/) ){
+        var nav = navigator.appVersion;
+
+        if ( nav.match(/Edge/) || !nav.match(/MSIE/) ){
             //alert("Aha, no IE.  Let's play flexbox");
             body.addClass("can-flex");
         }
