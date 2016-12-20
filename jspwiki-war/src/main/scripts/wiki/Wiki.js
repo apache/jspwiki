@@ -187,10 +187,22 @@ var Wiki = {
 
 
         //Modernizr.addTest('flexbox', testAllProps('flexBasis', '1px', true));
+        /*
         var hasNativeFlex = document.createElement('b');
 
         hasNativeFlex.style.cssText = "flex-basis:1px;";
         if( hasNativeFlex.style.length ){
+            body.addClass("can-flex");
+        }
+        */
+
+        //support for flexbox is broken in IE, let's do it the hard-way
+        console.log(navigator.appVersion);
+
+        var nav = navigator.appVersion;
+
+        if ( nav.match(/Edge/) || !nav.match(/MSIE/) ){
+            //alert("Aha, no IE.  Let's play flexbox");
             body.addClass("can-flex");
         }
 

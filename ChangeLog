@@ -1,3 +1,18 @@
+2016-12-19  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-22  Various HADDOCK updates & fixes.
+
+       * [JSPWIKI-1038]: Fix allowing flexbox in Edge. (but not in IE)
+
+
+2016-12-18  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-svn-21  Various HADDOCK updates & fixes.
+
+       * [JSPWIKI-1038]: IE's flexbox implementation is broken,
+         no workaround for now.
+
+
 2016-12-17  Dirk Frederickx (brushed AT apache DOT org)
 
        * Fixing RSSGenerator test with latest WeblogPlugin changes
