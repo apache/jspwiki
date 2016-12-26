@@ -53,13 +53,8 @@
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     WikiPage    wikipage    = wikiContext.getPage();
 
-    // Redirect if baseURL not set or RSS generation not on
-    if( wiki.getBaseURL().length() == 0 )
-    {
-        response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate RSS" );
-        return;
-    }
-    
+    // Redirect if RSS generation not on
+
     if( wiki.getRSSGenerator() == null )
     {
         response.sendError( 404, "RSS feeds are disabled at administrator request" );
@@ -106,7 +101,7 @@
     if( mode.equals("blog") )
     {
         org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
-        changed = plug.findBlogEntries(wiki.getPageManager(), 
+        changed = plug.findBlogEntries(wiki,
                                        wikipage.getName(),
                                        new Date(0L),
                                        new Date());

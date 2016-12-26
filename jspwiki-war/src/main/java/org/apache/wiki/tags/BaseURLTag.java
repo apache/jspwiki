@@ -21,7 +21,7 @@ package org.apache.wiki.tags;
 import java.io.IOException;
 
 /**
- *  Writes the jspwiki.baseURL property.
+ *  Writes the jspwiki baseURL.
  *
  *  @since 2.2
  */

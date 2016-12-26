@@ -56,7 +56,7 @@ A parte mais baixa deste menu é chamada similarmente de [LeftMenuFooter] (Baixo
 
 !Habilitanto o [RSS|http://blogspace.com/rss/] feed
 
-No seu arquivo jspwiki.properties, você precisará de alterar o atributo "jspwiki.rss.generate" para "true" (verdadeiro), e também precisará alterar o atributo "jspwiki.baseURL" para apontar para a sua Wiki.  Se não fizer isso o gerador de RSS não conseguirá saber para onde os links devem ir... :-)
+No seu arquivo jspwiki.properties, você precisará de alterar o atributo "jspwiki.rss.generate" para "true" (verdadeiro).
 
 !Eu não gosto que as ~CoisasFiquemJuntas nos títulos das páginas.  O que eu posso fazer?
 

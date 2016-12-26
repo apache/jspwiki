@@ -55,7 +55,6 @@ public class RSSGeneratorTest extends TestCase
 
     protected void setUp() throws Exception
     {
-        props.setProperty( WikiEngine.PROP_BASEURL, "http://localhost/" );
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
         CacheManager.getInstance().removeAllCaches();
         m_testEngine = new TestEngine(props);

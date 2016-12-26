@@ -142,7 +142,6 @@ public class WikiServletFilter implements Filter
             out.print( "<body>" );
             out.print( "<h1>JSPWiki installation</h1>" );
             out.print( "<p>Hello!  It appears that this is your first jspwiki installation." );
-            out.print( "(Or, you have removed jspwiki.baseURL from your property file.) " );
             out.print( "Therefore, you will need to start the installation process. " );
             out.print( "Please <a href='Install.jsp'>continue to the installer</a>." );
             out.print( "</p>");

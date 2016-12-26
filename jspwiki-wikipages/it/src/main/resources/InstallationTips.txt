@@ -57,7 +57,7 @@ Analogamente, la parte bassa del menu sinistro è la pagina [LeftMenuFooter], an
 
 !Abilitare il feed [RSS|http://blogspace.com/rss/]
 
-Nel file jspwiki.properties, dovete modificare la proprietà "jspwiki.rss.generate" a "true", e anche far si che la proprietà "jspwiki.baseURL" corrisponda al vostro Wiki.  Altrimenti il generatore RSS non avrà idea del come costruire i link ... :-)
+Nel file jspwiki.properties, dovete modificare la proprietà "jspwiki.rss.generate" a "true".
 
 !Non mi piace avere cose del tipo ~ThingsSquashedTogether nei titoli delle pagine. E' possibile cambiare questo comportamento?
 
