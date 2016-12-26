@@ -1,3 +1,8 @@
+2016-12-26  Harry Metske (metskem@apache.org)
+       * Fixed JSPWIKI-1035 - Get rid of jspwiki.baseURL
+         fixed remaining unit tests
+       * changed Release postfix from "svn" to "git"
+
 2016-12-19  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-22  Various HADDOCK updates & fixes.

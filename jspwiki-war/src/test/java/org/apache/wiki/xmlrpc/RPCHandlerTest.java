@@ -158,7 +158,7 @@ public class RPCHandlerTest extends TestCase
 
         assertEquals( "name", "Foobar", linkinfo.get("page") );
         assertEquals( "type", "local",  linkinfo.get("type") );
-        assertEquals( "href", "http://localhost/Edit.jsp?page=Foobar", linkinfo.get("href") );
+        assertEquals( "href", "/test/Edit.jsp?page=Foobar", linkinfo.get("href") );
     }
 
 
@@ -184,13 +184,13 @@ public class RPCHandlerTest extends TestCase
 
         assertEquals( "edit name", "Foobar", linkinfo.get("page") );
         assertEquals( "edit type", "local",  linkinfo.get("type") );
-        assertEquals( "edit href", "http://localhost/Edit.jsp?page=Foobar", linkinfo.get("href") );
+        assertEquals( "edit href", "/test/Edit.jsp?page=Foobar", linkinfo.get("href") );
 
         linkinfo = (Hashtable) links.elementAt(1);
 
         assertEquals( "att name", NAME1+"/TestAtt.txt", linkinfo.get("page") );
         assertEquals( "att type", "local", linkinfo.get("type") );
-        assertEquals( "att href", "http://localhost/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href") );
+        assertEquals( "att href", "/test/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href") );
     }
 
     private Date getCalendarTime( Date modifiedDate )

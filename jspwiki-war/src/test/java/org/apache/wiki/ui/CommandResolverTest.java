@@ -225,10 +225,10 @@ public class CommandResolverTest extends TestCase
     {
         String url;
         url = resolver.getSpecialPageReference( "RecentChanges" );
-        assertEquals( "http://localhost/RecentChanges.jsp", url );
+        assertEquals( "/test/RecentChanges.jsp", url );
         
         url = resolver.getSpecialPageReference( "Search" );
-        assertEquals( "http://localhost/Search.jsp", url );
+        assertEquals( "/test/Search.jsp", url );
         
         // UserPrefs doesn't exist in our test properties
         url = resolver.getSpecialPageReference( "UserPrefs" );
