@@ -1,3 +1,9 @@
+2016-12-31  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-24.
+
+       * Fixed JSPWIKI-1035 - merged branch JSPWIKI-1035 back to master
+
 2016-12-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-svn-23.
