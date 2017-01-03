@@ -802,17 +802,18 @@ var Snipe = new Class({
         if( !caret.thin ) {
 
             sel = txta.getSelection();
+            console.log("injectXL: ", sel, pfx, sfx);
 
             if( sel.startsWith(pfx) && sel.endsWith(sfx) ){
 
-                //console.log("TOGGLE: pfx/sfx matched inside the selection",caret.start,caret.end);
+                console.log("TOGGLE: pfx/sfx matched inside the selection",caret.start,caret.end);
                 sel = sel.slice( pfx.length, -sfx.length );
                 pfx = sfx = "";
 
             } else if( txta.getFromStart().endsWith(pfx)
                     && txta.getTillEnd().startsWith(sfx) ){
 
-                //console.log("TOGGLE: pfx/sfx matched outside the selection",caret.start,caret.end);
+                console.log("TOGGLE: pfx/sfx matched outside the selection",caret.start,caret.end);
                 start -= pfx.length;
                 txta.setSelectionRange(start , caret.end + sfx.length);
                 pfx = sfx = "";
@@ -836,14 +837,16 @@ var Snipe = new Class({
             prevline = fromStart.split(/\r?\n/).pop(),
             indent = prevline.match(/^\s+/);
 
+        console.log("inject: ", snippet, start, selectionLen );
+
         if( snippet.test(/^\n/) && ( fromStart.test( /(^|[\n\r]\s*)$/ ) ) ) {
-            //console.log("collapse leading \\n", snippet);
+            console.log("collapse leading \\n", snippet);
             snippet = snippet.slice( 1 );
             start--;
         }
 
         if( snippet.test(/\n$/) && ( txta.getTillEnd().test( /^\s*[\n\r]/ ) ) ) {
-            //console.log("collapse trailing \\n", snippet);
+            console.log("collapse trailing \\n", snippet);
             snippet = snippet.slice(0, -1);
             start--;
         }

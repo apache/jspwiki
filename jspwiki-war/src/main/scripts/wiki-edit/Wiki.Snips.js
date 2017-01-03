@@ -471,8 +471,8 @@ Wiki.Snips = {
         "InsertPage page='{pagename}'":"Insert another Page",
         "ListLocksPlugin":"List page locks",
         "RecentChangesPlugin":"Displays the recent changed pages",
-        "ReferredPagesPlugin page='{pagename}' type='local|external|attachment' depth='1..8' include='regexp' exclude='regexp'":"Incoming Links (referred pages)",
-        "ReferringPagesPlugin page='{pagename}' separator=',' include='regexp' exclude='regexp'":"Outgoing Links (referring pages)",
+        "ReferringPagesPlugin page='{pagename}' separator=',' include='regexp' exclude='regexp'":"Incoming Links (referring pages)",
+        "ReferredPagesPlugin page='{pagename}' type='local|external|attachment' depth='1..8' include='regexp' exclude='regexp'":"Outgoing Links (referred pages)",
         "Search query='{Janne}' max='10'":"Insert a Search query",
         "TableOfContents ":"Table Of Contents ",
         "UndefinedPagesPlugin":"List pages that are missing",
@@ -546,9 +546,9 @@ Wiki.Snips = {
             &&  textarea.slice(caret.start,caret.end-1).indexOf("\n") > -1 ){
                 Object.append(body, {
                 "divider-code": "",
-                    "\n%%prettify\n{{{\n/* code block */\n{code}\n}}}\n/%\n": "<span class='small' style='font-family:monospace;'>code block</span>",
-                    "\n%%prettify\n{{{\n{pretiffied code block}\n}}}/%\n": "<span class='small pun' style='font-family:monospace;'>prettify</span>",
-                    "\n%%scrollable\n{{{\n{code block}\n}}}/%\n": "<span class='small' style='font-family:monospace;'>scrollable-code</span>"
+                    "\n{{{\n/* code block */\n{code block}\n}}}\n": "<span class='small' style='font-family:monospace;'>&lt;/&gt;</span>",
+                    "\n%%prettify\n{{{\n{pretiffied code block}\n}}}/%\n": "<span class='small' style='font-family:monospace;color:green;'>&lt;/&gt;</span>",
+                    "\n%%scrollable\n{{{\n{code block}\n}}}/%\n": "&darr;&uarr;"
                 });
             }
 

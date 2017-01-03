@@ -160,16 +160,19 @@ Behavior:tabs & pills
 Behavior:Accordion
 >   %%accordion .. /%
 >   %%leftAccordion .. /%
+>   %%left-accordion .. /%
 >   %%rightAccordion .. /%
+>   %%right-accordion .. /%
 >   %%tabbedAccordion .. /%
+>   %%tabbed-accordion .. /%
 >   %%pillsAccordion .. /%
+>   %%pills-accordion .. /%
 */
     .add("[class^=accordion]", Accordion)
-    .add("[class^=leftAccordion]", Accordion, { type: "pills", position: "pull-left" })
-    .add("[class^=rightAccordion]", Accordion, { type: "pills", position: "pull-right" })
-    .add(".tabbedAccordion", Accordion, { type: "tabs" })
-    .add(".pillsAccordion", Accordion, { type: "pills" })
-
+    .add("[class^=leftAccordion],[class^=left-accordion]", Accordion, { type: "pills", position: "pull-left" })
+    .add("[class^=rightAccordion],[class^=right-accordion]", Accordion, { type: "pills", position: "pull-right" })
+    .add(".tabbedAccordion,.tabbed-accordion", Accordion, { type: "tabs" })
+    .add(".pillsAccordion,.pills-accordion", Accordion, { type: "pills" })
 
 /*
 Behavior:JSPWiki Categories
@@ -240,10 +243,11 @@ Behavior: Viewer
         });
 
     })
-    .add("div.maps, span.maps", function( map ){
+    .add(".maps", function( map ){
 
         var address = map.get("text").trim(),
-            url = "https://maps.google.com/maps?q=" +encodeURIComponent( address );
+            mapSvc = map.className.replace("-maps","").replace("maps","google"),
+            url = "https://maps.{0}.com/maps?q=".xsubs(mapSvc) + encodeURIComponent( address );
 
         Viewer.preload(url, { width: 800, height: 600 }, function( element ){
 
@@ -252,6 +256,7 @@ Behavior: Viewer
         });
 
     });
+
 
 
 /*

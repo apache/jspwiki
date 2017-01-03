@@ -368,6 +368,8 @@ var Textarea = new Class({
         l = ta.offsetLeft + el.offsetLeft - ta.scrollLeft;
         w = el.offsetWidth;
         h = el.offsetHeight;
+
+        console.log(offset, ta.offsetTop, "top: "+t, ta.offsetLeft, "left: "+l, "width: "+w, "height: "+h, "right: "+(l + w), "bottom: "+(t + h) );
         return { top: t, left: l, width: w, height: h, right: l + w, bottom: t + h };
 
     }

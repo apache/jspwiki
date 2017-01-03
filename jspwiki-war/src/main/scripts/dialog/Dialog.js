@@ -167,7 +167,7 @@ var Dialog = new Class({
 
     setClass: function(clazz, options){
 
-        console.log("Dialog.setClass", options.cssClass );
+        //console.log("Dialog.setClass", options.cssClass );
         options.cssClass = clazz + (options.cssClass || "");
 
     },

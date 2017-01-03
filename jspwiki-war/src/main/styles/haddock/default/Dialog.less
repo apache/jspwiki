@@ -115,7 +115,6 @@ DOM structure:
 
     .body {
         padding: 0.25em 0 0 0;
-        overflow: scroll;
         max-height: 300px;
 
         ul {
@@ -170,7 +169,7 @@ DOM structure:
 
 }
 .dialog.chars .item { text-align:center; }
-
+.dialog.chars .body { max-height:200px; overflow:auto;  }
 
 /*
 Style: .dialog.color
@@ -257,5 +256,7 @@ Style: .dialog.color
 	    span { color: @red; }
 
     }
+
+    .btn-group { padding:0; }  //reset default bootstrap padding to alling with input elements
 
 }

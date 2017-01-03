@@ -1,3 +1,17 @@
+2017-01-03  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-25: few Haddock template fixes
+
+       * REmove the editor suggestion-dialogs scroll-bars (only visible on Windows)
+         Fix a few formatting errors in sugestion dialogs.
+
+       * Fixed the width of the table filter input field
+
+       * Added console-logs to the editor for debugging on IE/EDGE
+         (positioning of suggestion dialogs seems to be broken)
+
+       * Update JSON XmlHttpRequest header to avoid IE/EDGE XML5619 Document Syntax errors
+
 2016-12-31  Harry Metske (metskem@apache.org)
 
        * 2.10.3-git-24.

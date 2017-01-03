@@ -197,15 +197,10 @@ var Wiki = {
         */
 
         //support for flexbox is broken in IE, let's do it the hard-way
-        console.log(navigator.appVersion);
-
+        //console.log(navigator.appVersion);
         var nav = navigator.appVersion;
 
-        if ( nav.match(/Edge/) || !nav.match(/MSIE/) ){
-            //alert("Aha, no IE.  Let's play flexbox");
-            body.addClass("can-flex");
-        }
-
+        body.ifClass( nav.match(/Edge/) || !nav.match(/MSIE/), "can-flex");
 
     },
 
@@ -713,7 +708,6 @@ var Wiki = {
         });
         (end)
     */
-    //jsonid: 1e4, //seed -- not used anymore
     jsonrpc: function(method, params, callback){
 
         if( this.JsonUrl ){
@@ -727,10 +721,17 @@ var Wiki = {
                 //urlEncoded: true, //content-type header = www-form-urlencoded + encoding
                 //encoding: "utf-8",
                 //encoding: "ISO-8859-1",
+        		headers: {
+		        	//'X-Requested-With': 'XMLHttpRequest',
+			        //'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+        			'Accept': 'application/json',
+		        	'X-Request': 'JSON'
+		        },
                 onSuccess: function( responseText ){
 
-                    console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
-                    callback( JSON.parse( responseText ) )
+                    //console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
+                    callback( JSON.parse( responseText ) );
+                    //callback( responseText );
 
                 },
                 onError: function(error){
