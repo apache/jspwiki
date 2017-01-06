@@ -95,7 +95,7 @@ b { font-weight : 600 ; }
 
 /* header & footer ...................................... */
 
-#header,
+#header, 
 #footer {
   color: #F1F4F7 ;
   font-size : 95% ;
@@ -765,7 +765,7 @@ a.tool:hover,
 #tbTAB { background-position: 0 -128px }
 #tbSIGN { background-position: 0 -288px }
 #doreplace {
-  padding: 1px 0.6em 2px 0.6em; 
+  padding: 1px 0.6em 2px 0.6em;
   border-radius: 5px; -moz-border-radius: 5px ;
 }
 .editor {
@@ -957,8 +957,8 @@ td.changenote {
   border-radius: 3px; -moz-border-radius: 3px;
 }
 #info th select { display: block }
-.pageactions { 
-  line-height: 1.5 
+.pageactions {
+  line-height: 1.5
 }
 .pageactions ul {
   list-style: none;
@@ -1130,7 +1130,7 @@ div#pagecontent p {
   background: white;
   border: 2px solid #D3E2FF;
   padding: 0.25em 0.5em;
-  white-space: nowrap
+  white-space: nowrap;
   left: 0;
 }
 #searchboxMenu a {
@@ -1147,13 +1147,13 @@ div#pagecontent p {
  background : #D7F2B3 ;
 }
 #searchboxMenu div { margin: .5em 0 }
-#searchboxMenu, 
-#searchResult, 
-#searchTarget, 
-#searchOutput, 
+#searchboxMenu,
+#searchResult,
+#searchTarget,
+#searchOutput,
 #searchOutput ul li a,
-#searchOutput a, 
-#recentSearches, 
+#searchOutput a,
+#recentSearches,
 #recentClear {
   background:#F1F4F7; color: black ;
 }
@@ -1950,7 +1950,7 @@ b { font-weight: 600 ; }
 }
 .graphcontent {
   margin: 0.2em 20% 0em 1em ;
-  padding: 0.7em 1.2em 0.5em 1.2em; 
+  padding: 0.7em 1.2em 0.5em 1.2em;
   max-width: 700px ;
   background-color: #F1F4F7 ;
   border: 3px solid rgba(189,209,225,0.5);

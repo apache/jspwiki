@@ -20,18 +20,18 @@
 */
 
 /* ORDERED LIST skin
- * additional .css on top of jspwiki.css 
+ * additional .css on top of jspwiki.css
  * inspired by http://orderedlist.com
  */
 
-/* COLOR scheme   
+/* COLOR scheme
 	#ccc normal font color
 	#c7ff70 green : font color headers, th
 	#ffff99  light yellow: font color pre
 	#6cf blue/green: font color links
-	
+
 	#202326  hr, body background
-	
+
 	#fc3 (orange) edit resizer, category, tip anchor
 	#ffff99 (light yellow) edit textarea, input fields
 
@@ -186,7 +186,7 @@ a.toc:hover {
 }
 .zebra-table th {
 	background:transparent;
-}    
+}
 .zebra-table tr.odd td {
 	background:#3f464a;
 }
@@ -220,11 +220,11 @@ td.diff {
 	background-color:#3f464a;
 }
 .edit textarea, input[type=text] {
-	xxbackground-color:#ffff99; 
-	xxcolor:#grey;
+	/*background-color:#ffff99;*/
+	/*color:#grey;*/
 }
 #toctoc label {
-	color:#c7ff70;	
+	color:#c7ff70;
 }
 #toctoc ul {
 	border-color:#fc3;
@@ -264,7 +264,7 @@ td.diff {
 .searchword, .cursor, .searchmatch {
 	background-color:#c7ff70;
 	color:black !important;
-} 
+}
 /* +++ 455 Footer +++ */
 .copyright {
 	color:white;
@@ -299,8 +299,8 @@ td.diff {
 	background:#3f464a;
 	border:2px solid #3f464a;
 }
-.pageactions li ul li.separator { 
-	border-top:2px solid #c7ff70; 
+.pageactions li ul li.separator {
+	border-top:2px solid #c7ff70;
 }
 .pageactions a.action {
 	border-bottom:none;
@@ -316,7 +316,7 @@ td.diff {
 	border:none;
 }
 a.action.more, a.action.sectiontoc {
-	background:#3f464a url(images/arrdown.gif) 95% center no-repeat;*/
+	background:#3f464a url(images/arrdown.gif) 95% center no-repeat;
 }
 
 a.tool {
@@ -333,7 +333,7 @@ a.tool:hover {
 	border:4px solid #fc3;
 }
 #tools h4 {
-	color:#black;
+	color:black;
 	font-weight:bold;
 	border-color:#ffff99;
 }
@@ -344,14 +344,14 @@ a.tool:hover {
 #toolbuttons span {
 	border:1px solid #fc3;
 }
-#toolbar a.tool { 
-	border:none; 
+#toolbar a.tool {
+	border:none;
 	background-repeat:no-repeat;
 	background-color:transparent;
 	background-position:3px 3px;
-	height:16px; 
-	width:16px; 
-	text-indent:20px; 
+	height:16px;
+	width:16px;
+	text-indent:20px;
 	overflow:hidden;
 }
 
@@ -360,14 +360,14 @@ a.tool:hover {
 	background-color:#ff9;
 	border:4px solid #fc3;
 }
-#findSuggestionMenu .hover { 
+#findSuggestionMenu .hover {
 	background-color:#fc3;
 }
 
 /* +++ 475 PageContent.jsp +++ */
 #sneakpreviewheader {
 	background-color:#3f464a;
-} 
+}
 #sneakpreview {
 	background:transparent !important;
 }
@@ -387,7 +387,7 @@ a.tool:hover {
 	border-bottom:none;
 }
 /* +++ 485 SearchBox +++ */
-.spin { 
+.spin {
 	background:url(images/spin.gif) no-repeat;
 }
 #header a:link, #header a:visited, #recentSearches div {
@@ -400,7 +400,7 @@ a.tool:hover {
 	border:none ;
 	background:#3f464a;
 }
-#searchTools a:hover, #searchboxMenu li:hover, #searchboxMenu a:hover { 
+#searchTools a:hover, #searchboxMenu li:hover, #searchboxMenu a:hover {
 	background:#c7ff70;
 	color:black !important;
 }
@@ -442,7 +442,7 @@ body {
 .weblogcomments {
 	background:#202326;
 }
- 
+
 /* +++ 640 RecentChangesPlugin +++ */
 .recentchanges td {
 	border-bottom:1px solid #202326;
@@ -498,7 +498,7 @@ table.calendar * {
 	border:1px solid #3f464a;
 	background:#3f464a;
 }
-.accordion .toggle { 
+.accordion .toggle {
 	border:2px solid #3f464a;
 	background:#303538;
 	color:#c7ff70;
@@ -506,13 +506,13 @@ table.calendar * {
 .accordion .toggle:hover, .togglemenu .toggle:hover, .sidemenu .toggle:hover {
 	background:#202326;
 }
-.togglemenu .toggle { 
+.togglemenu .toggle {
 	background:#303538;
 	border:none;
 	border-bottom:1px solid #3f464a;
 	margin:0 0 -1px 4px;
 }
-.togglemenu .toggle.active { 
+.togglemenu .toggle.active {
 	background:#3f464a;
 	border-bottom:1px solid #3f464a;
 	color:white;
@@ -527,7 +527,7 @@ table.calendar * {
 }
 .sidemenu .toggle.active {
 	color:#c7ff70;
-} 
+}
 
 /* +++ 915 Tips +++ */
 .tip-anchor {
@@ -580,7 +580,7 @@ table.calendar * {
 }
 .collapsetitle {
 	border:2px solid #3f464a;
-}                           
+}
 .collapsetitle:hover {
 	background:#303538;
 }
@@ -614,7 +614,7 @@ a.slimbox:hover {
 #lbOverlay {
 	background-color:#fff;
 }
-#lbCenter, 
+#lbCenter,
 #lbBottomContainer {
 	background-color:#202326;
 }
@@ -625,7 +625,7 @@ a.slimbox:hover {
 .categoryLink:link, .categoryLink:active, .categoryLink:visited {
 	border-bottom:2px solid #fc3;
 	color:#fc3;
-} 
+}
 .categoryPopup {
 	background-color:#ff9; /*rgba(255,255,153,0.7); */
 	border:4px solid #fc3;
@@ -634,11 +634,11 @@ a.slimbox:hover {
 	color:#c30;
 	border-bottom:1px solid #c30;
 }
-.categoryPopup .hover { 
+.categoryPopup .hover {
 	background-color:#fc3;
 }
 
-pre.prettyprint {   
+pre.prettyprint {
 	background-color:#ff9;
 	border:4px solid #fc3;
 }
@@ -652,4 +652,4 @@ pre.prettyprint {
 	color:#c7ff70;
 	font-weight:bold;
 	border-bottom:2px solid #c7ff70;
-}   
+}
