@@ -1,3 +1,10 @@
+2017-01-14  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-27.
+
+       * Fixed JSPWIKI-1042 - Impossible to change user profile loginName, fullname, password (patch by Eric Kraußer)
+       * Fixed JSPWIKI-1043 - Encode email subjects as UTF-8 (patch by Eric Kraußer)
+
 2017-01-06  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-26

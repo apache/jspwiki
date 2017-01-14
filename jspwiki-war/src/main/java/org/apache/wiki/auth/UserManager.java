@@ -555,8 +555,7 @@ public class UserManager {
             if ( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) )
             {
                 Object[] args = { fullName };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalfullname"),
-                                                                            args ) );
+                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalfullname"), args ) );
             }
         }
         catch ( NoSuchPrincipalException e)
@@ -569,8 +568,7 @@ public class UserManager {
             if ( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) )
             {
                 Object[] args = { loginName };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalloginname"),
-                        args ) );
+                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalloginname"), args ) );
             }
         }
         catch ( NoSuchPrincipalException e)
@@ -580,7 +578,9 @@ public class UserManager {
         try
         {
             otherProfile = getUserDatabase().findByEmail( email );
-            if ( otherProfile != null && !profile.equals( otherProfile ) && StringUtils.lowerCase( email ).equals( StringUtils.lowerCase(otherProfile.getEmail() ) ) )
+            if ( otherProfile != null
+                && !profile.getUid().equals(otherProfile.getUid()) // Issue JSPWIKI-1042
+                && !profile.equals( otherProfile ) && StringUtils.lowerCase( email ).equals( StringUtils.lowerCase(otherProfile.getEmail() ) ) )
             {
                 Object[] args = { email };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.email.taken"), args ) );
