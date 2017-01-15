@@ -138,7 +138,7 @@ Array.implement({
 
         }
 
-        console.log("[", kmgt ? "kmgt" : dmy ? "dmy" : num ? "num" : nat ? "nat" : "no conversion", "] ");
+        //console.log("[", kmgt ? "kmgt" : dmy ? "dmy" : num ? "num" : nat ? "nat" : "no conversion", "] ");
 
         return kmgt || dmy || num || nat || this.slice();
 

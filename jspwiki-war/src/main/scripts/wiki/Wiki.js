@@ -182,20 +182,6 @@ var Wiki = {
 
     caniuse: function( body ){
 
-        //Is not really needed anymore,  since we added a css "hack" to workaround an IE bug
-        //Still kept here as a placeholder for future feature-sniffing
-
-
-        //Modernizr.addTest('flexbox', testAllProps('flexBasis', '1px', true));
-        /*
-        var hasNativeFlex = document.createElement('b');
-
-        hasNativeFlex.style.cssText = "flex-basis:1px;";
-        if( hasNativeFlex.style.length ){
-            body.addClass("can-flex");
-        }
-        */
-
         //support for flexbox is broken in IE, let's do it the hard-way
         //console.log(navigator.appVersion);
         var nav = navigator.appVersion;
@@ -348,7 +334,7 @@ var Wiki = {
         url = wiki.BaseUrl;
         url = url ? url.slice( url.indexOf(host) + host.length, -1 ) : "";
         wiki.BasePath = ( url /*===""*/ ) ? url : "/";
-        //console.log("basepath: " + wiki.BasePath);
+        console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
 
     },
 
@@ -696,10 +682,12 @@ var Wiki = {
     Note:
         Uses the JsonUrl which is read from the meta element "WikiJsonUrl"
         {{{ <meta name="wikiJsonUrl" content="/JSPWiki-pipo/JSON-RPC" /> }}}
+
     Supported rpc calls:
         - {{search.findPages}} gets the list of pagenames with partial match
         - {{progressTracker.getProgress}} get a progress indicator of attachment upload
         - {{search.getSuggestions}} gets the list of pagenames with partial match
+
     Example:
         (start code)
         //Wiki.ajaxJsonCall('/search/pages,[Janne,20]', function(result){

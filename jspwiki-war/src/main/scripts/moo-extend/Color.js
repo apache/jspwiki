@@ -59,7 +59,7 @@ var c0l0r = 'i'.slick(),
         c0l0r.inject(document.body);
         color = ( color.test(/^[\da-f]{3,6}$/i) ?  ("#" + color) :
                  c0l0r.setStyle('color',color).getComputedStyle('color').rgbToHex() ).hexToRgb(true);  //[r,g,b]
-        c0l0r.remove();
+        c0l0r.dispose(); //remove element from the dom
 
     }
     if(!color){ return null; }

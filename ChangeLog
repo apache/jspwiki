@@ -1,3 +1,8 @@
+2017-01-15  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-28
+         JSPWIKI-1045 IE11 rendering is broken for %%graphBars using color names.
+
 2017-01-14  Harry Metske (metskem@apache.org)
 
        * 2.10.3-git-27.
@@ -14,7 +19,7 @@
 
        * 2.10.3-git-25: few Haddock template fixes
 
-       * REmove the editor suggestion-dialogs scroll-bars (only visible on Windows)
+       * Remove the editor suggestion-dialogs scroll-bars (only visible on Windows)
          Fix a few formatting errors in sugestion dialogs.
 
        * Fixed the width of the table filter input field
