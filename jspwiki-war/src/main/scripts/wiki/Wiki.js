@@ -185,6 +185,12 @@ var Wiki = {
         //support for flexbox is broken in IE, let's do it the hard-way
         //console.log(navigator.appVersion);
         var nav = navigator.appVersion;
+        console.log(nav);
+
+        //body.ifClass( nav.match(/Edge/) || !nav.match(/MSIE/), "can-flex");
+
+        //detect any IE version,  not-EDGE
+        body.ifClass( !("ActiveXObject" in window) , "can-flex");
 
         body.ifClass( nav.match(/Edge/) || !nav.match(/MSIE/), "can-flex");
 

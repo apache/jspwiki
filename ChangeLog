@@ -1,3 +1,9 @@
+2017-01-17  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-29
+         JSPWIKI-1046 IE11 scrolling in content page blocked.
+         IE detection not working on IE11; ok on Edge. New detection method implemented.
+
 2017-01-15  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-28
