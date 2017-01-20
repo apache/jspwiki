@@ -23,9 +23,8 @@ Class: UndoRedo
     Abstract class implements a simple undo/redo stack to save and restore
     the state of an "undo-able" object.
     The object needs to provide a {{getState()}} and a {{putState(obj)}} methods.
-    Prior to any changes, it should fire a "berforChange" event.
+    Prior to any changes, it should fire a "beforeChange" event.
     The undo and redo event trigger the corresponding actions.
-
 
 Options:
     maxundo - integer , maximal size of the undo and redo stack (default 20)
@@ -70,7 +69,7 @@ function swap(from, to){
 
     if( from[0] ){
 
-        to.push( this.getState() ); //current state
+        to[to.length] = this.getState(); //current state
         this.putState( from.pop() ); //new state
 
     }
@@ -102,7 +101,7 @@ this.Undoable = new Class({
 
                 //console.log("Undoable beforeChange:", undo.length);
 
-                undo.push( state || self.getState() );
+                undo[undo.length]= state || self.getState();
                 self.redo = [];
 
                 if( undo[maxundo] ){ undo.shift(); }

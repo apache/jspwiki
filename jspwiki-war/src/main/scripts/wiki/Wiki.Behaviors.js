@@ -67,6 +67,27 @@ var TheSlimbox, T = TableX;
 
 
 /*
+Behavior: Broken images
+    Replace broken image browser icons
+*/
+wiki.once( "img", function(imgs){
+
+    imgs.addEvent("error", function(){
+
+        var img = $(this);
+        [ "span.danger.img-error", {
+            text: "broken.image".localize() //Broken Image!
+        }, [
+            "span", { text: img.alt || img.src }
+            ]
+        ].slick().replaces(img);
+
+    });
+
+});
+
+
+/*
 Behavior: GraphBars, Progress-bars
 
 %%progress 50 /%
@@ -88,13 +109,13 @@ wiki.add("*[class^=progress]", function(element){
         maxv = RegExp.$2;
     }
 
-    ( element.get("tag") + clazz + "-maxv" + maxv ).slick().wraps(element);
+    ( element.get("tag") + clazz + "-minv0-maxv" + maxv  ).slick().wraps(element);
     element.className = "gBar";
 
 
 /*
-%%progress-red-striped 50/%  =>  %%graphBars-progress-red-striped-maxv100 %%gBar 50/% /%
-%%progress-red-striped 50/75 /%  =>  %%graphBars-progress-red-striped-maxv75 %%gBar 50/% /%
+%%progress-red-striped 50/%  =>  %%graphBars-progress-red-striped-minv0-maxv100 %%gBar 50/% /%
+%%progress-red-striped 50/75 /%  =>  %%graphBars-progress-red-striped-minv0-maxv75 %%gBar 50/% /%
 
 */
 
@@ -139,16 +160,19 @@ Behavior:tabs & pills
 Behavior:Accordion
 >   %%accordion .. /%
 >   %%leftAccordion .. /%
+>   %%left-accordion .. /%
 >   %%rightAccordion .. /%
+>   %%right-accordion .. /%
 >   %%tabbedAccordion .. /%
+>   %%tabbed-accordion .. /%
 >   %%pillsAccordion .. /%
+>   %%pills-accordion .. /%
 */
     .add("[class^=accordion]", Accordion)
-    .add("[class^=leftAccordion]", Accordion, { type: "pills", position: "pull-left" })
-    .add("[class^=rightAccordion]", Accordion, { type: "pills", position: "pull-right" })
-    .add(".tabbedAccordion", Accordion, { type: "tabs" })
-    .add(".pillsAccordion", Accordion, { type: "pills" })
-
+    .add("[class^=leftAccordion],[class^=left-accordion]", Accordion, { type: "pills", position: "pull-left" })
+    .add("[class^=rightAccordion],[class^=right-accordion]", Accordion, { type: "pills", position: "pull-right" })
+    .add(".tabbedAccordion,.tabbed-accordion", Accordion, { type: "tabs" })
+    .add(".pillsAccordion,.pills-accordion", Accordion, { type: "pills" })
 
 /*
 Behavior:JSPWiki Categories
@@ -207,7 +231,7 @@ Behavior: Viewer
 >     %%viewer [link to youtube, vimeo, some-wiki-page, http://some-external-site ..] /%
 >     [description | url to youtube... | class="viewer"]
 */
-    .add("a.viewer, div.viewer a", function( a ){
+    .add("a.viewer, div.viewer a, span.viewer a", function( a ){
 
         Viewer.preload(a.href, { width: 800, height: 600 }, function( element ){
 
@@ -218,7 +242,21 @@ Behavior: Viewer
 
         });
 
+    })
+    .add(".maps", function( map ){
+
+        var address = map.get("text").trim(),
+            mapSvc = map.className.replace("-maps","").replace("maps","google"),
+            url = "https://maps.{0}.com/maps?q=".xsubs(mapSvc) + encodeURIComponent( address );
+
+        Viewer.preload(url, { width: 800, height: 600 }, function( element ){
+
+            element.addClass("viewport").replaces(map);
+
+        });
+
     });
+
 
 
 /*
@@ -278,12 +316,14 @@ function filterJSPWikiLinks(element){
         element.getElements( element.match(".slimbox-attachments") ?
             "a[href].attachment" :
             // otherwise,  catch several different cases in one go
+            //    img:not([href$=/attachment_small.png]):not(.outlink)  ::jspwiki small icons
             //    img:not([src$=/attachment_small.png]):not(.outlink)  ::jspwiki small icons
             //    a[href].attachment,
             //    a[href].external,
             //    a[href].wikipage,
             //    a[href].interwiki
-            "img:not([src$=/attachment_small.png]):not(.outlink),a[href].attachment,a[href].external,a[href].wikipage, a[href].interwiki"
+            //    .recentchanges td:not(:nth-child(3)) a:first-child
+            "img:not([href$=/attachment_small.png]):not([src$=/attachment_small.png]):not(.outlink),a[href].attachment,a[href].external,a[href].wikipage, a[href].interwiki, .recentchanges td:not(:nth-child(3n)) a:first-child"
         );
 }
 
@@ -411,7 +451,7 @@ Behavior:Columns
 
 >    %%columns(-width) .. /%
 */
-    .add( "div[class~=columns]", Columns, { prefix: "columns" } )
+    .add( "div[class^=columns]", Columns, { prefix: "columns" } )
 
 /*
 Dynamic Style: Code-Prettifier
@@ -428,18 +468,19 @@ Example:
 >    }}} /%
 
 */
-    .add("div.prettify pre, div.prettify code", function(element){
+    .add("div.prettify:not(.prettyprint) pre, div.prettify:not(.prettyprint) code", function(element){
 
         element.addClass("prettyprint");
 
         //brute-force line-number injection
-        "pre.prettylines".slick({
+        "div".slick().wraps(element).grab(
+            "pre.prettylines".slick({
 
-            html: element.innerHTML.trim().split("\n").map( function(line, i){
-                return i + 1; }
-            ).join("\n")
+                html: element.innerHTML.trim().split("\n").map( function(line, i){
+                    return i + 1; }
+                ).join("\n")
 
-        }).inject(element, "before");
+            }),"top");
 
     })
     .add("[class~=prettify-nonum] pre, [class~=prettify-nonum] code", function(element){
@@ -510,7 +551,7 @@ Behavior: Table behaviors
                 ztoa: "sort.descending"
             }, String.localize);
 
-        while( args[0] ){
+        while( args && args[0] ){
 
             arg = args.shift();
 
@@ -655,7 +696,7 @@ Behavior: DropCaps
 
         var content, node = element.firstChild;
 
-        if( node.nodeType == 3 ){   // this is a text-node
+        if( node.nodeType == 3 ){   // aha, this is a text-node
 
             content = node.textContent.trim();
             node.textContent = content.slice(1);  //remove first character
@@ -675,7 +716,6 @@ Behavior: Add-CSS
     .add(".add-css", AddCSS)
 
 
-
 /*
 Behavior: Invisibles
     Show hidden characters such as tabs and line breaks.
@@ -692,7 +732,7 @@ CSS:
 .token.lf:before { content: '\240A'; }
 (end)
 */
-    .add(".invisibles pre", function(element){
+    .add(".invisibles pre, .reveal pre", function(element){
 
         var token = "<span class='token {0}'>$&</span>";
 

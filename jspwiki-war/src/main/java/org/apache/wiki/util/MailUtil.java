@@ -279,7 +279,7 @@ public final class MailUtil {
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(c_fromAddress));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
-            msg.setSubject(subject);
+            msg.setSubject(subject, "UTF-8");
             msg.setText(content, "UTF-8");
             msg.setSentDate(new Date());
 

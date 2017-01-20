@@ -73,9 +73,7 @@ et elle est elle aussi totalement éditable.
 !Activer [RSS|http://blogspace.com/rss/]
 
 Dans votre fichier {{jspwiki.properties}}, vous devrez modifier le paramètre
-{{jspwiki.rss.generate}} à la valeur {{true}}. Vous devrez aussi y changer le paramètre
-{{jspwiki.baseURL}} qui donne l'URL complète de votre Wiki. Sinon, le générateur RSS ne
-saura pas vers où ses liens doivent pointer... :-)
+{{jspwiki.rss.generate}} à la valeur {{true}}.
 
 !Je n'aime pas les ~TitresTousCollesCommeCa. Qu'est-ce que je peux faire ?
 

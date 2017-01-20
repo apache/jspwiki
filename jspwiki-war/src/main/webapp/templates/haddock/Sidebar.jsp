@@ -18,6 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -25,7 +26,12 @@
 <%@ page import="org.apache.wiki.*" %>
 
 <div class="sidebar">
-  <%--<button class="close" type="button">&times;</button>--%>
+
+  <c:set var="isweblog"><%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %></c:set>
+  <c:if test="${isweblog}">
+  <wiki:Calendar pageformat="'${param.page}_blogentry_'ddMMyy'_1'"
+                 urlformat="'Wiki.jsp?page=${param.page}&weblog.startDate='ddMMyy'&weblog.days=1'"/>
+  </c:if>
 
   <wiki:Permission permission="view">
 

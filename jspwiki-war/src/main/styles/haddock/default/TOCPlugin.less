@@ -33,18 +33,23 @@ Style: TableOfContentsPlugin
 DOM structure:
     (begin)
     div.toc
-        div.collapsebox
-            b.bullet xpand|clpse
-            h4#section-TOC Table Of Contents
+        div.collapsebox.panel.panel-default
+            div.panel-head
+                b.bullet xpand|clpse
+                h4#section-TOC Table Of Contents
             div.xpand|clpse
-                ul
-                    li.toclevel-1
-                    li.toclevel-2
-                    li.toclevel-3
+                div.panel-body
+                    ul
+                        li.toclevel-1
+                        li.toclevel-2
+                        li.toclevel-3
     (end)
 */
 .toc {
     width: (100% - @wiki-commentbox-width);
+
+    //when collapsed the header bottom border doubles with the bottom panel border
+    .panel-heading { border-bottom:none; }   //ugh -- for now just hide the border
 
     ul {
         .list-unstyled;
@@ -55,6 +60,7 @@ DOM structure:
     .toclevel-2 { padding-left:2.4em; }
     .toclevel-3 { padding-left:4.6em; }
 }
+//in case a TOC is added to the sidebar;  it will show the TOC of the main page
 .sidebar .toc {
     width:100%;
     .toclevel-1 { padding-left:.25em; }

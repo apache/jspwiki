@@ -51,8 +51,7 @@
   <wiki:Include page="Header.jsp" />
   <wiki:Include page="Nav.jsp" />
 
-  <c:set var="sidebar"><wiki:Variable var='sidebar' /></c:set><%-- page variable setting--%>
-  <c:set var="sidebar" value="${not sidebar ? prefs.Sidebar : sidebar }" />
+  <c:set var="sidebar"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
   <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
     <c:set var="sidebar" value="" />
   </wiki:CheckRequestContext>

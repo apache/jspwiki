@@ -263,7 +263,7 @@
   <%-- Do NOT change the order of wikiname and content, otherwise the
        servlet won't find its parts. --%>
 
-  <h4><fmt:message key="info.uploadnew"/></h4>
+  <h4><span class="icon-paper-clip"></span> <fmt:message key="info.uploadnew"/></h4>
 
     <div class="form-group">
       <label class="control-label form-col-20" for="files"><fmt:message key="attach.add.selectfile"/></label>

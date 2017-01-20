@@ -102,7 +102,7 @@ var Snipe = new Class({
         sectionParser: function(){ return {}; }
     },
 
-    initialize: function(el, options){
+    initialize: function(element, options){
 
         options = this.setOptions(options).options;
 
@@ -117,13 +117,15 @@ var Snipe = new Class({
             The main textarea is hidden and contains always the complete document.
             On submit, the mainarea is send back to the server.
             */
-            main = self.mainarea = $(el),
-            work = main.clone().erase("name").inject( main.hide(), "before" ),
-            container = options.container || work.form,
+            //main = self.mainarea = $(el),
+            //work = main.clone().erase("name").inject( main.hide(), "before" ).addClass("snipe-work"),
+            container = options.container || $(element).form,
 
             // Augment the textarea element with extra capabilities
             // Make sure the content of the mainarea is always in sync with the workarea
-            textarea = self.textarea = new Textarea( work );
+            //textarea = self.textarea = new Textarea( work );
+            textarea = self.textarea = new Textarea( element );
+
 
         self.directsnips = new Snipe.Snips( textarea, options.directsnips );
         self.snippets    = new Snipe.Snips( textarea, options.snippets );
@@ -133,14 +135,14 @@ var Snipe = new Class({
                 //feed the find dialog with searchable content
                 get: function(){
                     var selection = textarea.getSelection();
-                    return (selection=="") ? work.value : selection;
+                    return (selection=="") ? element.value : selection;
                     //return (selection=="") ? textarea.getValue() : selection;
                 },
                 set: function(v){
                     var s = textarea.getSelectionRange();
-                    //self.fireEvent("beforeChange");
+                    self.fireEvent("beforeChange"); //make undoable
                     //textarea[ s.thin ? "setValue" : "setSelection" ](v);
-                    s.thin ? work.value = v : textarea.setSelection(v);
+                    s.thin ? element.value = v : textarea.setSelection(v);
                     self.fireEvent("change");
                 }
             }
@@ -150,8 +152,8 @@ var Snipe = new Class({
         //Commands are entered via tab-completion, button clicks, or a dialog.
         //Snipe.Commands ensures that at most one dialog is open at the same time.
         self.commands = new Snipe.Commands( container, {
-            //onOpen: function( /*command*/ ){ work.focus(); },
-            onClose: function( /*command*/ ){ work.focus(); },
+            onOpen: function( /*command*/ ){ element.focus(); },
+            onClose: function( /*command*/ ){ element.focus(); },
             onAction: self.action,
             dialogs: self.snippets.dialogs,
             relativeTo: textarea
@@ -160,7 +162,7 @@ var Snipe = new Class({
 
         self.reset();
 
-        work.addEvents({
+        element.addEvents({
 
             keydown: self.keystroke,
             keypress: self.keystroke,
@@ -171,7 +173,7 @@ var Snipe = new Class({
             click: self.suggest.debounce(),
 
             input: (function( ){
-                console.log("***Snipe: dom textarea input :");
+                //console.log("change event on input");
                 self.fireEvent("change");
             }).debounce()
 
@@ -193,7 +195,7 @@ var Snipe = new Class({
 
     */
     toElement: function(){
-        return $(this.textarea);
+        return this.textarea.toElement();
     },
 
     /*
@@ -205,7 +207,8 @@ var Snipe = new Class({
     */
     get: function(item){
 
-        return( /mainarea|textarea/.test(item) ? this[item] :
+        return( "value" == item ? this.textarea.getValue() :
+                /mainarea|textarea/.test(item) ? this[item] :
                 /snippets|directsnips|autosuggest|tabcompletion|smartpairs/.test(item) ? this.options[item] :
                 null );
 
@@ -214,6 +217,7 @@ var Snipe = new Class({
     /*
     Function: set
         Set/Reset some of the options of the snip-editor.
+        Also use to set/reset the content of the textarea. (eg section editing)
 
     Arguments:
         item - snippets|directsnips|autosuggest|tabcompletion|smartpair
@@ -223,9 +227,18 @@ var Snipe = new Class({
     */
     set: function(item, value){
 
-        if( /snippets|directsnips|autosuggest|tabcompletion|smartpairs/.test(item) ){
+        if( item == "value" ){
+
+            this.textarea.setValue( value );
+            this.fireEvent("beforeChange"); //make undoable
+            this.textarea.focus();
+
+        } else if( /snippets|directsnips|autosuggest|tabcompletion|smartpairs/.test(item) ){
+
             this.options[item] = value;
+
         }
+
         return this.fireEvent("change");
     },
 
@@ -242,7 +255,7 @@ var Snipe = new Class({
     */
     shortcut: function(e){
 
-        var key, keycmd;
+        var key, cmd;
 
         if( e.shift || e.control || e.meta || e.alt ){
 
@@ -252,14 +265,14 @@ var Snipe = new Class({
                         (e.alt ? "alt+":"") +
                           e.key,
 
-            //console.log("shortcut ",key);
-            keycmd = this.snippets.keys[key];
+            console.log("shortcut ",key);
+            cmd = this.snippets.keys[key];
 
-            if ( keycmd ){
+            if ( cmd ){
 
-                //console.log("Snipe shortcut",key,keycmd,e.code);
+                //console.log("Snipe shortcut", key, cmd, se.code);
                 e.stop();
-                this.commands.action( keycmd );
+                this.commands.action( cmd );
 
             }
         }
@@ -310,11 +323,10 @@ var Snipe = new Class({
 
         var self = this,
             txta = self.textarea,
-            //el = txta.toElement(),
             key = e.key,
             caret = txta.getSelectionRange();
 
-        txta.toElement().focus();
+        txta.focus();
 
         if( /up|down|esc/.test(key) ){
 
@@ -512,7 +524,6 @@ var Snipe = new Class({
     Function: setContext
         Store the active snip. (state)
         EG, subsequent handling of dialogs.
-        As long as a snippet is active, the textarea gets the css class {{.activeSnip}}.
 
     Arguments:
         snip - snippet object to make active
@@ -527,7 +538,6 @@ var Snipe = new Class({
 
         //console.log("Snipe.setContext",snip,suggest);
         this.context = { snip:snip, suggest:suggest };
-        this.toElement().addClass("activeSnip");
 
     },
 
@@ -538,9 +548,9 @@ var Snipe = new Class({
     */
     reset: function(){
 
-        //console.log("Snipe:reset", this.context);
-        this.context = {};
-        this.toElement().removeClass("activeSnip").focus();
+        console.log("Snipe:reset", this.context);
+        this.context = null;
+        this.textarea.focus();
         this.commands.close();
 
     },
@@ -618,11 +628,10 @@ var Snipe = new Class({
 
                 console.log( "Snipe.suggest ",suggest );
                 this.setContext( null/*snip*/, suggest );
-                return this.commands.action( suggest.cmd , suggest.pfx );
+                return this.commands.action( suggest.cmd , suggest.lback );
 
             }
-
-            this.commands.close();
+            this.reset();
         }
     },
 
@@ -630,160 +639,225 @@ var Snipe = new Class({
     /*
     Function: action
         This function executes the command action.
-        It will insert the snippet and update the selection and caret.
+        It will coordinate to get the snippet inserted and move the
+        caret to the proper position after insertion.
 
-        It looks up and processes the snippet.
-        - insert the snippet text at the caret in the textarea.
-        - when text was selected (prior to the click or keyup event):
-            - the snippet text will replace the selection
-            - the selection will be passed as a parameter into the snippet
-            - if the snippet has ONE parameter, the snippet text will be toggled:
-              i.e. remove the snippet when already present, otherwise insert the snippet
+        Actions can be triggered via:
+        - tab-completion
+        - click-event from the [data-cmd] DOM element
+        - short-cut key
+        - matched suggestion (with look-back and match strings)
 
     Arguments:
         cmd - (string) used to loopup the snippet
         args - (optional) additional snippet arguments (eg value passed via a dialog)
     */
-    action: function( cmd ){
+    action: function( cmd /*, more command arguments */ ){
 
         var self = this,
             args = Array.slice(arguments, 1),
             snip = self.snippets.get( cmd ),
-            //snippet = snip.snippet,
-            s = snip.snippet,
-            suggest = snip.suggest && self.context.suggest,
-
             txta = self.textarea,
-            caret = txta.getSelectionRange(),
-            hasCaret = !caret.thin,
-            caretStart = caret.start,
+            caret,
+            snipXL,
+            snippet = snip.suggest ? args.join() : snip.snippet,
+            suggest = snip.suggest && self.context && self.context.suggest;
 
-            pfx, sel, sfx, snipArr, selectionLength,
-            /* match "pfx{selection}sfx" into ["pfx","selection","sfx"] */
-            /* do not match "pfx~{do-not-match}sfx"  */
-            snipSelection = /(^|[\S\s]*[^~])\{([^\{\}]+)\}([\S\s]*)/,
-            snipEscapeChar = /~\{/g;
+        function unesc(s){ return s.replace(/~\{/g, "{"); }
 
-        function setCaret(start,end){ txta.setSelectionRange(start, end); }
-        function removeEscapeChar(s){ return s.replace(snipEscapeChar, "{"); }
+        console.log("Snipe:action ", cmd, "snippet=",snippet, "args=",args, "suggest=",suggest );
 
-        console.log("Snipe:action ", snip, s, cmd, args,suggest );
+        if( !snip ) return;
 
-        if( snip ){
+        if( snip.event ){
+            //console.log("Snipe:action Event: ",snip.event);
+            self.fireEvent(snip.event, arguments);
 
-            if( snip.event ){
+        } else {
 
-                //console.log("Snipe:action() fire-event: ",snip.event);
-                return self.fireEvent(snip.event, arguments);
+            self.fireEvent("beforeChange"); //make action undoable
 
-            }
-
-            this.fireEvent("beforeChange"); //CHECKME
-
-            //adjust caret based on suggestion context
             if( suggest ){
 
-                s = args.join();  //result of the suggest dialog
-                selectionLength = suggest.match.length;
+                snippet = self.suggestAction( txta, snippet, suggest.lback, suggest.match);
 
-                if( s.startsWith(suggest.pfx) ){
-
-                    s = s.slice(suggest.pfx.length);
-                    selectionLength -= suggest.pfx.length;
-
-                } else {
-
-                    caretStart -= suggest.pfx.length;
-
-                }
-
-                //move the caret according to suggest pfx and match
-                setCaret( caretStart, caretStart +  selectionLength );
-                hasCaret = selectionLength > 0;
             }
 
-            if( (snipArr = s.match( snipSelection )) ){
 
-                pfx = removeEscapeChar( snipArr[1] );
-                sel = hasCaret ?  txta.getSelection() : snipArr[2] ;
-                sfx = removeEscapeChar( snipArr[3] );
-
-                console.log("found a 'pfx{selection}sfx' snippet", snipArr, pfx, sel, sfx,hasCaret );
-
-                if( hasCaret ) {
-
-                    if( sel.startsWith(pfx) && sel.endsWith(sfx) ){
-
-                        console.log("TOGGLE: pfx/sfx matched inside the selection",caret.start,caret.end);
-                        sel = sel.slice( pfx.length, -sfx.length );
-                        pfx = sfx = "";
-
-                    } else if( txta.getFromStart().endsWith(pfx)
-                            && txta.getTillEnd().startsWith(sfx) ){
-
-                        console.log("TOGGLE: pfx/sfx matched outside the selection",caret.start,caret.end);
-                        caretStart -= pfx.length;
-                        setCaret( caretStart, caret.end + sfx.length); //enlarge the selection
-                        pfx = sfx = "";
-
-                    }
+            /*
+            Match "pfx{=copy-selection}sfx" and replace by "pfx<selection>sfx"
+            snippet = snippet.replace(/..../, function(match, target){
+                if(selection){
+                    target = selection; selection = "";
                 }
+                return target;  //alse removing the {= and }
+            });
+            */
 
-                s = pfx + sel + sfx;
-                caretStart += pfx.length;
-                selectionLength = sel.length;
+
+            /*
+            Match "pfx{selection}sfx"
+
+            snippet = snippet.replace( /regexp/, selection || RegExp.$1 );
+
+            and also handle toggle !!?
+            */
+
+
+            // match "pfx{selection}sfx" into ["pfx","selection","sfx"]
+            // do not match "pfx~{do-not-match}sfx"
+            if( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^!\{\}][^\{\}]*)\}([\S\s]*)/ ) ){
+            //if( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^\{\}]+)\}([\S\s]*)/ ) ){
+
+                //console.log("Snipe:action complex snippet 'pfx{selection}sfx' ", pfx, sel, sfx, caret.thin );
+                self.injectXL( txta,
+                               snippet,
+                               unesc( snipXL[1] ), //pfx
+                               snipXL[2],          //sel
+                               unesc( snipXL[3] )  //sfx
+                );
 
             } else {
 
-                console.log("plain text snippet", hasCaret,s );
-                s = removeEscapeChar( s );
-                caretStart += hasCaret ? 0 : s.length;
-                selectionLength = hasCaret ? s.length : 0;
+                //if no selection, just insert and move caret after inserted snippet
+                caret = txta.getSelectionRange();
+                snippet = unesc(snippet);
 
+                //console.log("Snipe:action simple snippet", caret.thin, snippet );
+                self.inject( txta,
+                             snippet,
+                             caret.start + (caret.thin ? snippet.length : 0),
+                             caret.thin ? 0 : snippet.length );
             }
-
-            self.inject(s, caretStart, selectionLength);
-            self.reset();
-
-            self.fireEvent("change");
-            //allow to finish the actions, before opening a new suggestion dialog
-            self.suggest.delay(10, self);
 
         }
 
+        self.reset();
+        self.fireEvent("change");
+        self.suggest.delay(1, self); //allow some time to finish any actions, before opening a new suggestion dialog
+
     },
 
-    inject: function( snippet, start, selectionLength ){
+    /*
+    Function: suggestAction
+        Adjust the snippet and the caret based on the suggestion context.
+        The selection is set to the matched suggestion string, to prepare for the later
+        snippet replacement.
+        When the snippet starts with the look-back string; only the last part
+        of the matched suggestion string should be replaced by the snippet.
+        Returns a adjusted snippet.
 
-        var self = this,
-            txta = self.textarea,
-            fromStart = txta.getFromStart(),
+    Example:  ($==caret position)
+        [te$st] => lback = "te", match = "test",  snippet ="wiki-page"
+            Selection will become "test",  and snippet will become "wiki-page"
+        [te$st] => lback = "te", match = "test",  snippet ="team-page"
+            Selection will become "st",  and snippet will become "am-page"
+    */
+    suggestAction: function( txta, snippet, lback, match){
+
+        var start = txta.getSelectionRange().start,
+            len = match.length;
+
+        //console.log("Snipe:suggestAction ",snippet,lback,match );
+        if( snippet.startsWith( lback ) ){
+
+            //remove the look-back part of the snippet
+            snippet = snippet.slice( lback.length );
+            len -= lback.length;
+
+        } else {
+
+            //move the cursor to the start of the match
+            start -= lback.length;
+
+        }
+
+        txta.setSelectionRange(start, start + len); //move the cursor
+
+        return snippet;
+
+    },
+
+    /*
+    Function: injectXL
+        Inject a complex snippet.
+        Complex snippet match this pattern: "pfx{selection}sfx".
+        The part inside the "{..}" should be replaced by the selection.
+        If the selection has already the pfx/sfx strings,  they should be toggled.
+    Example
+        snippet: "__{bold}__", no selection
+            Snippet "__bold__" will be inserted, selection will become "bold"
+        snippet: "__{bold}__", selection:"pipo"
+            Snippet "__pipo__" will be inserted, selection will become "pipo"
+        snippet: "__{bold}__", selection:__"pipo"__
+            Snippet "pipo" will replace "__pipo__", selection will become "pipo"
+        snippet: "__{bold}__", selection:"__pipo__"
+            Snippet "pipo" will replace selection, selection will become "pipo"
+    */
+    injectXL: function( txta, snippet, pfx, sel, sfx){
+
+        var caret = txta.getSelectionRange(),
+            start = caret.start;
+
+        if( !caret.thin ) {
+
+            sel = txta.getSelection();
+            console.log("injectXL: ", sel, pfx, sfx);
+
+            if( sel.startsWith(pfx) && sel.endsWith(sfx) ){
+
+                console.log("TOGGLE: pfx/sfx matched inside the selection",caret.start,caret.end);
+                sel = sel.slice( pfx.length, -sfx.length );
+                pfx = sfx = "";
+
+            } else if( txta.getFromStart().endsWith(pfx)
+                    && txta.getTillEnd().startsWith(sfx) ){
+
+                console.log("TOGGLE: pfx/sfx matched outside the selection",caret.start,caret.end);
+                start -= pfx.length;
+                txta.setSelectionRange(start , caret.end + sfx.length);
+                pfx = sfx = "";
+
+            }
+        }
+
+        this.inject( txta, pfx + sel + sfx, start + pfx.length, sel.length);
+
+    },
+
+    /*
+    Function: inject
+        Replace the selection by the snippet and set a new selection.
+        Collapse leading and trailing \n characters
+        Autoindent the (multi-line) snippet.
+    */
+    inject: function( txta, snippet, start, selectionLen ){
+
+        var fromStart = txta.getFromStart(),
             prevline = fromStart.split(/\r?\n/).pop(),
-            indentation = prevline.match(/^\s+/);
+            indent = prevline.match(/^\s+/);
 
-        //console.log(snippet,start,selectionLength);
+        console.log("inject: ", snippet, start, selectionLen );
 
-        //process whitespace before and after the snippet
-        //collapse \n of previous line if the snippet starts with \n
         if( snippet.test(/^\n/) && ( fromStart.test( /(^|[\n\r]\s*)$/ ) ) ) {
-            //console.log("remove leading \\n", snippet);
+            console.log("collapse leading \\n", snippet);
             snippet = snippet.slice( 1 );
             start--;
         }
 
-        //collapse \n of the next line when the snippet ends with a \n
         if( snippet.test(/\n$/) && ( txta.getTillEnd().test( /^\s*[\n\r]/ ) ) ) {
-            //console.log("remove trailing \\n", snippet);
+            console.log("collapse trailing \\n", snippet);
             snippet = snippet.slice(0, -1);
+            start--;
         }
 
-        //finally auto-indent the snippets internal newlines \n
-        if( indentation ){
-            snippet = snippet.replace( /\n/g, "\n" + indentation[0] );
+        if( indent ){
+            //console.log("auto-indent internal newlines \n");
+            snippet = snippet.replace( /\n/g, "\n" + indent[0] );
         }
 
         txta.setSelection( snippet )
-            .setSelectionRange( start, start + selectionLength );
+            .setSelectionRange( start, start + selectionLen );
 
     },
 
@@ -801,7 +875,7 @@ var Snipe = new Class({
             el = txta.toElement();
 
         return {
-            main: this.mainarea.value,
+            //main: this.mainarea.value,
             value: el.get("value"),
             cursor: txta.getSelectionRange(),
             scrollTop: el.scrollTop,
@@ -823,7 +897,7 @@ var Snipe = new Class({
             el = txta.toElement();
 
         self.reset();
-        self.mainarea.value = state.main;
+        //self.mainarea.value = state.main;
         el.value = state.value;
         el.scrollTop = state.scrollTop;
         el.scrollLeft = state.scrollLeft;

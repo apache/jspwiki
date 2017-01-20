@@ -109,7 +109,7 @@ Wiki.Recents = new Class({
         if( items.indexOf( value ) < 0 ){
 
             //insert new item at the start of the list, and cap list on max 10 items
-            if( items.unshift(value) > 9){ items = items.slice(0, 9); }
+            items = [value].concat( items.slice(0, 8) );
             self.fireEvent("change", [self.items = items] );
 
         }

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -26,7 +26,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
-<%! 
+<%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 
@@ -39,7 +39,7 @@
     WikiSession wikiSession = wikiContext.getWikiSession();
     GroupManager groupMgr = wiki.getGroupManager();
     String name = request.getParameter( "group" );
-    
+
     if ( name == null )
     {
         // Group parameter was null
@@ -60,10 +60,11 @@
     }
 
     // Now, let's delete the group
-    try 
+    try
     {
         groupMgr.removeGroup( name );
-        response.sendRedirect( "." );
+        //response.sendRedirect( "." );
+        response.sendRedirect( "Group.jsp?group=" + name );
     }
     catch ( WikiSecurityException e )
     {

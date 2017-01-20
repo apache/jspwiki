@@ -111,17 +111,17 @@ var Dialog = new Class({
 
         var self = this, el;
 
-        this.setClass(".dialog",options);
+        this.setClass(".dialog", options);
         this.setOptions( options );
 
-        console.log("Dialog.initialize"   );
+        //console.log("Dialog.initialize" );
         options = self.options;
 
         el = self.element = options.dialog || self.build(options);
 
         el.getElements(".close").addEvent("click", self.hide.bind(self) );
 
-        //make dialog draggable; only possible when el is position absolute
+        //make dialog draggable; only possible when el has an absolute position
         if( (el.getStyle("position") == "absolute") && options.draggable ){
 
             new Drag(el,{
@@ -131,7 +131,6 @@ var Dialog = new Class({
         }
 
         self[ options.showNow ? "show": "hide"]();
-
 
     },
 
@@ -154,10 +153,22 @@ var Dialog = new Class({
 
     },
 
+    hasClass: function(clazz){
+        return this.element.hasClass(clazz);
+    },
+
+    ifClass: function(flag, trueClass, falseClass){
+
+        var body = this.element;
+        if( body ){ body.ifClass(flag, trueClass, falseClass); }
+        return this;
+
+    },
+
     setClass: function(clazz, options){
 
+        //console.log("Dialog.setClass", options.cssClass );
         options.cssClass = clazz + (options.cssClass || "");
-        console.log("Dialog.setClass ", options.cssClass );
 
     },
 
@@ -213,25 +224,15 @@ var Dialog = new Class({
 
     },
 
-    /*
-    Function: action
-        Fires the ""action"" event.
-        When the autoClose option is set, the dialog will also be hidden.
-    */
     action: function(value){
-        console.log("Dialog action: ",value," close:"+this.options.autoClose);
+        //console.log("Dialog action: ",value," close:"+this.options.autoClose);
         this.fireEvent("action", value);
         if( this.options.autoClose ){ this.hide(); }
     },
 
-    /*
-    Function: build
-        Build new dialog frame based on caption and body options.
-    */
     build: function( options ){
 
-        console.log("DIALOG build ",options.cssClass, options.styles);
-
+        //console.log("DIALOG build ",options.cssClass, options.styles);
         var element = this.element = [
             "div" + options.cssClass, {styles: options.styles}, [
                 "a.close",{ html: "&#215;"},

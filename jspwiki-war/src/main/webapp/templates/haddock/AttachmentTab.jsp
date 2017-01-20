@@ -42,7 +42,7 @@
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>" >
 
-    <h4><fmt:message key="attach.add"/></h4>
+    <h4><span class="icon-paper-clip"></span> <fmt:message key="attach.add"/></h4>
     <input type="hidden" name="nextpage" value="<wiki:Link context='upload' format='url'/>" />
     <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
     <input type="hidden" name="action" value="upload" />

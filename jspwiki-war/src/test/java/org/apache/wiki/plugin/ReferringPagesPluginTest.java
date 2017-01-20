@@ -82,7 +82,7 @@ public class ReferringPagesPluginTest extends TestCase
 
     private String mkFullLink( String page, String link )
     {
-        return "<a class=\"wikipage\" href=\"/Wiki.jsp?page="+link+"\">"+page+"</a>";
+        return "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page="+link+"\">"+page+"</a>";
     }
 
     public void testSingleReferral()

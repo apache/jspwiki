@@ -67,6 +67,15 @@ h2,h3,h4 {
 .sidebar .hashlink, .sidebar .editsection, .panel-title .hashlink { .hidden; }
 
 
+.lead {
+    font-family:@wiki-logo-font-family;
+}
+//mimicing .quote in a dialog dropdown
+.dialog .lead-item {
+    .lead;
+    font-size:@font-size-base;
+}
+
 
 b, i {
     color:inherit;
@@ -113,7 +122,7 @@ br { clear: both; }
 }
 /* closing vertical connecting corner */
 .tree ul li:last-child::after {
-    height: 1em;
+    height: .95em;
 }
 
 //dl { .dl-horizontal; }
@@ -146,6 +155,20 @@ PRE and xflow:
 
 */
 
+pre {
+  //FFS: overwrite bootstrap default, which only sets the bottom margin of a PRE
+  //better is to set top & bottom margins, in case the previous dom elements is a text node
+  //  margin: (@line-height-computed / 2) 0;
+
+  //overwrite bootstratp defaults: use alpha/transparency to also support dark backgrounds.
+  //color: @pre-color;
+  background-color: fadeout(@pre-bg,50%);
+  border: 1px solid fadeout(@pre-border-color,50%);
+
+}
+.small pre {
+  font-size: (@font-size-base - 1) * 0.85; // 14px to 13px
+}
 
 //inline code: jspwiki uses <tt> ; styles copied from bootstrap/code.less
 tt {
@@ -156,6 +179,8 @@ tt {
   white-space: nowrap;
   border-radius: @border-radius-base;
 }
+
+
 //  => reuse styling of pre
 
 //list-unstyled : bootstrap
@@ -207,12 +232,14 @@ a:hover { cursor:pointer; }
 //TODO: Overrule standard small red arrow; replace by ...  FIXME
 img.outlink { display:none; }
 a.external:after {
-    content: "\279A";
+    //.sup;
+    .small;
+    content: "\279a";
     //content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=");
     //content:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAMAAADXEh96AAAAB3RJTUUH0wMUEC8DV5a0ngAAAAlwSFlzAAAK8AAACvABQqw0mAAAAwBQTFRFAAAAgAAAAIAAgIAAAACAgACAAICAwMDAwNzApsrw//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////vwoKCkgICA/wAAAP8A//8AAAD//wD/AP//////9ptMMgAAAAt0Uk5T/////////////wBKTwHyAAAAG0lEQVR42mPg4voJBAxcYJoBxgMSXGAKKA6lALPeEyZVnxeBAAAAAElFTkSuQmCC);
 }
-a.attachment + a.infolink,
-a.attachment + button + a.infolink {
+a.infolink,
+button + a.infolink {
    .icon--all;
    &:after {
         margin-left:.1em;
@@ -223,19 +250,61 @@ a.attachment + button + a.infolink {
 
 
 /*
-Interwiki link
-    Reader : show pages without sidebar,minimal header/footer
-    <a class="interwiki" href="Wiki.jsp?page=XXX&skin=reader">XXX</a>
+Interwiki links
 */
-a.interwiki[href$="skin=reader"]:hover {
-    border-bottom: 1px dashed @link-hover-color;
+.interwiki-reader,
+a.interwiki[href$="skin=reader"] {
+    &::after {
+        color:@link-color;
+        .icon--all;
+        .sup;
+        content:"\f212";  //icon-leanpub
+    }
+    &:hover::after {
+        //text-decoraction:none;  //FIXME: doesnt work ...
+    }
 }
-a.interwiki[href$="skin=raw"]:hover {
-    border-bottom: 1px dotted @link-hover-color;
+.interwiki-raw,
+a.interwiki[href$="skin=raw"] {
+    &::after {
+        .icon--text();
+        content:"raw";
+    }
+    &:hover::after {
+        //text-decoraction:none;
+        background-color:@link-hover-color;
+    }
 }
-
-a.reader-view > [class^="icon-"] { color:@link-color; }
-
+.interwiki-edit,
+a.interwiki[href*="Edit.jsp?page="] {
+    &::after {
+        .icon--text;
+        content:"edit";
+        //color:@link-color;
+        //.icon--all;
+        //.sup;
+        //content:"\f040";  //icon-pencil
+    }
+    &:hover::after {
+        //text-decoraction:none;
+        background-color:@link-hover-color;
+    }
+}
+.interwiki-group,
+a.interwiki[href*="Group.jsp?group="] {
+    &::after {
+        .icon--text;
+        content:"group";
+        //color:@link-color;
+        //.icon--all;
+        //.sup;
+        //content:"\f0c0";  //icon-group
+    }
+    &:hover::after {
+        //text-decoraction:none;
+        background-color:@link-hover-color;
+    }
+}
 
 /*
 Footnotes
@@ -252,19 +321,15 @@ Images
 img {
     &.inline { .img-responsive; /*max-width:100%;*/ }
 }
-img { position:relative;}
-img:before {
-   content:"\e607  ";
-   font-family: FontJspwiki;
-   color:@red;
-}
-img:after {
-    content: "Broken Image: [" attr(alt) "]";
-    position: absolute;
-    display:inline-block; width:100%;height:100%;
-    background:@white;
-    left:20px;padding-top:.5em;
-    color:@red;
+/* broken images */
+
+.img-error {
+    &::before {
+        .icon--all;
+        content: "\e607 ";  //icon-picture
+        padding-right:.5em;
+    }
+    > span { padding-left:.5em;}
 }
 
 //img.inline
@@ -273,7 +338,7 @@ img:after {
 
 
 // Utility class to support un-scaled, scrollable images,
-.scrollable-image {
+.scrollable-img, .scrollable-image {
 
     overflow:scroll;
     img.inline { width:auto; max-width:none; }
@@ -333,7 +398,12 @@ div.dropcaps {
 
 
 //%%quote .. /%
-//.quote is replaced by <blockquote>, to reuse bootstraps styling
+//.quote is replaced by <blockquote>, to reuse bootstraps styling -- see Wiki.Behaviour.js
+//when showing the quote style in a dialog dropdown, use .quote-item -- see Wiki.Snips.js
+.dialog .quote-item {
+    border-left: 5px solid @blockquote-border-color;
+    padding-left: @line-height-computed;
+}
 
 .page-break {
     display:block;
@@ -369,8 +439,10 @@ div.dropcaps {
 //checkme: still used?
 .accesskey { text-decoration:underline; }
 
-.changenote { max-width:240px; font-style: italic; }
-
+.changenote {
+    max-width:240px;
+    .small;
+}
 .nowrap { white-space:nowrap; }
 
 [class^=tangle-] { background: @yellow; }
@@ -378,12 +450,13 @@ div.dropcaps {
 //TODO: why not use .panel iso .alert as base for these communication boxes
 .default, .success, .information, .info,  .warning, .error, .danger {
     .alert;
-    clear:both;
-    display:block;
+    //clear:both;
+    //display:block;
+    //.clearfix;
 }
 //support inline information blocks
 span.default, span.success, span.information, span.info,  span.warning, span.error, span.danger {
-    display:inline;
+    display: inline;
     padding: .05em .25em;
 }
 
@@ -398,6 +471,10 @@ span.default, span.success, span.information, span.info,  span.warning, span.err
 //CHECKME: make sure to fill the table cell with the background color
 td .success, td .information, td .warning, td .error { margin:0; }
 //BETTER:  td > .alert { margin:0; }
+
+
+.text-smallcaps { font-variant: small-caps; }
+
 
 
 /*

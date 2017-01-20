@@ -42,7 +42,7 @@
        title="<fmt:message key='actions.home.title' ><fmt:param>${frontpage}</fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
 
         <wiki:PageExists page="HomeMenu">
-        <ul class="dropdown-menu" data-hover-parent=".cage"  style="color:black;">
+        <ul class="dropdown-menu" data-hover-parent=".cage">
           <li class="logo-menu"><wiki:InsertPage page="HomeMenu" /></li>
         </ul>
         </wiki:PageExists>

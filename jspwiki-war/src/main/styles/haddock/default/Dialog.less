@@ -115,7 +115,7 @@ DOM structure:
 
     .body {
         padding: 0.25em 0 0 0;
-        overflow: scroll;
+        overflow:auto;
         max-height: 300px;
 
         ul {
@@ -151,16 +151,26 @@ DOM structure:
 
     }
 
-    &.dialog-horizontal .item { float: left; padding:0.5em; }
     &.dialog-horizontal {
         width: auto;
-        .body { padding: 0 2em 0 0.5em; } //reserve place for the .close button
+
+        .body { padding: 0 2em 0 0.5em; } //reserve space for the .close button on the right
+
+        .item {
+            float: left;
+            padding: 0.5em;
+        }
+
+        .divider {
+            float: left;
+            margin: 0 0.5em;
+            padding: 1.5em 1px 1em 0;  //1px is the width of the divider
+        }
     }
-    //&.dialog-horizontal .item:nth-child(6n) { float: none;  }
 
 }
 .dialog.chars .item { text-align:center; }
-
+.dialog.chars .body { max-height:200px; overflow:auto;  }
 
 /*
 Style: .dialog.color
@@ -235,7 +245,8 @@ Style: .dialog.color
     	position:absolute;
 
         //FIXME: dimensions copied from forms/.form-control - should be other ways to inherit this
-        height: @input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
+        //Make inputs at least the height of their button counterpart (base line-height + padding + border)
+        height: @input-height-base;
         padding: @padding-base-vertical @padding-base-horizontal;
         font-size: @font-size-base;
         //line-height: @line-height-base;
@@ -246,5 +257,7 @@ Style: .dialog.color
 	    span { color: @red; }
 
     }
+
+    .btn-group { padding:0; }  //reset default bootstrap padding to alling with input elements
 
 }

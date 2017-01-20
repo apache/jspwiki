@@ -78,6 +78,9 @@ var Textarea = new Class({
     toElement: function(){
         return this.ta;
     },
+    focus: function(){
+        this.ta.focus();
+    },
 
     /*
     Function: getValue
@@ -85,6 +88,12 @@ var Textarea = new Class({
     */
     getValue: function(){
         return this.ta.value;
+    },
+
+    setValue: function(value){
+        this.ta.value = value;
+        this.setSelectionRange(0,0);
+        return this;
     },
     /*
     Function: slice
@@ -359,6 +368,8 @@ var Textarea = new Class({
         l = ta.offsetLeft + el.offsetLeft - ta.scrollLeft;
         w = el.offsetWidth;
         h = el.offsetHeight;
+
+        console.log(offset, ta.offsetTop, "top: "+t, ta.offsetLeft, "left: "+l, "width: "+w, "height: "+h, "right: "+(l + w), "bottom: "+(t + h) );
         return { top: t, left: l, width: w, height: h, right: l + w, bottom: t + h };
 
     }

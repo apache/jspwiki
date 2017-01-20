@@ -131,8 +131,8 @@ var Accordion = new Class({
 
             }
 
-            toggles.push( toggle );
-            contents.push( "div".slick().wraps( pane.addClass("panel-body") ) );
+            toggles[toggles.length] = toggle;
+            contents[contents.length] = "div".slick().wraps( pane.addClass("panel-body") );
 
         }
 

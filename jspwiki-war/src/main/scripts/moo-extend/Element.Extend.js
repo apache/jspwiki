@@ -358,7 +358,7 @@ Element.implement({
 
                 Array.from(this.options).each( function(option){
 
-                    if (option.defaultSelected){ values.push(option.value || option.text); }
+                    if (option.defaultSelected){ values[values.length] = option.value || option.text; }
 
                 });
 

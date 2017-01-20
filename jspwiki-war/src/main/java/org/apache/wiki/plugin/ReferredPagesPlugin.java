@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 */
 package org.apache.wiki.plugin;
 
@@ -66,19 +66,19 @@ public class ReferredPagesPlugin implements WikiPlugin
 
     /** The parameter name for the type of the references.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TYPE    = "type";
-    
+
     /** The parameter name for the included pages.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_INCLUDE = "include";
-    
+
     /** The parameter name for the excluded pages.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXCLUDE = "exclude";
-    
+
     /** The parameter name for the format.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_FORMAT  = "format";
-    
+
     /** The minimum depth. Value is <tt>{@value}</tt>. */
     public static final int    MIN_DEPTH = 1;
-    
+
     /** The maximum depth. Value is <tt>{@value}</tt>. */
     public static final int    MAX_DEPTH = 8;
 
@@ -225,11 +225,15 @@ public class ReferredPagesPlugin implements WikiPlugin
                         isUL = true; m_result.append("<ul>\n");
                     }
 
-                    m_result.append("<li> " + link + " </li>\n");
+                    //See https://www.w3.org/wiki/HTML_lists  for proper nesting of UL and LI
+                    m_result.append("<li> " + link + "\n");
 
                     getReferredPages( context, link, depth );  // added recursive
                                                       // call - on general
                                                       // request
+
+                    m_result.append("\n</li>\n");
+
                 }
             }
             else
@@ -240,11 +244,14 @@ public class ReferredPagesPlugin implements WikiPlugin
                 }
 
                 String href = context.getURL(WikiContext.VIEW,link);
-                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a></li>\n" );
+                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a>\n" );
 
                 m_exists.add( link );
 
                 getReferredPages( context, link, depth );
+
+                m_result.append("\n</li>\n");
+
             }
         }
 

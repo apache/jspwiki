@@ -37,7 +37,7 @@
       method="get" accept-charset="UTF-8">
   <input type="hidden" name="page" value="<wiki:PageName />" />
 
-  <p class="btn btn-lg btn-primary btn-block">
+  <p class="btn btn-default btn-block">
        <fmt:message key="diff.difference">
          <fmt:param>
            <select class="form-control" id="r1" name="r1" onchange="this.form.submit();" >

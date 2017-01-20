@@ -64,8 +64,6 @@
 ! Разрешение канала [RSS|http://blogspace.com/rss/]
 
 В Вашем файле jspwiki.properties, Вы должны будете установить "jspwiki.rss.generate" в "true",
-и также установить "jspwiki.baseURL", чтобы указать на Вашу Wiki.
-Иначе генератор RSS не может выяснить, как его ссылки должны пойти... :-)
 
 ! Мне не нравится ~ThingsSquashedTogether в названиях страницы. Что я могу сделать?
 

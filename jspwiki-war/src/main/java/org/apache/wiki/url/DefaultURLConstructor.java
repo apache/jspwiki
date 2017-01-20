@@ -60,23 +60,7 @@ public class DefaultURLConstructor
     {
         m_engine = engine;
 
-        String baseurl = engine.getBaseURL();
-
-        if( baseurl != null && baseurl.length() > 0 )
-        {
-            try
-            {
-                URL url = new URL( baseurl );
-        
-                String path = url.getPath();
-        
-                m_pathPrefix = path;
-            }
-            catch( MalformedURLException e )
-            {
-                m_pathPrefix = "/JSPWiki/"; // Just a guess.
-            }
-        }
+        m_pathPrefix = engine.getBaseURL() + "/";
     }
 
     /**
@@ -100,7 +84,7 @@ public class DefaultURLConstructor
     {
         String baseurl = m_pathPrefix;
 
-        if( absolute ) baseurl = m_engine.getBaseURL();
+        if( absolute ) baseurl = m_engine.getBaseURL() + "/";
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );

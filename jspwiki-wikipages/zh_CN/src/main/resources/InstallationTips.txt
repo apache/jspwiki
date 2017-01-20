@@ -57,8 +57,8 @@
 
 !启用 [RSS|http://blogspace.com/rss/] 订阅
 
-在 jspwiki.properties 文件中，您需要将 "jspwiki.rss.generate" 设置为 "true"，另外也需要设置 "jspwiki.baseURL" 使其指向您的Wiki 系统。否则，RSS 生成程序没法知道它的链接应该指向何处……
+在 jspwiki.properties 文件中，您需要将 "jspwiki.rss.generate" 设置为 "true"，
 
 !我不喜欢页面标题中的 ~ThingsSquashedTogether，怎么办？
 
-正如 Finns 所说，"voe tokkiinsa"，意为“是的，当然”。您只需要在 jspwiki.properties 文件中将 "jspwiki.breakTitleWithSpaces" 属性设置为 "true"。
+正如 Finns 所说，"voe tokkiinsa"，意为“是的，当然”。您只需要在 jspwiki.properties 文件中将 "jspwiki.breakTitleWithSpaces" 属性设置为 "true"。

@@ -39,21 +39,10 @@ textarea { white-space: pre-wrap; }
     }
 
 }
-.editform input[name=changenote] {
-    position: absolute;
-    z-index: 2;  //appear on top of the button group
-    width: 480px;
-}
 
-
-.editform .commentsignature {
-    position: absolute;
-    z-index: 2;  //appear on top of the button group
-}
-
-
-.editform .open + .editor-tools  {
-    opacity:0;
+//save or post-comment button dropdown-menu : increase width of standard dropdown
+button[name=ok] + .dropdown-menu input[type=text] {
+    width: 340px;
 }
 
 .editor {
@@ -63,58 +52,111 @@ textarea { white-space: pre-wrap; }
     background: @wiki-editor-bg;
     color:inherit;
     font-size:90%;
+    border-radius:0;
 }
 
 //base styling similar to .page-content in Template.Content.less;
 .ajaxpreview {
-
-    &:empty:before {
-        content:"PREVIEW";
-    }
-
-    .hide;
-    background: @wiki-preview-bg;
-    padding: 0 0 .5em @grid-gutter-width/2; //cannot use margin here, as width=50%
+    //background: @wiki-preview-bg;
+    padding: .5em 0 .5em @grid-gutter-width/2; //cannot use margin here, as width=50%
     overflow: auto;
     //-ms-overflow-style: -ms-autohiding-scrollbar;
-    border: 2px dashed transparent;
+    //border: 2px dashed transparent;  //make space for the .loading effect
+    border: 1px solid @input-border;
+    border-left: none;
+    //.transition(background 0.2s ease-in-out);
 
     &.loading {
-        border: 2px dashed red;
+        //background: @wiki-empty-preview-bg;
+    }
+
+    &.empty {
+        .lead;
+        margin: 0; //reset .lead margin setting
+        .center;
+        background: @wiki-empty-preview-bg;
+        padding-top:2em;
     }
 }
 
-//Layout of editor and preview area
+/*
+Layout of editor and preview area
 
+HORIZONTAL SIDE BY SIDE VIEW  (.previewcolumn)
+     div.snip
+         div.toolbar
+         div.edit-area.livepreview.previewcolumn
+             div
+                div.dialog.selection
+                div {position:absolue}  => textarea-mirror
+                textarea.editor.snipeable
+                textarea#editorarea.editor.hidden
+             div.ajaxpreview
+         div.resizer[data-resize]
+
+VERTICAL VIEW
+     div.snip
+         div.toolbar
+         div.edit-area.livepreview
+             div
+                div.dialog.selection
+                div {position:absolue}  => textarea-mirror
+                textarea.editor.snipeable
+                textarea#editorarea.editor.hidden
+         div.resizer[data-resize]
+         div.ajaxpreview
+
+*/
 //default: show the editor (and preview) areas at 100%
-.edit-area  .col-50,
-.edit-area + .resizer + .ajaxpreview.col-50 { width:100%; }
+.edit-area > div,
+.ajaxpreview { width:100%; }
 
-//when livepreview is on, show the ajaxpreview area
-.edit-area.livepreview .ajaxpreview { .show; }
-.edit-area.livepreview  + .resizer + .ajaxpreview { .show; height:auto !important; }
+//when .previewcolumn (side by side) is on, set width of edit-area children to 50%
+.edit-area.livepreview.previewcolumn > div {
+    width:50%;
+    float:left;
+}
 
-//when livepreview is on AND previewcolumn (side by side) is on, set width to 50%
-.edit-area.livepreview.previewcolumn .col-50 { width:50%; float:left; }
+//only show the .ajaxpreview area when the .livepreview is on
+.edit-area:not(.livepreview) .ajaxpreview,
+.edit-area:not(.livepreview) ~ .ajaxpreview {
+    .hide;
+}
 
+.edit-area ~ .ajaxpreview {
+    height:auto !important;
+    border-left:1px solid @input-border
+}
 
 .resizer {
-    background: @wiki-resizer;
+    //background-color: @wiki-resizer;
 	cursor:row-resize;
-    width:100%;
-	height:8px;
-    line-height:8px;
-    margin-top:4px;
-    margin-bottom:.5em;
-    border-radius:4px;
+	height:.5em;//4px;
+    line-height:.5em; //4px;
+    //margin:.25em 0;
+    //border-radius:2px;
     z-index:3;
+    position:relative;
 
     &.dragging {
-        .progress-striped .progress-bar;
-        .progress.active .progress-bar;
+        //border:1px solid @input-border;
+        //.progress-striped .progress-bar;
+        //.progress.active .progress-bar;
     }
 }
 
+.comment-page {
+    height: 150px;
+    overflow-y: scroll;
+}
+.comment-page + [data-resize] {
+	cursor:row-resize;
+    background-color: @white;
+    border-top: 3px double @silver;
+    border-radius:0;
+    //fit horizontal resizer to screen width (hack to offset paddings of parent)
+    margin:4px -@padding-base-horizontal 7px -@padding-base-horizontal;
+}
 
 //CHECK: move to dropdown.less ..
 //reset bootstrap/form.less style on labels inside dropdown menu-s
@@ -122,8 +164,8 @@ textarea { white-space: pre-wrap; }
     label { font-weight: normal; }
 }
 
-.toolbar {
 
+.toolbar {
     padding-bottom: 1em;
     .btn-group {
         border:1px solid @link-color;
@@ -132,6 +174,7 @@ textarea { white-space: pre-wrap; }
     .btn-link:hover { text-decoration:none; }
 
 }
+
 
 /*
 Horizontal Dropdown Menu (based on bootstrap)
@@ -154,13 +197,26 @@ ul.dropdown-menu.dropdown-menu-horizontal {
 
 }
 
+.dropdown-size-4 {
+    width:18.2em;
+    > li {
+        display:inline-block;
+        float:left;
+        width:6em;
+        //border:1px solid red;
+        text-align:center;
+    }
+    > li:nth-child(3n+1) { clear:both;}
+}
+
+
 // icons only, or text labels ?
 // [data-cmd] { &:after { content: " " attr(data-cmd);  } }
 
 [data-cmd='find'] + .dropdown-menu {
 
     padding:5px 20px;
-    background-color: fade(@dropdown-bg,80%); //white background
+    background-color: fade(@dropdown-bg, 80%); //white background
 
     .tbHITS {
     	position:absolute;
@@ -169,6 +225,7 @@ ul.dropdown-menu.dropdown-menu-horizontal {
     }
 
 }
+
 
 [data-cmd='color'] {
     background:url("@{imagePath}/color-wheel.png") no-repeat center;
@@ -191,12 +248,10 @@ General styles to support wysiwyg editors
 
     .ajaxpreview {
         padding:1em;
-        //font-size: 90%;
         font-family: @font-family-monospace;
         white-space: pre-wrap;  //Lines are broken at newline characters, at <br>, and as necessary to fill line boxes.
-        border:1px solid silver;
+        border:1px solid @pre-border-color;
         word-wrap:normal;
-
     }
 
 }

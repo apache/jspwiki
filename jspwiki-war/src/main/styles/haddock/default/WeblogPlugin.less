@@ -48,14 +48,14 @@ a[href*="NewBlogEntry.jsp"] { .btn; .btn-xs; .btn-success; }
     margin:(@line-height-computed / 2) 0;
 }
 .weblogentryheading {
-    margin-top: @line-height-computed/2;
-    padding:@padding-base-vertical @padding-base-horizontal;
     .small;
-    float:right;
-    .badge;
+    position:absolute;
+    padding-top: @line-height-computed*2;
+    color:@btn-link-disabled-color;
 }
 .weblogentrytitle {
     .h1;
+    padding-bottom:(@line-height-computed );
     margin-bottom:(@line-height-computed / 2);
     border-bottom: 2px solid @pre-bg;
 
@@ -64,16 +64,22 @@ a[href*="NewBlogEntry.jsp"] { .btn; .btn-xs; .btn-success; }
 .weblogentrybody {
     .p;
     clear:both;
+    max-height:33vh;
+    overflow:auto;
 }
 .weblogentryfooter {
     .small;
     padding:@padding-base-vertical @padding-base-horizontal;
+    margin-bottom:@line-height-computed ;
     background-color:@pre-bg;
     clear:both;
 
-    a { .btn; .btn-xs; }
-    a[href*="_blogentry_"] { .btn-primary;  }
-    a[href*="_comments_"] { .btn-default;  }
+    a {
+        .btn; .btn-xs;
+        vertical-align:inherit;
+        &[href*="_blogentry_"] { .btn-primary;  }
+        &[href*="_comments_"] { .btn-default;  }
+    }
 
 }
 
@@ -124,3 +130,46 @@ div.weblogcomments
         content:"—"; //&mdash;
     }
 }
+
+
+/*
+DOM Structure of <Wiki:Calendar />
+
+table.calendar
+  tbody
+    tr
+        td  a[href=<prev-month>] <<
+        td.month[colspan=5]
+        td  a[href=<next-month>] >>
+    tr
+        td.weekdays  Mon,Tue ...  Sun
+    tr
+        td.othermonth
+        td.days
+        td.link a[herf=<...startDate=ddmmyy>]
+*/
+table.calendar {
+    width: 100%;
+    .small;
+    .panel;
+
+    td { text-align:center;  }
+
+    .month { .panel-title; font-family:@wiki-logo-font-family; }
+    //tr:first-child > td:first-child, tr:first-child > td:last-child {  } //next, previous months buttons
+    .weekdays {
+        font-family:@font-family-monospace;
+        border-bottom:1px solid @silver;
+        background-color:@white;
+    }
+    //td:nth-child(6){ border-left:1px dashed @silver; }   //divider for week and weekend days
+    td:nth-child(6):not(.weekdays),
+    td:nth-child(7):not(.weekdays) {
+        background: @pre-bg;
+    }
+
+    .othermonth { color:@gray-light; /*disabled*/ }
+    //.days { }
+    .link a { .badge; }
+}
+

@@ -145,9 +145,6 @@ public class WikiEngine
     Double negative, cause for most servers you don't need the property */
     public static final String PROP_NO_FILTER_ENCODING     = "jspwiki.nofilterencoding";    
 
-    /** The name for the base URL to use in all references. */
-    public static final String PROP_BASEURL      = "jspwiki.baseURL";
-
     /** The name for the property which allows you to set the current reference
      *  style.  The value is {@value}.
      */
@@ -197,9 +194,6 @@ public class WikiEngine
 
     /** If true, uses UTF8 encoding for all data */
     private boolean          m_useUTF8      = true;
-
-    /** Stores the base URL. */
-    private String           m_baseURL;
 
     /** Store the file path to the basic URL.  When we're not running as
         a servlet, it defaults to the user's current directory. */
@@ -533,11 +527,6 @@ public class WikiEngine
                                                         m_saveUserInfo );
 
         m_useUTF8        = "UTF-8".equals( TextUtil.getStringProperty( props, PROP_ENCODING, "ISO-8859-1" ) );
-        m_baseURL = TextUtil.getStringProperty(props, PROP_BASEURL, "");
-        if (!m_baseURL.endsWith("/"))
-        {
-            m_baseURL = m_baseURL + "/";
-        }
 
         m_beautifyTitle  = TextUtil.getBooleanProperty( props,
                                                         PROP_BEAUTIFYTITLE,
@@ -795,8 +784,11 @@ public class WikiEngine
 
     public String getBaseURL()
     {
-        return m_baseURL;
+    	String contextPath = m_servletContext.getContextPath();
+    	
+        return contextPath;
     }
+
 
     /**
      *  Returns the moment when this engine was started.
@@ -2234,7 +2226,7 @@ public class WikiEngine
     {
         if( m_rssGenerator != null && m_rssGenerator.isEnabled() )
         {
-            return getBaseURL()+m_rssFile;
+            return getBaseURL()+ "/" + m_rssFile;
         }
 
         return null;

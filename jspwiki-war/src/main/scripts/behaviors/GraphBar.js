@@ -136,8 +136,8 @@ var GraphBar = new Class({
 
                 }
 
+                //console.log(data, options.minv, options.maxv);
                 data = data.scale(options.minv, options.maxv)
-                console.log(data);
 
                 for( i = 0; i < len; i++){
 
@@ -244,6 +244,7 @@ var GraphBar = new Class({
         css = isProgress ?
             [offset + size, val + "%", (100 - val) + "%"] :
                 [offset + val / 100 * (/*offset + */ size), "100%" ];
+
 
         //then convert sizes to bar css styles
         css = css.map( function(barsize){

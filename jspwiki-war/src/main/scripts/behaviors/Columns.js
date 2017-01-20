@@ -56,7 +56,7 @@ function Columns(element, options){
     if( columnCount /*>0*/ ){
 
         columnCount++;
-        width = ( args[0] ) ? args[0] / columnCount + "px" : 100 / columnCount + "%";
+        width = args[0] ? args[0] + "px" : 100 / columnCount + "%";
 
         element
             .addClass("columns")

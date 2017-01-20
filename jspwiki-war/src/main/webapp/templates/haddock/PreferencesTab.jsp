@@ -71,6 +71,10 @@
         </ul>
     </span>
 
+    <wiki:Link cssClass="btn btn-danger pull-right"  page="${redirect}" >
+      <fmt:message key='prefs.cancel.submit'/>
+    </wiki:Link>
+
   </div>
 
   <c:if test="${param.tab eq 'prefs'}" >
@@ -121,7 +125,7 @@
 
   <div class="form-group">
     <label class="control-label form-col-20" for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label>
-    <label class="btn btn-default" for="prefSectionEditing">
+    <label class="btn btn-default">
       <input class="" id="prefSectionEditing" name="prefSectionEditing"  data-pref="SectionEditing"
          type="checkbox" ${prefs.SectionEditing ? 'checked="checked"' : ''} >
       <fmt:message key="prefs.user.sectionediting.text"/>
@@ -131,7 +135,7 @@
   <c:if test='${not empty skins}'>
   <div class="form-group">
     <label class="control-label form-col-20" for="prefSkin"><fmt:message key="prefs.user.skin"/></label>
-    <select class="" id="prefSkin" name="prefSkin" data-pref="SkinName">
+    <select id="prefSkin" name="prefSkin" data-pref="SkinName">
       <c:forEach items="${skins}" var="i">
         <option value='${i}' ${prefs.SkinName==i ? 'selected="selected"' : ''} >${i}</option>
       </c:forEach>
@@ -143,7 +147,7 @@
   <c:set var="prefLanguage" ><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
   <div class="form-group">
     <label class="control-label form-col-20" for="prefLanguage"><fmt:message key="prefs.user.language"/></label>
-    <select class="" id="prefLanguage" name="prefLanguage" data-pref="Language">
+    <select id="prefLanguage" name="prefLanguage" data-pref="Language">
       <c:forEach items='${languages}' var='lg'>
         <option value="<c:out value='${lg.key}'/>" ${fn:startsWith(prefLanguage,lg.key) ? 'selected="selected"' : ''} >${lg.value}</option>
       </c:forEach>
@@ -152,12 +156,13 @@
   </c:if>
 
   <div class="form-group">
+    <label class="hidden" for="prefLayout"><fmt:message key="prefs.user.layout"/></label>
     <label class="control-label form-col-20" for="prefOrientation"><fmt:message key="prefs.user.layout"/></label>
-    <select class="" id="prefLayout" name="prefLayout" data-pref="Layout">
+    <select id="prefLayout" name="prefLayout" data-pref="Layout">
       <option value='fluid' ${prefs.Layout=='fluid' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fluid"/></option>
       <option value='fixed' ${prefs.Layout=='fixed' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fixed"/></option>
     </select>
-    <select class="" id="prefOrientation" name="prefOrientation" data-pref="Orientation">
+    <select id="prefOrientation" name="prefOrientation" data-pref="Orientation">
       <option value='fav-left' ${prefs.Orientation=='fav-left' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.left"/></option>
       <option value='fav-right' ${prefs.Orientation=='fav-right' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.right"/></option>
       <%-- <option value='fav-hidden' ${prefs.Orientation=='fav-hidden' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.hidden"/></option>  --%>
@@ -166,7 +171,7 @@
 
   <div class="form-group">
     <label class="control-label form-col-20" for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label>
-    <select class="" id="prefTimeFormat" name="prefTimeFormat"  data-pref="DateFormat">
+    <select id="prefTimeFormat" name="prefTimeFormat"  data-pref="DateFormat">
       <c:forEach items='${timeformats}' var='tf' >
         <option value='<c:out value="${tf.key}"/>' ${prefs.DateFormat==tf.key ? 'selected="selected"' : ''} >${tf.value}</option>
       </c:forEach>
@@ -175,8 +180,8 @@
 
   <div class="form-group">
     <label class="control-label form-col-20" for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label>
-    <select class="" id='prefTimeZone' name='prefTimeZone'  data-pref="TimeZone">
-      <c:forEach items='${timezones}' var='tz'>
+    <select id="prefTimeZone" name="prefTimeZone"  data-pref="TimeZone">
+      <c:forEach items="${timezones}" var="tz">
         <option value='<c:out value="${tz.key}"/>' ${prefs.TimeZone==tz.key ? 'selected="selected"' : ''} >${tz.value}</option>
       </c:forEach>
     </select>

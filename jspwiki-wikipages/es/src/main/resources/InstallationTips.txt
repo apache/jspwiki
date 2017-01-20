@@ -57,7 +57,7 @@ La parte inferior de la sección de la izquierda es otra página más, llamada [
 
 !Activando el feed [RSS|http://blogspace.com/rss/]
 
-En tu archivo jspwiki.properties, tienes que establecer el parámetro "jspwiki.rss.generate" a "true", y también establecer el parámetro "jspwiki.baseURL" para que apunte a tu Wiki. De otro modo el generador de RSS no sabrá a dónde deben ir los enlaces... :-)
+En tu archivo jspwiki.properties, tienes que establecer el parámetro "jspwiki.rss.generate" a "true".
 
 !No me gusta que ~LasPalabrasSeAmontonenEnLosTitulos en los títulos de las páginas. ¿Puedo hacer algo al respecto?
 

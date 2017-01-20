@@ -84,7 +84,7 @@ if ( !installer.adminExists() )
   <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css"/>'/>
   <wiki:IncludeResources type="stylesheet"/>
 </head>
-<body class="view">
+<body class="container">
 <div id="wikibody">
 <div id="page">
 <div id="pagecontent">
@@ -98,7 +98,7 @@ if ( !installer.adminExists() )
 <p><fmt:message key="install.jsp.intro.p3" /></p>
 
 <!-- Any messages or errors? -->
-<div class="instructions">
+<div class="help-block">
   <wiki:Messages div="information" topic="<%=Installer.INSTALL_INFO%>" prefix='<%= rb.getString( "install.jsp.install.info" )%>'/>
   <wiki:Messages div="warning" topic="<%=Installer.INSTALL_WARNING%>" prefix='<%= rb.getString( "install.jsp.install.warning" )%>'/>
   <wiki:Messages div="error" topic="<%=Installer.INSTALL_ERROR%>" prefix='<%= rb.getString( "install.jsp.install.error" )%>'/>
@@ -110,30 +110,23 @@ if ( !installer.adminExists() )
 
   <!-- Page and log directories -->
   <h3><fmt:message key="install.jsp.basics.title" /></h3>
-  <div class="block">
 
-    <label><fmt:message key="install.jsp.basics.appname.label" /></label>
-    <input type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>"/>
-    <div class="description">
+    <label class="control-label" ><fmt:message key="install.jsp.basics.appname.label" />
+    <input class="form-control" type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>"/>
+    </label>
+    <div class="help-block">
       <fmt:message key="install.jsp.basics.appname.desc"/>
     </div>
 
-    <br/> <label><fmt:message key="install.jsp.basics.baseurl.label" /></label>
-    <input type="text" name="<%=Installer.BASE_URL%>" size="40" value="<%=installer.getProperty( Installer.BASE_URL )%>"/>
-    <div class="description">
-      <fmt:message key="install.jsp.basics.baseurl.desc" />
-    </div>
-
-    <br/><label><fmt:message key="install.jsp.basics.page.storage.label" /></label>
-    <input type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/>
-    <div class="description">
+    <label class="control-label" ><fmt:message key="install.jsp.basics.page.storage.label" />
+    <input class="form-control" type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/>
+    </label>
+    <div class="help-block">
       <fmt:message key="install.jsp.basics.page.storage.desc" />
     </div>
 
-  </div>
 
   <h3><fmt:message key="install.jsp.security.title" /></h3>
-  <div class="block">
 
     <%
       if( validated )
@@ -141,7 +134,7 @@ if ( !installer.adminExists() )
         if ( password != null )
         {
     %>
-      <label><fmt:message key="install.jsp.security.admaccount.label" /></label>
+      <label class="control-label" ><fmt:message key="install.jsp.security.admaccount.label" /></label>
       <p><fmt:message key="install.jsp.security.admaccount.enabled" /></p>
       <div class="description">
         <fmt:message key="install.jsp.security.admaccount.enabled.desc" />
@@ -152,40 +145,38 @@ if ( !installer.adminExists() )
       else
       {
     %>
-      <label><fmt:message key="install.jsp.security.admaccount.label" /></label>
+      <label class="control-label" ><fmt:message key="install.jsp.security.admaccount.label" /></label>
       <p><fmt:message key="install.jsp.security.admaccount.notenabled" /></p>
-      <div class="description">
+      <div class="help-block">
         <fmt:message key="install.jsp.security.admaccount.notenabled.desc" />
       </div>
     <%
       }
     %>
-  </div>
 
   <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
-  <div class="block">
-    <label><fmt:message key="install.jsp.adv.settings.logfile.label" /></label>
-    <input type="text" name="<%=Installer.LOG_FILE%>" value="<%=installer.getProperty( Installer.LOG_FILE )%>" size="40"/>
-    <div class="description">
+
+    <label class="control-label" ><fmt:message key="install.jsp.adv.settings.logfile.label" />
+    <input class="form-control" type="text" name="<%=Installer.LOG_FILE%>" value="<%=installer.getProperty( Installer.LOG_FILE )%>" size="40"/>
+    </label>
+    <div class="help-block">
       <fmt:message key="install.jsp.adv.settings.logfile.desc" />
     </div> <br/>
 
-    <label><fmt:message key="install.jsp.adv.settings.workdir.label" /></label>
-    <input type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>
-    <div class="description">
+    <label class="control-label" ><fmt:message key="install.jsp.adv.settings.workdir.label" />
+    <input class="form-control" type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>
+    </label>
+    <div class="help-block">
       <fmt:message key="install.jsp.adv.settings.workdir.desc" />
     </div>
-  </div>
 
-  <br/>
-  <div class="block">
-    <div class="instructions">
+
+    <p class="help-block">
       <fmt:message key="install.jsp.instr.desc" >
         <fmt:param><%=installer.getPropertiesPath()%></fmt:param>
       </fmt:message>
-    </div>
-    <input type="submit" name="submit" value="<fmt:message key="install.jsp.instr.submit" />" />
-  </div>
+    </p>
+    <input class="btn btn-primary" type="submit" name="submit" value="<fmt:message key="install.jsp.instr.submit" />" />
 
 </form>
 

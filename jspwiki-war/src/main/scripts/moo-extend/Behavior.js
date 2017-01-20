@@ -65,11 +65,12 @@ var Behavior = new Class({
     update: function(){
 
         var cache = "_bhvr", updated, type, isClass, isFunction,
-            nodes, node, i = 0, j, item, behavior, options;
+            nodes, node, i = 0, j, item, behavior, options, items;
 
         while( item = this.behaviors[ i++ ] ){
 
             //console.log("BEHAVIOR ", item.once?"ONCE ":"", nodes.length, item.s, typeOf(item.b) );
+            once = [];
             options = item.o;
             behavior = item.b;
             type = typeOf(behavior);
@@ -80,26 +81,32 @@ var Behavior = new Class({
 
             if( nodes[0] ){
 
-                if( item.once ){
+                for( j=0; node = nodes[ j++ ]; ){
 
-                    if( isClass ){ new behavior(nodes, options); }
-                    else if( isFunction ){ behavior(nodes, options); }
+                    updated = node[cache] || (node[cache] = []);
 
-                } else {
+                    if ( updated.indexOf(item) < 0 ){
 
-                    for( j=0; node = nodes[ j++ ]; ){
+                        if( item.once ){
 
-                        updated = node[cache] || (node[cache] = []);
+                            once.push( node );
 
-                        if ( updated.indexOf(item) < 0 ){
+                        } else {
 
                             //if( isString ) node[behavior](options);
                             if( isClass ){ new behavior(node, options); }
                             else if( isFunction ){ behavior.call(node, node, options); }
 
-                            updated.push( item );
                         }
+                        updated.push( item );
                     }
+                }
+
+                if( once[0] ){
+                    //console.log("ONCE", item.s , once.length);
+                    if( isClass ){ new behavior($$(once), options); }
+                    else if( isFunction ){ behavior($$(once), options); }
+
                 }
             }
         }
