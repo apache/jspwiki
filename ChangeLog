@@ -3,6 +3,7 @@
        * 2.10.3-git-31.
 
        * Fixed JSPWIKI-1047 - Access Control Lists do not work if page cache is deactivated (thanks to E. Poth)
+       * minor bugfix in SessionsPlugin (StringIndexOutOfBoundsException when using the distinctUsers option
 
 2017-01-21  Dirk Frederickx (brushed AT apache DOT org)
 

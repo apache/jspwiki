@@ -106,10 +106,10 @@ public class SessionsPlugin
             while (entries.hasNext())
             {
                 Map.Entry<String, Integer> entry = entries.next();
-                s.append( entry.getKey().toString() + "(" + entry.getValue().toString() + "), " );
+                s.append( entry.getKey() + "(" + entry.getValue().toString() + "), " );
             }
             // remove the last comma and blank :
-            return s.substring(0, s.length() - 2);
+            if (s.length() >= 2) return s.substring(0,    s.length() - 2);
         }
 
         return String.valueOf( WikiSession.sessions( engine ) );
