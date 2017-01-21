@@ -183,10 +183,7 @@ public class DefaultAclManager implements AclManager {
 
                 m_engine.getHTML(ctx, page);
 
-                page = m_engine.getPage(page.getName(), page.getVersion());
-                acl = page.getAcl();
-
-                if (acl == null) {
+                if (page.getAcl() == null) {
                     acl = new AclImpl();
                     page.setAcl(acl);
                 }
