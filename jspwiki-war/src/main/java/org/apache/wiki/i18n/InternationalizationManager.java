@@ -19,6 +19,8 @@
 package org.apache.wiki.i18n;
 
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -82,7 +84,12 @@ public class InternationalizationManager {
             locale = Locale.getDefault();
         }
 
-        ResourceBundle b = ResourceBundle.getBundle( bundle, locale );
+        ResourceBundle b = ResourceBundle.getBundle( bundle, locale , new ResourceBundle.Control() {
+            @Override
+            public List<Locale> getCandidateLocales(String baseName, Locale locale) {
+                return Collections.singletonList(Locale.ROOT);
+            }
+        });
 
         return b;
     }
