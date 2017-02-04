@@ -45,7 +45,7 @@ Function: snippets
 Wiki.Snips = {
 
     // Snipe predefined commands
-    find: { key: "f" },
+    find: { },
     undo: { event: "undo" },
     redo: { event: "redo" },
 

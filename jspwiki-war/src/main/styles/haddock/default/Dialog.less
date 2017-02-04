@@ -258,6 +258,13 @@ Style: .dialog.color
 
     }
 
+    [name=tbTEXTSEL] {
+        font-family: @font-family-monospace;
+	    resize: none !important; // disable resizable textareas in Webkit
+        .small;
+        background-color:transparent;
+    }
+
     .btn-group { padding:0; }  //reset default bootstrap padding to alling with input elements
 
 }
