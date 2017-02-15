@@ -55,7 +55,8 @@ public class SessionsPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
+    @Override
+    public String execute(WikiContext context, Map<String, String> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
@@ -106,7 +107,7 @@ public class SessionsPlugin
             while (entries.hasNext())
             {
                 Map.Entry<String, Integer> entry = entries.next();
-                s.append( entry.getKey() + "(" + entry.getValue().toString() + "), " );
+                s.append( entry.getKey() + "(" + entry.getValue() + "), " );
             }
             // remove the last comma and blank :
             if (s.length() >= 2) return s.substring(0,    s.length() - 2);

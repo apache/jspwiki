@@ -83,6 +83,7 @@ public class DefaultAclManager implements AclManager {
      * @see org.apache.wiki.auth.acl.AclManager#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      */
+    @Override
     public void initialize(WikiEngine engine, Properties props) {
         m_auth = engine.getAuthorizationManager();
         m_engine = engine;
@@ -101,6 +102,7 @@ public class DefaultAclManager implements AclManager {
      * @throws WikiSecurityException if the ruleLine was faulty somehow.
      * @since 2.1.121
      */
+    @Override
     public Acl parseAcl(WikiPage page, String ruleLine) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
@@ -158,6 +160,7 @@ public class DefaultAclManager implements AclManager {
      * @return the Acl representing permissions for the page
      * @since 2.2.121
      */
+    @Override
     public Acl getPermissions(WikiPage page) {
         //
         //  Does the page already have cached ACLs?
@@ -205,6 +208,7 @@ public class DefaultAclManager implements AclManager {
      * @throws WikiSecurityException of the Acl cannot be set
      * @since 2.5
      */
+    @Override
     public void setPermissions(WikiPage page, Acl acl) throws WikiSecurityException {
         PageManager pageManager = m_engine.getPageManager();
 
