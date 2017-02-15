@@ -279,6 +279,7 @@
       <div class="caption"><fmt:message key='editor.plain.find'/> &amp; <fmt:message key='editor.plain.replace'/> </div>
       <div class="body">
         <a class="close"">&times;</a>
+        <textarea class="form-control form-group" name="tbTEXTSEL" disabled rows="4" >TUUT</textarea>
         <div class="form-group">
           <span class="tbHITS"></span>
           <input class="form-control" type="text" name="tbFIND" size="16"

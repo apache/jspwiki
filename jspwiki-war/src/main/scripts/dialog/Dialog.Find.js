@@ -49,9 +49,11 @@ Dialog.Find = new Class({
             re: "[name=tbREGEXP]",
             i: "[name=tbMatchCASE]",
             one: "[name=replace]",
-            all: "[name=replaceall]"
+            all: "[name=replaceall]",
+            tsel: "[name=tbTEXTSEL]"
         },
         data: {
+            selection: function(){},
             get: function(){},
             set: function(){}
         }
@@ -67,7 +69,6 @@ Dialog.Find = new Class({
 
         //convert to $(elements)
         controls = self.controls = Object.map( self.options.controls, function(el){
-
             return dialog.getElement(el);
         });
 
@@ -86,10 +87,19 @@ Dialog.Find = new Class({
     },
 
     show: function(){
+
+        var controls = this.controls,
+            selection = this.options.data.selection();
+
+        //2. if selection, make tbTEXTSEL visible
+        controls.tsel.ifClass( selection == "", "hidden");
+        controls.tsel.value = selection;
+
         //1. make sure the find controls are visible
         this.parent();
-        //2. focus the find input field, and auto-trigger find()
-        this.controls.f.focus();
+
+        //3. focus the find input field, and auto-trigger find()
+        controls.f.focus();
     },
 
     // keypress, focus

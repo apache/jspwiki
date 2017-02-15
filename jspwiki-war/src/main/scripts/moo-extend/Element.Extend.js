@@ -282,7 +282,7 @@ Element.implement({
     },
 
     /*
-    Function sticky
+    Function onSticky
         Simulate "position:sticky".
         Keep the element fixed on the screen, during scrolling.
         Only supports top-bottom scrolling.

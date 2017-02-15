@@ -50,8 +50,9 @@ function AddCSS( element ){
         //tocheck: allow attached font files <a class=attachment href=xxx.woff><a class=infolink ....>
         css = css.replace( /url\(<a class="attachment" href="([^"]+.woff)".*><\/a>\)/gi,'url(<ifont href="$1"/>)' );
         css = css.replace( /url\(<a class="attachment" href="([^"]+.ttf)".*><\/a>\)/gi,'url(<ifont href="$1"/>)' );
+        css = css.replace( /url\(<a class="attachment" href="([^"]+.otf)".*><\/a>\)/gi,'url(<ifont href="$1"/>)' );
 
-        css = css.replace( /url\(\<[^i][^)]*\)/gi, "url(invalid)" ); //remove url(<a...)
+        css = css.replace( /url\(\<[^i].+\>\)/gi, "url(invalid)" ); //remove url(<a...)
         css = css.replace( /url\([^<][^)]*\)/gi, "url(invalid)" );  //remove url(xxx)
 
         //xss protection: remove @import statements

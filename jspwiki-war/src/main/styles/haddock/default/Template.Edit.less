@@ -213,33 +213,15 @@ ul.dropdown-menu.dropdown-menu-horizontal {
 // icons only, or text labels ?
 // [data-cmd] { &:after { content: " " attr(data-cmd);  } }
 
-[data-cmd='find'] + .dropdown-menu {
-
-    padding:5px 20px;
-    background-color: fade(@dropdown-bg, 80%); //white background
-
-    .tbHITS {
-    	position:absolute;
-	    right:1.5em;
-	    color:#999;
-    }
-
-}
-
-
-[data-cmd='color'] {
-    background:url("@{imagePath}/color-wheel.png") no-repeat center;
-}
 
 /* Section command button and dropdown */
 .section-selected > .btn { color:@red; }  //red section button (bookmark) when a section is selected
 
 .sections {
     //.indent-0 { }
-    .indent-1 { text-indent:.5em; }
-    .indent-2 { text-indent:1em; }
+    .text-indent-1 { text-indent:.5em; }
+    .text-indent-2 { text-indent:1em; }
 }
-
 
 /*
 General styles to support wysiwyg editors

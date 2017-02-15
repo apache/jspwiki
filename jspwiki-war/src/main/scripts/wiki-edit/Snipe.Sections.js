@@ -139,7 +139,7 @@ Snipe.Sections = new Class({
 
             addItem = function(item, index){
                 data.push("li" + (index == current ? ".active" : ""),[
-                    "a.indent-" + item.depth + ".section" + index, { html:item.title }
+                    "a.text-indent-" + item.depth + ".section" + index, { html:item.title }
                 ]);
             };
 

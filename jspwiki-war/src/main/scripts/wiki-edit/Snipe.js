@@ -133,10 +133,12 @@ var Snipe = new Class({
         self.snippets.dialogs.find = [ Dialog.Find, {
             data: {
                 //feed the find dialog with searchable content
+                selection: function(){
+                    return textarea.getSelection();
+                },
                 get: function(){
                     var selection = textarea.getSelection();
                     return (selection=="") ? element.value : selection;
-                    //return (selection=="") ? textarea.getValue() : selection;
                 },
                 set: function(v){
                     var s = textarea.getSelectionRange();

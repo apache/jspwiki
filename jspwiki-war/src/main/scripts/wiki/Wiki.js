@@ -183,9 +183,10 @@ var Wiki = {
     caniuse: function( body ){
 
         //support for flexbox is broken in IE, let's do it the hard-way
-		var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
-		var isIE9or10 = "ActiveXObject" in window;
-		body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
+        var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
+        var isIE9or10 = "ActiveXObject" in window;
+
+        body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
     },
 
     /*
