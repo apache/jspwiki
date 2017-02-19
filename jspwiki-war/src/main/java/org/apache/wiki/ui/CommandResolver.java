@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -439,6 +440,7 @@ public final class CommandResolver
             page = m_engine.getURLConstructor().parsePage( requestContext, request, m_engine.getContentEncoding() );
             if ( page != null )
             {
+                page = URLDecoder.decode(page, m_engine.getContentEncoding());
                 try
                 {
                     // Look for singular/plural variants; if one
