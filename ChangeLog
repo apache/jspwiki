@@ -1,3 +1,9 @@
+2017-03-03  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-33.
+
+       * Fixed JSPWIKI-1051 - Startup fails due to jspwiki.log (Permission denied)
+
 2017-02-04  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-32
