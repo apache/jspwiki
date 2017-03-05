@@ -1,3 +1,8 @@
+2017-03-05  Harry Metske (metskem@apache.org)
+       * 2.10.3-git-34
+
+       * JSPWIKI-1044 - URL in password recovery mail is relative while it should be absolute
+
 2017-03-03  Harry Metske (metskem@apache.org)
 
        * 2.10.3-git-33.
