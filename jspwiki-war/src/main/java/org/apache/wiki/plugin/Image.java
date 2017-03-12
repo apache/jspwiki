@@ -118,7 +118,7 @@ public class Image
             throw new PluginException("Parameter 'src' is required for Image plugin");
         }
 
-        if( cssclass == null ) cssclass = "imageplugin";
+        //if( cssclass == null ) cssclass = "imageplugin";
 
         if( target != null && !validTargetValue(target) )
         {
@@ -142,13 +142,18 @@ public class Image
 
         StringBuilder result = new StringBuilder();
 
-        result.append( "<table border=\"0\" class=\""+cssclass+"\"" );
+        result.append( "<table border=\"0\" class=\"imageplugin\"" );
         //if( align != null ) result.append(" align=\""+align+"\"");
         //if( style != null ) result.append(" style=\""+style+"\"");
 
         //
         //  Do some magic to make sure centering also work on FireFox
         //
+        if( align != null && align.equals("center") )
+        {
+            result.append(" style=\"margin-left: auto; margin-right: auto;\"");
+        }
+/*
         if( style != null )
         {
             result.append(" style=\""+style);
@@ -167,6 +172,7 @@ public class Image
         {
             if( align != null && align.equals("center") ) result.append(" style=\"margin-left: auto; margin-right: auto;\"");
         }
+*/
 
         if( title != null ) result.append(" title=\""+title+"\"");
 
@@ -176,11 +182,25 @@ public class Image
 
         if( caption != null )
         {
-            result.append("<caption align=bottom>"+TextUtil.replaceEntities(caption)+"</caption>\n");
+            result.append("<caption>"+caption+"</caption>\n");
         }
 
+        //move css class and style to the container of the image,
+        //so it doesn't affect the caption
+        result.append( "<tr><td" );
 
-        result.append( "<tr><td>" );
+        if( cssclass != null ) result.append(" class=\""+cssclass+"\"");
+        if( style != null )
+        {
+            result.append(" style=\""+style);
+
+            // Make sure that we add a ";" to the end of the style string
+            if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
+
+            result.append("\"");
+        }
+
+        result.append( ">" );
 
         if( link != null )
         {
