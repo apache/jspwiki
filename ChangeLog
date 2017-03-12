@@ -1,3 +1,18 @@
+2017-03-12  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-35  Haddock Template updates
+
+
+       * ImagePlugin:  minor update to apply the css class and styles
+         parameters to the image container, not to the whole table;
+         escape HTML entities in captions.
+
+       * several CSS stylesheet additions
+         - image styles : effects, captions, frames, animation
+         - background styles : color, background images
+
+       * %%columns: bugfix, few more column styles
+
 2017-03-05  Harry Metske (metskem@apache.org)
        * 2.10.3-git-34
 

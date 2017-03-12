@@ -37,9 +37,11 @@ table[border="1"] td { border:0; }
     tr:first-child {
         th, td {
             border-top: 0;
+            vertical-align: top; //fix bootstrap th setting
+
         }
         th {
-            border-bottom: 2px solid @table-border-color;
+            border-bottom: 1px solid @table-border-color;
         }
     }
 

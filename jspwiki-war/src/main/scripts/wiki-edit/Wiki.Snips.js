@@ -510,9 +510,9 @@ Wiki.Snips = {
 
             if( textarea.isCaretAtStartOfLine() ){
                 Object.append(body, {
-                    "\n{!!!}": "<span title='header'>H1</span>",
-                    "\n{!!}": "<span title='title'>H2</span>",
-                    "\n{!}": "<span title='sub-title'>H3</span>",
+                    "\n{!!!}": "<span title='header'>H<span class='sub'>1</span></span>",
+                    "\n{!!}": "<span title='title'>H<span class='sub'>2</span></span>",
+                    "\n{!}": "<span title='sub-title'>H<span class='sub'>3</span></span>",
                     "\n* {list item}": "<span class='icon-list-ul'/>",
                     "\n# {list-item}": "<span class='icon-list-ol'/>",
                     "divider-sol": ""
@@ -525,20 +525,20 @@ Wiki.Snips = {
                 "{{{monospaced}}} ": "<tt>&lt;/&gt;</tt>",
                 "{{{{code}}}}": "<span class='small' style='font-family:monospace;'>code</span>",
                 "divider1": "",
-                "[{link}]": "<span class='icon-link'/>",
+                "[{link}]": "<span class='icon-link' title='Insert a link'/>",
                 //"[description|{link}|options]": "<span class='icon-link'/>",
-                "[{Image src='{image.jpg}'}]": "<span class='icon-picture'/>",
-                "[{{plugin}}]": "<span class='icon-puzzle-piece'></span>",
-                "%%style {body} /%":"<span style='font-family:monospace;'>%%</span>",
+                "[{Image src='{image.jpg}'}]": "<span class='icon-picture' title='Insert an image'/>",
+                "[{{plugin}}]": "<span class='icon-puzzle-piece' title='Insert a Plugin'></span>",
+                "%%style {body} /%":"<span style='font-family:monospace;' title='Add a Style'>%%</span>",
                 "divider2": "",
-                "%%(font-family:{font};) body /%":"<span style='font-family:serif;'>A</span><span style='font-family:sans-serif'>a</span>",
-                "&{entity};" : "<span style='font-family:cursive;'>&amp;</span>",
+                "%%(font-family:{font};) body /%":"<span title='Change the Font'><span style='font-family:serif;'>A</span><span style='font-family:sans-serif'>a</span></span>",
+                "&{entity};" : "<span style='font-family:cursive;' title='Insert a Special Character'>&amp;</span>",
                 //"%%sub {subscript}/% ": "a<span class='sub'>n</span>",
                 //"%%sup {superscript}/% ": "a<span class='sup'>m</span>",
                 //"%%strike {strikethrough}/% ":"<span class='strike'>S</span>",
                 //"divider3": "",
-                "[{ALLOW {permission} principal }]":"<span class='icon-unlock-alt'></span>",
-                "\\\\\n":"<b>&para;</b>"
+                "[{ALLOW {permission} principal }]":"<span class='icon-unlock-alt' title='Add a page ACL'></span>",
+                "\\\\\n":"<b title='Insert a New Line'>&para;</b>"
             });
 
             if( textarea.isCaretAtStartOfLine()

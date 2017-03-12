@@ -61,7 +61,7 @@ Depend on :
     behaviors/TableX.Zebra.js
 */
 
-!function( wiki ){
+!(function( wiki ){
 
 var TheSlimbox, T = TableX;
 
@@ -449,7 +449,7 @@ Wiki Markup:
 /*
 Behavior:Columns
 
->    %%columns(-width) .. /%
+>    %%columns .. /%
 */
     .add( "div[class^=columns]", Columns, { prefix: "columns" } )
 
@@ -544,7 +544,7 @@ Behavior: Table behaviors
 
         var args = "table".sliceArgs(element),
             arg,
-            tables = element.getElements("table"),
+            tables = element.getElements("table:not(.imageplugin)"),
             hints = Object.map({
                 sort: "sort.click",
                 atoz: "sort.ascending",
@@ -594,6 +594,8 @@ Behavior: Scrollable pre area with maximum size (based on BOOTSTRAP)
             .addClass("pre-scrollable")
             .setStyle("maxHeight", maxHeight + "px");
 
+        //FFS : support scollable > table
+
     })
 
 /*
@@ -618,11 +620,12 @@ Behavior: List (based on BOOTSTRAP)
 >   %%list-unstyled-hover-group-nostyle
 
 */
-    .add("[class|=list]", function(element){
+    .add("[class*=list-]", function(element){
 
         var args = "list".sliceArgs(element),
             lists = element.getElements("ul|ol");
 
+        if( !args ) return;
         args.each( function( arg ){
 
             if( arg.test("unstyled|hover|group|nostyle") ){
@@ -745,6 +748,166 @@ CSS:
 
 
 /*
+wiki-slides
+
+*/
+    .once(".page-content.wiki-slides", function(elements){
+
+        var divider = "hr";
+
+        elements
+            .grab(divider.slick(), "top") //add one extra group-start-element at the top
+            .groupChildren("hr", "div.slide");
+
+    })
+
+
+/*
+Behviour:  Background
+    Move image to the background of a page.
+    Also support additional image styles on background images.
+
+Case1 ??:
+div[this is the parent container]
+    img.bg[src=<imageurl>]
+    ...
+    div other content
+    ...
+
+Case2:
+div[this is the parent container]
+    table.imageplugin
+        tr
+            td.bg
+                img[src=<imageurl>]
+    ...
+    div other content
+    ...
+
+Case3:
+div[this is the parent container]
+    div.bg
+        img[src=<imageurl>]
+    ...
+    div other content
+    ...
+
+
+After
+div[this is the parent container]
+    span.background[background-image=<image-url>]
+    div.background-overlay[z-index=2]
+        ...
+        div other content
+        ...
+
+
+%%bg [<image link>] /%
+%bg [{IMAGE src='<image link>' }]/%
+[{IMAGE src='<image link>' class='bg' }]
+
+%%bg-image.bg-fixed [<image link>] /%
+[{IMAGE src='<image link>' class='bg-image bg-fixed' }]
+
+*/
+    .add(".bg > table.imageplugin img, .bg > img", function( image ){
+
+        var bgBox = image.getParent(".bg"),
+            clazz = bgBox.className; //contains possibly other styles to be applied to the background image
+
+        if( bgBox && bgBox.match("td") ){
+            bgBox = bgBox.getParent("table");
+        }
+
+        if( bgBox ){
+
+            bgBox
+                .addClass("bg")   //need .bg as trigger for groupChildren() !
+                .getParent()      //move up to the containing element
+                .addClass("has-background")
+                .groupChildren(".bg", "div.bg-overlay.clearfix", function(wrapper, bg){
+
+                    //use a extra container span to allow additional effects
+                    //on the background image without impact on the overlay content ...
+                    var element = "span".slick();
+                    element.className = clazz;
+                    element.style.backgroundImage = "url(" + image.src + ")";
+                    element.inject(bg, "before");
+
+            });
+            //bgBox.destroy();   //not realy needed as per default the .bg  element is hidden
+            //bgBox.parentNode.removeChild(bgBox);
+        }
+
+    })
+/*
+
+
+DOM Structure
+
+Case1
+from::
+    div.caption(-arrow)(-overlay).other-class
+        img.inline[src='...']
+        caption-text
+
+to::
+    figure.caption(-arrow)(-overlay).other-class
+        figcaption.other-class
+            caption-text
+        img.inline[src='...']
+
+
+Case2
+from::
+    div.caption(-arrow)(-overlay).other-class
+        table.imageplugin
+            tr
+                td
+                    img[src='...']
+        caption-text
+
+to::
+    div.caption(-arrow)(-overlay)
+        table.imageplugin
+            caption.other-class
+                caption-text
+            tr
+                td
+                    img[src='...']
+
+*/
+    .add("[class^=caption] > .imageplugin", function( imageplugin ){
+
+        var caption = imageplugin.getParent(),
+            oldcaption = imageplugin.getFirst("caption");
+
+        if( !oldcaption ){
+
+            imageplugin.wraps(caption,"top");
+
+            "caption".slick({
+                html: caption.innerHTML,
+                "class": caption.className
+            }).replaces(caption);
+
+        }
+
+    })
+    .add("[class^=caption] > img.inline", function( img ){
+
+        var caption = img.getParent();
+
+        "figure".slick().grab(img).wraps(caption,"top");
+
+        "figcaption".slick({
+            html: caption.innerHTML,
+            "class": caption.className
+        }).replaces(caption);
+
+    })
+
+/*
 Experimental
 svg pie,
 credit: lea verou
@@ -782,4 +945,4 @@ Behavior:Flip, Flop
     .add( "div[class|=flop]", Flip, { prefix: "flop" } );
 
 
-}( Wiki );
+})( Wiki );

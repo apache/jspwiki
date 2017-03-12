@@ -136,6 +136,164 @@ dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
   border-top: 1px solid @hr-border;
 }
 
+//Component: border (eg around columns grid)
+.border {
+    border: 1px solid @btn-default-border;
+}
+.rounded, .rounded > img {
+    border-radius: @border-radius-base;
+}
+.circle, .circle > img {
+    border-radius: 50%;
+}
+
+//Component: raised effect (shadow)  (eg around columns grid)
+.raised, .raised > img {
+    box-shadow: 0 8px 16px rgba(0,20,80,.04), 0 4px 16px rgba(0,0,0,.08);
+}
+
+.light  { filter: opacity(50%); }
+.dark   { filter: brightness(75%); }
+.blur   { filter: blur(3px); overflow:hidden;  }
+.invert { filter: invert(.8); }
+.sepia  { filter: sepia(1); }
+.blend  {mix-blend-mode: multiply;}
+.blend2 {mix-blend-mode: luminosity;}
+.grayscale    { filter: grayscale(1); }
+.saturate-2   { filter: saturate(2); }
+.saturate-8   { filter: saturate(8); }
+.hue-rotate-1 { filter: hue-rotate(90deg); }
+.hue-rotate-2 { filter: hue-rotate(180deg); }
+.hue-rotate-3 { filter: hue-rotate(270deg); }
+.brightness   {filter: brightness(3); }
+.contrast-2   { filter: contrast(2);}
+.contrast-10   { filter: contrast(10);}
+
+.fliph  {transform: scaleX(-1);}
+.flipv  {transform: scaleY(-1);}
+.fliphv {transform: scaleX(-1) scaleY(-1);}
+
+.kenburns {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background-size:cover;
+}
+.kenburns img { width:100%; }  //occupy all available space of the container
+
+.kenburns img,
+.bg.kenburns { animation: kenburns 120s infinite linear; }
+
+
+@keyframes kenburns {
+    0% {
+        transform: scale(1) rotate(0deg) translate(0, 0);
+    }
+    50% {
+        transform: scale(1.4) rotate(1deg) translate(-15%, 0);
+    }
+    100% {
+        transform: scale(1) rotate(0deg) translate(0, 0);
+    }
+}
+
+
+//Component: re-usable sizing blocks eg  .columns.size-60
+.size-90 { width: 90% !important; }
+.size-80 { width: 80% !important; }
+.size-70 { width: 70% !important; }
+.size-60 { width: 60% !important; }
+.size-50 { width: 50% !important; }
+.size-40 { width: 40% !important; }
+.size-30 { width: 30% !important; }
+.size-20 { width: 20% !important; }
+
+//make sure images obey the size of their container
+.imageplugin td[class*=size-] { display:inline-block; }
+[class*=size-] > img { width:100% !important; }
+
+span.text-white, div.text-white, .bg.dark + .bg-overlay { color:@white; }
+span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
+
+.text-white.shadow {
+  text-shadow: 1px 1px 0 rgba(0,0,0,.25), 0 0 1em @white;
+}
+.text-black.shadow {
+  text-shadow: 1px 1px 0 rgba(255,255,255,.25), 0 0 1em @white;
+}
+
+//checkme - should be defined in bootstrap
+[class*=bg-]:not(.columns) {
+    padding: @padding-base-vertical  @padding-base-horizontal;
+    a {  color:inherit; }
+}
+.bg-success { background-color: @state-success-bg; }
+.bg-info    { background-color: @state-info-bg; }
+.bg-warning { background-color: @state-warning-bg; }
+.bg-danger  { background-color: @state-danger-bg; }
+
+.bg-aqua  { background-color: @aqua; color:hsla(197, 100%, 20%, 1.0);}
+.bg-blue  { background-color: @blue; color:hsla(208, 100%, 85%, 1.0);}
+.bg-navy  { background-color: @navy; color:hsla(210, 100%, 75%, 1.0);}
+.bg-teal  { background-color: @teal; }
+.bg-green  { background-color: @green; color:hsla(127, 63%, 15%, 1.0);}
+.bg-olive  { background-color: @olive; color:hsla(153, 43%, 15%, 1.0);}
+.bg-lime   { background-color: @lime; color:hsla(146, 100%, 20%, 1.0);}
+.bg-yellow { background-color: @yellow; color:hsla(52, 100%, 20%, 1.0);}
+.bg-orange { background-color: @orange; color:hsla(28, 100%, 20%, 1.0);}
+.bg-red    { background-color: @red; color:hsla(3, 100%, 25%, 1.0);}
+.bg-fuchsia { background-color: @fuchsia; color:hsla(314, 88%, 21%, 1.0);}
+.bg-purple  { background-color: @purple; color:hsla(292, 88%, 82%, 1.0);}
+.bg-maroon  { background-color: @maroon; color:hsla(331, 74%, 70%, 1.0);}
+.bg-white   { background-color: @white; color: @black; }
+.bg-silver  { background-color: @silver; }
+.bg-gray, .bg-grey  { background-color: @gray; color:@white; }
+.bg-black   { background-color: @black; color:@white; }
+
+/* Background images in jspwiki
+markup
+    %%bg [some image link] /%
+becomes
+    span.background(.fixed|.cover|.contain)(.top|.bottom|.left|.right)
+    div.background-overlay
+        <wrapping all siblings>
+*/
+.bg > img, .bg > img.inline, .bg > .imageplugin img { display:none; }
+
+.has-background {
+    position:relative;
+    overflow:hidden;
+
+    > .bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        //background-size: auto auto;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-origin: border-box;
+        //background-image:  this is set by Wiki.Behaviour.js
+
+        &.cover { background-size:cover; }   //default
+        &.contain { background-size:contain; }
+        &.fixed  { background-attachment: fixed; }
+        &.clip-text { background-clip: text; -webkit-background-clip: text; }
+        &.top, &.bottom.flipv { background-position-y: top; }
+        &.bottom, &.top.flipv { background-position-y: bottom; }
+        &.left, &.right.fliph { background-position-x: left; }
+        &.right, &.left.fliph { background-position-x: right; }
+
+    }
+
+    //wrapper block, to content overlayed over the background
+    > .bg-overlay {
+        position:relative;
+        z-index:2;
+    }
+}
+
 
 /*
 PRE and xflow:
@@ -179,9 +337,6 @@ tt {
   white-space: nowrap;
   border-radius: @border-radius-base;
 }
-
-
-//  => reuse styling of pre
 
 //list-unstyled : bootstrap
 //list-hover
@@ -231,7 +386,6 @@ a:hover { cursor:pointer; }
 }
 
 
-//TODO: Overrule standard small red arrow; replace by ...  FIXME
 img.outlink { display:none; }
 a.external:after {
     //.sup;
@@ -323,8 +477,9 @@ Images
 img {
     &.inline { .img-responsive; /*max-width:100%;*/ }
 }
-/* broken images */
 
+
+/* broken images */
 .img-error {
     &::before {
         .icon--all;
@@ -398,9 +553,10 @@ div.dropcaps {
     }
 }
 
-
 //%%quote .. /%
 //.quote is replaced by <blockquote>, to reuse bootstraps styling -- see Wiki.Behaviour.js
+blockquote:last-child { margin-bottom:0; }
+
 //when showing the quote style in a dialog dropdown, use .quote-item -- see Wiki.Snips.js
 .dialog .quote-item {
     border-left: 5px solid @blockquote-border-color;
@@ -423,30 +579,6 @@ div.dropcaps {
     }
 
 }
-
-//checkme - should be defined in bootstrap
-.bg-success { background-color: @state-success-bg; }
-.bg-info    { background-color: @state-info-bg; }
-.bg-warning { background-color: @state-warning-bg; }
-.bg-danger  { background-color: @state-danger-bg; }
-
-.bg-aqua  { background-color: @aqua; }
-.bg-blue  { background-color: @blue; color:@white;}
-.bg-navy  { background-color: @navy; color:@white; }
-.bg-teal  { background-color: @teal; }
-.bg-green  { background-color: @green; color:@white;}
-.bg-olive  { background-color: @olive; color:@white;}
-.bg-lime   { background-color: @lime; }
-.bg-yellow { background-color: @yellow; }
-.bg-orange { background-color: @orange; color:@white; }
-.bg-red    { background-color: @red; color:@white; }
-.bg-fuchsia { background-color: @fuchsia; color:@white; }
-.bg-purple  { background-color: @purple; color:@white;}
-.bg-maroon  { background-color: @maroon;  color:@white; }
-.bg-white   { background-color: @white; color: @black; }
-.bg-silver  { background-color: @silver; }
-.bg-gray, .bg-grey  { background-color: @gray; color:@white; }
-.bg-black   { background-color: @black; color:@white; }
 
 
 .ltr { direction:ltr; }
