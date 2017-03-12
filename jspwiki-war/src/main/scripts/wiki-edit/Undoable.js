@@ -50,7 +50,7 @@ Example:
 (end)
 */
 
-!function(){
+!(function(){
 
 // Helper function to change the css style of the undo/redo buttons.
 function btnStyle( self ){
@@ -117,4 +117,4 @@ this.Undoable = new Class({
 
 });
 
-}();
+})();

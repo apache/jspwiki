@@ -31,7 +31,7 @@ Javascript routines to support JSPWiki UserPreferences
     *  prefLanguage:"Language",
     *  prefSectionEditing:"SectionEditing" =>checkbox "on"
 */
-!function( wiki ){
+!(function( wiki ){
 
     var datapref = "*[data-pref]"; //data preference form elements
 
@@ -86,4 +86,4 @@ Javascript routines to support JSPWiki UserPreferences
 
     });
 
-}(Wiki);
+})(Wiki);

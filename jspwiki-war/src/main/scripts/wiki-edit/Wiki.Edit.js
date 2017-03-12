@@ -29,7 +29,7 @@ Class: Wiki.Edit
 /*eslint-env browser*/
 /*global Wiki, Snipe, Request */
 
-!function( wiki ){
+!(function( wiki ){
 
 
 wiki.add("textarea#editorarea", function( main ){
@@ -234,4 +234,4 @@ function jspwikiSectionParser( text ){
 
 }
 
-}( Wiki );
+})( Wiki );

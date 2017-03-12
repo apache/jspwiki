@@ -20,7 +20,7 @@
 */
 /*jshint forin:false, noarg:true, noempty:true, undef:true, unused:true, plusplus:false, immed:false, browser:true, mootools:true */
 
-!function(){
+!(function(){
 
 /* helper stuff for <array>.toNatural() */
 
@@ -216,4 +216,4 @@ Array.implement({
 
   });
 
-}();
+})();

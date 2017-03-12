@@ -314,7 +314,7 @@ Example:
 >    $(element).addEvent("transitionend",function(event){ ...})
 
 */
-!function(css3){
+!(function(css3){
 
 var B = Browser,
     NativeEvents = Element.NativeEvents,
@@ -338,5 +338,5 @@ var B = Browser,
 
     }
 
-}({transition: "TransitionEnd"});
+})({transition: "TransitionEnd"});
 //})({transition:"TransitionStart",transition:"TransitionEnd",animation:"AnimationStart",animation:"AnimationIteration",animation:"AnimationEnd");
