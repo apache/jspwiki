@@ -38,45 +38,52 @@ DOM structure:
     .col {
         float:left;
         padding: @padding-base-vertical  @padding-base-horizontal;
-
     }
-    //.col has a calculated width;  make sure img obey the size of their container
+
+    //.col has a calculated width;  make sure img obeys the size of its container
     .col img {
         max-width:100%;
     }
 
-    .col > .columns > .col,
+    .col > .columns .col,
     .col > [class*="bg-"] {
-        margin: -@padding-base-vertical  -@padding-base-horizontal;
         padding: @padding-base-vertical  @padding-base-horizontal;
         min-height: 100%;
         box-sizing: content-box;
     }
 
+    .col > [class*="bg-"],
     .col > .default,
     .col > .info, .col > .information,
     .col > .success,
     .col > .warning,
     .col > .danger, .col > .error {
-        margin:  0  -@padding-base-horizontal ;
+        margin:  -@padding-base-vertical  -@padding-base-horizontal ;
         min-height: 100%;
     }
 
-    &.border .col:not(:last-child){ border-right:1px solid #ccc; }
+    &.border > .col:not(:last-child){ border-right:1px solid @btn-default-border; }
+    &.border + &.border { border-top:none; }
 
     &.hover:not([class*="bg-"]) { background-color:inherit; }
-    &.hover .col:hover { background-color: #f5f5f5; }
+    &.hover .col:hover { background-color: @dropdown-link-hover-bg; }
+
+    &.vertical-align .col {
+      justify-content: center;
+      display:flex;
+      flex-direction:column;
+    }
 
 }
 
 
 .columns.sm > div:nth-child(1),
-.columns.ms > div:nth-child(2) { width:30%  !important; }
+.columns.ms > div:nth-child(2) { width: @wiki-commentbox-ratio !important; }
 .columns.sm > div:nth-child(2),
-.columns.ms > div:nth-child(1) { width:70%  !important; }
+.columns.ms > div:nth-child(1) { width:(100% - @wiki-commentbox-ratio) !important; }
 
-.columns.sms > div { width:25% !important; }
-.columns.sms > div:nth-child(2) { width:50%  !important; }
+.columns.sms > div { width: 25% !important; }
+.columns.sms > div:nth-child(2) { width: 50% !important; }
 
 
 //ie6 and lower hack

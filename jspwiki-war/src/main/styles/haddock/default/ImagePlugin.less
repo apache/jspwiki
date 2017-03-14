@@ -23,9 +23,12 @@ Style: ImagePlugin
 
 DOM Structure:
     (start code)
-    <table border="0" class="imageplugin" align="left|right|center">
-        <tr><td><img src="img.jpg" height="200px" width="200px" /></td></tr>
-    </table>
+    table.imageplugin[border="0"][align="left|right|center"][style="..."]
+        caption[align="bottom"]  caption-text
+        tbody
+            tr
+                td
+                    img[src="img.jpg"][height="200px"][width="200px"]
     (end)
 */
 
