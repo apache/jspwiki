@@ -1,3 +1,11 @@
+2017-03-18  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-37  Haddock Template
+
+       * JSPWIKI-1055:  Haddock Special Block Marker
+         Added a few icons to improve rendering of contextual blocks in B/W.
+
+
 2017-03-14  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-36  Haddock Template

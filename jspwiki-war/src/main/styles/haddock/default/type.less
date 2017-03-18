@@ -144,6 +144,8 @@ dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
 .rounded, .rounded > img {
     border-radius: @border-radius-base;
 }
+[class^=label].rounded { border-radius: 10em;}
+
 .circle, .circle > img {
     border-radius: 50%;
 }
@@ -400,7 +402,7 @@ button + a.infolink {
    .icon--all;
    &:after {
         margin-left:.1em;
-        content:"\e614"; //.icon-paper-clip
+        content:@icon-paper-clip;
     }
     > img { display:none; }
 }
@@ -415,7 +417,7 @@ a.interwiki[href$="skin=reader"] {
         color:@link-color;
         .icon--all;
         .sup;
-        content:"\f212";  //icon-leanpub
+        content:@icon-leanpub;
     }
     &:hover::after {
         //text-decoraction:none;  //FIXME: doesnt work ...
@@ -440,7 +442,7 @@ a.interwiki[href*="Edit.jsp?page="] {
         //color:@link-color;
         //.icon--all;
         //.sup;
-        //content:"\f040";  //icon-pencil
+        //content:@icon-pencil;
     }
     &:hover::after {
         //text-decoraction:none;
@@ -455,7 +457,7 @@ a.interwiki[href*="Group.jsp?group="] {
         //color:@link-color;
         //.icon--all;
         //.sup;
-        //content:"\f0c0";  //icon-group
+        //content:@icon-group;
     }
     &:hover::after {
         //text-decoraction:none;
@@ -484,7 +486,7 @@ img {
 .img-error {
     &::before {
         .icon--all;
-        content: "\e607 ";  //icon-picture
+        content: @icon-picture;
         padding-right:.5em;
     }
     > span { padding-left:.5em;}
