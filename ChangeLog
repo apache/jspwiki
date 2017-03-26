@@ -5,7 +5,6 @@
        * JSPWIKI-1055:  Haddock Special Block Marker
          Added a few icons to improve rendering of contextual blocks in B/W.
 
-
 2017-03-14  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-36  Haddock Template
@@ -15,7 +14,6 @@
 2017-03-12  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-35  Haddock Template updates
-
 
        * ImagePlugin:  minor update to apply the css class and styles
          parameters to the image container, not to the whole table;
@@ -28,6 +26,7 @@
        * %%columns: bugfix, few more column styles
 
 2017-03-05  Harry Metske (metskem@apache.org)
+
        * 2.10.3-git-34
 
        * JSPWIKI-1044 - URL in password recovery mail is relative while it should be absolute
