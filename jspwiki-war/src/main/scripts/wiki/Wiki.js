@@ -109,11 +109,8 @@ var Wiki = {
                 wiki.resizer(element, $$(element.get("data-resize")) );
             })
 
-            //make navigation bar sticky (simulate position:sticky; )
-            //.add(".sticky", "onSticky" )
-            .add( ".sticky", function(element){
-                element.onSticky();
-            })
+            //add header scroll-up/down effect
+            .add( ".fixed-header > .header", wiki.yoyo)
 
             //highlight previous search query retreived from a cookie or referrer page
             .add( ".page-content", function(element){
@@ -180,10 +177,10 @@ var Wiki = {
 
     },
 
+
     caniuse: function( body ){
 
-        //support for flexbox is broken in IE, let's do it the hard-way
-        //console.log(navigator.appVersion);
+        //support for flexbox is broken in IE, do it the hard-way - ugh.
 
         var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
         var isIE9or10 = "ActiveXObject" in window;
@@ -241,6 +238,56 @@ var Wiki = {
         wiki.autofocus();
 
     },
+
+    /*
+    Function: yoyo ( header )
+        Add a yoyo effect to the header:  hide it on scroll down, show it again on scroll up.
+
+    Inspired by: https://github.com/WickyNilliams/headroom.js
+
+    DOM Structure:
+    (start code)
+        div[style='padding-top:nn']    => nn==height of header;  push content down
+        div.header.yoyo[.scroll-down]  => css: position=fixed
+    (end)
+
+    */
+    yoyo: function( header ){
+
+        var height = header.offsetHeight,
+            semaphore,
+            scrollY,
+            lastScrollY = 0;
+
+        //add spacer just infront of fixed element, adjust height == header (fixed elements do not take space in the dom)
+        "div".slick({styles: { paddingTop: height } }).inject(header,"before");
+
+        window.addEvent("scroll", function(){ semaphore = true; });
+
+        setInterval( function(){
+
+            if( semaphore ){
+
+                semaphore = false;
+                scrollY = window.getScroll().y;
+
+                // Limit scroll top to counteract iOS / OSX bounce.
+        		scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
+
+                if( Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */ ){
+
+                    header.ifClass( scrollY > lastScrollY && scrollY > height, "scrolling-down" );
+                    //console.log(scrollY, lastScrollY, height);
+
+
+                    lastScrollY = scrollY;
+                }
+            }
+
+        }, 250);
+
+    },
+
 
     /*
     Function: popstate
@@ -731,34 +778,6 @@ var Wiki = {
                 }
 
             }).send( "params=" + params );
-
-            /* obsolete
-            new Request.JSON({
-                //url: this.JsonUrl,
-                url: this.JsonUrl + method,
-                data: JSON.encode({     //FFS ECMASCript5; JSON.stringify() ok >IE8
-                    //jsonrpc:'2.0', //CHECK
-                    id: this.jsonid++,
-                    method: method,
-                    params: params
-                }),
-                method: "post",
-                onSuccess: function( response ){
-                    if( response.error ){
-                        throw new Error("Wiki servier rpc error: " + response.error);
-                        callback(null);
-                    } else {
-                        callback( response.result );
-                    }
-                },
-                onError: function(error){
-                    //console.log(error);
-                    throw new Error("Wiki rpc error: "+error);
-                    callback(null);
-
-                }
-            }).send();
-            */
 
         }
 

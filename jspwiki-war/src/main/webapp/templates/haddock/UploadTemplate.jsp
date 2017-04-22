@@ -38,7 +38,6 @@
 <div class="container${prefs.Layout=='fluid' ? '-fluid' : ''}  ${prefs.Orientation}">
 
   <wiki:Include page="Header.jsp" />
-  <wiki:Include page="Nav.jsp" />
 
   <c:set var="sidebar"><wiki:Variable var='sidebar' default="${prefs.Sidebar}" /></c:set>
   <c:set var="sidebar" value="${ (sidebar!='off') and (prefs.Orientation!='fav-hidden') ? 'on' : 'off' }" />

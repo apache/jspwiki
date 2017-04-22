@@ -24,6 +24,11 @@ p, .p {
   margin: 0 0 (@line-height-computed / 2);
 }
 
+ul:last-child,
+ol:last-child {
+    margin:0;
+}
+
 /*
 Headings:
     The headings h2, h3 and h4 get a {{clear:left}} so they can appear
@@ -70,6 +75,8 @@ h2,h3,h4 {
 .lead {
     font-family:@wiki-logo-font-family;
 }
+
+
 //mimicing .quote in a dialog dropdown
 .dialog .lead-item {
     .lead;
@@ -212,6 +219,7 @@ dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
 .size-20 { width: 20% !important; }
 
 //make sure images obey the size of their container
+[class*=size-],
 .imageplugin td[class*=size-] { display:inline-block; }
 [class*=size-] > img { width:100% !important; }
 
@@ -230,6 +238,7 @@ span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
     padding: @padding-base-vertical  @padding-base-horizontal;
     a {  color:inherit; }
 }
+
 .bg-success { background-color: @state-success-bg; }
 .bg-info    { background-color: @state-info-bg; }
 .bg-warning { background-color: @state-warning-bg; }
@@ -351,6 +360,26 @@ tt {
 }
 .list-nostyle { list-style: none; }
 
+.list-group.raised li { border:none; }
+
+
+//.list-group, .list-hover, .list-unstyled, .list-nostyle
+ul[class*=list-] > li > [class*="bg-"]:only-child {
+    margin: -10px -15px;  //undo the margin of the li(.list-item-group)
+    display:block;
+}
+
+.list-group-item:first-child > [class*="bg-"] {
+    border-top-left-radius: @list-group-border-radius;
+    border-top-right-radius: @list-group-border-radius;
+}
+.list-group-item:last-child > [class*="bg-"] {
+    border-bottom-left-radius: @list-group-border-radius;
+    border-bottom-right-radius: @list-group-border-radius;
+}
+
+
+
 .indent-1 { margin-left: 40px !important; }
 .indent-2 { margin-left: 80px !important; }
 .indent-3 { margin-left: 120px !important; }
@@ -374,7 +403,9 @@ Links:
 
 
 //generic behavior -- why not part of bootstrap ??
-a:hover { cursor:pointer; }
+a:hover {
+    cursor:pointer;
+}
 
 //mimic :hover, for old ie cases which may not yet support :hover
 .hover { background-color:@wiki-hover; }
@@ -526,8 +557,10 @@ Section: Reusable Styles
 }
 .sub { top: 0.4em; }
 
-
-.caps { font-variant: small-caps; }
+.text-smallcaps, .caps {
+    font-variant: small-caps;
+    letter-spacing:0.1em;
+}
 
 .strike { text-decoration:line-through; }
 
@@ -605,9 +638,6 @@ blockquote:last-child { margin-bottom:0; }
 //TODO: why not use .panel iso .alert as base for these communication boxes
 .default, .success, .information, .info,  .warning, .error, .danger {
     .alert;
-    //clear:both;
-    //display:block;
-    //.clearfix;
 }
 //support inline information blocks
 span.default, span.success, span.information, span.info,  span.warning, span.error, span.danger {
@@ -616,7 +646,7 @@ span.default, span.success, span.information, span.info,  span.warning, span.err
 }
 
 .default {
-    .alert-variant(@btn-default-bg; @btn-default-border;@btn-default-color);
+    .alert-variant(@btn-default-bg; @btn-default-border; @btn-default-color);
 }
 .success            { .alert-success; }
 .info, .information { .alert-info; }
@@ -626,9 +656,6 @@ span.default, span.success, span.information, span.info,  span.warning, span.err
 //CHECKME: make sure to fill the table cell with the background color
 td .success, td .information, td .warning, td .error { margin:0; }
 //BETTER:  td > .alert { margin:0; }
-
-
-.text-smallcaps { font-variant: small-caps; }
 
 
 

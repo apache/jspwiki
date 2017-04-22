@@ -47,49 +47,18 @@ div.row
 (end)
 */
 
-// ref. http://updates.html5rocks.com/2012/08/Stick-your-landings-position-sticky-lands-in-WebKit
-/*
-Note: avoid page-bump when sticky become 'fixed', by adding a spacer with its height
+.header > .navigation {
+    background: rgba(255,255,255,.1);
+    padding: 0 @padding-base-horizontal 0 0;
+    .clearfix;
 
-(start code)
-    div.sticky(.stickyOn)
-        .. content ..
-        div.sticky-spacer[style="height:.."] //height calculated by js - same as content
-(end)
-
-*/
-.sticky {
-    display:block;
-
-    + .sticky-spacer { .hide; }
-
-    .pagename {
-        font-family:@font-family-sans-serif;
-        font-size: @wiki-logo-font-size;
-        line-height: 1;
-        .opacity(0);
-        .transition(all .5s ease);
+    /* hover menu items with transparent effect  - undo some of the bootstrap color settings */
+    .nav .open > a,
+    .nav > li > a:hover,
+    .nav > li > a:focus {
+        background-color: rgba(255,255,255,.2);
     }
-}
-
-.stickyOn {
-    top: 0;
-    z-index: 5;
-    position: fixed;
-    background: @dropdown-bg;
-    .opacity(.9);
-    .box-shadow(0 9px 12px -9px rgba(0,0,0,.175));
-
-    + .sticky-spacer { .show; }
-
-    .pagename { .opacity(1); }
-}
-
-/* make sure the anchors remains visible, even below the fixed header elements */
-.page-content > [id^="section-"]:not(#section-TOC):before {
-  display: block;
-  content: " ";
-  margin-top: -50px; //approximate size of the fixed navigation block
-  height: 50px;
-  visibility: hidden;
+    .nav > li.disabled > a {
+        color: #ddd;  /*one tint lighter then defaul #eee */
+    }
 }

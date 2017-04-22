@@ -1,3 +1,24 @@
+2017-04-22  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-38  Haddock Template updates
+
+       * Fixing some minor issues with the Image plugin ALIGN parameter
+
+       * %%magnify: add a magnifying glass to to reveal details of a cropped images.
+         Hover the mouse above the image to see the effect.
+
+       * Redesigned Header
+         The header (including the menu bar) now shifts up when you scroll down,
+         and reappears when scrolling back-up.  So you can quickly have access
+         to all the menu's and the quick search function.  Clicking the pagename
+         in the header get's you immediately back to the top of the page.
+         The menu bar has now become part of the (coloured) header section.
+
+       * Editor:
+         Improved the speed of the editor quick preview when editing large pages.
+         Updates to various editor auto-suggest dialogs.
+
+
 2017-03-18  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-37  Haddock Template

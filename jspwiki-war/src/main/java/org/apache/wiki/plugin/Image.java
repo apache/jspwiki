@@ -143,40 +143,23 @@ public class Image
         StringBuilder result = new StringBuilder();
 
         result.append( "<table border=\"0\" class=\"imageplugin\"" );
-        //if( align != null ) result.append(" align=\""+align+"\"");
-        //if( style != null ) result.append(" style=\""+style+"\"");
 
-        //
-        //  Do some magic to make sure centering also work on FireFox
-        //
-        if( align != null && align.equals("center") )
+        if( title != null )
         {
-            result.append(" style=\"margin-left: auto; margin-right: auto;\"");
+            result.append(" title=\""+title+"\"");
         }
-/*
-        if( style != null )
+
+        if( align != null )
         {
-            result.append(" style=\""+style);
-
-            // Make sure that we add a ";" to the end of the style string
-            if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
-
-            if( align != null && align.equals("center") )
+            if( align.equals("center") )
             {
-                result.append(" margin-left: auto; margin-right: auto;");
+                result.append(" style=\"margin-left: auto; margin-right: auto; text-align:center; vertical-align:middle;\"");
             }
-
-            result.append("\"");
+            else
+            {
+                result.append(" style=\"float:" + align + ";\"");
+            }
         }
-        else
-        {
-            if( align != null && align.equals("center") ) result.append(" style=\"margin-left: auto; margin-right: auto;\"");
-        }
-*/
-
-        if( title != null ) result.append(" title=\""+title+"\"");
-
-        if( align != null && !(align.equals("center")) ) result.append(" align=\""+align+"\"");
 
         result.append( ">\n" );
 
@@ -189,7 +172,11 @@ public class Image
         //so it doesn't affect the caption
         result.append( "<tr><td" );
 
-        if( cssclass != null ) result.append(" class=\""+cssclass+"\"");
+        if( cssclass != null )
+        {
+            result.append(" class=\""+cssclass+"\"");
+        }
+
         if( style != null )
         {
             result.append(" style=\""+style);

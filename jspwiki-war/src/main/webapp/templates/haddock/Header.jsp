@@ -58,7 +58,7 @@
         <c:choose>
         <c:when test="${not empty fn:substringBefore(param.page,'_blogentry_')}">${fn:replace(fn:replace(param.page,'_blogentry_',' ['),'_','#')}]</c:when>
         <c:when test="${not empty fn:substringBefore(param.page,'_comments_')}">${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}]</c:when>
-        <c:otherwise><wiki:PageName/></c:otherwise>
+        <c:otherwise><a href="#top"><wiki:PageName /></a></c:otherwise>
         </c:choose>
       </wiki:Link>
     </div>
@@ -67,5 +67,7 @@
   <div class="breadcrumb">
     <fmt:message key="header.yourtrail"/><wiki:Breadcrumbs separator="<span class='divider'></span>" />
   </div>
+
+  <wiki:Include page="Nav.jsp" />
 
 </div>

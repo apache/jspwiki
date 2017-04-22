@@ -32,15 +32,11 @@
 <c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
 
 <%-- navigation bar --%>
-<div class="row sticky">
+<div class="navigation">
 
 <ul class="nav nav-pills pull-left">
   <%-- toggle sidebar --%>
   <li id="menu"><a href="#"><!--&#x2261;-->&#9776;</a></li>
-  <li class="pagename">
-    <wiki:CheckRequestContext context='view'><a href="#top"><wiki:PageName /></a></wiki:CheckRequestContext>
-    <wiki:CheckRequestContext context='!view'><wiki:Link><wiki:PageName/></wiki:Link></wiki:CheckRequestContext>
-  </li>
 </ul>
 
 <ul class="nav nav-pills pull-right">
