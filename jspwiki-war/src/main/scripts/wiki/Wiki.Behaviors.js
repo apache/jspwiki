@@ -689,8 +689,20 @@ DOM Structure:
     })
 
 /*
+Behavior: Magnify
+    Add magnifying image glass
+
+Wiki-markup:
+    > %%magnify <img> /%
+    > [{Image src='...' class='magnify' }]
+
+*/
+    .once(".magnify img", Magnify)
+
+
+/*
 Behavior: DropCaps
-    Convert the first character of a paragraph to a large "DropCap"
+    Convert the first character of a paragraph to a large "DropCap" character
 
 >    %%dropcaps .. /%
 
@@ -757,7 +769,7 @@ wiki-slides
 
         elements
             .grab(divider.slick(), "top") //add one extra group-start-element at the top
-            .groupChildren("hr", "div.slide");
+            .groupChildren(divider, "div.slide");
 
     })
 
@@ -767,7 +779,7 @@ Behviour:  Background
     Move image to the background of a page.
     Also support additional image styles on background images.
 
-Case1 ??:
+Case1:
 div[this is the parent container]
     img.bg[src=<imageurl>]
     ...
@@ -835,13 +847,14 @@ div[this is the parent container]
                     element.inject(bg, "before");
 
             });
-            //bgBox.destroy();   //not realy needed as per default the .bg  element is hidden
+            //bgBox.destroy();   //not really needed as per default css the .bg  element is hidden
             //bgBox.parentNode.removeChild(bgBox);
         }
 
     })
-/*
 
+/*
+Behvior:  Image Caption
 
 DOM Structure
 
