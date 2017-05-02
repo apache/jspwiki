@@ -18,6 +18,7 @@
 --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page import="java.util.Properties" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.render.*" %>
@@ -75,8 +76,8 @@
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for wysiwyg editor has been rendered.
-   context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
-   context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
+   wikiContext.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
+   wikiContext.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
 
 
 %><%= pageAsHtml %><%
