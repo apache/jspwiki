@@ -1,3 +1,9 @@
+2017-05-14  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-39
+
+       * JSPWIKI-1059 - ConcurrentModificationException in SessionMonitor
+
 2017-04-22  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-38  Haddock Template updates
