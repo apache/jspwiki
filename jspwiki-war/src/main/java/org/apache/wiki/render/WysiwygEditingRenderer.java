@@ -72,94 +72,90 @@ public class WysiwygEditingRenderer
      */
     private void processChildren(Element baseElement)
     {
-        for( Iterator itr = baseElement.getChildren().iterator(); itr.hasNext(); )
+        for( Iterator< Element > itr = baseElement.getChildren().iterator(); itr.hasNext(); )
         {
-            Object childElement = itr.next();
-            if( childElement instanceof Element )
+            Element element = itr.next();
+            String elementName = element.getName().toLowerCase();
+            Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
+
+            if( elementName.equals( A_ELEMENT ) )
             {
-                Element element = (Element)childElement;
-                String elementName = element.getName().toLowerCase();
-                Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
-
-                if( elementName.equals( A_ELEMENT ) )
+                if( classAttr != null )
                 {
-                    if( classAttr != null )
+                    String classValue = classAttr.getValue();
+                    Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
+
+                    XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
+
+                    // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
+                    // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
+                    String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                    String editPageLinkUrl = wikiConfig.getEditJspPage();
+
+                    //if( classValue.equals( WIKIPAGE )
+                    //    || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
+                    if( //classValue.equals( WIKIPAGE ) &&
+                        ( hrefAttr != null )
+                    &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
                     {
-                        String classValue = classAttr.getValue();
-                        Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
+                        // Remove the leading url string so that users will only see the
+                        // wikipage's name when editing an existing wiki link.
+                        // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
 
-                        XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
+                        String newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
 
-                        // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
-                        // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
-                        String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
-                        String editPageLinkUrl = wikiConfig.getEditJspPage();
+                        // Convert "This%20Pagename%20Has%20Spaces" to "This Pagename Has Spaces"
+                        newHref = m_context.getEngine().decodeName( newHref );
 
-                        //if( classValue.equals( WIKIPAGE )
-                        //    || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
-                        if( //classValue.equals( WIKIPAGE ) &&
-                            ( hrefAttr != null )
-                        &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
-                        {
-                            // Remove the leading url string so that users will only see the
-                            // wikipage's name when editing an existing wiki link.
-                            // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
+                        // Handle links with section anchors.
+                        // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
+                        // to this wiki string: "TargetPage#Heading2".
+                        hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
 
-                            String newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
-
-                            // Convert "This%20Pagename%20Has%20Spaces" to "This Pagename Has Spaces"
-                            newHref = m_context.getEngine().decodeName( newHref );
-
-                            // Handle links with section anchors.
-                            // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
-                            // to this wiki string: "TargetPage#Heading2".
-                            hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
-
-                        }
-                        else if( //classValue.equals( EDITPAGE ) &&
-                                ( hrefAttr != null )
-                             && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
-                        {
-
-                            Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
-                            if( titleAttr != null )
-                            {
-                                    // remove the title since we don't want to eventually save the default undefined page title.
-                                    titleAttr.detach();
-                            }
-
-                            String newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
-                            newHref = m_context.getEngine().decodeName( newHref );
-
-                            hrefAttr.setValue( newHref );
-                        }
-
-                        else if( classValue.equals( HASHLINK ) )
-                        {
-                            itr.remove(); //remove element without disturbing the ongoing iteration
-                            continue;  //take next iteration of the for loop
-                        }
                     }
-                } // end of check for "a" element
-
-                else if ( elementName.equals( IMG_ELEMENT ) )
-                {
-                    if( classAttr != null )
+                    else if( //classValue.equals( EDITPAGE ) &&
+                            ( hrefAttr != null )
+                         && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                     {
-                        String classValue = classAttr.getValue();
 
-                        if( classValue.equals( OUTLINK ) )
+                        Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
+                        if( titleAttr != null )
                         {
-                            itr.remove(); //remove element without disturbing the ongoing iteration
-                            continue; //take next iteration of the for loop
+                                // remove the title since we don't want to eventually save the default undefined page title.
+                                titleAttr.detach();
                         }
 
+                        String newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
+                        newHref = m_context.getEngine().decodeName( newHref );
+
+                        hrefAttr.setValue( newHref );
+                    }
+
+                    else if( classValue.equals( HASHLINK ) )
+                    {
+                        itr.remove(); //remove element without disturbing the ongoing iteration
+                        continue;  //take next iteration of the for loop
+                    }
+                }
+            } // end of check for "a" element
+
+            else if ( elementName.equals( IMG_ELEMENT ) )
+            {
+                if( classAttr != null )
+                {
+                    String classValue = classAttr.getValue();
+
+                    if( classValue.equals( OUTLINK ) )
+                    {
+                        itr.remove(); //remove element without disturbing the ongoing iteration
+                        continue; //take next iteration of the for loop
                     }
 
                 }
 
-                processChildren( element );
             }
+
+            processChildren( element );
         }
     }
 
