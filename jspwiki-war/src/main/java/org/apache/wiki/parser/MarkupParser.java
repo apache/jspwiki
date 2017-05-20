@@ -182,6 +182,11 @@ public abstract class MarkupParser
         m_parseAccessRules = false;
     }
 
+    public boolean isParseAccessRules()
+    {
+        return m_parseAccessRules;
+    }
+
     /**
      *  Use this to turn on or off image inlining.
      *  @param toggle If true, images are inlined (as per set in jspwiki.properties)
