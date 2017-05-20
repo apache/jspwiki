@@ -339,24 +339,19 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         m_plainUris           = getLocalBooleanProperty( m_context,
-                                                         props,
                                                          PROP_PLAINURIS,
                                                          m_plainUris );
         m_useOutlinkImage     = getLocalBooleanProperty( m_context,
-                                                         props,
                                                          PROP_USEOUTLINKIMAGE,
                                                          m_useOutlinkImage );
         m_useAttachmentImage  = getLocalBooleanProperty( m_context,
-                                                         props,
                                                          PROP_USEATTACHMENTIMAGE,
                                                          m_useAttachmentImage );
         m_allowHTML           = getLocalBooleanProperty( m_context,
-                                                         props,
                                                          MarkupParser.PROP_ALLOWHTML,
                                                          m_allowHTML );
 
         m_useRelNofollow      = getLocalBooleanProperty( m_context,
-                                                         props,
                                                          PROP_USERELNOFOLLOW,
                                                          m_useRelNofollow );
 
@@ -374,13 +369,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  it will then check the given properties.
      *
      *  @param context WikiContext to check first
-     *  @param props   Properties to check next
      *  @param key     What key are we searching for?
      *  @param defValue Default value for the boolean
      *  @return True or false
      */
     private static boolean getLocalBooleanProperty( WikiContext context,
-                                                    Properties  props,
                                                     String      key,
                                                     boolean     defValue )
     {
@@ -391,7 +384,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             return TextUtil.isPositive( (String) bool );
         }
 
-        return TextUtil.getBooleanProperty( props, key, defValue );
+        return TextUtil.getBooleanProperty( context.getEngine().getWikiProperties(), key, defValue );
     }
 
     /**
