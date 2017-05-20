@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -150,7 +150,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 
     private WikiPageProvider m_provider;
 
-    protected HashMap<String, PageLock> m_pageLocks = new HashMap<String, PageLock>();
+    protected ConcurrentHashMap<String, PageLock> m_pageLocks = new ConcurrentHashMap<String, PageLock>();
 
     private WikiEngine m_engine;
 
@@ -325,22 +325,20 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             m_reaper.start();
         }
 
-        synchronized (m_pageLocks) {
-            fireEvent(WikiPageEvent.PAGE_LOCK, page.getName()); // prior to or after actual lock?
-            lock = m_pageLocks.get(page.getName());
+        fireEvent(WikiPageEvent.PAGE_LOCK, page.getName()); // prior to or after actual lock?
+        lock = m_pageLocks.get(page.getName());
 
-            if (lock == null) {
-                //
-                //  Lock is available, so make a lock.
-                //
-                Date d = new Date();
-                lock = new PageLock(page, user, d, new Date(d.getTime() + m_expiryTime * 60 * 1000L));
-                m_pageLocks.put(page.getName(), lock);
-                log.debug("Locked page " + page.getName() + " for " + user);
-            } else {
-                log.debug("Page " + page.getName() + " already locked by " + lock.getLocker());
-                lock = null; // Nothing to return
-            }
+        if (lock == null) {
+            //
+            //  Lock is available, so make a lock.
+            //
+            Date d = new Date();
+            lock = new PageLock(page, user, d, new Date(d.getTime() + m_expiryTime * 60 * 1000L));
+            m_pageLocks.put(page.getName(), lock);
+            log.debug("Locked page " + page.getName() + " for " + user);
+        } else {
+            log.debug("Page " + page.getName() + " already locked by " + lock.getLocker());
+            lock = null; // Nothing to return
         }
 
         return lock;
@@ -356,10 +354,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             return;
         }
 
-        synchronized (m_pageLocks) {
-            m_pageLocks.remove(lock.getPage());
-            log.debug("Unlocked page " + lock.getPage());
-        }
+        m_pageLocks.remove(lock.getPage());
+        log.debug("Unlocked page " + lock.getPage());
 
         fireEvent(WikiPageEvent.PAGE_UNLOCK, lock.getPage());
     }
@@ -372,13 +368,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @return Current lock, or null, if there is no lock
      */
     public PageLock getCurrentLock(WikiPage page) {
-        PageLock lock = null;
-
-        synchronized (m_pageLocks) {
-            lock = m_pageLocks.get(page.getName());
-        }
-
-        return lock;
+        return m_pageLocks.get(page.getName());
     }
 
     /**
@@ -392,10 +382,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
     public List<PageLock> getActiveLocks() {
         ArrayList<PageLock> result = new ArrayList<PageLock>();
 
-        synchronized (m_pageLocks) {
-            for (PageLock lock : m_pageLocks.values()) {
-                result.add(lock);
-            }
+        for (PageLock lock : m_pageLocks.values()) {
+            result.add(lock);
         }
 
         return result;
@@ -566,20 +554,18 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         }
 
         public void backgroundTask() throws Exception {
-            synchronized (m_pageLocks) {
-                Collection<PageLock> entries = m_pageLocks.values();
-                Date now = new Date();
-                for (Iterator<PageLock> i = entries.iterator(); i.hasNext(); ) {
-                    PageLock p = i.next();
+            Collection<PageLock> entries = m_pageLocks.values();
+            Date now = new Date();
+            for (Iterator<PageLock> i = entries.iterator(); i.hasNext(); ) {
+                PageLock p = i.next();
 
-                    if (now.after(p.getExpiryTime())) {
-                        i.remove();
+                if (now.after(p.getExpiryTime())) {
+                    i.remove();
 
-                        log.debug("Reaped lock: " + p.getPage() +
-                                " by " + p.getLocker() +
-                                ", acquired " + p.getAcquisitionTime() +
-                                ", and expired " + p.getExpiryTime());
-                    }
+                    log.debug("Reaped lock: " + p.getPage() +
+                              " by " + p.getLocker() +
+                              ", acquired " + p.getAcquisitionTime() +
+                              ", and expired " + p.getExpiryTime());
                 }
             }
         }
