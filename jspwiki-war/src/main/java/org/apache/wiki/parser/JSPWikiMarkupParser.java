@@ -97,6 +97,22 @@ public class JSPWikiMarkupParser extends MarkupParser {
       * for interwiki page links. The value is "interwiki". */
     public static final String CLASS_INTERWIKI = "interwiki";
 
+    /** The value for anchor element <tt>class</tt> attributes when used
+      * for footnote links. The value is "footnote". */
+    public static final String CLASS_FOOTNOTE = "footnote";
+
+    /** The value for anchor element <tt>class</tt> attributes when used
+      * for footnote links. The value is "footnote". */
+    public static final String CLASS_FOOTNOTE_REF = "footnoteref";
+
+    /** The value for anchor element <tt>class</tt> attributes when used
+      * for external links. The value is "external". */
+    public static final String CLASS_EXTERNAL = "external";
+
+    /** The value for anchor element <tt>class</tt> attributes when used
+      * for attachments. The value is "attachment". */
+    public static final String CLASS_ATTACHMENT = "attachment";
+
     protected static final int              READ          = 0;
     protected static final int              EDIT          = 1;
     protected static final int              EMPTY         = 2;  // Empty message
@@ -223,14 +239,14 @@ public class JSPWikiMarkupParser extends MarkupParser {
        CLASS_WIKIPAGE,
        CLASS_EDITPAGE,
        "",
-       "footnote",
-       "footnoteref",
+       CLASS_FOOTNOTE,
+       CLASS_FOOTNOTE_REF,
        "",
-       "external",
+       CLASS_EXTERNAL,
        CLASS_INTERWIKI,
-       "external",
+       CLASS_EXTERNAL,
        CLASS_WIKIPAGE,
-       "attachment"
+       CLASS_ATTACHMENT
     };
 
 
@@ -517,7 +533,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case LOCAL:
-                el = new Element("a").setAttribute("class","footnote");
+                el = new Element("a").setAttribute("class",CLASS_FOOTNOTE);
                 el.setAttribute("name", "ref-"+m_context.getName()+"-"+link.substring(1));
                 el.addContent("["+text+"]");
                 break;
