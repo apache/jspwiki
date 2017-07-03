@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 */
 package org.apache.wiki.parser;
 
@@ -74,7 +74,7 @@ public abstract class MarkupParser
     /**
      *  Constructs a MarkupParser.  The subclass must call this constructor
      *  to set up the necessary bits and pieces.
-     *  
+     *
      *  @param context The WikiContext.
      *  @param in The reader from which we are reading the bytes from.
      */
@@ -163,7 +163,7 @@ public abstract class MarkupParser
     /**
      *  Adds a HeadingListener to the parser chain.  It will be called whenever
      *  a parsed header is found.
-     *  
+     *
      *  @param listener The listener to add.
      */
     public void addHeadingListener( HeadingListener listener )
@@ -197,6 +197,10 @@ public abstract class MarkupParser
     public void enableImageInlining( boolean toggle )
     {
         m_inlineImages = toggle;
+    }
+
+    public boolean isImageInlining() {
+        return m_inlineImages;
     }
 
     /**
@@ -236,7 +240,7 @@ public abstract class MarkupParser
     /**
      *  Push back any character to the current input.  Does not
      *  push back a read EOF, though.
-     *  
+     *
      *  @param c Character to push back.
      *  @throws IOException In case the character cannot be pushed back.
      */
@@ -249,7 +253,7 @@ public abstract class MarkupParser
             m_in.unread( c );
         }
     }
-    
+
     /**
      *  Writes HTML for error message.  Does not add it to the document, you
      *  have to do it yourself.
