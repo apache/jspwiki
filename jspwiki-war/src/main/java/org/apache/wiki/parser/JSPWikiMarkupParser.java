@@ -81,9 +81,6 @@ import org.jdom2.Verifier;
  */
 public class JSPWikiMarkupParser extends MarkupParser {
 
-    /** Name of the outlink image; relative path to the JSPWiki directory. */
-    private static final String OUTLINK_IMAGE = "images/out.png";
-
     /** The value for anchor element <tt>class</tt> attributes when used
       * for wiki page (normal) links. The value is "wikipage". */
     public static final String CLASS_WIKIPAGE = "wikipage";
@@ -164,9 +161,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /** If true, all hyperlinks are translated as well, regardless whether they
         are surrounded by brackets. */
     public static final String     PROP_PLAINURIS        = "jspwiki.translatorReader.plainUris";
-
-    /** If true, all outward links (external links) have a small link image appended. */
-    public static final String     PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
 
     /** If true, all outward attachment info links have a small link image appended. */
     public static final String     PROP_USEATTACHMENTIMAGE = "jspwiki.translatorReader.useAttachmentImage";
