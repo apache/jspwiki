@@ -146,9 +146,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private boolean        m_isOpenParagraph = false;
 
-    /** Keeps image regexp Patterns */
-    private List<Pattern>  m_inlineImagePatterns;
-
     /** Parser for extended link functionality. */
     private LinkParser     m_linkParser = new LinkParser();
 
@@ -230,8 +227,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
         "im:", "mtqp", "smb:" };
 
-    private static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
-
     private static final String CAMELCASE_PATTERN     = "JSPWikiMarkupParser.camelCasePattern";
 
     private static final String[] CLASS_TYPES =
@@ -274,44 +269,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     // FIXME: parsers should be pooled for better performance.
-    @SuppressWarnings("unchecked")
     private void initialize()
     {
-        PatternCompiler compiler         = new GlobCompiler();
-        List<Pattern>   compiledpatterns;
-
-        //
-        //  We cache compiled patterns in the engine, since their creation is
-        //  really expensive
-        //
-        compiledpatterns = (List<Pattern>)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
-
-        if( compiledpatterns == null )
-        {
-            compiledpatterns = new ArrayList<Pattern>(20);
-            Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
-
-            //
-            //  Make them into Regexp Patterns.  Unknown patterns
-            //  are ignored.
-            //
-            for( Iterator< String > i = ptrns.iterator(); i.hasNext(); )
-            {
-                try
-                {
-                    compiledpatterns.add( compiler.compile( i.next(),
-                                                            GlobCompiler.DEFAULT_MASK|GlobCompiler.READ_ONLY_MASK ) );
-                }
-                catch( MalformedPatternException e )
-                {
-                    log.error("Malformed pattern in properties: ", e );
-                }
-            }
-
-            m_engine.setAttribute( INLINE_IMAGE_PATTERNS, compiledpatterns );
-        }
-
-        m_inlineImagePatterns = Collections.unmodifiableList(compiledpatterns);
+        initInlineImagePatterns();
 
         m_camelCasePattern = (Pattern) m_engine.getAttribute( CAMELCASE_PATTERN );
         if( m_camelCasePattern == null )

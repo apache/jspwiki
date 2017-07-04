@@ -23,7 +23,16 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -52,9 +61,13 @@ public abstract class MarkupParser
     protected ArrayList<HeadingListener>         m_headingListenerChain     = new ArrayList<HeadingListener>();
     protected ArrayList<StringTransmutator>      m_linkMutators             = new ArrayList<StringTransmutator>();
 
-    protected boolean        m_inlineImages             = true;
-
+    protected boolean        m_inlineImages     = true;
     protected boolean        m_parseAccessRules = true;
+    /** Keeps image regexp Patterns */
+    protected List< Pattern > m_inlineImagePatterns = null;
+
+    private static Logger log = Logger.getLogger( MarkupParser.class );
+
     /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
         this is a VERY dangerous option to set - never turn this on in a publicly
         allowable Wiki, unless you are absolutely certain of what you're doing. */
@@ -70,6 +83,8 @@ public abstract class MarkupParser
 
     /** Lists all punctuation characters allowed in page names. */
     public    static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+
+    private static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
 
     /**
      *  Constructs a MarkupParser.  The subclass must call this constructor
@@ -201,6 +216,44 @@ public abstract class MarkupParser
 
     public boolean isImageInlining() {
         return m_inlineImages;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected final void initInlineImagePatterns() {
+		PatternCompiler compiler = new GlobCompiler();
+        //
+        //  We cache compiled patterns in the engine, since their creation is really expensive
+        //
+        List< Pattern > compiledpatterns = ( List< Pattern > )m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
+
+        if( compiledpatterns == null ) {
+            compiledpatterns = new ArrayList< Pattern >( 20 );
+            Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
+
+            //
+            //  Make them into Regexp Patterns.  Unknown patterns are ignored.
+            //
+            for( Iterator< String > i = ptrns.iterator(); i.hasNext(); ) {
+            	String pattern = i.next();
+                try {
+                    compiledpatterns.add( compiler.compile( pattern,
+                                                            GlobCompiler.DEFAULT_MASK | GlobCompiler.READ_ONLY_MASK ) );
+                } catch( MalformedPatternException e ) {
+                    log.error( "Malformed pattern [" + pattern + "] in properties: ", e );
+                }
+            }
+
+            m_engine.setAttribute( INLINE_IMAGE_PATTERNS, compiledpatterns );
+        }
+
+        m_inlineImagePatterns = Collections.unmodifiableList( compiledpatterns );
+	}
+
+    public List< Pattern > getInlineImagePatterns() {
+    	if( m_inlineImagePatterns == null ) {
+    		initInlineImagePatterns();
+    	}
+    	return m_inlineImagePatterns;
     }
 
     /**
