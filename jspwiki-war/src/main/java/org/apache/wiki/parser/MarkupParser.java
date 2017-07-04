@@ -78,13 +78,18 @@ public abstract class MarkupParser
     /** Lists all punctuation characters allowed in WikiMarkup. These
         will not be cleaned away. This is for compatibility for older versions
         of JSPWiki. */
-
-    protected static final String           LEGACY_CHARS_ALLOWED      = "._";
+    protected static final String LEGACY_CHARS_ALLOWED      = "._";
 
     /** Lists all punctuation characters allowed in page names. */
-    public    static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+    public    static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
 
-    private static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
+    /** Name of the outlink image; relative path to the JSPWiki directory. */
+    public    static final String OUTLINK_IMAGE = "images/out.png";
+
+    /** If true, all outward links (external links) have a small link image appended. */
+    public    static final String PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
+
+    private   static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
 
     /**
      *  Constructs a MarkupParser.  The subclass must call this constructor
