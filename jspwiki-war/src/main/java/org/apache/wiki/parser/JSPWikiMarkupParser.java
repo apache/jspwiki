@@ -55,8 +55,6 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -1529,7 +1527,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //
                 //  Internal wiki link, but is it an attachment link?
                 //
-                String attachment = findAttachment( linkref );
+                String attachment = m_engine.getAttachmentManager().getAttachmentInfoName( m_context, linkref );
                 if( attachment != null )
                 {
                     callMutatorChain( m_attachmentLinkMutatorChain, attachment );
@@ -1595,33 +1593,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         return m_currentElement;
-    }
-
-    private String findAttachment( String linktext )
-    {
-        AttachmentManager mgr = m_engine.getAttachmentManager();
-        Attachment att = null;
-
-        try
-        {
-            att = mgr.getAttachmentInfo( m_context, linktext );
-        }
-        catch( ProviderException e )
-        {
-            log.warn("Finding attachments failed: ",e);
-            return null;
-        }
-
-        if( att != null )
-        {
-            return att.getName();
-        }
-        else if( linktext.indexOf('/') != -1 )
-        {
-            return linktext;
-        }
-
-        return null;
     }
 
     /**
