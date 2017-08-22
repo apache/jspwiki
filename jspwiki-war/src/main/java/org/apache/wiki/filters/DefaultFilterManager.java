@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.filters;
 
@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -42,6 +44,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PriorityList;
 import org.apache.wiki.util.XmlUtil;
@@ -57,22 +60,22 @@ import org.jdom2.Element;
  *    <li>Before the page is saved.
  *    <li>After the page has been saved.
  *  </ul>
- * 
+ *
  *  Using page filters allows you to modify the page data on-the-fly, and do things like
  *  adding your own custom WikiMarkup.
- * 
+ *
  *  <p>
  *  The initial page filter configuration is kept in a file called "filters.xml".  The
  *  format is really very simple:
  *  <pre>
  *  <?xml version="1.0"?>
- * 
+ *
  *  <pagefilters>
  *
  *    <filter>
  *      <class>org.apache.wiki.filters.ProfanityFilter</class>
  *    </filter>
- *  
+ *
  *    <filter>
  *      <class>org.apache.wiki.filters.TestFilter</class>
  *
@@ -94,7 +97,7 @@ import org.jdom2.Element;
  *  the PageFilterConfiguration page in the JSPWiki distribution.
  */
 public class DefaultFilterManager extends ModuleManager implements FilterManager {
-	
+
     private PriorityList< PageFilter > m_pageFilters = new PriorityList< PageFilter >();
 
     private Map< String, PageFilterInfo > m_filterClassMap = new HashMap< String, PageFilterInfo >();
@@ -103,7 +106,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Constructs a new FilterManager object.
-     *  
+     *
      *  @param engine The WikiEngine which owns the FilterManager
      *  @param props Properties to initialize the FilterManager with
      *  @throws WikiException If something goes wrong.
@@ -143,14 +146,14 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
         try
         {
             PageFilterInfo info = m_filterClassMap.get( className );
-            
+
             if( info != null && !checkCompatibility(info) )
             {
                 String msg = "Filter '"+info.getName()+"' not compatible with this version of JSPWiki";
                 log.warn(msg);
                 return;
             }
-            
+
             int priority = 0; // FIXME: Currently fixed.
 
             Class< ? > cl = ClassUtil.findClass( "org.apache.wiki.filters", className );
@@ -187,7 +190,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Initializes the filters from an XML file.
-     *  
+     *
      *  @param props The list of properties.  Typically jspwiki.properties
      *  @throws WikiException If something goes wrong.
      */
@@ -197,7 +200,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
         try {
             registerFilters();
-            
+
             if( m_engine.getServletContext() != null ) {
                 log.debug( "Attempting to locate " + DEFAULT_XMLFILE + " from servlet context." );
                 if( xmlFile == null ) {
@@ -224,12 +227,12 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
             }
 
             if( xmlStream == null ) {
-                log.info( "Cannot find property file for filters (this is okay, expected to find it as: '" + 
-                           ( xmlFile == null ? DEFAULT_XMLFILE : xmlFile ) + 
+                log.info( "Cannot find property file for filters (this is okay, expected to find it as: '" +
+                           ( xmlFile == null ? DEFAULT_XMLFILE : xmlFile ) +
                           "')" );
                 return;
             }
-            
+
             parseConfigFile( xmlStream );
         } catch( IOException e ) {
             log.error("Unable to read property file", e);
@@ -240,7 +243,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Parses the XML filters configuration file.
-     *  
+     *
      * @param xmlStream stream to parse
      */
     private void parseConfigFile( InputStream xmlStream ) {
@@ -249,7 +252,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
             Element f = i.next();
             String filterClass = f.getChildText( "class" );
             Properties props = new Properties();
-            
+
             List< Element > params = f.getChildren( "param" );
             for( Iterator< Element > par = params.iterator(); par.hasNext(); ) {
                 Element p = par.next();
@@ -259,16 +262,16 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
             initPageFilter( filterClass, props );
         }
     }
-    
- 
+
+
     /**
      *  Does the filtering before a translation.
-     *  
+     *
      *  @param context The WikiContext
      *  @param pageData WikiMarkup data to be passed through the preTranslate chain.
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified WikiMarkup
-     *  
+     *
      *  @see PageFilter#preTranslate(WikiContext, String)
      */
     public String doPreTranslateFiltering( WikiContext context, String pageData )
@@ -288,7 +291,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Does the filtering after HTML translation.
-     *  
+     *
      *  @param context The WikiContext
      *  @param htmlData HTML data to be passed through the postTranslate
      *  @throws FilterException If any of the filters throws a FilterException
@@ -312,7 +315,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Does the filtering before a save to the page repository.
-     *  
+     *
      *  @param context The WikiContext
      *  @param pageData WikiMarkup data to be passed through the preSave chain.
      *  @throws FilterException If any of the filters throws a FilterException
@@ -336,11 +339,11 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Does the page filtering after the page has been saved.
-     * 
+     *
      *  @param context The WikiContext
      *  @param pageData WikiMarkup data to be passed through the postSave chain.
      *  @throws FilterException If any of the filters throws a FilterException
-     * 
+     *
      *  @see PageFilter#postSave(WikiContext, String)
      */
     public void doPostSaveFiltering( WikiContext context, String pageData )
@@ -360,7 +363,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
     /**
      *  Returns the list of filters currently installed.  Note that this is not
      *  a copy, but the actual list.  So be careful with it.
-     *  
+     *
      *  @return A List of PageFilter objects
      */
     public List< PageFilter > getFilterList()
@@ -369,7 +372,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
     }
 
     /**
-     * 
+     *
      * Notifies PageFilters to clean up their ressources.
      *
      */
@@ -378,16 +381,16 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
         for( PageFilter f : m_pageFilters )
         {
             f.destroy( m_engine );
-        }        
+        }
     }
-    
+
     // events processing .......................................................
 
     /**
      *  Fires a WikiPageEvent of the provided type and WikiContext.
      *  Invalid WikiPageEvent types are ignored.
      *
-     * @see org.apache.wiki.event.WikiPageEvent 
+     * @see org.apache.wiki.event.WikiPageEvent
      * @param type      the WikiPageEvent type to be fired.
      * @param context   the WikiContext of the event.
      */
@@ -404,16 +407,11 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  {@inheritDoc}
      */
     @Override
-    public Collection modules()
-    {
-        ArrayList< PageFilter > modules = new ArrayList< PageFilter >();
-        
-        modules.addAll( m_pageFilters );
-        
-        return modules;
+    public Collection modules() {
+        return modules( m_filterClassMap.values().iterator() );
     }
-    
-    
+
+
     /**
      *  {@inheritDoc}
      */
@@ -447,7 +445,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
 
     /**
      *  Stores information about the filters.
-     * 
+     *
      *  @since 2.6.1
      */
     private static final class PageFilterInfo extends WikiModuleInfo
@@ -456,14 +454,14 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
         {
             super(name);
         }
-        
+
         protected static PageFilterInfo newInstance(String className, Element pluginEl)
         {
             if( className == null || className.length() == 0 ) return null;
             PageFilterInfo info = new PageFilterInfo( className );
 
             info.initializeFromXML( pluginEl );
-            return info;        
+            return info;
         }
     }
 }
