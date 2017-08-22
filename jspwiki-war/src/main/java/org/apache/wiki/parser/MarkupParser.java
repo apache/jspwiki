@@ -91,6 +91,52 @@ public abstract class MarkupParser
 
     private   static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
 
+    /** If set to "true", all external links are tagged with 'rel="nofollow"' */
+    public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
+
+    /** The value for anchor element <tt>class</tt> attributes when used
+     * for wiki page (normal) links. The value is "wikipage". */
+   public static final String CLASS_WIKIPAGE = "wikipage";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for edit page links. The value is "createpage". */
+   public static final String CLASS_EDITPAGE = "createpage";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for interwiki page links. The value is "interwiki". */
+   public static final String CLASS_INTERWIKI = "interwiki";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for footnote links. The value is "footnote". */
+   public static final String CLASS_FOOTNOTE = "footnote";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for footnote links. The value is "footnote". */
+   public static final String CLASS_FOOTNOTE_REF = "footnoteref";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for external links. The value is "external". */
+   public static final String CLASS_EXTERNAL = "external";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for attachments. The value is "attachment". */
+   public static final String CLASS_ATTACHMENT = "attachment";
+
+   public static final String[] CLASS_TYPES =
+   {
+      CLASS_WIKIPAGE,
+      CLASS_EDITPAGE,
+      "",
+      CLASS_FOOTNOTE,
+      CLASS_FOOTNOTE_REF,
+      "",
+      CLASS_EXTERNAL,
+      CLASS_INTERWIKI,
+      CLASS_EXTERNAL,
+      CLASS_WIKIPAGE,
+      CLASS_ATTACHMENT
+   };
+
     /**
      *  Constructs a MarkupParser.  The subclass must call this constructor
      *  to set up the necessary bits and pieces.
