@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki;
 
@@ -122,13 +122,13 @@ public class WikiEngine
 
     /** Stores properties. */
     private Properties       m_properties;
-    
+
     /** The default inlining pattern.  Currently "*.png" */
     public static final String DEFAULT_INLINEPATTERN = "*.png";
 
     /** Property for application name */
     public static final String PROP_APPNAME = "jspwiki.applicationName";
-    
+
     /** This property defines the inline image pattern.  It's current value is {@value} */
     public static final String PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
 
@@ -140,10 +140,10 @@ public class WikiEngine
 
     /** Define the used encoding.  Currently supported are ISO-8859-1 and UTF-8 */
     public static final String PROP_ENCODING     = "jspwiki.encoding";
-    
+
     /** Do not use encoding in WikiJSPFilter, default is false for most servers.
     Double negative, cause for most servers you don't need the property */
-    public static final String PROP_NO_FILTER_ENCODING     = "jspwiki.nofilterencoding";    
+    public static final String PROP_NO_FILTER_ENCODING     = "jspwiki.nofilterencoding";
 
     /** The name for the property which allows you to set the current reference
      *  style.  The value is {@value}.
@@ -178,14 +178,14 @@ public class WikiEngine
 
     /** Compares pages by name */
     private PageSorter     m_pageSorter = null;
-    
+
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
 
     /** The name of the property containing the ACLManager implementing class.
      *  The value is {@value}. */
     public static final String PROP_ACL_MANAGER_IMPL = "jspwiki.aclManager";
-    
+
     /** If this property is set to false, we don't allow the creation of empty pages */
     public static final String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
@@ -419,7 +419,7 @@ public class WikiEngine
             context.setAttribute( ATTR_WIKIENGINE,  this );
             m_rootPath = context.getRealPath("/");
         }
-        
+
         try
         {
             //
@@ -534,7 +534,7 @@ public class WikiEngine
 
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
-        
+
         // Initialize the page name comparator now as it may be used while
         // initializing other modules
         initPageSorter( props );
@@ -552,7 +552,7 @@ public class WikiEngine
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
-            
+
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
@@ -591,15 +591,15 @@ public class WikiEngine
             m_templateManager   = (TemplateManager)
                 ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
 
-            m_adminBeanManager = (AdminBeanManager)
-                ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
-
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event listeners,
             // it must be called lastly, so that all object references in the engine
             // are availabe to the initialize() method
             m_filterManager     = (FilterManager)
                 ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+
+            m_adminBeanManager = (AdminBeanManager)
+                ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
 
             // RenderingManager depends on FilterManager events.
 
@@ -647,10 +647,10 @@ public class WikiEngine
         {
             // Final catch-all for everything
             log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
-            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + 
+            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() +
                                      "; please check log files for better information.", e );
         }
-        
+
         //
         //  Initialize the good-to-have-but-not-fatal modules.
         //
@@ -785,7 +785,7 @@ public class WikiEngine
     public String getBaseURL()
     {
     	String contextPath = m_servletContext.getContextPath();
-    	
+
         return contextPath;
     }
 
@@ -831,7 +831,7 @@ public class WikiEngine
      *  @see #getURL(String, String, String, boolean)
      *  @see WikiContext#getURL(String, String)
      *  @deprecated
-     *  
+     *
      *  @param pageName The name of the page.
      *  @return An URI.
      *
@@ -1726,14 +1726,14 @@ public class WikiEngine
         }
 
         // Check if creation of empty pages is allowed; bail if not
-        boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, 
-                                                          PROP_ALLOW_CREATION_OF_EMPTY_PAGES, 
+        boolean allowEmpty = TextUtil.getBooleanProperty( m_properties,
+                                                          PROP_ALLOW_CREATION_OF_EMPTY_PAGES,
                                                           false );
-        if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) )  
+        if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) )
         {
             return;
         }
-        
+
         // Create approval workflow for page save; add the diffed, proposed
         // and old text versions as Facts for the approver (if approval is required)
         // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
@@ -1990,9 +1990,9 @@ public class WikiEngine
 
     /**
      *  Returns the current plugin manager.
-     *  
+     *
      *  In 2.10 the PluginManager will be returned instead of the generic
-     *  
+     *
      *  @since 1.6.1
      *  @return The current PluginManager instance
      */
@@ -2492,7 +2492,7 @@ public class WikiEngine
     {
         return WatchDog.getCurrentWatchDog(this);
     }
-    
+
     /**
      * Initialize the page name comparator.
      */
@@ -2501,10 +2501,10 @@ public class WikiEngine
         m_pageSorter = new PageSorter();
         m_pageSorter.initialize( props );
     }
-    
+
     /**
      * Get this engine's page name comparator.
-     * 
+     *
      * @return the PageSorter used to sort pages by name in this engine
      */
     public PageSorter getPageSorter()
