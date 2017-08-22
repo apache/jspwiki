@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.ui.admin;
 
@@ -37,25 +37,25 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.AdminBeanManager;
-import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.ui.admin.beans.CoreBean;
+import org.apache.wiki.ui.admin.beans.FilterBean;
 import org.apache.wiki.ui.admin.beans.PluginBean;
 import org.apache.wiki.ui.admin.beans.SearchManagerBean;
 import org.apache.wiki.ui.admin.beans.UserBean;
 
 
 /**
- *  Provides a manager class for all AdminBeans within JSPWiki.  This class also manages registration for any 
+ *  Provides a manager class for all AdminBeans within JSPWiki.  This class also manages registration for any
  *  AdminBean which is also a JMX bean.
  *
  *  @since  2.5.52
  */
 public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanManager {
-	
+
     private WikiEngine m_engine;
     private ArrayList< AdminBean >  m_allBeans;
 
@@ -102,7 +102,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 
 
     /**
-     *  Register an AdminBean.  If the AdminBean is also a JMX MBean, it also gets registered to the MBeanServer 
+     *  Register an AdminBean.  If the AdminBean is also a JMX MBean, it also gets registered to the MBeanServer
      *  we've found.
      *
      *  @param ab AdminBean to register.
@@ -147,9 +147,9 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
      *
      *  @param c Collection of WikiModuleInfo instances
      */
-    private void registerBeans( Collection c ) {
-        for( Iterator i = c.iterator(); i.hasNext(); ) {
-            String abname = ((WikiModuleInfo)i.next()).getAdminBeanClass();
+    private void registerBeans( Collection< WikiModuleInfo > c ) {
+        for( Iterator< WikiModuleInfo > i = c.iterator(); i.hasNext(); ) {
+            String abname = i.next().getAdminBeanClass();
 
             try {
                 if( abname != null && abname.length() > 0 ) {
@@ -173,16 +173,17 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         m_allBeans = new ArrayList<AdminBean>();
 
         try {
-            registerAdminBean( new CoreBean(m_engine) );
-            registerAdminBean( new UserBean(m_engine) );
-            registerAdminBean( new SearchManagerBean(m_engine) );
-            registerAdminBean( new PluginBean(m_engine) );
+            registerAdminBean( new CoreBean( m_engine ) );
+            registerAdminBean( new UserBean( m_engine ) );
+            registerAdminBean( new SearchManagerBean( m_engine ) );
+            registerAdminBean( new PluginBean( m_engine ) );
+            registerAdminBean( new FilterBean( m_engine ) );
         } catch( NotCompliantMBeanException e ) {
             log.error( e.getMessage(), e );
         }
         registerBeans( m_engine.getEditorManager().modules() );
-        PluginManager pm = m_engine.getPluginManager();
-        registerBeans( pm.modules() );
+        registerBeans( m_engine.getPluginManager().modules() );
+        registerBeans( m_engine.getFilterManager().modules() );
     }
 
     /* (non-Javadoc)
@@ -214,7 +215,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
     }
 
     /**
-     *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This will simply bind to the 
+     *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This will simply bind to the
      *  platform MBeanServer.
      */
     private static final class MBeanServerFactory15 {
@@ -269,5 +270,5 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
             }
         }
     }
-    
+
 }
