@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,11 +14,10 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.ui;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -280,16 +279,14 @@ public class EditorManager extends ModuleManager {
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     @Override
-    public Collection modules()
-    {
-        ArrayList<WikiModuleInfo> ls = new ArrayList<WikiModuleInfo>();
-
-        ls.addAll( m_editors.values() );
-
-        return ls;
+    public Collection modules() {
+        return modules( m_editors.values().iterator() );
     }
-    
+
     /**
      *  {@inheritDoc}
      */
