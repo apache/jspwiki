@@ -64,6 +64,7 @@ public class PluginBean extends ModuleBean< WikiPluginInfo > {
     protected Element heading() {
         Element trHead = XhtmlUtil.element( XHTML.tr );
         trHead.addContent( XhtmlUtil.element( XHTML.th ).addContent( "Name" ) )
+              .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Alias" ) )
               .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Author" ) )
               .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Notes" ) );
         return trHead;
