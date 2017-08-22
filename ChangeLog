@@ -1,11 +1,30 @@
+2017-08-22  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-41
+
+       * WysiwygEditingRenderer isn't hardcoded in JSPs anymore, and can be substituted
+         through jspwiki.renderingManager.renderer.wysiwyg property on jspwiki.properties.
+         This allows to develop custom renderers which do not expect the same information
+         as the existing ones.
+
+       * Fixed DefaultFilterManager#modules not returning Collection< WikiModuleInfo >,
+         as it was supposed to. This method wasn't used anywhere, until now, where it
+         is used through FilterBean, a new JSPWiki AdminBean exposing existing filters
+         information.
+
+       * FilterBean runs parallel to PluginBean, which allowed some more minor internal
+         refactorings and code polishing.
+
+       * Moved some constants from JSPWikiMarkupParser to MarkupParser.
+
 2017-07-16  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-40
 
-       * Some small changes around JSPWikiMarkupParser, needed to develop 
-         custom markup parsers, which do not rely on the former class or 
+       * Some small changes around JSPWikiMarkupParser, needed to develop
+         custom markup parsers, which do not rely on the former class or
          WikiDocument.
-       
+
        * Some other minor internal refactorings and code polishing
 
 2017-05-14  Harry Metske (metskem@apache.org)
