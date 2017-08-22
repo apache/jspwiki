@@ -94,25 +94,17 @@
 <%
    if( usertext == null ) usertext = "";
 
-   RenderingManager renderingManager = engine.getRenderingManager();
-
-   // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-   Properties copyOfWikiProperties = new Properties();
-   copyOfWikiProperties.putAll( engine.getWikiProperties() );
-   copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
-   renderingManager.initialize( engine, copyOfWikiProperties );
-
-    String pageAsHtml;
-    try
-    {
-        //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
-        pageAsHtml = renderingManager.getHTML( context, usertext );
-    }
-        catch( Exception e )
-    {
-        pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
-        //pageAsHtml = e.toString() + "\n" + usertext; //error
-    }
+   String pageAsHtml;
+   try
+   {
+       //pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
+       pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
+   }
+       catch( Exception e )
+   {
+       pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
+       //pageAsHtml = e.toString() + "\n" + usertext; //error
+   }
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for TinyMCE has been rendered.
@@ -122,7 +114,7 @@
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
    /*not used
-   String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
+   String templateDir = (String)engine.getWikiProperties().get( WikiEngine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
    if( request.isSecure() )

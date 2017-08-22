@@ -96,19 +96,11 @@
 <%
     if( usertext == null ) usertext = "";
 
-    RenderingManager renderingManager = new RenderingManager();
-
-    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-    Properties copyOfWikiProperties = new Properties();
-    copyOfWikiProperties.putAll( engine.getWikiProperties() );
-    copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
-    renderingManager.initialize( engine, copyOfWikiProperties );
-
     String pageAsHtml;
     try
     {
         //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
-        pageAsHtml = renderingManager.getHTML( context, usertext );
+        pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
     }
         catch( Exception e )
     {

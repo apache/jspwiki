@@ -48,19 +48,10 @@
   if( usertext != null )
   {
 
-    RenderingManager renderingManager = new RenderingManager();
-
-    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-    Properties copyOfWikiProperties = new Properties();
-    copyOfWikiProperties.putAll( wiki.getWikiProperties() );
-    copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
-    renderingManager.initialize( wiki, copyOfWikiProperties );
-
     String pageAsHtml;
     try
     {
-        pageAsHtml = renderingManager.getHTML( wikiContext, usertext );
-
+        pageAsHtml = wiki.getRenderingManager().getHTML( wikiContext, usertext );
     }
         catch( Exception e )
     {
