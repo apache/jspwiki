@@ -554,8 +554,10 @@ var Wiki = {
 			// Auto size editor and live preview window
 			var editPanes = jq$('.editor');
 			for (var i = 0; i < editPanes.length; i++) {
-				jq$(editPanes[i]).autosize();
-				jq$(editPanes[i]).trigger('autosize.resize');
+				var editor = jq$(editPanes[i]);
+				if (editor.is('#editorarea')) continue;
+				editor.autosize();
+				editor.trigger('autosize.resize');
 			}
 
             jq$(ajaxpreview).height(jq$(editPanes[0]).height());
