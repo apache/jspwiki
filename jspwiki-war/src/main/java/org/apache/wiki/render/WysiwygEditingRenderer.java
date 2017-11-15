@@ -22,14 +22,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
+import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.parser.WikiDocument;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
-import org.apache.wiki.parser.WikiDocument;
 
 /**
  *  Implements a WikiRendered that outputs XHTML in a format that is suitable
@@ -49,11 +49,7 @@ public class WysiwygEditingRenderer
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String EDITPAGE = "createpage";
     private static final String WIKIPAGE = "wikipage";
-    private static final String HASHLINK = "hashlink";
-    private static final String OUTLINK = "outlink";
     private static final String LINEBREAK = "\n";
-    private static final String LINKS_TRANSLATION = "$1#$2";
-    private static final String LINKS_SOURCE = "(.+)#section-.+-(.+)";
 
     /**
      *  Creates a WYSIWYG editing renderer.
@@ -131,7 +127,7 @@ public class WysiwygEditingRenderer
                         hrefAttr.setValue( newHref );
                     }
 
-                    else if( classValue.equals( HASHLINK ) )
+                    else if( classValue.equals( MarkupParser.HASHLINK ) )
                     {
                         itr.remove(); //remove element without disturbing the ongoing iteration
                         continue;  //take next iteration of the for loop
@@ -145,7 +141,7 @@ public class WysiwygEditingRenderer
                 {
                     String classValue = classAttr.getValue();
 
-                    if( classValue.equals( OUTLINK ) )
+                    if( classValue.equals( MarkupParser.OUTLINK ) )
                     {
                         itr.remove(); //remove element without disturbing the ongoing iteration
                         continue; //take next iteration of the for loop

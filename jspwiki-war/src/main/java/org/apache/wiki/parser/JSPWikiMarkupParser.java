@@ -1153,9 +1153,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
             }
 
-            el = new Element("img").setAttribute("class", "outlink");
+            el = new Element( "img" ).setAttribute( "class", OUTLINK );
             el.setAttribute( "src", m_outlinkImageURL );
-            el.setAttribute("alt","");
+            el.setAttribute( "alt","" );
         }
 
         return el;
@@ -2772,7 +2772,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( m_lastHeading != null && !m_wysiwygEditorMode )
         {
             // Add the hash anchor element at the end of the heading
-            addElement( new Element("a").setAttribute( "class","hashlink" ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
+            addElement( new Element("a").setAttribute( "class",HASHLINK ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
             m_lastHeading = null;
         }
         popElement("h2");

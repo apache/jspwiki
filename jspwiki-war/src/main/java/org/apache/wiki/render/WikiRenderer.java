@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.render;
 
@@ -29,7 +29,7 @@ import org.apache.wiki.parser.WikiDocument;
  *  it is expected that rendering capabilities are increased at some
  *  point, and I would hate if renderers broke.  This class allows
  *  some sane defaults to be implemented.
- *  
+ *
  *  @since  2.4
  */
 public abstract class WikiRenderer
@@ -37,11 +37,14 @@ public abstract class WikiRenderer
     protected WikiContext     m_context;
     protected WikiDocument    m_document;
 
+    public static final String LINKS_TRANSLATION = "$1#$2";
+    public static final String LINKS_SOURCE = "(.+)#section-.+-(.+)";
+
     /**
      *  Create a WikiRenderer.
-     *  
+     *
      *  @param context A WikiContext in which the rendering will take place.
-     *  @param doc The WikiDocument which shall be rendered. 
+     *  @param doc The WikiDocument which shall be rendered.
      */
     protected WikiRenderer( WikiContext context, WikiDocument doc )
     {
@@ -52,7 +55,7 @@ public abstract class WikiRenderer
 
     /**
      *  Renders and returns the end result.
-     *  
+     *
      *  @return A rendered string.
      *  @throws IOException If rendering fails.
      */

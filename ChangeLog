@@ -1,3 +1,10 @@
+2017-11-16  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-42
+       
+       * small refactor to move some private constants to public at MarkupParser and 
+         WikiRenderer, so they can be reused throughout the code and custom extensions.
+
 2017-08-22  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-41
