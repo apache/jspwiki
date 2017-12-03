@@ -478,15 +478,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  Returns true, if the link in question is an access
-     *  rule.
-     */
-    private static boolean isAccessRule( String link )
-    {
-        return link.startsWith("{ALLOW") || link.startsWith("{DENY");
-    }
-
-    /**
      *  Returns true if the link is really command to insert
      *  a plugin.
      *  <P>
@@ -1251,7 +1242,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         StringBuilder sb = new StringBuilder(linktext.length()+80);
 
-        if( isAccessRule( linktext ) )
+        if( m_linkParsingOperations.isAccessRule( linktext ) )
         {
             return handleAccessRule( linktext );
         }

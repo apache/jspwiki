@@ -71,7 +71,10 @@ public class LinkParsingOperations {
     }
 
     /**
-     * @see {@link JSPWikiMarkupParser#isAccessRule()}
+     *  Returns true, if the link in question is an access rule.
+     *
+     * @param link The link text
+     * @return {@code true}, if this represents an access rule.
      */
     public boolean isAccessRule( final String link ) {
         return link.startsWith("{ALLOW") || link.startsWith("{DENY");
@@ -86,7 +89,7 @@ public class LinkParsingOperations {
     }
 
     /**
-     * Returns true if the link is a metadata link
+     * Returns true if the link is a metadata link.
      *
      * @param link The link text
      * @return {@code true}, if this represents a metadata link.
