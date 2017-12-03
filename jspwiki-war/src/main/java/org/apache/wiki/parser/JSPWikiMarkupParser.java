@@ -1313,7 +1313,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
             //  In many cases these are the same.  [linktext|linkref].
             //
-            if( VariableManager.isVariableLink( linktext ) )
+            if( m_linkParsingOperations.isVariableLink( linktext ) )
             {
                 Content el = new VariableContent(linktext);
 

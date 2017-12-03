@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.   
+    under the License.
  */
 package org.apache.wiki;
 
@@ -35,6 +35,7 @@ import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.preferences.Preferences;
 
 /**
@@ -46,20 +47,20 @@ import org.apache.wiki.preferences.Preferences;
 public class VariableManager
 {
     private static Logger log = Logger.getLogger( VariableManager.class );
-   
+
     // FIXME: These are probably obsolete.
     public static final String VAR_ERROR = "error";
     public static final String VAR_MSG   = "msg";
-    
+
     /**
      *  Contains a list of those properties that shall never be shown.
      *  Put names here in lower case.
      */
-    
+
     static final String[] THE_BIG_NO_NO_LIST = {
         "jspwiki.auth.masterpassword"
     };
-    
+
     /**
      *  Creates a VariableManager object using the property list given.
      *  @param props The properties.
@@ -73,25 +74,27 @@ public class VariableManager
      *  a variable.
      *  <P>
      *  Currently we just check if the link starts with "{$".
-     *  
+     *
      *  @param link The link text
      *  @return true, if this represents a variable link.
+     *  @deprecated Use {@link LinkParsingOperations#isVariableLink(String)}
      */
+    @Deprecated
     public static boolean isVariableLink( String link )
     {
-        return link.startsWith("{$");
+        return new LinkParsingOperations( null ).isVariableLink( link );
     }
 
     /**
-     *  Parses the link and finds a value.  This is essentially used
-     *  once {@link #isVariableLink(String)} has found that the link text
-     *  actually contains a variable.  For example, you could pass in
-     *  "{$username}" and get back "JanneJalkanen".
+     *  Parses the link and finds a value.  This is essentially used once
+     *  {@link LinkParsingOperations#isVariableLink(String)} has found that
+     *  the link text actually contains a variable.  For example, you could
+     *  pass in "{$username}" and get back "JanneJalkanen".
      *
      *  @param  context The WikiContext
      *  @param  link    The link text containing the variable name.
      *  @return The variable value.
-     *  @throws IllegalArgumentException If the format is not valid (does not 
+     *  @throws IllegalArgumentException If the format is not valid (does not
      *          start with "{$", is zero length, etc.)
      *  @throws NoSuchVariableException If a variable is not known.
      */
@@ -116,7 +119,7 @@ public class VariableManager
      *  the expansion is not done twice, that is, a variable containing text $variable
      *  will not be expanded.
      *  <P>
-     *  The variables should be in the same format ({$variablename} as in the web 
+     *  The variables should be in the same format ({$variablename} as in the web
      *  pages.
      *
      *  @param context The WikiContext of the current page.
@@ -178,7 +181,7 @@ public class VariableManager
      *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}.
      *  The only difference is that this method does not throw an exception, but it
      *  returns the given default value instead.
-     *  
+     *
      *  @param context WikiContext
      *  @param varName The name of the variable
      *  @param defValue A default value.
@@ -195,7 +198,7 @@ public class VariableManager
             return defValue;
         }
     }
-    
+
     /**
      *  Returns a value of the named variable.  The resolving order is
      *  <ol>
@@ -211,12 +214,12 @@ public class VariableManager
      *
      *  Use this method only whenever you really need to have a parameter that
      *  can be overridden by anyone using the wiki.
-     *  
+     *
      *  @param context The WikiContext
      *  @param varName Name of the variable.
      *
      *  @return The variable value.
-     *  
+     *
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
@@ -239,7 +242,7 @@ public class VariableManager
             if( name.equals(THE_BIG_NO_NO_LIST[i]) )
                 return ""; // FIXME: Should this be something different?
         }
-        
+
         try
         {
             //
@@ -258,7 +261,7 @@ public class VariableManager
         }
         catch( NoSuchMethodException e1 )
         {
-            // 
+            //
             //  It is not a system var. Time to handle the other cases.
             //
             //  Check if such a context variable exists,
@@ -270,7 +273,7 @@ public class VariableManager
             }
 
             //
-            //  Well, I guess it wasn't a final straw.  We also allow 
+            //  Well, I guess it wasn't a final straw.  We also allow
             //  variables from the session and the request (in this order).
             //
 
@@ -282,7 +285,7 @@ public class VariableManager
                 try
                 {
                     String s;
-                    
+
                     if( (s = (String)session.getAttribute( varName )) != null )
                         return s;
 
@@ -295,7 +298,7 @@ public class VariableManager
             //
             // And the final straw: see if the current page has named metadata.
             //
-            
+
             WikiPage pg = context.getPage();
             if( pg != null )
             {
@@ -303,7 +306,7 @@ public class VariableManager
                 if( metadata != null )
                     return metadata.toString();
             }
-            
+
             //
             // And the final straw part 2: see if the "real" current page has
             // named metadata. This allows a parent page to control a inserted
@@ -316,14 +319,14 @@ public class VariableManager
                 if( metadata != null )
                     return metadata.toString();
             }
-            
+
             //
             // Next-to-final straw: attempt to fetch using property name
             // We don't allow fetching any other properties than those starting
             // with "jspwiki.".  I know my own code, but I can't vouch for bugs
             // in other people's code... :-)
             //
-            
+
             if( varName.startsWith("jspwiki.") )
             {
                 Properties props = context.getEngine().getWikiProperties();
@@ -334,14 +337,14 @@ public class VariableManager
                     return s;
                 }
             }
-            
+
             //
             //  Final defaults for some known quantities.
             //
 
             if( varName.equals( VAR_ERROR ) || varName.equals( VAR_MSG ) )
                 return "";
-  
+
             throw new NoSuchVariableException( "No variable "+varName+" defined." );
         }
         catch( Exception e )
@@ -363,7 +366,7 @@ public class VariableManager
      *  calls var.toLowerCase(), the getters for the variables do not have
      *  capitalization anywhere.  This may look a bit odd, but then again, this
      *  is not meant to be a public class.
-     *  
+     *
      *  @since 2.7.0
      *
      */
@@ -434,7 +437,7 @@ public class VariableManager
                 String link = i.next();
                 res.append( link );
                 res.append( " --> " );
-                res.append( m_context.getEngine().getInterWikiURL(link) );    
+                res.append( m_context.getEngine().getInterWikiURL(link) );
             }
             return res.toString();
         }
@@ -488,7 +491,7 @@ public class VariableManager
         public String getUsername()
         {
             Principal wup = m_context.getCurrentUser();
-            
+
             ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
             return wup != null ? wup.getName() : rb.getString( "varmgr.not.logged.in" );
         }

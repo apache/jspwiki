@@ -92,7 +92,13 @@ public class LinkParsingOperations {
     }
 
     /**
-     * @see {@link VariableManager#isVariableLink()}
+     *  Returns true if the link is really command to insert
+     *  a variable.
+     *  <P>
+     *  Currently we just check if the link starts with "{$".
+     *
+     *  @param link The link text
+     *  @return {@code true}, if this represents a variable link.
      */
     public boolean isVariableLink( String link ) {
         return link.startsWith( "{$" );
