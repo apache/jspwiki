@@ -108,7 +108,12 @@ public class LinkParsingOperations {
     }
 
     /**
-     * @see at {@link JSPWikiMarkupParser#isExternalLink(String)}.
+     *  Figures out if a link is an off-site link.  This recognizes
+     *  the most common protocols by checking how it starts.
+     *
+     *  @param link The link to check.
+     *  @return true, if this is a link outside of this wiki.
+     *  @since 2.10.3
      */
     public boolean isExternalLink( final String page ) {
         int idx = Arrays.binarySearch( EXTERNAL_LINKS, page, new StartingComparator() );

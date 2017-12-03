@@ -165,40 +165,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private Heading                m_lastHeading         = null;
 
-    /**
-     *  This list contains all IANA registered URI protocol
-     *  types as of September 2004 + a few well-known extra types.
-     *
-     *  JSPWiki recognises all of them as external links.
-     *
-     *  This array is sorted during class load, so you can just dump
-     *  here whatever you want in whatever order you want.
-     */
-    static final String[] EXTERNAL_LINKS = {
-        "http:", "ftp:", "https:", "mailto:",
-        "news:", "file:", "rtsp:", "mms:", "ldap:",
-        "gopher:", "nntp:", "telnet:", "wais:",
-        "prospero:", "z39.50s", "z39.50r", "vemmi:",
-        "imap:", "nfs:", "acap:", "tip:", "pop:",
-        "dav:", "opaquelocktoken:", "sip:", "sips:",
-        "tel:", "fax:", "modem:", "soap.beep:", "soap.beeps",
-        "xmlrpc.beep", "xmlrpc.beeps", "urn:", "go:",
-        "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
-        "im:", "mtqp", "smb:" };
-
     private static final String CAMELCASE_PATTERN     = "JSPWikiMarkupParser.camelCasePattern";
-
-
-    /**
-     *  This Comparator is used to find an external link from c_externalLinks.  It
-     *  checks if the link starts with the other arraythingie.
-     */
-    private static Comparator<String> c_startingComparator = new StartingComparator();
-
-    static
-    {
-        Arrays.sort( EXTERNAL_LINKS );
-    }
 
     /**
      *  Creates a markup parser.
@@ -504,20 +471,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param link The link to check.
      *  @return true, if this is a link outside of this wiki.
      *  @since 2.4
+     *  @deprecated - use {@link LinkParsingOperations#isExternalLink(String)} instead.
      */
-
+    @Deprecated
     public static boolean isExternalLink( String link )
     {
-        int idx = Arrays.binarySearch( EXTERNAL_LINKS, link,
-                                       c_startingComparator );
-
-        //
-        //  We need to check here once again; otherwise we might
-        //  get a match for something like "h".
-        //
-        if( idx >= 0 && link.startsWith(EXTERNAL_LINKS[idx]) ) return true;
-
-        return false;
+        return new LinkParsingOperations(null).isExternalLink( link );
     }
 
     /**
@@ -1185,7 +1144,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     {
         String possiblePage = MarkupParser.cleanLink( link );
 
-        if( isExternalLink( link ) && hasLinkText )
+        if( m_linkParsingOperations.isExternalLink( link ) && hasLinkText )
         {
             return makeLink( IMAGELINK, reallink, link, null, null );
         }
@@ -1361,7 +1320,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 addElement( el );
             }
-            else if( isExternalLink( linkref ) )
+            else if( m_linkParsingOperations.isExternalLink( linkref ) )
             {
                 // It's an external link, out of this Wiki
 
@@ -1415,7 +1374,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                             makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
                         }
 
-                        if( isExternalLink(urlReference) )
+                        if( m_linkParsingOperations.isExternalLink(urlReference) )
                         {
                             addElement( outlinkImage() );
                         }
@@ -2826,32 +2785,4 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
     }
 
-
-    /**
-     *  Compares two Strings, and if one starts with the other, then
-     *  returns null.  Otherwise just like the normal Comparator
-     *  for strings.
-     *
-     *  @since
-     */
-    private static class StartingComparator implements Comparator<String>
-    {
-        public int compare( String s1, String s2 )
-        {
-            if( s1.length() > s2.length() )
-            {
-                if( s1.startsWith(s2) && s2.length() > 1 ) return 0;
-            }
-            else
-            {
-                if( s2.startsWith(s1) && s1.length() > 1 ) return 0;
-            }
-
-            return s1.compareTo( s2 );
-        }
-
-    }
-
-
 }
-
