@@ -51,7 +51,6 @@ import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
@@ -106,13 +105,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
     private boolean        m_allowPHPWikiStyleLists = true;
 
-
     private boolean        m_isOpenParagraph = false;
 
     /** Parser for extended link functionality. */
     private LinkParser     m_linkParser = new LinkParser();
-
-    private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
     private StringBuilder  m_plainTextBuf = new StringBuilder(20);
@@ -233,25 +229,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         m_context.getPage().setHasMetadata();
-    }
-
-    /**
-     *  Returns link name, if it exists; otherwise it returns null.
-     */
-    private String linkExists( String page )
-    {
-        try
-        {
-            if( page == null || page.length() == 0 ) return null;
-
-            return m_engine.getFinalPageName( page );
-        }
-        catch( ProviderException e )
-        {
-            log.warn("TranslatorReader got a faulty page name!",e);
-
-            return page;  // FIXME: What would be the correct way to go back?
-        }
     }
 
     /**
@@ -460,7 +437,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
         return el;
     }
-
 
     /**
      *  Figures out if a link is an off-site link.  This recognizes
@@ -1001,16 +977,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
     private Element makeCamelCaseLink( String wikiname )
     {
-        String matchedLink;
+        String matchedLink = m_linkParsingOperations.linkIfExists( wikiname );
 
         callMutatorChain( m_localLinkMutatorChain, wikiname );
 
-        if( (matchedLink = linkExists( wikiname )) != null )
-        {
+        if( matchedLink != null ) {
             makeLink( READ, matchedLink, wikiname, null, null );
-        }
-        else
-        {
+        } else {
             makeLink( EDIT, wikiname, wikiname, null, null );
         }
 
@@ -1112,8 +1085,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             return makeLink( IMAGELINK, reallink, link, null, null );
         }
-        else if( ( linkExists( possiblePage ) ) != null &&
-                 hasLinkText )
+        else if( m_linkParsingOperations.linkExists( possiblePage ) && hasLinkText )
         {
             // System.out.println("Orig="+link+", Matched: "+matchedLink);
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
@@ -1393,15 +1365,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                    String matchedLink;
-                    if( (matchedLink = linkExists( linkref )) != null )
-                    {
+                    String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
+                    if( matchedLink != null ) {
                         String sectref = "section-"+m_engine.encodeName(matchedLink+"-"+wikifyLink(namedSection));
                         sectref = sectref.replace('%', '_');
                         makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
-                    }
-                    else
-                    {
+                    } else {
                         makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
                     }
                 }
@@ -1412,14 +1381,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                    String matchedLink = linkExists( linkref );
-
-                    if( matchedLink != null )
-                    {
+                    String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
+                    if( matchedLink != null ) {
                         makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
-                    }
-                    else
-                    {
+                    } else {
                         makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
                     }
                 }

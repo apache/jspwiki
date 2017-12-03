@@ -165,6 +165,12 @@ public class LinkParsingOperations {
         return false;
     }
 
+    /**
+     * Returns {@code true}, if the link name exists; otherwise it returns {@code false}.
+     *
+     * @param page link name
+     * @return {@code true}, if the link name exists; otherwise it returns {@code false}.
+     */
     public boolean linkExists( final String page ) {
         if( page == null || page.length() == 0 ) {
             return false;
@@ -177,6 +183,12 @@ public class LinkParsingOperations {
         }
     }
 
+    /**
+     * Returns link name, if it exists; otherwise it returns {@code null}.
+     *
+     * @param page link name
+     * @return link name, if it exists; otherwise it returns {@code null}.
+     */
     public String linkIfExists( final String page ) {
         if( page == null || page.length() == 0 ) {
             return null;
