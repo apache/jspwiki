@@ -495,27 +495,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  Matches the given link to the list of image name patterns
-     *  to determine whether it should be treated as an inline image
-     *  or not.
-     */
-    private boolean isImageLink( String link )
-    {
-        if( m_inlineImages )
-        {
-            link = link.toLowerCase();
-
-            for( Iterator< Pattern >  i = m_inlineImagePatterns.iterator(); i.hasNext(); )
-            {
-                if( m_inlineMatcher.matches( link, i.next() ) )
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      *  These are all of the HTML 4.01 block-level elements.
      */
     private static final String[] BLOCK_ELEMENTS = {
@@ -1092,7 +1071,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         callMutatorChain( m_externalLinkMutatorChain, url );
 
-        if( isImageLink( url ) )
+        if( m_linkParsingOperations.isImageLink( url ) )
         {
             result = handleImageLink( StringUtils.replace(url,"&amp;","&"), url, false );
         }
@@ -1311,7 +1290,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 callMutatorChain( m_externalLinkMutatorChain, linkref );
 
-                if( isImageLink( linkref ) )
+                if( m_linkParsingOperations.isImageLink( linkref ) )
                 {
                     handleImageLink( linkref, linktext, link.hasReference() );
                 }
@@ -1350,7 +1329,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
                         urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
 
-                        if( isImageLink(urlReference) )
+                        if( m_linkParsingOperations.isImageLink(urlReference) )
                         {
                             handleImageLink( urlReference, linktext, link.hasReference() );
                         }
@@ -1393,7 +1372,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 {
                     callMutatorChain( m_attachmentLinkMutatorChain, attachment );
 
-                    if( isImageLink( linkref ) )
+                    if( m_linkParsingOperations.isImageLink( linkref ) )
                     {
                         attachment = m_context.getURL( WikiContext.ATTACH, attachment );
                         sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );

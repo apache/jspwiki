@@ -146,7 +146,8 @@ public class LinkParsingOperations {
     }
 
     /**
-     * @see at {@link JSPWikiMarkupParser#isImageLink(String)}.
+     *  Matches the given link to the list of image name patterns to
+     *  determine whether it should be treated as an inline image or not.
      */
     public boolean isImageLink( String link ) {
         if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link ).isImageInlining() )
