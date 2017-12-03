@@ -81,7 +81,13 @@ public class LinkParsingOperations {
     }
 
     /**
-     * @see {@link JSPWikiMarkupParser#isPluginLink()}
+     *  Returns true if the link is really command to insert a plugin.
+     *  <P>
+     *  Currently we just check if the link starts with "{INSERT",
+     *  or just plain "{" but not "{$".
+     *
+     *  @param link Link text, i.e. the contents of text between [].
+     *  @return True, if this link seems to be a command to insert a plugin here.
      */
     public boolean isPluginLink( final String link ) {
         return link.startsWith( "{INSERT" ) ||

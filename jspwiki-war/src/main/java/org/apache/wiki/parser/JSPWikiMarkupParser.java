@@ -486,11 +486,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      *  @param link Link text, i.e. the contents of text between [].
      *  @return True, if this link seems to be a command to insert a plugin here.
+     *  @deprecated Use {@link LinkParsingOperations#isPluginLink(String)} instead,
      */
+    @Deprecated
     public static boolean isPluginLink( String link )
     {
-        return link.startsWith( "{INSERT" ) ||
-               ( link.startsWith( "{" ) && !link.startsWith( "{$" ) );
+        return new LinkParsingOperations( null ).isPluginLink( link );
     }
 
     /**
@@ -1252,7 +1253,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             return handleMetadata( linktext );
         }
 
-        if( isPluginLink( linktext ) )
+        if( m_linkParsingOperations.isPluginLink( linktext ) )
         {
             try
             {
