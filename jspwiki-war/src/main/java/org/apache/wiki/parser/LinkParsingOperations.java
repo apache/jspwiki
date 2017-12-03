@@ -122,7 +122,16 @@ public class LinkParsingOperations {
      * @return {@code true}, if this Link represents an InterWiki link, {@code false} otherwise.
      */
     public boolean isInterWikiLink( final String page ) {
-        return page.indexOf( ':' ) != -1;
+        return interWikiLinkAt( page ) != -1;
+    }
+
+    /**
+     * Returns true, if this Link represents an InterWiki link (of the form wiki:page).
+     *
+     * @return {@code true}, if this Link represents an InterWiki link, {@code false} otherwise.
+     */
+    public int interWikiLinkAt( final String page ) {
+        return page.indexOf( ':' );
     }
 
     /**

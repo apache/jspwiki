@@ -456,9 +456,10 @@ public class LinkParser
          */
         public boolean isInterwikiLink()
         {
+            LinkParsingOperations lpo = new LinkParsingOperations( null );
             if( !hasReference() ) m_ref = m_text;
-
-            return new LinkParsingOperations( null ).isInterWikiLink( m_ref );
+            m_interwikiPoint = lpo.interWikiLinkAt( m_ref );
+            return lpo.isInterWikiLink( m_ref );
         }
 
         /**
