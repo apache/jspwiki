@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.login;
 
@@ -58,12 +58,12 @@ public class WebContainerLoginModuleTest extends TestCase
             // Test using Principal (WebContainerLoginModule succeeds)
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
+            Set< Principal > principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue(  principals.contains( principal ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -87,12 +87,12 @@ public class WebContainerLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
+            Set< Principal > principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( principal ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );

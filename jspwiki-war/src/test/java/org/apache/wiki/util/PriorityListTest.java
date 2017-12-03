@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.util;
@@ -27,14 +27,14 @@ public class PriorityListTest extends TestCase
     {
         super( s );
     }
-    
+
     public void testInsert()
     {
-        PriorityList p = new PriorityList();
+        PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
-        
+
         assertEquals( "size", 2, p.size() );
 
         assertEquals( "Two", "Two", p.get(0) );
@@ -47,11 +47,11 @@ public class PriorityListTest extends TestCase
      */
     public void testInsertSame()
     {
-        PriorityList p = new PriorityList();
+        PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 1 );
-        
+
         assertEquals( "size", 2, p.size() );
 
         assertEquals( "One", "One", p.get(0) );
@@ -60,12 +60,12 @@ public class PriorityListTest extends TestCase
 
     public void testInsertSame2()
     {
-        PriorityList p = new PriorityList();
+        PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
         p.add( "Three", 3 );
-        
+
         assertEquals( "size", 3, p.size() );
 
         assertEquals( "Three", "Three", p.get(0) );
@@ -84,14 +84,14 @@ public class PriorityListTest extends TestCase
 
     public void testInsertSame3()
     {
-        PriorityList p = new PriorityList();
+        PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
         p.add( "Two2", 2 );
         p.add( "Two3", 2 );
         p.add( "Three", 3 );
-        
+
         assertEquals( "size", 5, p.size() );
 
         assertEquals( "Three", "Three", p.get(0) );

@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;

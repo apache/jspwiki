@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.search;
 
@@ -51,7 +51,6 @@ import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -65,10 +64,10 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
     private static final String DEFAULT_SEARCHPROVIDER  = "org.apache.wiki.search.LuceneSearchProvider";
-    
+
     /** Old option, now deprecated. */
     private static final String PROP_USE_LUCENE        = "jspwiki.useLucene";
-    
+
     /**
      *  Property name for setting the search provider. Value is <tt>{@value}</tt>.
      */
@@ -83,7 +82,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
     /**
      *  Creates a new SearchManager.
-     *  
+     *
      *  @param engine The WikiEngine that owns this SearchManager.
      *  @param properties The list of Properties.
      *  @throws FilterException If it cannot be instantiated.
@@ -108,13 +107,13 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 		public static final String AJAX_ACTION_SUGGESTIONS = "suggestions";
     	public static final String AJAX_ACTION_PAGES = "pages";
     	public static final int DEFAULT_MAX_RESULTS = 20;
-    	public int maxResults = DEFAULT_MAX_RESULTS; 
-		
+    	public int maxResults = DEFAULT_MAX_RESULTS;
+
 		@Override
 		public String getServletMapping() {
 			return JSON_SEARCH;
 		}
-		
+
     	@Override
     	public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params)
     			throws ServletException, IOException {
@@ -154,7 +153,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     		log.debug("result="+result);
     		resp.getWriter().write(result);
     	}
-    	
+
         /**
          *  Provides a list of suggestions to use for a page name.
          *  Currently the algorithm just looks into the value parameter,
@@ -172,16 +171,16 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
             if( wikiName.length() > 0 )
             {
-                
+
                 // split pagename and attachment filename
                 String filename = "";
                 int pos = wikiName.indexOf("/");
-                if( pos >= 0 ) 
+                if( pos >= 0 )
                 {
                     filename = wikiName.substring( pos ).toLowerCase();
                     wikiName = wikiName.substring( 0, pos );
                 }
-                
+
                 String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
@@ -231,7 +230,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
                     } else {
                         c = m_searchProvider.findPages( searchString, wikiContext );
                     }
-                    
+
                     int count = 0;
                     for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
@@ -314,7 +313,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
         try
         {
-            Class providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
+            Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
             m_searchProvider = (SearchProvider)providerClass.newInstance();
         }
         catch( ClassNotFoundException e )
@@ -340,7 +339,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
     /**
      *  Returns the SearchProvider used.
-     *  
+     *
      *  @return The current SearchProvider.
      */
     public SearchProvider getSearchEngine()
@@ -378,7 +377,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
     /**
      *  Reindexes the page.
-     *  
+     *
      *  @param wikiContext {@inheritDoc}
      *  @param content {@inheritDoc}
      */
@@ -405,7 +404,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
     /**
      *  If the page has been deleted, removes it from the index.
-     *  
+     *
      *  @param event {@inheritDoc}
      */
     public void actionPerformed(WikiEvent event)

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,25 +14,25 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.htmltowiki;
 
 import java.io.IOException;
 import java.io.StringReader;
 
+import org.apache.wiki.WikiContext;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.XMLOutputter;
-
-import org.apache.wiki.WikiContext;
 
 /**
  * Converting Html to Wiki Markup with NekoHtml for converting html to xhtml and
  * Xhtml2WikiTranslator for converting xhtml to Wiki Markup.
- * 
+ *
  */
 public class HtmlStringToWikiTranslator
 {
@@ -48,10 +48,10 @@ public class HtmlStringToWikiTranslator
     /**
      *  Translates text from HTML into WikiMarkup without a WikiContext (meaning
      *  some things perhaps cannot be translated).  Uses the default configuration.
-     *  
+     *
      *  @param html HTML text to translate
      *  @return WikiMarkup
-     *  
+     *
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
@@ -63,11 +63,11 @@ public class HtmlStringToWikiTranslator
     /**
      *  Translates text from HTML into WikiMarkup with a WikiContext.  The translation
      *  accuracy is better.  Uses the default configuration.
-     *  
+     *
      *  @param html HTML text to translate
      *  @param wikiContext The WikiContext to use.
      *  @return WikiMarkup
-     *  
+     *
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
@@ -78,11 +78,11 @@ public class HtmlStringToWikiTranslator
 
     /**
      *  Translates text from HTML into WikiMarkup using a specified configuration.
-     *  
+     *
      *  @param html HTML text to translate
      *  @param config The configuration to use.
      *  @return WikiMarkup
-     *  
+     *
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
@@ -97,7 +97,7 @@ public class HtmlStringToWikiTranslator
 
     /**
      * Use NekoHtml to parse HTML like well formed XHTML
-     * 
+     *
      * @param html
      * @return xhtml jdom root element (node "HTML")
      * @throws JDOMException
@@ -105,7 +105,7 @@ public class HtmlStringToWikiTranslator
      */
     private Element htmlStringToElement( String html ) throws JDOMException, IOException
     {
-        SAXBuilder builder = new SAXBuilder( CYBERNEKO_PARSER, true );
+        SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER), null, null );
         Document doc = builder.build( new StringReader( html ) );
         Element element = doc.getRootElement();
         return element;
@@ -113,7 +113,7 @@ public class HtmlStringToWikiTranslator
 
     /**
      *  A static helper method to create HTML from an Element.
-     *  
+     *
      *  @param element The element to get HTML from.
      *  @return HTML
      */

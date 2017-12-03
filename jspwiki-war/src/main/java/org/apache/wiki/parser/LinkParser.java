@@ -559,10 +559,10 @@ public class LinkParser
             {
                 sb.append( ' ' );
                 sb.append( '|' );
-                Iterator it = getAttributes();
+                Iterator< Attribute > it = getAttributes();
                 while ( it.hasNext() )
                 {
-                    Attribute a = (Attribute)it.next();
+                    Attribute a = it.next();
                     sb.append( ' ' );
                     sb.append( a.getName() );
                     sb.append( '=' );

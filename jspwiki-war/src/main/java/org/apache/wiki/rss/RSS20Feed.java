@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.rss;
 
@@ -45,7 +45,7 @@ public class RSS20Feed extends Feed
 {
     /**
      *  Creates an RSS 2.0 feed for the specified Context.
-     *  
+     *
      *  @param context The WikiContext.
      */
     public RSS20Feed( WikiContext context )
@@ -64,9 +64,9 @@ public class RSS20Feed extends Feed
         if( m_wikiContext.getHttpRequest() != null )
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Iterator< Entry > i = m_entries.iterator(); i.hasNext(); )
         {
-            Entry e = (Entry)i.next();
+            Entry e = i.next();
             WikiPage p = e.getPage();
 
             String url = e.getURL();

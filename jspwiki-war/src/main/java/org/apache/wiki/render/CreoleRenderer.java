@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.render;
 
@@ -34,7 +34,7 @@ import org.jdom2.Text;
  *  Implements DOM-to-Creole rendering.
  *  <p>
  *  FIXME: This class is not yet completely done.
- *  
+ *
  */
 public class CreoleRenderer extends WikiRenderer
 {
@@ -59,7 +59,7 @@ public class CreoleRenderer extends WikiRenderer
     private static final String P  = "p";
     private static final String A  = "a";
     private static final String PRE = "pre";
-    
+
     /**
      * Contains element, start markup, end markup
      */
@@ -72,7 +72,7 @@ public class CreoleRenderer extends WikiRenderer
        "hr", "----"  , EMPTY_STRING,
        "tt", "<<{{>>", "<<}}>>"
     };
-    
+
     private int m_listCount = 0;
     private char m_listChar = 'x';
 
@@ -80,13 +80,13 @@ public class CreoleRenderer extends WikiRenderer
 
     /**
      *  Creates a new Creole Renderer.
-     *  
+     *
      */
     public CreoleRenderer( WikiContext ctx, WikiDocument doc )
     {
         super( ctx, doc );
     }
-    
+
     /**
      * Renders an element into the StringBuilder given
      * @param ce
@@ -103,7 +103,7 @@ public class CreoleRenderer extends WikiRenderer
                 endEl = ELEMENTS[i+2];
             }
         }
-        
+
         if( UL.equals(ce.getName()) )
         {
             m_listCount++;
@@ -123,7 +123,7 @@ public class CreoleRenderer extends WikiRenderer
         {
             String href = ce.getAttributeValue( HREF_ATTRIBUTE );
             String text = ce.getText();
-            
+
             if( href.equals(text) )
             {
                 sb.append( HREF_START + href + HREF_END );
@@ -132,7 +132,7 @@ public class CreoleRenderer extends WikiRenderer
             {
                 sb.append( HREF_START + href+ HREF_DELIMITER + text +HREF_END);
             }
-            // Do not render anything else 
+            // Do not render anything else
             return;
         }
         else if( PRE.equals(ce.getName()) )
@@ -140,21 +140,21 @@ public class CreoleRenderer extends WikiRenderer
             sb.append( PRE_START );
             sb.append( ce.getText() );
             sb.append( PRE_END );
-            
+
             return;
         }
-        
+
         //
         //  Go through the children
         //
-        for( Iterator i = ce.getContent().iterator(); i.hasNext(); )
+        for( Iterator< Content > i = ce.getContent().iterator(); i.hasNext(); )
         {
-            Content c = (Content)i.next();
-            
+            Content c = i.next();
+
             if( c instanceof PluginContent )
             {
                 PluginContent pc = (PluginContent)c;
-                
+
                 if( pc.getPluginName().equals( PLUGIN_IMAGE ) )
                 {
                     sb.append( IMG_START + pc.getParameter( PARAM_SRC ) + IMG_END );
@@ -183,25 +183,25 @@ public class CreoleRenderer extends WikiRenderer
         {
             sb.append( LINEBREAK );
         }
-        
+
         sb.append(endEl);
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public String getString() throws IOException
     {
     	StringBuilder sb = new StringBuilder(1000);
-        
+
         Element ce = m_document.getRootElement();
-        
+
         //
         //  Traverse through the entire tree of everything.
         //
-        
+
         renderElement( ce, sb );
-        
+
         return sb.toString();
     }
 

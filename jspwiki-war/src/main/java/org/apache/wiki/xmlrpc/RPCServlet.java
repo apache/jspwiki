@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.xmlrpc;
 
@@ -31,10 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlrpc.*;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
+import org.apache.xmlrpc.ContextXmlRpcHandler;
+import org.apache.xmlrpc.Invoker;
+import org.apache.xmlrpc.XmlRpcContext;
+import org.apache.xmlrpc.XmlRpcHandlerMapping;
+import org.apache.xmlrpc.XmlRpcServer;
 
 /**
  *  Handles all incoming servlet requests for XML-RPC calls.

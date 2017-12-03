@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.permissions;
 
@@ -59,7 +59,7 @@ public class AllPermissionCollectionTest extends TestCase
         c_all.add( all4 );
         assertEquals( 3, count( c_all ) );
     }
-    
+
     public void testAddPagePermission()
     {
         PagePermission p1 = new PagePermission( "JSPWiki:Main", "edit" );
@@ -80,7 +80,7 @@ public class AllPermissionCollectionTest extends TestCase
         c_all.add( p4 );
         assertEquals( 3, count( c_all ) );
     }
-    
+
     public void testAddWikiPermission()
     {
         WikiPermission p1 = new WikiPermission( "JSPWiki", "login" );
@@ -101,7 +101,7 @@ public class AllPermissionCollectionTest extends TestCase
         c_all.add( p4 );
         assertEquals( 3, count( c_all ) );
     }
-    
+
     public void testReadOnly()
     {
         AllPermission all1 = new AllPermission( "*" );
@@ -202,7 +202,7 @@ public class AllPermissionCollectionTest extends TestCase
         assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
         assertTrue( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
     }
-    
+
     public void testImpliesMixedPermissions()
     {
         Permission p1 = new AllPermission( "JSPWiki" );
@@ -229,7 +229,7 @@ public class AllPermissionCollectionTest extends TestCase
         assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
         assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
         assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
-        
+
         c_all.add( p3 );
         assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
         assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
@@ -239,7 +239,7 @@ public class AllPermissionCollectionTest extends TestCase
         assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
         assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
         assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
-        
+
         c_all.add( p4 );
         assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
         assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
@@ -250,11 +250,11 @@ public class AllPermissionCollectionTest extends TestCase
         assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
         assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
     }
-    
+
     private int count( AllPermissionCollection collection )
     {
         int i = 0;
-        Enumeration perms = collection.elements();
+        Enumeration< Permission > perms = collection.elements();
         while( perms.hasMoreElements() )
         {
             perms.nextElement();

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,10 +14,14 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.forms;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -26,22 +30,17 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
-import org.jdom2.output.Format;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  *  Creates a Form text area element.   You may specify the size of the textarea
  *  by using the {@link #PARAM_COLS} and {@link #PARAM_ROWS} to signify the width
- *  and height of the area. 
+ *  and height of the area.
  */
 public class FormTextarea extends FormElement
 {
     /** Parameter name for setting the rows value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ROWS = "rows";
-    
+
     /** Parameter name for setting the columns value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_COLS = "cols";
 
@@ -93,10 +92,10 @@ public class FormTextarea extends FormElement
         if ( rows != null ) {
             field.setAttribute(XHTML.ATTR_rows,rows);
         }
-        if ( cols != null ) {            
+        if ( cols != null ) {
             field.setAttribute(XHTML.ATTR_cols,cols);
         }
-        
+
         if ( previousValues != null )
         {
             String oldValue = previousValues.get( inputName );

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.providers;
 
@@ -323,8 +323,6 @@ public class CachingProvider implements WikiPageProvider {
 
         if (pageName == null) return null;
 
-        WikiPage page = getPageInfoFromCache(pageName);
-
         Element cacheElement = m_textCache.get(pageName);
 
         if (cacheElement != null) {
@@ -391,14 +389,14 @@ public class CachingProvider implements WikiPageProvider {
                 }
             }
         }
-        
+
         if( all.size() >= m_cache.getCacheConfiguration().getMaxEntriesLocalHeap() ) {
         	log.warn( "seems " + m_cache.getName() + " can't hold all pages from your page repository, " +
         			  "so we're delegating on the underlying provider instead. Please consider increasing " +
         			  "your cache sizes on ehcache.xml to avoid this behaviour" );
         	return m_provider.getAllPages();
         }
-        
+
         return all;
     }
 

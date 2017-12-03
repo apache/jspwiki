@@ -34,10 +34,10 @@ public class SamplePlugin2
     {
     }
 
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map< String, String > params )
         throws PluginException
     {
-        return (String)params.get("text");
+        return params.get("text");
     }
 
 }

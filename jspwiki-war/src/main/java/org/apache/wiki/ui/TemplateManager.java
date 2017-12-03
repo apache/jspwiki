@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.ui;
 
@@ -260,7 +260,7 @@ public class TemplateManager extends ModuleManager {
     {
         int idx = 0;
         if( name.startsWith( "/" ) ) idx = 1;
-        
+
         idx = name.indexOf('/', idx);
         if( idx != -1 )
         {
@@ -437,7 +437,7 @@ public class TemplateManager extends ModuleManager {
      * List all installed i18n language properties by classpath searching for files like :
      *    templates/default_*.properties
      *    templates/default.properties
-     * 
+     *
      * @param pageContext
      * @return map of installed Languages
      * @since 2.7.x
@@ -473,14 +473,14 @@ public class TemplateManager extends ModuleManager {
 
     /**
      * List all available timeformats, read from the jspwiki.properties
-     * 
+     *
      * @param pageContext
      * @return map of TimeFormats
      * @since 2.7.x
      */
     public Map listTimeFormats(PageContext pageContext)
     {
-        WikiContext context = WikiContext.findContext( pageContext ); 
+        WikiContext context = WikiContext.findContext( pageContext );
         Properties props = m_engine.getWikiProperties();
         ArrayList<String> tfArr = new ArrayList<String>(40);
         LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
@@ -557,7 +557,7 @@ public class TemplateManager extends ModuleManager {
 
     /**
      * List all timezones, with special marker for server timezone
-     * 
+     *
      * @param pageContext
      * @return map of TimeZones
      * @since 2.7.x
@@ -567,14 +567,14 @@ public class TemplateManager extends ModuleManager {
         LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
 
         String[][] tzs = { { "GMT-12", "Enitwetok, Kwajalien" },
-                          { "GMT-11", "Nome, Midway Island, Samoa" }, 
+                          { "GMT-11", "Nome, Midway Island, Samoa" },
                           { "GMT-10", "Hawaii" },
-                          { "GMT-9", "Alaska" }, 
+                          { "GMT-9", "Alaska" },
                           { "GMT-8", "Pacific Time" },
-                          { "GMT-7", "Mountain Time" }, 
+                          { "GMT-7", "Mountain Time" },
                           { "GMT-6", "Central Time, Mexico City" },
                           { "GMT-5", "Eastern Time, Bogota, Lima, Quito" },
-                          { "GMT-4", "Atlantic Time, Caracas, La Paz" }, 
+                          { "GMT-4", "Atlantic Time, Caracas, La Paz" },
                           { "GMT-3:30", "Newfoundland" },
                           { "GMT-3", "Brazil, Buenos Aires, Georgetown, Falkland Is." },
                           { "GMT-2", "Mid-Atlantic, Ascention Is., St Helena" },
@@ -582,13 +582,13 @@ public class TemplateManager extends ModuleManager {
                           { "GMT", "Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" },
                           { "GMT+1", "Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" },
                           { "GMT+2", "Helsinki, Athens, Kaliningrad, South Africa, Warsaw" },
-                          { "GMT+3", "Baghdad, Riyadh, Moscow, Nairobi" }, 
+                          { "GMT+3", "Baghdad, Riyadh, Moscow, Nairobi" },
                           { "GMT+3:30", "Tehran" },
-                          { "GMT+4", "Adu Dhabi, Baku, Muscat, Tbilisi" }, 
+                          { "GMT+4", "Adu Dhabi, Baku, Muscat, Tbilisi" },
                           { "GMT+4:30", "Kabul" },
                           { "GMT+5", "Islamabad, Karachi, Tashkent" },
                           { "GMT+5:30", "Bombay, Calcutta, Madras, New Delhi" },
-                          { "GMT+6", "Almaty, Colomba, Dhakra" }, 
+                          { "GMT+6", "Almaty, Colomba, Dhakra" },
                           { "GMT+7", "Bangkok, Hanoi, Jakarta" },
                           { "GMT+8", "Beijing, Hong Kong, Perth, Singapore, Taipei" },
                           { "GMT+9", "Osaka, Sapporo, Seoul, Tokyo, Yakutsk" },
@@ -603,16 +603,16 @@ public class TemplateManager extends ModuleManager {
         {
             String tzID = tzs[i][0];
             java.util.TimeZone tz = java.util.TimeZone.getTimeZone(tzID);
-            
+
             String serverTimeZone = "";
 
             if( servertz.getRawOffset() == tz.getRawOffset() )
             {
                 serverTimeZone = LocaleSupport.getLocalizedMessage(pageContext, I18NSERVER_TIMEZONE);
-                tzID = servertz.getID(); 
+                tzID = servertz.getID();
             }
 
-            resultMap.put(tzID, "(" + tzs[i][0] + ") "+tzs[i][1] + " " + serverTimeZone);            
+            resultMap.put(tzID, "(" + tzs[i][0] + ") "+tzs[i][1] + " " + serverTimeZone);
         }
 
         return resultMap;
@@ -842,9 +842,9 @@ public class TemplateManager extends ModuleManager {
     @Override
     public Collection modules()
     {
-        return new ArrayList();
+        return new ArrayList<WikiModuleInfo>();
     }
-    
+
     /**
      *  Returns null!
      *  {@inheritDoc}

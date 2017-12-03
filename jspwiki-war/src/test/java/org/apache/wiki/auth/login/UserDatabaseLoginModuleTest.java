@@ -14,10 +14,11 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.login;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -54,23 +55,23 @@ public class UserDatabaseLoginModuleTest extends TestCase
             // Log in with a user that isn't in the database
             CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
+            Set< Principal > principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
             assertFalse( principals.contains( Role.ALL ) );
-            
+
             // Login with a user that IS in the database
             m_subject = new Subject();
             handler = new WikiCallbackHandler( m_engine, null, "janne", "myP@5sw0rd" );
             module = new UserDatabaseLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
@@ -78,7 +79,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );            
+            assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
@@ -93,12 +94,12 @@ public class UserDatabaseLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
+            Set< Principal > principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );

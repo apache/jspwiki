@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (C) 2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -34,9 +34,9 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
- *  Denounces a link by removing it from any search engine. 
+ *  Denounces a link by removing it from any search engine.
  *  <br> The bots are listed in org/apache/wiki/plugin/denounce.properties.
- *  
+ *
  *  <p>Parameters : </p>
  *  <ul>
  *  <li><b>link</b> - The link to be denounced, this parameter is required</li>
@@ -94,7 +94,7 @@ public class Denounce implements WikiPlugin
             {
                 String name = (String) e.nextElement();
 
-                try 
+                try
                 {
                     if( name.startsWith( PROP_REFERERPATTERN ) )
                     {
@@ -163,13 +163,13 @@ public class Denounce implements WikiPlugin
     /**
      *  Returns true, if the path is found among the referers.
      */
-    private boolean matchPattern( List list, String path )
+    private boolean matchPattern( List< Pattern > list, String path )
     {
         PatternMatcher matcher = new Perl5Matcher();
 
-        for( Iterator i = list.iterator(); i.hasNext(); )
+        for( Iterator< Pattern > i = list.iterator(); i.hasNext(); )
         {
-            if( matcher.matches( path, (Pattern)i.next() ) )
+            if( matcher.matches( path, i.next() ) )
             {
                 return true;
             }
@@ -208,7 +208,7 @@ public class Denounce implements WikiPlugin
 
         //
         //  Host
-        // 
+        //
 
         String host = request.getRemoteHost();
 

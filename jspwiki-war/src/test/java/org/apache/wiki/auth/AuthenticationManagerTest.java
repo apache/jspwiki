@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth;
 
@@ -40,7 +40,7 @@ import org.apache.wiki.auth.login.CookieAssertionLoginModule;
 
 /**
  * Tests the AuthorizationManager class.
- * 
+ *
  */
 public class AuthenticationManagerTest extends TestCase
 {
@@ -113,7 +113,7 @@ public class AuthenticationManagerTest extends TestCase
     /**
      * Tests a dummy WebAuthorizer that is guaranteed to return true for one
      * role for each of the two <code>isInRole</code> methods.
-     * 
+     *
      * @throws Exception
      */
     public void testCustomAuthorizer() throws Exception
@@ -132,7 +132,7 @@ public class AuthenticationManagerTest extends TestCase
         assertTrue( session.hasPrincipal( new Role( "AuthorizerRole") ) );
         assertFalse( session.hasPrincipal( new Role( "ContainerRole") ) );
         assertFalse( session.hasPrincipal( new Role( "DummyRole") ) );
-        
+
         // Try again with a container-authenticated session: DummyAuthorizer should ALSO allow ContainerRole
         session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.JANNE, new Principal[0] );
         assertTrue( session.hasPrincipal( Role.ALL ) );
@@ -217,7 +217,7 @@ public class AuthenticationManagerTest extends TestCase
         // Log in 'janne' and verify there are 5 principals in the subject
         // (ALL, AUTHENTICATED, login, fullname, wikiname Principals)
         WikiSession session = WikiSession.guestSession( m_engine );
-        m_auth.login( session, Users.JANNE, Users.JANNE_PASS );
+        m_auth.login( session, null, Users.JANNE, Users.JANNE_PASS );
         assertEquals( 3, session.getPrincipals().length );
         assertEquals( 2, session.getRoles().length );
         assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );

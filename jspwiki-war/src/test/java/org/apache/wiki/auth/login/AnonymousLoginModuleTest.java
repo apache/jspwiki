@@ -14,10 +14,11 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.login;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -28,14 +29,14 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.TestCase;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+
+import junit.framework.TestCase;
 
 /**
  */
@@ -58,7 +59,7 @@ public class AnonymousLoginModuleTest extends TestCase
             module.initialize( m_subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
+            Set< Principal > principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -78,12 +79,12 @@ public class AnonymousLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new AnonymousLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
+            Set< Principal > principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,18 +14,19 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki;
 
-import junit.framework.*;
+import java.util.Properties;
 
-import java.io.*;
-import java.util.*;
-
-import org.apache.log4j.*;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class VariableManagerTest extends TestCase
 {

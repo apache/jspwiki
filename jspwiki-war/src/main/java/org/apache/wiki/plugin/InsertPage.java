@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -44,7 +44,7 @@ import org.apache.wiki.util.TextUtil;
  *  <li><b>section</b> - the section of the page that has to be inserted (separated by "----"</li>
  *  <li><b>default</b> - the text to insert if the requested page does not exist</li>
  *  </ul>
- *  
+ *
  *  @since 2.1.37
  */
 public class InsertPage
@@ -69,7 +69,7 @@ public class InsertPage
      *  have circular references.
      */
     public static final String ATTR_RECURSE    = "org.apache.wiki.plugin.InsertPage.recurseCheck";
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -112,15 +112,15 @@ public class InsertPage
                 res.append( "<span class=\"error\">Page could not be found by the page provider.</span>" );
                 return res.toString();
             }
-            
+
             if( page != null )
             {
                 //
                 //  Check for recursivity
                 //
-                
-                List<String> previousIncludes = (List)context.getVariable( ATTR_RECURSE );
-                
+
+                List<String> previousIncludes = (List<String>)context.getVariable( ATTR_RECURSE );
+
                 if( previousIncludes != null )
                 {
                     if( previousIncludes.contains( page.getName() ) )
@@ -132,10 +132,10 @@ public class InsertPage
                 {
                     previousIncludes = new ArrayList<String>();
                 }
-               
+
                 previousIncludes.add( page.getName() );
                 context.setVariable( ATTR_RECURSE, previousIncludes );
-                
+
                 //
                 // Check for permissions
                 //
@@ -152,7 +152,7 @@ public class InsertPage
                  *  We want inclusion to occur within the context of
                  *  its own page, because we need the links to be correct.
                  */
-                
+
                 WikiContext includedContext = (WikiContext) context.clone();
                 includedContext.setPage( page );
 
@@ -171,7 +171,7 @@ public class InsertPage
                     }
                 }
 
-                if( pageData.length() > maxlen ) 
+                if( pageData.length() > maxlen )
                 {
                     pageData = pageData.substring( 0, maxlen )+" ...";
                     moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">More...</a></p>";
@@ -181,7 +181,7 @@ public class InsertPage
                 res.append( engine.textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
                 res.append("</div>");
-                
+
                 //
                 //  Remove the name from the stack; we're now done with this.
                 //
@@ -190,7 +190,7 @@ public class InsertPage
             }
             else
             {
-                if( defaultstr != null ) 
+                if( defaultstr != null )
                 {
                     res.append( defaultstr );
                 }
