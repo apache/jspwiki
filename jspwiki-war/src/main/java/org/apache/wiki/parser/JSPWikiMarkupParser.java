@@ -250,30 +250,17 @@ public class JSPWikiMarkupParser extends MarkupParser {
                                                              m_camelCaseLinks );
         }
 
-
-
         Boolean wysiwygVariable = (Boolean)m_context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
         if( wysiwygVariable != null )
         {
             m_wysiwygEditorMode = wysiwygVariable.booleanValue();
         }
 
-        m_plainUris           = getLocalBooleanProperty( m_context,
-                                                         PROP_PLAINURIS,
-                                                         m_plainUris );
-        m_useOutlinkImage     = getLocalBooleanProperty( m_context,
-                                                         PROP_USEOUTLINKIMAGE,
-                                                         m_useOutlinkImage );
-        m_useAttachmentImage  = getLocalBooleanProperty( m_context,
-                                                         PROP_USEATTACHMENTIMAGE,
-                                                         m_useAttachmentImage );
-        m_allowHTML           = getLocalBooleanProperty( m_context,
-                                                         MarkupParser.PROP_ALLOWHTML,
-                                                         m_allowHTML );
-
-        m_useRelNofollow      = getLocalBooleanProperty( m_context,
-                                                         PROP_USERELNOFOLLOW,
-                                                         m_useRelNofollow );
+        m_plainUris           = m_context.getBooleanWikiProperty( PROP_PLAINURIS, m_plainUris );
+        m_useOutlinkImage     = m_context.getBooleanWikiProperty( PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
+        m_useAttachmentImage  = m_context.getBooleanWikiProperty( PROP_USEATTACHMENTIMAGE, m_useAttachmentImage );
+        m_allowHTML           = m_context.getBooleanWikiProperty( PROP_ALLOWHTML, m_allowHTML );
+        m_useRelNofollow      = m_context.getBooleanWikiProperty( PROP_USERELNOFOLLOW, m_useRelNofollow );
 
         if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
@@ -281,30 +268,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         m_context.getPage().setHasMetadata();
-    }
-
-    /**
-     *  This is just a simple helper method which will first check the context
-     *  if there is already an override in place, and if there is not,
-     *  it will then check the given properties.
-     *
-     *  @param context WikiContext to check first
-     *  @param key     What key are we searching for?
-     *  @param defValue Default value for the boolean
-     *  @return True or false
-     */
-    private static boolean getLocalBooleanProperty( WikiContext context,
-                                                    String      key,
-                                                    boolean     defValue )
-    {
-        Object bool = context.getVariable(key);
-
-        if( bool != null )
-        {
-            return TextUtil.isPositive( (String) bool );
-        }
-
-        return TextUtil.getBooleanProperty( context.getEngine().getWikiProperties(), key, defValue );
     }
 
     /**

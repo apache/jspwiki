@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki;
 
@@ -39,6 +39,7 @@ import org.apache.wiki.ui.GroupCommand;
 import org.apache.wiki.ui.Installer;
 import org.apache.wiki.ui.PageCommand;
 import org.apache.wiki.ui.WikiCommand;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -465,6 +466,24 @@ public class WikiContext
     }
 
     /**
+     * This is just a simple helper method which will first check the context
+     * if there is already an override in place, and if there is not,
+     * it will then check the given properties.
+     *
+     * @param key      What key are we searching for?
+     * @param defValue Default value for the boolean
+     * @return  {@code true} or {@code false}.
+     */
+    public boolean getBooleanWikiProperty( final String key, final boolean defValue ) {
+        Object bool = getVariable( key );
+        if( bool != null ) {
+            return TextUtil.isPositive( (String) bool );
+        }
+
+        return TextUtil.getBooleanProperty( getEngine().getWikiProperties(), key, defValue );
+    }
+
+    /**
      *  This method will safely return any HTTP parameters that
      *  might have been defined.  You should use this method instead
      *  of peeking directly into the result of getHttpRequest(), since
@@ -654,7 +673,7 @@ public class WikiContext
     /**
      *  Creates a deep clone of the WikiContext.  This is useful when you want
      *  to be sure that you don't accidentally mess with page attributes, etc.
-     *  
+     *
      *  @since  2.8.0
      *  @return A deep clone of the WikiContext.
      */
@@ -682,7 +701,7 @@ public class WikiContext
 
         return null;
     }
-    
+
     /**
      *  Returns the WikiSession associated with the context.
      *  This method is guaranteed to always return a valid WikiSession.
@@ -698,7 +717,7 @@ public class WikiContext
 
     /**
      *  This method can be used to find the WikiContext programmatically
-     *  from a JSP PageContext. We check the request context. 
+     *  from a JSP PageContext. We check the request context.
      *  The wiki context, if it exists,
      *  is looked up using the key
      *  {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
