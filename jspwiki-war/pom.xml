@@ -207,6 +207,23 @@
           <path>/${project.build.finalName}</path>
         </configuration>
       </plugin>
+      
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <excludes>
+                <exclude>**/test*/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- Surefire plugin (running unit tests):
          http://maven.apache.org/surefire/maven-surefire-plugin/
