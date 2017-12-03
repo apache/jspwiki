@@ -99,9 +99,9 @@ public class LinkParsingOperations {
     }
 
     /**
-     * something similar at {@link LinkParser.Link#isInterwikiLink()}.
-     * @param page
-     * @return
+     *  Returns true, if this Link represents an InterWiki link (of the form wiki:page).
+     *
+     *  @return {@code true}, if this Link represents an InterWiki link, {@code false} otherwise.
      */
     public boolean isInterWikiLink( final String page ) {
         return page.indexOf( ':' ) != -1;
