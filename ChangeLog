@@ -1,3 +1,15 @@
+2017-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-43
+       
+       * Fixed JSPWIKI-843 - generate test-jar for jspwiki-war (wasn't being generated)
+       
+       * Extract WikiLink parsing operations from JSPWikiMarkupParser, LinkParser, 
+         VariableManager to their own class, LinkParsingOperations
+       
+       * Move (private) JSPWikiMarkupParser#getLocalBooleanProperty to 
+        (public) WikiContext#getBooleanWikiProperty
+
 2017-11-16  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-42
