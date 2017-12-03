@@ -48,7 +48,6 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.VariableManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -522,11 +521,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         return false;
-    }
-
-    private static boolean isMetadata( String link )
-    {
-        return link.startsWith("{SET");
     }
 
     /**
@@ -1262,7 +1256,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             return handleAccessRule( linktext );
         }
 
-        if( isMetadata( linktext ) )
+        if( m_linkParsingOperations.isMetadata( linktext ) )
         {
             return handleMetadata( linktext );
         }

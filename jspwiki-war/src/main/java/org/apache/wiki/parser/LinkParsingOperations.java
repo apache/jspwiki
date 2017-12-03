@@ -26,13 +26,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.VariableManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 
 /**
- * Link parsing operations
+ * Link parsing operations.
+ *
+ * @since 2.10.3
  */
 public class LinkParsingOperations {
 
@@ -85,41 +86,42 @@ public class LinkParsingOperations {
     }
 
     /**
-     * @see {@link JSPWikiMarkupParser#isMetadata()}
+     * Returns true if the link is a metadata link
+     *
+     * @param link The link text
+     * @return {@code true}, if this represents a metadata link.
      */
     public boolean isMetadata( final String link ) {
         return link.startsWith( "{SET" );
     }
 
     /**
-     *  Returns true if the link is really command to insert
-     *  a variable.
-     *  <P>
-     *  Currently we just check if the link starts with "{$".
+     * Returns true if the link is really command to insert a variable.
+     * <P>
+     * Currently we just check if the link starts with "{$".
      *
-     *  @param link The link text
-     *  @return {@code true}, if this represents a variable link.
+     * @param link The link text
+     * @return {@code true}, if this represents a variable link.
      */
     public boolean isVariableLink( String link ) {
         return link.startsWith( "{$" );
     }
 
     /**
-     *  Returns true, if this Link represents an InterWiki link (of the form wiki:page).
+     * Returns true, if this Link represents an InterWiki link (of the form wiki:page).
      *
-     *  @return {@code true}, if this Link represents an InterWiki link, {@code false} otherwise.
+     * @return {@code true}, if this Link represents an InterWiki link, {@code false} otherwise.
      */
     public boolean isInterWikiLink( final String page ) {
         return page.indexOf( ':' ) != -1;
     }
 
     /**
-     *  Figures out if a link is an off-site link.  This recognizes
-     *  the most common protocols by checking how it starts.
+     * Figures out if a link is an off-site link.  This recognizes
+     * the most common protocols by checking how it starts.
      *
-     *  @param link The link to check.
-     *  @return true, if this is a link outside of this wiki.
-     *  @since 2.10.3
+     * @param link The link to check.
+     * @return true, if this is a link outside of this wiki.
      */
     public boolean isExternalLink( final String page ) {
         int idx = Arrays.binarySearch( EXTERNAL_LINKS, page, new StartingComparator() );
