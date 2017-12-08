@@ -1,3 +1,11 @@
+2017-12-08  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-44
+       
+       * JSPWIKI-802 - initial markdown support see 
+         https://jspwiki-wiki.apache.org/Wiki.jsp?page=Markdown%20Support
+         for details
+       
 2017-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-43
