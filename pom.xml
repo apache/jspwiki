@@ -17,7 +17,9 @@
     specific language governing permissions and limitations
     under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <groupId>org.apache</groupId>
@@ -39,6 +41,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <flexmark.version>0.28.14</flexmark.version>
     <jdk.version>1.6</jdk.version>
     <lucene.version>4.7.0</lucene.version>
     <selenium.version>2.42.0</selenium.version>
@@ -67,6 +70,24 @@
   <dependencyManagement> <!-- defines what configuration is going to be used if, and only if, the dependency is used -->
     <dependencies>       <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
       <!-- compile dependencies -->
+      <dependency>
+        <groupId>com.vladsch.flexmark</groupId>
+        <artifactId>flexmark</artifactId>
+        <version>${flexmark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.vladsch.flexmark</groupId>
+        <artifactId>flexmark-ext-footnotes</artifactId>
+        <version>${flexmark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.vladsch.flexmark</groupId>
+        <artifactId>flexmark-ext-toc</artifactId>
+        <version>${flexmark.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
@@ -228,7 +249,7 @@
       <dependency>
         <groupId>net.sourceforge.stripes</groupId>
         <artifactId>stripes</artifactId>
-        <version>1.5.8</version>
+        <version>1.6.0</version>
       </dependency>
 
       <!--
@@ -269,11 +290,11 @@
       </dependency>
 
       <!-- runtime dependencies -->
-        <dependency>
-            <groupId>net.sourceforge.nekohtml</groupId>
-            <artifactId>nekohtml</artifactId>
-            <version>1.9.21</version>
-        </dependency>
+      <dependency>
+        <groupId>net.sourceforge.nekohtml</groupId>
+        <artifactId>nekohtml</artifactId>
+        <version>1.9.21</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -667,6 +688,20 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>markdown-support</id>
+      <activation>
+        <jdk>[1.7,)</jdk>
+      </activation>
+      <modules>
+        <module>jspwiki-wikipages</module>
+        <module>jspwiki-war</module>
+        <module>jspwiki-markdown</module>
+        <module>jspwiki-portable</module>
+        <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
+      </modules>
     </profile>
   </profiles>
 
