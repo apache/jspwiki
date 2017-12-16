@@ -19,7 +19,7 @@
 package org.apache.wiki.markdown;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.MarkdownForJSPWikiAttributeProvider;
+import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.JSPWikiLinkAttributeProvider;
 import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.JSPWikiLinkNodePostProcessor;
 
 import com.vladsch.flexmark.ast.Document;
@@ -84,7 +84,7 @@ public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, Html
 			 */
 			@Override
 			public AttributeProvider create( final NodeRendererContext context ) {
-				return new MarkdownForJSPWikiAttributeProvider( wContext );
+				return new JSPWikiLinkAttributeProvider( wContext );
 			}
 		};
 	}

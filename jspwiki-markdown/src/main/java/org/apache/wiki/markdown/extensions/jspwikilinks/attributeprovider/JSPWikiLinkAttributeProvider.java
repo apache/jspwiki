@@ -35,12 +35,12 @@ import com.vladsch.flexmark.util.html.Attributes;
  *
  * Acts as a factory of {@link NodeAttributeProviderState}, which are the classes setting the attributes for each concrete type of link.
  */
-public class MarkdownForJSPWikiAttributeProvider implements AttributeProvider {
+public class JSPWikiLinkAttributeProvider implements AttributeProvider {
 
     protected final WikiContext wikiContext;
     protected final LinkParsingOperations linkOperations;
 
-    public MarkdownForJSPWikiAttributeProvider( final WikiContext wikiContext ) {
+    public JSPWikiLinkAttributeProvider( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
     }
