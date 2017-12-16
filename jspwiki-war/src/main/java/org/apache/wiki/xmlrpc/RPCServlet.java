@@ -75,7 +75,7 @@ public class RPCServlet extends HttpServlet
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
         */
-        Class handlerClass = Class.forName( handlerName );
+        Class< ? > handlerClass = Class.forName( handlerName );
         m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
     }
 
@@ -179,9 +179,9 @@ public class RPCServlet extends HttpServlet
     private static class LocalHandler
         implements ContextXmlRpcHandler
     {
-        private Class m_clazz;
+        private Class< ? > m_clazz;
 
-        public LocalHandler( Class clazz )
+        public LocalHandler( Class< ? > clazz )
         {
             m_clazz = clazz;
         }

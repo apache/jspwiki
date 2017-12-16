@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.xmlrpc;
 
@@ -47,7 +47,7 @@ import org.apache.xmlrpc.XmlRpcException;
 public class RPCHandler
     extends AbstractRPCHandler
 {
-    private static Logger log = Logger.getLogger( RPCHandler.class ); 
+    private static Logger log = Logger.getLogger( RPCHandler.class );
 
     /**
      *  {@inheritDoc}
@@ -103,12 +103,11 @@ public class RPCHandler
     public Vector getAllPages()
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
+        Collection< WikiPage > pages = m_engine.getRecentChanges();
         Vector<String> result = new Vector<String>();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage p : pages )
         {
-            WikiPage p = (WikiPage) i.next();
             if( !(p instanceof Attachment) )
             {
                 result.add( toRPCString(p.getName()) );
@@ -138,8 +137,8 @@ public class RPCHandler
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( d );
-        cal.add( Calendar.MILLISECOND, 
-                 - (cal.get( Calendar.ZONE_OFFSET ) + 
+        cal.add( Calendar.MILLISECOND,
+                 - (cal.get( Calendar.ZONE_OFFSET ) +
                     (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
         ht.put( "lastModified", cal.getTime() );
@@ -156,7 +155,7 @@ public class RPCHandler
     public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
+        Collection< WikiPage > pages = m_engine.getRecentChanges();
         Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
 
         Calendar cal = Calendar.getInstance();
@@ -170,10 +169,8 @@ public class RPCHandler
                   (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         since = cal.getTime();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage page : pages )
         {
-            WikiPage page = (WikiPage)i.next();
-
             if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
             {
                 result.add( encodeWikiPage( page ) );
@@ -202,9 +199,9 @@ public class RPCHandler
         }
 
         WikiPage p = m_engine.getPage( pagename );
-        
+
         checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
-        
+
         return pagename;
     }
 
@@ -242,7 +239,7 @@ public class RPCHandler
     }
 
     public byte[] getPageHTML( String pagename )
-        throws XmlRpcException    
+        throws XmlRpcException
     {
         pagename = parsePageCheckCondition( pagename );
 

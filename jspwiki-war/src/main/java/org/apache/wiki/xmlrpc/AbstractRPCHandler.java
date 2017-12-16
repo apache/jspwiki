@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.xmlrpc;
 
@@ -60,8 +60,8 @@ public abstract class AbstractRPCHandler
 
     protected WikiEngine m_engine;
     protected WikiContext m_context;
-    
-    
+
+
     /**
      *  This is the currently implemented JSPWiki XML-RPC code revision.
      */
@@ -78,19 +78,17 @@ public abstract class AbstractRPCHandler
     public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
-        Vector<Hashtable<?, ?>> result    = new Vector<Hashtable<?, ?>>();
+        Collection< WikiPage > pages = m_engine.getRecentChanges();
+        Vector< Hashtable< ?, ? > > result = new Vector<Hashtable< ?, ? > >();
 
         // Transform UTC into local time.
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
-        cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) + 
+        cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) +
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage page : pages )
         {
-            WikiPage page = (WikiPage)i.next();
-
             if( page.getLastModified().after( cal.getTime() ) )
             {
                 result.add( encodeWikiPage( page ) );
@@ -101,28 +99,28 @@ public abstract class AbstractRPCHandler
     }
 
     /**
-     *  Checks whether the current user has permission to perform the RPC action; 
+     *  Checks whether the current user has permission to perform the RPC action;
      *  throws an exception if not allowed by {@link org.apache.wiki.auth.AuthorizationManager}.
-     *  
+     *
      *  @param perm the Permission to check
      */
     protected void checkPermission( Permission perm )
     {
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
-        
+
         if( mgr.checkPermission( m_context.getWikiSession(), perm ) )
             return;
-        
+
         throw new AuthenticationFailed( "You have no access to this resource, o master" );
     }
-    
+
     /**
      *  Returns the current supported JSPWiki XML-RPC API.
      */
     public int getRPCVersionSupported()
     {
         checkPermission( WikiPermission.LOGIN );
-        
+
         return RPC_VERSION;
     }
 }
