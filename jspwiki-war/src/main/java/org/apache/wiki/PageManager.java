@@ -693,7 +693,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * {@inheritDoc}
      */
     @Override
-    public Collection modules() {
+    public Collection< WikiModuleInfo > modules() {
         return null;
     }
 

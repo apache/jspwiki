@@ -47,13 +47,12 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.util.ClassUtil;
 
+
 /**
- *  Provides facilities for handling attachments.  All attachment
- *  handling goes through this class.
+ *  Provides facilities for handling attachments.  All attachment handling goes through this class.
  *  <p>
- *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider
- *  that is in use.  It is created by the WikiEngine as a singleton object, and
- *  can be requested through the WikiEngine.
+ *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider that is in use.
+ *  It is created by the WikiEngine as a singleton object, and can be requested through the WikiEngine.
  *
  *  @since 1.9.28
  */
@@ -341,12 +340,9 @@ public class AttachmentManager
         // System.out.println("Seeking info on "+currentPage+"::"+attachmentname);
 
         //
-        //  Finally, figure out whether this is a real attachment or a generated
-        //  attachment.
+        //  Finally, figure out whether this is a real attachment or a generated attachment.
         //
-        Attachment att;
-
-        att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
+        Attachment att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
 
         if( att == null )
         {
@@ -548,8 +544,7 @@ public class AttachmentManager
 
         m_provider.putAttachmentData( att, in );
 
-        m_engine.getReferenceManager().updateReferences( att.getName(),
-                                                         new Vector() );
+        m_engine.getReferenceManager().updateReferences( att.getName(), new Vector< String >() );
 
         WikiPage parent = new WikiPage( m_engine, att.getParentName() );
         m_engine.updateReferences( parent );

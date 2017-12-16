@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,16 +14,22 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.stress;
 
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Collection;
+import java.util.Properties;
 
-import org.apache.wiki.*;
-import org.apache.wiki.providers.*;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.providers.FileSystemProvider;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 
 public class StressTestVersioningProvider extends TestCase
 {
@@ -78,7 +84,7 @@ public class StressTestVersioningProvider extends TestCase
         WikiPage pageinfo = engine.getPage( NAME1 );
 
         assertEquals( "wrong version", maxver, pageinfo.getVersion() );
-        
+
         // +2 comes from \r\n.
         assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
     }
@@ -103,20 +109,18 @@ public class StressTestVersioningProvider extends TestCase
         System.out.println("Saved "+mark.toString(maxpages)+" pages/second");
 
         mark.reset();
-        
+
         mark.start();
-        Collection pages = engine.getPageManager().getAllPages();
+        Collection< WikiPage > pages = engine.getPageManager().getAllPages();
         mark.stop();
-        
+
         System.out.println("Got a list of all pages in "+mark);
-        
+
         mark.reset();
         mark.start();
-        
-        for( Iterator i = pages.iterator(); i.hasNext(); )
-        {
-            String foo = engine.getPureText( (WikiPage)i.next() );
-            
+
+        for( WikiPage page : pages ) {
+            String foo = engine.getPureText( page );
             assertNotNull( foo );
         }
         mark.stop();
@@ -129,12 +133,12 @@ public class StressTestVersioningProvider extends TestCase
     {
         runMassiveFileTest(100);
     }
-    
+
     public void testMillionFiles2() throws Exception
     {
         runMassiveFileTest(1000);
     }
-    
+
     public void testMillionFiles3() throws Exception
     {
         runMassiveFileTest(10000);
