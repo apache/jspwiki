@@ -1,28 +1,37 @@
+2017-12-16  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-45
+
+       * Fixed JSPWIKI-1064 - Link to non-existing page doesn't change if linked page
+         is created
+
+       * Improvement on JSPWIKI-843 - exclude tests from test-jar
+
 2017-12-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-44
-       
-       * JSPWIKI-802 - initial markdown support see 
+
+       * JSPWIKI-802 - initial markdown support see
          https://jspwiki-wiki.apache.org/Wiki.jsp?page=Markdown%20Support
          for details
-       
+
 2017-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-43
-       
+
        * Fixed JSPWIKI-843 - generate test-jar for jspwiki-war (wasn't being generated)
-       
-       * Extract WikiLink parsing operations from JSPWikiMarkupParser, LinkParser, 
+
+       * Extract WikiLink parsing operations from JSPWikiMarkupParser, LinkParser,
          VariableManager to their own class, LinkParsingOperations
-       
-       * Move (private) JSPWikiMarkupParser#getLocalBooleanProperty to 
+
+       * Move (private) JSPWikiMarkupParser#getLocalBooleanProperty to
         (public) WikiContext#getBooleanWikiProperty
 
 2017-11-16  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-42
-       
-       * small refactor to move some private constants to public at MarkupParser and 
+
+       * small refactor to move some private constants to public at MarkupParser and
          WikiRenderer, so they can be reused throughout the code and custom extensions.
 
 2017-08-22  Juan Pablo Santos (juanpablo AT apache DOT org)
