@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -38,6 +37,7 @@ import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 
 import net.sf.ehcache.Cache;
@@ -173,7 +173,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     }
 
     /**
-     *  Returns the default Paxt
+     *  Returns the wiki Parser
      *  @param pagedata the page data
      *  @return A MarkupParser instance.
      */
@@ -195,44 +195,47 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @throws IOException If rendering cannot be accomplished
      */
     // FIXME: The cache management policy is not very good: deleted/changed pages should be detected better.
-    protected WikiDocument getRenderedDocument(WikiContext context, String pagedata) throws IOException {
+    protected WikiDocument getRenderedDocument( WikiContext context, String pagedata ) throws IOException {
         String pageid = context.getRealPage().getName() + VERSION_DELIMITER + context.getRealPage().getVersion();
-        if (m_useCache) {
 
-            Element element = m_documentCache.get(pageid);
-            if (element != null) {
+        if( useCache( context ) ) {
+            Element element = m_documentCache.get( pageid );
+            if ( element != null ) {
                 WikiDocument doc = (WikiDocument) element.getObjectValue();
 
                 //
                 //  This check is needed in case the different filters have actually changed the page data.
                 //  FIXME: Figure out a faster method
-                if (pagedata.equals(doc.getPageData())) {
-                    if (log.isDebugEnabled()) log.debug("Using cached HTML for page " + pageid);
+                if( pagedata.equals( doc.getPageData() ) ) {
+                    if( log.isDebugEnabled() ) {
+                        log.debug( "Using cached HTML for page " + pageid );
+                    }
                     return doc;
                 }
-            } else {
-                if (log.isDebugEnabled()) log.debug("Re-rendering and storing " + pageid);
+            } else if( log.isDebugEnabled() ) {
+                log.debug( "Re-rendering and storing " + pageid );
             }
         }
-        //
+
         //  Refresh the data content
         //
-        try
-        {
+        try {
             MarkupParser parser = getParser( context, pagedata );
             WikiDocument doc = parser.parse();
             doc.setPageData( pagedata );
-            if (m_useCache) {
-                m_documentCache.put(new Element(pageid, doc));
+            if( useCache( context ) ) {
+                m_documentCache.put( new Element( pageid, doc ) );
             }
             return doc;
-        }
-        catch( IOException ex )
-        {
-            log.error("Unable to parse",ex);
+        } catch( IOException ex ) {
+            log.error( "Unable to parse", ex );
         }
 
         return null;
+    }
+
+    boolean useCache( WikiContext context ) {
+        return m_useCache && WikiContext.VIEW.equals( context.getRequestContext() );
     }
 
     /**
@@ -335,30 +338,32 @@ public class RenderingManager implements WikiEventListener, InternalModule
     }
 
     /**
-     * Flushes the document cache in response to a POST_SAVE_BEGIN event.
+     * {@inheritDoc}
+     *
+     * <p>Flushes the document cache in response to a POST_SAVE_BEGIN event.
      *
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
-     * @param event {@inheritDoc}
      */
     @Override
-    public void actionPerformed(WikiEvent event) {
-        if (m_useCache) {
-            if ((event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN)) {
-                if (m_documentCache != null) {
-                    String pageName = ((WikiPageEvent) event).getPageName();
-                    m_documentCache.remove(pageName);
-                    Collection<String> referringPages = m_engine.getReferenceManager().findReferrers(pageName);
+    public void actionPerformed( WikiEvent event ) {
+        log.debug( "event received: " + event.toString() );
+        if( m_useCache ) {
+            if( ( event instanceof WikiPageEvent ) && ( event.getType() == WikiPageEvent.POST_SAVE_BEGIN ) ) {
+                if( m_documentCache != null ) {
+                    String pageName = ( ( WikiPageEvent ) event ).getPageName();
+                    m_documentCache.remove( pageName );
+                    Collection< String > referringPages = m_engine.getReferenceManager().findReferrers( pageName );
 
                     //
                     //  Flush also those pages that refer to this page (if an nonexistent page
-                    //  appears; we need to flush the HTML that refers to the now-existent page
+                    //  appears, we need to flush the HTML that refers to the now-existent page)
                     //
-                    if (referringPages != null) {
-                        Iterator<String> i = referringPages.iterator();
-                        while (i.hasNext()) {
-                            String page = i.next();
-                            if (log.isDebugEnabled()) log.debug("Flushing " + page);
-                            m_documentCache.remove(page);
+                    if( referringPages != null ) {
+                        for( String page : referringPages ) {
+                            if( log.isDebugEnabled() ) {
+                                log.debug( "Flushing latest version of " + page );
+                            }
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION );
                         }
                     }
                 }
