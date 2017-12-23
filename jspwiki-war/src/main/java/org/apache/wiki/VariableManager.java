@@ -21,7 +21,6 @@ package org.apache.wiki;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -247,7 +246,7 @@ public class VariableManager
         {
             //
             //  Using reflection to get system variables adding a new system variable
-            //  now only invloves creating a new method in the SystemVariables class
+            //  now only involves creating a new method in the SystemVariables class
             //  with a name starting with get and the first character of the name of
             //  the variable capitalized. Example:
             //    public String getMysysvar(){
@@ -368,8 +367,8 @@ public class VariableManager
      *  is not meant to be a public class.
      *
      *  @since 2.7.0
-     *
      */
+    @SuppressWarnings( "unused" )
     private static class SystemVariables
     {
         private WikiContext m_context;
@@ -431,10 +430,11 @@ public class VariableManager
         {
         	StringBuilder res = new StringBuilder();
 
-            for( Iterator< String > i = m_context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
+            for( String link : m_context.getEngine().getAllInterWikiLinks() )
             {
-                if( res.length() > 0 ) res.append(", ");
-                String link = i.next();
+                if( res.length() > 0 ) {
+                    res.append(", ");
+                }
                 res.append( link );
                 res.append( " --> " );
                 res.append( m_context.getEngine().getInterWikiURL(link) );
@@ -446,11 +446,12 @@ public class VariableManager
         {
         	StringBuilder res = new StringBuilder();
 
-            for( Iterator< String > i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+            for( String ptrn : m_context.getEngine().getAllInlinedImagePatterns() )
             {
-                if( res.length() > 0 ) res.append(", ");
+                if( res.length() > 0 ) {
+                    res.append(", ");
+                }
 
-                String ptrn = i.next();
                 res.append(ptrn);
             }
 
