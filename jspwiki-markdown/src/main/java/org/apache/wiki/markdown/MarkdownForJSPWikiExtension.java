@@ -19,25 +19,17 @@
 package org.apache.wiki.markdown;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.JSPWikiLinkAttributeProvider;
-import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.JSPWikiLinkNodePostProcessor;
+import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.JSPWikiLinkAttributeProviderFactory;
+import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.JSPWikiNodePostProcessorFactory;
+import org.apache.wiki.markdown.renderer.JSPWikiNodeRendererFactory;
 
-import com.vladsch.flexmark.ast.Document;
-import com.vladsch.flexmark.ast.Link;
-import com.vladsch.flexmark.html.AttributeProvider;
-import com.vladsch.flexmark.html.AttributeProviderFactory;
 import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.html.IndependentAttributeProviderFactory;
-import com.vladsch.flexmark.html.renderer.NodeRendererContext;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.block.NodePostProcessor;
-import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
-import com.vladsch.flexmark.util.options.DataHolder;
 import com.vladsch.flexmark.util.options.MutableDataHolder;
 
 
 /**
- * Flexmark entry point for JSPWiki extensions
+ * Flexmark entry point to bootstrap JSPWiki extensions.
  */
 public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension {
 
@@ -66,7 +58,8 @@ public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, Html
 	 */
 	@Override
 	public void extend( final HtmlRenderer.Builder rendererBuilder, final String rendererType ) {
-        rendererBuilder.attributeProviderFactory( jspWikiAttributeProviderFactory( context ) );
+	    rendererBuilder.nodeRendererFactory( new JSPWikiNodeRendererFactory( context ) );
+        rendererBuilder.attributeProviderFactory( new JSPWikiLinkAttributeProviderFactory( context ) );
 	}
 
     /**
@@ -76,36 +69,5 @@ public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, Html
 	public void extend( final Parser.Builder parserBuilder ) {
 	    parserBuilder.postProcessorFactory( new JSPWikiNodePostProcessorFactory( context, parserBuilder ) );
 	}
-
-	AttributeProviderFactory jspWikiAttributeProviderFactory( final WikiContext wContext ) {
-		return new IndependentAttributeProviderFactory() {
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public AttributeProvider create( final NodeRendererContext context ) {
-				return new JSPWikiLinkAttributeProvider( wContext );
-			}
-		};
-	}
-
-    static class JSPWikiNodePostProcessorFactory extends NodePostProcessorFactory {
-
-        private final WikiContext m_context;
-
-        public JSPWikiNodePostProcessorFactory( final WikiContext m_context, final DataHolder options ) {
-            super( true );
-            addNodes( Link.class ); // needs to be called before create( Document )
-            this.m_context = m_context;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public NodePostProcessor create( final Document document ) {
-            return new JSPWikiLinkNodePostProcessor( m_context, document );
-        }
-    }
 
 }
