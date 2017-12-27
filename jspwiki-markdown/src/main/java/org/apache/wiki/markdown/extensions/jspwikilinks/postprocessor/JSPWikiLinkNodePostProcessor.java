@@ -20,6 +20,7 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
@@ -33,7 +34,7 @@ import com.vladsch.flexmark.util.NodeTracker;
 
 
 /**
- * {@link NodePostProcessor} for JSPWiki links.
+ * {@link NodePostProcessor} to convert {@link Link}s into {@link JSPWikiLink}s.
  *
  * Acts as a factory of {@link NodePostProcessorState}, which are the classes generating the extra markup for each concrete type of link.
  */
@@ -59,14 +60,9 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
     @Override
     public void process( final NodeTracker state, final Node node ) {
         if( node instanceof Link ) {
-            final Link link = ( Link )node;
-            boolean hasRef = true;
-            if( StringUtils.isEmpty( link.getUrl().toString() ) ) { // empty link == link.getText() is a wiki page
-                link.setUrl( link.getText() );
-                hasRef = false;
-            }
+            JSPWikiLink link = replaceLinkWithJSPWikiLink( state, node );
 
-            final NodePostProcessorState< Link > linkPostProcessor;
+            final NodePostProcessorState< JSPWikiLink > linkPostProcessor;
             if( linkOperations.isAccessRule( link.getUrl().toString() ) ) {
                 linkPostProcessor = new AccessRuleLinkNodePostProcessorState( m_context );
             } else if( linkOperations.isMetadata( link.getUrl().toString() ) ) {
@@ -76,16 +72,37 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
             } else if( linkOperations.isVariableLink( link.getUrl().toString() ) ) {
                 linkPostProcessor = new VariableLinkNodePostProcessorState( m_context );
             } else if( linkOperations.isExternalLink( link.getUrl().toString() ) ) {
-                linkPostProcessor = new ExternalLinkNodePostProcessorState( m_context, hasRef );
+                linkPostProcessor = new ExternalLinkNodePostProcessorState( m_context );
             } else if( linkOperations.isInterWikiLink( link.getUrl().toString() ) ) {
-                linkPostProcessor = new InterWikiLinkNodePostProcessorState( m_context, document, hasRef );
+                linkPostProcessor = new InterWikiLinkNodePostProcessorState( m_context, document );
+            } else if( StringUtils.startsWith( link.getUrl().toString(), "#" ) ) {
+                linkPostProcessor = new LocalFootnoteLinkNodePostProcessorState( m_context );
             } else if( TextUtil.isNumber( link.getUrl().toString() ) ) {
-                linkPostProcessor = new FootnoteRefLinkNodePostProcessorState();
+                linkPostProcessor = new LocalFootnoteRefLinkNodePostProcessorState( m_context );
             } else {
-                linkPostProcessor = new LocalLinkNodePostProcessorState( m_context, hasRef );
+                linkPostProcessor = new LocalLinkNodePostProcessorState( m_context );
             }
             linkPostProcessor.process( state, link );
         }
+    }
+
+    JSPWikiLink replaceLinkWithJSPWikiLink( final NodeTracker state, final Node node ) {
+        JSPWikiLink link = new JSPWikiLink( ( Link )node );
+        Node previous = node.getPrevious();
+        Node parent = node.getParent();
+
+        link.takeChildren( node );
+        node.unlink();
+
+        if( previous != null ) {
+            previous.insertAfter( link );
+        } else {
+            parent.appendChild( link );
+        }
+
+        state.nodeRemoved( node );
+        state.nodeAddedWithChildren( link );
+        return link;
     }
 
 }

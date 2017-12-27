@@ -20,10 +20,10 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.renderer.AttributablePart;
@@ -31,9 +31,9 @@ import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
- * {@link AttributeProvider} for JSPWiki links.
+ * {@link AttributeProvider} to decorate {@link JSPWikiLink}s.
  *
- * Acts as a factory of {@link NodeAttributeProviderState}, which are the classes setting the attributes for each concrete type of link.
+ * Acts as a factory of {@link NodeAttributeProviderState}s, which are the classes setting the attributes for each concrete type of link.
  */
 public class JSPWikiLinkAttributeProvider implements AttributeProvider {
 
@@ -52,24 +52,19 @@ public class JSPWikiLinkAttributeProvider implements AttributeProvider {
      */
     @Override
     public void setAttributes( final Node node, final AttributablePart part, final Attributes attributes ) {
-        if( node instanceof Link ) {
-            final Link link = ( Link )node;
-            boolean hasRef = true;
-            if( StringUtils.isEmpty( link.getUrl().toString() ) ) { // empty link == link.getText() is a wiki page
-                link.setUrl( link.getText() );
-                hasRef = false;
-            }
-            final NodeAttributeProviderState< Link > linkState;
-            if( linkOperations.isExternalLink( link.getUrl().toString() ) ) {
-                linkState = new ExternalLinkAttributeProviderState( wikiContext, hasRef );
-            } else if( linkOperations.isInterWikiLink( link.getUrl().toString() ) ) {
-                linkState = new InterWikiLinkAttributeProviderState( wikiContext, hasRef );
-            } else if( StringUtils.startsWith( link.getUrl().toString(), "#" ) ) {
+        if( node instanceof JSPWikiLink ) {
+            final JSPWikiLink link = ( JSPWikiLink )node;
+            final NodeAttributeProviderState< JSPWikiLink > linkState;
+            if( linkOperations.isExternalLink( link.getWikiLink() ) ) {
+                linkState = new ExternalLinkAttributeProviderState( wikiContext, link.hasRef() );
+            } else if( linkOperations.isInterWikiLink( link.getWikiLink() ) ) {
+                linkState = new InterWikiLinkAttributeProviderState( wikiContext, link.hasRef() );
+            } else if( StringUtils.startsWith( link.getWikiLink(), "#" ) ) {
                 linkState = new LocalFootnoteLinkAttributeProviderState( wikiContext );
-            } else if( TextUtil.isNumber( link.getUrl().toString() ) ) {
+            } else if( TextUtil.isNumber( link.getWikiLink() ) ) {
                 linkState = new LocalFootnoteRefLinkAttributeProviderState( wikiContext );
             } else {
-                linkState = new LocalLinkAttributeProviderState( wikiContext, hasRef );
+                linkState = new LocalLinkAttributeProviderState( wikiContext, link.hasRef() );
             }
             linkState.setAttributes( attributes, link );
         }
