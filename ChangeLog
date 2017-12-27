@@ -1,3 +1,13 @@
+2017-12-27  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-46
+
+       * JSPWIKI-802 - Markdown support
+         * urls are not set on attribute provider derived classes, as this has some
+           unwanted side effects. Introduced JSPWikiLink, a wrapper around Flexmark's
+           links which retain the original wiki link.
+         * updated Flexmark to 0.28.24.
+
 2017-12-16  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-45
