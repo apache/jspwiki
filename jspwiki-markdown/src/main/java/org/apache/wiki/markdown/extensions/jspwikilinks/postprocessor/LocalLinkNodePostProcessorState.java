@@ -19,10 +19,11 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
+import org.apache.wiki.parser.MarkupParser;
 
 import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
@@ -30,14 +31,12 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 /**
  * {@link NodePostProcessorState} which further post processes local links.
  */
-public class LocalLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class LocalLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private final boolean hasRef;
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
 
-    public LocalLinkNodePostProcessorState( final WikiContext wikiContext, final boolean hasRef ) {
-        this.hasRef = hasRef;
+    public LocalLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
     }
@@ -45,26 +44,46 @@ public class LocalLinkNodePostProcessorState implements NodePostProcessorState< 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
+        final int hashMark = link.getUrl().toString().indexOf( '#' );
         final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getUrl().toString() );
         if( attachment != null  ) {
-            if( linkOperations.isImageLink( link.getUrl().toString() ) ) {
-                new ImageLinkNodePostProcessorState( wikiContext, attachment, hasRef ).process( state, link );
-            } else {
+            if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
+                final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getUrl().toString() );
+                link.setUrl( CharSubSequence.of( attlink ) );
                 link.removeChildren();
                 final HtmlInline content = new HtmlInline( CharSubSequence.of( link.getText().toString() ) );
                 link.appendChild( content );
                 state.nodeAddedWithChildren( content );
                 addAttachmentLink( state, link );
+            } else {
+                new ImageLinkNodePostProcessorState( wikiContext, attachment, link.hasRef() ).process( state, link );
+            }
+        } else if( hashMark != -1 ) { // It's an internal Wiki link, but to a named section
+            final String namedSection = link.getUrl().toString().substring( hashMark + 1 );
+            link.setUrl( CharSubSequence.of( link.getUrl().toString().substring( 0, hashMark ) ) );
+            final String matchedLink = linkOperations.linkIfExists( link.getUrl().toString() );
+            if( matchedLink != null ) {
+                String sectref = "#section-" + wikiContext.getEngine().encodeName( matchedLink + "-" + MarkupParser.wikifyLink( namedSection ) );
+                sectref = sectref.replace('%', '_');
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() + sectref ) ) );
+            } else {
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.EDIT, link.getUrl().toString() ) ) );
+            }
+        } else {
+            if( linkOperations.linkExists( link.getUrl().toString() ) ) {
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
+            } else {
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.EDIT, link.getUrl().toString() ) ) );
             }
         }
     }
 
-    void addAttachmentLink( final NodeTracker state, final Link link ) {
-        final String infolink = wikiContext.getURL( WikiContext.INFO, link.getUrl().toString() );
+    void addAttachmentLink( final NodeTracker state, final JSPWikiLink link ) {
+        final String infolink = wikiContext.getURL( WikiContext.INFO, link.getWikiLink() );
         final String imglink = wikiContext.getURL( WikiContext.NONE, "images/attachment_small.png" );
         final HtmlInline aimg = new HtmlInline( CharSubSequence.of( "<a href=\""+ infolink + "\" class=\"infolink\">" +
                                                                        "<img src=\""+ imglink + "\" border=\"0\" alt=\"(info)\" />" +

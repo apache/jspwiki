@@ -21,10 +21,10 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.render.RenderingManager;
 
 import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
@@ -32,7 +32,7 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 /**
  * {@link NodePostProcessorState} which further post processes WikiVariable links.
  */
-public class VariableLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class VariableLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private final WikiContext wikiContext;
     private final boolean m_wysiwygEditorMode;
@@ -46,10 +46,10 @@ public class VariableLinkNodePostProcessorState implements NodePostProcessorStat
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
         final String variable = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
         if( !m_wysiwygEditorMode ) {
             try {

@@ -24,34 +24,34 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.TextUtil;
 
 import com.vladsch.flexmark.ast.Document;
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodePostProcessorState} which further post processes interwiki links.
  */
-public class InterWikiLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class InterWikiLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private static final Logger LOG = Logger.getLogger( InterWikiLinkNodePostProcessorState.class );
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
     private final Document document;
     private final boolean m_wysiwygEditorMode;
-    private final boolean hasRef;
     private boolean m_useOutlinkImage = true;
 
-    public InterWikiLinkNodePostProcessorState( final WikiContext wikiContext, final Document document, final boolean hasRef ) {
+    public InterWikiLinkNodePostProcessorState( final WikiContext wikiContext, final Document document ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
         this.document = document;
-        this.hasRef = hasRef;
         this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
@@ -60,16 +60,19 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
+        final String[] refAndPage = link.getUrl().toString().split( ":" );
         if( !m_wysiwygEditorMode ) {
-            final String[] refAndPage = link.getUrl().toString().split( ":" );
-            final String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
+            String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
             if( urlReference != null ) {
+                urlReference = TextUtil.replaceString( urlReference, "%s", refAndPage[ 1 ] );
                 if( linkOperations.isImageLink( urlReference ) ) {
-                    new ImageLinkNodePostProcessorState( wikiContext, urlReference, hasRef ).process( state, link );
+                    new ImageLinkNodePostProcessorState( wikiContext, urlReference, link.hasRef() ).process( state, link );
+                } else {
+                    link.setUrl( CharSubSequence.of( urlReference ) );
                 }
                 if( linkOperations.isExternalLink( urlReference ) ) {
                     NodePostProcessorStateCommonOperations.addOutlinkImage( state, link, wikiContext, m_useOutlinkImage );
@@ -81,6 +84,8 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
                 final String errMsg = MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args );
                 NodePostProcessorStateCommonOperations.makeError( state, link, errMsg );
             }
+        } else {
+            link.setUrl( CharSubSequence.of( refAndPage[0] + ":" + refAndPage[1] ) );
         }
     }
 

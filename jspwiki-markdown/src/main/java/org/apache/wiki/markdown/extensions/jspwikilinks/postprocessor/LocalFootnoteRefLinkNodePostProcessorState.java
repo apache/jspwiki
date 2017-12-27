@@ -18,7 +18,9 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import com.vladsch.flexmark.ast.Link;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
+
 import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
@@ -27,15 +29,22 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 /**
  * {@link NodePostProcessorState} which further post processes footnote reference links.
  */
-public class FootnoteRefLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class LocalFootnoteRefLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
+
+    private final WikiContext wikiContext;
+
+    public LocalFootnoteRefLinkNodePostProcessorState( final WikiContext wikiContext ) {
+        this.wikiContext = wikiContext;
+    }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
+        link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
         final Text opBracket = new Text( CharSubSequence.of( "[" ) );
         final Text clBracket = new Text( CharSubSequence.of( "]" ) );
         link.prependChild( opBracket );

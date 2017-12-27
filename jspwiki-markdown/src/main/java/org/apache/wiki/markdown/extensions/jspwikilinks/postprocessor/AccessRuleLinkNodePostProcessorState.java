@@ -23,16 +23,16 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.render.RenderingManager;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
 
 
 /**
  * {@link NodePostProcessorState} which further post processes access rules links.
  */
-public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private static final Logger LOG = Logger.getLogger( AccessRuleLinkNodePostProcessorState.class );
     private final WikiContext wikiContext;
@@ -47,10 +47,10 @@ public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorSt
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
         String ruleLine = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
         if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link.getUrl().toString() ).isParseAccessRules() ) {
             final WikiPage page = wikiContext.getRealPage();

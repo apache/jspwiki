@@ -25,12 +25,12 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 
 import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ext.toc.TocBlock;
 import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
@@ -39,7 +39,7 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 /**
  * {@link NodePostProcessorState} which further post processes plugin links.
  */
-public class PluginLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class PluginLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private static final Logger LOG = Logger.getLogger( PluginLinkNodePostProcessorState.class );
     private final WikiContext wikiContext;
@@ -54,10 +54,10 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( final NodeTracker state, final Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
         if( link.getText().toString().startsWith( "{TableOfContents" ) ) {
             handleTableOfContentsPlugin( state, link );
             return;
@@ -107,7 +107,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
         }
     }
 
-    void handleTableOfContentsPlugin(final NodeTracker state, final Link link) {
+    void handleTableOfContentsPlugin(final NodeTracker state, final JSPWikiLink link) {
         if( !m_wysiwygEditorMode ) {
             final ResourceBundle rb = Preferences.getBundle( wikiContext, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
             final HtmlInline divToc = new HtmlInline( CharSubSequence.of( "<div class=\"toc\">\n" ) );
@@ -130,7 +130,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
         removeLink( state, link );
     }
 
-    void removeLink(final NodeTracker state, final Link link) {
+    void removeLink(final NodeTracker state, final JSPWikiLink link) {
         link.unlink();
         state.nodeRemoved( link );
     }

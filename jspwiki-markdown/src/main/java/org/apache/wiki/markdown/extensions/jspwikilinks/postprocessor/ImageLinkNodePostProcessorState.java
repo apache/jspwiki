@@ -19,10 +19,10 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 
 import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
@@ -30,7 +30,7 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 /**
  * {@link NodePostProcessorState} which further post processes image links.
  */
-public class ImageLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class ImageLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private final boolean isLinkFromText;
     private final String urlRef;
@@ -45,15 +45,16 @@ public class ImageLinkNodePostProcessorState implements NodePostProcessorState< 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
         final HtmlInline img = new HtmlInline( CharSubSequence.of( "<img class=\"inline\" " +
                                                                         "src=\"" + urlRef + "\" " +
                                                                         "alt=\"" + link.getText().toString() + "\" />" ) );
         if( ( isLinkFromText && linkOperations.isExternalLink( link.getText().toString() ) ) ||
                 ( isLinkFromText && linkOperations.linkExists( link.getText().toString() ) ) ) {
+            link.setUrl( CharSubSequence.of( urlRef ) );
             link.removeChildren();
             link.appendChild( img );
             state.nodeAdded( img );

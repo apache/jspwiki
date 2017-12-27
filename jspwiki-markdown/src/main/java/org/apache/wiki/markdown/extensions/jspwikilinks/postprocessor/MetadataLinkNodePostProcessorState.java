@@ -24,17 +24,17 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
 
 
 /**
  * {@link NodePostProcessorState} which further post processes metadata links.
  */
-public class MetadataLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class MetadataLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private static final Logger LOG = Logger.getLogger( MetadataLinkNodePostProcessorState.class );
     private final WikiContext wikiContext;
@@ -49,10 +49,10 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
         final String metadataLine = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
         try {
             final String args = metadataLine.substring( metadataLine.indexOf(' '), metadataLine.length() - 1 );
@@ -79,9 +79,8 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
             }
         } catch( final Exception e ) {
             final ResourceBundle rb = Preferences.getBundle( wikiContext, InternationalizationManager.CORE_BUNDLE );
-            NodePostProcessorStateCommonOperations.makeError( state,
-                                                                  link,
-                                                                  MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), metadataLine ) );
+            NodePostProcessorStateCommonOperations.makeError( state, link,
+                                                              MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), metadataLine ) );
         }
     }
 

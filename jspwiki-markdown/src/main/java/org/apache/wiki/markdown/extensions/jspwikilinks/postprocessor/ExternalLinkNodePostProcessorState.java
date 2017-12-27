@@ -19,25 +19,24 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodePostProcessorState} which further post processes external links.
  */
-public class ExternalLinkNodePostProcessorState implements NodePostProcessorState< Link > {
+public class ExternalLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private final boolean hasRef;
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
     private boolean m_useOutlinkImage = true;
 
-    public ExternalLinkNodePostProcessorState( final WikiContext wikiContext, final boolean hasRef ) {
-        this.hasRef = hasRef;
+    public ExternalLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
         this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
@@ -46,13 +45,14 @@ public class ExternalLinkNodePostProcessorState implements NodePostProcessorStat
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, Link)
+     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
      */
     @Override
-    public void process( NodeTracker state, Link link ) {
+    public void process( final NodeTracker state, final JSPWikiLink link ) {
         if( linkOperations.isImageLink( link.getUrl().toString() ) ) {
-            new ImageLinkNodePostProcessorState( wikiContext, link.getUrl().toString(), hasRef ).process( state, link );
+            new ImageLinkNodePostProcessorState( wikiContext, link.getUrl().toString(), link.hasRef() ).process( state, link );
         } else {
+            link.setUrl( CharSubSequence.of( link.getUrl().toString() ) );
             NodePostProcessorStateCommonOperations.addOutlinkImage( state, link, wikiContext, m_useOutlinkImage );
         }
     }

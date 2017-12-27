@@ -19,11 +19,11 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 
 import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
@@ -54,13 +54,13 @@ class NodePostProcessorStateCommonOperations {
         if( useOutlinkImage && !wysiwygEditorMode ) {
             final String m_outlinkImageURL = wikiContext.getURL( WikiContext.NONE, MarkupParser.OUTLINK_IMAGE );
             final HtmlInline img = new HtmlInline( CharSubSequence.of( "<img class=\""+ MarkupParser.OUTLINK + "\" " +
-                                                                             "alt=\"\" src=\""+ m_outlinkImageURL + "\" />" ) );
+                                                                              "alt=\"\" src=\""+ m_outlinkImageURL + "\" />" ) );
             node.insertAfter( img );
             state.nodeAdded( img );
         }
     }
 
-    static String inlineLinkTextOnWysiwyg( final NodeTracker state, final Link link, final boolean wysiwygEditorMode ) {
+    static String inlineLinkTextOnWysiwyg( final NodeTracker state, final JSPWikiLink link, final boolean wysiwygEditorMode ) {
         final String line = link.getUrl().toString();
         if( wysiwygEditorMode ) {
             final HtmlInline content = new HtmlInline( CharSubSequence.of( "[" + line + "]()" ) );
