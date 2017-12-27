@@ -19,18 +19,17 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.html.Attributes;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodeAttributeProviderState} which sets the attributes for local links.
  */
-public class LocalLinkAttributeProviderState implements NodeAttributeProviderState< Link > {
+public class LocalLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final boolean hasRef;
     private final WikiContext wikiContext;
@@ -45,37 +44,35 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Link)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final Link link ) {
+    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         final int hashMark = link.getUrl().toString().indexOf( '#' );
-        final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getUrl().toString() );
+        final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getWikiLink() );
         if( attachment != null ) {
             if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
                 attributes.replaceValue( "class", MarkupParser.CLASS_ATTACHMENT );
-                final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getUrl().toString() );
-                link.setUrl( CharSubSequence.of( attlink ) );
+                final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getWikiLink() );
                 attributes.replaceValue( "href", attlink );
             } else {
                 new ImageLinkAttributeProviderState( wikiContext, attachment, hasRef ).setAttributes( attributes, link );
             }
         } else if( hashMark != -1 ) { // It's an internal Wiki link, but to a named section
             final String namedSection = link.getUrl().toString().substring( hashMark + 1 );
-            link.setUrl( CharSubSequence.of( link.getUrl().toString().substring( 0, hashMark ) ) );
             final String matchedLink = linkOperations.linkIfExists( link.getUrl().toString() );
             if( matchedLink != null ) {
                 String sectref = "#section-" + wikiContext.getEngine().encodeName( matchedLink + "-" + MarkupParser.wikifyLink( namedSection ) );
                 sectref = sectref.replace('%', '_');
-                new LocalReadLinkAttributeProviderState( wikiContext, link.getUrl().toString() + sectref ).setAttributes( attributes, link );
+                new LocalReadLinkAttributeProviderState( wikiContext ).setAttributes( attributes, link );
             } else {
-                new LocalEditLinkAttributeProviderState( wikiContext, link.getUrl().toString() ).setAttributes( attributes, link );
+                new LocalEditLinkAttributeProviderState( wikiContext, link.getWikiLink() ).setAttributes( attributes, link );
             }
         } else {
-            if( linkOperations.linkExists( link.getUrl().toString() ) ) {
-                new LocalReadLinkAttributeProviderState( wikiContext, link.getUrl().toString() ).setAttributes( attributes, link );
+            if( linkOperations.linkExists( link.getWikiLink() ) ) {
+                new LocalReadLinkAttributeProviderState( wikiContext ).setAttributes( attributes, link );
             } else {
-                new LocalEditLinkAttributeProviderState( wikiContext, link.getUrl().toString() ).setAttributes( attributes, link );
+                new LocalEditLinkAttributeProviderState( wikiContext, link.getWikiLink() ).setAttributes( attributes, link );
             }
         }
     }

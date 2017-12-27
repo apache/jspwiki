@@ -19,6 +19,7 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
@@ -26,13 +27,12 @@ import org.apache.wiki.util.TextUtil;
 
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.html.Attributes;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodeAttributeProviderState} which sets the attributes for interwiki links.
  */
-public class InterWikiLinkAttributeProviderState implements NodeAttributeProviderState< Link > {
+public class InterWikiLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final boolean hasRef;
     private final boolean m_wysiwygEditorMode;
@@ -50,14 +50,12 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Link)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final Link link ) {
-        final String[] refAndPage = link.getUrl().toString().split( ":" );
-        if( m_wysiwygEditorMode ) {
-            setInterWikiLinkAttrs( attributes, link, refAndPage[0] + ":" + refAndPage[1] );
-        } else {
+    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+        final String[] refAndPage = link.getWikiLink().split( ":" );
+        if( !m_wysiwygEditorMode ) {
             String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
             if( urlReference != null ) {
                 urlReference = TextUtil.replaceString( urlReference, "%s", refAndPage[ 1 ] );
@@ -67,12 +65,13 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
                     setInterWikiLinkAttrs( attributes, link, urlReference );
                 }
             }
+        } else {
+            setInterWikiLinkAttrs( attributes, link, refAndPage[0] + ":" + refAndPage[1] );
         }
     }
 
     void setInterWikiLinkAttrs( final Attributes attributes, final Link link, final String url ) {
         attributes.replaceValue( "class", MarkupParser.CLASS_INTERWIKI );
-        link.setUrl( CharSubSequence.of( url ) );
         attributes.replaceValue( "href", url );
     }
 

@@ -23,18 +23,17 @@ import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.html.Attributes;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodeAttributeProviderState} which sets the attributes for local edit links.
  */
-public class LocalEditLinkAttributeProviderState implements NodeAttributeProviderState< Link > {
+public class LocalEditLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final WikiContext wikiContext;
     private final String url;
@@ -47,14 +46,13 @@ public class LocalEditLinkAttributeProviderState implements NodeAttributeProvide
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Link)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final Link link ) {
+    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         final ResourceBundle rb = Preferences.getBundle( wikiContext, InternationalizationManager.CORE_BUNDLE );
         attributes.replaceValue( "title", MessageFormat.format( rb.getString( "markupparser.link.create" ), url ) );
         attributes.replaceValue( "class", MarkupParser.CLASS_EDITPAGE );
-        link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.EDIT, url ) ) );
         attributes.replaceValue( "href", link.getUrl().toString() );
     }
 

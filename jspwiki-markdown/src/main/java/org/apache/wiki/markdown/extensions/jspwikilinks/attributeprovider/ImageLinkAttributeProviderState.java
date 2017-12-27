@@ -19,18 +19,17 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.html.Attributes;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodeAttributeProviderState} which sets the attributes for image links.
  */
-public class ImageLinkAttributeProviderState implements NodeAttributeProviderState< Link > {
+public class ImageLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final boolean isLinkFromText;
     private final LinkParsingOperations linkOperations;
@@ -47,18 +46,16 @@ public class ImageLinkAttributeProviderState implements NodeAttributeProviderSta
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Link)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final Link link ) {
+    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         if( isLinkFromText && linkOperations.isExternalLink( link.getText().toString() ) ) {
             attributes.replaceValue( "class", MarkupParser.CLASS_EXTERNAL );
-            link.setUrl( CharSubSequence.of( urlRef ) );
             attributes.replaceValue( "href", urlRef );
         } else if ( isLinkFromText && linkOperations.linkExists( link.getText().toString() ) ) {
             final String pagelink = wikiContext.getURL( WikiContext.VIEW, link.getText().toString() );
             attributes.replaceValue( "class", MarkupParser.CLASS_WIKIPAGE );
-            link.setUrl( CharSubSequence.of( pagelink ) );
             attributes.replaceValue( "href", pagelink );
         }
     }

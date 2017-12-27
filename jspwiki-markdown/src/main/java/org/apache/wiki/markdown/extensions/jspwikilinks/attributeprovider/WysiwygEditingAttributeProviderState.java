@@ -20,10 +20,10 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.render.WikiRenderer;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.html.Attributes;
 
 
@@ -31,7 +31,7 @@ import com.vladsch.flexmark.util.html.Attributes;
  * {@link NodeAttributeProviderState} to finish up polishing WYSIWYG editing mode. More or less equivalent to WysiwygEditingRenderer, the main difference
  * being that in here there isn't any node removal, those nodes are simply not inserted elsewhere if WYSIWYG editing is detected.
  */
-public class WysiwygEditingAttributeProviderState implements NodeAttributeProviderState< Link > {
+public class WysiwygEditingAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final WikiContext wikiContext;
     private final boolean m_wysiwygEditorMode;
@@ -45,10 +45,10 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Link)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final Link link ) {
+    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         if( m_wysiwygEditorMode ) {
             if( attributes.getValue( "class" ) != null ) {
                 String href = attributes.getValue( "href" );

@@ -19,18 +19,17 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.html.Attributes;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
  * {@link NodeAttributeProviderState} which sets the attributes for external links.
  */
-public class ExternalLinkAttributeProviderState implements NodeAttributeProviderState< Link > {
+public class ExternalLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final boolean hasRef;
     private final boolean m_useRelNofollow;
@@ -47,15 +46,14 @@ public class ExternalLinkAttributeProviderState implements NodeAttributeProvider
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Link)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final Link link ) {
+    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         if( linkOperations.isImageLink( link.getUrl().toString() ) ) {
             new ImageLinkAttributeProviderState( wikiContext, link.getText().toString(), hasRef ).setAttributes( attributes, link );
         } else {
             attributes.replaceValue( "class", MarkupParser.CLASS_EXTERNAL );
-            link.setUrl( CharSubSequence.of( link.getUrl().toString() ) );
             attributes.replaceValue( "href", link.getUrl().toString() );
         }
         if( m_useRelNofollow ) {
