@@ -20,7 +20,6 @@ package org.apache.wiki.parser;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -159,15 +158,15 @@ public class LinkParsingOperations {
      *  determine whether it should be treated as an inline image or not.
      */
     public boolean isImageLink( String link ) {
-        if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link ).isImageInlining() )
-        {
+        if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link ).isImageInlining() ) {
             link = link.toLowerCase();
             List< Pattern > inlineImagePatterns = wikiContext.getEngine().getRenderingManager()
             		                                         .getParser( wikiContext, link ).getInlineImagePatterns();
 
-            for( Iterator< Pattern >  i = inlineImagePatterns.iterator(); i.hasNext(); ) {
-                if( new Perl5Matcher().matches( link, i.next() ) )
+            for( Pattern p : inlineImagePatterns ) {
+                if( new Perl5Matcher().matches( link, p ) ) {
                     return true;
+                }
             }
         }
 
