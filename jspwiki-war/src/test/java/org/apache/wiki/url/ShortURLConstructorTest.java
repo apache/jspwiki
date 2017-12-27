@@ -147,6 +147,14 @@ public class ShortURLConstructorTest extends TestCase
         assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp",true,"a=1&amp;b=2") );
     }
 
+    public void testEmptyURL()
+        throws Exception
+    {
+        URLConstructor c = getConstructor("wiki/" );
+
+        assertEquals( "/test/wiki/", c.makeURL(WikiContext.VIEW,"",true,null) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( ShortURLConstructorTest.class );
