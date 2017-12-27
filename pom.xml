@@ -41,7 +41,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <flexmark.version>0.28.14</flexmark.version>
+    <flexmark.version>0.28.24</flexmark.version>
     <jdk.version>1.6</jdk.version>
     <lucene.version>4.7.0</lucene.version>
     <selenium.version>2.42.0</selenium.version>
