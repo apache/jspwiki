@@ -21,17 +21,16 @@ package org.apache.wiki;
 import java.util.Properties;
 
 import org.apache.wiki.util.PropertyReader;
+import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class PropertyReaderTest extends TestCase
+public class PropertyReaderTest
 {
+    @Test
     public void testVariableExpansion()
     {
         Properties p = new Properties();
-        
+
         p.put("var.basedir", "/p/mywiki");
 
         p.put("jspwiki.fileSystemProvider.pageDir", "$basedir/www/");
@@ -40,25 +39,24 @@ public class PropertyReaderTest extends TestCase
         p.put("jspwiki.xyz", "test basedir"); //don't touch this
 
         PropertyReader.expandVars(p);
-        
-        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
-        assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
-        
-//        System.out.println(p.getProperty("jspwiki.workDir"));
-        
-        assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
+
+        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assert.assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
+        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assert.assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
+        Assert.assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
+
+        Assert.assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
     }
 
+    @Test
     public void testVariableExpansion2()
     {
         Properties p = new Properties();
-        
+
         //this time, declare the var at the end... (should overwrite this one);
         p.put("var.basedir", "xxx");
-        
+
         p.put("jspwiki.fileSystemProvider.pageDir", "$basedir/www/");
         p.put("jspwiki.basicAttachmentProvider.storageDir", "$basedir/www/");
         p.put("jspwiki.workDir", "$basedir/wrk/");
@@ -67,49 +65,39 @@ public class PropertyReaderTest extends TestCase
 
         p.put("var.basedir", " /p/mywiki"); //note that this var has a space at the beginning...
         p.put("var.x2", " wiki "); //note that this var has a space at the beginning...
-        
+
         PropertyReader.expandVars(p);
-        
-        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
-        assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
-        
-        //System.out.println(p.getProperty("jspwiki.abc"));
-        
-        assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
-        assertTrue( p.getProperty("jspwiki.abc").endsWith("test wiki") );
+
+        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assert.assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
+        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assert.assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
+        Assert.assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
+
+        Assert.assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
+        Assert.assertTrue( p.getProperty("jspwiki.abc").endsWith("test wiki") );
     }
 
 
-    
+
+    @Test
     public void testMultipleVariableExpansion()
     {
         Properties p = new Properties();
-        
+
         //this time, declare the var at the end... (should overwrite this one);
         p.put("var.x1", "a");
         p.put("var.x2", "b");
-        
+
         p.put("jspwiki.x1", "$x1");
         p.put("jspwiki.x2", "$x2");
         p.put("jspwiki.x3", "$x1/$x2");
-        
+
         PropertyReader.expandVars(p);
-        
-        //System.out.println(p.getProperty("jspwiki.x1"));
-        //System.out.println(p.getProperty("jspwiki.x2"));
-        //System.out.println(p.getProperty("jspwiki.x3"));
-        
-        assertTrue( p.getProperty("jspwiki.x1").equals("a") );
-        assertTrue( p.getProperty("jspwiki.x2").equals("b") );
-        assertTrue( p.getProperty("jspwiki.x3").equals("a/b") );
+
+        Assert.assertTrue( p.getProperty("jspwiki.x1").equals("a") );
+        Assert.assertTrue( p.getProperty("jspwiki.x2").equals("b") );
+        Assert.assertTrue( p.getProperty("jspwiki.x3").equals("a/b") );
     }
 
-    
-    public static Test suite()
-    {
-        return new TestSuite( PropertyReaderTest.class );
-    }
 }

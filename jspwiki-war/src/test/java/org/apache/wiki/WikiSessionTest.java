@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,24 +14,24 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import net.sourceforge.stripes.mock.*;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -42,117 +42,126 @@ import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.login.CookieAssertionLoginModule;
 import org.apache.wiki.auth.login.CookieAuthenticationLoginModule;
 import org.apache.wiki.ui.WikiServletFilter;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WikiSessionTest extends TestCase
+import net.sourceforge.stripes.mock.MockFilterChain;
+import net.sourceforge.stripes.mock.MockFilterConfig;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpServletResponse;
+import net.sourceforge.stripes.mock.MockServletContext;
+
+public class WikiSessionTest
 {
 
     private TestEngine m_engine = null;
-    
-    protected void setUp() throws Exception
+
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
         Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
     }
 
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-    }
-
+    @Test
     public void testRoles() throws Exception
     {
         WikiSession session;
         Principal[] principals;
-        
+
         // Test roles for guest session
         session = WikiSession.guestSession( m_engine );
         principals = session.getRoles();
-        assertTrue(  session.isAnonymous() );
-        assertFalse( session.isAuthenticated() );
-        assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
-        assertTrue(  ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
-        assertFalse( ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
-        
+        Assert.assertTrue(  session.isAnonymous() );
+        Assert.assertFalse( session.isAuthenticated() );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
+
         // Test roles for anonymous session
-        
+
         session = anonymousSession( m_engine );
         principals = session.getRoles();
-        assertTrue(  session.isAnonymous() );
-        assertFalse( session.isAuthenticated() );
-        assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
-        assertTrue(  ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
-        assertFalse( ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
-        
+        Assert.assertTrue(  session.isAnonymous() );
+        Assert.assertFalse( session.isAuthenticated() );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
+
         // Test roles for authenticated session
-        session = authenticatedSession( m_engine, 
-                                        Users.JANNE, 
+        session = authenticatedSession( m_engine,
+                                        Users.JANNE,
                                         Users.JANNE_PASS );
         principals = session.getRoles();
-        assertFalse( session.isAnonymous() );
-        assertTrue(  session.isAuthenticated() );
-        assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
-        assertFalse( ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
-        assertTrue(  ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
-        
+        Assert.assertFalse( session.isAnonymous() );
+        Assert.assertTrue(  session.isAuthenticated() );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
+
         // Test roles for admin session
         session = adminSession( m_engine );
         principals = session.getRoles();
-        assertFalse( session.isAnonymous() );
-        assertTrue(  session.isAuthenticated() );
-        assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
-        assertFalse( ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
-        assertTrue(  ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
+        Assert.assertFalse( session.isAnonymous() );
+        Assert.assertTrue(  session.isAuthenticated() );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.ALL ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        Assert.assertFalse( ArrayUtils.contains( principals, Role.ASSERTED ) );
+        Assert.assertTrue(  ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
     }
 
+    @Test
     public void testIsIPAddress()
     {
-        assertFalse( WikiSession.isIPV4Address( "Me" ) );
-        assertFalse( WikiSession.isIPV4Address( "Guest" ) );
-        assertTrue( WikiSession.isIPV4Address( "127.0.0.1" ) );
-        assertFalse( WikiSession.isIPV4Address( "1207.0.0.1" ) );
-        assertFalse( WikiSession.isIPV4Address( "127..0.1" ) );
-        assertFalse( WikiSession.isIPV4Address( "1207.0.0." ) );
-        assertFalse( WikiSession.isIPV4Address( ".0.0.1" ) );
-        assertFalse( WikiSession.isIPV4Address( "..." ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( "Me" ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( "Guest" ) );
+        Assert.assertTrue( WikiSession.isIPV4Address( "127.0.0.1" ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( "1207.0.0.1" ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( "127..0.1" ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( "1207.0.0." ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( ".0.0.1" ) );
+        Assert.assertFalse( WikiSession.isIPV4Address( "..." ) );
     }
-    
+
+    @Test
     public void testIPAddress() throws ServletException, IOException
     {
         MockHttpServletRequest request;
         WikiSession wikiSession;
-        
+
         // A naked HTTP request without userPrincipal/remoteUser should be anonymous
         request = m_engine.newHttpRequest();
         request.setUserPrincipal( null );
         runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isAnonymous());
+        Assert.assertTrue( wikiSession.isAnonymous());
     }
-    
+
+    @Test
     public void testUserPrincipal() throws ServletException, IOException
     {
         MockHttpServletRequest request;
         WikiSession wikiSession;
-        
+
         // Changing the UserPrincipal value should cause the user to be authenticated...
         request = m_engine.newHttpRequest();
         request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone") );
         runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isAuthenticated());
-        assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
+        Assert.assertTrue( wikiSession.isAuthenticated());
+        Assert.assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
     }
-        
+
+    @Test
     public void testAssertionCookie() throws ServletException, IOException
     {
         MockHttpServletRequest request;
         WikiSession wikiSession;
-        
+
         // Adding the magic "assertion cookie" should  set asserted status.
         request = m_engine.newHttpRequest();
         request.setUserPrincipal( null );
@@ -160,22 +169,23 @@ public class WikiSessionTest extends TestCase
         request.setCookies( new Cookie[] { new Cookie( cookieName, "FredFlintstone" ) } );
         runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isAsserted());
-        assertEquals( "FredFlintstone", wikiSession.getUserPrincipal().getName() );
+        Assert.assertTrue( wikiSession.isAsserted());
+        Assert.assertEquals( "FredFlintstone", wikiSession.getUserPrincipal().getName() );
     }
 
+    @Test
     public void testAuthenticationCookieDefaults() throws ServletException, IOException
     {
         MockHttpServletRequest request;
         WikiSession wikiSession;
-        
+
         // Set the authentication cookie first
         MockHttpServletResponse response = new MockHttpServletResponse();
         CookieAuthenticationLoginModule.setLoginCookie( m_engine, response, "Fred Flintstone" );
         Cookie[] cookies = response.getCookies();
-        assertEquals(1, cookies.length);
+        Assert.assertEquals(1, cookies.length);
         String uid = cookies[0].getValue();
-        
+
         // Adding the magic "authentication cookie" should NOT count as authenticated in the default case
         // (because cookie authentication is OFF).
         request = m_engine.newHttpRequest();
@@ -183,46 +193,47 @@ public class WikiSessionTest extends TestCase
         request.setCookies( new Cookie[] { new Cookie( "JSPWikiUID", uid ) } );
         runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isAnonymous());
-        assertFalse( wikiSession.isAuthenticated());
-        assertEquals( "127.0.0.1", wikiSession.getUserPrincipal().getName() );
-        
+        Assert.assertTrue( wikiSession.isAnonymous());
+        Assert.assertFalse( wikiSession.isAuthenticated());
+        Assert.assertEquals( "127.0.0.1", wikiSession.getUserPrincipal().getName() );
+
         // Clear the authentication cookie
         response = new MockHttpServletResponse();
         CookieAuthenticationLoginModule.clearLoginCookie( m_engine, request, response );
     }
-    
+
+    @Test
     public void testAuthenticationCookieWhenOn() throws WikiException, ServletException, IOException
     {
         Properties props = TestEngine.getTestProperties();
         props.setProperty( AuthenticationManager.PROP_ALLOW_COOKIE_AUTH, "true");
         m_engine = new TestEngine( props );
-        
+
         MockHttpServletRequest request;
         WikiSession wikiSession;
-        
+
         // Set the authentication cookie first
         MockHttpServletResponse response = new MockHttpServletResponse();
         CookieAuthenticationLoginModule.setLoginCookie( m_engine, response, "Fred Flintstone" );
         Cookie[] cookies = response.getCookies();
-        assertEquals(1, cookies.length);
+        Assert.assertEquals(1, cookies.length);
         String uid = cookies[0].getValue();
-        
+
         // Adding the magic "authentication cookie" should count as authenticated
         request = m_engine.newHttpRequest();
         request.setUserPrincipal( null );
         request.setCookies( new Cookie[] { new Cookie( "JSPWikiUID", uid ) } );
         runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertFalse( wikiSession.isAnonymous());
-        assertTrue( wikiSession.isAuthenticated());
-        assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
-        
+        Assert.assertFalse( wikiSession.isAnonymous());
+        Assert.assertTrue( wikiSession.isAuthenticated());
+        Assert.assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
+
         // Clear the authentication cookie
         response = new MockHttpServletResponse();
         CookieAuthenticationLoginModule.clearLoginCookie( m_engine, request, response );
     }
-    
+
     /**
      * Creates an anonymous user session.
      * @param engine the wiki engine
@@ -233,10 +244,10 @@ public class WikiSessionTest extends TestCase
     {
         // Build anon session
         MockHttpServletRequest request = engine.newHttpRequest();
-        
+
         // Log in
         runSecurityFilter( engine, request );
-        
+
         // Make sure the user is actually anonymous
         WikiSession session = WikiSession.getWikiSession( engine, request );
         if ( !session.isAnonymous() )
@@ -250,7 +261,7 @@ public class WikiSessionTest extends TestCase
     {
         return assertedSession( engine, name, new Principal[0] );
     }
-    
+
     public static WikiSession assertedSession( TestEngine engine, String name, Principal[] roles ) throws Exception
     {
         // We can use cookies right?
@@ -258,7 +269,7 @@ public class WikiSessionTest extends TestCase
         {
             throw new IllegalStateException( "Couldn't set up asserted user: login config doesn't allow cookies." );
         }
-        
+
         // Build anon session
         MockHttpServletRequest request = engine.newHttpRequest();
         Set<String> r = new HashSet<String>();
@@ -267,36 +278,36 @@ public class WikiSessionTest extends TestCase
             r.add( roles[i].getName() );
         }
         request.setRoles( r );
-        
+
         // Set cookie
         Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, name );
         request.setCookies( new Cookie[] { cookie } );
-        
+
         // Log in
         runSecurityFilter(engine, request);
-        
+
         // Make sure the user is actually asserted
         WikiSession session = WikiSession.getWikiSession( engine, request );
         return session;
     }
-    
+
     public static WikiSession adminSession( TestEngine engine ) throws Exception
     {
         return authenticatedSession( engine, Users.ADMIN, Users.ADMIN_PASS );
     }
-    
+
     public static WikiSession authenticatedSession( TestEngine engine, String id, String password ) throws Exception
     {
         // Build anon session
         MockHttpServletRequest request = engine.newHttpRequest();
-        
+
         // Log in as anon
         runSecurityFilter(engine, request);
-        
+
         // Log in the user with credentials
         WikiSession session = WikiSession.getWikiSession( engine, request );
         engine.getAuthenticationManager().login( session, request, id, password );
-        
+
         // Make sure the user is actually authenticated
         if ( !session.isAuthenticated() )
         {
@@ -304,7 +315,7 @@ public class WikiSessionTest extends TestCase
         }
         return session;
     }
-    
+
     public static WikiSession containerAuthenticatedSession( TestEngine engine, String id, Principal[] roles ) throws Exception
     {
         // Build container session
@@ -316,10 +327,10 @@ public class WikiSessionTest extends TestCase
         }
         request.setRoles( r );
         request.setUserPrincipal( new WikiPrincipal( id ) );
-        
+
         // Log in
         runSecurityFilter(engine,request);
-        
+
         // Make sure the user is actually authenticated
         WikiSession session = WikiSession.getWikiSession( engine, request );
         if ( !session.isAuthenticated() )
@@ -328,12 +339,12 @@ public class WikiSessionTest extends TestCase
         }
         return session;
     }
-    
+
     /**
      * "Scaffolding" method that runs the session security filter on a mock request. We do this by creating a
-     * complete mock servlet context and filter chain, and running the request through it. 
+     * complete mock servlet context and filter chain, and running the request through it.
      * @param engine the wiki engine
-     * @param request the mock request to pass itnto the 
+     * @param request the mock request to pass itnto the
      * @throws ServletException
      * @throws IOException
      */
@@ -342,12 +353,12 @@ public class WikiSessionTest extends TestCase
         // Create a mock servlet context and stash the wiki engine in it
         ServletContext servletCtx = new MockServletContext( "JSPWiki" );
         servletCtx.setAttribute( "org.apache.wiki.WikiEngine", engine );
-        
+
         // Create a mock filter configuration and add the servlet context we just created
         MockFilterConfig filterConfig = new MockFilterConfig();
         filterConfig.setFilterName( "WikiServletFilter" );
         filterConfig.setServletContext( servletCtx );
-        
+
         // Create the security filter and run the request  through it
         Filter filter = new WikiServletFilter();
         MockFilterChain chain = new MockFilterChain();
@@ -361,7 +372,7 @@ public class WikiSessionTest extends TestCase
     private static class MockServlet implements Servlet
     {
         private ServletConfig m_config;
-        
+
         public void destroy() { }
 
         public ServletConfig getServletConfig()
@@ -380,11 +391,6 @@ public class WikiSessionTest extends TestCase
         }
 
         public void service( ServletRequest request, ServletResponse response ) throws ServletException, IOException { }
-    }
-    
-    public static Test suite() 
-    {
-        return new TestSuite( WikiSessionTest.class );
     }
 
 }

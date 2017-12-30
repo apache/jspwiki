@@ -18,7 +18,9 @@
  */
 package org.apache.wiki;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
@@ -27,8 +29,9 @@ import org.apache.wiki.plugin.SampleAjaxPlugin;
 /**
  * @since 2.10.2-svn10
  */
-public class WikiAjaxServletTest extends TestCase {
+public class WikiAjaxServletTest {
 
+    @Test
     public void testServlets() throws Exception {
         String[] paths = new String[] {
                 "/ajax/MyPlugin",
@@ -41,28 +44,28 @@ public class WikiAjaxServletTest extends TestCase {
                 "/test//ajax/MyPlugin#hashCode?param=123&param=231",
                 "http://localhost:8080/ajax/MyPlugin#hashCode?param=123&param=231" };
 
-        assertEquals(9,paths.length);
+        Assert.assertEquals(9,paths.length);
         WikiAjaxDispatcherServlet wikiAjaxDispatcherServlet = new WikiAjaxDispatcherServlet();
         for (String path : paths) {
             String servletName = wikiAjaxDispatcherServlet.getServletName(path);
-            assertEquals("MyPlugin", servletName);
+            Assert.assertEquals("MyPlugin", servletName);
         }
 
         // The plugin SampleAjaxPlugin
         WikiAjaxDispatcherServlet.registerServlet(new SampleAjaxPlugin());
         WikiAjaxServlet servlet = wikiAjaxDispatcherServlet.findServletByName("SampleAjaxPlugin");
-        assertNotNull(servlet);
-        assertTrue(servlet instanceof SampleAjaxPlugin);
+        Assert.assertNotNull(servlet);
+        Assert.assertTrue(servlet instanceof SampleAjaxPlugin);
 
         /** Note sure about this
         WikiAjaxDispatcherServlet.registerServlet(new RPCServlet());
         WikiAjaxServlet servlet2 = wikiAjaxDispatcherServlet.findServletByName("RPCServlet");
-        assertNotNull(servlet2);
-        assertTrue(servlet2 instanceof RPCServlet);
+        Assert.assertNotNull(servlet2);
+        Assert.assertTrue(servlet2 instanceof RPCServlet);
         */
 
         WikiAjaxServlet servlet3 = wikiAjaxDispatcherServlet.findServletByName("TestWikiNonAjaxServlet");
-        assertNull(servlet3);
+        Assert.assertNull(servlet3);
     }
 
 }

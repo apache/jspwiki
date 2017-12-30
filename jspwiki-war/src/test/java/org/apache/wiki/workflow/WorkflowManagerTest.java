@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,29 +14,30 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.workflow;
 
 import java.util.Properties;
-
-import junit.framework.TestCase;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WorkflowManagerTest extends TestCase
+public class WorkflowManagerTest
 {
     protected Workflow w;
     protected WorkflowManager wm;
     protected WikiEngine m_engine;
-    
-    protected void setUp() throws Exception
+
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
         Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
         wm = m_engine.getWorkflowManager();
@@ -49,61 +50,65 @@ public class WorkflowManagerTest extends TestCase
         startTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
         decision.addSuccessor(Outcome.DECISION_APPROVE, endTask);
         w.setFirstStep(startTask);
-        
+
         // Add a message argument to the workflow with the page name
         w.addMessageArgument("MyPage");
     }
 
+    @Test
     public void testStart() throws WikiException
     {
         // Once we start the workflow, it should show that it's started
         // and the WM should have assigned it an ID
-        assertEquals(Workflow.ID_NOT_SET, w.getId());
-        assertFalse(w.isStarted());
+        Assert.assertEquals(Workflow.ID_NOT_SET, w.getId());
+        Assert.assertFalse(w.isStarted());
         wm.start(w);
-        assertFalse(Workflow.ID_NOT_SET == w.getId());
-        assertTrue(w.isStarted());
+        Assert.assertFalse(Workflow.ID_NOT_SET == w.getId());
+        Assert.assertTrue(w.isStarted());
     }
 
+    @Test
     public void testWorkflows() throws WikiException
     {
         // There should be no workflows in the cache, and none in completed list
-        assertEquals(0, wm.getWorkflows().size());
-        assertEquals(0, wm.getCompletedWorkflows().size());
-        
+        Assert.assertEquals(0, wm.getWorkflows().size());
+        Assert.assertEquals(0, wm.getCompletedWorkflows().size());
+
         // After starting, there should be 1 in the cache, with ID=1
         wm.start(w);
-        assertEquals(1, wm.getWorkflows().size());
-        assertEquals(0, wm.getCompletedWorkflows().size());
+        Assert.assertEquals(1, wm.getWorkflows().size());
+        Assert.assertEquals(0, wm.getCompletedWorkflows().size());
         Workflow workflow = (Workflow)wm.getWorkflows().iterator().next();
-        assertEquals(w, workflow);
-        assertEquals(1, workflow.getId());
-        
+        Assert.assertEquals(w, workflow);
+        Assert.assertEquals(1, workflow.getId());
+
         // After forcing a decision on step 2, the workflow should complete and vanish from the cache
         Decision d = (Decision)w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
-        assertEquals(0, wm.getWorkflows().size());
-        assertEquals(1, wm.getCompletedWorkflows().size());
+        Assert.assertEquals(0, wm.getWorkflows().size());
+        Assert.assertEquals(1, wm.getCompletedWorkflows().size());
     }
-    
+
+    @Test
     public void testRequiresApproval()
     {
         // Test properties says we need approvals for workflow.saveWikiPage & workflow.foo
-        assertFalse(wm.requiresApproval("workflow.saveWikiPage"));
-        assertTrue(wm.requiresApproval("workflow.foo"));
-        assertTrue(wm.requiresApproval("workflow.bar"));
+        Assert.assertFalse(wm.requiresApproval("workflow.saveWikiPage"));
+        Assert.assertTrue(wm.requiresApproval("workflow.foo"));
+        Assert.assertTrue(wm.requiresApproval("workflow.bar"));
     }
 
+    @Test
     public void testGetApprover() throws WikiException
     {
         // Test properties says workflow.saveWikiPage approver is GP Admin; workflow.foo is 'janne'
-        assertEquals(new WikiPrincipal("janne", WikiPrincipal.LOGIN_NAME), wm.getApprover("workflow.foo"));
-        assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.bar"));
-        
+        Assert.assertEquals(new WikiPrincipal("janne", WikiPrincipal.LOGIN_NAME), wm.getApprover("workflow.foo"));
+        Assert.assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.bar"));
+
         // 'saveWikiPage' workflow doesn't require approval, so we will need to catch an Exception
-        try 
+        try
         {
-            assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.saveWikiPage"));
+            Assert.assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.saveWikiPage"));
         }
         catch (WikiException e)
         {
@@ -111,7 +116,7 @@ public class WorkflowManagerTest extends TestCase
             return;
         }
         // We should never get here
-        fail("Workflow.bar doesn't need approval!");
+        Assert.fail("Workflow.bar doesn't need approval!");
     }
 
 }

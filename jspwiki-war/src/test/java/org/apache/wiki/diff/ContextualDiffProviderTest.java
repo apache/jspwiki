@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,24 +14,22 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.diff;
 
 import java.io.IOException;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ContextualDiffProviderTest extends TestCase
+public class ContextualDiffProviderTest
 {
     /**
      * Sets up some shorthand notation for writing test cases.
@@ -65,6 +63,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
+    @Test
     public void testNoChanges() throws IOException, WikiException
     {
         diffTest(null, "", "", "");
@@ -78,6 +77,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
+    @Test
     public void testSimpleInsertions() throws IOException, WikiException
     {
         // Ah, the white space trailing an insertion is tacked onto the insertion, this is fair, the
@@ -103,6 +103,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
+    @Test
     public void testSimpleDeletions() throws IOException, WikiException
     {
         // Simple deletes...
@@ -121,12 +122,13 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
+    @Test
     public void testContextLimits() throws IOException, WikiException
     {
         // No change
         diffTest("1", "A B C D E F G H I", "A B C D E F G H I", "A...");
         //TODO Hmm, should the diff provider instead return the string, "No Changes"?
-        
+
         // Bad property value, should default to huge context limit and return entire string.
         diffTest("foobar", "A B C D E F G H I", "A B C D F G H I", "A B C D |-E -|F G H I");
 
@@ -135,23 +137,25 @@ public class ContextualDiffProviderTest extends TestCase
 
         // Deletion of first element, limit context to 2...
         diffTest("2", "A B C D E", "B C D E", "|-A -|B ...");
-        
+
         // Deletion of last element, limit context to 2...
         diffTest("2", "A B C D E", "A B C D ", "...D |-E-|");
-        
+
         // Two simple deletions, limit context to 2...
         diffTest("2", "A B C D E F G H I J K L M N O P", "A B C E F G H I J K M N O P",
             "...C |-D -|E ......K |-L -|M ...");
-                
+
     }
 
+    @Test
     public void testMultiples() throws IOException, WikiException
     {
         diffTest(null, "A F", "A B C D E F", "A |^B C D E ^|F");
         diffTest(null, "A B C D E F", "A F", "A |-B C D E -|F");
-        
+
     }
 
+    @Test
     public void testSimpleChanges() throws IOException, WikiException
     {
         // *changes* are actually an insert and a delete in the output...
@@ -164,12 +168,13 @@ public class ContextualDiffProviderTest extends TestCase
 
     }
 
-    // FIXME: This test fails; must be enabled again asap.
+    // FIXME: This test Assert.fails; must be enabled again asap.
     /*
+    @Test
     public void testKnownProblemCases() throws NoRequiredPropertyException, IOException
     {
-        //These all fail...
-        
+        //These all Assert.fail...
+
         //make two consequtive changes
         diffTest(null, "A B C D", "A b c D", "A |^b c^-B C-| D");
         //acually returns ->                 "A |^b^-B-| |^c^-C-| D"
@@ -177,14 +182,14 @@ public class ContextualDiffProviderTest extends TestCase
         //collapse adjacent elements...
         diffTest(null, "A B C D", "A BC D", "A |^BC^-B C-| D");
         //acually returns ->                "A |^BC^-B-| |-C -|D"
-        
-        
-        //These failures are all due to how we process the diff results, we need to collapse 
+
+
+        //These Assert.failures are all due to how we process the diff results, we need to collapse
         //adjacent edits into one...
-        
+
     }
      */
-    
+
     private void diffTest(String contextLimit, String oldText, String newText, String expectedDiff)
         throws IOException, WikiException
     {
@@ -200,16 +205,11 @@ public class ContextualDiffProviderTest extends TestCase
 
         PropertyConfigurator.configure(props);
         TestEngine engine = new TestEngine(props);
-        
+
         WikiContext ctx = new WikiContext( engine, new WikiPage(engine,"Dummy") );
         String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
-        assertEquals(expectedDiff, actualDiff);
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite( ContextualDiffProviderTest.class );
+        Assert.assertEquals(expectedDiff, actualDiff);
     }
 
 }

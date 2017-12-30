@@ -18,11 +18,13 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import javax.management.NotCompliantMBeanException;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -30,12 +32,13 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 
 
-public class PluginBeanTest extends TestCase {
+public class PluginBeanTest {
     
     Properties props = TestEngine.getTestProperties();
 
     TestEngine testEngine;
     
+    @Test
     public void testDoGet() throws WikiException, NotCompliantMBeanException {
         testEngine = new TestEngine( props );
         WikiContext context = new WikiContext( testEngine, new WikiPage( testEngine, "TestPage01" ) );
@@ -50,7 +53,7 @@ public class PluginBeanTest extends TestCase {
                                   "<tr><td>SamplePlugin2</td><td>samplealias2</td><td>Janne Jalkanen</td><td></td></tr>" +
                                 "</table>" +
                               "</div>";
-        assertEquals( expectedHtml, pb.doGet( context ) );
+        Assert.assertEquals( expectedHtml, pb.doGet( context ) );
     }
 
 }

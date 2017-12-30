@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,76 +14,74 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.authorize;
-
 import java.security.Principal;
 import java.util.Properties;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class GroupTest extends TestCase
+public class GroupTest
 {
     Group m_group;
     String m_wiki;
-    
-    public GroupTest( String s )
-    {
-        super( s );
-    }
 
+    @Before
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         WikiEngine engine  = new TestEngine( props );
         m_wiki = engine.getApplicationName();
-        
+
         m_group = new Group( "TestGroup", m_wiki );
     }
-    
+
+    @Test
     public void testAdd1()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
         m_group.add( u1 );
-        assertTrue( m_group.isMember( u1 ) );
+        Assert.assertTrue( m_group.isMember( u1 ) );
     }
 
+    @Test
     public void testAdd2()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
         Principal u2 = new WikiPrincipal( "Bob" );
 
-        assertTrue( "adding alice", m_group.add( u1 ) );
+        Assert.assertTrue( "adding alice", m_group.add( u1 ) );
 
-        assertTrue( "adding bob", m_group.add( u2 ) );
+        Assert.assertTrue( "adding bob", m_group.add( u2 ) );
 
-        assertTrue( "Alice", m_group.isMember( u1 ) );
-        assertTrue( "Bob", m_group.isMember( u2 ) );
+        Assert.assertTrue( "Alice", m_group.isMember( u1 ) );
+        Assert.assertTrue( "Bob", m_group.isMember( u2 ) );
     }
 
     /**
      * Check that different objects match as well.
      */
+    @Test
     public void testAdd3()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
         Principal u2 = new WikiPrincipal( "Bob" );
         Principal u3 = new WikiPrincipal( "Bob" );
 
-        assertTrue( "adding alice", m_group.add( u1 ) );
-        assertTrue( "adding bob", m_group.add( u2 ) );
+        Assert.assertTrue( "adding alice", m_group.add( u1 ) );
+        Assert.assertTrue( "adding bob", m_group.add( u2 ) );
 
-        assertTrue( "Alice", m_group.isMember( u1 ) );
-        assertTrue( "Bob", m_group.isMember( u3 ) );
+        Assert.assertTrue( "Alice", m_group.isMember( u1 ) );
+        Assert.assertTrue( "Bob", m_group.isMember( u3 ) );
     }
 
+    @Test
     public void testRemove()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
@@ -95,11 +93,12 @@ public class GroupTest extends TestCase
 
         m_group.remove( u3 );
 
-        assertTrue( "Alice", m_group.isMember( u1 ) );
-        assertFalse( "Bob", m_group.isMember( u2 ) );
-        assertFalse( "Bob 2", m_group.isMember( u3 ) );
+        Assert.assertTrue( "Alice", m_group.isMember( u1 ) );
+        Assert.assertFalse( "Bob", m_group.isMember( u2 ) );
+        Assert.assertFalse( "Bob 2", m_group.isMember( u3 ) );
     }
 
+    @Test
     public void testEquals1()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
@@ -115,9 +114,10 @@ public class GroupTest extends TestCase
         group2.add( u3 );
         group2.add( u4 );
 
-        assertTrue( m_group.equals( group2 ) );
+        Assert.assertTrue( m_group.equals( group2 ) );
     }
 
+    @Test
     public void testEquals2()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
@@ -133,9 +133,10 @@ public class GroupTest extends TestCase
         group2.add( u3 );
         group2.add( u4 );
 
-        assertFalse( m_group.equals( group2 ) );
+        Assert.assertFalse( m_group.equals( group2 ) );
     }
 
+    @Test
     public void testEquals3()
     {
         Group group1 = new Group( "Blib", m_wiki );
@@ -150,9 +151,10 @@ public class GroupTest extends TestCase
         group2.add( u3 );
         group2.add( u4 );
 
-        assertTrue( group1.equals( group2 ) );
+        Assert.assertTrue( group1.equals( group2 ) );
     }
 
+    @Test
     public void testEquals4()
     {
         Group group1 = new Group( "BlibBlab", m_wiki );
@@ -167,12 +169,7 @@ public class GroupTest extends TestCase
         group2.add( u3 );
         group2.add( u4 );
 
-        assertFalse( m_group.equals( group2 ) );
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite( GroupTest.class );
+        Assert.assertFalse( m_group.equals( group2 ) );
     }
 
 }

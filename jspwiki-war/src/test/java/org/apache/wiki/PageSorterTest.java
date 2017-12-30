@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,16 +14,15 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki;
 
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 
 import org.apache.wiki.util.comparators.HumanComparator;
 import org.apache.wiki.util.comparators.LocaleComparator;
@@ -34,13 +33,10 @@ import org.apache.wiki.util.comparators.LocaleComparator;
  * <b>Note</b> - this class is deliberately not null safe. Never call any of the
  * methods with a null argument!
  */
-public class PageSorterTest extends TestCase
+public class PageSorterTest
 {
-    public static Test suite()
-    {
-        return new TestSuite( PageSorterTest.class );
-    }
 
+    @Test
     public void testPageSorterBadProperty()
     {
         // Initialised with a broken property
@@ -48,16 +44,18 @@ public class PageSorterTest extends TestCase
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "haha.this.isnt.a.class" );
         sorter.initialize( props );
-        assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
+    @Test
     public void testPageSorterDefaultConstructor()
     {
         // Check uninitialised behaviour
         PageSorter sorter = new PageSorter();
-        assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
+    @Test
     public void testPageSorterHumanComparator()
     {
         // Initialised with the human comparator
@@ -65,12 +63,13 @@ public class PageSorterTest extends TestCase
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, HumanComparator.class.getPackage().getName() + ".HumanComparator" );
         sorter.initialize( props );
-        assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "HumanComparator" );
         sorter.initialize( props );
-        assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
     }
 
+    @Test
     public void testPageSorterLocaleComparator()
     {
         // Initialised with the human comparator
@@ -78,18 +77,19 @@ public class PageSorterTest extends TestCase
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, LocaleComparator.class.getPackage().getName() + ".LocaleComparator" );
         sorter.initialize( props );
-        assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "LocaleComparator" );
         sorter.initialize( props );
-        assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
+    @Test
     public void testPageSorterNoProperty()
     {
         // Initialised without the necessary property
         PageSorter sorter = new PageSorter();
         Properties props = new Properties();
         sorter.initialize( props );
-        assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 }

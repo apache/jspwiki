@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import javax.management.NotCompliantMBeanException;
@@ -27,15 +29,16 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 
-public class FilterBeanTest extends TestCase {
+public class FilterBeanTest {
 
     Properties props = TestEngine.getTestProperties();
 
     TestEngine testEngine;
 
+    @Test
     public void testDoGet() throws WikiException, NotCompliantMBeanException {
         testEngine = new TestEngine( props );
         WikiContext context = new WikiContext( testEngine, new WikiPage( testEngine, "TestPage01" ) );
@@ -47,7 +50,7 @@ public class FilterBeanTest extends TestCase {
                                   "<tr><td>org.apache.wiki.filters.SpamFilter</td><td>Janne Jalkanen</td><td></td></tr>" +
                                 "</table>" +
                               "</div>";
-        assertEquals( expectedHtml, pb.doGet( context ) );
+        Assert.assertEquals( expectedHtml, pb.doGet( context ) );
     }
 
 }

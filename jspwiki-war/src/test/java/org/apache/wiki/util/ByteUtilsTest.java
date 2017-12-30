@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,47 +14,44 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.util;
 
 import java.util.Arrays;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
 
-public class ByteUtilsTest extends TestCase
-{
+public class ByteUtilsTest {
+
     final byte[] bytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 63, 127 };
     final String EXPECTED_HEX_STRING = "000102030405060708090a0b0c0d0e0f3f7f";
 
+    @Test
     public void testByteUtilsConvertBytes()
     {
         String hex = ByteUtils.bytes2hex(bytes);
-        assertEquals(EXPECTED_HEX_STRING, hex);
+        Assert.assertEquals(EXPECTED_HEX_STRING, hex);
     }
-    
+
+    @Test
     public void testConvertHexToBytes()
     {
         byte[] reconstructedBytes = ByteUtils.parseHexBinary(EXPECTED_HEX_STRING);
-        assertEquals(bytes.length,reconstructedBytes.length);
-        assertTrue(Arrays.equals(bytes,reconstructedBytes));
-    }
-    
-    public void testByteUtilsConvertByte()
-    {
-        assertEquals("0",  ByteUtils.byte2hex((byte)0));
-        assertEquals("f",  ByteUtils.byte2hex((byte)15));
-        assertEquals("10", ByteUtils.byte2hex((byte)16));
-        assertEquals("7f", ByteUtils.byte2hex((byte)127));
+        Assert.assertEquals(bytes.length,reconstructedBytes.length);
+        Assert.assertTrue(Arrays.equals(bytes,reconstructedBytes));
     }
 
-    public static Test suite()
+    @Test
+    public void testByteUtilsConvertByte()
     {
-        return new TestSuite( ByteUtilsTest.class );
+        Assert.assertEquals("0",  ByteUtils.byte2hex((byte)0));
+        Assert.assertEquals("f",  ByteUtils.byte2hex((byte)15));
+        Assert.assertEquals("10", ByteUtils.byte2hex((byte)16));
+        Assert.assertEquals("7f", ByteUtils.byte2hex((byte)127));
     }
-    
+
 }

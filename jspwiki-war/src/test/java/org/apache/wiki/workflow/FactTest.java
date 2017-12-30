@@ -18,24 +18,27 @@
  */
 package org.apache.wiki.workflow;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class FactTest extends TestCase
+import org.junit.Assert;
+
+public class FactTest
 {
 
+    @Test
     public void testCreate()
     {
         Fact f1 = new Fact("fact1",new Integer(1));
         Fact f2 = new Fact("fact2","A factual String");
         Fact f3 = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
 
-        assertEquals("fact1", f1.getMessageKey());
-        assertEquals("fact2", f2.getMessageKey());
-        assertEquals("fact3", f3.getMessageKey());
+        Assert.assertEquals("fact1", f1.getMessageKey());
+        Assert.assertEquals("fact2", f2.getMessageKey());
+        Assert.assertEquals("fact3", f3.getMessageKey());
 
-        assertEquals(new Integer(1), f1.getValue());
-        assertEquals("A factual String", f2.getValue());
-        assertEquals(Outcome.DECISION_ACKNOWLEDGE, f3.getValue());
+        Assert.assertEquals(new Integer(1), f1.getValue());
+        Assert.assertEquals("A factual String", f2.getValue());
+        Assert.assertEquals(Outcome.DECISION_ACKNOWLEDGE, f3.getValue());
     }
 
 }

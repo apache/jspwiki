@@ -18,7 +18,6 @@
  */
 
 package org.apache.wiki.providers;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,13 +29,14 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.FileUtil;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
-public class FileSystemProviderTest extends TestCase {
+public class FileSystemProviderTest {
 
     FileSystemProvider m_provider;
     FileSystemProvider m_providerUTF8;
@@ -45,12 +45,8 @@ public class FileSystemProviderTest extends TestCase {
 
     TestEngine         m_engine;
 
-    public FileSystemProviderTest( String s ) {
-        super( s );
-    }
-
-    @Override
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         m_pagedir = "./target/jspwiki.test.pages";
         props.setProperty( PageManager.PROP_PAGEPROVIDER, "FileSystemProvider" );
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, m_pagedir );
@@ -67,11 +63,12 @@ public class FileSystemProviderTest extends TestCase {
         m_providerUTF8.initialize( m_engine, props );
     }
 
-    @Override
-	public void tearDown() {
+    @After
+    public void tearDown() {
         TestEngine.deleteAll( new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) ) );
     }
 
+    @Test
     public void testScandinavianLetters() throws Exception {
         WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
 
@@ -79,13 +76,14 @@ public class FileSystemProviderTest extends TestCase {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "%C5%E4Test.txt" );
 
-        assertTrue("No such file", resultfile.exists());
+        Assert.assertTrue("No such file", resultfile.exists());
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
 
-        assertEquals("Wrong contents", contents, "test");
+        Assert.assertEquals("Wrong contents", contents, "test");
     }
 
+    @Test
     public void testScandinavianLettersUTF8() throws Exception {
         WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
 
@@ -93,18 +91,19 @@ public class FileSystemProviderTest extends TestCase {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "%C3%85%C3%A4Test.txt" );
 
-        assertTrue("No such file", resultfile.exists());
+        Assert.assertTrue("No such file", resultfile.exists());
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "UTF-8" );
 
-        assertEquals("Wrong contents", contents, "test\u00d6");
+        Assert.assertEquals("Wrong contents", contents, "test\u00d6");
     }
 
     /**
      * This should never happen, but let's check that we're protected anyway.
      * @throws Exception
      */
+    @Test
     public void testSlashesInPageNamesUTF8()
          throws Exception
     {
@@ -114,14 +113,15 @@ public class FileSystemProviderTest extends TestCase {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "Test%2FFoobar.txt" );
 
-        assertTrue("No such file", resultfile.exists());
+        Assert.assertTrue("No such file", resultfile.exists());
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "UTF-8" );
 
-        assertEquals("Wrong contents", contents, "test");
+        Assert.assertEquals("Wrong contents", contents, "test");
     }
 
+    @Test
     public void testSlashesInPageNames()
          throws Exception
     {
@@ -131,14 +131,15 @@ public class FileSystemProviderTest extends TestCase {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "Test%2FFoobar.txt" );
 
-        assertTrue("No such file", resultfile.exists());
+        Assert.assertTrue("No such file", resultfile.exists());
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "ISO-8859-1" );
 
-        assertEquals("Wrong contents", contents, "test");
+        Assert.assertEquals("Wrong contents", contents, "test");
     }
 
+    @Test
     public void testDotsInBeginning()
        throws Exception
     {
@@ -148,13 +149,14 @@ public class FileSystemProviderTest extends TestCase {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "%2ETest.txt" );
 
-        assertTrue("No such file", resultfile.exists());
+        Assert.assertTrue("No such file", resultfile.exists());
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
 
-        assertEquals("Wrong contents", contents, "test");
+        Assert.assertEquals("Wrong contents", contents, "test");
     }
 
+    @Test
     public void testAuthor()
         throws Exception
     {
@@ -167,7 +169,7 @@ public class FileSystemProviderTest extends TestCase {
 
             WikiPage page2 = m_provider.getPageInfo( "\u00c5\u00e4Test", 1 );
 
-            assertEquals( "Min\u00e4", page2.getAuthor() );
+            Assert.assertEquals( "Min\u00e4", page2.getAuthor() );
         }
         finally
         {
@@ -183,6 +185,7 @@ public class FileSystemProviderTest extends TestCase {
         }
     }
 
+    @Test
     public void testNonExistantDirectory() throws Exception {
         String tmpdir =  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) ;
         String dirname = "non-existant-directory";
@@ -200,12 +203,13 @@ public class FileSystemProviderTest extends TestCase {
 
         File f = new File( newdir );
 
-        assertTrue( "didn't create it", f.exists() );
-        assertTrue( "isn't a dir", f.isDirectory() );
+        Assert.assertTrue( "didn't create it", f.exists() );
+        Assert.assertTrue( "isn't a dir", f.isDirectory() );
 
         f.delete();
     }
 
+    @Test
     public void testDirectoryIsFile()
         throws Exception
     {
@@ -226,7 +230,7 @@ public class FileSystemProviderTest extends TestCase {
             {
                 test.initialize( m_engine, pr );
 
-                fail( "Wiki did not warn about wrong property." );
+                Assert.fail( "Wiki did not warn about wrong property." );
             }
             catch( IOException e )
             {
@@ -242,6 +246,7 @@ public class FileSystemProviderTest extends TestCase {
         }
     }
 
+    @Test
     public void testDelete()
         throws Exception
     {
@@ -254,52 +259,49 @@ public class FileSystemProviderTest extends TestCase {
 
         File f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
 
-        assertTrue( "file does not exist", f.exists() );
+        Assert.assertTrue( "file does not exist", f.exists() );
 
         f = new File( files, "Test.properties" );
 
-        assertTrue( "property file does not exist", f.exists() );
+        Assert.assertTrue( "property file does not exist", f.exists() );
 
         m_provider.deletePage( "Test" );
 
         f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
 
-        assertFalse( "file exists", f.exists() );
+        Assert.assertFalse( "file exists", f.exists() );
 
         f = new File( files, "Test.properties" );
 
-        assertFalse( "properties exist", f.exists() );
+        Assert.assertFalse( "properties exist", f.exists() );
     }
 
+    @Test
     public void testCustomProperties() throws Exception {
         String pageDir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
         String pageName = "CustomPropertiesTest";
         String fileName = pageName+FileSystemProvider.FILE_EXT;
         File file = new File (pageDir,fileName);
 
-        assertFalse( file.exists() );
+        Assert.assertFalse( file.exists() );
         WikiPage testPage = new WikiPage(m_engine,pageName);
         testPage.setAuthor("TestAuthor");
         testPage.setAttribute("@test","Save Me");
         testPage.setAttribute("@test2","Save You");
         testPage.setAttribute("test3","Do not save");
         m_provider.putPageText( testPage, "This page has custom properties" );
-        assertTrue("No such file", file.exists() );
+        Assert.assertTrue("No such file", file.exists() );
         WikiPage pageRetrieved = m_provider.getPageInfo( pageName, -1 );
         String value = (String)pageRetrieved.getAttribute("@test");
         String value2 = (String)pageRetrieved.getAttribute("@test2");
         String value3 = (String)pageRetrieved.getAttribute("test3");
-        assertNotNull(value);
-        assertNotNull(value2);
-        assertNull(value3);
-        assertEquals("Save Me",value);
-        assertEquals("Save You",value2);
+        Assert.assertNotNull(value);
+        Assert.assertNotNull(value2);
+        Assert.assertNull(value3);
+        Assert.assertEquals("Save Me",value);
+        Assert.assertEquals("Save You",value2);
         file.delete();
-        assertFalse( file.exists() );
+        Assert.assertFalse( file.exists() );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( FileSystemProviderTest.class );
-    }
 }

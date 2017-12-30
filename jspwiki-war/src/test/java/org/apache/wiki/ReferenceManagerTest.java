@@ -12,34 +12,29 @@
  * limitations under the License.
  */
 package org.apache.wiki;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.wiki.api.exceptions.WikiException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import net.sf.ehcache.CacheManager;
 
 /**
  * The ReferenceManager maintains all hyperlinks between wiki pages.
  */
-public class ReferenceManagerTest extends TestCase
+public class ReferenceManagerTest
 {
     Properties props = TestEngine.getTestProperties();
     TestEngine engine;
     ReferenceManager mgr;
 
-    public ReferenceManagerTest( String s )
-    {
-        super( s );
-    }
-
-    @Override
+    @Before
     public void setUp()
         throws Exception
     {
@@ -58,7 +53,7 @@ public class ReferenceManagerTest extends TestCase
         mgr = engine.getReferenceManager();
     }
 
-    @Override
+    @After
     public void tearDown()
         throws Exception
     {
@@ -71,112 +66,121 @@ public class ReferenceManagerTest extends TestCase
         CacheManager.getInstance().removeAllCaches();
     }
 
+    @Test
     public void testNonExistant1()
         throws Exception
     {
-        Collection c = mgr.findReferrers("Foobar2");
+        Collection< String > c = mgr.findReferrers("Foobar2");
 
-        assertNotNull( "referrers expected", c );
-        assertTrue( c.size() == 1 && c.contains("Foobar") );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertTrue( c.size() == 1 && c.contains("Foobar") );
     }
 
+    @Test
     public void testNonExistant2()
     {
-        Collection c = mgr.findReferrers("TestBug");
+        Collection< String > c = mgr.findReferrers("TestBug");
 
-        assertNull( c );
+        Assert.assertNull( c );
     }
 
+    @Test
     public void testRemove()
         throws Exception
     {
-        Collection c = mgr.findReferrers("Foobar2");
+        Collection< String > c = mgr.findReferrers("Foobar2");
 
-        assertNotNull( "referrers expected", c );
-        assertTrue( c.size() == 1 && c.contains("Foobar") );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertTrue( c.size() == 1 && c.contains("Foobar") );
 
         engine.deletePage( "Foobar" );
 
         c = mgr.findReferrers("Foobar2");
 
-        assertNull( c );
+        Assert.assertNull( c );
 
         engine.saveText( "Foobar", "[Foobar2]");
 
         c = mgr.findReferrers("Foobar2");
 
-        assertNotNull( "referrers expected", c );
-        assertTrue( c.size() == 1 && c.contains("Foobar") );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertTrue( c.size() == 1 && c.contains("Foobar") );
     }
 
+    @Test
     public void testUnreferenced()
         throws Exception
     {
-        Collection c = mgr.findUnreferenced();
-        assertTrue( "Unreferenced page not found by ReferenceManager",
+        Collection< String > c = mgr.findUnreferenced();
+        Assert.assertTrue( "Unreferenced page not found by ReferenceManager",
                     Util.collectionContains( c, "TestPage" ));
     }
 
 
+    @Test
     public void testBecomesUnreferenced()
         throws Exception
     {
         engine.saveText( "Foobar2", "[TestPage]" );
 
-        Collection c = mgr.findUnreferenced();
-        assertEquals( "Wrong # of orphan pages, stage 1", 0, c.size() );
+        Collection< String > c = mgr.findUnreferenced();
+        Assert.assertEquals( "Wrong # of orphan pages, stage 1", 0, c.size() );
 
         engine.saveText( "Foobar2", "norefs" );
         c = mgr.findUnreferenced();
-        assertEquals( "Wrong # of orphan pages", 1, c.size() );
+        Assert.assertEquals( "Wrong # of orphan pages", 1, c.size() );
 
         Iterator i = c.iterator();
         String first = (String) i.next();
-        assertEquals( "Not correct referrers", "TestPage", first );
+        Assert.assertEquals( "Not correct referrers", "TestPage", first );
     }
 
+    @Test
     public void testUncreated()
         throws Exception
     {
-        Collection c = mgr.findUncreated();
+        Collection< String > c = mgr.findUncreated();
 
-        assertTrue( c.size()==1 && ((String) c.iterator().next()).equals("Foobar2") );
+        Assert.assertTrue( c.size()==1 && ((String) c.iterator().next()).equals("Foobar2") );
     }
 
+    @Test
     public void testReferrers()
         throws Exception
     {
-        Collection c = mgr.findReferrers( "TestPage" );
-        assertNull( "TestPage referrers", c );
+        Collection< String > c = mgr.findReferrers( "TestPage" );
+        Assert.assertNull( "TestPage referrers", c );
 
         c = mgr.findReferrers( "Foobar" );
-        assertNotNull( "referrers expected", c );
-        assertTrue( "Foobar referrers", c.size()==2  );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertTrue( "Foobar referrers", c.size()==2  );
 
         c = mgr.findReferrers( "Foobar2" );
-        assertNotNull( "referrers expected", c );
-        assertTrue( "Foobar2 referrers", c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertTrue( "Foobar2 referrers", c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
 
         c = mgr.findReferrers( "Foobars" );
-        assertNotNull( "referrers expected", c );
-        assertEquals( "Foobars referrers", 2, c.size() );
-        //assertEquals( "Foobars referrer 'TestPage'", "TestPage", (String) c.iterator().next() );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertEquals( "Foobars referrers", 2, c.size() );
+        //Assert.assertEquals( "Foobars referrer 'TestPage'", "TestPage", (String) c.iterator().next() );
     }
 
+    @Test
     public void testRefersTo()
         throws Exception
     {
         Collection s = mgr.findRefersTo( "Foobar" );
 
-        assertTrue( "does not have Foobar", s.contains("Foobar") );
-        // assertTrue( "does not have Foobars", s.contains("Foobars") );
-        assertTrue( "does not have Foobar2", s.contains("Foobar2") );
+        Assert.assertTrue( "does not have Foobar", s.contains("Foobar") );
+        // Assert.assertTrue( "does not have Foobars", s.contains("Foobars") );
+        Assert.assertTrue( "does not have Foobar2", s.contains("Foobar2") );
     }
 
     /**
-     *  Should fail in 2.2.14-beta
+     *  Should Assert.fail in 2.2.14-beta
      * @throws Exception
      */
+    @Test
     public void testSingularReferences()
     throws Exception
     {
@@ -184,10 +188,10 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "FatalBugs", "<foo>" );
         engine.saveText( "BugCommentPreviewDeletesAllComments", "FatalBug" );
 
-        Collection c = mgr.findReferrers( "FatalBugs" );
+        Collection< String > c = mgr.findReferrers( "FatalBugs" );
 
-        assertNotNull( "referrers expected", c );
-        assertEquals( "FatalBugs referrers number", 2, c.size()  );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertEquals( "FatalBugs referrers number", 2, c.size()  );
     }
 
     /**
@@ -197,18 +201,19 @@ public class ReferenceManagerTest extends TestCase
     // NB: Unfortunately, cleaning out self-references in the case there's
     //     a plural and a singular form of the page becomes nigh impossible, so we
     //     just don't do it.
+    @Test
     public void testUpdatePluralOnlyRef()
         throws Exception
     {
         engine.saveText( "TestPage", "Reference to [Foobars]." );
-        Collection c = mgr.findUnreferenced();
-        assertTrue( "Foobar unreferenced", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
+        Collection< String > c = mgr.findUnreferenced();
+        Assert.assertTrue( "Foobar unreferenced", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
 
         c = mgr.findReferrers( "Foobar" );
-        assertNotNull( "referrers expected", c );
+        Assert.assertNotNull( "referrers expected", c );
         Iterator it = c.iterator();
         String s1 = (String)it.next();
-        assertTrue( "Foobar referrers",
+        Assert.assertTrue( "Foobar referrers",
                     c.size()==2 );
     }
 
@@ -218,53 +223,57 @@ public class ReferenceManagerTest extends TestCase
      *  the page referenced by a singular link.
      */
 
+    @Test
     public void testUpdateFoobar2s()
         throws Exception
     {
         engine.saveText( "Foobar2s", "qwertz" );
-        assertTrue( "no uncreated", mgr.findUncreated().size()==0 );
+        Assert.assertTrue( "no uncreated", mgr.findUncreated().size()==0 );
 
-        Collection c = mgr.findReferrers( "Foobar2s" );
-        assertNotNull( "referrers expected", c );
-        assertTrue( "referrers", c!=null && c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
+        Collection< String > c = mgr.findReferrers( "Foobar2s" );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertTrue( "referrers", c!=null && c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
     }
 
+    @Test
     public void testUpdateBothExist()
         throws Exception
     {
         engine.saveText( "Foobars", "qwertz" );
-        Collection c = mgr.findReferrers( "Foobars" );
-        assertNotNull( "referrers expected", c );
-        assertEquals( "Foobars referrers", 2, c.size() );
-        assertTrue( "Foobars referrer is not TestPage", c.contains( "TestPage" ) && c.contains("Foobar"));
+        Collection< String > c = mgr.findReferrers( "Foobars" );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertEquals( "Foobars referrers", 2, c.size() );
+        Assert.assertTrue( "Foobars referrer is not TestPage", c.contains( "TestPage" ) && c.contains("Foobar"));
     }
 
+    @Test
     public void testUpdateBothExist2()
         throws Exception
     {
         engine.saveText( "Foobars", "qwertz" );
         engine.saveText( "TestPage", "Reference to [Foobar], [Foobars]." );
 
-        Collection c = mgr.findReferrers( "Foobars" );
-        assertNotNull( "referrers expected", c );
-        assertEquals( "Foobars referrers count", 2, c.size() );
+        Collection< String > c = mgr.findReferrers( "Foobars" );
+        Assert.assertNotNull( "referrers expected", c );
+        Assert.assertEquals( "Foobars referrers count", 2, c.size() );
 
-        Iterator i = c.iterator();
-        String first = (String) i.next();
+        Iterator< String > i = c.iterator();
+        String first = i.next();
 
-        assertTrue( "Foobars referrers",
-                    c.contains("TestPage") && c.contains("Foobar"));
+        Assert.assertTrue( "Foobars referrers", c.contains("TestPage") && c.contains("Foobar"));
     }
 
+    @Test
     public void testCircularRefs()
         throws Exception
     {
         engine.saveText( "Foobar2", "ref to [TestPage]" );
 
-        assertTrue( "no uncreated", mgr.findUncreated().size()==0 );
-        assertTrue( "no unreferenced", mgr.findUnreferenced().size()==0 );
+        Assert.assertTrue( "no uncreated", mgr.findUncreated().size()==0 );
+        Assert.assertTrue( "no unreferenced", mgr.findUnreferenced().size()==0 );
     }
 
+    @Test
     public void testPluralSingularUpdate1()
         throws Exception
     {
@@ -274,24 +283,25 @@ public class ReferenceManagerTest extends TestCase
 
         engine.saveText( "BugOne", "OpenBug" );
 
-        Collection ref = mgr.findReferrers( "NewBugs" );
-        assertNull("newbugs",ref); // No referrers must be found
+        Collection< String > ref = mgr.findReferrers( "NewBugs" );
+        Assert.assertNull("newbugs",ref); // No referrers must be found
 
         ref = mgr.findReferrers( "NewBug" );
-        assertNull("newbug",ref); // No referrers must be found
+        Assert.assertNull("newbug",ref); // No referrers must be found
 
         ref = mgr.findReferrers( "OpenBugs" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("openbugs",1,ref.size());
-        assertEquals("openbugs2","BugOne",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("openbugs",1,ref.size());
+        Assert.assertEquals("openbugs2","BugOne",ref.iterator().next());
 
         ref = mgr.findReferrers( "OpenBug" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("openbug",1,ref.size());
-        assertEquals("openbug2","BugOne",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("openbug",1,ref.size());
+        Assert.assertEquals("openbug2","BugOne",ref.iterator().next());
 
     }
 
+    @Test
     public void testPluralSingularUpdate2()
         throws Exception
     {
@@ -301,24 +311,25 @@ public class ReferenceManagerTest extends TestCase
 
         engine.saveText( "BugOne", "OpenBug" );
 
-        Collection ref = mgr.findReferrers( "NewBugs" );
-        assertNull("newbugs",ref); // No referrers must be found
+        Collection< String > ref = mgr.findReferrers( "NewBugs" );
+        Assert.assertNull("newbugs",ref); // No referrers must be found
 
         ref = mgr.findReferrers( "NewBug" );
-        assertNull("newbug",ref); // No referrers must be found
+        Assert.assertNull("newbug",ref); // No referrers must be found
 
         ref = mgr.findReferrers( "OpenBugs" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("openbugs",1,ref.size());
-        assertEquals("openbugs2","BugOne",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("openbugs",1,ref.size());
+        Assert.assertEquals("openbugs2","BugOne",ref.iterator().next());
 
         ref = mgr.findReferrers( "OpenBug" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("openbug",1,ref.size());
-        assertEquals("openbug2","BugOne",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("openbug",1,ref.size());
+        Assert.assertEquals("openbug2","BugOne",ref.iterator().next());
 
     }
 
+    @Test
     public void testPluralSingularUpdate3()
         throws Exception
     {
@@ -329,47 +340,37 @@ public class ReferenceManagerTest extends TestCase
 
         engine.saveText( "BugOne", "OpenBug" );
 
-        Collection ref = mgr.findReferrers( "NewBugs" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("newbugs",1,ref.size());
-        assertEquals("newbugs2","BugTwo",ref.iterator().next());
+        Collection< String > ref = mgr.findReferrers( "NewBugs" );
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("newbugs",1,ref.size());
+        Assert.assertEquals("newbugs2","BugTwo",ref.iterator().next());
 
         ref = mgr.findReferrers( "NewBug" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("newbugs",1,ref.size());
-        assertEquals("newbugs2","BugTwo",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("newbugs",1,ref.size());
+        Assert.assertEquals("newbugs2","BugTwo",ref.iterator().next());
 
         ref = mgr.findReferrers( "OpenBugs" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("openbugs",1,ref.size());
-        assertEquals("openbugs2","BugOne",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("openbugs",1,ref.size());
+        Assert.assertEquals("openbugs2","BugOne",ref.iterator().next());
 
         ref = mgr.findReferrers( "OpenBug" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("openbug",1,ref.size());
-        assertEquals("openbug2","BugOne",ref.iterator().next());
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("openbug",1,ref.size());
+        Assert.assertEquals("openbug2","BugOne",ref.iterator().next());
 
     }
 
+    @Test
     public void testSelf() throws WikiException
     {
         engine.saveText( "BugOne", "BugOne" );
-        Collection ref = mgr.findReferrers( "BugOne" );
-        assertNotNull("referrers expected", ref);
-        assertEquals("wrong size",1,ref.size());
-        assertEquals("ref", "BugOne", ref.iterator().next());
+        Collection< String > ref = mgr.findReferrers( "BugOne" );
+        Assert.assertNotNull("referrers expected", ref);
+        Assert.assertEquals("wrong size",1,ref.size());
+        Assert.assertEquals("ref", "BugOne", ref.iterator().next());
     }
-
-    public static Test suite()
-    {
-        return new TestSuite( ReferenceManagerTest.class );
-    }
-
-    public static void main(String[] args)
-    {
-        junit.textui.TestRunner.main( new String[] { ReferenceManagerTest.class.getName() } );
-    }
-
 
     /**
      * Test method: dumps the contents of  ReferenceManager link lists to stdout.

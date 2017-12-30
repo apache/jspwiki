@@ -17,7 +17,6 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
-
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
@@ -35,12 +34,12 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
-
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
 
 /**
  */
-public class AnonymousLoginModuleTest extends TestCase
+public class AnonymousLoginModuleTest
 {
     UserDatabase m_db;
 
@@ -60,15 +59,15 @@ public class AnonymousLoginModuleTest extends TestCase
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
-            assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
+            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
@@ -85,24 +84,25 @@ public class AnonymousLoginModuleTest extends TestCase
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
-            assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
+            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
-            assertEquals( 0, principals.size() );
+            Assert.assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
     /**
-     * @see junit.framework.TestCase#setUp()
+     * 
      */
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
@@ -116,7 +116,7 @@ public class AnonymousLoginModuleTest extends TestCase
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 

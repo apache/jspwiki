@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,36 +14,33 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.plugin;
 
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class UndefinedPagesPluginTest extends TestCase
+import net.sf.ehcache.CacheManager;
+
+public class UndefinedPagesPluginTest
 {
     Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
     WikiContext context;
     PluginManager manager;
 
-    public UndefinedPagesPluginTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp()
         throws Exception
     {
@@ -57,6 +54,7 @@ public class UndefinedPagesPluginTest extends TestCase
         manager = new DefaultPluginManager( testEngine, props );
     }
 
+    @After
     public void tearDown()
     {
         testEngine.deleteTestPage( "TestPage" );
@@ -74,6 +72,7 @@ public class UndefinedPagesPluginTest extends TestCase
      *  We also check against plural forms here, which should not
      *  be listed as non-existent.
      */
+    @Test
     public void testSimpleUndefined()
         throws Exception
     {
@@ -84,14 +83,15 @@ public class UndefinedPagesPluginTest extends TestCase
 
         String exp = "[Foobar 2]\\\\";
 
-        assertEquals( wikitize(exp), res );
+        Assert.assertEquals( wikitize(exp), res );
     }
 
+    @Test
     public void testCount() throws Exception
     {
         String result = null;
         result = manager.execute(context, "{UndefinedPagesPlugin show=count}");
-        assertEquals("1", result);
+        Assert.assertEquals("1", result);
 
         // test if the proper exception is thrown:
         String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
@@ -105,11 +105,7 @@ public class UndefinedPagesPluginTest extends TestCase
             exceptionString = pe.getMessage();
         }
 
-        assertEquals(expectedExceptionString, exceptionString);
+        Assert.assertEquals(expectedExceptionString, exceptionString);
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( UndefinedPagesPluginTest.class );
-    }
 }

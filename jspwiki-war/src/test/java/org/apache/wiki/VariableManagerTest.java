@@ -18,28 +18,25 @@
  */
 
 package org.apache.wiki;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 
-public class VariableManagerTest extends TestCase
+public class VariableManagerTest
 {
     VariableManager m_variableManager;
     WikiContext     m_context;
 
     static final String PAGE_NAME = "TestPage";
 
-    public VariableManagerTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp()
         throws Exception
     {
@@ -52,17 +49,19 @@ public class VariableManagerTest extends TestCase
                                      new WikiPage( testEngine, PAGE_NAME ) );
     }
 
+    @After
     public void tearDown()
     {
     }
 
+    @Test
     public void testIllegalInsert1()
         throws Exception
     {
         try
         {
             m_variableManager.parseAndGetValue( m_context, "" );
-            fail( "Did not fail" );
+            Assert.fail( "Did not Assert.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -70,13 +69,14 @@ public class VariableManagerTest extends TestCase
         }
     }
 
+    @Test
     public void testIllegalInsert2()
         throws Exception
     {
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$" );
-            fail( "Did not fail" );
+            Assert.fail( "Did not Assert.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -84,13 +84,14 @@ public class VariableManagerTest extends TestCase
         }
     }
 
+    @Test
     public void testIllegalInsert3()
         throws Exception
     {
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$pagename" );
-            fail( "Did not fail" );
+            Assert.fail( "Did not Assert.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -98,13 +99,14 @@ public class VariableManagerTest extends TestCase
         }
     }
 
+    @Test
     public void testIllegalInsert4()
         throws Exception
     {
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$}" );
-            fail( "Did not fail" );
+            Assert.fail( "Did not Assert.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -112,12 +114,13 @@ public class VariableManagerTest extends TestCase
         }
     }
 
+    @Test
     public void testNonExistantVariable()
     {
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$no_such_variable}" );
-            fail( "Did not fail" );
+            Assert.fail( "Did not Assert.fail" );
         }
         catch( NoSuchVariableException e )
         {
@@ -125,64 +128,67 @@ public class VariableManagerTest extends TestCase
         }
     }
 
+    @Test
     public void testPageName()
         throws Exception
     {
         String res = m_variableManager.getValue( m_context, "pagename" );
 
-        assertEquals( PAGE_NAME, res );
+        Assert.assertEquals( PAGE_NAME, res );
     }
 
+    @Test
     public void testPageName2()
         throws Exception
     {
         String res =  m_variableManager.parseAndGetValue( m_context, "{$  pagename  }" );
 
-        assertEquals( PAGE_NAME, res );
+        Assert.assertEquals( PAGE_NAME, res );
     }
 
+    @Test
     public void testMixedCase()
         throws Exception
     {
         String res =  m_variableManager.parseAndGetValue( m_context, "{$PAGeNamE}" );
 
-        assertEquals( PAGE_NAME, res );
+        Assert.assertEquals( PAGE_NAME, res );
     }
 
+    @Test
     public void testExpand1()
         throws Exception
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}..." );
 
-        assertEquals( "Testing "+PAGE_NAME+"...", res );
+        Assert.assertEquals( "Testing "+PAGE_NAME+"...", res );
     }
 
+    @Test
     public void testExpand2()
         throws Exception
     {
         String res = m_variableManager.expandVariables( m_context, "{$pagename} tested..." );
 
-        assertEquals( PAGE_NAME+" tested...", res );
+        Assert.assertEquals( PAGE_NAME+" tested...", res );
     }
 
+    @Test
     public void testExpand3()
         throws Exception
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}, {$applicationname}" );
 
-        assertEquals( "Testing "+PAGE_NAME+", JSPWiki", res );
+        Assert.assertEquals( "Testing "+PAGE_NAME+", JSPWiki", res );
     }
 
+    @Test
     public void testExpand4()
         throws Exception
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {}, {{{}" );
 
-        assertEquals( "Testing {}, {{{}", res );
+        Assert.assertEquals( "Testing {}, {{{}", res );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( VariableManagerTest.class );
-    }
 }

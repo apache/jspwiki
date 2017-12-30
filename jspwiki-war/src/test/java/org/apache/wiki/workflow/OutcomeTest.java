@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,44 +14,48 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.workflow;
 
 import java.util.Locale;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class OutcomeTest extends TestCase
+public class OutcomeTest
 {
 
+    @Test
     public void testGetKey()
     {
-        assertEquals("outcome.decision.approve", Outcome.DECISION_APPROVE.getMessageKey());
-        assertEquals("outcome.decision.hold", Outcome.DECISION_HOLD.getMessageKey());
-        assertEquals("outcome.decision.deny", Outcome.DECISION_DENY.getMessageKey());
-        assertEquals("outcome.decision.reassign", Outcome.DECISION_REASSIGN.getMessageKey());
+        Assert.assertEquals("outcome.decision.approve", Outcome.DECISION_APPROVE.getMessageKey());
+        Assert.assertEquals("outcome.decision.hold", Outcome.DECISION_HOLD.getMessageKey());
+        Assert.assertEquals("outcome.decision.deny", Outcome.DECISION_DENY.getMessageKey());
+        Assert.assertEquals("outcome.decision.reassign", Outcome.DECISION_REASSIGN.getMessageKey());
     }
 
+    @Test
     public void testHashCode()
     {
-        assertEquals("outcome.decision.approve".hashCode(), Outcome.DECISION_APPROVE.hashCode());
-        assertEquals("outcome.decision.hold".hashCode()*2, Outcome.DECISION_HOLD.hashCode());
-        assertEquals("outcome.decision.deny".hashCode(), Outcome.DECISION_DENY.hashCode());
-        assertEquals("outcome.decision.reassign".hashCode()*2, Outcome.DECISION_REASSIGN.hashCode());
+        Assert.assertEquals("outcome.decision.approve".hashCode(), Outcome.DECISION_APPROVE.hashCode());
+        Assert.assertEquals("outcome.decision.hold".hashCode()*2, Outcome.DECISION_HOLD.hashCode());
+        Assert.assertEquals("outcome.decision.deny".hashCode(), Outcome.DECISION_DENY.hashCode());
+        Assert.assertEquals("outcome.decision.reassign".hashCode()*2, Outcome.DECISION_REASSIGN.hashCode());
     }
 
+    @Test
     public void testEquals()
     {
-        assertEquals(Outcome.DECISION_APPROVE, Outcome.DECISION_APPROVE);
-        assertNotSame(Outcome.DECISION_APPROVE, Outcome.DECISION_REASSIGN);
+        Assert.assertEquals(Outcome.DECISION_APPROVE, Outcome.DECISION_APPROVE);
+        Assert.assertNotSame(Outcome.DECISION_APPROVE, Outcome.DECISION_REASSIGN);
     }
 
+    @Test
     public void testMessage() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -62,47 +66,49 @@ public class OutcomeTest extends TestCase
         Outcome o;
 
         o = Outcome.DECISION_APPROVE;
-        assertEquals("Approve", i18n.get(core, rootLocale, o.getMessageKey()));
+        Assert.assertEquals("Approve", i18n.get(core, rootLocale, o.getMessageKey()));
 
         o = Outcome.DECISION_DENY;
-        assertEquals("Deny", i18n.get(core, rootLocale, o.getMessageKey()));
+        Assert.assertEquals("Deny", i18n.get(core, rootLocale, o.getMessageKey()));
 
         o = Outcome.DECISION_HOLD;
-        assertEquals("Hold", i18n.get(core, rootLocale, o.getMessageKey()));
+        Assert.assertEquals("Hold", i18n.get(core, rootLocale, o.getMessageKey()));
 
         o = Outcome.DECISION_REASSIGN;
-        assertEquals("Reassign", i18n.get(core, rootLocale, o.getMessageKey()));
+        Assert.assertEquals("Reassign", i18n.get(core, rootLocale, o.getMessageKey()));
     }
 
+    @Test
     public void testIsCompletion()
     {
-        assertTrue(Outcome.DECISION_ACKNOWLEDGE.isCompletion());
-        assertTrue(Outcome.DECISION_APPROVE.isCompletion());
-        assertTrue(Outcome.DECISION_DENY.isCompletion());
-        assertFalse(Outcome.DECISION_HOLD.isCompletion());
-        assertFalse(Outcome.DECISION_REASSIGN.isCompletion());
-        assertTrue(Outcome.STEP_ABORT.isCompletion());
-        assertTrue(Outcome.STEP_COMPLETE.isCompletion());
-        assertFalse(Outcome.STEP_CONTINUE.isCompletion());
+        Assert.assertTrue(Outcome.DECISION_ACKNOWLEDGE.isCompletion());
+        Assert.assertTrue(Outcome.DECISION_APPROVE.isCompletion());
+        Assert.assertTrue(Outcome.DECISION_DENY.isCompletion());
+        Assert.assertFalse(Outcome.DECISION_HOLD.isCompletion());
+        Assert.assertFalse(Outcome.DECISION_REASSIGN.isCompletion());
+        Assert.assertTrue(Outcome.STEP_ABORT.isCompletion());
+        Assert.assertTrue(Outcome.STEP_COMPLETE.isCompletion());
+        Assert.assertFalse(Outcome.STEP_CONTINUE.isCompletion());
     }
 
+    @Test
     public void testForName()
     {
         try
         {
-            assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("outcome.decision.acknowledge"));
-            assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("outcome.decision.approve"));
-            assertEquals(Outcome.DECISION_DENY, Outcome.forName("outcome.decision.deny"));
-            assertEquals(Outcome.DECISION_HOLD, Outcome.forName("outcome.decision.hold"));
-            assertEquals(Outcome.DECISION_REASSIGN, Outcome.forName("outcome.decision.reassign"));
-            assertEquals(Outcome.STEP_ABORT, Outcome.forName("outcome.step.abort"));
-            assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("outcome.step.complete"));
-            assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("outcome.step.continue"));
+            Assert.assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("outcome.decision.acknowledge"));
+            Assert.assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("outcome.decision.approve"));
+            Assert.assertEquals(Outcome.DECISION_DENY, Outcome.forName("outcome.decision.deny"));
+            Assert.assertEquals(Outcome.DECISION_HOLD, Outcome.forName("outcome.decision.hold"));
+            Assert.assertEquals(Outcome.DECISION_REASSIGN, Outcome.forName("outcome.decision.reassign"));
+            Assert.assertEquals(Outcome.STEP_ABORT, Outcome.forName("outcome.step.abort"));
+            Assert.assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("outcome.step.complete"));
+            Assert.assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("outcome.step.continue"));
         }
         catch (NoSuchOutcomeException e)
         {
             // We should never get here
-            fail("Could not look up an Outcome...");
+            Assert.fail("Could not look up an Outcome...");
         }
 
         // Look for a non-existent one
@@ -115,7 +121,7 @@ public class OutcomeTest extends TestCase
             return;
         }
         // We should never get here
-        fail("Could not look up an Outcome...");
+        Assert.fail("Could not look up an Outcome...");
     }
 
 }

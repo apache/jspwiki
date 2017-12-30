@@ -14,15 +14,19 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.workflow;
+
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Properties;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
@@ -30,7 +34,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 
-public class DecisionQueueTest extends TestCase
+public class DecisionQueueTest
 {
 
     TestEngine m_engine;
@@ -49,9 +53,10 @@ public class DecisionQueueTest extends TestCase
 
     WikiSession adminSession;
 
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
+
         Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
         m_queue = m_engine.getWorkflowManager().getDecisionQueue();
@@ -67,87 +72,94 @@ public class DecisionQueueTest extends TestCase
         m_queue.add(d3);
     }
 
+    @Test
     public void testAdd()
     {
         Decision[] decisions = m_queue.decisions();
-        assertEquals(d1, decisions[0]);
-        assertEquals(d2, decisions[1]);
-        assertEquals(d3, decisions[2]);
+        Assert.assertEquals(d1, decisions[0]);
+        Assert.assertEquals(d2, decisions[1]);
+        Assert.assertEquals(d3, decisions[2]);
     }
 
+    @Test
     public void testRemove()
     {
         Decision[] decisions = m_queue.decisions();
-        assertEquals(3, decisions.length);
+        Assert.assertEquals(3, decisions.length);
 
         m_queue.remove(d2);
         decisions = m_queue.decisions();
-        assertEquals(2, decisions.length);
-        assertEquals(d1, decisions[0]);
-        assertEquals(d3, decisions[1]);
+        Assert.assertEquals(2, decisions.length);
+        Assert.assertEquals(d1, decisions[0]);
+        Assert.assertEquals(d3, decisions[1]);
 
         m_queue.remove(d1);
         decisions = m_queue.decisions();
-        assertEquals(1, decisions.length);
-        assertEquals(d3, decisions[0]);
+        Assert.assertEquals(1, decisions.length);
+        Assert.assertEquals(d3, decisions[0]);
 
         m_queue.remove(d3);
         decisions = m_queue.decisions();
-        assertEquals(0, decisions.length);
+        Assert.assertEquals(0, decisions.length);
     }
 
+    @Test
     public void testComplete() throws WikiException
     {
-        assertEquals(3, m_queue.decisions().length);
+        Assert.assertEquals(3, m_queue.decisions().length);
 
         // Execute the competion for decision 1 (approve/deny)
         m_queue.decide(d1, Outcome.DECISION_APPROVE);
 
         // Decision should be marked completed, and removed from queue
-        assertTrue(d1.isCompleted());
-        assertEquals(2, m_queue.decisions().length);
+        Assert.assertTrue(d1.isCompleted());
+        Assert.assertEquals(2, m_queue.decisions().length);
 
         // Execute the competion for decision 2 (approve/deny/hold)
         m_queue.decide(d2, Outcome.DECISION_DENY);
 
         // Decision should be marked completed, and removed from queue
-        assertTrue(d2.isCompleted());
-        assertEquals(1, m_queue.decisions().length);
+        Assert.assertTrue(d2.isCompleted());
+        Assert.assertEquals(1, m_queue.decisions().length);
     }
 
+    @Test
     public void testReassign() throws WikiException
     {
         // Janne owns 1 decision (d3)
-        assertEquals(janneSession.getUserPrincipal(), d3.getActor());
-        assertEquals(1, m_queue.getActorDecisions(janneSession).size());
+        Assert.assertEquals(janneSession.getUserPrincipal(), d3.getActor());
+        Assert.assertEquals(1, m_queue.getActorDecisions(janneSession).size());
 
         // Reassign the decision
         m_queue.reassign(d3, new WikiPrincipal("NewOwner"));
 
         // d3 should have a different owner now, and it won't show up in
         // Janne's decision list
-        assertEquals(new WikiPrincipal("NewOwner"), d3.getActor());
-        assertEquals(0, m_queue.getActorDecisions(janneSession).size());
+        Assert.assertEquals(new WikiPrincipal("NewOwner"), d3.getActor());
+        Assert.assertEquals(0, m_queue.getActorDecisions(janneSession).size());
     }
 
+    @Test
     public void testDecisions()
     {
         Decision[] decisions = m_queue.decisions();
-        assertEquals(3, decisions.length);
-        assertEquals(d1, decisions[0]);
-        assertEquals(d2, decisions[1]);
-        assertEquals(d3, decisions[2]);
+        Assert.assertEquals(3, decisions.length);
+        Assert.assertEquals(d1, decisions[0]);
+        Assert.assertEquals(d2, decisions[1]);
+        Assert.assertEquals(d3, decisions[2]);
     }
 
+    @Test
     public void testActorDecisions()
     {
         Collection decisions = m_queue.getActorDecisions(adminSession);
-        assertEquals(1, decisions.size());
+        Assert.assertEquals(1, decisions.size());
 
         decisions = m_queue.getActorDecisions(janneSession);
-        assertEquals(1, decisions.size());
+        Assert.assertEquals(1, decisions.size());
     }
 
+    @Test
     public void testDecisionWorkflow() throws WikiException
     {
         Principal janne = janneSession.getUserPrincipal();
@@ -169,18 +181,18 @@ public class DecisionQueueTest extends TestCase
 
         // Start the workflow, and verify that the Decision is the current Step
         w.start();
-        assertEquals(decision, w.getCurrentStep());
+        Assert.assertEquals(decision, w.getCurrentStep());
 
         // Verify that it's also in Janne's DecisionQueue
         Collection decisions = m_queue.getActorDecisions(janneSession);
-        assertEquals(1, decisions.size());
+        Assert.assertEquals(1, decisions.size());
         Decision d = (Decision)decisions.iterator().next();
-        assertEquals(decision, d);
+        Assert.assertEquals(decision, d);
 
         // Make Decision, and verify that it's gone from the queue
         m_queue.decide(decision, Outcome.DECISION_APPROVE);
         decisions = m_queue.getActorDecisions(janneSession);
-        assertEquals(0, decisions.size());
+        Assert.assertEquals(0, decisions.size());
     }
 
 }

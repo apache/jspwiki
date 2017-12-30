@@ -17,7 +17,6 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
-
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
@@ -35,13 +34,14 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.junit.Assert;
+import org.junit.Before;
 
-import junit.framework.TestCase;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 /**
  */
-public class CookieAssertionLoginModuleTest extends TestCase
+public class CookieAssertionLoginModuleTest
 {
     UserDatabase m_db;
 
@@ -55,7 +55,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
         try
         {
             // We can use cookies right?
-            assertTrue( m_engine.getAuthenticationManager().allowsCookieAssertions() );
+            Assert.assertTrue( m_engine.getAuthenticationManager().allowsCookieAssertions() );
 
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
             Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
@@ -69,15 +69,15 @@ public class CookieAssertionLoginModuleTest extends TestCase
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
-            assertFalse( principals.contains( Role.ASSERTED ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
+            Assert.assertFalse( principals.contains( Role.ASSERTED ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
@@ -96,24 +96,25 @@ public class CookieAssertionLoginModuleTest extends TestCase
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
-            assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
+            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
-            assertEquals( 0, principals.size() );
+            Assert.assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
     /**
-     * @see junit.framework.TestCase#setUp()
+     * 
      */
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
@@ -127,7 +128,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 

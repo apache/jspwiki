@@ -17,12 +17,16 @@
     under the License.  
  */
 package org.apache.wiki.stress;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Properties;
 import java.util.Random;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.wiki.TestEngine;
@@ -31,14 +35,15 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
 
-public class MassiveRepositoryTest extends TestCase {
+public class MassiveRepositoryTest {
 	
     Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
 
     TestEngine engine;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
@@ -52,8 +57,9 @@ public class MassiveRepositoryTest extends TestCase {
         engine = new TestEngine(props);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
+
         
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
@@ -68,6 +74,7 @@ public class MassiveRepositoryTest extends TestCase {
         return baseName + i;
     }
     
+    @Test
     public void testMassiveRepositoryGettingAllPagesFromCache() throws Exception {
         int    numPages = 900;
         int    numRevisions = 900;
@@ -77,6 +84,7 @@ public class MassiveRepositoryTest extends TestCase {
         stressTest( numPages, numRevisions, numRenders, tickmarks );
     }
     
+    @Test
     public void testMassiveRepositoryBypassingCacheByHavingTooMuchPages() throws Exception {
     	int    numPages = 1001;
         int    numRevisions = 1001;
@@ -140,7 +148,7 @@ public class MassiveRepositoryTest extends TestCase {
         
         System.out.println("\nTook "+sw.toString()+", which is "+sw.toString(numRevisions)+" adds/second");
         
-        assertEquals( "Right number of pages", numPages, engine.getPageCount() );
+        Assert.assertEquals( "Right number of pages", numPages, engine.getPageCount() );
         
         //
         //  Rendering random pages
@@ -158,7 +166,7 @@ public class MassiveRepositoryTest extends TestCase {
             
             String content = engine.getHTML( page, WikiProvider.LATEST_VERSION );
               
-            assertNotNull(content);
+            Assert.assertNotNull(content);
             
             if( i % pm == 0 ) { System.out.print("."); System.out.flush(); }
         }

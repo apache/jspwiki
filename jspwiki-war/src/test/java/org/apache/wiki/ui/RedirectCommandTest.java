@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,60 +14,55 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 /*
  * (C) Janne Jalkanen 2005
- * 
+ *
  */
 package org.apache.wiki.ui;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class RedirectCommandTest extends TestCase
+
+public class RedirectCommandTest
 {
-    protected void tearDown() throws Exception
-    {
-    }
 
+    @Test
     public void testStaticCommand()
     {
         Command a = RedirectCommand.REDIRECT;
-        assertEquals( "", a.getRequestContext() );
-        assertEquals( "", a.getJSP() );
-        assertEquals( "%u%n", a.getURLPattern() );
-        assertNull( a.getContentTemplate() );
-        assertNull( a.getTarget() );
-        assertEquals( a, RedirectCommand.REDIRECT );
+        Assert.assertEquals( "", a.getRequestContext() );
+        Assert.assertEquals( "", a.getJSP() );
+        Assert.assertEquals( "%u%n", a.getURLPattern() );
+        Assert.assertNull( a.getContentTemplate() );
+        Assert.assertNull( a.getTarget() );
+        Assert.assertEquals( a, RedirectCommand.REDIRECT );
     }
-    
+
+    @Test
     public void testTargetedCommand()
     {
         Command a = RedirectCommand.REDIRECT;
-        
+
         // Test with local JSP
         Command b = a.targetedCommand( "%uTestPage.jsp" );
-        assertEquals( "", b.getRequestContext() );
-        assertEquals( "TestPage.jsp", b.getJSP() );
-        assertEquals( "%uTestPage.jsp", b.getURLPattern() );
-        assertNull( b.getContentTemplate() );
-        assertEquals( "%uTestPage.jsp", b.getTarget() );
-        assertNotSame( RedirectCommand.REDIRECT, b );
-        
+        Assert.assertEquals( "", b.getRequestContext() );
+        Assert.assertEquals( "TestPage.jsp", b.getJSP() );
+        Assert.assertEquals( "%uTestPage.jsp", b.getURLPattern() );
+        Assert.assertNull( b.getContentTemplate() );
+        Assert.assertEquals( "%uTestPage.jsp", b.getTarget() );
+        Assert.assertNotSame( RedirectCommand.REDIRECT, b );
+
         // Test with non-local URL
         b = a.targetedCommand( "http://www.yahoo.com" );
-        assertEquals( "", b.getRequestContext() );
-        assertEquals( "http://www.yahoo.com", b.getJSP() );
-        assertEquals( "http://www.yahoo.com", b.getURLPattern() );
-        assertNull( b.getContentTemplate() );
-        assertEquals( "http://www.yahoo.com", b.getTarget() );
-        assertNotSame( RedirectCommand.REDIRECT, b );
+        Assert.assertEquals( "", b.getRequestContext() );
+        Assert.assertEquals( "http://www.yahoo.com", b.getJSP() );
+        Assert.assertEquals( "http://www.yahoo.com", b.getURLPattern() );
+        Assert.assertNull( b.getContentTemplate() );
+        Assert.assertEquals( "http://www.yahoo.com", b.getTarget() );
+        Assert.assertNotSame( RedirectCommand.REDIRECT, b );
     }
-    
-    public static Test suite()
-    {
-        return new TestSuite( RedirectCommandTest.class );
-    }
+
 }

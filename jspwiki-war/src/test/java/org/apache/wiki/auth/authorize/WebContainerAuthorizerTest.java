@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,34 +14,27 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.authorize;
-
 import java.security.Principal;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.commons.lang.ArrayUtils;
-import org.jdom2.Document;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
+import org.jdom2.Document;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WebContainerAuthorizerTest extends TestCase
+public class WebContainerAuthorizerTest
 {
     WikiEngine m_engine;
     WebContainerAuthorizer m_authorizer;
     Document   m_webxml;
 
-    public WebContainerAuthorizerTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -55,22 +48,25 @@ public class WebContainerAuthorizerTest extends TestCase
         }
     }
 
+    @Test
     public void testConstraints() throws Exception
     {
-        assertTrue( m_authorizer.isConstrained( "/Delete.jsp", new Role( "Admin" ) ) );
-        assertTrue( m_authorizer.isConstrained( "/Login.jsp", Role.AUTHENTICATED ) );
-        assertFalse( m_authorizer.isConstrained( "/UserPreferences.jsp", Role.AUTHENTICATED ) );
+        Assert.assertTrue( m_authorizer.isConstrained( "/Delete.jsp", new Role( "Admin" ) ) );
+        Assert.assertTrue( m_authorizer.isConstrained( "/Login.jsp", Role.AUTHENTICATED ) );
+        Assert.assertFalse( m_authorizer.isConstrained( "/UserPreferences.jsp", Role.AUTHENTICATED ) );
     }
-    
+
+    @Test
     public void testGetRoles()
     {
         // We should find 2 roles: AUTHENTICATED plus custom role "Admin"
         Principal[] roles = m_authorizer.getRoles();
-        assertEquals( 2, roles.length );
-        assertTrue( ArrayUtils.contains( roles, Role.AUTHENTICATED ) );
-        assertTrue( ArrayUtils.contains( roles, new Role( "Admin" ) ) );
+        Assert.assertEquals( 2, roles.length );
+        Assert.assertTrue( ArrayUtils.contains( roles, Role.AUTHENTICATED ) );
+        Assert.assertTrue( ArrayUtils.contains( roles, new Role( "Admin" ) ) );
     }
-    
+
+    @Test
     public void testRoles() throws Exception
     {
         Role[] roles = m_authorizer.getRoles( m_webxml );
@@ -82,7 +78,7 @@ public class WebContainerAuthorizerTest extends TestCase
                 found = true;
             }
         }
-        assertTrue( "Didn't find AUTHENTICATED", found );
+        Assert.assertTrue( "Didn't find AUTHENTICATED", found );
         for ( int i = 0; i < roles.length; i++ )
         {
             if ( roles[i].equals( new Role( "Admin" ) ) )
@@ -90,17 +86,13 @@ public class WebContainerAuthorizerTest extends TestCase
                 found = true;
             }
         }
-        assertTrue( "Didn't find ADMIN", found );
-    }
-    
-    public void testIsContainerAuthorized()
-    {
-        assertTrue( m_authorizer.isContainerAuthorized() );
+        Assert.assertTrue( "Didn't find ADMIN", found );
     }
 
-    public static Test suite()
+    @Test
+    public void testIsContainerAuthorized()
     {
-        return new TestSuite( WebContainerAuthorizerTest.class );
+        Assert.assertTrue( m_authorizer.isContainerAuthorized() );
     }
 
 }

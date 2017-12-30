@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,10 +14,9 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.authorize;
-
 import java.io.File;
 import java.security.Principal;
 import java.sql.Connection;
@@ -29,33 +28,38 @@ import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
 import javax.sql.DataSource;
 
-import junit.framework.TestCase;
-
-import org.apache.wiki.*;
+import org.apache.wiki.HsqlDbUtils;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.TestJDBCDataSource;
+import org.apache.wiki.TestJNDIContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  */
-public class JDBCGroupDatabaseTest extends TestCase
+public class JDBCGroupDatabaseTest
 {
     private HsqlDbUtils       m_hu   = new HsqlDbUtils();
-    
+
     private Connection        m_conn = null;
 
     private JDBCGroupDatabase m_db   = null;
 
     private String            m_wiki;
-    
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception
-    {
-        super.setUp();
 
+    /**
+     * 
+     */
+    @Before
+    public void setUp() throws Exception
+    {
         m_hu.setUp();
         Properties props = TestEngine.getTestProperties();
         WikiEngine engine = new TestEngine( props );
@@ -84,7 +88,7 @@ public class JDBCGroupDatabaseTest extends TestCase
         }
         catch( SQLException e )
         {
-            fail("Looks like your database could not be connected to - "+
+            Assert.fail("Looks like your database could not be connected to - "+
                   "please make sure that you have started your database, exception: " + e.getMessage());
         }
 
@@ -93,6 +97,7 @@ public class JDBCGroupDatabaseTest extends TestCase
         m_db.initialize( engine, new Properties() );
     }
 
+    @After
     public void tearDown() throws Exception
     {
         if ( m_conn != null )
@@ -102,6 +107,7 @@ public class JDBCGroupDatabaseTest extends TestCase
         m_hu.tearDown();
     }
 
+    @Test
     public void testDelete() throws WikiException
     {
         // First, count the number of groups in the db now.
@@ -118,56 +124,58 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // Make sure the profile saved successfully
         group = backendGroup( name );
-        assertEquals( name, group.getName() );
-        assertEquals( oldUserCount+1, m_db.groups().length );
+        Assert.assertEquals( name, group.getName() );
+        Assert.assertEquals( oldUserCount+1, m_db.groups().length );
 
         // Now delete the profile; should be back to old count
         m_db.delete( group );
-        assertEquals( oldUserCount, m_db.groups().length );
+        Assert.assertEquals( oldUserCount, m_db.groups().length );
     }
 
+    @Test
     public void testGroups() throws WikiSecurityException
     {
         // Test file has 4 groups in it: TV, Literature, Art, and Admin
         Group[] groups = m_db.groups();
-        assertEquals( 4, groups.length );
+        Assert.assertEquals( 4, groups.length );
 
         Group group;
 
         // Group TV has 3 members
         group = backendGroup( "TV" );
-        assertEquals("TV", group.getName() );
-        assertEquals( 3, group.members().length );
+        Assert.assertEquals("TV", group.getName() );
+        Assert.assertEquals( 3, group.members().length );
 
         // Group Literature has 2 members
         group = backendGroup( "Literature" );
-        assertEquals("Literature", group.getName() );
-        assertEquals( 2, group.members().length );
+        Assert.assertEquals("Literature", group.getName() );
+        Assert.assertEquals( 2, group.members().length );
 
         // Group Art has no members
         group = backendGroup( "Art" );
-        assertEquals("Art", group.getName() );
-        assertEquals( 0, group.members().length );
+        Assert.assertEquals("Art", group.getName() );
+        Assert.assertEquals( 0, group.members().length );
 
         // Group Admin has 1 member (Administrator)
         group = backendGroup( "Admin" );
-        assertEquals("Admin", group.getName() );
-        assertEquals( 1, group.members().length );
-        assertEquals( "Administrator", group.members()[0].getName() );
+        Assert.assertEquals("Admin", group.getName() );
+        Assert.assertEquals( 1, group.members().length );
+        Assert.assertEquals( "Administrator", group.members()[0].getName() );
 
         // Group Archaeology doesn't exist
         try
         {
             group = backendGroup( "Archaeology" );
             // We should never get here
-            assertTrue(false);
+            Assert.assertTrue(false);
         }
         catch (NoSuchPrincipalException e)
         {
-            assertTrue(true);
+            Assert.assertTrue(true);
         }
     }
 
+    @Test
     public void testSave() throws Exception
     {
         // Create a new group with random name
@@ -183,25 +191,26 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // Make sure the profile saved successfully
         group = backendGroup( name );
-        assertEquals( name, group.getName() );
-        assertEquals( 3, group.members().length );
-        assertTrue( group.isMember( new WikiPrincipal( "Al" ) ) );
-        assertTrue( group.isMember( new WikiPrincipal( "Bob" ) ) );
-        assertTrue( group.isMember( new WikiPrincipal( "Cookie" ) ) );
+        Assert.assertEquals( name, group.getName() );
+        Assert.assertEquals( 3, group.members().length );
+        Assert.assertTrue( group.isMember( new WikiPrincipal( "Al" ) ) );
+        Assert.assertTrue( group.isMember( new WikiPrincipal( "Bob" ) ) );
+        Assert.assertTrue( group.isMember( new WikiPrincipal( "Cookie" ) ) );
 
         // The back-end should have timestamped the create/modify fields
-        assertNotNull( group.getCreator() );
-        assertEquals( "Tester", group.getCreator() );
-        assertNotNull( group.getCreated() );
-        assertNotNull( group.getModifier() );
-        assertEquals( "Tester", group.getModifier() );
-        assertNotNull( group.getLastModified() );
-        assertNotSame( group.getCreated(), group.getLastModified() );
+        Assert.assertNotNull( group.getCreator() );
+        Assert.assertEquals( "Tester", group.getCreator() );
+        Assert.assertNotNull( group.getCreated() );
+        Assert.assertNotNull( group.getModifier() );
+        Assert.assertEquals( "Tester", group.getModifier() );
+        Assert.assertNotNull( group.getLastModified() );
+        Assert.assertNotSame( group.getCreated(), group.getLastModified() );
 
         // Remove the group
         m_db.delete( group );
     }
 
+    @Test
     public void testResave() throws Exception
     {
         // Create a new group with random name & 3 members
@@ -217,7 +226,7 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // Make sure the profile saved successfully
         group = backendGroup( name );
-        assertEquals( name, group.getName() );
+        Assert.assertEquals( name, group.getName() );
 
         // Modify the members by adding the group; re-add Al while we're at it
         Principal dave = new WikiPrincipal( "Dave" );
@@ -227,24 +236,24 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // We should see 4 members and new timestamp info
         Principal[] members = group.members();
-        assertEquals( 4, members.length );
-        assertNotNull( group.getCreator() );
-        assertEquals( "Tester", group.getCreator() );
-        assertNotNull( group.getCreated() );
-        assertNotNull( group.getModifier() );
-        assertEquals( "SecondTester", group.getModifier() );
-        assertNotNull( group.getLastModified() );
+        Assert.assertEquals( 4, members.length );
+        Assert.assertNotNull( group.getCreator() );
+        Assert.assertEquals( "Tester", group.getCreator() );
+        Assert.assertNotNull( group.getCreated() );
+        Assert.assertNotNull( group.getModifier() );
+        Assert.assertEquals( "SecondTester", group.getModifier() );
+        Assert.assertNotNull( group.getLastModified() );
 
         // Check the back-end; We should see the same thing
         group = backendGroup( name );
         members = group.members();
-        assertEquals( 4, members.length );
-        assertNotNull( group.getCreator() );
-        assertEquals( "Tester", group.getCreator() );
-        assertNotNull( group.getCreated() );
-        assertNotNull( group.getModifier() );
-        assertEquals( "SecondTester", group.getModifier() );
-        assertNotNull( group.getLastModified() );
+        Assert.assertEquals( 4, members.length );
+        Assert.assertNotNull( group.getCreator() );
+        Assert.assertEquals( "Tester", group.getCreator() );
+        Assert.assertNotNull( group.getCreated() );
+        Assert.assertNotNull( group.getModifier() );
+        Assert.assertEquals( "SecondTester", group.getModifier() );
+        Assert.assertNotNull( group.getLastModified() );
 
         // Remove the group
         m_db.delete( group );
