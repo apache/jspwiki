@@ -41,7 +41,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <flexmark.version>0.28.24</flexmark.version>
+    <flexmark.version>0.28.34</flexmark.version>
     <jdk.version>1.6</jdk.version>
     <lucene.version>4.7.0</lucene.version>
     <selenium.version>2.42.0</selenium.version>
@@ -55,9 +55,9 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/jspwiki.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/jspwiki.git</developerConnection>
-    <url>https://git-wip-us.apache.org/repos/asf?p=jspwiki.git;a=summary</url>
+    <connection>scm:git:https://github.com/apache/jspwiki.git</connection>
+    <developerConnection>scm:git:https://github.com/apache/jspwiki.git</developerConnection>
+    <url>https://github.com/apache/jspwiki</url>
   </scm>
 
   <modules>
@@ -488,7 +488,7 @@
           - use UglifyJS for JS compression
           - use Less as advanced CSS preprocessor
         -->
-        
+
         <plugin>
           <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
           <artifactId>inmemdb-maven-plugin</artifactId>
