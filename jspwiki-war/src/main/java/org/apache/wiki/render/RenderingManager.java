@@ -196,7 +196,9 @@ public class RenderingManager implements WikiEventListener, InternalModule
      */
     // FIXME: The cache management policy is not very good: deleted/changed pages should be detected better.
     protected WikiDocument getRenderedDocument( WikiContext context, String pagedata ) throws IOException {
-        String pageid = context.getRealPage().getName() + VERSION_DELIMITER + context.getRealPage().getVersion();
+        String pageid = context.getRealPage().getName() + VERSION_DELIMITER +
+                        context.getRealPage().getVersion() + VERSION_DELIMITER +
+                        context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
 
         if( useCache( context ) ) {
             Element element = m_documentCache.get( pageid );
@@ -363,7 +365,9 @@ public class RenderingManager implements WikiEventListener, InternalModule
                             if( log.isDebugEnabled() ) {
                                 log.debug( "Flushing latest version of " + page );
                             }
-                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION );
+                            // as there is a new version of the page expire both plugin and pluginless versions of the old page
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
                         }
                     }
                 }
