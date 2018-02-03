@@ -52,9 +52,28 @@ DOM Structure:
     width:100%;
 }
 .sidebar {
-    float:left;
-    width:@wiki-sidebar-width;
-    margin-left:-@wiki-sidebar-width;
+    position: relative;
+    // Prevent columns from collapsing when empty
+    min-height: 1px;
+    // Inner gutter via padding
+    padding-left:  (@grid-gutter-width / 2);
+    padding-right: (@grid-gutter-width / 2);
+    float: left;
+
+    @media (min-width: @screen-xs-min) { // push to bottom on extra small devices
+      background: @wiki-sidebar-bg;
+      bottom: 0;
+      margin-left:0;
+      margin-top: 10px; // give some space if page fits whole page
+      position: absolute;
+      width: 100%;
+    }
+
+    @media (min-width: @screen-md-min) {
+      width: @wiki-sidebar-width;
+      margin-left:-@wiki-sidebar-width;
+      margin-top: 0;
+    }
     padding:@padding-base-horizontal;
     overflow-x:hidden;
 }
@@ -65,7 +84,14 @@ DOM Structure:
 }
 
 .content.active {
-    .page { width:100%-@wiki-sidebar-width; }
+    .page {
+      @media (min-width: @screen-xs-min) {
+        width: 100%;
+      }
+      @media (min-width: @screen-md-min) {
+        width:100%-@wiki-sidebar-width; 
+      }
+    }
     .sidebar { margin-left:0; }
 }
 .content {
@@ -76,8 +102,13 @@ DOM Structure:
     content: " ";
     position: absolute; top: 0; left: 0; bottom: 0;
     background: @wiki-sidebar-bg;
+    @media (min-width: @screen-xs-min) {
+      width: 0;
+    }
+    @media (min-width: @screen-md-min) {
+      width: @wiki-sidebar-width;
+    }
     .transition (all .3s);
-    width: @wiki-sidebar-width;
 }
 .content:not(.active):after {
     width: 0;
