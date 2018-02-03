@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,17 +14,17 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki;
 
 import java.lang.ref.WeakReference;
 import java.util.EmptyStackException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -50,7 +50,7 @@ import org.apache.log4j.Logger;
  *  @since  2.4.92
  */
 public final class WatchDog {
-	
+
     private Watchable m_watchable;
     private Stack< State > m_stateStack = new Stack< State >();
     private boolean m_enabled = true;
@@ -58,8 +58,8 @@ public final class WatchDog {
 
     private static final Logger log = Logger.getLogger( WatchDog.class );
 
-    private static HashMap< Integer, WeakReference< WatchDog > > c_kennel = new HashMap< Integer, WeakReference< WatchDog > >();
-    
+    private static Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap< Integer, WeakReference< WatchDog > >();
+
     private static WikiBackgroundThread c_watcherThread;
 
     /**
@@ -86,9 +86,7 @@ public final class WatchDog {
             wd = new WatchDog( engine, t );
             w = new WeakReference< WatchDog >( wd );
 
-            synchronized( c_kennel ) {
-                c_kennel.put( t.hashCode(), w );
-            }
+            c_kennel.put( t.hashCode(), w );
         }
 
         return wd;
@@ -136,20 +134,16 @@ public final class WatchDog {
         	return;
         }
 
-        synchronized( c_kennel ) {
-            for( Iterator< Map.Entry< Integer, WeakReference< WatchDog > > > i = c_kennel.entrySet().iterator(); i.hasNext(); ) {
-                Map.Entry< Integer, WeakReference< WatchDog > > e = i.next();
+        for( Map.Entry< Integer, WeakReference< WatchDog > > e : c_kennel.entrySet() ) {
+            WeakReference< WatchDog > w = e.getValue();
 
-                WeakReference< WatchDog > w = e.getValue();
-
-                //
-                //  Remove expired as well
-                //
-                if( w.get() == null ) {
-                    c_kennel.remove( e.getKey() );
-                    scrub();
-                    break;
-                }
+            //
+            //  Remove expired as well
+            //
+            if( w.get() == null ) {
+                c_kennel.remove( e.getKey() );
+                scrub();
+                break;
             }
         }
     }
@@ -181,7 +175,7 @@ public final class WatchDog {
     }
 
     /**
-     *  Enters a watched state with no expectation of the expected completion time. In practice this method is 
+     *  Enters a watched state with no expectation of the expected completion time. In practice this method is
      *  used when you have no idea, but would like to figure out, e.g. via debugging, where exactly your Watchable is.
      *
      *  @param state A free-form string description of your state.
@@ -191,7 +185,7 @@ public final class WatchDog {
     }
 
     /**
-     *  Enters a watched state which has an expected completion time.  This is the main method for using the 
+     *  Enters a watched state which has an expected completion time.  This is the main method for using the
      *  WatchDog.  For example:
      *
      *  <code>
@@ -208,7 +202,7 @@ public final class WatchDog {
      */
     public void enterState( String state, int expectedCompletionTime ) {
         if( log.isDebugEnabled() ){
-        	log.debug( m_watchable.getName() + ": Entering state " + state + 
+        	log.debug( m_watchable.getName() + ": Entering state " + state +
         			                           ", expected completion in " + expectedCompletionTime + " s");
         }
 
@@ -219,7 +213,7 @@ public final class WatchDog {
     }
 
     /**
-     *  Exits a state entered with enterState().  This method does not check that the state is correct, it'll just 
+     *  Exits a state entered with enterState().  This method does not check that the state is correct, it'll just
      *  pop out whatever is on the top of the state stack.
      */
     public void exitState() {
@@ -227,7 +221,7 @@ public final class WatchDog {
     }
 
     /**
-     *  Exits a particular state entered with enterState().  The state is checked against the current state, and if 
+     *  Exits a particular state entered with enterState().  The state is checked against the current state, and if
      *  they do not match, an error is flagged.
      *
      *  @param state The state you wish to exit.
@@ -251,19 +245,19 @@ public final class WatchDog {
             log.error( "Stack for " + m_watchable.getName() + " is empty!", e );
         }
     }
-    
+
     /**
      * helper to see if the associated stateStack is not empty.
-     * 
+     *
      * @return {@code true} if not empty, {@code false} otherwise.
      */
     public boolean isStateStackNotEmpty() {
 		return m_stateStack != null && !m_stateStack.isEmpty();
 	}
-    
+
     /**
      * helper to see if the associated watchable is alive.
-     * 
+     *
      * @return {@code true} if it's alive, {@code false} otherwise.
      */
     public boolean isWatchableAlive() {
@@ -281,11 +275,11 @@ public final class WatchDog {
                 long now = System.currentTimeMillis();
 
                 if( now > st.getExpiryTime() ) {
-                    log.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() + 
-                    		  "' by " + (now - st.getExpiryTime()) / 1000 + " seconds" + 
+                    log.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
+                    		  "' by " + (now - st.getExpiryTime()) / 1000 + " seconds" +
                     		 ( log.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
                     dumpStackTraceForWatchable();
-                    
+
                     m_watchable.timeoutExceeded(st.getState());
                 }
             } catch( EmptyStackException e ) {
@@ -301,7 +295,7 @@ public final class WatchDog {
         if( !log.isDebugEnabled() ) {
         	return;
         }
-        
+
         Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
         Set<Thread> threads = stackTraces.keySet();
         Iterator<Thread> threadIterator = threads.iterator();
@@ -321,7 +315,7 @@ public final class WatchDog {
                 }
             }
         }
-        
+
         log.debug( stacktrace.toString() );
     }
 
@@ -372,23 +366,19 @@ public final class WatchDog {
             if( c_kennel == null ) {
             	return;
             }
-            
-            synchronized( c_kennel ) {
-                for( Iterator< Map.Entry< Integer, WeakReference< WatchDog > > > i = c_kennel.entrySet().iterator(); i.hasNext(); ) {
-                    Map.Entry< Integer, WeakReference< WatchDog > > entry = i.next();
 
-                    WeakReference< WatchDog > wr = entry.getValue();
-                    WatchDog w = wr.get();
-                    if( w != null ) {
-                        if( w.isWatchableAlive() && w.isStateStackNotEmpty() ) {
-                            w.check();
-                        } else {
-                            c_kennel.remove( entry.getKey() );
-                            break;
-                        }
+            for( Map.Entry< Integer, WeakReference< WatchDog > > entry : c_kennel.entrySet() ) {
+                WeakReference< WatchDog > wr = entry.getValue();
+                WatchDog w = wr.get();
+                if( w != null ) {
+                    if( w.isWatchableAlive() && w.isStateStackNotEmpty() ) {
+                        w.check();
+                    } else {
+                        c_kennel.remove( entry.getKey() );
+                        break;
                     }
-                } // for
-            } // synchronized
+                }
+            }
 
             WatchDog.scrub();
         }
@@ -399,7 +389,7 @@ public final class WatchDog {
      *  A class which just stores the state in our State stack.
      */
     private static class State {
-    	
+
         protected String m_state;
         protected long   m_enterTime;
         protected long   m_expiryTime;
