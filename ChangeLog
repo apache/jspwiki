@@ -1,3 +1,14 @@
+2018-02-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-48
+
+       * JSPWIKI-835 - better mobile experience: move sidebar to bottom on
+         extra-small devices (< 768px, only on haddock template)
+
+       * Some internal refactors to org.apache.wiki.WatchDog
+
+       * Flexmark updated to 0.28.38.
+
 2018-01-27  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-47
@@ -5,13 +16,13 @@
        * Another fix on JSPWIKI-1064 - Link to non-existing page doesn't change if
          linked page is created, as the page render cache must also take into account
          if the plugins should be rendered or not.
-       
+
        * JSPWiki portable: Update bundled Apache Tomcat to latest version on 7.x branch
          and launch4j to 3.11.
-       
-       * JSPWiki portable: As appbundler is not longer accesible through java.net, use 
+
+       * JSPWiki portable: As appbundler is not longer accesible through java.net, use
          fork at https://github.com/teras/appbundler instead.
-       
+
        * Updated maven plugins' versions to latest + use latest ASF parent pom.
 
 2018-01-21  Juan Pablo Santos (juanpablo AT apache DOT org)
