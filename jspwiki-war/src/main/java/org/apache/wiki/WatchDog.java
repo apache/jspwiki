@@ -19,7 +19,6 @@
 package org.apache.wiki;
 
 import java.lang.ref.WeakReference;
-import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -30,9 +29,8 @@ import org.apache.log4j.Logger;
 
 
 /**
- *  WatchDog is a general system watchdog.  You can attach any Watchable
- *  or a Thread object to it, and it will notify you if a timeout has been
- *  exceeded.
+ *  WatchDog is a general system watchdog.  You can attach any Watchable or a
+ *  Thread object to it, and it will notify you if a timeout has been exceeded.
  *  <p>
  *  The notification of the timeouts is done from a separate WatchDog thread,
  *  of which there is one per watched thread.  This Thread is named 'WatchDog for
@@ -68,8 +66,7 @@ public final class WatchDog {
      *  keeps an internal list of Watchdogs for you so that there
      *  won't be more than one watchdog per thread.
      *
-     *  @param engine The WikiEngine to which the Watchdog should
-     *                be bonded to.
+     *  @param engine The WikiEngine to which the Watchdog should be bonded to.
      *  @return A usable WatchDog object.
      */
     public static WatchDog getCurrentWatchDog( WikiEngine engine ) {
@@ -227,7 +224,7 @@ public final class WatchDog {
      *  @param state The state you wish to exit.
      */
     public void exitState( String state ) {
-        try {
+        if( !m_stateStack.empty() ) {
             synchronized( m_stateStack ) {
                 State st = m_stateStack.peek();
                 if( state == null || st.getState().equals( state ) ) {
@@ -241,8 +238,8 @@ public final class WatchDog {
                     log.error( "exitState() called before enterState()" );
                 }
             }
-        } catch( EmptyStackException e ) {
-            log.error( "Stack for " + m_watchable.getName() + " is empty!", e );
+        } else {
+            log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
         }
     }
 
@@ -270,7 +267,7 @@ public final class WatchDog {
         }
 
         synchronized( m_stateStack ) {
-            try {
+            if( !m_stateStack.empty() ) {
                 State st = m_stateStack.peek();
                 long now = System.currentTimeMillis();
 
@@ -282,8 +279,8 @@ public final class WatchDog {
 
                     m_watchable.timeoutExceeded(st.getState());
                 }
-            } catch( EmptyStackException e ) {
-            	log.error( "Stack for " + m_watchable.getName() + " is empty!", e );
+            } else {
+            	log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
             }
         }
     }
@@ -328,10 +325,10 @@ public final class WatchDog {
         synchronized( m_stateStack ) {
             String state = "Idle";
 
-            try {
+            if( !m_stateStack.empty() ) {
                 State st = m_stateStack.peek();
                 state = st.getState();
-            } catch( EmptyStackException e ) {}
+            }
             return "WatchDog state=" + state;
         }
     }
