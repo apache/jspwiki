@@ -39,13 +39,15 @@ public class CommentedPropertiesTest
 
     Properties m_props = new CommentedProperties();
     // file size of the properties test file in bytes
-    private final int m_propFileSize = 1008;
+    private int m_propFileSize;
 
     @Before
     public void setUp() throws IOException
     {
         InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test.properties" );
         m_props.load( in );
+        File m_propFile = getFile( "test.properties" );
+        m_propFileSize = ( int )m_propFile.length();
         in.close();
     }
 
