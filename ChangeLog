@@ -1,3 +1,12 @@
+2018-02-25  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-01  Fixing Admin JSP Bugs
+
+       * Quick fix to admin and user management pages:  adding proper tabs to
+         the ADMIN page, fixing javascript bugs in user management page
+         (reported by Harry)
+
+
 2018-02-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.3-git-48
