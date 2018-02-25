@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="java.util.*" %>
@@ -28,7 +28,7 @@
 <head>
 <title>JSPWiki administration</title>
   <wiki:Include page="commonheader.jsp"/>
-  <link rel="stylesheet" media="screen, projection, print" type="text/css" 
+  <link rel="stylesheet" media="screen, projection, print" type="text/css"
         href="<wiki:Link format='url' templatefile='admin/admin.css'/>"/>
 </head>
 <body class="container context-view">
@@ -44,15 +44,15 @@ in your <tt>jspwiki.properties</tt> file.</div>
     AdminBeanManager mgr = wiki.getAdminBeanManager();
  %>
 
-<wiki:TabbedSection defaultTab="${param['tab-admin']}">
+<div class="tabs admin">
 
-<wiki:Tab id="core" title="Core">
+<h3>Core</h3>
 <p>Contains core setup options.</p>
    <wiki:TabbedSection defaultTab="${param['tab-core']}">
 
      <wiki:AdminBeanIterator type="core" id="ab">
       <wiki:Tab id="${ab.id}" title="${ab.title}">
-      
+
       <div class="formcontainer">
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
         <input type="hidden" name="tab-admin" value="core"/>
@@ -66,13 +66,11 @@ in your <tt>jspwiki.properties</tt> file.</div>
       </wiki:Tab>
      </wiki:AdminBeanIterator>
    </wiki:TabbedSection>
-</wiki:Tab>
 
-<wiki:Tab id="users" title="Users">
+<h3>Users</h3>
    <wiki:Include page="admin/UserManagement.jsp"/>
-</wiki:Tab>
 
-<wiki:Tab id="groups" title="Groups">
+<h3>Group</h3>
    <div>
    <p>This is a list of all groups in this wiki.  If you click on the group name,
    you will be taken to the administration page of that particular group.</p>
@@ -80,16 +78,14 @@ in your <tt>jspwiki.properties</tt> file.</div>
    <wiki:Plugin plugin="Groups"/>
    </p>
    </div>
-</wiki:Tab>
 
+<h3>Editors</h3>
 
-<wiki:Tab id="editors" title="Editors">
-   
    <wiki:TabbedSection defaultTab="${param['tab-editors']}">
      <wiki:AdminBeanIterator type="editors" id="ab">
       <wiki:Tab id="${ab.id}" title="${ab.title}">
-      
-      <div class="formcontainer"> 
+
+      <div class="formcontainer">
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
          <input type="hidden" name="tab-admin" value="editors"/>
          <input type="hidden" name="tab-editors" value="${ab.title}" />
@@ -102,13 +98,10 @@ in your <tt>jspwiki.properties</tt> file.</div>
      </wiki:AdminBeanIterator>
    </wiki:TabbedSection>
 
-</wiki:Tab>
-
-<wiki:Tab id="filters" title="Filters">
+<h3>Filters</h3>
 <p>There will be more filter stuff here</p>
-</wiki:Tab>
 
-</wiki:TabbedSection>
+</div>
 </div>
 
 </div>
