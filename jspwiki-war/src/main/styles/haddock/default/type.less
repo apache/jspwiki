@@ -405,6 +405,8 @@ Links:
 //generic behavior -- why not part of bootstrap ??
 a:hover {
     cursor:pointer;
+    //text-decoration: underline;
+    -webkit-text-decoration-skip: ink;
 }
 
 //mimic :hover, for old ie cases which may not yet support :hover
@@ -413,6 +415,11 @@ a:hover {
 .createpage {
     color: @wiki-link-createpage;
     border-bottom: 1px dashed @wiki-link-createpage;
+    &:after {
+    	.icon--text();
+    	content:"?";
+    	background-color:@wiki-link-createpage;
+    }
     &:hover {
         color:darken(@wiki-link-createpage,10%);
         text-decoration:none;
@@ -445,10 +452,11 @@ Interwiki links
 .interwiki-reader,
 a.interwiki[href$="skin=reader"] {
     &::after {
-        color:@link-color;
         .icon--all;
         .sup;
         content:@icon-leanpub;
+        margin-left:.15em;
+        //color:@link-color;  //needed for More-Menu style
     }
     &:hover::after {
         //text-decoraction:none;  //FIXME: doesnt work ...
@@ -459,6 +467,7 @@ a.interwiki[href$="skin=raw"] {
     &::after {
         .icon--text();
         content:"raw";
+        margin-left:.15em;
     }
     &:hover::after {
         //text-decoraction:none;
@@ -470,6 +479,7 @@ a.interwiki[href*="Edit.jsp?page="] {
     &::after {
         .icon--text;
         content:"edit";
+        margin-left:.15em;
         //color:@link-color;
         //.icon--all;
         //.sup;
@@ -485,6 +495,7 @@ a.interwiki[href*="Group.jsp?group="] {
     &::after {
         .icon--text;
         content:"group";
+        margin-left:.15em;
         //color:@link-color;
         //.icon--all;
         //.sup;
@@ -494,6 +505,17 @@ a.interwiki[href*="Group.jsp?group="] {
         //text-decoraction:none;
         background-color:@link-hover-color;
     }
+}
+a.interwiki[href^="rss.jsp"],
+.feed {
+	&:after {
+       .icon--all;
+        margin-left:.15em;
+        .sup;
+        content:@icon-rss;
+	}
+    &:hover { text-decoration:none; }
+
 }
 
 /*
@@ -644,6 +666,9 @@ span.default, span.success, span.information, span.info,  span.warning, span.err
     display: inline;
     padding: .05em .25em;
 }
+span.success, span.information, span.info,  span.warning, span.error, span.danger {
+    border:none;
+}
 
 .default {
     .alert-variant(@btn-default-bg; @btn-default-border; @btn-default-color);
@@ -654,9 +679,8 @@ span.default, span.success, span.information, span.info,  span.warning, span.err
 .error, .danger     { .alert-danger; }
 
 //CHECKME: make sure to fill the table cell with the background color
-td .success, td .information, td .warning, td .error { margin:0; }
+td .success, td .info, td .information, td .warning, td .error, td .danger  { margin:0; }
 //BETTER:  td > .alert { margin:0; }
-
 
 
 /*
