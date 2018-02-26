@@ -41,7 +41,6 @@ wiki.add("textarea#editorarea", function( main ){
 
     onbeforeunload( window, main );
 
-
     if( snipe = getFormElem("textarea.snipeable") ){
 
         snipe = new Snipe( snipe, {
@@ -128,6 +127,7 @@ function livepreview(snipe, preview, previewToggle){
         isEmpty = content == "",
         name, link;
 
+    //console.log("**** change event", new Date().getSeconds() );
 
     function previewDone(){  PreviewSemaphore = false;  } //semaphore OFF!
 

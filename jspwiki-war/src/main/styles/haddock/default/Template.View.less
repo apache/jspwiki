@@ -271,69 +271,29 @@ body.can-flex {
     clear:both;
 }
 
+.feed {
+
+	//.@{fa-css-prefix};
+    display:inline-block;
+    font-family:FontJspwiki;
+	font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration:none;
+
+	&:before { content: "\e610"; } //fixme -- re-use .icon-search
+    &:hover { text-decoration:none; }
+
+    overflow:hidden;
+    vertical-align:middle;
+}
+
 
 // CHECKME
 // *** ConflictContent.jsp ***
 // #conflict
 // #conflictother
 // #conflictown
-
-
-
-
-/*  admin beans */
-/*
-div.formcontainer
-  div.block
-    label
-    input
-    div.description
-*/
-div.admin {
-    .formcontainer {
-        .default;
-        .block { margin-bottom:.5em; }
-        label { }
-        input[type=submit] {
-            .btn;
-            .btn-primary;
-        }
-        input[type=text] {
-            .form-control;
-        }
-        table {
-            .table;
-            .table-bordered;
-            .table-striped;
-            .table-condensed;
-            .wikitable;
-            width:auto; //.table-fit;
-        }
-        .description { .help-block; }
-
-    }
-
-}
-
-    .admin-user-form {
-    	display: -ms-flex;
-	    display: -webkit-flex;
-    	display: flex;
-
-        > div#useredit {
-	        width:80%;
-        }
-        > div#userlist {
-        	margin-right: (@padding-base-horizontal*4);
-        	width:20%;
-
-            .list-group-item.new-user{
-                color: @btn-primary-color;
-                background: @btn-primary-bg;
-                border: @btn-primary-border;
-            }
-        }
-
-    }
-
 

@@ -468,7 +468,9 @@ Example:
 >    }}} /%
 
 */
-    .add("div.prettify pre:not(.prettyprint), div.prettify code:not(.prettyprint)", function(element){
+    .add("div.prettify:not(.prettyprint) pre, div.prettify:not(.prettyprint) code", function(element){
+
+        element.addClass("prettyprint");
 
         //brute-force line-number injection
         "div".slick().wraps(element).grab(
@@ -480,22 +482,10 @@ Example:
 
             }),"top");
 
-        element.addClass("prettyprint");
-        /*html5 expects  <pre><code>  */
-        if( element.match("pre") ){
-            element.innerHTML = "<code>" + element.innerHTML + "</code>";
-            element = element.getFirst();
-        }
-
     })
-    .add("[class~=prettify-nonum] pre:not(.prettyprint), [class~=prettify-nonum] code:not(.prettyprint)", function(element){
+    .add("[class~=prettify-nonum] pre, [class~=prettify-nonum] code", function(element){
 
         element.addClass("prettyprint");
-        /*html5 expects  <pre><code>  */
-        if( element.match("pre") ){
-            element.innerHTML = "<code>" + element.innerHTML + "</code>";
-            element = element.getFirst();
-        }
 
     })
 

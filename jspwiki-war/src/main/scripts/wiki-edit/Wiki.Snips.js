@@ -29,11 +29,11 @@ Wiki.DirectSnips = {
     '[' : ']',
     '{' : '}',
     "'" : {
-        snippet: "'",
-        scope: {
-            "[{" : "}]"  //plugin parameters
-          }
-        }
+    snippet: "'",
+    scope: {
+        "[{" : "}]"  //plugin parameters
+      }
+    }
 };
 
 /*
@@ -103,16 +103,10 @@ Wiki.Snips = {
 
     tabs: {
         nScope: {
-            "%%(":")",
-            "%%tabs":"/%"
+        "%%(":")",
+        "%%tabs":"/%"
         },
         snippet:"%%tabs\n!tab-1\ntab-1 content 1\n!tab-2\ntab-2 content \n/%\n "
-    },
-
-    insertPageDlg:{
-        scope: { "[{InsertPage":"}]" },
-        suggest: { lback:"page='([^']*)'?$", match: "^([^']*)" },
-        insertPageDlg: Wiki.pageDialog("Insert Page", "/search/suggestions")
     },
 
     img: "\n[{Image src='{img.jpg}' width='400px' height='300px' align='left' }]\n ",
@@ -339,7 +333,7 @@ Wiki.Snips = {
         suggest: {lback: "table-(?:[\\w-]+-)?(\\w*)$", match: "^\\w*" },
         tableDlg: [Dialog.Selection, {
         cssClass:".dialog-horizontal",
-        body: "sort|filter|striped|bordered|noborder|hover|condensed|fit"
+        body: "sort|filter|striped|bordered|hover|condensed|fit"
         }]
     },
 
