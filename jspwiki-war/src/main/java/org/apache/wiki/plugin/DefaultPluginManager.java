@@ -606,7 +606,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         /**
          *  Initializes a plugin, if it has not yet been initialized.
          *  If the plugin extends {@link HttpServlet} it will automatically
-         *  register it as AJAX using {@link WikiAjaxDispatcherServlet.register}.
+         *  register it as AJAX using {@link WikiAjaxDispatcherServlet#registerServlet(String, WikiAjaxServlet)}.
          *
          *  @param engine The WikiEngine
          *  @param searchPath A List of Strings, containing different package names.

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.render;
 
@@ -30,48 +30,46 @@ import org.jdom2.Text;
 import org.jdom2.xpath.XPath;
 
 /**
- *  A simple renderer that just renders all the text() nodes
- *  from the DOM tree.  This is very useful for cleaning away
- *  all of the XHTML.
- *  
+ *  A simple renderer that just renders all the text() nodes from the DOM tree.
+ *  This is very useful for cleaning away all of the XHTML.
+ *
  *  @since  2.4
  */
 public class CleanTextRenderer
     extends WikiRenderer
 {
     private static final String ALL_TEXT_NODES = "//text()";
-    
+
     protected static final Logger log = Logger.getLogger( CleanTextRenderer.class );
-    
+
     /**
      *  Create a renderer.
-     *  
-     *  @param context {@inheritDoc}
-     *  @param doc {@inheritDoc}
+     *
+     *  @param context A WikiContext in which the rendering will take place.
+     *  @param doc The WikiDocument which shall be rendered.
      */
     public CleanTextRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
     }
-    
+
     /**
      *  {@inheritDoc}
      */
-    public String getString()
-        throws IOException
+    public String getString() throws IOException
     {
     	StringBuilder sb = new StringBuilder();
-        
+
         try
         {
             XPath xp = XPath.newInstance( ALL_TEXT_NODES );
-        
+
             List nodes = xp.selectNodes(m_document.getDocument());
-            
+
             for( Iterator i = nodes.iterator(); i.hasNext(); )
             {
                 Object el = i.next();
-                
+
                 if( el instanceof Text )
                 {
                     sb.append( ((Text)el).getValue() );
@@ -83,7 +81,7 @@ public class CleanTextRenderer
             log.error("Could not parse XPATH expression");
             throw new IOException( e.getMessage() );
         }
-    
+
         return sb.toString();
     }
 }

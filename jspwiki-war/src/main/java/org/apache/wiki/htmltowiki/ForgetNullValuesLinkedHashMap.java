@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.htmltowiki;
 
@@ -22,25 +22,23 @@ import java.util.LinkedHashMap;
 
 /**
  * A LinkedHashMap that does not put null values into the map.
- * 
- * @param <K> {@inheritDoc}
- * @param <V> {@inheritDoc}
- * 
+ *
  */
 public class ForgetNullValuesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
 {
     private static final long serialVersionUID = 0L;
-    
+
     /**
      *  {@inheritDoc}
      */
+    @Override
     public V put( K key, V value )
     {
         if( value != null )
         {
             return super.put( key, value );
         }
-        
+
         return null;
     }
 }

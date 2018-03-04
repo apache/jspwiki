@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,24 +14,24 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.api.exceptions;
 
 
 /**
- *  This exception represents the superclass of all exceptions that providers may throw.  It is okay to throw 
- *  it in case you cannot use any of the specific subclasses, in which case the page loading is considered to be 
+ *  This exception represents the superclass of all exceptions that providers may throw.  It is okay to throw
+ *  it in case you cannot use any of the specific subclasses, in which case the page loading is considered to be
  *  broken, and the user is notified.
  */
 public class ProviderException extends WikiException {
 
     private static final long serialVersionUID = 0L;
-    
+
     /**
      *  Creates a ProviderException.
-     *  
-     *  @param msg {@inheritDoc}
+     *
+     *  @param msg exception message.
      */
     public ProviderException( String msg ) {
         super( msg );

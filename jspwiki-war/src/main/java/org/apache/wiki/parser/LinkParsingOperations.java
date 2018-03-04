@@ -137,7 +137,7 @@ public class LinkParsingOperations {
      * Figures out if a link is an off-site link.  This recognizes
      * the most common protocols by checking how it starts.
      *
-     * @param link The link to check.
+     * @param page The link to check.
      * @return true, if this is a link outside of this wiki.
      */
     public boolean isExternalLink( final String page ) {

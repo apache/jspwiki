@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.api.exceptions;
 
@@ -23,15 +23,15 @@ package org.apache.wiki.api.exceptions;
  *  Provides a generic PluginException.  This is the kind of an exception that the plugins should throw.
  */
 public class PluginException  extends WikiException {
-	
+
     private static final long serialVersionUID = -289900047240960332L;
 
     private final Throwable m_throwable;
 
     /**
      *  Create a PluginException.
-     *  
-     *  @param message {@inheritDoc}
+     *
+     *  @param message exception message.
      */
     public PluginException( String message ) {
         super( message );
@@ -40,8 +40,8 @@ public class PluginException  extends WikiException {
 
     /**
      *  Create a PluginException with the given original exception wrapped.
-     *  
-     *  @param message {@inheritDoc}
+     *
+     *  @param message exception message.
      *  @param original The original exception.
      */
     public PluginException( String message, Throwable original ) {
@@ -51,11 +51,11 @@ public class PluginException  extends WikiException {
 
     /**
      *  Return the original exception.
-     *  
+     *
      *  @return The original exception.
      */
     public Throwable getRootThrowable() {
         return m_throwable;
     }
-    
+
 }

@@ -1,3 +1,7 @@
+2018-03-04  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * Fixed all javadoc errors when building using java 8 - no version bump
+
 2018-02-25  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.4-git-01  Fixing Admin JSP Bugs

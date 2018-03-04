@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth;
 
@@ -159,28 +159,28 @@ public class UserManager {
                                                           PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
-            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
+            final Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
             m_database = (UserDatabase) dbClass.newInstance();
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
             log.info("UserDatabase initialized.");
         }
-        catch( NoRequiredPropertyException e )
+        catch( final NoRequiredPropertyException e )
         {
             log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
         }
-        catch( ClassNotFoundException e )
+        catch( final ClassNotFoundException e )
         {
             log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
         }
-        catch( InstantiationException e )
+        catch( final InstantiationException e )
         {
             log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
         }
-        catch( IllegalAccessException e )
+        catch( final IllegalAccessException e )
         {
             log.error( "You are not allowed to access this user database class", e );
         }
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
             log.error( "Exception initializing user database: " + e.getMessage() );
         }
@@ -235,7 +235,7 @@ public class UserManager {
                 profile = getUserDatabase().find( user.getName() );
                 newProfile = false;
             }
-            catch( NoSuchPrincipalException e )
+            catch( final NoSuchPrincipalException e )
             {
             }
         }
@@ -298,18 +298,18 @@ public class UserManager {
     public void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException
     {
         // Verify user is allowed to save profile!
-        Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
+        final Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
         if ( !m_engine.getAuthorizationManager().checkPermission( session, p ) )
         {
             throw new WikiSecurityException( "You are not allowed to save wiki profiles." );
         }
 
         // Check if profile is new, and see if container allows creation
-        boolean newProfile = profile.isNew();
+        final boolean newProfile = profile.isNew();
 
         // Check if another user profile already has the fullname or loginname
-        UserProfile oldProfile = getUserProfile( session );
-        boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null )
+        final UserProfile oldProfile = getUserProfile( session );
+        final boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null )
             ? false
             : !( oldProfile.getFullname().equals( profile.getFullname() ) &&
                  oldProfile.getLoginName().equals( profile.getLoginName() ) );
@@ -322,7 +322,7 @@ public class UserManager {
                 throw new DuplicateUserException( "security.error.login.taken", profile.getLoginName() );
             }
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
         }
         try
@@ -333,20 +333,20 @@ public class UserManager {
                 throw new DuplicateUserException( "security.error.fullname.taken", profile.getFullname() );
             }
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
         }
 
         // For new accounts, create approval workflow for user profile save.
         if ( newProfile && oldProfile != null && oldProfile.isNew() )
         {
-            WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
-            Principal submitter = session.getUserPrincipal();
-            Task completionTask = new SaveUserProfileTask( m_engine, session.getLocale() );
+            final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
+            final Principal submitter = session.getUserPrincipal();
+            final Task completionTask = new SaveUserProfileTask( m_engine, session.getLocale() );
 
             // Add user profile attribute as Facts for the approver (if required)
-            boolean hasEmail = profile.getEmail() != null;
-            Fact[] facts = new Fact[ hasEmail ? 4 : 3];
+            final boolean hasEmail = profile.getEmail() != null;
+            final Fact[] facts = new Fact[ hasEmail ? 4 : 3];
             facts[0] = new Fact( PREFS_FULL_NAME, profile.getFullname() );
             facts[1] = new Fact( PREFS_LOGIN_NAME, profile.getLoginName() );
             facts[2] = new Fact( FACT_SUBMITTER, submitter.getName() );
@@ -354,7 +354,7 @@ public class UserManager {
             {
                 facts[3] = new Fact( PREFS_EMAIL, profile.getEmail() );
             }
-            Workflow workflow = builder.buildApprovalWorkflow( submitter,
+            final Workflow workflow = builder.buildApprovalWorkflow( submitter,
                                                                SAVE_APPROVER,
                                                                null,
                                                                SAVE_DECISION_MESSAGE_KEY,
@@ -365,7 +365,7 @@ public class UserManager {
             workflow.setAttribute( SAVED_PROFILE, profile );
             m_engine.getWorkflowManager().start(workflow);
 
-            boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
+            final boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
 
             // If the profile requires approval, redirect user to message page
             if ( approvalRequired )
@@ -377,13 +377,13 @@ public class UserManager {
 
             try
             {
-                AuthenticationManager mgr = m_engine.getAuthenticationManager();
+                final AuthenticationManager mgr = m_engine.getAuthenticationManager();
                 if ( newProfile && !mgr.isContainerAuthenticated() )
                 {
                     mgr.login( session, null, profile.getLoginName(), profile.getPassword() );
                 }
             }
-            catch ( WikiException e )
+            catch ( final WikiException e )
             {
                 throw new WikiSecurityException( e.getMessage(), e );
             }
@@ -408,7 +408,7 @@ public class UserManager {
             if ( nameChanged )
             {
                 // Fire an event if the login name or full name changed
-                UserProfile[] profiles = new UserProfile[] { oldProfile, profile };
+                final UserProfile[] profiles = new UserProfile[] { oldProfile, profile };
                 fireEvent( WikiSecurityEvent.PROFILE_NAME_CHANGED, session, profiles );
             }
             else
@@ -444,8 +444,8 @@ public class UserManager {
     public UserProfile parseProfile( WikiContext context )
     {
         // Retrieve the user's profile (may have been previously cached)
-        UserProfile profile = getUserProfile( context.getWikiSession() );
-        HttpServletRequest request = context.getHttpRequest();
+        final UserProfile profile = getUserProfile( context.getWikiSession() );
+        final HttpServletRequest request = context.getHttpRequest();
 
         // Extract values from request stream (cleanse whitespace as needed)
         String loginName = request.getParameter( PARAM_LOGINNAME );
@@ -487,17 +487,17 @@ public class UserManager {
      */
     public void validateProfile( WikiContext context, UserProfile profile )
     {
-        boolean isNew = profile.isNew();
-        WikiSession session = context.getWikiSession();
-        InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
-        ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
+        final boolean isNew = profile.isNew();
+        final WikiSession session = context.getWikiSession();
+        final InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
+        final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         //
         //  Query the SpamFilter first
         //
-        FilterManager fm = m_engine.getFilterManager();
-        List<PageFilter> ls = fm.getFilterList();
-        for( PageFilter pf : ls )
+        final FilterManager fm = m_engine.getFilterManager();
+        final List<PageFilter> ls = fm.getFilterList();
+        for( final PageFilter pf : ls )
         {
             if( pf instanceof SpamFilter )
             {
@@ -509,7 +509,7 @@ public class UserManager {
                 break;
             }
         }
-        
+
         // If container-managed auth and user not logged in, throw an error
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
              && !context.getWikiSession().isAuthenticated() )
@@ -524,7 +524,7 @@ public class UserManager {
         // If new profile, passwords must match and can't be null
         if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
         {
-            String password = profile.getPassword();
+            final String password = profile.getPassword();
             if ( password == null )
             {
                 if ( isNew )
@@ -534,8 +534,8 @@ public class UserManager {
             }
             else
             {
-                HttpServletRequest request = context.getHttpRequest();
-                String password2 = ( request == null ) ? null : request.getParameter( "password2" );
+                final HttpServletRequest request = context.getHttpRequest();
+                final String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if ( !password.equals( password2 ) )
                 {
                     session.addMessage( SESSION_MESSAGES, rb.getString("security.error.passwordnomatch") );
@@ -544,9 +544,9 @@ public class UserManager {
         }
 
         UserProfile otherProfile;
-        String fullName = profile.getFullname();
-        String loginName = profile.getLoginName();
-        String email = profile.getEmail();
+        final String fullName = profile.getFullname();
+        final String loginName = profile.getLoginName();
+        final String email = profile.getEmail();
 
         // It's illegal to use as a full name someone else's login name
         try
@@ -554,11 +554,11 @@ public class UserManager {
             otherProfile = getUserDatabase().find( fullName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) )
             {
-                Object[] args = { fullName };
+                final Object[] args = { fullName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalfullname"), args ) );
             }
         }
-        catch ( NoSuchPrincipalException e)
+        catch ( final NoSuchPrincipalException e)
         { /* It's clean */ }
 
         // It's illegal to use as a login name someone else's full name
@@ -567,11 +567,11 @@ public class UserManager {
             otherProfile = getUserDatabase().find( loginName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) )
             {
-                Object[] args = { loginName };
+                final Object[] args = { loginName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalloginname"), args ) );
             }
         }
-        catch ( NoSuchPrincipalException e)
+        catch ( final NoSuchPrincipalException e)
         { /* It's clean */ }
 
         // It's illegal to use multiple accounts with the same email
@@ -582,17 +582,17 @@ public class UserManager {
                 && !profile.getUid().equals(otherProfile.getUid()) // Issue JSPWIKI-1042
                 && !profile.equals( otherProfile ) && StringUtils.lowerCase( email ).equals( StringUtils.lowerCase(otherProfile.getEmail() ) ) )
             {
-                Object[] args = { email };
+                final Object[] args = { email };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.email.taken"), args ) );
             }
         }
-        catch ( NoSuchPrincipalException e)
+        catch ( final NoSuchPrincipalException e)
         { /* It's clean */ }
     }
 
     /**
      *  A helper method for returning all of the known WikiNames in this system.
-     *  
+     *
      *  @return An Array of Principals
      *  @throws WikiSecurityException If for reason the names cannot be fetched
      */
@@ -614,6 +614,7 @@ public class UserManager {
          * No-op.
          * @throws WikiSecurityException never...
          */
+        @Override
         public void commit() throws WikiSecurityException
         {
             // No operation
@@ -624,6 +625,7 @@ public class UserManager {
          * @param loginName the login name to delete
          * @throws WikiSecurityException never...
          */
+        @Override
         public void deleteByLoginName( String loginName ) throws WikiSecurityException
         {
             // No operation
@@ -635,6 +637,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByEmail(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -646,6 +649,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByFullName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -657,6 +661,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByLoginName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -668,6 +673,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -678,6 +684,7 @@ public class UserManager {
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
+        @Override
         public UserProfile findByWikiName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -688,6 +695,7 @@ public class UserManager {
          * @return a zero-length array
          * @throws WikiSecurityException never...
          */
+        @Override
         public Principal[] getWikiNames() throws WikiSecurityException
         {
             return new Principal[0];
@@ -700,6 +708,7 @@ public class UserManager {
          * @param props the properties used to initialize the wiki engine
          * @throws NoRequiredPropertyException never...
          */
+        @Override
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
         }
@@ -711,6 +720,7 @@ public class UserManager {
          * @throws DuplicateUserException never...
          * @throws WikiSecurityException never...
          */
+        @Override
         public void rename( String loginName, String newName ) throws DuplicateUserException, WikiSecurityException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -721,6 +731,7 @@ public class UserManager {
          * @param profile the user profile
          * @throws WikiSecurityException never...
          */
+        @Override
         public void save( UserProfile profile ) throws WikiSecurityException
         {
         }
@@ -746,8 +757,8 @@ public class UserManager {
         /**
          * Constructs a new Task for saving a user profile.
          * @param engine the wiki engine
-         * @deprecated will be removed in 2.10 scope. Consider using 
-         * {@link #SaveUserProfileTask(WikiEngine, Locale)} instead
+         * @deprecated will be removed in 2.10 scope. Consider using
+         * {@link #UserManager.SaveUserProfileTask(WikiEngine, Locale)} instead
          */
         @Deprecated
         public SaveUserProfileTask( WikiEngine engine )
@@ -757,7 +768,7 @@ public class UserManager {
             m_db = engine.getUserManager().getUserDatabase();
             m_loc = null;
         }
-        
+
         public SaveUserProfileTask( WikiEngine engine, Locale loc )
         {
             super( SAVE_TASK_MESSAGE_KEY );
@@ -772,10 +783,11 @@ public class UserManager {
          * task completed successfully
          * @throws WikiException if the save did not complete for some reason
          */
+        @Override
         public Outcome execute() throws WikiException
         {
             // Retrieve user profile
-            UserProfile profile = (UserProfile) getWorkflow().getAttribute( SAVED_PROFILE );
+            final UserProfile profile = (UserProfile) getWorkflow().getAttribute( SAVED_PROFILE );
 
             // Save the profile (userdatabase will take care of timestamps for us)
             m_db.save( profile );
@@ -785,24 +797,24 @@ public class UserManager {
             {
                 try
                 {
-                    InternationalizationManager i18n = m_engine.getInternationalizationManager();
-                    String app = m_engine.getApplicationName();
-                    String to = profile.getEmail();
-                    String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, 
+                    final InternationalizationManager i18n = m_engine.getInternationalizationManager();
+                    final String app = m_engine.getApplicationName();
+                    final String to = profile.getEmail();
+                    final String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                "notification.createUserProfile.accept.subject", app );
-                    
-                    String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc, 
-                                               "notification.createUserProfile.accept.content", app, 
-                                               profile.getLoginName(), 
+
+                    final String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
+                                               "notification.createUserProfile.accept.content", app,
+                                               profile.getLoginName(),
                                                profile.getFullname(),
                                                profile.getEmail(),
                                                m_engine.getURL( WikiContext.LOGIN, null, null, true ) );
                     MailUtil.sendMessage( m_engine.getWikiProperties(), to, subject, content);
                 }
-                catch ( AddressException e)
+                catch ( final AddressException e)
                 {
                 }
-                catch ( MessagingException me )
+                catch ( final MessagingException me )
                 {
                     log.error( "Could not send registration confirmation e-mail. Is the e-mail server running?", me );
                 }
@@ -850,7 +862,7 @@ public class UserManager {
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(session,type,profile));
         }
     }
-    
+
     /**
      *  Implements the JSON API for usermanager.
      *  <p>
@@ -861,7 +873,7 @@ public class UserManager {
     public static final class JSONUserModule implements WikiAjaxServlet
     {
 		private volatile UserManager m_manager;
-        
+
         /**
          *  Create a new JSONUserModule.
          *  @param mgr Manager
@@ -870,12 +882,13 @@ public class UserManager {
         {
             m_manager = mgr;
         }
-        
+
         @Override
         public String getServletMapping() {
         	return JSON_USERS;
         }
-        
+
+        @Override
         public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params) throws ServletException, IOException {
         	try {
         		String uid = null;
@@ -885,14 +898,14 @@ public class UserManager {
         		uid = params.get(0);
 	        	log.debug("uid="+uid);
 	        	if (StringUtils.isNotBlank(uid)) {
-		            UserProfile prof = getUserInfo(uid);
+		            final UserProfile prof = getUserInfo(uid);
 		            resp.getWriter().write(AjaxUtil.toJson(prof));
 	        	}
-        	} catch (NoSuchPrincipalException e) {
+        	} catch (final NoSuchPrincipalException e) {
         		throw new ServletException(e);
         	}
         }
-        
+
         /**
          *  Directly returns the UserProfile object attached to an uid.
          *
@@ -905,11 +918,11 @@ public class UserManager {
         {
             if( m_manager != null )
             {
-                UserProfile prof = m_manager.getUserDatabase().find( uid );
+                final UserProfile prof = m_manager.getUserDatabase().find( uid );
 
                 return prof;
             }
-            
+
             throw new IllegalStateException("The manager is offline.");
         }
     }

@@ -52,8 +52,8 @@ public class WysiwygEditingRenderer
     /**
      *  Creates a WYSIWYG editing renderer.
      *
-     *  @param context {@inheritDoc}
-     *  @param doc {@inheritDoc}
+     *  @param context A WikiContext in which the rendering will take place.
+     *  @param doc The WikiDocument which shall be rendered.
      */
     public WysiwygEditingRenderer( WikiContext context, WikiDocument doc )
     {
