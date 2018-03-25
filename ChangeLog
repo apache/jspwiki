@@ -3,7 +3,7 @@
        * 2.10.4-git-02
 
        * Further fix on JSPWIKI-1064 - Link to non-existing page doesn't change if
-         linked page is created, not all page caches where properly flushed.
+         linked page is created, not all page caches were properly flushed.
 
 2018-03-04  Juan Pablo Santos (juanpablo AT apache DOT org)
 
