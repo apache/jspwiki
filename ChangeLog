@@ -1,3 +1,10 @@
+2018-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.4-git-02
+
+       * Further fix on JSPWIKI-1064 - Link to non-existing page doesn't change if
+         linked page is created, not all page caches where properly flushed.
+
 2018-03-04  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * Fixed all javadoc errors when building using java 8 - no version bump
@@ -9,7 +16,6 @@
        * Quick fix to admin and user management pages:  adding proper tabs to
          the ADMIN page, fixing javascript bugs in user management page
          (reported by Harry)
-
 
 2018-02-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
