@@ -101,8 +101,8 @@ public class RenderingManager implements WikiEventListener, InternalModule
     public static final String WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
 
     /**
-     *  Variable name which tells whether plugins should be executed or not.  Value
-     *  can be either Boolean.TRUE or Boolean.FALSE.
+     *  Variable name which tells whether plugins should be executed or not.  Value can be either
+     *  {@code Boolean.TRUE} or {@code Boolean.FALSE}. While not set it's value is {@code null}
      */
     public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
 
@@ -368,6 +368,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
                             // as there is a new version of the page expire both plugin and pluginless versions of the old page
                             m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
                             m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + null );
                         }
                     }
                 }
