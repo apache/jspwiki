@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth;
 
@@ -105,7 +105,7 @@ public class AuthorizationManager {
 
     /** Property that supplies the security policy file name, in WEB-INF. */
     protected static final String             POLICY      = "jspwiki.policy.file";
-    
+
     /** Name of the default security policy file, in WEB-INF. */
     protected static final String             DEFAULT_POLICY      = "jspwiki.policy";
 
@@ -376,7 +376,7 @@ public class AuthorizationManager {
         }
         return false;
     }
-    
+
     /**
      * Checks whether the current user has access to the wiki context,
      * by obtaining the required Permission ({@link WikiContext#requiredPermission()})
@@ -388,7 +388,7 @@ public class AuthorizationManager {
      * Note that this method will automatically redirect the user to
      * a login or error page, as appropriate, if access fails. This is
      * NOT guaranteed to be default behavior in the future.
-     * 
+     *
      * @param context wiki context to check if it is accesible
      * @param response the http response
      * @return the result of the access check
@@ -407,7 +407,7 @@ public class AuthorizationManager {
      * <code>false</code> otherwise. If access is allowed,
      * the wiki context will be added to the request as attribute
      * with the key name {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * 
+     *
      * @param context wiki context to check if it is accesible
      * @param response The servlet response object
      * @param redirect If true, makes an automatic redirect to the response
@@ -420,12 +420,9 @@ public class AuthorizationManager {
         ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         // Stash the wiki context
-        if( allowed )
+        if ( context.getHttpRequest() != null && context.getHttpRequest().getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
         {
-            if ( context.getHttpRequest() != null && context.getHttpRequest().getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
-            {
-                context.getHttpRequest().setAttribute( WikiTagBase.ATTR_CONTEXT, context );
-            }
+            context.getHttpRequest().setAttribute( WikiTagBase.ATTR_CONTEXT, context );
         }
 
         // If access not allowed, redirect
@@ -436,13 +433,13 @@ public class AuthorizationManager {
             if( context.getWikiSession().isAuthenticated() )
             {
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + context.requiredPermission() + ")" );
-                context.getWikiSession().addMessage( 
+                context.getWikiSession().addMessage(
                                MessageFormat.format( rb.getString("security.error.noaccess.logged"), context.getName()) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + context.requiredPermission() + ")");
-                context.getWikiSession().addMessage( 
+                context.getWikiSession().addMessage(
                                MessageFormat.format( rb.getString("security.error.noaccess"), context.getName()) );
             }
             response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
@@ -473,8 +470,8 @@ public class AuthorizationManager {
         {
             String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
             URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
-            
-            if (policyURL != null) 
+
+            if (policyURL != null)
             {
                 File policyFile = new File( policyURL.toURI().getPath() );
                 log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
@@ -484,8 +481,8 @@ public class AuthorizationManager {
             }
             else
             {
-                String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " + 
-                            "Please ensure that the jspwiki.policy file exists in the default location. " + 
+                String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " +
+                            "Please ensure that the jspwiki.policy file exists in the default location. " +
                 		    "This file should exist regardless of the existance of a global policy file. " +
                             "The global policy file is identified by the java.security.policy variable. ";
                 WikiSecurityException wse = new WikiSecurityException( sb );
