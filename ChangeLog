@@ -1,3 +1,10 @@
+2018-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.4-git-03
+
+       * Main page can be revealed when invoking some JSPs without parameters
+         (reported by Motohiko Matsuda, thanks!)
+
 2018-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.4-git-02
