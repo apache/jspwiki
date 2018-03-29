@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -39,7 +39,11 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
 	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+	if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( wikiContext.getCommand().getTarget() == null ) {
+        response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
+        return;
+    }
 
     String renameFrom = wikiContext.getName();
     String renameTo = request.getParameter("renameto");
@@ -105,5 +109,5 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
-    
+
 %><wiki:Include page="<%=contentPage%>" />
