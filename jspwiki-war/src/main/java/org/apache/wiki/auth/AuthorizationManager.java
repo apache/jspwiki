@@ -404,8 +404,7 @@ public class AuthorizationManager {
      * optionally redirects if not), by obtaining the required Permission ({@link WikiContext#requiredPermission()})
      * and delegating the access check to {@link #checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as attribute
+     * <code>false</code> otherwise. Also, the wiki context will be added to the request as attribute
      * with the key name {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
      *
      * @param context wiki context to check if it is accesible
