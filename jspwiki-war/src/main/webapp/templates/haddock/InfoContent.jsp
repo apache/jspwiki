@@ -117,7 +117,7 @@
     <wiki:Messages div="alert alert-danger" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>'/>
 
     <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
-           class="form-group"
+           class="form-group form-inline"
               id="renameform"
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
@@ -153,7 +153,7 @@
 
 
   <div class="tabs">
-    <h4 id="history">History</h4>
+    <h4 id="history"><fmt:message key="info.history"/></h4>
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
@@ -214,7 +214,7 @@
     </div>
     ${pagination}
 
-    <h4 id="page-refs">Page References</h4>
+    <h4 id="page-refs"><fmt:message key="info.tab.links" /></h4>
     <table class="table">
       <tr>
       <th><fmt:message key="info.tab.incoming" /></th>
@@ -237,7 +237,7 @@
 
     <%-- DIFF section --%>
     <wiki:CheckRequestContext context='diff'>
-      <h4 data-activePane id="diff">Difference</h4>
+      <h4 data-activePane id="diff"><fmt:message key="diff.tab" /></h4>
       <wiki:Include page="DiffTab.jsp"/>
     </wiki:CheckRequestContext>
 

@@ -334,8 +334,8 @@
     <div class="row edit-area"><%-- .livepreview  .previewcolumn--%>
       <div>
         <textarea class="editor form-control snipeable"
-           <wiki:CheckRequestContext context="edit">placeholder="Add your page content here"</wiki:CheckRequestContext>
-           <wiki:CheckRequestContext context="comment">placeholder="Leave a comment"</wiki:CheckRequestContext>
+           <wiki:CheckRequestContext context="edit">placeholder="<fmt:message key='editor.plain.create'/>"</wiki:CheckRequestContext>
+           <wiki:CheckRequestContext context="comment">placeholder="<fmt:message key='editor.plain.comment'/>"</wiki:CheckRequestContext>
                   autofocus="autofocus"
                   rows="20" cols="80"></textarea>
         <textarea class="editor form-control hidden" id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"
