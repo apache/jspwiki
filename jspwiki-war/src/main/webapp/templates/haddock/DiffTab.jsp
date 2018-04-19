@@ -64,7 +64,7 @@
     </div>
   </c:if>
 
-  <wiki:InsertDiff><i><fmt:message key="diff.nodiff"/></i></wiki:InsertDiff>
+  <wiki:InsertDiff><p></p><p class="warning"><fmt:message key="diff.nodiff"/></p></wiki:InsertDiff>
 
 </form>
 </wiki:PageExists>

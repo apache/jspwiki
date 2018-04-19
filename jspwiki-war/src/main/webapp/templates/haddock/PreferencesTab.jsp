@@ -144,12 +144,11 @@
   </c:if>
 
   <c:if test='${not empty languages}'>
-  <c:set var="prefLanguage" ><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
   <div class="form-group">
     <label class="control-label form-col-20" for="prefLanguage"><fmt:message key="prefs.user.language"/></label>
     <select id="prefLanguage" name="prefLanguage" data-pref="Language">
       <c:forEach items='${languages}' var='lg'>
-        <option value="<c:out value='${lg.key}'/>" ${fn:startsWith(prefLanguage,lg.key) ? 'selected="selected"' : ''} >${lg.value}</option>
+        <option value="<c:out value='${lg.key}'/>" ${fn:startsWith(prefs.Language,lg.key) ? 'selected="selected"' : ''} >${lg.value}</option>
       </c:forEach>
     </select>
   </div>

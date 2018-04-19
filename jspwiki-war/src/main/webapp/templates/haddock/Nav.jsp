@@ -56,6 +56,7 @@
   <%-- attachment --%>
   <wiki:CheckRequestContext context='view|info|rename|diff|rename|edit|comment|conflict'>
   <wiki:PageExists>
+  <c:if test="${param.tab ne 'attach'}"><%-- context upload -> context view&tab=attach ... --%>
   <li id="attach"
    class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
     <wiki:Link page="${page}" context="upload" accessKey="a" >
@@ -63,6 +64,7 @@
       <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
     </wiki:Link>
   </li>
+  </c:if>
   </wiki:PageExists>
   </wiki:CheckRequestContext>
 
@@ -129,7 +131,7 @@
   </wiki:CheckRequestContext>
   <wiki:CheckRequestContext context='edit|comment'>
   <li>
-    <a class="slimbox-link" href="<wiki:Link format='url' page='EditPageHelp' ><wiki:Param name='skin' value='reader'/></wiki:Link>">
+    <a class="slimbox-link" href="<wiki:Link format='url' page='EditPageHelp' ></wiki:Link>">
       <fmt:message key="edit.tab.help" />
     </a>
     <%--
