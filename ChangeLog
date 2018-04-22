@@ -1,3 +1,19 @@
+2018-04-22  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-08  Adding support for mobile devices to the Haddock Template
+            See JSPWIKI-835
+            Part-1 -- many style adjustment to fit smaller screens
+            - Sidebar now slides over the main page on mobile devices
+            - Header (pagename, and menu bar) are better fit for small screens
+            - Width of several menu's and dropdowns is restricted for small screens
+            - Editor toolbar resized for small screens
+
+            Other:
+            - Editor toolbar now remains on screen, even when scrolling down
+            - Small tweaks of the RecentChanges output
+            - JSPWIKI-1068 : fixing positioning of the TitleBox
+
+
 2018-04-19  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.4-git-07 Adding a favicon to the haddock template

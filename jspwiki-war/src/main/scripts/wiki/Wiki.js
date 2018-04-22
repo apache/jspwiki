@@ -110,7 +110,12 @@ var Wiki = {
             })
 
             //add header scroll-up/down effect
-            .add( ".fixed-header > .header", wiki.yoyo)
+            .add(".fixed-header > .header", wiki.yoyo)
+
+            //sticky toolbar in the editor
+            .add(".sticky", function (element) {
+                element.onSticky();
+            })
 
             //highlight previous search query retreived from a cookie or referrer page
             .add( ".page-content", function(element){
@@ -248,43 +253,48 @@ var Wiki = {
     DOM Structure:
     (start code)
         div[style='padding-top:nn']    => nn==height of header;  push content down
-        div.header.yoyo[.scroll-down]  => css: position=fixed
+        div.header.yoyo[.scrolling-down]  => css: position=fixed
     (end)
 
     */
     yoyo: function( header ){
 
-        var height = header.offsetHeight,
-            semaphore,
+        var height = "offsetHeight",
             scrollY,
-            lastScrollY = 0;
+            lastScrollY = 0,
 
-        //add spacer just infront of fixed element, adjust height == header (fixed elements do not take space in the dom)
-        "div".slick({styles: { paddingTop: height } }).inject(header,"before");
+            //add spacer just infront of fixed element,
+            //and adjust height == header (fixed elements do not take space in the dom)
+            spacer = "div".slick().inject(header, "before"),
+            busy;
 
-        window.addEvent("scroll", function(){ semaphore = true; });
+        function update(){
 
-        setInterval( function(){
+            scrollY = window.getScroll().y;
 
-            if( semaphore ){
+            spacer.style.paddingTop = header[height]+"px"; //could change during window resize
 
-                semaphore = false;
-                scrollY = window.getScroll().y;
+            // Limit scroll top to counteract iOS / OSX bounce.
+            scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
 
-                // Limit scroll top to counteract iOS / OSX bounce.
-        		scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
+            if (Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */) {
 
-                if( Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */ ){
+                header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
+                lastScrollY = scrollY;
 
-                    header.ifClass( scrollY > lastScrollY && scrollY > height, "scrolling-down" );
-                    //console.log(scrollY, lastScrollY, height);
-
-
-                    lastScrollY = scrollY;
-                }
             }
+            busy = false;
+        }
 
-        }, 250);
+        function handleEvent(){
+            if(!busy){
+              busy = true;
+              requestAnimationFrame( update );
+            }
+        }
+
+        window.addEvents({ scroll: handleEvent, resize: handleEvent });
+        update(); //first run: set height of the spacer
 
     },
 
@@ -381,9 +391,9 @@ var Wiki = {
         // BasePath: if JSPWiki is installed in the root, then we have to make sure that
         // the cookie-cutter works properly here.
         url = wiki.BaseUrl;
-        url = url ? url.slice( url.indexOf(host) + host.length, -1 ) : "";
-        wiki.BasePath = ( url /*===""*/ ) ? url : "/";
-        console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
+        url = url ? url.slice(url.indexOf(host) + host.length, -1) : "";
+        wiki.BasePath = (url /*===""*/) ? url : "/";
+        //console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
 
     },
 
@@ -767,7 +777,7 @@ var Wiki = {
                 onSuccess: function( responseText ){
 
                     //console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
-                    callback( JSON.parse( responseText ) );
+                    callback(responseText == "" ? "" : JSON.parse(responseText));
                     //callback( responseText );
 
                 },

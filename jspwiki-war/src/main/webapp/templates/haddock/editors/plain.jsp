@@ -93,7 +93,9 @@
   <div class="snipe">
     <div class="form-inline form-group">
 
-    <div class="form-group dropdown">
+    <div class="form-inline form-group sticky">
+
+    <div class="form-inline form-group dropdown">
     <button class="btn btn-success" type="submit" name="ok" accesskey="s">
       <fmt:message key='editor.plain.save.submit${ context == "edit" ? "" : ".comment" }'/>
       <span class="caret"></span>
@@ -172,8 +174,6 @@
     --%>
       </li>
       <li class="divider"></li>
-
-
 
             <li>
               <a>

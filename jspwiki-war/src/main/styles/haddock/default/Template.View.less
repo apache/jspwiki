@@ -55,6 +55,7 @@ Section: Header & Footer
 DOM structure:
 (start code)
     div.header
+      div.titlebox
       div.topline
         div.pagename
         div.pull-left
@@ -100,14 +101,10 @@ DOM structure:
 .container-fluid {
 	//margin:0 1em;
 
-    .header > * {
-        padding-right:@padding-base-horizontal;
-    }
-
+    .header > *:not(.titlebox),
     > .row > ul.nav {
-        padding-right: @padding-base-horizontal;
+        //padding-right:@padding-base-horizontal;
     }
-
 }
 
 .titlebox {
@@ -130,7 +127,7 @@ DOM structure:
     //background-repeat:no-repeat;
     background-attachment:fixed; //default=scroll
 
-	> * {
+	> *:not(.titlebox) {
 	    padding: @padding-base-horizontal/4 0 @padding-base-horizontal/4 @padding-base-horizontal;
 	}
     .btn [class^="icon-"]:before { font-size: 1.3em; }
@@ -172,15 +169,12 @@ Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
     z-index:5;
     width:100%;
     //will-change: transform;
-    .transition( transform 0.2s ease-in-out);
+    .transition( transform 0.1s ease-in-out);
     .translate( 0; 0 ); //transform: translateY(0);
-    //transform-origin: top;
-    //transform: perspective(400px) rotateX(0deg);
 
     //when scrolling-down,  hide the fixed header
     &.scrolling-down {
         .translate(0;-100%); //transform: translateY(-100%); /*hide the header*/
-        //transform: perspective(400px) rotateX(-90deg);
     }
 }
 

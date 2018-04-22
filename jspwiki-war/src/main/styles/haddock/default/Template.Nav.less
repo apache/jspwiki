@@ -48,8 +48,10 @@ div.row
 */
 
 .header > .navigation {
+
     background: rgba(255,255,255,.1);
-    padding: 0 @padding-base-horizontal 0 0;
+    padding:0;
+    //padding: 0 @padding-base-horizontal 0 0;
     .clearfix;
 
     /* hover menu items with transparent effect  - undo some of the bootstrap color settings */
@@ -59,6 +61,25 @@ div.row
         background-color: rgba(255,255,255,.2);
     }
     .nav > li.disabled > a {
-        color: #ddd;  /*one tint lighter then defaul #eee */
+        color:@silver;
     }
+    .nav > li > a {
+    	border-radius:0;
+		> *:first-child { display:none; }
+    }
+	.nav-pills > li > a > .badge { margin:0; }
+	.nav > li > a > .badge {
+		background:rgba(255,255,255,.7);
+		color:@gray;
+		position:relative;
+		top:-.7em;
+		font-size:50%;
+	}
+    .nav > li.disabled > a > .badge {
+		background:rgba(255,255,255,.5);
+		color:@gray;
+    }
+
+    .nav > li > a.slimbox-link:after { color:white; font-size:70%; top:-.7em; }
+
 }

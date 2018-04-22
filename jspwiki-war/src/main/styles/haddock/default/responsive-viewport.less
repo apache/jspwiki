@@ -1,0 +1,233 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+/*
+Section: Responsive styles for small viewports or screens
+	@screen-xs-min : 600px
+	Typical layout changes needed for phones, small tablets.
+	
+
+	TODO::
+		!Sidebar should automatically close after navigating ... !! 
+	        default sidebar view for userpref & login : should be HIDE !
+		
+	    FFS: responsive tables :  should scroll left-right on small screens
+
+		style.less : 
+			make some styles smaller (commentbox float?)
+			make tab padding smaller
+			columns should be shown vertically
+			wider content should scroll horizontally
+			...
+		
+
+*/
+
+
+@wiki-small-viewport: 768px;
+@wiki-small-viewport-menu-width: 280px;
+
+@media only screen and (max-width: @wiki-small-viewport) {
+
+	//generic
+	.input-xs { 
+		.input-sm; 
+		padding: @padding-xs-vertical @padding-xs-horizontal; 
+		height:auto;
+	}
+
+	// type.less
+	// grid.less
+	// tables.less
+	// TableX.Sort.less
+	// TableX.Filter.less
+	// forms.less
+	// modals.less
+
+	// pagination.less
+	.pagination {
+	    margin: @line-height-computed 0;
+    	padding: @padding-base-vertical/2 @padding-base-horizontal/2;
+
+    	a,  .cursor {
+        	padding:0.2em;
+	        border:1px solid transparent;
+	        
+	        > span[class] { 
+	        		position:relative;
+	        		display:inline-block; 
+	        		width:1ex; 
+	        		top:0.4em;
+	        		white-space:nowrap;
+	        		font-family:@font-family-monospace;
+	        		overflow:hidden;
+	        		text-align:center;
+	        		visibility:hidden;
+	        		&:before { 
+	        			visibility:visible; 
+	        		}
+	        } 
+	        .first:before { content:"\ab"; }
+	        .prev:before { content:"\3c"; }
+	        .next:before { content:"\3e"; }
+	        .last:before { content:"\bb"; }
+	        .all:before  { content:"\2200"; }
+
+    	}
+	}
+
+	// Tips.less
+	// Magnify.less
+
+	// Viewer.less
+	// Viewer.Slimbox.less
+	// Viewer.Carousel.less
+
+	// Template.View.less
+	
+	.header, .footer {
+	    .btn { padding: 0 4px; }
+	    .btn [class^="icon-"]:before { font-size: 1em;  }
+	}
+	
+	.header > *:not(.titlebox), .footer > *:not(.titlebox) { padding:0;  }
+	
+	.reader .pagename { font-size:1.5em; line-height:1.5;}
+	.pagename {
+		font-size: 1.5em;
+		line-height: 1.5;
+	}
+
+	a.logo {
+		text-indent:-99em;
+		margin-top:.7em;
+		width:2.5em;
+		height:1.5em;
+		border:none;
+		b:before {content:""}; 
+	}
+	
+	.breadcrumb { display:none; }
+	
+	// Template.UserBox.less
+	
+	.userbox ul.dropdown-menu { 
+			max-width:@wiki-small-viewport-menu-width;
+			li:first-child a { white-space:normal; }
+	}
+	
+	// Template.SearchBox.less
+	.searchbox ul.dropdown-menu { max-width: @wiki-small-viewport-menu-width; }
+
+	// Template.Nav.less
+	// Only show the menu icons
+	.header > .navigation .nav > li > a { 
+		padding: 5px 10px; 
+		> *:first-child { display:initial; }
+		> *:nth-child(even) { display:none; }
+	}
+
+	// Template.Content.less
+	/* hide sidebar on extra small devices, and give it a fixed width
+	   by default  sidebar is now visible !  and will overlay the main page
+			.active : should now hide the sidebar
+			not(.active) : should overlay the sidebar over the main page content
+	*/
+
+	.content {
+		.sidebar, &:after { width: @wiki-small-viewport-menu-width; margin-left:0 }	
+	}
+	.sidebar { position:absolute; }
+	.content.active {
+    	.page { width:100%; }  //keep full width
+    	.sidebar, &:after { margin-left: -100%; }
+	}	
+	.fav-right {
+    	.content {
+	    	.sidebar, &:after { margin-right:0; }
+    	}
+    	.sidebar { right:0; }  //positon = absolution 
+	    .content.active {
+    	    .sidebar, &:after { margin-right:-100%; }
+	    }
+	}
+	
+	.page-content input { .input-xs; }
+	.page-content .btn { .btn-xs; }
+
+
+	// Template.Attach.less
+	// Template.Diff.less
+	// Template.Search.less
+	// Template.Workflow.less
+
+	// Template.Edit.less
+	.snipe {
+
+		.btn { .btn-xs; }
+				
+		ul.dropdown-menu { 
+			max-width:@wiki-small-viewport-menu-width;
+		}
+		
+		//hack :: unclear why this is not already inline ?
+		> .form-group  > .form-group { display:inline-block; margin-bottom:0; }
+		
+		//remove less used button to make toolbar fit on narrow screens
+		.editor-tools [data-cmd=undo],		
+		.editor-tools [data-cmd=redo] { display:none; }
+	}
+	input#changenote { max-width: @wiki-small-viewport-menu-width; }
+
+
+	.modal,
+	.slmbx,
+	.dialog.find {
+		max-width:@wiki-small-viewport-menu-width;
+		.btn { .btn-xs; }
+		input.form-control { .input-xs; }
+	} 
+
+	
+	// Dialog.less
+	// Template.Preview.less
+
+    // ImagePlugin.less
+    // IndexPlugin.less
+    // TOCPlugin.less
+    // WeblogPlugin.less
+    // RecentChangesPlugin.less
+
+    // CommentBox.less
+    // GraphBar.less
+    // Tabs.less
+    // Accordion.less
+    // Columns.less
+    // Collapsible.less
+    // Category.less
+
+    // Flip.less
+    // Invisibles.less
+
+    // prettify.less
+
+
+} /* end of @media */
+

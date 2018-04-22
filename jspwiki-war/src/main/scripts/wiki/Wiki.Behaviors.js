@@ -70,22 +70,22 @@ var TheSlimbox, T = TableX;
 Behavior: Broken images
     Replace broken image browser icons
 */
-wiki.once( "img", function(imgs){
+wiki.once( "img:not(outlink)", function(imgs){
 
     imgs.addEvent("error", function(){
 
         var img = $(this);
         [ "span.danger.img-error", {
-            text: "broken.image".localize() //Broken Image!
-        }, [
-            "span", { text: img.alt || img.src }
+                text: "broken.image".localize()
+            },
+            [
+                "span", { text: img.alt || img.src }
             ]
         ].slick().replaces(img);
 
     });
 
 });
-
 
 /*
 Behavior: GraphBars, Progress-bars
@@ -529,7 +529,7 @@ Behavior: Table behaviors
     %%zebra-pink ... /%      => odd rows get backgroundcolor red
     %%zebra-eee-red ... /%     => odd rows: #eee, even rows: red
 
-    %%table-striped-bordered-hover-condensed-fit-filter-sort
+    %%table-striped-bordered-hover-condensed-fit-filter-sort-noborder
     %%sortable .. /%
     %%table-filter .. /%
 
@@ -565,7 +565,7 @@ Behavior: Table behaviors
 
             arg = args.shift();
 
-            if( arg.test("striped|bordered|hover|condensed|fit")){
+            if( arg.test("striped|bordered|hover|condensed|fit|noborder")){
 
                 tables.addClass("table-"+arg);
 

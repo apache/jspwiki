@@ -40,9 +40,22 @@ textarea { white-space: pre-wrap; }
 
 }
 
-//save or post-comment button dropdown-menu : increase width of standard dropdown
-button[name=ok] + .dropdown-menu input[type=text] {
-    width: 340px;
+
+.sticky {
+    //display:block;
+    + .sticky-spacer { .hide; }
+}
+
+.stickyOn {
+    top: 0;
+    z-index: 5;
+    position: fixed;
+    background: @dropdown-bg;
+    .opacity(.9);
+    .box-shadow(0 9px 12px -9px rgba(0,0,0,.175));
+
+    + .sticky-spacer { .show; }
+
 }
 
 .editor {
@@ -164,18 +177,6 @@ VERTICAL VIEW
     label { font-weight: normal; }
 }
 
-
-.toolbar {
-    padding-bottom: 1em;
-    .btn-group {
-        border:1px solid @link-color;
-	    border-radius:@border-radius-base;
-    }
-    .btn-link:hover { text-decoration:none; }
-
-}
-
-
 /*
 Horizontal Dropdown Menu (based on bootstrap)
 FIXME: used a hack to fix the min-width of the default dropdown menu ; there must be a better way !
@@ -233,8 +234,7 @@ General styles to support wysiwyg editors
         font-family: @font-family-monospace;
         white-space: pre-wrap;  //Lines are broken at newline characters, at <br>, and as necessary to fill line boxes.
         border:1px solid @pre-border-color;
-        word-wrap:normal;
+        overflow-wrap:normal;
     }
 
 }
-

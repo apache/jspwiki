@@ -43,6 +43,18 @@
 
 @import "FontJspwiki/variables.less";
 
+
+.icon-view-menu:before { content:"\21D0"; }
+.icon-help-menu:before { content:@icon-lightbulb-o;  }
+
+// Note:  use span.icon  to grab higher specificity on this selector, to overule some .icon-all settings
+// FFS: replace by real icon?
+span.icon-info-menu {
+    font-family:@font-family-monospace;
+    &:before { content:"i"; }
+}
+
+
 .icon-none:before {
     content: "\a0";
 }
