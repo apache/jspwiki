@@ -201,17 +201,14 @@ public class ReferredPagesPlugin implements WikiPlugin
 
         if( m_formatSort ) context.getEngine().getPageSorter().sort( allLinks );
 
-        for( Iterator i = allLinks.iterator(); i.hasNext(); )
+        for( Iterator<String> i = allLinks.iterator(); i.hasNext(); )
         {
-            String link = (String) i.next() ;
+            String link = i.next() ;
 
-            if( localLinkSet.contains( link ) ) continue; // skip multiple
-                                                          // links to the same
-                                                          // page
+            if( localLinkSet.contains( link ) ) continue; // skip multiple links to the same page
             localLinkSet.add( link );
 
-            if( !m_engine.pageExists( link ) ) continue; // hide links to non
-                                                         // existing pages
+            if( !m_engine.pageExists( link ) ) continue; // hide links to non existing pages
 
             if(  m_matcher.matches( link , m_excludePattern ) ) continue;
             if( !m_matcher.matches( link , m_includePattern ) ) continue;

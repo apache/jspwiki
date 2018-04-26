@@ -14,10 +14,10 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.login;
-
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -27,8 +27,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import junit.framework.TestCase;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -36,10 +34,12 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.junit.Assert;
+import org.junit.Before;
 
 /**
  */
-public class UserDatabaseLoginModuleTest extends TestCase
+public class UserDatabaseLoginModuleTest
 {
     WikiEngine m_engine;
 
@@ -54,36 +54,36 @@ public class UserDatabaseLoginModuleTest extends TestCase
             // Log in with a user that isn't in the database
             CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
-            assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );
-            
+            Set< Principal > principals = m_subject.getPrincipals();
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
+            Assert.assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
+
             // Login with a user that IS in the database
             m_subject = new Subject();
             handler = new WikiCallbackHandler( m_engine, null, "janne", "myP@5sw0rd" );
             module = new UserDatabaseLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
             principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) );
-            assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );            
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) );
+            Assert.assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
@@ -93,30 +93,31 @@ public class UserDatabaseLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
-            assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Set< Principal > principals = m_subject.getPrincipals();
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
+            Assert.assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
-            assertEquals( 0, principals.size() );
+            Assert.assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
     /**
-     * @see junit.framework.TestCase#setUp()
+     * 
      */
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
@@ -130,7 +131,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 

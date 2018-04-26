@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.10.1-SNAPSHOT" />
+  <property name="jspwiki.woas.version" value="2.10.4-SNAPSHOT" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
@@ -38,7 +38,7 @@
   <property name="jspwiki.woas.assembly.dir" value="${jspwiki.woas.target.dir}/woas" />
 
   <!-- the Tomcat version to use --> 
-  <property name="jspwiki.tomcat.version" value="7.0.52"/>
+  <property name="jspwiki.tomcat.version" value="7.0.84"/>
 
   <!-- the Tomcat distribution to use --> 
   <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
@@ -143,16 +143,16 @@
         errTitle="WikiOnAStick" 
         chdir="." 
         icon="${basedir}/src/resources/windows/jspwiki.ico"
-        jar="${basedir}/src/resources/tomcat/tomcat-launcher-7.0.52.jar"
+        jar="${basedir}/target/launchers/tomcat-launcher-${jspwiki.tomcat.version}.jar"
         >
         <singleInstance mutexName="org.apache.jspwiki.jspwiki-portable" />
         <jre minVersion="1.6.0" />
         <versionInfo
-          fileVersion="2.1.10.1"
+          fileVersion="2.10.4.0"
           txtFileVersion="JSPWiki ${jspwiki.woas.version}"
           fileDescription="WikiOnAStick"
           copyright="Apache Software Licence 2.0"
-          productVersion="2.1.10.1"
+          productVersion="2.10.4.0"
           txtProductVersion="JSPWiki ${jspwiki.woas.version}"
           productName="WikiOnAStick"
           companyName="Apache Software Foundation"
@@ -181,7 +181,7 @@
     <taskdef 
       name="bundleapp" 
       classname="com.oracle.appbundler.AppBundlerTask"
-      classpath="${jspwiki.appbundler.install.dir}/appbundler-1.0.jar" 
+      classpath="${jspwiki.appbundler.install.dir}/appbundler-1.1.0.jar" 
     />
     <delete dir="${jspwiki.woas.assembly.dir}/woas.app"/> 
     <bundleapp 
@@ -212,24 +212,24 @@
     <target name="woas:download-launch4j-for-win" description="Download the Win32 launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.8/launch4j-3.8-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
-        <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.8-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
-        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.8-win32.zip"/>
+        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.11/launch4j-3.11-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
+        <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.11-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
+        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.11-win32.zip"/>
     </target>
 
     <target name="woas:download-launch4j-for-mac" description="Download the Mac OS X launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.8/launch4j-3.8-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
-        <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.8-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
-        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.8-macosx-x86.tgz"/>
+        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.11/launch4j-3.11-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
+        <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.11-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
+        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.11-macosx-x86.tgz"/>
         <chmod dir="${jspwiki.launch4j.install.dir}/bin" includes="*" perm="ugo+x"/>
     </target>
 
     <target name="woas:download-appbundler-for-mac" description="Download the Mac OS X appbundler library">
         <delete dir="${jspwiki.appbundler.install.dir}"/>
         <mkdir dir="${jspwiki.appbundler.install.dir}"/>
-        <get src="https://java.net/downloads/appbundler/appbundler-1.0.jar" dest="${jspwiki.appbundler.install.dir}"/>
+        <get src="http://search.maven.org/remotecontent?filepath=com/panayotis/appbundler/1.1.0/appbundler-1.1.0.jar" dest="${jspwiki.appbundler.install.dir}/appbundler-1.1.0.jar"/>
     </target>
 
 </project>

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -49,7 +49,6 @@ public class UnusedPagesPlugin
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {
@@ -59,15 +58,14 @@ public class UnusedPagesPlugin
         // filter out attachments if "excludeattachments" was requested:
         //
         String prop = params.get( PARAM_EXCLUDEATTS );
-        if( TextUtil.isPositive(prop) ) 
+        if( TextUtil.isPositive(prop) )
         {
             //  remove links to attachments (recognizable by a slash in it)
-            //  FIXME: In 3.0, this assumption is going to fail. FIXME3.0
-            Iterator iterator = links.iterator();
-            while( iterator.hasNext() ) 
+            Iterator< String > iterator = links.iterator();
+            while( iterator.hasNext() )
             {
-                String link = (String) iterator.next();
-                if (link.indexOf("/")!=-1) 
+                String link = iterator.next();
+                if (link.indexOf("/")!=-1)
                 {
                     iterator.remove();
                 }
@@ -79,7 +77,7 @@ public class UnusedPagesPlugin
         links = filterAndSortCollection( links );
 
         String wikitext = null;
-        
+
         if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
         {
             wikitext = "" + links.size();
@@ -91,7 +89,7 @@ public class UnusedPagesPlugin
         else
         {
             wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
-        }        
+        }
         return makeHTML( context, wikitext );
     }
 

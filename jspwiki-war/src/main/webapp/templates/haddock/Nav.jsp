@@ -32,15 +32,11 @@
 <c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
 
 <%-- navigation bar --%>
-<div class="row sticky">
+<div class="navigation">
 
 <ul class="nav nav-pills pull-left">
   <%-- toggle sidebar --%>
   <li id="menu"><a href="#"><!--&#x2261;-->&#9776;</a></li>
-  <li class="pagename">
-    <wiki:CheckRequestContext context='view'><a href="#top"><wiki:PageName /></a></wiki:CheckRequestContext>
-    <wiki:CheckRequestContext context='!view'><wiki:Link><wiki:PageName/></wiki:Link></wiki:CheckRequestContext>
-  </li>
 </ul>
 
 <ul class="nav nav-pills pull-right">
@@ -51,22 +47,40 @@
     </c:set>
 
   <%-- view --%>
+
+  <%-- context upload -> context view&tab=attach ... --%>
+  <%--
+  <c:if test="${param.tab eq 'attach'}">
+  <li id="view">
+    <wiki:Link page="${page}" >
+        <span class="icon-view-menu"></span>
+        <span><fmt:message key="view.tab"/></span>
+    </wiki:Link>
+  </li>
+  </c:if>
+  --%>
   <wiki:CheckRequestContext context='info|diff|upload|rename|edit|comment|conflict'>
   <li id="view">
-    <wiki:Link page="${page}" ><fmt:message key="view.tab"/></wiki:Link>
+    <wiki:Link page="${page}" >
+        <span class="icon-view-menu"></span>
+        <span><fmt:message key="view.tab"/></span>
+    </wiki:Link>
   </li>
   </wiki:CheckRequestContext>
 
   <%-- attachment --%>
   <wiki:CheckRequestContext context='view|info|rename|diff|rename|edit|comment|conflict'>
   <wiki:PageExists>
+  <c:if test="${param.tab ne 'attach'}"><%-- context upload -> context view&tab=attach ... --%>
   <li id="attach"
    class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
     <wiki:Link page="${page}" context="upload" accessKey="a" >
-      <fmt:message key='attach.tab'/>
+      <span class="icon-paper-clip"></span>
+      <span><fmt:message key='attach.tab'/></span>
       <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
     </wiki:Link>
   </li>
+  </c:if>
   </wiki:PageExists>
   </wiki:CheckRequestContext>
 
@@ -75,7 +89,9 @@
   <wiki:PageExists>
   <li id="info">
     <wiki:Link context="info" accessKey="i">
-      <fmt:message key='info.tab'/><wiki:PageExists><span class="caret"></span></wiki:PageExists>
+      <span class="icon-info-menu"></span>
+      <span><fmt:message key='info.tab'/></span>
+      <wiki:PageExists><span class="caret"></span></wiki:PageExists>
     </wiki:Link>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
       <li class="dropdown-header"><fmt:message key="info.version"/> : <span class="badge"><wiki:PageVersion /></span></li>
@@ -110,12 +126,14 @@
 	  class="<wiki:Permission permission='!edit'>disabled</wiki:Permission>">
       <wiki:PageType type="page">
         <wiki:Link context="edit" accessKey="e" >
-          <fmt:message key='actions.edit'/>
+          <span class="icon-pencil"></span>
+          <span><fmt:message key='actions.edit'/></span>
         </wiki:Link>
       </wiki:PageType>
       <wiki:PageType type="attachment">
         <wiki:Link context="edit" page="<wiki:ParentPageName />" accessKey="e" >
-          <fmt:message key='actions.edit'/>
+          <span class="icon-pencil"></span>
+          <span><fmt:message key='actions.edit'/></span>
         </wiki:Link>
       </wiki:PageType>
     </li>
@@ -127,14 +145,16 @@
   <wiki:CheckRequestContext context='find'>
   <li>
     <a class="slimbox-link" href="<wiki:Link format='url' page='SearchPageHelp' ><wiki:Param name='skin' value='reader'/></wiki:Link>">
-      <fmt:message key="find.tab.help" />
+      <span class="icon-help-menu"></span>
+      <span><fmt:message key="find.tab.help" /></span>
     </a>
   </li>
   </wiki:CheckRequestContext>
   <wiki:CheckRequestContext context='edit|comment'>
   <li>
-    <a class="slimbox-link" href="<wiki:Link format='url' page='EditPageHelp' ><wiki:Param name='skin' value='reader'/></wiki:Link>">
-      <fmt:message key="edit.tab.help" />
+    <a class="slimbox-link" href="<wiki:Link format='url' page='EditPageHelp' ></wiki:Link>">
+      <span class="icon-help-menu"></span>
+      <span><fmt:message key="edit.tab.help" /></span>
     </a>
     <%--
       <wiki:NoSuchPage page="EditPageHelp">
@@ -150,7 +170,8 @@
   <wiki:CheckRequestContext context='login'>
   <li>
     <a class="slimbox-link" href="<wiki:Link format='url' page='LoginHelp' ><wiki:Param name='skin' value='reader'/></wiki:Link>">
-      <fmt:message key="login.tab.help" />
+      <span class="icon-help-menu"></span>
+      <span><fmt:message key="login.tab.help" /></span>
     </a>
   </li>
   <%--
@@ -168,7 +189,11 @@
 
   <%-- more menu --%>
   <li id="more">
-    <a href="#"><fmt:message key="actions.more"/><span class="caret"></span></a>
+    <a href="#">
+        <span class="icon-ellipsis-v"></span>
+        <span><fmt:message key="actions.more"/></span>
+        <span class="caret"></span>
+    </a>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
       <wiki:PageExists>
       <wiki:CheckRequestContext context='view|info|diff|upload|preview' >
@@ -216,8 +241,7 @@
         <wiki:PageType type="page">
           <li>
             <wiki:Link context="comment">
-              <span class="icon-plus"></span>
-              <fmt:message key="actions.comment" />
+              <span class="icon-plus"></span> <fmt:message key="actions.comment" />
             </wiki:Link>
           </li>
         </wiki:PageType>

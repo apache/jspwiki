@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.rss;
 
@@ -35,7 +35,7 @@ import org.jdom2.Namespace;
  * <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
  */
 public class RSS10Feed extends Feed {
-    
+
     private static final Namespace NS_XMNLS = Namespace.getNamespace( "http://purl.org/rss/1.0/" );
     private static final Namespace NS_RDF = Namespace.getNamespace( "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
     private static final Namespace NS_DC = Namespace.getNamespace( "dc", "http://purl.org/dc/elements/1.1/" );
@@ -44,7 +44,7 @@ public class RSS10Feed extends Feed {
     /**
      * Create an RSS 1.0 feed for a given context.
      *
-     * @param context {@inheritDoc}
+     * @param context The WikiContext.
      */
     public RSS10Feed( WikiContext context ) {
         super( context );
@@ -96,7 +96,7 @@ public class RSS10Feed extends Feed {
             cal.setTime(p.getLastModified());
             cal.add( Calendar.MILLISECOND,
                     - ( cal.get( Calendar.ZONE_OFFSET ) +
-                             ( cal.getTimeZone().inDaylightTime( p.getLastModified() ) ? cal.get( Calendar.DST_OFFSET ) 
+                             ( cal.getTimeZone().inDaylightTime( p.getLastModified() ) ? cal.get( Calendar.DST_OFFSET )
                                                                                        : 0 ) ) );
 
             item.addContent( new Element( "date", NS_DC ).addContent( iso8601fmt.format( cal.getTime() ) ) );
@@ -116,7 +116,7 @@ public class RSS10Feed extends Feed {
             if( m_wikiContext.getEngine().pageExists(author) ) {
                 description.setAttribute( "link", engine.getURL( WikiContext.VIEW, author, null, true ), NS_XMNLS );
             }
-            
+
             description.addContent( new Element("value", NS_XMNLS).addContent( author) );
             contributor.addContent( description );
            */
@@ -161,7 +161,7 @@ public class RSS10Feed extends Feed {
      */
     @Override
     public String getString() {
-        Element root = new Element( "RDF", NS_RDF ); 
+        Element root = new Element( "RDF", NS_RDF );
         root.addContent( getChannelElement() );
         root.addNamespaceDeclaration( NS_XMNLS );
         root.addNamespaceDeclaration( NS_RDF );

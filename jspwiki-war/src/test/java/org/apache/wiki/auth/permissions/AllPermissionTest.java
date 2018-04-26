@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,87 +14,93 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.permissions;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  */
-public class AllPermissionTest extends TestCase
+public class AllPermissionTest
 {
 
     /*
      * Class under test for boolean equals(Object)
      */
+    @Test
     public void testEqualsObject()
     {
         AllPermission p1 = new AllPermission( "*" );
         AllPermission p2 = new AllPermission( "*" );
         AllPermission p3 = new AllPermission( "myWiki" );
-        assertTrue( p1.equals( p2 ) );
-        assertTrue( p2.equals( p1 ) );
-        assertFalse( p1.equals( p3 ) );
-        assertFalse( p3.equals( p1 ) );
+        Assert.assertTrue( p1.equals( p2 ) );
+        Assert.assertTrue( p2.equals( p1 ) );
+        Assert.assertFalse( p1.equals( p3 ) );
+        Assert.assertFalse( p3.equals( p1 ) );
     }
 
+    @Test
     public void testImpliesAllPermission()
     {
         AllPermission p1 = new AllPermission( "*" );
         AllPermission p2 = new AllPermission( "*" );
-        assertTrue( p1.equals( p2 ) );
-        assertTrue( p2.equals( p1 ) );
+        Assert.assertTrue( p1.equals( p2 ) );
+        Assert.assertTrue( p2.equals( p1 ) );
 
         p2 = new AllPermission( "myWiki" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
     }
 
+    @Test
     public void testImpliesPagePermission()
     {
         AllPermission p1 = new AllPermission( "*" );
         PagePermission p2 = new PagePermission( "*:TestPage", "delete" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
 
         p2 = new PagePermission( "myWiki:TestPage", "delete" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
-        
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
+
         p2 = new PagePermission( "*:GroupTest", "delete" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
-        
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
+
         p2 = new PagePermission( "myWiki:GroupTest", "delete" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
     }
 
+    @Test
     public void testImpliesWikiPermission()
     {
         AllPermission p1 = new AllPermission( "*" );
         WikiPermission p2 = new WikiPermission( "*", "createPages" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
 
         p2 = new WikiPermission( "myWiki", "createPages" );
-        assertTrue( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
+        Assert.assertTrue( p1.implies( p2 ) );
+        Assert.assertFalse( p2.implies( p1 ) );
     }
 
     /*
      * Class under test for String toString()
      */
+    @Test
     public void testToString()
     {
         AllPermission p = new AllPermission( "myWiki" );
         String result = "(\"org.apache.wiki.auth.permissions.AllPermission\",\"myWiki\")";
-        assertEquals( result, p.toString() );
+        Assert.assertEquals( result, p.toString() );
 
         p = new AllPermission( "*" );
         result = "(\"org.apache.wiki.auth.permissions.AllPermission\",\"*\")";
-        assertEquals( result, p.toString() );
+        Assert.assertEquals( result, p.toString() );
     }
 
 }

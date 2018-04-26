@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,34 +14,21 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.workflow;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-/**
- */
-public class AllTests extends TestCase
-{
-    public AllTests( String s )
-    {
-        super( s );
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite( "Workflow tests" );
-        suite.addTestSuite( ApprovalWorkflowTest.class );
-        suite.addTestSuite( DecisionQueueTest.class );
-        suite.addTestSuite( FactTest.class );
-        suite.addTestSuite( OutcomeTest.class );
-        suite.addTestSuite( SimpleDecisionTest.class );
-        suite.addTestSuite( TaskTest.class );
-        suite.addTestSuite( WorkflowManagerTest.class );
-        suite.addTestSuite( WorkflowTest.class );
-        return suite;
-    }
+@RunWith( Suite.class )
+@Suite.SuiteClasses( { ApprovalWorkflowTest.class,
+                       DecisionQueueTest.class,
+                       FactTest.class,
+                       OutcomeTest.class,
+                       SimpleDecisionTest.class,
+                       TaskTest.class,
+                       WorkflowManagerTest.class,
+                       WorkflowTest.class } )
+public class AllTests {
 }

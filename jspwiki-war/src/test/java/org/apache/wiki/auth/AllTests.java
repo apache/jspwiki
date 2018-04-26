@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,36 +14,23 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.auth;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase
-{
-    public AllTests( String s )
-    {
-        super( s );
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite("AAA package tests");
-
-        suite.addTest( AuthenticationManagerTest.suite() );
-        suite.addTest( AuthorizationManagerTest.suite() );
-        suite.addTest( GroupManagerTest.suite() );
-        suite.addTest( org.apache.wiki.auth.acl.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.authorize.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.login.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.permissions.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.user.AllTests.suite() );
-        suite.addTestSuite( org.apache.wiki.auth.UserManagerTest.class );
-        
-        return suite;
-    }
+@RunWith( Suite.class )
+@Suite.SuiteClasses( { AuthenticationManagerTest.class,
+                       AuthorizationManagerTest.class,
+                       GroupManagerTest.class,
+                       UserManagerTest.class,
+                       org.apache.wiki.auth.acl.AllTests.class,
+                       org.apache.wiki.auth.authorize.AllTests.class,
+                       org.apache.wiki.auth.login.AllTests.class,
+                       org.apache.wiki.auth.permissions.AllTests.class,
+                       org.apache.wiki.auth.user.AllTests.class } )
+public class AllTests {
 }

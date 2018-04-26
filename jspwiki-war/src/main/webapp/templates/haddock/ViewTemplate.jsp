@@ -46,10 +46,9 @@
 
 <body class="context-<wiki:Variable var='requestcontext' default='' />">
 
-<div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation}">
+<div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation} fixed-header">
 
   <wiki:Include page="Header.jsp" />
-  <wiki:Include page="Nav.jsp" />
 
   <c:set var="sidebar"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
   <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page isErrorPage="true" %>
@@ -23,11 +23,11 @@
 <%@ page import="org.apache.wiki.util.FileUtil" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = wiki.createContext( request, 
+    WikiContext wikiContext = wiki.createContext( request,
                                                   WikiContext.ERROR );
     String pagereq = wikiContext.getName();
 
@@ -37,34 +37,27 @@
 
     Throwable realcause = null;
 
-    if( exception != null )        
-    {   
-        msg = exception.getMessage();
-        if( msg == null || msg.length() == 0 )
-        {
-            msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
-        }
-
-        //
-        //  This allows us to get the actual cause of the exception.
-        //  Note the cast; at least Tomcat has two classes called "JspException"
-        //  imported in JSP pages.
-        //
-
-
-        if( exception instanceof javax.servlet.jsp.JspException )
-        {
-            log.debug("IS JSPEXCEPTION");
-            realcause = ((javax.servlet.jsp.JspException)exception).getRootCause();
-            log.debug("REALCAUSE="+realcause);
-        }
-
-        if( realcause == null ) realcause = exception;    
-    }
-    else
+    msg = exception.getMessage();
+    if( msg == null || msg.length() == 0 )
     {
-        realcause = new Exception("Unknown general exception");
+        msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
     }
+
+    //
+    //  This allows us to get the actual cause of the exception.
+    //  Note the cast; at least Tomcat has two classes called "JspException"
+    //  imported in JSP pages.
+    //
+
+
+    if( exception instanceof javax.servlet.jsp.JspException )
+    {
+        log.debug("IS JSPEXCEPTION");
+        realcause = ((javax.servlet.jsp.JspException)exception).getCause();
+        log.debug("REALCAUSE="+realcause);
+    }
+
+    if( realcause == null ) realcause = exception;
 
     log.debug("Error.jsp exception is: ",exception);
 
@@ -78,7 +71,7 @@
       <dt><b>Error Message</b></dt>
       <dd>
          <wiki:Messages div="error" />
-      </dd>      
+      </dd>
       <dt><b>Exception</b></dt>
       <dd><%=realcause.getClass().getName()%></dd>
       <dt><b>Place where detected</b></dt>
@@ -91,7 +84,7 @@
    then you might want to check your configuration files.  If you are absolutely sure
    that JSPWiki was running quite okay or you can't figure out what is going
    on, then by all means, come over to <a href="http://jspwiki.apache.org/">jspwiki.apache.org</a>
-   and tell us.  There is more information in the log file (like the full stack trace, 
+   and tell us.  There is more information in the log file (like the full stack trace,
    which you should add to any error report).
    </p>
    <p>

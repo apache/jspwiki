@@ -217,7 +217,7 @@ String.implement({
     */
     sliceArgs: function(element, regexp){
 
-        var args = element.grab /*isElement*/ ? element.className : element;
+        var args = element.className || String(element);
 
         if( !regexp) regexp = "(?:^|\\s)("+this+"(?:-\\w+)*)(?:\\s|$)"; //default '-' separated arguments
 

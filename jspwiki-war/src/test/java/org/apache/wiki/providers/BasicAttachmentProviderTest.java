@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.providers;
@@ -27,16 +27,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class BasicAttachmentProviderTest extends TestCase
+public class BasicAttachmentProviderTest
 {
     public static final String NAME1 = "TestPage";
     public static final String NAME2 = "TestPageToo";
@@ -52,18 +52,14 @@ public class BasicAttachmentProviderTest extends TestCase
      */
     private static final String c_fileContents = "gy th tgyhgthygyth tgyfgftrfgvtgfgtr";
 
-    public BasicAttachmentProviderTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp()
         throws Exception
     {
         m_engine  = new TestEngine(props);
 
         TestEngine.deleteAll( new File(TextUtil.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR )) );
-        
+
         m_provider = new BasicAttachmentProvider();
         m_provider.initialize( m_engine, props );
 
@@ -78,11 +74,11 @@ public class BasicAttachmentProviderTest extends TestCase
         tmpFile.deleteOnExit();
 
         FileWriter out = new FileWriter( tmpFile );
-        
+
         FileUtil.copyContents( new StringReader( c_fileContents ), out );
 
         out.close();
-        
+
         return tmpFile;
     }
 
@@ -91,15 +87,16 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         File tmpFile = new File( directory, name );
         FileWriter out = new FileWriter( tmpFile );
-        
+
         FileUtil.copyContents( new StringReader( c_fileContents ), out );
 
         out.close();
-        
+
         return tmpFile;
     }
 
 
+    @After
     public void tearDown()
     {
         m_engine.deleteTestPage( NAME1 );
@@ -114,56 +111,63 @@ public class BasicAttachmentProviderTest extends TestCase
         f = new File( tmpfiles, NAME2+BasicAttachmentProvider.DIR_EXTENSION );
 
         TestEngine.deleteAll( f );
-        
+
         TestEngine.emptyWorkDir();
     }
 
+    @Test
     public void testExtension()
     {
         String s = "test.png";
 
-        assertEquals( BasicAttachmentProvider.getFileExtension(s), "png" );
+        Assert.assertEquals( BasicAttachmentProvider.getFileExtension(s), "png" );
     }
 
+    @Test
     public void testExtension2()
     {
         String s = ".foo";
 
-        assertEquals( "foo", BasicAttachmentProvider.getFileExtension(s) );
+        Assert.assertEquals( "foo", BasicAttachmentProvider.getFileExtension(s) );
     }
 
+    @Test
     public void testExtension3()
     {
         String s = "test.png.3";
 
-        assertEquals( "3", BasicAttachmentProvider.getFileExtension(s) );
+        Assert.assertEquals( "3", BasicAttachmentProvider.getFileExtension(s) );
     }
 
+    @Test
     public void testExtension4()
     {
         String s = "testpng";
 
-        assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
+        Assert.assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
     }
 
 
+    @Test
     public void testExtension5()
     {
         String s = "test.";
 
-        assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
+        Assert.assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
     }
 
+    @Test
     public void testExtension6()
     {
         String s = "test.a";
 
-        assertEquals( "a", BasicAttachmentProvider.getFileExtension(s) );
+        Assert.assertEquals( "a", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     /**
      *  Can we save attachments with names in UTF-8 range?
      */
+    @Test
     public void testPutAttachmentUTF8()
         throws Exception
     {
@@ -176,10 +180,11 @@ public class BasicAttachmentProviderTest extends TestCase
         List res = m_provider.listAllChanged( new Date(0L) );
 
         Attachment a0 = (Attachment) res.get(0);
-        
-        assertEquals( "name", att.getName(), a0.getName() );
+
+        Assert.assertEquals( "name", att.getName(), a0.getName() );
     }
 
+    @Test
     public void testListAll()
         throws Exception
     {
@@ -194,22 +199,23 @@ public class BasicAttachmentProviderTest extends TestCase
         Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
-        
+
         List res = m_provider.listAllChanged( new Date(0L) );
 
-        assertEquals( "list size", 2, res.size() );
+        Assert.assertEquals( "list size", 2, res.size() );
 
         Attachment a2 = (Attachment) res.get(0);  // Most recently changed
         Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-        assertEquals( "a1 name", att.getName(), a1.getName() );
-        assertEquals( "a2 name", att2.getName(), a2.getName() );
+        Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
+        Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
     }
 
 
     /**
-     *  Check that the system does not fail if there are extra files in the directory.
+     *  Check that the system does not Assert.fail if there are extra files in the directory.
      */
+    @Test
     public void testListAllExtrafile()
         throws Exception
     {
@@ -229,16 +235,16 @@ public class BasicAttachmentProviderTest extends TestCase
             Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
-        
+
             List res = m_provider.listAllChanged( new Date(0L) );
 
-            assertEquals( "list size", 2, res.size() );
+            Assert.assertEquals( "list size", 2, res.size() );
 
             Attachment a2 = (Attachment) res.get(0);  // Most recently changed
             Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-            assertEquals( "a1 name", att.getName(), a1.getName() );
-            assertEquals( "a2 name", att2.getName(), a2.getName() );
+            Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
+            Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
         }
         finally
         {
@@ -247,9 +253,10 @@ public class BasicAttachmentProviderTest extends TestCase
     }
 
     /**
-     *  Check that the system does not fail if there are extra files in the
+     *  Check that the system does not Assert.fail if there are extra files in the
      *  attachment directory.
      */
+    @Test
     public void testListAllExtrafileInAttachmentDir()
         throws Exception
     {
@@ -262,9 +269,9 @@ public class BasicAttachmentProviderTest extends TestCase
         Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
-        
+
         File extrafile = makeExtraFile( attDir, "ping.pong" );
-        
+
         try
         {
             Thread.sleep( 2000L ); // So that we get a bit of granularity.
@@ -272,16 +279,16 @@ public class BasicAttachmentProviderTest extends TestCase
             Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
-        
+
             List res = m_provider.listAllChanged( new Date(0L) );
 
-            assertEquals( "list size", 2, res.size() );
+            Assert.assertEquals( "list size", 2, res.size() );
 
             Attachment a2 = (Attachment) res.get(0);  // Most recently changed
             Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-            assertEquals( "a1 name", att.getName(), a1.getName() );
-            assertEquals( "a2 name", att2.getName(), a2.getName() );
+            Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
+            Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
         }
         finally
         {
@@ -290,9 +297,10 @@ public class BasicAttachmentProviderTest extends TestCase
     }
 
     /**
-     *  Check that the system does not fail if there are extra dirs in the
+     *  Check that the system does not Assert.fail if there are extra dirs in the
      *  attachment directory.
      */
+    @Test
     public void testListAllExtradirInAttachmentDir()
         throws Exception
     {
@@ -304,11 +312,11 @@ public class BasicAttachmentProviderTest extends TestCase
         Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
-        
-        // This is our extraneous directory. 
+
+        // This is our extraneous directory.
         File extrafile = new File( attDir, "ping.pong" );
         extrafile.mkdir();
-        
+
         try
         {
             Thread.sleep( 2000L ); // So that we get a bit of granularity.
@@ -316,16 +324,16 @@ public class BasicAttachmentProviderTest extends TestCase
             Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
-        
+
             List res = m_provider.listAllChanged( new Date(0L) );
 
-            assertEquals( "list size", 2, res.size() );
+            Assert.assertEquals( "list size", 2, res.size() );
 
             Attachment a2 = (Attachment) res.get(0);  // Most recently changed
             Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-            assertEquals( "a1 name", att.getName(), a1.getName() );
-            assertEquals( "a2 name", att2.getName(), a2.getName() );
+            Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
+            Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
         }
         finally
         {
@@ -333,11 +341,12 @@ public class BasicAttachmentProviderTest extends TestCase
         }
     }
 
+    @Test
     public void testListAllNoExtension()
         throws Exception
     {
         File in = makeAttachmentFile();
-        
+
         Attachment att = new Attachment( m_engine, NAME1, "test1." );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
@@ -347,22 +356,16 @@ public class BasicAttachmentProviderTest extends TestCase
         Attachment att2 = new Attachment( m_engine, NAME2, "test2." );
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
-        
+
         List res = m_provider.listAllChanged( new Date(0L) );
 
-        assertEquals( "list size", 2, res.size() );
+        Assert.assertEquals( "list size", 2, res.size() );
 
         Attachment a2 = (Attachment) res.get(0);  // Most recently changed
         Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-        assertEquals( "a1 name", att.getName(), a1.getName() );
-        assertEquals( "a2 name", att2.getName(), a2.getName() );        
+        Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
+        Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
     }
-
-    public static Test suite()
-    {
-        return new TestSuite( BasicAttachmentProviderTest.class );
-    }
-
 
 }

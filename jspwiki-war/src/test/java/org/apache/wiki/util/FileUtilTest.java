@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.util;
@@ -25,38 +25,30 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class FileUtilTest extends TestCase
+public class FileUtilTest
 {
-    public FileUtilTest( String s )
+
+    @BeforeClass
+    public static void setUp()
     {
-        super( s );
         Properties props = TestEngine.getTestProperties();
         PropertyConfigurator.configure(props);
-    }
-
-    public void setUp()
-        throws Exception
-    {
-    }
-
-    public void tearDown()
-    {
     }
 
     /**
      *  This test actually checks if your JDK is misbehaving.  On my own Debian
      *  machine, changing the system to use UTF-8 suddenly broke Java, and I put
      *  in this test to check for its brokenness.  If your tests suddenly stop
-     *  running, check if this one is failing too.  If it is, your platform is
+     *  running, check if this one is Assert.failing too.  If it is, your platform is
      *  broken.  If it's not, seek for the bug in your code.
      */
+    @Test
     public void testJDKString()
         throws Exception
     {
@@ -64,9 +56,10 @@ public class FileUtilTest extends TestCase
 
         String res = new String( src.getBytes("ISO-8859-1"), "ISO-8859-1" );
 
-        assertEquals( src, res );
+        Assert.assertEquals( src, res );
     }
 
+    @Test
     public void testReadContentsLatin1()
         throws Exception
     {
@@ -75,12 +68,13 @@ public class FileUtilTest extends TestCase
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "ISO-8859-1" );
 
-        assertEquals( src, res );
+        Assert.assertEquals( src, res );
     }
 
     /**
      *  Check that fallbacks to ISO-Latin1 still work.
      */
+    @Test
     public void testReadContentsLatin1_2()
         throws Exception
     {
@@ -89,7 +83,7 @@ public class FileUtilTest extends TestCase
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "UTF-8" );
 
-        assertEquals( src, res );
+        Assert.assertEquals( src, res );
     }
 
     /**
@@ -97,13 +91,13 @@ public class FileUtilTest extends TestCase
 
        FIXME: Works only on UNIX systems now.
     */
+    @Test
     public void testReadContentsFromPipe()
         throws Exception
     {
         String src = "abc\n123456\n\nfoobar.\n";
 
         // Make a very long string.
-
         for( int i = 0; i < 10; i++ )
         {
             src += src;
@@ -117,20 +111,19 @@ public class FileUtilTest extends TestCase
 
         try
         {
-            Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), 
-                                                         envp, 
-                                                         f.getParentFile() );
+            Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), envp, f.getParentFile() );
 
             String result = FileUtil.readContents( process.getInputStream(), "UTF-8" );
 
             f.delete();
 
-            assertEquals( src,
+            Assert.assertEquals( src,
                           result );
         }
         catch( IOException e ) {}
     }
 
+    @Test
     public void testReadContentsReader()
         throws IOException
     {
@@ -138,12 +131,7 @@ public class FileUtilTest extends TestCase
 
         String result = FileUtil.readContents( new StringReader( data ) );
 
-        assertEquals( data,
-                      result );
+        Assert.assertEquals( data, result );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( FileUtilTest.class );
-    }
 }

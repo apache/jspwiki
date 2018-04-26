@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,59 +14,52 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.plugin;
 
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.wiki.TestEngine;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class GroupsTest extends TestCase
+
+public class GroupsTest
 {
     Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
-    
-    public GroupsTest( String s )
-    {
-        super( s );
-    }
 
+    @Before
     public void setUp()
         throws Exception
     {
         testEngine = new TestEngine(props);
     }
 
+    @After
     public void tearDown() throws Exception
     {
-        super.tearDown();
-        
         testEngine.deletePage( "Test" );
     }
-    
+
+    @Test
     public void testTag() throws Exception
     {
         String src="[{Groups}]";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = testEngine.getHTML( "Test" );
-        
-        assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, " 
+
+        Assert.assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, "
                 + "<a href=\"/test/Group.jsp?group=Art\">Art</a>, "
                 + "<a href=\"/test/Group.jsp?group=Literature\">Literature</a>, "
                 + "<a href=\"/test/Group.jsp?group=TV\">TV</a>\n"
                 , res );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( GroupsTest.class );
-    }
 }

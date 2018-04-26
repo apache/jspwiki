@@ -38,15 +38,13 @@
 <div class="container${prefs.Layout=='fluid' ? '-fluid' : ''}  ${prefs.Orientation}">
 
   <wiki:Include page="Header.jsp" />
-  <wiki:Include page="Nav.jsp" />
 
-  <c:set var="sidebar"><wiki:Variable var='sidebar' default="${prefs.Sidebar}" /></c:set>
-  <c:set var="sidebar" value="${ (sidebar!='off') and (prefs.Orientation!='fav-hidden') ? 'on' : 'off' }" />
-  <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup'>
-    <c:set var="sidebar">off</c:set>
+  <c:set var="sidebar"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
+  <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
+    <c:set var="sidebar" value="" />
   </wiki:CheckRequestContext>
 
-  <div class="content <c:if test='${sidebar != "off"}'>active</c:if>" data-toggle="li#menu,.sidebar>.close">
+  <div class="content ${sidebar}" data-toggle="li#menu,.sidebar>.close" data-toggle-pref="Sidebar" >
     <div class="page">
       <wiki:PageExists>
         <wiki:Include page="AttachmentTab.jsp"/>

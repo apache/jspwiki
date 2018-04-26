@@ -29,8 +29,9 @@ Class: Wiki.Edit
 /*eslint-env browser*/
 /*global Wiki, Snipe, Request */
 
-!function( wiki ){
+!(function( wiki ){
 
+var PreviewSemaphore;  //global semaphore to avoid double running the XHR preview
 
 wiki.add("textarea#editorarea", function( main ){
 
@@ -39,6 +40,7 @@ wiki.add("textarea#editorarea", function( main ){
     function getFormElem( selector ){  return form.getElement( selector );  }
 
     onbeforeunload( window, main );
+
 
     if( snipe = getFormElem("textarea.snipeable") ){
 
@@ -58,10 +60,20 @@ wiki.add("textarea#editorarea", function( main ){
 
         if( preview = getFormElem(".ajaxpreview") ){
 
-            snipe.addEvent("change", livepreview.pass([
-                preview,
-                getFormElem("[data-cmd=livepreview]") || {}
-            ], snipe));
+            var snipeHasChanged = false;
+
+            setInterval( function(){
+
+                if( snipeHasChanged && !PreviewSemaphore ){
+
+                    snipeHasChanged = false;
+                    livepreview( snipe, preview, getFormElem("[data-cmd=livepreview]") );
+
+                }
+
+            }, 250);
+
+            snipe.addEvent("change", function(){ snipeHasChanged = true; });
 
         }
 
@@ -103,25 +115,30 @@ function onbeforeunload( window, main ){
 }
 
 
-   /*
+/*
 Function: livepreview
     Linked as onChange handler to Snipe.
     Make AJAX call to the wiki server to convert the contents of the textarea
     (wiki markup) to HTML.
 */
 
-function livepreview(preview, previewToggle){
+function livepreview(snipe, preview, previewToggle){
 
-    var content = this.get("value").trim(),
+    var content = snipe.get("value").trim(),
         isEmpty = content == "",
         name, link;
 
-    //console.log("**** change event", new Date().getSeconds() );
 
-    function updateWiki( hasBeenUpdated ){
+    function previewDone(){  PreviewSemaphore = false;  } //semaphore OFF!
 
-        preview.ifClass(!hasBeenUpdated, "loading");
-        if( hasBeenUpdated ){ wiki.update(); }
+    function renderPreview( completed ){
+
+        preview.ifClass(!completed, "loading");
+
+        if( completed ){
+            wiki.update();  //render the preview area
+            previewDone();
+        }
 
     }
 
@@ -157,6 +174,8 @@ function livepreview(preview, previewToggle){
 
         }
 
+        PreviewSemaphore = true;  //here we go:  semaphore ON!
+
         //return preview.set("html",preview.get("html")+" Lorem ipsum"); //test code
 
         //console.log("**** invoke Request.HTML ",previewcache, wiki.XHRPreview)
@@ -167,8 +186,9 @@ function livepreview(preview, previewToggle){
                 wikimarkup: content
             },
             update: preview,
-            onRequest: updateWiki,
-            onComplete: updateWiki.pass(true)
+            onRequest: renderPreview,
+            onComplete: renderPreview.pass(true),
+            onError: previewDone
 
         }).send();
 
@@ -234,4 +254,4 @@ function jspwikiSectionParser( text ){
 
 }
 
-}( Wiki );
+})( Wiki );

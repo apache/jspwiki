@@ -54,6 +54,7 @@
     <js>/scripts/behaviors/GraphBar.js</js>
     <js>/scripts/behaviors/Element.Reflect.js</js>
     <js>/scripts/behaviors/Flip.js</js>
+    <js>/scripts/behaviors/Magnify.js</js>
     <js>/scripts/behaviors/TableX.js</js>
     <js>/scripts/behaviors/TableX.Sort.js</js>
     <js>/scripts/behaviors/TableX.Filter.js</js>

@@ -14,18 +14,24 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.     
+    under the License.
  */
 package org.apache.wiki;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.apache.wiki.url.DefaultURLConstructor;
 
 import net.sf.ehcache.CacheManager;
-import org.apache.log4j.Logger;
 
-import org.apache.wiki.url.DefaultURLConstructor;
 
 /**
  * This provides a master servlet for dealing with short urls.  It mostly does
@@ -35,20 +41,19 @@ import org.apache.wiki.url.DefaultURLConstructor;
  * @since 2.2
  */
 public class WikiServlet extends HttpServlet {
+
     private static final long serialVersionUID = 3258410651167633973L;
     private WikiEngine m_engine;
-    static final Logger log = Logger.getLogger(WikiServlet.class.getName());
+    static final Logger log = Logger.getLogger( WikiServlet.class.getName() );
 
     /**
      * {@inheritDoc}
      */
-    public void init(ServletConfig config)
-            throws ServletException {
-        super.init(config);
-
-        m_engine = WikiEngine.getInstance(config);
-
-        log.info("WikiServlet initialized.");
+    @Override
+    public void init( ServletConfig config ) throws ServletException {
+        super.init( config );
+        m_engine = WikiEngine.getInstance( config );
+        log.info( "WikiServlet initialized." );
     }
 
     /**
@@ -60,8 +65,9 @@ public class WikiServlet extends HttpServlet {
      *
      * @see javax.servlet.GenericServlet#destroy()
      */
+    @Override
     public void destroy() {
-        log.info("WikiServlet shutdown.");
+        log.info( "WikiServlet shutdown." );
         CacheManager.getInstance().shutdown();
         m_engine.shutdown();
         super.destroy();
@@ -70,30 +76,28 @@ public class WikiServlet extends HttpServlet {
     /**
      * {@inheritDoc}
      */
-    public void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
-        doGet(req, res);
+    @Override
+    public void doPost( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException {
+        doGet( req, res );
     }
 
     /**
      * {@inheritDoc}
      */
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
-        String pageName = DefaultURLConstructor.parsePageFromURL(req,
-                m_engine.getContentEncoding());
+    @Override
+    public void doGet( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException {
+        String pageName = DefaultURLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );
 
-        log.info("Request for page: " + pageName);
-
-        if (pageName == null) {
+        log.info( "Request for page: " + pageName );
+        if( pageName == null ) {
             pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well
         }
 
-        String jspPage = m_engine.getURLConstructor().getForwardPage(req);
+        String jspPage = m_engine.getURLConstructor().getForwardPage( req );
+        RequestDispatcher dispatcher = req.getRequestDispatcher( "/" + jspPage + "?page=" +
+                                                                 m_engine.encodeName( pageName ) + "&" + req.getQueryString() );
 
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/" + jspPage + "?page="
-                + m_engine.encodeName(pageName) + "&" + req.getQueryString());
-
-        dispatcher.forward(req, res);
+        dispatcher.forward( req, res );
     }
+
 }

@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,40 +14,28 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.wiki.PropertyReaderTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
-public class AllTests extends TestCase {
-
-    public AllTests( String s ) {
-        super( s );
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite("Utility suite tests");
-
-        suite.addTest( ByteUtilsTest.suite() );
-        suite.addTest( ClassUtilTest.suite() );
-        suite.addTest( CommentedPropertiesTest.suite() );
-        suite.addTest( CryptoUtilTest.suite() );
-        suite.addTest( FileUtilTest.suite() );
-        suite.addTest( org.apache.wiki.util.comparators.AllTests.suite() );
-        suite.addTest( MailUtilTest.suite() );
-        suite.addTest( PriorityListTest.suite() );
-        suite.addTest( PropertyReaderTest.suite() );
-        suite.addTest( SerializerTest.suite() );
-        suite.addTest( TextUtilTest.suite() );
-        suite.addTest( TimedCounterListTest.suite() );
-        suite.addTest( XmlUtilTest.suite() );
-        
-        return suite;
-    }
+@RunWith( Suite.class )
+@Suite.SuiteClasses( { ByteUtilsTest.class,
+                       ClassUtilTest.class,
+                       CommentedPropertiesTest.class,
+                       CryptoUtilTest.class,
+                       FileUtilTest.class,
+                       MailUtilTest.class,
+                       PriorityListTest.class,
+                       PropertyReaderTest.class,
+                       SerializerTest.class,
+                       TextUtilTest.class,
+                       TimedCounterListTest.class,
+                       XmlUtilTest.class,
+                       org.apache.wiki.util.comparators.AllTests.class } )
+public class AllTests {
 }

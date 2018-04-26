@@ -45,7 +45,7 @@ Examples:
 
 */
 
-!function(){
+!(function(){
 
 var c0l0r = 'i'.slick(),
     Color = this.Color = new Type('Color', function(color){
@@ -98,4 +98,4 @@ Color.implement({
 
 });
 
-}();
+})();

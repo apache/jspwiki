@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,39 +14,26 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.plugin;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
-
-public class AllTests extends TestCase
-{
-    public AllTests( String s )
-    {
-        super( s );
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite("JSPWiki plugins");
-
-        suite.addTest( CounterPluginTest.suite() );
-        suite.addTest( GroupsTest.suite() );
-        suite.addTest( IfPluginTest.suite() );
-        suite.addTest( InsertPageTest.suite() );
-        suite.addTest( DefaultPluginManagerTest.suite() );
-        suite.addTest( ReferringPagesPluginTest.suite() );
-        suite.addTest( TableOfContentsTest.suite() );
-        suite.addTest( UndefinedPagesPluginTest.suite() );
-        suite.addTest( RecentChangesPluginTest.suite() );
-        suite.addTest( PageViewPluginTest.suite() );
-
-        return suite;
-    }
+@RunWith( Suite.class )
+@Suite.SuiteClasses( { CounterPluginTest.class,
+                       GroupsTest.class,
+                       IfPluginTest.class,
+                       InsertPageTest.class,
+                       DefaultPluginManagerTest.class,
+                       ReferringPagesPluginTest.class,
+                       TableOfContentsTest.class,
+                       UndefinedPagesPluginTest.class,
+                       RecentChangesPluginTest.class,
+                       PageViewPluginTest.class,
+                       ReferringUndefinedPagesPluginTest.class } )
+public class AllTests {
 }

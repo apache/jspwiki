@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.util;
 
@@ -22,18 +22,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class SerializerTest extends TestCase
-{
 
-    public static Test suite()
-    {
-        return new TestSuite( SerializerTest.class );
-    }
+public class SerializerTest {
 
+    @Test
     public void testSerializeMap() throws Exception
     {
         Map<String, Serializable> map = new HashMap<String, Serializable>();
@@ -42,10 +37,11 @@ public class SerializerTest extends TestCase
         String serializedForm = Serializer.serializeToBase64( map );
 
         Map<String, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
-        assertEquals( 2, newMap.size() );
-        assertTrue( newMap.containsKey( "attribute1" ) );
-        assertTrue( newMap.containsKey( "attribute2" ) );
-        assertEquals( "some random value", newMap.get( "attribute1" ) );
-        assertEquals( "another value", newMap.get( "attribute2" ) );
+        Assert.assertEquals( 2, newMap.size() );
+        Assert.assertTrue( newMap.containsKey( "attribute1" ) );
+        Assert.assertTrue( newMap.containsKey( "attribute2" ) );
+        Assert.assertEquals( "some random value", newMap.get( "attribute1" ) );
+        Assert.assertEquals( "another value", newMap.get( "attribute2" ) );
     }
+
 }

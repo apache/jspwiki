@@ -98,7 +98,7 @@ public class InsertDiffTag extends WikiTagBase {
         Integer verold = (Integer) pageContext.getAttribute( ATTR_OLDVERSION,
                                                              PageContext.REQUEST_SCOPE );
 
-        log.info("Request diff between version "+verold+" and "+vernew);
+        log.debug("Request diff between version "+verold+" and "+vernew);
 
         if( ctx.getPage() != null )
         {

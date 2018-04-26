@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,131 +14,143 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 
-public class ReleaseTest extends TestCase
+public class ReleaseTest
 {
+    @Test
     public void testNewer1()
     {
-        assertTrue( Release.isNewerOrEqual("1.0.100") );
+        Assert.assertTrue( Release.isNewerOrEqual("1.0.100") );
     }
 
+    @Test
     public void testNewer2()
     {
-        assertTrue( Release.isNewerOrEqual("2.0.0-alpha") );
+        Assert.assertTrue( Release.isNewerOrEqual("2.0.0-alpha") );
     }
-    
+
+    @Test
     public void testNewer3()
     {
-        assertFalse( Release.isNewerOrEqual("10.0.0") );
+        Assert.assertFalse( Release.isNewerOrEqual("10.0.0") );
     }
-    
+
+    @Test
     public void testNewer4()
     {
-        assertTrue( Release.isNewerOrEqual(Release.VERSTR) );
+        Assert.assertTrue( Release.isNewerOrEqual(Release.VERSTR) );
     }
-    
+
+    @Test
     public void testNewer5()
     {
         String rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION+1)+"-cvs";
-        
-        assertFalse( Release.isNewerOrEqual(rel) );
+
+        Assert.assertFalse( Release.isNewerOrEqual(rel) );
     }
 
+    @Test
     public void testNewer6()
     {
         String rel = null;
-        
+
         if( Release.MINORREVISION != 0 )
             rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
         else
-            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";            
-        
-        assertTrue( Release.isNewerOrEqual(rel) );
+            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";
+
+        Assert.assertTrue( Release.isNewerOrEqual(rel) );
     }
 
+    @Test
     public void testNewer7()
     {
         String rel = Release.VERSION+"."+Release.REVISION;
-        
-        assertTrue( Release.isNewerOrEqual(rel) );
+
+        Assert.assertTrue( Release.isNewerOrEqual(rel) );
     }
 
+    @Test
     public void testNewer8()
     {
         String rel = Release.VERSION+"";
-        
-        assertTrue( Release.isNewerOrEqual(rel) );
+
+        Assert.assertTrue( Release.isNewerOrEqual(rel) );
     }
 
+    @Test
     public void testOlder1()
     {
-        assertFalse( Release.isOlderOrEqual("1.0.100") );
+        Assert.assertFalse( Release.isOlderOrEqual("1.0.100") );
     }
 
+    @Test
     public void testOlder2()
     {
-        assertFalse( Release.isOlderOrEqual("2.0.0-alpha") );
+        Assert.assertFalse( Release.isOlderOrEqual("2.0.0-alpha") );
     }
-    
+
+    @Test
     public void testOlder3()
     {
-        assertTrue( Release.isOlderOrEqual("10.0.0") );
+        Assert.assertTrue( Release.isOlderOrEqual("10.0.0") );
     }
-    
+
+    @Test
     public void testOlder4()
     {
-        assertTrue( Release.isOlderOrEqual(Release.VERSTR) );
+        Assert.assertTrue( Release.isOlderOrEqual(Release.VERSTR) );
     }
-    
+
+    @Test
     public void testOlder5()
     {
         String rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION+1)+"-cvs";
-        
-        assertTrue( Release.isOlderOrEqual(rel) );
+
+        Assert.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
+    @Test
     public void testOlder6()
     {
         String rel;
-        
+
         if( Release.MINORREVISION != 0 )
             rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
         else
-            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";   
-        
-        assertFalse( Release.isOlderOrEqual(rel) );
+            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";
+
+        Assert.assertFalse( Release.isOlderOrEqual(rel) );
     }
 
+    @Test
     public void testOlder7()
     {
         String rel = Release.VERSION+"."+Release.REVISION;
-        
-        assertTrue( Release.isOlderOrEqual(rel) );
+
+        Assert.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
+    @Test
     public void testOlder8()
     {
         String rel = Release.VERSION+"";
-        
-        assertTrue( Release.isOlderOrEqual(rel) );
+
+        Assert.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
+    @Test
     public void testOlder9()
     {
         String rel = "";
-        
-        assertTrue( Release.isOlderOrEqual(rel) );
+
+        Assert.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( ReleaseTest.class );
-    }
 }

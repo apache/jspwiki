@@ -108,7 +108,7 @@ if ( !installer.adminExists() )
 
 <form action="Install.jsp" method="post">
 
-  <!-- Page and log directories -->
+  <!-- Page directory -->
   <h3><fmt:message key="install.jsp.basics.title" /></h3>
 
     <label class="control-label" ><fmt:message key="install.jsp.basics.appname.label" />
@@ -155,13 +155,6 @@ if ( !installer.adminExists() )
     %>
 
   <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
-
-    <label class="control-label" ><fmt:message key="install.jsp.adv.settings.logfile.label" />
-    <input class="form-control" type="text" name="<%=Installer.LOG_FILE%>" value="<%=installer.getProperty( Installer.LOG_FILE )%>" size="40"/>
-    </label>
-    <div class="help-block">
-      <fmt:message key="install.jsp.adv.settings.logfile.desc" />
-    </div> <br/>
 
     <label class="control-label" ><fmt:message key="install.jsp.adv.settings.workdir.label" />
     <input class="form-control" type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>

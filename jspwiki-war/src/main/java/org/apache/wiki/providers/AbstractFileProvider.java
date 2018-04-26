@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.providers;
 
@@ -71,11 +71,11 @@ public abstract class AbstractFileProvider
 {
     private static final Logger   log = Logger.getLogger(AbstractFileProvider.class);
     private String m_pageDirectory = "/tmp/";
-    
+
     protected String m_encoding;
-    
+
     protected WikiEngine m_engine;
-    
+
     public static final String PROP_CUSTOMPROP_MAXLIMIT = "custom.pageproperty.max.allowed";
     public static final String PROP_CUSTOMPROP_MAXKEYLENGTH = "custom.pageproperty.key.length";
     public static final String PROP_CUSTOMPROP_MAXVALUELENGTH = "custom.pageproperty.value.length";
@@ -115,7 +115,7 @@ public abstract class AbstractFileProvider
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
 
     private boolean m_windowsHackNeeded = false;
-    
+
     /**
      *  {@inheritDoc}
      *  @throws FileNotFoundException If the specified page directory does not exist.
@@ -156,18 +156,18 @@ public abstract class AbstractFileProvider
         m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, DEFAULT_ENCODING );
 
         String os = System.getProperty( "os.name" ).toLowerCase();
-        
+
         if( os.startsWith("windows") || os.equals("nt") )
         {
             m_windowsHackNeeded = true;
         }
-        
+
     	if (properties != null) {
             MAX_PROPLIMIT = TextUtil.getIntegerProperty(properties,PROP_CUSTOMPROP_MAXLIMIT,DEFAULT_MAX_PROPLIMIT);
             MAX_PROPKEYLENGTH = TextUtil.getIntegerProperty(properties,PROP_CUSTOMPROP_MAXKEYLENGTH,DEFAULT_MAX_PROPKEYLENGTH);
             MAX_PROPVALUELENGTH = TextUtil.getIntegerProperty(properties,PROP_CUSTOMPROP_MAXVALUELENGTH,DEFAULT_MAX_PROPVALUELENGTH);
     	}
-        
+
         log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
     }
 
@@ -182,19 +182,19 @@ public abstract class AbstractFileProvider
         "con", "prn", "nul", "aux", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
         "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9"
     };
-    
+
     /**
      *  This makes sure that the queried page name
      *  is still readable by the file system.  For example, all XML entities
      *  and slashes are encoded with the percent notation.
-     *  
+     *
      *  @param pagename The name to mangle
      *  @return The mangled name.
      */
     protected String mangleName( String pagename )
     {
         pagename = TextUtil.urlEncode( pagename, m_encoding );
-        
+
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
 
         //
@@ -205,7 +205,7 @@ public abstract class AbstractFileProvider
         {
             pagename = "%2E" + pagename.substring( 1 );
         }
-        
+
         if( m_windowsHackNeeded )
         {
             String pn = pagename.toLowerCase();
@@ -217,13 +217,13 @@ public abstract class AbstractFileProvider
                 }
             }
         }
-        
+
         return pagename;
     }
 
     /**
      *  This makes the reverse of mangleName.
-     *  
+     *
      *  @param filename The filename to unmangle
      *  @return The unmangled name.
      */
@@ -236,18 +236,18 @@ public abstract class AbstractFileProvider
             {
                 filename = filename.substring(3);
             }
-            
+
             return TextUtil.urlDecode( filename, m_encoding );
         }
-        catch( UnsupportedEncodingException e ) 
+        catch( UnsupportedEncodingException e )
         {
             throw new InternalWikiException("Faulty encoding; should never happen", e);
         }
     }
-    
+
     /**
      *  Finds a Wiki page from the page repository.
-     *  
+     *
      *  @param page The name of the page.
      *  @return A File to the page.  May be null.
      */
@@ -277,7 +277,7 @@ public abstract class AbstractFileProvider
     /**
      *  This implementation just returns the current version, as filesystem
      *  does not provide versioning information for now.
-     *  
+     *
      *  @param page {@inheritDoc}
      *  @param version {@inheritDoc}
      *  @throws {@inheritDoc}
@@ -303,7 +303,7 @@ public abstract class AbstractFileProvider
             if( pagedata.canRead() )
             {
                 try
-                {          
+                {
                     in = new FileInputStream( pagedata );
                     result = FileUtil.readContents( in, m_encoding );
                 }
@@ -333,7 +333,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
-    public void putPageText( WikiPage page, String text )        
+    public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
         File file = findPage( page.getName() );
@@ -390,16 +390,16 @@ public abstract class AbstractFileProvider
                 log.error("Page "+wikiname+" was found in directory listing, but could not be located individually.");
                 continue;
             }
-            
+
             set.add( page );
         }
 
-        return set;        
+        return set;
     }
 
     /**
      *  Does not work.
-     *  
+     *
      *  @param date {@inheritDoc}
      *  @return {@inheritDoc}
      */
@@ -423,7 +423,7 @@ public abstract class AbstractFileProvider
     /**
      * Iterates through all WikiPages, matches them against the given query,
      * and returns a Collection of SearchResult objects.
-     * 
+     *
      * @param query {@inheritDoc}
      * @return {@inheritDoc}
      */
@@ -473,7 +473,7 @@ public abstract class AbstractFileProvider
     /**
      *  Always returns the latest version, since FileSystemProvider
      *  does not support versioning.
-     *  
+     *
      *  @param page {@inheritDoc}
      *  @param version {@inheritDoc}
      *  @return {@inheritDoc}
@@ -497,7 +497,7 @@ public abstract class AbstractFileProvider
 
     /**
      *  The FileSystemProvider provides only one version.
-     *  
+     *
      *  @param page {@inheritDoc}
      *  @throws {@inheritDoc}
      *  @return {@inheritDoc}
@@ -547,7 +547,7 @@ public abstract class AbstractFileProvider
 
     /**
      * Set the custom properties provided into the given page.
-     * 
+     *
      * @since 2.10.2
      */
     protected void setCustomProperties(WikiPage page, Properties properties) {
@@ -561,9 +561,9 @@ public abstract class AbstractFileProvider
     }
 
     /**
-     * Get custom properties using {@link this.addCustomPageProperties}, validate them using {@link this.validateCustomPageProperties}
+     * Get custom properties using {@link #addCustomProperties(WikiPage, Properties)}, validate them using {@link #validateCustomPageProperties(Properties)}
      * and add them to default properties provided
-     * 
+     *
      * @since 2.10.2
      */
     protected void getCustomProperties(WikiPage page, Properties defaultProperties) throws IOException {
@@ -571,16 +571,16 @@ public abstract class AbstractFileProvider
     	validateCustomPageProperties(customPageProperties);
     	defaultProperties.putAll(customPageProperties);
     }
-    
+
     /**
      * By default all page attributes that start with "@" are returned as custom properties.
      * This can be overwritten by custom FileSystemProviders to save additional properties.
-     * CustomPageProperties are validated by {@link this.validateCustomPageProperties}
-     * 
+     * CustomPageProperties are validated by {@link #validateCustomPageProperties(Properties)}
+     *
      * @since 2.10.2
      * @param page the current page
      * @param props the default properties of this page
-     * @return default implementation returns empty Properties. 
+     * @return default implementation returns empty Properties.
      */
     protected Properties addCustomProperties(WikiPage page, Properties props) {
     	Properties customProperties = new Properties();
@@ -592,11 +592,11 @@ public abstract class AbstractFileProvider
     				customProperties.put(key,value.toString());
     			}
     		}
-    		
+
     	}
     	return customProperties;
     }
-    
+
     /**
      * Default validation, validates that key and value is ASCII <code>StringUtils.isAsciiPrintable()</code> and within lengths set up in jspwiki-custom.properties.
      * This can be overwritten by custom FileSystemProviders to validate additional properties

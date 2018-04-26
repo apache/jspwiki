@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.parser;
@@ -169,7 +169,7 @@ public class LinkParser
     private static final String TARGET = "target";
     private static final String DELIMS = " \t\n\r\f=";
 
-    private static final List m_EMPTY = new ArrayList();
+    private static final List< Attribute > m_EMPTY = new ArrayList< Attribute >();
 
     // ............
 
@@ -312,10 +312,10 @@ public class LinkParser
     }
 
 
-    /** 
+    /**
      *  Returns true if the String <tt>s</tt> is completely
      *  composed of whitespace.
-     * 
+     *
      *  @param s The string to check
      *  @return True, if "s" is all XML whitespace.
      */
@@ -329,10 +329,10 @@ public class LinkParser
     }
 
 
-    /** 
+    /**
      *  Returns true if char <tt>c</tt> is a member of
      *  <tt>S</tt> (space) [XML 1.1 production 3].
-     *  
+     *
      *  @param c Character to check.
      *  @return True, if the character is an XML space.
      */
@@ -375,7 +375,7 @@ public class LinkParser
 
         /**
          *  Create a new link with a given text and hyperlink (reference).
-         *  
+         *
          *  @param text The link text.
          *  @param ref  The hypertext reference.
          *  @throws ParseException If the link text or reference are illegal.
@@ -388,7 +388,7 @@ public class LinkParser
 
         /**
          *  Sets the link text.
-         *  
+         *
          *  @param text The link text.
          *  @throws ParseException If the text is illegal (e.g. null).
          */
@@ -403,7 +403,7 @@ public class LinkParser
 
         /**
          *  Returns the link text.
-         *  
+         *
          *  @return Link text.
          */
         public String getText()
@@ -414,7 +414,7 @@ public class LinkParser
         /**
          *  Sets the hypertext reference.  Typically, this is an URI or an interwiki link,
          *  or a wikilink.
-         *  
+         *
          *  @param ref The reference.
          *  @throws ParseException If the reference is illegal.
          */
@@ -429,7 +429,7 @@ public class LinkParser
 
         /**
          *  Returns true, if there is a reference.
-         *  
+         *
          *  @return True, if there's a reference; false otherwise.
          */
         public boolean hasReference()
@@ -437,9 +437,9 @@ public class LinkParser
             return m_ref != null;
         }
 
-        /** 
-         *  Returns the link reference, or the link text if null. 
-         *  
+        /**
+         *  Returns the link reference, or the link text if null.
+         *
          *  @return A link reference.
          */
         public String getReference()
@@ -451,25 +451,24 @@ public class LinkParser
 
         /**
          *  Returns true, if this Link represents an InterWiki link (of the form wiki:page).
-         * 
+         *
          *  @return True, if this Link represents an InterWiki link.
          */
         public boolean isInterwikiLink()
         {
+            LinkParsingOperations lpo = new LinkParsingOperations( null );
             if( !hasReference() ) m_ref = m_text;
-
-            m_interwikiPoint = m_ref.indexOf(':');
-
-            return m_interwikiPoint != -1;
+            m_interwikiPoint = lpo.interWikiLinkAt( m_ref );
+            return lpo.isInterWikiLink( m_ref );
         }
 
         /**
-         *  Returns the name of the wiki if this is an interwiki link. 
+         *  Returns the name of the wiki if this is an interwiki link.
          *  <pre>
          *    Link link = new Link("Foo","Wikipedia:Foobar");
          *    assert( link.getExternalWikiPage(), "Wikipedia" );
-         *  </pre> 
-         *  
+         *  </pre>
+         *
          *  @return Name of the wiki, or null, if this is not an interwiki link.
          */
         public String getExternalWiki()
@@ -478,17 +477,17 @@ public class LinkParser
             {
                 return m_ref.substring( 0, m_interwikiPoint );
             }
-            
+
             return null;
         }
 
-        /** 
+        /**
          *  Returns the wikiname part of an interwiki link. Used only with interwiki links.
          *  <pre>
          *    Link link = new Link("Foo","Wikipedia:Foobar");
          *    assert( link.getExternalWikiPage(), "Foobar" );
-         *  </pre> 
-         *  
+         *  </pre>
+         *
          *  @return Wikiname part, or null, if this is not an interwiki link.
          */
         public String getExternalWikiPage()
@@ -497,13 +496,13 @@ public class LinkParser
             {
                 return m_ref.substring( m_interwikiPoint+1 );
             }
-            
+
             return null;
         }
 
         /**
          *  Returns the number of attributes on this link.
-         *  
+         *
          *  @return The number of attributes.
          */
         public int attributeCount()
@@ -515,7 +514,7 @@ public class LinkParser
 
         /**
          *  Adds another attribute to the link.
-         *  
+         *
          *  @param attr A JDOM Attribute.
          */
         public void addAttribute( Attribute attr )
@@ -527,9 +526,9 @@ public class LinkParser
             m_attribs.add(attr);
         }
 
-        /** 
+        /**
          *  Returns an Iterator over the list of JDOM Attributes.
-         *  
+         *
          *  @return Iterator over the attributes.
          */
         public Iterator getAttributes()
@@ -539,8 +538,8 @@ public class LinkParser
                     : m_EMPTY.iterator() ;
         }
 
-        /** 
-         *  Returns a wikitext string representation of this Link. 
+        /**
+         *  Returns a wikitext string representation of this Link.
          *  @return WikiText.
          */
         public String toString()
@@ -561,10 +560,10 @@ public class LinkParser
             {
                 sb.append( ' ' );
                 sb.append( '|' );
-                Iterator it = getAttributes();
+                Iterator< Attribute > it = getAttributes();
                 while ( it.hasNext() )
                 {
-                    Attribute a = (Attribute)it.next();
+                    Attribute a = it.next();
                     sb.append( ' ' );
                     sb.append( a.getName() );
                     sb.append( '=' );

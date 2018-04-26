@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.providers;
 
@@ -39,7 +39,7 @@ import org.apache.wiki.util.TextUtil;
 /**
  *  Provides a caching attachment provider.  This class rests on top of a
  *  real provider class and provides a cache to speed things up.  Only the
- *  Attachment objects are cached; the actual attachment contents are 
+ *  Attachment objects are cached; the actual attachment contents are
  *  fetched always from the provider.
  *
  *  @since 2.1.64.
@@ -82,7 +82,7 @@ public class CachingAttachmentProvider
 
     /** Property that supplies the directory used to store attachments. */
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
-    
+
     private boolean m_gotall = false;
 
     /**
@@ -116,9 +116,9 @@ public class CachingAttachmentProvider
         //  Find and initialize real provider.
         //
         String classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
-        
+
         try
-        {            
+        {
             Class<?> providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
@@ -186,12 +186,12 @@ public class CachingAttachmentProvider
     private <T> Collection<T> cloneCollection( Collection<T> c )
     {
         ArrayList<T> list = new ArrayList<T>();
-        
+
         list.addAll( c );
-        
+
         return list;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -240,14 +240,9 @@ public class CachingAttachmentProvider
      *
      *  @return null, if no such attachment was in this collection.
      */
-    private Attachment findAttachmentFromCollection( Collection c, String name )
-    {
-        for( Iterator i = c.iterator(); i.hasNext(); )
-        {
-            Attachment att = (Attachment) i.next();
-
-            if( name.equals( att.getFileName() ) )
-            {
+    private Attachment findAttachmentFromCollection( Collection< Attachment > c, String name ) {
+        for( Attachment att : c ) {
+            if( name.equals( att.getFileName() ) ) {
                 return att;
             }
         }
@@ -343,14 +338,14 @@ public class CachingAttachmentProvider
 
     /**
      *  Returns the WikiAttachmentProvider that this caching provider delegates to.
-     * 
+     *
      *  @return The real provider underneath this one.
      */
     public WikiAttachmentProvider getRealProvider()
     {
         return m_provider;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -359,14 +354,14 @@ public class CachingAttachmentProvider
         m_provider.moveAttachmentsForPage(oldParent, newParent);
         m_cache.remove(newParent);
         m_cache.remove(oldParent);
-        
+
         //
         //  This is a kludge to make sure that the pages are removed
         //  from the other cache as well.
         //
         String checkName = oldParent + "/";
-        
-        Collection<String> names = m_cache.getKeysWithExpiryCheck();
+
+        Collection< String > names = m_cache.getKeysWithExpiryCheck();
         for( String name : names )
         {
             if( name.startsWith( checkName ) )

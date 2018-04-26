@@ -26,15 +26,34 @@ DOM structure:
 */
 .recentchanges {
 
+	.wikitable;
+	> thead > tr > th,
+	> tbody > tr > th,
+	> tfoot > tr > th,
+	> thead > tr > td,
+	> tbody > tr > td,
+	> tfoot > tr > td {
+    	border-top: 0;
+	}
+
     table-layout:fixed;  // this renders faster
 
+	.date {
+		border-bottom:3px double @wiki-sidebar-bg;
+		padding-bottom:0;
+
+		b {
+			font-weight:normal;
+			font-family:@font-family-sans-serif;
+			letter-spacing:1px;
+		}
+	}
+
+
     td {
-        &:first-child:not(.date) {
-            padding-left:2em;
-        }
-        &.date {
-            border-bottom:2px solid @wiki-recentchanges-date-bg;
-            padding-top:1em;
+        &:first-child {
+            width:auto;
+            padding-left:1em;
         }
 
     }

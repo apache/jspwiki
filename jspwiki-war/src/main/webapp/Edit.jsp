@@ -53,7 +53,11 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( wikiContext.getCommand().getTarget() == null ) {
+        response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
+        return;
+    }
     String pagereq = wikiContext.getName();
 
     WikiSession wikiSession = wikiContext.getWikiSession();
@@ -65,7 +69,7 @@
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
     String author  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
-    String changenote = TextUtil.replaceEntities( findParam( pageContext, "changenote" ) );
+    String changenote = findParam( pageContext, "changenote" );
     String text    = EditorManager.getEditedText( pageContext );
     String link    = TextUtil.replaceEntities( findParam( pageContext, "link") );
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );

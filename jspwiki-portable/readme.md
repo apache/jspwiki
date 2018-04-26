@@ -21,7 +21,7 @@
 
 This project builds a ready-to-use JSP Wiki distribution
 
-* Based on Tomcat 7.0.52 as servlet engine
+* Based on Tomcat 7.0.84 as servlet engine
 * Using HTTP port 9627 to avoid conflicts with existing servers running on port 80 and/or 8080
 
 # 2. Creating The Native Launchers
@@ -60,6 +60,8 @@ BUILD SUCCESSFUL
 ```
 The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
 
+note: on windows platforms, use `ant woas:download-launch4j-for-win woas:create-windows-app` to create the launcher.
+
 ## 2.2 Creating The Mac OS X Launcher
 
 Run the following commands
@@ -81,7 +83,9 @@ woas:mac-app-oracle-jdk:
 
 BUILD SUCCESSFUL
 ```
-The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
+The generated "woas.app" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.app* after manual testing.
+
+note: on windows platforms, use `ant woas:download-appbundler-for-mac woas:download-launch4j-for-mac woas:create-mac-app`
 
 # 3. Current State
 

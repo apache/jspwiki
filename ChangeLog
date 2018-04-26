@@ -1,3 +1,242 @@
+2018-04-22  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-08  Adding support for mobile devices to the Haddock Template
+            See JSPWIKI-835
+            Part-1 -- many style adjustment to fit smaller screens
+            - Sidebar now slides over the main page on mobile devices
+            - Header (pagename, and menu bar) are better fit for small screens
+            - Width of several menu's and dropdowns is restricted for small screens
+            - Editor toolbar resized for small screens
+
+            Other:
+            - Editor toolbar now remains on screen, even when scrolling down
+            - Small tweaks of the RecentChanges output
+            - JSPWIKI-1068 : fixing positioning of the TitleBox
+
+
+2018-04-19  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-07 Adding a favicon to the haddock template
+
+2018-04-11  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-06  JSPWIKI-1069 i18n errors in german translation
+
+2018-03-31  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-05  JSPWIKI-1068 TitleBox rendering on Haddock
+
+2018-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.4-git-04
+
+       * JSPWIKI-1039/JSPWIKI-1067: ACLs are not taken into account when cache
+         is disabled / View-only ACLs are not enforced
+
+2018-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.4-git-03
+
+       * Main page can be revealed when invoking some JSPs without parameters
+         (reported by Motohiko Matsuda, thanks!)
+
+2018-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.4-git-02
+
+       * Further fix on JSPWIKI-1064 - Link to non-existing page doesn't change if
+         linked page is created, not all page caches were properly flushed.
+
+2018-03-04  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * Fixed all javadoc errors when building using java 8 - no version bump
+
+2018-02-25  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-01  Fixing Admin JSP Bugs
+
+       * Quick fix to admin and user management pages:  adding proper tabs to
+         the ADMIN page, fixing javascript bugs in user management page
+         (reported by Harry)
+
+2018-02-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-48
+
+       * JSPWIKI-835 - better mobile experience: move sidebar to bottom on
+         extra-small devices (< 768px, only on haddock template)
+
+       * Some internal refactors to org.apache.wiki.WatchDog
+
+       * Flexmark updated to 0.28.38.
+
+2018-01-27  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-47
+
+       * Another fix on JSPWIKI-1064 - Link to non-existing page doesn't change if
+         linked page is created, as the page render cache must also take into account
+         if the plugins should be rendered or not.
+
+       * JSPWiki portable: Update bundled Apache Tomcat to latest version on 7.x branch
+         and launch4j to 3.11.
+
+       * JSPWiki portable: As appbundler is not longer accesible through java.net, use
+         fork at https://github.com/teras/appbundler instead.
+
+       * Updated maven plugins' versions to latest + use latest ASF parent pom.
+
+2018-01-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * Updated <scm/> section from main pom.xml so it points to github repo
+
+       * Flexmark updated to 0.28.34 (no version bump).
+
+2017-12-30  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * Upgraded all test from JUnit 3 to JUnit 4 (no version bump).
+
+2017-12-27  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-46
+
+       * JSPWIKI-802 - Markdown support
+         * urls are not set on attribute provider derived classes, as this has some
+           unwanted side effects. Introduced JSPWikiLink, a wrapper around Flexmark's
+           links which retain the original wiki link.
+         * updated Flexmark to 0.28.24.
+
+2017-12-16  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-45
+
+       * Fixed JSPWIKI-1064 - Link to non-existing page doesn't change if linked page
+         is created
+
+       * Improvement on JSPWIKI-843 - exclude tests from test-jar
+
+2017-12-08  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-44
+
+       * JSPWIKI-802 - initial markdown support see
+         https://jspwiki-wiki.apache.org/Wiki.jsp?page=Markdown%20Support
+         for details
+
+2017-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-43
+
+       * Fixed JSPWIKI-843 - generate test-jar for jspwiki-war (wasn't being generated)
+
+       * Extract WikiLink parsing operations from JSPWikiMarkupParser, LinkParser,
+         VariableManager to their own class, LinkParsingOperations
+
+       * Move (private) JSPWikiMarkupParser#getLocalBooleanProperty to
+        (public) WikiContext#getBooleanWikiProperty
+
+2017-11-16  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-42
+
+       * small refactor to move some private constants to public at MarkupParser and
+         WikiRenderer, so they can be reused throughout the code and custom extensions.
+
+2017-08-22  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-41
+
+       * WysiwygEditingRenderer isn't hardcoded in JSPs anymore, and can be substituted
+         through jspwiki.renderingManager.renderer.wysiwyg property on jspwiki.properties.
+         This allows to develop custom renderers which do not expect the same information
+         as the existing ones.
+
+       * Fixed DefaultFilterManager#modules not returning Collection< WikiModuleInfo >,
+         as it was supposed to. This method wasn't used anywhere, until now, where it
+         is used through FilterBean, a new JSPWiki AdminBean exposing existing filters
+         information.
+
+       * FilterBean runs parallel to PluginBean, which allowed some more minor internal
+         refactorings and code polishing.
+
+       * Moved some constants from JSPWikiMarkupParser to MarkupParser.
+
+2017-07-16  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.3-git-40
+
+       * Some small changes around JSPWikiMarkupParser, needed to develop
+         custom markup parsers, which do not rely on the former class or
+         WikiDocument.
+
+       * Some other minor internal refactorings and code polishing
+
+2017-05-14  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-39
+
+       * JSPWIKI-1059 - ConcurrentModificationException in SessionMonitor
+
+2017-04-22  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-38  Haddock Template updates
+
+       * Fixing some minor issues with the Image plugin ALIGN parameter
+
+       * %%magnify: add a magnifying glass to to reveal details of a cropped images.
+         Hover the mouse above the image to see the effect.
+
+       * Redesigned Header
+         The header (including the menu bar) now shifts up when you scroll down,
+         and reappears when scrolling back-up.  So you can quickly have access
+         to all the menu's and the quick search function.  Clicking the pagename
+         in the header get's you immediately back to the top of the page.
+         The menu bar has now become part of the (coloured) header section.
+
+       * Editor:
+         Improved the speed of the editor quick preview when editing large pages.
+         Updates to various editor auto-suggest dialogs.
+
+
+2017-03-18  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-37  Haddock Template
+
+       * JSPWIKI-1055:  Haddock Special Block Marker
+         Added a few icons to improve rendering of contextual blocks in B/W.
+
+2017-03-14  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-36  Haddock Template
+
+       * Few fixes on the %%column style
+
+2017-03-12  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.3-git-35  Haddock Template updates
+
+       * ImagePlugin:  minor update to apply the css class and styles
+         parameters to the image container, not to the whole table;
+         escape HTML entities in captions.
+
+       * several CSS stylesheet additions
+         - image styles : effects, captions, frames, animation
+         - background styles : color, background images
+
+       * %%columns: bugfix, few more column styles
+
+2017-03-05  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-34
+
+       * JSPWIKI-1044 - URL in password recovery mail is relative while it should be absolute
+
+2017-03-03  Harry Metske (metskem@apache.org)
+
+       * 2.10.3-git-33.
+
+       * Fixed JSPWIKI-1051 - Startup fails due to jspwiki.log (Permission denied)
+
 2017-02-04  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.3-git-32

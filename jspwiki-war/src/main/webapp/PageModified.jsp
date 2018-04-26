@@ -34,7 +34,11 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.CONFLICT );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( wikiContext.getCommand().getTarget() == null ) {
+        response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
+        return;
+    }
     String pagereq = wikiContext.getName();
 
     String usertext = (String)session.getAttribute( EditorManager.REQ_EDITEDTEXT );

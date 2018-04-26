@@ -129,9 +129,7 @@ public class PluginContent extends Text {
      * @return The plugin rendered according to the options set in the WikiContext.
      */
     public String getText() {
-        String result;
-
-        WikiDocument doc = (WikiDocument) getDocument();
+        WikiDocument doc = ( WikiDocument )getDocument();
 
         if (doc == null) {
             //
@@ -152,7 +150,18 @@ public class PluginContent extends Text {
             return getPluginName();
         }
 
-        Boolean wysiwygVariable = (Boolean) context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
+        return invoke( context );
+    }
+
+    /**
+     * Performs plugin invocation and return its contents.
+     * 
+     * @param context WikiContext in which the plugin is executed. Must NOT be null.
+     * @return plugin contents.
+     */
+	public String invoke( WikiContext context ) {
+		String result;
+		Boolean wysiwygVariable = (Boolean) context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
         boolean wysiwygEditorMode = false;
         if (wysiwygVariable != null) {
             wysiwygEditorMode = wysiwygVariable.booleanValue();
@@ -208,7 +217,7 @@ public class PluginContent extends Text {
 
 
         return result;
-    }
+	}
 
     /**
      * Executes the executeParse() method.

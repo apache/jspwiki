@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,24 +14,23 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.plugin;
-
 import java.util.Properties;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class DefaultPluginManagerTest extends TestCase
+public class DefaultPluginManagerTest
 {
     public static final String NAME1 = "Test1";
 
@@ -43,11 +42,7 @@ public class DefaultPluginManagerTest extends TestCase
 
     DefaultPluginManager manager;
 
-    public DefaultPluginManagerTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp()
         throws Exception
     {
@@ -56,32 +51,34 @@ public class DefaultPluginManagerTest extends TestCase
         manager = new DefaultPluginManager( engine, props );
     }
 
+    @After
     public void tearDown() throws ProviderException
     {
         engine.deletePage("Testpage");
     }
 
+    @Test
     public void testSimpleInsert()
         throws Exception
     {
-        String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=foobar}");
+        String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=foobar}");
 
-        assertEquals( "foobar",
-                      res );
+        Assert.assertEquals( "foobar", res );
     }
 
+    @Test
     public void testSimpleInsertNoPackage()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text=foobar}");
 
-        assertEquals( "foobar",
+        Assert.assertEquals( "foobar",
                       res );
     }
 
 
+    @Test
     public void testSimpleInsertNoPackage2()
         throws Exception
     {
@@ -90,10 +87,11 @@ public class DefaultPluginManagerTest extends TestCase
         String res = m.execute( context,
                                 "{INSERT SamplePlugin2 WHERE text=foobar}");
 
-        assertEquals( "foobar",
+        Assert.assertEquals( "foobar",
                       res );
     }
 
+    @Test
     public void testSimpleInsertNoPackage3()
         throws Exception
     {
@@ -102,11 +100,12 @@ public class DefaultPluginManagerTest extends TestCase
         String res = m.execute( context,
                                 "{INSERT SamplePlugin3 WHERE text=foobar}");
 
-        assertEquals( "foobar",
+        Assert.assertEquals( "foobar",
                       res );
     }
 
     /** Check that in all cases org.apache.wiki.plugin is searched. */
+    @Test
     public void testSimpleInsertNoPackage4()
         throws Exception
     {
@@ -115,107 +114,112 @@ public class DefaultPluginManagerTest extends TestCase
         String res = m.execute( context,
                                 "{INSERT SamplePlugin WHERE text=foobar}");
 
-        assertEquals( "foobar",
+        Assert.assertEquals( "foobar",
                       res );
     }
 
 
+    @Test
     public void testSimpleInsert2()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat}");
 
-        assertEquals( "foobar2",
+        Assert.assertEquals( "foobar2",
                       res );
     }
 
     /** Missing closing brace */
+    @Test
     public void testSimpleInsert3()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat");
 
-        assertEquals( "foobar2",
+        Assert.assertEquals( "foobar2",
                       res );
     }
 
+    @Test
     public void testQuotedArgs()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text='this is a space'}");
 
-        assertEquals( "this is a space",
+        Assert.assertEquals( "this is a space",
                       res );
     }
 
+    @Test
     public void testQuotedArgs2()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text='this \\'is a\\' space'}");
 
-        assertEquals( "this 'is a' space",
+        Assert.assertEquals( "this 'is a' space",
                       res );
     }
 
+    @Test
     public void testNumberArgs()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text=15}");
 
-        assertEquals( "15",
+        Assert.assertEquals( "15",
                       res );
     }
 
+    @Test
     public void testNoInsert()
         throws Exception
     {
         String res = manager.execute( context,
                                       "{SamplePlugin WHERE text=15}");
 
-        assertEquals( "15",
+        Assert.assertEquals( "15",
                       res );
     }
 
     // This should be read from tests/etc/ini/jspwiki_module.xml
+    @Test
     public void testAlias()
         throws Exception
     {
         String res = manager.execute( context, "{samplealias text=15}");
 
-        assertEquals( "15", res );
+        Assert.assertEquals( "15", res );
     }
 
+    @Test
     public void testAlias2()
         throws Exception
     {
         String res = manager.execute( context, "{samplealias2 text=xyzzy}");
 
-        assertEquals( "xyzzy", res );
+        Assert.assertEquals( "xyzzy", res );
     }
 
+    @Test
     public void testInitPlugin() throws Exception
     {
         manager.execute( context, "{JavaScriptPlugin}");
 
-        assertTrue( JavaScriptPlugin.c_inited );
+        Assert.assertTrue( JavaScriptPlugin.c_inited );
     }
 
+    @Test
     public void testParserPlugin() throws Exception
     {
         engine.saveText(context, "[{SamplePlugin render=true}]");
-
         engine.getHTML( "Testpage" );
 
-        assertTrue( SamplePlugin.c_rendered );
+        Assert.assertTrue( SamplePlugin.c_rendered );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite( DefaultPluginManagerTest.class );
-    }
 }

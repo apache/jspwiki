@@ -24,6 +24,11 @@ p, .p {
   margin: 0 0 (@line-height-computed / 2);
 }
 
+ul:last-child,
+ol:last-child {
+    margin:0;
+}
+
 /*
 Headings:
     The headings h2, h3 and h4 get a {{clear:left}} so they can appear
@@ -70,6 +75,8 @@ h2,h3,h4 {
 .lead {
     font-family:@wiki-logo-font-family;
 }
+
+
 //mimicing .quote in a dialog dropdown
 .dialog .lead-item {
     .lead;
@@ -121,12 +128,175 @@ br { clear: both; }
 //dl { .dl-horizontal; }
 dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
 
-
+//copied from bootstrap scaffolding
 .hr {
   display: block;
-  margin-top: 10px;
+  margin-top:    @line-height-computed;
+  margin-bottom: @line-height-computed;
   border: 0;
   border-top: 1px solid @hr-border;
+}
+
+//Component: border (eg around columns grid)
+.border {
+    border: 1px solid @btn-default-border;
+}
+.rounded, .rounded > img {
+    border-radius: @border-radius-base;
+}
+[class^=label].rounded { border-radius: 10em;}
+
+.circle, .circle > img {
+    border-radius: 50%;
+}
+
+//Component: raised effect (shadow)  (eg around columns grid)
+.raised, .raised > img {
+    box-shadow: 0 8px 16px rgba(0,20,80,.04), 0 4px 16px rgba(0,0,0,.08);
+}
+
+.light  { filter: opacity(50%); }
+.dark   { filter: brightness(75%); }
+.blur   { filter: blur(3px); overflow:hidden;  }
+.invert { filter: invert(.8); }
+.sepia  { filter: sepia(1); }
+.blend  {mix-blend-mode: multiply;}
+.blend2 {mix-blend-mode: luminosity;}
+.grayscale    { filter: grayscale(1); }
+.saturate-2   { filter: saturate(2); }
+.saturate-8   { filter: saturate(8); }
+.hue-rotate-1 { filter: hue-rotate(90deg); }
+.hue-rotate-2 { filter: hue-rotate(180deg); }
+.hue-rotate-3 { filter: hue-rotate(270deg); }
+.brightness   {filter: brightness(3); }
+.contrast-2   { filter: contrast(2);}
+.contrast-10   { filter: contrast(10);}
+
+.fliph  {transform: scaleX(-1);}
+.flipv  {transform: scaleY(-1);}
+.fliphv {transform: scaleX(-1) scaleY(-1);}
+
+.kenburns {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background-size:cover;
+}
+.kenburns img { width:100%; }  //occupy all available space of the container
+
+.kenburns img,
+.bg.kenburns { animation: kenburns 120s infinite linear; }
+
+
+@keyframes kenburns {
+    0% {
+        transform: scale(1) rotate(0deg) translate(0, 0);
+    }
+    50% {
+        transform: scale(1.4) rotate(1deg) translate(-15%, 0);
+    }
+    100% {
+        transform: scale(1) rotate(0deg) translate(0, 0);
+    }
+}
+
+
+//Component: re-usable sizing blocks eg  .columns.size-60
+.size-90 { width: 90% !important; }
+.size-80 { width: 80% !important; }
+.size-70 { width: 70% !important; }
+.size-60 { width: 60% !important; }
+.size-50 { width: 50% !important; }
+.size-40 { width: 40% !important; }
+.size-30 { width: 30% !important; }
+.size-20 { width: 20% !important; }
+
+//make sure images obey the size of their container
+[class*=size-],
+.imageplugin td[class*=size-] { display:inline-block; }
+[class*=size-] > img { width:100% !important; }
+
+span.text-white, div.text-white, .bg.dark + .bg-overlay { color:@white; }
+span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
+
+.text-white.shadow {
+  text-shadow: 1px 1px 0 rgba(0,0,0,.25), 0 0 1em @white;
+}
+.text-black.shadow {
+  text-shadow: 1px 1px 0 rgba(255,255,255,.25), 0 0 1em @white;
+}
+
+//checkme - should be defined in bootstrap
+[class*=bg-]:not(.columns) {
+    padding: @padding-base-vertical  @padding-base-horizontal;
+    a {  color:inherit; }
+}
+
+.bg-success { background-color: @state-success-bg; }
+.bg-info    { background-color: @state-info-bg; }
+.bg-warning { background-color: @state-warning-bg; }
+.bg-danger  { background-color: @state-danger-bg; }
+
+.bg-aqua  { background-color: @aqua; color:hsla(197, 100%, 20%, 1.0);}
+.bg-blue  { background-color: @blue; color:hsla(208, 100%, 85%, 1.0);}
+.bg-navy  { background-color: @navy; color:hsla(210, 100%, 75%, 1.0);}
+.bg-teal  { background-color: @teal; }
+.bg-green  { background-color: @green; color:hsla(127, 63%, 15%, 1.0);}
+.bg-olive  { background-color: @olive; color:hsla(153, 43%, 15%, 1.0);}
+.bg-lime   { background-color: @lime; color:hsla(146, 100%, 20%, 1.0);}
+.bg-yellow { background-color: @yellow; color:hsla(52, 100%, 20%, 1.0);}
+.bg-orange { background-color: @orange; color:hsla(28, 100%, 20%, 1.0);}
+.bg-red    { background-color: @red; color:hsla(3, 100%, 25%, 1.0);}
+.bg-fuchsia { background-color: @fuchsia; color:hsla(314, 88%, 21%, 1.0);}
+.bg-purple  { background-color: @purple; color:hsla(292, 88%, 82%, 1.0);}
+.bg-maroon  { background-color: @maroon; color:hsla(331, 74%, 70%, 1.0);}
+.bg-white   { background-color: @white; color: @black; }
+.bg-silver  { background-color: @silver; }
+.bg-gray, .bg-grey  { background-color: @gray; color:@white; }
+.bg-black   { background-color: @black; color:@white; }
+
+/* Background images in jspwiki
+markup
+    %%bg [some image link] /%
+becomes
+    span.background(.fixed|.cover|.contain)(.top|.bottom|.left|.right)
+    div.background-overlay
+        <wrapping all siblings>
+*/
+.bg > img, .bg > img.inline, .bg > .imageplugin img { display:none; }
+
+.has-background {
+    position:relative;
+    overflow:hidden;
+
+    > .bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        //background-size: auto auto;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-origin: border-box;
+        //background-image:  this is set by Wiki.Behaviour.js
+
+        &.cover { background-size:cover; }   //default
+        &.contain { background-size:contain; }
+        &.fixed  { background-attachment: fixed; }
+        &.clip-text { background-clip: text; -webkit-background-clip: text; }
+        &.top, &.bottom.flipv { background-position-y: top; }
+        &.bottom, &.top.flipv { background-position-y: bottom; }
+        &.left, &.right.fliph { background-position-x: left; }
+        &.right, &.left.fliph { background-position-x: right; }
+
+    }
+
+    //wrapper block, to content overlayed over the background
+    > .bg-overlay {
+        position:relative;
+        z-index:2;
+    }
 }
 
 
@@ -173,9 +343,6 @@ tt {
   border-radius: @border-radius-base;
 }
 
-
-//  => reuse styling of pre
-
 //list-unstyled : bootstrap
 //list-hover
 .list-hover {
@@ -185,6 +352,26 @@ tt {
     }
 }
 .list-nostyle { list-style: none; }
+
+.list-group.raised li { border:none; }
+
+
+//.list-group, .list-hover, .list-unstyled, .list-nostyle
+ul[class*=list-] > li > [class*="bg-"]:only-child {
+    margin: -10px -15px;  //undo the margin of the li(.list-item-group)
+    display:block;
+}
+
+.list-group-item:first-child > [class*="bg-"] {
+    border-top-left-radius: @list-group-border-radius;
+    border-top-right-radius: @list-group-border-radius;
+}
+.list-group-item:last-child > [class*="bg-"] {
+    border-bottom-left-radius: @list-group-border-radius;
+    border-bottom-right-radius: @list-group-border-radius;
+}
+
+
 
 .indent-1 { margin-left: 40px !important; }
 .indent-2 { margin-left: 80px !important; }
@@ -209,7 +396,11 @@ Links:
 
 
 //generic behavior -- why not part of bootstrap ??
-a:hover { cursor:pointer; }
+a:hover {
+    cursor:pointer;
+    //text-decoration: underline;
+    -webkit-text-decoration-skip: ink;
+}
 
 //mimic :hover, for old ie cases which may not yet support :hover
 .hover { background-color:@wiki-hover; }
@@ -217,6 +408,11 @@ a:hover { cursor:pointer; }
 .createpage {
     color: @wiki-link-createpage;
     border-bottom: 1px dashed @wiki-link-createpage;
+    &:after {
+    	.icon--text();
+    	content:"?";
+    	background-color:@wiki-link-createpage;
+    }
     &:hover {
         color:darken(@wiki-link-createpage,10%);
         text-decoration:none;
@@ -224,7 +420,6 @@ a:hover { cursor:pointer; }
 }
 
 
-//TODO: Overrule standard small red arrow; replace by ...  FIXME
 img.outlink { display:none; }
 a.external:after {
     //.sup;
@@ -238,7 +433,7 @@ button + a.infolink {
    .icon--all;
    &:after {
         margin-left:.1em;
-        content:"\e614"; //.icon-paper-clip
+        content:@icon-paper-clip;
     }
     > img { display:none; }
 }
@@ -250,10 +445,11 @@ Interwiki links
 .interwiki-reader,
 a.interwiki[href$="skin=reader"] {
     &::after {
-        color:@link-color;
         .icon--all;
         .sup;
-        content:"\f212";  //icon-leanpub
+        content:@icon-leanpub;
+        margin-left:.15em;
+        //color:@link-color;  //needed for More-Menu style
     }
     &:hover::after {
         //text-decoraction:none;  //FIXME: doesnt work ...
@@ -264,6 +460,7 @@ a.interwiki[href$="skin=raw"] {
     &::after {
         .icon--text();
         content:"raw";
+        margin-left:.15em;
     }
     &:hover::after {
         //text-decoraction:none;
@@ -275,10 +472,11 @@ a.interwiki[href*="Edit.jsp?page="] {
     &::after {
         .icon--text;
         content:"edit";
+        margin-left:.15em;
         //color:@link-color;
         //.icon--all;
         //.sup;
-        //content:"\f040";  //icon-pencil
+        //content:@icon-pencil;
     }
     &:hover::after {
         //text-decoraction:none;
@@ -290,15 +488,27 @@ a.interwiki[href*="Group.jsp?group="] {
     &::after {
         .icon--text;
         content:"group";
+        margin-left:.15em;
         //color:@link-color;
         //.icon--all;
         //.sup;
-        //content:"\f0c0";  //icon-group
+        //content:@icon-group;
     }
     &:hover::after {
         //text-decoraction:none;
         background-color:@link-hover-color;
     }
+}
+a.interwiki[href^="rss.jsp"],
+.feed {
+	&:after {
+       .icon--all;
+        margin-left:.15em;
+        .sup;
+        content:@icon-rss;
+	}
+    &:hover { text-decoration:none; }
+
 }
 
 /*
@@ -316,12 +526,13 @@ Images
 img {
     &.inline { .img-responsive; /*max-width:100%;*/ }
 }
-/* broken images */
 
+
+/* broken images */
 .img-error {
     &::before {
         .icon--all;
-        content: "\e607 ";  //icon-picture
+        content: @icon-picture;
         padding-right:.5em;
     }
     > span { padding-left:.5em;}
@@ -361,8 +572,10 @@ Section: Reusable Styles
 }
 .sub { top: 0.4em; }
 
-
-.caps { font-variant: small-caps; }
+.text-smallcaps, .caps {
+    font-variant: small-caps;
+    letter-spacing:0.1em;
+}
 
 .strike { text-decoration:line-through; }
 
@@ -391,9 +604,10 @@ div.dropcaps {
     }
 }
 
-
 //%%quote .. /%
 //.quote is replaced by <blockquote>, to reuse bootstraps styling -- see Wiki.Behaviour.js
+blockquote:last-child { margin-bottom:0; }
+
 //when showing the quote style in a dialog dropdown, use .quote-item -- see Wiki.Snips.js
 .dialog .quote-item {
     border-left: 5px solid @blockquote-border-color;
@@ -417,30 +631,6 @@ div.dropcaps {
 
 }
 
-//checkme - should be defined in bootstrap
-.bg-success { background-color: @state-success-bg; }
-.bg-info    { background-color: @state-info-bg; }
-.bg-warning { background-color: @state-warning-bg; }
-.bg-danger  { background-color: @state-danger-bg; }
-
-.bg-aqua  { background-color: @aqua; }
-.bg-blue  { background-color: @blue; color:@white;}
-.bg-navy  { background-color: @navy; color:@white; }
-.bg-teal  { background-color: @teal; }
-.bg-green  { background-color: @green; color:@white;}
-.bg-olive  { background-color: @olive; color:@white;}
-.bg-lime   { background-color: @lime; }
-.bg-yellow { background-color: @yellow; }
-.bg-orange { background-color: @orange; color:@white; }
-.bg-red    { background-color: @red; color:@white; }
-.bg-fuchsia { background-color: @fuchsia; color:@white; }
-.bg-purple  { background-color: @purple; color:@white;}
-.bg-maroon  { background-color: @maroon;  color:@white; }
-.bg-white   { background-color: @white; color: @black; }
-.bg-silver  { background-color: @silver; }
-.bg-gray, .bg-grey  { background-color: @gray; color:@white; }
-.bg-black   { background-color: @black; color:@white; }
-
 
 .ltr { direction:ltr; }
 .rtl { direction:rtl; }
@@ -463,18 +653,18 @@ div.dropcaps {
 //TODO: why not use .panel iso .alert as base for these communication boxes
 .default, .success, .information, .info,  .warning, .error, .danger {
     .alert;
-    //clear:both;
-    //display:block;
-    //.clearfix;
 }
 //support inline information blocks
 span.default, span.success, span.information, span.info,  span.warning, span.error, span.danger {
     display: inline;
     padding: .05em .25em;
 }
+span.success, span.information, span.info,  span.warning, span.error, span.danger {
+    border:none;
+}
 
 .default {
-    .alert-variant(@btn-default-bg; @btn-default-border;@btn-default-color);
+    .alert-variant(@btn-default-bg; @btn-default-border; @btn-default-color);
 }
 .success            { .alert-success; }
 .info, .information { .alert-info; }
@@ -482,12 +672,8 @@ span.default, span.success, span.information, span.info,  span.warning, span.err
 .error, .danger     { .alert-danger; }
 
 //CHECKME: make sure to fill the table cell with the background color
-td .success, td .information, td .warning, td .error { margin:0; }
+td .success, td .info, td .information, td .warning, td .error, td .danger  { margin:0; }
 //BETTER:  td > .alert { margin:0; }
-
-
-.text-smallcaps { font-variant: small-caps; }
-
 
 
 /*

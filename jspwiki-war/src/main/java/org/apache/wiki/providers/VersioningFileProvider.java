@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.providers;
 
@@ -73,15 +73,15 @@ public class VersioningFileProvider
     extends AbstractFileProvider
 {
     private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
-   
+
     /** Name of the directory where the old versions are stored. */
     public static final String      PAGEDIR      = "OLD";
-    
+
     /** Name of the property file which stores the metadata. */
     public static final String      PROPERTYFILE = "page.properties";
 
     private CachedProperties        m_cachedProperties;
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -128,7 +128,7 @@ public class VersioningFileProvider
 
         return new File( oldpages, mangleName(page) );
     }
-    
+
     /**
      *  Goes through the repository and decides which version is
      *  the newest one in that directory.
@@ -178,32 +178,32 @@ public class VersioningFileProvider
     private int findLatestVersion( String page )
     {
         int version = -1;
-        
+
         try
         {
             Properties props = getPageProperties( page );
-            
-            for( Iterator i = props.keySet().iterator(); i.hasNext(); )
+
+            for( Iterator<Object> i = props.keySet().iterator(); i.hasNext(); )
             {
                 String key = (String)i.next();
-                
+
                 if( key.endsWith(".author") )
                 {
                     int cutpoint = key.indexOf('.');
                     if( cutpoint > 0 )
                     {
                         String pageNum = key.substring(0,cutpoint);
-                        
+
                         try
                         {
                             int res = Integer.parseInt( pageNum );
-                            
+
                             if( res > version )
                             {
                                 version = res;
                             }
                         }
-                        catch( NumberFormatException e ) {} // It's okay to skip these. 
+                        catch( NumberFormatException e ) {} // It's okay to skip these.
                     }
                 }
             }
@@ -212,7 +212,7 @@ public class VersioningFileProvider
         {
             log.error("Unable to figure out latest version - dying...",e);
         }
-        
+
         return version;
     }
 
@@ -233,20 +233,20 @@ public class VersioningFileProvider
             //   was read just as much times as there were versions of that file. The loading
             //   of a propertyfile is a cpu-intensive job. So now hold on to the last propertyfile
             //   read because the next method will with a high probability ask for the same propertyfile.
-            //   The time it took to show a historypage with 267 versions dropped with 300%. 
+            //   The time it took to show a historypage with 267 versions dropped with 300%.
             //
-            
+
             CachedProperties cp = m_cachedProperties;
-            
-            if( cp != null 
-                && cp.m_page.equals(page) 
+
+            if( cp != null
+                && cp.m_page.equals(page)
                 && cp.m_lastModified == lastModified)
             {
                 return cp.m_props;
             }
-            
+
             InputStream in = null;
-            
+
             try
             {
                 in = new BufferedInputStream(new FileInputStream( propertyFile ));
@@ -265,7 +265,7 @@ public class VersioningFileProvider
             	IOUtils.closeQuietly( in );
             }
         }
-        
+
         return new Properties(); // Returns an empty object
     }
 
@@ -278,7 +278,7 @@ public class VersioningFileProvider
     {
         File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
         OutputStream out = null;
-        
+
         try
         {
             out = new FileOutputStream( propertyFile );
@@ -353,7 +353,7 @@ public class VersioningFileProvider
 
         if( !pageFile.exists() )
             throw new NoSuchVersionException("Version "+version+"does not exist.");
-        
+
         return readFile( pageFile );
     }
 
@@ -370,7 +370,7 @@ public class VersioningFileProvider
             if( pagedata.canRead() )
             {
                 try
-                {          
+                {
                     in = new FileInputStream( pagedata );
                     result = FileUtil.readContents( in, m_encoding );
                 }
@@ -401,7 +401,7 @@ public class VersioningFileProvider
     }
 
     // FIXME: This method has no rollback whatsoever.
-    
+
     /*
       This is how the page directory should look like:
 
@@ -521,7 +521,7 @@ public class VersioningFileProvider
 
             // Get additional custom properties from page and add to props
             getCustomProperties(page, props);
-            
+
             putPageProperties( page.getName(), props );
         }
         catch( IOException e )
@@ -543,7 +543,7 @@ public class VersioningFileProvider
         WikiPage p = null;
 
         if( version == WikiPageProvider.LATEST_VERSION ||
-            version == latest || 
+            version == latest ||
             (version == 1 && latest == -1) )
         {
             //
@@ -660,7 +660,7 @@ public class VersioningFileProvider
         int latest = findLatestVersion( page );
 
         // list.add( getPageInfo(page,WikiPageProvider.LATEST_VERSION) );
-        
+
         for( int i = latest; i > 0; i-- )
         {
             WikiPage info = getPageInfo( page, i );
@@ -736,7 +736,7 @@ public class VersioningFileProvider
      *  Removes the relevant page directory under "OLD" -directory as well,
      *  but does not remove any extra subdirectories from it.  It will only
      *  touch those files that it thinks to be WikiPages.
-     *  
+     *
      *  @param page {@inheritDoc}
      *  @throws {@inheritDoc}
      */
@@ -770,11 +770,11 @@ public class VersioningFileProvider
 
     /**
      *  {@inheritDoc}
-     *  
+     *
      *  Deleting versions has never really worked,
-     *  JSPWiki assumes that version histories are "not gappy". 
+     *  JSPWiki assumes that version histories are "not gappy".
      *  Using deleteVersion() is definitely not recommended.
-     *  
+     *
      */
     public void deleteVersion( String page, int version )
         throws ProviderException
@@ -784,7 +784,7 @@ public class VersioningFileProvider
         int latest = findLatestVersion( page );
 
         if( version == WikiPageProvider.LATEST_VERSION ||
-            version == latest || 
+            version == latest ||
             (version == 1 && latest == -1) )
         {
             //
@@ -805,18 +805,18 @@ public class VersioningFileProvider
             // We can let the FileSystemProvider take care
             // of the actual deletion
             super.deleteVersion( page, WikiPageProvider.LATEST_VERSION );
-            
+
             //
             //  Copy the old file to the new location
             //
             latest = findLatestVersion( page );
-            
+
             File pageDir = findOldPageDir( page );
             File previousFile = new File( pageDir, Integer.toString(latest)+FILE_EXT );
 
             InputStream in = null;
             OutputStream out = null;
-            
+
             try
             {
                 if( previousFile.exists() )
@@ -842,7 +842,7 @@ public class VersioningFileProvider
             	IOUtils.closeQuietly( in );
             	IOUtils.closeQuietly( out );
             }
-            
+
             return;
         }
 
@@ -869,19 +869,19 @@ public class VersioningFileProvider
     {
         Collection pages = super.getAllPages();
         Collection<WikiPage> returnedPages = new ArrayList<WikiPage>();
-        
+
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
             WikiPage page = (WikiPage) i.next();
-            
+
             WikiPage info = getPageInfo( page.getName(), WikiProvider.LATEST_VERSION );
- 
+
             returnedPages.add( info );
         }
-        
+
         return returnedPages;
     }
-    
+
     /**
      *  {@inheritDoc}
      */

@@ -18,6 +18,8 @@
  */
 
 package org.apache.wiki;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 import java.util.Collection;
@@ -32,12 +34,11 @@ import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
 import org.apache.wiki.util.TextUtil;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 import net.sf.ehcache.CacheManager;
 
-public class WikiEngineTest extends TestCase
+public class WikiEngineTest
 {
     public static final String NAME1 = "Test1";
     public static final long PAGEPROVIDER_RESCAN_PERIOD = 2;
@@ -47,23 +48,13 @@ public class WikiEngineTest extends TestCase
     TestEngine m_engine;
 
 
-    public WikiEngineTest( String s )
-    {
-        super( s );
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite( WikiEngineTest.class );
-    }
-
     public static void main(String[] args)
     {
         junit.textui.TestRunner.main(new String[] { WikiEngineTest.class.getName() } );
     }
 
-    @Override
-	public void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
@@ -74,8 +65,8 @@ public class WikiEngineTest extends TestCase
         m_engine = new TestEngine(props);
     }
 
-    @Override
-	public void tearDown()
+    @After
+    public void tearDown()
     {
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
@@ -89,6 +80,7 @@ public class WikiEngineTest extends TestCase
         TestEngine.emptyWorkDir();
     }
 
+    @Test
     public void testNonExistentDirectory()
         throws Exception
     {
@@ -100,8 +92,8 @@ public class WikiEngineTest extends TestCase
         new TestEngine( props );
 
         File f = new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) );
-        assertTrue( "didn't create it", f.exists() );
-        assertTrue( "isn't a dir", f.isDirectory() );
+        Assert.assertTrue( "didn't create it", f.exists() );
+        Assert.assertTrue( "isn't a dir", f.isDirectory() );
 
         f.delete();
     }
@@ -109,12 +101,13 @@ public class WikiEngineTest extends TestCase
     /**
      *  Check that calling pageExists( String ) works.
      */
+    @Test
     public void testNonExistentPage()
         throws Exception
     {
         String pagename = "Test1";
 
-        assertEquals( "Page already exists",
+        Assert.assertEquals( "Page already exists",
                       false,
                       m_engine.pageExists( pagename ) );
     }
@@ -122,51 +115,56 @@ public class WikiEngineTest extends TestCase
     /**
      *  Check that calling pageExists( WikiPage ) works.
      */
+    @Test
     public void testNonExistentPage2()
         throws Exception
     {
         WikiPage page = new WikiPage(m_engine, "Test1");
 
-        assertEquals( "Page already exists",
+        Assert.assertEquals( "Page already exists",
                       false,
                       m_engine.pageExists( page ) );
     }
 
+    @Test
     public void testFinalPageName()
         throws Exception
     {
         m_engine.saveText( "Foobar", "1" );
         m_engine.saveText( "Foobars", "2" );
 
-        assertEquals( "plural mistake", "Foobars",
+        Assert.assertEquals( "plural mistake", "Foobars",
                       m_engine.getFinalPageName( "Foobars" ) );
 
-        assertEquals( "singular mistake", "Foobar",
+        Assert.assertEquals( "singular mistake", "Foobar",
                       m_engine.getFinalPageName( "Foobar" ) );
     }
 
+    @Test
     public void testFinalPageNameSingular()
         throws Exception
     {
         m_engine.saveText( "Foobar", "1" );
 
-        assertEquals( "plural mistake", "Foobar",
+        Assert.assertEquals( "plural mistake", "Foobar",
                       m_engine.getFinalPageName( "Foobars" ) );
-        assertEquals( "singular mistake", "Foobar",
+        Assert.assertEquals( "singular mistake", "Foobar",
                       m_engine.getFinalPageName( "Foobar" ) );
     }
 
+    @Test
     public void testFinalPageNamePlural()
         throws Exception
     {
         m_engine.saveText( "Foobars", "1" );
 
-        assertEquals( "plural mistake", "Foobars",
+        Assert.assertEquals( "plural mistake", "Foobars",
                       m_engine.getFinalPageName( "Foobars" ) );
-        assertEquals( "singular mistake", "Foobars",
+        Assert.assertEquals( "singular mistake", "Foobars",
                       m_engine.getFinalPageName( "Foobar" ) );
     }
 
+    @Test
     public void testPutPage()
         throws Exception
     {
@@ -175,15 +173,16 @@ public class WikiEngineTest extends TestCase
 
         m_engine.saveText( name, text );
 
-        assertEquals( "page does not exist",
+        Assert.assertEquals( "page does not exist",
                       true,
                       m_engine.pageExists( name ) );
 
-        assertEquals( "wrong content",
+        Assert.assertEquals( "wrong content",
                       text,
                       m_engine.getText( name ) );
     }
 
+    @Test
     public void testPutPageEntities()
         throws Exception
     {
@@ -192,11 +191,11 @@ public class WikiEngineTest extends TestCase
 
         m_engine.saveText( name, text );
 
-        assertEquals( "page does not exist",
+        Assert.assertEquals( "page does not exist",
                       true,
                       m_engine.pageExists( name ) );
 
-        assertEquals( "wrong content",
+        Assert.assertEquals( "wrong content",
                       "Foobar. &amp;quot;\r\n",
                       m_engine.getText( name ) );
     }
@@ -204,6 +203,7 @@ public class WikiEngineTest extends TestCase
     /**
      *  Cgeck that basic " is changed.
      */
+    @Test
     public void testPutPageEntities2()
         throws Exception
     {
@@ -212,15 +212,16 @@ public class WikiEngineTest extends TestCase
 
         m_engine.saveText( name, text );
 
-        assertEquals( "page does not exist",
+        Assert.assertEquals( "page does not exist",
                       true,
                       m_engine.pageExists( name ) );
 
-        assertEquals( "wrong content",
+        Assert.assertEquals( "wrong content",
                       "Foobar. &quot;\r\n",
                       m_engine.getText( name ) );
     }
 
+    @Test
     public void testGetHTML()
         throws Exception
     {
@@ -231,18 +232,20 @@ public class WikiEngineTest extends TestCase
 
         String data = m_engine.getHTML( name );
 
-        assertEquals( "<i>Foobar.</i>\n",
+        Assert.assertEquals( "<i>Foobar.</i>\n",
                        data );
     }
 
+    @Test
     public void testEncodeNameLatin1()
     {
         String name = "abc\u00e5\u00e4\u00f6";
 
-        assertEquals( "abc%E5%E4%F6",
+        Assert.assertEquals( "abc%E5%E4%F6",
                       m_engine.encodeName(name) );
     }
 
+    @Test
     public void testEncodeNameUTF8()
         throws Exception
     {
@@ -252,10 +255,11 @@ public class WikiEngineTest extends TestCase
 
         WikiEngine engine = new TestEngine( props );
 
-        assertEquals( "A%E2%89%A2%CE%91.",
+        Assert.assertEquals( "A%E2%89%A2%CE%91.",
                       engine.encodeName(name) );
     }
 
+    @Test
     public void testReadLinks()
         throws Exception
     {
@@ -263,73 +267,81 @@ public class WikiEngineTest extends TestCase
 
         Object[] result = m_engine.scanWikiLinks( new WikiPage(m_engine, "Test"), src ).toArray();
 
-        assertEquals( "item 0", "Foobar", result[0] );
-        assertEquals( "item 1", "This is a link", result[1] );
+        Assert.assertEquals( "item 0", "Foobar", result[0] );
+        Assert.assertEquals( "item 1", "This is a link", result[1] );
     }
 
+    @Test
     public void testBeautifyTitle()
     {
         String src = "WikiNameThingy";
 
-        assertEquals("Wiki Name Thingy", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("Wiki Name Thingy", m_engine.beautifyTitle( src ) );
     }
 
     /**
      *  Acronyms should be treated wisely.
      */
+    @Test
     public void testBeautifyTitleAcronym()
     {
         String src = "JSPWikiPage";
 
-        assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
     }
 
     /**
      *  Acronyms should be treated wisely.
      */
+    @Test
     public void testBeautifyTitleAcronym2()
     {
         String src = "DELETEME";
 
-        assertEquals("DELETEME", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("DELETEME", m_engine.beautifyTitle( src ) );
     }
 
+    @Test
     public void testBeautifyTitleAcronym3()
     {
         String src = "JSPWikiFAQ";
 
-        assertEquals("JSP Wiki FAQ", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("JSP Wiki FAQ", m_engine.beautifyTitle( src ) );
     }
 
+    @Test
     public void testBeautifyTitleNumbers()
     {
         String src = "TestPage12";
 
-        assertEquals("Test Page 12", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("Test Page 12", m_engine.beautifyTitle( src ) );
     }
 
     /**
      *  English articles too.
      */
+    @Test
     public void testBeautifyTitleArticle()
     {
         String src = "ThisIsAPage";
 
-        assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
     }
 
     /**
      *  English articles too, pathological case...
      */
     /*
+    @Test
     public void testBeautifyTitleArticle2()
     {
         String src = "ThisIsAJSPWikiPage";
 
-        assertEquals("This Is A JSP Wiki Page", m_engine.beautifyTitle( src ) );
+        Assert.assertEquals("This Is A JSP Wiki Page", m_engine.beautifyTitle( src ) );
     }
     */
 
+    @Test
     public void testLatestGet()
         throws Exception
     {
@@ -343,11 +355,12 @@ public class WikiEngineTest extends TestCase
 
         VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
 
-        assertEquals( "wrong page", "test", vsp.m_latestReq );
-        assertEquals( "wrong version", -1, vsp.m_latestVers );
-        assertNotNull("null", p);
+        Assert.assertEquals( "wrong page", "test", vsp.m_latestReq );
+        Assert.assertEquals( "wrong version", -1, vsp.m_latestVers );
+        Assert.assertNotNull("null", p);
     }
 
+    @Test
     public void testLatestGet2()
         throws Exception
     {
@@ -361,11 +374,12 @@ public class WikiEngineTest extends TestCase
 
         VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
 
-        assertEquals( "wrong page", "test", vsp.m_latestReq );
-        assertEquals( "wrong version", -1, vsp.m_latestVers );
-        assertNotNull("null", p);
+        Assert.assertEquals( "wrong page", "test", vsp.m_latestReq );
+        Assert.assertEquals( "wrong version", -1, vsp.m_latestVers );
+        Assert.assertNotNull("null", p);
     }
 
+    @Test
     public void testLatestGet3()
         throws Exception
     {
@@ -379,11 +393,12 @@ public class WikiEngineTest extends TestCase
 
         VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
 
-        assertEquals( "wrong page", "test", vsp.m_latestReq );
-        assertEquals( "wrong version", 5, vsp.m_latestVers );
-        assertNotNull("null", p);
+        Assert.assertEquals( "wrong page", "test", vsp.m_latestReq );
+        Assert.assertEquals( "wrong version", 5, vsp.m_latestVers );
+        Assert.assertNotNull("null", p);
     }
 
+    @Test
     public void testLatestGet4()
         throws Exception
     {
@@ -398,14 +413,15 @@ public class WikiEngineTest extends TestCase
         CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
         VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
 
-        assertEquals( "wrong page", VerySimpleProvider.PAGENAME, vsp.m_latestReq );
-        assertEquals( "wrong version", -1, vsp.m_latestVers );
-        assertNotNull("null", p);
+        Assert.assertEquals( "wrong page", VerySimpleProvider.PAGENAME, vsp.m_latestReq );
+        Assert.assertEquals( "wrong version", -1, vsp.m_latestVers );
+        Assert.assertNotNull("null", p);
     }
 
     /**
      *  Checks, if ReferenceManager is informed of new attachments.
      */
+    @Test
     public void testAttachmentRefs()
         throws Exception
     {
@@ -422,15 +438,15 @@ public class WikiEngineTest extends TestCase
         {
             // and check post-conditions
             Collection c = refMgr.findUncreated();
-            assertTrue("attachment exists: "+c,
+            Assert.assertTrue("attachment exists: "+c,
                        c==null || c.size()==0 );
 
             c = refMgr.findUnreferenced();
-            assertEquals( "unreferenced count", 2, c.size() );
+            Assert.assertEquals( "unreferenced count", 2, c.size() );
             Iterator< String > i = c.iterator();
             String first = i.next();
             String second = i.next();
-            assertTrue( "unreferenced",
+            Assert.assertTrue( "unreferenced",
                         (first.equals( NAME1 ) && second.equals( NAME1+"/TestAtt.txt"))
                         || (first.equals( NAME1+"/TestAtt.txt" ) && second.equals( NAME1 )) );
         }
@@ -462,6 +478,7 @@ public class WikiEngineTest extends TestCase
       However, doing this in a relatively sane timeframe can be a problem.
     */
 
+    @Test
     public void testAttachmentRefs2()
         throws Exception
     {
@@ -473,14 +490,14 @@ public class WikiEngineTest extends TestCase
         // check a few pre-conditions
 
         Collection c = refMgr.findReferrers( "TestAtt.txt" );
-        assertTrue( "normal, unexisting page",
+        Assert.assertTrue( "normal, unexisting page",
                     c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
 
         c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
-        assertTrue( "no attachment", c==null || c.size()==0 );
+        Assert.assertTrue( "no attachment", c==null || c.size()==0 );
 
         c = refMgr.findUncreated();
-        assertTrue( "unknown attachment",
+        Assert.assertTrue( "unknown attachment",
                     c!=null &&
                     c.size()==1 &&
                     ((String)c.iterator().next()).equals( "TestAtt.txt" ) );
@@ -494,17 +511,17 @@ public class WikiEngineTest extends TestCase
         {
             // and check post-conditions
             c = refMgr.findUncreated();
-            assertTrue( "attachment exists: ",
+            Assert.assertTrue( "attachment exists: ",
                         c==null || c.size()==0 );
 
             c = refMgr.findReferrers( "TestAtt.txt" );
-            assertTrue( "no normal page", c==null || c.size()==0 );
+            Assert.assertTrue( "no normal page", c==null || c.size()==0 );
 
             c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
-            assertTrue( "attachment exists now", c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
+            Assert.assertTrue( "attachment exists now", c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
 
             c = refMgr.findUnreferenced();
-            assertTrue( "unreferenced",
+            Assert.assertTrue( "unreferenced",
                         c.size()==1 && ((String)c.iterator().next()).equals( NAME1 ));
         }
         finally
@@ -518,6 +535,7 @@ public class WikiEngineTest extends TestCase
     /**
      *  Checks, if ReferenceManager is informed if a link to an attachment is added.
      */
+    @Test
     public void testAttachmentRefs3()
         throws Exception
     {
@@ -536,12 +554,12 @@ public class WikiEngineTest extends TestCase
         {
             // and check post-conditions
             Collection c = refMgr.findUncreated();
-            assertTrue( "attachment exists",
+            Assert.assertTrue( "attachment exists",
                         c==null || c.size()==0 );
 
             c = refMgr.findUnreferenced();
-            assertEquals( "unreferenced count", c.size(), 1 );
-            assertTrue( "unreferenced",
+            Assert.assertEquals( "unreferenced count", c.size(), 1 );
+            Assert.assertTrue( "unreferenced",
                         ((String)c.iterator().next()).equals( NAME1 ) );
         }
         finally
@@ -555,6 +573,7 @@ public class WikiEngineTest extends TestCase
     /**
      *  Checks, if ReferenceManager is informed if a third page references an attachment.
      */
+    @Test
     public void testAttachmentRefs4()
         throws Exception
     {
@@ -573,12 +592,12 @@ public class WikiEngineTest extends TestCase
         {
             // and check post-conditions
             Collection c = refMgr.findUncreated();
-            assertTrue( "attachment exists",
+            Assert.assertTrue( "attachment exists",
                         c==null || c.size()==0 );
 
             c = refMgr.findUnreferenced();
-            assertEquals( "unreferenced count", c.size(), 1 );
-            assertTrue( "unreferenced",
+            Assert.assertEquals( "unreferenced count", c.size(), 1 );
+            Assert.assertTrue( "unreferenced",
                         ((String)c.iterator().next()).equals( NAME1 ) );
         }
         finally
@@ -593,6 +612,7 @@ public class WikiEngineTest extends TestCase
 
 
 
+    @Test
     public void testDeletePage()
         throws Exception
     {
@@ -601,16 +621,17 @@ public class WikiEngineTest extends TestCase
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
         File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        assertTrue( "Didn't create it!", saved.exists() );
+        Assert.assertTrue( "Didn't create it!", saved.exists() );
 
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
         m_engine.deletePage( page.getName() );
 
-        assertFalse( "Page has not been removed!", saved.exists() );
+        Assert.assertFalse( "Page has not been removed!", saved.exists() );
     }
 
 
+    @Test
     public void testDeletePageAndAttachments()
         throws Exception
     {
@@ -626,18 +647,19 @@ public class WikiEngineTest extends TestCase
         String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
         File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
 
-        assertTrue( "Didn't create it!", saved.exists() );
+        Assert.assertTrue( "Didn't create it!", saved.exists() );
 
-        assertTrue( "Attachment dir does not exist", attfile.exists() );
+        Assert.assertTrue( "Attachment dir does not exist", attfile.exists() );
 
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
         m_engine.deletePage( page.getName() );
 
-        assertFalse( "Page has not been removed!", saved.exists() );
-        assertFalse( "Attachment has not been removed", attfile.exists() );
+        Assert.assertFalse( "Page has not been removed!", saved.exists() );
+        Assert.assertFalse( "Attachment has not been removed", attfile.exists() );
     }
 
+    @Test
     public void testDeletePageAndAttachments2()
         throws Exception
     {
@@ -653,13 +675,13 @@ public class WikiEngineTest extends TestCase
         String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
         File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
 
-        assertTrue( "Didn't create it!", saved.exists() );
+        Assert.assertTrue( "Didn't create it!", saved.exists() );
 
-        assertTrue( "Attachment dir does not exist", attfile.exists() );
+        Assert.assertTrue( "Attachment dir does not exist", attfile.exists() );
 
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
-        assertNotNull( "page", page );
+        Assert.assertNotNull( "page", page );
 
         att = m_engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
 
@@ -667,14 +689,15 @@ public class WikiEngineTest extends TestCase
 
         m_engine.deletePage( NAME1 );
 
-        assertNull( "Page not removed", m_engine.getPage(NAME1) );
-        assertNull( "Att not removed", m_engine.getPage(NAME1+"/TestAtt.txt") );
+        Assert.assertNull( "Page not removed", m_engine.getPage(NAME1) );
+        Assert.assertNull( "Att not removed", m_engine.getPage(NAME1+"/TestAtt.txt") );
 
         Collection refs = m_engine.getReferenceManager().findReferrers(NAME1);
 
-        assertNull( "referrers", refs );
+        Assert.assertNull( "referrers", refs );
     }
 
+    @Test
     public void testDeleteVersion()
         throws Exception
     {
@@ -689,13 +712,14 @@ public class WikiEngineTest extends TestCase
 
         engine.deleteVersion( page );
 
-        assertNull( "got page", engine.getPage( NAME1, 3 ) );
+        Assert.assertNull( "got page", engine.getPage( NAME1, 3 ) );
 
         String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
 
-        assertEquals( "content", "Test2", content.trim() );
+        Assert.assertEquals( "content", "Test2", content.trim() );
     }
 
+    @Test
     public void testDeleteVersion2()
         throws Exception
     {
@@ -710,13 +734,13 @@ public class WikiEngineTest extends TestCase
 
         engine.deleteVersion( page );
 
-        assertNull( "got page", engine.getPage( NAME1, 1 ) );
+        Assert.assertNull( "got page", engine.getPage( NAME1, 1 ) );
 
         String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
 
-        assertEquals( "content", "Test3", content.trim() );
+        Assert.assertEquals( "content", "Test3", content.trim() );
 
-        assertEquals( "content1", "", engine.getText(NAME1, 1).trim() );
+        Assert.assertEquals( "content1", "", engine.getText(NAME1, 1).trim() );
     }
 
 
@@ -724,6 +748,7 @@ public class WikiEngineTest extends TestCase
      *  Tests BugReadingOfVariableNotWorkingForOlderVersions
      * @throws Exception
      */
+    @Test
     public void testOldVersionVars()
         throws Exception
     {
@@ -741,30 +766,32 @@ public class WikiEngineTest extends TestCase
 
         WikiPage v2 = engine.getPage( NAME1, 2 );
 
-        assertEquals( "V1", "bar", v1.getAttribute("foo") );
+        Assert.assertEquals( "V1", "bar", v1.getAttribute("foo") );
 
         // FIXME: The following must run as well
-        assertEquals( "V2", "notbar", v2.getAttribute("foo") );
+        Assert.assertEquals( "V2", "notbar", v2.getAttribute("foo") );
 
         engine.deletePage( NAME1 );
     }
 
+    @Test
     public void testSpacedNames1()
         throws Exception
     {
         m_engine.saveText("This is a test", "puppaa");
 
-        assertEquals( "normal", "puppaa", m_engine.getText("This is a test").trim() );
+        Assert.assertEquals( "normal", "puppaa", m_engine.getText("This is a test").trim() );
     }
 
 
+    @Test
     public void testParsedVariables() throws Exception
     {
         m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
 
         String res = m_engine.getHTML( "TestPage" );
 
-        assertEquals( "bar\n", res );
+        Assert.assertEquals( "bar\n", res );
     }
 
     /**
@@ -772,28 +799,30 @@ public class WikiEngineTest extends TestCase
      *
      * @throws Exception
      */
+    @Test
     public void testRename() throws Exception
     {
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
 
         Collection pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
-        assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
+        Assert.assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
 
         WikiContext ctx = new WikiContext( m_engine, m_engine.getPage("OldNameTestPage") );
 
         m_engine.renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
-        assertFalse( "did not vanish", m_engine.pageExists( "OldNameTestPage") );
-        assertTrue( "did not appear", m_engine.pageExists( "NewNameTestPage") );
+        Assert.assertFalse( "did not vanish", m_engine.pageExists( "OldNameTestPage") );
+        Assert.assertTrue( "did not appear", m_engine.pageExists( "NewNameTestPage") );
 
         pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
 
-        assertEquals( "wrong # of referrers", 1, pages.size() );
+        Assert.assertEquals( "wrong # of referrers", 1, pages.size() );
 
-        assertEquals( "has wrong referrer", "NewNameTestPage", pages.iterator().next() );
+        Assert.assertEquals( "has wrong referrer", "NewNameTestPage", pages.iterator().next() );
     }
 
+    @Test
     public void testChangeNoteOldVersion2() throws Exception
     {
         WikiPage p = new WikiPage( m_engine, NAME1 );
@@ -816,41 +845,44 @@ public class WikiEngineTest extends TestCase
 
         WikiPage p3 = m_engine.getPage( NAME1, -1 );
 
-        assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
+        Assert.assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
     }
 
+    @Test
     public void testCreatePage() throws Exception
     {
         String text = "Foobar.\r\n";
         String name = "mrmyxpltz";
 
-        assertEquals( "page should not exist right now",
+        Assert.assertEquals( "page should not exist right now",
                       false,
                       m_engine.pageExists( name ) );
 
         m_engine.saveText( name, text );
 
-        assertEquals( "page does not exist",
+        Assert.assertEquals( "page does not exist",
                       true,
                       m_engine.pageExists( name ) );
     }
 
+    @Test
     public void testCreateEmptyPage() throws Exception
     {
         String text = "";
         String name = "mrmxyzptlk";
 
-        assertEquals( "page should not exist right now",
+        Assert.assertEquals( "page should not exist right now",
                       false,
                       m_engine.pageExists( name ) );
 
         m_engine.saveText( name, text );
 
-        assertEquals( "page should not exist right now neither",
+        Assert.assertEquals( "page should not exist right now neither",
                       false,
                       m_engine.pageExists( name ) );
     }
 
+    @Test
     public void testSaveExistingPageWithEmptyContent() throws Exception
     {
         String text = "Foobar.\r\n";
@@ -858,18 +890,18 @@ public class WikiEngineTest extends TestCase
 
         m_engine.saveText( name, text );
 
-        assertEquals( "page does not exist",
+        Assert.assertEquals( "page does not exist",
                       true,
                       m_engine.pageExists( name ) );
 
         // saveText uses normalizePostData to assure it conforms to certain rules
-        assertEquals( "wrong content",
+        Assert.assertEquals( "wrong content",
                       TextUtil.normalizePostData( text ),
                       m_engine.getText( name ) );
 
         m_engine.saveText( name, "" );
 
-        assertEquals( "wrong content",
+        Assert.assertEquals( "wrong content",
                       TextUtil.normalizePostData( "" ),
                       m_engine.getText( name ) );
 

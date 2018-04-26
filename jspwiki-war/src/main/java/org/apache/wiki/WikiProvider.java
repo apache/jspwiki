@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.     
+    under the License.
  */
 package org.apache.wiki;
 
@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.io.IOException;
 
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+
 
 /**
  *  A generic Wiki provider for all sorts of things that the Wiki can
@@ -38,7 +39,7 @@ public interface WikiProvider
 
     /**
      *  Initializes the page provider.
-     *  
+     *
      *  @param engine WikiEngine to own this provider
      *  @param properties A set of properties used to initialize this provider
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
@@ -49,13 +50,12 @@ public interface WikiProvider
                IOException;
 
     /**
-     *  Return a valid HTML string for information.  May
-     *  be anything.
+     *  Return a valid HTML string for information.  May be anything.
      *  @since 1.6.4
      *  @return A string describing the provider.
      */
-
     String getProviderInfo();
+
 }
 
 

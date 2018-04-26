@@ -22,10 +22,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -51,7 +51,7 @@ public class SessionMonitor implements HttpSessionListener
     private static Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
-    private static Map<WikiEngine, SessionMonitor>          c_monitors   = new HashMap<WikiEngine, SessionMonitor>();
+    private static ConcurrentHashMap<WikiEngine, SessionMonitor>          c_monitors   = new ConcurrentHashMap<WikiEngine, SessionMonitor>();
 
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
     private final Map<String, WikiSession>                 m_sessions   = new WeakHashMap<String, WikiSession>();
@@ -74,16 +74,15 @@ public class SessionMonitor implements HttpSessionListener
         }
         SessionMonitor monitor;
 
-        synchronized( c_monitors )
-        {
-            monitor = c_monitors.get(engine);
-            if( monitor == null )
-            {
-                monitor = new SessionMonitor(engine);
+          monitor = c_monitors.get(engine);
+          if( monitor == null )
+          {
+              monitor = new SessionMonitor(engine);
 
-                c_monitors.put( engine, monitor );
-            }
-        }
+              c_monitors.put( engine, monitor );
+
+          }
+
         return monitor;
     }
 
@@ -201,9 +200,10 @@ public class SessionMonitor implements HttpSessionListener
     public final Principal[] userPrincipals()
     {
         Collection<Principal> principals = new ArrayList<Principal>();
-        for ( WikiSession session : m_sessions.values() )
-        {
-            principals.add( session.getUserPrincipal() );
+        synchronized ( m_sessions ) {
+            for (WikiSession session : m_sessions.values()) {
+                principals.add( session.getUserPrincipal() );
+            }
         }
         Principal[] p = principals.toArray( new Principal[principals.size()] );
         Arrays.sort( p, m_comparator );
@@ -257,7 +257,7 @@ public class SessionMonitor implements HttpSessionListener
 
     /**
      * Removes the user's WikiSession from the internal session cache when the web
-     * container destoys an HTTP session.
+     * container destroys an HTTP session.
      * @param se the HTTP session event
      */
     public void sessionDestroyed( HttpSessionEvent se )

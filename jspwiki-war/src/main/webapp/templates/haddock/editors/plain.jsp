@@ -93,7 +93,9 @@
   <div class="snipe">
     <div class="form-inline form-group">
 
-    <div class="form-group dropdown">
+    <div class="form-inline form-group sticky">
+
+    <div class="form-inline form-group dropdown">
     <button class="btn btn-success" type="submit" name="ok" accesskey="s">
       <fmt:message key='editor.plain.save.submit${ context == "edit" ? "" : ".comment" }'/>
       <span class="caret"></span>
@@ -172,8 +174,6 @@
     --%>
       </li>
       <li class="divider"></li>
-
-
 
             <li>
               <a>
@@ -334,8 +334,8 @@
     <div class="row edit-area"><%-- .livepreview  .previewcolumn--%>
       <div>
         <textarea class="editor form-control snipeable"
-           <wiki:CheckRequestContext context="edit">placeholder="Add your page content here"</wiki:CheckRequestContext>
-           <wiki:CheckRequestContext context="comment">placeholder="Leave a comment"</wiki:CheckRequestContext>
+           <wiki:CheckRequestContext context="edit">placeholder="<fmt:message key='editor.plain.create'/>"</wiki:CheckRequestContext>
+           <wiki:CheckRequestContext context="comment">placeholder="<fmt:message key='editor.plain.comment'/>"</wiki:CheckRequestContext>
                   autofocus="autofocus"
                   rows="20" cols="80"></textarea>
         <textarea class="editor form-control hidden" id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"

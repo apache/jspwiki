@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.providers;
@@ -25,25 +25,22 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.FileUtil;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class CachingProviderTest extends TestCase
+import net.sf.ehcache.CacheManager;
+
+public class CachingProviderTest
 {
     protected TestEngine testEngine;
 
-    public CachingProviderTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp()
         throws Exception
     {
@@ -55,6 +52,7 @@ public class CachingProviderTest extends TestCase
         PropertyConfigurator.configure(props2);
     }
 
+    @After
     public void tearDown()
     {
         TestEngine.emptyWorkDir();
@@ -64,6 +62,7 @@ public class CachingProviderTest extends TestCase
     /**
      *  Checks that at startup we call the provider once, and once only.
      */
+    @Test
     public void testInitialization()
         throws Exception
     {
@@ -77,48 +76,44 @@ public class CachingProviderTest extends TestCase
 
         CounterProvider p = (CounterProvider)((CachingProvider)engine.getPageManager().getProvider()).getRealProvider();
 
-        assertEquals("init", 1, p.m_initCalls);
-        assertEquals("getAllPages", 1, p.m_getAllPagesCalls);
-        assertEquals("pageExists", 0, p.m_pageExistsCalls);
-        assertEquals("getPageText", 4, p.m_getPageTextCalls);
+        Assert.assertEquals("init", 1, p.m_initCalls);
+        Assert.assertEquals("getAllPages", 1, p.m_getAllPagesCalls);
+        Assert.assertEquals("pageExists", 0, p.m_pageExistsCalls);
+        Assert.assertEquals("getPageText", 4, p.m_getPageTextCalls);
 
         engine.getPage( "Foo" );
 
-        assertEquals("pageExists2", 0, p.m_pageExistsCalls);
+        Assert.assertEquals("pageExists2", 0, p.m_pageExistsCalls);
     }
 
+    @Test
     public void testSneakyAdd()
         throws Exception
     {
         Properties props = TestEngine.getTestProperties();
 
         props.setProperty( "jspwiki.cachingProvider.cacheCheckInterval", "2" );
-        
+
         TestEngine engine = new TestEngine( props );
-        
+
         String dir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        
+
         File f = new File( dir, "Testi.txt" );
         String content = "[fuufaa]";
-        
+
         PrintWriter out = new PrintWriter( new FileWriter(f) );
         FileUtil.copyContents( new StringReader(content), out );
         out.close();
-        
+
         Thread.sleep( 4000L ); // Make sure we wait long enough
-        
+
         WikiPage p = engine.getPage( "Testi" );
-        assertNotNull( "page did not exist?", p );
-        
+        Assert.assertNotNull( "page did not exist?", p );
+
         String text = engine.getText( "Testi");
-        assertEquals("text", "[fuufaa]", text );
-        
+        Assert.assertEquals("text", "[fuufaa]", text );
+
         // TODO: ReferenceManager check as well
-    }
-    
-    public static Test suite()
-    {
-        return new TestSuite( CachingProviderTest.class );
     }
 
 }

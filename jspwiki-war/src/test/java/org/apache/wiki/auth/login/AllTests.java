@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,30 +14,17 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.login;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-/**
- */
-public class AllTests extends TestCase
-{
-    public AllTests( String s )
-    {
-        super( s );
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite( "Login module tests" );
-        suite.addTestSuite( AnonymousLoginModuleTest.class );
-        suite.addTestSuite( CookieAssertionLoginModuleTest.class );
-        suite.addTestSuite( UserDatabaseLoginModuleTest.class );
-        suite.addTestSuite( WebContainerLoginModuleTest.class );
-        return suite;
-    }
+@RunWith( Suite.class )
+@Suite.SuiteClasses( { AnonymousLoginModuleTest.class,
+                       CookieAssertionLoginModuleTest.class,
+                       UserDatabaseLoginModuleTest.class,
+                       WebContainerLoginModuleTest.class } )
+public class AllTests {
 }

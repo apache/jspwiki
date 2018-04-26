@@ -109,9 +109,11 @@ var Wiki = {
                 wiki.resizer(element, $$(element.get("data-resize")) );
             })
 
-            //make navigation bar sticky (simulate position:sticky; )
-            //.add(".sticky", "onSticky" )
-            .add( ".sticky", function(element){
+            //add header scroll-up/down effect
+            .add(".fixed-header > .header", wiki.yoyo)
+
+            //sticky toolbar in the editor
+            .add(".sticky", function (element) {
                 element.onSticky();
             })
 
@@ -180,9 +182,11 @@ var Wiki = {
 
     },
 
+
     caniuse: function( body ){
 
-        //support for flexbox is broken in IE, let's do it the hard-way
+        //support for flexbox is broken in IE, do it the hard-way - ugh.
+
         var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
         var isIE9or10 = "ActiveXObject" in window;
 
@@ -238,6 +242,61 @@ var Wiki = {
         wiki.autofocus();
 
     },
+
+    /*
+    Function: yoyo ( header )
+        Add a yoyo effect to the header:  hide it on scroll down, show it again on scroll up.
+
+    Inspired by: https://github.com/WickyNilliams/headroom.js
+
+    DOM Structure:
+    (start code)
+        div[style='padding-top:nn']    => nn==height of header;  push content down
+        div.header.yoyo[.scrolling-down]  => css: position=fixed
+    (end)
+
+    */
+    yoyo: function( header ){
+
+        var height = "offsetHeight",
+            scrollY,
+            lastScrollY = 0,
+
+            //add spacer just infront of fixed element,
+            //and adjust height == header (fixed elements do not take space in the dom)
+            spacer = "div".slick().inject(header, "before"),
+            busy;
+
+        function update(){
+
+            scrollY = window.getScroll().y;
+
+            spacer.style.paddingTop = header[height]+"px"; //could change during window resize
+
+            // Limit scroll top to counteract iOS / OSX bounce.
+            scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
+
+            if (Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */) {
+
+                header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
+                lastScrollY = scrollY;
+
+            }
+            busy = false;
+        }
+
+        function handleEvent(){
+            if(!busy){
+              busy = true;
+              requestAnimationFrame( update );
+            }
+        }
+
+        window.addEvents({ scroll: handleEvent, resize: handleEvent });
+        update(); //first run: set height of the spacer
+
+    },
+
 
     /*
     Function: popstate
@@ -331,9 +390,9 @@ var Wiki = {
         // BasePath: if JSPWiki is installed in the root, then we have to make sure that
         // the cookie-cutter works properly here.
         url = wiki.BaseUrl;
-        url = url ? url.slice( url.indexOf(host) + host.length, -1 ) : "";
-        wiki.BasePath = ( url /*===""*/ ) ? url : "/";
-        console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
+        url = url ? url.slice(url.indexOf(host) + host.length, -1) : "";
+        wiki.BasePath = (url /*===""*/) ? url : "/";
+        //console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
 
     },
 
@@ -731,7 +790,7 @@ var Wiki = {
                 onSuccess: function( responseText ){
 
                     //console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
-                    callback( JSON.parse( responseText ) );
+                    callback(responseText == "" ? "" : JSON.parse(responseText));
                     //callback( responseText );
 
                 },
@@ -742,34 +801,6 @@ var Wiki = {
                 }
 
             }).send( "params=" + params );
-
-            /* obsolete
-            new Request.JSON({
-                //url: this.JsonUrl,
-                url: this.JsonUrl + method,
-                data: JSON.encode({     //FFS ECMASCript5; JSON.stringify() ok >IE8
-                    //jsonrpc:'2.0', //CHECK
-                    id: this.jsonid++,
-                    method: method,
-                    params: params
-                }),
-                method: "post",
-                onSuccess: function( response ){
-                    if( response.error ){
-                        throw new Error("Wiki servier rpc error: " + response.error);
-                        callback(null);
-                    } else {
-                        callback( response.result );
-                    }
-                },
-                onError: function(error){
-                    //console.log(error);
-                    throw new Error("Wiki rpc error: "+error);
-                    callback(null);
-
-                }
-            }).send();
-            */
 
         }
 

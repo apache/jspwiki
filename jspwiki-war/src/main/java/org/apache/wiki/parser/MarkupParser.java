@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 */
 package org.apache.wiki.parser;
 
@@ -23,7 +23,16 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -52,9 +61,14 @@ public abstract class MarkupParser
     protected ArrayList<HeadingListener>         m_headingListenerChain     = new ArrayList<HeadingListener>();
     protected ArrayList<StringTransmutator>      m_linkMutators             = new ArrayList<StringTransmutator>();
 
-    protected boolean        m_inlineImages             = true;
-
+    protected boolean        m_inlineImages     = true;
     protected boolean        m_parseAccessRules = true;
+    /** Keeps image regexp Patterns */
+    protected List< Pattern > m_inlineImagePatterns = null;
+    protected LinkParsingOperations m_linkParsingOperations;
+
+    private static Logger log = Logger.getLogger( MarkupParser.class );
+
     /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
         this is a VERY dangerous option to set - never turn this on in a publicly
         allowable Wiki, unless you are absolutely certain of what you're doing. */
@@ -65,16 +79,73 @@ public abstract class MarkupParser
     /** Lists all punctuation characters allowed in WikiMarkup. These
         will not be cleaned away. This is for compatibility for older versions
         of JSPWiki. */
-
-    protected static final String           LEGACY_CHARS_ALLOWED      = "._";
+    protected static final String LEGACY_CHARS_ALLOWED      = "._";
 
     /** Lists all punctuation characters allowed in page names. */
-    public    static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+    public    static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+
+    public    static final String HASHLINK = "hashlink";
+
+    /** Name of the outlink image; relative path to the JSPWiki directory. */
+    public    static final String OUTLINK_IMAGE = "images/out.png";
+    /** Outlink css class. */
+    public    static final String OUTLINK = "outlink";
+
+    /** If true, all outward links (external links) have a small link image appended. */
+    public    static final String PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
+
+    private   static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
+
+    /** If set to "true", all external links are tagged with 'rel="nofollow"' */
+    public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
+
+    /** The value for anchor element <tt>class</tt> attributes when used
+     * for wiki page (normal) links. The value is "wikipage". */
+   public static final String CLASS_WIKIPAGE = "wikipage";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for edit page links. The value is "createpage". */
+   public static final String CLASS_EDITPAGE = "createpage";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for interwiki page links. The value is "interwiki". */
+   public static final String CLASS_INTERWIKI = "interwiki";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for footnote links. The value is "footnote". */
+   public static final String CLASS_FOOTNOTE = "footnote";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for footnote links. The value is "footnote". */
+   public static final String CLASS_FOOTNOTE_REF = "footnoteref";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for external links. The value is "external". */
+   public static final String CLASS_EXTERNAL = "external";
+
+   /** The value for anchor element <tt>class</tt> attributes when used
+     * for attachments. The value is "attachment". */
+   public static final String CLASS_ATTACHMENT = "attachment";
+
+   public static final String[] CLASS_TYPES =
+   {
+      CLASS_WIKIPAGE,
+      CLASS_EDITPAGE,
+      "",
+      CLASS_FOOTNOTE,
+      CLASS_FOOTNOTE_REF,
+      "",
+      CLASS_EXTERNAL,
+      CLASS_INTERWIKI,
+      CLASS_EXTERNAL,
+      CLASS_WIKIPAGE,
+      CLASS_ATTACHMENT
+   };
 
     /**
      *  Constructs a MarkupParser.  The subclass must call this constructor
      *  to set up the necessary bits and pieces.
-     *  
+     *
      *  @param context The WikiContext.
      *  @param in The reader from which we are reading the bytes from.
      */
@@ -82,6 +153,7 @@ public abstract class MarkupParser
     {
         m_engine = context.getEngine();
         m_context = context;
+        m_linkParsingOperations = new LinkParsingOperations( m_context );
         setInputReader( in );
     }
 
@@ -163,7 +235,7 @@ public abstract class MarkupParser
     /**
      *  Adds a HeadingListener to the parser chain.  It will be called whenever
      *  a parsed header is found.
-     *  
+     *
      *  @param listener The listener to add.
      */
     public void addHeadingListener( HeadingListener listener )
@@ -182,6 +254,11 @@ public abstract class MarkupParser
         m_parseAccessRules = false;
     }
 
+    public boolean isParseAccessRules()
+    {
+        return m_parseAccessRules;
+    }
+
     /**
      *  Use this to turn on or off image inlining.
      *  @param toggle If true, images are inlined (as per set in jspwiki.properties)
@@ -192,6 +269,48 @@ public abstract class MarkupParser
     public void enableImageInlining( boolean toggle )
     {
         m_inlineImages = toggle;
+    }
+
+    public boolean isImageInlining() {
+        return m_inlineImages;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected final void initInlineImagePatterns() {
+		PatternCompiler compiler = new GlobCompiler();
+        //
+        //  We cache compiled patterns in the engine, since their creation is really expensive
+        //
+        List< Pattern > compiledpatterns = ( List< Pattern > )m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
+
+        if( compiledpatterns == null ) {
+            compiledpatterns = new ArrayList< Pattern >( 20 );
+            Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
+
+            //
+            //  Make them into Regexp Patterns.  Unknown patterns are ignored.
+            //
+            for( Iterator< String > i = ptrns.iterator(); i.hasNext(); ) {
+            	String pattern = i.next();
+                try {
+                    compiledpatterns.add( compiler.compile( pattern,
+                                                            GlobCompiler.DEFAULT_MASK | GlobCompiler.READ_ONLY_MASK ) );
+                } catch( MalformedPatternException e ) {
+                    log.error( "Malformed pattern [" + pattern + "] in properties: ", e );
+                }
+            }
+
+            m_engine.setAttribute( INLINE_IMAGE_PATTERNS, compiledpatterns );
+        }
+
+        m_inlineImagePatterns = Collections.unmodifiableList( compiledpatterns );
+	}
+
+    public List< Pattern > getInlineImagePatterns() {
+    	if( m_inlineImagePatterns == null ) {
+    		initInlineImagePatterns();
+    	}
+    	return m_inlineImagePatterns;
     }
 
     /**
@@ -231,7 +350,7 @@ public abstract class MarkupParser
     /**
      *  Push back any character to the current input.  Does not
      *  push back a read EOF, though.
-     *  
+     *
      *  @param c Character to push back.
      *  @throws IOException In case the character cannot be pushed back.
      */
@@ -244,7 +363,7 @@ public abstract class MarkupParser
             m_in.unread( c );
         }
     }
-    
+
     /**
      *  Writes HTML for error message.  Does not add it to the document, you
      *  have to do it yourself.

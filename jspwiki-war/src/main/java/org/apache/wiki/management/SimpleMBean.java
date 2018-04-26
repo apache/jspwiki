@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.management;
 
@@ -80,8 +80,8 @@ public abstract class SimpleMBean implements DynamicMBean {
 
     /**
      *  Create a new SimpleMBean
-     *  
-     *  @throws NotCompliantMBeanException {@inheritDoc}
+     *
+     *  @throws NotCompliantMBeanException if an error occurs registering the MBean.
      */
     protected SimpleMBean() throws NotCompliantMBeanException
     {
@@ -199,14 +199,14 @@ public abstract class SimpleMBean implements DynamicMBean {
 
     /**
      *  Gets an attribute using reflection from the MBean.
-     *  
+     *
      *  @param name Name of the attribute to find.
      *  @return The value returned by the corresponding getXXX() call
      *  @throws AttributeNotFoundException If there is not such attribute
-     *  @throws MBeanException 
+     *  @throws MBeanException
      *  @throws ReflectionException
      */
-    public Object getAttribute(String name) 
+    public Object getAttribute(String name)
         throws AttributeNotFoundException, MBeanException, ReflectionException
     {
         Method m;
@@ -245,9 +245,9 @@ public abstract class SimpleMBean implements DynamicMBean {
 
     /**
      *  Gets multiple attributes at the same time.
-     *  
+     *
      *  @param arg0 The attribute names to get
-     *  @return A list of attributes 
+     *  @return A list of attributes
      */
     public AttributeList getAttributes(String[] arg0)
     {
@@ -281,7 +281,7 @@ public abstract class SimpleMBean implements DynamicMBean {
 
     /**
      *  Return the MBeanInfo structure.
-     *  
+     *
      *  @return the MBeanInfo
      */
     public MBeanInfo getMBeanInfo()
@@ -291,7 +291,7 @@ public abstract class SimpleMBean implements DynamicMBean {
 
     /**
      *  Invokes a particular method.
-     *  
+     *
      *  @param arg0 Method name
      *  @param arg1 A list of arguments for the invocation
      */
@@ -362,7 +362,7 @@ public abstract class SimpleMBean implements DynamicMBean {
     public AttributeList setAttributes(AttributeList arg0)
     {
         AttributeList result = new AttributeList();
-        for( Iterator i = arg0.iterator(); i.hasNext(); )
+        for( Iterator< Object > i = arg0.iterator(); i.hasNext(); )
         {
             Attribute attr = (Attribute)i.next();
 

@@ -225,4 +225,31 @@ a.feed[href], .editsection, .hashlink, .filter-input, .slmbx,
 }
 
 
+//make the special block markers print friendly by adding an icon in the left margin
+div.info, div.information, div.warning, div.danger, div.error {
+    position:relative;
+    padding-left:3em;
+}
+div.info::before, div.information::before,
+div.warning::before,
+div.danger::before, div.error::before {
+    position:absolute;
+    font-family: 'FontJspwiki';
+    left:0.75em;
+    top:0.5em;
+    font-size:1.5em;
+}
+div.info, div.information { .icon-info; }
+div.warning { .icon-warning; }
+div.danger, div.error { .icon-error; }
+
+
+// CHECKME: Make sure to print collapsed items as if they were not collapsed
+div.clpse {
+    display:block;
+    height:auto !important;
+    //width:auto !important;
+}
+
+
 } /* end of @media print */

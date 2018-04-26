@@ -27,44 +27,43 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import net.sf.ehcache.CacheManager;
+
 
 /**
  *
  *  @since
  */
-public class RSSGeneratorTest extends TestCase
+public class RSSGeneratorTest
 {
     TestEngine m_testEngine;
     Properties props = TestEngine.getTestProperties();
 
-    public RSSGeneratorTest( String arg0 )
-    {
-        super( arg0 );
-    }
-
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
         CacheManager.getInstance().removeAllCaches();
         m_testEngine = new TestEngine(props);
     }
 
-    protected void tearDown() throws Exception
+    @After
+    public void tearDown() throws Exception
     {
         TestEngine.deleteAll( new File(props.getProperty( FileSystemProvider.PROP_PAGEDIR )) );
     }
 
+    @Test
     public void testBlogRSS()
         throws Exception
     {
@@ -91,10 +90,11 @@ public class RSSGeneratorTest extends TestCase
         Feed feed = new RSS10Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );
 
-        assertTrue( "has Foo", blog.indexOf("<description>Foo</description>") != -1 );
-        assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
+        Assert.assertTrue( "has Foo", blog.indexOf("<description>Foo</description>") != -1 );
+        Assert.assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
     }
 
+    @Test
     public void testBlogRSS2()
         throws Exception
     {
@@ -121,12 +121,8 @@ public class RSSGeneratorTest extends TestCase
         Feed feed = new RSS20Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );
 
-        assertTrue( "has Foo", blog.indexOf("<description>Foo &amp;quot;blah&amp;quot;.</description>") != -1 );
-        assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
-    }
-    public static Test suite()
-    {
-        return new TestSuite( RSSGeneratorTest.class );
+        Assert.assertTrue( "has Foo", blog.indexOf("<description>Foo &amp;quot;blah&amp;quot;.</description>") != -1 );
+        Assert.assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
     }
 
 }

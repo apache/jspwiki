@@ -19,20 +19,19 @@
 package org.apache.wiki.plugin;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -446,7 +445,6 @@ public class WeblogPlugin
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
-        SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
 
         for( Iterator i = allPages.iterator(); i.hasNext(); )
         {

@@ -62,7 +62,7 @@ Example:
     ...
     (end)
 */
-!function(){
+!(function(){
 
 var TCollapsible = this.Collapsible = new Class({
 
@@ -354,4 +354,4 @@ TCollapsible/*this.Collapsible*/.Box = new Class({
 
 });
 
-}();
+})();

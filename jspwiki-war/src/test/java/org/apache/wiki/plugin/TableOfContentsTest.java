@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,63 +14,54 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 /*
  * (C) Janne Jalkanen 2005
- * 
+ *
  */
 package org.apache.wiki.plugin;
-
 import java.util.Properties;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
- *  @since 
+ *  @since
  */
-public class TableOfContentsTest extends TestCase
+public class TableOfContentsTest
 {
     TestEngine testEngine;
-    
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception
-    {
-        super.setUp();
 
+    @Before
+    public void setUp() throws Exception
+    {
         Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
     }
 
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception
+    @After
+    public void tearDown() throws Exception
     {
-        super.tearDown();
-        
         testEngine.deletePage( "Test" );
     }
-    
+
     /**
      * TableOfContents plugin produces some i18n text, so we enforce english locale in order to
      * be able to compare properly to assertion texts.
-     * 
+     *
      * @param pagename name of the page.
-     * @return (english) contents corresponding to the given page name. 
+     * @return (english) contents corresponding to the given page name.
      */
-    String getI18nHTML( String pagename ) 
+    String getI18nHTML( String pagename )
     {
         WikiPage page = testEngine.getPage( pagename, WikiPageProvider.LATEST_VERSION );
         WikiContext context = new WikiContext( testEngine,
@@ -80,17 +71,18 @@ public class TableOfContentsTest extends TestCase
         return testEngine.getHTML( context, page );
     }
 
+    @Test
     public void testHeadingVariables()
         throws Exception
     {
         String src="[{SET foo=bar}]\n\n[{TableOfContents}]\n\n!!!Heading [{$foo}]";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
+
         // FIXME: The <p> should not be here.
-        assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
+        Assert.assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                       "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                       "<ul>\n"+
                       "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">Heading bar</a></li>\n"+
@@ -99,15 +91,16 @@ public class TableOfContentsTest extends TestCase
                       res );
     }
 
+    @Test
     public void testNumberedItems()
     throws Exception
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
+
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                 "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
@@ -119,20 +112,21 @@ public class TableOfContentsTest extends TestCase
                 "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
                 "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
                 "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>\n";
-                
-        assertEquals(expecting,
+
+        Assert.assertEquals(expecting,
                 res );
     }
-    
+
+    @Test
     public void testNumberedItemsComplex()
     throws Exception
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
+
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
@@ -154,20 +148,21 @@ public class TableOfContentsTest extends TestCase
         "\n<h4 id=\"section-Test-Subsubheading3\">Subsubheading3<a class=\"hashlink\" href=\"#section-Test-Subsubheading3\">#</a></h4>"+
         "\n<h2 id=\"section-Test-Heading\">Heading<a class=\"hashlink\" href=\"#section-Test-Heading\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading3\">Subheading3<a class=\"hashlink\" href=\"#section-Test-Subheading3\">#</a></h3>\n";
-        
-        assertEquals(expecting,
+
+        Assert.assertEquals(expecting,
                 res );
     }
-    
+
+    @Test
     public void testNumberedItemsComplex2()
     throws Exception
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!Subheading0\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
+
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
@@ -191,20 +186,21 @@ public class TableOfContentsTest extends TestCase
         "\n<h4 id=\"section-Test-Subsubheading3\">Subsubheading3<a class=\"hashlink\" href=\"#section-Test-Subsubheading3\">#</a></h4>"+
         "\n<h2 id=\"section-Test-Heading\">Heading<a class=\"hashlink\" href=\"#section-Test-Heading\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading3\">Subheading3<a class=\"hashlink\" href=\"#section-Test-Subheading3\">#</a></h3>\n";
-        
-        assertEquals(expecting,
+
+        Assert.assertEquals(expecting,
                      res );
     }
-    
+
+    @Test
     public void testNumberedItemsWithPrefix()
     throws Exception
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3,prefix=FooBar-}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
+
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
@@ -216,60 +212,59 @@ public class TableOfContentsTest extends TestCase
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
         "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>\n";
-        
-        assertEquals(expecting,
+
+        Assert.assertEquals(expecting,
                 res );
     }
-    
+
     /**
      *  Tests BugTableOfContentsCausesHeapdump
-     *  
+     *
      * @throws Exception
      */
+    @Test
     public void testSelfReference()
         throws Exception
     {
         String src = "!!![{TableOfContents}]";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
-        assertTrue( res.indexOf("Table of Contents") != -1 );
+
+        Assert.assertTrue( res.indexOf("Table of Contents") != -1 );
     }
-    
+
+    @Test
     public void testHTML()
         throws Exception
     {
         String src = "[{TableOfContents}]\n\n!<i>test</i>";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
-        
-        assertTrue( "<i>", res.indexOf("<i>") == -1 ); // Check that there is no HTML left
-        assertTrue( "</i>", res.indexOf("</i>") == -1 ); // Check that there is no HTML left
-        
+
+        Assert.assertTrue( "<i>", res.indexOf("<i>") == -1 ); // Check that there is no HTML left
+        Assert.assertTrue( "</i>", res.indexOf("</i>") == -1 ); // Check that there is no HTML left
+
     }
-    
+
+    @Test
     public void testSimilarNames() throws WikiException
     {
         String src = "[{TableOfContents}]\n\n!Test\n\n!Test\n\n";
-        
+
         testEngine.saveText( "Test", src );
-        
+
         String res = getI18nHTML( "Test" );
 
-        assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
-        assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );
+        Assert.assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
+        Assert.assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );
 
-        assertTrue( "First test", res.indexOf( "#section-Test-Test" ) != -1 );
-        assertTrue( "2nd test",   res.indexOf( "#section-Test-Test-2" ) != -1 );
-        
+        Assert.assertTrue( "First test", res.indexOf( "#section-Test-Test" ) != -1 );
+        Assert.assertTrue( "2nd test",   res.indexOf( "#section-Test-Test-2" ) != -1 );
+
     }
-    public static Test suite()
-    {
-        return new TestSuite( TableOfContentsTest.class );
-    }
-    
+
 }

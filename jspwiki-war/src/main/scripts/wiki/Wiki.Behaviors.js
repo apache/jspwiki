@@ -61,7 +61,7 @@ Depend on :
     behaviors/TableX.Zebra.js
 */
 
-!function( wiki ){
+!(function( wiki ){
 
 var TheSlimbox, T = TableX;
 
@@ -70,22 +70,22 @@ var TheSlimbox, T = TableX;
 Behavior: Broken images
     Replace broken image browser icons
 */
-wiki.once( "img", function(imgs){
+wiki.once( "img:not(outlink)", function(imgs){
 
     imgs.addEvent("error", function(){
 
         var img = $(this);
         [ "span.danger.img-error", {
-            text: "broken.image".localize() //Broken Image!
-        }, [
-            "span", { text: img.alt || img.src }
+                text: "broken.image".localize()
+            },
+            [
+                "span", { text: img.alt || img.src }
             ]
         ].slick().replaces(img);
 
     });
 
 });
-
 
 /*
 Behavior: GraphBars, Progress-bars
@@ -449,7 +449,7 @@ Wiki Markup:
 /*
 Behavior:Columns
 
->    %%columns(-width) .. /%
+>    %%columns .. /%
 */
     .add( "div[class^=columns]", Columns, { prefix: "columns" } )
 
@@ -468,9 +468,7 @@ Example:
 >    }}} /%
 
 */
-    .add("div.prettify:not(.prettyprint) pre, div.prettify:not(.prettyprint) code", function(element){
-
-        element.addClass("prettyprint");
+    .add("div.prettify pre:not(.prettyprint), div.prettify code:not(.prettyprint)", function(element){
 
         //brute-force line-number injection
         "div".slick().wraps(element).grab(
@@ -482,10 +480,22 @@ Example:
 
             }),"top");
 
+        element.addClass("prettyprint");
+        /*html5 expects  <pre><code>  */
+        if( element.match("pre") ){
+            element.innerHTML = "<code>" + element.innerHTML + "</code>";
+            element = element.getFirst();
+        }
+
     })
-    .add("[class~=prettify-nonum] pre, [class~=prettify-nonum] code", function(element){
+    .add("[class~=prettify-nonum] pre:not(.prettyprint), [class~=prettify-nonum] code:not(.prettyprint)", function(element){
 
         element.addClass("prettyprint");
+        /*html5 expects  <pre><code>  */
+        if( element.match("pre") ){
+            element.innerHTML = "<code>" + element.innerHTML + "</code>";
+            element = element.getFirst();
+        }
 
     })
 
@@ -519,7 +529,7 @@ Behavior: Table behaviors
     %%zebra-pink ... /%      => odd rows get backgroundcolor red
     %%zebra-eee-red ... /%     => odd rows: #eee, even rows: red
 
-    %%table-striped-bordered-hover-condensed-fit-filter-sort
+    %%table-striped-bordered-hover-condensed-fit-filter-sort-noborder
     %%sortable .. /%
     %%table-filter .. /%
 
@@ -544,7 +554,7 @@ Behavior: Table behaviors
 
         var args = "table".sliceArgs(element),
             arg,
-            tables = element.getElements("table"),
+            tables = element.getElements("table:not(.imageplugin)"),
             hints = Object.map({
                 sort: "sort.click",
                 atoz: "sort.ascending",
@@ -555,7 +565,7 @@ Behavior: Table behaviors
 
             arg = args.shift();
 
-            if( arg.test("striped|bordered|hover|condensed|fit")){
+            if( arg.test("striped|bordered|hover|condensed|fit|noborder")){
 
                 tables.addClass("table-"+arg);
 
@@ -594,6 +604,8 @@ Behavior: Scrollable pre area with maximum size (based on BOOTSTRAP)
             .addClass("pre-scrollable")
             .setStyle("maxHeight", maxHeight + "px");
 
+        //FFS : support scollable > table
+
     })
 
 /*
@@ -618,11 +630,12 @@ Behavior: List (based on BOOTSTRAP)
 >   %%list-unstyled-hover-group-nostyle
 
 */
-    .add("[class|=list]", function(element){
+    .add("[class*=list-]", function(element){
 
         var args = "list".sliceArgs(element),
             lists = element.getElements("ul|ol");
 
+        if( !args ) return;
         args.each( function( arg ){
 
             if( arg.test("unstyled|hover|group|nostyle") ){
@@ -686,8 +699,20 @@ DOM Structure:
     })
 
 /*
+Behavior: Magnify
+    Add magnifying image glass
+
+Wiki-markup:
+    > %%magnify <img> /%
+    > [{Image src='...' class='magnify' }]
+
+*/
+    .once(".magnify img", Magnify)
+
+
+/*
 Behavior: DropCaps
-    Convert the first character of a paragraph to a large "DropCap"
+    Convert the first character of a paragraph to a large "DropCap" character
 
 >    %%dropcaps .. /%
 
@@ -745,6 +770,167 @@ CSS:
 
 
 /*
+wiki-slides
+
+*/
+    .once(".page-content.wiki-slides", function(elements){
+
+        var divider = "hr";
+
+        elements
+            .grab(divider.slick(), "top") //add one extra group-start-element at the top
+            .groupChildren(divider, "div.slide");
+
+    })
+
+
+/*
+Behviour:  Background
+    Move image to the background of a page.
+    Also support additional image styles on background images.
+
+Case1:
+div[this is the parent container]
+    img.bg[src=<imageurl>]
+    ...
+    div other content
+    ...
+
+Case2:
+div[this is the parent container]
+    table.imageplugin
+        tr
+            td.bg
+                img[src=<imageurl>]
+    ...
+    div other content
+    ...
+
+Case3:
+div[this is the parent container]
+    div.bg
+        img[src=<imageurl>]
+    ...
+    div other content
+    ...
+
+
+After
+div[this is the parent container]
+    span.background[background-image=<image-url>]
+    div.background-overlay[z-index=2]
+        ...
+        div other content
+        ...
+
+
+%%bg [<image link>] /%
+%bg [{IMAGE src='<image link>' }]/%
+[{IMAGE src='<image link>' class='bg' }]
+
+%%bg-image.bg-fixed [<image link>] /%
+[{IMAGE src='<image link>' class='bg-image bg-fixed' }]
+
+*/
+    .add(".bg > table.imageplugin img, .bg > img", function( image ){
+
+        var bgBox = image.getParent(".bg"),
+            clazz = bgBox.className; //contains possibly other styles to be applied to the background image
+
+        if( bgBox && bgBox.match("td") ){
+            bgBox = bgBox.getParent("table");
+        }
+
+        if( bgBox ){
+
+            bgBox
+                .addClass("bg")   //need .bg as trigger for groupChildren() !
+                .getParent()      //move up to the containing element
+                .addClass("has-background")
+                .groupChildren(".bg", "div.bg-overlay.clearfix", function(wrapper, bg){
+
+                    //use a extra container span to allow additional effects
+                    //on the background image without impact on the overlay content ...
+                    var element = "span".slick();
+                    element.className = clazz;
+                    element.style.backgroundImage = "url(" + image.src + ")";
+                    element.inject(bg, "before");
+
+            });
+            //bgBox.destroy();   //not really needed as per default css the .bg  element is hidden
+            //bgBox.parentNode.removeChild(bgBox);
+        }
+
+    })
+
+/*
+Behvior:  Image Caption
+
+DOM Structure
+
+Case1
+from::
+    div.caption(-arrow)(-overlay).other-class
+        img.inline[src='...']
+        caption-text
+
+to::
+    figure.caption(-arrow)(-overlay).other-class
+        figcaption.other-class
+            caption-text
+        img.inline[src='...']
+
+
+Case2
+from::
+    div.caption(-arrow)(-overlay).other-class
+        table.imageplugin
+            tr
+                td
+                    img[src='...']
+        caption-text
+
+to::
+    div.caption(-arrow)(-overlay)
+        table.imageplugin
+            caption.other-class
+                caption-text
+            tr
+                td
+                    img[src='...']
+
+*/
+    .add("[class^=caption] > .imageplugin", function( imageplugin ){
+
+        var caption = imageplugin.getParent(),
+            oldcaption = imageplugin.getFirst("caption");
+
+        if( !oldcaption ){
+
+            imageplugin.wraps(caption,"top");
+
+            "caption".slick({
+                html: caption.innerHTML,
+                "class": caption.className
+            }).replaces(caption);
+
+        }
+
+    })
+    .add("[class^=caption] > img.inline", function( img ){
+
+        var caption = img.getParent();
+
+        "figure".slick().grab(img).wraps(caption,"top");
+
+        "figcaption".slick({
+            html: caption.innerHTML,
+            "class": caption.className
+        }).replaces(caption);
+
+    })
+
+/*
 Experimental
 svg pie,
 credit: lea verou
@@ -782,4 +968,4 @@ Behavior:Flip, Flop
     .add( "div[class|=flop]", Flip, { prefix: "flop" } );
 
 
-}( Wiki );
+})( Wiki );

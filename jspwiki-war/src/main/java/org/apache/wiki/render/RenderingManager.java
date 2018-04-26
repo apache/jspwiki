@@ -22,12 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.PageManager;
@@ -42,7 +37,12 @@ import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 /**
@@ -69,16 +69,20 @@ public class RenderingManager implements WikiEventListener, InternalModule
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
     /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
-    private static final int    DEFAULT_CACHESIZE = 1000;
-    private static final String VERSION_DELIMITER = "::";
-    private static final String PROP_PARSER       = "jspwiki.renderingManager.markupParser";
-    private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
+    private static final int    DEFAULT_CACHESIZE     = 1000;
+    private static final String VERSION_DELIMITER     = "::";
+    private static final String PROP_PARSER           = "jspwiki.renderingManager.markupParser";
+    private static final String PROP_RENDERER         = "jspwiki.renderingManager.renderer";
+    private static final String PROP_WYSIWYG_RENDERER = "jspwiki.renderingManager.renderer.wysiwyg";
 
     /** The name of the default renderer. */
     public static final String DEFAULT_PARSER = JSPWikiMarkupParser.class.getName();
 
     /** The name of the default renderer. */
     public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
+
+    /** The name of the default WYSIWYG renderer. */
+    public  static final String DEFAULT_WYSIWYG_RENDERER  = WysiwygEditingRenderer.class.getName();
 
     /** Stores the WikiDocuments that have been cached. */
     private Cache m_documentCache;
@@ -87,6 +91,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     public static final String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
 
     private Constructor< ? > m_rendererConstructor;
+    private Constructor< ? > m_rendererWysiwygConstructor;
     private String m_markupParserClass = DEFAULT_PARSER;
 
     /**
@@ -96,8 +101,8 @@ public class RenderingManager implements WikiEventListener, InternalModule
     public static final String WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
 
     /**
-     *  Variable name which tells whether plugins should be executed or not.  Value
-     *  can be either Boolean.TRUE or Boolean.FALSE.
+     *  Variable name which tells whether plugins should be executed or not.  Value can be either
+     *  {@code Boolean.TRUE} or {@code Boolean.FALSE}. While not set it's value is {@code null}
      */
     public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
 
@@ -137,30 +142,38 @@ public class RenderingManager implements WikiEventListener, InternalModule
             }
         }
 
-        String renderImplName = properties.getProperty( PROP_RENDERER, DEFAULT_RENDERER );
+        final String renderImplName = properties.getProperty( PROP_RENDERER, DEFAULT_RENDERER );
+        final String renderWysiwygImplName = properties.getProperty( PROP_WYSIWYG_RENDERER, DEFAULT_WYSIWYG_RENDERER );
 
-        Class< ? >[] rendererParams = { WikiContext.class, WikiDocument.class };
-        try {
-            Class< ? > c = Class.forName( renderImplName );
-            m_rendererConstructor = c.getConstructor( rendererParams );
-        } catch( ClassNotFoundException e ) {
-            log.error( "Unable to find WikiRenderer implementation " + renderImplName );
-        } catch( SecurityException e ) {
-            log.error( "Unable to access the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
-        } catch( NoSuchMethodException e ) {
-            log.error( "Unable to locate the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
-        }
+        final Class< ? >[] rendererParams = { WikiContext.class, WikiDocument.class };
+        m_rendererConstructor = initRenderer( renderImplName, rendererParams );
+        m_rendererWysiwygConstructor = initRenderer( renderWysiwygImplName, rendererParams );
 
-        if( m_rendererConstructor == null ) {
-            throw new WikiException( "Failed to get WikiRenderer '" + renderImplName + "'." );
-        }
         log.info( "Rendering content with " + renderImplName + "." );
 
         WikiEventUtils.addWikiEventListener(m_engine, WikiPageEvent.POST_SAVE_BEGIN, this);
     }
 
+    private Constructor< ? > initRenderer( final String renderImplName, final Class< ? >[] rendererParams ) throws WikiException {
+        Constructor< ? > c = null;
+        try {
+            final Class< ? > clazz = Class.forName( renderImplName );
+            c = clazz.getConstructor( rendererParams );
+        } catch( final ClassNotFoundException e ) {
+            log.error( "Unable to find WikiRenderer implementation " + renderImplName );
+        } catch( final SecurityException e ) {
+            log.error( "Unable to access the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
+        } catch( final NoSuchMethodException e ) {
+            log.error( "Unable to locate the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
+        }
+        if( c == null ) {
+            throw new WikiException( "Failed to get WikiRenderer '" + renderImplName + "'." );
+        }
+        return c;
+    }
+
     /**
-     *  Returns the default Paxt
+     *  Returns the wiki Parser
      *  @param pagedata the page data
      *  @return A MarkupParser instance.
      */
@@ -182,44 +195,49 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @throws IOException If rendering cannot be accomplished
      */
     // FIXME: The cache management policy is not very good: deleted/changed pages should be detected better.
-    protected WikiDocument getRenderedDocument(WikiContext context, String pagedata) throws IOException {
-        String pageid = context.getRealPage().getName() + VERSION_DELIMITER + context.getRealPage().getVersion();
-        if (m_useCache) {
+    protected WikiDocument getRenderedDocument( WikiContext context, String pagedata ) throws IOException {
+        String pageid = context.getRealPage().getName() + VERSION_DELIMITER +
+                        context.getRealPage().getVersion() + VERSION_DELIMITER +
+                        context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
 
-            Element element = m_documentCache.get(pageid);
-            if (element != null) {
+        if( useCache( context ) ) {
+            Element element = m_documentCache.get( pageid );
+            if ( element != null ) {
                 WikiDocument doc = (WikiDocument) element.getObjectValue();
 
                 //
                 //  This check is needed in case the different filters have actually changed the page data.
                 //  FIXME: Figure out a faster method
-                if (pagedata.equals(doc.getPageData())) {
-                    if (log.isDebugEnabled()) log.debug("Using cached HTML for page " + pageid);
+                if( pagedata.equals( doc.getPageData() ) ) {
+                    if( log.isDebugEnabled() ) {
+                        log.debug( "Using cached HTML for page " + pageid );
+                    }
                     return doc;
                 }
-            } else {
-                if (log.isDebugEnabled()) log.debug("Re-rendering and storing " + pageid);
+            } else if( log.isDebugEnabled() ) {
+                log.debug( "Re-rendering and storing " + pageid );
             }
         }
-        //
+
         //  Refresh the data content
         //
-        try
-        {
+        try {
             MarkupParser parser = getParser( context, pagedata );
             WikiDocument doc = parser.parse();
             doc.setPageData( pagedata );
-            if (m_useCache) {
-                m_documentCache.put(new Element(pageid, doc));
+            if( useCache( context ) ) {
+                m_documentCache.put( new Element( pageid, doc ) );
             }
             return doc;
-        }
-        catch( IOException ex )
-        {
-            log.error("Unable to parse",ex);
+        } catch( IOException ex ) {
+            log.error( "Unable to parse", ex );
         }
 
         return null;
+    }
+
+    boolean useCache( WikiContext context ) {
+        return m_useCache && WikiContext.VIEW.equals( context.getRequestContext() );
     }
 
     /**
@@ -236,7 +254,19 @@ public class RenderingManager implements WikiEventListener, InternalModule
      */
     public String getHTML( WikiContext context, WikiDocument doc ) throws IOException
     {
-        WikiRenderer rend = getRenderer( context, doc );
+        final Boolean wysiwygVariable = ( Boolean )context.getVariable( WYSIWYG_EDITOR_MODE );
+        final boolean wysiwygEditorMode;
+        if( wysiwygVariable != null ) {
+            wysiwygEditorMode = wysiwygVariable.booleanValue();
+        } else {
+            wysiwygEditorMode = false;
+        }
+        WikiRenderer rend;
+        if( wysiwygEditorMode ) {
+            rend = getWysiwygRenderer( context, doc );
+        } else {
+            rend = getRenderer( context, doc );
+        }
 
         return rend.getString();
     }
@@ -250,17 +280,33 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @param doc The document to render
      * @return A WikiRenderer for this document, or null, if no such renderer could be instantiated.
      */
-    public WikiRenderer getRenderer( WikiContext context, WikiDocument doc )
-    {
-        Object[] params = { context, doc };
-        WikiRenderer rval = null;
+    public WikiRenderer getRenderer( WikiContext context, WikiDocument doc ) {
+        final Object[] params = { context, doc };
+        return getRenderer( params, m_rendererConstructor );
+    }
 
-        try
-        {
-            rval = (WikiRenderer)m_rendererConstructor.newInstance( params );
-        }
-        catch( Exception e )
-        {
+    /**
+     * Returns a WikiRenderer instance meant for WYSIWYG editing, initialized with the given
+     * context and doc. The object is an WysiwygEditingRenderer, unless overridden
+     * in jspwiki.properties with PROP_WYSIWYG_RENDERER.
+     *
+     * @param context The WikiContext
+     * @param doc The document to render
+     * @return A WikiRenderer instance meant for WYSIWYG editing, for this document, or null, if
+     *         no such renderer could be instantiated.
+     */
+    public WikiRenderer getWysiwygRenderer( WikiContext context, WikiDocument doc ) {
+        final Object[] params = { context, doc };
+        return getRenderer( params, m_rendererWysiwygConstructor );
+    }
+
+    @SuppressWarnings("unchecked")
+    private < T extends WikiRenderer > T getRenderer( Object[] params, Constructor<?> rendererConstructor ) {
+        T rval = null;
+
+        try {
+            rval = (T)rendererConstructor.newInstance( params );
+        } catch( final Exception e ) {
             log.error( "Unable to create WikiRenderer", e );
         }
         return rval;
@@ -294,29 +340,35 @@ public class RenderingManager implements WikiEventListener, InternalModule
     }
 
     /**
-     * Flushes the document cache in response to a POST_SAVE_BEGIN event.
+     * {@inheritDoc}
+     *
+     * <p>Flushes the document cache in response to a POST_SAVE_BEGIN event.
      *
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
-     * @param event {@inheritDoc}
      */
-    public void actionPerformed(WikiEvent event) {
-        if (m_useCache) {
-            if ((event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN)) {
-                if (m_documentCache != null) {
-                    String pageName = ((WikiPageEvent) event).getPageName();
-                    m_documentCache.remove(pageName);
-                    Collection referringPages = m_engine.getReferenceManager().findReferrers(pageName);
+    @Override
+    public void actionPerformed( WikiEvent event ) {
+        log.debug( "event received: " + event.toString() );
+        if( m_useCache ) {
+            if( ( event instanceof WikiPageEvent ) && ( event.getType() == WikiPageEvent.POST_SAVE_BEGIN ) ) {
+                if( m_documentCache != null ) {
+                    String pageName = ( ( WikiPageEvent ) event ).getPageName();
+                    m_documentCache.remove( pageName );
+                    Collection< String > referringPages = m_engine.getReferenceManager().findReferrers( pageName );
 
                     //
                     //  Flush also those pages that refer to this page (if an nonexistent page
-                    //  appears; we need to flush the HTML that refers to the now-existent page
+                    //  appears, we need to flush the HTML that refers to the now-existent page)
                     //
-                    if (referringPages != null) {
-                        Iterator i = referringPages.iterator();
-                        while (i.hasNext()) {
-                            String page = (String) i.next();
-                            if (log.isDebugEnabled()) log.debug("Flushing " + page);
-                            m_documentCache.remove(page);
+                    if( referringPages != null ) {
+                        for( String page : referringPages ) {
+                            if( log.isDebugEnabled() ) {
+                                log.debug( "Flushing latest version of " + page );
+                            }
+                            // as there is a new version of the page expire both plugin and pluginless versions of the old page
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
+                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + null );
                         }
                     }
                 }

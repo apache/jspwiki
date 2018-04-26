@@ -29,11 +29,11 @@ Wiki.DirectSnips = {
     '[' : ']',
     '{' : '}',
     "'" : {
-    snippet: "'",
-    scope: {
-        "[{" : "}]"  //plugin parameters
-      }
-    }
+        snippet: "'",
+        scope: {
+            "[{" : "}]"  //plugin parameters
+          }
+        }
 };
 
 /*
@@ -103,10 +103,16 @@ Wiki.Snips = {
 
     tabs: {
         nScope: {
-        "%%(":")",
-        "%%tabbedSection":"/%"
+            "%%(":")",
+            "%%tabs":"/%"
         },
-        snippet:"%%tabbedSection \n%%tab-{tabTitle1}\ntab content 1\n/%\n%%tab-tabTitle2\ntab content 2\n/%\n/%\n "
+        snippet:"%%tabs\n!tab-1\ntab-1 content 1\n!tab-2\ntab-2 content \n/%\n "
+    },
+
+    insertPageDlg:{
+        scope: { "[{InsertPage":"}]" },
+        suggest: { lback:"page='([^']*)'?$", match: "^([^']*)" },
+        insertPageDlg: Wiki.pageDialog("Insert Page", "/search/suggestions")
     },
 
     img: "\n[{Image src='{img.jpg}' width='400px' height='300px' align='left' }]\n ",
@@ -151,8 +157,8 @@ Wiki.Snips = {
 
     charsDlg: {
         suggest: {
-        lback: /&\w*;?$/,
-        match: /^&\w*;?/
+            lback: /&\w*;?$/,
+            match: /^&\w*;?/
         },
         dialog: [ Dialog.Chars, {
             caption:"dialog.character.entities".localize()
@@ -164,65 +170,63 @@ Wiki.Snips = {
         scope: { "%%":"/%" },
         suggest: "icon-\\S*",
         iconDlg: [Dialog.Selection, {
-        cssClass:".dialog-horizontal",
-        body:{
-            "icon-search":"<div class='icon-search'></div>",
-            "icon-user":"<div class='icon-user'></div>",
-            "icon-home":"<div class='icon-home'></div>",
-            "icon-refresh":"<div class='icon-refresh'></div>",
-            "icon-repeat":"<div class='icon-repeat'></div>",
-            "icon-bookmark":"<div class='icon-bookmark'></div>",
-            "icon-tint":"<div class='icon-tint'></div>",
-            "icon-plus":"<div class='icon-plus'></div>",
-            "icon-external-link":"<div class='icon-external-link'></div>",
-
-            "icon-signin":"<div class='icon-signin'></div>",
-            "icon-signout":"<div class='icon-signout'></div>",
-            "icon-rss":"<div class='icon-rss'></div>",
-            "icon-wrench":"<div class='icon-wrench'></div>",
-            "icon-filter":"<div class='icon-filter'></div>",
-            "icon-link":"<div class='icon-link'></div>",
-            "icon-paper-clip":"<div class='icon-paper-clip'></div>",
-            "icon-undo":"<div class='icon-undo'></div>",
-            "icon-euro":"<div class='icon-euro'></div>",
-            "icon-slimbox":"<div class='icon-slimbox'></div>",
-            "icon-picture":"<div class='icon-picture'></div>",
-            "icon-columns":"<div class='icon-columns'></div>"
-        }
+        cssClass:".dialog-horizontal.icons",
+        body: ( function(icons){
+                    var obj = {};
+                    icons.split(",").forEach( function(item){
+                        item = "icon-"+item;
+                        obj[item]="<div class='"+item+"'></div>";
+                    })
+                    return obj;
+                }
+              )( "search,user,home,refresh,repeat,bookmark,tint,plus,external-link,signin,signout,rss,wrench,filter,link,paper-clip,undo,euro,tag,star,star-o,heart,trash-o,ellipsis-v,pie-chart,location,info,warning,error,flash,smile,frown,meh,slimbox,picture,columns"
+              )
         }]
     },
 
-    contextText: {
-        scope: { "%%":"/%" },
+    textDlg: {
+        scope: { "%%":" " },
         suggest: {
-        lback: /%%text-(\w*)$/,
-        //match: "^default|success|info|warning|danger|capitalize|lowercase|uppercase|smallcaps"
-        match: /^\w*/
+            lback: /(:?%%|\.)text-(\w*)$/,
+            //match: "^default|success|info|warning|danger|capitalize|lowercase|uppercase|smallcaps"
+            match: /^\w*/
         },
-        contextText: [Dialog.Selection, {
-        cssClass:".dialog-horizontal",
+        textDlg: [Dialog.Selection, {
+        cssClass:".dialog-horizontal.text-styles",
         body:{
             primary:"<span class='text-primary'>primary</span>",
             success:"<span class='text-success'>success</span>",
             info:"<span class='text-info'>info</span>",
             warning:"<span class='text-warning'>warning</span>",
             danger:"<span class='text-danger'>danger</span>",
-            "":"",
-            capitalize:"<span class='text-capitalize'>capitalize</span>",
-            lowercase:"<span class='text-lowercase'>lowercase</span>",
-            uppercase:"<span class='text-uppercase'>uppercase</span>",
-            smallcaps:"<span class='text-smallcaps'>Small Caps</span>"
+
+            white:"<span class='text-white'>white</span>",
+            //"white.shadow":"<span class='bg-black'><span class='text-white shadow'>shadow</span></span>",
+            black:"<span class='text-black'>black</span>",
+            //"black.shadow":"<span class='text-black shadow'>shadow</span>",
+
+            divider2:"",
+            left:"<span class='icon-align-left'></span>",
+            center:"<span class='icon-align-center'></span>",
+            right:"<span class='icon-align-right'></span>",
+            justify:"<span class='icon-align-justify'></span>",
+
+            capitalize:"<span class='text-capitalize'>Aa</span>",
+            lowercase:"<span class='text-lowercase'>aa</span>",
+            uppercase:"<span class='text-uppercase'>AA</span>",
+            smallcaps:"<span class='text-smallcaps'>Aa</span>"
+
         }
         }]
     },
 
     contextBG: {
-        scope: { "%%":"/%" },
+        scope: { "%%":" " },
         suggest: {
-        //lback: /%%(default|success|info|warning|error)$/,
-        //match: /^\w+/
-        lback: /%%(\w*)$/,
-        match: /^(default|success|info|warning|error)/
+            //lback: /%%(default|success|info|warning|error)$/,
+            //match: /^\w+/
+            lback: /%%(\w*)$/,
+            match: /^(default|success|info|warning|error)/
         },
         contextBG: [Dialog.Selection, {
         cssClass:".dialog-horizontal",
@@ -232,6 +236,71 @@ Wiki.Snips = {
             info:"<span class='info'>info</span>",
             warning:"<span class='warning'>warning</span>",
             error:"<span class='error'>error</span>"
+        }
+        }]
+    },
+
+    bgColorDlg: {
+        scope: { "%%":" " },
+        suggest: {
+        lback: /(:?%%|\.)bg-(\w*)$/,
+        match: /^\w*/
+        },
+        bgColorDlg: [Dialog.Selection, {
+        cssClass:".dialog-horizontal.bg-colors",
+        body:{
+            primary:"<span class='bg-primary' title='primary'>&para;</span>",
+            success:"<span class='bg-success' titlte='success'>&para;</span>",
+            info:"<span class='bg-info' title='info'>&para;</span>",
+            warning:"<span class='bg-warning' title='warning'>&para;</span>",
+            danger:"<span class='bg-danger' title='danger'>&para;</span>",
+
+            aqua:"<span class='bg-aqua' title='aqua'>&para;</span>",
+            blue:"<span class='bg-blue' title='blue'>&para;</span>",
+            navy:"<span class='bg-navy' title='navy'>&para;</span>",
+            teal:"<span class='bg-teal' title='teal'>&para;</span>",
+            green:"<span class='bg-green' title='green'>&para;</span>",
+            olive:"<span class='bg-olive' title='olive'>&para;</span>",
+            lime:"<span class='bg-lime' title='lime'>&para;</span>",
+
+            yellow:"<span class='bg-yellow' title='yellow'>&para;</span>",
+            orange:"<span class='bg-orange' title='orange'>&para;</span>",
+            red:"<span class='bg-red' title='red'>&para;</span>",
+            fuchsia:"<span class='bg-fuchsia' title='fuchsia'>&para;</span>",
+            purple:"<span class='bg-purple' title='purple'>&para;</span>",
+            maroon:"<span class='bg-maroon' title='maroon'>&para;</span>",
+
+            white:"<span class='bg-white' title='white'>&para;</span>",
+            silver:"<span class='bg-silver' title='silver'>&para;</span>",
+            gray:"<span class='bg-gray' title='gray'>&para;</span>",
+            black:"<span class='bg-black' title='black'>&para;</span>"
+        }
+        }]
+    },
+
+    bgDlg: {
+        scope: { "%%bg.":" " },
+        suggest: {
+        lback: /(:%%bg\.|\.?)(\w*)$/,
+        //match: "^default|success|info|warning|danger"
+        match: /^\w*/
+        },
+        bgDlg: [Dialog.Selection, {
+        //caption:"Background Image",
+        cssClass:".dialog-horizontal",
+        body:{
+            "top":"&uarr;",
+            "right":"&rarr;",
+            "bottom":"&darr;",
+            "left":"&larr;",
+            "divider1":"",
+            "contain": "Contain",
+            "cover": "Cover",
+            "fixed":"Fixed",
+            "divider2":"",
+            "dark":"Dark",
+            "light":"Light",
+            "kenburns":"Animated"
         }
         }]
     },
@@ -270,24 +339,25 @@ Wiki.Snips = {
         suggest: {lback: "table-(?:[\\w-]+-)?(\\w*)$", match: "^\\w*" },
         tableDlg: [Dialog.Selection, {
         cssClass:".dialog-horizontal",
-        body: "sort|filter|striped|bordered|hover|condensed|fit"
+        body: "sort|filter|striped|bordered|noborder|hover|condensed|fit"
         }]
     },
 
     cssDlg: {
-        scope: { "%%":"/%" },
-        suggest: {lback:"%%([\\da-zA-Z-_]*)$", match:"^[\\da-zA-Z-_]+"},
+        scope: { "%%":" " },
+        suggest: {lback:"(:?%%|\\.)([\\da-zA-Z-_]*)$", match:"^[\\da-zA-Z-_]*"},
         cssDlg: [Dialog.Selection, {
         caption: "dialog.styles".localize(),
         cssClass: ".dialog-filtered",
         body: {
         "(css:value;)":"any css definitions",
-        "default":"Contextual <span class='info'>backgrounds</span>",
-        "text-{default}":"Contextual colors and other text styles",
-        "label-{default}":"<span class='label label-success'>Contextual labels</span>",
+        "bg-":"Background colors",
+        "text-{default}":"Text colors and other styles",
+        "default":"<span class='default'>Contextual boxes</span>",
+        "label-{default}":"<span class='label label-default'>Contextual labels</span>",
         "badge":"Badges <span class='badge'>007</span>",
         //"btn-default":"<span class='btn btn-xs btn-default'>Buttons</span>",
-        "collapse":"<b class='bullet'></b>Collapsible lists",
+        "collapse":"Collapsible lists <b class='bullet'></b>",
         "list-{nostyle}":"List styles",
         "table-{fit}":"Table styles",
         "":"",
@@ -510,9 +580,9 @@ Wiki.Snips = {
 
             if( textarea.isCaretAtStartOfLine() ){
                 Object.append(body, {
-                    "\n{!!!}": "<span title='header'>H1</span>",
-                    "\n{!!}": "<span title='title'>H2</span>",
-                    "\n{!}": "<span title='sub-title'>H3</span>",
+                    "\n{!!!}": "<span title='header'>H<span class='sub'>1</span></span>",
+                    "\n{!!}": "<span title='title'>H<span class='sub'>2</span></span>",
+                    "\n{!}": "<span title='sub-title'>H<span class='sub'>3</span></span>",
                     "\n* {list item}": "<span class='icon-list-ul'/>",
                     "\n# {list-item}": "<span class='icon-list-ol'/>",
                     "divider-sol": ""
@@ -522,23 +592,23 @@ Wiki.Snips = {
             Object.append(body, {
                 "__{bold}__": "<span style='font-family:serif;'><b>B</b></span>",
                 "''{italic}''": "<span style='font-family:serif;'><i>I</i></span>",
-                "{{{monospaced}}} ": "<tt>&lt;/&gt;</tt>",
-                "{{{{code}}}}": "<span class='small' style='font-family:monospace;'>code</span>",
+                "{{{monospaced}}} ": "<tt title='inline monospaced'>&lt;&gt;</tt>",
+                "{{{{code}}}}": "<span title='code' class='small' style='font-family:monospace;'>code</span>",
                 "divider1": "",
-                "[{link}]": "<span class='icon-link'/>",
+                "[{link}]": "<span class='icon-link' title='Insert a link'/>",
                 //"[description|{link}|options]": "<span class='icon-link'/>",
-                "[{Image src='{image.jpg}'}]": "<span class='icon-picture'/>",
-                "[{{plugin}}]": "<span class='icon-puzzle-piece'></span>",
-                "%%style {body} /%":"<span style='font-family:monospace;'>%%</span>",
+                "[{Image src='{image.jpg}'}]": "<span class='icon-picture' title='Insert an image'/>",
+                "[{{plugin}}]": "<span class='icon-puzzle-piece' title='Insert a Plugin'></span>",
+                "%%style {body} /%":"<span style='font-family:monospace;' title='Add a Style'>%%</span>",
                 "divider2": "",
-                "%%(font-family:{font};) body /%":"<span style='font-family:serif;'>A</span><span style='font-family:sans-serif'>a</span>",
-                "&{entity};" : "<span style='font-family:cursive;'>&amp;</span>",
+                "%%(font-family:{font};) body /%":"<span title='Change the Font'><span style='font-family:serif;'>A</span><span style='font-family:sans-serif'>a</span></span>",
+                "&{entity};" : "<span style='font-family:cursive;' title='Insert a Special Character'>&amp;</span>",
                 //"%%sub {subscript}/% ": "a<span class='sub'>n</span>",
                 //"%%sup {superscript}/% ": "a<span class='sup'>m</span>",
                 //"%%strike {strikethrough}/% ":"<span class='strike'>S</span>",
                 //"divider3": "",
-                "[{ALLOW {permission} principal }]":"<span class='icon-unlock-alt'></span>",
-                "\\\\\n":"<b>&para;</b>"
+                "[{ALLOW {permission} principal }]":"<span class='icon-unlock-alt' title='Add a page ACL'></span>",
+                "\\\\\n":"<b title='Insert a New Line'>&para;</b>"
             });
 
             if( textarea.isCaretAtStartOfLine()

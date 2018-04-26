@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -38,10 +38,10 @@ public class SamplePlugin3
     {
     }
 
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map< String, String > params )
         throws PluginException
     {
-        return (String)params.get("text");
+        return params.get("text");
     }
 
 }

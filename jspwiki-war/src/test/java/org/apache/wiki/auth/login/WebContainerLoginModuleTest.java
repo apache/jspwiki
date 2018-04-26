@@ -14,10 +14,9 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.login;
-
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
@@ -28,19 +27,19 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import junit.framework.TestCase;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.junit.Assert;
+import org.junit.Before;
 
-/**
- */
-public class WebContainerLoginModuleTest extends TestCase
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
+
+public class WebContainerLoginModuleTest
 {
     UserDatabase m_db;
 
@@ -58,23 +57,23 @@ public class WebContainerLoginModuleTest extends TestCase
             // Test using Principal (WebContainerLoginModule succeeds)
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue(  principals.contains( principal ) );
-            assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ASSERTED ) );
-            assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Set< Principal > principals = m_subject.getPrincipals();
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue(  principals.contains( principal ) );
+            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assert.assertFalse( principals.contains( Role.ASSERTED ) );
+            Assert.assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
@@ -87,30 +86,28 @@ public class WebContainerLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize( m_subject, handler, 
-                              new HashMap<String, Object>(), 
+            module.initialize( m_subject, handler,
+                              new HashMap<String, Object>(),
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = m_subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( principal ) );
-            assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );
+            Set< Principal > principals = m_subject.getPrincipals();
+            Assert.assertEquals( 1, principals.size() );
+            Assert.assertTrue( principals.contains( principal ) );
+            Assert.assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            Assert.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
-            assertEquals( 0, principals.size() );
+            Assert.assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
@@ -124,7 +121,7 @@ public class WebContainerLoginModuleTest extends TestCase
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            assertTrue( false );
+            Assert.assertTrue( false );
         }
     }
 

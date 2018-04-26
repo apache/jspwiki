@@ -40,14 +40,22 @@ function HighlightQuery( node, query, template ){
 
     if( query || (query = (document.referrer.match(/(?:\?|&)(?:q|query)=([^&]*)/)||[,''])[1]) ){
 
+
+    try {
+
         var words = decodeURIComponent(query)
-                    .stripScripts() //xss vulnerability
-                    .replace( /\+/g, " " )
-                    .replace( /\s+-\S+/g, "" )
-                    .replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ) //escape metachars
-                    .trim().replace(/\s+/g,'|'),
+                .stripScripts() //xss vulnerability
+                .replace( /\+/g, " " )
+                .replace( /\s+-\S+/g, "" )
+                .replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ) //escape metachars
+                .trim().replace(/\s+/g,'|'),
 
             hasWords = RegExp( "(" + words + ")" , "gi");
+
+    } catch(e) {
+        console.error(e);
+        return;
+    }
 
         //console.log("highlight word : ",query, words);
 

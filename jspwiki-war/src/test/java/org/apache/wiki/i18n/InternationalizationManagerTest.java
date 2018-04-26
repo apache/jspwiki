@@ -17,16 +17,20 @@
     under the License.    
  */
 package org.apache.wiki.i18n;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Locale;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
-public class InternationalizationManagerTest extends TestCase
+public class InternationalizationManagerTest
 {
     InternationalizationManager i18n = new InternationalizationManager( null );
     
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
     	// enforce english locale as the default one. Otherwise, if your default locale is one
     	// of the given translations, ResourceBundle.getBundle(String, Locale.ENGLISH) will 
@@ -34,22 +38,24 @@ public class InternationalizationManagerTest extends TestCase
     	Locale.setDefault( Locale.ENGLISH );
     }
     
+    @Test
     public void testGetFromCoreWithArgs() 
     {
         String str = i18n.get( InternationalizationManager.CORE_BUNDLE, 
                                Locale.ENGLISH, 
                                "security.error.cannot.rename", 
                                "Test User" );
-        assertEquals( "Cannot rename: the login name 'Test User' is already taken.", str );
+        Assert.assertEquals( "Cannot rename: the login name 'Test User' is already taken.", str );
     }
     
+    @Test
     public void testGetFromDefTemplateWithArgs() 
     {
         String str = i18n.get( InternationalizationManager.DEF_TEMPLATE, 
                                Locale.ENGLISH, 
                                "notification.createUserProfile.accept.content", 
                                "JSPWiki", "testUser", "Test User", "test@user.com", "www.foo.com" );
-        assertEquals( "Congratulations! Your new profile on JSPWiki has been created. " +
+        Assert.assertEquals( "Congratulations! Your new profile on JSPWiki has been created. " +
         		      "Your profile details are as follows: \n\n" +
                       "Login name: testUser \n" +
                       "Your name : Test User \n" +

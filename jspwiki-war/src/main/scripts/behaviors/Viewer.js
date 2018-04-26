@@ -37,7 +37,7 @@ Viewer object
             "src" - to be rendered as IFRAME
             other-parameters with additional details
 */
-!function(){
+!(function(){
 
 this.Viewer = {
 
@@ -336,4 +336,4 @@ Viewer.LIB.append([
 
 ]);
 
-}();
+})();

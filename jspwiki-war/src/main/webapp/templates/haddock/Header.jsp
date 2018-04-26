@@ -24,19 +24,17 @@
 <%@ page import="org.apache.wiki.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  WikiContext c = WikiContext.findContext(pageContext);
-%>
-<c:set var="frontpage" value="<%= c.getEngine().getFrontPage() %>" />
-
-<c:set var="titlebox"><wiki:InsertPage page="TitleBox" /></c:set>
-<c:if test="${!empty titlebox}"><div class="titlebox alert">${titlebox}</div></c:if>
+<c:set var="frontpage"><wiki:Variable var="jspwiki.frontPage" /></c:set>
 
 <div class="header">
+
+  <c:set var="titlebox"><wiki:InsertPage page="TitleBox" /></c:set>
+  <c:if test="${!empty titlebox}"><div class="titlebox">${titlebox}</div></c:if>
 
   <div class="topline">
 
     <div class="cage pull-left">
+
     <a class="logo pull-left"
         href="<wiki:Link page='${frontpage}' format='url' />"
        title="<fmt:message key='actions.home.title' ><fmt:param>${frontpage}</fmt:param></fmt:message> ">apache<b>jsp&#x03C9;iki</b></a>
@@ -54,18 +52,24 @@
     <div class="pagename" title="<wiki:PageName />">
       <wiki:CheckRequestContext context='viewGroup|createGroup|editGroup'><span class="icon-group"></span></wiki:CheckRequestContext>
       <wiki:PageType type="attachment"><span class="icon-paper-clip"></span></wiki:PageType>
-      <wiki:Link>
+
         <c:choose>
-        <c:when test="${not empty fn:substringBefore(param.page,'_blogentry_')}">${fn:replace(fn:replace(param.page,'_blogentry_',' ['),'_','#')}]</c:when>
-        <c:when test="${not empty fn:substringBefore(param.page,'_comments_')}">${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}]</c:when>
-        <c:otherwise><wiki:PageName/></c:otherwise>
+          <c:when test="${not empty fn:substringBefore(param.page,'_blogentry_')}">
+            <wiki:Link>${fn:replace(fn:replace(param.page,'_blogentry_',' ['),'_','#')}]</wiki:Link>
+          </c:when>
+          <c:when test="${not empty fn:substringBefore(param.page,'_comments_')}">
+            <wiki:Link>${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}]</wiki:Link>
+          </c:when>
+          <c:otherwise><a href="#top"><wiki:PageName /></a></c:otherwise>
         </c:choose>
-      </wiki:Link>
+
     </div>
 
   </div>
   <div class="breadcrumb">
     <fmt:message key="header.yourtrail"/><wiki:Breadcrumbs separator="<span class='divider'></span>" />
   </div>
+
+  <wiki:Include page="Nav.jsp" />
 
 </div>

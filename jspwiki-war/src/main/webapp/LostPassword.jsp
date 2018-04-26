@@ -69,7 +69,7 @@
 
             // Try sending email first, as that is more likely to fail.
 
-            Object[] args = { profile.getLoginName(), randomPassword,
+            Object[] args = { profile.getLoginName(), randomPassword, request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort() +
                              wiki.getURLConstructor().makeURL( WikiContext.NONE, "Login.jsp", true, "" ), wiki.getApplicationName() };
 
             String mailMessage = MessageFormat.format( rb.getString( "lostpwd.newpassword.email" ), args );

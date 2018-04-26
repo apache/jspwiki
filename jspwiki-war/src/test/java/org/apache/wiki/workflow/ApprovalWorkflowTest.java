@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.workflow;
 
@@ -22,8 +22,6 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
-import junit.framework.TestCase;
 
 import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
@@ -34,8 +32,11 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ApprovalWorkflowTest extends TestCase
+public class ApprovalWorkflowTest
 {
     WorkflowBuilder m_builder;
     TestEngine m_engine;
@@ -43,9 +44,9 @@ public class ApprovalWorkflowTest extends TestCase
     DecisionQueue m_dq;
 
 
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
         Properties props = TestEngine.getTestProperties();
 
         // Explicitly turn on Admin approvals for page saves and our sample approval workflow
@@ -60,6 +61,7 @@ public class ApprovalWorkflowTest extends TestCase
     }
 
 
+    @Test
     public void testBuildApprovalWorkflow() throws WikiException
     {
 
@@ -80,61 +82,62 @@ public class ApprovalWorkflowTest extends TestCase
         w.setWorkflowManager( m_engine.getWorkflowManager() );
 
         // Check to see if the workflow built correctly
-        assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
-        assertNull( w.getCurrentStep() );
-        assertEquals( "workflow.approvalWorkflow", w.getMessageKey() );
-        assertEquals( Workflow.CREATED, w.getCurrentState() );
-        assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
-        assertEquals( m_engine.getWorkflowManager(), w.getWorkflowManager() );
-        assertEquals( 0, w.getHistory().size() );
+        Assert.assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
+        Assert.assertNull( w.getCurrentStep() );
+        Assert.assertEquals( "workflow.approvalWorkflow", w.getMessageKey() );
+        Assert.assertEquals( Workflow.CREATED, w.getCurrentState() );
+        Assert.assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
+        Assert.assertEquals( m_engine.getWorkflowManager(), w.getWorkflowManager() );
+        Assert.assertEquals( 0, w.getHistory().size() );
 
         // Our dummy "task complete" attributes should still be null
-        assertNull( w.getAttribute( "task.preSaveWikiPage") );
-        assertNull( w.getAttribute( "task.saveWikiPage") );
+        Assert.assertNull( w.getAttribute( "task.preSaveWikiPage") );
+        Assert.assertNull( w.getAttribute( "task.saveWikiPage") );
 
         // Start the workflow
         w.start();
 
         // Presave complete attribute should be set now, and current step should be Decision
         Step decision = w.getCurrentStep();
-        assertTrue( decision instanceof Decision );
-        assertEquals( 2, w.getHistory().size() );
-        assertEquals( prepTask, w.getHistory().get( 0 ) );
-        assertTrue( w.getHistory().get( 1 ) instanceof Decision );
-        assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
-        assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
-        assertEquals( decisionKey, decision.getMessageKey() );
+        Assert.assertTrue( decision instanceof Decision );
+        Assert.assertEquals( 2, w.getHistory().size() );
+        Assert.assertEquals( prepTask, w.getHistory().get( 0 ) );
+        Assert.assertTrue( w.getHistory().get( 1 ) instanceof Decision );
+        Assert.assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
+        Assert.assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
+        Assert.assertEquals( decisionKey, decision.getMessageKey() );
         List decisionFacts = ((Decision)decision).getFacts();
-        assertEquals( 3, decisionFacts.size() );
-        assertEquals( facts[0], decisionFacts.get(0) );
-        assertEquals( facts[1], decisionFacts.get(1) );
-        assertEquals( facts[2], decisionFacts.get(2) );
+        Assert.assertEquals( 3, decisionFacts.size() );
+        Assert.assertEquals( facts[0], decisionFacts.get(0) );
+        Assert.assertEquals( facts[1], decisionFacts.get(1) );
+        Assert.assertEquals( facts[2], decisionFacts.get(2) );
 
         // Check that our predecessor/successor relationships are ok
-        assertEquals( decision, prepTask.getSuccessor( Outcome.STEP_COMPLETE ) );
-        assertEquals( null, prepTask.getSuccessor( Outcome.STEP_ABORT ) );
-        assertEquals( null, prepTask.getSuccessor( Outcome.STEP_CONTINUE ) );
-        assertEquals( null, decision.getSuccessor( Outcome.DECISION_ACKNOWLEDGE ) );
-        assertEquals( null, decision.getSuccessor( Outcome.DECISION_HOLD ) );
-        assertEquals( null, decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
-        assertEquals( completionTask, decision.getSuccessor( Outcome.DECISION_APPROVE ) );
+        Assert.assertEquals( decision, prepTask.getSuccessor( Outcome.STEP_COMPLETE ) );
+        Assert.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_ABORT ) );
+        Assert.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_CONTINUE ) );
+        Assert.assertEquals( null, decision.getSuccessor( Outcome.DECISION_ACKNOWLEDGE ) );
+        Assert.assertEquals( null, decision.getSuccessor( Outcome.DECISION_HOLD ) );
+        Assert.assertEquals( null, decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
+        Assert.assertEquals( completionTask, decision.getSuccessor( Outcome.DECISION_APPROVE ) );
 
         // The "deny" notification should use the right key
         Step notification = decision.getSuccessor( Outcome.DECISION_DENY );
-        assertNotNull( notification );
-        assertEquals( rejectedMessageKey, notification.getMessageKey() );
-        assertTrue( notification instanceof SimpleNotification );
+        Assert.assertNotNull( notification );
+        Assert.assertEquals( rejectedMessageKey, notification.getMessageKey() );
+        Assert.assertTrue( notification instanceof SimpleNotification );
 
         // Now, approve the Decision and everything should complete
         ((Decision)decision).decide( Outcome.DECISION_APPROVE );
-        assertTrue( w.isCompleted() );
-        assertNull( w.getCurrentStep() );
-        assertEquals( 3, w.getHistory().size() );
-        assertEquals( completionTask, w.getHistory().get( 2 ) );
-        assertTrue( completionTask.isCompleted() );
-        assertEquals( Outcome.STEP_COMPLETE, completionTask.getOutcome() );
+        Assert.assertTrue( w.isCompleted() );
+        Assert.assertNull( w.getCurrentStep() );
+        Assert.assertEquals( 3, w.getHistory().size() );
+        Assert.assertEquals( completionTask, w.getHistory().get( 2 ) );
+        Assert.assertTrue( completionTask.isCompleted() );
+        Assert.assertEquals( Outcome.STEP_COMPLETE, completionTask.getOutcome() );
     }
 
+    @Test
     public void testBuildApprovalWorkflowDeny() throws WikiException
     {
         Principal submitter = new WikiPrincipal( "Submitter" );
@@ -158,25 +161,26 @@ public class ApprovalWorkflowTest extends TestCase
 
         // Now, deny the Decision and the submitter should see a notification
         Step step = w.getCurrentStep();
-        assertTrue( step instanceof Decision );
+        Assert.assertTrue( step instanceof Decision );
         Decision decision = (Decision)step;
         decision.decide( Outcome.DECISION_DENY );
-        assertFalse( w.isCompleted() );
+        Assert.assertFalse( w.isCompleted() );
 
         // Check that the notification is ok, then acknowledge it
         step = w.getCurrentStep();
-        assertTrue( step instanceof SimpleNotification );
-        assertEquals( rejectedMessageKey, step.getMessageKey() );
+        Assert.assertTrue( step instanceof SimpleNotification );
+        Assert.assertEquals( rejectedMessageKey, step.getMessageKey() );
         SimpleNotification notification = (SimpleNotification)step;
         notification.acknowledge();
 
         // Workflow should be complete now
-        assertTrue( w.isCompleted() );
-        assertNull( w.getCurrentStep() );
-        assertEquals( 3, w.getHistory().size() );
-        assertEquals( notification, w.getHistory().get( 2 ) );
+        Assert.assertTrue( w.isCompleted() );
+        Assert.assertNull( w.getCurrentStep() );
+        Assert.assertEquals( 3, w.getHistory().size() );
+        Assert.assertEquals( notification, w.getHistory().get( 2 ) );
     }
 
+    @Test
     public void testSaveWikiPageWithApproval() throws WikiException
     {
         // Create a sample test page and try to save it
@@ -192,23 +196,24 @@ public class ApprovalWorkflowTest extends TestCase
         }
 
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
-        assertFalse( m_engine.pageExists(pageName));
+        Assert.assertFalse( m_engine.pageExists(pageName));
 
         // Second, GroupPrincipal Admin should see a Decision in its queue
         Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
-        assertEquals(1, decisions.size());
+        Assert.assertEquals(1, decisions.size());
 
         // Now, approve the decision and it should go away, and page should appear.
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
-        assertTrue( m_engine.pageExists(pageName));
+        Assert.assertTrue( m_engine.pageExists(pageName));
         decisions = m_dq.getActorDecisions( m_engine.adminSession() );
-        assertEquals(0, decisions.size());
+        Assert.assertEquals(0, decisions.size());
 
         // Delete the page we created
         m_engine.deletePage( pageName );
     }
 
+    @Test
     public void testSaveWikiPageWithRejection() throws WikiException
     {
         // Create a sample test page and try to save it
@@ -224,29 +229,30 @@ public class ApprovalWorkflowTest extends TestCase
         }
 
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
-        assertFalse( m_engine.pageExists(pageName));
+        Assert.assertFalse( m_engine.pageExists(pageName));
 
         // ...and there should be a Decision in GroupPrincipal Admin's queue
         Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
-        assertEquals(1, decisions.size());
+        Assert.assertEquals(1, decisions.size());
 
         // Now, DENY the decision and the page should still not exist...
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_DENY);
-        assertFalse( m_engine.pageExists(pageName) );
+        Assert.assertFalse( m_engine.pageExists(pageName) );
 
         // ...but there should also be a notification decision in Janne's queue
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
-        assertEquals(1, decisions.size());
+        Assert.assertEquals(1, decisions.size());
         decision = (Decision)decisions.iterator().next();
-        assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
+        Assert.assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
 
         // Once Janne disposes of the notification, his queue should be empty
         decision.decide(Outcome.DECISION_ACKNOWLEDGE);
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
-        assertEquals(0, decisions.size());
+        Assert.assertEquals(0, decisions.size());
     }
 
+    @Test
     public void testSaveWikiPageWithException() throws WikiException
     {
         // Add a PageFilter that rejects all save attempts
@@ -262,11 +268,11 @@ public class ApprovalWorkflowTest extends TestCase
         }
         catch ( WikiException e )
         {
-            assertTrue( e instanceof FilterException );
-            assertEquals( "Page save aborted.", e.getMessage() );
+            Assert.assertTrue( e instanceof FilterException );
+            Assert.assertEquals( "Page save aborted.", e.getMessage() );
             return;
         }
-        fail( "Page save should have thrown a FilterException, but didn't." );
+        Assert.fail( "Page save should have thrown a FilterException, but didn't." );
     }
 
     /**

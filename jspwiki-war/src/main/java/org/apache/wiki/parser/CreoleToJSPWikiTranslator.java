@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.parser;
 
@@ -168,7 +168,7 @@ public class CreoleToJSPWikiTranslator
 
     /**
      *  I have no idea what this method does.  Could someone please tell me?
-     *  
+     *
      * @param wikiProps A property set
      * @param content The content to translate?
      * @param username The username in the signature?
@@ -206,9 +206,9 @@ public class CreoleToJSPWikiTranslator
         return result;
     }
 
-    /** 
-     *  Translates Creole markup to JSPWiki markup 
-     *  
+    /**
+     *  Translates Creole markup to JSPWiki markup
+     *
      *  @param wikiProps A set of Wiki Properties
      *  @param content Creole markup
      *  @return Wiki markup
@@ -322,13 +322,13 @@ public class CreoleToJSPWikiTranslator
             }
             counter = 0;
         }
-        
+
         // Fixes testExtensions5
-        if( content.endsWith( "\n" ) && result.charAt( result.length()-1 ) != '\n' ) 
+        if( content.endsWith( "\n" ) && result.charAt( result.length()-1 ) != '\n' )
         {
             result.append( '\n' );
         }
-        
+
         return result.toString();
     }
 
@@ -393,9 +393,9 @@ public class CreoleToJSPWikiTranslator
         return content;
     }
 
-    private ArrayList readPlaceholderProperties(Properties wikiProps)
+    private ArrayList< String[] > readPlaceholderProperties(Properties wikiProps)
     {
-        Set keySet = wikiProps.keySet();
+        Set< Object > keySet = wikiProps.keySet();
         Object[] keys = keySet.toArray();
         ArrayList<String[]> result = new ArrayList<String[]>();
 
@@ -420,7 +420,7 @@ public class CreoleToJSPWikiTranslator
         Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         String contentCopy = content;
 
-        ArrayList plProperties = readPlaceholderProperties(wikiProps);
+        ArrayList< String[] > plProperties = readPlaceholderProperties(wikiProps);
 
         while (matcher.find())
         {
@@ -439,13 +439,14 @@ public class CreoleToJSPWikiTranslator
                     // Replace placeholder params
                     for (int j = 0; j < plProperties.size(); j++)
                     {
-                        String[] pair = (String[]) plProperties.get(j);
+                        String[] pair = plProperties.get(j);
                         String key = pair[0];
                         String value = pair[1];
                         String code = param.replaceAll("(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>");
                         code = code.replaceAll("(.*?)%(.*?)<check>(.*?)</check>", "$1$3$2");
-                        if (!code.equals(param))
+                        if (!code.equals(param)) {
                             paramsString += code;
+                        }
                     }
 
                     // Check if it is a number

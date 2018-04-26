@@ -218,9 +218,9 @@ public class MetaWeblogHandler
             Collections.sort( changed, new PageTimeComparator() );
 
             int items = 0;
-            for( Iterator i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ )
+            for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ )
             {
-                WikiPage p = (WikiPage) i.next();
+                WikiPage p = i.next();
 
                 result.put( "entry", makeEntry( p ) );
             }

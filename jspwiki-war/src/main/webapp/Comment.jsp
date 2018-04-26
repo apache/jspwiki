@@ -61,6 +61,10 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
     if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( wikiContext.getCommand().getTarget() == null ) {
+        response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
+        return;
+    }
     String pagereq = wikiContext.getName();
 
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );

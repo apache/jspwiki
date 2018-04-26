@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,46 +14,43 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.util.comparators;
 
 import java.util.Comparator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
 
-public class HumanComparatorTest extends TestCase
+
+public class HumanComparatorTest
 {
-    public static Test suite()
-    {
-        return new TestSuite( HumanComparatorTest.class );
-    }
 
+    @Test
     public void testCharOrder()
     {
         HumanComparator comparator = new HumanComparator();
 
         // Default order first
-        assertTrue( comparator.compare( "a c", "a1c" ) < 0 );
-        assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
+        Assert.assertTrue( comparator.compare( "a c", "a1c" ) < 0 );
+        Assert.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
 
         // Now letters then numbers then other
         HumanComparator.CharType sortOrder[] = { HumanComparator.CharType.TYPE_LETTER, HumanComparator.CharType.TYPE_DIGIT,
                                                 HumanComparator.CharType.TYPE_OTHER };
         comparator.setSortOrder( sortOrder );
-        assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
-        assertTrue( comparator.compare( "a1c", "abc" ) > 0 );
+        Assert.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
+        Assert.assertTrue( comparator.compare( "a1c", "abc" ) > 0 );
 
         // Now numbers then letters then other
         sortOrder[0] = HumanComparator.CharType.TYPE_DIGIT;
         sortOrder[1] = HumanComparator.CharType.TYPE_LETTER;
         sortOrder[2] = HumanComparator.CharType.TYPE_OTHER;
         comparator.setSortOrder( sortOrder );
-        assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
-        assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
+        Assert.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
+        Assert.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
 
         // Finally try to break it
         try
@@ -62,7 +59,7 @@ public class HumanComparatorTest extends TestCase
             sortOrder[1] = HumanComparator.CharType.TYPE_DIGIT;
             sortOrder[2] = HumanComparator.CharType.TYPE_OTHER;
             comparator.setSortOrder( sortOrder );
-            fail( "Expected IllegalArgumentException" );
+            Assert.fail( "Expected IllegalArgumentException" );
         }
         catch( IllegalArgumentException e )
         {
@@ -70,19 +67,20 @@ public class HumanComparatorTest extends TestCase
         }
     }
 
+    @Test
     public void testCompare()
     {
         Comparator<String> comparator = new HumanComparator();
 
-        assertTrue( comparator.compare( "abcd001", "ABCD001" ) > 0 );
-        assertTrue( comparator.compare( "abcd001a", "ABCD001z" ) < 0 );
-        assertTrue( comparator.compare( "abc8", "abcd1" ) < 0 );
-        assertTrue( comparator.compare( "abc 8", "abc1" ) < 0 );
-        assertTrue( comparator.compare( "abc  8", "abc 1" ) < 0 );
-        assertTrue( comparator.compare( "abdc001", "ABCD001" ) > 0 );
-        assertTrue( comparator.compare( "ab cd001", "ABDC001" ) < 0 );
-        assertTrue( comparator.compare( "10", "01" ) > 0 );
-        assertTrue( comparator.compare( "10", "00000001" ) > 0 );
-        assertTrue( comparator.compare( "01", "00000001" ) < 0 );
+        Assert.assertTrue( comparator.compare( "abcd001", "ABCD001" ) > 0 );
+        Assert.assertTrue( comparator.compare( "abcd001a", "ABCD001z" ) < 0 );
+        Assert.assertTrue( comparator.compare( "abc8", "abcd1" ) < 0 );
+        Assert.assertTrue( comparator.compare( "abc 8", "abc1" ) < 0 );
+        Assert.assertTrue( comparator.compare( "abc  8", "abc 1" ) < 0 );
+        Assert.assertTrue( comparator.compare( "abdc001", "ABCD001" ) > 0 );
+        Assert.assertTrue( comparator.compare( "ab cd001", "ABDC001" ) < 0 );
+        Assert.assertTrue( comparator.compare( "10", "01" ) > 0 );
+        Assert.assertTrue( comparator.compare( "10", "00000001" ) > 0 );
+        Assert.assertTrue( comparator.compare( "01", "00000001" ) < 0 );
     }
 }

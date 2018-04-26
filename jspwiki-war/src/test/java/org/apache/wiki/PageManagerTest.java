@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,31 +14,26 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki;
-
 import java.util.Properties;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.providers.CachingProvider;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PageManagerTest extends TestCase
+public class PageManagerTest
 {
     Properties props = TestEngine.getTestProperties();
 
     TestEngine engine;
 
-    public PageManagerTest( String s )
-    {
-        super( s );
-    }
-
+    @Before
     public void setUp()
         throws Exception
     {
@@ -46,31 +41,29 @@ public class PageManagerTest extends TestCase
         engine = new TestEngine(props);
     }
 
+    @After
     public void tearDown()
     {
     }
 
+    @Test
     public void testPageCacheExists()
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "true" );
         PageManager m = new PageManager( engine, props );
 
-        assertTrue( m.getProvider() instanceof CachingProvider );
+        Assert.assertTrue( m.getProvider() instanceof CachingProvider );
     }
 
+    @Test
     public void testPageCacheNotInUse()
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "false" );
         PageManager m = new PageManager( engine, props );
 
-        assertTrue( !(m.getProvider() instanceof CachingProvider) );
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite( PageManagerTest.class );
+        Assert.assertTrue( !(m.getProvider() instanceof CachingProvider) );
     }
 
 }

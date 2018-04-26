@@ -81,15 +81,7 @@
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = "";
 
-   RenderingManager renderingManager = engine.getRenderingManager();
-
-   // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-   Properties copyOfWikiProperties = new Properties();
-   copyOfWikiProperties.putAll( engine.getWikiProperties() );
-   copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
-   renderingManager.initialize( engine, copyOfWikiProperties );
-
-   String pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
+   String pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for FCK has been rendered.
@@ -97,7 +89,7 @@
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
-   String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
+   String templateDir = (String)engine.getWikiProperties().get( WikiEngine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
    if( request.isSecure() )

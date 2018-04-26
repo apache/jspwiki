@@ -22,14 +22,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
+import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.parser.WikiDocument;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
-import org.apache.wiki.parser.WikiDocument;
 
 /**
  *  Implements a WikiRendered that outputs XHTML in a format that is suitable
@@ -47,19 +47,13 @@ public class WysiwygEditingRenderer
     private static final String CLASS_ATTRIBUTE = "class";
     private static final String HREF_ATTRIBUTE = "href";
     private static final String TITLE_ATTRIBUTE = "title";
-    private static final String EDITPAGE = "createpage";
-    private static final String WIKIPAGE = "wikipage";
-    private static final String HASHLINK = "hashlink";
-    private static final String OUTLINK = "outlink";
     private static final String LINEBREAK = "\n";
-    private static final String LINKS_TRANSLATION = "$1#$2";
-    private static final String LINKS_SOURCE = "(.+)#section-.+-(.+)";
 
     /**
      *  Creates a WYSIWYG editing renderer.
      *
-     *  @param context {@inheritDoc}
-     *  @param doc {@inheritDoc}
+     *  @param context A WikiContext in which the rendering will take place.
+     *  @param doc The WikiDocument which shall be rendered.
      */
     public WysiwygEditingRenderer( WikiContext context, WikiDocument doc )
     {
@@ -72,94 +66,90 @@ public class WysiwygEditingRenderer
      */
     private void processChildren(Element baseElement)
     {
-        for( Iterator itr = baseElement.getChildren().iterator(); itr.hasNext(); )
+        for( Iterator< Element > itr = baseElement.getChildren().iterator(); itr.hasNext(); )
         {
-            Object childElement = itr.next();
-            if( childElement instanceof Element )
+            Element element = itr.next();
+            String elementName = element.getName().toLowerCase();
+            Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
+
+            if( elementName.equals( A_ELEMENT ) )
             {
-                Element element = (Element)childElement;
-                String elementName = element.getName().toLowerCase();
-                Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
-
-                if( elementName.equals( A_ELEMENT ) )
+                if( classAttr != null )
                 {
-                    if( classAttr != null )
+                    String classValue = classAttr.getValue();
+                    Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
+
+                    XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
+
+                    // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
+                    // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
+                    String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                    String editPageLinkUrl = wikiConfig.getEditJspPage();
+
+                    //if( classValue.equals( WIKIPAGE )
+                    //    || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
+                    if( //classValue.equals( WIKIPAGE ) &&
+                        ( hrefAttr != null )
+                    &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
                     {
-                        String classValue = classAttr.getValue();
-                        Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
+                        // Remove the leading url string so that users will only see the
+                        // wikipage's name when editing an existing wiki link.
+                        // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
 
-                        XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
+                        String newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
 
-                        // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
-                        // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
-                        String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
-                        String editPageLinkUrl = wikiConfig.getEditJspPage();
+                        // Convert "This%20Pagename%20Has%20Spaces" to "This Pagename Has Spaces"
+                        newHref = m_context.getEngine().decodeName( newHref );
 
-                        //if( classValue.equals( WIKIPAGE )
-                        //    || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
-                        if( //classValue.equals( WIKIPAGE ) &&
-                            ( hrefAttr != null )
-                        &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
-                        {
-                            // Remove the leading url string so that users will only see the
-                            // wikipage's name when editing an existing wiki link.
-                            // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
+                        // Handle links with section anchors.
+                        // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
+                        // to this wiki string: "TargetPage#Heading2".
+                        hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
 
-                            String newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
-
-                            // Convert "This%20Pagename%20Has%20Spaces" to "This Pagename Has Spaces"
-                            newHref = m_context.getEngine().decodeName( newHref );
-
-                            // Handle links with section anchors.
-                            // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
-                            // to this wiki string: "TargetPage#Heading2".
-                            hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
-
-                        }
-                        else if( //classValue.equals( EDITPAGE ) &&
-                                ( hrefAttr != null )
-                             && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
-                        {
-
-                            Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
-                            if( titleAttr != null )
-                            {
-                                    // remove the title since we don't want to eventually save the default undefined page title.
-                                    titleAttr.detach();
-                            }
-
-                            String newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
-                            newHref = m_context.getEngine().decodeName( newHref );
-
-                            hrefAttr.setValue( newHref );
-                        }
-
-                        else if( classValue.equals( HASHLINK ) )
-                        {
-                            itr.remove(); //remove element without disturbing the ongoing iteration
-                            continue;  //take next iteration of the for loop
-                        }
                     }
-                } // end of check for "a" element
-
-                else if ( elementName.equals( IMG_ELEMENT ) )
-                {
-                    if( classAttr != null )
+                    else if( //classValue.equals( EDITPAGE ) &&
+                            ( hrefAttr != null )
+                         && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                     {
-                        String classValue = classAttr.getValue();
 
-                        if( classValue.equals( OUTLINK ) )
+                        Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
+                        if( titleAttr != null )
                         {
-                            itr.remove(); //remove element without disturbing the ongoing iteration
-                            continue; //take next iteration of the for loop
+                                // remove the title since we don't want to eventually save the default undefined page title.
+                                titleAttr.detach();
                         }
 
+                        String newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
+                        newHref = m_context.getEngine().decodeName( newHref );
+
+                        hrefAttr.setValue( newHref );
+                    }
+
+                    else if( classValue.equals( MarkupParser.HASHLINK ) )
+                    {
+                        itr.remove(); //remove element without disturbing the ongoing iteration
+                        continue;  //take next iteration of the for loop
+                    }
+                }
+            } // end of check for "a" element
+
+            else if ( elementName.equals( IMG_ELEMENT ) )
+            {
+                if( classAttr != null )
+                {
+                    String classValue = classAttr.getValue();
+
+                    if( classValue.equals( MarkupParser.OUTLINK ) )
+                    {
+                        itr.remove(); //remove element without disturbing the ongoing iteration
+                        continue; //take next iteration of the for loop
                     }
 
                 }
 
-                processChildren( element );
             }
+
+            processChildren( element );
         }
     }
 

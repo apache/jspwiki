@@ -14,10 +14,29 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.plugin;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -48,27 +67,6 @@ import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
-import javax.servlet.http.HttpServlet;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -162,7 +160,7 @@ import javax.servlet.http.HttpServlet;
  *  @since 1.6.1
  */
 public class DefaultPluginManager extends ModuleManager implements PluginManager {
-	
+
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
     private static Logger log = Logger.getLogger( DefaultPluginManager.class );
@@ -249,7 +247,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     public Pattern getPluginPattern() {
 		return m_pluginPattern;
 	}
-    
+
     /**
      * {@inheritDoc}
      */
@@ -278,15 +276,15 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     {
         Element div = XhtmlUtil.element(XHTML.div,"Plugin execution failed, stack trace follows:");
         div.setAttribute(XHTML.ATTR_class,"debug");
-        
+
 
         StringWriter out = new StringWriter();
         t.printStackTrace(new PrintWriter(out));
-        div.addContent(XhtmlUtil.element(XHTML.pre,out.toString()));        
+        div.addContent(XhtmlUtil.element(XHTML.pre,out.toString()));
         div.addContent(XhtmlUtil.element(XHTML.b,"Parameters to the plugin"));
 
         Element list = XhtmlUtil.element(XHTML.ul);
-        
+
         for( Iterator<Map.Entry<String,String>> i = params.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry<String,String> e = i.next();
             String key = e.getKey();
@@ -294,7 +292,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         }
 
         div.addContent(list);
-        
+
         return XhtmlUtil.serialize(div);
     }
 
@@ -482,7 +480,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *  @param commandline The full command line, including plugin name, parameters and body.
      *
      *  @return HTML as returned by the plugin, or possibly an error message.
-     *  
+     *
      *  @throws PluginException From the plugin itself, it propagates, waah!
      */
     public String execute( WikiContext context, String commandline ) throws PluginException {
@@ -579,7 +577,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     //        information from the plugin XML.  In fact, it probably should have
     //        some sort of a superclass system.
     public static final class WikiPluginInfo extends WikiModuleInfo {
-    	
+
         private String    m_className;
         private String    m_alias;
         private String    m_ajaxAlias;
@@ -604,11 +602,11 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
             info.initializeFromXML( el );
             return info;
         }
-        
+
         /**
          *  Initializes a plugin, if it has not yet been initialized.
-         *  If the plugin extends {@link HttpServlet} it will automatically 
-         *  register it as AJAX using {@link WikiAjaxDispatcherServlet.register}.
+         *  If the plugin extends {@link HttpServlet} it will automatically
+         *  register it as AJAX using {@link WikiAjaxDispatcherServlet#registerServlet(String, WikiAjaxServlet)}.
          *
          *  @param engine The WikiEngine
          *  @param searchPath A List of Strings, containing different package names.
@@ -649,7 +647,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
         /**
          *  Create a new WikiPluginInfo based on the Class information.
-         *  
+         *
          *  @param clazz The class to check
          *  @return A WikiPluginInfo instance
          */
@@ -682,7 +680,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         public String getAlias() {
             return m_alias;
         }
-        
+
         /**
          *  Returns the ajax alias name for this object.
          *  @return An ajax alias name for the plugin.
@@ -702,7 +700,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *  @throws InstantiationException If the class cannot be instantiated-
          *  @throws IllegalAccessException If the class cannot be accessed.
          */
-        
+
         public WikiPlugin newPluginInstance(List<String> searchPath, List<String> externalJars) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
             if( m_clazz == null ) {
                 m_clazz = ClassUtil.findClass(searchPath, externalJars ,m_className);
@@ -774,7 +772,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
         /**
          *  Returns a string suitable for debugging.  Don't assume that the format would stay the same.
-         *  
+         *
          *  @return Something human-readable
          */
         public String toString() {
@@ -787,16 +785,9 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      */
     @Override
     public Collection< WikiModuleInfo > modules() {
-        Set< WikiModuleInfo > ls = new TreeSet< WikiModuleInfo >();
-        
-        for( Iterator< WikiPluginInfo > i = m_pluginClassMap.values().iterator(); i.hasNext(); ) {
-            WikiModuleInfo wmi = i.next();
-            if( !ls.contains( wmi ) ) ls.add( wmi );
-        }
-        
-        return ls;
+        return modules( m_pluginClassMap.values().iterator() );
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -807,7 +798,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
     /**
      * Creates a {@link WikiPlugin}.
-     * 
+     *
      * @param pluginName plugin's classname
      * @param rb {@link ResourceBundle} with i18ned text for exceptions.
      * @return a {@link WikiPlugin}.
@@ -839,5 +830,5 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
         }
         return plugin;
     }
-    
+
 }

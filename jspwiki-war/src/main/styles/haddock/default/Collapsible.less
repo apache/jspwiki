@@ -68,17 +68,6 @@ DOM structure:
 .xpand, .clpse { overflow:hidden; }
 
 
-// CHECKME: Make sure to print collapsed items as if they were not collapsed
-//move to print.less
-@media print {
-    div.clpse {
-        display:block;
-        height:auto !important;
-        //width:auto !important;
-    }
-}
-
-
 /*
 TODO: Experimental - css3 animation iso mootools tween.
 div.xpand { .transition(all .5s ease); height:auto; }

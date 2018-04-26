@@ -27,26 +27,19 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <script>
-function constructdate(date)
-{
-  var d = new Date();
-  d.setTime(date.time);
-  return d;
-}
-
 function refreshUserInfo()
 {
-   var userid = $('userid').getValue();
+   var userid = $('userid').value;
 
    if( userid == '--New--' ) return;
 
-   Wiki.ajaxJsonCall("/users",[userid], function(userprofile) {
+   Wiki.jsonrpc("/users", [userid], function(userprofile){
 	   $('loginname').value = userprofile.loginName;
 	   $('loginid').value = userprofile.loginName;
 	   $('fullname').value = userprofile.fullname;
 	   $('email').value = userprofile.email;
-	   $('lastmodified').setHTML(constructdate(userprofile.lastModified));
-	   $('creationdate').setHTML(constructdate(userprofile.created));
+	   $('lastmodified').innerHTML = userprofile.modified || "";
+	   $('creationdate').innerHTML = userprofile.created || "";
    });
 }
 

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -26,23 +26,27 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
-<%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+<%!
+    Logger log = Logger.getLogger("JSPWiki");
 %>
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DIFF );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( wikiContext.getCommand().getTarget() == null ) {
+        response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
+        return;
+    }
     String pagereq = wikiContext.getName();
 
     WatchDog w = wiki.getCurrentWatchDog();
     try
     {
     w.enterState("Generating INFO response",60);
-    
-    // Notused ? 
+
+    // Notused ?
     // String pageurl = wiki.encodeName( pagereq );
 
     // If "r1" is null, then assume current version (= -1)

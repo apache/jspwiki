@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,24 +14,24 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PageViewPluginTest extends TestCase
+import net.sf.ehcache.CacheManager;
 
+public class PageViewPluginTest
 {
     Properties props = TestEngine.getTestProperties();
 
@@ -41,11 +41,7 @@ public class PageViewPluginTest extends TestCase
 
     PluginManager manager;
 
-    public static Test suite()
-    {
-        return new TestSuite( PageViewPluginTest.class );
-    }
-
+    @Before
     public void setUp() throws Exception
     {
         CacheManager.getInstance().removeAllCaches();
@@ -58,6 +54,7 @@ public class PageViewPluginTest extends TestCase
         manager = new DefaultPluginManager( testEngine, props );
     }
 
+    @After
     public void tearDown()
     {
         testEngine.deleteTestPage( "TestPage01" );
@@ -66,6 +63,7 @@ public class PageViewPluginTest extends TestCase
         TestEngine.emptyWorkDir();
     }
 
+    @Test
     public void testShowCountsBasic() throws Exception
     {
         WikiPage page1 = testEngine.getPage( "TestPage01" );
@@ -88,11 +86,12 @@ public class PageViewPluginTest extends TestCase
         String result = testEngine.getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
-        assertTrue( result.contains( "Test Page 01 (2 views)" ) );
+        Assert.assertTrue( result.contains( "Test Page 01 (2 views)" ) );
 
-        assertTrue( result.contains( "Test Page 02 (3 views)" ) );
+        Assert.assertTrue( result.contains( "Test Page 02 (3 views)" ) );
     }
 
+    @Test
     public void testShowCountsExclude() throws Exception
     {
         testEngine.saveText( "TestPageExcluded", "this is test page that should be excluded [{PageViewPlugin}]" );
@@ -117,14 +116,15 @@ public class PageViewPluginTest extends TestCase
         String result = testEngine.getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
-        assertTrue( result.contains( "Test Page 01" ) );
-        
+        Assert.assertTrue( result.contains( "Test Page 01" ) );
+
         // this page should not have been shown:
-        assertFalse( result.contains( "Test Page Excluded" ) );
+        Assert.assertFalse( result.contains( "Test Page Excluded" ) );
 
         testEngine.deleteTestPage( "TestPageExcluded" );
     }
 
+    @Test
     public void testShowCountsSorted() throws Exception
     {
         WikiPage page1 = testEngine.getPage( "TestPage01" );
@@ -149,11 +149,12 @@ public class PageViewPluginTest extends TestCase
 
         int start1 = result.indexOf( "Test Page 01" );
         int start2 = result.indexOf( "Test Page 02" );
-        
+
         // page2 should be showed before page1
-        assertTrue( start2 < start1 );
+        Assert.assertTrue( start2 < start1 );
     }
 
+    @Test
     public void testShowCountEntries() throws Exception
     {
         // create pages that should be counted
@@ -186,10 +187,10 @@ public class PageViewPluginTest extends TestCase
         String result = testEngine.getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
-        assertTrue( result.contains( "Test Page 03" ) );
+        Assert.assertTrue( result.contains( "Test Page 03" ) );
 
-        assertFalse( result.contains( "Test Page 04" ) );
-        
+        Assert.assertFalse( result.contains( "Test Page 04" ) );
+
         testEngine.deleteTestPage( "TestPage03" );
         testEngine.deleteTestPage( "TestPage04" );
     }

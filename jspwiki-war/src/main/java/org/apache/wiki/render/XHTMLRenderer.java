@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.render;
 
@@ -31,25 +31,25 @@ import org.apache.wiki.parser.WikiDocument;
  *  Implements a WikiRendered that outputs XHTML.  Because the internal DOM
  *  representation is in XHTML already, this just basically dumps out everything
  *  out in a non-prettyprinted format.
- *  
+ *
  *  @since  2.4
  */
 public class XHTMLRenderer
-    extends WikiRenderer 
+    extends WikiRenderer
 {
     private static final String LINEBREAK = "\n";
 
     /**
      *  Creates an XHTML 1.0 renderer.
-     *  
-     *  @param context {@inheritDoc}
-     *  @param doc {@inheritDoc}
+     *
+     *  @param context A WikiContext in which the rendering will take place.
+     *  @param doc The WikiDocument which shall be rendered.
      */
     public XHTMLRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -60,16 +60,16 @@ public class XHTMLRenderer
 
         CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
         XMLOutputter output = new XMLOutputter(processor);
-        
+
         StringWriter out = new StringWriter();
-        
+
         Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
         fmt.setLineSeparator( LINEBREAK );
 
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );
-        
+
         String result = out.toString();
         return result;
     }

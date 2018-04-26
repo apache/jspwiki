@@ -23,20 +23,89 @@ Style: ImagePlugin
 
 DOM Structure:
     (start code)
-    <table border="0" class="imageplugin" align="left|right|center">
-        <tr><td><img src="img.jpg" height="200px" width="200px" /></td></tr>
-    </table>
+    table.imageplugin[style="..."]
+        caption[align="bottom"]  caption-text
+        tbody
+            tr
+                td
+                    img[src="img.jpg"][height="200px"][width="200px"]
     (end)
 */
+
 .imageplugin {
-
-    margin:.5em 0;
-
+    border:none;
+    position:relative;
+    break-inside:avoid; /* needed to avoid break in columns */
     img { border: 0; }
-    caption { font-size:90%; }
+}
 
-    * {
-        padding:0;
-        margin:0;
-    }
+figure {
+  display: table;
+  position: relative;
+  break-inside: avoid;
+}
+figcaption {
+    display: table-caption;
+  //copied from boostrap
+  padding-top: @table-cell-padding;
+  padding-bottom: @table-cell-padding;
+  color: @text-muted;
+  text-align: left;
+}
+
+figcaption, caption {
+  font-size:90%;
+  line-height:1;
+  caption-side:bottom;
+
+  a {
+    color:inherit;
+    text-decoration:none;
+    //&:after { display:none; }
+    &:hover { color:inherit; }
+  }
+}
+
+figcaption.caption-arrow,
+caption.caption-arrow,
+.caption-arrow caption {
+  position:relative;
+  padding:@alert-padding;
+  background:@white;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.03);
+}
+figcaption.caption-arrow:before,
+caption.caption-arrow:before,
+.caption-arrow caption:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0;
+  left: 20%;
+  z-index:2;
+  transform-origin: 0 0;
+  transform: rotate(135deg);
+  border: .8rem solid @white;
+  border-color: transparent transparent inherit inherit;
+}
+
+figcaption.caption-overlay,
+caption.caption-overlay,
+.caption-overlay caption {
+  color: @white;
+  text-shadow: 0 1px 0 #111;
+  text-align:center;
+  position: absolute;
+  font-size: @font-size-h1;
+  line-height: @headings-line-height;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.attachment;
 
@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -46,13 +47,12 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.util.ClassUtil;
 
+
 /**
- *  Provides facilities for handling attachments.  All attachment
- *  handling goes through this class.
+ *  Provides facilities for handling attachments.  All attachment handling goes through this class.
  *  <p>
- *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider
- *  that is in use.  It is created by the WikiEngine as a singleton object, and
- *  can be requested through the WikiEngine.
+ *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider that is in use.
+ *  It is created by the WikiEngine as a singleton object, and can be requested through the WikiEngine.
  *
  *  @since 1.9.28
  */
@@ -228,12 +228,46 @@ public class AttachmentManager
      *  @return Attachment, or null, if no such attachment exists.
      *  @throws ProviderException If something goes wrong.
      */
-
     public Attachment getAttachmentInfo( WikiContext context,
                                          String attachmentname )
         throws ProviderException
     {
         return getAttachmentInfo( context, attachmentname, WikiProvider.LATEST_VERSION );
+    }
+
+    /**
+     *  Figures out the full attachment name from the context and attachment name.
+     *
+     *  @param context The current WikiContext
+     *  @param attachmentname The file name of the attachment.
+     *  @return Attachment, or null, if no such attachment exists.
+     *  @throws ProviderException If something goes wrong.
+     */
+    public String getAttachmentInfoName( WikiContext context,
+                                         String attachmentname )
+    {
+        Attachment att = null;
+
+        try
+        {
+            att = getAttachmentInfo( context, attachmentname );
+        }
+        catch( ProviderException e )
+        {
+            log.warn("Finding attachments failed: ",e);
+            return null;
+        }
+
+        if( att != null )
+        {
+            return att.getName();
+        }
+        else if( attachmentname.indexOf('/') != -1 )
+        {
+            return attachmentname;
+        }
+
+        return null;
     }
 
     /**
@@ -306,12 +340,9 @@ public class AttachmentManager
         // System.out.println("Seeking info on "+currentPage+"::"+attachmentname);
 
         //
-        //  Finally, figure out whether this is a real attachment or a generated
-        //  attachment.
+        //  Finally, figure out whether this is a real attachment or a generated attachment.
         //
-        Attachment att;
-
-        att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
+        Attachment att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
 
         if( att == null )
         {
@@ -510,11 +541,10 @@ public class AttachmentManager
             // the caller should catch the exception and use the exception text as an i18n key
             throw new ProviderException(  "attach.parent.not.exist"  );
         }
-        
+
         m_provider.putAttachmentData( att, in );
 
-        m_engine.getReferenceManager().updateReferences( att.getName(),
-                                                         new java.util.Vector() );
+        m_engine.getReferenceManager().updateReferences( att.getName(), new Vector< String >() );
 
         WikiPage parent = new WikiPage( m_engine, att.getParentName() );
         m_engine.updateReferences( parent );
@@ -614,7 +644,7 @@ public class AttachmentManager
     /**
      *  Validates the filename and makes sure it is legal.  It trims and splits
      *  and replaces bad characters.
-     *  
+     *
      *  @param filename
      *  @return A validated name with annoying characters replaced.
      *  @throws WikiException If the filename is not legal (e.g. empty)
@@ -625,11 +655,11 @@ public class AttachmentManager
         if( filename == null || filename.trim().length() == 0 )
         {
             log.error("Empty file name given.");
-    
+
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.empty.file" );
         }
-    
+
         //
         //  Should help with IE 5.22 on OSX
         //
@@ -644,22 +674,22 @@ public class AttachmentManager
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.unwanted.file"  );
         }
-    
+
         //
         //  Some browser send the full path info with the filename, so we need
         //  to remove it here by simply splitting along slashes and then taking the path.
         //
-        
+
         String[] splitpath = filename.split( "[/\\\\]" );
         filename = splitpath[splitpath.length-1];
-        
+
         //
         //  Remove any characters that might be a problem. Most
         //  importantly - characters that might stop processing
         //  of the URL.
         //
         filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
-    
+
         return filename;
     }
 }

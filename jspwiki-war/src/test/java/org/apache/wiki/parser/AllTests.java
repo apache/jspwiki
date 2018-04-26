@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,32 +14,20 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 /*
  * (C) Janne Jalkanen 2005
- * 
+ *
  */
 package org.apache.wiki.parser;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase
-{
-    public AllTests( String s )
-    {
-        super( s );
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite("Parser tests");
-
-        suite.addTest( JSPWikiMarkupParserTest.suite() );
-        suite.addTest( MarkupParserTest.suite() );
-        suite.addTest( CreoleToJSPWikiTranslatorTest.suite() );
-        return suite;
-    }
+@RunWith( Suite.class )
+@Suite.SuiteClasses( { CreoleToJSPWikiTranslatorTest.class,
+                       JSPWikiMarkupParserTest.class,
+                       MarkupParserTest.class} )
+public class AllTests {
 }

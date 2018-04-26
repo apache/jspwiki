@@ -22,30 +22,31 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WysiwygEditingRendererTest extends TestCase
+public class WysiwygEditingRendererTest
 {
     protected TestEngine testEngine;
 
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine(props);
-        super.setUp();
 
         testEngine.saveText( "WysiwygEditingRendererTest", "test page" );
         testEngine.saveText( "This Pagename Has Spaces", "This Pagename Has Spaces" );
     }
 
+    @After
     public void tearDown()
     {
         testEngine.deleteTestPage( "WysiwygEditingRendererTest" );
@@ -67,41 +68,36 @@ public class WysiwygEditingRendererTest extends TestCase
         return wer.getString();
     }
 
+    @Test
     public void testDefinedPageLink() throws Exception
     {
         String src = "[WysiwygEditingRendererTest]";
-        assertEquals( "<a class=\"wikipage\" href=\"WysiwygEditingRendererTest\">WysiwygEditingRendererTest</a>", render(src) );
+        Assert.assertEquals( "<a class=\"wikipage\" href=\"WysiwygEditingRendererTest\">WysiwygEditingRendererTest</a>", render(src) );
 
         src = "[WysiwygEditingRendererTest#Footnotes]";
-        assertEquals( "<a class=\"wikipage\" href=\"WysiwygEditingRendererTest#Footnotes\">WysiwygEditingRendererTest#Footnotes</a>", render(src) );
+        Assert.assertEquals( "<a class=\"wikipage\" href=\"WysiwygEditingRendererTest#Footnotes\">WysiwygEditingRendererTest#Footnotes</a>", render(src) );
 
         src = "[test page|WysiwygEditingRendererTest|class='notWikipageClass']";
-        assertEquals( "<a class=\"notWikipageClass\" href=\"WysiwygEditingRendererTest\">test page</a>", render(src) );
+        Assert.assertEquals( "<a class=\"notWikipageClass\" href=\"WysiwygEditingRendererTest\">test page</a>", render(src) );
 
         src = "[This Pagename Has Spaces]";
-        assertEquals( "<a class=\"wikipage\" href=\"This Pagename Has Spaces\">This Pagename Has Spaces</a>", render(src) );
+        Assert.assertEquals( "<a class=\"wikipage\" href=\"This Pagename Has Spaces\">This Pagename Has Spaces</a>", render(src) );
     }
 
+    @Test
     public void testUndefinedPageLink() throws Exception
     {
         String src = "[UndefinedPageLinkHere]";
-        assertEquals( "<a class=\"createpage\" href=\"UndefinedPageLinkHere\">UndefinedPageLinkHere</a>", render(src) );
+        Assert.assertEquals( "<a class=\"createpage\" href=\"UndefinedPageLinkHere\">UndefinedPageLinkHere</a>", render(src) );
 
         src = "[UndefinedPageLinkHere#SomeSection]";
-        assertEquals( "<a class=\"createpage\" href=\"UndefinedPageLinkHere\">UndefinedPageLinkHere#SomeSection</a>", render(src) );
+        Assert.assertEquals( "<a class=\"createpage\" href=\"UndefinedPageLinkHere\">UndefinedPageLinkHere#SomeSection</a>", render(src) );
 
         src = "[test page|UndefinedPageLinkHere|class='notEditpageClass']";
-        assertEquals( "<a class=\"notEditpageClass\" href=\"UndefinedPageLinkHere\">test page</a>", render(src) );
+        Assert.assertEquals( "<a class=\"notEditpageClass\" href=\"UndefinedPageLinkHere\">test page</a>", render(src) );
 
         src = "[Non-existent Pagename with Spaces]";
-        assertEquals( "<a class=\"createpage\" href=\"Non-existent Pagename with Spaces\">Non-existent Pagename with Spaces</a>", render(src) );
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite( WysiwygEditingRendererTest.class );
-
-        return suite;
+        Assert.assertEquals( "<a class=\"createpage\" href=\"Non-existent Pagename with Spaces\">Non-existent Pagename with Spaces</a>", render(src) );
     }
 
 }

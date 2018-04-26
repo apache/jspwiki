@@ -14,57 +14,53 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.acl;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.acl.AclEntry;
-import org.apache.wiki.auth.acl.AclEntryImpl;
-import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class AclImplTest extends TestCase
+public class AclImplTest
 {
-    private AclImpl      m_acl;
+    private AclImpl m_acl;
 
-    private AclImpl      m_aclGroup;
+    private AclImpl m_aclGroup;
 
-    private Map<String, Group>          m_groups;
+    private Map<String, Group> m_groups;
 
     private GroupManager m_groupMgr;
 
-    private WikiSession  m_session;
-
-    public AclImplTest( String s )
-    {
-        super( s );
-    }
+    private WikiSession m_session;
 
     /**
      * We setup the following rules: Alice = may view Bob = may view, may edit
      * Charlie = may view Dave = may view, may comment groupAcl: FooGroup =
      * Alice, Bob - may edit BarGroup = Bob, Charlie - may view
      */
+    @Before
     public void setUp() throws Exception
     {
-        super.setUp();
+
         Properties props = TestEngine.getTestProperties();
         TestEngine engine  = new TestEngine( props );
         m_groupMgr = engine.getGroupManager();
@@ -129,6 +125,7 @@ public class AclImplTest extends TestCase
         m_groups.put( "BarGroup", bar );
     }
 
+    @After
     public void tearDown() throws Exception
     {
         m_groupMgr.removeGroup( "FooGroup" );
@@ -164,92 +161,94 @@ public class AclImplTest extends TestCase
         return false;
     }
 
+    @Test
     public void testAlice()
     {
         // Alice should be able to view but not edit or comment
         Principal wup = new WikiPrincipal( "Alice" );
-        assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertFalse( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertFalse( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
     }
 
+    @Test
     public void testBob()
     {
         // Bob should be able to view, edit, and comment but not delete
         Principal wup = new WikiPrincipal( "Bob" );
-        assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertTrue( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertTrue( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertTrue( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertTrue( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
+    @Test
     public void testCharlie()
     {
         // Charlie should be able to view, but not edit, comment or delete
         Principal wup = new WikiPrincipal( "Charlie" );
-        assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertFalse( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertFalse( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
+    @Test
     public void testDave()
     {
         // Dave should be able to view and comment but not edit or delete
         Principal wup = new WikiPrincipal( "Dave" );
-        assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertTrue( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertTrue( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
+    @Test
     public void testGroups()
     {
         Principal wup = new WikiPrincipal( "Alice" );
-        assertTrue( "Alice view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertTrue( "Alice edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertTrue( "Alice comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "Alice delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertTrue( "Alice view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertTrue( "Alice edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertTrue( "Alice comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "Alice delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
 
         wup = new WikiPrincipal( "Bob" );
-        assertTrue( "Bob view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertTrue( "Bob edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertTrue( "Bob comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "Bob delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertTrue( "Bob view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertTrue( "Bob edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertTrue( "Bob comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "Bob delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
 
         wup = new WikiPrincipal( "Charlie" );
-        assertTrue( "Charlie view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertFalse( "Charlie edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertFalse( "Charlie comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "Charlie delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertTrue( "Charlie view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertFalse( "Charlie edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertFalse( "Charlie comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "Charlie delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
 
         wup = new WikiPrincipal( "Dave" );
-        assertFalse( "Dave view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        assertFalse( "Dave edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        assertFalse( "Dave comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        assertFalse( "Dave delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assert.assertFalse( "Dave view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assert.assertFalse( "Dave edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assert.assertFalse( "Dave comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assert.assertFalse( "Dave delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
+    @Test
     public void testSerialization() throws IOException, ClassNotFoundException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
+
         ObjectOutputStream out2 = new ObjectOutputStream(out);
-        
+
         out2.writeObject( m_acl );
-        
+
         out2.close();
-        
+
         byte[] stuff = out.toByteArray();
-        
+
         ObjectInputStream in = new ObjectInputStream( new ByteArrayInputStream(stuff) );
-        
+
         AclImpl newacl = (AclImpl) in.readObject();
         assert( newacl.toString().equals(m_acl.toString()) );
     }
-    
-    public static Test suite()
-    {
-        return new TestSuite( AclImplTest.class );
-    }
+
 }

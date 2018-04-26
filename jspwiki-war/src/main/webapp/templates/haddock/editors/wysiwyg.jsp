@@ -89,20 +89,11 @@
 <%
     if( usertext == null ) usertext = "";
 
-    RenderingManager renderingManager = new RenderingManager();
-    //RenderingManager renderingManager = engine.getRenderingManager();
-
-    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-    Properties copyOfWikiProperties = new Properties();
-    copyOfWikiProperties.putAll( engine.getWikiProperties() );
-    copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
-    renderingManager.initialize( engine, copyOfWikiProperties );
-
     String pageAsHtml;
     try
     {
-        //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
-        pageAsHtml = renderingManager.getHTML( context, usertext );
+        //pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
+        pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
     }
         catch( Exception e )
     {
@@ -123,7 +114,7 @@
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
    /*not used
-   String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
+   String templateDir = (String)engine.getWikiProperties().get( WikiEngine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
    if( request.isSecure() )

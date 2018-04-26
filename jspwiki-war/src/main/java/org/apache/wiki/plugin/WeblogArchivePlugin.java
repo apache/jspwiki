@@ -88,7 +88,7 @@ public class WeblogArchivePlugin implements WikiPlugin
 
         try
         {
-            Collection months = collectMonths( engine, weblogName );
+            Collection< Calendar > months = collectMonths( engine, weblogName );
             int year = 0;
 
             //
@@ -99,14 +99,14 @@ public class WeblogArchivePlugin implements WikiPlugin
 
             if( months.size() > 0 )
             {
-                year = ((Calendar)months.iterator().next()).get( Calendar.YEAR );
+                year = (months.iterator().next()).get( Calendar.YEAR );
 
                 sb.append( "<li class=\"archiveyear\">"+year+"</li>\n" );
             }
 
-            for( Iterator i = months.iterator(); i.hasNext(); )
+            for( Iterator< Calendar > i = months.iterator(); i.hasNext(); )
             {
-                Calendar cal = (Calendar) i.next();
+                Calendar cal = i.next();
 
                 if( cal.get( Calendar.YEAR ) != year )
                 {
@@ -135,21 +135,19 @@ public class WeblogArchivePlugin implements WikiPlugin
         return sb.toString();
     }
 
-    @SuppressWarnings("unchecked")
-    private SortedSet collectMonths( WikiEngine engine, String page )
+    private SortedSet< Calendar > collectMonths( WikiEngine engine, String page )
         throws ProviderException
     {
-        Comparator comp = new ArchiveComparator();
+        Comparator< Calendar > comp = new ArchiveComparator();
         TreeSet<Calendar> res = new TreeSet<Calendar>( comp );
 
         WeblogPlugin pl = new WeblogPlugin();
 
-        List blogEntries = pl.findBlogEntries( engine,
-                                               page, new Date(0L), new Date() );
+        List< WikiPage > blogEntries = pl.findBlogEntries( engine, page, new Date(0L), new Date() );
 
-        for( Iterator i = blogEntries.iterator(); i.hasNext(); )
+        for( Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext(); )
         {
-            WikiPage p = (WikiPage) i.next();
+            WikiPage p = i.next();
 
             // FIXME: Not correct, should parse page creation time.
 
@@ -194,28 +192,23 @@ public class WeblogArchivePlugin implements WikiPlugin
      * This is a simple comparator for ordering weblog archive entries.
      * Two dates in the same month are considered equal.
      */
-    private static class ArchiveComparator
-        implements Comparator
-    {
+    private static class ArchiveComparator implements Comparator< Calendar > {
 
-        public int compare( Object a, Object b )
+        public int compare( Calendar a, Calendar b )
         {
-            if( a == null || b == null ||
-                !(a instanceof Calendar) || !(b instanceof Calendar) )
+            if( a == null || b == null )
             {
                 throw new ClassCastException( "Invalid calendar supplied for comparison." );
             }
 
-            Calendar ca = (Calendar) a;
-            Calendar cb = (Calendar) b;
-            if( ca.get( Calendar.YEAR ) == cb.get( Calendar.YEAR ) &&
-                ca.get( Calendar.MONTH ) == cb.get( Calendar.MONTH ) )
+            if( a.get( Calendar.YEAR ) == b.get( Calendar.YEAR ) &&
+                a.get( Calendar.MONTH ) == b.get( Calendar.MONTH ) )
             {
                 return 0;
             }
 
             //sort recent dates first
-            return cb.getTime().before( ca.getTime() ) ? -1 : 1;
+            return b.getTime().before( a.getTime() ) ? -1 : 1;
         }
     }
 }

@@ -55,6 +55,7 @@ Section: Header & Footer
 DOM structure:
 (start code)
     div.header
+      div.titlebox
       div.topline
         div.pagename
         div.pull-left
@@ -100,18 +101,16 @@ DOM structure:
 .container-fluid {
 	//margin:0 1em;
 
-    .header > * {
-        padding-right:@padding-base-horizontal;
-    }
-
+    .header > *:not(.titlebox),
     > .row > ul.nav {
-        padding-right: @padding-base-horizontal;
+        //padding-right:@padding-base-horizontal;
     }
-
-
 }
 
-.titlebox.alert { margin:0; }
+.titlebox {
+	color:@black;
+	.bg-warning;
+}
 
 .header, .footer {
     .clearfix;
@@ -128,14 +127,9 @@ DOM structure:
     //background-repeat:no-repeat;
     background-attachment:fixed; //default=scroll
 
-	> * {
+	> *:not(.titlebox) {
 	    padding: @padding-base-horizontal/4 0 @padding-base-horizontal/4 @padding-base-horizontal;
 	}
-}
-
-.topline {
-    .clearfix();
-    border-bottom: 1px solid rgba(255,255,255,0.1);
     .btn [class^="icon-"]:before { font-size: 1.3em; }
 }
 
@@ -166,6 +160,24 @@ a.logo {
 
 }
 
+/*
+Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
+*/
+.fixed-header > .header {
+    position: fixed;
+    top:0;
+    z-index:5;
+    width:100%;
+    //will-change: transform;
+    .transition( transform 0.1s ease-in-out);
+    .translate( 0; 0 ); //transform: translateY(0);
+
+    //when scrolling-down,  hide the fixed header
+    &.scrolling-down {
+        .translate(0;-100%); //transform: translateY(-100%); /*hide the header*/
+    }
+}
+
 
 .header .pagename,
 .header .breadcrumb {
@@ -178,27 +190,27 @@ a.logo {
     text-align: center;
     a { text-decoration:none; }
 
-    line-height: 1;
-    padding: 0.1em .5em;
+    line-height: 1.2;
+    padding: 0 .5em;
 }
 .reader .pagename {
     font-size: 6em;
 }
 
-//JSPWiki-s breadcrumb - do not inherit bootstraps breadcrumbs
+/*
+JSPWiki-s breadcrumb - do not inherit bootstraps breadcrumbs
+Only show breadcrumb on mouse hover
+*/
 .breadcrumb {
     .small;
     .transition(all .5s ease);
     color:transparent;
+    &:hover { color:inherit; }
 
     .divider:before {
         content:"\2022";   //&bull;
         padding:0 .25em;
     }
-}
-.header:hover .breadcrumb {
-    color:inherit;
-    //background:rgba(255,255,255,0.05);
 }
 
 
@@ -206,13 +218,12 @@ a.logo {
     //background: @wiki-footer-bg; //reuse header background
     padding: @padding-base-horizontal;
 	text-align: center;
-
 }
 
 
 /*
 Section: Sticky Footer
-This seciontCSS add-on will ensure to stick the footer to the bottom of the window
+This add-on will ensure to stick the footer to the bottom of the window
 even when there’s not enough content to fill the page.
 
 .can-flex :  present when the browser supports flexbox
@@ -221,60 +232,40 @@ Credits: https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
 */
 
 body.can-flex {
-  //hack for IE-bug :  see https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
-  display: flex;
-  min-height: 100vh;
-  flex-flow: column;
+    //hack for IE-bug :  see https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
+    display: flex;
+    min-height: 100vh;
+    flex-flow: column;
+
+    & > .container-fluid,
+    & > .container {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+
+        min-height: 100vh;
+
+        -webkit-flex-flow: column;
+        -moz-flex-flow: column;
+        -ms-flex-flow: column;
+        flex-flow: column;
+    }
+    & .content {
+        -webkit-box-flex: 1;
+        -moz-box-flex: 1;
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+    }
 }
 
-body.can-flex > .container-fluid,
-body.can-flex > .container {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-
-  min-height: 100vh;
-
-  -webkit-flex-flow: column;
-  -moz-flex-flow: column;
-  -ms-flex-flow: column;
-  flex-flow: column;
-}
-body.can-flex .content {
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -webkit-flex: 1;
-  -ms-flex: 1;
-  flex: 1;
-}
-
-
-.copyright, .wiki-version { .small; }
+.wiki-version { .small; }
 
 .reader .copyright {
     margin: 2em 0;
     clear:both;
-}
-
-.feed {
-
-	//.@{fa-css-prefix};
-    display:inline-block;
-    font-family:FontJspwiki;
-	font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-decoration:none;
-
-	&:before { content: "\e610"; } //fixme -- re-use .icon-search
-    &:hover { text-decoration:none; }
-
-    overflow:hidden;
-    vertical-align:middle;
 }
 
 
@@ -283,4 +274,63 @@ body.can-flex .content {
 // #conflict
 // #conflictother
 // #conflictown
+
+
+
+
+/*  admin beans */
+/*
+div.formcontainer
+  div.block
+    label
+    input
+    div.description
+*/
+div.admin {
+    .formcontainer {
+        .default;
+        .block { margin-bottom:.5em; }
+        label { }
+        input[type=submit] {
+            .btn;
+            .btn-primary;
+        }
+        input[type=text] {
+            .form-control;
+        }
+        table {
+            .table;
+            .table-bordered;
+            .table-striped;
+            .table-condensed;
+            .wikitable;
+            width:auto; //.table-fit;
+        }
+        .description { .help-block; }
+
+    }
+
+}
+
+    .admin-user-form {
+    	display: -ms-flex;
+	    display: -webkit-flex;
+    	display: flex;
+
+        > div#useredit {
+	        width:80%;
+        }
+        > div#userlist {
+        	margin-right: (@padding-base-horizontal*4);
+        	width:20%;
+
+            .list-group-item.new-user{
+                color: @btn-primary-color;
+                background: @btn-primary-bg;
+                border: @btn-primary-border;
+            }
+        }
+
+    }
+
 

@@ -28,7 +28,7 @@ Credit:
     Arian Stolwijk, [https://github.com/arian/mootools-form-upload]
 
 */
-!function(){
+!(function(){
 
 
 function readableFileSize(bytes, precision){
@@ -268,4 +268,4 @@ Form.File = new Class({
 
 });
 
-}();
+})();

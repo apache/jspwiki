@@ -41,49 +41,46 @@ DOM Structure:
 
 .content {
     /* position:relative;  => dont, otherwise suggestion dialogs are clipped */
-    padding:0;
+    padding: 0;
     overflow:hidden; //checkme
     clear:both;
     .hyphens(auto);
-    .transition(all .3s);
+
+    background: @wiki-page-bg;  //page background color
+    position: relative;  //prepare for the :after element to give the sidebar another color
+
+	&:after {
+	    content: " ";
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	bottom: 0;
+	    background: @wiki-sidebar-bg;
+	}
+	//by default,  sidebar, and sidebar background color are hidden  (margin-left=-100%;)
+	.sidebar, &:after {
+	    width: @wiki-sidebar-width;
+    	margin-left: -100%;
+    	.transition (all .3s);
+	}
 }
 .page {
     float:right;
     width:100%;
+   .transition(all .3s);
 }
 .sidebar {
-    float:left;
-    width:@wiki-sidebar-width;
-    margin-left:-@wiki-sidebar-width;
-    padding:@padding-base-horizontal;
+    position: relative;
+    float: left;
+    z-index: 1;  //on top of the content:after element !
+    min-height: 1px; // Prevent columns from collapsing when empty
+    padding: @padding-base-horizontal (@grid-gutter-width / 2);
     overflow-x:hidden;
 }
-.page, .sidebar {
-    //box-sizing: border-box;  //width% now includes border & padding : already part of bootstrap
-   .transition(all .3s);
-    //& > *:last-child { padding-bottom:1em; }
-}
-
+//show the sidebar
 .content.active {
-    .page { width:100%-@wiki-sidebar-width; }
-    .sidebar { margin-left:0; }
-}
-.content {
-    background: @wiki-page-bg;  //page background color
-    position: relative;  //prepare for the :after element to give the sidebar another color
-}
-.content:after {
-    content: " ";
-    position: absolute; top: 0; left: 0; bottom: 0;
-    background: @wiki-sidebar-bg;
-    .transition (all .3s);
-    width: @wiki-sidebar-width;
-}
-.content:not(.active):after {
-    width: 0;
-}
-.sidebar {
-    z-index:1;  //ontop of the content:after element !
+    .page { width: 100% - @wiki-sidebar-width; }
+    .sidebar, &:after { margin-left:0; }
 }
 
 /*
@@ -91,19 +88,15 @@ Put sidebar at the right side
 - FFS: also move toggle buttons to other side ?
 */
 .fav-right {
-    .content:after {
-        right:0; left:auto;
+    .content {
+    	&:after { right:0; left:auto; }
+    	.sidebar, &:after { margin-left:0; margin-right:-100%; }
     }
-    .page    {
-        float:left;
-    }
-    .sidebar {
-        float: right;
-        margin-left: 0;
-        margin-right: -@wiki-sidebar-width;
-    }
+    .page { float:left; }
+    .sidebar { float: right; }
+
     .content.active {
-        .sidebar { margin-right:0; }
+        .sidebar, &:after { margin-right:0; }
     }
 }
 /*
@@ -119,7 +112,7 @@ We may just hide the on/off toggle in css
 	//& > h2, & > h3, & > h4,  { margin-top:0; }
 }
 .page-content {
-    padding: @padding-base-vertical @padding-base-horizontal;
+    padding: @padding-base-horizontal;
 }
 
 

@@ -25,8 +25,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +39,6 @@ import javax.xml.transform.Result;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.Pattern;
@@ -51,14 +48,10 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.VariableManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -81,21 +74,6 @@ import org.jdom2.Verifier;
  *  @since  2.4
  */
 public class JSPWikiMarkupParser extends MarkupParser {
-
-    /** Name of the outlink image; relative path to the JSPWiki directory. */
-    private static final String OUTLINK_IMAGE = "images/out.png";
-
-    /** The value for anchor element <tt>class</tt> attributes when used
-      * for wiki page (normal) links. The value is "wikipage". */
-    public static final String CLASS_WIKIPAGE = "wikipage";
-
-    /** The value for anchor element <tt>class</tt> attributes when used
-      * for edit page links. The value is "createpage". */
-    public static final String CLASS_EDITPAGE = "createpage";
-
-    /** The value for anchor element <tt>class</tt> attributes when used
-      * for interwiki page links. The value is "interwiki". */
-    public static final String CLASS_INTERWIKI = "interwiki";
 
     protected static final int              READ          = 0;
     protected static final int              EDIT          = 1;
@@ -127,16 +105,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
     private boolean        m_allowPHPWikiStyleLists = true;
 
-
     private boolean        m_isOpenParagraph = false;
-
-    /** Keeps image regexp Patterns */
-    private List<Pattern>  m_inlineImagePatterns;
 
     /** Parser for extended link functionality. */
     private LinkParser     m_linkParser = new LinkParser();
-
-    private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
     private StringBuilder  m_plainTextBuf = new StringBuilder(20);
@@ -153,14 +125,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
         are surrounded by brackets. */
     public static final String     PROP_PLAINURIS        = "jspwiki.translatorReader.plainUris";
 
-    /** If true, all outward links (external links) have a small link image appended. */
-    public static final String     PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
-
     /** If true, all outward attachment info links have a small link image appended. */
     public static final String     PROP_USEATTACHMENTIMAGE = "jspwiki.translatorReader.useAttachmentImage";
-
-    /** If set to "true", all external links are tagged with 'rel="nofollow"' */
-    public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
@@ -193,57 +159,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private Heading                m_lastHeading         = null;
 
-    /**
-     *  This list contains all IANA registered URI protocol
-     *  types as of September 2004 + a few well-known extra types.
-     *
-     *  JSPWiki recognises all of them as external links.
-     *
-     *  This array is sorted during class load, so you can just dump
-     *  here whatever you want in whatever order you want.
-     */
-    static final String[] EXTERNAL_LINKS = {
-        "http:", "ftp:", "https:", "mailto:",
-        "news:", "file:", "rtsp:", "mms:", "ldap:",
-        "gopher:", "nntp:", "telnet:", "wais:",
-        "prospero:", "z39.50s", "z39.50r", "vemmi:",
-        "imap:", "nfs:", "acap:", "tip:", "pop:",
-        "dav:", "opaquelocktoken:", "sip:", "sips:",
-        "tel:", "fax:", "modem:", "soap.beep:", "soap.beeps",
-        "xmlrpc.beep", "xmlrpc.beeps", "urn:", "go:",
-        "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
-        "im:", "mtqp", "smb:" };
-
-    private static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
-
     private static final String CAMELCASE_PATTERN     = "JSPWikiMarkupParser.camelCasePattern";
-
-    private static final String[] CLASS_TYPES =
-    {
-       CLASS_WIKIPAGE,
-       CLASS_EDITPAGE,
-       "",
-       "footnote",
-       "footnoteref",
-       "",
-       "external",
-       CLASS_INTERWIKI,
-       "external",
-       CLASS_WIKIPAGE,
-       "attachment"
-    };
-
-
-    /**
-     *  This Comparator is used to find an external link from c_externalLinks.  It
-     *  checks if the link starts with the other arraythingie.
-     */
-    private static Comparator<String> c_startingComparator = new StartingComparator();
-
-    static
-    {
-        Arrays.sort( EXTERNAL_LINKS );
-    }
 
     /**
      *  Creates a markup parser.
@@ -258,44 +174,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     // FIXME: parsers should be pooled for better performance.
-    @SuppressWarnings("unchecked")
     private void initialize()
     {
-        PatternCompiler compiler         = new GlobCompiler();
-        List<Pattern>   compiledpatterns;
-
-        //
-        //  We cache compiled patterns in the engine, since their creation is
-        //  really expensive
-        //
-        compiledpatterns = (List<Pattern>)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
-
-        if( compiledpatterns == null )
-        {
-            compiledpatterns = new ArrayList<Pattern>(20);
-            Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
-
-            //
-            //  Make them into Regexp Patterns.  Unknown patterns
-            //  are ignored.
-            //
-            for( Iterator< String > i = ptrns.iterator(); i.hasNext(); )
-            {
-                try
-                {
-                    compiledpatterns.add( compiler.compile( i.next(),
-                                                            GlobCompiler.DEFAULT_MASK|GlobCompiler.READ_ONLY_MASK ) );
-                }
-                catch( MalformedPatternException e )
-                {
-                    log.error("Malformed pattern in properties: ", e );
-                }
-            }
-
-            m_engine.setAttribute( INLINE_IMAGE_PATTERNS, compiledpatterns );
-        }
-
-        m_inlineImagePatterns = Collections.unmodifiableList(compiledpatterns);
+        initInlineImagePatterns();
 
         m_camelCasePattern = (Pattern) m_engine.getAttribute( CAMELCASE_PATTERN );
         if( m_camelCasePattern == null )
@@ -330,35 +211,17 @@ public class JSPWikiMarkupParser extends MarkupParser {
                                                              m_camelCaseLinks );
         }
 
-
-
         Boolean wysiwygVariable = (Boolean)m_context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
         if( wysiwygVariable != null )
         {
             m_wysiwygEditorMode = wysiwygVariable.booleanValue();
         }
 
-        m_plainUris           = getLocalBooleanProperty( m_context,
-                                                         props,
-                                                         PROP_PLAINURIS,
-                                                         m_plainUris );
-        m_useOutlinkImage     = getLocalBooleanProperty( m_context,
-                                                         props,
-                                                         PROP_USEOUTLINKIMAGE,
-                                                         m_useOutlinkImage );
-        m_useAttachmentImage  = getLocalBooleanProperty( m_context,
-                                                         props,
-                                                         PROP_USEATTACHMENTIMAGE,
-                                                         m_useAttachmentImage );
-        m_allowHTML           = getLocalBooleanProperty( m_context,
-                                                         props,
-                                                         MarkupParser.PROP_ALLOWHTML,
-                                                         m_allowHTML );
-
-        m_useRelNofollow      = getLocalBooleanProperty( m_context,
-                                                         props,
-                                                         PROP_USERELNOFOLLOW,
-                                                         m_useRelNofollow );
+        m_plainUris           = m_context.getBooleanWikiProperty( PROP_PLAINURIS, m_plainUris );
+        m_useOutlinkImage     = m_context.getBooleanWikiProperty( PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
+        m_useAttachmentImage  = m_context.getBooleanWikiProperty( PROP_USEATTACHMENTIMAGE, m_useAttachmentImage );
+        m_allowHTML           = m_context.getBooleanWikiProperty( PROP_ALLOWHTML, m_allowHTML );
+        m_useRelNofollow      = m_context.getBooleanWikiProperty( PROP_USERELNOFOLLOW, m_useRelNofollow );
 
         if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
@@ -366,51 +229,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         m_context.getPage().setHasMetadata();
-    }
-
-    /**
-     *  This is just a simple helper method which will first check the context
-     *  if there is already an override in place, and if there is not,
-     *  it will then check the given properties.
-     *
-     *  @param context WikiContext to check first
-     *  @param props   Properties to check next
-     *  @param key     What key are we searching for?
-     *  @param defValue Default value for the boolean
-     *  @return True or false
-     */
-    private static boolean getLocalBooleanProperty( WikiContext context,
-                                                    Properties  props,
-                                                    String      key,
-                                                    boolean     defValue )
-    {
-        Object bool = context.getVariable(key);
-
-        if( bool != null )
-        {
-            return TextUtil.isPositive( (String) bool );
-        }
-
-        return TextUtil.getBooleanProperty( props, key, defValue );
-    }
-
-    /**
-     *  Returns link name, if it exists; otherwise it returns null.
-     */
-    private String linkExists( String page )
-    {
-        try
-        {
-            if( page == null || page.length() == 0 ) return null;
-
-            return m_engine.getFinalPageName( page );
-        }
-        catch( ProviderException e )
-        {
-            log.warn("TranslatorReader got a faulty page name!",e);
-
-            return page;  // FIXME: What would be the correct way to go back?
-        }
     }
 
     /**
@@ -524,7 +342,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case LOCAL:
-                el = new Element("a").setAttribute("class","footnote");
+                el = new Element("a").setAttribute("class",CLASS_FOOTNOTE);
                 el.setAttribute("name", "ref-"+m_context.getName()+"-"+link.substring(1));
                 el.addContent("["+text+"]");
                 break;
@@ -620,7 +438,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el;
     }
 
-
     /**
      *  Figures out if a link is an off-site link.  This recognizes
      *  the most common protocols by checking how it starts.
@@ -628,29 +445,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param link The link to check.
      *  @return true, if this is a link outside of this wiki.
      *  @since 2.4
+     *  @deprecated - use {@link LinkParsingOperations#isExternalLink(String)} instead.
      */
-
+    @Deprecated
     public static boolean isExternalLink( String link )
     {
-        int idx = Arrays.binarySearch( EXTERNAL_LINKS, link,
-                                       c_startingComparator );
-
-        //
-        //  We need to check here once again; otherwise we might
-        //  get a match for something like "h".
-        //
-        if( idx >= 0 && link.startsWith(EXTERNAL_LINKS[idx]) ) return true;
-
-        return false;
-    }
-
-    /**
-     *  Returns true, if the link in question is an access
-     *  rule.
-     */
-    private static boolean isAccessRule( String link )
-    {
-        return link.startsWith("{ALLOW") || link.startsWith("{DENY");
+        return new LinkParsingOperations(null).isExternalLink( link );
     }
 
     /**
@@ -662,37 +462,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      *  @param link Link text, i.e. the contents of text between [].
      *  @return True, if this link seems to be a command to insert a plugin here.
+     *  @deprecated Use {@link LinkParsingOperations#isPluginLink(String)} instead,
      */
+    @Deprecated
     public static boolean isPluginLink( String link )
     {
-        return link.startsWith( "{INSERT" ) ||
-               ( link.startsWith( "{" ) && !link.startsWith( "{$" ) );
-    }
-
-    /**
-     *  Matches the given link to the list of image name patterns
-     *  to determine whether it should be treated as an inline image
-     *  or not.
-     */
-    private boolean isImageLink( String link )
-    {
-        if( m_inlineImages )
-        {
-            link = link.toLowerCase();
-
-            for( Iterator< Pattern >  i = m_inlineImagePatterns.iterator(); i.hasNext(); )
-            {
-                if( m_inlineMatcher.matches( link, i.next() ) )
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean isMetadata( String link )
-    {
-        return link.startsWith("{SET");
+        return new LinkParsingOperations( null ).isPluginLink( link );
     }
 
     /**
@@ -1202,16 +977,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
     private Element makeCamelCaseLink( String wikiname )
     {
-        String matchedLink;
+        String matchedLink = m_linkParsingOperations.linkIfExists( wikiname );
 
         callMutatorChain( m_localLinkMutatorChain, wikiname );
 
-        if( (matchedLink = linkExists( wikiname )) != null )
-        {
+        if( matchedLink != null ) {
             makeLink( READ, matchedLink, wikiname, null, null );
-        }
-        else
-        {
+        } else {
             makeLink( EDIT, wikiname, wikiname, null, null );
         }
 
@@ -1240,9 +1012,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
             }
 
-            el = new Element("img").setAttribute("class", "outlink");
+            el = new Element( "img" ).setAttribute( "class", OUTLINK );
             el.setAttribute( "src", m_outlinkImageURL );
-            el.setAttribute("alt","");
+            el.setAttribute( "alt","" );
         }
 
         return el;
@@ -1272,7 +1044,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         callMutatorChain( m_externalLinkMutatorChain, url );
 
-        if( isImageLink( url ) )
+        if( m_linkParsingOperations.isImageLink( url ) )
         {
             result = handleImageLink( StringUtils.replace(url,"&amp;","&"), url, false );
         }
@@ -1309,12 +1081,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
     {
         String possiblePage = MarkupParser.cleanLink( link );
 
-        if( isExternalLink( link ) && hasLinkText )
+        if( m_linkParsingOperations.isExternalLink( link ) && hasLinkText )
         {
             return makeLink( IMAGELINK, reallink, link, null, null );
         }
-        else if( ( linkExists( possiblePage ) ) != null &&
-                 hasLinkText )
+        else if( m_linkParsingOperations.linkExists( possiblePage ) && hasLinkText )
         {
             // System.out.println("Orig="+link+", Matched: "+matchedLink);
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
@@ -1423,17 +1194,17 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         StringBuilder sb = new StringBuilder(linktext.length()+80);
 
-        if( isAccessRule( linktext ) )
+        if( m_linkParsingOperations.isAccessRule( linktext ) )
         {
             return handleAccessRule( linktext );
         }
 
-        if( isMetadata( linktext ) )
+        if( m_linkParsingOperations.isMetadata( linktext ) )
         {
             return handleMetadata( linktext );
         }
 
-        if( isPluginLink( linktext ) )
+        if( m_linkParsingOperations.isPluginLink( linktext ) )
         {
             try
             {
@@ -1479,19 +1250,19 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
             //  In many cases these are the same.  [linktext|linkref].
             //
-            if( VariableManager.isVariableLink( linktext ) )
+            if( m_linkParsingOperations.isVariableLink( linktext ) )
             {
                 Content el = new VariableContent(linktext);
 
                 addElement( el );
             }
-            else if( isExternalLink( linkref ) )
+            else if( m_linkParsingOperations.isExternalLink( linkref ) )
             {
                 // It's an external link, out of this Wiki
 
                 callMutatorChain( m_externalLinkMutatorChain, linkref );
 
-                if( isImageLink( linkref ) )
+                if( m_linkParsingOperations.isImageLink( linkref ) )
                 {
                     handleImageLink( linkref, linktext, link.hasReference() );
                 }
@@ -1530,7 +1301,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
                         urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
 
-                        if( isImageLink(urlReference) )
+                        if( m_linkParsingOperations.isImageLink(urlReference) )
                         {
                             handleImageLink( urlReference, linktext, link.hasReference() );
                         }
@@ -1539,7 +1310,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                             makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
                         }
 
-                        if( isExternalLink(urlReference) )
+                        if( m_linkParsingOperations.isExternalLink(urlReference) )
                         {
                             addElement( outlinkImage() );
                         }
@@ -1568,12 +1339,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //
                 //  Internal wiki link, but is it an attachment link?
                 //
-                String attachment = findAttachment( linkref );
+                String attachment = m_engine.getAttachmentManager().getAttachmentInfoName( m_context, linkref );
                 if( attachment != null )
                 {
                     callMutatorChain( m_attachmentLinkMutatorChain, attachment );
 
-                    if( isImageLink( linkref ) )
+                    if( m_linkParsingOperations.isImageLink( linkref ) )
                     {
                         attachment = m_context.getURL( WikiContext.ATTACH, attachment );
                         sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
@@ -1594,15 +1365,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                    String matchedLink;
-                    if( (matchedLink = linkExists( linkref )) != null )
-                    {
+                    String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
+                    if( matchedLink != null ) {
                         String sectref = "section-"+m_engine.encodeName(matchedLink+"-"+wikifyLink(namedSection));
                         sectref = sectref.replace('%', '_');
                         makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
-                    }
-                    else
-                    {
+                    } else {
                         makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
                     }
                 }
@@ -1613,14 +1381,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                    String matchedLink = linkExists( linkref );
-
-                    if( matchedLink != null )
-                    {
+                    String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
+                    if( matchedLink != null ) {
                         makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
-                    }
-                    else
-                    {
+                    } else {
                         makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
                     }
                 }
@@ -1634,33 +1398,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         return m_currentElement;
-    }
-
-    private String findAttachment( String linktext )
-    {
-        AttachmentManager mgr = m_engine.getAttachmentManager();
-        Attachment att = null;
-
-        try
-        {
-            att = mgr.getAttachmentInfo( m_context, linktext );
-        }
-        catch( ProviderException e )
-        {
-            log.warn("Finding attachments failed: ",e);
-            return null;
-        }
-
-        if( att != null )
-        {
-            return att.getName();
-        }
-        else if( linktext.indexOf('/') != -1 )
-        {
-            return linktext;
-        }
-
-        return null;
     }
 
     /**
@@ -2886,7 +2623,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( m_lastHeading != null && !m_wysiwygEditorMode )
         {
             // Add the hash anchor element at the end of the heading
-            addElement( new Element("a").setAttribute( "class","hashlink" ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
+            addElement( new Element("a").setAttribute( "class",HASHLINK ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
             m_lastHeading = null;
         }
         popElement("h2");
@@ -2977,32 +2714,4 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
     }
 
-
-    /**
-     *  Compares two Strings, and if one starts with the other, then
-     *  returns null.  Otherwise just like the normal Comparator
-     *  for strings.
-     *
-     *  @since
-     */
-    private static class StartingComparator implements Comparator<String>
-    {
-        public int compare( String s1, String s2 )
-        {
-            if( s1.length() > s2.length() )
-            {
-                if( s1.startsWith(s2) && s2.length() > 1 ) return 0;
-            }
-            else
-            {
-                if( s2.startsWith(s1) && s1.length() > 1 ) return 0;
-            }
-
-            return s1.compareTo( s2 );
-        }
-
-    }
-
-
 }
-
