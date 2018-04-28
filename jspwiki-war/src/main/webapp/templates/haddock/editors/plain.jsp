@@ -91,7 +91,6 @@
   <input class="hidden" type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" />
 
   <div class="snipe">
-    <div class="form-inline form-group">
 
     <div class="form-inline form-group sticky">
 
