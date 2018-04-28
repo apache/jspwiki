@@ -60,7 +60,7 @@ Class: Wiki
 */
 var Wiki = {
 
-    version: "haddock03",  //used to validate compatible preference cookies
+    version: "haddock04",  //used to validate compatible preference cookies
 
     initialize: function(){
 
@@ -83,8 +83,7 @@ var Wiki = {
 
                 element.onToggle( element.get("data-toggle"), function(isActive){
                     var pref = element.get("data-toggle-pref");
-                    if( pref ){
-                        //console.log(pref, isActive);
+                    if (pref) {
                         wiki.prefs.set(pref, isActive ? "active" : "");
                     }
                 });
@@ -178,8 +177,6 @@ var Wiki = {
             domready: wiki.domready.bind(wiki)
         });
 
-
-
     },
 
 
@@ -193,6 +190,7 @@ var Wiki = {
         body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
 
     },
+
 
     /*
     Function: domready
@@ -222,6 +220,15 @@ var Wiki = {
             wiki.prefs.set("version", wiki.version);
         }
 
+        //The initial Sidebar will be active depending on a cookie state.
+        //However, for small screen,  the default state will be hidden.
+        wiki.media("(min-width:768px)", function( screenIsLarge ){
+
+            if(!screenIsLarge){
+                $$(".content")[0].removeClass("active"); //always hide sidebar on pageload for narrow screens
+            }
+
+        });
 
         //wiki.url = null;  //CHECK:  why this is needed?
         //console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
@@ -241,6 +248,24 @@ var Wiki = {
         wiki.popstate();
 
         wiki.autofocus();
+
+    },
+
+
+    /*
+    Function: media query event handler
+        Catch media-query changes  (eg screen width,  portrait/landscape changes,  etc...
+    */
+    media: function(query, callback){
+
+        function queryChanged( event ){ callback( event.matches ); }
+
+        if( /*window.*/ matchMedia ){
+
+            var mediaQueryList = matchMedia( query );
+            mediaQueryList.addListener( queryChanged );
+            queryChanged( mediaQueryList );
+        }
 
     },
 
@@ -272,7 +297,7 @@ var Wiki = {
 
             scrollY = window.getScroll().y;
 
-            spacer.style.paddingTop = header[height]+"px"; //could change during window resize
+            spacer.style.paddingTop = header[height]+"px"; //update after window resize
 
             // Limit scroll top to counteract iOS / OSX bounce.
             scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
