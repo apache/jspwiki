@@ -1,3 +1,7 @@
+2018-04-29  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-10  Bugfix in AddCSS.JS related to url() parsing
+
 2018-04-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.4-git-09  Better support for mobile devices in the Haddock Template

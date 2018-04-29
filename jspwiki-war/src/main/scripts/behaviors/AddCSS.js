@@ -30,50 +30,45 @@
 >   %%add-css ... /%
 >   %%add-css [some-remote-wiki-page] /%
 */
-//Wiki.AddCSS function( element ){
-function AddCSS( element ){
+function AddCSS(element) {
 
-    function insertStyle ( elements ){
+    function insertStyle(elements) {
 
-        var css = "",
+        var css = "",    //css = "".concat(...elements);
             item;
 
-        //collect all css to be inserted
-        while( item = elements.shift() ){ css += item.innerHTML; }
+        //concatenate all css to be inserted
+        while (item = elements.shift()) { css += item.innerHTML; }
 
-        //allow google fonts @import url(https://fonts.googleapis.com/css?family=XXXX);
-        css = css.replace( /@import url\(https:\/\/fonts.googleapis.com\/css\?family=/gi, "@imp@rt" );
+        css = css //cascading replaces
 
-        //magic to replace the inline wiki-image links to css url()
-        //xss protection: remove invalid url's;  only allow url([wiki-attachement])
+            //allow google fonts @import url(https://fonts.googleapis.com/css?family=XXXX);
+            .replace(/@import url\(https:\/\/fonts.googleapis.com\/css\?family=/gi, "\xa4")
 
-        //tocheck: allow attached font files <a class=attachment href=xxx.woff><a class=infolink ....>
-        css = css.replace( /url\(<a class="attachment" href="([^"]+.woff)".*><\/a>\)/gi,'url(<ifont href="$1"/>)' );
-        css = css.replace( /url\(<a class="attachment" href="([^"]+.ttf)".*><\/a>\)/gi,'url(<ifont href="$1"/>)' );
-        css = css.replace( /url\(<a class="attachment" href="([^"]+.otf)".*><\/a>\)/gi,'url(<ifont href="$1"/>)' );
+            //replace wiki-image links to css url()
+            //xss protection: remove invalid url's;  only allow url([wiki-attachement])
+            .replace(/url\(<a class="attachment" href="([^"]+.woff)".*><\/a>\)/gi, 'url(<\xa5$1")')
+            .replace(/url\(<a class="attachment" href="([^"]+.ttf)".*><\/a>\)/gi, 'url(<\xa5$1")')
+            .replace(/url\(<a class="attachment" href="([^"]+.otf)".*><\/a>\)/gi, 'url(<\xa5$1")')
 
-        css = css.replace( /url\(\<[^i].+\>\)/gi, "url(invalid)" ); //remove url(<a...)
-        css = css.replace( /url\([^<][^)]*\)/gi, "url(invalid)" );  //remove url(xxx)
+            .replace(/url\(<a[^>]+>\)/gi, "url(invalid)") //remove remaining url(<a...)
+            .replace(/url\([^<][^)]+\)/gi, "url(invalid)")  //remove remaining url(xxx)
 
-        //xss protection: remove @import statements
-        css = css.replace( /@import/gi, "invalid" );
+            .replace(/@import/gi, "invalid") //xss protection: remove the remaining @import statements
 
-        //allow google fonts
-        css = css.replace( /@imp@rt/g, "@import url(https://fonts.googleapis.com/css?family=");
+            .replace(/\xa4/g, "@import url(https://fonts.googleapis.com/css?family=") //google fonts -part2
 
-        //xss protection: remove IE dynamic properties
-        css = css.replace( /expression|behavior/gi, "invalid" );
+            .replace(/expression|behavior/gi, "invalid") //xss protection: remove IE dynamic properties
 
-        css = css.replace( /url\(<img class="inline" .*?src="([^"]+)[^>]*>\)/gi, "url($1)" );
-        css = css.replace( /url\(<ifont href="([^"]+)"\/>\)/gi, "url($1)" );
+            .replace(/url\(<img class="inline" .*?src="([^"]+)[^>]*>\)/gi, "url($1)")
+            .replace(/<\xa5([^"]+)"/gi, "$1")  //attached font files- part2
 
-        css = css.replace( /<p>|<\/p>/gi, "" ); //jspwiki inserts <p/> for empty lines
+            .replace(/<p>|<\/p>/gi, "") //jspwiki inserts <p/> for empty lines, remove them
+            .replace(/&amp;/g, "&")
+            .replace(/&gt;/g, ">")
+            .replace(/&lt;/g, "<");
 
-        css = css.replace( /&amp;/g, "&" )
-                 .replace( /&gt;/g, ">" )
-                 .replace( /&lt;/g, "<" );
-
-        css = "style[type=text/css]".slick({text: css});
+        css = "style[type=text/css]".slick({ text: css });
 
         /*
         Sequence to insert CSS is :
@@ -85,25 +80,23 @@ function AddCSS( element ){
         need to be inserted at the top of the DOM, i.e. just at the top of the BODY element.
         Other CCS is injected in the order of appearance.
         */
-        if( element.getParent( ".sidebar" ) ){
+        if (element.getParent(".sidebar")) {
 
             $(document.body).grab(css, "top");
             element.destroy();
 
         } else {
 
-            css.replaces( element );
+            css.replaces(element);
 
         }
 
     };
 
-    if( element.innerHTML.test( /^\s*<a class="wikipage" href="([^"]+)">/ ) ){
+    if (element.innerHTML.test(/^\s*<a class="wikipage" href="([^"]+)">/)) {
 
         //%%add-css [some-wikipage] /%
-        //go and read the %%add-css blocks from another remote page -- how hard is that ?
-        //then filter all div.page-content div.add-css elements
-
+        //read another wiki page, and select all div.page-content div.add-css blocks
         new Request.HTML({
             url: RegExp.$1,
             filter: "div.page-content div.add-css",
