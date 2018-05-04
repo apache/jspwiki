@@ -143,6 +143,7 @@ var Accordion = new Class({
             display: this.options.closed ? -1 : 0, // initial display status
             alwaysHide: !nav, //allow closing all panes
             initialDisplayFx: false, //do not show effect on initial display
+            duration: 300,
 
             onComplete: function(){
                 var el = $(this.elements[this.current]);

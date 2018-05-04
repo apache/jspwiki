@@ -32,7 +32,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.wiki.modules.ModuleManager;
 import org.jdom2.Element;
 import org.junit.Assert;
-import org.junit.Test;
 
 public class XmlUtilTest extends TestCase {
 
@@ -40,7 +39,6 @@ public class XmlUtilTest extends TestCase {
         return new TestSuite( XmlUtilTest.class );
     }
 
-    @Test
     public void testParseFromClasspath() {
     	List< Element > elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/plugin" );
     	Assert.assertEquals( 4, elements.size() ); // 2 on src/main/resources, another 2 on src/test/resources
@@ -67,7 +65,6 @@ public class XmlUtilTest extends TestCase {
      	Assert.assertEquals( 19, elements.size() );
     }
 
-    @Test
     public void testParseFromStream() throws FileNotFoundException {
     	InputStream is = new FileInputStream( new File ("./src/test/resources/ini/jspwiki_module.xml" ) );
     	List< Element > elements = XmlUtil.parse( is, "/modules/plugin" );
