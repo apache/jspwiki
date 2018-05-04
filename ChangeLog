@@ -1,3 +1,16 @@
+2018-04-29  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-10  Bugfix in AddCSS.JS related to url() parsing
+
+2018-04-28  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.4-git-09  Better support for mobile devices in the Haddock Template
+            See JSPWIKI-835
+            - Updates various styles to better fit small screens.  (tabs, accordion, columns, ...)
+            - On small screens,  the sidebar is by default closed.
+              On wider screens, the sidebar is open/closed based on the previous state
+              which is saved in a cookie.
+
 2018-04-22  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.4-git-08  Adding support for mobile devices to the Haddock Template

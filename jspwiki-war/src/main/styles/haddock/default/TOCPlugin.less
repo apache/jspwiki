@@ -46,7 +46,8 @@ DOM structure:
     (end)
 */
 .toc {
-    width: (100% - @wiki-commentbox-width);
+    width: @wiki-commentbox-width-inverse;
+    min-width: @wiki-small-viewport-dialog-width;
 
     //when collapsed the header bottom border doubles with the bottom panel border
     .panel-heading { border-bottom:none; }   //ugh -- for now just hide the border
@@ -58,14 +59,14 @@ DOM structure:
     }
     .toclevel-1 { padding-left:1.2em }
     .toclevel-2 { padding-left:2.4em; }
-    .toclevel-3 { padding-left:4.6em; }
+    .toclevel-3 { padding-left:3.6em; }
 }
 //in case a TOC is added to the sidebar;  it will show the TOC of the main page
 .sidebar .toc {
     width:100%;
-    .toclevel-1 { padding-left:.25em; }
-    .toclevel-2 { padding-left:.5em; }
-    .toclevel-3 { padding-left:.75em; }
+	.toclevel-1 { padding-left:.5em; }
+    .toclevel-2 { padding-left:1em; }
+    .toclevel-3 { padding-left:1.5em; }
 }
 
 //Multiple occurrences of the TOC plugin are rendered as links (a.toc)

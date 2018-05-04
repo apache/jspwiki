@@ -99,7 +99,7 @@ images/feather-small.png   wxh  162x286
 //wider layout :  1 | (1*phi)   => commentbox
 @wiki-commentbox-ratio: percentage( 1 / (1 + @golden-square) ); //27.6373%
 @wiki-commentbox-width: @wiki-commentbox-ratio * 100% / (100% - @wiki-sidebar-width);
-
+@wiki-commentbox-width-inverse: (100% - @wiki-commentbox-width);
 
 //Nav bar
 @wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -178,3 +178,14 @@ images/feather-small.png   wxh  162x286
 
 //Magnifier glass
 @magnifier-size: 300px;
+
+
+//responsive-viewport.less
+@wiki-small-viewport: 768px;
+@wiki-xsmall-viewport: 480px;
+@wiki-small-viewport-dialog-width: 280px;
+@wiki-small-viewport-width: 450px; //used by slimbox,  viewer, ...
+@nav-sm-link-padding: 2px 6px;
+@nav-sm-link-padding-swap: 6px 2px;
+
+
