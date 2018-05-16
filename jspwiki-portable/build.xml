@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.10.4-SNAPSHOT" />
+  <property name="jspwiki.woas.version" value="2.10.4" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
