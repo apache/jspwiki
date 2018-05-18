@@ -33,9 +33,9 @@
 
 <div class="cage pull-right userbox user-${loginstatus}">
 
-  <div class="btn"><span class="icon-user"></span><span class="caret"></span></div>
+  <div data-click-parent=".userbox" class="btn"><span class="icon-user"></span></div>
 
-  <ul class="dropdown-menu pull-right" data-hover-parent=".userbox">
+  <ul class="dropdown-menu pull-right">
 
     <li>
       <wiki:UserCheck status="anonymous">

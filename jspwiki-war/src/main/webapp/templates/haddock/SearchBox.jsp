@@ -28,9 +28,9 @@
   id="searchForm"
   accept-charset="<wiki:ContentEncoding />">
 
-  <div class="btn"><span class="icon-search"></span><span class="caret"></span></div>
+  <div data-click-parent=".searchbox" class="btn"><span class="icon-search"></span></div>
 
-  <ul class="dropdown-menu" data-hover-parent=".searchbox">
+  <ul class="dropdown-menu">
     <li class="dropdown-header">
   <input type="text" size="20"
         class="form-control" name="query" id="query"
