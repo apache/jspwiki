@@ -102,33 +102,38 @@ var Wiki = {
 			})
 
 			// Click effect: Similar to hover effect, but triggered on click of an element (e.g. for searchbox)
-			.add("[data-click-parent]", function (element) {
-				jq$(element).click(function () {
-					var parentSelector = jq$(this).attr('data-click-parent');
-					var parent = jq$(parentSelector);
-					if (parent.hasClass('open')) {
-						parent.removeClass('open open-parent');
-					} else {
-						parent.addClass('open open-parent');
-						if (jq$('.searchbox').find('input').length > 0) {
-							jq$('.searchbox').find("input:first").focus();
-						}
-					}
-				});
+			// Defined in the following two blocks
+			.add("body", function (element) {
+				// Close open element if clicked anywhere else
+				jq$(element).click(function (event) {
+					var openParent = jq$('.open-click-parent');
+					if (jq$.contains(openParent, event.target)) return;
+					else if (openParent.length > 0 && jq$.contains(openParent[0], event.target)) return;
+					else openParent.removeClass('open open-click-parent');
+				})
 			})
 
-			.add("body", function (element) {
+			.add("[data-click-parent]", function (element) {
 				jq$(element).click(function (event) {
-					var openParent = jq$('.open-parent');
-					var clickedInsideParent = false;
-					try {
-						clickedInsideParent = jq$.contains(openParent[0], event.target) || jq$(event.target).is(openParent);
-					} catch (e) {
+					var parentSelector = jq$(this).attr('data-click-parent');
+					var parent = jq$(parentSelector);
+					var openParent = jq$('.open-click-parent');
+					// Close already open parents
+					if (!openParent.is(parent)) {
+						openParent.removeClass('open open-click-parent');
 					}
-					if (!clickedInsideParent) {
-						openParent.removeClass('open open-parent');
+					if (parent.hasClass('open')) {
+						parent.removeClass('open open-click-parent');
+					} else {
+						parent.addClass('open open-click-parent');
+						if (parent.find('input').length > 0) {
+							parent.find("input:first").focus();
+						}
 					}
-				})
+					event.preventDefault();
+					event.stopPropagation();
+					return false;
+				});
 			})
 
 			//resize the "data-resize" elements when dragging this element

@@ -24,23 +24,23 @@
 <%-- Provides a simple searchbox --%>
 <%-- Powered by wiki/Findpages.js and wiki/Recents.js  --%>
 <form action="<wiki:Link jsp='Search.jsp' format='url'/>"
-  class="form-inline searchbox pull-right"
-  id="searchForm"
-  accept-charset="<wiki:ContentEncoding />">
+      class="form-inline searchbox pull-right"
+      id="searchForm"
+      accept-charset="<wiki:ContentEncoding />">
 
-  <div class="btn"><span class="icon-search"></span></div>
+  <div data-click-parent=".searchbox" class="btn"><span class="icon-search"></span></div>
 
-  <ul class="dropdown-menu" data-hover-parent=".searchbox">
+  <ul class="dropdown-menu">
     <li class="dropdown-header">
-  <input type="text" size="20"
-        class="form-control" name="query" id="query"
-    placeholder="<fmt:message key='sbox.search.submit'/>" />
+      <input type="text" size="20"
+             class="form-control" name="query" id="query"
+             placeholder="<fmt:message key='sbox.search.submit'/>" />
     </li>
     <li class="dropdown-header">
-    <button type="submit"
-           class="btn btn-primary btn-block" name="searchSubmit" id="searchSubmit"
-  	       value="<fmt:message key='find.submit.go'/>"> <fmt:message key='sbox.search.fullsearch'/>
-    </button>
+      <button type="submit"
+              class="btn btn-primary btn-block" name="searchSubmit" id="searchSubmit"
+              value="<fmt:message key='find.submit.go'/>"> <fmt:message key='sbox.search.fullsearch'/>
+      </button>
     </li>
     <%-- see wiki/Findpages.js
         <li class="findpages"> ... </li>

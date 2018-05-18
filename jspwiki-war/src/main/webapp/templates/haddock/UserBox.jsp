@@ -33,9 +33,9 @@
 
 <div class="cage pull-right userbox user-${loginstatus}">
 
-  <div class="btn"><span class="icon-user"></span></div>
+  <div data-click-parent=".userbox" class="btn"><span class="icon-user"></span></div>
 
-  <ul class="dropdown-menu pull-right" data-hover-parent=".userbox">
+  <ul class="dropdown-menu pull-right">
 
     <li>
       <wiki:UserCheck status="anonymous">
@@ -67,35 +67,35 @@
         <wiki:CheckRequestContext context='!preview'>
           <wiki:Link cssClass="btn btn-default btn-block" jsp="UserPreferences.jsp">
             <wiki:Param name='redirect' value='${redirect}'/>
-           <fmt:message key="actions.prefs" />
+            <fmt:message key="actions.prefs" />
           </wiki:Link>
           <wiki:Permission permission="createGroups">
-          <wiki:Link cssClass="btn btn-default btn-block" jsp="UserPreferences.jsp">
-            <wiki:Param name='redirect' value='${redirect}'/>
-            <wiki:Param name='tab' value='groups'/>
-            <span class="icon-group"></span> <fmt:message key="actions.groups" />
-          </wiki:Link>
+            <wiki:Link cssClass="btn btn-default btn-block" jsp="UserPreferences.jsp">
+              <wiki:Param name='redirect' value='${redirect}'/>
+              <wiki:Param name='tab' value='groups'/>
+              <span class="icon-group"></span> <fmt:message key="actions.groups" />
+            </wiki:Link>
           </wiki:Permission>
-         </wiki:CheckRequestContext>
+        </wiki:CheckRequestContext>
       </wiki:CheckRequestContext>
       <%--
            login button
       --%>
       <wiki:UserCheck status="notAuthenticated">
         <wiki:CheckRequestContext context='!login'>
-        <wiki:Permission permission="login">
-          <wiki:Link cssClass="btn btn-primary btn-block login" jsp="Login.jsp">
-            <wiki:Param name='redirect' value='${redirect}'/>
-            <span class="icon-signin"></span> <fmt:message key="actions.login" />
-        </wiki:Link>
-        </wiki:Permission>
-        <wiki:Permission permission='editProfile'>
-        <wiki:Link cssClass="btn btn-link btn-block register" jsp="Login.jsp">
-          <wiki:Param name='redirect' value='${redirect}'/>
-          <wiki:Param name='tab' value='register'/>
-          <fmt:message key="actions.registernow" />
-        </wiki:Link>
-        </wiki:Permission>
+          <wiki:Permission permission="login">
+            <wiki:Link cssClass="btn btn-primary btn-block login" jsp="Login.jsp">
+              <wiki:Param name='redirect' value='${redirect}'/>
+              <span class="icon-signin"></span> <fmt:message key="actions.login" />
+            </wiki:Link>
+          </wiki:Permission>
+          <wiki:Permission permission='editProfile'>
+            <wiki:Link cssClass="btn btn-link btn-block register" jsp="Login.jsp">
+              <wiki:Param name='redirect' value='${redirect}'/>
+              <wiki:Param name='tab' value='register'/>
+              <fmt:message key="actions.registernow" />
+            </wiki:Link>
+          </wiki:Permission>
         </wiki:CheckRequestContext>
       </wiki:UserCheck>
       <%--
@@ -103,8 +103,8 @@
       --%>
       <wiki:UserCheck status="authenticated">
         <a href="<wiki:Link jsp='Logout.jsp' format='url' />"
-          class="btn btn-default btn-block logout" data-modal=".modal">
-            <span class="icon-signout"></span> <fmt:message key="actions.logout"/>
+           class="btn btn-default btn-block logout" data-modal=".modal">
+          <span class="icon-signout"></span> <fmt:message key="actions.logout"/>
           <div class="modal"><fmt:message key='actions.confirmlogout'/></div>
         </a>
       </wiki:UserCheck>
