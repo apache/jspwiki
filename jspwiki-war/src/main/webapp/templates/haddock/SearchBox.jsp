@@ -28,7 +28,7 @@
   id="searchForm"
   accept-charset="<wiki:ContentEncoding />">
 
-  <div class="btn"><span class="icon-search"></span><span class="caret"></span></div>
+  <div class="btn"><span class="icon-search"></span></div>
 
   <ul class="dropdown-menu" data-hover-parent=".searchbox">
     <li class="dropdown-header">
