@@ -224,21 +224,6 @@ var Wiki = {
 		body.ifClass(!(isIE11 || isIE9or10), "can-flex");
 	},
 
-	listenForCloseClick: function (element) {
-		var wiki = this;
-		jq$('body').click(function (event) {
-			var target = $(event.target);
-			if (!element.is(target)) {
-				element.removeClass('open');
-				wiki.stopListeningForCloseClick();
-			}
-		})
-	},
-
-	stopListeningForCloseClick: function () {
-		jq$('body').unbind('click');
-	},
-
 	/*
 	Function: domready
 		After the DOM is fully loaded:
