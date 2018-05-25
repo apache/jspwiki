@@ -60,798 +60,798 @@ Class: Wiki
 */
 var Wiki = {
 
-	version: "haddock04",  //used to validate compatible preference cookies
-
-	initialize: function(){
-
-		var wiki = this,
-			behavior = new Behavior();
-
-		wiki.add = behavior.add.bind(behavior);
-		wiki.once = behavior.once.bind(behavior);
-		wiki.update = behavior.update.bind(behavior);
-
-
-		// add core jspwiki behaviors; needed to support the default template jsp's
-		wiki.add( "body", wiki.caniuse )
-
-			.add( "[accesskey]", Accesskey )
-
-			//toggle effect:  toggle .active class on this element when clicking toggle element
-			//.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
-			.add( "[data-toggle]", function(element){
-
-				element.onToggle( element.get("data-toggle"), function(isActive){
-					var pref = element.get("data-toggle-pref");
-					if (pref) {
-						wiki.prefs.set(pref, isActive ? "active" : "");
-					}
-				});
-			})
-
-			//generate modal confirmation boxes, eg prompting to execute
-			//an unrecoverable action such as deleting a page or attachment
-			//.add("[data-modal]", "onModal", {attr:"data-modal"})
-			.add( "[data-modal]", function(element){
-				element.onModal( element.get("data-modal") );
-			})
-
-			//hover effects: show/hide this element when hovering over the parent element
-			//.add("[data-toggle]", "onHover", {attr:"data-hover-parent"})
-			.add( "[data-hover-parent]", function(element){
-				element.onHover( element.get("data-hover-parent") );
-			})
-
-			// Click effect: Similar to hover effect, but triggered on click of an element (e.g. for searchbox)
-			// Defined in the following two blocks
-			.add("body", function (element) {
-				// Close open element if clicked anywhere else
-				jq$(element).click(function (event) {
-					var openParent = jq$('.open-click-parent');
-					if (jq$.contains(openParent, event.target)) return;
-					else if (openParent.length > 0 && jq$.contains(openParent[0], event.target)) return;
-					else openParent.removeClass('open open-click-parent');
-				})
-			})
-
-			.add("[data-click-parent]", function (element) {
-				jq$(element).click(function (event) {
-					var parentSelector = jq$(this).attr('data-click-parent');
-					var parent = jq$(parentSelector);
-					var openParent = jq$('.open-click-parent');
-					// Close already open parents
-					if (!openParent.is(parent)) {
-						openParent.removeClass('open open-click-parent');
-					}
-					if (parent.hasClass('open')) {
-						parent.removeClass('open open-click-parent');
-					} else {
-						parent.addClass('open open-click-parent');
-						if (parent.find('input').length > 0) {
-							parent.find("input:first").focus();
-						}
-					}
-					event.preventDefault();
-					event.stopPropagation();
-					return false;
-				});
-			})
-
-			//resize the "data-resize" elements when dragging this element
-			//.add( "[data-resize]", wiki.resizer.bind(wiki) )
-			.add( "[data-resize]", function(element){
-				wiki.resizer(element, $$(element.get("data-resize")) );
-			})
-
-			//add header scroll-up/down effect
-			.add(".fixed-header > .header", wiki.yoyo)
-
-			//sticky toolbar in the editor
-			.add(".sticky", function (element) {
-				element.onSticky();
-			})
-
-			//highlight previous search query retreived from a cookie or referrer page
-			.add( ".page-content", function(element){
-
-				var previousQuery = "PrevQuery";
-
-				HighlightQuery( element, wiki.prefs.get(previousQuery) );
-				wiki.prefs.erase(previousQuery);
-
-			})
-
-			//activate quick navigation searchbox
-			.add( ".searchbox .dropdown-menu", function(element){
+    version: "haddock04",  //used to validate compatible preference cookies
+
+    initialize: function(){
+
+        var wiki = this,
+            behavior = new Behavior();
+
+        wiki.add = behavior.add.bind(behavior);
+        wiki.once = behavior.once.bind(behavior);
+        wiki.update = behavior.update.bind(behavior);
+
+
+        // add core jspwiki behaviors; needed to support the default template jsp's
+        wiki.add( "body", wiki.caniuse )
+
+            .add( "[accesskey]", Accesskey )
+
+            //toggle effect:  toggle .active class on this element when clicking toggle element
+            //.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
+            .add( "[data-toggle]", function(element){
+
+                element.onToggle( element.get("data-toggle"), function(isActive){
+                    var pref = element.get("data-toggle-pref");
+                    if (pref) {
+                        wiki.prefs.set(pref, isActive ? "active" : "");
+                    }
+                });
+            })
+
+            //generate modal confirmation boxes, eg prompting to execute
+            //an unrecoverable action such as deleting a page or attachment
+            //.add("[data-modal]", "onModal", {attr:"data-modal"})
+            .add( "[data-modal]", function(element){
+                element.onModal( element.get("data-modal") );
+            })
+
+            //hover effects: show/hide this element when hovering over the parent element
+            //.add("[data-toggle]", "onHover", {attr:"data-hover-parent"})
+            .add( "[data-hover-parent]", function(element){
+                element.onHover( element.get("data-hover-parent") );
+            })
+
+            // Click effect: Similar to hover effect, but triggered on click of an element (e.g. for searchbox)
+            // Defined in the following two blocks
+            .add("body", function (element) {
+                // Close open element if clicked anywhere else
+                jq$(element).click(function (event) {
+                    var openParent = jq$('.open-click-parent');
+                    if (jq$.contains(openParent, event.target)) return;
+                    else if (openParent.length > 0 && jq$.contains(openParent[0], event.target)) return;
+                    else openParent.removeClass('open open-click-parent');
+                })
+            })
+
+            .add("[data-click-parent]", function (element) {
+                jq$(element).click(function (event) {
+                    var parentSelector = jq$(this).attr('data-click-parent');
+                    var parent = jq$(parentSelector);
+                    var openParent = jq$('.open-click-parent');
+                    // Close already open parents
+                    if (!openParent.is(parent)) {
+                        openParent.removeClass('open open-click-parent');
+                    }
+                    if (parent.hasClass('open')) {
+                        parent.removeClass('open open-click-parent');
+                    } else {
+                        parent.addClass('open open-click-parent');
+                        if (parent.find('input').length > 0) {
+                            parent.find("input:first").focus();
+                        }
+                    }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                });
+            })
+
+            //resize the "data-resize" elements when dragging this element
+            //.add( "[data-resize]", wiki.resizer.bind(wiki) )
+            .add( "[data-resize]", function(element){
+                wiki.resizer(element, $$(element.get("data-resize")) );
+            })
+
+            //add header scroll-up/down effect
+            .add(".fixed-header > .header", wiki.yoyo)
+
+            //sticky toolbar in the editor
+            .add(".sticky", function (element) {
+                element.onSticky();
+            })
+
+            //highlight previous search query retreived from a cookie or referrer page
+            .add( ".page-content", function(element){
+
+                var previousQuery = "PrevQuery";
+
+                HighlightQuery( element, wiki.prefs.get(previousQuery) );
+                wiki.prefs.erase(previousQuery);
+
+            })
+
+            //activate quick navigation searchbox
+            .add( ".searchbox .dropdown-menu", function(element){
 
-				var recentSearch = "RecentSearch", prefs = wiki.prefs;
+                var recentSearch = "RecentSearch", prefs = wiki.prefs;
 
-				//activate Recent Searches functionality
-				new wiki.Recents( element, {
-					items: prefs.get(recentSearch),
-					onChange: function( items ){
-						items ? prefs.set(recentSearch, items) : prefs.erase(recentSearch);
-					}
-				});
+                //activate Recent Searches functionality
+                new wiki.Recents( element, {
+                    items: prefs.get(recentSearch),
+                    onChange: function( items ){
+                        items ? prefs.set(recentSearch, items) : prefs.erase(recentSearch);
+                    }
+                });
 
-				//activate Quick Navigation functionality
-				new wiki.Findpages(element, {
-					rpc: function(value, callback){
-						wiki.jsonrpc("/search/pages", [value, 16], callback);
-					},
-					toUrl: wiki.toUrl.bind(wiki),
-					allowClone: function(){
-						return /view|preview|info|attach/.test( wiki.Context );
-					}
-				});
-			})
+                //activate Quick Navigation functionality
+                new wiki.Findpages(element, {
+                    rpc: function(value, callback){
+                        wiki.jsonrpc("/search/pages", [value, 16], callback);
+                    },
+                    toUrl: wiki.toUrl.bind(wiki),
+                    allowClone: function(){
+                        return /view|preview|info|attach/.test( wiki.Context );
+                    }
+                });
+            })
 
-			//activate ajax search routines on Search.jsp
-			.add( "#searchform2", function(form){
+            //activate ajax search routines on Search.jsp
+            .add( "#searchform2", function(form){
 
-				wiki.search = new wiki.Search( form, {
-					xhrURL: wiki.XHRSearch,
-					onComplete: function(){
-						//console.log(form.query.get("value"));
-						wiki.prefs.set("PrevQuery", form.query.get("value"));
-					}
-				});
-			})
+                wiki.search = new wiki.Search( form, {
+                    xhrURL: wiki.XHRSearch,
+                    onComplete: function(){
+                        //console.log(form.query.get("value"));
+                        wiki.prefs.set("PrevQuery", form.query.get("value"));
+                    }
+                });
+            })
 
-			//activate attachment upload routines
-			.add( "#files", Form.File, {
-				max: 8,
-				rpc: function(progressid, callback){
-					//console.log("progress", progressid);
-					wiki.jsonrpc("/progressTracker", [progressid], callback);
-				}
-			});
+            //activate attachment upload routines
+            .add( "#files", Form.File, {
+                max: 8,
+                rpc: function(progressid, callback){
+                    //console.log("progress", progressid);
+                    wiki.jsonrpc("/progressTracker", [progressid], callback);
+                }
+            });
 
-		window.addEvents({
-			popstate: wiki.popstate,
-			domready: wiki.domready.bind(wiki)
-		});
+        window.addEvents({
+            popstate: wiki.popstate,
+            domready: wiki.domready.bind(wiki)
+        });
 
-	},
+    },
 
 
-	caniuse: function( body ){
+    caniuse: function( body ){
 
-		//support for flexbox is broken in IE, do it the hard-way - ugh.
+        //support for flexbox is broken in IE, do it the hard-way - ugh.
 
-		var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
-		var isIE9or10 = "ActiveXObject" in window;
+        var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
+        var isIE9or10 = "ActiveXObject" in window;
 
-		body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
+        body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
 
-	},
+    },
 
 
-	/*
-	Function: domready
-		After the DOM is fully loaded:
-		- initialize the meta data wiki properties
-		- initialize the section Links
-		- when the "referrer" url (previous page) contains a "section=" parameter,
-		  scroll the wiki page to the right section
-	*/
-	domready: function(){
+    /*
+    Function: domready
+        After the DOM is fully loaded:
+        - initialize the meta data wiki properties
+        - initialize the section Links
+        - when the "referrer" url (previous page) contains a "section=" parameter,
+          scroll the wiki page to the right section
+    */
+    domready: function(){
 
-		var wiki = this;
+        var wiki = this;
 
-		wiki.dropdowns();
+        wiki.dropdowns();
 
-		wiki.meta();
+        wiki.meta();
 
-		wiki.prefs = new Hash.Cookie("JSPWikiUserPrefs", {
-			path: wiki.BasePath,
-			duration: 20
-		});
+        wiki.prefs = new Hash.Cookie("JSPWikiUserPrefs", {
+            path: wiki.BasePath,
+            duration: 20
+        });
 
-		//Object.each(wiki.prefs.hash, function(item,key){ console.log("PREFS  ",key,"=>",item); });
+        //Object.each(wiki.prefs.hash, function(item,key){ console.log("PREFS  ",key,"=>",item); });
 
-		if( wiki.version != wiki.prefs.get("version") ){
-			wiki.prefs.empty();
-			wiki.prefs.set("version", wiki.version);
-		}
+        if( wiki.version != wiki.prefs.get("version") ){
+            wiki.prefs.empty();
+            wiki.prefs.set("version", wiki.version);
+        }
 
-		//The initial Sidebar will be active depending on a cookie state.
-		//However, for small screen,  the default state will be hidden.
-		wiki.media("(min-width:768px)", function( screenIsLarge ){
+        //The initial Sidebar will be active depending on a cookie state.
+        //However, for small screen,  the default state will be hidden.
+        wiki.media("(min-width:768px)", function( screenIsLarge ){
 
-			if(!screenIsLarge){
-				$$(".content")[0].removeClass("active"); //always hide sidebar on pageload for narrow screens
-			}
+            if(!screenIsLarge){
+                $$(".content")[0].removeClass("active"); //always hide sidebar on pageload for narrow screens
+            }
 
-		});
+        });
 
-		//wiki.url = null;  //CHECK:  why this is needed?
-		//console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
-		if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
+        //wiki.url = null;  //CHECK:  why this is needed?
+        //console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
+        if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
 
-			wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
+            wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
 
-		}
+        }
 
-		//console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
-		wiki.scrollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
+        //console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
+        wiki.scrollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
 
-		// initialize all registered behaviors
-		wiki.update();
+        // initialize all registered behaviors
+        wiki.update();
 
-		//on page-load, also read the #hash and fire popstate events
-		wiki.popstate();
+        //on page-load, also read the #hash and fire popstate events
+        wiki.popstate();
 
-		wiki.autofocus();
+        wiki.autofocus();
 
-	},
+    },
 
 
-	/*
-	Function: media query event handler
-		Catch media-query changes  (eg screen width,  portrait/landscape changes,  etc...
-	*/
-	media: function(query, callback){
+    /*
+    Function: media query event handler
+        Catch media-query changes  (eg screen width,  portrait/landscape changes,  etc...
+    */
+    media: function(query, callback){
 
-		function queryChanged( event ){ callback( event.matches ); }
+        function queryChanged( event ){ callback( event.matches ); }
 
-		if( /*window.*/ matchMedia ){
+        if( /*window.*/ matchMedia ){
 
-			var mediaQueryList = matchMedia( query );
-			mediaQueryList.addListener( queryChanged );
-			queryChanged( mediaQueryList );
-		}
+            var mediaQueryList = matchMedia( query );
+            mediaQueryList.addListener( queryChanged );
+            queryChanged( mediaQueryList );
+        }
 
-	},
+    },
 
-	/*
-	Function: yoyo ( header )
-		Add a yoyo effect to the header:  hide it on scroll down, show it again on scroll up.
+    /*
+    Function: yoyo ( header )
+        Add a yoyo effect to the header:  hide it on scroll down, show it again on scroll up.
 
-	Inspired by: https://github.com/WickyNilliams/headroom.js
+    Inspired by: https://github.com/WickyNilliams/headroom.js
 
-	DOM Structure:
-	(start code)
-		div[style='padding-top:nn']    => nn==height of header;  push content down
-		div.header.yoyo[.scrolling-down]  => css: position=fixed
-	(end)
+    DOM Structure:
+    (start code)
+        div[style='padding-top:nn']    => nn==height of header;  push content down
+        div.header.yoyo[.scrolling-down]  => css: position=fixed
+    (end)
 
-	*/
-	yoyo: function( header ){
+    */
+    yoyo: function( header ){
 
-		var height = "offsetHeight",
-			scrollY,
-			lastScrollY = 0,
+        var height = "offsetHeight",
+            scrollY,
+            lastScrollY = 0,
 
-			//add spacer just infront of fixed element,
-			//and adjust height == header (fixed elements do not take space in the dom)
-			spacer = "div".slick().inject(header, "before"),
-			busy;
+            //add spacer just infront of fixed element,
+            //and adjust height == header (fixed elements do not take space in the dom)
+            spacer = "div".slick().inject(header, "before"),
+            busy;
 
-		function update(){
+        function update(){
 
-			scrollY = window.getScroll().y;
+            scrollY = window.getScroll().y;
 
-			spacer.style.paddingTop = header[height]+"px"; //update after window resize
+            spacer.style.paddingTop = header[height]+"px"; //update after window resize
 
-			// Limit scroll top to counteract iOS / OSX bounce.
-			scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
+            // Limit scroll top to counteract iOS / OSX bounce.
+            scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
 
-			if (Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */) {
+            if (Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */) {
 
-				header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
-				lastScrollY = scrollY;
+                header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
+                lastScrollY = scrollY;
 
-			}
-			busy = false;
-		}
+            }
+            busy = false;
+        }
 
-		function handleEvent(){
-			if(!busy){
-				busy = true;
-				requestAnimationFrame( update );
-			}
-		}
+        function handleEvent(){
+            if(!busy){
+              busy = true;
+              requestAnimationFrame( update );
+            }
+        }
 
-		window.addEvents({ scroll: handleEvent, resize: handleEvent });
-		update(); //first run: set height of the spacer
+        window.addEvents({ scroll: handleEvent, resize: handleEvent });
+        update(); //first run: set height of the spacer
 
-	},
+    },
 
 
-	/*
-	Function: popstate
-		When pressing the back-button, the "popstate" event is fired.
-		This popstate function will fire a internal 'popstate' event
-		on the target DOM element.
+    /*
+    Function: popstate
+        When pressing the back-button, the "popstate" event is fired.
+        This popstate function will fire a internal 'popstate' event
+        on the target DOM element.
 
-		Behaviors (such as Tabs or Accordions) can push the ID of their
-		visible content on the window.location hash.
-		This ID can be retrieved when the back-button is pressed.
+        Behaviors (such as Tabs or Accordions) can push the ID of their
+        visible content on the window.location hash.
+        This ID can be retrieved when the back-button is pressed.
 
-		When clicking a link referring to hidden content (tab, accordion), the
-		popstate event is 'bubbled' up the DOM tree.
+        When clicking a link referring to hidden content (tab, accordion), the
+        popstate event is 'bubbled' up the DOM tree.
 
-	*/
-	popstate: function(){
+    */
+    popstate: function(){
 
-		var target = $(location.hash.slice(1)),
-			events,
-			popstate = "popstate";
+        var target = $(location.hash.slice(1)),
+            events,
+            popstate = "popstate";
 
-		//console.log( popstate, location.hash, target );
+        //console.log( popstate, location.hash, target );
 
-		//only send popstate events to targets within the main page; eg not sidebar
-		if( target && target.getParent(".page-content") ){
+        //only send popstate events to targets within the main page; eg not sidebar
+        if( target && target.getParent(".page-content") ){
 
-			while( !target.hasClass("page-content") ){
+            while( !target.hasClass("page-content") ){
 
-				events = target.retrieve("events"); //mootools specific - to read registered events on elements
+                events = target.retrieve("events"); //mootools specific - to read registered events on elements
 
-				if( events && events[popstate] ){
+                if( events && events[popstate] ){
 
-					target.fireEvent(popstate);
+                    target.fireEvent(popstate);
 
-				}
+                }
 
-				target = target.getParent();
+                target = target.getParent();
 
-			}
-		}
-	},
+            }
+        }
+    },
 
-	autofocus: function(){
+    autofocus: function(){
 
-		var els, element;
+        var els, element;
 
-		if( !("autofocus" in document.createElement("input") ) ){
-			// editor/plain.jsp  textarea#wikiText
-			// login.jsp         input#j_username
-			// prefs/prefs       input#assertedName
-			// find              input#query2
-			els = $$("input[autofocus=autofocus], textarea[autofocus=autofocus]");
-			while( els[0] ){
-				element = els.shift();
-				//console.log("autofocus", element, element.autofocus, element.isVisible(), element.offsetWidth, element.offsetHeight, "$", element.getStyle("display"), "$");
-				if( element.isVisible() ){
-					element.focus();
-					return;
-				}
-			}
-		}
+        if( !("autofocus" in document.createElement("input") ) ){
+            // editor/plain.jsp  textarea#wikiText
+            // login.jsp         input#j_username
+            // prefs/prefs       input#assertedName
+            // find              input#query2
+            els = $$("input[autofocus=autofocus], textarea[autofocus=autofocus]");
+            while( els[0] ){
+                element = els.shift();
+                //console.log("autofocus", element, element.autofocus, element.isVisible(), element.offsetWidth, element.offsetHeight, "$", element.getStyle("display"), "$");
+                if( element.isVisible() ){
+                    element.focus();
+                    return;
+                }
+            }
+        }
 
-	},
+    },
 
-	/*
-	Function: meta
-		Read all the "meta" dom elements, prefixed with "wiki",
-		and add them as properties to the wiki object.
-		EG  <meta name="wikiContext">  becomes  wiki.Context
-		* wikiContext : jspwiki requestcontext variable (view, edit, info, ...)
-		* wikiBaseUrl
-		* wikiPageUrl: page url template with dummy pagename "%23%24%25"
-		* wikiEditUrl : edit page url
-		* wikiJsonUrl : JSON-RPC / AJAX url
-		* wikiPageName : pagename without blanks
-		* wikiUserName
-		* wikiTemplateUrl : path of the jsp template
-		* wikiApplicationName
-		* wikiEditPermission
-	*/
-	meta: function(){
+    /*
+    Function: meta
+        Read all the "meta" dom elements, prefixed with "wiki",
+        and add them as properties to the wiki object.
+        EG  <meta name="wikiContext">  becomes  wiki.Context
+        * wikiContext : jspwiki requestcontext variable (view, edit, info, ...)
+        * wikiBaseUrl
+        * wikiPageUrl: page url template with dummy pagename "%23%24%25"
+        * wikiEditUrl : edit page url
+        * wikiJsonUrl : JSON-RPC / AJAX url
+        * wikiPageName : pagename without blanks
+        * wikiUserName
+        * wikiTemplateUrl : path of the jsp template
+        * wikiApplicationName
+        * wikiEditPermission
+    */
+    meta: function(){
 
-		var url,
-			wiki = this,
-			host = location.host;
+        var url,
+            wiki = this,
+            host = location.host;
 
-		$$("meta[name^=wiki]").each( function(el){
-			wiki[el.get("name").slice(4)] = el.get("content") || "";
-		});
+        $$("meta[name^=wiki]").each( function(el){
+            wiki[el.get("name").slice(4)] = el.get("content") || "";
+        });
 
-		// BasePath: if JSPWiki is installed in the root, then we have to make sure that
-		// the cookie-cutter works properly here.
-		url = wiki.BaseUrl;
-		url = url ? url.slice(url.indexOf(host) + host.length, -1) : "";
-		wiki.BasePath = (url /*===""*/) ? url : "/";
-		//console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
+        // BasePath: if JSPWiki is installed in the root, then we have to make sure that
+        // the cookie-cutter works properly here.
+        url = wiki.BaseUrl;
+        url = url ? url.slice(url.indexOf(host) + host.length, -1) : "";
+        wiki.BasePath = (url /*===""*/) ? url : "/";
+        //console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
 
-	},
+    },
 
-	/*
-	Function: dropdowns
-		Parse special wikipages such ase MoreMenu, HomeMenu
-		and format them as bootstrap compatible dropdown menus.
-	*/
-	dropdowns: function(){
+    /*
+    Function: dropdowns
+        Parse special wikipages such ase MoreMenu, HomeMenu
+        and format them as bootstrap compatible dropdown menus.
+    */
+    dropdowns: function(){
 
-		$$( "ul.dropdown-menu > li > ul" ).each( function(ul){
+        $$( "ul.dropdown-menu > li > ul" ).each( function(ul){
 
-			var li, parentLi = ul.getParent();
+            var li, parentLi = ul.getParent();
 
-			while( (li = ul.getFirst("li")) ){
+            while( (li = ul.getFirst("li")) ){
 
-				if( li.innerHTML.trim() == "----" ){
+                if( li.innerHTML.trim() == "----" ){
 
-					li.addClass("divider");
+                    li.addClass("divider");
 
-				} else if( !li.getFirst() || !li.getFirst("a") ){
+                } else if( !li.getFirst() || !li.getFirst("a") ){
 
-					li.addClass("dropdown-header");
+                    li.addClass("dropdown-header");
 
-				}
-				li.inject(parentLi, "before");
+                }
+                li.inject(parentLi, "before");
 
-			}
-			ul.dispose();
+            }
+            ul.dispose();
 
-		});
+        });
 
-		/* (deprecated) "pre-HADDOCK" moremenu style
-			  Consists of a list of links, with \\ delimitters
-			  Each <p> becomes a set of <li>, one for each link
-			  The block is terminated with a divider, if more <p>'s are coming
-		*/
-		$$( "ul.dropdown-menu > li.more-menu > p" ).each( function(element){
+        /* (deprecated) "pre-HADDOCK" moremenu style
+              Consists of a list of links, with \\ delimitters
+              Each <p> becomes a set of <li>, one for each link
+              The block is terminated with a divider, if more <p>'s are coming
+        */
+        $$( "ul.dropdown-menu > li.more-menu > p" ).each( function(element){
 
-			var parentLi = element.getParent();
+            var parentLi = element.getParent();
 
-			element.getElements('a').each( function(link){
-				["li",[link]].slick().inject(parentLi, "before");
-			});
-			if( element.getNext("p *,hr") ){
-				"li.divider".slick().inject(parentLi, "before") ;
-			}
-			element.dispose();
+            element.getElements('a').each( function(link){
+                ["li",[link]].slick().inject(parentLi, "before");
+            });
+            if( element.getNext("p *,hr") ){
+                "li.divider".slick().inject(parentLi, "before") ;
+            }
+            element.dispose();
 
-		});
+        });
 
-	},
+    },
 
-	/*
-	Function: getSections
-		Returns the list of all section headers, excluding the header of the Table Of Contents.
-	*/
-	getSections: function(){
+    /*
+    Function: getSections
+        Returns the list of all section headers, excluding the header of the Table Of Contents.
+    */
+    getSections: function(){
 
-		return $$(".page-content [id^=section]:not(#section-TOC)");
+        return $$(".page-content [id^=section]:not(#section-TOC)");
 
-	},
+    },
 
-	/*
-	Function: scrollTo
-		Scrolls the page to the section previously being edited - if any
-		Section counting starts at 1??
-	*/
-	scrollTo: function( index ){
+    /*
+    Function: scrollTo
+        Scrolls the page to the section previously being edited - if any
+        Section counting starts at 1??
+    */
+    scrollTo: function( index ){
 
-		//console.log("Scroll to section ", index, ", Number of sections:", this.getSections().length );
-		var element = this.getSections()[index];
+        //console.log("Scroll to section ", index, ", Number of sections:", this.getSections().length );
+        var element = this.getSections()[index];
 
-		if( element ){
-			location.replace( "#" + element.get("id") );
-		}
+        if( element ){
+            location.replace( "#" + element.get("id") );
+        }
 
-	},
+    },
 
-	/*
-	Property: toUrl
-		Convert a wiki pagename to a full wiki-url.
-		Use the correct url template: view(default), edit-url or clone-url
-	*/
-	toUrl: function(pagename, isEdit, isClone){
+    /*
+    Property: toUrl
+        Convert a wiki pagename to a full wiki-url.
+        Use the correct url template: view(default), edit-url or clone-url
+    */
+    toUrl: function(pagename, isEdit, isClone){
 
-		var urlTemplate = isClone ? this.CloneUrl : isEdit ? this.EditUrl : this.PageUrl;
-		return urlTemplate.replace(/%23%24%25/, this.cleanPageName(pagename) );
+        var urlTemplate = isClone ? this.CloneUrl : isEdit ? this.EditUrl : this.PageUrl;
+        return urlTemplate.replace(/%23%24%25/, this.cleanPageName(pagename) );
 
-	},
+    },
 
-	/*
-	Property: toPageName
-		Parse a wiki-url and return the corresponding wiki pagename
-	*/
-	toPageName: function(url){
+    /*
+    Property: toPageName
+        Parse a wiki-url and return the corresponding wiki pagename
+    */
+    toPageName: function(url){
 
-		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, "(.+)");
-		return ( url.match( RegExp(s) ) || [0, false] )[1];
+        var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, "(.+)");
+        return ( url.match( RegExp(s) ) || [0, false] )[1];
 
-	},
+    },
 
-	/*
-	Property: cleanPageName
-		Remove all not-allowed chars from a pagename.
-		Trim all whitespace, allow letters, digits and punctuation chars: ()&+, -=._$
-		Mirror of org.apache.wiki.parser.MarkupParser.cleanPageName()
-	*/
-	cleanPageName: function( pagename ){
+    /*
+    Property: cleanPageName
+        Remove all not-allowed chars from a pagename.
+        Trim all whitespace, allow letters, digits and punctuation chars: ()&+, -=._$
+        Mirror of org.apache.wiki.parser.MarkupParser.cleanPageName()
+    */
+    cleanPageName: function( pagename ){
 
-		//\w is short for [A-Z_a-z0-9_]
-		return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
+        //\w is short for [A-Z_a-z0-9_]
+        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
 
-	},
+    },
 
-	/*
-	Function: addEditLinks
-		Add to each Section title (h2/h3/h4) a quick edit link.
-		FFS: should better move server side
-		FFS: add section #hash to automatically go back to the section being edited
-	*/
-	addEditLinks: function( url ){
+    /*
+    Function: addEditLinks
+        Add to each Section title (h2/h3/h4) a quick edit link.
+        FFS: should better move server side
+        FFS: add section #hash to automatically go back to the section being edited
+    */
+    addEditLinks: function( url ){
 
-		var description = "quick.edit".localize();
+        var description = "quick.edit".localize();
 
-		url = url + (url.contains("?") ? "&" : "?") + "section=";
+        url = url + (url.contains("?") ? "&" : "?") + "section=";
 
-		this.getSections().each( function(element, index){
+        this.getSections().each( function(element, index){
 
-			element.grab("a.editsection".slick({ html: description, href: url + index }));
+            element.grab("a.editsection".slick({ html: description, href: url + index }));
 
-		});
+        });
 
-	},
+    },
 
-	/*
-	Function: configPrefs  (sofar only used in edit mode)
-		Initialize the configuration checkboxes from the wiki prefs cookie.
-		Save any change to the checkboxes back into the wiki prefs cookie.
-		Also take care of switching between different editor types, saving the
-		new editor type into the wiki prefs cookie.
+    /*
+    Function: configPrefs  (sofar only used in edit mode)
+        Initialize the configuration checkboxes from the wiki prefs cookie.
+        Save any change to the checkboxes back into the wiki prefs cookie.
+        Also take care of switching between different editor types, saving the
+        new editor type into the wiki prefs cookie.
 
-		EG: tabcompletion, smartpairs, autosuggest, livepreview, previewcolumn. editor-type
-	*/
-	configPrefs: function( form, onChangeFn ){
+        EG: tabcompletion, smartpairs, autosuggest, livepreview, previewcolumn. editor-type
+    */
+    configPrefs: function( form, onChangeFn ){
 
-		var wiki = this;
+        var wiki = this;
 
-		function onCheck(){
+        function onCheck(){
 
-			var cmd = this.getAttribute("data-cmd"),
-				isChecked = this.checked;
+            var cmd = this.getAttribute("data-cmd"),
+                isChecked = this.checked;
 
-			wiki.toggleLivePreview(form, cmd, isChecked);
-			wiki.prefs.set(cmd, isChecked);  //persist in the pref cookie
-			if( onChangeFn ){ onChangeFn(cmd, isChecked); }
+            wiki.toggleLivePreview(form, cmd, isChecked);
+            wiki.prefs.set(cmd, isChecked);  //persist in the pref cookie
+            if( onChangeFn ){ onChangeFn(cmd, isChecked); }
 
-		}
+        }
 
-		//Handle all configuration checkboxes
-		form.getElements("[type=checkbox][data-cmd]").each( function( el ){
+        //Handle all configuration checkboxes
+        form.getElements("[type=checkbox][data-cmd]").each( function( el ){
 
-			el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
-			el.addEvent("click", onCheck );
-			onCheck.apply(el);
+            el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
+            el.addEvent("click", onCheck );
+            onCheck.apply(el);
 
-		});
+        });
 
-		//Persist the selected editor type in the pref cookie
-		form.getElements("a.editor-type").addEvent("click", function(){
+        //Persist the selected editor type in the pref cookie
+        form.getElements("a.editor-type").addEvent("click", function(){
 
-			wiki.prefs.set("editor", this.get("text"));
+            wiki.prefs.set("editor", this.get("text"));
 
-		});
+        });
 
-	},
+    },
 
 
-	toggleLivePreview: function( container, cmd, state ){
+    toggleLivePreview: function( container, cmd, state ){
 
-		if( cmd.test( /livepreview|previewcolumn/ ) ){
+        if( cmd.test( /livepreview|previewcolumn/ ) ){
 
-			var previewcontainer = container.getElement(".edit-area").ifClass(state, cmd),
-				ajaxpreview = container.getElement(".ajaxpreview");
+            var previewcontainer = container.getElement(".edit-area").ifClass(state, cmd),
+                ajaxpreview = container.getElement(".ajaxpreview");
 
-			if( cmd == "livepreview" ){
+            if( cmd == "livepreview" ){
 
-				//disable the previewcolumn toolbar cmd checkbox
-				container.getElement("[data-cmd=previewcolumn]").disabled = !state;
+                //disable the previewcolumn toolbar cmd checkbox
+                container.getElement("[data-cmd=previewcolumn]").disabled = !state;
 
-			} else {
+            } else {
 
-				/* Toggle the position of the preview-area in the dom
+                /* Toggle the position of the preview-area in the dom
 
-				1. HORIZONTAL SIDE BY SIDE VIEW
-				div.snip
-					div.toolbar
-					div.edit-area.livepreview.previewcolumn
-						div.col-50
-						div.col-50.ajaxpreview
-					div.resizer
+                1. HORIZONTAL SIDE BY SIDE VIEW
+                div.snip
+                    div.toolbar
+                    div.edit-area.livepreview.previewcolumn
+                        div.col-50
+                        div.col-50.ajaxpreview
+                    div.resizer
 
-				2. VERTICAL VIEW
-				div.snip
-					div.toolbar
-					div.edit-area.livepreview
-						div.col-50
-					div.resizer
-					div.col-50.ajaxpreview
-				*/
+                2. VERTICAL VIEW
+                div.snip
+                    div.toolbar
+                    div.edit-area.livepreview
+                        div.col-50
+                    div.resizer
+                    div.col-50.ajaxpreview
+                */
 
-				if( !state ){ previewcontainer = previewcontainer.getParent(); }
-				previewcontainer.grab(ajaxpreview);
+                if( !state ){ previewcontainer = previewcontainer.getParent(); }
+                previewcontainer.grab(ajaxpreview);
 
-			}
-		}
-	},
+            }
+        }
+    },
 
-	getXHRPreview: function( getContent, previewElement ){
+    getXHRPreview: function( getContent, previewElement ){
 
-		var wiki = this,
-			loading = "loading",
-			preview = function(p){ previewElement.removeClass(loading).set("text", p);};
+        var wiki = this,
+            loading = "loading",
+            preview = function(p){ previewElement.removeClass(loading).set("text", p);};
 
-		return (function(){
+        return (function(){
 
-			previewElement.addClass(loading);
+            previewElement.addClass(loading);
 
-			new Request({
-				url: wiki.XHRHtml2Markup,
-				data: {
-					htmlPageText: getContent()
-				},
-				onSuccess: function(responseText){
-					preview( responseText.trim() );
-				},
-				onFailure: function(e){
-					preview( "Sorry, HTML to Wiki Markup conversion failed :=() " + e );
-				}
-			}).send();
+            new Request({
+                url: wiki.XHRHtml2Markup,
+                data: {
+                    htmlPageText: getContent()
+                },
+                onSuccess: function(responseText){
+                    preview( responseText.trim() );
+                },
+                onFailure: function(e){
+                    preview( "Sorry, HTML to Wiki Markup conversion failed :=() " + e );
+                }
+            }).send();
 
-		}).debounce();
+        }).debounce();
 
-	},
+    },
 
-	/*
-	Behavior: resizer
-		Resize the target element, by dragging a .resizer handle.
-		Multiple elements can be resized via the callback.
-		The .resizer element can specify a prefs cookie to retrieve/store the height.
-		Used by the plain and wysiwyg editor.
+    /*
+    Behavior: resizer
+        Resize the target element, by dragging a .resizer handle.
+        Multiple elements can be resized via the callback.
+        The .resizer element can specify a prefs cookie to retrieve/store the height.
+        Used by the plain and wysiwyg editor.
 
-	Arguments:
-		target - DOM element to be resized
-		callback - function, to allow resizing of more elements
+    Arguments:
+        target - DOM element to be resized
+        callback - function, to allow resizing of more elements
 
-	Globals:
-		wiki - main wiki object, to get/set preference fields
-		textarea - resizable textarea (DOM element)
-		preview - preview (DOM element)
-	*/
-	/*
-	wiki.add(".resizer",function(element){...}
+    Globals:
+        wiki - main wiki object, to get/set preference fields
+        textarea - resizable textarea (DOM element)
+        preview - preview (DOM element)
+    */
+    /*
+    wiki.add(".resizer",function(element){...}
 
 
-	[data-resize] : resize target,  can be multiple elements
+    [data-resize] : resize target,  can be multiple elements
 
-	div.resizer[data-resize=".pagecontent"] => for add-comment sections
-	div.resizer[data-resize=".ajaxpreview,.snipeable"][data-pref=editorHeight]
-	*/
-	resizer: function( handle, targets, dragCallback ){
+    div.resizer[data-resize=".pagecontent"] => for add-comment sections
+    div.resizer[data-resize=".ajaxpreview,.snipeable"][data-pref=editorHeight]
+    */
+    resizer: function( handle, targets, dragCallback ){
 
-		var pref = handle.get("data-pref"),
-			prefs = this.prefs,
-			target;
+        var pref = handle.get("data-pref"),
+            prefs = this.prefs,
+            target;
 
-		function showDragState(add){ handle.ifClass(add, "dragging"); }
+        function showDragState(add){ handle.ifClass(add, "dragging"); }
 
-		if( !targets[0] ){ return; }
+        if( !targets[0] ){ return; }
 
-		//set the initial size of the targets
-		if( pref ){
-			targets.setStyle("height", prefs.get(pref) || 300 );
-		}
+        //set the initial size of the targets
+        if( pref ){
+            targets.setStyle("height", prefs.get(pref) || 300 );
+        }
 
-		target = targets.pop();
+        target = targets.pop();
 
-		target.makeResizable({
-			handle: handle,
-			modifiers: { x: null },
-			onDrag: function(){
-				var h = this.value.now.y;
-				if( pref ){ prefs.set(pref, h); }
-				if( targets ){ targets.setStyle("height", h); }
-				if( dragCallback ){ dragCallback(h); }
-			},
-			onBeforeStart: showDragState.pass(true),
-			onComplete: showDragState.pass(false),
-			onCancel: showDragState.pass(false)
-		});
+        target.makeResizable({
+            handle: handle,
+            modifiers: { x: null },
+            onDrag: function(){
+                var h = this.value.now.y;
+                if( pref ){ prefs.set(pref, h); }
+                if( targets ){ targets.setStyle("height", h); }
+                if( dragCallback ){ dragCallback(h); }
+            },
+            onBeforeStart: showDragState.pass(true),
+            onComplete: showDragState.pass(false),
+            onCancel: showDragState.pass(false)
+        });
 
-	},
+    },
 
 
-	pageDialog: function( caption, method ){
+    pageDialog: function( caption, method ){
 
-		var wiki = this;
+        var wiki = this;
 
-		return [ Dialog.Selection, {
+        return [ Dialog.Selection, {
 
-			caption: caption,
+            caption: caption,
 
-			onOpen: function( dialog ){
+            onOpen: function( dialog ){
 
-				var key = dialog.getValue();
+                var key = dialog.getValue();
 
-				//if empty link, than fetch list of attachments of the open page
-				if( !key || (key.trim()=='') ){
+                //if empty link, than fetch list of attachments of the open page
+                if( !key || (key.trim()=='') ){
 
-					key = wiki.PageName + "/";
+                    key = wiki.PageName + "/";
 
-				}
+                }
 
-				wiki.jsonrpc( method, [key, 30], function( result ){
+                wiki.jsonrpc( method, [key, 30], function( result ){
 
-					//console.log("jsonrpc result", result, !!result[0] );
-					if( result[0] /* length > 0 */ ){
+                    //console.log("jsonrpc result", result, !!result[0] );
+                    if( result[0] /* length > 0 */ ){
 
-						dialog.setBody( result );
+                        dialog.setBody( result );
 
-					} else {
+                    } else {
 
-						dialog.hide();
+                        dialog.hide();
 
-					}
-				});
-			}
-		}];
+                    }
+                });
+            }
+        }];
 
-	},
+    },
 
-	/*
-	Function: jsonrpc
-		Generic json-rpc routines to talk to the backend jspwiki-engine.
-	Note:
-		Uses the JsonUrl which is read from the meta element "WikiJsonUrl"
-		{{{ <meta name="wikiJsonUrl" content="/JSPWiki-pipo/JSON-RPC" /> }}}
+    /*
+    Function: jsonrpc
+        Generic json-rpc routines to talk to the backend jspwiki-engine.
+    Note:
+        Uses the JsonUrl which is read from the meta element "WikiJsonUrl"
+        {{{ <meta name="wikiJsonUrl" content="/JSPWiki-pipo/JSON-RPC" /> }}}
 
-	Supported rpc calls:
-		- {{search.findPages}} gets the list of pagenames with partial match
-		- {{progressTracker.getProgress}} get a progress indicator of attachment upload
-		- {{search.getSuggestions}} gets the list of pagenames with partial match
+    Supported rpc calls:
+        - {{search.findPages}} gets the list of pagenames with partial match
+        - {{progressTracker.getProgress}} get a progress indicator of attachment upload
+        - {{search.getSuggestions}} gets the list of pagenames with partial match
 
-	Example:
-		(start code)
-		//Wiki.ajaxJsonCall('/search/pages,[Janne,20]', function(result){
-		Wiki.jsonrpc("search.findPages", ["Janne", 20], function(result){
-			//do something with the resulting json object
-		});
-		(end)
-	*/
-	jsonrpc: function(method, params, callback){
+    Example:
+        (start code)
+        //Wiki.ajaxJsonCall('/search/pages,[Janne,20]', function(result){
+        Wiki.jsonrpc("search.findPages", ["Janne", 20], function(result){
+            //do something with the resulting json object
+        });
+        (end)
+    */
+    jsonrpc: function(method, params, callback){
 
-		if( this.JsonUrl ){
+        if( this.JsonUrl ){
 
-			//console.log(method, JSON.stringify(params) );
+            //console.log(method, JSON.stringify(params) );
 
-			//NOTE:  this is half a JSON rpc ... only responseText is JSON formatted
-			new Request({
-				url: this.JsonUrl + method,
-				//method:"post"     //defaults to "POST"
-				//urlEncoded: true, //content-type header = www-form-urlencoded + encoding
-				//encoding: "utf-8",
-				//encoding: "ISO-8859-1",
-				headers: {
-					//'X-Requested-With': 'XMLHttpRequest',
-					//'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
-					'Accept': 'application/json',
-					'X-Request': 'JSON'
-				},
-				onSuccess: function( responseText ){
+            //NOTE:  this is half a JSON rpc ... only responseText is JSON formatted
+            new Request({
+                url: this.JsonUrl + method,
+                //method:"post"     //defaults to "POST"
+                //urlEncoded: true, //content-type header = www-form-urlencoded + encoding
+                //encoding: "utf-8",
+                //encoding: "ISO-8859-1",
+        		headers: {
+		        	//'X-Requested-With': 'XMLHttpRequest',
+			        //'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+        			'Accept': 'application/json',
+		        	'X-Request': 'JSON'
+		        },
+                onSuccess: function( responseText ){
 
-					//console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
-					callback(responseText == "" ? "" : JSON.parse(responseText));
-					//callback( responseText );
+                    //console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
+                    callback(responseText == "" ? "" : JSON.parse(responseText));
+                    //callback( responseText );
 
-				},
-				onError: function(error){
-					//console.log(error);
-					callback( null );
-					throw new Error("Wiki rpc error: " + error);
-				}
+                },
+                onError: function(error){
+                    //console.log(error);
+                    callback( null );
+                    throw new Error("Wiki rpc error: " + error);
+                }
 
-			}).send( "params=" + params );
+            }).send( "params=" + params );
 
-		}
+        }
 
-	}
+    }
 
 };
 
