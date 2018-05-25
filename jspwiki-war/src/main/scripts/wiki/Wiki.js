@@ -62,25 +62,26 @@ var Wiki = {
 
 	version: "haddock04",  //used to validate compatible preference cookies
 
-	initialize: function () {
+	initialize: function(){
 
 		var wiki = this,
 			behavior = new Behavior();
+
 		wiki.add = behavior.add.bind(behavior);
 		wiki.once = behavior.once.bind(behavior);
 		wiki.update = behavior.update.bind(behavior);
 
 
 		// add core jspwiki behaviors; needed to support the default template jsp's
-		wiki.add("body", wiki.caniuse)
+		wiki.add( "body", wiki.caniuse )
 
-			.add("[accesskey]", Accesskey)
+			.add( "[accesskey]", Accesskey )
 
 			//toggle effect:  toggle .active class on this element when clicking toggle element
 			//.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
-			.add("[data-toggle]", function (element) {
+			.add( "[data-toggle]", function(element){
 
-				element.onToggle(element.get("data-toggle"), function (isActive) {
+				element.onToggle( element.get("data-toggle"), function(isActive){
 					var pref = element.get("data-toggle-pref");
 					if (pref) {
 						wiki.prefs.set(pref, isActive ? "active" : "");
@@ -91,14 +92,14 @@ var Wiki = {
 			//generate modal confirmation boxes, eg prompting to execute
 			//an unrecoverable action such as deleting a page or attachment
 			//.add("[data-modal]", "onModal", {attr:"data-modal"})
-			.add("[data-modal]", function (element) {
-				element.onModal(element.get("data-modal"));
+			.add( "[data-modal]", function(element){
+				element.onModal( element.get("data-modal") );
 			})
 
 			//hover effects: show/hide this element when hovering over the parent element
 			//.add("[data-toggle]", "onHover", {attr:"data-hover-parent"})
-			.add("[data-hover-parent]", function (element) {
-				element.onHover(element.get("data-hover-parent"));
+			.add( "[data-hover-parent]", function(element){
+				element.onHover( element.get("data-hover-parent") );
 			})
 
 			// Click effect: Similar to hover effect, but triggered on click of an element (e.g. for searchbox)
@@ -138,8 +139,8 @@ var Wiki = {
 
 			//resize the "data-resize" elements when dragging this element
 			//.add( "[data-resize]", wiki.resizer.bind(wiki) )
-			.add("[data-resize]", function (element) {
-				wiki.resizer(element, $$(element.get("data-resize")));
+			.add( "[data-resize]", function(element){
+				wiki.resizer(element, $$(element.get("data-resize")) );
 			})
 
 			//add header scroll-up/down effect
@@ -151,46 +152,46 @@ var Wiki = {
 			})
 
 			//highlight previous search query retreived from a cookie or referrer page
-			.add(".page-content", function (element) {
+			.add( ".page-content", function(element){
 
 				var previousQuery = "PrevQuery";
 
-				HighlightQuery(element, wiki.prefs.get(previousQuery));
+				HighlightQuery( element, wiki.prefs.get(previousQuery) );
 				wiki.prefs.erase(previousQuery);
 
 			})
 
 			//activate quick navigation searchbox
-			.add(".searchbox .dropdown-menu", function (element) {
+			.add( ".searchbox .dropdown-menu", function(element){
 
 				var recentSearch = "RecentSearch", prefs = wiki.prefs;
 
 				//activate Recent Searches functionality
-				new wiki.Recents(element, {
+				new wiki.Recents( element, {
 					items: prefs.get(recentSearch),
-					onChange: function (items) {
+					onChange: function( items ){
 						items ? prefs.set(recentSearch, items) : prefs.erase(recentSearch);
 					}
 				});
 
 				//activate Quick Navigation functionality
 				new wiki.Findpages(element, {
-					rpc: function (value, callback) {
+					rpc: function(value, callback){
 						wiki.jsonrpc("/search/pages", [value, 16], callback);
 					},
 					toUrl: wiki.toUrl.bind(wiki),
-					allowClone: function () {
-						return /view|preview|info|attach/.test(wiki.Context);
+					allowClone: function(){
+						return /view|preview|info|attach/.test( wiki.Context );
 					}
 				});
 			})
 
 			//activate ajax search routines on Search.jsp
-			.add("#searchform2", function (form) {
+			.add( "#searchform2", function(form){
 
-				wiki.search = new wiki.Search(form, {
+				wiki.search = new wiki.Search( form, {
 					xhrURL: wiki.XHRSearch,
-					onComplete: function () {
+					onComplete: function(){
 						//console.log(form.query.get("value"));
 						wiki.prefs.set("PrevQuery", form.query.get("value"));
 					}
@@ -198,9 +199,9 @@ var Wiki = {
 			})
 
 			//activate attachment upload routines
-			.add("#files", Form.File, {
+			.add( "#files", Form.File, {
 				max: 8,
-				rpc: function (progressid, callback) {
+				rpc: function(progressid, callback){
 					//console.log("progress", progressid);
 					wiki.jsonrpc("/progressTracker", [progressid], callback);
 				}
@@ -214,30 +215,17 @@ var Wiki = {
 	},
 
 
-	caniuse: function (body) {
+	caniuse: function( body ){
 
 		//support for flexbox is broken in IE, do it the hard-way - ugh.
 
 		var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
 		var isIE9or10 = "ActiveXObject" in window;
 
-		body.ifClass(!(isIE11 || isIE9or10), "can-flex");
+		body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
+
 	},
 
-	listenForCloseClick: function (element) {
-		var wiki = this;
-		jq$('body').click(function (event) {
-			var target = $(event.target);
-			if (!element.is(target)) {
-				element.removeClass('open');
-				wiki.stopListeningForCloseClick();
-			}
-		})
-	},
-
-	stopListeningForCloseClick: function () {
-		jq$('body').unbind('click');
-	},
 
 	/*
 	Function: domready
@@ -247,7 +235,7 @@ var Wiki = {
 		- when the "referrer" url (previous page) contains a "section=" parameter,
 		  scroll the wiki page to the right section
 	*/
-	domready: function () {
+	domready: function(){
 
 		var wiki = this;
 
@@ -262,16 +250,16 @@ var Wiki = {
 
 		//Object.each(wiki.prefs.hash, function(item,key){ console.log("PREFS  ",key,"=>",item); });
 
-		if (wiki.version != wiki.prefs.get("version")) {
+		if( wiki.version != wiki.prefs.get("version") ){
 			wiki.prefs.empty();
 			wiki.prefs.set("version", wiki.version);
 		}
 
 		//The initial Sidebar will be active depending on a cookie state.
 		//However, for small screen,  the default state will be hidden.
-		wiki.media("(min-width:768px)", function (screenIsLarge) {
+		wiki.media("(min-width:768px)", function( screenIsLarge ){
 
-			if (!screenIsLarge) {
+			if(!screenIsLarge){
 				$$(".content")[0].removeClass("active"); //always hide sidebar on pageload for narrow screens
 			}
 
@@ -279,14 +267,14 @@ var Wiki = {
 
 		//wiki.url = null;  //CHECK:  why this is needed?
 		//console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
-		if (wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview")) {
+		if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
 
-			wiki.addEditLinks(wiki.toUrl(wiki.PageName, true));
+			wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
 
 		}
 
 		//console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
-		wiki.scrollTo((document.referrer.match(/\&section=(\d+)$/) || [, -1])[1]);
+		wiki.scrollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
 
 		// initialize all registered behaviors
 		wiki.update();
@@ -303,17 +291,15 @@ var Wiki = {
 	Function: media query event handler
 		Catch media-query changes  (eg screen width,  portrait/landscape changes,  etc...
 	*/
-	media: function (query, callback) {
+	media: function(query, callback){
 
-		function queryChanged(event) {
-			callback(event.matches);
-		}
+		function queryChanged( event ){ callback( event.matches ); }
 
-		if (/*window.*/ matchMedia) {
+		if( /*window.*/ matchMedia ){
 
-			var mediaQueryList = matchMedia(query);
-			mediaQueryList.addListener(queryChanged);
-			queryChanged(mediaQueryList);
+			var mediaQueryList = matchMedia( query );
+			mediaQueryList.addListener( queryChanged );
+			queryChanged( mediaQueryList );
 		}
 
 	},
@@ -331,7 +317,7 @@ var Wiki = {
 	(end)
 
 	*/
-	yoyo: function (header) {
+	yoyo: function( header ){
 
 		var height = "offsetHeight",
 			scrollY,
@@ -342,11 +328,11 @@ var Wiki = {
 			spacer = "div".slick().inject(header, "before"),
 			busy;
 
-		function update() {
+		function update(){
 
 			scrollY = window.getScroll().y;
 
-			spacer.style.paddingTop = header[height] + "px"; //update after window resize
+			spacer.style.paddingTop = header[height]+"px"; //update after window resize
 
 			// Limit scroll top to counteract iOS / OSX bounce.
 			scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
@@ -360,14 +346,14 @@ var Wiki = {
 			busy = false;
 		}
 
-		function handleEvent() {
-			if (!busy) {
+		function handleEvent(){
+			if(!busy){
 				busy = true;
-				requestAnimationFrame(update);
+				requestAnimationFrame( update );
 			}
 		}
 
-		window.addEvents({scroll: handleEvent, resize: handleEvent});
+		window.addEvents({ scroll: handleEvent, resize: handleEvent });
 		update(); //first run: set height of the spacer
 
 	},
@@ -387,7 +373,7 @@ var Wiki = {
 		popstate event is 'bubbled' up the DOM tree.
 
 	*/
-	popstate: function () {
+	popstate: function(){
 
 		var target = $(location.hash.slice(1)),
 			events,
@@ -396,13 +382,13 @@ var Wiki = {
 		//console.log( popstate, location.hash, target );
 
 		//only send popstate events to targets within the main page; eg not sidebar
-		if (target && target.getParent(".page-content")) {
+		if( target && target.getParent(".page-content") ){
 
-			while (!target.hasClass("page-content")) {
+			while( !target.hasClass("page-content") ){
 
 				events = target.retrieve("events"); //mootools specific - to read registered events on elements
 
-				if (events && events[popstate]) {
+				if( events && events[popstate] ){
 
 					target.fireEvent(popstate);
 
@@ -414,20 +400,20 @@ var Wiki = {
 		}
 	},
 
-	autofocus: function () {
+	autofocus: function(){
 
 		var els, element;
 
-		if (!("autofocus" in document.createElement("input"))) {
+		if( !("autofocus" in document.createElement("input") ) ){
 			// editor/plain.jsp  textarea#wikiText
 			// login.jsp         input#j_username
 			// prefs/prefs       input#assertedName
 			// find              input#query2
 			els = $$("input[autofocus=autofocus], textarea[autofocus=autofocus]");
-			while (els[0]) {
+			while( els[0] ){
 				element = els.shift();
 				//console.log("autofocus", element, element.autofocus, element.isVisible(), element.offsetWidth, element.offsetHeight, "$", element.getStyle("display"), "$");
-				if (element.isVisible()) {
+				if( element.isVisible() ){
 					element.focus();
 					return;
 				}
@@ -452,13 +438,13 @@ var Wiki = {
 		* wikiApplicationName
 		* wikiEditPermission
 	*/
-	meta: function () {
+	meta: function(){
 
 		var url,
 			wiki = this,
 			host = location.host;
 
-		$$("meta[name^=wiki]").each(function (el) {
+		$$("meta[name^=wiki]").each( function(el){
 			wiki[el.get("name").slice(4)] = el.get("content") || "";
 		});
 
@@ -476,19 +462,19 @@ var Wiki = {
 		Parse special wikipages such ase MoreMenu, HomeMenu
 		and format them as bootstrap compatible dropdown menus.
 	*/
-	dropdowns: function () {
+	dropdowns: function(){
 
-		$$("ul.dropdown-menu > li > ul").each(function (ul) {
+		$$( "ul.dropdown-menu > li > ul" ).each( function(ul){
 
 			var li, parentLi = ul.getParent();
 
-			while ((li = ul.getFirst("li"))) {
+			while( (li = ul.getFirst("li")) ){
 
-				if (li.innerHTML.trim() == "----") {
+				if( li.innerHTML.trim() == "----" ){
 
 					li.addClass("divider");
 
-				} else if (!li.getFirst() || !li.getFirst("a")) {
+				} else if( !li.getFirst() || !li.getFirst("a") ){
 
 					li.addClass("dropdown-header");
 
@@ -505,15 +491,15 @@ var Wiki = {
 			  Each <p> becomes a set of <li>, one for each link
 			  The block is terminated with a divider, if more <p>'s are coming
 		*/
-		$$("ul.dropdown-menu > li.more-menu > p").each(function (element) {
+		$$( "ul.dropdown-menu > li.more-menu > p" ).each( function(element){
 
 			var parentLi = element.getParent();
 
-			element.getElements('a').each(function (link) {
-				["li", [link]].slick().inject(parentLi, "before");
+			element.getElements('a').each( function(link){
+				["li",[link]].slick().inject(parentLi, "before");
 			});
-			if (element.getNext("p *,hr")) {
-				"li.divider".slick().inject(parentLi, "before");
+			if( element.getNext("p *,hr") ){
+				"li.divider".slick().inject(parentLi, "before") ;
 			}
 			element.dispose();
 
@@ -525,7 +511,7 @@ var Wiki = {
 	Function: getSections
 		Returns the list of all section headers, excluding the header of the Table Of Contents.
 	*/
-	getSections: function () {
+	getSections: function(){
 
 		return $$(".page-content [id^=section]:not(#section-TOC)");
 
@@ -536,13 +522,13 @@ var Wiki = {
 		Scrolls the page to the section previously being edited - if any
 		Section counting starts at 1??
 	*/
-	scrollTo: function (index) {
+	scrollTo: function( index ){
 
 		//console.log("Scroll to section ", index, ", Number of sections:", this.getSections().length );
 		var element = this.getSections()[index];
 
-		if (element) {
-			location.replace("#" + element.get("id"));
+		if( element ){
+			location.replace( "#" + element.get("id") );
 		}
 
 	},
@@ -552,10 +538,10 @@ var Wiki = {
 		Convert a wiki pagename to a full wiki-url.
 		Use the correct url template: view(default), edit-url or clone-url
 	*/
-	toUrl: function (pagename, isEdit, isClone) {
+	toUrl: function(pagename, isEdit, isClone){
 
 		var urlTemplate = isClone ? this.CloneUrl : isEdit ? this.EditUrl : this.PageUrl;
-		return urlTemplate.replace(/%23%24%25/, this.cleanPageName(pagename));
+		return urlTemplate.replace(/%23%24%25/, this.cleanPageName(pagename) );
 
 	},
 
@@ -563,10 +549,10 @@ var Wiki = {
 	Property: toPageName
 		Parse a wiki-url and return the corresponding wiki pagename
 	*/
-	toPageName: function (url) {
+	toPageName: function(url){
 
 		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, "(.+)");
-		return (url.match(RegExp(s)) || [0, false])[1];
+		return ( url.match( RegExp(s) ) || [0, false] )[1];
 
 	},
 
@@ -576,7 +562,7 @@ var Wiki = {
 		Trim all whitespace, allow letters, digits and punctuation chars: ()&+, -=._$
 		Mirror of org.apache.wiki.parser.MarkupParser.cleanPageName()
 	*/
-	cleanPageName: function (pagename) {
+	cleanPageName: function( pagename ){
 
 		//\w is short for [A-Z_a-z0-9_]
 		return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
@@ -589,15 +575,15 @@ var Wiki = {
 		FFS: should better move server side
 		FFS: add section #hash to automatically go back to the section being edited
 	*/
-	addEditLinks: function (url) {
+	addEditLinks: function( url ){
 
 		var description = "quick.edit".localize();
 
 		url = url + (url.contains("?") ? "&" : "?") + "section=";
 
-		this.getSections().each(function (element, index) {
+		this.getSections().each( function(element, index){
 
-			element.grab("a.editsection".slick({html: description, href: url + index}));
+			element.grab("a.editsection".slick({ html: description, href: url + index }));
 
 		});
 
@@ -612,34 +598,32 @@ var Wiki = {
 
 		EG: tabcompletion, smartpairs, autosuggest, livepreview, previewcolumn. editor-type
 	*/
-	configPrefs: function (form, onChangeFn) {
+	configPrefs: function( form, onChangeFn ){
 
 		var wiki = this;
 
-		function onCheck() {
+		function onCheck(){
 
 			var cmd = this.getAttribute("data-cmd"),
 				isChecked = this.checked;
 
 			wiki.toggleLivePreview(form, cmd, isChecked);
 			wiki.prefs.set(cmd, isChecked);  //persist in the pref cookie
-			if (onChangeFn) {
-				onChangeFn(cmd, isChecked);
-			}
+			if( onChangeFn ){ onChangeFn(cmd, isChecked); }
 
 		}
 
 		//Handle all configuration checkboxes
-		form.getElements("[type=checkbox][data-cmd]").each(function (el) {
+		form.getElements("[type=checkbox][data-cmd]").each( function( el ){
 
 			el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
-			el.addEvent("click", onCheck);
+			el.addEvent("click", onCheck );
 			onCheck.apply(el);
 
 		});
 
 		//Persist the selected editor type in the pref cookie
-		form.getElements("a.editor-type").addEvent("click", function () {
+		form.getElements("a.editor-type").addEvent("click", function(){
 
 			wiki.prefs.set("editor", this.get("text"));
 
@@ -648,14 +632,14 @@ var Wiki = {
 	},
 
 
-	toggleLivePreview: function (container, cmd, state) {
+	toggleLivePreview: function( container, cmd, state ){
 
-		if (cmd.test(/livepreview|previewcolumn/)) {
+		if( cmd.test( /livepreview|previewcolumn/ ) ){
 
 			var previewcontainer = container.getElement(".edit-area").ifClass(state, cmd),
 				ajaxpreview = container.getElement(".ajaxpreview");
 
-			if (cmd == "livepreview") {
+			if( cmd == "livepreview" ){
 
 				//disable the previewcolumn toolbar cmd checkbox
 				container.getElement("[data-cmd=previewcolumn]").disabled = !state;
@@ -681,38 +665,20 @@ var Wiki = {
 					div.col-50.ajaxpreview
 				*/
 
-				if (!state) {
-					previewcontainer = previewcontainer.getParent();
-				}
+				if( !state ){ previewcontainer = previewcontainer.getParent(); }
 				previewcontainer.grab(ajaxpreview);
 
 			}
-
-
-			// Auto size editor and live preview window
-			var editPanes = jq$('.editor');
-			for (var i = 0; i < editPanes.length; i++) {
-				var editor = jq$(editPanes[i]);
-				if (editor.is('#editorarea')) continue;
-				editor.autosize();
-				editor.trigger('autosize.resize');
-			}
-
-			jq$(ajaxpreview).height(jq$(editPanes[0]).height());
 		}
-
-
 	},
 
-	getXHRPreview: function (getContent, previewElement) {
+	getXHRPreview: function( getContent, previewElement ){
 
 		var wiki = this,
 			loading = "loading",
-			preview = function (p) {
-				previewElement.removeClass(loading).set("text", p);
-			};
+			preview = function(p){ previewElement.removeClass(loading).set("text", p);};
 
-		return (function () {
+		return (function(){
 
 			previewElement.addClass(loading);
 
@@ -721,11 +687,11 @@ var Wiki = {
 				data: {
 					htmlPageText: getContent()
 				},
-				onSuccess: function (responseText) {
-					preview(responseText.trim());
+				onSuccess: function(responseText){
+					preview( responseText.trim() );
 				},
-				onFailure: function (e) {
-					preview("Sorry, HTML to Wiki Markup conversion failed :=() " + e);
+				onFailure: function(e){
+					preview( "Sorry, HTML to Wiki Markup conversion failed :=() " + e );
 				}
 			}).send();
 
@@ -758,41 +724,31 @@ var Wiki = {
 	div.resizer[data-resize=".pagecontent"] => for add-comment sections
 	div.resizer[data-resize=".ajaxpreview,.snipeable"][data-pref=editorHeight]
 	*/
-	resizer: function (handle, targets, dragCallback) {
+	resizer: function( handle, targets, dragCallback ){
 
 		var pref = handle.get("data-pref"),
 			prefs = this.prefs,
 			target;
 
-		function showDragState(add) {
-			handle.ifClass(add, "dragging");
-		}
+		function showDragState(add){ handle.ifClass(add, "dragging"); }
 
-		if (!targets[0]) {
-			return;
-		}
+		if( !targets[0] ){ return; }
 
 		//set the initial size of the targets
-		if (pref) {
-			targets.setStyle("height", prefs.get(pref) || 300);
+		if( pref ){
+			targets.setStyle("height", prefs.get(pref) || 300 );
 		}
 
 		target = targets.pop();
 
 		target.makeResizable({
 			handle: handle,
-			modifiers: {x: null},
-			onDrag: function () {
+			modifiers: { x: null },
+			onDrag: function(){
 				var h = this.value.now.y;
-				if (pref) {
-					prefs.set(pref, h);
-				}
-				if (targets) {
-					targets.setStyle("height", h);
-				}
-				if (dragCallback) {
-					dragCallback(h);
-				}
+				if( pref ){ prefs.set(pref, h); }
+				if( targets ){ targets.setStyle("height", h); }
+				if( dragCallback ){ dragCallback(h); }
 			},
 			onBeforeStart: showDragState.pass(true),
 			onComplete: showDragState.pass(false),
@@ -802,31 +758,31 @@ var Wiki = {
 	},
 
 
-	pageDialog: function (caption, method) {
+	pageDialog: function( caption, method ){
 
 		var wiki = this;
 
-		return [Dialog.Selection, {
+		return [ Dialog.Selection, {
 
 			caption: caption,
 
-			onOpen: function (dialog) {
+			onOpen: function( dialog ){
 
 				var key = dialog.getValue();
 
 				//if empty link, than fetch list of attachments of the open page
-				if (!key || (key.trim() == '')) {
+				if( !key || (key.trim()=='') ){
 
 					key = wiki.PageName + "/";
 
 				}
 
-				wiki.jsonrpc(method, [key, 30], function (result) {
+				wiki.jsonrpc( method, [key, 30], function( result ){
 
 					//console.log("jsonrpc result", result, !!result[0] );
-					if (result[0] /* length > 0 */) {
+					if( result[0] /* length > 0 */ ){
 
-						dialog.setBody(result);
+						dialog.setBody( result );
 
 					} else {
 
@@ -859,9 +815,9 @@ var Wiki = {
 		});
 		(end)
 	*/
-	jsonrpc: function (method, params, callback) {
+	jsonrpc: function(method, params, callback){
 
-		if (this.JsonUrl) {
+		if( this.JsonUrl ){
 
 			//console.log(method, JSON.stringify(params) );
 
@@ -878,20 +834,20 @@ var Wiki = {
 					'Accept': 'application/json',
 					'X-Request': 'JSON'
 				},
-				onSuccess: function (responseText) {
+				onSuccess: function( responseText ){
 
 					//console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );
 					callback(responseText == "" ? "" : JSON.parse(responseText));
 					//callback( responseText );
 
 				},
-				onError: function (error) {
+				onError: function(error){
 					//console.log(error);
-					callback(null);
+					callback( null );
 					throw new Error("Wiki rpc error: " + error);
 				}
 
-			}).send("params=" + params);
+			}).send( "params=" + params );
 
 		}
 
