@@ -1,3 +1,9 @@
+2018-05-27  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.5-git-01
+
+       * JSPWIKI-1070: Support JDK 10 builds
+
 2018-04-29  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.4-git-10  Bugfix in AddCSS.JS related to url() parsing
