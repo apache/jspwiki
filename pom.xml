@@ -308,6 +308,11 @@
           </execution>
         </executions>
       </plugin>
+      
+      <plugin>
+        <groupId>net.nicoulaj.maven.plugins</groupId>
+        <artifactId>checksum-maven-plugin</artifactId>
+      </plugin>
     </plugins>
 
     <pluginManagement> <!-- defines what configuration is going to be used if, and only if, the plugin is used                          -->
@@ -415,7 +420,7 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.0.1</version>
           <configuration>
             <additionalparam>
             -charset ${project.build.sourceEncoding}
@@ -523,6 +528,25 @@
           <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
           <artifactId>inmemdb-maven-plugin</artifactId>
           <version>1.4.3</version>
+        </plugin>
+        
+        <plugin>
+          <groupId>net.nicoulaj.maven.plugins</groupId>
+          <artifactId>checksum-maven-plugin</artifactId>
+          <version>1.6</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>artifacts</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <algorithms>
+              <algorithm>SHA-1</algorithm>
+              <algorithm>SHA-512</algorithm>
+            </algorithms>
+          </configuration>
         </plugin>
 
         <plugin>
