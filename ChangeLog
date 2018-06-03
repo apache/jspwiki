@@ -1,3 +1,11 @@
+2018-06-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.5-git-02
+
+       * JSPWIKI-1070: (properly) Support JDK 10 builds
+       
+       * Generate sha1 and sha512 checksums for build artifacts
+
 2018-05-27  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.5-git-01
