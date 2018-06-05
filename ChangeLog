@@ -1,9 +1,15 @@
+2018-06-05  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.5-git-03  JSPWIKI-1071 Ajax request header 'Connection' forbidden
+         impacting the DEFAULT jspwiki template.
+
+
 2018-06-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.5-git-02
 
        * JSPWIKI-1070: (properly) Support JDK 10 builds
-       
+
        * Generate sha1 and sha512 checksums for build artifacts
 
 2018-05-27  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -36,7 +42,7 @@
             - Editor toolbar resized for small screens
 
             Other:
-            - Editor toolbar now remains on screen, even when scrolling down
+            - JSPWIKI-1058 Editor toolbar now remains on screen, even when scrolling down
             - Small tweaks of the RecentChanges output
             - JSPWIKI-1068 : fixing positioning of the TitleBox
 

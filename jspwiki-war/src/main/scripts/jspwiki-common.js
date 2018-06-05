@@ -1012,9 +1012,9 @@ var SearchBox = {
 		});
 
 		new Ajax(Wiki.TemplateUrl+'AJAXSearch.jsp', {
-			postBody: $('searchform2').toQueryString(),
+			data: $('searchform2').toQueryString(),
 			update: 'searchResult2',
-			method: 'post',
+			method: 'get', // use "get" to avoid mootools bug on XHR header "CONNECTION:CLOSE"
 			onComplete: function() {
 				$('spin').hide();
 				GraphBar.render($('searchResult2'));
@@ -1708,7 +1708,8 @@ var Categories =
 				new Event(e).stop();  //dont jump to top of page ;-)
 
 				new Ajax( Wiki.TemplateUrl + 'AJAXCategories.jsp', {
-					postBody: '&page=' + page,
+				    method:"get", //use "get" to avoid mootools bug on XHR header "CONNECTION:CLOSE"
+					data: '&page=' + page,
 					update: popup,
 					onComplete: function(){
 						link.setProperty('title', '').removeEvent('click');
