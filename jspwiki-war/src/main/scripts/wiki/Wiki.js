@@ -102,6 +102,41 @@ var Wiki = {
                 element.onHover( element.get("data-hover-parent") );
             })
 
+            // Click effect: Similar to hover effect, but triggered on click of an element (e.g. for searchbox)
+            // Defined in the following two blocks
+            .add("body", function (element) {
+                // Close open element if clicked anywhere else
+                jq$(element).click(function (event) {
+                    var openParent = jq$('.open-click-parent');
+                    if (jq$.contains(openParent, event.target)) return;
+                    else if (openParent.length > 0 && jq$.contains(openParent[0], event.target)) return;
+                    else openParent.removeClass('open open-click-parent');
+                })
+            })
+
+            .add("[data-click-parent]", function (element) {
+                jq$(element).click(function (event) {
+                    var parentSelector = jq$(this).attr('data-click-parent');
+                    var parent = jq$(parentSelector);
+                    var openParent = jq$('.open-click-parent');
+                    // Close already open parents
+                    if (!openParent.is(parent)) {
+                        openParent.removeClass('open open-click-parent');
+                    }
+                    if (parent.hasClass('open')) {
+                        parent.removeClass('open open-click-parent');
+                    } else {
+                        parent.addClass('open open-click-parent');
+                        if (parent.find('input').length > 0) {
+                            parent.find("input:first").focus();
+                        }
+                    }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                });
+            })
+
             //resize the "data-resize" elements when dragging this element
             //.add( "[data-resize]", wiki.resizer.bind(wiki) )
             .add( "[data-resize]", function(element){
