@@ -422,28 +422,24 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.0.1</version>
           <configuration>
-            <additionalparam>
-            -charset ${project.build.sourceEncoding}
-            -docencoding ${project.build.sourceEncoding}
-            -version
-            -author
-            -breakiterator
-            -linksource
-            -sourcetab 4
-            -windowtitle "${project.name} ${project.version}"
-            -bottom ""
-            -doctitle "${project.name} ${project.version}"
-            -link {project.organization.url}
-            </additionalparam>
-            <bottom>Copyright © {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
+            <additionalOptions>
+              <additionalOption>-sourceclasspath ${project.build.outputDirectory}</additionalOption>
+              <additionalOption>-Xdoclint:none</additionalOption>
+            </additionalOptions>
+            <author>${project.organization.name}</author>
+            <bottom>Copyright &#169; {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
+            <breakiterator>true</breakiterator>
             <doclet>org.jboss.apiviz.APIviz</doclet>
             <docletArtifact>
-              <groupId>org.jboss.apiviz</groupId>
+              <groupId>com.grahamedgecombe.apiviz</groupId>
               <artifactId>apiviz</artifactId>
-              <version>1.3.2.GA</version>
+              <version>1.3.4</version>
             </docletArtifact>
-            <encoding>${project.build.sourceEncoding}</encoding>
+            <linksource>true</linksource>
+            <sourcetab>4</sourcetab>
             <quiet>true</quiet>
+            <useStandardDocletOptions>true</useStandardDocletOptions>
+            <version>${project.version}</version>
           </configuration>
         </plugin>
 
