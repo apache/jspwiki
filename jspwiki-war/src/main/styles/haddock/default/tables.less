@@ -48,15 +48,13 @@ table[border="1"] td { border:0; }
 
     &.table-fit { width:auto; }
 
-}
-
-.wikitable.table-condensed  {
-
-    th, td { padding: @table-condensed-cell-padding; }
+	&.table-condensed {
+		th, td { padding: @table-condensed-cell-padding; }
+	}
 
 }
 
-.wikitable.table-bordered {
+.table-bordered {
         border: 1px solid @table-border-color;
 
         tr:first-child {
@@ -64,16 +62,16 @@ table[border="1"] td { border:0; }
         }
 }
 
-.wikitable.table-noborder td,
-.wikitable.table-borderless td,
-.wikitable.table-noborder tr:first-child th,
-.wikitable.table-borderless tr:first-child th {
-    border: 0;
+.table-noborder,
+.table-borderless {
+	td, tr:first-child th {
+	    border: 0;
+	}
 }
 
 .table-fit .wikitable {  width:auto; }
 
-.table-striped.wikitable {
+.table-striped {
   > tbody > tr:nth-child(odd) {
     > td,
     > th {

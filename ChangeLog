@@ -1,3 +1,24 @@
+2018-06-17  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.5-git-04  Fine-tuning Haddock for mobile devices.
+
+       * Improve accessibility on hover-menu's for touch-devices. They'll open after
+         a touch-down event; and will close when touching any area outside the menu.
+
+       * Fixing access to the Find and User menu's for touch devices.
+
+       * Several small style improvements on the navigation bar for mobile devices
+         (hiding CARET to indicate hover-menu's, ...)
+
+       * Added touch-support for %%magnify style.
+
+       * Breadcrumbs are now moved to a proper drop-down menu (...) on the navigation bar
+         instead of the previously not-so-obvious 'mouse-over-zone' under the pagename.
+         This also makes breadcrumbs accessible to the tablet & phone users.
+
+       * Fixed a display error when uploading multiple attachements in one step.
+
+
 2018-06-05  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.5-git-03  JSPWIKI-1071 Ajax request header 'Connection' forbidden

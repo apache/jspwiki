@@ -37,6 +37,29 @@
 <ul class="nav nav-pills pull-left">
   <%-- toggle sidebar --%>
   <li id="menu"><a href="#"><!--&#x2261;-->&#9776;</a></li>
+
+  <li id="trail" tabindex="0">
+    <a href="#">
+        <span>&hellip;</span>
+        <span>&hellip;</span>
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" data-hover-parent="li">
+      <li class="dropdown-header"><fmt:message key="header.yourtrail"/></li>
+      <li class="divider"></li>
+
+      <%--  FIXME: breadcrumbs tag returns items in wrong order: 1st item is at back of the list !!
+      <li><wiki:Breadcrumbs separator="</li><li>" /></li>
+      --%>
+      <c:set var="refresh_breadCrumbTrail_attr"><wiki:Breadcrumbs /></c:set>
+      <c:forEach items="${breadCrumbTrail}" varStatus="status" begin="2">
+          <c:set var="crumb" value="${breadCrumbTrail[fn:length(breadCrumbTrail) - status.index]}" />
+          <li><wiki:Link page="${crumb}" >${crumb}</wiki:Link></li>
+      </c:forEach>
+
+    </ul>
+  </li>
+
 </ul>
 
 <ul class="nav nav-pills pull-right">
@@ -87,7 +110,7 @@
   <%-- info --%>
   <wiki:CheckRequestContext context='view|info|upload|rename|edit|comment|conflict'>
   <wiki:PageExists>
-  <li id="info">
+  <li id="info" tabindex="0">
     <wiki:Link context="info" accessKey="i">
       <span class="icon-info-menu"></span>
       <span><fmt:message key='info.tab'/></span>
@@ -188,7 +211,7 @@
 
 
   <%-- more menu --%>
-  <li id="more">
+  <li id="more" tabindex="0">
     <a href="#">
         <span class="icon-ellipsis-v"></span>
         <span><fmt:message key="actions.more"/></span>

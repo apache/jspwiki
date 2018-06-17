@@ -67,6 +67,8 @@ images/feather-small.png   wxh  162x286
 //softer gray-tones
 @pre-bg:                      #f7f7f9; //#f2f2f2;
 @pre-border-color:            #e1e1e8; //#e5e5e5;
+@wiki-pre-bg:                 fadeout(@pre-bg,50%);
+@wiki-pre-border-color:       fadeout(@pre-border-color,50%);
 @panel-default-border:        @pre-border-color;
 @panel-default-heading-bg:    @pre-bg;
 
@@ -75,6 +77,7 @@ images/feather-small.png   wxh  162x286
 // JPSWiki variables
 // Main color scheme
 @wiki-header-bg:    rgba(74,137,220,0.9); //@brand-primary;
+//@wiki-header-bg: -webkit-linear-gradient(108deg,rgba(112,208,238,0.8), rgba(74,137,220,0.9)/*rgba(42,132,210,0.8)*/ 90%);
 
 @wiki-header-color: @white;
 @wiki-page-bg:      @white;

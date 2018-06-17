@@ -134,7 +134,7 @@
 
     <wiki:CheckRequestContext context="edit">
     <div class="btn-group sections">
-      <button class="btn btn-default"><span class="icon-bookmark"></span><span class="caret"></span></button>
+      <button class="btn btn-default" type="button"><span class="icon-bookmark"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
             <li><a>first</a></li>
             <li><a>..</a></li>
@@ -144,18 +144,18 @@
     </div>
     </wiki:CheckRequestContext>
 
-    <button class="btn btn-default" data-cmd="lipstick"><span class="icon-tint" /></button>
-    <button class="btn btn-default" data-cmd="find"><span class="icon-search" /></button>
+    <button class="btn btn-default" type="button" data-cmd="lipstick"><span class="icon-tint" /></button>
+    <button class="btn btn-default" type="button" data-cmd="find"><span class="icon-search" /></button>
 
 
     <fmt:message key='editor.plain.undo.title' var='msg'/>
-    <button class="btn btn-default" data-cmd="undo" title="${msg}"><span class="icon-undo"></span></button>
+    <button class="btn btn-default" type="button" data-cmd="undo" title="${msg}"><span class="icon-undo"></span></button>
     <fmt:message key='editor.plain.redo.title' var='msg'/>
-    <button class="btn btn-default" data-cmd="redo" title="${msg}"><span class="icon-repeat"></span></button>
+    <button class="btn btn-default" type="button" data-cmd="redo" title="${msg}"><span class="icon-repeat"></span></button>
 
     <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
-      <button class="btn btn-default"><span class="icon-wrench"></span><span class="caret"></span></button>
+      <button class="btn btn-default" type="button"><span class="icon-wrench"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
 
             <li>
@@ -223,7 +223,7 @@
     <c:if test='${fn:length(editors) > 1}'>
     <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
-      <button class="btn btn-default"><span class="icon-pencil"></span><span class="caret"></span></button>
+      <button class="btn btn-default" type="button"><span class="icon-pencil"></span><span class="caret"></span></button>
       <ul class="dropdown-menu" data-hover-parent="div">
         <c:forEach items="${editors}" var="edt">
           <c:choose>

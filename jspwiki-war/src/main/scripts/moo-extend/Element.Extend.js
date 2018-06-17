@@ -121,36 +121,55 @@ Element.implement({
     /*
     Function: onHover
         Turns a DOM element into a hoverable menu.
+        Only one menu at a time can be visible.
 
     Arguments:
         toggle - (string,optional) A CSS selector to match the hoverable toggle element
-        onOpen - (function, optional) Function which is call when opening the menu
+        onOpen - (function, optional) Function which is to be called when opening the menu
 
     Example
     > $("li.dropdown-menu").onHover("ul");
     */
     onHover: function( toggle, onOpen ){
 
-        var element = this;
+        function toggleMenu( event ){
 
-        if( (toggle = element.getParent(toggle)) ){
+            if( /enter|focus/.test(event.type) ){
 
-             element.fade("hide");  //CHECKME : is this sill needed, menu should be hidden/visible depending on .open
+                //on touch devices, a starttouch also generates a mouseenter on :hover links
+                //however, there is no mouseleave when clicking outside the hover menu
+                //so temporary add a touchend handler on the document to help close the menu
+                document.addEvent("touchend", toggleMenu);
+                toggle.addClass("open");
+                if( onOpen ){ onOpen(); }
 
-             toggle.addEvents({
-                mouseenter: function(){
-                    element.fade(0.9);
-                    toggle.addClass("open");
-                    if(onOpen){ onOpen(); }
-                },
-                mouseleave: function(){
-                    element.fade(0);
-                    toggle.removeClass("open");
-                }
+            } else {
+
+                //close the menu if toggle receives the event or a (touchend-)event is received outside the menu
+                if( (event.target != toggle) && toggle.contains(event.target) ){ return; }
+
+                toggle.removeClass("open");
+                document.removeEvent("touchend", toggleMenu);
+
+            }
+
+            event.preventDefault;
+
+        };
+
+        toggle = this.getParent( toggle );
+
+        if( toggle ){
+
+            toggle.addEvents({
+                focus: toggleMenu,  //keyboard
+                blur: toggleMenu,
+                mouseenter: toggleMenu,
+                mouseleave: toggleMenu
             });
 
         }
-        return element;
+        return this;
     },
 
     /*

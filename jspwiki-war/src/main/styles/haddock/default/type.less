@@ -69,8 +69,11 @@ h2,h3,h4 {
 
 }
 
-.sidebar .hashlink, .sidebar .editsection, .panel-title .hashlink { .hidden; }
-
+.sidebar .hashlink,
+.sidebar .editsection,
+.panel-title .hashlink {
+	.hidden;
+}
 
 .lead {
     font-family:@wiki-logo-font-family;
@@ -227,10 +230,10 @@ span.text-white, div.text-white, .bg.dark + .bg-overlay { color:@white; }
 span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
 
 .text-white.shadow {
-  text-shadow: 1px 1px 0 rgba(0,0,0,.25), 0 0 1em @white;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.25), 0 0 1em @white;
 }
 .text-black.shadow {
-  text-shadow: 1px 1px 0 rgba(255,255,255,.25), 0 0 1em @white;
+    text-shadow: 1px 1px 0 rgba(255,255,255,.25), 0 0 1em @white;
 }
 
 //checkme - should be defined in bootstrap
@@ -262,13 +265,15 @@ span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
 .bg-gray, .bg-grey  { background-color: @gray; color:@white; }
 .bg-black   { background-color: @black; color:@white; }
 
-/* Background images in jspwiki
-markup
-    %%bg [some image link] /%
+/*
+Background images in jspwiki
+
+Markup
+>    %%bg [some image link] /%
 becomes
-    span.background(.fixed|.cover|.contain)(.top|.bottom|.left|.right)
-    div.background-overlay
-        <wrapping all siblings>
+>    span.background(.fixed|.cover|.contain)(.top|.bottom|.left|.right)
+>    div.background-overlay
+>        <wrapping all siblings>
 */
 .bg > img, .bg > img.inline, .bg > .imageplugin img { display:none; }
 
@@ -330,10 +335,10 @@ pre {
   //better is to set top & bottom margins, in case the previous dom elements is a text node
   //  margin: (@line-height-computed / 2) 0;
 
-  //overwrite bootstratp defaults: use alpha/transparency to also support dark backgrounds.
+  //overwrite bootstrap defaults: use alpha/transparency to also support dark backgrounds.
   //color: @pre-color;
-  background-color: fadeout(@pre-bg,50%);
-  border: 1px solid fadeout(@pre-border-color,50%);
+  background-color: @wiki-pre-bg;
+  border: 1px solid @wiki-pre-border-color;
 
 }
 .small pre {
@@ -351,7 +356,6 @@ tt {
 }
 
 //list-unstyled : bootstrap
-//list-hover
 .list-hover {
     li:hover {
         background-color:@dropdown-link-hover-bg;
@@ -359,7 +363,6 @@ tt {
     }
 }
 .list-nostyle { list-style: none; }
-
 .list-group.raised li { border:none; }
 
 
@@ -670,7 +673,8 @@ span.success, span.information, span.info,  span.warning, span.error, span.dange
 }
 
 .default {
-    .alert-variant(@btn-default-bg; @btn-default-border; @btn-default-color);
+    .alert-variant(@wiki-pre-bg; @wiki-pre-border-color; @btn-default-color);
+
 }
 .success            { .alert-success; }
 .info, .information { .alert-info; }

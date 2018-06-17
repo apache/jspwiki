@@ -21,7 +21,7 @@
 
 
 /*eslint-env browser*/
-/*global $, $$, Form, Hash, Behavior, HighlightQuery, Accesskey */
+/*global $, $$, Form, Hash, Behavior, HighlightQuery, Accesskey, Dialog */
 /*exported  Wiki */
 
 /*
@@ -72,13 +72,13 @@ var Wiki = {
         wiki.update = behavior.update.bind(behavior);
 
 
-        // add core jspwiki behaviors; needed to support the default template jsp's
+
+        //jspwiki behaviors; needed to support the haddock template jsp's
         wiki.add( "body", wiki.caniuse )
 
             .add( "[accesskey]", Accesskey )
 
             //toggle effect:  toggle .active class on this element when clicking toggle element
-            //.add("[data-toggle]", "onToggle", {attr:"data-toggle"})
             .add( "[data-toggle]", function(element){
 
                 element.onToggle( element.get("data-toggle"), function(isActive){
@@ -96,8 +96,7 @@ var Wiki = {
                 element.onModal( element.get("data-modal") );
             })
 
-            //hover effects: show/hide this element when hovering over the parent element
-            //.add("[data-toggle]", "onHover", {attr:"data-hover-parent"})
+            //hover effects: show/hide an element when hovering over the data-hover-parent element
             .add( "[data-hover-parent]", function(element){
                 element.onHover( element.get("data-hover-parent") );
             })
@@ -239,7 +238,7 @@ var Wiki = {
         }
 
         //console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
-        wiki.scrollTo( ( document.referrer.match( /\&section=(\d+)$/ ) || [,-1])[1] );
+        wiki.scrollTo( ( document.referrer.match( /&section=(\d+)$/ ) || [0,-1])[1] );
 
         // initialize all registered behaviors
         wiki.update();
@@ -530,7 +529,7 @@ var Wiki = {
     cleanPageName: function( pagename ){
 
         //\w is short for [A-Z_a-z0-9_]
-        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD\(\)&\+,\-=\.\$ ]/g, "");
+        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD()&+,\-=.$ ]/g, "");
 
     },
 
@@ -793,12 +792,12 @@ var Wiki = {
                 //urlEncoded: true, //content-type header = www-form-urlencoded + encoding
                 //encoding: "utf-8",
                 //encoding: "ISO-8859-1",
-        		headers: {
-		        	//'X-Requested-With': 'XMLHttpRequest',
-			        //'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
-        			'Accept': 'application/json',
-		        	'X-Request': 'JSON'
-		        },
+                headers: {
+                    //'X-Requested-With': 'XMLHttpRequest',
+                    //'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+                    'Accept': 'application/json',
+                    'X-Request': 'JSON'
+                },
                 onSuccess: function( responseText ){
 
                     //console.log(responseText, JSON.parse( responseText ), responseText.charCodeAt(8),responseText.codePointAt(8), (encodeURIComponent(responseText)), encodeURIComponent("ä"), encodeURIComponent("Ã")  );

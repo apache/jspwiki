@@ -33,7 +33,7 @@
 
   <div class="topline">
 
-    <div class="cage pull-left">
+    <div class="cage pull-left" tabindex="0">
 
     <a class="logo pull-left"
         href="<wiki:Link page='${frontpage}' format='url' />"
@@ -60,16 +60,12 @@
           <c:when test="${not empty fn:substringBefore(param.page,'_comments_')}">
             <wiki:Link>${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}]</wiki:Link>
           </c:when>
-          <c:otherwise><a href="#top"><wiki:PageName /></a></c:otherwise>
+          <c:otherwise><a href="#top" tabindex="-1"><wiki:PageName /></a></c:otherwise>
         </c:choose>
 
     </div>
 
   </div>
-  <div class="breadcrumb">
-    <fmt:message key="header.yourtrail"/><wiki:Breadcrumbs separator="<span class='divider'></span>" />
-  </div>
-
   <wiki:Include page="Nav.jsp" />
 
 </div>

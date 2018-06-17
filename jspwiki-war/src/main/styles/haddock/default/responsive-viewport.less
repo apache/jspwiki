@@ -139,6 +139,8 @@ Medium size screens,  tablets,  phones in landscape mode
 
 	.header > *:not(.titlebox), .footer > *:not(.titlebox) { padding:0;  }
 
+	.header .caret { display: none; }
+
 	.reader .pagename { font-size:1.5em; line-height:1.5;}
 	.pagename {
 		font-size: 1.5em;
@@ -154,17 +156,22 @@ Medium size screens,  tablets,  phones in landscape mode
 		b:before {content:""};
 	}
 
-	.breadcrumb { display:none; }
-
 	// Template.UserBox.less
 
 	.userbox ul.dropdown-menu {
 			max-width:@wiki-small-viewport-dialog-width;
 			li:first-child a { white-space:normal; }
 	}
+	.userbox > .btn { padding: 6px  5px 6px 10px;}
 
 	// Template.SearchBox.less
 	.searchbox ul.dropdown-menu { max-width: @wiki-small-viewport-dialog-width; }
+	//.searchbox .btn .icon-search { padding: 5px 10px; }
+
+	.searchbox > .btn { padding: 6px 10px 6px 10px;}  //keep original top/bottom padding 6px
+	.searchbox > .btn > .icon-search { padding: 0;}
+
+
 
 	// Template.Nav.less
 	// Only show the menu icons
@@ -172,6 +179,24 @@ Medium size screens,  tablets,  phones in landscape mode
 		padding: 5px 10px;
 		> *:first-child { display:initial; }
 		> *:nth-child(even) { display:none; }
+	}
+	#attach .badge {
+		background:transparent;
+		color:white;
+		padding:3px 0;
+		min-width:auto;
+	}
+
+	.header > .navigation .nav > li > a {
+
+		& > *:first-child { display:inline-block; }
+		&:hover > *:first-child { animation: wiggle 1s ease-in-out infinite; }
+
+	}
+	@keyframes wiggle {
+    	0% { transform:rotate(10deg); }
+	    50% { transform:rotate(-10deg); }
+    	100% { transform:rotate(10deg); }
 	}
 
 	// Template.Content.less

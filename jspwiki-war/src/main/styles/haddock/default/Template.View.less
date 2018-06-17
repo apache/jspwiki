@@ -85,9 +85,6 @@ DOM structure:
 		        li.recents ...
 		        li.recents.clear ...
 
-
-      div.breadcrumbs
-
     ...
 
     div.footer
@@ -179,8 +176,7 @@ Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
 }
 
 
-.header .pagename,
-.header .breadcrumb {
+.header .pagename {
     .text-overflow();
 }
 
@@ -195,22 +191,6 @@ Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
 }
 .reader .pagename {
     font-size: 6em;
-}
-
-/*
-JSPWiki-s breadcrumb - do not inherit bootstraps breadcrumbs
-Only show breadcrumb on mouse hover
-*/
-.breadcrumb {
-    .small;
-    .transition(all .5s ease);
-    color:transparent;
-    &:hover { color:inherit; }
-
-    .divider:before {
-        content:"\2022";   //&bull;
-        padding:0 .25em;
-    }
 }
 
 

@@ -484,7 +484,6 @@ Example:
         /*html5 expects  <pre><code>  */
         if( element.match("pre") ){
             element.innerHTML = "<code>" + element.innerHTML + "</code>";
-            element = element.getFirst();
         }
 
     })
@@ -494,7 +493,6 @@ Example:
         /*html5 expects  <pre><code>  */
         if( element.match("pre") ){
             element.innerHTML = "<code>" + element.innerHTML + "</code>";
-            element = element.getFirst();
         }
 
     })

@@ -34,7 +34,7 @@ function Magnify( images ){
     function move_maggy( event ){
 
         var img = event.target,
-            isVisible = ( event.type != "mouseleave" );
+            isVisible = /move/.test(event.type);
 
         if( isVisible ){
 
@@ -63,7 +63,9 @@ function Magnify( images ){
 
     $$( images ).addEvents({
         mousemove: move_maggy,
-        mouseleave: move_maggy
+        touchmove: move_maggy,
+        mouseleave: move_maggy,
+        touchend: move_maggy
     });
 
 }

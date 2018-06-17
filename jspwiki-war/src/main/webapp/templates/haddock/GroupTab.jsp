@@ -164,7 +164,7 @@
 
       <c:if test='<%= authMgr.checkPermission( c.getWikiSession(), new GroupPermission( name, "delete" ) ) %>'>
       <%-- <wiki:Permission permission="deleteGroup"> --%>
-        <button class="btn btn-xs btn-danger" onclick="document.deleteGroupForm.group.value ='${group.name}';document.deleteGroupForm.ok.click();">
+        <button class="btn btn-xs btn-danger" type="button" onclick="document.deleteGroupForm.group.value ='${group.name}';document.deleteGroupForm.ok.click();">
           <fmt:message key="actions.deletegroup"/>
         </button>
       <%--</wiki:Permission>--%>

@@ -25,10 +25,11 @@
 <%-- Powered by wiki/Findpages.js and wiki/Recents.js  --%>
 <form action="<wiki:Link jsp='Search.jsp' format='url'/>"
   class="form-inline searchbox pull-right"
-  id="searchForm"
+  id="searchForm" tabindex="0"
   accept-charset="<wiki:ContentEncoding />">
 
-  <div class="btn"><span class="icon-search"></span><span class="caret"></span></div>
+  <%-- the onclick="" is needed for hover effect on ipad https://www.codehaven.co.uk/fix-css-hover-on-iphone-ipad/ --%>
+  <div onclick="" class="btn"><span class="icon-search"></span><span class="caret"></span></div>
 
   <ul class="dropdown-menu" data-hover-parent=".searchbox">
     <li class="dropdown-header">

@@ -26,12 +26,14 @@ DOM Structure:
 (start code)
 div.row
 	ul.nav.nav-pills.pull-left
-		li
-			a.logo
-
-	ul.nav.nav-pills.pull-right
 		li.menu
 			a Menu
+		li.trail
+			a ...
+				span.caret
+			ul.dropdown-menu.pull-right
+
+	ul.nav.nav-pills.pull-right
     	li
     		a Attach
     	li
@@ -39,8 +41,8 @@ div.row
     	li[.disabled]
     		a Edit
     	li
-    		More
-    		span.caret
+    		a More
+    			span.caret
     		ul.dropdown-menu.pull-right
     			...
 
@@ -57,8 +59,11 @@ div.row
     /* hover menu items with transparent effect  - undo some of the bootstrap color settings */
     .nav .open > a,
     .nav > li > a:hover,
-    .nav > li > a:focus {
+    .nav > li > a:hover:focus {
         background-color: rgba(255,255,255,.2);
+    }
+    .nav > li > a:focus {
+    	background-color: transparent;
     }
     .nav > li.disabled > a {
         color:@silver;
