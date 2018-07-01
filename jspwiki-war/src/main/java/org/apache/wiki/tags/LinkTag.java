@@ -65,6 +65,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     private String m_ref     = null;
     private String m_context = WikiContext.VIEW;
     private String m_accesskey = null;
+    private String m_tabindex = null;
     private String m_templatefile = null;
 
     private boolean m_absolute = false;
@@ -127,6 +128,11 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     public void setTarget( String target )
     {
         m_target = target;
+    }
+
+    public void setTabindex( String tabindex )
+    {
+        m_tabindex = tabindex;
     }
 
     public void setCompareToVersion( String ver )
@@ -431,6 +437,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );
             sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
             sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
+            sb.append( (m_tabindex != null) ? "tabindex=\""+m_tabindex+"\" " : "" );
 
             switch( m_format )
             {

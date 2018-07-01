@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.tags;
 
@@ -40,11 +40,11 @@ public class RSSImageLinkTag
     extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
+
     protected String m_title;
     private   String m_mode;
     private   String m_pageName;
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -59,7 +59,7 @@ public class RSSImageLinkTag
 
     /**
      *  Sets the title for the link.  If not defined, no title is shown.
-     *  
+     *
      *  @param title A string for the title.
      */
     public void setTitle( String title )
@@ -71,11 +71,11 @@ public class RSSImageLinkTag
     {
         m_mode = mode;
     }
-  
-    
+
+
     /**
      *  Returns the title.
-     *  
+     *
      *  @return The title.
      */
     public String getTitle()
@@ -108,7 +108,7 @@ public class RSSImageLinkTag
             else
             {
                 String page = m_pageName != null ? m_pageName : m_wikiContext.getPage().getName();
-            
+
                 String params = "page="+page+"&mode="+m_mode;
                 out.print( "<a href='"+m_wikiContext.getURL( WikiContext.NONE, "rss.jsp", params ));
                 out.print( "' class='feed'" );
@@ -116,7 +116,7 @@ public class RSSImageLinkTag
                 out.print( "&nbsp;</a> ");
             }
         }
-        
+
         return SKIP_BODY;
     }
 }

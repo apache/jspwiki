@@ -32,33 +32,36 @@
 <c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
 
 <%-- navigation bar --%>
-<div class="navigation">
+<div class="navigation" role="navigation">
 
 <ul class="nav nav-pills pull-left">
   <%-- toggle sidebar --%>
   <li id="menu"><a href="#"><!--&#x2261;-->&#9776;</a></li>
 
+  <c:set var="refresh_breadCrumbTrail_attr"><wiki:Breadcrumbs /></c:set>
+  <%-- don't show the breadcrumbs if it has none or only one item --%>
+  <c:if test="${fn:length(breadCrumbTrail) gt 2}">
   <li id="trail" tabindex="0">
     <a href="#">
         <span>&hellip;</span>
-        <span>&hellip;</span>
+        <span><fmt:message key="actions.trail"/></span>
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" data-hover-parent="li">
       <li class="dropdown-header"><fmt:message key="header.yourtrail"/></li>
       <li class="divider"></li>
 
-      <%--  FIXME: breadcrumbs tag returns items in wrong order: 1st item is at back of the list !!
+      <%--  FIXME: breadcrumbs tag returns items in wrong order: most recent item is at back of the list !!
       <li><wiki:Breadcrumbs separator="</li><li>" /></li>
       --%>
-      <c:set var="refresh_breadCrumbTrail_attr"><wiki:Breadcrumbs /></c:set>
       <c:forEach items="${breadCrumbTrail}" varStatus="status" begin="2">
           <c:set var="crumb" value="${breadCrumbTrail[fn:length(breadCrumbTrail) - status.index]}" />
-          <li><wiki:Link page="${crumb}" >${crumb}</wiki:Link></li>
+          <li><wiki:Link page="${crumb}">${crumb}</wiki:Link></li>
       </c:forEach>
 
     </ul>
   </li>
+  </c:if>
 
 </ul>
 
@@ -91,10 +94,10 @@
   </li>
   </wiki:CheckRequestContext>
 
-  <%-- attachment --%>
+  <%-- attachment   : included in the info menu
   <wiki:CheckRequestContext context='view|info|rename|diff|rename|edit|comment|conflict'>
   <wiki:PageExists>
-  <c:if test="${param.tab ne 'attach'}"><%-- context upload -> context view&tab=attach ... --%>
+  <c:if test="${param.tab ne 'attach'}"><!-- context upload -> context view&tab=attach ... -- >
   <li id="attach"
    class="<wiki:Permission permission='!upload'>disabled</wiki:Permission>">
     <wiki:Link page="${page}" context="upload" accessKey="a" >
@@ -106,36 +109,59 @@
   </c:if>
   </wiki:PageExists>
   </wiki:CheckRequestContext>
+  --%>
 
   <%-- info --%>
   <wiki:CheckRequestContext context='view|info|upload|rename|edit|comment|conflict'>
   <wiki:PageExists>
   <li id="info" tabindex="0">
-    <wiki:Link context="info" accessKey="i">
-      <span class="icon-info-menu"></span>
-      <span><fmt:message key='info.tab'/></span>
-      <wiki:PageExists><span class="caret"></span></wiki:PageExists>
-    </wiki:Link>
+      <a href="#" accessKey="i">
+        <span class="icon-info-menu"></span>
+        <span><fmt:message key='info.tab'/></span>
+        <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
+        <wiki:PageExists><span class="caret"></span></wiki:PageExists>
+      </a>
     <ul class="dropdown-menu pull-right" data-hover-parent="li">
       <li class="dropdown-header"><fmt:message key="info.version"/> : <span class="badge"><wiki:PageVersion /></span></li>
-      <li class="dropdown-header"><fmt:message key="info.date"/> : </li>
-      <wiki:CheckVersion mode="latest">
-        <li><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
-      </wiki:CheckVersion>
-      <wiki:CheckVersion mode="notlatest">
-        <li><wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></li>
-      </wiki:CheckVersion>
-      <li class="dropdown-header"><fmt:message key="info.author"/> : </li>
-      <li>
+      <li class="dropdown-header"><fmt:message key="info.date"/> :
+        <span>
+        <wiki:CheckVersion mode="latest">
+          <wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink>
+        </wiki:CheckVersion>
+        <wiki:CheckVersion mode="notlatest">
+          <wiki:DiffLink version="current" newVersion="latest"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink>
+        </wiki:CheckVersion>
+        </span>
+      </li>
+      <li class="dropdown-header"><fmt:message key="info.author"/> :
+        <span>
         <%-- wiki:Author sometimes returns a link(ok) or a plain text, we always need a link! --%>
         <c:set var="author"><wiki:Author/></c:set>
         <c:choose>
           <c:when test="${ fn:contains(author,'href=')}">${author}</c:when>
           <c:otherwise><a href="#">${author}</a></c:otherwise>
         </c:choose>
+        </span>
+      </li>
+      <li class="dropdown-header">
+        <wiki:RSSImageLink mode="wiki" title="<fmt:message key='info.feed'/>"/>
       </li>
       <li class="divider"></li>
-      <li><wiki:RSSImageLink mode="wiki" /></li>
+      <li class="dropdown-header">
+        <c:set var="disabledBtn" value=""/>
+        <wiki:CheckRequestContext context='info'><c:set var="disabledBtn" value="disabled" /></wiki:CheckRequestContext>
+          <wiki:Link cssClass="btn btn-xs btn-default ${disabledBtn}" context="info" tabindex="0"><fmt:message key='info.moreinfo'/></wiki:Link>
+      </li>
+      <li class="dropdown-header">
+        <c:set var="disabledBtn" value=""/>
+        <wiki:CheckRequestContext context='upload'><c:set var="disabledBtn" value="disabled" /></wiki:CheckRequestContext>
+        <wiki:Permission permission='!upload'><c:set var="disabledBtn" value="disabled" /></wiki:Permission>
+        <wiki:Link cssClass="btn btn-xs btn-default ${disabledBtn}" page="${page}" context="upload" tabindex="0">
+          <span class="icon-paper-clip"></span>
+          <fmt:message key='edit.tab.attachments'/>
+          <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
+        </wiki:Link>
+      </li>
     </ul>
   </li>
   </wiki:PageExists>

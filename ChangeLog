@@ -1,3 +1,22 @@
+2018-07-01  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.5-git-05 : few more haddock template updates
+
+       * The haddock editor has now a page restore functionality to recover unsaved page
+         edits.  When your session or login timer expires, or your accidentally close a
+         browser tab without saving, etc...  your last changes are now preserved in the
+         localstorage area of your browser.
+         At the start of a new edit sessions,  you will be presented with a modal dialog
+         to restore the cached page.
+
+       * The "attach" and the "info" menu are now combined into a single navigation menu.
+         The INFO or ATTACHMENT UPLOAD page can be accessed with an additional
+         click of a button. This also improves usability on touch devices.
+
+       * Small refinements of the Search and User buttons (top-right corner)
+         to improve support for touch devices. (issue reported by Juan Pablo)
+
+
 2018-06-17  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.5-git-04  Fine-tuning Haddock for mobile devices.

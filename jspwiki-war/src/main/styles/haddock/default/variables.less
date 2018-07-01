@@ -97,12 +97,15 @@ images/feather-small.png   wxh  162x286
 
 //blurb layout :        1 | (1*phi*phi)
 //three section layout: 1 | (1*phi*phi) | 1
-@wiki-sidebar-width: percentage( 1 / (1 + @golden-square + 1) );  //21.6447%
+@sidebar-ratio: 1 / (1 + @golden-square + 1); //21.6447
+@wiki-sidebar-width: percentage( @sidebar-ratio );  //21.6447%
 
 //wider layout :  1 | (1*phi)   => commentbox
 @wiki-commentbox-ratio: percentage( 1 / (1 + @golden-square) ); //27.6373%
 @wiki-commentbox-width: @wiki-commentbox-ratio * 100% / (100% - @wiki-sidebar-width);
 @wiki-commentbox-width-inverse: (100% - @wiki-commentbox-width);
+@wiki-modal-max-width: 100 * (1-@sidebar-ratio);
+@wiki-modal-max-height: 90;
 
 //Nav bar
 @wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;

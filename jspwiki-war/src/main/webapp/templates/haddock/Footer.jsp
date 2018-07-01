@@ -28,7 +28,7 @@
   <wiki:InsertPage page="CopyrightNotice"/>
 
   <div class="wiki-version"><%=Release.APPNAME%> v<%=Release.getVersionString()%>
-    <wiki:RSSImageLink title="Aggregate the RSS feed" />
+    <wiki:RSSImageLink />
   </div>
 
 </div>

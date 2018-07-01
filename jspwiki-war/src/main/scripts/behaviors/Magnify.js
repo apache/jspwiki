@@ -55,6 +55,9 @@ function Magnify( images ){
                 backgroundPosition: bgX + "px " + bgY + "px"
             });
 
+            /*avoid that the whole screen starts to scroll around when touch-down*/
+            if( /touch/.test(event.type) ){ event.preventDefault(); }
+
         }
 
         maggy.ifClass( isVisible , "show" );
@@ -62,6 +65,7 @@ function Magnify( images ){
     }
 
     $$( images ).addEvents({
+        mousedown: function(event){ event.stop(); },  //avoid dragging/selecting the img
         mousemove: move_maggy,
         touchmove: move_maggy,
         mouseleave: move_maggy,

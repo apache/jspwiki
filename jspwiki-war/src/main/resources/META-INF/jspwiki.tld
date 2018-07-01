@@ -358,6 +358,10 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
+       <name>tabindex</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
        <name>compareToVersion</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>

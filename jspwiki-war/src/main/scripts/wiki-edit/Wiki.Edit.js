@@ -31,7 +31,8 @@ Class: Wiki.Edit
 
 !(function( wiki ){
 
-var PreviewSemaphore;  //global semaphore to avoid double running the XHR preview
+var PreviewSemaphore,  //global semaphore to avoid double running the XHR preview
+    LocalCache; //name of the localstorage key
 
 wiki.add("textarea#editorarea", function( main ){
 
@@ -40,7 +41,6 @@ wiki.add("textarea#editorarea", function( main ){
     function getFormElem( selector ){  return form.getElement( selector );  }
 
     onbeforeunload( window, main );
-
 
     if( snipe = getFormElem("textarea.snipeable") ){
 
@@ -66,8 +66,12 @@ wiki.add("textarea#editorarea", function( main ){
 
                 if( snipeHasChanged && !PreviewSemaphore ){
 
+                    var content = snipe.get('value').trim();
+
+                    localStorage.setItem(LocalCache, content);
+
                     snipeHasChanged = false;
-                    livepreview( snipe, preview, getFormElem("[data-cmd=livepreview]") );
+                    livepreview( content, preview, getFormElem("[data-cmd=livepreview]") );
 
                 }
 
@@ -82,6 +86,20 @@ wiki.add("textarea#editorarea", function( main ){
             menu: getFormElem(".sections > ul"),
             parser: jspwikiSectionParser
         });
+
+
+        LocalCache = "wiki" + wiki.PageName;
+
+        if(LocalCache in localStorage){
+
+            var cache = localStorage.getItem(LocalCache),
+                modal = getFormElem(".localstorage");
+
+            modal.grab("pre".slick({text:cache}) )
+                .openModal( function(){
+                    snipe.set("value", cache);
+                });
+        }
 
     }
 
@@ -109,6 +127,7 @@ function onbeforeunload( window, main ){
 
     main.form.addEvent("submit", function(){
 
+        localStorage.removeItem( LocalCache );
         window.onbeforeunload = null;
 
     });
@@ -122,25 +141,24 @@ Function: livepreview
     (wiki markup) to HTML.
 */
 
-function livepreview(snipe, preview, previewToggle){
+function livepreview(content, preview, previewToggle){
 
-    var content = snipe.get("value").trim(),
-        isEmpty = content == "",
+    var isEmpty = content == "",
+        loading = "loading",
         name, link;
 
 
-    function previewDone(){  PreviewSemaphore = false;  } //semaphore OFF!
+    function previewDone(){  PreviewSemaphore = false;  }
 
-    function renderPreview( completed ){
+    function renderPreview(done){
 
-        preview.ifClass(!completed, "loading");
-
-        if( completed ){
+        preview.ifClass(done,loading);
+        if(done){
             wiki.update();  //render the preview area
             previewDone();
         }
-
     }
+
 
     if( !previewToggle.checked ){
 
@@ -187,7 +205,7 @@ function livepreview(snipe, preview, previewToggle){
             },
             update: preview,
             onRequest: renderPreview,
-            onComplete: renderPreview.pass(true),
+            onSuccess: renderPreview.pass(true),
             onError: previewDone
 
         }).send();

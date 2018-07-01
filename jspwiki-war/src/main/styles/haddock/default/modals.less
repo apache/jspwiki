@@ -36,44 +36,44 @@ body[.show-modal]
 */
 
 .modal {
-  position: fixed;
-  top: 50%; left: 50%;
-  width: 20em; margin: -5em -10em;
+  //position: fixed;
+  position: absolute;
+  max-width: unit(@wiki-modal-max-width, vw);
+  max-height: unit(@wiki-modal-max-height,vh);
+  top: unit( (100 - @wiki-modal-max-height)/2,vh);
+  left: 50%; margin-right:-50%;
+  transform: translate(-50%);
 
   padding: @modal-inner-padding;
-  .lead; //get some bigger font
 
   background-color: @modal-content-bg;
   border: 1px solid @modal-content-border-color;
   border-radius: @border-radius-large;
-  .box-shadow(0 5px 15px rgba(0,0,0,.5));
-  // Remove focus outline from opened modal
-  outline: none;
-
-  .transition(all .6s);
-  .opacity(0);
-  z-index: -1;
-  pointer-events:0;
+  .box-shadow(0 0 20vh rgba(0,0,0,.5));
+  outline: none; // Remove focus outline from opened modal
 }
 
 
-// Modal background DOM element, inserted as last element of the DOM
+// Modal background DOM element, inserted as last element of the body
 .backdrop {
-    position: fixed;top: 0;left: 0;right: 0;bottom: 0;
+    position: fixed;
+    top: 0;left: 0;right: 0;bottom: 0;
     background-color: @modal-backdrop-bg;
+    pointer-events:none;
+}
 
-    .transition(all .6s);
+.modal, .backdrop {
+    z-index: -1; //hidden by default
     .opacity(0);
-    z-index: -1;
+    .transition(all .6s);
 }
 
 .show-modal {
 
     .backdrop {
         .opacity(0.3);
-        z-index: (@zindex-modal-background - 10); //bring above main content, but below the dialog
+        z-index: (@zindex-modal-background - 1); //bring above main content, but below the modal dialog
     }
-
     .modal.active {
         .opacity(1);
         z-index: @zindex-modal-background;
@@ -83,7 +83,7 @@ body[.show-modal]
 
 // Footer (for actions)
 .modal-footer {
-    margin-top: 15px;
+    margin-top: @modal-inner-padding;
     text-align: center; // right align buttons
 
     // Properly space out buttons
@@ -92,7 +92,6 @@ body[.show-modal]
         margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
     }
 }
-
 
 // Scale up the modal
 @media screen and (min-width: @screen-sm-min) {

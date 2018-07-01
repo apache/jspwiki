@@ -61,6 +61,9 @@ DOM structure:
         margin:  -@padding-base-vertical  -@padding-base-horizontal ;
         min-height: 100%;
     }
+    .col > pre:only-child {
+    	margin:-@padding-base-vertical 0;
+    }
 
     &.border > .col:not(:last-child){ border-right:1px solid @btn-default-border; }
     &.border + &.border { border-top:none; }

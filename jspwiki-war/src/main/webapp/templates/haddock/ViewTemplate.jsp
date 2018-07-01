@@ -59,7 +59,7 @@
 
   <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
                                        data-toggle-pref="${sidebarCookie}" >
-    <div class="page">
+    <div class="page" role="content">
       <wiki:Content/>
       <wiki:Include page="PageInfo.jsp"/>
     </div>

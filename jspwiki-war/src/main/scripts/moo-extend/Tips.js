@@ -39,8 +39,9 @@ Bootstrap
 var Tips = function Tips(elements){
 
         var tt = 'div.tooltip',
-            TheTip = [tt,[tt+'-inner'/*,tt+'-arrow'*/]].slick().inject(document.body),
-            inner = TheTip.getFirst();
+            zTip = [tt,[tt+'-inner'/*,tt+'-arrow'*/]].slick().inject(document.body),
+            inner = zTip.firstChild,
+            isVisible;
 
         function tipEvent( e ){
 

@@ -91,7 +91,6 @@ var Wiki = {
 
             //generate modal confirmation boxes, eg prompting to execute
             //an unrecoverable action such as deleting a page or attachment
-            //.add("[data-modal]", "onModal", {attr:"data-modal"})
             .add( "[data-modal]", function(element){
                 element.onModal( element.get("data-modal") );
             })

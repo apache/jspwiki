@@ -83,6 +83,71 @@ Medium size screens,  tablets,  phones in landscape mode
 	// type.less
 	// grid.less
 	// tables.less
+	//	Use .table-responsive as wrapper around large wide tables
+	//  Modified from bootstrap/tables.less
+	.table-responsive {
+		overflow-x: auto;
+		min-height: 0.01%; // Workaround for IE9 bug (see https://github.com/twbs/bootstrap/issues/14837)
+
+	    width: 100%;
+	    margin-bottom: (@line-height-computed * 0.75);
+    	overflow-y: hidden;
+    	-ms-overflow-style: -ms-autohiding-scrollbar;
+    	border: 0; //overrule default bootstrap :  1px solid @table-border-color;
+
+	    // Tighten up spacing
+	    table, .wikitable {
+    		margin-bottom: 0;
+
+    		// Ensure the content doesn't wrap
+		    > thead,
+    		> tbody,
+    		> tfoot {
+        		> tr {
+        			> th,
+        			> td {
+            			white-space: nowrap;
+        			}
+        		}
+    		}
+    	}
+
+    	// Special overrides for the bordered tables
+    	.table-bordered {
+    		border: 0;
+
+    		// Nuke the appropriate borders so that the parent can handle them
+    		> thead,
+    		> tbody,
+    		> tfoot {
+        		> tr {
+        			> th:first-child,
+        			> td:first-child {
+            			border-left: 0;
+        			}
+	        		> th:last-child,
+    	    		> td:last-child {
+            			border-right: 0;
+        			}
+        		}
+    		}
+
+    		// Only nuke the last row's bottom-border in `tbody` and `tfoot` since
+    		// chances are there will be only one `tr` in a `thead` and that would
+    		// remove the border altogether.
+    		> tbody,
+    		> tfoot {
+        		> tr:last-child {
+        			> th,
+        			> td {
+            			border-bottom: 0;
+        			}
+        		}
+    		}
+    	}
+	}
+
+
 	// TableX.Sort.less
 	// TableX.Filter.less
 	// forms.less
@@ -256,7 +321,6 @@ Medium size screens,  tablets,  phones in landscape mode
 	input#changenote { max-width: @wiki-small-viewport-dialog-width; }
 
 
-	.modal,
 	.slmbx,
 	.dialog.find {
 		max-width:@wiki-small-viewport-dialog-width;
