@@ -46,8 +46,10 @@ public class CommentedPropertiesTest
     {
         InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test.properties" );
         m_props.load( in );
-        File m_propFile = getFile( "test.properties" );
-        m_propFileSize = ( int )m_propFile.length();
+        // CommentedProperties always internally uses \n as EOL, as opposed to a File which uses, well, the given EOL of the File.  
+        // Thus, executing this test when test.properties has another EOL (like f.ex when git cloning having core.autocrlf=true on
+        // windows) using File.length() would fail this test. 
+        m_propFileSize = m_props.toString().length();
         in.close();
     }
 
