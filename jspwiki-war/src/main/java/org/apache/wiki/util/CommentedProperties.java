@@ -127,9 +127,9 @@ public class CommentedProperties extends Properties
     public synchronized void putAll( Map arg0 )
     {
         // Shove all of the entries into the property string
-        for( Iterator it = arg0.entrySet().iterator(); it.hasNext(); )
+        for( Iterator< Entry< ?, ? > > it = arg0.entrySet().iterator(); it.hasNext(); )
         {
-            Entry entry = (Entry)it.next();
+            Entry< ?, ? > entry = it.next();
             writeProperty( entry.getKey(), entry.getValue() );
         }
 
