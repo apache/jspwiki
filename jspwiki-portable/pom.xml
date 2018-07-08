@@ -31,7 +31,7 @@
 
   <properties>
     <jspwiki.woas.language>en</jspwiki.woas.language>
-    <tomcat.version>7.0.84</tomcat.version>
+    <tomcat.version>7.0.90</tomcat.version>
   </properties>
 
   <build>

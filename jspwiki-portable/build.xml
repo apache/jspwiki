@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.10.4" />
+  <property name="jspwiki.woas.version" value="2.10.5" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
@@ -38,7 +38,7 @@
   <property name="jspwiki.woas.assembly.dir" value="${jspwiki.woas.target.dir}/woas" />
 
   <!-- the Tomcat version to use --> 
-  <property name="jspwiki.tomcat.version" value="7.0.84"/>
+  <property name="jspwiki.tomcat.version" value="7.0.90"/>
 
   <!-- the Tomcat distribution to use --> 
   <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
@@ -148,11 +148,11 @@
         <singleInstance mutexName="org.apache.jspwiki.jspwiki-portable" />
         <jre minVersion="1.6.0" />
         <versionInfo
-          fileVersion="2.10.4.0"
+          fileVersion="2.10.5.0"
           txtFileVersion="JSPWiki ${jspwiki.woas.version}"
           fileDescription="WikiOnAStick"
           copyright="Apache Software Licence 2.0"
-          productVersion="2.10.4.0"
+          productVersion="2.10.5.0"
           txtProductVersion="JSPWiki ${jspwiki.woas.version}"
           productName="WikiOnAStick"
           companyName="Apache Software Foundation"
