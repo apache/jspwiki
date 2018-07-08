@@ -1,3 +1,7 @@
+2018-07-08  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.5-git-06 : update bundled Apache Tomcat on portable JSPWiki to 7.0.90
+
 2018-07-01  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.5-git-05 : few more haddock template updates
