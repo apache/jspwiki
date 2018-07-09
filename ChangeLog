@@ -1,3 +1,18 @@
+2018-07-09  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.10.5-git-07 : fix to plain haddock editor related to the new
+         functionality to recover unsaved page edits.
+
+         You can test this like so:
+         - open a page for edit in the haddock template
+         - make some changes to the page
+         - move to another page without saving (or close the browser tab)
+         - click LEAVE when the popup 'changes you made may not be saved' appears.
+         - reopen the page for edit
+         - you should now receive a new popup which allows you to restore or abandon
+           the unsaved changes
+
+
 2018-07-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.5-git-06 : update bundled Apache Tomcat on portable JSPWiki to 7.0.90

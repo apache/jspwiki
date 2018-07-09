@@ -92,6 +92,13 @@
 
   <div class="snipe">
 
+    <div class="localstorage modal">
+      <div class="modal-footer">
+        <button class="btn btn-success"><fmt:message key="editor.plain.localstorage.restore"/></button>
+        <button class="btn btn-danger"><fmt:message key="editor.plain.localstorage.delete"/></button>
+      </div>
+    </div>
+
     <div class="form-inline form-group sticky">
 
     <div class="form-inline form-group dropdown">
