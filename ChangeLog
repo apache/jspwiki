@@ -1,3 +1,7 @@
+2018-07-08  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.10.5-git-08 : update flexmark to 0.34.6 and slf4j to 1.7.25
+
 2018-07-09  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.10.5-git-07 : fix to plain haddock editor related to the new
