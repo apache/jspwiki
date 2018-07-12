@@ -23,7 +23,7 @@ import org.apache.wiki.WikiContext;
 import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.AttributeProviderFactory;
 import com.vladsch.flexmark.html.IndependentAttributeProviderFactory;
-import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.LinkResolverContext;
 
 
 /**
@@ -40,10 +40,10 @@ public class JSPWikiLinkAttributeProviderFactory extends IndependentAttributePro
     /**
      * {@inheritDoc}
      *
-     * @see com.vladsch.flexmark.html.AttributeProviderFactory#create(com.vladsch.flexmark.html.renderer.NodeRendererContext)
+     * @see com.vladsch.flexmark.html.AttributeProviderFactory#create(com.vladsch.flexmark.html.renderer.LinkResolverContext)
      */
     @Override
-    public AttributeProvider create( final NodeRendererContext context ) {
+    public AttributeProvider create( final LinkResolverContext context ) {
         return new JSPWikiLinkAttributeProvider( wikiContext );
     }
 
