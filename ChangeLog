@@ -1,3 +1,7 @@
+2018-08-31  Siegfried Goeschl (sgoeschl@apache.org)
+
+       * 2.10.5-git-09 : JSPWIKI-1073 Upgrade the jspwiki-portable build
+
 2018-07-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.10.5-git-08 : update flexmark to 0.34.6 and slf4j to 1.7.25
