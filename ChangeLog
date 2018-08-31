@@ -1,3 +1,9 @@
+2018-08-31  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+	   * update flexmark to 0.34.22 and ASF parent pom to 21
+
+	   * prepare release for 2.10.5
+
 2018-08-31  Siegfried Goeschl (sgoeschl@apache.org)
 
        * 2.10.5-git-09 : JSPWIKI-1073 Upgrade the jspwiki-portable build
