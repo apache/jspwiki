@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>19</version>
+    <version>21</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -39,8 +39,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <flexmark.version>0.34.6</flexmark.version>
+    <flexmark.version>0.34.22</flexmark.version>
     <jdk.version>1.6</jdk.version>
+    <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
+    <maven.compiler.target>${jdk}</maven.compiler.target>
     <lucene.version>4.7.0</lucene.version>
     <selenium.version>2.42.0</selenium.version>
     <slf4j.version>1.7.25</slf4j.version>
@@ -529,7 +531,7 @@
         <plugin>
           <groupId>net.nicoulaj.maven.plugins</groupId>
           <artifactId>checksum-maven-plugin</artifactId>
-          <version>1.6</version>
+          <version>1.7</version>
           <executions>
             <execution>
               <goals>
@@ -539,7 +541,6 @@
           </executions>
           <configuration>
             <algorithms>
-              <algorithm>SHA-1</algorithm>
               <algorithm>SHA-512</algorithm>
             </algorithms>
           </configuration>
@@ -577,8 +578,7 @@
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes>
-              <exclude>mvn_cheat-sheet.md</exclude> <!-- handy list of maven commands; will be moved to site once we've switched to Maven -->
-              <exclude>.gitignore</exclude>          <!-- git exclusions -->
+              <exclude>.gitignore</exclude>                                     <!-- git exclusions -->
               <exclude>**/src/main/config/doc/LICENSE.*</exclude>               <!-- 3rd party License files -->
               <exclude>**/src/main/config/wikipages/**</exclude>                <!-- Default wikipages -->
               <exclude>**/src/main/config/dev/OldChangeLog</exclude>            <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
