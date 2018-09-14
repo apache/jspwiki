@@ -29,7 +29,7 @@
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>2.10.6-SNAPSHOT</version>
+  <version>2.11.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard J2EE components (Java, servlets, JSP).</description>
@@ -40,7 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <flexmark.version>0.34.22</flexmark.version>
-    <jdk.version>1.6</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
     <maven.compiler.target>${jdk}</maven.compiler.target>
     <lucene.version>4.7.0</lucene.version>
@@ -51,7 +51,7 @@
   </properties>
 
   <prerequisites>
-    <maven>3.0.4</maven>
+    <maven>3.5.0</maven>
   </prerequisites>
 
   <scm>
