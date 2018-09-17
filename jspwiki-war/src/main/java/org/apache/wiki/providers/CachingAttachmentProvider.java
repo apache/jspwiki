@@ -241,7 +241,7 @@ public class CachingAttachmentProvider
      *  @return null, if no such attachment was in this collection.
      */
     private Attachment findAttachmentFromCollection( Collection< Attachment > c, String name ) {
-        for( Attachment att : c ) {
+        for( Attachment att : new ArrayList< Attachment >( c ) ) {
             if( name.equals( att.getFileName() ) ) {
                 return att;
             }
