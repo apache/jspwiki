@@ -1,3 +1,7 @@
+2018-09-14  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-01: minimum required to build/run is now Java 8 / Maven 3.5.0
+
 2018-08-31  Juan Pablo Santos (juanpablo AT apache DOT org)
 
 	   * update flexmark to 0.34.22 and ASF parent pom to 21
