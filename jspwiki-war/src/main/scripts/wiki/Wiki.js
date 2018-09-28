@@ -336,7 +336,7 @@ var Wiki = {
 			// Limit scroll top to counteract iOS / OSX bounce.
 			scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
 
-			if (Math.abs(lastScrollY - scrollY) > 5 /* minimum difference */) {
+			if (Math.abs(lastScrollY - scrollY) > header[height] /* minimum difference */) {
 
 				header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
 				lastScrollY = scrollY;
