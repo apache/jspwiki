@@ -46,6 +46,7 @@
     <lucene.version>4.7.0</lucene.version>
     <selenium.version>2.42.0</selenium.version>
     <slf4j.version>1.7.25</slf4j.version>
+	<tomcat.version>8.5.34</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <minimize>true</minimize> <!-- wro4j compression -->
   </properties>
@@ -600,12 +601,40 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.tomcat.maven</groupId>
-          <artifactId>tomcat7-maven-plugin</artifactId>
-          <version>2.2</version>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-maven2-plugin</artifactId>
+          <version>1.6.10</version>
           <configuration>
-            <contextReloadable>true</contextReloadable>
-            <port>8080</port>
+            <container>
+              <!-- https://codehaus-cargo.github.io/cargo/Maven2+Plugin+Reference+Guide.html#Maven2PluginReferenceGuide-container -->
+              <containerId>tomcat8x</containerId>
+              <zipUrlInstaller>
+                <url>https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.version}/tomcat-${tomcat.version}.zip</url>
+              </zipUrlInstaller>
+              <output>${project.build.directory}/tomcat8x/logs/container.log</output>
+              <systemProperties>
+                <user.language>en</user.language>
+                <user.region>US</user.region>
+              </systemProperties>
+            </container>
+            <configuration>
+              <type>standalone</type>
+              <home>${project.build.directory}/tomcat8x</home>
+              <properties>
+                <cargo.servlet.port>8080</cargo.servlet.port>
+                <cargo.jvmargs>-XX:MaxPermSize=512m -Xms256m -Xmx3072m -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -XX:+DisableExplicitGC -Xverify:none -Djava.awt.headless=true</cargo.jvmargs>
+              </properties>
+            </configuration>
+            <!-- <deployables>
+              <deployable>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>jspwiki-war</artifactId>
+                <type>war</type>
+                <properties>
+                  <context>/JSPWiki</context>
+                </properties>
+              </deployable>
+            </deployables> -->
           </configuration>
         </plugin>
 

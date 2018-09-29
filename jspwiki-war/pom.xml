@@ -188,25 +188,6 @@
   <build>
     <finalName>JSPWiki</finalName>
     <plugins>
-      <!-- With below plugin can deploy to an embedded Tomcat instance via:
-         mvn clean install tomcat7:run-war [-Dmaven.test.skip]
-         ...or standalone by adding a <server /> entry "myTomcat":
-         http://www.jroller.com/gmazza/entry/web_service_tutorial#maventomcat
-         and running tomcat7:redeploy instead of run-war in
-         string above.
-
-         Either way, JSPWiki URL will be
-         http://localhost:8080/JSPWiki
-      -->
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <configuration>
-          <server>myTomcat</server>
-          <url>http://localhost:8080/manager/text</url>
-          <path>/${project.build.finalName}</path>
-        </configuration>
-      </plugin>
       
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
