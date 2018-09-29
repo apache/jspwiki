@@ -57,15 +57,19 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
         <configuration>
-          <!-- Using CMA, so Tomcat instance needs a tomcat-users.xml w/usernames & passwords -->
-          <tomcatUsers>
-            ${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat-users.xml
-          </tomcatUsers>
-          <!-- Using JDBC for User & Group info, so Tomcat instance needs JNDI lookups for database -->
-          <contextFile>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat7-context.xml</contextFile>
+          <configfiles>
+            <configfile> <!-- Using CMA, so Tomcat instance needs a tomcat-users.xml w/usernames & passwords -->
+              <file>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat-users.xml</file>
+              <todir>conf</todir>
+            </configfile>
+            <configfile> <!-- Using JDBC for User & Group info, so Tomcat instance needs JNDI lookups for database -->
+              <file>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/context.xml</file>
+              <todir>conf</todir>
+            </configfile>
+          </configfiles>
         </configuration>
       </plugin>
 

@@ -131,13 +131,16 @@
           <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file)
                located in pom.xml of submodules using them. -->
           <plugin>
-            <groupId>org.apache.tomcat.maven</groupId>
-            <artifactId>tomcat7-maven-plugin</artifactId>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+			<configuration>
+              <wait>false</wait>
+            </configuration>
             <executions>
               <execution>
-                <id>tomcat-run</id>
+                <id>container-start</id>
                 <goals>
-                  <goal>run-war</goal>
+                  <goal>start</goal>
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
@@ -149,9 +152,9 @@
                 </configuration>
               </execution>
               <execution>
-                <id>tomcat-shutdown</id>
+                <id>container-stop</id>
                 <goals>
-                  <goal>shutdown</goal>
+                  <goal>stop</goal>
                 </goals>
                 <phase>post-integration-test</phase>
               </execution>

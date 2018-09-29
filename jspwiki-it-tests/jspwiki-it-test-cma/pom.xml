@@ -44,13 +44,15 @@
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
         <configuration>
-          <!-- Using CMA, so Tomcat instance needs a tomcat-users.xml w/usernames & passwords -->
-          <tomcatUsers>
-            ${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat-users.xml
-          </tomcatUsers>
+          <configfiles>
+            <configfile> <!-- Using CMA, so Tomcat instance needs a tomcat-users.xml w/usernames & passwords -->
+              <file>${project.basedir}/../jspwiki-selenium-tests/src/main/config/tomcatconf/tomcat-users.xml</file>
+              <todir>conf</todir>
+            </configfile>
+          </configfiles>
         </configuration>
       </plugin>
       <plugin>
