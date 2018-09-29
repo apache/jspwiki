@@ -73,15 +73,15 @@ Run the following commands
 ```
 jspwiki-portable> mvn clean package
 
-jspwiki-portable> ant woas:download-launch4j-for-mac woas:create-windows-app
+jspwiki-portable> ant woas:download-launch4j-for-mac woas:create-windows-app -Djspwiki.tomcat.version=X.Y.Z
 Buildfile: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/build.xml
 
 woas:download-launch4j-for-mac:
     [mkdir] Created dir: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j
-      [get] Getting: http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.8/launch4j-3.8-macosx-x86.tgz
-      [get] To: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.8-macosx-x86.tgz
-    [untar] Expanding: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.8-macosx-x86.tgz into /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack
-   [delete] Deleting: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.8-macosx-x86.tgz
+      [get] Getting: http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.12/launch4j-3.12-macosx-x86.tgz
+      [get] To: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.12-macosx-x86.tgz
+    [untar] Expanding: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.12-macosx-x86.tgz into /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack
+   [delete] Deleting: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/launch4j/launch4j-3.12-macosx-x86.tgz
 
 woas:create-windows-app:
  [launch4j] Compiling resources
@@ -94,7 +94,7 @@ BUILD SUCCESSFUL
 ```
 The generated "woas.exe" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.exe* after manual testing.
 
-note: on windows platforms, use `ant woas:download-launch4j-for-win woas:create-windows-app` to create the launcher.
+note: on windows platforms, use `ant woas:download-launch4j-for-win woas:create-windows-app -Djspwiki.tomcat.version=X.Y.Z` to create the launcher.
 
 ### 2.1.2 Creating The Mac OS X Launcher
 
@@ -103,13 +103,13 @@ Run the following commands
 ```
 jspwiki-portable> mvn clean package
 
-jspwiki-portable> ant woas:download-appbundler-for-mac woas:mac-app-oracle-jdk
+jspwiki-portable> ant woas:download-appbundler-for-mac woas:mac-app-oracle-jdk -Djspwiki.tomcat.version=X.Y.Z
 Buildfile: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/build.xml
 
 woas:download-appbundler-for-mac:
     [mkdir] Created dir: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/appbundler
-      [get] Getting: https://java.net/downloads/appbundler/appbundler-1.0.jar
-      [get] To: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/appbundler/appbundler-1.0.jar
+      [get] Getting: http://search.maven.org/remotecontent?filepath=com/panayotis/appbundler/1.1.0/appbundler-1.1.0.jar
+      [get] To: /Users/sgoeschl/work/asf/jspwiki/trunk/jspwiki/jspwiki-portable/target/unpack/appbundler/appbundler-1.1.0.jar
 
 woas:mac-app-oracle-jdk:
      [echo] Building Mac OS X launcher for Oracle JDK
@@ -119,7 +119,7 @@ BUILD SUCCESSFUL
 ```
 The generated "woas.app" can be copied manually to *jspwiki-portable/src/overlay/launchers/tomcat/woas.app* after manual testing.
 
-note: on windows platforms, use `ant woas:download-appbundler-for-mac woas:download-launch4j-for-mac woas:create-mac-app`
+note: on windows platforms, use `ant woas:download-appbundler-for-mac woas:download-launch4j-for-mac woas:create-mac-app -Djspwiki.tomcat.version=X.Y.Z`
 
 ## 2.2. Current State
 
