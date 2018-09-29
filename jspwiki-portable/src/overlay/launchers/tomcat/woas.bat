@@ -17,7 +17,7 @@ REM  limitations under the License.
 
 REM %~dp0 is expanded pathname of the current script under NT
 
-SET JSPWIKI_HOME=%~dp0
+SET JSPWIKI_HOME=%cd%
 
 SET CATALINA_HOME=%JSPWIKI_HOME%
 SET CATALINA_BASE=%JSPWIKI_HOME%
