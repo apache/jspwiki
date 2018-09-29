@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.11.0-M1" />
+  <property name="jspwiki.woas.version" value="2.11.0" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
@@ -38,7 +38,7 @@
   <property name="jspwiki.woas.assembly.dir" value="${jspwiki.woas.target.dir}/woas" />
 
   <!-- the Tomcat version to use --> 
-  <property name="jspwiki.tomcat.version" value="7.0.90"/>
+  <property name="jspwiki.tomcat.version" value="${jspwiki.tomcat.version}"/>
 
   <!-- the Tomcat distribution to use --> 
   <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
@@ -86,7 +86,7 @@
   <!-- Tomcat 7 Distribution                                          -->
   <!-- ############################################################## -->
 
-  <target name="woas:copy-tomcat-7" description="Prepares an unpacked Tomcat 7 deployment">
+  <target name="woas:copy-tomcat" description="Prepares an unpacked Tomcat deployment">
     <!-- copy the stuff to the assembly directory -->
     <copy todir="${jspwiki.woas.assembly.dir}">
       <fileset dir="${jspwiki.woas.unpack.dir}/tomcat/${jspwiki.tomcat.distribution}"/>
@@ -114,7 +114,7 @@
     <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>        
   </target>
 
-  <target name="woas:copy-tomcat-7-launchers" description="Copies the existing native launchers"> 
+  <target name="woas:copy-tomcat-launchers" description="Copies the existing native launchers"> 
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/launchers/tomcat"/>
     </copy>    
@@ -145,14 +145,18 @@
         icon="${basedir}/src/resources/windows/jspwiki.ico"
         jar="${basedir}/target/launchers/tomcat-launcher-${jspwiki.tomcat.version}.jar"
         >
+		<classPath mainClass="org.apache.catalina.startup.Bootstrap">
+          <cp>${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/bootstrap.jar</cp>
+          <cp>${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/tomcat-juli.jar</cp>
+        </classPath>
         <singleInstance mutexName="org.apache.jspwiki.jspwiki-portable" />
-        <jre minVersion="1.6.0" />
+        <jre minVersion="1.8.0" />
         <versionInfo
-          fileVersion="${jspwiki.woas.version}"
+          fileVersion="${jspwiki.woas.version}.0"
           txtFileVersion="JSPWiki ${jspwiki.woas.version}"
           fileDescription="WikiOnAStick"
           copyright="Apache Software Licence 2.0"
-          productVersion="${jspwiki.woas.version}"
+          productVersion="${jspwiki.woas.version}.0"
           txtProductVersion="JSPWiki ${jspwiki.woas.version}"
           productName="WikiOnAStick"
           companyName="Apache Software Foundation"
@@ -212,17 +216,17 @@
     <target name="woas:download-launch4j-for-win" description="Download the Win32 launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.11/launch4j-3.11-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
-        <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.11-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
-        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.11-win32.zip"/>
+        <get src="https://datapacket.dl.sourceforge.net/project/launch4j/launch4j-3/3.12/launch4j-3.12-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
+        <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.12-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
+        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.12-win32.zip"/>
     </target>
 
     <target name="woas:download-launch4j-for-mac" description="Download the Mac OS X launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.11/launch4j-3.11-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
-        <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.11-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
-        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.11-macosx-x86.tgz"/>
+        <get src="https://datapacket.dl.sourceforge.net/project/launch4j/launch4j-3/3.12/launch4j-3.12-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
+        <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.12-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
+        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.12-macosx-x86.tgz"/>
         <chmod dir="${jspwiki.launch4j.install.dir}/bin" includes="*" perm="ugo+x"/>
     </target>
 
