@@ -2,6 +2,8 @@
 
        * 2.11.0-M1-git-02: minimum required Servlet / JSP is now 3.1 / 2.3
 
+       * add jspwiki-markdown to the main build
+
        * flexmark updated to 0.34.46
 
 2018-09-14  Juan Pablo Santos (juanpablo AT apache DOT org)
