@@ -1,3 +1,9 @@
+2018-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-02: minimum required Servlet / JSP is now 3.1 / 2.3
+
+       * flexmark updated to 0.34.46
+
 2018-09-14  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-01: minimum required to build/run is now Java 8 / Maven 3.5.0
