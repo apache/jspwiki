@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -99,7 +100,7 @@ public class WikiJSPFilter extends WikiServletFilter
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
             HttpServletResponseWrapper responseWrapper;
 
-            responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response, m_wiki_encoding, useEncoding);
+            responseWrapper = new JSPWikiServletResponseWrapper( (HttpServletResponse)response, m_wiki_encoding, useEncoding);
 
             // fire PAGE_REQUESTED event
             String pagename = DefaultURLConstructor.parsePageFromURL(
@@ -248,11 +249,11 @@ public class WikiJSPFilter extends WikiServletFilter
      *  Simple response wrapper that just allows us to gobble through the entire
      *  response before it's output.
      */
-    private static class MyServletResponseWrapper
+    private static class JSPWikiServletResponseWrapper
         extends HttpServletResponseWrapper
     {
         ByteArrayOutputStream m_output;
-        private MyServletOutputStream m_servletOut;
+        private ByteArrayServletOutputStream m_servletOut;
         private PrintWriter m_writer;
         private HttpServletResponse m_response;
         private boolean useEncoding;
@@ -264,11 +265,11 @@ public class WikiJSPFilter extends WikiServletFilter
         private static final int INIT_BUFFER_SIZE = 0x8000;
 
 
-        public MyServletResponseWrapper( HttpServletResponse r, final String wiki_encoding, boolean useEncoding)
+        public JSPWikiServletResponseWrapper( HttpServletResponse r, final String wiki_encoding, boolean useEncoding)
                 throws UnsupportedEncodingException {
             super(r);
             m_output = new ByteArrayOutputStream(INIT_BUFFER_SIZE);
-            m_servletOut = new MyServletOutputStream(m_output);
+            m_servletOut = new ByteArrayServletOutputStream(m_output);
             m_writer = new PrintWriter(new OutputStreamWriter(m_servletOut, wiki_encoding), true);
             this.useEncoding = useEncoding;
 
@@ -295,11 +296,11 @@ public class WikiJSPFilter extends WikiServletFilter
             super.flushBuffer();
         }
 
-        class MyServletOutputStream extends ServletOutputStream
+        class ByteArrayServletOutputStream extends ServletOutputStream
         {
             ByteArrayOutputStream m_buffer;
 
-            public MyServletOutputStream(ByteArrayOutputStream byteArrayOutputStream)
+            public ByteArrayServletOutputStream(ByteArrayOutputStream byteArrayOutputStream)
             {
                 super();
                 m_buffer = byteArrayOutputStream;
@@ -310,6 +311,18 @@ public class WikiJSPFilter extends WikiServletFilter
             {
                 m_buffer.write( aInt );
             }
+
+			@Override
+			public boolean isReady() 
+			{
+				return false;
+			}
+
+			@Override
+			public void setWriteListener(WriteListener writeListener) 
+			{
+			}
+			
         }
 
         /**
