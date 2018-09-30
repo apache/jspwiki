@@ -35,16 +35,16 @@ Okay, so you wanna Wiki?  You'll need the following things:
 
 REQUIRED:
 
-* A JSP engine that supports Servlet API 2.5.  We recommend Tomcat from
+* A JSP engine that supports Servlet API 3.1.  We recommend Tomcat from
   http://tomcat.apache.org/ for a really easy installation.
-  Tomcat 6.x or later is supported.
+  Tomcat 8.x or later is supported.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
 
 * And of course, a server to run the JSP engine on.
 
-* JDK 1.6+
+* JDK 8+
 
 
 OPTIONAL:
