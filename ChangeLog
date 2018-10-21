@@ -1,3 +1,19 @@
+2018-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-03: Haddock is now the default template
+	     - to bring back the 2.10 template set the jspwiki.templateDir property to "210"
+
+	   * added the following pages to the core pages' bundles, as they enable some more haddock functionality
+	     - CSSBackgroundGradients: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Gradients
+	     - CSSBackgroundPatterns: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Patterns
+	     - CSSInstagramFilters: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Instagram%20Filters
+	     - CSSPrettifyThemeTomorrowNightBlue: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Tomorrow%20Night%20Blue
+	     - CSSPrettifyThemeTomorrowPrism: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Prism
+	     - CSSRibbon: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Ribbon
+	     - CSSStripedText: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Striped Text
+	     - CSSThemeCleanBlue: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Clean%20Blue%20Theme
+	     - CSSThemeDark: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Dark%20Theme
+
 2018-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-02: minimum required Servlet / JSP is now 3.1 / 2.3
