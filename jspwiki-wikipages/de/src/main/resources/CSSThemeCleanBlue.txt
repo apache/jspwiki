@@ -1,0 +1,129 @@
+%%add-css
+/* fonts */
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web:300,400,400italic,600,600italic,700|Source+Code+Pro:400,600);
+
+body {
+  font-family: "Titillium Web", "Candara", "Verdana", "Arial", "Helvetica", sans-serif ;
+  /*font-size: 90% ;*/
+  line-height: normal ;
+  color: black;
+  background: #fbfbfb;
+}
+h2, h3, h4 {
+  margin: 1em 0 0.5em 0;
+  padding: 0.25em 0;
+  line-height: 1.2;
+}
+h2 { font-size: 180% }
+h3 { font-size: 150% }
+h4 { font-size: 130% }
+h2 .editsection, h2 .hashlink { font-size: 67% }
+h3 .editsection, h3 .hashlink { font-size: 76% }
+h4 .editsection, h4 .hashlink { font-size: 86% }
+
+code, tt, pre {
+  font-family: "Source Code Pro","Consolas","Liberation Mono","Courier New","Courier", "Monaco", monospace;
+}
+b { font-weight : 600 ; }
+
+/* header / footer */
+.header {
+    background:rgba(251,251,251,0.8); color:black;
+}
+.pagename, .footer {
+  background: -webkit-linear-gradient(left, #001C37, white);
+  background: linear-gradient(left, #001C37, white);
+  border-radius:.25em;
+  font-family: inherit;
+  color:black;
+}
+.pagename a:link, .pagename a:visited { color:white; }
+.content { background:transparent; margin:0 .5em; }
+.content:after { background:transparent; }
+.sidebar { border-radius:.5em; background:rgba(162,195,223,0.10); /*#A2C3DF = sidebar color*/ }
+
+/* hide jspwiki logo */
+a.logo { border:none; text-indent:-99em; }
+a.logo b:before { content:""; }
+
+/* put back your own company logo */
+a.logo {
+    background-image: url([Clean Blue Theme/logo-hi.png]);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-top:.5em;
+    height: 45px;
+    width: 120px; 
+}
+
+/* links */
+a, a:link { color: #0C4777 ; text-decoration:none;}
+a:visited { color: #3D5A73 ; text-decoration:none;border-bottom:none;}
+a:hover { border-bottom: 1px dotted #8DC5F2; }
+a:active, a.external:active {
+  color: #556B1C ;
+  background-color: #D6EB9F ;
+  text-decoration: none ;
+  border-bottom : 1px dotted #7EA121 ;
+}
+a.createpage {color: #74105B;text-decoration:none; border-bottom:1px dotted #B6509D;}
+img.outlink {display:none;}
+a.editsection,a.hashlink {
+  font-size: x-small;
+  line-height: 1.2;
+  padding: .25em;
+  vertical-align: top;
+  color: #B49CDC; text-decoration:none; border-bottom:none;
+}
+a.editsection:hover,a.hashlink:hover {
+  background-color: #D3E2FF;
+  color: #0C4777 !important;
+}
+
+
+.lead {
+  font-family: 'Goudy Bookletter 1911', "Cambria", "Times New Roman", "Times", serif;
+}
+
+.panel-success > .panel-heading, 
+.success, .bg-success, .label-success, .alert-success, .progress-bar-success { 
+  background-color: #E0FFE0;
+  border: thin dotted #9ED39E ;
+}
+.text-success {color:#9ED39E ; }
+
+.panel-info > .panel-heading, 
+.info, .bg-info, .label-info, .alert-info, .progress-bar-info { 
+  background-color: #CCDEED;
+  border: thin dotted #D3E2FF ;
+}
+.text-info { color:#8DC5F2; }
+
+.panel-warning > .panel-heading, 
+.warning, .bg-warning, .label-warning, .alert-warning, .progress-bar-warning { 
+  background-color: #FFDFC0;
+  border: thin dotted #FFDF80 ;
+}
+.text-warning { color: #FFDF80;}
+
+.panel-danger > .panel-heading, 
+.error, .danger, .bg-danger, .label-danger, .alert-danger,
+.progress-bar-error,.progress-bar-danger{ 
+  background-color: #FFC0C0;
+  border: thin dotted #FF8080 ;
+}
+.text-danger { color:#FF8080; }
+
+blockquote {
+  border-left: 4px solid #CCDEED;
+  padding: 0 1em;
+  margin: 0 .5em;
+  font-size: 95% ;
+}
+
+/%
+
+
+[{ALLOW edit Admin}]
+[{ALLOW view All}]
