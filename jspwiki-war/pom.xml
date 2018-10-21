@@ -283,7 +283,7 @@
               <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
               <ignoreMissingResources>false</ignoreMissingResources>
               -->
-              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
+              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/</cssDestinationFolder>
               <wroFile>src/main/config/wro/wro.xml</wroFile>
             </configuration>
           </execution>
