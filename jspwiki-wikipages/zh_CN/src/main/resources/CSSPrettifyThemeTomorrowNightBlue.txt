@@ -1,0 +1,29 @@
+%%add-css
+  .prettify pre {
+    background: #002451;
+    font-family: Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, Consolas, monospace;
+    border:none; 
+  }
+  pre.prettyprint { border-radius:0 4px 4px 0; }
+  pre.prettylines { border-radius: 4px 0 0 4px; color: #7285b7; }
+  
+  .pln { color: #ffffff; }  /* plain text */
+  .str { color: #d1f1a9; }  /* string content */
+  .kwd { color: #ebbbff; }  /* keyword */
+  .com { color: #7285b7; }  /* comment */
+  .typ { color: #bbdaff; }  /* type name */
+  .lit { color: #ffc58f; }  /* literal value */
+  .pun { color: #ffffff; }  /* punctuation */
+  .opn { color: #ffffff; }  /* lisp open bracket */
+  .clo { color: #ffffff; }  /* lisp close bracket */
+  .tag { color: #ff9da4; }  /* markup tag name */
+  .atn { color: #ffc58f; }  /* markup attribute name */
+  .atv { color: #99ffff; }  /* markup attribute value */
+  .dec { color: #ffc58f; }  /* declaration */
+  .var { color: #ff9da4; }  /* variable name */
+  .fun { color: #bbdaff; }  /* function name */
+/%
+
+
+[{ALLOW edit Admin}]
+[{ALLOW view All}]
