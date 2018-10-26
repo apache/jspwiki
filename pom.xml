@@ -39,7 +39,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <flexmark.version>0.34.46</flexmark.version>
+    <flexmark.version>0.34.56</flexmark.version>
     <jdk.version>1.8</jdk.version>
     <junit.version>5.3.1</junit.version>
     <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
