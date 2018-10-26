@@ -326,7 +326,7 @@
       <plugins>        <!-- ordered alphabetically by groupId (default first):artifactId                                                -->
         <plugin>       <!-- default maven plugins have their version configured to make the build independent of the maven version used -->
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.7</version>
+          <version>1.8</version>
         </plugin>
 
         <plugin>
@@ -336,24 +336,17 @@
 
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.8.0</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.ow2.asm</groupId>
-              <artifactId>asm</artifactId>
-              <version>6.1.1</version> <!-- MCOMPILER-332 -->
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>
@@ -403,7 +396,7 @@
 
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.0</version>
           <configuration>
             <archive>
               <manifest>
@@ -452,12 +445,12 @@
 
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
-          <version>2.5</version>
+          <version>3.0.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>2.9</version>
+          <version>3.0.0</version>
         </plugin>
 
         <plugin>
@@ -481,7 +474,7 @@
 
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.0</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
           </configuration>
@@ -504,7 +497,7 @@
 
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.2</version>
           <configuration>
             <archive>
               <manifest>
