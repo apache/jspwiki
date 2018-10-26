@@ -1,3 +1,11 @@
+2018-10-26  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-04: update tests to JUnit 5.3.1
+	   
+	   * updated versions of maven plugins
+	   
+	   * flexmark updated to 0.34.56
+
 2018-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-03: Haddock is now the default template
