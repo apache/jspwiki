@@ -23,16 +23,16 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GroupTest
 {
     Group m_group;
     String m_wiki;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -47,7 +47,7 @@ public class GroupTest
     {
         Principal u1 = new WikiPrincipal( "Alice" );
         m_group.add( u1 );
-        Assert.assertTrue( m_group.isMember( u1 ) );
+        Assertions.assertTrue( m_group.isMember( u1 ) );
     }
 
     @Test
@@ -56,12 +56,12 @@ public class GroupTest
         Principal u1 = new WikiPrincipal( "Alice" );
         Principal u2 = new WikiPrincipal( "Bob" );
 
-        Assert.assertTrue( "adding alice", m_group.add( u1 ) );
+        Assertions.assertTrue( m_group.add( u1 ), "adding alice" );
 
-        Assert.assertTrue( "adding bob", m_group.add( u2 ) );
+        Assertions.assertTrue( m_group.add( u2 ), "adding bob" );
 
-        Assert.assertTrue( "Alice", m_group.isMember( u1 ) );
-        Assert.assertTrue( "Bob", m_group.isMember( u2 ) );
+        Assertions.assertTrue( m_group.isMember( u1 ), "Alice" );
+        Assertions.assertTrue( m_group.isMember( u2 ), "Bob" );
     }
 
     /**
@@ -74,11 +74,11 @@ public class GroupTest
         Principal u2 = new WikiPrincipal( "Bob" );
         Principal u3 = new WikiPrincipal( "Bob" );
 
-        Assert.assertTrue( "adding alice", m_group.add( u1 ) );
-        Assert.assertTrue( "adding bob", m_group.add( u2 ) );
+        Assertions.assertTrue( m_group.add( u1 ), "adding alice" );
+        Assertions.assertTrue( m_group.add( u2 ), "adding bob" );
 
-        Assert.assertTrue( "Alice", m_group.isMember( u1 ) );
-        Assert.assertTrue( "Bob", m_group.isMember( u3 ) );
+        Assertions.assertTrue( m_group.isMember( u1 ), "Alice" );
+        Assertions.assertTrue( m_group.isMember( u3 ), "Bob" );
     }
 
     @Test
@@ -93,9 +93,9 @@ public class GroupTest
 
         m_group.remove( u3 );
 
-        Assert.assertTrue( "Alice", m_group.isMember( u1 ) );
-        Assert.assertFalse( "Bob", m_group.isMember( u2 ) );
-        Assert.assertFalse( "Bob 2", m_group.isMember( u3 ) );
+        Assertions.assertTrue( m_group.isMember( u1 ), "Alice" );
+        Assertions.assertFalse( m_group.isMember( u2 ), "Bob" );
+        Assertions.assertFalse( m_group.isMember( u3 ), "Bob 2" );
     }
 
     @Test
@@ -114,7 +114,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assert.assertTrue( m_group.equals( group2 ) );
+        Assertions.assertTrue( m_group.equals( group2 ) );
     }
 
     @Test
@@ -133,7 +133,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assert.assertFalse( m_group.equals( group2 ) );
+        Assertions.assertFalse( m_group.equals( group2 ) );
     }
 
     @Test
@@ -151,7 +151,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assert.assertTrue( group1.equals( group2 ) );
+        Assertions.assertTrue( group1.equals( group2 ) );
     }
 
     @Test
@@ -169,7 +169,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assert.assertFalse( m_group.equals( group2 ) );
+        Assertions.assertFalse( m_group.equals( group2 ) );
     }
 
 }

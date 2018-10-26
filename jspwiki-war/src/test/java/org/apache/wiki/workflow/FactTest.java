@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.workflow;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public class FactTest
 {
@@ -32,13 +32,13 @@ public class FactTest
         Fact f2 = new Fact("fact2","A factual String");
         Fact f3 = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
 
-        Assert.assertEquals("fact1", f1.getMessageKey());
-        Assert.assertEquals("fact2", f2.getMessageKey());
-        Assert.assertEquals("fact3", f3.getMessageKey());
+        Assertions.assertEquals("fact1", f1.getMessageKey());
+        Assertions.assertEquals("fact2", f2.getMessageKey());
+        Assertions.assertEquals("fact3", f3.getMessageKey());
 
-        Assert.assertEquals(new Integer(1), f1.getValue());
-        Assert.assertEquals("A factual String", f2.getValue());
-        Assert.assertEquals(Outcome.DECISION_ACKNOWLEDGE, f3.getValue());
+        Assertions.assertEquals(new Integer(1), f1.getValue());
+        Assertions.assertEquals("A factual String", f2.getValue());
+        Assertions.assertEquals(Outcome.DECISION_ACKNOWLEDGE, f3.getValue());
     }
 
 }

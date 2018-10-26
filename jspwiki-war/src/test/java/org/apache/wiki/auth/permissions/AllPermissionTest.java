@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth.permissions;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  */
@@ -35,10 +35,10 @@ public class AllPermissionTest
         AllPermission p1 = new AllPermission( "*" );
         AllPermission p2 = new AllPermission( "*" );
         AllPermission p3 = new AllPermission( "myWiki" );
-        Assert.assertTrue( p1.equals( p2 ) );
-        Assert.assertTrue( p2.equals( p1 ) );
-        Assert.assertFalse( p1.equals( p3 ) );
-        Assert.assertFalse( p3.equals( p1 ) );
+        Assertions.assertTrue( p1.equals( p2 ) );
+        Assertions.assertTrue( p2.equals( p1 ) );
+        Assertions.assertFalse( p1.equals( p3 ) );
+        Assertions.assertFalse( p3.equals( p1 ) );
     }
 
     @Test
@@ -46,12 +46,12 @@ public class AllPermissionTest
     {
         AllPermission p1 = new AllPermission( "*" );
         AllPermission p2 = new AllPermission( "*" );
-        Assert.assertTrue( p1.equals( p2 ) );
-        Assert.assertTrue( p2.equals( p1 ) );
+        Assertions.assertTrue( p1.equals( p2 ) );
+        Assertions.assertTrue( p2.equals( p1 ) );
 
         p2 = new AllPermission( "myWiki" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
     }
 
     @Test
@@ -59,20 +59,20 @@ public class AllPermissionTest
     {
         AllPermission p1 = new AllPermission( "*" );
         PagePermission p2 = new PagePermission( "*:TestPage", "delete" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
 
         p2 = new PagePermission( "myWiki:TestPage", "delete" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
 
         p2 = new PagePermission( "*:GroupTest", "delete" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
 
         p2 = new PagePermission( "myWiki:GroupTest", "delete" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
     }
 
     @Test
@@ -80,12 +80,12 @@ public class AllPermissionTest
     {
         AllPermission p1 = new AllPermission( "*" );
         WikiPermission p2 = new WikiPermission( "*", "createPages" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
 
         p2 = new WikiPermission( "myWiki", "createPages" );
-        Assert.assertTrue( p1.implies( p2 ) );
-        Assert.assertFalse( p2.implies( p1 ) );
+        Assertions.assertTrue( p1.implies( p2 ) );
+        Assertions.assertFalse( p2.implies( p1 ) );
     }
 
     /*
@@ -96,11 +96,11 @@ public class AllPermissionTest
     {
         AllPermission p = new AllPermission( "myWiki" );
         String result = "(\"org.apache.wiki.auth.permissions.AllPermission\",\"myWiki\")";
-        Assert.assertEquals( result, p.toString() );
+        Assertions.assertEquals( result, p.toString() );
 
         p = new AllPermission( "*" );
         result = "(\"org.apache.wiki.auth.permissions.AllPermission\",\"*\")";
-        Assert.assertEquals( result, p.toString() );
+        Assertions.assertEquals( result, p.toString() );
     }
 
 }

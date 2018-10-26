@@ -17,6 +17,7 @@
     under the License.
  */
 package org.apache.wiki.parser;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +41,10 @@ import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.stress.Benchmark;
 import org.apache.wiki.util.TextUtil;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -56,7 +57,7 @@ public class JSPWikiMarkupParserTest
 
     TestEngine testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp()
     throws Exception
     {
@@ -66,7 +67,7 @@ public class JSPWikiMarkupParserTest
         testEngine = new TestEngine( props );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         deleteCreatedPages();
@@ -161,7 +162,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [hyperlink]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Hyperlink\">hyperlink</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Hyperlink\">hyperlink</a>",
                       translate(src) );
     }
 
@@ -173,7 +174,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [hyperlink too]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperlinkToo\">hyperlink too</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperlinkToo\">hyperlink too</a>",
                       translate(src) );
     }
 
@@ -185,7 +186,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [HyperLink]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>",
                       translate(src) );
     }
 
@@ -197,7 +198,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [here|HyperLink]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">here</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">here</a>",
                       translate(src) );
     }
 
@@ -209,7 +210,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [here|HyperLink#heading]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">here</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">here</a>",
                       translate(src) );
     }
 
@@ -221,7 +222,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [HyperLink#heading]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">HyperLink#heading</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">HyperLink#heading</a>",
                       translate(src) );
     }
 
@@ -233,7 +234,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "!Heading Too\r\nThis should be a [HyperLink#heading too]";
 
-        Assert.assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too<a class=\"hashlink\" href=\"#section-testpage-HeadingToo\">#</a></h4>\nThis should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
+        Assertions.assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too<a class=\"hashlink\" href=\"#section-testpage-HeadingToo\">#</a></h4>\nThis should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
                       translate(src) );
     }
 
@@ -246,7 +247,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [HyperLink#headingwithnonASCIIZoltán]";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingwithnonASCIIZolt_E1n\">HyperLink#headingwithnonASCIIZoltán</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingwithnonASCIIZolt_E1n\">HyperLink#headingwithnonASCIIZoltán</a>",
                 translate(src) );
     }
 
@@ -263,7 +264,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "[DiscussionAboutWiki] [WikiMarkupDevelopment].";
 
-        Assert.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=DiscussionAboutWiki\">DiscussionAboutWiki</a> <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=WikiMarkupDevelopment\">WikiMarkupDevelopment</a>.",
+        Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=DiscussionAboutWiki\">DiscussionAboutWiki</a> <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=WikiMarkupDevelopment\">WikiMarkupDevelopment</a>.",
                       translate(src) );
     }
 
@@ -275,7 +276,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a HyperLink.";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>.",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>.",
                       translate(src) );
     }
 
@@ -285,7 +286,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a HyperLink.";
 
-        Assert.assertEquals( "This should be a <a class=\"createpage\" href=\"/test/Edit.jsp?page=HyperLink\" title=\"Create &quot;HyperLink&quot;\">HyperLink</a>.",
+        Assertions.assertEquals( "This should be a <a class=\"createpage\" href=\"/test/Edit.jsp?page=HyperLink\" title=\"Create &quot;HyperLink&quot;\">HyperLink</a>.",
                       translate(src) );
     }
 
@@ -302,7 +303,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [  HyperLink  ].";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">  HyperLink  </a>.",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">  HyperLink  </a>.",
                       translate(src) );
     }
 
@@ -312,7 +313,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a nonHyperLink.";
 
-        Assert.assertEquals( "This should be a nonHyperLink.",
+        Assertions.assertEquals( "This should be a nonHyperLink.",
                       translate(src) );
     }
 
@@ -328,7 +329,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a HyperLink, and ThisToo.";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>, and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>, and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
                       translate(src) );
     }
 
@@ -344,7 +345,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be a [HyperLink], and ThisToo.";
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>, and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>, and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
                       translate(src) );
     }
 
@@ -359,7 +360,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "] This ] should be a HyperLink], and ThisToo.";
 
-        Assert.assertEquals( "] This ] should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>], and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
+        Assertions.assertEquals( "] This ] should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>], and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
                       translate(src) );
     }
 
@@ -373,7 +374,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "HyperLink, and ThisToo";
 
-        Assert.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>, and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>",
+        Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>, and <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>",
                       translate(src) );
     }
 
@@ -386,7 +387,7 @@ public class JSPWikiMarkupParserTest
         String src = "http://www.foo.bar/ANewHope/";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>",
+        Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>",
                       translate(src) );
     }
 
@@ -399,7 +400,7 @@ public class JSPWikiMarkupParserTest
         String src = "mailto:foo@bar.com";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "<a class=\"external\" href=\"mailto:foo@bar.com\">mailto:foo@bar.com</a>",
+        Assertions.assertEquals( "<a class=\"external\" href=\"mailto:foo@bar.com\">mailto:foo@bar.com</a>",
                       translate(src) );
     }
 
@@ -412,7 +413,7 @@ public class JSPWikiMarkupParserTest
         String src = "This should be a link: http://www.foo.bar/ANewHope/.  Is it?";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>.  Is it?",
+        Assertions.assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>.  Is it?",
                       translate(src) );
     }
 
@@ -425,7 +426,7 @@ public class JSPWikiMarkupParserTest
         String src = "This should be a link: (http://www.foo.bar/ANewHope/)  Is it?";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "This should be a link: (<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>)  Is it?",
+        Assertions.assertEquals( "This should be a link: (<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>)  Is it?",
                       translate(src) );
     }
 
@@ -438,7 +439,7 @@ public class JSPWikiMarkupParserTest
         String src = "This should be a link: http://www.foo.bar/ANewHope/\nIs it?";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>\nIs it?",
+        Assertions.assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>\nIs it?",
                       translate(src) );
     }
 
@@ -451,7 +452,7 @@ public class JSPWikiMarkupParserTest
         String src = "This should not be a link: http://''some.server''/wiki//test/Wiki.jsp\nIs it?";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "This should not be a link: http://<i>some.server</i>/wiki//test/Wiki.jsp\nIs it?",
+        Assertions.assertEquals( "This should not be a link: http://<i>some.server</i>/wiki//test/Wiki.jsp\nIs it?",
                       translate(src) );
     }
 
@@ -463,7 +464,7 @@ public class JSPWikiMarkupParserTest
         String src = "http://www.foo.bar/ANewHope?q=foobar&gobble=bobble+gnoo";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo\">http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo</a>",
+        Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo\">http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo</a>",
                       translate(src) );
     }
 
@@ -474,7 +475,7 @@ public class JSPWikiMarkupParserTest
         String src = "http://www.foo.bar/~ANewHope/";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/~ANewHope/\">http://www.foo.bar/~ANewHope/</a>",
+        Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/~ANewHope/\">http://www.foo.bar/~ANewHope/</a>",
                       translate(src) );
     }
 
@@ -485,7 +486,7 @@ public class JSPWikiMarkupParserTest
         String src = "http://www.foo.bar/%7EANewHope/";
 
         // System.out.println( "EX:"+translate(src) );
-        Assert.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/%7EANewHope/\">http://www.foo.bar/%7EANewHope/</a>",
+        Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/%7EANewHope/\">http://www.foo.bar/%7EANewHope/</a>",
                       translate(src) );
     }
 
@@ -495,7 +496,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should not be a ~HyperLink.";
 
-        Assert.assertEquals( "This should not be a HyperLink.",
+        Assertions.assertEquals( "This should not be a HyperLink.",
                       translate(src) );
     }
 
@@ -505,7 +506,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "~HyperLinks should not be matched.";
 
-        Assert.assertEquals( "HyperLinks should not be matched.",
+        Assertions.assertEquals( "HyperLinks should not be matched.",
                       translate(src) );
     }
 
@@ -515,7 +516,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "The page ~ASamplePage is not a hyperlink.";
 
-        Assert.assertEquals( "The page ASamplePage is not a hyperlink.",
+        Assertions.assertEquals( "The page ASamplePage is not a hyperlink.",
                       translate(src) );
     }
 
@@ -525,7 +526,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "The page \"~ASamplePage\" is not a hyperlink.";
 
-        Assert.assertEquals( "The page &quot;ASamplePage&quot; is not a hyperlink.",
+        Assertions.assertEquals( "The page &quot;ASamplePage&quot; is not a hyperlink.",
                       translate(src) );
     }
 
@@ -537,7 +538,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "*HyperLink";
 
-        Assert.assertEquals( "<ul><li><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a></li></ul>",
+        Assertions.assertEquals( "<ul><li><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a></li></ul>",
                       translate(src) );
     }
 
@@ -549,7 +550,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "__BoldHyperLink__";
 
-        Assert.assertEquals( "<b><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=BoldHyperLink\">BoldHyperLink</a></b>",
+        Assertions.assertEquals( "<b><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=BoldHyperLink\">BoldHyperLink</a></b>",
                       translate(src) );
     }
 
@@ -561,7 +562,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "Let's see, if a bold __HyperLink__ is correct?";
 
-        Assert.assertEquals( "Let's see, if a bold <b><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a></b> is correct?",
+        Assertions.assertEquals( "Let's see, if a bold <b><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a></b> is correct?",
                       translate(src) );
     }
 
@@ -573,7 +574,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "''ItalicHyperLink''";
 
-        Assert.assertEquals( "<i><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ItalicHyperLink\">ItalicHyperLink</a></i>",
+        Assertions.assertEquals( "<i><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ItalicHyperLink\">ItalicHyperLink</a></i>",
                       translate(src) );
     }
 
@@ -585,7 +586,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "Test. Punctuation. HyperLink.";
 
-        Assert.assertEquals( "Test. Punctuation. <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>.",
+        Assertions.assertEquals( "Test. Punctuation. <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>.",
                       translate(src) );
     }
 
@@ -598,7 +599,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "Punctuations: HyperLink,ThisToo.";
 
-        Assert.assertEquals( "Punctuations: <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>,<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
+        Assertions.assertEquals( "Punctuations: <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>,<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ThisToo\">ThisToo</a>.",
                       translate(src) );
     }
 
@@ -610,7 +611,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "Onko t\u00e4m\u00e4 hyperlinkki: \u00c4itiSy\u00f6\u00d6ljy\u00e4?";
 
-        Assert.assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
+        Assertions.assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
                       translate(src) );
     }
 
@@ -621,7 +622,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [http://www.regex.fi/]";
 
-        Assert.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">http://www.regex.fi/</a>",
+        Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">http://www.regex.fi/</a>",
                       translate(src) );
     }
 
@@ -631,7 +632,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [link|http://www.regex.fi/]";
 
-        Assert.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">link</a>",
+        Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">link</a>",
                       translate(src) );
     }
 
@@ -641,7 +642,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [link|http://www.regex.fi/]";
 
-        Assert.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\" rel=\"nofollow\">link</a>",
+        Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\" rel=\"nofollow\">link</a>",
                       translate_nofollow(src) );
     }
 
@@ -657,7 +658,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("HyperLink");
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLinks</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLinks</a>",
                       translate(src) );
     }
 
@@ -667,7 +668,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [HyperLinks]";
 
-        Assert.assertEquals( "This should be a <a class=\"createpage\" href=\"/test/Edit.jsp?page=HyperLinks\" title=\"Create &quot;HyperLinks&quot;\">HyperLinks</a>",
+        Assertions.assertEquals( "This should be a <a class=\"createpage\" href=\"/test/Edit.jsp?page=HyperLinks\" title=\"Create &quot;HyperLinks&quot;\">HyperLinks</a>",
                       translate(src) );
     }
 
@@ -679,7 +680,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("HyperLinks");
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLinks\">HyperLink</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLinks\">HyperLink</a>",
                       translate(src) );
     }
 
@@ -691,7 +692,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("HyperLink");
 
-        Assert.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">Hyper links</a>",
+        Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">Hyper links</a>",
                       translate(src) );
     }
 
@@ -702,7 +703,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [link|http://www.haxored.com/\" onMouseOver=\"alert('Hahhaa');\"]";
 
-        Assert.assertEquals( "This should be a <a class=\"external\" href=\"http://www.haxored.com/&quot; onMouseOver=&quot;alert('Hahhaa');&quot;\">link</a>",
+        Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.haxored.com/&quot; onMouseOver=&quot;alert('Hahhaa');&quot;\">link</a>",
                       translate(src) );
     }
 
@@ -712,7 +713,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [link|JSPWiki:HyperLink]";
 
-        Assert.assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">link</a>",
+        Assertions.assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">link</a>",
                       translate(src) );
     }
 
@@ -722,7 +723,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should be a [JSPWiki:HyperLink]";
 
-        Assert.assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">JSPWiki:HyperLink</a>",
+        Assertions.assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">JSPWiki:HyperLink</a>",
                       translate(src) );
     }
 
@@ -738,7 +739,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
-        Assert.assertEquals( "This should be an <a class=\"attachment\" href=\"/test/attach/Test/TestAtt.txt\">attachment link</a>"+
+        Assertions.assertEquals( "This should be an <a class=\"attachment\" href=\"/test/attach/Test/TestAtt.txt\">attachment link</a>"+
                       "<a href=\"/test/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(src));
     }
@@ -762,7 +763,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
-        Assert.assertEquals( "This should be an <a class=\"attachment\" href=\"/test/attach/Test/TestAtt.txt\">attachment link</a>"+
+        Assertions.assertEquals( "This should be an <a class=\"attachment\" href=\"/test/attach/Test/TestAtt.txt\">attachment link</a>"+
                       "<a href=\"/test/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
@@ -786,7 +787,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "[Test page/TestAtt.txt]";
 
-        Assert.assertEquals( "<a class=\"attachment\" href=\"/test/attach/TestPage/TestAtt.txt\">Test page/TestAtt.txt</a>"+
+        Assertions.assertEquals( "<a class=\"attachment\" href=\"/test/attach/TestPage/TestAtt.txt\">Test page/TestAtt.txt</a>"+
                       "<a href=\"/test/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
@@ -807,7 +808,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
 
-        Assert.assertEquals( "<a class=\"attachment\" href=\"/test/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
+        Assertions.assertEquals( "<a class=\"attachment\" href=\"/test/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
                       "<a href=\"/test/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
@@ -820,7 +821,7 @@ public class JSPWikiMarkupParserTest
 
         String src = "This should not be a [[HyperLink]";
 
-        Assert.assertEquals( "This should not be a [HyperLink]",
+        Assertions.assertEquals( "This should not be a [HyperLink]",
                       translate(src) );
     }
 
@@ -830,7 +831,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "This should not be a [[[[HyperLink]";
 
-        Assert.assertEquals( "This should not be a [[[HyperLink]",
+        Assertions.assertEquals( "This should not be a [[[HyperLink]",
                       translate(src) );
     }
 
@@ -840,7 +841,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "[[HyperLink], and this [[Neither].";
 
-        Assert.assertEquals( "[HyperLink], and this [Neither].",
+        Assertions.assertEquals( "[HyperLink], and this [Neither].",
                       translate(src) );
     }
 
@@ -850,7 +851,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "There is [[{NoPlugin}] here.";
 
-        Assert.assertEquals( "There is [{NoPlugin}] here.",
+        Assertions.assertEquals( "There is [{NoPlugin}] here.",
                       translate(src) );
     }
 
@@ -860,7 +861,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "What if this is the last char [";
 
-        Assert.assertEquals( "What if this is the last char ",
+        Assertions.assertEquals( "What if this is the last char ",
                       translate(src) );
     }
 
@@ -870,7 +871,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "What if this is the last char [[";
 
-        Assert.assertEquals( "What if this is the last char [",
+        Assertions.assertEquals( "What if this is the last char [",
                       translate(src) );
     }
 
@@ -882,7 +883,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("Test_page");
 
-        Assert.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Test_page\">test_page</a>",
+        Assertions.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Test_page\">test_page</a>",
                      translate(src) );
     }
 
@@ -894,7 +895,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("Test.page");
 
-        Assert.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Test.page\">test.page</a>",
+        Assertions.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Test.page\">test.page</a>",
                      translate(src) );
     }
 
@@ -906,7 +907,7 @@ public class JSPWikiMarkupParserTest
 
         newPage(".testpage_");
 
-        Assert.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=.testpage_\">.testpage_</a>",
+        Assertions.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=.testpage_\">.testpage_</a>",
                      translate(src) );
     }
 
@@ -916,7 +917,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Link [test|http://www.ecyrd.com/test.png]";
 
-        Assert.assertEquals("Link <img class=\"inline\" src=\"http://www.ecyrd.com/test.png\" alt=\"test\" />",
+        Assertions.assertEquals("Link <img class=\"inline\" src=\"http://www.ecyrd.com/test.png\" alt=\"test\" />",
                      translate(src) );
     }
 
@@ -926,7 +927,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Link [test|http://www.ecyrd.com/test.ppm]";
 
-        Assert.assertEquals("Link <a class=\"external\" href=\"http://www.ecyrd.com/test.ppm\">test</a>",
+        Assertions.assertEquals("Link <a class=\"external\" href=\"http://www.ecyrd.com/test.ppm\">test</a>",
                      translate(src) );
     }
 
@@ -936,7 +937,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Link [test|http://images.com/testi]";
 
-        Assert.assertEquals("Link <img class=\"inline\" src=\"http://images.com/testi\" alt=\"test\" />",
+        Assertions.assertEquals("Link <img class=\"inline\" src=\"http://images.com/testi\" alt=\"test\" />",
                      translate(src) );
     }
 
@@ -946,7 +947,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Link [test|http://foobar.jpg]";
 
-        Assert.assertEquals("Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"test\" />",
+        Assertions.assertEquals("Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"test\" />",
                      translate(src) );
     }
 
@@ -957,7 +958,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Link [http://foobar.jpg]";
 
-        Assert.assertEquals("Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://foobar.jpg\" />",
+        Assertions.assertEquals("Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://foobar.jpg\" />",
                      translate(src) );
     }
 
@@ -967,7 +968,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
 
-        Assert.assertEquals("Link <a class=\"external\" href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a>",
+        Assertions.assertEquals("Link <a class=\"external\" href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a>",
                      translate(src) );
     }
 
@@ -979,7 +980,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("SandBox");
 
-        Assert.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=SandBox\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"SandBox\" /></a>",
+        Assertions.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=SandBox\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"SandBox\" /></a>",
                      translate(src) );
     }
 
@@ -991,7 +992,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("\u00C5\u00E4Test"); // FIXME: Should be capital
 
-        Assert.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>",
+        Assertions.assertEquals("Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>",
                      translate(src));
     }
 
@@ -1001,7 +1002,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1\n\n2\n\n3";
 
-        Assert.assertEquals( "<p>1\n</p><p>2\n</p>\n<p>3</p>", translate(src) );
+        Assertions.assertEquals( "<p>1\n</p><p>2\n</p>\n<p>3</p>", translate(src) );
     }
 
     @Test
@@ -1012,7 +1013,7 @@ public class JSPWikiMarkupParserTest
 
         newPage( "WikiEtiquette" );
 
-        Assert.assertEquals( "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>"+
+        Assertions.assertEquals( "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>"+
                       "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Search\">Search</a></p>", translate(src) );
     }
 
@@ -1022,7 +1023,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
 
-        Assert.assertEquals( "<p />\n<h4 id=\"section-testpage-Testi\">Testi<a class=\"hashlink\" href=\"#section-testpage-Testi\">#</a></h4>\n<p>Foo.</p>",
+        Assertions.assertEquals( "<p />\n<h4 id=\"section-testpage-Testi\">Testi<a class=\"hashlink\" href=\"#section-testpage-Testi\">#</a></h4>\n<p>Foo.</p>",
                       translate(src) );
     }
 
@@ -1037,7 +1038,7 @@ public class JSPWikiMarkupParserTest
         newPage("Search");
         newPage("UnusedPages");
 
-        Assert.assertEquals( "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=RecentChanges\">Recent Changes</a><br />\n"+
+        Assertions.assertEquals( "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=RecentChanges\">Recent Changes</a><br />\n"+
                       "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>\n"+
                       "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Search\">Find pages</a><br />\n"+
                       "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=UnusedPages\">Unused pages</a></p>",
@@ -1050,7 +1051,7 @@ public class JSPWikiMarkupParserTest
         String src = "__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
                      "In UNIX, the file(1) command can be used.";
 
-        Assert.assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>"+
+        Assertions.assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>"+
                       "<p>In UNIX, the file(1) command can be used.</p>",
                       translate(src) );
     }
@@ -1061,7 +1062,7 @@ public class JSPWikiMarkupParserTest
         String src = "[{Counter}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
                      "In UNIX, the file(1) command can be used.";
 
-        Assert.assertEquals( "<p>1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+        Assertions.assertEquals( "<p>1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
                       "<p>In UNIX, the file(1) command can be used.</p>",
                       translate(src) );
     }
@@ -1072,7 +1073,7 @@ public class JSPWikiMarkupParserTest
         String src = "[{$encoding}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
                      "In UNIX, the file(1) command can be used.";
 
-        Assert.assertEquals( "<p>ISO-8859-1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+        Assertions.assertEquals( "<p>ISO-8859-1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
                       "<p>In UNIX, the file(1) command can be used.</p>",
                       translate(src) );
     }
@@ -1083,7 +1084,7 @@ public class JSPWikiMarkupParserTest
         String src = "[{SET foo=bar}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
                      "In UNIX, the file(1) command can be used.";
 
-        Assert.assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+        Assertions.assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
                       "<p>In UNIX, the file(1) command can be used.</p>",
                       translate(src) );
     }
@@ -1094,7 +1095,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1\\\\2";
 
-        Assert.assertEquals( "1<br />2", translate(src) );
+        Assertions.assertEquals( "1<br />2", translate(src) );
     }
 
     @Test
@@ -1103,7 +1104,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1~\\\\2";
 
-        Assert.assertEquals( "1\\\\2", translate(src) );
+        Assertions.assertEquals( "1\\\\2", translate(src) );
     }
 
     @Test
@@ -1112,7 +1113,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1\\\\\\2";
 
-        Assert.assertEquals( "1<br clear=\"all\" />2", translate(src) );
+        Assertions.assertEquals( "1<br clear=\"all\" />2", translate(src) );
     }
 
     @Test
@@ -1121,7 +1122,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{2345}}6";
 
-        Assert.assertEquals( "1<tt>2345</tt>6", translate(src) );
+        Assertions.assertEquals( "1<tt>2345</tt>6", translate(src) );
     }
 
     @Test
@@ -1130,7 +1131,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{\n2345\n}}6";
 
-        Assert.assertEquals( "1<tt>\n2345\n</tt>6", translate(src) );
+        Assertions.assertEquals( "1<tt>\n2345\n</tt>6", translate(src) );
     }
 
     @Test
@@ -1141,7 +1142,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("ALink");
 
-        Assert.assertEquals( "1<tt>\n2345\n<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ALink\">a link</a>\n</tt>6", translate(src) );
+        Assertions.assertEquals( "1<tt>\n2345\n<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ALink\">a link</a>\n</tt>6", translate(src) );
     }
 
     @Test
@@ -1150,7 +1151,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{2345}}}6";
 
-        Assert.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">2345</span>6", translate(src) );
+        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">2345</span>6", translate(src) );
     }
 
     @Test
@@ -1159,7 +1160,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
 
-        Assert.assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
+        Assertions.assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
     }
 
     @Test
@@ -1168,7 +1169,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "foo\n\nbar{{{2345}}}6";
 
-        Assert.assertEquals( "<p>foo\n</p><p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
+        Assertions.assertEquals( "<p>foo\n</p><p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
     }
 
     @Test
@@ -1177,7 +1178,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1~{{{2345}}}6";
 
-        Assert.assertEquals( "1{{{2345}}}6", translate(src) );
+        Assertions.assertEquals( "1{{{2345}}}6", translate(src) );
     }
 
     @Test
@@ -1186,7 +1187,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{{{{2345~}}}}}}6";
 
-        Assert.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">{{{2345}}}</span>6", translate(src) );
+        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">{{{2345}}}</span>6", translate(src) );
     }
 
     @Test
@@ -1195,7 +1196,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1 {{{ {{{ 2345 ~}}} }}} 6";
 
-        Assert.assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 }}} </span> 6", translate(src) );
+        Assertions.assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 }}} </span> 6", translate(src) );
     }
 
     @Test
@@ -1204,7 +1205,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{ {{{2345~}} }}}6";
 
-        Assert.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> {{{2345~}} </span>6", translate(src) );
+        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> {{{2345~}} </span>6", translate(src) );
     }
 
     @Test
@@ -1213,7 +1214,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{ ~ }}}6";
 
-        Assert.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> ~ </span>6", translate(src) );
+        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> ~ </span>6", translate(src) );
     }
 
 
@@ -1223,7 +1224,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1\n{{{ <b> }}}";
 
-        Assert.assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate(src) );
+        Assertions.assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate(src) );
     }
 
     @Test
@@ -1232,7 +1233,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1\n{{{ CamelCase }}}";
 
-        Assert.assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
+        Assertions.assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
     }
 
     @Test
@@ -1241,7 +1242,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1\r\n{{{\r\nZippadii\r\n}}}";
 
-        Assert.assertEquals( "1\n<pre>\nZippadii\n</pre>", translate(src) );
+        Assertions.assertEquals( "1\n<pre>\nZippadii\n</pre>", translate(src) );
     }
 
     @Test
@@ -1250,7 +1251,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "A list:\n* One\n* Two\n* Three\n";
 
-        Assert.assertEquals( "A list:\n<ul><li>One\n</li><li>Two\n</li><li>Three\n</li></ul>",
+        Assertions.assertEquals( "A list:\n<ul><li>One\n</li><li>Two\n</li><li>Three\n</li></ul>",
                       translate(src) );
     }
 
@@ -1268,7 +1269,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
 
-        Assert.assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>",
+        Assertions.assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>",
                       translate(src) );
     }
 
@@ -1278,7 +1279,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
 
-        Assert.assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>Should be normal.",
+        Assertions.assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>Should be normal.",
                       translate(src) );
     }
 
@@ -1288,7 +1289,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "<b>Test</b>";
 
-        Assert.assertEquals( "&lt;b&gt;Test&lt;/b&gt;", translate(src) );
+        Assertions.assertEquals( "&lt;b&gt;Test&lt;/b&gt;", translate(src) );
     }
 
     @Test
@@ -1297,7 +1298,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "<p>";
 
-        Assert.assertEquals( "&lt;p&gt;", translate(src) );
+        Assertions.assertEquals( "&lt;p&gt;", translate(src) );
     }
 
     @Test
@@ -1313,7 +1314,7 @@ public class JSPWikiMarkupParserTest
 
         String out = translate( testEngine, page, src );
 
-        Assert.assertEquals( "<p>", out );
+        Assertions.assertEquals( "<p>", out );
     }
 
     @Test
@@ -1329,7 +1330,7 @@ public class JSPWikiMarkupParserTest
 
         String out = translate( testEngine, page, src );
 
-        Assert.assertEquals( "<pre> &lt;br /&gt; </pre>", out );
+        Assertions.assertEquals( "<pre> &lt;br /&gt; </pre>", out );
     }
 
     /*
@@ -1341,7 +1342,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "\"Test\"\"";
 
-        Assert.assertEquals( "&quot;Test&quot;&quot;", translate(src) );
+        Assertions.assertEquals( "&quot;Test&quot;&quot;", translate(src) );
     }
     */
     @Test
@@ -1350,7 +1351,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "& &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&";
 
-        Assert.assertEquals( "&amp; &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&amp;", translate(src) );
+        Assertions.assertEquals( "&amp; &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&amp;", translate(src) );
     }
 
     @Test
@@ -1359,7 +1360,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="''This is a\ntest.''";
 
-        Assert.assertEquals( "<i>This is a\ntest.</i>", translate(src) );
+        Assertions.assertEquals( "<i>This is a\ntest.</i>", translate(src) );
     }
 
     @Test
@@ -1368,7 +1369,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="__This is a\ntest.__";
 
-        Assert.assertEquals( "<b>This is a\ntest.</b>", translate(src) );
+        Assertions.assertEquals( "<b>This is a\ntest.</b>", translate(src) );
     }
 
     @Test
@@ -1377,7 +1378,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="__This is a\n\ntest.__";
 
-        Assert.assertEquals( "<p><b>This is a\n</b></p><p><b>test.</b></p>", translate(src) );
+        Assertions.assertEquals( "<p><b>This is a\n</b></p><p><b>test.</b></p>", translate(src) );
     }
 
     @Test
@@ -1386,7 +1387,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="__This ''is'' a test.__";
 
-        Assert.assertEquals( "<b>This <i>is</i> a test.</b>", translate(src) );
+        Assertions.assertEquals( "<b>This <i>is</i> a test.</b>", translate(src) );
     }
 
     @Test
@@ -1395,7 +1396,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Footnote[1]";
 
-        Assert.assertEquals( "Footnote<a class=\"footnoteref\" href=\"#ref-testpage-1\">[1]</a>",
+        Assertions.assertEquals( "Footnote<a class=\"footnoteref\" href=\"#ref-testpage-1\">[1]</a>",
                       translate(src) );
     }
 
@@ -1405,7 +1406,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[#2356] Footnote.";
 
-        Assert.assertEquals( "<a class=\"footnote\" name=\"ref-testpage-2356\">[#2356]</a> Footnote.",
+        Assertions.assertEquals( "<a class=\"footnote\" name=\"ref-testpage-2356\">[#2356]</a> Footnote.",
                       translate(src) );
     }
 
@@ -1418,7 +1419,7 @@ public class JSPWikiMarkupParserTest
         String src="A\n\n**\n\nB";
 
         // System.out.println(translate(src));
-        Assert.assertEquals( "<p>A\n</p><ul><li><ul><li>\n</li></ul></li></ul><p>B</p>",
+        Assertions.assertEquals( "<p>A\n</p><ul><li><ul><li>\n</li></ul></li></ul><p>B</p>",
                       translate(src) );
     }
 
@@ -1429,7 +1430,7 @@ public class JSPWikiMarkupParserTest
         String src="A\n\n##\n\nB";
 
         // System.out.println(translate(src));
-        Assert.assertEquals( "<p>A\n</p><ol><li><ol><li>\n</li></ol></li></ol><p>B</p>",
+        Assertions.assertEquals( "<p>A\n</p><ol><li><ol><li>\n</li></ol></li></ol><p>B</p>",
                       translate(src) );
     }
 
@@ -1469,7 +1470,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ul><li>Item A"+
+        Assertions.assertEquals( "<ul><li>Item A"+
                       "<ol><li>Numbered 1</li>"+
                       "<li>Numbered 2</li>"+
                       "</ol></li>"+
@@ -1492,7 +1493,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ol><li>Item A"+
+        Assertions.assertEquals( "<ol><li>Item A"+
                       "<ul><li>Numbered 1</li>"+
                       "<li>Numbered 2</li>"+
                       "</ul></li>"+
@@ -1536,7 +1537,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ul>"+
+        Assertions.assertEquals( "<ul>"+
                       "<li>bullet A"+
                       "<ul>"+
                       "<li>bullet A_1</li>"+
@@ -1585,7 +1586,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ul>"+
+        Assertions.assertEquals( "<ul>"+
                       "<li>bullet A"+
                       "<ul>"+
                       "<li>bullet A_1</li>"+
@@ -1633,7 +1634,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ul>"+
+        Assertions.assertEquals( "<ul>"+
                       "<li>bullet 1"+
                       "<ol><li>number 2</li></ol>"+
                       "<ul><li>bullet 3</li></ul>"+
@@ -1677,7 +1678,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ol>"+
+        Assertions.assertEquals( "<ol>"+
                       "<li>number 1"+
                       "<ul><li>bullet 2</li></ul>"+
                       "<ol><li>number 3</li></ol>"+
@@ -1700,7 +1701,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ul><li>Item A"+
+        Assertions.assertEquals( "<ul><li>Item A"+
                       "<ul><li>Numbered 1</li>"+
                       "<li>Numbered 2</li>"+
                       "</ul></li>"+
@@ -1720,7 +1721,7 @@ public class JSPWikiMarkupParserTest
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        Assert.assertEquals( "<ul><li>Item A"+
+        Assertions.assertEquals( "<ul><li>Item A"+
                       "<ul><li>Numbered 1</li>"+
                       "<li>Numbered 2"+
                       "<ul><li>Numbered3</li>"+
@@ -1738,7 +1739,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=test}]";
 
-        Assert.assertEquals( "test", translate(src) );
+        Assertions.assertEquals( "test", translate(src) );
     }
 
     @Test
@@ -1747,7 +1748,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text='<b>Foo</b>'}]";
 
-        Assert.assertEquals( "<b>Foo</b>", translate(src) );
+        Assertions.assertEquals( "<b>Foo</b>", translate(src) );
     }
 
     @Test
@@ -1756,7 +1757,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{SamplePlugin text=test}]";
 
-        Assert.assertEquals( "test", translate(src) );
+        Assertions.assertEquals( "test", translate(src) );
     }
 
     @Test
@@ -1765,7 +1766,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Today: [{INSERT JavaScriptPlugin}] ''day''.";
 
-        Assert.assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <i>day</i>.", translate(src) );
+        Assertions.assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <i>day</i>.", translate(src) );
     }
 
     @Test
@@ -1774,7 +1775,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text=test}]";
 
-        Assert.assertEquals( "test", translate(src) );
+        Assertions.assertEquals( "test", translate(src) );
     }
 
     /**
@@ -1786,7 +1787,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text=test}] [{INSERT SamplePlugin WHERE text=test2}]";
 
-        Assert.assertEquals( "test test2", translate(src) );
+        Assertions.assertEquals( "test test2", translate(src) );
     }
 
     @Test
@@ -1795,7 +1796,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text='test me now'}]";
 
-        Assert.assertEquals( "test me now", translate(src) );
+        Assertions.assertEquals( "test me now", translate(src) );
     }
 
     @Test
@@ -1804,7 +1805,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
 
-        Assert.assertEquals( "test 'me too' now", translate(src) );
+        Assertions.assertEquals( "test 'me too' now", translate(src) );
     }
 
     @Test
@@ -1813,7 +1814,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text=foo}] [{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
 
-        Assert.assertEquals( "foo test 'me too' now", translate(src) );
+        Assertions.assertEquals( "foo test 'me too' now", translate(src) );
     }
 
     /**
@@ -1825,7 +1826,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text=PageContent}]";
 
-        Assert.assertEquals( "PageContent", translate(src) );
+        Assertions.assertEquals( "PageContent", translate(src) );
     }
 
     /**
@@ -1837,7 +1838,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{INSERT SamplePlugin WHERE text='----'}]";
 
-        Assert.assertEquals( "----", translate(src) );
+        Assertions.assertEquals( "----", translate(src) );
     }
 
     @Test
@@ -1846,7 +1847,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin WHERE\n text=PageContent}]";
 
-        Assert.assertEquals( "Test PageContent", translate(src) );
+        Assertions.assertEquals( "Test PageContent", translate(src) );
     }
 
     @Test
@@ -1855,7 +1856,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n123\n456\n}]";
 
-        Assert.assertEquals( "Test PageContent (123+456+)", translate(src) );
+        Assertions.assertEquals( "Test PageContent (123+456+)", translate(src) );
     }
 
     @Test
@@ -1864,7 +1865,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n\n123\n456\n}]";
 
-        Assert.assertEquals( "Test PageContent (+123+456+)", translate(src) );
+        Assertions.assertEquals( "Test PageContent (+123+456+)", translate(src) );
     }
 
     @Test
@@ -1873,7 +1874,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\n\n123\n456\n}]";
 
-        Assert.assertEquals( "Test  (123+456+)", translate(src) );
+        Assertions.assertEquals( "Test  (123+456+)", translate(src) );
     }
 
     /**
@@ -1885,7 +1886,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin \n\n123\n456\n}]";
 
-        Assert.assertEquals( "Test  (123+456+)", translate(src) );
+        Assertions.assertEquals( "Test  (123+456+)", translate(src) );
     }
 
     /**
@@ -1897,7 +1898,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin text=']'}]";
 
-        Assert.assertEquals( "Test ]", translate(src) );
+        Assertions.assertEquals( "Test ]", translate(src) );
     }
 
     @Test
@@ -1906,7 +1907,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin text='a[]+b'}]";
 
-        Assert.assertEquals( "Test a[]+b", translate(src) );
+        Assertions.assertEquals( "Test a[]+b", translate(src) );
     }
 
     @Test
@@ -1915,7 +1916,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\n\na[]+b\n}]";
 
-        Assert.assertEquals( "Test  (a[]+b+)", translate(src) );
+        Assertions.assertEquals( "Test  (a[]+b+)", translate(src) );
     }
 
     @Test
@@ -1924,7 +1925,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin text='}'}]";
 
-        Assert.assertEquals( "Test }", translate(src) );
+        Assertions.assertEquals( "Test }", translate(src) );
     }
 
     @Test
@@ -1933,7 +1934,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}]";
 
-        Assert.assertEquals( "Test  (a[]+b{}+Glob.+)", translate(src) );
+        Assertions.assertEquals( "Test  (a[]+b{}+Glob.+)", translate(src) );
     }
 
     @Test
@@ -1942,7 +1943,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}}]";
 
-        Assert.assertEquals( "Test  (a[]+b{}+Glob.+})", translate(src) );
+        Assertions.assertEquals( "Test  (a[]+b{}+Glob.+})", translate(src) );
     }
 
     @Test
@@ -1951,7 +1952,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\n\n[{SamplePlugin}]\nGlob.\n}}]";
 
-        Assert.assertEquals( "Test  ([{SamplePlugin}]+Glob.+})", translate(src) );
+        Assertions.assertEquals( "Test  ([{SamplePlugin}]+Glob.+})", translate(src) );
     }
 
 
@@ -1961,7 +1962,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{SET foo='bar'}]Test [{INSERT SamplePlugin\n\n[{SamplePlugin text='[{$foo}]'}]\nGlob.\n}}]";
 
-        Assert.assertEquals( "Test  ([{SamplePlugin text='[bar]'}]+Glob.+})", translate(src) );
+        Assertions.assertEquals( "Test  ([{SamplePlugin text='[bar]'}]+Glob.+})", translate(src) );
     }
 
 
@@ -1973,14 +1974,14 @@ public class JSPWikiMarkupParserTest
     {
         String src="Test [{INSERT SamplePlugin\n\na+b{}\nGlob.\n}";
 
-        Assert.assertEquals( "Test {INSERT SamplePlugin\n\na+b{}\nGlob.\n}", translate(src) );
+        Assertions.assertEquals( "Test {INSERT SamplePlugin\n\na+b{}\nGlob.\n}", translate(src) );
     }
 
     @Test
     public void testMissingPlugin() throws Exception {
     	String src="Test [{SamplePlugino foo='bar'}]";
 
-    	Assert.assertEquals( "Test JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino" +
+    	Assertions.assertEquals( "Test JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino" +
     			             "<span class=\"error\">JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino</span>",
     			             translate( src ) );
     }
@@ -1991,7 +1992,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="[{$pagename}]";
 
-        Assert.assertEquals( PAGE_NAME+"", translate(src) );
+        Assertions.assertEquals( PAGE_NAME+"", translate(src) );
     }
 
     @Test
@@ -2000,7 +2001,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><th> heading </th><th> heading2 </th></tr>\n"+
                       "<tr><td> Cell 1 </td><td> Cell 2 </td></tr>\n"+
                       "<tr class=\"odd\"><td> Cell 3 </td><td> Cell 4</td></tr>\n"+
@@ -2014,7 +2015,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><th>heading</th><th>heading2</th></tr>\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr class=\"odd\"><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
@@ -2028,7 +2029,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
@@ -2041,7 +2042,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="|a\nbc";
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><td>a</td></tr>\n"+
                       "</table>"+
                       "bc",
@@ -2058,7 +2059,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Testtable\n||header|cell\n\n|cell||header";
 
-        Assert.assertEquals( "<p>Testtable\n</p>"+
+        Assertions.assertEquals( "<p>Testtable\n</p>"+
                       "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><th>header</th><td>cell</td></tr>\n</table><p />\n"+
                       "<table class=\"wikitable\" border=\"1\">"+
@@ -2075,7 +2076,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("ReallyALink");
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
@@ -2090,7 +2091,7 @@ public class JSPWikiMarkupParserTest
 
         newPage("ReallyALink");
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr class=\"odd\"><td>Cell 1</td><td> Cell| 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
@@ -2103,7 +2104,7 @@ public class JSPWikiMarkupParserTest
     {
         String src=";:Foo";
 
-        Assert.assertEquals( "<dl><dt></dt><dd>Foo</dd></dl>",
+        Assertions.assertEquals( "<dl><dt></dt><dd>Foo</dd></dl>",
                       translate(src) );
     }
 
@@ -2113,7 +2114,7 @@ public class JSPWikiMarkupParserTest
     {
         String src=";Bar:Foo";
 
-        Assert.assertEquals( "<dl><dt>Bar</dt><dd>Foo</dd></dl>",
+        Assertions.assertEquals( "<dl><dt>Bar</dt><dd>Foo</dd></dl>",
                       translate(src) );
     }
 
@@ -2123,7 +2124,7 @@ public class JSPWikiMarkupParserTest
     {
         String src=";:";
 
-        Assert.assertEquals( "<dl><dt></dt><dd /></dl>",
+        Assertions.assertEquals( "<dl><dt></dt><dd /></dl>",
                       translate(src) );
     }
 
@@ -2133,7 +2134,7 @@ public class JSPWikiMarkupParserTest
     {
         String src=";Bar:Foo :-)";
 
-        Assert.assertEquals( "<dl><dt>Bar</dt><dd>Foo :-)</dd></dl>",
+        Assertions.assertEquals( "<dl><dt>Bar</dt><dd>Foo :-)</dd></dl>",
                       translate(src) );
     }
 
@@ -2143,7 +2144,7 @@ public class JSPWikiMarkupParserTest
     {
         String src=";Bar:Foo :-) ;-) :*]";
 
-        Assert.assertEquals( "<dl><dt>Bar</dt><dd>Foo :-) ;-) :*]</dd></dl>",
+        Assertions.assertEquals( "<dl><dt>Bar</dt><dd>Foo :-) ;-) :*]</dd></dl>",
                       translate(src) );
     }
 
@@ -2154,7 +2155,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="----";
 
-        Assert.assertEquals( "<hr />",
+        Assertions.assertEquals( "<hr />",
                       translate(src) );
     }
 
@@ -2164,7 +2165,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="----Foo";
 
-        Assert.assertEquals( "<hr />Foo",
+        Assertions.assertEquals( "<hr />Foo",
                       translate(src) );
     }
 
@@ -2174,7 +2175,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="Bar----Foo";
 
-        Assert.assertEquals( "Bar----Foo",
+        Assertions.assertEquals( "Bar----Foo",
                       translate(src) );
     }
 
@@ -2184,7 +2185,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="-";
 
-        Assert.assertEquals( "-",
+        Assertions.assertEquals( "-",
                       translate(src) );
     }
 
@@ -2194,7 +2195,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="--";
 
-        Assert.assertEquals( "--",
+        Assertions.assertEquals( "--",
                       translate(src) );
     }
 
@@ -2204,7 +2205,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="---";
 
-        Assert.assertEquals( "---",
+        Assertions.assertEquals( "---",
                       translate(src) );
     }
 
@@ -2214,7 +2215,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="------";
 
-        Assert.assertEquals( "<hr />",
+        Assertions.assertEquals( "<hr />",
                       translate(src) );
     }
 
@@ -2224,7 +2225,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="!Hello\nThis is a test";
 
-        Assert.assertEquals( "<h4 id=\"section-testpage-Hello\">Hello<a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>\nThis is a test",
+        Assertions.assertEquals( "<h4 id=\"section-testpage-Hello\">Hello<a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>\nThis is a test",
                       translate(src) );
     }
 
@@ -2234,7 +2235,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="!!Hello, testing 1, 2, 3";
 
-        Assert.assertEquals( "<h3 id=\"section-testpage-HelloTesting123\">Hello, testing 1, 2, 3<a class=\"hashlink\" href=\"#section-testpage-HelloTesting123\">#</a></h3>",
+        Assertions.assertEquals( "<h3 id=\"section-testpage-HelloTesting123\">Hello, testing 1, 2, 3<a class=\"hashlink\" href=\"#section-testpage-HelloTesting123\">#</a></h3>",
                       translate(src) );
     }
 
@@ -2244,7 +2245,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="!!!Hello there, how are you doing?";
 
-        Assert.assertEquals( "<h2 id=\"section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?<a class=\"hashlink\" href=\"#section-testpage-HelloThereHowAreYouDoing\">#</a></h2>",
+        Assertions.assertEquals( "<h2 id=\"section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?<a class=\"hashlink\" href=\"#section-testpage-HelloThereHowAreYouDoing\">#</a></h2>",
                       translate(src) );
     }
 
@@ -2254,7 +2255,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="!!![Hello]";
 
-        Assert.assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"createpage\" href=\"/test/Edit.jsp?page=Hello\" title=\"Create &quot;Hello&quot;\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
+        Assertions.assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"createpage\" href=\"/test/Edit.jsp?page=Hello\" title=\"Create &quot;Hello&quot;\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
                       translate(src) );
     }
 
@@ -2264,7 +2265,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="!!![Hello|http://www.google.com/]";
 
-        Assert.assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
+        Assertions.assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
                       translate(src) );
     }
 
@@ -2274,7 +2275,7 @@ public class JSPWikiMarkupParserTest
     {
         String src="![Hello|http://www.google.com/?p=a&c=d]";
 
-        Assert.assertEquals( "<h4 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>",
+        Assertions.assertEquals( "<h4 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>",
                       translate(src) );
     }
 
@@ -2287,7 +2288,7 @@ public class JSPWikiMarkupParserTest
     {
         String translation = translate( brokenPageText );
 
-        Assert.assertNotNull( translation );
+        Assertions.assertNotNull( translation );
     }
 
     /**
@@ -2299,7 +2300,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "{{{\ncode.}}\n";
 
-        Assert.assertEquals( "<pre>\ncode.}}\n</pre>", translate(src) );
+        Assertions.assertEquals( "<pre>\ncode.}}\n</pre>", translate(src) );
     }
 
     /**
@@ -2311,7 +2312,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "{{{\ncode.}\n";
 
-        Assert.assertEquals( "<pre>\ncode.}\n</pre>", translate(src) );
+        Assertions.assertEquals( "<pre>\ncode.}\n</pre>", translate(src) );
     }
 
     @Test
@@ -2320,7 +2321,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Hello!";
 
-        Assert.assertEquals( "Hello!", translate(src) );
+        Assertions.assertEquals( "Hello!", translate(src) );
     }
 
     /**
@@ -2378,14 +2379,14 @@ public class JSPWikiMarkupParserTest
 
      String res = translate( p, src );
 
-     Assert.assertEquals("Page text", "Foobar.", res);
+     Assertions.assertEquals( "Foobar.", res, "Page text" );
 
      Acl acl = p.getAcl();
 
      Principal prof = new WikiPrincipal("JanneJalkanen");
 
-     Assert.assertTrue( "has read", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
-     Assert.assertFalse( "no edit", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
+     Assertions.assertTrue( "has read", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+     Assertions.assertFalse( "no edit", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
      }
 
     @Test
@@ -2399,24 +2400,24 @@ public class JSPWikiMarkupParserTest
 
      String res = translate( p, src );
 
-     Assert.assertEquals("Page text", "Foobar.\n", res);
+     Assertions.assertEquals("Page text", "Foobar.\n", res);
 
      Acl acl = p.getAcl();
 
      // ACL says Janne can read and edit
       Principal prof = new WikiPrincipal("JanneJalkanen");
-      Assert.assertTrue( "read for JJ", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
-      Assert.assertTrue( "edit for JJ", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
+      Assertions.assertTrue( "read for JJ", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+      Assertions.assertTrue( "edit for JJ", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
 
       // ACL doesn't say Erik can read or edit
        prof = new WikiPrincipal("ErikBunn");
-       Assert.assertFalse( "no read for BB", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
-       Assert.assertFalse( "no edit for EB", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
+       Assertions.assertFalse( "no read for BB", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+       Assertions.assertFalse( "no edit for EB", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
 
        // ACL says Sulo can edit, but doens't say he can read (though the AuthMgr will tell us it's implied)
         prof = new WikiPrincipal("SuloVilen");
-        Assert.assertFalse( "read for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
-        Assert.assertTrue( "edit for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
+        Assertions.assertFalse( "read for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+        Assertions.assertTrue( "edit for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
         }
         */
     /*
@@ -2446,9 +2447,9 @@ public class JSPWikiMarkupParserTest
 
         String res = translate( p, src );
 
-        Assert.assertEquals("Page text", "Foobar.", res);
+        Assertions.assertEquals( "Foobar.", res, "Page text" );
 
-        Assert.assertEquals( "foo", p.getAttribute("name") );
+        Assertions.assertEquals( "foo", p.getAttribute("name") );
     }
 
     @Test
@@ -2461,9 +2462,9 @@ public class JSPWikiMarkupParserTest
 
         String res = translate( p, src );
 
-        Assert.assertEquals("Page text", "Foobar.", res);
+        Assertions.assertEquals( "Foobar.", res, "Page text" );
 
-        Assert.assertEquals( "foo", p.getAttribute("name") );
+        Assertions.assertEquals( "foo", p.getAttribute("name") );
     }
 
     @Test
@@ -2476,9 +2477,9 @@ public class JSPWikiMarkupParserTest
 
         String res = translate( p, src );
 
-        Assert.assertEquals("Page text", "Foobar.", res);
+        Assertions.assertEquals( "Foobar.", res, "Page text" );
 
-        Assert.assertEquals( "Janne Jalkanen", p.getAttribute("name") );
+        Assertions.assertEquals( "Janne Jalkanen", p.getAttribute("name") );
     }
 
     @Test
@@ -2491,10 +2492,10 @@ public class JSPWikiMarkupParserTest
 
         String res = translate( p, src );
 
-        Assert.assertEquals("Page text", "Foobar.", res);
+        Assertions.assertEquals( "Foobar.", res, "Page text" );
 
-        Assert.assertEquals( "Janne Jalkanen", p.getAttribute("name") );
-        Assert.assertEquals( "Janne Jalkanen", p.getAttribute("too") );
+        Assertions.assertEquals( "Janne Jalkanen", p.getAttribute("name") );
+        Assertions.assertEquals( "Janne Jalkanen", p.getAttribute("too") );
     }
 
     @Test
@@ -2507,9 +2508,9 @@ public class JSPWikiMarkupParserTest
 
         String res = translate( p, src );
 
-        Assert.assertEquals("Page text", "Foobar. &lt;b&gt;danger&lt;/b&gt;", res);
+        Assertions.assertEquals( "Foobar. &lt;b&gt;danger&lt;/b&gt;", res, "Page text");
 
-        Assert.assertEquals( "<b>danger</b>", p.getAttribute("name") );
+        Assertions.assertEquals( "<b>danger</b>", p.getAttribute("name") );
     }
 
 
@@ -2536,8 +2537,8 @@ public class JSPWikiMarkupParserTest
 
         Collection< String > links = coll.getLinks();
 
-        Assert.assertEquals( "no links found", 1, links.size() );
-        Assert.assertEquals( "wrong link", "Test", links.iterator().next() );
+        Assertions.assertEquals( 1, links.size(), "no links found" );
+        Assertions.assertEquals( "Test", links.iterator().next(), "wrong link" );
     }
 
     @Test
@@ -2560,9 +2561,8 @@ public class JSPWikiMarkupParserTest
 
         Collection< String > links = coll.getLinks();
 
-        Assert.assertEquals( "no links found", 1, links.size() );
-        Assert.assertEquals( "wrong link", PAGE_NAME+"/Test.txt",
-                      links.iterator().next() );
+        Assertions.assertEquals( 1, links.size(), "no links found" );
+        Assertions.assertEquals( PAGE_NAME+"/Test.txt", links.iterator().next(), "wrong link" );
     }
 
     @Test
@@ -2595,11 +2595,10 @@ public class JSPWikiMarkupParserTest
 
             Collection< String > links = coll.getLinks();
 
-            Assert.assertEquals( "no links found", 1, links.size() );
-            Assert.assertEquals( "wrong link", PAGE_NAME+"/TestAtt.txt",
-                          links.iterator().next() );
+            Assertions.assertEquals( 1, links.size(), "no links found" );
+            Assertions.assertEquals( PAGE_NAME+"/TestAtt.txt", links.iterator().next(), "wrong link" );
 
-            Assert.assertEquals( "wrong links found", 0, coll_others.getLinks().size() );
+            Assertions.assertEquals( 0, coll_others.getLinks().size(), "wrong links found" );
         }
         finally
         {
@@ -2617,7 +2616,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "%%foo\ntest\n%%\n";
 
-        Assert.assertEquals( "<div class=\"foo\">\ntest\n</div>\n", translate(src) );
+        Assertions.assertEquals( "<div class=\"foo\">\ntest\n</div>\n", translate(src) );
     }
 
     @Test
@@ -2626,7 +2625,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "%%(foo:bar;)\ntest\n%%\n";
 
-        Assert.assertEquals( "<div style=\"foo:bar;\">\ntest\n</div>\n", translate(src) );
+        Assertions.assertEquals( "<div style=\"foo:bar;\">\ntest\n</div>\n", translate(src) );
     }
 
     @Test
@@ -2635,7 +2634,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "%%foo test%%\n";
 
-        Assert.assertEquals( "<span class=\"foo\">test</span>\n", translate(src) );
+        Assertions.assertEquals( "<span class=\"foo\">test</span>\n", translate(src) );
     }
 
     @Test
@@ -2644,7 +2643,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "%%(foo:bar;)test%%\n";
 
-        Assert.assertEquals( "<span style=\"foo:bar;\">test</span>\n", translate(src) );
+        Assertions.assertEquals( "<span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
     @Test
@@ -2653,7 +2652,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Johan %%(foo:bar;)test%%\n";
 
-        Assert.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
+        Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
     @Test
@@ -2662,7 +2661,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Johan %%(foo:bar;)test/%\n";
 
-        Assert.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
+        Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
     @Test
@@ -2671,7 +2670,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "~%%foo test~%%\n";
 
-        Assert.assertEquals( "%%foo test%%\n", translate(src) );
+        Assertions.assertEquals( "%%foo test%%\n", translate(src) );
     }
 
     @Test
@@ -2680,7 +2679,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Johan %%(color: rgb(1,2,3);)test%%\n";
 
-        Assert.assertEquals( "Johan <span style=\"color: rgb(1,2,3);\">test</span>\n", translate(src) );
+        Assertions.assertEquals( "Johan <span style=\"color: rgb(1,2,3);\">test</span>\n", translate(src) );
     }
 
     @Test
@@ -2689,7 +2688,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "|%%(foo:bar;)test%%|no test\n";
 
-        Assert.assertEquals( "<table class=\"wikitable\" border=\"1\"><tr class=\"odd\"><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>",
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\"><tr class=\"odd\"><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>",
                       translate(src) );
     }
 
@@ -2699,7 +2698,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "%%(visibility: hidden; background-image:url(javascript:alert('X')))%%\nTEST";
 
-        Assert.assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
+        Assertions.assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
     }
 
     // FIXME: This test must be enabled later on!
@@ -2710,7 +2709,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "%%(visibility: hidden; background&#09;-image:url(j&#000013;avas&#99;ript:'url()';alert('X');)%%\nTEST";
 
-        Assert.assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
+        Assertions.assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
     }
     */
     @Test
@@ -2719,7 +2718,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "Janne&apos;s test";
 
-        Assert.assertEquals( "Janne&apos;s test", translate(src) );
+        Assertions.assertEquals( "Janne&apos;s test", translate(src) );
     }
 
     @Test
@@ -2728,7 +2727,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "&Auml;";
 
-        Assert.assertEquals( "&Auml;", translate(src) );
+        Assertions.assertEquals( "&Auml;", translate(src) );
     }
 
     @Test
@@ -2737,7 +2736,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "H2%%sub 2%%~ O";
 
-        Assert.assertEquals( "H2<span class=\"sub\">2</span>O", translate(src) );
+        Assertions.assertEquals( "H2<span class=\"sub\">2</span>O", translate(src) );
     }
 
 
@@ -2747,7 +2746,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "____";
 
-        Assert.assertEquals( "<b></b>", translate(src) );
+        Assertions.assertEquals( "<b></b>", translate(src) );
     }
 
     @Test
@@ -2756,7 +2755,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "''''";
 
-        Assert.assertEquals( "<i></i>", translate(src) );
+        Assertions.assertEquals( "<i></i>", translate(src) );
     }
 
     @Test
@@ -2781,7 +2780,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "[-phobous]";
 
-        Assert.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=-phobous\" title=\"Create &quot;-phobous&quot;\">-phobous</a>", translate(src) );
+        Assertions.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=-phobous\" title=\"Create &quot;-phobous&quot;\">-phobous</a>", translate(src) );
     }
 
     @Test
@@ -2790,7 +2789,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "[?phobous]";
 
-        Assert.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=Phobous\" title=\"Create &quot;Phobous&quot;\">?phobous</a>", translate(src) );
+        Assertions.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=Phobous\" title=\"Create &quot;Phobous&quot;\">?phobous</a>", translate(src) );
     }
 
     @Test
@@ -2799,7 +2798,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "[Brightness (apical)]";
 
-        Assert.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=Brightness%20%28apical%29\" title=\"Create &quot;Brightness (apical)&quot;\">Brightness (apical)</a>", translate(src) );
+        Assertions.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=Brightness%20%28apical%29\" title=\"Create &quot;Brightness (apical)&quot;\">Brightness (apical)</a>", translate(src) );
     }
 
     @Test
@@ -2818,10 +2817,10 @@ public class JSPWikiMarkupParserTest
         death.append("\n\n");
 
         System.out.println("Trying to crash parser with a line which is "+death.length()+" chars in size");
-        //  This should not Assert.fail
+        //  This should not Assertions.fail
         String res = translate( death.toString() );
 
-        Assert.assertTrue( res.length() > 0 );
+        Assertions.assertTrue( res.length() > 0 );
     }
 
     @Test
@@ -2830,7 +2829,7 @@ public class JSPWikiMarkupParserTest
         newPage("Foo bar");
         String src = "[Foo bar]";
 
-        Assert.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20bar\">Foo bar</a>", translate(src) );
+        Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20bar\">Foo bar</a>", translate(src) );
     }
 
     /** Too many spaces */
@@ -2840,7 +2839,7 @@ public class JSPWikiMarkupParserTest
         newPage("Foo bar");
         String src = "[Foo        bar]";
 
-        Assert.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20bar\">Foo        bar</a>", translate(src) );
+        Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20bar\">Foo        bar</a>", translate(src) );
     }
 
     @Test
@@ -2850,7 +2849,7 @@ public class JSPWikiMarkupParserTest
 
         String dst = translate(src);
 
-        Assert.assertTrue( "No error", dst.indexOf("JDOM") != -1 );
+        Assertions.assertTrue( dst.indexOf("JDOM") != -1, "No error" );
     }
 
     @Test
@@ -2860,7 +2859,7 @@ public class JSPWikiMarkupParserTest
 
         String dst = translate(src);
 
-        Assert.assertEquals( "<a class=\"external\" href=\"http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;\">http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;</a>", dst );
+        Assertions.assertEquals( "<a class=\"external\" href=\"http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;\">http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;</a>", dst );
     }
 
     @Test
@@ -2871,7 +2870,7 @@ public class JSPWikiMarkupParserTest
 
         String dst = translate(src);
 
-        Assert.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%26Bar\">Foo&amp;Bar</a>", dst );
+        Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%26Bar\">Foo&amp;Bar</a>", dst );
     }
 
     @Test
@@ -2882,7 +2881,7 @@ public class JSPWikiMarkupParserTest
 
         String dst = translate(src);
 
-        Assert.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20%26%20Bar\">Foo &amp; Bar</a>", dst );
+        Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20%26%20Bar\">Foo &amp; Bar</a>", dst );
     }
 
     // This is a random find: the following page text caused an eternal loop in V2.0.x.

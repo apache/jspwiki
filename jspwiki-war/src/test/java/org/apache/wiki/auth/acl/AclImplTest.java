@@ -35,10 +35,10 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AclImplTest
 {
@@ -57,7 +57,7 @@ public class AclImplTest
      * Charlie = may view Dave = may view, may comment groupAcl: FooGroup =
      * Alice, Bob - may edit BarGroup = Bob, Charlie - may view
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
 
@@ -125,7 +125,7 @@ public class AclImplTest
         m_groups.put( "BarGroup", bar );
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception
     {
         m_groupMgr.removeGroup( "FooGroup" );
@@ -166,9 +166,9 @@ public class AclImplTest
     {
         // Alice should be able to view but not edit or comment
         Principal wup = new WikiPrincipal( "Alice" );
-        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertFalse( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
     }
 
     @Test
@@ -176,10 +176,10 @@ public class AclImplTest
     {
         // Bob should be able to view, edit, and comment but not delete
         Principal wup = new WikiPrincipal( "Bob" );
-        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertTrue( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertTrue( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
     @Test
@@ -187,10 +187,10 @@ public class AclImplTest
     {
         // Charlie should be able to view, but not edit, comment or delete
         Principal wup = new WikiPrincipal( "Charlie" );
-        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertFalse( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
     @Test
@@ -198,38 +198,38 @@ public class AclImplTest
     {
         // Dave should be able to view and comment but not edit or delete
         Principal wup = new WikiPrincipal( "Dave" );
-        Assert.assertTrue( "view", inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertFalse( "edit", inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertTrue( "comment", inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "delete", inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.VIEW ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.EDIT ), wup ) );
+        Assertions.assertTrue( inArray( m_acl.findPrincipals( PagePermission.COMMENT ), wup ) );
+        Assertions.assertFalse( inArray( m_acl.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
     @Test
     public void testGroups()
     {
         Principal wup = new WikiPrincipal( "Alice" );
-        Assert.assertTrue( "Alice view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertTrue( "Alice edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertTrue( "Alice comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "Alice delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ), "Alice view" );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ), "Alice edit" );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ), "Alice comment" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ),"Alice delete" );
 
         wup = new WikiPrincipal( "Bob" );
-        Assert.assertTrue( "Bob view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertTrue( "Bob edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertTrue( "Bob comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "Bob delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ), "Bob view" );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ), "Bob edit" );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ), "Bob comment" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ), "Bob delete" );
 
         wup = new WikiPrincipal( "Charlie" );
-        Assert.assertTrue( "Charlie view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertFalse( "Charlie edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertFalse( "Charlie comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "Charlie delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertTrue( inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ), "Charlie view" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ), "Charlie edit" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ), "Charlie comment" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ),"Charlie delete" );
 
         wup = new WikiPrincipal( "Dave" );
-        Assert.assertFalse( "Dave view", inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ) );
-        Assert.assertFalse( "Dave edit", inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ) );
-        Assert.assertFalse( "Dave comment", inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ) );
-        Assert.assertFalse( "Dave delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.VIEW ), wup ), "Dave view" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.EDIT ), wup ), "Dave edit" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.COMMENT ), wup ), "Dave comment" );
+        Assertions.assertFalse( inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ), "Dave delete" );
     }
 
     @Test

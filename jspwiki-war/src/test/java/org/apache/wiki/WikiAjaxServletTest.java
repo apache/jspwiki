@@ -18,9 +18,9 @@
  */
 package org.apache.wiki;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
@@ -44,28 +44,28 @@ public class WikiAjaxServletTest {
                 "/test//ajax/MyPlugin#hashCode?param=123&param=231",
                 "http://localhost:8080/ajax/MyPlugin#hashCode?param=123&param=231" };
 
-        Assert.assertEquals(9,paths.length);
+        Assertions.assertEquals(9,paths.length);
         WikiAjaxDispatcherServlet wikiAjaxDispatcherServlet = new WikiAjaxDispatcherServlet();
         for (String path : paths) {
             String servletName = wikiAjaxDispatcherServlet.getServletName(path);
-            Assert.assertEquals("MyPlugin", servletName);
+            Assertions.assertEquals("MyPlugin", servletName);
         }
 
         // The plugin SampleAjaxPlugin
         WikiAjaxDispatcherServlet.registerServlet(new SampleAjaxPlugin());
         WikiAjaxServlet servlet = wikiAjaxDispatcherServlet.findServletByName("SampleAjaxPlugin");
-        Assert.assertNotNull(servlet);
-        Assert.assertTrue(servlet instanceof SampleAjaxPlugin);
+        Assertions.assertNotNull(servlet);
+        Assertions.assertTrue(servlet instanceof SampleAjaxPlugin);
 
         /** Note sure about this
         WikiAjaxDispatcherServlet.registerServlet(new RPCServlet());
         WikiAjaxServlet servlet2 = wikiAjaxDispatcherServlet.findServletByName("RPCServlet");
-        Assert.assertNotNull(servlet2);
-        Assert.assertTrue(servlet2 instanceof RPCServlet);
+        Assertions.assertNotNull(servlet2);
+        Assertions.assertTrue(servlet2 instanceof RPCServlet);
         */
 
         WikiAjaxServlet servlet3 = wikiAjaxDispatcherServlet.findServletByName("TestWikiNonAjaxServlet");
-        Assert.assertNull(servlet3);
+        Assertions.assertNull(servlet3);
     }
 
 }

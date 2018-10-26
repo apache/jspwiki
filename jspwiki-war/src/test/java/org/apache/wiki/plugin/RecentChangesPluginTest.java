@@ -25,10 +25,10 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -41,7 +41,7 @@ public class RecentChangesPluginTest {
 
     PluginManager manager;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         CacheManager.getInstance().removeAllCaches();
         testEngine = new TestEngine(props);
@@ -54,7 +54,7 @@ public class RecentChangesPluginTest {
         manager = new DefaultPluginManager(testEngine, props);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         testEngine.deleteTestPage("TestPage01");
         testEngine.deleteTestPage("TestPage02");
@@ -77,10 +77,10 @@ public class RecentChangesPluginTest {
 
         // we don't want to compare the complete html returned, but check if
         // certain Strings are present and other Strings are not present
-        Assert.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
-        Assert.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
-        Assert.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
-        Assert.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
+        Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
+        Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
+        Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
+        Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
     /**
@@ -95,10 +95,10 @@ public class RecentChangesPluginTest {
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
 
-        Assert.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
-        Assert.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
-        Assert.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
-        Assert.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
+        Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
+        Assertions.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
+        Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
+        Assertions.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
     /**
@@ -113,10 +113,10 @@ public class RecentChangesPluginTest {
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
 
-        Assert.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
-        Assert.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
-        Assert.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
-        Assert.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
+        Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
+        Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
+        Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage02\">Test Page 02</a>"));
+        Assertions.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage03\">Test Page 03</a>"));
     }
 
     /**
@@ -131,8 +131,8 @@ public class RecentChangesPluginTest {
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
 
-        Assert.assertTrue( "<table class=\"recentchanges\" cellpadding=\"4\"></table>".equals( res ) );
-        Assert.assertFalse( "<table class=\"recentchanges\" cellpadding=\"4\" />".equals( res ) );
+        Assertions.assertTrue( "<table class=\"recentchanges\" cellpadding=\"4\"></table>".equals( res ) );
+        Assertions.assertFalse( "<table class=\"recentchanges\" cellpadding=\"4\" />".equals( res ) );
     }
 
 }

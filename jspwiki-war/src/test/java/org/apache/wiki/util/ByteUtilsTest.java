@@ -21,8 +21,8 @@ package org.apache.wiki.util;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class ByteUtilsTest {
@@ -34,24 +34,24 @@ public class ByteUtilsTest {
     public void testByteUtilsConvertBytes()
     {
         String hex = ByteUtils.bytes2hex(bytes);
-        Assert.assertEquals(EXPECTED_HEX_STRING, hex);
+        Assertions.assertEquals(EXPECTED_HEX_STRING, hex);
     }
 
     @Test
     public void testConvertHexToBytes()
     {
         byte[] reconstructedBytes = ByteUtils.parseHexBinary(EXPECTED_HEX_STRING);
-        Assert.assertEquals(bytes.length,reconstructedBytes.length);
-        Assert.assertTrue(Arrays.equals(bytes,reconstructedBytes));
+        Assertions.assertEquals(bytes.length,reconstructedBytes.length);
+        Assertions.assertTrue(Arrays.equals(bytes,reconstructedBytes));
     }
 
     @Test
     public void testByteUtilsConvertByte()
     {
-        Assert.assertEquals("0",  ByteUtils.byte2hex((byte)0));
-        Assert.assertEquals("f",  ByteUtils.byte2hex((byte)15));
-        Assert.assertEquals("10", ByteUtils.byte2hex((byte)16));
-        Assert.assertEquals("7f", ByteUtils.byte2hex((byte)127));
+        Assertions.assertEquals("0",  ByteUtils.byte2hex((byte)0));
+        Assertions.assertEquals("f",  ByteUtils.byte2hex((byte)15));
+        Assertions.assertEquals("10", ByteUtils.byte2hex((byte)16));
+        Assertions.assertEquals("7f", ByteUtils.byte2hex((byte)127));
     }
 
 }

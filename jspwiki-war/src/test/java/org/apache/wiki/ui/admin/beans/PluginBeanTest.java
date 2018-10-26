@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
 import javax.management.NotCompliantMBeanException;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -53,7 +53,7 @@ public class PluginBeanTest {
                                   "<tr><td>SamplePlugin2</td><td>samplealias2</td><td>Janne Jalkanen</td><td></td></tr>" +
                                 "</table>" +
                               "</div>";
-        Assert.assertEquals( expectedHtml, pb.doGet( context ) );
+        Assertions.assertEquals( expectedHtml, pb.doGet( context ) );
     }
 
 }

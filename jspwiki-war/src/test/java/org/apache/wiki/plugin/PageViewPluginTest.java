@@ -24,10 +24,10 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -41,7 +41,7 @@ public class PageViewPluginTest
 
     PluginManager manager;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         CacheManager.getInstance().removeAllCaches();
@@ -54,7 +54,7 @@ public class PageViewPluginTest
         manager = new DefaultPluginManager( testEngine, props );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         testEngine.deleteTestPage( "TestPage01" );
@@ -86,9 +86,9 @@ public class PageViewPluginTest
         String result = testEngine.getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
-        Assert.assertTrue( result.contains( "Test Page 01 (2 views)" ) );
+        Assertions.assertTrue( result.contains( "Test Page 01 (2 views)" ) );
 
-        Assert.assertTrue( result.contains( "Test Page 02 (3 views)" ) );
+        Assertions.assertTrue( result.contains( "Test Page 02 (3 views)" ) );
     }
 
     @Test
@@ -116,10 +116,10 @@ public class PageViewPluginTest
         String result = testEngine.getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
-        Assert.assertTrue( result.contains( "Test Page 01" ) );
+        Assertions.assertTrue( result.contains( "Test Page 01" ) );
 
         // this page should not have been shown:
-        Assert.assertFalse( result.contains( "Test Page Excluded" ) );
+        Assertions.assertFalse( result.contains( "Test Page Excluded" ) );
 
         testEngine.deleteTestPage( "TestPageExcluded" );
     }
@@ -151,7 +151,7 @@ public class PageViewPluginTest
         int start2 = result.indexOf( "Test Page 02" );
 
         // page2 should be showed before page1
-        Assert.assertTrue( start2 < start1 );
+        Assertions.assertTrue( start2 < start1 );
     }
 
     @Test
@@ -187,9 +187,9 @@ public class PageViewPluginTest
         String result = testEngine.getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
-        Assert.assertTrue( result.contains( "Test Page 03" ) );
+        Assertions.assertTrue( result.contains( "Test Page 03" ) );
 
-        Assert.assertFalse( result.contains( "Test Page 04" ) );
+        Assertions.assertFalse( result.contains( "Test Page 04" ) );
 
         testEngine.deleteTestPage( "TestPage03" );
         testEngine.deleteTestPage( "TestPage04" );

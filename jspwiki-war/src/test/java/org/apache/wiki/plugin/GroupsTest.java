@@ -22,10 +22,10 @@ package org.apache.wiki.plugin;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class GroupsTest
@@ -33,14 +33,14 @@ public class GroupsTest
     Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
         testEngine = new TestEngine(props);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception
     {
         testEngine.deletePage( "Test" );
@@ -55,7 +55,7 @@ public class GroupsTest
 
         String res = testEngine.getHTML( "Test" );
 
-        Assert.assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, "
+        Assertions.assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, "
                 + "<a href=\"/test/Group.jsp?group=Art\">Art</a>, "
                 + "<a href=\"/test/Group.jsp?group=Literature\">Literature</a>, "
                 + "<a href=\"/test/Group.jsp?group=TV\">TV</a>\n"

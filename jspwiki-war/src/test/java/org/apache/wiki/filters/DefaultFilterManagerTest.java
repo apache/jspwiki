@@ -26,16 +26,16 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DefaultFilterManagerTest {
     Properties props = TestEngine.getTestProperties();
 
     TestEngine engine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         PropertyConfigurator.configure(props);
         engine = new TestEngine(props);
@@ -45,35 +45,35 @@ public class DefaultFilterManagerTest {
     public void testInitFilters() throws Exception {
         FilterManager m = new DefaultFilterManager( engine, props );
 
-        List l = m.getFilterList();
+        List<PageFilter> l = m.getFilterList();
 
-        Assert.assertEquals("Wrong number of filters", 2, l.size());
+        Assertions.assertEquals( 2, l.size(), "Wrong number of filters" );
 
-        Iterator i = l.iterator();
-        PageFilter f1 = (PageFilter)i.next();
+        Iterator<PageFilter> i = l.iterator();
+        PageFilter f1 = i.next();
 
-        Assert.assertTrue("Not a Profanityfilter", f1 instanceof ProfanityFilter);
+        Assertions.assertTrue( f1 instanceof ProfanityFilter, "Not a Profanityfilter" );
 
-        PageFilter f2 = (PageFilter)i.next();
+        PageFilter f2 = i.next();
 
-        Assert.assertTrue("Not a Testfilter", f2 instanceof TestFilter);
+        Assertions.assertTrue( f2 instanceof TestFilter, "Not a Testfilter" );
     }
 
     @Test
     public void testInitParams() throws Exception {
         FilterManager m = new DefaultFilterManager( engine, props );
 
-        List l = m.getFilterList();
+        List<PageFilter> l = m.getFilterList();
 
-        Iterator i = l.iterator();
+        Iterator<PageFilter> i = l.iterator();
         i.next();
         TestFilter f2 = (TestFilter)i.next();
 
         Properties p = f2.m_properties;
 
-        Assert.assertEquals("no foobar", "Zippadippadai", p.getProperty("foobar"));
+        Assertions.assertEquals( "Zippadippadai", p.getProperty("foobar"), "no foobar" );
 
-        Assert.assertEquals("no blatblaa", "5", p.getProperty( "blatblaa" ) );
+        Assertions.assertEquals( "5", p.getProperty( "blatblaa" ), "no blatblaa" );
     }
 
 }

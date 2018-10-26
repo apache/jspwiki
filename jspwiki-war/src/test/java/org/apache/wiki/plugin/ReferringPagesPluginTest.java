@@ -26,10 +26,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ReferringPagesPluginTest
 {
@@ -38,7 +38,7 @@ public class ReferringPagesPluginTest
     WikiContext context;
     PluginManager manager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -58,7 +58,7 @@ public class ReferringPagesPluginTest
         manager = new DefaultPluginManager( engine, props );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         engine.deleteTestPage( "TestPage" );
@@ -90,7 +90,7 @@ public class ReferringPagesPluginTest
         String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
-        Assert.assertEquals( mkLink( "TestPage" )+"<br />",
+        Assertions.assertEquals( mkLink( "TestPage" )+"<br />",
                       res );
     }
 
@@ -113,7 +113,7 @@ public class ReferringPagesPluginTest
         }
 
         // there is one extra "<a" in the result
-        Assert.assertEquals( 5+1, count );
+        Assertions.assertEquals( 5+1, count );
 
         String expected = ">...and 2 more</a>";
         count =0;
@@ -121,7 +121,7 @@ public class ReferringPagesPluginTest
         {
             count++;
         }
-        Assert.assertEquals("End", 1, count );
+        Assertions.assertEquals(1, count, "End");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ReferringPagesPluginTest
         String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
 
-        Assert.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />",
+        Assertions.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />",
                       res );
     }
 
@@ -144,23 +144,20 @@ public class ReferringPagesPluginTest
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin include='*7'}" );
 
-        Assert.assertTrue( "7", res.indexOf("Foobar7") != -1 );
-        Assert.assertTrue( "6", res.indexOf("Foobar6") == -1 );
-        Assert.assertTrue( "5", res.indexOf("Foobar5") == -1 );
-        Assert.assertTrue( "4", res.indexOf("Foobar4") == -1 );
-        Assert.assertTrue( "3", res.indexOf("Foobar3") == -1 );
-        Assert.assertTrue( "2", res.indexOf("Foobar2") == -1 );
+        Assertions.assertTrue( res.indexOf("Foobar7") != -1, "7" );
+        Assertions.assertTrue( res.indexOf("Foobar6") == -1, "6" );
+        Assertions.assertTrue( res.indexOf("Foobar5") == -1, "5" );
+        Assertions.assertTrue( res.indexOf("Foobar4") == -1, "4" );
+        Assertions.assertTrue( res.indexOf("Foobar3") == -1, "3" );
+        Assertions.assertTrue( res.indexOf("Foobar2") == -1, "2" );
     }
 
     @Test
     public void testExclude()
         throws Exception
     {
-        String res = manager.execute( context,
-                                      "{ReferringPagesPlugin exclude='*'}");
-
-        Assert.assertEquals( "...nobody",
-                      res );
+        String res = manager.execute( context, "{ReferringPagesPlugin exclude='*'}");
+        Assertions.assertEquals( "...nobody", res );
     }
 
     @Test
@@ -170,7 +167,7 @@ public class ReferringPagesPluginTest
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7'}");
 
-        Assert.assertTrue( res.indexOf("Foobar7") == -1 );
+        Assertions.assertTrue( res.indexOf("Foobar7") == -1 );
     }
 
     @Test
@@ -180,12 +177,12 @@ public class ReferringPagesPluginTest
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7,*5,*4'}");
 
-        Assert.assertTrue( "7", res.indexOf("Foobar7") == -1 );
-        Assert.assertTrue( "6", res.indexOf("Foobar6") != -1 );
-        Assert.assertTrue( "5", res.indexOf("Foobar5") == -1 );
-        Assert.assertTrue( "4", res.indexOf("Foobar4") == -1 );
-        Assert.assertTrue( "3", res.indexOf("Foobar3") != -1 );
-        Assert.assertTrue( "2", res.indexOf("Foobar2") != -1 );
+        Assertions.assertTrue( res.indexOf("Foobar7") == -1, "7" );
+        Assertions.assertTrue( res.indexOf("Foobar6") != -1, "6" );
+        Assertions.assertTrue( res.indexOf("Foobar5") == -1, "5" );
+        Assertions.assertTrue( res.indexOf("Foobar4") == -1, "4" );
+        Assertions.assertTrue( res.indexOf("Foobar3") != -1, "3" );
+        Assertions.assertTrue( res.indexOf("Foobar2") != -1, "2" );
     }
 
     @Test
@@ -193,14 +190,14 @@ public class ReferringPagesPluginTest
     {
         String result = null;
         result = manager.execute(context, "{ReferringPagesPlugin show=count}");
-        Assert.assertEquals("7",result);
+        Assertions.assertEquals("7",result);
 
         result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count}");
-        Assert.assertEquals("6",result);
+        Assertions.assertEquals("6",result);
 
         result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count,showLastModified=true}");
         String numberResult=result.substring(0,result.indexOf(" "));
-        Assert.assertEquals("6",numberResult);
+        Assertions.assertEquals("6",numberResult);
 
         String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
         // the date should be parseable:
@@ -219,7 +216,7 @@ public class ReferringPagesPluginTest
             exceptionString = pe.getMessage();
         }
 
-        Assert.assertEquals(expectedExceptionString, exceptionString);
+        Assertions.assertEquals(expectedExceptionString, exceptionString);
     }
 
 }

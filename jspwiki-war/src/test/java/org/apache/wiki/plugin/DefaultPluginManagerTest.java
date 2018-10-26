@@ -25,10 +25,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DefaultPluginManagerTest
 {
@@ -42,7 +42,7 @@ public class DefaultPluginManagerTest
 
     DefaultPluginManager manager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -51,7 +51,7 @@ public class DefaultPluginManagerTest
         manager = new DefaultPluginManager( engine, props );
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws ProviderException
     {
         engine.deletePage("Testpage");
@@ -63,7 +63,7 @@ public class DefaultPluginManagerTest
     {
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=foobar}");
 
-        Assert.assertEquals( "foobar", res );
+        Assertions.assertEquals( "foobar", res );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text=foobar}");
 
-        Assert.assertEquals( "foobar",
+        Assertions.assertEquals( "foobar",
                       res );
     }
 
@@ -87,7 +87,7 @@ public class DefaultPluginManagerTest
         String res = m.execute( context,
                                 "{INSERT SamplePlugin2 WHERE text=foobar}");
 
-        Assert.assertEquals( "foobar",
+        Assertions.assertEquals( "foobar",
                       res );
     }
 
@@ -100,7 +100,7 @@ public class DefaultPluginManagerTest
         String res = m.execute( context,
                                 "{INSERT SamplePlugin3 WHERE text=foobar}");
 
-        Assert.assertEquals( "foobar",
+        Assertions.assertEquals( "foobar",
                       res );
     }
 
@@ -114,7 +114,7 @@ public class DefaultPluginManagerTest
         String res = m.execute( context,
                                 "{INSERT SamplePlugin WHERE text=foobar}");
 
-        Assert.assertEquals( "foobar",
+        Assertions.assertEquals( "foobar",
                       res );
     }
 
@@ -126,7 +126,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat}");
 
-        Assert.assertEquals( "foobar2",
+        Assertions.assertEquals( "foobar2",
                       res );
     }
 
@@ -138,7 +138,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat");
 
-        Assert.assertEquals( "foobar2",
+        Assertions.assertEquals( "foobar2",
                       res );
     }
 
@@ -149,7 +149,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text='this is a space'}");
 
-        Assert.assertEquals( "this is a space",
+        Assertions.assertEquals( "this is a space",
                       res );
     }
 
@@ -160,7 +160,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text='this \\'is a\\' space'}");
 
-        Assert.assertEquals( "this 'is a' space",
+        Assertions.assertEquals( "this 'is a' space",
                       res );
     }
 
@@ -171,7 +171,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{INSERT SamplePlugin WHERE text=15}");
 
-        Assert.assertEquals( "15",
+        Assertions.assertEquals( "15",
                       res );
     }
 
@@ -182,7 +182,7 @@ public class DefaultPluginManagerTest
         String res = manager.execute( context,
                                       "{SamplePlugin WHERE text=15}");
 
-        Assert.assertEquals( "15",
+        Assertions.assertEquals( "15",
                       res );
     }
 
@@ -193,7 +193,7 @@ public class DefaultPluginManagerTest
     {
         String res = manager.execute( context, "{samplealias text=15}");
 
-        Assert.assertEquals( "15", res );
+        Assertions.assertEquals( "15", res );
     }
 
     @Test
@@ -202,7 +202,7 @@ public class DefaultPluginManagerTest
     {
         String res = manager.execute( context, "{samplealias2 text=xyzzy}");
 
-        Assert.assertEquals( "xyzzy", res );
+        Assertions.assertEquals( "xyzzy", res );
     }
 
     @Test
@@ -210,7 +210,7 @@ public class DefaultPluginManagerTest
     {
         manager.execute( context, "{JavaScriptPlugin}");
 
-        Assert.assertTrue( JavaScriptPlugin.c_inited );
+        Assertions.assertTrue( JavaScriptPlugin.c_inited );
     }
 
     @Test
@@ -219,7 +219,7 @@ public class DefaultPluginManagerTest
         engine.saveText(context, "[{SamplePlugin render=true}]");
         engine.getHTML( "Testpage" );
 
-        Assert.assertTrue( SamplePlugin.c_rendered );
+        Assertions.assertTrue( SamplePlugin.c_rendered );
     }
 
 }

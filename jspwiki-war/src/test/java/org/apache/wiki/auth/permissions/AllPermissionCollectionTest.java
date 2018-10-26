@@ -20,9 +20,9 @@ package org.apache.wiki.auth.permissions;
 import java.security.Permission;
 import java.util.Enumeration;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  */
@@ -34,7 +34,7 @@ public class AllPermissionCollectionTest
     /**
      *
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         c_all = new AllPermissionCollection();
@@ -49,17 +49,17 @@ public class AllPermissionCollectionTest
         AllPermission all4 = new AllPermission( "*" );
 
         c_all.add( all1 );
-        Assert.assertEquals( 1, count( c_all ) );
+        Assertions.assertEquals( 1, count( c_all ) );
 
         c_all.add( all2 );
-        Assert.assertEquals( 2, count( c_all ) );
+        Assertions.assertEquals( 2, count( c_all ) );
 
         c_all.add( all3 );
-        Assert.assertEquals( 3, count( c_all ) );
+        Assertions.assertEquals( 3, count( c_all ) );
 
         // The last one is a duplicate and shouldn't be counted...
         c_all.add( all4 );
-        Assert.assertEquals( 3, count( c_all ) );
+        Assertions.assertEquals( 3, count( c_all ) );
     }
 
     @Test
@@ -71,17 +71,17 @@ public class AllPermissionCollectionTest
         PagePermission p4 = new PagePermission( "JSPWiki:Main", "edit" );
 
         c_all.add( p1 );
-        Assert.assertEquals( 1, count( c_all ) );
+        Assertions.assertEquals( 1, count( c_all ) );
 
         c_all.add( p2 );
-        Assert.assertEquals( 2, count( c_all ) );
+        Assertions.assertEquals( 2, count( c_all ) );
 
         c_all.add( p3 );
-        Assert.assertEquals( 3, count( c_all ) );
+        Assertions.assertEquals( 3, count( c_all ) );
 
         // The last one is a duplicate and shouldn't be counted...
         c_all.add( p4 );
-        Assert.assertEquals( 3, count( c_all ) );
+        Assertions.assertEquals( 3, count( c_all ) );
     }
 
     @Test
@@ -93,17 +93,17 @@ public class AllPermissionCollectionTest
         WikiPermission p4 = new WikiPermission( "JSPWiki", "login" );
 
         c_all.add( p1 );
-        Assert.assertEquals( 1, count( c_all ) );
+        Assertions.assertEquals( 1, count( c_all ) );
 
         c_all.add( p2 );
-        Assert.assertEquals( 2, count( c_all ) );
+        Assertions.assertEquals( 2, count( c_all ) );
 
         c_all.add( p3 );
-        Assert.assertEquals( 3, count( c_all ) );
+        Assertions.assertEquals( 3, count( c_all ) );
 
         // The last one is a duplicate and shouldn't be counted...
         c_all.add( p4 );
-        Assert.assertEquals( 3, count( c_all ) );
+        Assertions.assertEquals( 3, count( c_all ) );
     }
 
     @Test
@@ -112,14 +112,14 @@ public class AllPermissionCollectionTest
         AllPermission all1 = new AllPermission( "*" );
         AllPermission all2 = new AllPermission( "JSPWiki" );
 
-        Assert.assertFalse( c_all.isReadOnly() );
+        Assertions.assertFalse( c_all.isReadOnly() );
         c_all.add( all1 );
-        Assert.assertFalse( c_all.isReadOnly() );
+        Assertions.assertFalse( c_all.isReadOnly() );
 
         // Mark as read-only; isReadOnly should return "true", as we'll get an
         // error
         c_all.setReadOnly();
-        Assert.assertTrue( c_all.isReadOnly() );
+        Assertions.assertTrue( c_all.isReadOnly() );
         boolean exception = false;
         try
         {
@@ -133,7 +133,7 @@ public class AllPermissionCollectionTest
         if ( !exception )
         {
             // We should never get here
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 
@@ -146,27 +146,27 @@ public class AllPermissionCollectionTest
         AllPermission all4 = new AllPermission( "*" );
 
         c_all.add( all1 );
-        Assert.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
-        Assert.assertFalse( c_all.implies( new AllPermission( "myWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
+        Assertions.assertFalse( c_all.implies( new AllPermission( "myWiki" ) ) );
 
         c_all.add( all2 );
-        Assert.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "myWiki" ) ) );
-        Assert.assertFalse( c_all.implies( new AllPermission( "bigTimeWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "myWiki" ) ) );
+        Assertions.assertFalse( c_all.implies( new AllPermission( "bigTimeWiki" ) ) );
 
         c_all.add( all3 );
-        Assert.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "myWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "bigTimeWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "bigBigBigWiki" ) ) );
-        Assert.assertFalse( c_all.implies( new AllPermission( "bittyWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "myWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "bigTimeWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "bigBigBigWiki" ) ) );
+        Assertions.assertFalse( c_all.implies( new AllPermission( "bittyWiki" ) ) );
 
         c_all.add( all4 );
-        Assert.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "myWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "bigTimeWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "bigBigBigWiki" ) ) );
-        Assert.assertTrue( c_all.implies( new AllPermission( "bittyWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "myWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "bigTimeWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "bigBigBigWiki" ) ) );
+        Assertions.assertTrue( c_all.implies( new AllPermission( "bittyWiki" ) ) );
     }
 
     @Test
@@ -176,18 +176,18 @@ public class AllPermissionCollectionTest
         AllPermission all2 = new AllPermission( "*" );
 
         c_all.add( all1 );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Main", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:GroupAdmin", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Foobar", "delete" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "myWiki:Foobar", "delete" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:*", "view" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Main", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:GroupAdmin", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Foobar", "delete" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "myWiki:Foobar", "delete" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:*", "view" ) ) );
 
         c_all.add( all2 );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Main", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:GroupAdmin", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Foobar", "delete" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "myWiki:Foobar", "delete" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:*", "view" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Main", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:GroupAdmin", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Foobar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "myWiki:Foobar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:*", "view" ) ) );
     }
 
     @Test
@@ -197,18 +197,18 @@ public class AllPermissionCollectionTest
         AllPermission all2 = new AllPermission( "*" );
 
         c_all.add( all1 );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "createGroups" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "editPreferences" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "createGroups" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "editPreferences" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
 
         c_all.add( all2 );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "createGroups" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "editPreferences" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "createGroups" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "editPreferences" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
     }
 
     @Test
@@ -220,44 +220,44 @@ public class AllPermissionCollectionTest
         Permission p4 = new AllPermission( "*" );
 
         c_all.add( p1 );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
 
         c_all.add( p2 );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
 
         c_all.add( p3 );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
-        Assert.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
-        Assert.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
+        Assertions.assertFalse( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
+        Assertions.assertFalse( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
 
         c_all.add( p4 );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
-        Assert.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:FooBar", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "myWiki", "editPreferences" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "myWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new WikiPermission( "bigTimeWiki", "login" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "edit" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:FooBar", "delete" ) ) );
+        Assertions.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
     }
 
     private int count( AllPermissionCollection collection )

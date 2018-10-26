@@ -24,10 +24,10 @@ import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
@@ -40,7 +40,7 @@ public class SearchManagerTest {
     SearchManager m_mgr;
     Properties props;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Properties props = TestEngine.getTestProperties();
         String workDir = props.getProperty( "jspwiki.workDir" );
@@ -56,14 +56,14 @@ public class SearchManagerTest {
         m_mgr = m_engine.getSearchManager();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     	TestEngine.emptyWorkDir( props );
     }
 
     @Test
     public void testDefaultProvider() {
-        Assert.assertEquals( "org.apache.wiki.search.LuceneSearchProvider",
+        Assertions.assertEquals( "org.apache.wiki.search.LuceneSearchProvider",
                       m_mgr.getSearchEngine().getClass().getName() );
     }
 
@@ -108,10 +108,10 @@ public class SearchManagerTest {
         Thread.yield();
         Collection res = waitForIndex( "mankind" , "testSimpleSearch" );
 
-        Assert.assertNotNull( "null result", res );
-        Assert.assertEquals( "no pages", 1, res.size() );
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assert.assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
@@ -126,11 +126,11 @@ public class SearchManagerTest {
         Thread.yield();
         Collection res = waitForIndex( "mankind" , "testSimpleSearch2" );
 
-        Assert.assertNotNull( "null result", res );
-        Assert.assertEquals( "no pages", 1, res.size() );
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assert.assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
-        m_engine.deleteTestPage("TestPage");
+        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
+        m_engine.deleteTestPage( "TestPage" );
     }
 
     @Test
@@ -151,14 +151,14 @@ public class SearchManagerTest {
 
         res = m_mgr.findPages( "mankind", ctx ); // check for text present in 1st m_engine.saveText() but not in 2nd
 
-        Assert.assertNotNull( "found results", res );
-        Assert.assertEquals( "empty results", 0, res.size() );
+        Assertions.assertNotNull( res, "found results" );
+        Assertions.assertEquals( 0, res.size(), "empty results" );
 
         res = m_mgr.findPages( "Babylon", ctx );
-        Assert.assertNotNull( "null result", res );
-        Assert.assertEquals( "no pages", 1, res.size() );
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assert.assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
@@ -176,14 +176,14 @@ public class SearchManagerTest {
         Thread.yield();
         Collection res = waitForIndex( "mankind" , "testSimpleSearch4" );
 
-        Assert.assertNotNull( "found results", res );
-        Assert.assertEquals( "result not found", 1, res.size() );
+        Assertions.assertNotNull( res, "found results" );
+        Assertions.assertEquals( 1, res.size(), "result not found" );
 
         m_engine.saveText( ctx, "[{ALLOW view Authenticated}] It was the dawn of the third age of mankind... page is blocked" );
 
         res = m_mgr.findPages( "mankind" , ctx );
-        Assert.assertNotNull( "null result", res );
-        Assert.assertEquals( "result found, should be blocked", 0, res.size() );
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 0, res.size(), "result found, should be blocked" );
 
         m_engine.deleteTestPage("TestPage");
     }
@@ -197,10 +197,10 @@ public class SearchManagerTest {
         Thread.yield();
         Collection res = waitForIndex( "Test" , "testTitleSearch" );
 
-        Assert.assertNotNull( "null result", res );
-        Assert.assertEquals( "no pages", 1, res.size() );
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assert.assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
@@ -213,10 +213,10 @@ public class SearchManagerTest {
         Thread.yield();
         Collection res = waitForIndex( "TestPage" , "testTitleSearch2" );
 
-        Assert.assertNotNull( "null result", res );
-        Assert.assertEquals( "no pages", 1, res.size() );
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assert.assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 

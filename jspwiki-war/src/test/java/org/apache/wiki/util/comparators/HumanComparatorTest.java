@@ -21,8 +21,8 @@ package org.apache.wiki.util.comparators;
 
 import java.util.Comparator;
 
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 
 public class HumanComparatorTest
@@ -34,23 +34,23 @@ public class HumanComparatorTest
         HumanComparator comparator = new HumanComparator();
 
         // Default order first
-        Assert.assertTrue( comparator.compare( "a c", "a1c" ) < 0 );
-        Assert.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "a c", "a1c" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
 
         // Now letters then numbers then other
         HumanComparator.CharType sortOrder[] = { HumanComparator.CharType.TYPE_LETTER, HumanComparator.CharType.TYPE_DIGIT,
                                                 HumanComparator.CharType.TYPE_OTHER };
         comparator.setSortOrder( sortOrder );
-        Assert.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
-        Assert.assertTrue( comparator.compare( "a1c", "abc" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "a1c", "abc" ) > 0 );
 
         // Now numbers then letters then other
         sortOrder[0] = HumanComparator.CharType.TYPE_DIGIT;
         sortOrder[1] = HumanComparator.CharType.TYPE_LETTER;
         sortOrder[2] = HumanComparator.CharType.TYPE_OTHER;
         comparator.setSortOrder( sortOrder );
-        Assert.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
-        Assert.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
 
         // Finally try to break it
         try
@@ -59,7 +59,7 @@ public class HumanComparatorTest
             sortOrder[1] = HumanComparator.CharType.TYPE_DIGIT;
             sortOrder[2] = HumanComparator.CharType.TYPE_OTHER;
             comparator.setSortOrder( sortOrder );
-            Assert.fail( "Expected IllegalArgumentException" );
+            Assertions.fail( "Expected IllegalArgumentException" );
         }
         catch( IllegalArgumentException e )
         {
@@ -72,15 +72,15 @@ public class HumanComparatorTest
     {
         Comparator<String> comparator = new HumanComparator();
 
-        Assert.assertTrue( comparator.compare( "abcd001", "ABCD001" ) > 0 );
-        Assert.assertTrue( comparator.compare( "abcd001a", "ABCD001z" ) < 0 );
-        Assert.assertTrue( comparator.compare( "abc8", "abcd1" ) < 0 );
-        Assert.assertTrue( comparator.compare( "abc 8", "abc1" ) < 0 );
-        Assert.assertTrue( comparator.compare( "abc  8", "abc 1" ) < 0 );
-        Assert.assertTrue( comparator.compare( "abdc001", "ABCD001" ) > 0 );
-        Assert.assertTrue( comparator.compare( "ab cd001", "ABDC001" ) < 0 );
-        Assert.assertTrue( comparator.compare( "10", "01" ) > 0 );
-        Assert.assertTrue( comparator.compare( "10", "00000001" ) > 0 );
-        Assert.assertTrue( comparator.compare( "01", "00000001" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "abcd001", "ABCD001" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "abcd001a", "ABCD001z" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "abc8", "abcd1" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "abc 8", "abc1" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "abc  8", "abc 1" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "abdc001", "ABCD001" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "ab cd001", "ABDC001" ) < 0 );
+        Assertions.assertTrue( comparator.compare( "10", "01" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "10", "00000001" ) > 0 );
+        Assertions.assertTrue( comparator.compare( "01", "00000001" ) < 0 );
     }
 }

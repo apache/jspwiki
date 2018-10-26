@@ -34,8 +34,8 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
@@ -55,7 +55,7 @@ public class CookieAssertionLoginModuleTest
         try
         {
             // We can use cookies right?
-            Assert.assertTrue( m_engine.getAuthenticationManager().allowsCookieAssertions() );
+            Assertions.assertTrue( m_engine.getAuthenticationManager().allowsCookieAssertions() );
 
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
             Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
@@ -69,15 +69,15 @@ public class CookieAssertionLoginModuleTest
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            Assert.assertEquals( 1, principals.size() );
-            Assert.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
-            Assert.assertFalse( principals.contains( Role.ASSERTED ) );
-            Assert.assertFalse( principals.contains( Role.ALL ) );
+            Assertions.assertEquals( 1, principals.size() );
+            Assertions.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
+            Assertions.assertFalse( principals.contains( Role.ASSERTED ) );
+            Assertions.assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 
@@ -96,24 +96,24 @@ public class CookieAssertionLoginModuleTest
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            Assert.assertEquals( 1, principals.size() );
-            Assert.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
-            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
-            Assert.assertFalse( principals.contains( Role.ALL ) );
+            Assertions.assertEquals( 1, principals.size() );
+            Assertions.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
+            Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assertions.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
-            Assert.assertEquals( 0, principals.size() );
+            Assertions.assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 
     /**
      * 
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -128,7 +128,7 @@ public class CookieAssertionLoginModuleTest
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 

@@ -22,10 +22,10 @@ import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.providers.CachingProvider;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PageManagerTest
 {
@@ -33,7 +33,7 @@ public class PageManagerTest
 
     TestEngine engine;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -41,7 +41,7 @@ public class PageManagerTest
         engine = new TestEngine(props);
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
     }
@@ -53,7 +53,7 @@ public class PageManagerTest
         props.setProperty( "jspwiki.usePageCache", "true" );
         PageManager m = new PageManager( engine, props );
 
-        Assert.assertTrue( m.getProvider() instanceof CachingProvider );
+        Assertions.assertTrue( m.getProvider() instanceof CachingProvider );
     }
 
     @Test
@@ -63,7 +63,7 @@ public class PageManagerTest
         props.setProperty( "jspwiki.usePageCache", "false" );
         PageManager m = new PageManager( engine, props );
 
-        Assert.assertTrue( !(m.getProvider() instanceof CachingProvider) );
+        Assertions.assertTrue( !(m.getProvider() instanceof CachingProvider) );
     }
 
 }

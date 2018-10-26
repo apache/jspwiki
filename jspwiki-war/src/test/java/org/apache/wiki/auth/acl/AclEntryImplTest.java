@@ -19,16 +19,16 @@
 package org.apache.wiki.auth.acl;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AclEntryImplTest
 
 {
     AclEntryImpl m_ae;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         m_ae = new AclEntryImpl();
@@ -39,8 +39,8 @@ public class AclEntryImplTest
     {
         m_ae.addPermission( PagePermission.VIEW );
 
-        Assert.assertTrue( "no permission", m_ae.checkPermission( PagePermission.VIEW ) );
-        Assert.assertFalse( "permission found", m_ae.checkPermission( PagePermission.EDIT ) );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.VIEW ), "no permission" );
+        Assertions.assertFalse( m_ae.checkPermission( PagePermission.EDIT ), "permission found" );
     }
 
     @Test
@@ -49,8 +49,8 @@ public class AclEntryImplTest
         m_ae.addPermission( PagePermission.VIEW );
         m_ae.addPermission( PagePermission.EDIT );
 
-        Assert.assertTrue( "no editpermission", m_ae.checkPermission( PagePermission.EDIT ) );
-        Assert.assertTrue( "no viewpermission", m_ae.checkPermission( PagePermission.VIEW ) );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.EDIT ), "no editpermission" );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.VIEW ), "no viewpermission" );
     }
 
     @Test
@@ -58,7 +58,7 @@ public class AclEntryImplTest
     {
         m_ae.addPermission( PagePermission.COMMENT );
 
-        Assert.assertFalse( "has edit permission", m_ae.checkPermission( PagePermission.EDIT ) );
+        Assertions.assertFalse( m_ae.checkPermission( PagePermission.EDIT ), "has edit permission" );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class AclEntryImplTest
     {
         m_ae.addPermission( PagePermission.EDIT );
 
-        Assert.assertTrue( "has comment permission", m_ae.checkPermission( PagePermission.COMMENT ) );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.COMMENT ), "has comment permission" );
     }
 
     @Test
@@ -74,8 +74,8 @@ public class AclEntryImplTest
     {
         m_ae.addPermission( PagePermission.VIEW );
 
-        Assert.assertTrue( "has view all", m_ae.checkPermission( PagePermission.VIEW ) );
-        Assert.assertTrue( "has view on single page", m_ae.checkPermission( PermissionFactory.getPagePermission( "mywiki:SamplePage", "view" ) ) );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.VIEW ), "has view all" );
+        Assertions.assertTrue( m_ae.checkPermission( PermissionFactory.getPagePermission( "mywiki:SamplePage", "view" ) ), "has view on single page" );
     }
 
     @Test
@@ -84,20 +84,20 @@ public class AclEntryImplTest
         m_ae.addPermission( PagePermission.VIEW );
         m_ae.addPermission( PagePermission.EDIT );
 
-        Assert.assertTrue( "has edit permission", m_ae.checkPermission( PagePermission.EDIT ) );
-        Assert.assertTrue( "has view permission", m_ae.checkPermission( PagePermission.VIEW ) );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.EDIT ), "has edit permission" );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.VIEW ), "has view permission" );
 
         m_ae.removePermission( PagePermission.EDIT );
 
-        Assert.assertFalse( "no edit permission", m_ae.checkPermission( PagePermission.EDIT ) );
-        Assert.assertTrue( "has view permission", m_ae.checkPermission( PagePermission.VIEW ) );
+        Assertions.assertFalse( m_ae.checkPermission( PagePermission.EDIT ), "no edit permission" );
+        Assertions.assertTrue( m_ae.checkPermission( PagePermission.VIEW ), "has view permission" );
     }
 
     @Test
     public void testDefaults()
     {
-        Assert.assertFalse( "elements", m_ae.permissions().hasMoreElements() );
-        Assert.assertNull( "principal", m_ae.getPrincipal() );
+        Assertions.assertFalse( m_ae.permissions().hasMoreElements(), "elements" );
+        Assertions.assertNull( m_ae.getPrincipal(), "principal" );
     }
 
 }

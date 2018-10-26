@@ -22,8 +22,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class RedirectCommandTest
@@ -33,12 +33,12 @@ public class RedirectCommandTest
     public void testStaticCommand()
     {
         Command a = RedirectCommand.REDIRECT;
-        Assert.assertEquals( "", a.getRequestContext() );
-        Assert.assertEquals( "", a.getJSP() );
-        Assert.assertEquals( "%u%n", a.getURLPattern() );
-        Assert.assertNull( a.getContentTemplate() );
-        Assert.assertNull( a.getTarget() );
-        Assert.assertEquals( a, RedirectCommand.REDIRECT );
+        Assertions.assertEquals( "", a.getRequestContext() );
+        Assertions.assertEquals( "", a.getJSP() );
+        Assertions.assertEquals( "%u%n", a.getURLPattern() );
+        Assertions.assertNull( a.getContentTemplate() );
+        Assertions.assertNull( a.getTarget() );
+        Assertions.assertEquals( a, RedirectCommand.REDIRECT );
     }
 
     @Test
@@ -48,21 +48,21 @@ public class RedirectCommandTest
 
         // Test with local JSP
         Command b = a.targetedCommand( "%uTestPage.jsp" );
-        Assert.assertEquals( "", b.getRequestContext() );
-        Assert.assertEquals( "TestPage.jsp", b.getJSP() );
-        Assert.assertEquals( "%uTestPage.jsp", b.getURLPattern() );
-        Assert.assertNull( b.getContentTemplate() );
-        Assert.assertEquals( "%uTestPage.jsp", b.getTarget() );
-        Assert.assertNotSame( RedirectCommand.REDIRECT, b );
+        Assertions.assertEquals( "", b.getRequestContext() );
+        Assertions.assertEquals( "TestPage.jsp", b.getJSP() );
+        Assertions.assertEquals( "%uTestPage.jsp", b.getURLPattern() );
+        Assertions.assertNull( b.getContentTemplate() );
+        Assertions.assertEquals( "%uTestPage.jsp", b.getTarget() );
+        Assertions.assertNotSame( RedirectCommand.REDIRECT, b );
 
         // Test with non-local URL
         b = a.targetedCommand( "http://www.yahoo.com" );
-        Assert.assertEquals( "", b.getRequestContext() );
-        Assert.assertEquals( "http://www.yahoo.com", b.getJSP() );
-        Assert.assertEquals( "http://www.yahoo.com", b.getURLPattern() );
-        Assert.assertNull( b.getContentTemplate() );
-        Assert.assertEquals( "http://www.yahoo.com", b.getTarget() );
-        Assert.assertNotSame( RedirectCommand.REDIRECT, b );
+        Assertions.assertEquals( "", b.getRequestContext() );
+        Assertions.assertEquals( "http://www.yahoo.com", b.getJSP() );
+        Assertions.assertEquals( "http://www.yahoo.com", b.getURLPattern() );
+        Assertions.assertNull( b.getContentTemplate() );
+        Assertions.assertEquals( "http://www.yahoo.com", b.getTarget() );
+        Assertions.assertNotSame( RedirectCommand.REDIRECT, b );
     }
 
 }

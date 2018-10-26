@@ -27,58 +27,58 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.wiki.modules.ModuleManager;
 import org.jdom2.Element;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class XmlUtilTest {
 
     @Test
     public void testParseFromClasspath() {
     	List< Element > elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/plugin" );
-    	Assert.assertEquals( 4, elements.size() ); // 2 on src/main/resources, another 2 on src/test/resources
+    	Assertions.assertEquals( 4, elements.size() ); // 2 on src/main/resources, another 2 on src/test/resources
 
     	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/filter" );
-    	Assert.assertEquals( 1, elements.size() );
+    	Assertions.assertEquals( 1, elements.size() );
 
      	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/editor" );
-     	Assert.assertEquals( 2, elements.size() );
+     	Assertions.assertEquals( 2, elements.size() );
 
      	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, "/modules/heck" );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( "doesnt/exist.this", "/modules/editor" );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( ( String )null, "/modules/editor" );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( ModuleManager.PLUGIN_RESOURCE_LOCATION, null );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( ClassUtil.MAPPINGS, "/classmappings/mapping" );
-     	Assert.assertEquals( 19, elements.size() );
+     	Assertions.assertEquals( 19, elements.size() );
     }
 
     @Test
     public void testParseFromStream() throws FileNotFoundException {
     	InputStream is = new FileInputStream( new File ("./src/test/resources/ini/jspwiki_module.xml" ) );
     	List< Element > elements = XmlUtil.parse( is, "/modules/plugin" );
-    	Assert.assertEquals( 2, elements.size() );
+    	Assertions.assertEquals( 2, elements.size() );
 
     	elements = XmlUtil.parse( is, "/modules/filter" );
-    	Assert.assertEquals( 0, elements.size() );
+    	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( is, "/modules/editor" );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( is, "/modules/heck" );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( ( InputStream )null, "/modules/editor" );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	elements = XmlUtil.parse( is, null );
-     	Assert.assertEquals( 0, elements.size() );
+     	Assertions.assertEquals( 0, elements.size() );
 
      	IOUtils.closeQuietly( is );
     }

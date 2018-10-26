@@ -18,16 +18,16 @@
  */
 
 package org.apache.wiki;
-import org.junit.Before;
-import org.junit.After;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class VariableManagerTest
 {
@@ -36,7 +36,7 @@ public class VariableManagerTest
 
     static final String PAGE_NAME = "TestPage";
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -49,7 +49,7 @@ public class VariableManagerTest
                                      new WikiPage( testEngine, PAGE_NAME ) );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
     }
@@ -61,7 +61,7 @@ public class VariableManagerTest
         try
         {
             m_variableManager.parseAndGetValue( m_context, "" );
-            Assert.fail( "Did not Assert.fail" );
+            Assertions.fail( "Did not Assertions.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -76,7 +76,7 @@ public class VariableManagerTest
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$" );
-            Assert.fail( "Did not Assert.fail" );
+            Assertions.fail( "Did not Assertions.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -91,7 +91,7 @@ public class VariableManagerTest
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$pagename" );
-            Assert.fail( "Did not Assert.fail" );
+            Assertions.fail( "Did not Assertions.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -106,7 +106,7 @@ public class VariableManagerTest
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$}" );
-            Assert.fail( "Did not Assert.fail" );
+            Assertions.fail( "Did not Assertions.fail" );
         }
         catch( IllegalArgumentException e )
         {
@@ -120,7 +120,7 @@ public class VariableManagerTest
         try
         {
             m_variableManager.parseAndGetValue( m_context, "{$no_such_variable}" );
-            Assert.fail( "Did not Assert.fail" );
+            Assertions.fail( "Did not Assertions.fail" );
         }
         catch( NoSuchVariableException e )
         {
@@ -134,7 +134,7 @@ public class VariableManagerTest
     {
         String res = m_variableManager.getValue( m_context, "pagename" );
 
-        Assert.assertEquals( PAGE_NAME, res );
+        Assertions.assertEquals( PAGE_NAME, res );
     }
 
     @Test
@@ -143,7 +143,7 @@ public class VariableManagerTest
     {
         String res =  m_variableManager.parseAndGetValue( m_context, "{$  pagename  }" );
 
-        Assert.assertEquals( PAGE_NAME, res );
+        Assertions.assertEquals( PAGE_NAME, res );
     }
 
     @Test
@@ -152,7 +152,7 @@ public class VariableManagerTest
     {
         String res =  m_variableManager.parseAndGetValue( m_context, "{$PAGeNamE}" );
 
-        Assert.assertEquals( PAGE_NAME, res );
+        Assertions.assertEquals( PAGE_NAME, res );
     }
 
     @Test
@@ -161,7 +161,7 @@ public class VariableManagerTest
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}..." );
 
-        Assert.assertEquals( "Testing "+PAGE_NAME+"...", res );
+        Assertions.assertEquals( "Testing "+PAGE_NAME+"...", res );
     }
 
     @Test
@@ -170,7 +170,7 @@ public class VariableManagerTest
     {
         String res = m_variableManager.expandVariables( m_context, "{$pagename} tested..." );
 
-        Assert.assertEquals( PAGE_NAME+" tested...", res );
+        Assertions.assertEquals( PAGE_NAME+" tested...", res );
     }
 
     @Test
@@ -179,7 +179,7 @@ public class VariableManagerTest
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}, {$applicationname}" );
 
-        Assert.assertEquals( "Testing "+PAGE_NAME+", JSPWiki", res );
+        Assertions.assertEquals( "Testing "+PAGE_NAME+", JSPWiki", res );
     }
 
     @Test
@@ -188,7 +188,7 @@ public class VariableManagerTest
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {}, {{{}" );
 
-        Assert.assertEquals( "Testing {}, {{{}", res );
+        Assertions.assertEquals( "Testing {}, {{{}", res );
     }
 
 }

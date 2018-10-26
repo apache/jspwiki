@@ -32,10 +32,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.FileSystemProvider;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -49,7 +49,7 @@ public class RSSGeneratorTest
     TestEngine m_testEngine;
     Properties props = TestEngine.getTestProperties();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
@@ -57,7 +57,7 @@ public class RSSGeneratorTest
         m_testEngine = new TestEngine(props);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception
     {
         TestEngine.deleteAll( new File(props.getProperty( FileSystemProvider.PROP_PAGEDIR )) );
@@ -90,8 +90,8 @@ public class RSSGeneratorTest
         Feed feed = new RSS10Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );
 
-        Assert.assertTrue( "has Foo", blog.indexOf("<description>Foo</description>") != -1 );
-        Assert.assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
+        Assertions.assertTrue( blog.indexOf("<description>Foo</description>") != -1, "has Foo" );
+        Assertions.assertTrue( blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1, "has proper Bar" );
     }
 
     @Test
@@ -121,8 +121,8 @@ public class RSSGeneratorTest
         Feed feed = new RSS20Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );
 
-        Assert.assertTrue( "has Foo", blog.indexOf("<description>Foo &amp;quot;blah&amp;quot;.</description>") != -1 );
-        Assert.assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
+        Assertions.assertTrue( blog.indexOf("<description>Foo &amp;quot;blah&amp;quot;.</description>") != -1, "has Foo" );
+        Assertions.assertTrue( blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1, "has proper Bar" );
     }
 
 }

@@ -27,15 +27,15 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CreoleRendererTest
 {
     protected TestEngine m_testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -62,7 +62,7 @@ public class CreoleRendererTest
     {
         String src = "123 ''test'' 456";
 
-        Assert.assertEquals( "123 //test// 456", render(src) );
+        Assertions.assertEquals( "123 //test// 456", render(src) );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class CreoleRendererTest
     {
         String src = "123 __test__ 456";
 
-        Assert.assertEquals( "123 **test** 456", render(src) );
+        Assertions.assertEquals( "123 **test** 456", render(src) );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class CreoleRendererTest
     {
         String src = "123 __''test''__ 456";
 
-        Assert.assertEquals( "123 **//test//** 456", render(src) );
+        Assertions.assertEquals( "123 **//test//** 456", render(src) );
     }
 
     @Test
@@ -86,7 +86,7 @@ public class CreoleRendererTest
     {
         String src = "*one\r\n**two\r\n**three\r\n*four";
 
-        Assert.assertEquals( "* one\n** two\n** three\n* four", render(src) );
+        Assertions.assertEquals( "* one\n** two\n** three\n* four", render(src) );
     }
 
     @Test
@@ -94,7 +94,7 @@ public class CreoleRendererTest
     {
         String src = "* one\r\n**        two\r\n** three\r\n* four";
 
-        Assert.assertEquals( "* one\n** two\n** three\n* four", render(src) );
+        Assertions.assertEquals( "* one\n** two\n** three\n* four", render(src) );
     }
 
     @Test
@@ -102,7 +102,7 @@ public class CreoleRendererTest
     {
         String src = "*one\r\n**two\r\n**three\r\n*four";
 
-        Assert.assertEquals( "* one\n** two\n** three\n* four", render(src) );
+        Assertions.assertEquals( "* one\n** two\n** three\n* four", render(src) );
     }
 
     @Test
@@ -110,7 +110,7 @@ public class CreoleRendererTest
     {
         String src = "# one\r\n##        two\r\n## three\r\n#four";
 
-        Assert.assertEquals( "# one\n## two\n## three\n# four", render(src) );
+        Assertions.assertEquals( "# one\n## two\n## three\n# four", render(src) );
     }
 
     /*
@@ -120,7 +120,7 @@ public class CreoleRendererTest
     {
         String src = "aaa\n\nbbb\n\nccc";
 
-        Assert.assertEquals( src, render(src) );
+        Assertions.assertEquals( src, render(src) );
     }
     */
     @Test
@@ -128,7 +128,7 @@ public class CreoleRendererTest
     {
         String src = "Testing [{Image src='http://test/image.png'}] plugin.";
 
-        Assert.assertEquals( "Testing {{http://test/image.png}} plugin.", render(src) );
+        Assertions.assertEquals( "Testing {{http://test/image.png}} plugin.", render(src) );
     }
 
     @Test
@@ -136,16 +136,16 @@ public class CreoleRendererTest
     {
         String src = "[{Counter}] [{Counter}]";
 
-        Assert.assertEquals( "<<Counter 1>> <<Counter 2>>", render(src) );
+        Assertions.assertEquals( "<<Counter 1>> <<Counter 2>>", render(src) );
     }
     /*
-    // FIXME: These shouldn't really be Assert.failing.
+    // FIXME: These shouldn't really be Assertions.failing.
     @Test
     public void testHeading1() throws Exception
     {
         String src = "!!!Hello";
 
-        Assert.assertEquals( "== Hello ==", render(src) );
+        Assertions.assertEquals( "== Hello ==", render(src) );
     }
 
     @Test
@@ -153,7 +153,7 @@ public class CreoleRendererTest
     {
         String src = "!!Hello";
 
-        Assert.assertEquals( "=== Hello ===", render(src) );
+        Assertions.assertEquals( "=== Hello ===", render(src) );
     }
 
     @Test
@@ -161,7 +161,7 @@ public class CreoleRendererTest
     {
         String src = "!Hello";
 
-        Assert.assertEquals( "==== Hello ====", render(src) );
+        Assertions.assertEquals( "==== Hello ====", render(src) );
     }
 */
     @Test
@@ -169,7 +169,7 @@ public class CreoleRendererTest
     {
         String src = "[http://jspwiki.apache.org]";
 
-        Assert.assertEquals( "[[http://jspwiki.apache.org]]", render(src) );
+        Assertions.assertEquals( "[[http://jspwiki.apache.org]]", render(src) );
     }
 
     @Test
@@ -177,7 +177,7 @@ public class CreoleRendererTest
     {
         String src = "[JSPWiki|http://jspwiki.apache.org]";
 
-        Assert.assertEquals( "[[http://jspwiki.apache.org|JSPWiki]]", render(src) );
+        Assertions.assertEquals( "[[http://jspwiki.apache.org|JSPWiki]]", render(src) );
     }
 
     @Test
@@ -185,7 +185,7 @@ public class CreoleRendererTest
     {
         String src = "a\nb\nc";
 
-        Assert.assertEquals("a\nb\nc", render(src));
+        Assertions.assertEquals("a\nb\nc", render(src));
     }
 
     @Test
@@ -193,7 +193,7 @@ public class CreoleRendererTest
     {
         String src = "{{{\n test __foo__ \n}}}";
 
-        Assert.assertEquals("{{{\n test __foo__ \n}}}", render(src));
+        Assertions.assertEquals("{{{\n test __foo__ \n}}}", render(src));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class CreoleRendererTest
     {
         String src = "a\n----\nb";
 
-        Assert.assertEquals("a\n----\nb", render(src));
+        Assertions.assertEquals("a\n----\nb", render(src));
     }
 
 }

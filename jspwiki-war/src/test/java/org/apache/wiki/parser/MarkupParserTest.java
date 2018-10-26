@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.parser;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class MarkupParserTest
@@ -28,19 +28,19 @@ public class MarkupParserTest
     @Test
     public void testCleanLink1()
     {
-        Assert.assertEquals( "--CleanLink--", MarkupParser.cleanLink("--CleanLink--") );
+        Assertions.assertEquals( "--CleanLink--", MarkupParser.cleanLink("--CleanLink--") );
     }
 
     @Test
     public void testCleanLink2()
     {
-        Assert.assertEquals( "CleanLink", MarkupParser.cleanLink("??CleanLink??") );
+        Assertions.assertEquals( "CleanLink", MarkupParser.cleanLink("??CleanLink??") );
     }
 
     @Test
     public void testCleanLink3()
     {
-        Assert.assertEquals( "Clean (link)", MarkupParser.cleanLink("Clean (link)") );
+        Assertions.assertEquals( "Clean (link)", MarkupParser.cleanLink("Clean (link)") );
     }
 
 }

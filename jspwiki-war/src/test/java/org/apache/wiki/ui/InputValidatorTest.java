@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class InputValidatorTest
 {
@@ -39,7 +39,7 @@ public class InputValidatorTest
 
     String         TEST  = "test";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -52,44 +52,44 @@ public class InputValidatorTest
     public void testUnsafePattern()
     {
         Pattern unsafe = InputValidator.UNSAFE_PATTERN;
-        Assert.assertFalse( unsafe.matcher( "a b c d e f g" ).find() );
-        Assert.assertTrue( unsafe.matcher( "<a> b c d e f g" ).find() );
-        Assert.assertTrue( unsafe.matcher( "foo$" ).find() );
+        Assertions.assertFalse( unsafe.matcher( "a b c d e f g" ).find() );
+        Assertions.assertTrue( unsafe.matcher( "<a> b c d e f g" ).find() );
+        Assertions.assertTrue( unsafe.matcher( "foo$" ).find() );
     }
 
     @Test
     public void testValidate()
     {
-        Assert.assertTrue( val.validate( "Test string", "Name", InputValidator.STANDARD ) );
-        Assert.assertFalse( val.validate( "Test $tring", "Name", InputValidator.STANDARD ) );
-        Assert.assertFalse( val.validate( "Test <string>", "Name", InputValidator.STANDARD ) );
-        Assert.assertFalse( val.validate( "Test & string", "Name", InputValidator.STANDARD ) );
-        Assert.assertFalse( val.validate( "Test @ string", "Name", InputValidator.STANDARD ) );
+        Assertions.assertTrue( val.validate( "Test string", "Name", InputValidator.STANDARD ) );
+        Assertions.assertFalse( val.validate( "Test $tring", "Name", InputValidator.STANDARD ) );
+        Assertions.assertFalse( val.validate( "Test <string>", "Name", InputValidator.STANDARD ) );
+        Assertions.assertFalse( val.validate( "Test & string", "Name", InputValidator.STANDARD ) );
+        Assertions.assertFalse( val.validate( "Test @ string", "Name", InputValidator.STANDARD ) );
 
         // Null or blank fields should validate
-        Assert.assertTrue( val.validate( "", "Name", InputValidator.STANDARD ) );
-        Assert.assertTrue( val.validate( null, "Name", InputValidator.STANDARD ) );
+        Assertions.assertTrue( val.validate( "", "Name", InputValidator.STANDARD ) );
+        Assertions.assertTrue( val.validate( null, "Name", InputValidator.STANDARD ) );
     }
 
     @Test
     public void testValidateNotNull()
     {
-        Assert.assertTrue( val.validateNotNull("Test string", "Name") );
-        Assert.assertFalse( val.validateNotNull("Test $tring", "Name") );
-        Assert.assertFalse( val.validateNotNull("", "Name") );
-        Assert.assertFalse( val.validateNotNull(null, "Name") );
+        Assertions.assertTrue( val.validateNotNull("Test string", "Name") );
+        Assertions.assertFalse( val.validateNotNull("Test $tring", "Name") );
+        Assertions.assertFalse( val.validateNotNull("", "Name") );
+        Assertions.assertFalse( val.validateNotNull(null, "Name") );
     }
 
     @Test
     public void testValidateEmail()
     {
-        Assert.assertTrue( val.validateNotNull("foo@bar.com", "E-mail", InputValidator.EMAIL) );
-        Assert.assertTrue( val.validateNotNull("foo-bar@foo.com", "E-mail", InputValidator.EMAIL) );
-        Assert.assertTrue( val.validateNotNull("foo-bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
-        Assert.assertTrue( val.validateNotNull("foo+bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
-        Assert.assertTrue( val.validateNotNull("foo.bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
-        Assert.assertFalse( val.validateNotNull("foobar", "E-mail", InputValidator.EMAIL) );
-        Assert.assertFalse( val.validateNotNull("foobar@foo", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertTrue( val.validateNotNull("foo@bar.com", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertTrue( val.validateNotNull("foo-bar@foo.com", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertTrue( val.validateNotNull("foo-bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertTrue( val.validateNotNull("foo+bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertTrue( val.validateNotNull("foo.bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertFalse( val.validateNotNull("foobar", "E-mail", InputValidator.EMAIL) );
+        Assertions.assertFalse( val.validateNotNull("foobar@foo", "E-mail", InputValidator.EMAIL) );
     }
 
 }

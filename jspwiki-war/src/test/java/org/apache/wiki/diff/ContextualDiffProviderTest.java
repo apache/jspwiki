@@ -26,8 +26,8 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ContextualDiffProviderTest
 {
@@ -168,12 +168,12 @@ public class ContextualDiffProviderTest
 
     }
 
-    // FIXME: This test Assert.fails; must be enabled again asap.
+    // FIXME: This test Assertions.fails; must be enabled again asap.
     /*
     @Test
     public void testKnownProblemCases() throws NoRequiredPropertyException, IOException
     {
-        //These all Assert.fail...
+        //These all Assertions.fail...
 
         //make two consequtive changes
         diffTest(null, "A B C D", "A b c D", "A |^b c^-B C-| D");
@@ -184,7 +184,7 @@ public class ContextualDiffProviderTest
         //acually returns ->                "A |^BC^-B-| |-C -|D"
 
 
-        //These Assert.failures are all due to how we process the diff results, we need to collapse
+        //These Assertions.failures are all due to how we process the diff results, we need to collapse
         //adjacent edits into one...
 
     }
@@ -209,7 +209,7 @@ public class ContextualDiffProviderTest
         WikiContext ctx = new WikiContext( engine, new WikiPage(engine,"Dummy") );
         String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
-        Assert.assertEquals(expectedDiff, actualDiff);
+        Assertions.assertEquals(expectedDiff, actualDiff);
     }
 
 }

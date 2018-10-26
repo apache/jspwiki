@@ -27,16 +27,16 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DefaultAclManagerTest
 {
     TestEngine m_engine;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -50,7 +50,7 @@ public class DefaultAclManagerTest
         m_engine.saveText( "TestAclPage", text );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         try
@@ -68,43 +68,43 @@ public class DefaultAclManagerTest
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
-        Assert.assertNotNull( page.getAcl() );
-        Assert.assertTrue(page.getAcl().isEmpty());
+        Assertions.assertNotNull( page.getAcl() );
+        Assertions.assertTrue(page.getAcl().isEmpty());
 
         page = m_engine.getPage( "TestAclPage" );
         acl = m_engine.getAclManager().getPermissions( page );
-        Assert.assertNotNull( page.getAcl() );
-        Assert.assertFalse(page.getAcl().isEmpty());
+        Assertions.assertNotNull( page.getAcl() );
+        Assertions.assertFalse(page.getAcl().isEmpty());
 
         Principal[] p;
 
         // Charlie is an editor; reading is therefore implied
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "view") );
-        Assert.assertEquals( 2, p.length );
-        Assert.assertTrue( ArrayUtils.contains( p, new WikiPrincipal("Charlie") ) );
+        Assertions.assertEquals( 2, p.length );
+        Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal("Charlie") ) );
 
         // Charlie should be in the ACL as an editor
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "edit") );
-        Assert.assertEquals( 2, p.length );
-        Assert.assertTrue( ArrayUtils.contains( p, new WikiPrincipal("Charlie") ) );
+        Assertions.assertEquals( 2, p.length );
+        Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal("Charlie") ) );
 
         // Charlie should not be able to delete this page
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "delete") );
-        Assert.assertEquals( 0, p.length );
+        Assertions.assertEquals( 0, p.length );
 
         // Herman is an unregistered user and editor; reading is implied
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "view") );
-        Assert.assertEquals( 2, p.length );
-        Assert.assertTrue( ArrayUtils.contains( p, new UnresolvedPrincipal("Herman") ) );
+        Assertions.assertEquals( 2, p.length );
+        Assertions.assertTrue( ArrayUtils.contains( p, new UnresolvedPrincipal("Herman") ) );
 
         // Herman should be in the ACL as an editor
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "edit") );
-        Assert.assertEquals( 2, p.length );
-        Assert.assertTrue( ArrayUtils.contains( p, new UnresolvedPrincipal("Herman") ) );
+        Assertions.assertEquals( 2, p.length );
+        Assertions.assertTrue( ArrayUtils.contains( p, new UnresolvedPrincipal("Herman") ) );
 
         // Herman should not be able to delete this page
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "delete") );
-        Assert.assertEquals( 0, p.length );
+        Assertions.assertEquals( 0, p.length );
     }
 
     @Test
@@ -115,57 +115,57 @@ public class DefaultAclManagerTest
 
         acl = "[{ALLOW view Bob, Alice, Betty}] Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
-        Assert.assertTrue ( m.find() );
-        Assert.assertEquals( 2, m.groupCount() );
-        Assert.assertEquals( "[{ALLOW view Bob, Alice, Betty}]", m.group(0) );
-        Assert.assertEquals( "view", m.group(1) );
-        Assert.assertEquals( "Bob, Alice, Betty", m.group(2) );
-        Assert.assertFalse( m.find() );
+        Assertions.assertTrue ( m.find() );
+        Assertions.assertEquals( 2, m.groupCount() );
+        Assertions.assertEquals( "[{ALLOW view Bob, Alice, Betty}]", m.group(0) );
+        Assertions.assertEquals( "view", m.group(1) );
+        Assertions.assertEquals( "Bob, Alice, Betty", m.group(2) );
+        Assertions.assertFalse( m.find() );
 
         acl = "[{ALLOW view Alice}] Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
-        Assert.assertTrue ( m.find() );
+        Assertions.assertTrue ( m.find() );
 //        System.out.println( m.group() );
-        Assert.assertEquals( 2, m.groupCount() );
-        Assert.assertEquals( "[{ALLOW view Alice}]", m.group(0) );
-        Assert.assertEquals( "view", m.group(1) );
-        Assert.assertEquals( "Alice", m.group(2) );
-        Assert.assertFalse( m.find() );
+        Assertions.assertEquals( 2, m.groupCount() );
+        Assertions.assertEquals( "[{ALLOW view Alice}]", m.group(0) );
+        Assertions.assertEquals( "view", m.group(1) );
+        Assertions.assertEquals( "Alice", m.group(2) );
+        Assertions.assertFalse( m.find() );
 
         acl = "Test text   [{   ALLOW   view   Alice  }]  Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
-        Assert.assertTrue ( m.find() );
+        Assertions.assertTrue ( m.find() );
 //        System.out.println( m.group() );
-        Assert.assertEquals( 2, m.groupCount() );
-        Assert.assertEquals( "[{   ALLOW   view   Alice  }]", m.group(0) );
-        Assert.assertEquals( "view", m.group(1) );
-        Assert.assertEquals( "Alice", m.group(2) );
-        Assert.assertFalse( m.find() );
+        Assertions.assertEquals( 2, m.groupCount() );
+        Assertions.assertEquals( "[{   ALLOW   view   Alice  }]", m.group(0) );
+        Assertions.assertEquals( "view", m.group(1) );
+        Assertions.assertEquals( "Alice", m.group(2) );
+        Assertions.assertFalse( m.find() );
 
         acl = "Test text   [{   ALLOW   view  Alice  ,  Bob  }]  Test text.";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
-        Assert.assertTrue ( m.find() );
+        Assertions.assertTrue ( m.find() );
 //        System.out.println( m.group() );
-        Assert.assertEquals( 2, m.groupCount() );
-        Assert.assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
-        Assert.assertEquals( "view", m.group(1) );
-        Assert.assertEquals( "Alice  ,  Bob", m.group(2) );
-        Assert.assertFalse( m.find() );
+        Assertions.assertEquals( 2, m.groupCount() );
+        Assertions.assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
+        Assertions.assertEquals( "view", m.group(1) );
+        Assertions.assertEquals( "Alice  ,  Bob", m.group(2) );
+        Assertions.assertFalse( m.find() );
 
         acl = "Test text   [{   ALLOW   view  Alice  ,  Bob  }]  Test text  [{ALLOW edit Betty}].";
         m = DefaultAclManager.ACL_PATTERN.matcher( acl );
-        Assert.assertTrue ( m.find() );
+        Assertions.assertTrue ( m.find() );
 //        System.out.println( m.group() );
-        Assert.assertEquals( 2, m.groupCount() );
-        Assert.assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
-        Assert.assertEquals( "view", m.group(1) );
-        Assert.assertEquals( "Alice  ,  Bob", m.group(2) );
-        Assert.assertTrue ( m.find() );
-        Assert.assertEquals( 2, m.groupCount() );
-        Assert.assertEquals( "[{ALLOW edit Betty}]", m.group(0) );
-        Assert.assertEquals( "edit", m.group(1) );
-        Assert.assertEquals( "Betty", m.group(2) );
-        Assert.assertFalse( m.find() );
+        Assertions.assertEquals( 2, m.groupCount() );
+        Assertions.assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
+        Assertions.assertEquals( "view", m.group(1) );
+        Assertions.assertEquals( "Alice  ,  Bob", m.group(2) );
+        Assertions.assertTrue ( m.find() );
+        Assertions.assertEquals( 2, m.groupCount() );
+        Assertions.assertEquals( "[{ALLOW edit Betty}]", m.group(0) );
+        Assertions.assertEquals( "edit", m.group(1) );
+        Assertions.assertEquals( "Betty", m.group(2) );
+        Assertions.assertFalse( m.find() );
     }
 
     @Test
@@ -175,7 +175,7 @@ public class DefaultAclManagerTest
         WikiPage page = m_engine.getPage( "TestAclPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
         String aclString = DefaultAclManager.printAcl( acl );
-        Assert.assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );
+        Assertions.assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );
 
         // Create an ACL from scratch
         acl = new AclImpl();
@@ -192,7 +192,7 @@ public class DefaultAclManagerTest
 
         // Verify that the printed ACL is OK
         String expectedValue = "[{ALLOW delete Devin}]\n[{ALLOW edit Charlie,Devin}]\n[{ALLOW view Charlie}]\n";
-        Assert.assertEquals( expectedValue, DefaultAclManager.printAcl( acl ) );
+        Assertions.assertEquals( expectedValue, DefaultAclManager.printAcl( acl ) );
     }
 
 }

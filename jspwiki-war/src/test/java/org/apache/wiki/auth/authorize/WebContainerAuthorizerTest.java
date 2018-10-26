@@ -24,9 +24,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.jdom2.Document;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WebContainerAuthorizerTest
 {
@@ -34,7 +34,7 @@ public class WebContainerAuthorizerTest
     WebContainerAuthorizer m_authorizer;
     Document   m_webxml;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -51,9 +51,9 @@ public class WebContainerAuthorizerTest
     @Test
     public void testConstraints() throws Exception
     {
-        Assert.assertTrue( m_authorizer.isConstrained( "/Delete.jsp", new Role( "Admin" ) ) );
-        Assert.assertTrue( m_authorizer.isConstrained( "/Login.jsp", Role.AUTHENTICATED ) );
-        Assert.assertFalse( m_authorizer.isConstrained( "/UserPreferences.jsp", Role.AUTHENTICATED ) );
+        Assertions.assertTrue( m_authorizer.isConstrained( "/Delete.jsp", new Role( "Admin" ) ) );
+        Assertions.assertTrue( m_authorizer.isConstrained( "/Login.jsp", Role.AUTHENTICATED ) );
+        Assertions.assertFalse( m_authorizer.isConstrained( "/UserPreferences.jsp", Role.AUTHENTICATED ) );
     }
 
     @Test
@@ -61,9 +61,9 @@ public class WebContainerAuthorizerTest
     {
         // We should find 2 roles: AUTHENTICATED plus custom role "Admin"
         Principal[] roles = m_authorizer.getRoles();
-        Assert.assertEquals( 2, roles.length );
-        Assert.assertTrue( ArrayUtils.contains( roles, Role.AUTHENTICATED ) );
-        Assert.assertTrue( ArrayUtils.contains( roles, new Role( "Admin" ) ) );
+        Assertions.assertEquals( 2, roles.length );
+        Assertions.assertTrue( ArrayUtils.contains( roles, Role.AUTHENTICATED ) );
+        Assertions.assertTrue( ArrayUtils.contains( roles, new Role( "Admin" ) ) );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class WebContainerAuthorizerTest
                 found = true;
             }
         }
-        Assert.assertTrue( "Didn't find AUTHENTICATED", found );
+        Assertions.assertTrue( found, "Didn't find AUTHENTICATED" );
         for ( int i = 0; i < roles.length; i++ )
         {
             if ( roles[i].equals( new Role( "Admin" ) ) )
@@ -86,13 +86,13 @@ public class WebContainerAuthorizerTest
                 found = true;
             }
         }
-        Assert.assertTrue( "Didn't find ADMIN", found );
+        Assertions.assertTrue( found, "Didn't find ADMIN" );
     }
 
     @Test
     public void testIsContainerAuthorized()
     {
-        Assert.assertTrue( m_authorizer.isContainerAuthorized() );
+        Assertions.assertTrue( m_authorizer.isContainerAuthorized() );
     }
 
 }

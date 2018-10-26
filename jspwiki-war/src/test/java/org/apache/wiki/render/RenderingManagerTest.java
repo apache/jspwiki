@@ -26,10 +26,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -38,7 +38,7 @@ public class RenderingManagerTest {
     RenderingManager m_manager;
     TestEngine       m_engine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         CacheManager.getInstance().removeAllCaches();
         Properties props = TestEngine.getTestProperties();
@@ -47,7 +47,7 @@ public class RenderingManagerTest {
         m_manager = m_engine.getRenderingManager();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         m_engine.deletePage( "TestPage" );
     }
@@ -80,7 +80,7 @@ public class RenderingManagerTest {
             WikiDocument d = p.parse();
 
             String html = m_manager.getHTML( context, d );
-            Assert.assertNotNull( "noncached got null response",html);
+            Assertions.assertNotNull( "noncached got null response",html);
         }
 
         sw.stop();
@@ -100,7 +100,7 @@ public class RenderingManagerTest {
 
             String html = m_manager.getHTML( context, pagedata );
 
-            Assert.assertNotNull("cached got null response",html);
+            Assertions.assertNotNull("cached got null response",html);
         }
 
         sw.stop();

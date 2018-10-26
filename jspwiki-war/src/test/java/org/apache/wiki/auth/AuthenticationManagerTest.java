@@ -32,9 +32,9 @@ import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.auth.login.CookieAssertionLoginModule;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the AuthorizationManager class.
@@ -87,7 +87,7 @@ public class AuthenticationManagerTest
 
     private WikiSession m_session;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -112,25 +112,25 @@ public class AuthenticationManagerTest
 
         // Start a session without any container roles: DummyAuthorizer should ALWAYS allow AuthorizerRole
         WikiSession session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
-        Assert.assertTrue( session.hasPrincipal( Role.ALL ) );
-        Assert.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new Role( "AuthorizerRole") ) );
-        Assert.assertFalse( session.hasPrincipal( new Role( "ContainerRole") ) );
-        Assert.assertFalse( session.hasPrincipal( new Role( "DummyRole") ) );
+        Assertions.assertTrue( session.hasPrincipal( Role.ALL ) );
+        Assertions.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new Role( "AuthorizerRole") ) );
+        Assertions.assertFalse( session.hasPrincipal( new Role( "ContainerRole") ) );
+        Assertions.assertFalse( session.hasPrincipal( new Role( "DummyRole") ) );
 
         // Try again with a container-authenticated session: DummyAuthorizer should ALSO allow ContainerRole
         session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.JANNE, new Principal[0] );
-        Assert.assertTrue( session.hasPrincipal( Role.ALL ) );
-        Assert.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new Role( "AuthorizerRole") ) );
-        Assert.assertTrue( session.hasPrincipal( new Role( "ContainerRole") ) );
-        Assert.assertFalse( session.hasPrincipal( new Role( "DummyRole") ) );
+        Assertions.assertTrue( session.hasPrincipal( Role.ALL ) );
+        Assertions.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new Role( "AuthorizerRole") ) );
+        Assertions.assertTrue( session.hasPrincipal( new Role( "ContainerRole") ) );
+        Assertions.assertFalse( session.hasPrincipal( new Role( "DummyRole") ) );
     }
 
     @Test
@@ -145,7 +145,7 @@ public class AuthenticationManagerTest
         // login module
         WikiEngine engine = new TestEngine( props );
         AuthenticationManager authMgr = engine.getAuthenticationManager();
-        Assert.assertEquals( CookieAssertionLoginModule.class, authMgr.m_loginModuleClass );
+        Assertions.assertEquals( CookieAssertionLoginModule.class, authMgr.m_loginModuleClass );
     }
 
     @Test
@@ -163,39 +163,39 @@ public class AuthenticationManagerTest
         WikiEngine engine = new TestEngine( props );
         AuthenticationManager authMgr = engine.getAuthenticationManager();
         Map<String, String> options = authMgr.m_loginModuleOptions;
-        Assert.assertEquals( 3, options.size() );
-        Assert.assertTrue( options.containsKey( "key1" ) );
-        Assert.assertTrue( options.containsKey( "key2" ) );
-        Assert.assertTrue( options.containsKey( "key3" ) );
-        Assert.assertEquals( "value1", options.get( "key1" ) );
-        Assert.assertEquals( "value2", options.get( "key2" ) );
-        Assert.assertEquals( "value3", options.get( "key3" ) );
+        Assertions.assertEquals( 3, options.size() );
+        Assertions.assertTrue( options.containsKey( "key1" ) );
+        Assertions.assertTrue( options.containsKey( "key2" ) );
+        Assertions.assertTrue( options.containsKey( "key3" ) );
+        Assertions.assertEquals( "value1", options.get( "key1" ) );
+        Assertions.assertEquals( "value2", options.get( "key2" ) );
+        Assertions.assertEquals( "value3", options.get( "key3" ) );
     }
 
     @Test
     public void testIsUserPrincipal()
     {
-        Assert.assertTrue( AuthenticationManager.isUserPrincipal( new WikiPrincipal( "Foo" ) ) );
-        Assert.assertFalse( AuthenticationManager.isUserPrincipal( new GroupPrincipal( "Group1" ) ) );
-        Assert.assertFalse( AuthenticationManager.isUserPrincipal( new Role( "Role1" ) ) );
-        Assert.assertFalse( AuthenticationManager.isUserPrincipal( Role.ANONYMOUS ) );
+        Assertions.assertTrue( AuthenticationManager.isUserPrincipal( new WikiPrincipal( "Foo" ) ) );
+        Assertions.assertFalse( AuthenticationManager.isUserPrincipal( new GroupPrincipal( "Group1" ) ) );
+        Assertions.assertFalse( AuthenticationManager.isUserPrincipal( new Role( "Role1" ) ) );
+        Assertions.assertFalse( AuthenticationManager.isUserPrincipal( Role.ANONYMOUS ) );
     }
 
     @Test
     public void testLoginCustom() throws Exception
     {
         WikiSession session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
-        Assert.assertTrue( session.hasPrincipal( Role.ALL ) );
-        Assert.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( Role.ALL ) );
+        Assertions.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ) ) );
     }
 
     @Test
     public void testLoginCustomWithGroup() throws Exception
     {
-        // Flush any pre-existing groups (left over from previous Assert.failures,
+        // Flush any pre-existing groups (left over from previous Assertions.failures,
         // perhaps)
         try
         {
@@ -211,9 +211,9 @@ public class AuthenticationManagerTest
         // (ALL, AUTHENTICATED, login, fullname, wikiname Principals)
         WikiSession session = WikiSession.guestSession( m_engine );
         m_auth.login( session, null, Users.JANNE, Users.JANNE_PASS );
-        Assert.assertEquals( 3, session.getPrincipals().length );
-        Assert.assertEquals( 2, session.getRoles().length );
-        Assert.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
+        Assertions.assertEquals( 3, session.getPrincipals().length );
+        Assertions.assertEquals( 2, session.getRoles().length );
+        Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
 
         // Listen for any manager group-add events
         GroupManager manager = m_engine.getGroupManager();
@@ -233,27 +233,27 @@ public class AuthenticationManagerTest
 
         // We should see two security events (one for each group create)
         // We should also see a GroupPrincipal for group Test1, but not Test2
-        Assert.assertEquals( 2, trap.events().length );
-        Assert.assertTrue( session.hasPrincipal( principalTest1 ) );
-        Assert.assertFalse( session.hasPrincipal( principalTest2 ) );
+        Assertions.assertEquals( 2, trap.events().length );
+        Assertions.assertTrue( session.hasPrincipal( principalTest1 ) );
+        Assertions.assertFalse( session.hasPrincipal( principalTest2 ) );
 
         // If we remove Test1, the GroupPrincipal should disappear
         m_groupMgr.removeGroup( "Test1" );
-        Assert.assertFalse( session.hasPrincipal( principalTest1 ) );
-        Assert.assertFalse( session.hasPrincipal( principalTest2 ) );
+        Assertions.assertFalse( session.hasPrincipal( principalTest1 ) );
+        Assertions.assertFalse( session.hasPrincipal( principalTest2 ) );
 
         // Now, add 'JanneJalkanen' to Test2 group manually; we should see the
         // GroupPrincipal
         groupTest2.add( new WikiPrincipal( "JanneJalkanen" ) );
         m_groupMgr.setGroup( session, groupTest2 );
-        Assert.assertFalse( session.hasPrincipal( principalTest1 ) );
-        Assert.assertTrue( session.hasPrincipal( principalTest2 ) );
+        Assertions.assertFalse( session.hasPrincipal( principalTest1 ) );
+        Assertions.assertTrue( session.hasPrincipal( principalTest2 ) );
 
         // Remove 'JanneJalkenen' manually; the GroupPrincipal should disappear
         groupTest2.remove( new WikiPrincipal( "JanneJalkanen" ) );
         m_groupMgr.setGroup( session, groupTest2 );
-        Assert.assertFalse( session.hasPrincipal( principalTest1 ) );
-        Assert.assertFalse( session.hasPrincipal( principalTest2 ) );
+        Assertions.assertFalse( session.hasPrincipal( principalTest1 ) );
+        Assertions.assertFalse( session.hasPrincipal( principalTest2 ) );
 
         // Clean up
         m_groupMgr.removeGroup( "Test2" );

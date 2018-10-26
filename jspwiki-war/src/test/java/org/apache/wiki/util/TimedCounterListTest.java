@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.util;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class TimedCounterListTest
 {
     TimedCounterList<String> m_list = new TimedCounterList<String>();
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         m_list.add( "Foo" );
@@ -39,9 +39,9 @@ public class TimedCounterListTest
     @Test
     public void testCount()
     {
-        Assert.assertEquals( "Foo", 3, m_list.count( "Foo" ) );
-        Assert.assertEquals( "Bar", 1, m_list.count( "Bar" ) );
-        Assert.assertEquals( "Baz", 0, m_list.count( "Baz" ) );
+        Assertions.assertEquals( 3, m_list.count( "Foo" ), "Foo" );
+        Assertions.assertEquals( 1, m_list.count( "Bar" ), "Bar" );
+        Assertions.assertEquals( 0, m_list.count( "Baz" ), "Baz" );
     }
 
     @Test
@@ -53,11 +53,11 @@ public class TimedCounterListTest
 
             m_list.cleanup(100);
 
-            Assert.assertEquals( "Foo", 0, m_list.count( "Foo" ) );
-            Assert.assertEquals( "Bar", 0, m_list.count( "Foo" ) );
-            Assert.assertEquals( "Baz", 0, m_list.count( "Foo" ) );
+            Assertions.assertEquals( 0, m_list.count( "Foo" ), "Foo" );
+            Assertions.assertEquals( 0, m_list.count( "Foo" ), "Bar" );
+            Assertions.assertEquals( 0, m_list.count( "Foo" ), "Baz" );
 
-            Assert.assertEquals( "size", 0, m_list.size() );
+            Assertions.assertEquals( 0, m_list.size(), "size" );
         }
         catch( InterruptedException e )
         {

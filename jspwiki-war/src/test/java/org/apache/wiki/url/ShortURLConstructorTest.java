@@ -27,8 +27,8 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class ShortURLConstructorTest
@@ -56,7 +56,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor("wiki/" );
 
-        Assert.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",false,null) );
+        Assertions.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",false,null) );
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor("" );
 
-        Assert.assertEquals( "/test/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/wiki/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor("view/" );
 
-        Assert.assertEquals( "/test/view/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/view/Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/wiki/Main?do=Edit", c.makeURL(WikiContext.EDIT,"Main",true,null) );
+        Assertions.assertEquals( "/test/wiki/Main?do=Edit", c.makeURL(WikiContext.EDIT,"Main",true,null) );
     }
 
     @Test
@@ -128,7 +128,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",true,null) );
+        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",true,null) );
     }
 
     @Test
@@ -137,7 +137,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",false,null) );
+        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",false,null) );
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",true,null) );
+        Assertions.assertEquals( "/test/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",true,null) );
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor(null );
 
-        Assert.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp",true,"a=1&amp;b=2") );
+        Assertions.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp",true,"a=1&amp;b=2") );
     }
 
     @Test
@@ -164,7 +164,7 @@ public class ShortURLConstructorTest
     {
         URLConstructor c = getConstructor("wiki/" );
 
-        Assert.assertEquals( "/test/wiki/", c.makeURL(WikiContext.VIEW,"",true,null) );
+        Assertions.assertEquals( "/test/wiki/", c.makeURL(WikiContext.VIEW,"",true,null) );
     }
 
 }

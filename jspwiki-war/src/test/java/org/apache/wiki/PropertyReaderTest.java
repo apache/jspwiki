@@ -21,8 +21,8 @@ package org.apache.wiki;
 import java.util.Properties;
 
 import org.apache.wiki.util.PropertyReader;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PropertyReaderTest
 {
@@ -40,13 +40,13 @@ public class PropertyReaderTest
 
         PropertyReader.expandVars(p);
 
-        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        Assert.assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
-        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        Assert.assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
-        Assert.assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
+        Assertions.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
 
-        Assert.assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
+        Assertions.assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
     }
 
     @Test
@@ -68,14 +68,14 @@ public class PropertyReaderTest
 
         PropertyReader.expandVars(p);
 
-        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        Assert.assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
-        Assert.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
-        Assert.assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
-        Assert.assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
+        Assertions.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.basicAttachmentProvider.storageDir").equals("/p/mywiki/www/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.fileSystemProvider.pageDir").equals("/p/mywiki/www/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.workDir").endsWith("/p/mywiki/wrk/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.xyz").endsWith("test basedir") ); //don't touch this
 
-        Assert.assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
-        Assert.assertTrue( p.getProperty("jspwiki.abc").endsWith("test wiki") );
+        Assertions.assertFalse( p.getProperty("jspwiki.workDir").endsWith("$basedir/wrk/") );
+        Assertions.assertTrue( p.getProperty("jspwiki.abc").endsWith("test wiki") );
     }
 
 
@@ -95,9 +95,9 @@ public class PropertyReaderTest
 
         PropertyReader.expandVars(p);
 
-        Assert.assertTrue( p.getProperty("jspwiki.x1").equals("a") );
-        Assert.assertTrue( p.getProperty("jspwiki.x2").equals("b") );
-        Assert.assertTrue( p.getProperty("jspwiki.x3").equals("a/b") );
+        Assertions.assertTrue( p.getProperty("jspwiki.x1").equals("a") );
+        Assertions.assertTrue( p.getProperty("jspwiki.x2").equals("b") );
+        Assertions.assertTrue( p.getProperty("jspwiki.x3").equals("a/b") );
     }
 
 }

@@ -32,9 +32,9 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ApprovalWorkflowTest
 {
@@ -44,7 +44,7 @@ public class ApprovalWorkflowTest
     DecisionQueue m_dq;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -82,59 +82,59 @@ public class ApprovalWorkflowTest
         w.setWorkflowManager( m_engine.getWorkflowManager() );
 
         // Check to see if the workflow built correctly
-        Assert.assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
-        Assert.assertNull( w.getCurrentStep() );
-        Assert.assertEquals( "workflow.approvalWorkflow", w.getMessageKey() );
-        Assert.assertEquals( Workflow.CREATED, w.getCurrentState() );
-        Assert.assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
-        Assert.assertEquals( m_engine.getWorkflowManager(), w.getWorkflowManager() );
-        Assert.assertEquals( 0, w.getHistory().size() );
+        Assertions.assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
+        Assertions.assertNull( w.getCurrentStep() );
+        Assertions.assertEquals( "workflow.approvalWorkflow", w.getMessageKey() );
+        Assertions.assertEquals( Workflow.CREATED, w.getCurrentState() );
+        Assertions.assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
+        Assertions.assertEquals( m_engine.getWorkflowManager(), w.getWorkflowManager() );
+        Assertions.assertEquals( 0, w.getHistory().size() );
 
         // Our dummy "task complete" attributes should still be null
-        Assert.assertNull( w.getAttribute( "task.preSaveWikiPage") );
-        Assert.assertNull( w.getAttribute( "task.saveWikiPage") );
+        Assertions.assertNull( w.getAttribute( "task.preSaveWikiPage") );
+        Assertions.assertNull( w.getAttribute( "task.saveWikiPage") );
 
         // Start the workflow
         w.start();
 
         // Presave complete attribute should be set now, and current step should be Decision
         Step decision = w.getCurrentStep();
-        Assert.assertTrue( decision instanceof Decision );
-        Assert.assertEquals( 2, w.getHistory().size() );
-        Assert.assertEquals( prepTask, w.getHistory().get( 0 ) );
-        Assert.assertTrue( w.getHistory().get( 1 ) instanceof Decision );
-        Assert.assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
-        Assert.assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
-        Assert.assertEquals( decisionKey, decision.getMessageKey() );
+        Assertions.assertTrue( decision instanceof Decision );
+        Assertions.assertEquals( 2, w.getHistory().size() );
+        Assertions.assertEquals( prepTask, w.getHistory().get( 0 ) );
+        Assertions.assertTrue( w.getHistory().get( 1 ) instanceof Decision );
+        Assertions.assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
+        Assertions.assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
+        Assertions.assertEquals( decisionKey, decision.getMessageKey() );
         List decisionFacts = ((Decision)decision).getFacts();
-        Assert.assertEquals( 3, decisionFacts.size() );
-        Assert.assertEquals( facts[0], decisionFacts.get(0) );
-        Assert.assertEquals( facts[1], decisionFacts.get(1) );
-        Assert.assertEquals( facts[2], decisionFacts.get(2) );
+        Assertions.assertEquals( 3, decisionFacts.size() );
+        Assertions.assertEquals( facts[0], decisionFacts.get(0) );
+        Assertions.assertEquals( facts[1], decisionFacts.get(1) );
+        Assertions.assertEquals( facts[2], decisionFacts.get(2) );
 
         // Check that our predecessor/successor relationships are ok
-        Assert.assertEquals( decision, prepTask.getSuccessor( Outcome.STEP_COMPLETE ) );
-        Assert.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_ABORT ) );
-        Assert.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_CONTINUE ) );
-        Assert.assertEquals( null, decision.getSuccessor( Outcome.DECISION_ACKNOWLEDGE ) );
-        Assert.assertEquals( null, decision.getSuccessor( Outcome.DECISION_HOLD ) );
-        Assert.assertEquals( null, decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
-        Assert.assertEquals( completionTask, decision.getSuccessor( Outcome.DECISION_APPROVE ) );
+        Assertions.assertEquals( decision, prepTask.getSuccessor( Outcome.STEP_COMPLETE ) );
+        Assertions.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_ABORT ) );
+        Assertions.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_CONTINUE ) );
+        Assertions.assertEquals( null, decision.getSuccessor( Outcome.DECISION_ACKNOWLEDGE ) );
+        Assertions.assertEquals( null, decision.getSuccessor( Outcome.DECISION_HOLD ) );
+        Assertions.assertEquals( null, decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
+        Assertions.assertEquals( completionTask, decision.getSuccessor( Outcome.DECISION_APPROVE ) );
 
         // The "deny" notification should use the right key
         Step notification = decision.getSuccessor( Outcome.DECISION_DENY );
-        Assert.assertNotNull( notification );
-        Assert.assertEquals( rejectedMessageKey, notification.getMessageKey() );
-        Assert.assertTrue( notification instanceof SimpleNotification );
+        Assertions.assertNotNull( notification );
+        Assertions.assertEquals( rejectedMessageKey, notification.getMessageKey() );
+        Assertions.assertTrue( notification instanceof SimpleNotification );
 
         // Now, approve the Decision and everything should complete
         ((Decision)decision).decide( Outcome.DECISION_APPROVE );
-        Assert.assertTrue( w.isCompleted() );
-        Assert.assertNull( w.getCurrentStep() );
-        Assert.assertEquals( 3, w.getHistory().size() );
-        Assert.assertEquals( completionTask, w.getHistory().get( 2 ) );
-        Assert.assertTrue( completionTask.isCompleted() );
-        Assert.assertEquals( Outcome.STEP_COMPLETE, completionTask.getOutcome() );
+        Assertions.assertTrue( w.isCompleted() );
+        Assertions.assertNull( w.getCurrentStep() );
+        Assertions.assertEquals( 3, w.getHistory().size() );
+        Assertions.assertEquals( completionTask, w.getHistory().get( 2 ) );
+        Assertions.assertTrue( completionTask.isCompleted() );
+        Assertions.assertEquals( Outcome.STEP_COMPLETE, completionTask.getOutcome() );
     }
 
     @Test
@@ -161,23 +161,23 @@ public class ApprovalWorkflowTest
 
         // Now, deny the Decision and the submitter should see a notification
         Step step = w.getCurrentStep();
-        Assert.assertTrue( step instanceof Decision );
+        Assertions.assertTrue( step instanceof Decision );
         Decision decision = (Decision)step;
         decision.decide( Outcome.DECISION_DENY );
-        Assert.assertFalse( w.isCompleted() );
+        Assertions.assertFalse( w.isCompleted() );
 
         // Check that the notification is ok, then acknowledge it
         step = w.getCurrentStep();
-        Assert.assertTrue( step instanceof SimpleNotification );
-        Assert.assertEquals( rejectedMessageKey, step.getMessageKey() );
+        Assertions.assertTrue( step instanceof SimpleNotification );
+        Assertions.assertEquals( rejectedMessageKey, step.getMessageKey() );
         SimpleNotification notification = (SimpleNotification)step;
         notification.acknowledge();
 
         // Workflow should be complete now
-        Assert.assertTrue( w.isCompleted() );
-        Assert.assertNull( w.getCurrentStep() );
-        Assert.assertEquals( 3, w.getHistory().size() );
-        Assert.assertEquals( notification, w.getHistory().get( 2 ) );
+        Assertions.assertTrue( w.isCompleted() );
+        Assertions.assertNull( w.getCurrentStep() );
+        Assertions.assertEquals( 3, w.getHistory().size() );
+        Assertions.assertEquals( notification, w.getHistory().get( 2 ) );
     }
 
     @Test
@@ -196,18 +196,18 @@ public class ApprovalWorkflowTest
         }
 
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
-        Assert.assertFalse( m_engine.pageExists(pageName));
+        Assertions.assertFalse( m_engine.pageExists(pageName));
 
         // Second, GroupPrincipal Admin should see a Decision in its queue
         Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
-        Assert.assertEquals(1, decisions.size());
+        Assertions.assertEquals(1, decisions.size());
 
         // Now, approve the decision and it should go away, and page should appear.
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
-        Assert.assertTrue( m_engine.pageExists(pageName));
+        Assertions.assertTrue( m_engine.pageExists(pageName));
         decisions = m_dq.getActorDecisions( m_engine.adminSession() );
-        Assert.assertEquals(0, decisions.size());
+        Assertions.assertEquals(0, decisions.size());
 
         // Delete the page we created
         m_engine.deletePage( pageName );
@@ -229,27 +229,27 @@ public class ApprovalWorkflowTest
         }
 
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
-        Assert.assertFalse( m_engine.pageExists(pageName));
+        Assertions.assertFalse( m_engine.pageExists(pageName));
 
         // ...and there should be a Decision in GroupPrincipal Admin's queue
         Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
-        Assert.assertEquals(1, decisions.size());
+        Assertions.assertEquals(1, decisions.size());
 
         // Now, DENY the decision and the page should still not exist...
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_DENY);
-        Assert.assertFalse( m_engine.pageExists(pageName) );
+        Assertions.assertFalse( m_engine.pageExists(pageName) );
 
         // ...but there should also be a notification decision in Janne's queue
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
-        Assert.assertEquals(1, decisions.size());
+        Assertions.assertEquals(1, decisions.size());
         decision = (Decision)decisions.iterator().next();
-        Assert.assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
+        Assertions.assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
 
         // Once Janne disposes of the notification, his queue should be empty
         decision.decide(Outcome.DECISION_ACKNOWLEDGE);
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
-        Assert.assertEquals(0, decisions.size());
+        Assertions.assertEquals(0, decisions.size());
     }
 
     @Test
@@ -268,11 +268,11 @@ public class ApprovalWorkflowTest
         }
         catch ( WikiException e )
         {
-            Assert.assertTrue( e instanceof FilterException );
-            Assert.assertEquals( "Page save aborted.", e.getMessage() );
+            Assertions.assertTrue( e instanceof FilterException );
+            Assertions.assertEquals( "Page save aborted.", e.getMessage() );
             return;
         }
-        Assert.fail( "Page save should have thrown a FilterException, but didn't." );
+        Assertions.fail( "Page save should have thrown a FilterException, but didn't." );
     }
 
     /**

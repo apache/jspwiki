@@ -21,8 +21,8 @@ package org.apache.wiki;
 
 import java.util.Properties;
 
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 import org.apache.wiki.util.comparators.HumanComparator;
 import org.apache.wiki.util.comparators.LocaleComparator;
@@ -44,7 +44,7 @@ public class PageSorterTest
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "haha.this.isnt.a.class" );
         sorter.initialize( props );
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
     @Test
@@ -52,7 +52,7 @@ public class PageSorterTest
     {
         // Check uninitialised behaviour
         PageSorter sorter = new PageSorter();
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
     @Test
@@ -63,10 +63,10 @@ public class PageSorterTest
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, HumanComparator.class.getPackage().getName() + ".HumanComparator" );
         sorter.initialize( props );
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "HumanComparator" );
         sorter.initialize( props );
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
     }
 
     @Test
@@ -77,10 +77,10 @@ public class PageSorterTest
         Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, LocaleComparator.class.getPackage().getName() + ".LocaleComparator" );
         sorter.initialize( props );
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "LocaleComparator" );
         sorter.initialize( props );
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
     @Test
@@ -90,6 +90,6 @@ public class PageSorterTest
         PageSorter sorter = new PageSorter();
         Properties props = new Properties();
         sorter.initialize( props );
-        Assert.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
+        Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 }

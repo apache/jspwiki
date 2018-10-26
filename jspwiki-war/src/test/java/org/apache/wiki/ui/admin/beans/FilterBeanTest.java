@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
@@ -29,7 +29,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 
 public class FilterBeanTest {
@@ -50,7 +50,7 @@ public class FilterBeanTest {
                                   "<tr><td>org.apache.wiki.filters.SpamFilter</td><td>Janne Jalkanen</td><td></td></tr>" +
                                 "</table>" +
                               "</div>";
-        Assert.assertEquals( expectedHtml, pb.doGet( context ) );
+        Assertions.assertEquals( expectedHtml, pb.doGet( context ) );
     }
 
 }

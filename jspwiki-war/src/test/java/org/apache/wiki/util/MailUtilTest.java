@@ -29,9 +29,9 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test is not integrated into any TestSuite yet, because I don't know how
@@ -57,7 +57,7 @@ public class MailUtilTest
     static final String TEST_RECEIVER = "someone@somewhere.org";
     static final String TEST_SENDER = "homer.simpson@burns.com";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         PropertyConfigurator.configure(m_props);
         TestEngine testEngine = new TestEngine( m_props );
@@ -73,12 +73,12 @@ public class MailUtilTest
     public void testProperties()
     {
         Properties props = m_context.getEngine().getWikiProperties();
-        Assert.assertEquals( "127.0.0.1",                   props.getProperty( MailUtil.PROP_MAIL_HOST ) );
-        Assert.assertEquals( "25",                          props.getProperty( MailUtil.PROP_MAIL_PORT ) );
-        Assert.assertEquals( "JSPWiki <JSPWiki@localhost>", props.getProperty( MailUtil.PROP_MAIL_SENDER ) );
-        Assert.assertNull( props.getProperty( MailUtil.PROP_MAIL_ACCOUNT ) );
-        Assert.assertNull( props.getProperty( MailUtil.PROP_MAIL_PASSWORD ) );
-        Assert.assertNull( props.getProperty( MailUtil.PROP_MAIL_JNDI_NAME ) );
+        Assertions.assertEquals( "127.0.0.1",                   props.getProperty( MailUtil.PROP_MAIL_HOST ) );
+        Assertions.assertEquals( "25",                          props.getProperty( MailUtil.PROP_MAIL_PORT ) );
+        Assertions.assertEquals( "JSPWiki <JSPWiki@localhost>", props.getProperty( MailUtil.PROP_MAIL_SENDER ) );
+        Assertions.assertNull( props.getProperty( MailUtil.PROP_MAIL_ACCOUNT ) );
+        Assertions.assertNull( props.getProperty( MailUtil.PROP_MAIL_PASSWORD ) );
+        Assertions.assertNull( props.getProperty( MailUtil.PROP_MAIL_JNDI_NAME ) );
     }
 
     /**
@@ -106,7 +106,7 @@ public class MailUtilTest
         {
             if( e.getCause() instanceof ConnectException )
             {
-                // This can occur if you do not have a SMTP server set up.  We just log this and don't Assert.fail.
+                // This can occur if you do not have a SMTP server set up.  We just log this and don't Assertions.fail.
                 System.out.println("I could not test whether mail sending works, since I could not connect to your SMTP server.");
                 System.out.println("Reason: "+e.getMessage());
                 return;
@@ -114,7 +114,7 @@ public class MailUtilTest
             if( e.getCause() instanceof SSLHandshakeException )
             {
                 // This can occur if you do not have the required cert in the JVM's keystore.  We just log this
-                // and don't Assert.fail.
+                // and don't Assertions.fail.
                 System.out.println("I could not test whether mail sending works, since I don't have the required cert in my keystore.");
                 System.out.println("Reason: "+e.getMessage());
                 return;
@@ -126,12 +126,12 @@ public class MailUtilTest
                 return;
             }
             e.printStackTrace();
-            Assert.fail( "Unknown problem, cause=" + e.getCause() + " (check the console for error report)" );
+            Assertions.fail( "Unknown problem, cause=" + e.getCause() + " (check the console for error report)" );
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            Assert.fail( "Could not send mail: " + e.getMessage() );
+            Assertions.fail( "Could not send mail: " + e.getMessage() );
         }
     }
 

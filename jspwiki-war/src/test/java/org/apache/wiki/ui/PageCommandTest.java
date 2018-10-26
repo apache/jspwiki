@@ -27,10 +27,10 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PageCommandTest
 {
@@ -38,7 +38,7 @@ public class PageCommandTest
 
     WikiPage       testPage;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -47,7 +47,7 @@ public class PageCommandTest
         testPage = testEngine.getPage( "TestPage" );
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception
     {
         testEngine.deletePage( "TestPage" );
@@ -57,31 +57,31 @@ public class PageCommandTest
     public void testStaticCommand()
     {
         Command a = PageCommand.VIEW;
-        Assert.assertEquals( "view", a.getRequestContext() );
-        Assert.assertEquals( "Wiki.jsp", a.getJSP() );
-        Assert.assertEquals( "%uWiki.jsp?page=%n", a.getURLPattern() );
-        Assert.assertEquals( "PageContent.jsp", a.getContentTemplate() );
-        Assert.assertNull( a.getTarget());
-        Assert.assertNull( a.requiredPermission() );
-        Assert.assertEquals( a, PageCommand.VIEW );
+        Assertions.assertEquals( "view", a.getRequestContext() );
+        Assertions.assertEquals( "Wiki.jsp", a.getJSP() );
+        Assertions.assertEquals( "%uWiki.jsp?page=%n", a.getURLPattern() );
+        Assertions.assertEquals( "PageContent.jsp", a.getContentTemplate() );
+        Assertions.assertNull( a.getTarget());
+        Assertions.assertNull( a.requiredPermission() );
+        Assertions.assertEquals( a, PageCommand.VIEW );
 
         a = PageCommand.EDIT;
-        Assert.assertEquals( "edit", a.getRequestContext() );
-        Assert.assertEquals( "Edit.jsp", a.getJSP() );
-        Assert.assertEquals( "%uEdit.jsp?page=%n", a.getURLPattern() );
-        Assert.assertEquals( "EditContent.jsp", a.getContentTemplate() );
-        Assert.assertNull( a.getTarget());
-        Assert.assertNull( a.requiredPermission() );
-        Assert.assertEquals( a, PageCommand.EDIT );
+        Assertions.assertEquals( "edit", a.getRequestContext() );
+        Assertions.assertEquals( "Edit.jsp", a.getJSP() );
+        Assertions.assertEquals( "%uEdit.jsp?page=%n", a.getURLPattern() );
+        Assertions.assertEquals( "EditContent.jsp", a.getContentTemplate() );
+        Assertions.assertNull( a.getTarget());
+        Assertions.assertNull( a.requiredPermission() );
+        Assertions.assertEquals( a, PageCommand.EDIT );
 
         a = PageCommand.PREVIEW;
-        Assert.assertEquals( "preview", a.getRequestContext() );
-        Assert.assertEquals( "Preview.jsp", a.getJSP() );
-        Assert.assertEquals( "%uPreview.jsp?page=%n", a.getURLPattern() );
-        Assert.assertEquals( "PreviewContent.jsp", a.getContentTemplate() );
-        Assert.assertNull( a.getTarget());
-        Assert.assertNull( a.requiredPermission() );
-        Assert.assertEquals( a, PageCommand.PREVIEW );
+        Assertions.assertEquals( "preview", a.getRequestContext() );
+        Assertions.assertEquals( "Preview.jsp", a.getJSP() );
+        Assertions.assertEquals( "%uPreview.jsp?page=%n", a.getURLPattern() );
+        Assertions.assertEquals( "PreviewContent.jsp", a.getContentTemplate() );
+        Assertions.assertNull( a.getTarget());
+        Assertions.assertNull( a.requiredPermission() );
+        Assertions.assertEquals( a, PageCommand.PREVIEW );
     }
 
     @Test
@@ -92,42 +92,42 @@ public class PageCommandTest
 
         // Combine with wiki page; make sure it's not equal to old command
         Command b = a.targetedCommand( testPage );
-        Assert.assertNotSame( a, b );
-        Assert.assertEquals( a.getRequestContext(), b.getRequestContext() );
-        Assert.assertEquals( a.getJSP(), b.getJSP() );
-        Assert.assertEquals( a.getURLPattern(), b.getURLPattern() );
-        Assert.assertEquals( a.getContentTemplate(), b.getContentTemplate() );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( PermissionFactory.getPagePermission( testPage, "view" ), b.requiredPermission() );
-        Assert.assertEquals( testPage, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertEquals( a.getRequestContext(), b.getRequestContext() );
+        Assertions.assertEquals( a.getJSP(), b.getJSP() );
+        Assertions.assertEquals( a.getURLPattern(), b.getURLPattern() );
+        Assertions.assertEquals( a.getContentTemplate(), b.getContentTemplate() );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( PermissionFactory.getPagePermission( testPage, "view" ), b.requiredPermission() );
+        Assertions.assertEquals( testPage, b.getTarget() );
 
         // Do the same with edit command
         a = PageCommand.EDIT;
         b = a.targetedCommand( testPage );
-        Assert.assertNotSame( a, b );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( PermissionFactory.getPagePermission( testPage, "edit" ), b.requiredPermission() );
-        Assert.assertEquals( testPage, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( PermissionFactory.getPagePermission( testPage, "edit" ), b.requiredPermission() );
+        Assertions.assertEquals( testPage, b.getTarget() );
 
         // Do the same with delete command
         a = PageCommand.DELETE;
         b = a.targetedCommand( testPage );
-        Assert.assertNotSame( a, b );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( PermissionFactory.getPagePermission( testPage, "delete" ), b.requiredPermission() );
-        Assert.assertEquals( testPage, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( PermissionFactory.getPagePermission( testPage, "delete" ), b.requiredPermission() );
+        Assertions.assertEquals( testPage, b.getTarget() );
 
         // Do the same with info command
         a = PageCommand.INFO;
         b = a.targetedCommand( testPage );
-        Assert.assertNotSame( a, b );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( PermissionFactory.getPagePermission( testPage, "view" ), b.requiredPermission() );
-        Assert.assertEquals( testPage, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( PermissionFactory.getPagePermission( testPage, "view" ), b.requiredPermission() );
+        Assertions.assertEquals( testPage, b.getTarget() );
     }
 
 }

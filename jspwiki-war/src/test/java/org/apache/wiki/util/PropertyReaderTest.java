@@ -20,9 +20,9 @@
 */
 package org.apache.wiki.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Unit test for PropertyReader.
@@ -31,13 +31,13 @@ public class PropertyReaderTest {
 
     @Test
     public void testLocateClassPathResource() throws Exception {
-        Assert.assertEquals("/ini/jspwiki.properties", PropertyReader.createResourceLocation("ini", "jspwiki.properties"));
-        Assert.assertEquals("/ini/jspwiki.properties", PropertyReader.createResourceLocation(null, "ini/jspwiki.properties"));
-        Assert.assertEquals("/ini/jspwiki.properties", PropertyReader.createResourceLocation(null, "/ini/jspwiki.properties"));
-        Assert.assertEquals("/jspwiki-custom.properties", PropertyReader.createResourceLocation(null, "/jspwiki-custom.properties"));
-        Assert.assertEquals("/jspwiki.custom.cascade.1.ini", PropertyReader.createResourceLocation(null, "jspwiki.custom.cascade.1.ini"));
-        Assert.assertEquals("/WEB-INF/classes/jspwiki-custom.properties", PropertyReader.createResourceLocation("WEB-INF/classes", PropertyReader.CUSTOM_JSPWIKI_CONFIG));
-        Assert.assertEquals("/WEB-INF/classes/jspwiki-custom.properties", PropertyReader.createResourceLocation("/WEB-INF/classes", PropertyReader.CUSTOM_JSPWIKI_CONFIG));
-        Assert.assertEquals("/WEB-INF/classes/jspwiki-custom.properties", PropertyReader.createResourceLocation("/WEB-INF/classes/", PropertyReader.CUSTOM_JSPWIKI_CONFIG));
+        Assertions.assertEquals("/ini/jspwiki.properties", PropertyReader.createResourceLocation("ini", "jspwiki.properties"));
+        Assertions.assertEquals("/ini/jspwiki.properties", PropertyReader.createResourceLocation(null, "ini/jspwiki.properties"));
+        Assertions.assertEquals("/ini/jspwiki.properties", PropertyReader.createResourceLocation(null, "/ini/jspwiki.properties"));
+        Assertions.assertEquals("/jspwiki-custom.properties", PropertyReader.createResourceLocation(null, "/jspwiki-custom.properties"));
+        Assertions.assertEquals("/jspwiki.custom.cascade.1.ini", PropertyReader.createResourceLocation(null, "jspwiki.custom.cascade.1.ini"));
+        Assertions.assertEquals("/WEB-INF/classes/jspwiki-custom.properties", PropertyReader.createResourceLocation("WEB-INF/classes", PropertyReader.CUSTOM_JSPWIKI_CONFIG));
+        Assertions.assertEquals("/WEB-INF/classes/jspwiki-custom.properties", PropertyReader.createResourceLocation("/WEB-INF/classes", PropertyReader.CUSTOM_JSPWIKI_CONFIG));
+        Assertions.assertEquals("/WEB-INF/classes/jspwiki-custom.properties", PropertyReader.createResourceLocation("/WEB-INF/classes/", PropertyReader.CUSTOM_JSPWIKI_CONFIG));
     }
 }

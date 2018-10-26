@@ -26,10 +26,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -40,7 +40,7 @@ public class UndefinedPagesPluginTest
     WikiContext context;
     PluginManager manager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -54,7 +54,7 @@ public class UndefinedPagesPluginTest
         manager = new DefaultPluginManager( testEngine, props );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         testEngine.deleteTestPage( "TestPage" );
@@ -83,7 +83,7 @@ public class UndefinedPagesPluginTest
 
         String exp = "[Foobar 2]\\\\";
 
-        Assert.assertEquals( wikitize(exp), res );
+        Assertions.assertEquals( wikitize(exp), res );
     }
 
     @Test
@@ -91,7 +91,7 @@ public class UndefinedPagesPluginTest
     {
         String result = null;
         result = manager.execute(context, "{UndefinedPagesPlugin show=count}");
-        Assert.assertEquals("1", result);
+        Assertions.assertEquals("1", result);
 
         // test if the proper exception is thrown:
         String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
@@ -105,7 +105,7 @@ public class UndefinedPagesPluginTest
             exceptionString = pe.getMessage();
         }
 
-        Assert.assertEquals(expectedExceptionString, exceptionString);
+        Assertions.assertEquals(expectedExceptionString, exceptionString);
     }
 
 }

@@ -17,19 +17,19 @@
     under the License.    
  */
 package org.apache.wiki.i18n;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public class InternationalizationManagerTest
 {
     InternationalizationManager i18n = new InternationalizationManager( null );
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
     	// enforce english locale as the default one. Otherwise, if your default locale is one
@@ -45,7 +45,7 @@ public class InternationalizationManagerTest
                                Locale.ENGLISH, 
                                "security.error.cannot.rename", 
                                "Test User" );
-        Assert.assertEquals( "Cannot rename: the login name 'Test User' is already taken.", str );
+        Assertions.assertEquals( "Cannot rename: the login name 'Test User' is already taken.", str );
     }
     
     @Test
@@ -55,7 +55,7 @@ public class InternationalizationManagerTest
                                Locale.ENGLISH, 
                                "notification.createUserProfile.accept.content", 
                                "JSPWiki", "testUser", "Test User", "test@user.com", "www.foo.com" );
-        Assert.assertEquals( "Congratulations! Your new profile on JSPWiki has been created. " +
+        Assertions.assertEquals( "Congratulations! Your new profile on JSPWiki has been created. " +
         		      "Your profile details are as follows: \n\n" +
                       "Login name: testUser \n" +
                       "Your name : Test User \n" +

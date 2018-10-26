@@ -25,13 +25,12 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-
-public class StressTestVersioningProvider extends TestCase
+public class StressTestVersioningProvider 
 {
     public static final String NAME1 = "Test1";
 
@@ -39,17 +38,14 @@ public class StressTestVersioningProvider extends TestCase
 
     TestEngine engine;
 
-    public StressTestVersioningProvider( String s )
-    {
-        super( s );
-    }
-
+    @BeforeEach
     public void setUp()
         throws Exception
     {
         engine = new TestEngine(props);
     }
 
+    @AfterEach
     public void tearDown()
     {
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
@@ -83,10 +79,10 @@ public class StressTestVersioningProvider extends TestCase
         System.out.println("Benchmark: "+mark.toString(2000)+" pages/second");
         WikiPage pageinfo = engine.getPage( NAME1 );
 
-        assertEquals( "wrong version", maxver, pageinfo.getVersion() );
+        Assertions.assertEquals( maxver, pageinfo.getVersion(), "wrong version" );
 
         // +2 comes from \r\n.
-        assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
+        Assertions.assertEquals( maxver+2, engine.getText(NAME1).length(), "wrong text" );
     }
 
     private void runMassiveFileTest(int maxpages)
@@ -121,7 +117,7 @@ public class StressTestVersioningProvider extends TestCase
 
         for( WikiPage page : pages ) {
             String foo = engine.getPureText( page );
-            assertNotNull( foo );
+            Assertions.assertNotNull( foo );
         }
         mark.stop();
 
@@ -149,8 +145,5 @@ public class StressTestVersioningProvider extends TestCase
         runMassiveFileTest(100000);
     }
     */
-    public static Test suite()
-    {
-        return new TestSuite( StressTestVersioningProvider.class );
-    }
+
 }

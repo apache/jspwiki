@@ -18,33 +18,33 @@
  */
 package org.apache.wiki;
 
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class ReleaseTest
 {
     @Test
     public void testNewer1()
     {
-        Assert.assertTrue( Release.isNewerOrEqual("1.0.100") );
+        Assertions.assertTrue( Release.isNewerOrEqual("1.0.100") );
     }
 
     @Test
     public void testNewer2()
     {
-        Assert.assertTrue( Release.isNewerOrEqual("2.0.0-alpha") );
+        Assertions.assertTrue( Release.isNewerOrEqual("2.0.0-alpha") );
     }
 
     @Test
     public void testNewer3()
     {
-        Assert.assertFalse( Release.isNewerOrEqual("10.0.0") );
+        Assertions.assertFalse( Release.isNewerOrEqual("10.0.0") );
     }
 
     @Test
     public void testNewer4()
     {
-        Assert.assertTrue( Release.isNewerOrEqual(Release.VERSTR) );
+        Assertions.assertTrue( Release.isNewerOrEqual(Release.VERSTR) );
     }
 
     @Test
@@ -52,7 +52,7 @@ public class ReleaseTest
     {
         String rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION+1)+"-cvs";
 
-        Assert.assertFalse( Release.isNewerOrEqual(rel) );
+        Assertions.assertFalse( Release.isNewerOrEqual(rel) );
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ReleaseTest
         else
             rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";
 
-        Assert.assertTrue( Release.isNewerOrEqual(rel) );
+        Assertions.assertTrue( Release.isNewerOrEqual(rel) );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ReleaseTest
     {
         String rel = Release.VERSION+"."+Release.REVISION;
 
-        Assert.assertTrue( Release.isNewerOrEqual(rel) );
+        Assertions.assertTrue( Release.isNewerOrEqual(rel) );
     }
 
     @Test
@@ -81,31 +81,31 @@ public class ReleaseTest
     {
         String rel = Release.VERSION+"";
 
-        Assert.assertTrue( Release.isNewerOrEqual(rel) );
+        Assertions.assertTrue( Release.isNewerOrEqual(rel) );
     }
 
     @Test
     public void testOlder1()
     {
-        Assert.assertFalse( Release.isOlderOrEqual("1.0.100") );
+        Assertions.assertFalse( Release.isOlderOrEqual("1.0.100") );
     }
 
     @Test
     public void testOlder2()
     {
-        Assert.assertFalse( Release.isOlderOrEqual("2.0.0-alpha") );
+        Assertions.assertFalse( Release.isOlderOrEqual("2.0.0-alpha") );
     }
 
     @Test
     public void testOlder3()
     {
-        Assert.assertTrue( Release.isOlderOrEqual("10.0.0") );
+        Assertions.assertTrue( Release.isOlderOrEqual("10.0.0") );
     }
 
     @Test
     public void testOlder4()
     {
-        Assert.assertTrue( Release.isOlderOrEqual(Release.VERSTR) );
+        Assertions.assertTrue( Release.isOlderOrEqual(Release.VERSTR) );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ReleaseTest
     {
         String rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION+1)+"-cvs";
 
-        Assert.assertTrue( Release.isOlderOrEqual(rel) );
+        Assertions.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ReleaseTest
         else
             rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";
 
-        Assert.assertFalse( Release.isOlderOrEqual(rel) );
+        Assertions.assertFalse( Release.isOlderOrEqual(rel) );
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ReleaseTest
     {
         String rel = Release.VERSION+"."+Release.REVISION;
 
-        Assert.assertTrue( Release.isOlderOrEqual(rel) );
+        Assertions.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ReleaseTest
     {
         String rel = Release.VERSION+"";
 
-        Assert.assertTrue( Release.isOlderOrEqual(rel) );
+        Assertions.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
     @Test
@@ -150,7 +150,7 @@ public class ReleaseTest
     {
         String rel = "";
 
-        Assert.assertTrue( Release.isOlderOrEqual(rel) );
+        Assertions.assertTrue( Release.isOlderOrEqual(rel) );
     }
 
 }

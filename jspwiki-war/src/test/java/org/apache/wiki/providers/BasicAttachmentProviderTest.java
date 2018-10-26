@@ -31,10 +31,10 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class BasicAttachmentProviderTest
 {
@@ -52,7 +52,7 @@ public class BasicAttachmentProviderTest
      */
     private static final String c_fileContents = "gy th tgyhgthygyth tgyfgftrfgvtgfgtr";
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -96,7 +96,7 @@ public class BasicAttachmentProviderTest
     }
 
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         m_engine.deleteTestPage( NAME1 );
@@ -120,7 +120,7 @@ public class BasicAttachmentProviderTest
     {
         String s = "test.png";
 
-        Assert.assertEquals( BasicAttachmentProvider.getFileExtension(s), "png" );
+        Assertions.assertEquals( BasicAttachmentProvider.getFileExtension(s), "png" );
     }
 
     @Test
@@ -128,7 +128,7 @@ public class BasicAttachmentProviderTest
     {
         String s = ".foo";
 
-        Assert.assertEquals( "foo", BasicAttachmentProvider.getFileExtension(s) );
+        Assertions.assertEquals( "foo", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     @Test
@@ -136,7 +136,7 @@ public class BasicAttachmentProviderTest
     {
         String s = "test.png.3";
 
-        Assert.assertEquals( "3", BasicAttachmentProvider.getFileExtension(s) );
+        Assertions.assertEquals( "3", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     @Test
@@ -144,7 +144,7 @@ public class BasicAttachmentProviderTest
     {
         String s = "testpng";
 
-        Assert.assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
+        Assertions.assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
     }
 
 
@@ -153,7 +153,7 @@ public class BasicAttachmentProviderTest
     {
         String s = "test.";
 
-        Assert.assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
+        Assertions.assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     @Test
@@ -161,7 +161,7 @@ public class BasicAttachmentProviderTest
     {
         String s = "test.a";
 
-        Assert.assertEquals( "a", BasicAttachmentProvider.getFileExtension(s) );
+        Assertions.assertEquals( "a", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     /**
@@ -181,7 +181,7 @@ public class BasicAttachmentProviderTest
 
         Attachment a0 = (Attachment) res.get(0);
 
-        Assert.assertEquals( "name", att.getName(), a0.getName() );
+        Assertions.assertEquals( att.getName(), a0.getName(), "name" );
     }
 
     @Test
@@ -202,18 +202,18 @@ public class BasicAttachmentProviderTest
 
         List res = m_provider.listAllChanged( new Date(0L) );
 
-        Assert.assertEquals( "list size", 2, res.size() );
+        Assertions.assertEquals( 2, res.size(), "list size" );
 
         Attachment a2 = (Attachment) res.get(0);  // Most recently changed
         Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-        Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
-        Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
     }
 
 
     /**
-     *  Check that the system does not Assert.fail if there are extra files in the directory.
+     *  Check that the system does not Assertions.fail if there are extra files in the directory.
      */
     @Test
     public void testListAllExtrafile()
@@ -238,13 +238,13 @@ public class BasicAttachmentProviderTest
 
             List res = m_provider.listAllChanged( new Date(0L) );
 
-            Assert.assertEquals( "list size", 2, res.size() );
+            Assertions.assertEquals( 2, res.size(), "list size" );
 
             Attachment a2 = (Attachment) res.get(0);  // Most recently changed
             Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-            Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
-            Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
+            Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
+            Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
         }
         finally
         {
@@ -253,7 +253,7 @@ public class BasicAttachmentProviderTest
     }
 
     /**
-     *  Check that the system does not Assert.fail if there are extra files in the
+     *  Check that the system does not Assertions.fail if there are extra files in the
      *  attachment directory.
      */
     @Test
@@ -282,13 +282,13 @@ public class BasicAttachmentProviderTest
 
             List res = m_provider.listAllChanged( new Date(0L) );
 
-            Assert.assertEquals( "list size", 2, res.size() );
+            Assertions.assertEquals( 2, res.size(), "list size" );
 
             Attachment a2 = (Attachment) res.get(0);  // Most recently changed
             Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-            Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
-            Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
+            Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
+            Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
         }
         finally
         {
@@ -297,7 +297,7 @@ public class BasicAttachmentProviderTest
     }
 
     /**
-     *  Check that the system does not Assert.fail if there are extra dirs in the
+     *  Check that the system does not Assertions.fail if there are extra dirs in the
      *  attachment directory.
      */
     @Test
@@ -327,13 +327,13 @@ public class BasicAttachmentProviderTest
 
             List res = m_provider.listAllChanged( new Date(0L) );
 
-            Assert.assertEquals( "list size", 2, res.size() );
+            Assertions.assertEquals( 2, res.size(), "list size" );
 
             Attachment a2 = (Attachment) res.get(0);  // Most recently changed
             Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-            Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
-            Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
+            Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
+            Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
         }
         finally
         {
@@ -359,13 +359,13 @@ public class BasicAttachmentProviderTest
 
         List res = m_provider.listAllChanged( new Date(0L) );
 
-        Assert.assertEquals( "list size", 2, res.size() );
+        Assertions.assertEquals( 2, res.size(), "list size" );
 
         Attachment a2 = (Attachment) res.get(0);  // Most recently changed
         Attachment a1 = (Attachment) res.get(1);  // Least recently changed
 
-        Assert.assertEquals( "a1 name", att.getName(), a1.getName() );
-        Assert.assertEquals( "a2 name", att2.getName(), a2.getName() );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
     }
 
 }

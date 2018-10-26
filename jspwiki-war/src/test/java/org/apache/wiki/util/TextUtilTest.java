@@ -22,8 +22,8 @@ import java.io.File;
 import java.util.Properties;
 
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TextUtilTest
 {
@@ -31,7 +31,7 @@ public class TextUtilTest
     public void testGenerateRandomPassword()
     {
         for (int i=0; i<1000; i++) {
-            Assert.assertEquals("pw", TextUtil.PASSWORD_LENGTH, TextUtil.generateRandomPassword().length());
+            Assertions.assertEquals( TextUtil.PASSWORD_LENGTH, TextUtil.generateRandomPassword().length(), "pw" );
         }
     }
 
@@ -40,7 +40,7 @@ public class TextUtilTest
     {
         String name = "Hello/World";
 
-        Assert.assertEquals( "Hello/World", TextUtil.urlEncode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello/World", TextUtil.urlEncode(name,"ISO-8859-1") );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TextUtilTest
     {
         String name = "Hello~World";
 
-        Assert.assertEquals( "Hello%7EWorld", TextUtil.urlEncode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello%7EWorld", TextUtil.urlEncode(name,"ISO-8859-1") );
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TextUtilTest
     {
         String name = "Hello/World ~";
 
-        Assert.assertEquals( "Hello/World+%7E", TextUtil.urlEncode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello/World+%7E", TextUtil.urlEncode(name,"ISO-8859-1") );
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TextUtilTest
     {
         String name = "Hello/World+%7E+%2F";
 
-        Assert.assertEquals( "Hello/World ~ /", TextUtil.urlDecode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello/World ~ /", TextUtil.urlDecode(name,"ISO-8859-1") );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class TextUtilTest
     {
         String name = "\u0041\u2262\u0391\u002E";
 
-        Assert.assertEquals( "A%E2%89%A2%CE%91.", TextUtil.urlEncodeUTF8(name) );
+        Assertions.assertEquals( "A%E2%89%A2%CE%91.", TextUtil.urlEncodeUTF8(name) );
     }
 
     @Test
@@ -81,7 +81,7 @@ public class TextUtilTest
     {
         String name = "\uD55C\uAD6D\uC5B4";
 
-        Assert.assertEquals( "%ED%95%9C%EA%B5%AD%EC%96%B4", TextUtil.urlEncodeUTF8(name) );
+        Assertions.assertEquals( "%ED%95%9C%EA%B5%AD%EC%96%B4", TextUtil.urlEncodeUTF8(name) );
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TextUtilTest
     {
         String name = "\u65E5\u672C\u8A9E";
 
-        Assert.assertEquals( "%E6%97%A5%E6%9C%AC%E8%AA%9E", TextUtil.urlEncodeUTF8(name) );
+        Assertions.assertEquals( "%E6%97%A5%E6%9C%AC%E8%AA%9E", TextUtil.urlEncodeUTF8(name) );
     }
 
     @Test
@@ -97,7 +97,7 @@ public class TextUtilTest
     {
         String name = "Hello World";
 
-        Assert.assertEquals( "Hello+World", TextUtil.urlEncodeUTF8(name) );
+        Assertions.assertEquals( "Hello+World", TextUtil.urlEncodeUTF8(name) );
     }
 
     @Test
@@ -105,7 +105,7 @@ public class TextUtilTest
     {
         String name = "A%E2%89%A2%CE%91.";
 
-        Assert.assertEquals( "\u0041\u2262\u0391\u002E", TextUtil.urlDecodeUTF8(name) );
+        Assertions.assertEquals( "\u0041\u2262\u0391\u002E", TextUtil.urlDecodeUTF8(name) );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class TextUtilTest
     {
         String name = "%ED%95%9C%EA%B5%AD%EC%96%B4";
 
-        Assert.assertEquals( "\uD55C\uAD6D\uC5B4", TextUtil.urlDecodeUTF8(name) );
+        Assertions.assertEquals( "\uD55C\uAD6D\uC5B4", TextUtil.urlDecodeUTF8(name) );
     }
 
     @Test
@@ -121,7 +121,7 @@ public class TextUtilTest
     {
         String name = "%E6%97%A5%E6%9C%AC%E8%AA%9E";
 
-        Assert.assertEquals( "\u65E5\u672C\u8A9E", TextUtil.urlDecodeUTF8(name) );
+        Assertions.assertEquals( "\u65E5\u672C\u8A9E", TextUtil.urlDecodeUTF8(name) );
     }
 
     @Test
@@ -129,7 +129,7 @@ public class TextUtilTest
     {
         String text = "aabacaa";
 
-        Assert.assertEquals( "ddbacdd", TextUtil.replaceString( text, "aa", "dd" ) );
+        Assertions.assertEquals( "ddbacdd", TextUtil.replaceString( text, "aa", "dd" ) );
     }
 
     @Test
@@ -137,7 +137,7 @@ public class TextUtilTest
     {
         String text = "aabacaafaa";
 
-        Assert.assertEquals( "ddbacddfdd", TextUtil.replaceString( text, "aa", "dd" ) );
+        Assertions.assertEquals( "ddbacddfdd", TextUtil.replaceString( text, "aa", "dd" ) );
     }
 
     @Test
@@ -145,7 +145,7 @@ public class TextUtilTest
     {
         String text = "aaabacaaafaa";
 
-        Assert.assertEquals( "dbacdfaa", TextUtil.replaceString( text, "aaa", "d" ) );
+        Assertions.assertEquals( "dbacdfaa", TextUtil.replaceString( text, "aaa", "d" ) );
     }
 
     @Test
@@ -153,7 +153,7 @@ public class TextUtilTest
     {
         String text = "abcde";
 
-        Assert.assertEquals( "fbcde", TextUtil.replaceString( text, "a", "f" ) );
+        Assertions.assertEquals( "fbcde", TextUtil.replaceString( text, "a", "f" ) );
     }
 
     @Test
@@ -161,7 +161,7 @@ public class TextUtilTest
     {
         String text = "ababab";
 
-        Assert.assertEquals( "afafaf", TextUtil.replaceString( text, "b", "f" ) );
+        Assertions.assertEquals( "afafaf", TextUtil.replaceString( text, "b", "f" ) );
     }
 
     @Test
@@ -169,7 +169,7 @@ public class TextUtilTest
     {
         String text = "aABcAa";
 
-        Assert.assertEquals( "ddBcdd", TextUtil.replaceStringCaseUnsensitive( text, "aa", "dd" ) );
+        Assertions.assertEquals( "ddBcdd", TextUtil.replaceStringCaseUnsensitive( text, "aa", "dd" ) );
     }
 
     @Test
@@ -177,7 +177,7 @@ public class TextUtilTest
     {
         String text = "Abcde";
 
-        Assert.assertEquals( "fbcde", TextUtil.replaceStringCaseUnsensitive( text, "a", "f" ) );
+        Assertions.assertEquals( "fbcde", TextUtil.replaceStringCaseUnsensitive( text, "a", "f" ) );
     }
 
     @Test
@@ -185,7 +185,7 @@ public class TextUtilTest
     {
         String text = "aBAbab";
 
-        Assert.assertEquals( "afAfaf", TextUtil.replaceStringCaseUnsensitive( text, "b", "f" ) );
+        Assertions.assertEquals( "afAfaf", TextUtil.replaceStringCaseUnsensitive( text, "b", "f" ) );
     }
 
     @Test
@@ -193,7 +193,7 @@ public class TextUtilTest
     {
         String text = "AaBAcAAfaa";
 
-        Assert.assertEquals( "ddBAcddfdd", TextUtil.replaceStringCaseUnsensitive( text, "aa", "dd" ) );
+        Assertions.assertEquals( "ddBAcddfdd", TextUtil.replaceStringCaseUnsensitive( text, "aa", "dd" ) );
     }
 
     @Test
@@ -201,7 +201,7 @@ public class TextUtilTest
     {
         String text = "aAaBaCAAafaa";
 
-        Assert.assertEquals( "dBaCdfaa", TextUtil.replaceStringCaseUnsensitive( text, "aaa", "d" ) );
+        Assertions.assertEquals( "dBaCdfaa", TextUtil.replaceStringCaseUnsensitive( text, "aaa", "d" ) );
     }
 
     // Pure UNIX.
@@ -210,7 +210,7 @@ public class TextUtilTest
     {
         String text = "ab\ncd";
 
-        Assert.assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Pure MSDOS.
@@ -219,7 +219,7 @@ public class TextUtilTest
     {
         String text = "ab\r\ncd";
 
-        Assert.assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Pure Mac
@@ -228,7 +228,7 @@ public class TextUtilTest
     {
         String text = "ab\rcd";
 
-        Assert.assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Mixed, ending correct.
@@ -237,7 +237,7 @@ public class TextUtilTest
     {
         String text = "ab\ncd\r\n\r\n\r";
 
-        Assert.assertEquals( "ab\r\ncd\r\n\r\n\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "ab\r\ncd\r\n\r\n\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Multiple newlines
@@ -246,7 +246,7 @@ public class TextUtilTest
     {
         String text = "ab\ncd\n\n\n\n";
 
-        Assert.assertEquals( "ab\r\ncd\r\n\r\n\r\n\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "ab\r\ncd\r\n\r\n\r\n\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Empty.
@@ -255,7 +255,7 @@ public class TextUtilTest
     {
         String text = "";
 
-        Assert.assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Just a newline.
@@ -264,7 +264,7 @@ public class TextUtilTest
     {
         String text = "\n";
 
-        Assert.assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
+        Assertions.assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
     }
 
     @Test
@@ -280,16 +280,16 @@ public class TextUtilTest
         props.setProperty("foobar.5", "OFF");
         props.setProperty("foobar.6", "gewkjoigew");
 
-        Assert.assertTrue( "foobar.0", TextUtil.getBooleanProperty( props, "foobar.0", false ) );
-        Assert.assertTrue( "foobar.1", TextUtil.getBooleanProperty( props, "foobar.1", false ) );
+        Assertions.assertTrue( TextUtil.getBooleanProperty( props, "foobar.0", false ), "foobar.0" );
+        Assertions.assertTrue( TextUtil.getBooleanProperty( props, "foobar.1", false ), "foobar.1" );
 
-        Assert.assertFalse( "foobar.2", TextUtil.getBooleanProperty( props, "foobar.2", true ) );
-        Assert.assertFalse( "foobar.3", TextUtil.getBooleanProperty( props, "foobar.3", true ) );
-        Assert.assertTrue( "foobar.4", TextUtil.getBooleanProperty( props, "foobar.4", false ) );
+        Assertions.assertFalse( TextUtil.getBooleanProperty( props, "foobar.2", true ), "foobar.2" );
+        Assertions.assertFalse( TextUtil.getBooleanProperty( props, "foobar.3", true ), "foobar.3" );
+        Assertions.assertTrue( TextUtil.getBooleanProperty( props, "foobar.4", false ), "foobar.4" );
 
-        Assert.assertFalse( "foobar.5", TextUtil.getBooleanProperty( props, "foobar.5", true ) );
+        Assertions.assertFalse( TextUtil.getBooleanProperty( props, "foobar.5", true ), "foobar.5" );
 
-        Assert.assertFalse( "foobar.6", TextUtil.getBooleanProperty( props, "foobar.6", true ) );
+        Assertions.assertFalse( TextUtil.getBooleanProperty( props, "foobar.6", true ), "foobar.6" );
     }
 
     @Test
@@ -298,19 +298,19 @@ public class TextUtilTest
     {
         String src = "Single page.";
 
-        Assert.assertEquals( "section 1", src, TextUtil.getSection(src,1) );
+        Assertions.assertEquals( src, TextUtil.getSection(src,1), "section 1" );
 
         try
         {
             TextUtil.getSection( src, 5 );
-            Assert.fail("Did not get exception for 2");
+            Assertions.fail("Did not get exception for 2");
         }
         catch( IllegalArgumentException e ) {}
 
         try
         {
             TextUtil.getSection( src, -1 );
-            Assert.fail("Did not get exception for -1");
+            Assertions.fail("Did not get exception for -1");
         }
         catch( IllegalArgumentException e ) {}
     }
@@ -321,14 +321,14 @@ public class TextUtilTest
     {
         String src = "First section\n----\nSecond section\n\n----\n\nThird section";
 
-        Assert.assertEquals( "section 1", "First section\n", TextUtil.getSection(src,1) );
-        Assert.assertEquals( "section 2", "\nSecond section\n\n", TextUtil.getSection(src,2) );
-        Assert.assertEquals( "section 3", "\n\nThird section", TextUtil.getSection(src,3) );
+        Assertions.assertEquals( "First section\n", TextUtil.getSection(src,1), "section 1" );
+        Assertions.assertEquals( "\nSecond section\n\n", TextUtil.getSection(src,2), "section 2" );
+        Assertions.assertEquals( "\n\nThird section", TextUtil.getSection(src,3), "section 3" );
 
         try
         {
             TextUtil.getSection( src, 4 );
-            Assert.fail("Did not get exception for section 4");
+            Assertions.fail("Did not get exception for section 4");
         }
         catch( IllegalArgumentException e ) {}
     }
@@ -340,14 +340,14 @@ public class TextUtilTest
         String src = "----\nSecond section\n----";
 
 
-        Assert.assertEquals( "section 1", "", TextUtil.getSection(src,1) );
-        Assert.assertEquals( "section 2", "\nSecond section\n", TextUtil.getSection(src,2) );
-        Assert.assertEquals( "section 3", "", TextUtil.getSection(src,3) );
+        Assertions.assertEquals( "", TextUtil.getSection(src,1), "section 1" );
+        Assertions.assertEquals( "\nSecond section\n", TextUtil.getSection(src,2), "section 2" );
+        Assertions.assertEquals( "", TextUtil.getSection(src,3), "section 3" );
 
         try
         {
             TextUtil.getSection( src, 4 );
-            Assert.fail("Did not get exception for section 4");
+            Assertions.fail("Did not get exception for section 4");
         }
         catch( IllegalArgumentException e ) {}
     }
@@ -357,17 +357,17 @@ public class TextUtilTest
     {
         String src = "----------------\nSecond section\n----";
 
-        Assert.assertEquals("section 2", "\nSecond section\n", TextUtil.getSection(src, 2));
+        Assertions.assertEquals( "\nSecond section\n", TextUtil.getSection(src, 2), "section 2" );
     }
 
     @Test
     public void testBooleanParameter()
        throws Exception
     {
-        Assert.assertEquals( "1", true, TextUtil.isPositive(" true ") );
-        Assert.assertEquals( "2", false, TextUtil.isPositive(" fewqkfow kfpokwe ") );
-        Assert.assertEquals( "3", true, TextUtil.isPositive("on") );
-        Assert.assertEquals( "4", true, TextUtil.isPositive("\t\ton") );
+        Assertions.assertEquals( true, TextUtil.isPositive(" true "), "1" );
+        Assertions.assertEquals( false, TextUtil.isPositive(" fewqkfow kfpokwe "), "2" );
+        Assertions.assertEquals( true, TextUtil.isPositive("on"), "3" );
+        Assertions.assertEquals( true, TextUtil.isPositive("\t\ton"), "4" );
     }
 
     @Test
@@ -377,8 +377,8 @@ public class TextUtilTest
 
         Properties props = TextUtil.createProperties(vals);
 
-        Assert.assertEquals( "foo", "this is a property", TextUtil.getStringProperty(props,"foo","") );
-        Assert.assertEquals( "bar", 60, TextUtil.getIntegerProperty(props,"bar",0) );
+        Assertions.assertEquals( "this is a property", TextUtil.getStringProperty(props,"foo",""), "foo" );
+        Assertions.assertEquals( 60, TextUtil.getIntegerProperty(props,"bar",0), "bar" );
     }
 
     @Test
@@ -386,7 +386,7 @@ public class TextUtilTest
     {
         String[] vals = { "foo", " this is a property ", "bar", "60" };
         Properties props = TextUtil.createProperties(vals);
-        Assert.assertEquals( "60", TextUtil.getRequiredProperty( props, "bar" ) );
+        Assertions.assertEquals( "60", TextUtil.getRequiredProperty( props, "bar" ) );
     }
 
     @Test
@@ -397,7 +397,7 @@ public class TextUtilTest
         try
         {
             TextUtil.getRequiredProperty( props, "ber" );
-            Assert.fail( "NoRequiredPropertyException should've been thrown!" );
+            Assertions.fail( "NoRequiredPropertyException should've been thrown!" );
         }
         catch (NoRequiredPropertyException nrpe) {}
     }
@@ -407,7 +407,7 @@ public class TextUtilTest
     {
         String[] vals = { "foo", " this is a property " };
         Properties props = TextUtil.createProperties(vals);
-        Assert.assertEquals( "this is a property", TextUtil.getStringProperty( props, "foo", "err" ) );
+        Assertions.assertEquals( "this is a property", TextUtil.getStringProperty( props, "foo", "err" ) );
     }
 
     @Test
@@ -416,7 +416,7 @@ public class TextUtilTest
         String defaultValue = System.getProperty( "user.home" ) + File.separator + "jspwiki-files";
         String[] vals = { "foo", " this is a property " };
         Properties props = TextUtil.createProperties(vals);
-        Assert.assertEquals( defaultValue, TextUtil.getStringProperty( props, "bar", defaultValue ) );
+        Assertions.assertEquals( defaultValue, TextUtil.getStringProperty( props, "bar", defaultValue ) );
     }
 
     @Test
@@ -425,8 +425,8 @@ public class TextUtilTest
         String[] values = { "jspwiki.fileSystemProvider.pageDir", " ." + File.separator + "data" + File.separator + "private " };
         Properties props = TextUtil.createProperties(values);
         String path = TextUtil.getCanonicalFilePathProperty(props, "jspwiki.fileSystemProvider.pageDir", "NA");
-        Assert.assertTrue( path.endsWith( File.separator + "data" + File.separator + "private" ) );
-        Assert.assertFalse( path.endsWith( "." + File.separator + "data" + File.separator + "private" ) );
+        Assertions.assertTrue( path.endsWith( File.separator + "data" + File.separator + "private" ) );
+        Assertions.assertFalse( path.endsWith( "." + File.separator + "data" + File.separator + "private" ) );
     }
 
     @Test
@@ -436,7 +436,7 @@ public class TextUtilTest
         String[] values = {};
         Properties props = TextUtil.createProperties(values);
         String path = TextUtil.getCanonicalFilePathProperty(props, "jspwiki.fileSystemProvider.pageDir", defaultValue);
-        Assert.assertTrue(path.endsWith("jspwiki-files"));
+        Assertions.assertTrue(path.endsWith("jspwiki-files"));
     }
 
 }

@@ -29,10 +29,10 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.FileUtil;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -40,7 +40,7 @@ public class CachingProviderTest
 {
     protected TestEngine testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -52,7 +52,7 @@ public class CachingProviderTest
         PropertyConfigurator.configure(props2);
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         TestEngine.emptyWorkDir();
@@ -76,14 +76,14 @@ public class CachingProviderTest
 
         CounterProvider p = (CounterProvider)((CachingProvider)engine.getPageManager().getProvider()).getRealProvider();
 
-        Assert.assertEquals("init", 1, p.m_initCalls);
-        Assert.assertEquals("getAllPages", 1, p.m_getAllPagesCalls);
-        Assert.assertEquals("pageExists", 0, p.m_pageExistsCalls);
-        Assert.assertEquals("getPageText", 4, p.m_getPageTextCalls);
+        Assertions.assertEquals( 1, p.m_initCalls, "init" );
+        Assertions.assertEquals( 1, p.m_getAllPagesCalls, "getAllPages" );
+        Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists" );
+        Assertions.assertEquals( 4, p.m_getPageTextCalls, "getPageText" );
 
         engine.getPage( "Foo" );
 
-        Assert.assertEquals("pageExists2", 0, p.m_pageExistsCalls);
+        Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists2" );
     }
 
     @Test
@@ -108,10 +108,10 @@ public class CachingProviderTest
         Thread.sleep( 4000L ); // Make sure we wait long enough
 
         WikiPage p = engine.getPage( "Testi" );
-        Assert.assertNotNull( "page did not exist?", p );
+        Assertions.assertNotNull( p, "page did not exist?" );
 
         String text = engine.getText( "Testi");
-        Assert.assertEquals("text", "[fuufaa]", text );
+        Assertions.assertEquals( "[fuufaa]", text, "text" );
 
         // TODO: ReferenceManager check as well
     }

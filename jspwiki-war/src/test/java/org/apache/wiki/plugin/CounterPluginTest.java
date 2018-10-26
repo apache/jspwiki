@@ -33,16 +33,16 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.WikiRenderer;
 import org.apache.wiki.render.XHTMLRenderer;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CounterPluginTest
 {
     Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -72,7 +72,7 @@ public class CounterPluginTest
     {
         String src = "[{Counter}], [{Counter}]";
 
-        Assert.assertEquals( "1, 2", translate(src) );
+        Assertions.assertEquals( "1, 2", translate(src) );
     }
 
     @Test
@@ -81,7 +81,7 @@ public class CounterPluginTest
     {
         String src = "[{Counter}], [{Counter}], [{$counter}]";
 
-        Assert.assertEquals( "1, 2, 2",
+        Assertions.assertEquals( "1, 2, 2",
                       translate(src) );
     }
 
@@ -91,7 +91,7 @@ public class CounterPluginTest
     {
         String src = "[{Counter}], [{Counter name=aa}], [{$counter-aa}]";
 
-        Assert.assertEquals( "1, 1, 1",
+        Assertions.assertEquals( "1, 1, 1",
                       translate(src) );
     }
 
@@ -101,11 +101,11 @@ public class CounterPluginTest
     {
         String src = "[{Counter}], [{Counter increment=9}]";
 
-        Assert.assertEquals( "1, 10", translate(src) );
+        Assertions.assertEquals( "1, 10", translate(src) );
 
         src = "[{Counter}],[{Counter}], [{Counter increment=-8}]";
 
-        Assert.assertEquals( "1,2, -6", translate(src) );
+        Assertions.assertEquals( "1,2, -6", translate(src) );
     }
 
     @Test
@@ -113,11 +113,11 @@ public class CounterPluginTest
     {
         String src = "[{Counter start=5}], [{Counter increment=-1}], [{Counter increment=-1}]";
 
-        Assert.assertEquals( "5, 4, 3", translate(src) );
+        Assertions.assertEquals( "5, 4, 3", translate(src) );
 
         src = "[{Counter}],[{Counter start=11}], [{Counter increment=-8}]";
 
-        Assert.assertEquals( "1,11, 3", translate(src) );
+        Assertions.assertEquals( "1,11, 3", translate(src) );
     }
 
     @Test
@@ -126,11 +126,11 @@ public class CounterPluginTest
     {
         String src = "[{Counter}],[{Counter showResult=false}],[{Counter}]";
 
-        Assert.assertEquals( "1,,3", translate(src) );
+        Assertions.assertEquals( "1,,3", translate(src) );
 
         src = "[{Counter}],[{Counter showResult=true}],[{Counter}]";
 
-        Assert.assertEquals( "1,2,3", translate(src) );
+        Assertions.assertEquals( "1,2,3", translate(src) );
     }
 
 }

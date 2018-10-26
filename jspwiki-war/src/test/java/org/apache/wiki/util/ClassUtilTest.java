@@ -21,8 +21,8 @@ package org.apache.wiki.util;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class ClassUtilTest
@@ -35,20 +35,20 @@ public class ClassUtilTest
     public void testClasspathSearch() throws Exception
     {
         List< String > jarSearch = ClassUtil.classpathEntriesUnder( "META-INF" );
-        Assert.assertNotNull( jarSearch );
-        Assert.assertTrue( jarSearch.size() > 0 );
+        Assertions.assertNotNull( jarSearch );
+        Assertions.assertTrue( jarSearch.size() > 0 );
 
         List< String > fileSearch = ClassUtil.classpathEntriesUnder( "templates" );
-        Assert.assertNotNull( fileSearch );
-        Assert.assertTrue( fileSearch.size() > 0 );
+        Assertions.assertNotNull( fileSearch );
+        Assertions.assertTrue( fileSearch.size() > 0 );
 
         List< String > nullSearch = ClassUtil.classpathEntriesUnder( "blurb" );
-        Assert.assertNotNull( nullSearch );
-        Assert.assertTrue( nullSearch.size() == 0 );
+        Assertions.assertNotNull( nullSearch );
+        Assertions.assertTrue( nullSearch.size() == 0 );
 
         List< String > nullInputSearch = ClassUtil.classpathEntriesUnder( null );
-        Assert.assertNotNull( nullInputSearch );
-        Assert.assertTrue( nullSearch.size() == 0 );
+        Assertions.assertNotNull( nullInputSearch );
+        Assertions.assertTrue( nullSearch.size() == 0 );
     }
 
     /**
@@ -60,7 +60,7 @@ public class ClassUtilTest
     {
         Class< ? > foo = ClassUtil.findClass( "org.apache.wiki", "WikiPage" );
 
-        Assert.assertEquals( foo.getName(), "org.apache.wiki.WikiPage" );
+        Assertions.assertEquals( foo.getName(), "org.apache.wiki.WikiPage" );
     }
 
     /**
@@ -73,7 +73,7 @@ public class ClassUtilTest
         try
         {
             Class< ? > foo = ClassUtil.findClass( "org.apache.wiki", "MubbleBubble" );
-            Assert.fail( "Found class:" + foo );
+            Assertions.fail( "Found class:" + foo );
         }
         catch( ClassNotFoundException e )
         {
@@ -83,11 +83,11 @@ public class ClassUtilTest
 
     @Test
     public void testAssignable() {
-        Assert.assertTrue( ClassUtil.assignable( "org.apache.wiki.parser.JSPWikiMarkupParser", "org.apache.wiki.parser.MarkupParser" ) );
-        Assert.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
-        Assert.assertFalse( ClassUtil.assignable( null, "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
-        Assert.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", null ) );
-        Assert.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.WikiEngine" ) );
+        Assertions.assertTrue( ClassUtil.assignable( "org.apache.wiki.parser.JSPWikiMarkupParser", "org.apache.wiki.parser.MarkupParser" ) );
+        Assertions.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
+        Assertions.assertFalse( ClassUtil.assignable( null, "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
+        Assertions.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", null ) );
+        Assertions.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.WikiEngine" ) );
     }
 
 }

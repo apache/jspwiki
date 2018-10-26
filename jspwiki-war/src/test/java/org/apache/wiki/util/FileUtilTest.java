@@ -27,14 +27,14 @@ import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class FileUtilTest
 {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp()
     {
         Properties props = TestEngine.getTestProperties();
@@ -45,7 +45,7 @@ public class FileUtilTest
      *  This test actually checks if your JDK is misbehaving.  On my own Debian
      *  machine, changing the system to use UTF-8 suddenly broke Java, and I put
      *  in this test to check for its brokenness.  If your tests suddenly stop
-     *  running, check if this one is Assert.failing too.  If it is, your platform is
+     *  running, check if this one is Assertions.failing too.  If it is, your platform is
      *  broken.  If it's not, seek for the bug in your code.
      */
     @Test
@@ -56,7 +56,7 @@ public class FileUtilTest
 
         String res = new String( src.getBytes("ISO-8859-1"), "ISO-8859-1" );
 
-        Assert.assertEquals( src, res );
+        Assertions.assertEquals( src, res );
     }
 
     @Test
@@ -68,7 +68,7 @@ public class FileUtilTest
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "ISO-8859-1" );
 
-        Assert.assertEquals( src, res );
+        Assertions.assertEquals( src, res );
     }
 
     /**
@@ -83,7 +83,7 @@ public class FileUtilTest
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "UTF-8" );
 
-        Assert.assertEquals( src, res );
+        Assertions.assertEquals( src, res );
     }
 
     /**
@@ -117,7 +117,7 @@ public class FileUtilTest
 
             f.delete();
 
-            Assert.assertEquals( src,
+            Assertions.assertEquals( src,
                           result );
         }
         catch( IOException e ) {}
@@ -131,7 +131,7 @@ public class FileUtilTest
 
         String result = FileUtil.readContents( new StringReader( data ) );
 
-        Assert.assertEquals( data, result );
+        Assertions.assertEquals( data, result );
     }
 
 }

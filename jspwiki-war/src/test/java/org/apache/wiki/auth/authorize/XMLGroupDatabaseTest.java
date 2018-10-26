@@ -27,9 +27,9 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -44,7 +44,7 @@ public class XMLGroupDatabaseTest
   /**
    * 
    */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
       Properties props = TestEngine.getTestProperties();
@@ -70,53 +70,53 @@ public class XMLGroupDatabaseTest
 
       // Make sure the profile saved successfully
       group = backendGroup( name );
-      Assert.assertEquals( name, group.getName() );
-      Assert.assertEquals( oldUserCount+1, m_db.groups().length );
+      Assertions.assertEquals( name, group.getName() );
+      Assertions.assertEquals( oldUserCount+1, m_db.groups().length );
 
       // Now delete the profile; should be back to old count
       m_db.delete( group );
-      Assert.assertEquals( oldUserCount, m_db.groups().length );
+      Assertions.assertEquals( oldUserCount, m_db.groups().length );
     }
 
     @Test
     public void testGroups() throws WikiSecurityException {
       // Test file has 4 groups in it: TV, Literature, Art, and Admin
       Group[] groups = m_db.groups();
-      Assert.assertEquals( 4, groups.length );
+      Assertions.assertEquals( 4, groups.length );
 
       Group group;
 
       // Group TV has 3 members
       group = backendGroup( "TV" );
-      Assert.assertEquals("TV", group.getName() );
-      Assert.assertEquals( 3, group.members().length );
+      Assertions.assertEquals("TV", group.getName() );
+      Assertions.assertEquals( 3, group.members().length );
 
       // Group Literature has 2 members
       group = backendGroup( "Literature" );
-      Assert.assertEquals("Literature", group.getName() );
-      Assert.assertEquals( 2, group.members().length );
+      Assertions.assertEquals("Literature", group.getName() );
+      Assertions.assertEquals( 2, group.members().length );
 
       // Group Art has no members
       group = backendGroup( "Art" );
-      Assert.assertEquals("Art", group.getName() );
-      Assert.assertEquals( 0, group.members().length );
+      Assertions.assertEquals("Art", group.getName() );
+      Assertions.assertEquals( 0, group.members().length );
 
       // Group Admin has 1 member (Administrator)
       group = backendGroup( "Admin" );
-      Assert.assertEquals("Admin", group.getName() );
-      Assert.assertEquals( 1, group.members().length );
-      Assert.assertEquals( "Administrator", group.members()[0].getName() );
+      Assertions.assertEquals("Admin", group.getName() );
+      Assertions.assertEquals( 1, group.members().length );
+      Assertions.assertEquals( "Administrator", group.members()[0].getName() );
 
       // Group Archaeology doesn't exist
       try
       {
           group = backendGroup( "Archaeology" );
           // We should never get here
-          Assert.assertTrue(false);
+          Assertions.assertTrue(false);
       }
       catch (NoSuchPrincipalException e)
       {
-          Assert.assertTrue(true);
+          Assertions.assertTrue(true);
       }
     }
 
@@ -135,20 +135,20 @@ public class XMLGroupDatabaseTest
 
       // Make sure the profile saved successfully
       group = backendGroup( name );
-      Assert.assertEquals( name, group.getName() );
-      Assert.assertEquals( 3, group.members().length );
-      Assert.assertTrue( group.isMember( new WikiPrincipal( "Al" ) ) );
-      Assert.assertTrue( group.isMember( new WikiPrincipal( "Bob" ) ) );
-      Assert.assertTrue( group.isMember( new WikiPrincipal( "Cookie" ) ) );
+      Assertions.assertEquals( name, group.getName() );
+      Assertions.assertEquals( 3, group.members().length );
+      Assertions.assertTrue( group.isMember( new WikiPrincipal( "Al" ) ) );
+      Assertions.assertTrue( group.isMember( new WikiPrincipal( "Bob" ) ) );
+      Assertions.assertTrue( group.isMember( new WikiPrincipal( "Cookie" ) ) );
 
       // The back-end should have timestamped the create/modify fields
-      Assert.assertNotNull( group.getCreator() );
-      Assert.assertEquals( "Tester", group.getCreator() );
-      Assert.assertNotNull( group.getCreated() );
-      Assert.assertNotNull( group.getModifier() );
-      Assert.assertEquals( "Tester", group.getModifier() );
-      Assert.assertNotNull( group.getLastModified() );
-      Assert.assertNotSame( group.getCreated(), group.getLastModified() );
+      Assertions.assertNotNull( group.getCreator() );
+      Assertions.assertEquals( "Tester", group.getCreator() );
+      Assertions.assertNotNull( group.getCreated() );
+      Assertions.assertNotNull( group.getModifier() );
+      Assertions.assertEquals( "Tester", group.getModifier() );
+      Assertions.assertNotNull( group.getLastModified() );
+      Assertions.assertNotSame( group.getCreated(), group.getLastModified() );
 
       // Remove the group
       m_db.delete( group );
@@ -169,7 +169,7 @@ public class XMLGroupDatabaseTest
 
       // Make sure the profile saved successfully
       group = backendGroup( name );
-      Assert.assertEquals( name, group.getName() );
+      Assertions.assertEquals( name, group.getName() );
 
       // Modify the members by adding the group; re-add Al while we're at it
       Principal dave = new WikiPrincipal( "Dave" );
@@ -179,24 +179,24 @@ public class XMLGroupDatabaseTest
 
       // We should see 4 members and new timestamp info
       Principal[] members = group.members();
-      Assert.assertEquals( 4, members.length );
-      Assert.assertNotNull( group.getCreator() );
-      Assert.assertEquals( "Tester", group.getCreator() );
-      Assert.assertNotNull( group.getCreated() );
-      Assert.assertNotNull( group.getModifier() );
-      Assert.assertEquals( "SecondTester", group.getModifier() );
-      Assert.assertNotNull( group.getLastModified() );
+      Assertions.assertEquals( 4, members.length );
+      Assertions.assertNotNull( group.getCreator() );
+      Assertions.assertEquals( "Tester", group.getCreator() );
+      Assertions.assertNotNull( group.getCreated() );
+      Assertions.assertNotNull( group.getModifier() );
+      Assertions.assertEquals( "SecondTester", group.getModifier() );
+      Assertions.assertNotNull( group.getLastModified() );
 
       // Check the back-end; We should see the same thing
       group = backendGroup( name );
       members = group.members();
-      Assert.assertEquals( 4, members.length );
-      Assert.assertNotNull( group.getCreator() );
-      Assert.assertEquals( "Tester", group.getCreator() );
-      Assert.assertNotNull( group.getCreated() );
-      Assert.assertNotNull( group.getModifier() );
-      Assert.assertEquals( "SecondTester", group.getModifier() );
-      Assert.assertNotNull( group.getLastModified() );
+      Assertions.assertEquals( 4, members.length );
+      Assertions.assertNotNull( group.getCreator() );
+      Assertions.assertEquals( "Tester", group.getCreator() );
+      Assertions.assertNotNull( group.getCreated() );
+      Assertions.assertNotNull( group.getModifier() );
+      Assertions.assertEquals( "SecondTester", group.getModifier() );
+      Assertions.assertNotNull( group.getLastModified() );
 
       // Remove the group
       m_db.delete( group );

@@ -29,9 +29,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class CommentedPropertiesTest
@@ -41,7 +41,7 @@ public class CommentedPropertiesTest
     // file size of the properties test file in bytes
     private int m_propFileSize;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException
     {
         InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test.properties" );
@@ -56,16 +56,16 @@ public class CommentedPropertiesTest
     @Test
     public void testLoadProperties()
     {
-        Assert.assertEquals( 5, m_props.keySet().size() );
-        Assert.assertEquals( "Foo", m_props.get( "testProp1" ) );
-        Assert.assertEquals( "Bar", m_props.get( "testProp2" ) );
-        Assert.assertEquals( "", m_props.get( "testProp3" ) );
-        Assert.assertEquals( "FooAgain", m_props.get( "testProp4" ) );
-        Assert.assertEquals( "BarAgain", m_props.get( "testProp5" ) );
-        Assert.assertNull( m_props.get( "testProp6" ) );
+        Assertions.assertEquals( 5, m_props.keySet().size() );
+        Assertions.assertEquals( "Foo", m_props.get( "testProp1" ) );
+        Assertions.assertEquals( "Bar", m_props.get( "testProp2" ) );
+        Assertions.assertEquals( "", m_props.get( "testProp3" ) );
+        Assertions.assertEquals( "FooAgain", m_props.get( "testProp4" ) );
+        Assertions.assertEquals( "BarAgain", m_props.get( "testProp5" ) );
+        Assertions.assertNull( m_props.get( "testProp6" ) );
 
         // String we read in, including comments is c_stringOffset bytes
-        Assert.assertEquals( m_propFileSize, m_props.toString().length() );
+        Assertions.assertEquals( m_propFileSize, m_props.toString().length() );
     }
 
     @Test
@@ -74,15 +74,15 @@ public class CommentedPropertiesTest
         m_props.setProperty( "testProp1", "newValue" );
 
         // Length of stored string should now be 5 bytes more
-        Assert.assertEquals( m_propFileSize+5, m_props.toString().length() );
-        Assert.assertTrue( m_props.toString().indexOf( "newValue" ) != -1 );
+        Assertions.assertEquals( m_propFileSize+5, m_props.toString().length() );
+        Assertions.assertTrue( m_props.toString().indexOf( "newValue" ) != -1 );
 
         // Create new property; should add 21 (1+7+3+9+1) bytes
         m_props.setProperty( "newProp", "newValue2" );
         m_props.containsKey( "newProp" );
         m_props.containsValue( "newValue2" );
-        Assert.assertEquals( m_propFileSize+5+21, m_props.toString().length() );
-        Assert.assertTrue( m_props.toString().indexOf( "newProp = newValue2" ) != -1 );
+        Assertions.assertEquals( m_propFileSize+5+21, m_props.toString().length() );
+        Assertions.assertTrue( m_props.toString().indexOf( "newProp = newValue2" ) != -1 );
     }
 
     @Test
@@ -90,28 +90,28 @@ public class CommentedPropertiesTest
     {
         // Remove prop 1; length of stored string should be 14 (1+9+1+3) bytes less
         m_props.remove( "testProp1" );
-        Assert.assertFalse( m_props.containsKey( "testProp1" ) );
-        Assert.assertEquals( m_propFileSize-14, m_props.toString().length() );
+        Assertions.assertFalse( m_props.containsKey( "testProp1" ) );
+        Assertions.assertEquals( m_propFileSize-14, m_props.toString().length() );
 
         // Remove prop 2; length of stored string should be 15 (1+9+2+3) bytes less
         m_props.remove( "testProp2" );
-        Assert.assertFalse( m_props.containsKey( "testProp2" ) );
-        Assert.assertEquals( m_propFileSize-14-15, m_props.toString().length() );
+        Assertions.assertFalse( m_props.containsKey( "testProp2" ) );
+        Assertions.assertEquals( m_propFileSize-14-15, m_props.toString().length() );
 
         // Remove prop 3; length of stored string should be 11 (1+9+1) bytes less
         m_props.remove( "testProp3" );
-        Assert.assertFalse( m_props.containsKey( "testProp3" ) );
-        Assert.assertEquals( m_propFileSize-14-15-11, m_props.toString().length() );
+        Assertions.assertFalse( m_props.containsKey( "testProp3" ) );
+        Assertions.assertEquals( m_propFileSize-14-15-11, m_props.toString().length() );
 
         // Remove prop 4; length of stored string should be 19 (1+9+1+8) bytes less
         m_props.remove( "testProp4" );
-        Assert.assertFalse( m_props.containsKey( "testProp4" ) );
-        Assert.assertEquals( m_propFileSize-14-15-11-19, m_props.toString().length() );
+        Assertions.assertFalse( m_props.containsKey( "testProp4" ) );
+        Assertions.assertEquals( m_propFileSize-14-15-11-19, m_props.toString().length() );
 
         // Remove prop 5; length of stored string should be 19 (1+9+1+8) bytes less
         m_props.remove( "testProp5" );
-        Assert.assertFalse( m_props.containsKey( "testProp5" ) );
-        Assert.assertEquals( m_propFileSize-14-15-11-19-19, m_props.toString().length() );
+        Assertions.assertFalse( m_props.containsKey( "testProp5" ) );
+        Assertions.assertEquals( m_propFileSize-14-15-11-19-19, m_props.toString().length() );
     }
 
     @Test
@@ -128,7 +128,7 @@ public class CommentedPropertiesTest
         InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test2.properties" );
         props2.load( in );
         in.close();
-        Assert.assertEquals( m_props.toString(), props2.toString() );
+        Assertions.assertEquals( m_props.toString(), props2.toString() );
 
         // Remove props1, 2, 3 & resave props to new file
         m_props.remove( "testProp1" );
@@ -144,12 +144,12 @@ public class CommentedPropertiesTest
         in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test3.properties" );
         props3.load( in );
         in.close();
-        Assert.assertNotSame( m_props.toString(), props3.toString() );
-        Assert.assertFalse( props3.containsKey( "testProp1" ) );
-        Assert.assertFalse( props3.containsKey( "testProp2" ) );
-        Assert.assertFalse( props3.containsKey( "testProp3" ) );
-        Assert.assertTrue( props3.containsKey( "testProp4" ) );
-        Assert.assertTrue( props3.containsKey( "testProp5" ) );
+        Assertions.assertNotSame( m_props.toString(), props3.toString() );
+        Assertions.assertFalse( props3.containsKey( "testProp1" ) );
+        Assertions.assertFalse( props3.containsKey( "testProp2" ) );
+        Assertions.assertFalse( props3.containsKey( "testProp3" ) );
+        Assertions.assertTrue( props3.containsKey( "testProp4" ) );
+        Assertions.assertTrue( props3.containsKey( "testProp5" ) );
 
         // Clean up
         File file = getFile( "test2.properties" );

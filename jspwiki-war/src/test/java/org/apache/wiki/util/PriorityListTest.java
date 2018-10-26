@@ -19,8 +19,8 @@
 
 package org.apache.wiki.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PriorityListTest
 {
@@ -32,10 +32,10 @@ public class PriorityListTest
         p.add( "One", 1 );
         p.add( "Two", 2 );
 
-        Assert.assertEquals( "size", 2, p.size() );
+        Assertions.assertEquals( 2, p.size(), "size" );
 
-        Assert.assertEquals( "Two", "Two", p.get(0) );
-        Assert.assertEquals( "One", "One", p.get(1) );
+        Assertions.assertEquals( "Two", p.get(0), "Two" );
+        Assertions.assertEquals( "One", p.get(1), "One" );
     }
 
     /**
@@ -50,10 +50,10 @@ public class PriorityListTest
         p.add( "One", 1 );
         p.add( "Two", 1 );
 
-        Assert.assertEquals( "size", 2, p.size() );
+        Assertions.assertEquals( 2, p.size(), "size" );
 
-        Assert.assertEquals( "One", "One", p.get(0) );
-        Assert.assertEquals( "Two", "Two", p.get(1) );
+        Assertions.assertEquals( "One", p.get(0), "One" );
+        Assertions.assertEquals( "Two", p.get(1), "Two" );
     }
 
     @Test
@@ -65,20 +65,20 @@ public class PriorityListTest
         p.add( "Two", 2 );
         p.add( "Three", 3 );
 
-        Assert.assertEquals( "size", 3, p.size() );
+        Assertions.assertEquals( 3, p.size(), "size" );
 
-        Assert.assertEquals( "Three", "Three", p.get(0) );
-        Assert.assertEquals( "Two", "Two", p.get(1) );
-        Assert.assertEquals( "One", "One", p.get(2) );
+        Assertions.assertEquals( "Three", p.get(0), "Three" );
+        Assertions.assertEquals( "Two", p.get(1), "Two" );
+        Assertions.assertEquals( "One", p.get(2), "One" );
 
         p.add( "TwoTwo", 2 );
 
-        Assert.assertEquals( "2: size", 4, p.size() );
+        Assertions.assertEquals( 4, p.size(), "2: size" );
 
-        Assert.assertEquals( "2: Three", "Three", p.get(0) );
-        Assert.assertEquals( "2: Two", "Two", p.get(1) );
-        Assert.assertEquals( "2: TwoTwo", "TwoTwo", p.get(2) );
-        Assert.assertEquals( "2: One", "One", p.get(3) );
+        Assertions.assertEquals( "Three", p.get(0), "2: Three" );
+        Assertions.assertEquals( "Two", p.get(1), "2: Two" );
+        Assertions.assertEquals( "TwoTwo", p.get(2), "2: TwoTwo" );
+        Assertions.assertEquals( "One", p.get(3), "2: One" );
     }
 
     @Test
@@ -92,24 +92,24 @@ public class PriorityListTest
         p.add( "Two3", 2 );
         p.add( "Three", 3 );
 
-        Assert.assertEquals( "size", 5, p.size() );
+        Assertions.assertEquals( 5, p.size(), "size" );
 
-        Assert.assertEquals( "Three", "Three", p.get(0) );
-        Assert.assertEquals( "Two", "Two", p.get(1) );
-        Assert.assertEquals( "Two2", "Two2", p.get(2) );
-        Assert.assertEquals( "Two3", "Two3", p.get(3) );
-        Assert.assertEquals( "One", "One", p.get(4) );
+        Assertions.assertEquals( "Three", p.get(0), "Three" );
+        Assertions.assertEquals( "Two", p.get(1), "Two" );
+        Assertions.assertEquals( "Two2", p.get(2), "Two2" );
+        Assertions.assertEquals( "Two3", p.get(3), "Two3" );
+        Assertions.assertEquals( "One", p.get(4), "One" );
 
         p.add( "TwoTwo", 2 );
 
-        Assert.assertEquals( "2: size", 6, p.size() );
+        Assertions.assertEquals( 6, p.size(), "2: size" );
 
-        Assert.assertEquals( "2: Three", "Three", p.get(0) );
-        Assert.assertEquals( "2: Two", "Two", p.get(1) );
-        Assert.assertEquals( "2: Two2", "Two2", p.get(2) );
-        Assert.assertEquals( "2: Two3", "Two3", p.get(3) );
-        Assert.assertEquals( "2: TwoTwo", "TwoTwo", p.get(4) );
-        Assert.assertEquals( "2: One", "One", p.get(5) );
+        Assertions.assertEquals( "Three", p.get(0), "2: Three" );
+        Assertions.assertEquals( "Two", p.get(1), "2: Two" );
+        Assertions.assertEquals( "Two2", p.get(2), "2: Two2" );
+        Assertions.assertEquals( "Two3", p.get(3), "2: Two3" );
+        Assertions.assertEquals( "TwoTwo", p.get(4), "2: TwoTwo" );
+        Assertions.assertEquals( "One", p.get(5), "2: One" );
     }
 
 }

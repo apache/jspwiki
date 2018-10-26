@@ -30,10 +30,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.xmlrpc.XmlRpcException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sf.ehcache.CacheManager;
 
@@ -45,7 +45,7 @@ public class RPCHandlerTest
 
     static final String NAME1 = "Test";
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -57,7 +57,7 @@ public class RPCHandlerTest
         m_handler.initialize( ctx );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         m_engine.deleteTestPage( NAME1 );
@@ -71,11 +71,11 @@ public class RPCHandlerTest
         try
         {
             m_handler.getPage( "NoSuchPage" );
-            Assert.fail("No exception for missing page.");
+            Assertions.fail("No exception for missing page.");
         }
         catch( XmlRpcException e )
         {
-            Assert.assertEquals( "Wrong error code.", RPCHandler.ERR_NOPAGE, e.code );
+            Assertions.assertEquals( RPCHandler.ERR_NOPAGE, e.code, "Wrong error code." );
         }
     }
 
@@ -91,7 +91,7 @@ public class RPCHandlerTest
         time = getCalendarTime( directInfo.getLastModified() );
         Vector recentChanges = m_handler.getRecentChanges( time );
 
-        Assert.assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
+        Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
 
     @Test
@@ -109,7 +109,7 @@ public class RPCHandlerTest
         time = getCalendarTime( directInfo.getLastModified() );
         Vector recentChanges = m_handler.getRecentChanges( time );
 
-        Assert.assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
+        Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
 
     @Test
@@ -120,7 +120,7 @@ public class RPCHandlerTest
         WikiPage directInfo = m_engine.getPage( NAME1 );
 
         Hashtable ht = m_handler.getPageInfo( NAME1 );
-        Assert.assertEquals( "name", (String)ht.get( "name" ), NAME1 );
+        Assertions.assertEquals( (String)ht.get( "name" ), NAME1, "name" );
 
         Date d = (Date) ht.get( "lastModified" );
 
@@ -137,8 +137,7 @@ public class RPCHandlerTest
                   (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         // System.out.println("RPC2: "+cal.getTime() );
 
-        Assert.assertEquals( "date", cal.getTime().getTime(),
-                      directInfo.getLastModified().getTime() );
+        Assertions.assertEquals( cal.getTime().getTime(), directInfo.getLastModified().getTime(), "date" );
     }
 
     /**
@@ -155,13 +154,13 @@ public class RPCHandlerTest
 
         Vector links = m_handler.listLinks( pageName );
 
-        Assert.assertEquals( "link count", 1, links.size() );
+        Assertions.assertEquals( 1, links.size(), "link count" );
 
         Hashtable linkinfo = (Hashtable) links.elementAt(0);
 
-        Assert.assertEquals( "name", "Foobar", linkinfo.get("page") );
-        Assert.assertEquals( "type", "local",  linkinfo.get("type") );
-        Assert.assertEquals( "href", "/test/Edit.jsp?page=Foobar", linkinfo.get("href") );
+        Assertions.assertEquals( "Foobar", linkinfo.get("page"), "name" );
+        Assertions.assertEquals( "local",  linkinfo.get("type"), "type" );
+        Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get("href"), "href" );
     }
 
 
@@ -182,19 +181,19 @@ public class RPCHandlerTest
 
         Vector links = m_handler.listLinks( pageName );
 
-        Assert.assertEquals( "link count", 2, links.size() );
+        Assertions.assertEquals( 2, links.size(), "link count" );
 
         Hashtable linkinfo = (Hashtable) links.elementAt(0);
 
-        Assert.assertEquals( "edit name", "Foobar", linkinfo.get("page") );
-        Assert.assertEquals( "edit type", "local",  linkinfo.get("type") );
-        Assert.assertEquals( "edit href", "/test/Edit.jsp?page=Foobar", linkinfo.get("href") );
+        Assertions.assertEquals( "Foobar", linkinfo.get("page"), "edit name" );
+        Assertions.assertEquals( "local",  linkinfo.get("type"), "edit type" );
+        Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get("href"), "edit href" );
 
         linkinfo = (Hashtable) links.elementAt(1);
 
-        Assert.assertEquals( "att name", NAME1+"/TestAtt.txt", linkinfo.get("page") );
-        Assert.assertEquals( "att type", "local", linkinfo.get("type") );
-        Assert.assertEquals( "att href", "/test/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href") );
+        Assertions.assertEquals( NAME1+"/TestAtt.txt", linkinfo.get("page"), "att name" );
+        Assertions.assertEquals( "local", linkinfo.get("type"), "att type" );
+        Assertions.assertEquals( "/test/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href"), "att href" );
     }
 
     private Date getCalendarTime( Date modifiedDate )
@@ -226,14 +225,14 @@ public class RPCHandlerTest
         try
         {
             Vector links = m_handler.listLinks( NAME1 );
-            Assert.fail("Didn't get an exception in listLinks()");
+            Assertions.fail("Didn't get an exception in listLinks()");
         }
         catch( XmlRpcException e ) {}
 
         try
         {
             Hashtable ht = m_handler.getPageInfo( NAME1 );
-            Assert.fail("Didn't get an exception in getPageInfo()");
+            Assertions.fail("Didn't get an exception in getPageInfo()");
         }
         catch( XmlRpcException e ) {}
     }

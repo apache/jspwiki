@@ -29,10 +29,10 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.FileUtil;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 
@@ -45,7 +45,7 @@ public class FileSystemProviderTest {
 
     TestEngine         m_engine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         m_pagedir = "./target/jspwiki.test.pages";
         props.setProperty( PageManager.PROP_PAGEPROVIDER, "FileSystemProvider" );
@@ -63,7 +63,7 @@ public class FileSystemProviderTest {
         m_providerUTF8.initialize( m_engine, props );
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         TestEngine.deleteAll( new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) ) );
     }
@@ -76,11 +76,11 @@ public class FileSystemProviderTest {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "%C5%E4Test.txt" );
 
-        Assert.assertTrue("No such file", resultfile.exists());
+        Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
 
-        Assert.assertEquals("Wrong contents", contents, "test");
+        Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
 
     @Test
@@ -91,12 +91,12 @@ public class FileSystemProviderTest {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "%C3%85%C3%A4Test.txt" );
 
-        Assert.assertTrue("No such file", resultfile.exists());
+        Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "UTF-8" );
 
-        Assert.assertEquals("Wrong contents", contents, "test\u00d6");
+        Assertions.assertEquals( contents, "test\u00d6", "Wrong contents" );
     }
 
     /**
@@ -113,12 +113,12 @@ public class FileSystemProviderTest {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "Test%2FFoobar.txt" );
 
-        Assert.assertTrue("No such file", resultfile.exists());
+        Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "UTF-8" );
 
-        Assert.assertEquals("Wrong contents", contents, "test");
+        Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
 
     @Test
@@ -131,12 +131,12 @@ public class FileSystemProviderTest {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "Test%2FFoobar.txt" );
 
-        Assert.assertTrue("No such file", resultfile.exists());
+        Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "ISO-8859-1" );
 
-        Assert.assertEquals("Wrong contents", contents, "test");
+        Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
 
     @Test
@@ -149,11 +149,11 @@ public class FileSystemProviderTest {
 
         File resultfile = new File(  props.getProperty( FileSystemProvider.PROP_PAGEDIR ) , "%2ETest.txt" );
 
-        Assert.assertTrue("No such file", resultfile.exists());
+        Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
 
-        Assert.assertEquals("Wrong contents", contents, "test");
+        Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
 
     @Test
@@ -169,7 +169,7 @@ public class FileSystemProviderTest {
 
             WikiPage page2 = m_provider.getPageInfo( "\u00c5\u00e4Test", 1 );
 
-            Assert.assertEquals( "Min\u00e4", page2.getAuthor() );
+            Assertions.assertEquals( "Min\u00e4", page2.getAuthor() );
         }
         finally
         {
@@ -203,8 +203,8 @@ public class FileSystemProviderTest {
 
         File f = new File( newdir );
 
-        Assert.assertTrue( "didn't create it", f.exists() );
-        Assert.assertTrue( "isn't a dir", f.isDirectory() );
+        Assertions.assertTrue( f.exists(), "didn't create it" );
+        Assertions.assertTrue( f.isDirectory(), "isn't a dir" );
 
         f.delete();
     }
@@ -221,8 +221,7 @@ public class FileSystemProviderTest {
 
             Properties pr = new Properties();
 
-            pr.setProperty( FileSystemProvider.PROP_PAGEDIR,
-                               tmpFile.getAbsolutePath() );
+            pr.setProperty( FileSystemProvider.PROP_PAGEDIR, tmpFile.getAbsolutePath() );
 
             FileSystemProvider test = new FileSystemProvider();
 
@@ -230,7 +229,7 @@ public class FileSystemProviderTest {
             {
                 test.initialize( m_engine, pr );
 
-                Assert.fail( "Wiki did not warn about wrong property." );
+                Assertions.fail( "Wiki did not warn about wrong property." );
             }
             catch( IOException e )
             {
@@ -259,21 +258,21 @@ public class FileSystemProviderTest {
 
         File f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
 
-        Assert.assertTrue( "file does not exist", f.exists() );
+        Assertions.assertTrue( f.exists(), "file does not exist" );
 
         f = new File( files, "Test.properties" );
 
-        Assert.assertTrue( "property file does not exist", f.exists() );
+        Assertions.assertTrue( f.exists(), "property file does not exist" );
 
         m_provider.deletePage( "Test" );
 
         f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
 
-        Assert.assertFalse( "file exists", f.exists() );
+        Assertions.assertFalse( f.exists(), "file exists" );
 
         f = new File( files, "Test.properties" );
 
-        Assert.assertFalse( "properties exist", f.exists() );
+        Assertions.assertFalse( f.exists(), "properties exist" );
     }
 
     @Test
@@ -283,25 +282,25 @@ public class FileSystemProviderTest {
         String fileName = pageName+FileSystemProvider.FILE_EXT;
         File file = new File (pageDir,fileName);
 
-        Assert.assertFalse( file.exists() );
+        Assertions.assertFalse( file.exists() );
         WikiPage testPage = new WikiPage(m_engine,pageName);
         testPage.setAuthor("TestAuthor");
         testPage.setAttribute("@test","Save Me");
         testPage.setAttribute("@test2","Save You");
         testPage.setAttribute("test3","Do not save");
         m_provider.putPageText( testPage, "This page has custom properties" );
-        Assert.assertTrue("No such file", file.exists() );
+        Assertions.assertTrue( file.exists(), "No such file" );
         WikiPage pageRetrieved = m_provider.getPageInfo( pageName, -1 );
         String value = (String)pageRetrieved.getAttribute("@test");
         String value2 = (String)pageRetrieved.getAttribute("@test2");
         String value3 = (String)pageRetrieved.getAttribute("test3");
-        Assert.assertNotNull(value);
-        Assert.assertNotNull(value2);
-        Assert.assertNull(value3);
-        Assert.assertEquals("Save Me",value);
-        Assert.assertEquals("Save You",value2);
+        Assertions.assertNotNull(value);
+        Assertions.assertNotNull(value2);
+        Assertions.assertNull(value3);
+        Assertions.assertEquals("Save Me",value);
+        Assertions.assertEquals("Save You",value2);
         file.delete();
-        Assert.assertFalse( file.exists() );
+        Assertions.assertFalse( file.exists() );
     }
 
 }

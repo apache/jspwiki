@@ -34,8 +34,8 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  */
@@ -59,15 +59,15 @@ public class AnonymousLoginModuleTest
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            Assert.assertEquals( 1, principals.size() );
-            Assert.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
-            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
-            Assert.assertFalse( principals.contains( Role.ALL ) );
+            Assertions.assertEquals( 1, principals.size() );
+            Assertions.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
+            Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assertions.assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 
@@ -84,24 +84,24 @@ public class AnonymousLoginModuleTest
             module.login();
             module.commit();
             Set< Principal > principals = m_subject.getPrincipals();
-            Assert.assertEquals( 1, principals.size() );
-            Assert.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
-            Assert.assertFalse( principals.contains( Role.ANONYMOUS ) );
-            Assert.assertFalse( principals.contains( Role.ALL ) );
+            Assertions.assertEquals( 1, principals.size() );
+            Assertions.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
+            Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
+            Assertions.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
-            Assert.assertEquals( 0, principals.size() );
+            Assertions.assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
             System.err.println( e.getMessage() );
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 
     /**
      * 
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -116,7 +116,7 @@ public class AnonymousLoginModuleTest
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            Assert.assertTrue( false );
+            Assertions.assertTrue( false );
         }
     }
 

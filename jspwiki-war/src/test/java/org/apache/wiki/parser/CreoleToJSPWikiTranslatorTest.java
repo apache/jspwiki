@@ -22,8 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class CreoleToJSPWikiTranslatorTest
@@ -36,7 +36,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is **bold**.";
 
-        Assert.assertEquals("This is __bold__.", translate(src));
+        Assertions.assertEquals("This is __bold__.", translate(src));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "**This is all bold.**";
 
-        Assert.assertEquals("__This is all bold.__", translate(src));
+        Assertions.assertEquals("__This is all bold.__", translate(src));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is **bold\nand still bold**.";
 
-        Assert.assertEquals("This is __bold\nand still bold__.", translate(src));
+        Assertions.assertEquals("This is __bold\nand still bold__.", translate(src));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is **bold\r\n\r\nand no more bold.";
 
-        Assert.assertEquals("This is __bold__\r\n\r\nand no more bold.", translate(src));
+        Assertions.assertEquals("This is __bold__\r\n\r\nand no more bold.", translate(src));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is //italic\r\nand still italic//.";
 
-        Assert.assertEquals("This is ''italic\r\nand still italic''.", translate(src));
+        Assertions.assertEquals("This is ''italic\r\nand still italic''.", translate(src));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is //italic\r\n\r\nnand no more italic.";
 
-        Assert.assertEquals("This is ''italic''\r\n\r\nnand no more italic.", translate(src));
+        Assertions.assertEquals("This is ''italic''\r\n\r\nnand no more italic.", translate(src));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is //italic//.";
 
-        Assert.assertEquals("This is ''italic''.", translate(src));
+        Assertions.assertEquals("This is ''italic''.", translate(src));
     }
 
     @Test
@@ -92,21 +92,21 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is {{Image}}.";
 
-        Assert.assertEquals("This is [{Image src='Image'}].", translate(src));
+        Assertions.assertEquals("This is [{Image src='Image'}].", translate(src));
     }
 
     @Test
     public void testImageLink() throws Exception
     {
         String src = "This is [[http://www.wikicreole.org|{{Image}}]] with a link.";
-        Assert.assertEquals("This is [{Image src='Image' link='http://www.wikicreole.org'}] with a link.", translate(src));
+        Assertions.assertEquals("This is [{Image src='Image' link='http://www.wikicreole.org'}] with a link.", translate(src));
     }
 
     @Test
     public void testImageDescription() throws Exception
     {
         String src = "This is {{Image|Description}}.";
-        Assert.assertEquals("This is [{Image src='Image' caption='Description'}].", translate(src));
+        Assertions.assertEquals("This is [{Image src='Image' caption='Description'}].", translate(src));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This is [[http://www.wikicreole.org|{{Image|Description}}]].";
 
-        Assert.assertEquals("This is [{Image src='Image' link='http://www.wikicreole.org' caption='Description'}].", translate(src));
+        Assertions.assertEquals("This is [{Image src='Image' link='http://www.wikicreole.org' caption='Description'}].", translate(src));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This should be a [[hyperlink]]";
 
-        Assert.assertEquals("This should be a [hyperlink]", translate(src));
+        Assertions.assertEquals("This should be a [hyperlink]", translate(src));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This should be a [[hyperlink too]]";
 
-        Assert.assertEquals("This should be a [hyperlink too]", translate(src));
+        Assertions.assertEquals("This should be a [hyperlink too]", translate(src));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This should be a [[HyperLink]]";
 
-        Assert.assertEquals("This should be a [HyperLink]", translate(src));
+        Assertions.assertEquals("This should be a [HyperLink]", translate(src));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This should be a [[HyperLink|here]]";
 
-        Assert.assertEquals("This should be a [here|HyperLink]", translate(src));
+        Assertions.assertEquals("This should be a [here|HyperLink]", translate(src));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "This should be a [[HyperLink#heading|here]]";
 
-        Assert.assertEquals("This should be a [here|HyperLink#heading]", translate(src));
+        Assertions.assertEquals("This should be a [here|HyperLink#heading]", translate(src));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "This should be a [[HyperLink#heading]]";
 
-        Assert.assertEquals("This should be a [HyperLink#heading]", translate(src));
+        Assertions.assertEquals("This should be a [HyperLink#heading]", translate(src));
     }
 
     //
@@ -176,7 +176,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "[[DiscussionAboutWiki]] [[WikiMarkupDevelopment]].";
 
-        Assert.assertEquals("[DiscussionAboutWiki] [WikiMarkupDevelopment].", translate(src));
+        Assertions.assertEquals("[DiscussionAboutWiki] [WikiMarkupDevelopment].", translate(src));
     }
 
     /** ******* Stuff not in JSPWikiMarkupParserTest ************************* */
@@ -187,7 +187,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "=====Level 4 heading";
 
-        Assert.assertEquals("__Level 4 heading__", translate(src));
+        Assertions.assertEquals("__Level 4 heading__", translate(src));
     }
 
     @Test
@@ -196,7 +196,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "Sponsored by the [Wiki Symposium|http://www.wikisym.org/] and [i3G Institute|http://www.i3g.hs-heilbronn.de].";
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                      "Sponsored by the [Wiki Symposium|http://www.wikisym.org/] and [i3G Institute|http://www.i3g.hs-heilbronn.de].",
                      translate(src));
     }
@@ -205,7 +205,7 @@ public class CreoleToJSPWikiTranslatorTest
     public void testHyperLinksJSPWiki() throws Exception
     {
         String src = "* [http://www.wikisym.org/cgi-bin/mailman/listinfo/wiki-research|Wiki research mailing list]";
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -214,7 +214,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "Sponsored by the [[http://www.wikisym.org/|Wiki Symposium]] and [[http://www.i3g.hs-heilbronn.de|i3G Institute]].";
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                      "Sponsored by the [Wiki Symposium|http://www.wikisym.org/] and [i3G Institute|http://www.i3g.hs-heilbronn.de].",
                      translate(src));
     }
@@ -224,14 +224,14 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "{{{$$...$$}}}";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
     public void testPreformattedCreole2() throws Exception
     {
         String src = "{{{\r\n" + "\r\n" + "[[http://en.wikipedia.org|wikipedia]]\r\n" + "}}}";
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "{{{\r\n" + "Guitar Chord C:\r\n" + "\r\n" + "||---|---|---|\r\n" + "||-0-|---|---|\r\n"
                      + "||---|-0-|---|\r\n" + "||---|---|-0-|\r\n" + "||---|---|---|\\n" + "}}}";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -249,7 +249,7 @@ public class CreoleToJSPWikiTranslatorTest
         // don't interpret plugins
         String src = "{{{<<Test>>}}}";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -257,7 +257,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "{{{<<<Test>>>}}}";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -269,7 +269,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "[[http://www.wikicreole.org|external Links]]\r\n" + preformatted;
 
         String target = "[external Links|http://www.wikicreole.org]\r\n" + preformatted;
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -280,7 +280,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "[http://www.wikicreole.org]\r\n" + preformatted;
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -289,14 +289,14 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "- 1\r\n" + "-- 2\r\n" + "--- 3\r\n" + "---- 4\r\n" + "----- 5";
         String target = "* 1\r\n" + "** 2\r\n" + "*** 3\r\n" + "**** 4\r\n" + "***** 5";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
     public void testLineAmbiguity() throws Exception
     {
         String src = "Some text\r\n\r\n----\r\n\r\nMore text";
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -304,7 +304,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "Some **text**\r\n\r\n--Steff";
         String target = "Some __text__\r\n\r\n--Steff";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     public void disabledTestLinebreakCreole() throws Exception
@@ -314,7 +314,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "My contact dates:\\\\\n" + "Pone: xyz\\\\\r\n" + "Fax: +45\\\\\n" + "Mobile: abc";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     public void disabledTestLinebreakCreoleShort() throws Exception
@@ -324,7 +324,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "a\\\\\n" + "b\\\\\n" + "c\n";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     public void disabledTestLinebreakCreoleWithLists() throws Exception
@@ -332,7 +332,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "*This\n" + "*Is\n" + "*a\n" + "*list";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -342,7 +342,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "Some test\r\n" + "\r\n" + "%%commentbox\r\n" + "Aloha World!\r\n" + "%%\r\n" + "\r\n"
                      + "Does the pagefilter mess up special jspwiki css markup?";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -353,7 +353,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "* 1\r\n" + "** 1.1\r\n" + "** 1.2\r\n" + "* 2\r\n" + "---------\r\n" + "test\r\n" + "Test";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     /**
@@ -366,7 +366,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
 
         String src = "* 1\r\n" + "** 1.1\r\n" + "** 1.2\r\n" + "* 2\r\n" + "---------\r\n" + "test";
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -377,7 +377,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = " 1\\\\\r\n" + "~- 3\\\\\r\n" + "~===\\\\\r\n" + "~- 2\\\\";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -388,7 +388,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "{{{\r\n" + "{{{\r\n" + "{{Image}}\r\n" + "~}}}\r\n" + "}}}\r\n" + "Test";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -397,7 +397,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "|a|b\r\n" + "|c|d";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -408,7 +408,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "|a|b\r\n" + "|c|d";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -419,7 +419,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "before\r\n" + "|a|b\r\n" + "|c|d\r\n" + "after";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -430,7 +430,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "before\r\n" + "|a\\\\b|b\r\n" + "|c|d\r\n" + "after";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -442,7 +442,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "|a|b\r\n" + "\r\n" +  "|x|y\r\nTest";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -452,7 +452,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "|=a|=b|\r\n" + "|c|d|";
 
         String target = "||a||b\r\n" + "|c|d";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -463,7 +463,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "||a||b\r\n" + "|c|d";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -472,7 +472,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "||a||b\r\n" + "|c|d";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -483,7 +483,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "[{ImagePlugin src='abc'}]";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -492,7 +492,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "[{ImagePlugin src='abc'}]";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -501,7 +501,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String src = "<This is HTML>";
 
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -511,7 +511,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "[{FormOpen submit=\'http://jspwiki.apache.org\' }]";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -537,14 +537,14 @@ public class CreoleToJSPWikiTranslatorTest
         //System.out.println(src);
         //System.out.println(translate(src));
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
     public void testHeaderNotAtBeginning()
     {
         String src = "Hallo==Hallo";
-        Assert.assertEquals(src, translate(src));
+        Assertions.assertEquals(src, translate(src));
     }
 
     @Test
@@ -554,7 +554,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "||a||b\r\n" + "|[c]|d";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -564,7 +564,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "||a||b\r\n" + "|[c]|[{Image src='Image.png'}]";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -574,7 +574,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "Hallo das ist super\r\n!!Und jetzt\r\nGehts weiter";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -583,7 +583,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "# Hallo\r\n" + "-- Hallo\r\n" + "--- Hallo\r\n" + "Hi";
 
         String target = "# Hallo\r\n" + "** Hallo\r\n" + "*** Hallo\r\n" + "Hi";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -592,7 +592,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "- Hallo\r\n" + "## Hallo\r\n" + "### Hallo\r\n" + "Hi";
 
         String target = "* Hallo\r\n" + "## Hallo\r\n" + "### Hallo\r\n" + "Hi";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -608,7 +608,7 @@ public class CreoleToJSPWikiTranslatorTest
                         + "#Language information\r\n" + "#Acronyms and abbreviations\r\n" + "#Emphasis and strong emphasis\r\n"
                         + "#Quotes, inline and block\r\n" + "#Images";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -618,7 +618,7 @@ public class CreoleToJSPWikiTranslatorTest
         String target = "Hallo\r\n-- [[Hanno]]";
         Properties props = new Properties();
         props.put("creole.dateFormat", "dd/MM/yyyy");
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
     }
 
     @Test
@@ -629,7 +629,7 @@ public class CreoleToJSPWikiTranslatorTest
         String target = "Hallo\r\n-- [[Hanno]], " + (new SimpleDateFormat("dd/MM/yyyy")).format(cal.getTime());
         Properties props = new Properties();
         props.put("creole.dateFormat", "dd/MM/yyyy");
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
     }
 
     @Test
@@ -642,7 +642,7 @@ public class CreoleToJSPWikiTranslatorTest
         String target = "Hallo\r\n-- [[Hanno]], " + (new SimpleDateFormat(format)).format(cal.getTime());
         Properties props = new Properties();
         props.put("creole.dateFormat", format);
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
     }
 
     @Test
@@ -650,7 +650,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "Hallo\r\n=Hallo\r\nHallo";
         String target = "Hallo\r\n!!!Hallo\r\nHallo";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -660,7 +660,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "{{{Hallo\r\n" + "--~~~~\r\n" + "Hallo\r\n" + "}}}";
         Properties props = new Properties();
         props.put("creole.dateFormat", format);
-        Assert.assertEquals(src, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
+        Assertions.assertEquals(src, new CreoleToJSPWikiTranslator().translateSignature(props, src, "Hanno"));
     }
 
     @Test
@@ -674,7 +674,7 @@ public class CreoleToJSPWikiTranslatorTest
                         + "\r\n* nothing I hope\r\n" + "* maybe something\r\n" + "* we will soon see!\r\n"
                         + "\r\n!!! and this is a big title ===============\r\n" + "\r\nWhat can we put here?\r\n"
                         + "\r\n[{Image src='Web2.png'}]";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -682,15 +682,15 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "Hallo\r\nHallo[[ 	www.gmx.de]]Hallo\r\nHallo";
         String target = "Hallo\r\nHallo[http://www.gmx.de]Hallo\r\nHallo";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
 
         String src2 = "Hallo\r\nHallo[[www.gmx.de]]Hallo\r\nHallo";
         String target2 = "Hallo\r\nHallo[http://www.gmx.de]Hallo\r\nHallo";
-        Assert.assertEquals(target2, translate(src2));
+        Assertions.assertEquals(target2, translate(src2));
 
         String src3 = "Hallo\r\nHallo[[www.gmx.de|GMX]]Hallo\r\nHallo";
         String target3 = "Hallo\r\nHallo[GMX|http://www.gmx.de]Hallo\r\nHallo";
-        Assert.assertEquals(target3, translate(src3));
+        Assertions.assertEquals(target3, translate(src3));
     }
 
     @Test
@@ -703,7 +703,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.put("creole.imagePlugin.para.NB", "border=0");
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -714,7 +714,7 @@ public class CreoleToJSPWikiTranslatorTest
         Properties props = new Properties();
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -725,7 +725,7 @@ public class CreoleToJSPWikiTranslatorTest
         Properties props = new Properties();
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -738,7 +738,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.put("creole.imagePlugin.para.NB", "border=0");
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -751,7 +751,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.put("creole.imagePlugin.para.NB", "border=0");
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -764,7 +764,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.put("creole.imagePlugin.para.NB", "border=0");
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -774,7 +774,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.load(new FileInputStream(TEST_PROPERTIES));
         String src = "Hallo {{Image.png|Caption|M,[-]}}";
         String target = "Hallo [{ImageX src='Image.png' caption='Caption' width='180' border=false}]";
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -784,7 +784,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.load(new FileInputStream(TEST_PROPERTIES));
         String src = "Hallo [[http://www.gmx.de|{{Image.png||XL,+X,[-]}}]]";
         String target = "Hallo [{ImageX src='Image.png' link='http://www.gmx.de' width='540' float='right' border=false}]";
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -794,7 +794,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.load(new FileInputStream(TEST_PROPERTIES));
         String src = "Hallo [[http://www.gmx.de|{{Image.png||XL,+X,X-,[-]}}]]";
         String target = "Hallo [{ImageX src='Image.png' link='http://www.gmx.de' width='540' float='right' align='left' border=false}]";
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -804,7 +804,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.load(new FileInputStream(TEST_PROPERTIES));
         String src = "Hallo [[http://www.gmx.de|{{Image.png|Caption|XL,+X,X-,[-]}}]]";
         String target = "Hallo [{ImageX src='Image.png' link='http://www.gmx.de' caption='Caption' width='540' float='right' align='left' border=false}]";
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -814,7 +814,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.load(new FileInputStream(TEST_PROPERTIES));
         String src = "Hallo [[http://www.gmx.de|{{Image.png|Caption|xL, +X , X-, [-]}}]]";
         String target = "Hallo [{ImageX src='Image.png' link='http://www.gmx.de' caption='Caption' width='540' float='right' align='left' border=false}]";
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -829,7 +829,7 @@ public class CreoleToJSPWikiTranslatorTest
         props.put("creole.imagePlugin.para.%cm", "widthInCM='%'");
         props.put("creole.imagePlugin.name", "ImageX");
 
-        Assert.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
+        Assertions.assertEquals(target, new CreoleToJSPWikiTranslator().translate(props, src));
     }
 
     @Test
@@ -837,7 +837,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "<<JudoScript\r\n" + "if this works then ok\r\n" + "else improve the programm\r\n" + ">>";
         String target = "[{JudoScript\r\n" + "if this works then ok\r\n" + "else improve the programm\r\n" + "}]";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -847,7 +847,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "**<<CurrentTimePlugin format='HH:mm \'am\' dd-MMM-yyyy'>>**";
         String tar = "__[{CurrentTimePlugin format='HH:mm \'am\' dd-MMM-yyyy'}]__";
 
-        Assert.assertEquals(tar, translate(src));
+        Assertions.assertEquals(tar, translate(src));
     }
 
     @Test
@@ -858,7 +858,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String tar = "[{CurrentTimePlugin format=zzzz}]\r\n" + "\r\n" + "[{RecentChangesPlugin since='30'}]";
 
-        Assert.assertEquals(tar, translate(src));
+        Assertions.assertEquals(tar, translate(src));
     }
 
     @Test
@@ -866,7 +866,7 @@ public class CreoleToJSPWikiTranslatorTest
     {
         String src = "<<JudoScript\r\n" + "if [[this]] works then ok\r\n" + "else improve the programm\r\n" + ">>";
         String target = "[{JudoScript\r\n" + "if [[this]] works then ok\r\n" + "else improve the programm\r\n" + "}]";
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
 
     }
 
@@ -876,7 +876,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "Hallo[[https://wiki.i3g.hs-heilbronn.de]]Hallo";
         String target = "Hallo[https://wiki.i3g.hs-heilbronn.de]Hallo";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -885,7 +885,7 @@ public class CreoleToJSPWikiTranslatorTest
         String src = "Hallo<<Hallo{{{Test}}}Hallo>>Hallo";
         String target = "Hallo[{Hallo{{{Test}}}Hallo}]Hallo";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     @Test
@@ -895,7 +895,7 @@ public class CreoleToJSPWikiTranslatorTest
 
         String target = "Hallo\r\n" + "[{Hallo\r\n" + "Hallo\r\n" + "Hallo\r\n" + "}]";
 
-        Assert.assertEquals(target, translate(src));
+        Assertions.assertEquals(target, translate(src));
     }
 
     /**
@@ -916,14 +916,14 @@ public class CreoleToJSPWikiTranslatorTest
         props.setProperty( "creole.imagePlugin.name", "Image" );
         props.setProperty( "creole.imagePlugin.para.%px", "width='%px\"" );
 
-        String content = "//Note: Please see the [[http://liferay.com/community/100-papercuts|main landing page]] for the latest updates.//<<TableOfContents>>== Introduction ==This project's aim is to identify and fix high-visibility, easy to correct bugs in Liferay Portal. It is driven by the wider Liferay community, with volunteers working to identify, prioritize, assign, and resolve known issues.== The Process ==# **Identify issues.**  The community has always been encouraged to vote for issues that they would like to see fixed sooner rather than later.  This has allowed Liferay program managers to properly prioritize bugs based on community feedback.  With the 100 Paper Cuts program, voting has become even more important.  We use the same voting system to identify high visibility, easy-to-fix bugs.  The 100 Paper Cuts process begins with a period of time in which additional voting is encouraged.  If you wish to vote for issues, please read the voting process.  You can also [[http://issues.liferay.com/secure/IssueNavigator.jspa?mode=hide&requestId=12340|browse this filter for potential PaperCuts bugs]].  This fiter shows all open bugs that haven't been already selected for inclusion into the existing Liferay development pipeline, sorted by votes.# **Assign and Fix.**  During a 2-week period, approximately 10 issues are selected and fixed based on their impact and effort required to fix.  We aim for selecting bugs that take no more than 1 developer-day to fix.  This period is called a \"Community Sprint\" and represents a fixed time amount in which to fix the identified issues.  Once the sprint period is over, the process is repeated.# **Track progress.**  During and after the sprint, issues are tracked for progress, until the issue is merged with one or more Liferay releases.== Current Sprint Status ==|=Resolved|=In Progress|=Blocked on submitter|=Warning!|=Unfixable/Not a papercut||{{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/health-80plus.gif}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/health-40to59.png}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/warning.gif}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|=== Sprint 3: Mar 16, 2011 - Mar 30, 2011 ===|= Issue |= Summary |= Assigned To |= Status |= Indicator || [[http://issues.liferay.com/browse/LPS-15491 |LPS-15491]] | Automatic \"html linkification\" of text http links in message board posts: [[http://liferay.com/|http://liferay.com]] => <a href=\"[[http://lliferay.com\">http//lliferay.com</a>|http://lliferay.com\">http://lliferay.com</a>]] | Baptiste | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/warning.gif}}|| [[http://issues.liferay.com/browse/LPS-9157 |LPS-9157]] | Width of the panel shouldn't be changed| Maarten | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15494 |LPS-15494]] | Showing search result content in inappropriate layout| Juan | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15791 |LPS-15791]] | Pagination is lost after editing permissions in the Define Permission action of Roles admin portlet| Rafal | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-8968 |LPS-8968]] | Web Proxy Assert.fails with error.httpclient in Glassfish| Deb | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15677 |LPS-15677]] | Asset Publisher portlet does not display web content, When the content publish again.| Boubker | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15225 |LPS-15225]] | String not internationalized in Enterprise Admin Organizations portlet.| Corne | Community Resolved| {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15122 |LPS-15122]] | o language key for \"Table of Contents\" in the wiki | Corne | Contributed Solution| {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14789 |LPS-14789]] | Freemarker template processor has undefined variables | Tomas | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|== Previous Sprint Status ===== Sprint 2: Feb 23, 2011 - Mar 9, 2011 ===|= Issue |= Summary |= Assigned To |= Status |= Indicator || [[http://issues.liferay.com/browse/LEP-6973 |LEP-6973]] | Publish to Live is not properly configuring Page Permissions from Staging | Boubker | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-12988 |LPS-12988]] | Bad HTTP Content-Type for RSS feed | Jelmer | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-10263 |LPS-10263]] | Remove the mandatory URL from announcements entries | Jaromir | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11854 |LPS-11854]] | Web Form Portlet Configuration -- Changing type field does not appear to work at all in IE8. | Deb | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-12918 |LPS-12918]] | Import lar with global \"Structures/Templates\" | Jelmer | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11479 |LPS-11479]] | ServiceBuilder doesn't support one-to-one relationships out of the box | Tomas | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|| [[http://issues.liferay.com/browse/LPS-7503 |LPS-7503]] | Give alternatives to <object> | Juan | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|| [[http://issues.liferay.com/browse/LPS-14905 |LPS-14905]] | Unable to import group from LDAP in Liferay 6.0.5 with ldap.import.method=user | Baptiste | Resolved | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|=== Sprint 1: Feb 2, 2011 - Feb 16, 2011 ===|= Issue |= Summary |= Assigned To |= Status |= Indicator || [[http://issues.liferay.com/browse/LPS-11003|LPS-11003]] | sample-struts-liferay-portlet can not be deployed to trunk | James | Closed (not reproducible) | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-13422|LPS-13422]] | Preformatted URLS show with \"[ ]\" around them on a wiki page | Milan | Fixed | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14911|LPS-14911]] | Unable to publish previously saved draft | Deb | Community Resolved | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14671|LPS-14671]] | When adding a document to the document library a file extension is required in the document title | Corne | Closed (already fixed) | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14411|LPS-14411]] | complete_gradient.png is missing | Boubker | In Review | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14351|LPS-14351]] | Liferay Calendar, Duplicate Events Upon Import | Tomas | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-12988|LPS-12988]] | Bad HTTP Content-Type for RSS feed | Maarten | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|| [[http://issues.liferay.com/browse/LPS-12810|LPS-12810]] | Error on Summary Tab of Calendar | Juan | Fixed | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11859|LPS-11859]] | Categories Navigation with Wiki Broken | Juan | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11854|LPS-11854]] | Web Form Portlet Configuration -- Changing type field does not appear to work at all in IE8. | Szymon | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/warning.gif}}|";
+        String content = "//Note: Please see the [[http://liferay.com/community/100-papercuts|main landing page]] for the latest updates.//<<TableOfContents>>== Introduction ==This project's aim is to identify and fix high-visibility, easy to correct bugs in Liferay Portal. It is driven by the wider Liferay community, with volunteers working to identify, prioritize, assign, and resolve known issues.== The Process ==# **Identify issues.**  The community has always been encouraged to vote for issues that they would like to see fixed sooner rather than later.  This has allowed Liferay program managers to properly prioritize bugs based on community feedback.  With the 100 Paper Cuts program, voting has become even more important.  We use the same voting system to identify high visibility, easy-to-fix bugs.  The 100 Paper Cuts process begins with a period of time in which additional voting is encouraged.  If you wish to vote for issues, please read the voting process.  You can also [[http://issues.liferay.com/secure/IssueNavigator.jspa?mode=hide&requestId=12340|browse this filter for potential PaperCuts bugs]].  This fiter shows all open bugs that haven't been already selected for inclusion into the existing Liferay development pipeline, sorted by votes.# **Assign and Fix.**  During a 2-week period, approximately 10 issues are selected and fixed based on their impact and effort required to fix.  We aim for selecting bugs that take no more than 1 developer-day to fix.  This period is called a \"Community Sprint\" and represents a fixed time amount in which to fix the identified issues.  Once the sprint period is over, the process is repeated.# **Track progress.**  During and after the sprint, issues are tracked for progress, until the issue is merged with one or more Liferay releases.== Current Sprint Status ==|=Resolved|=In Progress|=Blocked on submitter|=Warning!|=Unfixable/Not a papercut||{{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/health-80plus.gif}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/health-40to59.png}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/warning.gif}}|{{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|=== Sprint 3: Mar 16, 2011 - Mar 30, 2011 ===|= Issue |= Summary |= Assigned To |= Status |= Indicator || [[http://issues.liferay.com/browse/LPS-15491 |LPS-15491]] | Automatic \"html linkification\" of text http links in message board posts: [[http://liferay.com/|http://liferay.com]] => <a href=\"[[http://lliferay.com\">http//lliferay.com</a>|http://lliferay.com\">http://lliferay.com</a>]] | Baptiste | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/warning.gif}}|| [[http://issues.liferay.com/browse/LPS-9157 |LPS-9157]] | Width of the panel shouldn't be changed| Maarten | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15494 |LPS-15494]] | Showing search result content in inappropriate layout| Juan | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15791 |LPS-15791]] | Pagination is lost after editing permissions in the Define Permission action of Roles admin portlet| Rafal | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-8968 |LPS-8968]] | Web Proxy Assertions.fails with error.httpclient in Glassfish| Deb | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15677 |LPS-15677]] | Asset Publisher portlet does not display web content, When the content publish again.| Boubker | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15225 |LPS-15225]] | String not internationalized in Enterprise Admin Organizations portlet.| Corne | Community Resolved| {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-15122 |LPS-15122]] | o language key for \"Table of Contents\" in the wiki | Corne | Contributed Solution| {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14789 |LPS-14789]] | Freemarker template processor has undefined variables | Tomas | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|== Previous Sprint Status ===== Sprint 2: Feb 23, 2011 - Mar 9, 2011 ===|= Issue |= Summary |= Assigned To |= Status |= Indicator || [[http://issues.liferay.com/browse/LEP-6973 |LEP-6973]] | Publish to Live is not properly configuring Page Permissions from Staging | Boubker | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-12988 |LPS-12988]] | Bad HTTP Content-Type for RSS feed | Jelmer | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-10263 |LPS-10263]] | Remove the mandatory URL from announcements entries | Jaromir | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11854 |LPS-11854]] | Web Form Portlet Configuration -- Changing type field does not appear to work at all in IE8. | Deb | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-12918 |LPS-12918]] | Import lar with global \"Structures/Templates\" | Jelmer | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11479 |LPS-11479]] | ServiceBuilder doesn't support one-to-one relationships out of the box | Tomas | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|| [[http://issues.liferay.com/browse/LPS-7503 |LPS-7503]] | Give alternatives to <object> | Juan | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|| [[http://issues.liferay.com/browse/LPS-14905 |LPS-14905]] | Unable to import group from LDAP in Liferay 6.0.5 with ldap.import.method=user | Baptiste | Resolved | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|=== Sprint 1: Feb 2, 2011 - Feb 16, 2011 ===|= Issue |= Summary |= Assigned To |= Status |= Indicator || [[http://issues.liferay.com/browse/LPS-11003|LPS-11003]] | sample-struts-liferay-portlet can not be deployed to trunk | James | Closed (not reproducible) | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-13422|LPS-13422]] | Preformatted URLS show with \"[ ]\" around them on a wiki page | Milan | Fixed | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14911|LPS-14911]] | Unable to publish previously saved draft | Deb | Community Resolved | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14671|LPS-14671]] | When adding a document to the document library a file extension is required in the document title | Corne | Closed (already fixed) | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14411|LPS-14411]] | complete_gradient.png is missing | Boubker | In Review | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-14351|LPS-14351]] | Liferay Calendar, Duplicate Events Upon Import | Tomas | Contributed Solution | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-12988|LPS-12988]] | Bad HTTP Content-Type for RSS feed | Maarten | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/red.gif}}|| [[http://issues.liferay.com/browse/LPS-12810|LPS-12810]] | Error on Summary Tab of Calendar | Juan | Fixed | {{http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11859|LPS-11859]] | Categories Navigation with Wiki Broken | Juan | Contributed Solution | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=http://cdn.www.liferay.com/osb-theme/images/dock/my_place_current.png}}|| [[http://issues.liferay.com/browse/LPS-11854|LPS-11854]] | Web Form Portlet Configuration -- Changing type field does not appear to work at all in IE8. | Szymon | Open | {{../../../c/wiki/get_page_attachment?p_l_id=10171&nodeId=10304&title=&fileName=SharedImages/warning.gif}}|";
 
         long startTime = System.currentTimeMillis();
         translator.translate( props, content );
         long testDuration = System.currentTimeMillis() - startTime;
 
         // even a very slow cpu should do this much faster
-        Assert.assertTrue( "rendering takes too long", testDuration < 3000 );
+        Assertions.assertTrue( testDuration < 3000, "rendering takes too long" );
     }
 
     public String translate(String src)

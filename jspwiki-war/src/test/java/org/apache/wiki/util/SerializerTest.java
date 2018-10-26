@@ -22,8 +22,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class SerializerTest {
@@ -37,11 +37,11 @@ public class SerializerTest {
         String serializedForm = Serializer.serializeToBase64( map );
 
         Map<String, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
-        Assert.assertEquals( 2, newMap.size() );
-        Assert.assertTrue( newMap.containsKey( "attribute1" ) );
-        Assert.assertTrue( newMap.containsKey( "attribute2" ) );
-        Assert.assertEquals( "some random value", newMap.get( "attribute1" ) );
-        Assert.assertEquals( "another value", newMap.get( "attribute2" ) );
+        Assertions.assertEquals( 2, newMap.size() );
+        Assertions.assertTrue( newMap.containsKey( "attribute1" ) );
+        Assertions.assertTrue( newMap.containsKey( "attribute2" ) );
+        Assertions.assertEquals( "some random value", newMap.get( "attribute1" ) );
+        Assertions.assertEquals( "another value", newMap.get( "attribute2" ) );
     }
 
 }

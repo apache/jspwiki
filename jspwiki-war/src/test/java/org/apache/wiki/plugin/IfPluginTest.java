@@ -26,10 +26,10 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.providers.WikiPageProvider;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
@@ -38,14 +38,14 @@ public class IfPluginTest
 
     TestEngine testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception
     {
         testEngine.deletePage( "Test" );
@@ -73,7 +73,7 @@ public class IfPluginTest
     /**
      * Checks that user access is granted.
      *
-     * @throws WikiException test Assert.failing.
+     * @throws WikiException test Assertions.failing.
      */
     @Test
     public void testIfPluginUserAllowed() throws WikiException
@@ -88,13 +88,13 @@ public class IfPluginTest
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
-        Assert.assertEquals( expected, res );
+        Assertions.assertEquals( expected, res );
     }
 
     /**
      * Checks that user access is forbidden.
      *
-     * @throws WikiException test Assert.failing.
+     * @throws WikiException test Assertions.failing.
      */
     @Test
     public void testIfPluginUserNotAllowed() throws WikiException
@@ -109,13 +109,13 @@ public class IfPluginTest
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
-        Assert.assertEquals( expected, res );
+        Assertions.assertEquals( expected, res );
     }
 
     /**
      * Checks that IP address is granted.
      *
-     * @throws WikiException test Assert.failing.
+     * @throws WikiException test Assertions.failing.
      */
     @Test
     public void testIfPluginIPAllowed() throws WikiException
@@ -130,13 +130,13 @@ public class IfPluginTest
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
-        Assert.assertEquals( expected, res );
+        Assertions.assertEquals( expected, res );
     }
 
     /**
      * Checks that IP address is granted.
      *
-     * @throws WikiException test Assert.failing.
+     * @throws WikiException test Assertions.failing.
      */
     @Test
     public void testIfPluginIPNotAllowed() throws WikiException
@@ -151,7 +151,7 @@ public class IfPluginTest
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
-        Assert.assertEquals( expected, res );
+        Assertions.assertEquals( expected, res );
     }
 
 }

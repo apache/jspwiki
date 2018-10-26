@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TaskTest
 {
@@ -67,7 +67,7 @@ public class TaskTest
 
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
 
@@ -78,8 +78,8 @@ public class TaskTest
     @Test
     public void testGetActor()
     {
-       Assert.assertNotSame(new WikiPrincipal("Actor1"), m_task.getActor());
-       Assert.assertEquals(SystemPrincipal.SYSTEM_USER, m_task.getActor());
+       Assertions.assertNotSame(new WikiPrincipal("Actor1"), m_task.getActor());
+       Assertions.assertEquals(SystemPrincipal.SYSTEM_USER, m_task.getActor());
     }
 
     @Test
@@ -93,15 +93,15 @@ public class TaskTest
         Step d2 = new SimpleDecision(m_workflow, "decision2.key", new WikiPrincipal("Actor2"));
         m_task.addSuccessor(Outcome.STEP_ABORT, d2);
 
-        Assert.assertEquals(d1, m_task.getSuccessor(Outcome.STEP_COMPLETE));
-        Assert.assertEquals(d2, m_task.getSuccessor(Outcome.STEP_ABORT));
+        Assertions.assertEquals(d1, m_task.getSuccessor(Outcome.STEP_COMPLETE));
+        Assertions.assertEquals(d2, m_task.getSuccessor(Outcome.STEP_ABORT));
 
         // The other Outcomes should return null when looked up
-        Assert.assertNull(m_task.getSuccessor(Outcome.DECISION_APPROVE));
-        Assert.assertNull(m_task.getSuccessor(Outcome.DECISION_DENY));
-        Assert.assertNull(m_task.getSuccessor(Outcome.DECISION_HOLD));
-        Assert.assertNull(m_task.getSuccessor(Outcome.DECISION_REASSIGN));
-        Assert.assertNull(m_task.getSuccessor(Outcome.STEP_CONTINUE));
+        Assertions.assertNull(m_task.getSuccessor(Outcome.DECISION_APPROVE));
+        Assertions.assertNull(m_task.getSuccessor(Outcome.DECISION_DENY));
+        Assertions.assertNull(m_task.getSuccessor(Outcome.DECISION_HOLD));
+        Assertions.assertNull(m_task.getSuccessor(Outcome.DECISION_REASSIGN));
+        Assertions.assertNull(m_task.getSuccessor(Outcome.STEP_CONTINUE));
     }
 
     @Test
@@ -111,84 +111,84 @@ public class TaskTest
         m_task.addError("Error deciding something else.");
 
         List errors = m_task.getErrors();
-        Assert.assertEquals(2, errors.size());
-        Assert.assertEquals("Error deciding something.", errors.get(0));
-        Assert.assertEquals("Error deciding something else.", errors.get(1));
+        Assertions.assertEquals(2, errors.size());
+        Assertions.assertEquals("Error deciding something.", errors.get(0));
+        Assertions.assertEquals("Error deciding something else.", errors.get(1));
     }
 
     @Test
     public void testAvailableOutcomes()
     {
         Collection outcomes = m_task.getAvailableOutcomes();
-        Assert.assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
-        Assert.assertFalse(outcomes.contains(Outcome.DECISION_DENY));
-        Assert.assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
-        Assert.assertFalse(outcomes.contains(Outcome.DECISION_REASSIGN));
-        Assert.assertTrue(outcomes.contains(Outcome.STEP_ABORT));
-        Assert.assertTrue(outcomes.contains(Outcome.STEP_COMPLETE));
+        Assertions.assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
+        Assertions.assertFalse(outcomes.contains(Outcome.DECISION_DENY));
+        Assertions.assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
+        Assertions.assertFalse(outcomes.contains(Outcome.DECISION_REASSIGN));
+        Assertions.assertTrue(outcomes.contains(Outcome.STEP_ABORT));
+        Assertions.assertTrue(outcomes.contains(Outcome.STEP_COMPLETE));
     }
 
     @Test
     public void testGetEndTime() throws WikiException
     {
-        Assert.assertEquals(Workflow.TIME_NOT_SET, m_task.getEndTime());
+        Assertions.assertEquals(Workflow.TIME_NOT_SET, m_task.getEndTime());
         m_task.start();
         m_task.setOutcome(m_task.execute());
-        Assert.assertTrue((Workflow.TIME_NOT_SET  !=  m_task.getEndTime()));
+        Assertions.assertTrue((Workflow.TIME_NOT_SET  !=  m_task.getEndTime()));
     }
 
     @Test
     public void testGetMessageKey()
     {
-        Assert.assertEquals("task.normal",m_task.getMessageKey());
+        Assertions.assertEquals("task.normal",m_task.getMessageKey());
     }
 
     @Test
     public void testGetOutcome() throws WikiException
     {
-        Assert.assertEquals(Outcome.STEP_CONTINUE,m_task.getOutcome());
+        Assertions.assertEquals(Outcome.STEP_CONTINUE,m_task.getOutcome());
         m_task.start();
         m_task.setOutcome(m_task.execute());
-        Assert.assertEquals(Outcome.STEP_COMPLETE, m_task.getOutcome());
+        Assertions.assertEquals(Outcome.STEP_COMPLETE, m_task.getOutcome());
 
         // Test the "error task"
         m_task = new ErrorTask(m_workflow);
-        Assert.assertEquals(Outcome.STEP_CONTINUE,m_task.getOutcome());
+        Assertions.assertEquals(Outcome.STEP_CONTINUE,m_task.getOutcome());
         m_task.start();
         m_task.setOutcome(m_task.execute());
-        Assert.assertEquals(Outcome.STEP_ABORT, m_task.getOutcome());
+        Assertions.assertEquals(Outcome.STEP_ABORT, m_task.getOutcome());
     }
 
     @Test
     public void testGetStartTime() throws WikiException
     {
-        Assert.assertEquals(Workflow.TIME_NOT_SET, m_task.getStartTime());
+        Assertions.assertEquals(Workflow.TIME_NOT_SET, m_task.getStartTime());
         m_task.start();
         m_task.execute();
-        Assert.assertTrue((Workflow.TIME_NOT_SET  !=  m_task.getStartTime()));
+        Assertions.assertTrue((Workflow.TIME_NOT_SET  !=  m_task.getStartTime()));
     }
 
     @Test
     public void testGetWorkflow()
     {
-        Assert.assertEquals(m_workflow, m_task.getWorkflow());
+        Assertions.assertEquals(m_workflow, m_task.getWorkflow());
     }
 
     @Test
     public void testIsCompleted() throws WikiException
     {
-        Assert.assertFalse(m_task.isCompleted());
+        Assertions.assertFalse(m_task.isCompleted());
         m_task.start();
         m_task.setOutcome(m_task.execute());
-        Assert.assertTrue(m_task.isCompleted());
+        Assertions.assertTrue(m_task.isCompleted());
     }
 
     @Test
     public void testIsStarted() throws WikiException
     {
-        Assert.assertFalse(m_task.isStarted());
+        Assertions.assertFalse(m_task.isStarted());
         m_task.start();
-        Assert.assertTrue(m_task.isStarted());
+        Assertions.assertTrue(m_task.isStarted());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class TaskTest
             return;
         }
         // We should never get here
-        Assert.fail("Decision allowed itself to be started twice!");
+        Assertions.fail("Decision allowed itself to be started twice!");
     }
 
 }

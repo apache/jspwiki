@@ -21,6 +21,7 @@
  *
  */
 package org.apache.wiki.plugin;
+
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
@@ -28,10 +29,10 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.providers.WikiPageProvider;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -41,14 +42,14 @@ public class TableOfContentsTest
 {
     TestEngine testEngine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception
     {
         testEngine.deletePage( "Test" );
@@ -64,9 +65,7 @@ public class TableOfContentsTest
     String getI18nHTML( String pagename )
     {
         WikiPage page = testEngine.getPage( pagename, WikiPageProvider.LATEST_VERSION );
-        WikiContext context = new WikiContext( testEngine,
-                                               testEngine.newHttpRequest(),
-                                               page );
+        WikiContext context = new WikiContext( testEngine, testEngine.newHttpRequest(), page );
         context.setRequestContext( WikiContext.NONE );
         return testEngine.getHTML( context, page );
     }
@@ -82,7 +81,7 @@ public class TableOfContentsTest
         String res = getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
-        Assert.assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
+        Assertions.assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                       "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                       "<ul>\n"+
                       "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">Heading bar</a></li>\n"+
@@ -113,8 +112,7 @@ public class TableOfContentsTest
                 "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
                 "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>\n";
 
-        Assert.assertEquals(expecting,
-                res );
+        Assertions.assertEquals(expecting, res );
     }
 
     @Test
@@ -149,7 +147,7 @@ public class TableOfContentsTest
         "\n<h2 id=\"section-Test-Heading\">Heading<a class=\"hashlink\" href=\"#section-Test-Heading\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading3\">Subheading3<a class=\"hashlink\" href=\"#section-Test-Subheading3\">#</a></h3>\n";
 
-        Assert.assertEquals(expecting,
+        Assertions.assertEquals(expecting,
                 res );
     }
 
@@ -187,7 +185,7 @@ public class TableOfContentsTest
         "\n<h2 id=\"section-Test-Heading\">Heading<a class=\"hashlink\" href=\"#section-Test-Heading\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading3\">Subheading3<a class=\"hashlink\" href=\"#section-Test-Subheading3\">#</a></h3>\n";
 
-        Assert.assertEquals(expecting,
+        Assertions.assertEquals(expecting,
                      res );
     }
 
@@ -213,8 +211,7 @@ public class TableOfContentsTest
         "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
         "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>\n";
 
-        Assert.assertEquals(expecting,
-                res );
+        Assertions.assertEquals(expecting, res );
     }
 
     /**
@@ -232,7 +229,7 @@ public class TableOfContentsTest
 
         String res = getI18nHTML( "Test" );
 
-        Assert.assertTrue( res.indexOf("Table of Contents") != -1 );
+        Assertions.assertTrue( res.indexOf("Table of Contents") != -1 );
     }
 
     @Test
@@ -245,9 +242,8 @@ public class TableOfContentsTest
 
         String res = getI18nHTML( "Test" );
 
-        Assert.assertTrue( "<i>", res.indexOf("<i>") == -1 ); // Check that there is no HTML left
-        Assert.assertTrue( "</i>", res.indexOf("</i>") == -1 ); // Check that there is no HTML left
-
+        Assertions.assertTrue( res.indexOf("<i>") == -1, "<i>" ); // Check that there is no HTML left
+        Assertions.assertTrue( res.indexOf("</i>") == -1, "</i>" ); // Check that there is no HTML left
     }
 
     @Test
@@ -259,12 +255,10 @@ public class TableOfContentsTest
 
         String res = getI18nHTML( "Test" );
 
-        Assert.assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
-        Assert.assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );
-
-        Assert.assertTrue( "First test", res.indexOf( "#section-Test-Test" ) != -1 );
-        Assert.assertTrue( "2nd test",   res.indexOf( "#section-Test-Test-2" ) != -1 );
-
+        Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test\"" ) != -1, "Final HTML 1" );
+        Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1, "Final HTML 2" );
+        Assertions.assertTrue( res.indexOf( "#section-Test-Test" ) != -1, "First test" );
+        Assertions.assertTrue( res.indexOf( "#section-Test-Test-2" ) != -1, "2nd test" );
     }
 
 }

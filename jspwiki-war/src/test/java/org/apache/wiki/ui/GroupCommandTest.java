@@ -27,13 +27,13 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.permissions.GroupPermission;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GroupCommandTest
 {
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         Properties props = TestEngine.getTestProperties();
@@ -46,31 +46,31 @@ public class GroupCommandTest
         Command a;
 
         a = GroupCommand.VIEW_GROUP;
-        Assert.assertEquals( "viewGroup", a.getRequestContext() );
-        Assert.assertEquals( "Group.jsp", a.getJSP() );
-        Assert.assertEquals( "%uGroup.jsp?group=%n", a.getURLPattern() );
-        Assert.assertEquals( "GroupContent.jsp", a.getContentTemplate() );
-        Assert.assertNull( a.getTarget());
-        Assert.assertNull( a.requiredPermission() );
-        Assert.assertEquals( a, GroupCommand.VIEW_GROUP );
+        Assertions.assertEquals( "viewGroup", a.getRequestContext() );
+        Assertions.assertEquals( "Group.jsp", a.getJSP() );
+        Assertions.assertEquals( "%uGroup.jsp?group=%n", a.getURLPattern() );
+        Assertions.assertEquals( "GroupContent.jsp", a.getContentTemplate() );
+        Assertions.assertNull( a.getTarget());
+        Assertions.assertNull( a.requiredPermission() );
+        Assertions.assertEquals( a, GroupCommand.VIEW_GROUP );
 
         a = GroupCommand.EDIT_GROUP;
-        Assert.assertEquals( "editGroup", a.getRequestContext() );
-        Assert.assertEquals( "EditGroup.jsp", a.getJSP() );
-        Assert.assertEquals( "%uEditGroup.jsp?group=%n", a.getURLPattern() );
-        Assert.assertEquals( "EditGroupContent.jsp", a.getContentTemplate() );
-        Assert.assertNull( a.getTarget());
-        Assert.assertNull( a.requiredPermission() );
-        Assert.assertEquals( a, GroupCommand.EDIT_GROUP );
+        Assertions.assertEquals( "editGroup", a.getRequestContext() );
+        Assertions.assertEquals( "EditGroup.jsp", a.getJSP() );
+        Assertions.assertEquals( "%uEditGroup.jsp?group=%n", a.getURLPattern() );
+        Assertions.assertEquals( "EditGroupContent.jsp", a.getContentTemplate() );
+        Assertions.assertNull( a.getTarget());
+        Assertions.assertNull( a.requiredPermission() );
+        Assertions.assertEquals( a, GroupCommand.EDIT_GROUP );
 
         a = GroupCommand.DELETE_GROUP;
-        Assert.assertEquals( "deleteGroup", a.getRequestContext() );
-        Assert.assertEquals( "DeleteGroup.jsp", a.getJSP() );
-        Assert.assertEquals( "%uDeleteGroup.jsp?group=%n", a.getURLPattern() );
-        Assert.assertNull( null );
-        Assert.assertNull( a.getTarget());
-        Assert.assertNull( a.requiredPermission() );
-        Assert.assertEquals( a, GroupCommand.DELETE_GROUP );
+        Assertions.assertEquals( "deleteGroup", a.getRequestContext() );
+        Assertions.assertEquals( "DeleteGroup.jsp", a.getJSP() );
+        Assertions.assertEquals( "%uDeleteGroup.jsp?group=%n", a.getURLPattern() );
+        Assertions.assertNull( null );
+        Assertions.assertNull( a.getTarget());
+        Assertions.assertNull( a.requiredPermission() );
+        Assertions.assertEquals( a, GroupCommand.DELETE_GROUP );
     }
 
     @Test
@@ -82,33 +82,33 @@ public class GroupCommandTest
 
         // Combine with wiki group; make sure it's not equal to old command
         Command b = a.targetedCommand( group );
-        Assert.assertNotSame( a, b );
-        Assert.assertEquals( a.getRequestContext(), b.getRequestContext() );
-        Assert.assertEquals( a.getJSP(), b.getJSP() );
-        Assert.assertEquals( a.getURLPattern(), b.getURLPattern() );
-        Assert.assertEquals( a.getContentTemplate(), b.getContentTemplate() );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( new GroupPermission( "*:Test", "view" ), b.requiredPermission() );
-        Assert.assertEquals( group, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertEquals( a.getRequestContext(), b.getRequestContext() );
+        Assertions.assertEquals( a.getJSP(), b.getJSP() );
+        Assertions.assertEquals( a.getURLPattern(), b.getURLPattern() );
+        Assertions.assertEquals( a.getContentTemplate(), b.getContentTemplate() );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( new GroupPermission( "*:Test", "view" ), b.requiredPermission() );
+        Assertions.assertEquals( group, b.getTarget() );
 
         // Do the same with edit command
         a = GroupCommand.EDIT_GROUP;
         b = a.targetedCommand( group );
-        Assert.assertNotSame( a, b );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( new GroupPermission( "*:Test", "edit" ), b.requiredPermission() );
-        Assert.assertEquals( group, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( new GroupPermission( "*:Test", "edit" ), b.requiredPermission() );
+        Assertions.assertEquals( group, b.getTarget() );
 
         // Do the same with delete command
         a = GroupCommand.DELETE_GROUP;
         b = a.targetedCommand( group );
-        Assert.assertNotSame( a, b );
-        Assert.assertNotNull( b.getTarget() );
-        Assert.assertNotNull( b.requiredPermission() );
-        Assert.assertEquals( new GroupPermission( "*:Test", "delete" ), b.requiredPermission() );
-        Assert.assertEquals( group, b.getTarget() );
+        Assertions.assertNotSame( a, b );
+        Assertions.assertNotNull( b.getTarget() );
+        Assertions.assertNotNull( b.requiredPermission() );
+        Assertions.assertEquals( new GroupPermission( "*:Test", "delete" ), b.requiredPermission() );
+        Assertions.assertEquals( group, b.getTarget() );
     }
 
 }
