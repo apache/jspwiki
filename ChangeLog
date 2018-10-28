@@ -11,6 +11,8 @@
          - PropertiesUtils moved to the util package
          - ReferenceManager#findReferrers returns Set< String > instead of Collection< String >
          - AttachmentManager#listAttachments returns a List<Attachment> instead of a Collection
+         - WikiEngine#findPages( String query, WikiContext wikiContext ) is removed, use 
+           WikiEngine#getSearchManager()#findPages( String query, WikiContext wikiContext ) instead
 
 2018-10-26  Juan Pablo Santos (juanpablo AT apache DOT org)
 
