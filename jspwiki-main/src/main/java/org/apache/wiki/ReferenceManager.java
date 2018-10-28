@@ -519,7 +519,7 @@ public class ReferenceManager
             f = new File( f, getHashFileName(p.getName()) );
 
             // FIXME: There is a concurrency issue here...
-            Set entries = p.getAttributes().entrySet();
+            Set< Map.Entry < String, Object > > entries = p.getAttributes().entrySet();
 
             if( entries.size() == 0 ) 
             {
@@ -538,9 +538,9 @@ public class ReferenceManager
             out.writeUTF( p.getName() );
             out.writeLong( entries.size() );
 
-            for( Iterator i = entries.iterator(); i.hasNext(); )
+            for( Iterator< Map.Entry < String, Object > > i = entries.iterator(); i.hasNext(); )
             {
-                Map.Entry e = (Map.Entry) i.next();
+                Map.Entry< String, Object > e = i.next();
 
                 if( e.getValue() instanceof Serializable )
                 {

@@ -37,11 +37,7 @@ import org.apache.wiki.providers.WikiPageProvider;
 //        author, date, etc. should also be part of the metadata.  We also
 //        need to figure out the metadata lifecycle.
 
-public class WikiPage
-    implements Cloneable,
-               Comparable
-{
-    private static final long serialVersionUID = 1L;
+public class WikiPage implements Cloneable, Comparable< WikiPage > {
 
     private       String     m_name;
     private       WikiEngine m_engine;
@@ -50,7 +46,7 @@ public class WikiPage
     private long             m_fileSize = -1;
     private int              m_version = WikiPageProvider.LATEST_VERSION;
     private String           m_author = null;
-    private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
+    private final Map<String,Object> m_attributes = new HashMap<>();
 
     /**
      *  "Summary" is a short summary of the page.  It is a String.
@@ -131,7 +127,7 @@ public class WikiPage
      * @return The attribute Map.  Please note that this is a direct
      *         reference, not a copy.
      */
-    public Map getAttributes() 
+    public Map< String, Object > getAttributes() 
     {
         return m_attributes;
     }
@@ -357,9 +353,9 @@ public class WikiPage
      *  @param page The object to compare against
      *  @return -1, 0 or 1
      */
-    public int compareTo( Object page )
+    public int compareTo( WikiPage page )
     {
-        return m_engine.getPageSorter().compare( this, (WikiPage) page );
+        return m_engine.getPageSorter().compare( this, page );
     }
     
     /**
