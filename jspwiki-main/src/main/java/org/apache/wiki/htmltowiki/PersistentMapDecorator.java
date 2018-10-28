@@ -32,14 +32,14 @@ public class PersistentMapDecorator extends Properties
 {
     private static final long serialVersionUID = 0L;
     
-    private Map m_delegate;
+    private Map< Object, Object > m_delegate;
 
     /**
      *  Creates a new decorator for a given map.
      *  
      *  @param delegate The map to create a decorator for.
      */
-    public PersistentMapDecorator( Map delegate )
+    public PersistentMapDecorator( Map< Object, Object > delegate )
     {
         m_delegate = delegate;
     }
@@ -74,9 +74,8 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public Set entrySet()
+    public Set< Map.Entry< Object, Object > > entrySet()
     {
         return m_delegate.entrySet();
     }
@@ -120,9 +119,8 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public Set keySet()
+    public Set< Object > keySet()
     {
         return m_delegate.keySet();
     }
@@ -130,7 +128,6 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Object put( Object arg0, Object arg1 )
     {
@@ -140,9 +137,8 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public void putAll( Map arg0 )
+    public void putAll( Map< ?, ? > arg0 )
     {
         m_delegate.putAll( arg0 );
     }
@@ -177,9 +173,8 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public Collection values()
+    public Collection< Object > values()
     {
         return m_delegate.values();
     }
