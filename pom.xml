@@ -52,10 +52,6 @@
     <minimize>true</minimize> <!-- wro4j compression -->
   </properties>
 
-  <prerequisites>
-    <maven>3.5.0</maven>
-  </prerequisites>
-
   <scm>
     <connection>scm:git:https://github.com/apache/jspwiki.git</connection>
     <developerConnection>scm:git:https://github.com/apache/jspwiki.git</developerConnection>
@@ -398,7 +394,7 @@
               </requireJavaVersion>
               <requireMavenVersion>
                 <message>BUILD REQUIRES MAVEN 3</message>
-                <version>[3.0,)</version>
+                <version>[3.5,)</version>
               </requireMavenVersion>
             </rules>
           </configuration>
