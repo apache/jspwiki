@@ -70,8 +70,8 @@ public class SearchManagerTest {
     /**
      * Should cover for both index and initial delay
      */
-    Collection waitForIndex( String text, String testName ) throws Exception {
-        Collection res = null;
+    Collection< SearchResult > waitForIndex( String text, String testName ) throws Exception {
+        Collection< SearchResult > res = null;
         for( long l = 0; l < SLEEP_COUNT; l++ ) {
             if( res == null || res.isEmpty() ) {
                 Thread.sleep( SLEEP_TIME );
@@ -147,7 +147,7 @@ public class SearchManagerTest {
         m_engine.saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
 
         Thread.yield();
-        Collection res = waitForIndex( "Babylon" , "testSimpleSearch3" ); // wait until 2nd m_engine.saveText() takes effect
+        Collection< SearchResult > res = waitForIndex( "Babylon" , "testSimpleSearch3" ); // wait until 2nd m_engine.saveText() takes effect
 
         res = m_mgr.findPages( "mankind", ctx ); // check for text present in 1st m_engine.saveText() but not in 2nd
 
@@ -174,7 +174,7 @@ public class SearchManagerTest {
         m_engine.saveText( ctx, txt );
 
         Thread.yield();
-        Collection res = waitForIndex( "mankind" , "testSimpleSearch4" );
+        Collection< SearchResult > res = waitForIndex( "mankind" , "testSimpleSearch4" );
 
         Assertions.assertNotNull( res, "found results" );
         Assertions.assertEquals( 1, res.size(), "result not found" );

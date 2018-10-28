@@ -1833,31 +1833,6 @@ public class WikiEngine
     }
 
     /**
-     *  Parses an incoming search request, then
-     *  does a search.
-     *  <P>
-     *  The query is dependent on the actual chosen search provider - each one of them has
-     *  a language of its own.
-     *
-     *  @param query The query string
-     *  @param wikiContext the context within which to run the search
-     *  @return A Collection of SearchResult objects.
-     *  @throws ProviderException If the searching failed
-     *  @throws IOException       If the searching failed
-     */
-
-    //
-    // FIXME: Should also have attributes attached.
-    //
-    public Collection findPages( String query, WikiContext wikiContext )
-        throws ProviderException, IOException
-    {
-        Collection results = m_searchManager.findPages( query, wikiContext );
-
-        return results;
-    }
-
-    /**
      *  Finds the corresponding WikiPage object based on the page name.  It always finds
      *  the latest version of a page.
      *

@@ -114,8 +114,7 @@ public class Search implements WikiPlugin
     {
         log.debug("Searching for string "+query);
 
-        @SuppressWarnings("unchecked")
-        Collection<SearchResult> list = context.getEngine().findPages( query, context );
+        Collection<SearchResult> list = context.getEngine().getSearchManager().findPages( query, context );
 
         return list;
     }
