@@ -104,7 +104,8 @@ public class PingWeblogsComFilter
                                                               URL url,
                                                               String method )
                                     {
-                                        Hashtable res = (Hashtable) result;
+                                        @SuppressWarnings("unchecked")
+                                        Hashtable< String, Object > res = (Hashtable < String, Object > ) result;
 
                                         Boolean flerror = (Boolean)res.get("flerror");
                                         String  msg     = (String)res.get("message");
