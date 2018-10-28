@@ -435,20 +435,19 @@ public class WeblogPlugin
      *  @return a list of pages with their FIRST revisions.
      *  @throws ProviderException If something goes wrong
      */
-    public List findBlogEntries( WikiEngine engine,
-                                 String baseName, Date start, Date end )
+    public List< WikiPage > findBlogEntries( WikiEngine engine, String baseName, Date start, Date end )
         throws ProviderException
     {
         PageManager mgr = engine.getPageManager();
-        Set allPages = engine.getReferenceManager().findCreated();
+        Set< String > allPages = engine.getReferenceManager().findCreated();
 
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
 
-        for( Iterator i = allPages.iterator(); i.hasNext(); )
+        for( Iterator< String > i = allPages.iterator(); i.hasNext(); )
         {
-            String pageName = (String)i.next();
+            String pageName = i.next();
 
             if( pageName.startsWith( baseName ) )
             {

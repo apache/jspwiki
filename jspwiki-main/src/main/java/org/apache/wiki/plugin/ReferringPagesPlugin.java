@@ -88,8 +88,8 @@ public class ReferringPagesPlugin
         
         if( page != null )
         {
-            Collection   links  = refmgr.findReferrers( page.getName() );
-            String       wikitext = "";
+            Collection< String > links  = refmgr.findReferrers( page.getName() );
+            String wikitext = "";
 
             super.initialize( context, params );
 

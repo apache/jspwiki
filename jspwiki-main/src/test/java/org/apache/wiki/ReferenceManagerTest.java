@@ -129,8 +129,8 @@ public class ReferenceManagerTest
         c = mgr.findUnreferenced();
         Assertions.assertEquals( 1, c.size(), "Wrong # of orphan pages" );
 
-        Iterator i = c.iterator();
-        String first = (String) i.next();
+        Iterator< String > i = c.iterator();
+        String first = i.next();
         Assertions.assertEquals( "TestPage", first, "Not correct referrers" );
     }
 
@@ -168,7 +168,7 @@ public class ReferenceManagerTest
     public void testRefersTo()
         throws Exception
     {
-        Collection s = mgr.findRefersTo( "Foobar" );
+        Collection< String > s = mgr.findRefersTo( "Foobar" );
 
         Assertions.assertTrue( s.contains("Foobar"), "does not have Foobar" );
         // Assertions.assertTrue( "does not have Foobars", s.contains("Foobars") );
@@ -210,8 +210,6 @@ public class ReferenceManagerTest
 
         c = mgr.findReferrers( "Foobar" );
         Assertions.assertNotNull( c, "referrers expected" );
-        Iterator it = c.iterator();
-        String s1 = (String)it.next();
         Assertions.assertTrue( c.size()==2, "Foobar referrers" );
     }
 
@@ -254,10 +252,6 @@ public class ReferenceManagerTest
         Collection< String > c = mgr.findReferrers( "Foobars" );
         Assertions.assertNotNull( c, "referrers expected" );
         Assertions.assertEquals( 2, c.size(), "Foobars referrers count" );
-
-        Iterator< String > i = c.iterator();
-        String first = i.next();
-
         Assertions.assertTrue( c.contains("TestPage") && c.contains("Foobar"), "Foobars referrers" );
     }
 
@@ -382,17 +376,17 @@ public class ReferenceManagerTest
         {
             buf.append( "================================================================\n" );
             buf.append( "Referred By list:\n" );
-            Set keys = rm.getReferredBy().keySet();
-            Iterator it = keys.iterator();
+            Set< String > keys = rm.getReferredBy().keySet();
+            Iterator< String > it = keys.iterator();
             while( it.hasNext() )
             {
-                String key = (String) it.next();
+                String key = it.next();
                 buf.append( key + " referred by: " );
-                Set refs = (Set)rm.getReferredBy().get( key );
-                Iterator rit = refs.iterator();
+                Set< String > refs = rm.getReferredBy().get( key );
+                Iterator< String > rit = refs.iterator();
                 while( rit.hasNext() )
                 {
-                    String aRef = (String)rit.next();
+                    String aRef = rit.next();
                     buf.append( aRef + " " );
                 }
                 buf.append( "\n" );
@@ -407,19 +401,19 @@ public class ReferenceManagerTest
             {
                 String key = (String) it.next();
                 buf.append( key + " refers to: " );
-                Collection refs = (Collection)rm.getRefersTo().get( key );
+                Collection< String > refs = rm.getRefersTo().get( key );
                 if(refs != null)
                 {
-                    Iterator rit = refs.iterator();
+                    Iterator< String > rit = refs.iterator();
                     while( rit.hasNext() )
                     {
-                        String aRef = (String)rit.next();
+                        String aRef = rit.next();
                         buf.append( aRef + " " );
                     }
                     buf.append( "\n" );
-                }
-                else
+                } else {
                     buf.append("(no references)\n");
+                }
             }
             buf.append( "================================================================\n" );
         }

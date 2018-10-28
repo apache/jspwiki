@@ -185,12 +185,12 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
 
-                Set allPages = m_engine.getReferenceManager().findCreated();
+                Set< String > allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
-                for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
+                for( Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; )
                 {
-                    String p = (String) i.next();
+                    String p = i.next();
                     String pp = p.toLowerCase();
                     if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) )
                     {

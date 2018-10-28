@@ -71,7 +71,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
 
         Collection<String> result = null;
 
-        TreeMap sortedMap = new TreeMap();
+        TreeMap< String, String > sortedMap = new TreeMap<>();
         if (uncreatedPages != null) {
             for (String uncreatedPageName : uncreatedPages) {
                 Collection<String> referrers = referenceManager.findReferrers(uncreatedPageName);

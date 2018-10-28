@@ -403,7 +403,7 @@ public class WikiEngineTest
         try
         {
             // and check post-conditions
-            Collection c = refMgr.findUncreated();
+            Collection< String > c = refMgr.findUncreated();
             Assertions.assertTrue( c==null || c.size()==0, "attachment exists: "+c );
 
             c = refMgr.findUnreferenced();
@@ -453,7 +453,7 @@ public class WikiEngineTest
 
         // check a few pre-conditions
 
-        Collection c = refMgr.findReferrers( "TestAtt.txt" );
+        Collection< String > c = refMgr.findReferrers( "TestAtt.txt" );
         Assertions.assertTrue( c!=null && ((String)c.iterator().next()).equals( NAME1 ), "normal, unexisting page" );
 
         c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
@@ -511,7 +511,7 @@ public class WikiEngineTest
         try
         {
             // and check post-conditions
-            Collection c = refMgr.findUncreated();
+            Collection< String > c = refMgr.findUncreated();
             Assertions.assertTrue( c==null || c.size()==0, "attachment exists" );
 
             c = refMgr.findUnreferenced();
@@ -547,7 +547,7 @@ public class WikiEngineTest
         try
         {
             // and check post-conditions
-            Collection c = refMgr.findUncreated();
+            Collection< String > c = refMgr.findUncreated();
             Assertions.assertTrue( c==null || c.size()==0, "attachment exists" );
 
             c = refMgr.findUnreferenced();
@@ -646,7 +646,7 @@ public class WikiEngineTest
         Assertions.assertNull( m_engine.getPage(NAME1), "Page not removed" );
         Assertions.assertNull( m_engine.getPage(NAME1+"/TestAtt.txt"), "Att not removed" );
 
-        Collection refs = m_engine.getReferenceManager().findReferrers(NAME1);
+        Collection< String > refs = m_engine.getReferenceManager().findReferrers(NAME1);
 
         Assertions.assertNull( refs, "referrers" );
     }
@@ -759,7 +759,7 @@ public class WikiEngineTest
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
 
-        Collection pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        Collection< String > pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( "OldNameTestPage", pages.iterator().next(), "has one" );
 
         WikiContext ctx = new WikiContext( m_engine, m_engine.getPage("OldNameTestPage") );

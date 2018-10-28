@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.FileSystemProvider;
@@ -82,10 +83,10 @@ public class RSSGeneratorTest
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List< ? > entries = blogplugin.findBlogEntries( m_testEngine,
-                                                       "TestBlog",
-                                                        new Date(0),
-                                                        new Date(Long.MAX_VALUE) );
+        List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
+                                                               "TestBlog",
+                                                               new Date(0),
+                                                               new Date(Long.MAX_VALUE) );
 
         Feed feed = new RSS10Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );
@@ -113,10 +114,10 @@ public class RSSGeneratorTest
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List< ? > entries = blogplugin.findBlogEntries( m_testEngine,
-                                                       "TestBlog",
-                                                        new Date(0),
-                                                        new Date(Long.MAX_VALUE) );
+        List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
+                                                               "TestBlog",
+                                                               new Date(0),
+                                                               new Date(Long.MAX_VALUE) );
 
         Feed feed = new RSS20Feed( context );
         String blog = gen.generateBlogRSS( context, entries, feed );

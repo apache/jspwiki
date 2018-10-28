@@ -139,20 +139,13 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
      * @return A list containing page names which matched the filters.
      * @throws ProviderException
      */
-    private List<String> listPages( WikiContext context, String include, String exclude )
-            throws ProviderException
-    {
-        Pattern includePtrn = include != null 
-                ? Pattern.compile( include )
-                : Pattern.compile(".*");
-        Pattern excludePtrn = exclude != null
-                ? Pattern.compile( exclude )
-                : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
-        List<String> result = new ArrayList<String>();
-        @SuppressWarnings("unchecked")
-        Collection<String> pages = (Collection<String>)context.getEngine().getReferenceManager().findCreated();
+    private List<String> listPages( WikiContext context, String include, String exclude ) throws ProviderException {
+        Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
+        Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
+        List<String> result = new ArrayList<>();
+        Collection<String> pages = context.getEngine().getReferenceManager().findCreated();
         for ( Iterator<String> i = pages.iterator(); i.hasNext(); ) {
-            String pageName = (String) i.next();
+            String pageName = i.next();
             if ( excludePtrn.matcher( pageName ).matches() ) continue;
             if ( includePtrn.matcher( pageName ).matches() ) {
                 result.add( pageName );
