@@ -19,18 +19,18 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 
 /**
  *  Iterates through the list of attachments one has.
@@ -75,7 +75,7 @@ public class AttachmentsIteratorTag
         {
             if( page != null && engine.pageExists(page) )
             {
-                Collection atts = mgr.listAttachments( page );
+                List< Attachment > atts = mgr.listAttachments( page );
 
                 if( atts == null )
                 {

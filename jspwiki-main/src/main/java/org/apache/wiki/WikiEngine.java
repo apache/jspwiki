@@ -2182,10 +2182,10 @@ public class WikiEngine
 
                 if (m_attachmentManager.hasAttachments( p ))
                 {
-                    Collection attachments = m_attachmentManager.listAttachments( p );
-                    for( Iterator atti = attachments.iterator(); atti.hasNext(); )
+                    List< Attachment > attachments = m_attachmentManager.listAttachments( p );
+                    for( Iterator< Attachment > atti = attachments.iterator(); atti.hasNext(); )
                     {
-                        Attachment attachment = (Attachment)atti.next();
+                        Attachment attachment = atti.next();
                         refTo.remove(attachment.getName());
 
                         m_attachmentManager.deleteAttachment( attachment );

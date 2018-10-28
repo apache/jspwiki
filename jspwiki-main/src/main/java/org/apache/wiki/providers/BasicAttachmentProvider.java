@@ -452,10 +452,10 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection listAttachments( WikiPage page )
+    public List< Attachment > listAttachments( WikiPage page )
         throws ProviderException
     {
-        Collection<Attachment> result = new ArrayList<Attachment>();
+        List<Attachment> result = new ArrayList<Attachment>();
 
         File dir = findPageDir( page.getName() );
 

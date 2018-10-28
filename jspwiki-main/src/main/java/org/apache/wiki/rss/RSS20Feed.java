@@ -87,11 +87,11 @@ public class RSS20Feed extends Feed
             {
                 try
                 {
-                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                    List< Attachment > c = engine.getAttachmentManager().listAttachments(p);
 
-                    for( Iterator a = c.iterator(); a.hasNext(); )
+                    for( Iterator< Attachment > a = c.iterator(); a.hasNext(); )
                     {
-                        Attachment att = (Attachment) a.next();
+                        Attachment att = a.next();
 
                         Element attEl = new Element("enclosure");
                         attEl.setAttribute( "url", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );

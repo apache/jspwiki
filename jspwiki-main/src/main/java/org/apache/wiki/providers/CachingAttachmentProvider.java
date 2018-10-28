@@ -167,13 +167,13 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
-    public Collection listAttachments(WikiPage page) throws ProviderException {
+    public List< Attachment > listAttachments(WikiPage page) throws ProviderException {
         log.debug("Listing attachments for " + page);
-        Collection<Attachment> c = null;
+        List<Attachment> c = null;
         Element element = m_cache.get(page.getName());
 
         if (element != null) {
-            c = (Collection<Attachment>) element.getObjectValue();
+            c = (List<Attachment>) element.getObjectValue();
             log.debug("LIST from cache, " + page.getName() + ", size=" + c.size());
             return cloneCollection(c);
         }
@@ -183,9 +183,9 @@ public class CachingAttachmentProvider
         return refresh(page);
     }
 
-    private <T> Collection<T> cloneCollection( Collection<T> c )
+    private <T> List<T> cloneCollection( Collection<T> c )
     {
-        ArrayList<T> list = new ArrayList<T>();
+        ArrayList<T> list = new ArrayList<>();
 
         list.addAll( c );
 
@@ -255,9 +255,9 @@ public class CachingAttachmentProvider
      *
      *  @return The newly fetched object from the provider.
      */
-    private Collection<Attachment> refresh( WikiPage page ) throws ProviderException
+    private List<Attachment> refresh( WikiPage page ) throws ProviderException
     {
-        Collection<Attachment> c = m_provider.listAttachments( page );
+        List<Attachment> c = m_provider.listAttachments( page );
         m_cache.put(new Element(page.getName(), c));
 
         return c;
@@ -361,7 +361,8 @@ public class CachingAttachmentProvider
         //
         String checkName = oldParent + "/";
 
-        Collection< String > names = m_cache.getKeysWithExpiryCheck();
+        @SuppressWarnings("unchecked")
+		List< String > names = m_cache.getKeysWithExpiryCheck();
         for( String name : names )
         {
             if( name.startsWith( checkName ) )

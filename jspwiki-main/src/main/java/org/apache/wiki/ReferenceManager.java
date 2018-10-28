@@ -37,6 +37,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -193,7 +194,7 @@ public class ReferenceManager
         Collection<String> links = m_engine.scanWikiLinks( page, content );
 
         res.addAll( links );
-        Collection< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( page );
+        List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( page );
 
         for( Iterator< Attachment > atti = attachments.iterator(); atti.hasNext(); )
         {

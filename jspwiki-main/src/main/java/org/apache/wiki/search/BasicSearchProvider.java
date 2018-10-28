@@ -21,6 +21,7 @@ package org.apache.wiki.search;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -122,7 +123,7 @@ public class BasicSearchProvider implements SearchProvider
     {
         if(m_engine.getAttachmentManager().hasAttachments(page))
         {
-            Collection attachments;
+            List< Attachment > attachments;
             try
             {
                 attachments = m_engine.getAttachmentManager().listAttachments(page);
@@ -134,12 +135,13 @@ public class BasicSearchProvider implements SearchProvider
             }
 
             StringBuilder attachmentNames = new StringBuilder();
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            for( Iterator< Attachment > it = attachments.iterator(); it.hasNext(); )
             {
-                Attachment att = (Attachment) it.next();
+                Attachment att = it.next();
                 attachmentNames.append(att.getName());
-                if(it.hasNext())
+                if(it.hasNext()) {
                     attachmentNames.append(separator);
+                }
             }
             return attachmentNames.toString();
         }

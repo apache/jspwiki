@@ -78,7 +78,7 @@ public interface WikiAttachmentProvider
      *  @throws ProviderException If something goes wrong when listing the attachments.
      */
 
-    Collection listAttachments( WikiPage page )
+    List< Attachment > listAttachments( WikiPage page )
         throws ProviderException;
 
     /**

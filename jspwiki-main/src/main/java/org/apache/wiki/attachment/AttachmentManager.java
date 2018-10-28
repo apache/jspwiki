@@ -360,26 +360,14 @@ public class AttachmentManager
      *  @return a valid collection of attachments.
      *  @throws ProviderException If there was something wrong in the backend.
      */
-
-    // FIXME: This API should be changed to return a List.
-    @SuppressWarnings("unchecked")
-    public Collection listAttachments( WikiPage wikipage )
-        throws ProviderException
-    {
+    public List< Attachment > listAttachments( WikiPage wikipage ) throws ProviderException {
         if( m_provider == null )
         {
-            return new ArrayList();
+            return new ArrayList<>();
         }
 
-        Collection atts = m_provider.listAttachments( wikipage );
-
-        //
-        //  This is just a sanity check; all of our providers return a Collection.
-        //
-        if( atts instanceof List )
-        {
-            m_engine.getPageSorter().sortPages( (List) atts );
-        }
+        List< Attachment >atts = m_provider.listAttachments( wikipage );
+        m_engine.getPageSorter().sortPages( (List) atts );
 
         return atts;
     }

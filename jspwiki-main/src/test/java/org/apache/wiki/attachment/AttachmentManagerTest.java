@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
@@ -238,7 +238,7 @@ public class AttachmentManagerTest
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Collection<?> c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
+        List< Attachment > c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
 
         Assertions.assertEquals( 1, c.size(), "Length" );
 

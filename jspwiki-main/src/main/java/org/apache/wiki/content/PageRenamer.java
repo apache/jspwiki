@@ -19,6 +19,7 @@
 package org.apache.wiki.content;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -125,8 +126,7 @@ public class PageRenamer
         //
         
         //  Remove references to attachments under old name
-        @SuppressWarnings( "unchecked" )
-        Collection<Attachment> attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
+        List<Attachment> attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
         for (Attachment att:attachmentsOldName)
         {
             WikiPage fromAttPage = engine.getPage( att.getName() );
@@ -256,8 +256,7 @@ public class PageRenamer
         
         try
         {
-            @SuppressWarnings( "unchecked" )
-            Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
+            List<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
 
             for( Attachment att : attachments  )
             {

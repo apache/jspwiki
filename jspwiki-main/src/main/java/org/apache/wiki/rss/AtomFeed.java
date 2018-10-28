@@ -24,20 +24,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
  *  Provides an Atom 1.0 standard feed, with enclosures.
@@ -120,11 +121,11 @@ public class AtomFeed extends Feed
             {
                 try
                 {
-                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                    List< Attachment > c = engine.getAttachmentManager().listAttachments(p);
 
-                    for( Iterator a = c.iterator(); a.hasNext(); )
+                    for( Iterator< Attachment > a = c.iterator(); a.hasNext(); )
                     {
-                        Attachment att = (Attachment) a.next();
+                        Attachment att = a.next();
 
                         Element attEl = getElement("link");
                         attEl.setAttribute( "rel","enclosure" );

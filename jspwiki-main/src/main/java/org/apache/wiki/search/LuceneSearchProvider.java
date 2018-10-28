@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -483,12 +484,12 @@ public class LuceneSearchProvider implements SearchProvider {
         // Now add the names of the attachments of this page
         try
         {
-            Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
+            List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments(page);
             String attachmentNames = "";
 
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            for( Iterator< Attachment > it = attachments.iterator(); it.hasNext(); )
             {
-                Attachment att = (Attachment) it.next();
+                Attachment att = it.next();
                 attachmentNames += att.getName() + ";";
             }
             field = new Field( LUCENE_ATTACHMENTS, attachmentNames, TextField.TYPE_STORED );
