@@ -157,7 +157,7 @@ public interface PluginManager {
      * 
      * @return A Collection of {@link WikiModuleInfo} instances.
      */
-    Collection modules();
+    Collection< WikiModuleInfo > modules();
 
     /**
      * Returns the {@link WikiPluginInfo} information about the provided pluginName.

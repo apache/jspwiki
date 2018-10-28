@@ -120,7 +120,7 @@ public interface FilterManager
      * 
      * @return A Collection of {@link WikiModuleInfo} instances.
      */
-    Collection modules();
+    Collection< WikiModuleInfo > modules();
     
     /**
      * Returns the {@link WikiModuleInfo} information about the provided filterName.
