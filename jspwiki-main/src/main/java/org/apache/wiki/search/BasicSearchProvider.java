@@ -149,12 +149,12 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection findPages( QueryItem[] query, WikiContext wikiContext )
+    private Collection< SearchResult > findPages( QueryItem[] query, WikiContext wikiContext )
     {
-        TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
+        TreeSet<SearchResult> res = new TreeSet<>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
-        Collection allPages = null;
+        Collection< WikiPage > allPages = null;
         try {
             allPages = m_engine.getPageManager().getAllPages();
         } catch( ProviderException pe ) {
@@ -164,7 +164,7 @@ public class BasicSearchProvider implements SearchProvider
 
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
 
-        Iterator it = allPages.iterator();
+        Iterator< WikiPage > it = allPages.iterator();
         while( it.hasNext() ) {
             try {
                 WikiPage page = (WikiPage) it.next();
@@ -195,7 +195,7 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages(String query, WikiContext wikiContext) {
+    public Collection< SearchResult > findPages(String query, WikiContext wikiContext) {
         return findPages(parseQuery(query), wikiContext);
     }
 
