@@ -18,11 +18,12 @@
  */
 package org.apache.wiki.providers;
 
-import java.util.List;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
 
