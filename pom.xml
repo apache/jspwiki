@@ -359,11 +359,11 @@
             <additionalConfig>
               <file>
                 <name>.checkstyle</name>
-                <location>./src/main/config/dev/jspwiki-checkstyle.xml</location>
+                <location>./jspwiki-war/src/main/config/dev/jspwiki-checkstyle.xml</location>
               </file>
               <file>
                 <name>.settings/org.eclipse.jdt.core.prefs</name>
-                <location>./src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
+                <location>./jspwiki-war/src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
               </file>
             </additionalConfig>
             <additionalProjectnatures>
