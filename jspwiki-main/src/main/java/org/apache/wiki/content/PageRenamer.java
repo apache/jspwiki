@@ -174,7 +174,6 @@ public class PageRenamer
         //
         engine.getSearchManager().reindexPage(toPage);
         
-        @SuppressWarnings( "unchecked" )
         Collection<Attachment> attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
         for (Attachment att:attachmentsNewName)
         {
