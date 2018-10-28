@@ -39,16 +39,42 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <flexmark.version>0.34.56</flexmark.version>
     <jdk.version>1.8</jdk.version>
+    <maven.version>3.5</maven.version>
+
+    <akismet-java.version>1.02</akismet-java.version>
+    <commons-fileupload.version>1.3</commons-fileupload.version>
+    <commons-httpclient.version>3.1</commons-httpclient.version>
+    <commons-io.version>2.4</commons-io.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <ehcache.version>2.8.3</ehcache.version>
+    <flexmark.version>0.34.56</flexmark.version>
+    <freshcookies-security.version>0.60</freshcookies-security.version>
+    <gson.version>2.3.1</gson.version>
+    <hsqldb.version>2.3.0</hsqldb.version>
+    <jaxen.version>1.1.4</jaxen.version>
+    <javax-jstl.version>1.2</javax-jstl.version>
+    <javax-mail.version>1.4.7</javax-mail.version>
+    <javax-jsp-api.version>2.3.0</javax-jsp-api.version>
+    <javax-servlet-api.version>3.1.0</javax-servlet-api.version>
+    <jdom2.version>2.0.5</jdom2.version>
+    <jetty.version>8.1.15.v20140411</jetty.version>
+    <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.3.1</junit.version>
-    <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
-    <maven.compiler.target>${jdk}</maven.compiler.target>
+    <log4j.version>1.2.17</log4j.version>
     <lucene.version>4.7.0</lucene.version>
+    <nekohtml.version>1.9.21</nekohtml.version>
+    <oro.version>2.0.8</oro.version>
+    <sandler.version>0.5</sandler.version>
     <selenium.version>2.42.0</selenium.version>
     <slf4j.version>1.7.25</slf4j.version>
+    <stripes.version>1.6.0</stripes.version>
     <tomcat.version>8.5.34</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
+    <xmlrpc.version>2.0.1</xmlrpc.version>
+
+    <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
+    <maven.compiler.target>${jdk}</maven.compiler.target>
     <minimize>true</minimize> <!-- wro4j compression -->
   </properties>
 
@@ -71,6 +97,12 @@
     <dependencies>       <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
       <!-- compile dependencies -->
       <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.vladsch.flexmark</groupId>
         <artifactId>flexmark</artifactId>
         <version>${flexmark.version}</version>
@@ -89,93 +121,69 @@
       </dependency>
 
       <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.3.1</version>
-      </dependency>
-
-      <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
-        <version>1.3</version>
+        <version>${commons-fileupload.version}</version>
       </dependency>
 
       <dependency>
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
-        <version>3.1</version>
+        <version>${commons-httpclient.version}</version>
       </dependency>
 
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.4</version>
+        <version>${commons-io.version}</version>
       </dependency>
 
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
+        <version>${commons-lang.version}</version>
       </dependency>
 
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
-        <version>1.4.7</version>
+        <version>${javax-mail.version}</version>
       </dependency>
 
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
-        <version>1.2</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom2</artifactId>
-        <version>2.0.5</version>
+        <version>${javax-jstl.version}</version>
       </dependency>
 
       <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
-        <version>1.1.4</version>
+        <version>${jaxen.version}</version>
       </dependency>
 
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>1.2.17</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${slf4j.version}</version>
+        <version>${log4j.version}</version>
       </dependency>
 
       <dependency>
         <groupId>net.sourceforge</groupId>
         <artifactId>akismet-java</artifactId>
-        <version>1.02</version>
+        <version>${akismet-java.version}</version>
       </dependency>
 
       <dependency>
         <groupId>net.sourceforge</groupId>
         <artifactId>sandler</artifactId>
-        <version>0.5</version>
+        <version>${sandler.version}</version>
       </dependency>
 
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
-        <version>2.8.3</version>
+        <version>${ehcache.version}</version>
       </dependency>
 
       <dependency>
@@ -193,20 +201,25 @@
       <dependency>
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-analyzers-common</artifactId>
-        <scope>compile</scope>
         <version>${lucene.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.freshcookies</groupId>
         <artifactId>freshcookies-security</artifactId>
-        <version>0.60</version>
+        <version>${freshcookies-security.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jdom</groupId>
+        <artifactId>jdom2</artifactId>
+        <version>${jdom2.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.jvnet.hudson</groupId>
         <artifactId>org.suigeneris.jrcs.diff</artifactId>
-        <version>0.4.2</version>
+        <version>${jrcs-diff.version}</version>
       </dependency>
 
       <dependency>
@@ -228,30 +241,34 @@
       </dependency>
 
       <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
-        <version>2.0.8</version>
+        <version>${oro.version}</version>
       </dependency>
 
       <dependency>
         <groupId>xmlrpc</groupId>
         <artifactId>xmlrpc</artifactId>
-        <version>2.0.1</version>
+        <version>${xmlrpc.version}</version>
       </dependency>
 
       <!-- test dependencies -->
       <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>${junit.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
         <groupId>net.sourceforge.stripes</groupId>
         <artifactId>stripes</artifactId>
-        <version>1.6.0</version>
+        <version>${stripes.version}</version>
       </dependency>
 
       <!--
@@ -263,39 +280,47 @@
       <dependency>
         <groupId>org.eclipse.jetty.aggregate</groupId>
         <artifactId>jetty-all</artifactId>
-        <version>8.1.15.v20140411</version>
+        <version>${jetty.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>2.3.0</version>
+        <version>${hsqldb.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>sqltool</artifactId>
-        <version>2.3.0</version>
+        <version>${hsqldb.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <!-- provided dependencies -->
       <dependency>
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>javax.servlet.jsp-api</artifactId>
-        <version>2.3.0</version>
+        <version>${javax-jsp-api.version}</version>
       </dependency>
 
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
-        <version>3.1.0</version>
+        <version>${javax-servlet-api.version}</version>
       </dependency>
 
       <!-- runtime dependencies -->
       <dependency>
         <groupId>net.sourceforge.nekohtml</groupId>
         <artifactId>nekohtml</artifactId>
-        <version>1.9.21</version>
+        <version>${nekohtml.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -393,8 +418,8 @@
                 <version>${jdk.version}</version>
               </requireJavaVersion>
               <requireMavenVersion>
-                <message>BUILD REQUIRES MAVEN 3</message>
-                <version>[3.5,)</version>
+                <message>BUILD REQUIRES MAVEN ${maven.version}</message>
+                <version>[${maven.version},)</version>
               </requireMavenVersion>
             </rules>
           </configuration>
