@@ -251,7 +251,6 @@ public class PageRenamer
     {
         Set<String> referrers = new TreeSet<String>();
         
-        @SuppressWarnings( "unchecked" )
         Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
         if( r != null ) referrers.addAll( r );
         
@@ -262,7 +261,6 @@ public class PageRenamer
 
             for( Attachment att : attachments  )
             {
-                @SuppressWarnings( "unchecked" )
                 Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
 
                 if( c != null ) referrers.addAll(c);
