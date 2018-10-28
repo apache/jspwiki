@@ -45,7 +45,7 @@ public class UndefinedPagesPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection links = refmgr.findUncreated();
+        Collection< String > links = refmgr.findUncreated();
 
         super.initialize( context, params );
 
