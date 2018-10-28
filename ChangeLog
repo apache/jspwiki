@@ -1,26 +1,40 @@
+2018-10-29  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-05: maven build refactor
+         - java code split into its own module: custom extensions should now rely on 
+           the new org.apache.jspwiki:jspwiki-main dependency, instead of the 
+           org.apache.jspwiki:jspwiki-war:classes old one
+         - parent-pom: clean-up + dependencies and plugins versions' set as maven properties
+         - jspwiki-markdown module included into main war
+
+       * several small code refactors, including some backwards-incompatible ones:
+         - PropertiesUtils moved to the util package
+         - ReferenceManager#findReferrers returns Set< String > instead of Collection< String >
+         - AttachmentManager#listAttachments returns a List<Attachment> instead of a Collection
+
 2018-10-26  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-04: update tests to JUnit 5.3.1
-	   
-	   * updated versions of maven plugins
-	   
-	   * flexmark updated to 0.34.56
+
+       * updated versions of maven plugins
+
+       * flexmark updated to 0.34.56
 
 2018-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-03: Haddock is now the default template
-	     - to bring back the 2.10 template set the jspwiki.templateDir property to "210"
+         - to bring back the 2.10 template set the jspwiki.templateDir property to "210"
 
-	   * added the following pages to the core pages' bundles, as they enable some more haddock functionality
-	     - CSSBackgroundGradients: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Gradients
-	     - CSSBackgroundPatterns: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Patterns
-	     - CSSInstagramFilters: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Instagram%20Filters
-	     - CSSPrettifyThemeTomorrowNightBlue: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Tomorrow%20Night%20Blue
-	     - CSSPrettifyThemeTomorrowPrism: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Prism
-	     - CSSRibbon: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Ribbon
-	     - CSSStripedText: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Striped Text
-	     - CSSThemeCleanBlue: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Clean%20Blue%20Theme
-	     - CSSThemeDark: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Dark%20Theme
+       * added the following pages to the core pages' bundles, as they enable some more haddock functionality
+         - CSSBackgroundGradients: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Gradients
+         - CSSBackgroundPatterns: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Patterns
+         - CSSInstagramFilters: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Instagram%20Filters
+         - CSSPrettifyThemeTomorrowNightBlue: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Tomorrow%20Night%20Blue
+         - CSSPrettifyThemeTomorrowPrism: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Prism
+         - CSSRibbon: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Ribbon
+         - CSSStripedText: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Striped Text
+         - CSSThemeCleanBlue: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Clean%20Blue%20Theme
+         - CSSThemeDark: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Dark%20Theme
 
 2018-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)
 
@@ -38,9 +52,9 @@
 
 2018-08-31  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-	   * update flexmark to 0.34.22 and ASF parent pom to 21
+       * update flexmark to 0.34.22 and ASF parent pom to 21
 
-	   * prepare release for 2.10.5
+       * prepare release for 2.10.5
 
 2018-08-31  Siegfried Goeschl (sgoeschl@apache.org)
 
@@ -772,7 +786,7 @@
 
        * Fixed the AttachementServlet so you can now select multiple files
          before pressing the upload button.  You can also use
-		 drap & drop if your browser supports it.
+         drap & drop if your browser supports it.
 
         * [JSPWIKI-903] Fixed a page redirect issue when deleting an
          attachment from the Attachment info page.
@@ -1405,7 +1419,7 @@
               test
               }]
 
-		 We are still getting error-code: 490, "No permission to access this AJAX method!"
+         We are still getting error-code: 490, "No permission to access this AJAX method!"
          when invoking a plugin generated json-rpc call.
 
 
