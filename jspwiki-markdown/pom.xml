@@ -33,15 +33,14 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-war</artifactId>
+      <artifactId>jspwiki-main</artifactId>
       <version>${project.version}</version>
-      <classifier>classes</classifier>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-war</artifactId>
+      <artifactId>jspwiki-main</artifactId>
       <type>test-jar</type>
       <version>${project.version}</version>
       <scope>test</scope>
