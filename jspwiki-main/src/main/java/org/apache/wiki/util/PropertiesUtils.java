@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.htmltowiki;
+package org.apache.wiki.util;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -24,13 +24,12 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 /**
- * some usefull methods for properties
+ * some useful methods for properties
  *
  * @version 1.0
  */
-// FIXME3.0 move to utils package
-public final class PropertiesUtils
-{
+public final class PropertiesUtils {
+
     private static final String OTHER_WHITESPACE = "\t\r\n\014";
     private static final char[] HEXDIGIT = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
@@ -46,17 +45,17 @@ public final class PropertiesUtils
      * @param properties the properties object
      * @return String the properties, nicely formatted 
      */
-    @SuppressWarnings("unchecked")
     public static String toSortedString( Properties properties )
     {
-        TreeMap treemap = new TreeMap( properties );
+        @SuppressWarnings( { "unchecked", "rawtypes" } )
+		TreeMap< String, String > treemap = new TreeMap( properties );
         String string = "";
-        Iterator iterator = treemap.entrySet().iterator();
+        Iterator< Map.Entry< String, String > > iterator = treemap.entrySet().iterator();
         while( iterator.hasNext() )
         {
-            Map.Entry entry = (Map.Entry)iterator.next();
-            String key = (String)entry.getKey();
-            String value = entry.getValue() == null ? "null" : entry.getValue().toString();
+            Map.Entry< String, String > entry = iterator.next();
+            String key = entry.getKey();
+            String value = entry.getValue() == null ? "null" : entry.getValue();
             string += toLine( key, value ) + '\n';
         }
         return string;
