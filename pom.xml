@@ -73,6 +73,34 @@
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
+    <plugin.antrun.version>1.8</plugin.antrun.version>
+    <plugin.assembly.version>3.1.0</plugin.assembly.version>
+    <plugin.clean.version>3.1.0</plugin.clean.version>
+    <plugin.compiler.version>3.8.0</plugin.compiler.version>
+    <plugin.dependency.version>3.1.1</plugin.dependency.version>
+    <plugin.eclipse.version>2.10</plugin.eclipse.version>
+    <plugin.enforcer.version>1.4.1</plugin.enforcer.version>
+    <plugin.idea.version>2.2.1</plugin.idea.version>
+    <plugin.install.version>2.5.2</plugin.install.version>
+    <plugin.jar.version>3.1.0</plugin.jar.version>
+    <plugin.javadoc.version>3.0.1</plugin.javadoc.version>
+    <plugin.jxr.version>3.0.0</plugin.jxr.version>
+    <plugin.project-info-reports.version>3.0.0</plugin.project-info-reports.version>
+    <plugin.release.version>2.5.3</plugin.release.version>
+    <plugin.resources.version>3.1.0</plugin.resources.version>
+    <plugin.source.version>3.0.1</plugin.source.version>
+    <plugin.surefire.version>2.22.0</plugin.surefire.version>
+    <plugin.war.version>3.2.2</plugin.war.version>
+    <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
+    <plugin.checksum.version>1.7</plugin.checksum.version>
+    <plugin.jslint.version>1.0.1</plugin.jslint.version>
+    <plugin.cargo.version>1.6.10</plugin.cargo.version>
+    <plugin.clirr.version>2.8</plugin.clirr.version>
+    <plugin.cobertura.version>2.7</plugin.cobertura.version>
+    <plugin.selenium.version>2.3</plugin.selenium.version>
+    <plugin.sonar.version>3.4.0.905</plugin.sonar.version>
+    <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
+    <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
     <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
     <maven.compiler.target>${jdk}</maven.compiler.target>
     <minimize>true</minimize> <!-- wro4j compression -->
@@ -347,22 +375,22 @@
       <plugins>        <!-- ordered alphabetically by groupId (default first):artifactId                                                -->
         <plugin>       <!-- default maven plugins have their version configured to make the build independent of the maven version used -->
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.8</version>
+          <version>${plugin.antrun.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>${plugin.assembly.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>${plugin.clean.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>${plugin.compiler.version}</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${jdk.version}</source>
@@ -372,12 +400,12 @@
 
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>${plugin.dependency.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.10</version>
+          <version>${plugin.eclipse.version}</version>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>true</downloadJavadocs>
@@ -399,17 +427,8 @@
         </plugin>
 
         <plugin>
-          <artifactId>maven-idea-plugin</artifactId>
-          <version>2.2.1</version>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>true</downloadJavadocs>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4.1</version>
+          <version>${plugin.enforcer.version}</version>
           <configuration>
             <fail>true</fail>
             <rules>
@@ -426,24 +445,17 @@
         </plugin>
 
         <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.1.0</version>
+          <artifactId>maven-idea-plugin</artifactId>
+          <version>${plugin.idea.version}</version>
           <configuration>
-            <archive>
-              <manifest>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              </manifest>
-              <manifestEntries>
-                <Extension-Name>${project.artifactId}</Extension-Name>
-              </manifestEntries>
-            </archive>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
           </configuration>
         </plugin>
 
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>${plugin.install.version}</version>
           <configuration>
             <createChecksum>true</createChecksum>
           </configuration>
@@ -451,7 +463,7 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${plugin.javadoc.version}</version>
           <configuration>
             <additionalOptions>
               <additionalOption>-sourceclasspath ${project.build.outputDirectory}</additionalOption>
@@ -475,18 +487,34 @@
         </plugin>
 
         <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${plugin.jar.version}</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+              <manifestEntries>
+                <Extension-Name>${project.artifactId}</Extension-Name>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+
+        <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>${plugin.jxr.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>${plugin.project-info-reports.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.3</version>
+          <version>${plugin.release.version}</version>
           <dependencies>
             <dependency>
               <groupId>org.apache.maven.scm</groupId>
@@ -505,7 +533,7 @@
 
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>${plugin.resources.version}</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
           </configuration>
@@ -513,12 +541,12 @@
 
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${plugin.source.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>${plugin.surefire.version}</version>
           <configuration>
             <systemPropertyVariables>
               <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
@@ -528,12 +556,12 @@
 
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>${plugin.surefire.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>${plugin.war.version}</version>
           <configuration>
             <archive>
               <manifest>
@@ -559,13 +587,13 @@
         <plugin>
           <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
           <artifactId>inmemdb-maven-plugin</artifactId>
-          <version>1.4.3</version>
+          <version>${plugin.inmemdb.version}</version>
         </plugin>
         
         <plugin>
           <groupId>net.nicoulaj.maven.plugins</groupId>
           <artifactId>checksum-maven-plugin</artifactId>
-          <version>1.7</version>
+          <version>${plugin.checksum.version}</version>
           <executions>
             <execution>
               <goals>
@@ -593,18 +621,10 @@
           </configuration>
         </plugin>
 
-        <!-- yuicompressor  => replaced by wro4j
-        <plugin>
-          <groupId>net.alchim31.maven</groupId>
-          <artifactId>yuicompressor-maven-plugin</artifactId>
-          <version>1.3.2</version>
-        </plugin>
-        -->
-
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jslint-maven-plugin</artifactId>
-          <version>1.0.1</version>
+          <version>${plugin.jslint.version}</version>
         </plugin>
 
         <plugin>
@@ -636,7 +656,7 @@
         <plugin>
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
-          <version>1.6.10</version>
+          <version>${plugin.cargo.version}</version>
           <configuration>
             <container>
               <!-- https://codehaus-cargo.github.io/cargo/Maven2+Plugin+Reference+Guide.html#Maven2PluginReferenceGuide-container -->
@@ -674,13 +694,13 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>clirr-maven-plugin</artifactId>
-          <version>2.8</version>
+          <version>${plugin.clirr.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.7</version>
+          <version>${plugin.cobertura.version}</version>
           <configuration>
             <formats>
               <format>html</format>
@@ -692,7 +712,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>selenium-maven-plugin</artifactId>
-          <version>2.3</version>
+          <version>${plugin.selenium.version}</version>
           <configuration>
             <background>true</background>
           </configuration>
@@ -701,20 +721,20 @@
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.4.0.905</version>
+          <version>${plugin.sonar.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.codehaus.sonar-plugins</groupId>
           <artifactId>maven-report</artifactId>
-          <version>0.1</version>
+          <version>${plugin.sonar-report.version}</version>
         </plugin>
 
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
+          <version>${plugin.eclipse-lifecycle-mapping.version}</version>
           <configuration>
             <lifecycleMappingMetadata>
               <pluginExecutions>
