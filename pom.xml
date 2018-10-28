@@ -775,20 +775,6 @@
         </plugins>
       </build>
     </profile>
-
-    <profile>
-      <id>markdown-support</id>
-      <activation>
-        <jdk>[1.7,)</jdk>
-      </activation>
-      <modules>
-        <module>jspwiki-wikipages</module>
-        <module>jspwiki-war</module>
-        <module>jspwiki-markdown</module>
-        <module>jspwiki-portable</module>
-        <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
-      </modules>
-    </profile>
   </profiles>
 
   <organization>
