@@ -32,7 +32,7 @@ import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 
-public abstract class ModuleBean< T extends WikiModuleInfo > extends SimpleAdminBean {
+public abstract class ModuleBean extends SimpleAdminBean {
 
     protected WikiEngine m_engine;
 
@@ -60,14 +60,14 @@ public abstract class ModuleBean< T extends WikiModuleInfo > extends SimpleAdmin
      * {@inheritDoc}
      */
     public String doGet( WikiContext context ) {
-        Collection< T > filters = modules();
+        Collection< WikiModuleInfo > filters = modules();
         Element root = title();
         Element tb = containerForModuleDetail( root );
 
         Element trHead = heading();
         tb.addContent( trHead );
 
-        for( T info : filters ) {
+        for( WikiModuleInfo info : filters ) {
             Element tr = rowBody( info );
             tb.addContent( tr );
         }
@@ -92,7 +92,7 @@ public abstract class ModuleBean< T extends WikiModuleInfo > extends SimpleAdmin
      *
      * @return a collection of {@link WikiModuleInfo}
      */
-    protected abstract Collection< T > modules();
+    protected abstract Collection< WikiModuleInfo > modules();
 
     /**
      * html blob describing the values of each {@link WikiModuleInfo} inspected.
@@ -107,9 +107,9 @@ public abstract class ModuleBean< T extends WikiModuleInfo > extends SimpleAdmin
      * @param module {@link WikiModuleInfo} inspected.
      * @return {@link Element} describing the {@link Element} inspected.
      */
-    protected abstract Element rowBody( T module );
+    protected abstract Element rowBody( WikiModuleInfo module );
 
-    protected String validModuleVersion( T info ) {
+    protected String validModuleVersion( WikiModuleInfo info ) {
         return Release.isNewerOrEqual( info.getMinVersion() ) && Release.isOlderOrEqual( info.getMaxVersion() )
                ? StringUtils.EMPTY
                : VER_WARNING;

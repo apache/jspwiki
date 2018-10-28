@@ -23,13 +23,14 @@ import java.util.Collection;
 import javax.management.NotCompliantMBeanException;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 
 
-public class PluginBean extends ModuleBean< WikiPluginInfo > {
+public class PluginBean extends ModuleBean {
 
     public PluginBean( WikiEngine engine ) throws NotCompliantMBeanException {
         super( engine );
@@ -53,7 +54,7 @@ public class PluginBean extends ModuleBean< WikiPluginInfo > {
      * {@inheritDoc}
      */
     @Override
-    protected Collection< WikiPluginInfo > modules() {
+    protected Collection< WikiModuleInfo > modules() {
         return m_engine.getPluginManager().modules();
     }
 
@@ -74,10 +75,10 @@ public class PluginBean extends ModuleBean< WikiPluginInfo > {
      * {@inheritDoc}
      */
     @Override
-    protected Element rowBody( WikiPluginInfo plugin ) {
+    protected Element rowBody( WikiModuleInfo plugin ) {
         Element tr = XhtmlUtil.element( XHTML.tr );
         tr.addContent( XhtmlUtil.element( XHTML.td ).addContent( plugin.getName() ) )
-          .addContent( XhtmlUtil.element( XHTML.td ).addContent( plugin.getAlias() ) )
+          .addContent( XhtmlUtil.element( XHTML.td ).addContent( ( ( WikiPluginInfo )plugin).getAlias() ) )
           .addContent( XhtmlUtil.element( XHTML.td ).addContent( plugin.getAuthor() ) )
           .addContent( XhtmlUtil.element( XHTML.td ).addContent( validModuleVersion( plugin ) ) );
         return tr;

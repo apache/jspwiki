@@ -29,7 +29,7 @@ import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 
 
-public class FilterBean extends ModuleBean< WikiModuleInfo > {
+public class FilterBean extends ModuleBean {
 
     public FilterBean( WikiEngine engine ) throws NotCompliantMBeanException {
         super( engine );
