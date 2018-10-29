@@ -56,7 +56,7 @@
   {
     try
     {
-      Collection list = wiki.findPages( query, wikiContext );
+      Collection list = wiki.getSearchManager().findPages( query, wikiContext );
 
       //  Filter down to only those that we actually have a permission to view
       AuthorizationManager mgr = wiki.getAuthorizationManager();

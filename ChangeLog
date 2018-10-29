@@ -1,3 +1,7 @@
+2018-10-30  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-06: fix JSPs using methods removed on 2.11.0-M1-git-05
+
 2018-10-29  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-05: maven build refactor

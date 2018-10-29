@@ -50,7 +50,7 @@
 
         try
         {
-            list = wiki.findPages( query, wikiContext );
+            list = wiki.getSearchManager().findPages( query, wikiContext );
 
             pageContext.setAttribute( "searchresults",
                                       list,
