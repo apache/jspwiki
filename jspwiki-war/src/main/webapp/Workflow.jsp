@@ -36,7 +36,7 @@
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    WikiEngine wiki = WikiEngine.getInstance( request.getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.WORKFLOW );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
@@ -56,10 +56,10 @@
           String outcomeKey = request.getParameter("outcome");
           Outcome outcome = Outcome.forName( outcomeKey );
           // Iterate through our actor decisions and see if we can find an ID match
-          Collection decisions = dq.getActorDecisions(wikiSession);
-          for (Iterator it = decisions.iterator(); it.hasNext();)
+          Collection< Decision > decisions = dq.getActorDecisions(wikiSession);
+          for (Iterator< Decision > it = decisions.iterator(); it.hasNext();)
           {
-            Decision d = (Decision)it.next();
+            Decision d = it.next();
             if (d.getId() == id)
             {
               // Cool, we found it. Now make the decision.
@@ -83,10 +83,10 @@
           // Extract parameters for decision ID & decision outcome
           int id = Integer.parseInt( request.getParameter( "id" ) );
           // Iterate through our owner decisions and see if we can find an ID match
-          Collection workflows = wiki.getWorkflowManager().getOwnerWorkflows(wikiSession);
-          for (Iterator it = workflows.iterator(); it.hasNext();)
+          Collection< Workflow > workflows = wiki.getWorkflowManager().getOwnerWorkflows(wikiSession);
+          for (Iterator< Workflow > it = workflows.iterator(); it.hasNext();)
           {
-            Workflow w = (Workflow)it.next();
+            Workflow w = it.next();
             if (w.getId() == id)
             {
               // Cool, we found it. Now kill the workflow.

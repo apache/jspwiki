@@ -96,7 +96,7 @@
     //
     //  Now, list items.
     //
-    List changed;
+    List< WikiPage > changed;
     
     if( mode.equals("blog") )
     {
@@ -117,9 +117,9 @@
     boolean hasChanged = false;
     Date    latest     = new Date(0);
 
-    for( Iterator i = changed.iterator(); i.hasNext(); )
+    for( Iterator< WikiPage > i = changed.iterator(); i.hasNext(); )
     {
-        WikiPage p = (WikiPage) i.next();
+        WikiPage p = i.next();
 
         if( !HttpUtil.checkFor304( request, p.getName(), p.getLastModified() ) ) hasChanged = true;
         if( p.getLastModified().after( latest ) ) latest = p.getLastModified();

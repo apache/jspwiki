@@ -56,16 +56,16 @@
   {
     try
     {
-      Collection list = wiki.getSearchManager().findPages( query, wikiContext );
+      Collection< SearchResult > list = wiki.getSearchManager().findPages( query, wikiContext );
 
       //  Filter down to only those that we actually have a permission to view
       AuthorizationManager mgr = wiki.getAuthorizationManager();
 
-      ArrayList items = new ArrayList();
+      ArrayList< SearchResult > items = new ArrayList<>();
 
-      for( Iterator i = list.iterator(); i.hasNext(); )
+      for( Iterator< SearchResult > i = list.iterator(); i.hasNext(); )
       {
-        SearchResult r = (SearchResult)i.next();
+        SearchResult r = i.next();
 
         WikiPage p = r.getPage();
 
