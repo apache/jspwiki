@@ -99,7 +99,7 @@ public class LuceneSearchProvider implements SearchProvider {
     // Lucene properties.
 
     /** Which analyzer to use.  Default is StandardAnalyzer. */
-    public static final String PROP_LUCENE_ANALYZER    = "jspwiki.lucene.analyzer";
+    public static final String PROP_LUCENE_ANALYZER      = "jspwiki.lucene.analyzer";
 
     private static final String PROP_LUCENE_INDEXDELAY   = "jspwiki.lucene.indexdelay";
     private static final String PROP_LUCENE_INITIALDELAY = "jspwiki.lucene.initialdelay";
@@ -227,11 +227,11 @@ public class LuceneSearchProvider implements SearchProvider {
                 try
                 {
                     writer = getIndexWriter( luceneDir );
-                    Collection allPages = m_engine.getPageManager().getAllPages();
+                    Collection< WikiPage > allPages = m_engine.getPageManager().getAllPages();
 
-                    for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
+                    for( Iterator< WikiPage > iterator = allPages.iterator(); iterator.hasNext(); )
                     {
-                        WikiPage page = (WikiPage) iterator.next();
+                        WikiPage page = iterator.next();
                         
                         try
                         {

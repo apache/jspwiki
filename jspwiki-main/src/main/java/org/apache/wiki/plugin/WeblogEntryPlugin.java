@@ -124,13 +124,13 @@ public class WeblogEntryPlugin implements WikiPlugin {
                               String baseName,
                               String date)
             throws ProviderException {
-        Collection everyone = mgr.getAllPages();
+        Collection< WikiPage > everyone = mgr.getAllPages();
         int max = 0;
 
         String startString = WeblogPlugin.makeEntryPage(baseName, date, "");
 
-        for (Iterator i = everyone.iterator(); i.hasNext(); ) {
-            WikiPage p = (WikiPage) i.next();
+        for (Iterator< WikiPage > i = everyone.iterator(); i.hasNext(); ) {
+            WikiPage p = i.next();
 
             if (p.getName().startsWith(startString)) {
                 try {

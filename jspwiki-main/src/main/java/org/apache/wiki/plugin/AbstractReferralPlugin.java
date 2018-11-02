@@ -259,7 +259,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
      */
     protected Collection filterCollection( Collection c )
     {
-        ArrayList<Object> result = new ArrayList<Object>();
+        ArrayList<Object> result = new ArrayList<>();
 
         PatternMatcher pm = new Perl5Matcher();
 
@@ -366,22 +366,22 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
      *  @param numItems How many items to show.
      *  @return The WikiText
      */
-    protected String wikitizeCollection( Collection links, String separator, int numItems )
+    protected String wikitizeCollection( Collection< String > links, String separator, int numItems )
     {
         if( links == null || links.isEmpty() )
             return "";
 
         StringBuilder output = new StringBuilder();
 
-        Iterator it     = links.iterator();
-        int      count  = 0;
+        Iterator< String > it = links.iterator();
+        int count = 0;
 
         //
         //  The output will be B Item[1] A S B Item[2] A S B Item[3] A
         //
         while( it.hasNext() && ( (count < numItems) || ( numItems == ALL_ITEMS ) ) )
         {
-            String value = (String)it.next();
+            String value = it.next();
 
             if( count > 0 )
             {

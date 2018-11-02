@@ -262,15 +262,15 @@ public class AtomAPIServlet extends HttpServlet
         throws ProviderException,
                IOException
     {
-        Collection pages = m_engine.getPageManager().getAllPages();
+        Collection< WikiPage > pages = m_engine.getPageManager().getAllPages();
 
         Feed feed = SyndicationFactory.newSyndicationFeed();
         feed.setTitle("List of blogs at this site");
         feed.setModified( new Date() );
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( Iterator< WikiPage > i = pages.iterator(); i.hasNext(); )
         {
-            WikiPage p = (WikiPage) i.next();
+            WikiPage p = i.next();
 
             //
             //  List only weblogs

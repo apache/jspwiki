@@ -89,7 +89,6 @@ public class SearchManagerBean extends SimpleAdminBean
                     setName("Reindexer started");
                 }
 
-                @SuppressWarnings("unchecked")
                 public void backgroundTask() throws Exception
                 {
                     Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();

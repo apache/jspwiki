@@ -283,7 +283,7 @@ public class EditorManager extends ModuleManager {
      *  {@inheritDoc}
      */
     @Override
-    public Collection modules() {
+    public Collection< WikiModuleInfo > modules() {
         return modules( m_editors.values().iterator() );
     }
 

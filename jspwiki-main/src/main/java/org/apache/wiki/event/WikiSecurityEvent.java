@@ -234,7 +234,7 @@ public final class WikiSecurityEvent extends WikiEvent
             case LOGIN_CREDENTIAL_EXPIRED:  return "LOGIN_ACCOUNT_EXPIRED";
             case LOGIN_FAILED:              return "LOGIN_FAILED";
             case LOGOUT:                    return "LOGOUT";
-            case PRINCIPAL_ADD:                    return "PRINCIPAL_ADD";
+            case PRINCIPAL_ADD:             return "PRINCIPAL_ADD";
             case SESSION_EXPIRED:           return "SESSION_EXPIRED";
             case GROUP_ADD:                 return "GROUP_ADD";
             case GROUP_REMOVE:              return "GROUP_REMOVE";
@@ -261,7 +261,7 @@ public final class WikiSecurityEvent extends WikiEvent
             case LOGIN_CREDENTIAL_EXPIRED:  return "login failed: credential expired";
             case LOGIN_FAILED:              return "login failed";
             case LOGOUT:                    return "user logged out";
-            case PRINCIPAL_ADD:                   return "new principal added";
+            case PRINCIPAL_ADD:             return "new principal added";
             case SESSION_EXPIRED:           return "session expired";
             case GROUP_ADD:                 return "new group added";
             case GROUP_REMOVE:              return "group removed";

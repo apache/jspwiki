@@ -398,15 +398,14 @@ public class TemplateManager extends ModuleManager {
      *   @return Set of Strings with the skin names.
      *   @since 2.3.26
      */
-    @SuppressWarnings("unchecked")
-    public Set listSkins( PageContext pageContext, String template )
+    public Set< String > listSkins( PageContext pageContext, String template )
     {
         String place = makeFullJSPName( template, SKIN_DIRECTORY );
 
         ServletContext sContext = pageContext.getServletContext();
 
         Set<String> skinSet = sContext.getResourcePaths( place );
-        TreeSet<String> resultSet = new TreeSet<String>();
+        TreeSet<String> resultSet = new TreeSet<>();
 
         if( log.isDebugEnabled() ) log.debug( "Listings skins from "+place );
 
@@ -442,9 +441,9 @@ public class TemplateManager extends ModuleManager {
      * @return map of installed Languages
      * @since 2.7.x
      */
-    public Map listLanguages(PageContext pageContext)
+    public Map< String, String > listLanguages(PageContext pageContext)
     {
-        Map< String, String > resultMap = new LinkedHashMap< String, String >();
+        Map< String, String > resultMap = new LinkedHashMap<>();
         String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
 
         List< String > entries = ClassUtil.classpathEntriesUnder( DIRECTORY );
@@ -482,8 +481,8 @@ public class TemplateManager extends ModuleManager {
     {
         WikiContext context = WikiContext.findContext( pageContext );
         Properties props = m_engine.getWikiProperties();
-        ArrayList<String> tfArr = new ArrayList<String>(40);
-        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
+        ArrayList<String> tfArr = new ArrayList<>(40);
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<>();
 
         /* filter timeformat properties */
         for (Enumeration e = props.propertyNames(); e.hasMoreElements();)
@@ -562,9 +561,9 @@ public class TemplateManager extends ModuleManager {
      * @return map of TimeZones
      * @since 2.7.x
      */
-    public Map listTimeZones(PageContext pageContext)
+    public Map< String, String > listTimeZones(PageContext pageContext)
     {
-        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
+        Map<String,String> resultMap = new LinkedHashMap<>();
 
         String[][] tzs = { { "GMT-12", "Enitwetok, Kwajalien" },
                           { "GMT-11", "Nome, Midway Island, Samoa" },
@@ -840,9 +839,9 @@ public class TemplateManager extends ModuleManager {
      *  @return {@inheritDoc}
      */
     @Override
-    public Collection modules()
+    public Collection< WikiModuleInfo > modules()
     {
-        return new ArrayList<WikiModuleInfo>();
+        return new ArrayList<>();
     }
 
     /**

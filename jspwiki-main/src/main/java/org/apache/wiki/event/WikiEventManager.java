@@ -20,7 +20,16 @@
 package org.apache.wiki.event;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -470,7 +479,7 @@ public final class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                TreeSet<WikiEventListener> set = new TreeSet<WikiEventListener>( new WikiEventListenerComparator() );
+                TreeSet<WikiEventListener> set = new TreeSet<>( new WikiEventListenerComparator() );
 
                 for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
                 {

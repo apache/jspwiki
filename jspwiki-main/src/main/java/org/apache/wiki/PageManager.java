@@ -150,7 +150,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 
     private WikiPageProvider m_provider;
 
-    protected ConcurrentHashMap<String, PageLock> m_pageLocks = new ConcurrentHashMap<String, PageLock>();
+    protected ConcurrentHashMap<String, PageLock> m_pageLocks = new ConcurrentHashMap<>();
 
     private WikiEngine m_engine;
 
@@ -225,7 +225,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @return A Collection of WikiPage objects.
      * @throws ProviderException If the backend has problems.
      */
-    public Collection getAllPages() throws ProviderException {
+    public Collection< WikiPage > getAllPages() throws ProviderException {
         return m_provider.getAllPages();
     }
 
@@ -692,7 +692,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      */
     @Override
     public Collection< WikiModuleInfo > modules() {
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -730,9 +730,9 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             // Examine each page ACL
             try {
                 int pagesChanged = 0;
-                Collection pages = getAllPages();
-                for (Iterator it = pages.iterator(); it.hasNext(); ) {
-                    WikiPage page = (WikiPage) it.next();
+                Collection< WikiPage > pages = getAllPages();
+                for (Iterator< WikiPage > it = pages.iterator(); it.hasNext(); ) {
+                    WikiPage page = it.next();
                     boolean aclChanged = changeAcl(page, oldPrincipals, newPrincipal);
                     if (aclChanged) {
                         // If the Acl needed changing, change it now

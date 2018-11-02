@@ -79,10 +79,10 @@ public abstract class ModuleManager
      *
      * @return A Collection of WikiModuleInfo instances.
      */
-    public abstract Collection modules();
+    public abstract Collection< WikiModuleInfo > modules();
 
     protected < T extends WikiModuleInfo > Collection< WikiModuleInfo > modules( Iterator< T > iterator ) {
-        Set< WikiModuleInfo > ls = new TreeSet< WikiModuleInfo >();
+        Set< WikiModuleInfo > ls = new TreeSet<>();
 
         for( Iterator< T > i = iterator; i.hasNext(); ) {
             WikiModuleInfo wmi = i.next();
