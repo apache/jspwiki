@@ -349,9 +349,7 @@ public class WikiContext
     public String getRedirectURL()
     {
         String pagename = m_page.getName();
-        String redirURL = null;
-
-        redirURL = m_engine.getCommandResolver().getSpecialPageReference( pagename );
+        String redirURL = m_engine.getCommandResolver().getSpecialPageReference( pagename );
 
         if( redirURL == null )
         {
@@ -750,22 +748,17 @@ public class WikiContext
         if ( WikiCommand.INSTALL.equals( m_command ) )
         {
             // See if admin users exists
-            boolean adminExists = false;
             try
             {
                 UserManager userMgr = m_engine.getUserManager();
                 UserDatabase userDb = userMgr.getUserDatabase();
                 userDb.findByLoginName( Installer.ADMIN_ID );
-                adminExists = true;
             }
             catch ( NoSuchPrincipalException e )
             {
                 return DUMMY_PERMISSION;
             }
-            if ( adminExists )
-            {
-                return new AllPermission( m_engine.getApplicationName() );
-            }
+            return new AllPermission( m_engine.getApplicationName() );
         }
 
         // TODO: we should really break the contract so that this
