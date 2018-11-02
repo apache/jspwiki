@@ -110,7 +110,7 @@ public class TaskTest
         m_task.addError("Error deciding something.");
         m_task.addError("Error deciding something else.");
 
-        List errors = m_task.getErrors();
+        List< String > errors = m_task.getErrors();
         Assertions.assertEquals(2, errors.size());
         Assertions.assertEquals("Error deciding something.", errors.get(0));
         Assertions.assertEquals("Error deciding something else.", errors.get(1));
@@ -119,7 +119,7 @@ public class TaskTest
     @Test
     public void testAvailableOutcomes()
     {
-        Collection outcomes = m_task.getAvailableOutcomes();
+        Collection< Outcome > outcomes = m_task.getAvailableOutcomes();
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_DENY));
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_HOLD));

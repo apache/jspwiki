@@ -106,7 +106,7 @@ public class ApprovalWorkflowTest
         Assertions.assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
         Assertions.assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
         Assertions.assertEquals( decisionKey, decision.getMessageKey() );
-        List decisionFacts = ((Decision)decision).getFacts();
+        List< Fact > decisionFacts = ((Decision)decision).getFacts();
         Assertions.assertEquals( 3, decisionFacts.size() );
         Assertions.assertEquals( facts[0], decisionFacts.get(0) );
         Assertions.assertEquals( facts[1], decisionFacts.get(1) );
@@ -199,7 +199,7 @@ public class ApprovalWorkflowTest
         Assertions.assertFalse( m_engine.pageExists(pageName));
 
         // Second, GroupPrincipal Admin should see a Decision in its queue
-        Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
+        Collection< Decision > decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals(1, decisions.size());
 
         // Now, approve the decision and it should go away, and page should appear.
@@ -232,7 +232,7 @@ public class ApprovalWorkflowTest
         Assertions.assertFalse( m_engine.pageExists(pageName));
 
         // ...and there should be a Decision in GroupPrincipal Admin's queue
-        Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
+        Collection< Decision > decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals(1, decisions.size());
 
         // Now, DENY the decision and the page should still not exist...

@@ -152,7 +152,7 @@ public class DecisionQueueTest
     @Test
     public void testActorDecisions()
     {
-        Collection decisions = m_queue.getActorDecisions(adminSession);
+        Collection< Decision > decisions = m_queue.getActorDecisions(adminSession);
         Assertions.assertEquals(1, decisions.size());
 
         decisions = m_queue.getActorDecisions(janneSession);
@@ -184,7 +184,7 @@ public class DecisionQueueTest
         Assertions.assertEquals(decision, w.getCurrentStep());
 
         // Verify that it's also in Janne's DecisionQueue
-        Collection decisions = m_queue.getActorDecisions(janneSession);
+        Collection< Decision > decisions = m_queue.getActorDecisions(janneSession);
         Assertions.assertEquals(1, decisions.size());
         Decision d = (Decision)decisions.iterator().next();
         Assertions.assertEquals(decision, d);

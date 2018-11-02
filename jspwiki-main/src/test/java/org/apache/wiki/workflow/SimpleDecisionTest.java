@@ -52,7 +52,7 @@ public class SimpleDecisionTest
         m_decision.addFact(f3);
 
         // The facts should be available, and returned in order
-        List facts = m_decision.getFacts();
+        List< Fact > facts = m_decision.getFacts();
         Assertions.assertEquals(f1, facts.get(0));
         Assertions.assertEquals(f2, facts.get(1));
         Assertions.assertEquals(f3, facts.get(2));
@@ -109,7 +109,7 @@ public class SimpleDecisionTest
         m_decision.addError("Error deciding something.");
         m_decision.addError("Error deciding something else.");
 
-        List errors = m_decision.getErrors();
+        List< String > errors = m_decision.getErrors();
         Assertions.assertEquals(2, errors.size());
         Assertions.assertEquals("Error deciding something.", errors.get(0));
         Assertions.assertEquals("Error deciding something else.", errors.get(1));
@@ -118,7 +118,7 @@ public class SimpleDecisionTest
     @Test
     public void testAvailableOutcomes()
     {
-        Collection outcomes = m_decision.getAvailableOutcomes();
+        Collection< Outcome > outcomes = m_decision.getAvailableOutcomes();
         Assertions.assertTrue(outcomes.contains(Outcome.DECISION_APPROVE));
         Assertions.assertTrue(outcomes.contains(Outcome.DECISION_DENY));
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
