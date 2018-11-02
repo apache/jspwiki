@@ -25,10 +25,11 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
 
 /**
  *  Provides static helper functions for serializing different objects.
@@ -56,28 +57,17 @@ public final class Serializer
      * @throws IOException if the contents cannot be parsed for any reason
      */
     @SuppressWarnings("unchecked")
-    public static Map<String,? extends Serializable> deserializeFromBase64( String rawString ) throws IOException
-    {
+    public static Map< String, ? extends Serializable > deserializeFromBase64( String rawString ) throws IOException {
         // Decode from Base64-encoded String to byte array
-        byte[] decodedBytes = Base64.decodeBase64( rawString.getBytes("UTF-8") );
+        byte[] decodedBytes = Base64.getDecoder().decode( rawString.getBytes( StandardCharsets.UTF_8 ) );
         
         // Deserialize from the input stream to the Map
         InputStream bytesIn = new ByteArrayInputStream( decodedBytes );
-        ObjectInputStream in = new ObjectInputStream( bytesIn );
-        HashMap<String,Serializable> attributes;
-        try
-        {
-            attributes = (HashMap<String,Serializable>)in.readObject();
-        }
-        catch ( ClassNotFoundException e )
-        {
+        try( ObjectInputStream in = new ObjectInputStream( bytesIn ) ) {
+            return ( HashMap< String, Serializable > )in.readObject();
+        } catch ( ClassNotFoundException e ) {
             throw new IOException( "Could not deserialiaze user profile attributes. Reason: " + e.getMessage() );
         }
-        finally
-        {
-            in.close();
-        }
-        return attributes;
     }
 
     /**
@@ -87,10 +77,9 @@ public final class Serializer
      * @return a String representing the serialized form of the Map
      * @throws IOException If serialization cannot be done
      */
-    public static String serializeToBase64( Map<String,Serializable> map ) throws IOException
-    {
+    public static String serializeToBase64( Map< String, Serializable > map ) throws IOException {
         // Load the Map contents into a defensive HashMap
-        HashMap<String,Serializable> serialMap = new HashMap<String,Serializable>();
+        Map< String, Serializable > serialMap = new HashMap<>();
         serialMap.putAll( map );
         
         // Serialize the Map to an output stream
@@ -100,7 +89,7 @@ public final class Serializer
         out.close();
         
         // Transform to Base64-encoded String
-        byte[] result = Base64.encodeBase64( bytesOut.toByteArray() );
+        byte[] result = Base64.getEncoder().encode( bytesOut.toByteArray() );
         return new String( result ) ;
     }
 
