@@ -321,17 +321,13 @@ public class ReferenceManager
         throws IOException,
                ClassNotFoundException
     {
-        ObjectInputStream in = null;
         long saved = 0L;
 
-        try
+        File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
+        try( ObjectInputStream in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) ) )
         {
             StopWatch sw = new StopWatch();
             sw.start();
-
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-
-            in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
 
             long ver     = in.readLong();
 
@@ -352,10 +348,6 @@ public class ReferenceManager
             sw.stop();
             log.debug("Read serialized data successfully in "+sw);
         }
-        finally
-        {
-            if( in != null ) in.close();
-        }
 
         return saved;
     }
@@ -365,16 +357,10 @@ public class ReferenceManager
      */
     private synchronized void serializeToDisk()
     {
-        ObjectOutputStream out = null;
-
-        try
-        {
+        File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
+        try( ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
             StopWatch sw = new StopWatch();
             sw.start();
-
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-
-            out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
 
             out.writeLong( serialVersionUID );
             out.writeLong( System.currentTimeMillis() ); // Timestamp
@@ -387,15 +373,9 @@ public class ReferenceManager
 
             log.debug("serialization done - took "+sw);
         }
-        catch( IOException e )
+        catch( IOException ioe )
         {
-            log.error("Unable to serialize!");
-
-            try
-            {
-                if( out != null ) out.close();
-            }
-            catch( IOException ex ) {}
+            log.error("Unable to serialize!", ioe);
         }
     }
 
