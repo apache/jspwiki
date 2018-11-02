@@ -159,7 +159,6 @@ public class WeblogPlugin
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {

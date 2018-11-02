@@ -64,9 +64,9 @@ public class CleanTextRenderer
         {
             XPath xp = XPath.newInstance( ALL_TEXT_NODES );
 
-            List nodes = xp.selectNodes(m_document.getDocument());
+            List< ? > nodes = xp.selectNodes(m_document.getDocument());
 
-            for( Iterator i = nodes.iterator(); i.hasNext(); )
+            for( Iterator< ? > i = nodes.iterator(); i.hasNext(); )
             {
                 Object el = i.next();
 

@@ -191,14 +191,13 @@ public class MetaWeblogHandler
     // FIXME: The implementation is suboptimal, as it
     //        goes through all of the blog entries.
 
-    @SuppressWarnings("unchecked")
     public Hashtable getRecentPosts( String blogid,
                                      String username,
                                      String password,
                                      int numberOfPosts)
         throws XmlRpcException
     {
-        Hashtable<String, Hashtable<String, Object>> result = new Hashtable<String, Hashtable<String, Object>>();
+        Hashtable<String, Hashtable<String, Object>> result = new Hashtable<>();
 
         log.info( "metaWeblog.getRecentPosts() called");
 
