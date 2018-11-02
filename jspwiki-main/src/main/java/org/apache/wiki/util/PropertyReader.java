@@ -20,6 +20,7 @@ package org.apache.wiki.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -34,7 +35,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
-import org.apache.wiki.Release;
 
 
 /**
@@ -114,22 +114,8 @@ public final class PropertyReader {
      */
     public static Properties loadWebAppProps( ServletContext context ) {
         String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG );
-        InputStream propertyStream = null;
 
-        try {
-            //
-            //  Figure out where our properties lie.
-            //
-            if( propertyFile == null ) {
-                LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
-                             "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
-                //  Use the custom property file at the default location
-                propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
-            } else {
-                LOG.info(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
-                propertyStream = new FileInputStream( new File(propertyFile) );
-            }
-
+        try( InputStream propertyStream = loadCustomPropertiesFile(context, propertyFile) ) {
             Properties props = getDefaultProperties();
             if( propertyStream == null ) {
                 LOG.info("No custom property file found, relying on JSPWiki defaults.");
@@ -148,14 +134,32 @@ public final class PropertyReader {
 
             return props;
         } catch( Exception e ) {
-            LOG.error( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " +
-                         e.getMessage() );
-        } finally {
-        	IOUtils.closeQuietly( propertyStream );
+            LOG.error( "JSPWiki: Unable to load and setup properties from jspwiki.properties. " + e.getMessage() );
         }
 
         return null;
     }
+
+    /**
+     * Figure out where our properties lie.
+     * 
+     * @param context
+     * @param propertyFile
+     * @return
+     * @throws FileNotFoundException
+     */
+	static InputStream loadCustomPropertiesFile(ServletContext context, String propertyFile) throws FileNotFoundException {
+		InputStream propertyStream;
+		if( propertyFile == null ) {
+		    LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
+		    //  Use the custom property file at the default location
+		    propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
+		} else {
+		    LOG.info( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
+		    propertyStream = new FileInputStream( new File(propertyFile) );
+		}
+		return propertyStream;
+	}
 
 
     /**
@@ -236,7 +240,6 @@ public final class PropertyReader {
         // get into cascade...
         int depth = 0;
         boolean more = true;
-        InputStream propertyStream = null;
         while( more ) {
             depth++;
             String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + depth );
@@ -246,18 +249,13 @@ public final class PropertyReader {
                 break;
             }
 
-            try {
+            try( InputStream propertyStream = new FileInputStream( new File( propertyFile ) ) ) {
                 LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
                 Properties additionalProps = new Properties();
-                propertyStream = new FileInputStream( new File( propertyFile ) );
-                additionalProps.load(propertyStream);
-                defaultProperties.putAll(additionalProps);
+                additionalProps.load( propertyStream );
+                defaultProperties.putAll( additionalProps );
             } catch( Exception e ) {
-                LOG.error( " " + Release.APPNAME +
-                             ": Unable to load and setup properties from " + propertyFile + "." +
-                             e.getMessage() );
-            } finally {
-            	IOUtils.closeQuietly( propertyStream );
+                LOG.error( "JSPWiki: Unable to load and setup properties from " + propertyFile + "." + e.getMessage() );
             }
         }
 
