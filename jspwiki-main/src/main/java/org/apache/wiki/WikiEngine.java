@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
@@ -710,15 +711,14 @@ public class WikiEngine
     {
         try
         {
-            ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
+            ArrayList<WikiPage> pages = new ArrayList<>();
             pages.addAll( m_pageManager.getAllPages() );
             pages.addAll( m_attachmentManager.getAllAttachments() );
 
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
             {
-                m_referenceManager =
-                    (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
+                m_referenceManager = (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
             }
 
@@ -1803,22 +1803,18 @@ public class WikiEngine
      *  order of last change (i.e. first object is the most
      *  recently changed).  This method also includes attachments.
      *
-     *  @return Collection of WikiPage objects.  In reality, the returned
-     *          collection is a Set, but due to API compatibility reasons,
-     *          we're not changing the signature soon...
+     *  @return Set of WikiPage objects.
      */
 
-    // FIXME: Should really get a Date object and do proper comparisons.
-    //        This is terribly wasteful.
-    @SuppressWarnings("unchecked")
-    public Collection getRecentChanges()
+    // FIXME: Should really get a Date object and do proper comparisons. This is terribly wasteful.
+    public Set< WikiPage > getRecentChanges()
     {
         try
         {
             Collection<WikiPage>   pages = m_pageManager.getAllPages();
             Collection<Attachment>  atts = m_attachmentManager.getAllAttachments();
 
-            TreeSet<WikiPage> sortedPages = new TreeSet<WikiPage>( new PageTimeComparator() );
+            TreeSet<WikiPage> sortedPages = new TreeSet<>( new PageTimeComparator() );
 
             sortedPages.addAll( pages );
             sortedPages.addAll( atts );
