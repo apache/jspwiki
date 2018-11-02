@@ -1,3 +1,11 @@
+2018-11-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-07: removed a bunch of warnings throughout the code
+	   
+	   * added a Jenkinsfile
+	   
+	   * small backwards-incompatible change: WikiEngine#getRecentChanges() now returns a Set instead of a Collection
+
 2018-10-30  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-06: fix JSPs using methods removed on 2.11.0-M1-git-05
