@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.user;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -232,7 +233,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
             if ( newPasswordFormat )
             {
                 hashedPassword = getHash( password );
-                return CryptoUtil.verifySaltedPassword( password.getBytes("UTF-8"), storedPassword );
+                return CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
             }
 
             // If old format, verify using the old SHA verification algorithm
@@ -265,8 +266,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         }
         catch( WikiSecurityException e )
         {
-            log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage() );
-            e.printStackTrace();
+            log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
         }
         return false;
     }
