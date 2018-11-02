@@ -53,9 +53,9 @@ public class RSS20Feed extends Feed
         super( context );
     }
 
-    private List getItems()
+    private List<Element> getItems()
     {
-        ArrayList<Element> list = new ArrayList<Element>();
+        ArrayList<Element> list = new ArrayList<>();
         SimpleDateFormat fmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
 
         WikiEngine engine = m_wikiContext.getEngine();

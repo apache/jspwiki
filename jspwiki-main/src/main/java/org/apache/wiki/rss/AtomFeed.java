@@ -79,7 +79,7 @@ public class AtomFeed extends Feed
         return e.getURL(); // FIXME: Not really a feed id!
     }
 
-    private Collection getItems()
+    private Collection<Element> getItems()
     {
         ArrayList<Element> list = new ArrayList<Element>();
 
@@ -89,9 +89,9 @@ public class AtomFeed extends Feed
         if( m_wikiContext.getHttpRequest() != null )
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Iterator< Entry > i = m_entries.iterator(); i.hasNext(); )
         {
-            Entry e = (Entry)i.next();
+            Entry e = i.next();
 
             WikiPage p = e.getPage();
 
@@ -160,9 +160,9 @@ public class AtomFeed extends Feed
 
         Date lastModified = new Date(0L);
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Iterator< Entry > i = m_entries.iterator(); i.hasNext(); )
         {
-            Entry e = (Entry)i.next();
+            Entry e = i.next();
 
             if( e.getPage().getLastModified().after(lastModified) )
                 lastModified = e.getPage().getLastModified();

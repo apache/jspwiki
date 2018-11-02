@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.rss;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
@@ -318,7 +318,7 @@ public class RSSGenerator
      * @throws ProviderException If the underlying provider failed.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
-    public String generateFeed( WikiContext wikiContext, List changed, String mode, String type )
+    public String generateFeed( WikiContext wikiContext, List< WikiPage > changed, String mode, String type )
         throws ProviderException, IllegalArgumentException
     {
         Feed feed = null;
@@ -395,20 +395,19 @@ public class RSSGenerator
         feed.setChannelLanguage( m_channelLanguage );
         feed.setChannelDescription( m_channelDescription );
 
-        Collection changed = m_engine.getRecentChanges();
+        Set< WikiPage > changed = m_engine.getRecentChanges();
 
         WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;
-        for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
+        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
-            WikiPage page = (WikiPage) i.next();
+            WikiPage page = i.next();
 
             //
             //  Check if the anonymous user has view access to this page.
             //
 
-            if( !m_engine.getAuthorizationManager().checkPermission(session,
-                                                                    new PagePermission(page,PagePermission.VIEW_ACTION) ) )
+            if( !m_engine.getAuthorizationManager().checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) )
             {
                 // No permission, skip to the next one.
                 continue;
@@ -454,8 +453,7 @@ public class RSSGenerator
      * @param feed A Feed object to fill.
      * @return the RSS representation of the wiki context
      */
-    @SuppressWarnings("unchecked")
-    protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )
+    protected String generateWikiPageRSS( WikiContext wikiContext, List< WikiPage > changed, Feed feed )
     {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
@@ -476,9 +474,9 @@ public class RSSGenerator
         Collections.sort( changed, new PageTimeComparator() );
 
         int items = 0;
-        for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
+        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
-            WikiPage page = (WikiPage) i.next();
+            WikiPage page = i.next();
 
             Entry e = new Entry();
 
@@ -528,8 +526,7 @@ public class RSSGenerator
      *  @return A String of valid RSS or Atom.
      *  @throws ProviderException If reading of pages was not possible.
      */
-    @SuppressWarnings("unchecked")
-    protected String generateBlogRSS( WikiContext wikiContext, List changed, Feed feed )
+    protected String generateBlogRSS( WikiContext wikiContext, List< WikiPage > changed, Feed feed )
         throws ProviderException
     {
         if( log.isDebugEnabled() ) log.debug("Generating RSS for blog, size="+changed.size());
@@ -560,9 +557,9 @@ public class RSSGenerator
         Collections.sort( changed, new PageTimeComparator() );
 
         int items = 0;
-        for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
+        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
-            WikiPage page = (WikiPage) i.next();
+            WikiPage page = i.next();
 
             Entry e = new Entry();
 
