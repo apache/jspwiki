@@ -110,7 +110,7 @@ public abstract class AbstractStep implements Step
     /**
      * {@inheritDoc}
      */
-    public final Collection getAvailableOutcomes()
+    public final Collection< Outcome > getAvailableOutcomes()
     {
         Set<Outcome> outcomes = m_successors.keySet();
         return Collections.unmodifiableCollection( outcomes );
@@ -119,7 +119,7 @@ public abstract class AbstractStep implements Step
     /**
      * {@inheritDoc}
      */
-    public final List getErrors()
+    public final List< String > getErrors()
     {
         return Collections.unmodifiableList( m_errors );
     }

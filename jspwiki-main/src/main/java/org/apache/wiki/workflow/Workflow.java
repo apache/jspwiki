@@ -504,7 +504,7 @@ public class Workflow implements Serializable
      * @return an array of Steps representing those that have executed, or are
      *         currently executing
      */
-    public final List getHistory()
+    public final List< Step > getHistory()
     {
         return Collections.unmodifiableList( m_history );
     }

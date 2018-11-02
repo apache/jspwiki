@@ -67,8 +67,7 @@ public class DecisionQueue implements Serializable
      * order of submission. If no Decisions are pending, this method returns a
      * zero-length array.
      *
-     * @return the pending decisions TODO: explore whether this method could be
-     *         made protected
+     * @return the pending decisions 
      */
     protected Decision[] decisions()
     {
@@ -95,9 +94,9 @@ public class DecisionQueue implements Serializable
      *            the wiki session
      * @return the collection of Decisions, which may be empty
      */
-    public Collection getActorDecisions(WikiSession session)
+    public Collection<Decision> getActorDecisions(WikiSession session)
     {
-        ArrayList<Decision> decisions = new ArrayList<Decision>();
+        ArrayList<Decision> decisions = new ArrayList<>();
         if ( session.isAuthenticated() )
         {
             Principal[] principals = session.getPrincipals();

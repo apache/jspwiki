@@ -187,7 +187,7 @@ public abstract class Decision extends AbstractStep
      * 
      * @return the list of Facts
      */
-    public final List getFacts()
+    public final List< Fact > getFacts()
     {
         return Collections.unmodifiableList( m_facts );
     }
