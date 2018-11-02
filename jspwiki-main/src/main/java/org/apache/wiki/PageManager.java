@@ -312,8 +312,6 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @return null, if page could not be locked.
      */
     public PageLock lockPage(WikiPage page, String user) {
-        PageLock lock = null;
-
         if (m_reaper == null) {
             //
             //  Start the lock reaper lazily.  We don't want to start it in
@@ -326,7 +324,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         }
 
         fireEvent(WikiPageEvent.PAGE_LOCK, page.getName()); // prior to or after actual lock?
-        lock = m_pageLocks.get(page.getName());
+        PageLock lock = m_pageLocks.get(page.getName());
 
         if (lock == null) {
             //
