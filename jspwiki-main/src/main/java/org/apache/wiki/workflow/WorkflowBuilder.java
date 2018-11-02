@@ -19,8 +19,8 @@
 package org.apache.wiki.workflow;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -30,7 +30,7 @@ import org.apache.wiki.api.exceptions.WikiException;
  */
 public final class WorkflowBuilder
 {
-    private static final Map<WikiEngine, WorkflowBuilder> BUILDERS = new HashMap<WikiEngine, WorkflowBuilder>();
+    private static final Map<WikiEngine, WorkflowBuilder> BUILDERS = new ConcurrentHashMap<>();
     private final WikiEngine m_engine;
 
     /**
