@@ -155,8 +155,7 @@ public class UserManager {
 
         try
         {
-            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(),
-                                                          PROP_DATABASE );
+            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
             final Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
@@ -166,7 +165,7 @@ public class UserManager {
         }
         catch( final NoRequiredPropertyException e )
         {
-            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
+            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki.", e );
         }
         catch( final ClassNotFoundException e )
         {
@@ -182,7 +181,7 @@ public class UserManager {
         }
         catch( final WikiSecurityException e )
         {
-            log.error( "Exception initializing user database: " + e.getMessage() );
+            log.error( "Exception initializing user database: " + e.getMessage(), e );
         }
         finally
         {
