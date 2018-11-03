@@ -78,8 +78,7 @@ public class SearchResultIteratorTag
         //
         if( m_iterator == null )
         {
-            Collection searchresults = (Collection) pageContext.getAttribute( "searchresults",
-                                                                              PageContext.REQUEST_SCOPE );
+            Collection< ? > searchresults = (Collection< ? >)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
             setList( searchresults );
             
             int skip = 0;
@@ -89,9 +88,8 @@ public class SearchResultIteratorTag
             while( m_iterator.hasNext() && (skip++ < m_start) ) m_iterator.next();
         }
 
-        m_count       = 0;
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
+        m_count = 0;
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
         return nextResult();
     }

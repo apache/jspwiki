@@ -46,8 +46,8 @@ import org.apache.wiki.WikiPage;
 public abstract class IteratorTag extends BodyTagSupport implements TryCatchFinally {
 
 	private static final long serialVersionUID = 8945334759300595321L;
-	protected String      m_pageName;
-    protected Iterator    m_iterator;
+	protected String m_pageName;
+    protected Iterator< ? > m_iterator;
     protected WikiContext m_wikiContext;
 
     private static final Logger log = Logger.getLogger( IteratorTag.class );
@@ -57,7 +57,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  
      *  @param arg A Collection which will be iterated.
      */
-    public void setList( Collection arg )
+    public void setList( Collection< ? > arg )
     {
         if( arg != null )
             m_iterator = arg.iterator();
@@ -74,16 +74,6 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
             m_iterator = Arrays.asList(arg).iterator();
         }
     }
-    
-    /**
-     *  Sets the iterator directly that is used to form the iteration.
-     */
-    /*
-    public void setList( Iterator arg )
-    {
-        m_iterator = arg;
-    }
-    */
 
     /**
      *  Clears the iterator away.  After calling this method doStartTag()
