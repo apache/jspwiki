@@ -477,7 +477,7 @@ public class TemplateManager extends ModuleManager {
      * @return map of TimeFormats
      * @since 2.7.x
      */
-    public Map listTimeFormats(PageContext pageContext)
+    public Map< String, String > listTimeFormats(PageContext pageContext)
     {
         WikiContext context = WikiContext.findContext( pageContext );
         Properties props = m_engine.getWikiProperties();
@@ -485,7 +485,7 @@ public class TemplateManager extends ModuleManager {
         LinkedHashMap<String,String> resultMap = new LinkedHashMap<>();
 
         /* filter timeformat properties */
-        for (Enumeration e = props.propertyNames(); e.hasMoreElements();)
+        for (Enumeration< ? > e = props.propertyNames(); e.hasMoreElements();)
         {
             String name = (String) e.nextElement();
 
@@ -496,21 +496,14 @@ public class TemplateManager extends ModuleManager {
         }
 
         /* fetch actual formats */
-        if (tfArr.size() == 0) /*
-                                 * no props found - make sure some default
-                                 * formats are avail
-                                 */
-        {
+        if (tfArr.size() == 0)  {/* no props found - make sure some default formats are avail */
             tfArr.add("dd-MMM-yy");
             tfArr.add("d-MMM-yyyy");
             tfArr.add("EEE, dd-MMM-yyyy, zzzz");
-        }
-        else
-        {
+        } else {
             Collections.sort(tfArr);
 
-            for (int i = 0; i < tfArr.size(); i++)
-            {
+            for (int i = 0; i < tfArr.size(); i++) {
                 tfArr.set(i, props.getProperty(tfArr.get(i)));
             }
         }
