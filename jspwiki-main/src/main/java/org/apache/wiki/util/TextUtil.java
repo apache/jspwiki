@@ -20,7 +20,8 @@ package org.apache.wiki.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.Random;
@@ -97,11 +98,9 @@ public final class TextUtil {
      *  @param encoding The encoding in which the string should be interpreted
      *  @return A decoded String
      *
-     *  @throws UnsupportedEncodingException If the encoding is unknown.
      *  @throws IllegalArgumentException If the byte array is not a valid string.
      */
-    protected static String urlDecode( byte[] bytes, String encoding )
-              throws UnsupportedEncodingException, IllegalArgumentException {
+    protected static String urlDecode( byte[] bytes, String encoding ) throws  IllegalArgumentException {
         if( bytes == null ) {
             return null;
         }
@@ -130,15 +129,7 @@ public final class TextUtil {
             throw new IllegalArgumentException( "Malformed UTF-8 string?" );
         }
 
-        String processedPageName = null ;
-
-        try {
-            processedPageName = new String(decodeBytes, 0, decodedByteCount, encoding) ;
-        } catch( UnsupportedEncodingException e ) {
-            throw new UnsupportedEncodingException( "UTF-8 encoding not supported on this platform" );
-        }
-
-        return processedPageName;
+        return new String(decodeBytes, 0, decodedByteCount, Charset.forName( encoding ) );
     }
 
     /**
@@ -153,14 +144,8 @@ public final class TextUtil {
             return "";
         }
 
-        byte[] rs;
-
-        try {
-            rs = text.getBytes( "UTF-8" );
-            return urlEncode( rs );
-        } catch( UnsupportedEncodingException uee ) {
-            throw new UnsupportedOperationException( "UTF-8 not supported!?!", uee );
-        }
+        byte[] rs = text.getBytes( StandardCharsets.UTF_8 );
+        return urlEncode( rs );
     }
 
     /**
@@ -170,17 +155,11 @@ public final class TextUtil {
      *  @return A plain, normal string.
      */
     public static String urlDecodeUTF8( String utf8 ) {
-        String rs = null;
-
-        if( utf8 == null ) return null;
-
-        try {
-            rs = urlDecode( utf8.getBytes( "ISO-8859-1" ), "UTF-8" );
-        } catch( UnsupportedEncodingException uee ) {
-            throw new UnsupportedOperationException( "UTF-8 or ISO-8859-1 not supported!?!", uee );
+        if( utf8 == null ) {
+            return null;
         }
 
-        return rs;
+        return urlDecode( utf8.getBytes( StandardCharsets.ISO_8859_1 ), StandardCharsets.UTF_8.toString() );
     }
 
     /**
@@ -195,15 +174,11 @@ public final class TextUtil {
     public static String urlEncode( String data, String encoding ) {
         // Presumably, the same caveats apply as in FileSystemProvider.
         // Don't see why it would be horribly kludgy, though.
-        if( "UTF-8".equals( encoding ) ) {
-            return TextUtil.urlEncodeUTF8( data );
+        if( StandardCharsets.UTF_8.toString().equals( encoding ) ) {
+            return urlEncodeUTF8( data );
         }
 
-        try {
-            return TextUtil.urlEncode( data.getBytes( encoding ) );
-        } catch( UnsupportedEncodingException uee ) {
-            throw new UnsupportedOperationException( "Could not encode String into" + encoding, uee );
-        }
+        return urlEncode( data.getBytes( Charset.forName( encoding ) ) );
     }
 
     /**
@@ -214,23 +189,16 @@ public final class TextUtil {
      * @param data The URL-encoded string to decode
      * @param encoding The encoding to use
      * @return A decoded string.
-     * @throws UnsupportedEncodingException If the encoding is unknown
      * @throws IllegalArgumentException If the data cannot be decoded.
      */
-    public static String urlDecode( String data, String encoding )
-        throws UnsupportedEncodingException, IllegalArgumentException {
+    public static String urlDecode( String data, String encoding ) throws IllegalArgumentException {
         // Presumably, the same caveats apply as in FileSystemProvider.
         // Don't see why it would be horribly kludgy, though.
         if( "UTF-8".equals( encoding ) ) {
-            return TextUtil.urlDecodeUTF8( data );
+            return urlDecodeUTF8( data );
         }
 
-        try {
-            return TextUtil.urlDecode( data.getBytes(encoding), encoding );
-        } catch( UnsupportedEncodingException uee ) {
-            throw new UnsupportedOperationException("Could not decode String into" + encoding, uee );
-        }
-
+        return urlDecode( data.getBytes( Charset.forName( encoding ) ), encoding );
     }
 
     /**
