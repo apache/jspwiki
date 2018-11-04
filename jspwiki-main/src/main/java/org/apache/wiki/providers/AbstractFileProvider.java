@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -102,7 +102,7 @@ public abstract class AbstractFileProvider
     /**
      *  Name of the property that defines where page directories are.
      */
-    public static final String      PROP_PAGEDIR = "jspwiki.fileSystemProvider.pageDir";
+    public static final String PROP_PAGEDIR = "jspwiki.fileSystemProvider.pageDir";
 
     /**
      *  All files should have this extension to be recognized as JSPWiki files.
@@ -112,7 +112,7 @@ public abstract class AbstractFileProvider
     public static final String FILE_EXT = ".txt";
 
     /** The default encoding. */
-    public static final String DEFAULT_ENCODING = "ISO-8859-1";
+    public static final String DEFAULT_ENCODING = StandardCharsets.ISO_8859_1.toString();
 
     private boolean m_windowsHackNeeded = false;
 
@@ -121,9 +121,7 @@ public abstract class AbstractFileProvider
      *  @throws FileNotFoundException If the specified page directory does not exist.
      *  @throws IOException In case the specified page directory is a file, not a directory.
      */
-    public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException, FileNotFoundException
+    public void initialize( WikiEngine engine, Properties properties ) throws NoRequiredPropertyException, IOException, FileNotFoundException
     {
         log.debug("Initing FileSystemProvider");
         m_pageDirectory = TextUtil.getCanonicalFilePathProperty(properties, PROP_PAGEDIR,
@@ -230,19 +228,12 @@ public abstract class AbstractFileProvider
     protected String unmangleName( String filename )
     {
         // The exception should never happen.
-        try
+        if( m_windowsHackNeeded && filename.startsWith( "$$$") && filename.length() > 3 )
         {
-            if( m_windowsHackNeeded && filename.startsWith( "$$$") && filename.length() > 3 )
-            {
-                filename = filename.substring(3);
-            }
+            filename = filename.substring(3);
+        }
 
-            return TextUtil.urlDecode( filename, m_encoding );
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            throw new InternalWikiException("Faulty encoding; should never happen", e);
-        }
+        return TextUtil.urlDecode( filename, m_encoding );
     }
 
     /**
@@ -364,7 +355,7 @@ public abstract class AbstractFileProvider
     {
         log.debug("Getting all pages...");
 
-        ArrayList<WikiPage> set = new ArrayList<WikiPage>();
+        ArrayList<WikiPage> set = new ArrayList<>();
 
         File wikipagedir = new File( m_pageDirectory );
 
