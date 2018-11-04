@@ -19,6 +19,7 @@
 package org.apache.wiki.xmlrpc;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -78,20 +79,7 @@ public class RPCHandler
      */
     private byte[] toRPCBase64( String src )
     {
-        try
-        {
-            return src.getBytes("UTF-8");
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            //
-            //  You shouldn't be running JSPWiki on a platform that does not
-            //  use UTF-8.  We revert to platform default, so that the other
-            //  end might have a chance of getting something.
-            //
-            log.fatal("Platform does not support UTF-8, reverting to platform default");
-            return src.getBytes();
-        }
+        return src.getBytes( StandardCharsets.UTF_8 );
     }
 
     public String getApplicationName()
