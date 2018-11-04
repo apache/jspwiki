@@ -53,15 +53,15 @@ public final class FormUtil
      * @param key the key to look up
      * @return the List of keys
      */
-    public static List getValues( Map params, String key )
+    public static List< ? > getValues( Map< ? , ? > params, String key )
     {
         if( params == null || key == null )
-            return new ArrayList(0);
+            return new ArrayList<>(0);
 
         Object entry = params.get( key );
         if( entry != null )
         {
-            ArrayList<Object> rval = new ArrayList<Object>(1);
+            ArrayList<Object> rval = new ArrayList<>(1);
             rval.add( entry );
             return rval;
         }
@@ -88,9 +88,9 @@ public final class FormUtil
      * @return ArrayList, containing the values corresponding to the
      *          keyPrefix, in order.
      */
-    public static List getNumberedValues( Map params, String keyPrefix )
+    public static List< ? > getNumberedValues( Map< ?, ? > params, String keyPrefix )
     {
-        ArrayList<Object> rval = new ArrayList<Object>();
+        ArrayList<Object> rval = new ArrayList<>();
         if( params == null || 
             params.size() == 0 || 
             keyPrefix == null || 
@@ -137,17 +137,16 @@ public final class FormUtil
      * @param filterPrefix the prefix
      * @return the Map containing parsed key/value pairs
      */
-    public static Map< String, String > requestToMap( HttpServletRequest req, 
-                                                      String filterPrefix )
+    public static Map< String, String > requestToMap( HttpServletRequest req, String filterPrefix )
     {
-        HashMap<String,String> params = new HashMap<String,String>();
+        HashMap<String,String> params = new HashMap<>();
         
         if( filterPrefix == null ) filterPrefix = "";
         
-        Enumeration en = req.getParameterNames();
+        Enumeration< String > en = req.getParameterNames();
         while( en.hasMoreElements() )
         {
-            String param = (String)en.nextElement();
+            String param = en.nextElement();
             
             if( param.startsWith( filterPrefix ) )
             {
