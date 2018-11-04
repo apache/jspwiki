@@ -74,7 +74,7 @@ public class WikiContext
     private    WikiEngine m_engine;
     private    String     m_template = "default";
 
-    private    HashMap<String,Object> m_variableMap = new HashMap<String,Object>();
+    private    HashMap<String,Object> m_variableMap = new HashMap<>();
 
     /**
      *  Stores the HttpServletRequest.  May be null, if the request did not
@@ -274,7 +274,8 @@ public class WikiContext
      * {@inheritDoc}
      * @see org.apache.wiki.ui.Command#getContentTemplate()
      */
-    public String getContentTemplate()
+    @Override
+	public String getContentTemplate()
     {
         return m_command.getContentTemplate();
     }
@@ -283,7 +284,8 @@ public class WikiContext
      * {@inheritDoc}
      * @see org.apache.wiki.ui.Command#getJSP()
      */
-    public String getJSP()
+    @Override
+	public String getJSP()
     {
         return m_command.getContentTemplate();
     }
@@ -404,7 +406,8 @@ public class WikiContext
      *  Returns the request context.
      *  @return The name of the request context (e.g. VIEW).
      */
-    public String getRequestContext()
+    @Override
+	public String getRequestContext()
     {
         return m_command.getRequestContext();
     }
@@ -424,7 +427,8 @@ public class WikiContext
      * {@inheritDoc}
      * @see org.apache.wiki.ui.Command#getTarget()
      */
-    public Object getTarget()
+    @Override
+	public Object getTarget()
     {
         return m_command.getTarget();
     }
@@ -433,7 +437,8 @@ public class WikiContext
      * {@inheritDoc}
      * @see org.apache.wiki.ui.Command#getURLPattern()
      */
-    public String getURLPattern()
+    @Override
+	public String getURLPattern()
     {
         return m_command.getURLPattern();
     }
@@ -542,7 +547,8 @@ public class WikiContext
      * @see org.apache.wiki.ui.PageCommand#getName()
      * @see org.apache.wiki.ui.GroupCommand#getName()
      */
-    public String getName()
+    @Override
+	public String getName()
     {
         if ( m_command instanceof PageCommand )
         {
@@ -644,7 +650,8 @@ public class WikiContext
      *  @since 2.1.37.
      *  @return A shallow clone of the WikiContext
      */
-    public Object clone()
+    @Override
+	public Object clone()
     {
         try
         {
@@ -742,7 +749,8 @@ public class WikiContext
      * @return the permission
      * @since 2.4
      */
-    public Permission requiredPermission()
+    @Override
+	public Permission requiredPermission()
     {
         // This is a filthy rotten hack -- absolutely putrid
         if ( WikiCommand.INSTALL.equals( m_command ) )
@@ -779,7 +787,8 @@ public class WikiContext
      *
      * {@inheritDoc}
      */
-    public Command targetedCommand( Object target )
+    @Override
+	public Command targetedCommand( Object target )
     {
         if ( m_command.getTarget() == null )
         {
@@ -795,14 +804,8 @@ public class WikiContext
      *  @since 2.4.46
      *  @return true, if the user has all permissions.
      */
-    public boolean hasAdminPermissions()
-    {
-        boolean admin = false;
-
-        admin = m_engine.getAuthorizationManager().checkPermission( getWikiSession(),
-                                                                    new AllPermission(m_engine.getApplicationName()) );
-
-        return admin;
+    public boolean hasAdminPermissions() {
+        return m_engine.getAuthorizationManager().checkPermission( getWikiSession(), new AllPermission(m_engine.getApplicationName()) );
     }
 
     /**
