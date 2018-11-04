@@ -21,7 +21,6 @@ package org.apache.wiki.util;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -57,7 +56,7 @@ public final class ClassUtil {
      */
     public  static final String MAPPINGS = "ini/classmappings.xml";
     
-    private static Map<String, String> c_classMappings = new Hashtable<String, String>();
+    private static Map<String, String> c_classMappings = new Hashtable<>();
 
     private static boolean classLoaderSetup = false;
     private static ClassLoader loader = null;
@@ -67,7 +66,7 @@ public final class ClassUtil {
      *  Initialize the class mappings document.
      */
     static {
-    	List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
+        List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
 
         if( nodes.size() > 0 ) {
             for( Iterator< Element > i = nodes.iterator(); i.hasNext(); ) {
@@ -183,7 +182,7 @@ public final class ClassUtil {
      */
     public static List< String > classpathEntriesUnder( final String rootPackage ) 
     {
-        List< String > results = new ArrayList< String >();
+        List< String > results = new ArrayList< >();
         Enumeration< URL > en = null;
         if( StringUtils.isNotEmpty( rootPackage ) ) {
             try
@@ -301,11 +300,12 @@ public final class ClassUtil {
      *  
      *  @param requestedClass The name of the class you wish to instantiate.
      *  @return An instantiated Object.
-     *  @throws WikiException If the class cannot be found or instantiated.
+     *  @throws IllegalArgumentException If the class cannot be found or instantiated. 
+     *  @throws ReflectiveOperationException If the class cannot be found or instantiated.
      *  @since 2.5.40
      */
     public static Object getMappedObject( String requestedClass )
-        throws WikiException
+        throws ReflectiveOperationException, IllegalArgumentException
     {
         Object[] initargs = {};
         return getMappedObject(requestedClass, initargs );
@@ -327,73 +327,46 @@ public final class ClassUtil {
      *  @param requestedClass The name of the class you wish to instantiate.
      *  @param initargs The parameters to be passed to the constructor. May be <code>null</code>.
      *  @return An instantiated Object.
-     *  @throws WikiException If the class cannot be found or instantiated.  The error is logged.
+     *  @throws IllegalArgumentException If the class cannot be found or instantiated. 
+     *  @throws ReflectiveOperationException If the class cannot be found or instantiated.
      *  @since 2.5.40
      */
     public static Object getMappedObject( String requestedClass, Object... initargs )
-        throws WikiException
+        throws ReflectiveOperationException, IllegalArgumentException
     {
-        try
+        Class<?> cl = getMappedClass( requestedClass );
+        Constructor<?>[] ctors = cl.getConstructors();
+        
+        //
+        //  Try to find the proper constructor by comparing the
+        //  initargs array classes and the constructor types.
+        //
+        for( int c = 0; c < ctors.length; c++ )
         {
-            Class<?> cl = getMappedClass( requestedClass );
-         
-            Constructor<?>[] ctors = cl.getConstructors();
+            Class<?>[] params = ctors[c].getParameterTypes();
             
-            //
-            //  Try to find the proper constructor by comparing the
-            //  initargs array classes and the constructor types.
-            //
-            for( int c = 0; c < ctors.length; c++ )
+            if( params.length == initargs.length )
             {
-                Class<?>[] params = ctors[c].getParameterTypes();
-                
-                if( params.length == initargs.length )
+                for( int arg = 0; arg < initargs.length; arg++ )
                 {
-                    for( int arg = 0; arg < initargs.length; arg++ )
+                    if( params[arg].isAssignableFrom(initargs[arg].getClass()))
                     {
-                        if( params[arg].isAssignableFrom(initargs[arg].getClass()))
-                        {
-                            //
-                            //  Ha, found it!  Instantiating and returning...
-                            //
-                            return ctors[c].newInstance(initargs);
-                        }
+                        //
+                        //  Ha, found it!  Instantiating and returning...
+                        //
+                        return ctors[c].newInstance(initargs);
                     }
                 }
             }
-            
-            //
-            //  No arguments, so we can just call a default constructor and
-            //  ignore the arguments.
-            //
-            Object o = cl.newInstance();
-            
-            return o;
         }
-        catch( InstantiationException e )
-        {
-            log.info( "Cannot instantiate requested class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
-        catch (IllegalAccessException e)
-        {
-            log.info( "Cannot access requested class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
-        catch (IllegalArgumentException e)
-        {
-            log.info( "Illegal arguments when constructing new object", e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
-        catch (InvocationTargetException e)
-        {
-            log.info( "You tried to instantiate an abstract class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
+        
+        //
+        //  No arguments, so we can just call a default constructor and
+        //  ignore the arguments.
+        //
+        Object o = cl.newInstance();
+        
+        return o;
     }
 
     /**
@@ -405,7 +378,7 @@ public final class ClassUtil {
      *  @throws WikiException
      */
     private static Class< ? > getMappedClass( String requestedClass )
-        throws WikiException
+        throws ClassNotFoundException
     {
         String mappedClass = c_classMappings.get( requestedClass );
         
@@ -414,18 +387,9 @@ public final class ClassUtil {
             mappedClass = requestedClass;
         }
         
-        try
-        {
-            Class< ? > cl = Class.forName(mappedClass);
-            
-            return cl;
-        }
-        catch (ClassNotFoundException e)
-        {
-            log.info( "Cannot find requested class", e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass, e );
-        }
+        Class< ? > cl = Class.forName(mappedClass);
+        
+        return cl;
     }
     
     /**
@@ -436,14 +400,14 @@ public final class ClassUtil {
      * @return {@code true} if {@code srcClassName} is a subclass of {@code parentClassname}, {@code false} otherwise.
      */
     public static boolean assignable( String srcClassName, String parentClassName ) {
-    	try {
-			Class< ? > src = Class.forName( srcClassName );
-			Class< ? > parent = Class.forName( parentClassName );
-			return parent.isAssignableFrom( src );
-		} catch( Exception e ) {
-			log.error( e.getMessage(), e );
-		}
-    	return false;
+        try {
+            Class< ? > src = Class.forName( srcClassName );
+            Class< ? > parent = Class.forName( parentClassName );
+            return parent.isAssignableFrom( src );
+        } catch( Exception e ) {
+            log.error( e.getMessage(), e );
+        }
+        return false;
     }
     
 }

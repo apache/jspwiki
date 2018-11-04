@@ -727,6 +727,10 @@ public class WikiEngine
         {
             log.fatal("PageProvider is unable to list pages: ", e);
         }
+        catch( ReflectiveOperationException | IllegalArgumentException e ) 
+        {
+            throw new WikiException( "Could not instantiate ReferenceManager: " + e.getMessage(), e );
+        }
     }
 
     /**
@@ -837,6 +841,7 @@ public class WikiEngine
      *
      *  @since 2.0.3
      */
+    @Deprecated
     public String getEditURL( String pageName )
     {
         return m_urlConstructor.makeURL( WikiContext.EDIT, pageName, false, null );
@@ -853,6 +858,7 @@ public class WikiEngine
      *  @deprecated
      *  @return An URI.
      */
+    @Deprecated
     public String getAttachmentURL( String attName )
     {
         return m_urlConstructor.makeURL( WikiContext.ATTACH, attName, false, null );
@@ -920,6 +926,7 @@ public class WikiEngine
      *              the near future.
      */
 
+    @Deprecated
     public String safeGetParameter( ServletRequest request, String name )
     {
         try
@@ -1010,7 +1017,7 @@ public class WikiEngine
      */
     public Collection< String > getAllInterWikiLinks()
     {
-    	ArrayList< String > list = new ArrayList< String >();
+        ArrayList< String > list = new ArrayList< >();
 
         for( Enumeration< ? > i = m_properties.propertyNames(); i.hasMoreElements(); )
         {
@@ -1033,7 +1040,7 @@ public class WikiEngine
     public Collection< String > getAllInlinedImagePatterns()
     {
         Properties props    = getWikiProperties();
-        ArrayList<String>  ptrnlist = new ArrayList<String>();
+        ArrayList<String>  ptrnlist = new ArrayList<>();
 
         for( Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
         {
@@ -2320,15 +2327,14 @@ public class WikiEngine
         {
             try
             {
-                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL,
-                                                     DefaultAclManager.class.getName() );
+                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, DefaultAclManager.class.getName() );
                 m_aclManager = (AclManager)ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
                 m_aclManager.initialize( this, m_properties );
             }
-            catch ( WikiException we )
+            catch ( ReflectiveOperationException | IllegalArgumentException e )
             {
-                log.fatal( "unable to instantiate class for AclManager: " + we.getMessage() );
-                throw new InternalWikiException("Cannot instantiate AclManager, please check logs.", we);
+                log.fatal( "unable to instantiate class for AclManager: " + e.getMessage() );
+                throw new InternalWikiException( "Cannot instantiate AclManager, please check logs.", e );
             }
         }
         return m_aclManager;
