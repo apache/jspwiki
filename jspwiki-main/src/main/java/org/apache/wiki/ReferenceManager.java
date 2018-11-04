@@ -482,10 +482,8 @@ public class ReferenceManager
             //
             f = new File( f, hashName );
             
-            try( ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) ) )
-            {
-                // FIXME: There is a concurrency issue here...
-                Set< Map.Entry < String, Object > > entries = p.getAttributes().entrySet();
+            try( ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
+                Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() ); // new Set to avoid concurrency issue
 
                 if( entries.size() == 0 ) 
                 {
@@ -502,29 +500,19 @@ public class ReferenceManager
                 out.writeUTF( p.getName() );
                 out.writeLong( entries.size() );
 
-                for( Iterator< Map.Entry < String, Object > > i = entries.iterator(); i.hasNext(); )
-                {
+                for( Iterator< Map.Entry < String, Object > > i = entries.iterator(); i.hasNext(); ) {
                     Map.Entry< String, Object > e = i.next();
 
-                    if( e.getValue() instanceof Serializable )
-                    {
+                    if( e.getValue() instanceof Serializable ) {
                         out.writeUTF( e.getKey() );
                         out.writeObject( e.getValue() );
                     }
                 }
 
-                out.close();
-
-            }
-            catch( IOException e )
-            {
+            } catch( IOException e ) {
                 log.error( "Unable to serialize!", e );
-
-            }
-            finally
-            {
+            } finally {
                 sw.stop();
-
                 log.debug("serialization for "+p.getName()+" done - took "+sw);
             }
         }
