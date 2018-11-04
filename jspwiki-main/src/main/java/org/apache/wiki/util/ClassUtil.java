@@ -27,10 +27,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -38,7 +38,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.engine.PluginManager;
-import org.apache.wiki.api.exceptions.WikiException;
 import org.jdom2.Element;
 
 /**
@@ -56,7 +55,7 @@ public final class ClassUtil {
      */
     public  static final String MAPPINGS = "ini/classmappings.xml";
     
-    private static Map<String, String> c_classMappings = new Hashtable<>();
+    private static Map<String, String> c_classMappings = new ConcurrentHashMap<>();
 
     private static boolean classLoaderSetup = false;
     private static ClassLoader loader = null;
@@ -251,40 +250,18 @@ public final class ClassUtil {
      * @param jurlcon given {@link JarURLConnection} to search in.
      * @param rootPackage base package.
      */
-    static void jarEntriesUnder( List< String > results, JarURLConnection jurlcon, String rootPackage )
-    {
-        JarFile jar = null;
-        try
-        {
-            jar = jurlcon.getJarFile();
+    static void jarEntriesUnder( List< String > results, JarURLConnection jurlcon, String rootPackage ) {
+        try( JarFile jar = jurlcon.getJarFile() ) {
             log.debug( "scanning [" + jar.getName() +"]" );
             Enumeration< JarEntry > entries = jar.entries();
-            while( entries.hasMoreElements() )
-            {
+            while( entries.hasMoreElements() ) {
                 JarEntry entry = entries.nextElement();
-                if( entry.getName().startsWith( rootPackage ) && !entry.isDirectory() ) 
-                {
+                if( entry.getName().startsWith( rootPackage ) && !entry.isDirectory() ) {
                     results.add( entry.getName() );
                 }
             }
-        }
-        catch( IOException ioe )
-        {
+        } catch( IOException ioe ) {
             log.error( ioe.getMessage(), ioe );
-        }
-        finally 
-        {
-            if (jar != null)
-            {
-                try
-                {
-                    jar.close();
-                }
-                catch( IOException ioe )
-                {
-                    log.error( ioe.getMessage(), ioe );
-                }
-            }
         }
     }
     
@@ -304,11 +281,12 @@ public final class ClassUtil {
      *  @throws ReflectiveOperationException If the class cannot be found or instantiated.
      *  @since 2.5.40
      */
-    public static Object getMappedObject( String requestedClass )
+    @SuppressWarnings("unchecked")
+    public static < T > T getMappedObject( String requestedClass )
         throws ReflectiveOperationException, IllegalArgumentException
     {
         Object[] initargs = {};
-        return getMappedObject(requestedClass, initargs );
+        return ( T )getMappedObject(requestedClass, initargs );
     }
 
     /**
@@ -331,7 +309,8 @@ public final class ClassUtil {
      *  @throws ReflectiveOperationException If the class cannot be found or instantiated.
      *  @since 2.5.40
      */
-    public static Object getMappedObject( String requestedClass, Object... initargs )
+    @SuppressWarnings( "unchecked" )
+    public static < T > T getMappedObject( String requestedClass, Object... initargs )
         throws ReflectiveOperationException, IllegalArgumentException
     {
         Class<?> cl = getMappedClass( requestedClass );
@@ -354,19 +333,16 @@ public final class ClassUtil {
                         //
                         //  Ha, found it!  Instantiating and returning...
                         //
-                        return ctors[c].newInstance(initargs);
+                        return ( T )ctors[c].newInstance(initargs);
                     }
                 }
             }
         }
         
         //
-        //  No arguments, so we can just call a default constructor and
-        //  ignore the arguments.
+        //  No arguments, so we can just call a default constructor and ignore the arguments.
         //
-        Object o = cl.newInstance();
-        
-        return o;
+        return ( T )cl.newInstance();
     }
 
     /**
@@ -375,11 +351,9 @@ public final class ClassUtil {
      *  
      *  @param requestedClass
      *  @return A Class object which you can then instantiate.
-     *  @throws WikiException
+     *  @throws ClassNotFoundException
      */
-    private static Class< ? > getMappedClass( String requestedClass )
-        throws ClassNotFoundException
-    {
+    private static Class< ? > getMappedClass( String requestedClass ) throws ClassNotFoundException {
         String mappedClass = c_classMappings.get( requestedClass );
         
         if( mappedClass == null )

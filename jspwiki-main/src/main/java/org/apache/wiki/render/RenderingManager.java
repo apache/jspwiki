@@ -179,7 +179,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
      */
     public MarkupParser getParser( WikiContext context, String pagedata ) {
     	try {
-			return ( MarkupParser )ClassUtil.getMappedObject( m_markupParserClass, context, new StringReader( pagedata ) );
+			return ClassUtil.getMappedObject( m_markupParserClass, context, new StringReader( pagedata ) );
 		} catch( ReflectiveOperationException | IllegalArgumentException e ) {
 			log.error( "unable to get an instance of " + m_markupParserClass + " (" + e.getMessage() + "), returning default markup parser.", e );
 			return new JSPWikiMarkupParser( context, new StringReader( pagedata ) );

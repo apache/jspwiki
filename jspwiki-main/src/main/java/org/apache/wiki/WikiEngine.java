@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -494,16 +495,14 @@ public class WikiEngine
         //
         //  Create and find the default working directory.
         //
-        m_workDir        = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
+        m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
 
-        if( m_workDir == null )
-        {
+        if( m_workDir == null ) {
             m_workDir = System.getProperty("java.io.tmpdir", ".");
             m_workDir += File.separator+Release.APPNAME+"-"+m_appid;
         }
 
-        try
-        {
+        try {
             File f = new File( m_workDir );
             f.mkdirs();
 
@@ -514,25 +513,16 @@ public class WikiEngine
             if( !f.canRead() ) throw new WikiException("No permission to read work directory: "+m_workDir);
             if( !f.canWrite() ) throw new WikiException("No permission to write to work directory: "+m_workDir);
             if( !f.isDirectory() ) throw new WikiException("jspwiki.workDir does not point to a directory: "+m_workDir);
-        }
-        catch( SecurityException e )
-        {
+        } catch( SecurityException e ) {
             log.fatal( "Unable to find or create the working directory: "+m_workDir, e );
             throw new IllegalArgumentException( "Unable to find or create the working dir: " + m_workDir, e );
         }
 
         log.info("JSPWiki working directory is '"+m_workDir+"'");
 
-        m_saveUserInfo   = TextUtil.getBooleanProperty( props,
-                                                        PROP_STOREUSERNAME,
-                                                        m_saveUserInfo );
-
-        m_useUTF8        = "UTF-8".equals( TextUtil.getStringProperty( props, PROP_ENCODING, "ISO-8859-1" ) );
-
-        m_beautifyTitle  = TextUtil.getBooleanProperty( props,
-                                                        PROP_BEAUTIFYTITLE,
-                                                        m_beautifyTitle );
-
+        m_saveUserInfo   = TextUtil.getBooleanProperty( props, PROP_STOREUSERNAME, m_saveUserInfo );
+        m_useUTF8        = StandardCharsets.UTF_8.name().equals( TextUtil.getStringProperty( props, PROP_ENCODING, StandardCharsets.ISO_8859_1.name() ) );
+        m_beautifyTitle  = TextUtil.getBooleanProperty( props, PROP_BEAUTIFYTITLE, m_beautifyTitle );
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
@@ -550,26 +540,22 @@ public class WikiEngine
         try
         {
             Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
-                    TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+                                                       TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
 
-            m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
-            m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
-            m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
-            m_attachmentManager = (AttachmentManager)ClassUtil.getMappedObject(AttachmentManager.class.getName(), this, props );
-            m_variableManager   = (VariableManager)ClassUtil.getMappedObject(VariableManager.class.getName(), props );
-            // m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
-            m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName());
-
-            m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
-
-            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName());
-            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedObject( AuthorizationManager.class.getName());
-            m_userManager           = (UserManager) ClassUtil.getMappedObject(UserManager.class.getName());
-            m_groupManager          = (GroupManager) ClassUtil.getMappedObject(GroupManager.class.getName());
-
-            m_editorManager     = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName(), this );
+            m_pageManager           = ClassUtil.getMappedObject( PageManager.class.getName(), this, props );
+            m_pluginManager         = ClassUtil.getMappedObject( PluginManager.class.getName(), this, props );
+            m_differenceManager     = ClassUtil.getMappedObject( DifferenceManager.class.getName(), this, props );
+            m_attachmentManager     = ClassUtil.getMappedObject( AttachmentManager.class.getName(), this, props );
+            m_variableManager       = ClassUtil.getMappedObject( VariableManager.class.getName(), props );
+            m_renderingManager      = ClassUtil.getMappedObject( RenderingManager.class.getName() );
+            m_searchManager         = ClassUtil.getMappedObject( SearchManager.class.getName(), this, props );
+            m_authenticationManager = ClassUtil.getMappedObject( AuthenticationManager.class.getName() );
+            m_authorizationManager  = ClassUtil.getMappedObject( AuthorizationManager.class.getName() );
+            m_userManager           = ClassUtil.getMappedObject( UserManager.class.getName() );
+            m_groupManager          = ClassUtil.getMappedObject( GroupManager.class.getName() );
+            m_editorManager         = ClassUtil.getMappedObject( EditorManager.class.getName(), this );
             m_editorManager.initialize( props );
 
             m_progressManager   = new ProgressManager();
@@ -583,27 +569,21 @@ public class WikiEngine
             m_aclManager = getAclManager();
 
             // Start the Workflow manager
-            m_workflowMgr = (WorkflowManager)ClassUtil.getMappedObject(WorkflowManager.class.getName());
+            m_workflowMgr = ClassUtil.getMappedObject(WorkflowManager.class.getName());
             m_workflowMgr.initialize(this, props);
 
-            m_internationalizationManager = (InternationalizationManager)
-                ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
-
-            m_templateManager   = (TemplateManager)
-                ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
+            m_internationalizationManager = ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
+            m_templateManager = ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
 
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event listeners,
             // it must be called lastly, so that all object references in the engine
             // are availabe to the initialize() method
-            m_filterManager     = (FilterManager)
-                ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+            m_filterManager = ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
 
-            m_adminBeanManager = (AdminBeanManager)
-                ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
+            m_adminBeanManager = ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
 
             // RenderingManager depends on FilterManager events.
-
             m_renderingManager.initialize( this, props );
 
             //
@@ -718,7 +698,7 @@ public class WikiEngine
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
             {
-                m_referenceManager = (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
+                m_referenceManager = ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
             }
 
@@ -2328,7 +2308,7 @@ public class WikiEngine
             try
             {
                 String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, DefaultAclManager.class.getName() );
-                m_aclManager = (AclManager)ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
+                m_aclManager = ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
                 m_aclManager.initialize( this, m_properties );
             }
             catch ( ReflectiveOperationException | IllegalArgumentException e )
