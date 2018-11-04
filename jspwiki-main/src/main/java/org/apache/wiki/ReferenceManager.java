@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -379,22 +379,16 @@ public class ReferenceManager
         }
     }
 
-    private String getHashFileName( String pageName )
-        throws NoSuchAlgorithmException
-    {
-        MessageDigest digest = MessageDigest.getInstance("MD5");
+    private String getHashFileName( String pageName ) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+			byte[] dig = digest.digest( pageName.getBytes(StandardCharsets.UTF_8) );
 
-        byte[] dig;
-        try
-        {
-            dig = digest.digest( pageName.getBytes("UTF-8") );
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new InternalWikiException("AAAAGH!  UTF-8 is gone!  My eyes!  It burns...!", e);
-        }
-
-        return TextUtil.toHexString(dig)+".cache";
+	        return TextUtil.toHexString(dig)+".cache";
+		} catch( NoSuchAlgorithmException e ) {
+			log.fatal( "What do you mean - no such algorithm?", e );
+			return null;
+		}
     }
 
     /**
@@ -405,74 +399,66 @@ public class ReferenceManager
         throws IOException,
                ClassNotFoundException
     {
-        ObjectInputStream in = null;
         long saved = 0L;
 
-        try
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
+        //
+        //  Find attribute cache, and check if it exists
+        //
+        String hashName = getHashFileName( p.getName() );
+        if( hashName != null ) {
+        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
 
-            //
-            //  Find attribute cache, and check if it exists
-            //
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-
-            f = new File( f, getHashFileName(p.getName()) );
+            f = new File( f, hashName );
 
             if( !f.exists() )
             {
                 return 0L;
             }
-
-            log.debug("Deserializing attributes for "+p.getName());
-
-            in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
-
-            long ver     = in.readLong();
-
-            if( ver != serialVersionUID )
+            try( ObjectInputStream in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) ))
             {
-                log.debug("File format has changed; cannot deserialize.");
-                return 0L;
+                StopWatch sw = new StopWatch();
+                sw.start();
+
+                log.debug("Deserializing attributes for "+p.getName());
+
+                long ver = in.readLong();
+
+                if( ver != serialVersionUID )
+                {
+                    log.debug("File format has changed; cannot deserialize.");
+                    return 0L;
+                }
+
+                saved        = in.readLong();
+
+                String name  = in.readUTF();
+
+                if( !name.equals(p.getName()) )
+                {
+                    log.debug("File name does not match ("+name+"), skipping...");
+                    return 0L; // Not here
+                }
+
+                long entries = in.readLong();
+
+                for( int i = 0; i < entries; i++ )
+                {
+                    String key   = in.readUTF();
+                    Object value = in.readObject();
+
+                    p.setAttribute( key, value );
+
+                    log.debug("   attr: "+key+"="+value);
+                }
+
+                in.close();
+
+                sw.stop();
+                log.debug("Read serialized data for "+name+" successfully in "+sw);
+                p.setHasMetadata();
             }
-
-            saved        = in.readLong();
-
-            String name  = in.readUTF();
-
-            if( !name.equals(p.getName()) )
-            {
-                log.debug("File name does not match ("+name+"), skipping...");
-                return 0L; // Not here
-            }
-
-            long entries = in.readLong();
-
-            for( int i = 0; i < entries; i++ )
-            {
-                String key   = in.readUTF();
-                Object value = in.readObject();
-
-                p.setAttribute( key, value );
-
-                log.debug("   attr: "+key+"="+value);
-            }
-
-            in.close();
-
-            sw.stop();
-            log.debug("Read serialized data for "+name+" successfully in "+sw);
-            p.setHasMetadata();
         }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.fatal("No MD5!?!");
-        }
-        finally
-        {
-            if( in != null ) in.close();
-        }
+        
 
         return saved;
     }
@@ -482,75 +468,67 @@ public class ReferenceManager
      */
     private synchronized void serializeAttrsToDisk( WikiPage p )
     {
-        ObjectOutputStream out = null;
         StopWatch sw = new StopWatch();
         sw.start();
 
-        try
-        {
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+        String hashName = getHashFileName( p.getName() );
+        if( hashName != null ) {
+        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
 
             if( !f.exists() ) f.mkdirs();
 
             //
             //  Create a digest for the name
             //
-            f = new File( f, getHashFileName(p.getName()) );
-
-            // FIXME: There is a concurrency issue here...
-            Set< Map.Entry < String, Object > > entries = p.getAttributes().entrySet();
-
-            if( entries.size() == 0 ) 
+            f = new File( f, hashName );
+            
+            try( ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) ) )
             {
-                //  Nothing to serialize, therefore we will just simply remove the
-                //  serialization file so that the next time we boot, we don't
-                //  deserialize old data.
-                f.delete();
-                return;
-            }
+                // FIXME: There is a concurrency issue here...
+                Set< Map.Entry < String, Object > > entries = p.getAttributes().entrySet();
 
-            out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
-
-            out.writeLong( serialVersionUID );
-            out.writeLong( System.currentTimeMillis() ); // Timestamp
-
-            out.writeUTF( p.getName() );
-            out.writeLong( entries.size() );
-
-            for( Iterator< Map.Entry < String, Object > > i = entries.iterator(); i.hasNext(); )
-            {
-                Map.Entry< String, Object > e = i.next();
-
-                if( e.getValue() instanceof Serializable )
+                if( entries.size() == 0 ) 
                 {
-                    out.writeUTF( (String)e.getKey() );
-                    out.writeObject( e.getValue() );
+                    //  Nothing to serialize, therefore we will just simply remove the
+                    //  serialization file so that the next time we boot, we don't
+                    //  deserialize old data.
+                    f.delete();
+                    return;
                 }
+
+                out.writeLong( serialVersionUID );
+                out.writeLong( System.currentTimeMillis() ); // Timestamp
+
+                out.writeUTF( p.getName() );
+                out.writeLong( entries.size() );
+
+                for( Iterator< Map.Entry < String, Object > > i = entries.iterator(); i.hasNext(); )
+                {
+                    Map.Entry< String, Object > e = i.next();
+
+                    if( e.getValue() instanceof Serializable )
+                    {
+                        out.writeUTF( e.getKey() );
+                        out.writeObject( e.getValue() );
+                    }
+                }
+
+                out.close();
+
             }
-
-            out.close();
-
-        }
-        catch( IOException e )
-        {
-            log.error("Unable to serialize!");
-
-            try
+            catch( IOException e )
             {
-                if( out != null ) out.close();
-            }
-            catch( IOException ex ) {}
-        }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.fatal("No MD5 algorithm!?!");
-        }
-        finally
-        {
-            sw.stop();
+                log.error( "Unable to serialize!", e );
 
-            log.debug("serialization for "+p.getName()+" done - took "+sw);
+            }
+            finally
+            {
+                sw.stop();
+
+                log.debug("serialization for "+p.getName()+" done - took "+sw);
+            }
         }
+        
     }
 
     /**
@@ -559,7 +537,8 @@ public class ReferenceManager
      *  @param context {@inheritDoc}
      *  @param content {@inheritDoc}
      */
-    public void postSave( WikiContext context, String content )
+    @Override
+	public void postSave( WikiContext context, String content )
     {
         WikiPage page = context.getPage();
 
@@ -630,17 +609,13 @@ public class ReferenceManager
         //
         serializeToDisk();
 
-        try
-        {
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+        String hashName = getHashFileName( pageName );
+        if( hashName != null ) {
+        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
 
             f = new File( f, getHashFileName(pageName) );
 
             if( f.exists() ) f.delete();
-        }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.error("What do you mean - no such algorithm?", e);
         }
     }
 
@@ -684,7 +659,7 @@ public class ReferenceManager
         Collection< String > oldRefTo = m_refersTo.get( page );
         m_refersTo.remove( page );
 
-        TreeSet<String> cleanedRefs = new TreeSet<String>();
+        TreeSet<String> cleanedRefs = new TreeSet<>();
         for( Iterator< String > i = references.iterator(); i.hasNext(); )
         {
             String ref = i.next();
@@ -1143,7 +1118,8 @@ public class ReferenceManager
     /**
      *  {@inheritDoc}
      */
-    public void actionPerformed(WikiEvent event)
+    @Override
+	public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )
         {
