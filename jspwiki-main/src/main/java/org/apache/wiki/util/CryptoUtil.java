@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 
 /**
  * Hashes and verifies salted SHA-1 passwords, which are compliant with RFC
@@ -34,8 +33,6 @@ import org.apache.log4j.Logger;
  */
 public final class CryptoUtil
 {
-    private static final Logger log = Logger.getLogger( CryptoUtil.class );
-
     private static final String SSHA = "{SSHA}";
 
     private static final Random RANDOM = new SecureRandom();
@@ -183,18 +180,9 @@ public final class CryptoUtil
         {
             all[hash.length + i] = salt[i];
         }
-        byte[] base64 = Base64.encodeBase64( all );
+        byte[] base64 = Base64.getEncoder().encode( all );
         
-        String saltedString = null;
-        try
-        {
-            saltedString = SSHA + new String( base64, "UTF8" );
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            log.fatal( "You do not have UTF-8!?!" );
-        }
-        return saltedString;
+        return SSHA + new String( base64, StandardCharsets.UTF_8 );
     }
 
     /**
@@ -204,17 +192,15 @@ public final class CryptoUtil
      *  @param entry The password entry, typically starting with {SSHA}.
      *  @return True, if the password matches.
      *  @throws NoSuchAlgorithmException If there is no SHA available.
-     *  @throws UnsupportedEncodingException If no UTF-8 encoding is available 
      */
-    public static boolean verifySaltedPassword( byte[] password, String entry ) 
-        throws NoSuchAlgorithmException, UnsupportedEncodingException
+    public static boolean verifySaltedPassword( byte[] password, String entry ) throws NoSuchAlgorithmException
     {
         // First, extract everything after {SSHA} and decode from Base64
         if( !entry.startsWith( SSHA ) )
         {
             throw new IllegalArgumentException( "Hash not prefixed by {SSHA}; is it really a salted hash?" );
         }
-        byte[] challenge = Base64.decodeBase64( entry.substring( 6 ).getBytes("UTF-8") );
+        byte[] challenge = Base64.getDecoder().decode( entry.substring( 6 ).getBytes( StandardCharsets.UTF_8 ) );
 
         // Extract the password hash and salt
         byte[] passwordHash = extractPasswordHash( challenge );
