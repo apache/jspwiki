@@ -81,7 +81,7 @@ public final class CryptoUtil
         // Print help if the user requested it, or if no arguments
         if( args.length == 0 || (args.length == 1 && HELP.equals( args[0] )) )
         {
-            System.out.println( "Usage: CryptUtil [options] " );
+            System.out.println( "Usage: CryptoUtil [options] " );
             System.out.println( "   --hash   password             create hash for password" );
             System.out.println( "   --verify password digest      verify password for digest" );
             System.exit( 0 );
@@ -95,7 +95,7 @@ public final class CryptoUtil
                 throw new IllegalArgumentException( "Error: --hash requires a 'password' argument." );
             }
             final String password = args[1].trim();
-            System.out.println( CryptoUtil.getSaltedPassword( password.getBytes("UTF-8") ) );
+            System.out.println( CryptoUtil.getSaltedPassword( password.getBytes( StandardCharsets.UTF_8 ) ) );
         }
 
         // User wants to verify an existing password
@@ -107,7 +107,7 @@ public final class CryptoUtil
             }
             final String password = args[1].trim();
             final String digest = args[2].trim();
-            System.out.println( CryptoUtil.verifySaltedPassword( password.getBytes("UTF-8"), digest ) );
+            System.out.println( CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), digest ) );
         }
 
         else
