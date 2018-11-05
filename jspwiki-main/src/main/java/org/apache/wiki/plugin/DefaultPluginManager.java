@@ -167,9 +167,9 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
 
     private static final String DEFAULT_FORMS_PACKAGE = "org.apache.wiki.forms";
 
-    private ArrayList<String> m_searchPath = new ArrayList<String>();
+    private ArrayList<String> m_searchPath = new ArrayList<>();
 
-    private ArrayList<String> m_externalJars = new ArrayList<String>();
+    private ArrayList<String> m_externalJars = new ArrayList<>();
 
     private Pattern m_pluginPattern;
 
@@ -178,7 +178,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      *  Keeps a list of all known plugin classes.
      */
-    private Map<String, WikiPluginInfo> m_pluginClassMap = new HashMap<String, WikiPluginInfo>();
+    private Map<String, WikiPluginInfo> m_pluginClassMap = new HashMap<>();
 
     /**
      *  Create a new PluginManager.
@@ -230,6 +230,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      * {@inheritDoc}
      */
+    @Override
     public void enablePlugins( boolean enabled ) {
         m_pluginsEnabled = enabled;
     }
@@ -237,6 +238,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean pluginsEnabled() {
         return m_pluginsEnabled;
     }
@@ -244,6 +246,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      * {@inheritDoc}
      */
+    @Override
     public Pattern getPluginPattern() {
 		return m_pluginPattern;
 	}
@@ -251,6 +254,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getPluginSearchPath() {
     	return TextUtil.getStringProperty( m_engine.getWikiProperties(), PROP_SEARCHPATH, null );
     }
@@ -314,6 +318,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *
      *  @since 2.0
      */
+    @Override
     public String execute( WikiContext context, String classname, Map< String, String > params ) throws PluginException {
         if( !m_pluginsEnabled ) {
             return "";
@@ -377,8 +382,9 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *
      * @throws IOException If the parsing fails.
      */
+    @Override
     public Map< String, String > parseArgs( String argstring ) throws IOException {
-        Map< String, String > arglist = new HashMap< String, String >();
+        Map< String, String > arglist = new HashMap< >();
 
         //
         //  Protection against funny users.
@@ -483,6 +489,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      *
      *  @throws PluginException From the plugin itself, it propagates, waah!
      */
+    @Override
     public String execute( WikiContext context, String commandline ) throws PluginException {
         if( !m_pluginsEnabled ) {
             return "";
@@ -775,6 +782,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *
          *  @return Something human-readable
          */
+        @Override
         public String toString() {
             return "Plugin :[name=" + m_name + "][className=" + m_className + "]";
         }
@@ -804,6 +812,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
      * @return a {@link WikiPlugin}.
      * @throws PluginException if there is a problem building the {@link WikiPlugin}.
      */
+    @Override
     public WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) throws PluginException {
         WikiPlugin plugin = null;
         WikiPluginInfo pluginInfo = m_pluginClassMap.get( pluginName );
