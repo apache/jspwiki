@@ -78,6 +78,7 @@ public class CommentedProperties extends Properties
      *  @param in The reader to read properties from
      *  @throws IOException in case something goes wrong.
      */
+    @Override
     public synchronized void load( Reader in ) throws IOException
     {
         m_propertyString = FileUtil.readContents( in );
@@ -122,14 +123,14 @@ public class CommentedProperties extends Properties
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public synchronized void putAll( Map arg0 )
+    public synchronized void putAll( Map< ? , ? > arg0 )
     {
         // Shove all of the entries into the property string
-        for( Iterator< Entry< ?, ? > > it = arg0.entrySet().iterator(); it.hasNext(); )
+        for( Iterator< ? > it = arg0.entrySet().iterator(); it.hasNext(); )
         {
-            Entry< ?, ? > entry = it.next();
+            @SuppressWarnings("unchecked") 
+            Entry< Object, Object > entry = ( Entry< Object, Object > )it.next();
             writeProperty( entry.getKey(), entry.getValue() );
         }
 
