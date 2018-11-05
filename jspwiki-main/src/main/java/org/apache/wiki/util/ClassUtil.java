@@ -37,7 +37,6 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.api.engine.PluginManager;
 import org.jdom2.Element;
 
 /**
@@ -124,12 +123,10 @@ public final class ClassUtil {
     }
 
     /**
-     * Setup the plugin classloader.
-     * Check if there are external JARS to add via property {@link org.apache.wiki.api.engine.PluginManager#PROP_EXTERNALJARS}
-     *
-     * @return the classloader that can load classes from the configured external jars or
-     *         ,if not specified, the classloader that loaded this class.
-     * @param externaljars
+     * Setup the plugin classloader, checking if there are external JARS to add.
+     * 
+     * @param externaljars external jars to load into the classloader.
+     * @return the classloader that can load classes from the configured external jars or, if not specified, the classloader that loaded this class.
      */
     private static ClassLoader setupClassLoader(List<String> externaljars) {
         classLoaderSetup = true;
@@ -140,17 +137,23 @@ public final class ClassUtil {
         }
         URL[] urls = new URL[externaljars.size()];
         int i = 0;
-        try {
-            for (String externaljar : externaljars) {
-                File jarFile = new File(externaljar);
+        for( String externaljar : externaljars ) {
+            try {
+                File jarFile = new File( externaljar );
                 URL ucl = jarFile.toURI().toURL();
                 urls[i++] = ucl;
                 log.info("added " + ucl + " to list of external jars");
+            } catch (MalformedURLException e) {
+                log.error("exception (" + e.getMessage() +") while setting up classloaders for external jar:" + externaljar + ", continuing without external jars.");
             }
-        } catch (MalformedURLException e) {
-            log.error("exception while setting up classloaders for external jars via property" + PluginManager.PROP_EXTERNALJARS + ", continuing without external jars.");
+        }
+        
+        if( i == 0 ) {
+            log.error( "all external jars threw an exception while setting up classloaders for them, continuing with standard classloading. " + 
+                       "See https://jspwiki-wiki.apache.org/Wiki.jsp?page=InstallingPlugins for help on how to install custom plugins." );
             return ClassUtil.class.getClassLoader();
         }
+        
         return new URLClassLoader(urls, ClassUtil.class.getClassLoader());
     }
 
