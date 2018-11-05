@@ -21,8 +21,8 @@ package org.apache.wiki.util;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Base64;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -105,13 +105,13 @@ public class CryptoUtilTest
     {
         byte[] digest;
 
-        digest = Base64.decodeBase64( "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=".getBytes() );
+        digest = Base64.getDecoder().decode( "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=".getBytes() );
         Assertions.assertEquals( "foo", new String( CryptoUtil.extractSalt( digest ) ) );
 
-        digest = Base64.decodeBase64( "tAVisOOQGAeVyP8UMFQY9qi83lxsb09e".getBytes() );
+        digest = Base64.getDecoder().decode( "tAVisOOQGAeVyP8UMFQY9qi83lxsb09e".getBytes() );
         Assertions.assertEquals( "loO^", new String( CryptoUtil.extractSalt( digest ) ) );
 
-        digest = Base64.decodeBase64( "BZaDYvB8czmNW3MjR2j7/mklODV0ZXN0eQ==".getBytes() );
+        digest = Base64.getDecoder().decode( "BZaDYvB8czmNW3MjR2j7/mklODV0ZXN0eQ==".getBytes() );
         Assertions.assertEquals( "testy", new String( CryptoUtil.extractSalt( digest ) ) );
     }
 
