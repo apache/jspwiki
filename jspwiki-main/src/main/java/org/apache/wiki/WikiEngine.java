@@ -686,11 +686,8 @@ public class WikiEngine
      *
      *  @throws WikiException If the reference manager initialization fails.
      */
-    @SuppressWarnings("unchecked")
-    public void initReferenceManager() throws WikiException
-    {
-        try
-        {
+    public void initReferenceManager() throws WikiException {
+        try {
             ArrayList<WikiPage> pages = new ArrayList<>();
             pages.addAll( m_pageManager.getAllPages() );
             pages.addAll( m_attachmentManager.getAllAttachments() );
@@ -702,13 +699,9 @@ public class WikiEngine
                 m_referenceManager.initialize( pages );
             }
 
-        }
-        catch( ProviderException e )
-        {
+        } catch( ProviderException e ) {
             log.fatal("PageProvider is unable to list pages: ", e);
-        }
-        catch( ReflectiveOperationException | IllegalArgumentException e ) 
-        {
+        } catch( ReflectiveOperationException | IllegalArgumentException e ) {
             throw new WikiException( "Could not instantiate ReferenceManager: " + e.getMessage(), e );
         }
     }
@@ -1796,8 +1789,7 @@ public class WikiEngine
     // FIXME: Should really get a Date object and do proper comparisons. This is terribly wasteful.
     public Set< WikiPage > getRecentChanges()
     {
-        try
-        {
+        try {
             Collection<WikiPage>   pages = m_pageManager.getAllPages();
             Collection<Attachment>  atts = m_attachmentManager.getAllAttachments();
 
@@ -1807,9 +1799,7 @@ public class WikiEngine
             sortedPages.addAll( atts );
 
             return sortedPages;
-        }
-        catch( ProviderException e )
-        {
+        } catch( ProviderException e ) {
             log.error( "Unable to fetch all pages: ",e);
             return null;
         }
@@ -1871,9 +1861,9 @@ public class WikiEngine
      *          revision of the page.
      */
 
-    public List getVersionHistory( String page )
+    public List< ? extends WikiPage > getVersionHistory( String page )
     {
-        List c = null;
+        List< ? extends WikiPage > c = null;
 
         try
         {

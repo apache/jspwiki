@@ -378,7 +378,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @since 2.0.22.
      */
     public List<PageLock> getActiveLocks() {
-        ArrayList<PageLock> result = new ArrayList<PageLock>();
+        ArrayList<PageLock> result = new ArrayList<>();
 
         for (PageLock lock : m_pageLocks.values()) {
             result.add(lock);
@@ -432,12 +432,10 @@ public class PageManager extends ModuleManager implements WikiEventListener {
     }
 
     /**
-     * Gets a version history of page.  Each element in the returned
-     * List is a WikiPage.
+     * Gets a version history of page.  Each element in the returned List is a WikiPage.
      *
      * @param pageName The name of the page to fetch history for
-     * @return If the page does not exist, returns null, otherwise a List
-     *         of WikiPages.
+     * @return If the page does not exist, returns null, otherwise a List of WikiPages.
      * @throws ProviderException If the repository fails.
      */
     public List getVersionHistory(String pageName) throws ProviderException {
@@ -551,6 +549,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             setName("JSPWiki Lock Reaper");
         }
 
+        @Override
         public void backgroundTask() throws Exception {
             Collection<PageLock> entries = m_pageLocks.values();
             Date now = new Date();
@@ -713,6 +712,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      *
      * @param event The event
      */
+    @Override
     public void actionPerformed(WikiEvent event) {
         if (!(event instanceof WikiSecurityEvent)) {
             return;
@@ -768,8 +768,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         boolean pageChanged = false;
         if (acl != null) {
             Enumeration<AclEntry> entries = acl.entries();
-            Collection<AclEntry> entriesToAdd = new ArrayList<AclEntry>();
-            Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
+            Collection<AclEntry> entriesToAdd = new ArrayList<>();
+            Collection<AclEntry> entriesToRemove = new ArrayList<>();
             while (entries.hasMoreElements()) {
                 AclEntry entry = entries.nextElement();
                 if (ArrayUtils.contains(oldPrincipals, entry.getPrincipal())) {

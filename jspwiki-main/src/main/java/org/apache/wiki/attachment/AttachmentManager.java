@@ -29,10 +29,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.PageManager;
@@ -46,6 +42,10 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.util.ClassUtil;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 /**
@@ -549,7 +549,7 @@ public class AttachmentManager
      *          disabled.
      *  @throws ProviderException If the provider fails for some reason.
      */
-    public List getVersionHistory( String attachmentName )
+    public List<Attachment> getVersionHistory( String attachmentName )
         throws ProviderException
     {
         if( m_provider == null )
@@ -575,15 +575,12 @@ public class AttachmentManager
      *          return an empty collection.
      *  @throws ProviderException If something went wrong with the backend
      */
-    public Collection getAllAttachments()
-        throws ProviderException
-    {
-        if( attachmentsEnabled() )
-        {
+    public Collection<Attachment> getAllAttachments() throws ProviderException {
+        if( attachmentsEnabled() ) {
             return m_provider.listAllChanged( new Date(0L) );
         }
 
-        return new ArrayList<Attachment>();
+        return new ArrayList<>();
     }
 
     /**

@@ -216,7 +216,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public List listAllChanged(Date timestamp) throws ProviderException {
+    public List<Attachment> listAllChanged(Date timestamp) throws ProviderException {
         List< Attachment > all = null;
         //
         // we do a one-time build up of the cache, after this the cache is updated for every attachment add/delete
@@ -313,7 +313,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public List getVersionHistory( Attachment att )
+    public List<Attachment> getVersionHistory( Attachment att )
     {
         return m_provider.getVersionHistory( att );
     }

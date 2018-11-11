@@ -18,13 +18,14 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.search.QueryItem;
@@ -104,7 +105,7 @@ public interface WikiAttachmentProvider
      *  @return A List of Attachment objects, in most-recently-changed first order.
      *  @throws ProviderException If something goes wrong.
      */
-    List listAllChanged( Date timestamp )
+    List<Attachment> listAllChanged( Date timestamp )
         throws ProviderException;
 
     /**
@@ -126,7 +127,7 @@ public interface WikiAttachmentProvider
      *  @param att The attachment for which to find the version history for.
      *  @return A List of Attachment objects.
      */
-    List getVersionHistory( Attachment att );
+    List<Attachment> getVersionHistory( Attachment att );
 
     /**
      *  Removes a specific version from the repository.  The implementations
