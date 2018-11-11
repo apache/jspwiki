@@ -23,23 +23,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Properties;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.wiki.TestEngine;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class FileUtilTest
 {
-
-    @BeforeAll
-    public static void setUp()
-    {
-        Properties props = TestEngine.getTestProperties();
-        PropertyConfigurator.configure(props);
-    }
 
     /**
      *  This test actually checks if your JDK is misbehaving.  On my own Debian
@@ -54,7 +44,7 @@ public class FileUtilTest
     {
         String src = "abc\u00e4\u00e5\u00a6";
 
-        String res = new String( src.getBytes("ISO-8859-1"), "ISO-8859-1" );
+        String res = new String( src.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1 );
 
         Assertions.assertEquals( src, res );
     }
@@ -65,8 +55,8 @@ public class FileUtilTest
     {
         String src = "abc\u00e4\u00e5\u00a6";
 
-        String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
-                                            "ISO-8859-1" );
+        String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes(StandardCharsets.ISO_8859_1) ),
+                                            StandardCharsets.ISO_8859_1.name() );
 
         Assertions.assertEquals( src, res );
     }
@@ -80,17 +70,15 @@ public class FileUtilTest
     {
         String src = "abc\u00e4\u00e5\u00a6def";
 
-        String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
-                                            "UTF-8" );
+        String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes(StandardCharsets.ISO_8859_1) ),
+                                            StandardCharsets.UTF_8.name() );
 
         Assertions.assertEquals( src, res );
     }
 
     /**
-       ISO Latin 1 from a pipe.
-
-       FIXME: Works only on UNIX systems now.
-    */
+     * ISO Latin 1 from a pipe.
+     */
     @Test
     public void testReadContentsFromPipe()
         throws Exception
@@ -105,7 +93,7 @@ public class FileUtilTest
 
         src += "\u00e4\u00e5\u00a6";
 
-        File f = FileUtil.newTmpFile( src, "ISO-8859-1" );
+        File f = FileUtil.newTmpFile( src, StandardCharsets.ISO_8859_1.name() );
 
         String[] envp = {};
 
@@ -113,7 +101,7 @@ public class FileUtilTest
         {
             Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), envp, f.getParentFile() );
 
-            String result = FileUtil.readContents( process.getInputStream(), "UTF-8" );
+            String result = FileUtil.readContents( process.getInputStream(), StandardCharsets.UTF_8.name() );
 
             f.delete();
 
