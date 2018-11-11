@@ -528,25 +528,19 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @param page WikiPage to add to the update queue.
      */
     @Override
-    public void reindexPage( WikiPage page )
-    {
-        if( page != null )
-        {
+    public void reindexPage( WikiPage page ) {
+        if( page != null ) {
             String text;
 
             // TODO: Think if this was better done in the thread itself?
 
-            if( page instanceof Attachment )
-            {
+            if( page instanceof Attachment ) {
                 text = getAttachmentContent( (Attachment) page );
-            }
-            else
-            {
+            } else {
                 text = m_engine.getPureText( page );
             }
 
-            if( text != null )
-            {
+            if( text != null ) {
                 // Add work item to m_updates queue.
                 Object[] pair = new Object[2];
                 pair[0] = page;
@@ -561,9 +555,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection findPages( String query, WikiContext wikiContext )
-        throws ProviderException
-    {
+    public Collection< SearchResult > findPages( String query, WikiContext wikiContext ) throws ProviderException {
         return findPages( query, FLAG_CONTEXTS, wikiContext );
     }
 
@@ -581,7 +573,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @return A Collection of SearchResult instances
      *  @throws ProviderException if there is a problem with the backend
      */
-    public Collection findPages( String query, int flags, WikiContext wikiContext )
+    public Collection< SearchResult > findPages( String query, int flags, WikiContext wikiContext )
         throws ProviderException
     {
         IndexSearcher  searcher = null;

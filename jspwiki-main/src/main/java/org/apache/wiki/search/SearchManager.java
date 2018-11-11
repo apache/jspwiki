@@ -133,13 +133,13 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     			}
 
     			if (actionName.equals(AJAX_ACTION_SUGGESTIONS)) {
-    				List<String> callResults = new ArrayList<String>();
+    				List<String> callResults = new ArrayList<>();
     				log.debug("Calling getSuggestions() START");
     				callResults = getSuggestions(itemId, maxResults);
     				log.debug("Calling getSuggestions() DONE. "+callResults.size());
     				result = AjaxUtil.toJson(callResults);
     			} else if (actionName.equals(AJAX_ACTION_PAGES)) {
-    				List<Map<String,Object>> callResults = new ArrayList<Map<String,Object>>();
+    				List<Map<String,Object>> callResults = new ArrayList<>();
     				log.debug("Calling findPages() START");
     				WikiContext wikiContext = m_engine.createContext(req, WikiContext.VIEW);
     				if (wikiContext == null) {
@@ -167,7 +167,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         {
             StopWatch sw = new StopWatch();
             sw.start();
-            List<String> list = new ArrayList<String>(maxLength);
+            List<String> list = new ArrayList<>(maxLength);
 
             if( wikiName.length() > 0 )
             {
@@ -217,12 +217,10 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
             StopWatch sw = new StopWatch();
             sw.start();
 
-            List<Map<String,Object>> list = new ArrayList<Map<String,Object>>(maxLength);
+            List<Map<String,Object>> list = new ArrayList<>(maxLength);
 
-            if( searchString.length() > 0 )
-            {
-                try
-                {
+            if( searchString.length() > 0 ) {
+                try {
                     Collection< SearchResult > c;
 
                     if( m_searchProvider instanceof LuceneSearchProvider ) {
@@ -240,9 +238,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
                         hm.put( "score", sr.getScore() );
                         list.add( hm );
                     }
-                }
-                catch(Exception e)
-                {
+                } catch(Exception e) {
                     log.info("AJAX search failed; ",e);
                 }
             }
@@ -262,6 +258,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      * @param properties the properties used to initialize the wiki engine
      * @throws FilterException if the search provider failed to initialize
      */
+    @Override
     public void initialize(WikiEngine engine, Properties properties)
         throws FilterException
     {
@@ -283,8 +280,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         }
     }
 
-    private void loadSearchProvider(Properties properties)
-    {
+    private void loadSearchProvider(Properties properties) {
         //
         // See if we're using Lucene, and if so, ensure that its
         // index directory is up to date.
@@ -308,24 +304,12 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
             return;
         }
 
-        String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER,
-                                                           DEFAULT_SEARCHPROVIDER );
+        String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
 
-        try
-        {
+        try {
             Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
             m_searchProvider = (SearchProvider)providerClass.newInstance();
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
-        }
-        catch( InstantiationException e )
-        {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
-        }
-        catch( IllegalAccessException e )
-        {
+        } catch( ClassNotFoundException | InstantiationException | IllegalAccessException e ) {
             log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
         }
 
@@ -405,6 +389,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *
      *  @param event {@inheritDoc}
      */
+    @Override
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )

@@ -40,7 +40,7 @@ public interface SearchProvider extends WikiProvider
     void pageRemoved(WikiPage page);
 
     /**
-     *  Adds a WikiPage for indexing queue.  This is called a queue, since
+     *  Adds a WikiPage for indexing queue. This is called a queue, since
      *  this method is expected to return pretty quickly, and indexing to
      *  be done in a separate thread.
      *
@@ -56,5 +56,5 @@ public interface SearchProvider extends WikiProvider
      * @throws ProviderException if the search provider failed.
      * @throws IOException if for some reason the query could not be executed.
      */
-    Collection findPages(String query, WikiContext wikiContext) throws ProviderException, IOException;
+    Collection< SearchResult > findPages(String query, WikiContext wikiContext) throws ProviderException, IOException;
 }
