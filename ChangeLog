@@ -1,3 +1,7 @@
+2018-11-11  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * no version bump: some more polishing and minor refactors
+
 2018-11-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-08: try to load as many external third-party plugin jars as possible, instead  
