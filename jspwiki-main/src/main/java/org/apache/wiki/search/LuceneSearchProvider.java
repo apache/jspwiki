@@ -120,7 +120,7 @@ public class LuceneSearchProvider implements SearchProvider {
     protected static final String LUCENE_PAGE_NAME     = "name";
 
     private String           m_luceneDirectory;
-    protected Vector<Object[]> m_updates = new Vector<Object[]>(); // Vector because multi-threaded.
+    protected Vector<Object[]> m_updates = new Vector<>(); // Vector because multi-threaded.
 
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
@@ -133,6 +133,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void initialize(WikiEngine engine, Properties props)
             throws NoRequiredPropertyException, IOException
     {
@@ -198,98 +199,61 @@ public class LuceneSearchProvider implements SearchProvider {
      *
      *  @throws IOException If there's a problem during indexing
      */
-    protected void doFullLuceneReindex()
-        throws IOException
-    {
+    protected void doFullLuceneReindex() throws IOException {
         File dir = new File(m_luceneDirectory);
 
         String[] filelist = dir.list();
 
-        if( filelist == null )
-        {
+        if( filelist == null ) {
             throw new IOException( "Invalid Lucene directory: cannot produce listing: "+dir.getAbsolutePath());
         }
 
-        try
-        {
-            if( filelist.length == 0 )
-            {
+        try {
+            if( filelist.length == 0 ) {
                 //
                 //  No files? Reindex!
                 //
                 Date start = new Date();
-                IndexWriter writer = null;
 
                 log.info("Starting Lucene reindexing, this can take a couple of minutes...");
 
                 Directory luceneDir = new SimpleFSDirectory(dir, null);
-                
-                try
+                try( IndexWriter writer = getIndexWriter( luceneDir ) )
                 {
-                    writer = getIndexWriter( luceneDir );
                     Collection< WikiPage > allPages = m_engine.getPageManager().getAllPages();
-
-                    for( Iterator< WikiPage > iterator = allPages.iterator(); iterator.hasNext(); )
-                    {
-                        WikiPage page = iterator.next();
+                    for( WikiPage page : allPages ) {
                         
-                        try
-                        {
-                            String text = m_engine.getPageManager().getPageText( page.getName(),
-                                                                                 WikiProvider.LATEST_VERSION );
+                        try {
+                            String text = m_engine.getPageManager().getPageText( page.getName(), WikiProvider.LATEST_VERSION );
                             luceneIndexPage( page, text, writer );
-                        }
-                        catch( IOException e )
-                        {
+                        } catch( IOException e ) {
                             log.warn( "Unable to index page " + page.getName() + ", continuing to next ", e );
                         }
                     }
 
-                    Collection allAttachments = m_engine.getAttachmentManager().getAllAttachments();
-                    for( Iterator iterator = allAttachments.iterator(); iterator.hasNext(); )
-                    {
-                        Attachment att = (Attachment) iterator.next();
-                        
-                        try
-                        {
+                    Collection< Attachment > allAttachments = m_engine.getAttachmentManager().getAllAttachments();
+                    for( Attachment att : allAttachments ) {
+                        try {
                             String text = getAttachmentContent( att.getName(), WikiProvider.LATEST_VERSION );
                             luceneIndexPage( att, text, writer );
-                        }
-                        catch( IOException e )
-                        {
+                        } catch( IOException e ) {
                             log.warn( "Unable to index attachment " + att.getName() + ", continuing to next", e );
                         }
                     }
 
                 }
-                finally
-                {
-                    close( writer );
-                }
 
                 Date end = new Date();
                 log.info( "Full Lucene index finished in " + (end.getTime() - start.getTime()) + " milliseconds." );
-            }
-            else
-            {
+            } else {
                 log.info("Files found in Lucene directory, not reindexing.");
             }
-        }
-        catch( NoClassDefFoundError e )
-        {
-            log.info("Lucene libraries do not exist - not using Lucene.");
-        }
-        catch ( IOException e )
-        {
+        } catch ( IOException e ) {
             log.error("Problem while creating Lucene index - not using Lucene.", e);
-        }
-        catch ( ProviderException e )
-        {
+        } catch ( ProviderException e ) {
             log.error("Problem reading pages while creating Lucene index (JSPWiki won't start.)", e);
             throw new IllegalArgumentException("unable to create Lucene index");
-        }
-        catch( Exception e )
-        {
+        } catch( Exception e ) {
             log.error("Unable to start lucene",e);
         }
 
@@ -509,6 +473,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void pageRemoved( WikiPage page )
     {
         IndexWriter writer = null;
@@ -562,6 +527,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *
      *  @param page WikiPage to add to the update queue.
      */
+    @Override
     public void reindexPage( WikiPage page )
     {
         if( page != null )
@@ -594,6 +560,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection findPages( String query, WikiContext wikiContext )
         throws ProviderException
     {
@@ -653,7 +620,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
             AuthorizationManager mgr = m_engine.getAuthorizationManager();
 
-            list = new ArrayList<SearchResult>(hits.length);
+            list = new ArrayList<>(hits.length);
             for ( int curr = 0; curr < hits.length; curr++ )
             {
                 int docID = hits[curr].doc;
@@ -731,6 +698,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getProviderInfo()
     {
         return "LuceneSearchProvider";
@@ -757,6 +725,7 @@ public class LuceneSearchProvider implements SearchProvider {
             setName("JSPWiki Lucene Indexer");
         }
 
+        @Override
         public void startupTask() throws Exception
         {
             m_watchdog = getEngine().getCurrentWatchDog();
@@ -777,6 +746,7 @@ public class LuceneSearchProvider implements SearchProvider {
             m_watchdog.exitState();
         }
 
+        @Override
         public void backgroundTask() throws Exception
         {
             m_watchdog.enterState("Emptying index queue", 60);
@@ -812,6 +782,7 @@ public class LuceneSearchProvider implements SearchProvider {
             m_contexts = contexts != null ? contexts.clone() : null;
         }
 
+        @Override
         public WikiPage getPage()
         {
             return m_page;
@@ -820,12 +791,14 @@ public class LuceneSearchProvider implements SearchProvider {
         /* (non-Javadoc)
          * @see org.apache.wiki.SearchResult#getScore()
          */
+        @Override
         public int getScore()
         {
             return m_score;
         }
 
 
+        @Override
         public String[] getContexts()
         {
             return m_contexts;
