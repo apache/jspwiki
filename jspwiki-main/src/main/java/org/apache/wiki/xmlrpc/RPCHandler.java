@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Collection;
@@ -53,6 +52,7 @@ public class RPCHandler
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void initialize( WikiContext ctx )
     {
         super.initialize( ctx );
@@ -92,7 +92,7 @@ public class RPCHandler
     {
         checkPermission( PagePermission.VIEW );
         Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector<String> result = new Vector<String>();
+        Vector<String> result = new Vector<>();
 
         for( WikiPage p : pages )
         {
@@ -108,9 +108,10 @@ public class RPCHandler
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
+    @Override
     protected Hashtable<String,Object> encodeWikiPage( WikiPage page )
     {
-        Hashtable<String, Object> ht = new Hashtable<String, Object>();
+        Hashtable<String, Object> ht = new Hashtable<>();
 
         ht.put( "name", toRPCString(page.getName()) );
 
@@ -140,11 +141,12 @@ public class RPCHandler
         return ht;
     }
 
+    @Override
     public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
         Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
+        Vector<Hashtable<String, Object>> result = new Vector<>();
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
@@ -263,7 +265,7 @@ public class RPCHandler
                              extCollector,
                              attCollector );
 
-        Vector<Hashtable<String, String>> result = new Vector<Hashtable<String, String>>();
+        Vector<Hashtable<String, String>> result = new Vector<>();
 
         //
         //  Add local links.
@@ -271,7 +273,7 @@ public class RPCHandler
         for( Iterator< String > i = localCollector.getLinks().iterator(); i.hasNext(); )
         {
             String link = i.next();
-            Hashtable< String, String > ht = new Hashtable<String, String>();
+            Hashtable< String, String > ht = new Hashtable<>();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
 
@@ -305,7 +307,7 @@ public class RPCHandler
         {
             String link = i.next();
 
-            Hashtable< String, String > ht = new Hashtable< String, String >();
+            Hashtable< String, String > ht = new Hashtable< >();
 
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
@@ -323,7 +325,7 @@ public class RPCHandler
         {
             String link = i.next();
 
-            Hashtable< String, String > ht = new Hashtable< String, String >();
+            Hashtable< String, String > ht = new Hashtable< >();
 
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );

@@ -160,10 +160,10 @@ public final class WikiEventManager
     private static WikiEventListener c_monitor = null;
 
     /* The Map of client object to WikiEventDelegate. */
-    private final Map<Object, WikiEventDelegate> m_delegates = new HashMap<Object, WikiEventDelegate>();
+    private final Map<Object, WikiEventDelegate> m_delegates = new HashMap<>();
 
     /* The Vector containing any preloaded WikiEventDelegates. */
-    private final Vector<WikiEventDelegate> m_preloadCache = new Vector<WikiEventDelegate>();
+    private final Vector<WikiEventDelegate> m_preloadCache = new Vector<>();
 
     /* Singleton instance of the WikiEventManager. */
     private static WikiEventManager c_instance = null;
@@ -439,7 +439,7 @@ public final class WikiEventManager
     {
         /* A list of event listeners for this instance. */
 
-        private ArrayList<WeakReference<WikiEventListener>> m_listenerList = new ArrayList<WeakReference<WikiEventListener>>();
+        private ArrayList<WeakReference<WikiEventListener>> m_listenerList = new ArrayList<>();
 
         private Class  m_class  = null;
 
@@ -506,7 +506,7 @@ public final class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                return m_listenerList.add( new WeakReference<WikiEventListener>(listener) );
+                return m_listenerList.add( new WeakReference<>(listener) );
             }
         }
 
@@ -606,6 +606,7 @@ public final class WikiEventManager
     private static class WikiEventListenerComparator implements Comparator<WikiEventListener>
     {
         // TODO: This method is a critical performance bottleneck
+        @Override
         public int compare(WikiEventListener w0, WikiEventListener w1)
         {
             if( w1 == w0 || w0.equals(w1) ) return 0;

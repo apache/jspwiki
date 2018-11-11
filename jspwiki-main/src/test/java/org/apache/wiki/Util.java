@@ -21,6 +21,7 @@ package org.apache.wiki;
 import java.util.Collection;
 import java.util.Iterator;
 
+
 /**
  * Utilities for tests.
  */
@@ -29,10 +30,9 @@ public class Util
     /**
      * Check that a collection contains the required string.
      */
-    public static boolean collectionContains( Collection container,
-                                              String captive )
+    public static boolean collectionContains( Collection< ? > container, String captive )
     {
-        Iterator i = container.iterator();
+        Iterator< ? > i = container.iterator();
         while( i.hasNext() )
         {
             Object cap = i.next();
