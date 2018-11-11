@@ -99,28 +99,18 @@ public class Preferences
         Preferences prefs = new Preferences();
         Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
         WikiContext ctx = WikiContext.findContext( pageContext );
-
+        String dateFormat = ctx.getEngine().getInternationalizationManager().get( InternationalizationManager.CORE_BUNDLE,
+                                                                                  getLocale( ctx ),
+                                                                                  "common.datetimeformat" );
+        
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
-        prefs.put("DateFormat",
-                  TextUtil.getStringProperty( props,
-                                              "jspwiki.defaultprefs.template.dateformat",
-                                              ctx.getEngine().getInternationalizationManager().get( InternationalizationManager.CORE_BUNDLE,
-                                                                                                    getLocale( ctx ),
-                                                                                                    "common.datetimeformat" ) ) );
-
-        prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone",
-                                                          java.util.TimeZone.getDefault().getID() ) );
-
+        prefs.put("DateFormat", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.dateformat", dateFormat ) );
+        prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", java.util.TimeZone.getDefault().getID() ) );
         prefs.put("Orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
         prefs.put("Sidebar", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sidebar", "active" ) );
-
         prefs.put("Layout", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.layout", "fluid" ) );
-
-        prefs.put("Language", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.language",
-                                                          getLocale( ctx ).toString() ) );
-
-        prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting",
-                                                          "true" ) );
+        prefs.put("Language", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.language", getLocale( ctx ).toString() ) );
+        prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting", "true" ) );
 
         // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
         // disabling it until knowing why it's happening
@@ -141,24 +131,20 @@ public class Preferences
      *  @param prefs The default hashmap of preferences
      *
      */
-	private static void parseJSONPreferences( HttpServletRequest request, Preferences prefs )
-    {
-        //FIXME: urlDecodeUTF8 should better go in HttpUtil ??
+	private static void parseJSONPreferences( HttpServletRequest request, Preferences prefs ) {
         String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
 
-        if( prefVal != null )
-        {
-            Gson gson=new Gson();
-            Map<String,String> map = new HashMap<String,String>();
+        if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
-            map = (Map<String,String>) gson.fromJson(prefVal, map.getClass());
+            @SuppressWarnings("unchecked")
+            Map<String,String> map = new Gson().fromJson(prefVal, Map.class );
 
             for (String key : map.keySet()) {
                 key = TextUtil.replaceEntities( key );
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
-                Object value = map.get(key);
+                String value = map.get(key);
                 if (value != null) {
-                	prefs.put(key, value.toString() );
+                	prefs.put( key, value );
                 }
             }
         }
@@ -172,18 +158,19 @@ public class Preferences
      *  @param name
      *  @return the preference value
      */
-    public static String getPreference( WikiContext wikiContext, String name )
-    {
+    public static String getPreference( WikiContext wikiContext, String name ) {
         HttpServletRequest request = wikiContext.getHttpRequest();
         if ( request == null ) return null;
 
         Preferences prefs = (Preferences)request.getSession().getAttribute( SESSIONPREFS );
 
-        if( prefs != null )
+        if( prefs != null ) {
             return prefs.get( name );
+        }
 
         return null;
     }
+    
     /**
      *  Returns a preference value programmatically.
      *  FIXME
