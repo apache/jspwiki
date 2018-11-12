@@ -98,7 +98,7 @@
     //
     List< WikiPage > changed;
     
-    if( mode.equals("blog") )
+    if( "blog".equals( mode ) )
     {
         org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
         changed = plug.findBlogEntries(wiki,
@@ -108,7 +108,7 @@
     }
     else
     {
-        changed = wiki.getVersionHistory( wikipage.getName() );
+        changed = ( List< WikiPage > )wiki.getVersionHistory( wikipage.getName() );
     }
     
     //
