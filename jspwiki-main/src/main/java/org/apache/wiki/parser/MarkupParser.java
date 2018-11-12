@@ -55,11 +55,11 @@ public abstract class MarkupParser
     protected WikiContext    m_context;
 
     /** Optionally stores internal wikilinks */
-    protected ArrayList<StringTransmutator>      m_localLinkMutatorChain    = new ArrayList<StringTransmutator>();
-    protected ArrayList<StringTransmutator>      m_externalLinkMutatorChain = new ArrayList<StringTransmutator>();
-    protected ArrayList<StringTransmutator>      m_attachmentLinkMutatorChain = new ArrayList<StringTransmutator>();
-    protected ArrayList<HeadingListener>         m_headingListenerChain     = new ArrayList<HeadingListener>();
-    protected ArrayList<StringTransmutator>      m_linkMutators             = new ArrayList<StringTransmutator>();
+    protected ArrayList<StringTransmutator>      m_localLinkMutatorChain    = new ArrayList<>();
+    protected ArrayList<StringTransmutator>      m_externalLinkMutatorChain = new ArrayList<>();
+    protected ArrayList<StringTransmutator>      m_attachmentLinkMutatorChain = new ArrayList<>();
+    protected ArrayList<HeadingListener>         m_headingListenerChain     = new ArrayList<>();
+    protected ArrayList<StringTransmutator>      m_linkMutators             = new ArrayList<>();
 
     protected boolean        m_inlineImages     = true;
     protected boolean        m_parseAccessRules = true;
@@ -284,7 +284,7 @@ public abstract class MarkupParser
         List< Pattern > compiledpatterns = ( List< Pattern > )m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
 
         if( compiledpatterns == null ) {
-            compiledpatterns = new ArrayList< Pattern >( 20 );
+            compiledpatterns = new ArrayList< >( 20 );
             Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
 
             //

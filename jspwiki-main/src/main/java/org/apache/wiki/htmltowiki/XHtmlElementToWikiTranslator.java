@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom2.Attribute;
+import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Text;
@@ -252,9 +253,9 @@ public class XHtmlElementToWikiTranslator
 
     private void printChildren( Element base ) throws IOException, JDOMException
     {
-        for( Iterator i = base.getContent().iterator(); i.hasNext(); )
+        for( Iterator< Content > i = base.getContent().iterator(); i.hasNext(); )
         {
-            Object c = i.next();
+            Content c = i.next();
             if( c instanceof Element )
             {
                 Element e = (Element)c;
@@ -404,7 +405,7 @@ public class XHtmlElementToWikiTranslator
                                     }
                                     else
                                     {
-                                        Map augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
+                                        Map<String, String> augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
 
                                         m_out.print( "[" );
                                         print( e );
@@ -697,7 +698,6 @@ public class XHtmlElementToWikiTranslator
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void printImage( Element base ) throws JDOMException
     {
         Element child = (Element)XPath.selectSingleNode( base, "TBODY/TR/TD/*" );
@@ -707,7 +707,7 @@ public class XHtmlElementToWikiTranslator
         }
         Element img;
         String href;
-        Map<Object,Object> map = new ForgetNullValuesLinkedHashMap();
+        Map<Object,Object> map = new ForgetNullValuesLinkedHashMap<>();
         if( child.getName().equals( "A" ) )
         {
             img = child.getChild( "IMG" );
@@ -785,13 +785,13 @@ public class XHtmlElementToWikiTranslator
     {
         String classVal = a.getAttributeValue( "class" );
 
-        return classVal != null && classVal.equals( "createpage" );
+        return "createpage".equals( classVal );
     }
 
     /**
      *  Returns a Map containing the valid augmented wiki link attributes.
      */
-    private Map getAugmentedWikiLinkAttributes( Element a )
+    private Map<String,String> getAugmentedWikiLinkAttributes( Element a )
     {
         Map<String,String> attributesMap = new HashMap<>();
 

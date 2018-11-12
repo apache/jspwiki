@@ -18,9 +18,14 @@
  */
 package org.apache.wiki.providers;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiContext;
@@ -34,13 +39,9 @@ import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.TreeSet;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 /**
@@ -103,6 +104,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException, IOException {
         log.debug("Initing CachingProvider");
@@ -195,6 +197,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public boolean pageExists( String pageName, int version )
     {
         if( pageName == null ) return false;
@@ -236,6 +239,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public boolean pageExists( String pageName )
     {
         if( pageName == null ) return false;
@@ -286,6 +290,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getPageText( String pageName, int version )
         throws ProviderException
     {
@@ -342,6 +347,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void putPageText(WikiPage page, String text) throws ProviderException {
         synchronized (this) {
             m_provider.putPageText(page, text);
@@ -361,6 +367,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection getAllPages() throws ProviderException {
         Collection all;
 
@@ -385,7 +392,7 @@ public class CachingProvider implements WikiPageProvider {
                 Element element = m_cache.get(key);
                 Object cachedPage = element.getObjectValue();
                 if (cachedPage != null) {
-                    all.add((WikiPage) cachedPage);
+                    all.add(cachedPage);
                 }
             }
         }
@@ -403,6 +410,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection getAllChangedSince( Date date )
     {
         return m_provider.getAllChangedSince( date );
@@ -411,6 +419,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int getPageCount()
         throws ProviderException
     {
@@ -420,6 +429,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection findPages( QueryItem[] query )
     {
         //
@@ -461,6 +471,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public WikiPage getPageInfo( String pageName, int version ) throws ProviderException
     {
         WikiPage page = null;
@@ -500,15 +511,17 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
-    public List getVersionHistory(String pageName) throws ProviderException {
-        List history = null;
+    @SuppressWarnings("unchecked")
+    @Override
+    public List< WikiPage > getVersionHistory(String pageName) throws ProviderException {
+        List< WikiPage > history = null;
 
         if (pageName == null) return null;
         Element element = m_historyCache.get(pageName);
 
         if (element != null) {
             m_historyCacheHits++;
-            history = (List) element.getObjectValue();
+            history = ( List< WikiPage > )element.getObjectValue();
         } else {
             history = m_provider.getVersionHistory(pageName);
             m_historyCache.put( new Element( pageName, history ));
@@ -523,6 +536,7 @@ public class CachingProvider implements WikiPageProvider {
      *
      * @return A plain string with all the above mentioned values.
      */
+    @Override
     public synchronized String getProviderInfo()
     {
         return "Real provider: "+m_provider.getClass().getName()+
@@ -535,6 +549,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void deleteVersion( String pageName, int version )
         throws ProviderException
     {
@@ -566,6 +581,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void deletePage( String pageName )
         throws ProviderException
     {
@@ -584,6 +600,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void movePage(String from, String to) throws ProviderException {
         m_provider.movePage(from, to);
 

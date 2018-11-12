@@ -98,7 +98,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private boolean        m_isPreBlock   = false;
 
     /** Contains style information, in multiple forms. */
-    private Stack<Boolean> m_styleStack   = new Stack<Boolean>();
+    private Stack<Boolean> m_styleStack   = new Stack<>();
 
      // general list handling
     private int            m_genlistlevel = 0;
@@ -116,7 +116,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element        m_currentElement;
 
     /** Keep track of duplicate header names.  */
-    private Map<String, Integer>   m_titleSectionCounter = new HashMap<String, Integer>();
+    private Map<String, Integer>   m_titleSectionCounter = new HashMap<>();
 
     /** If true, consider CamelCase hyperlinks as well. */
     public static final String     PROP_CAMELCASELINKS   = "jspwiki.translatorReader.camelCaseLinks";
@@ -235,21 +235,19 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  Calls a transmutator chain.
      *
      *  @param list Chain to call
-     *  @param text Text that should be passed to the mutate() method
-     *              of each of the mutators in the chain.
+     *  @param text Text that should be passed to the mutate() method of each of the mutators in the chain.
      *  @return The result of the mutation.
      */
-
-    protected String callMutatorChain( Collection list, String text )
+    protected String callMutatorChain( Collection< StringTransmutator > list, String text )
     {
         if( list == null || list.size() == 0 )
         {
             return text;
         }
 
-        for( Iterator i = list.iterator(); i.hasNext(); )
+        for( Iterator< StringTransmutator > i = list.iterator(); i.hasNext(); )
         {
-            StringTransmutator m = (StringTransmutator) i.next();
+            StringTransmutator m = i.next();
 
             text = m.mutate( m_context, text );
         }
@@ -296,7 +294,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el;
     }
 
-    private Element makeLink( int type, String link, String text, String section, Iterator attributes )
+    private Element makeLink( int type, String link, String text, String section, Iterator< Attribute > attributes )
     {
         Element el = null;
 
@@ -422,7 +420,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             while( attributes.hasNext() )
             {
-                Attribute attr = (Attribute)attributes.next();
+                Attribute attr = attributes.next();
                 if( attr != null )
                 {
                     el.setAttribute(attr);
@@ -2638,6 +2636,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @return A WikiDocument, ready to be passed to the renderer.
      *  @throws IOException If parsing cannot be accomplished.
      */
+    @Override
     public WikiDocument parse()
         throws IOException
     {
@@ -2669,7 +2668,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         if( rootElement.getChild("p") != null )
         {
-            ArrayList<Content> ls = new ArrayList<Content>();
+            ArrayList<Content> ls = new ArrayList<>();
             int idxOfFirstContent = 0;
             int count = 0;
 

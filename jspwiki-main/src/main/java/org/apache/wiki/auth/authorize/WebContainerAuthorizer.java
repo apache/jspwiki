@@ -30,19 +30,19 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.xpath.XPath;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 
 /**
  * Authorizes users by delegating role membership checks to the servlet
@@ -91,6 +91,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
+    @Override
     public void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
@@ -151,6 +152,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
      */
+    @Override
     public boolean isUserInRole( HttpServletRequest request, Principal role )
     {
         return request.isUserInRole( role.getName() );
@@ -179,6 +181,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      *         <code>false</code> otherwise
      * @see org.apache.wiki.auth.Authorizer#isUserInRole(org.apache.wiki.WikiSession, java.security.Principal)
      */
+    @Override
     public boolean isUserInRole( WikiSession session, Principal role )
     {
         if ( session == null || role == null )
@@ -196,6 +199,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @return a Role Principal, or <code>null</code>
      * @see org.apache.wiki.auth.Authorizer#initialize(WikiEngine, Properties)
      */
+    @Override
     public Principal findRole( String role )
     {
         for( Role containerRole : m_containerRoles )
@@ -311,6 +315,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * array.
      * @return an array of Principals representing the roles
      */
+    @Override
     public Principal[] getRoles()
     {
         return m_containerRoles.clone();
@@ -327,7 +332,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     protected Role[] getRoles( Document webxml ) throws JDOMException
     {
-        Set<Role> roles = new HashSet<Role>();
+        Set<Role> roles = new HashSet<>();
         Element root = webxml.getRootElement();
 
         // Get roles referred to by constraints
@@ -371,7 +376,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
     {
         URL url;
         SAXBuilder builder = new SAXBuilder();
-        builder.setValidation( false );
+        builder.setXMLReaderFactory( XMLReaders.NONVALIDATING );
         builder.setEntityResolver( new LocalEntityResolver() );
         Document doc = null;
         if ( m_engine.getServletContext() == null )
@@ -420,6 +425,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
          * @throws SAXException if the resource cannot be resolved locally
          * @throws IOException if the resource cannot be opened
          */
+        @Override
         public InputSource resolveEntity( String publicId, String systemId ) throws SAXException, IOException
         {
             String file = systemId.substring( systemId.lastIndexOf( '/' ) + 1 );

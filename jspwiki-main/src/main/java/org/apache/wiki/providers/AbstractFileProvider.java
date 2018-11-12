@@ -121,6 +121,7 @@ public abstract class AbstractFileProvider
      *  @throws FileNotFoundException If the specified page directory does not exist.
      *  @throws IOException In case the specified page directory is a file, not a directory.
      */
+    @Override
     public void initialize( WikiEngine engine, Properties properties ) throws NoRequiredPropertyException, IOException, FileNotFoundException
     {
         log.debug("Initing FileSystemProvider");
@@ -250,6 +251,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public boolean pageExists( String page )
     {
         File pagefile = findPage( page );
@@ -260,6 +262,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public boolean pageExists( String page, int version )
     {
         return pageExists (page);
@@ -273,6 +276,7 @@ public abstract class AbstractFileProvider
      *  @param version {@inheritDoc}
      *  @throws {@inheritDoc}
      */
+    @Override
     public String getPageText( String page, int version )
         throws ProviderException
     {
@@ -324,6 +328,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
@@ -350,6 +355,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection getAllPages()
         throws ProviderException
     {
@@ -394,6 +400,7 @@ public abstract class AbstractFileProvider
      *  @param date {@inheritDoc}
      *  @return {@inheritDoc}
      */
+    @Override
     public Collection getAllChangedSince( Date date )
     {
         return new ArrayList(); // FIXME
@@ -402,6 +409,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int getPageCount()
     {
         File wikipagedir = new File( m_pageDirectory );
@@ -418,10 +426,11 @@ public abstract class AbstractFileProvider
      * @param query {@inheritDoc}
      * @return {@inheritDoc}
      */
+    @Override
     public Collection findPages( QueryItem[] query )
     {
         File wikipagedir = new File( m_pageDirectory );
-        TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
+        TreeSet<SearchResult> res = new TreeSet<>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
@@ -470,6 +479,7 @@ public abstract class AbstractFileProvider
      *  @return {@inheritDoc}
      *  @throws {@inheritDoc}
      */
+    @Override
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
     {
@@ -493,10 +503,10 @@ public abstract class AbstractFileProvider
      *  @throws {@inheritDoc}
      *  @return {@inheritDoc}
      */
-    public List getVersionHistory( String page )
-        throws ProviderException
+    @Override
+    public List<WikiPage> getVersionHistory( String page ) throws ProviderException
     {
-        ArrayList<WikiPage> list = new ArrayList<WikiPage>();
+        ArrayList<WikiPage> list = new ArrayList<>();
 
         list.add( getPageInfo( page, WikiPageProvider.LATEST_VERSION ) );
 
@@ -506,6 +516,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getProviderInfo()
     {
         return "";
@@ -514,6 +525,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void deleteVersion( String pageName, int version )
         throws ProviderException
     {
@@ -528,6 +540,7 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void deletePage( String pageName )
         throws ProviderException
     {
@@ -635,6 +648,7 @@ public abstract class AbstractFileProvider
         /**
          *  {@inheritDoc}
          */
+        @Override
         public boolean accept( File dir, String name )
         {
             return name.endsWith( FILE_EXT );

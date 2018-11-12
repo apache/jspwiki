@@ -22,13 +22,22 @@ package org.apache.wiki.plugin;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
@@ -61,9 +70,9 @@ public class Denounce implements WikiPlugin
 
     private static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
 
-    private static ArrayList<Pattern> c_refererPatterns = new ArrayList<Pattern>();
-    private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<Pattern>();
-    private static ArrayList<Pattern> c_hostPatterns    = new ArrayList<Pattern>();
+    private static ArrayList<Pattern> c_refererPatterns = new ArrayList<>();
+    private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<>();
+    private static ArrayList<Pattern> c_hostPatterns    = new ArrayList<>();
 
     private static String    c_denounceText    = "";
 
@@ -90,7 +99,7 @@ public class Denounce implements WikiPlugin
 
             c_denounceText = props.getProperty( PROP_DENOUNCETEXT, c_denounceText );
 
-            for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+            for( Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
             {
                 String name = (String) e.nextElement();
 
@@ -130,6 +139,7 @@ public class Denounce implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String execute( WikiContext context, Map<String, String> params )
         throws PluginException
     {

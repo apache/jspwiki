@@ -74,7 +74,7 @@ public interface WikiPageProvider
      * @return True, if page exists; false otherwise.
      */
 
-    public boolean pageExists(String page, int version);
+    boolean pageExists(String page, int version);
 
     /**
      *  Finds pages based on the query.   Only applicable to providers
@@ -139,9 +139,7 @@ public interface WikiPageProvider
      *  @return A collection of WikiPages.
      *  @throws ProviderException If something goes wrong.
      */
-
-    List getVersionHistory( String page )
-        throws ProviderException;
+    List< WikiPage > getVersionHistory( String page ) throws ProviderException;
 
     /**
      *  Gets a specific version out of the repository.

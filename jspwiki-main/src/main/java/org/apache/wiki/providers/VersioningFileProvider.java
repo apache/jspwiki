@@ -85,6 +85,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -336,6 +337,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public synchronized String getPageText( String page, int version )
         throws ProviderException
     {
@@ -414,6 +416,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public synchronized void putPageText( WikiPage page, String text )
         throws ProviderException
     {
@@ -534,6 +537,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
     {
@@ -629,6 +633,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public boolean pageExists( String pageName, int version )
     {
         if (version == WikiPageProvider.LATEST_VERSION || version == findLatestVersion( pageName ) ) {
@@ -652,11 +657,9 @@ public class VersioningFileProvider
      *  {@inheritDoc}
      */
      // FIXME: Does not get user information.
-    public List getVersionHistory( String page )
-    throws ProviderException
-    {
-        ArrayList<WikiPage> list = new ArrayList<WikiPage>();
-
+    @Override
+    public List< WikiPage > getVersionHistory( String page ) throws ProviderException {
+        ArrayList<WikiPage> list = new ArrayList<>();
         int latest = findLatestVersion( page );
 
         // list.add( getPageInfo(page,WikiPageProvider.LATEST_VERSION) );
@@ -741,6 +744,7 @@ public class VersioningFileProvider
      *  @throws {@inheritDoc}
      */
     // FIXME: Should log errors.
+    @Override
     public void deletePage( String page )
         throws ProviderException
     {
@@ -776,6 +780,7 @@ public class VersioningFileProvider
      *  Using deleteVersion() is definitely not recommended.
      *
      */
+    @Override
     public void deleteVersion( String page, int version )
         throws ProviderException
     {
@@ -865,10 +870,11 @@ public class VersioningFileProvider
      *  {@inheritDoc}
      */
     // FIXME: This is kinda slow, we should need to do this only once.
+    @Override
     public Collection getAllPages() throws ProviderException
     {
         Collection pages = super.getAllPages();
-        Collection<WikiPage> returnedPages = new ArrayList<WikiPage>();
+        Collection<WikiPage> returnedPages = new ArrayList<>();
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
@@ -885,6 +891,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getProviderInfo()
     {
         return "";
@@ -893,6 +900,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void movePage( String from,
                           String to )
         throws ProviderException
