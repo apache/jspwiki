@@ -438,7 +438,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @return If the page does not exist, returns null, otherwise a List of WikiPages.
      * @throws ProviderException If the repository fails.
      */
-    public List getVersionHistory(String pageName) throws ProviderException {
+    public List< WikiPage > getVersionHistory(String pageName) throws ProviderException {
         if (pageExists(pageName)) {
             return m_provider.getVersionHistory(pageName);
         }

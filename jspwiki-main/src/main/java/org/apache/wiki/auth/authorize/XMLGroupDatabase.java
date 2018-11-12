@@ -39,16 +39,16 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.util.TextUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.TextUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -110,7 +110,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private WikiEngine            m_engine         = null;
 
-    private Map<String, Group>                   m_groups         = new HashMap<String, Group>();
+    private Map<String, Group>                   m_groups         = new HashMap<>();
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -121,7 +121,8 @@ public class XMLGroupDatabase implements GroupDatabase
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated
+    @Override
     public void commit() throws WikiSecurityException
     { }
 
@@ -135,6 +136,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * supplied group (thrown as {@link NoSuchPrincipalException}) or if
      * the commit did not succeed
      */
+    @Override
     public void delete( Group group ) throws WikiSecurityException
     {
         String index = group.getName();
@@ -160,6 +162,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @return the wiki groups
      * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
+    @Override
     public Group[] groups() throws WikiSecurityException
     {
         buildDOM();
@@ -177,6 +180,7 @@ public class XMLGroupDatabase implements GroupDatabase
      *             located, parsed, or opened
      * @throws WikiSecurityException if the database could not be initialized successfully
      */
+    @Override
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
         m_engine = engine;
@@ -221,6 +225,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @param modifier the user who saved the Group
      * @throws WikiSecurityException if the Group could not be saved successfully
      */
+    @Override
     public void save( Group group, Principal modifier ) throws WikiSecurityException
     {
         if ( group == null || modifier == null )
