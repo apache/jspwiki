@@ -92,6 +92,7 @@
     <plugin.surefire.version>2.22.0</plugin.surefire.version>
     <plugin.war.version>3.2.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
+    <plugin.jspc.version>2.4.6</plugin.jspc.version>
     <plugin.checksum.version>1.7</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.6.10</plugin.cargo.version>
@@ -579,18 +580,31 @@
           </configuration>
         </plugin>
 
-        <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
-          Merge and compress CSS and JS files using the WRO4J.
-          - use UglifyJS for JS compression
-          - use Less as advanced CSS preprocessor
-        -->
-
         <plugin>
           <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
           <artifactId>inmemdb-maven-plugin</artifactId>
           <version>${plugin.inmemdb.version}</version>
         </plugin>
-        
+
+        <plugin>
+          <groupId>io.leonard.maven.plugins</groupId>
+          <artifactId>jspc-maven-plugin</artifactId>
+          <version>${plugin.jspc.version}</version>
+          <configuration>
+            <generatedClasses>${project.build.directory}/ignore</generatedClasses> <!-- only check JSPs are well-formed -->
+            <keepSources>true</keepSources>
+            <stopAtFirstError>false</stopAtFirstError>
+          </configuration>
+          <executions>
+            <execution>
+              <id>check-jsps-are-well-formed</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>net.nicoulaj.maven.plugins</groupId>
           <artifactId>checksum-maven-plugin</artifactId>
@@ -609,6 +623,11 @@
           </configuration>
         </plugin>
 
+        <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
+          Merge and compress CSS and JS files using the WRO4J.
+          - use UglifyJS for JS compression
+          - use Less as advanced CSS preprocessor
+        -->
         <plugin>
           <groupId>ro.isdc.wro4j</groupId>
           <artifactId>wro4j-maven-plugin</artifactId>

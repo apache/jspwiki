@@ -59,13 +59,23 @@
   <build>
     <finalName>JSPWiki</finalName>
     <plugins>
+      <plugin>
+        <groupId>io.leonard.maven.plugins</groupId>
+        <artifactId>jspc-maven-plugin</artifactId>
+        <dependencies>
+          <dependency> <!-- so jspwiki custom taglibs can be seen by the jsp compiler -->
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-main</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
       <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
         Merge and compress CSS and JS files using the WRO4J.
         - use UglifyJS for JS compression
         - use Less as advanced CSS preprocessor
       -->
-
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
         <artifactId>wro4j-maven-plugin</artifactId>
