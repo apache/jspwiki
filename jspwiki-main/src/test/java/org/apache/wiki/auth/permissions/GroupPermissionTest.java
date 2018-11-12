@@ -301,21 +301,16 @@ public class GroupPermissionTest
      * @param p2
      * @return
      */
-    protected final boolean subjectImplies( final Subject subject, final GroupPermission p1, final Permission p2 )
-    {
-        try
-        {
-            Boolean result = (Boolean)Subject.doAsPrivileged( subject, new PrivilegedAction()
-            {
-                public Object run()
-                {
-                    return Boolean.valueOf( p1.impliesMember( p2 ) );
+    protected final boolean subjectImplies( final Subject subject, final GroupPermission p1, final Permission p2 ) {
+        try {
+            Boolean result = Subject.doAsPrivileged( subject, new PrivilegedAction< Boolean >() {
+                @Override
+                public Boolean run() {
+                    return p1.impliesMember( p2 );
                 }
             }, null );
             return result.booleanValue();
-        }
-        catch( AccessControlException e )
-        {
+        } catch( AccessControlException e ) {
             return false;
         }
     }

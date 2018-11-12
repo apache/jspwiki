@@ -106,12 +106,12 @@ public class SearchManagerTest {
         m_engine.saveText("TestPage", txt);
 
         Thread.yield();
-        Collection res = waitForIndex( "mankind" , "testSimpleSearch" );
+        Collection< SearchResult > res = waitForIndex( "mankind" , "testSimpleSearch" );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
+        Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
@@ -124,12 +124,12 @@ public class SearchManagerTest {
         m_engine.saveText("TestPage", txt + " 2");
 
         Thread.yield();
-        Collection res = waitForIndex( "mankind" , "testSimpleSearch2" );
+        Collection< SearchResult > res = waitForIndex( "mankind" , "testSimpleSearch2" );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
+        Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage( "TestPage" );
     }
 
@@ -158,7 +158,7 @@ public class SearchManagerTest {
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
+        Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
@@ -195,12 +195,12 @@ public class SearchManagerTest {
         m_engine.saveText("TestPage", txt);
 
         Thread.yield();
-        Collection res = waitForIndex( "Test" , "testTitleSearch" );
+        Collection< SearchResult > res = waitForIndex( "Test" , "testTitleSearch" );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
+        Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
@@ -211,12 +211,12 @@ public class SearchManagerTest {
         m_engine.saveText("TestPage", txt);
 
         Thread.yield();
-        Collection res = waitForIndex( "TestPage" , "testTitleSearch2" );
+        Collection< SearchResult > res = waitForIndex( "TestPage" , "testTitleSearch2" );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
 
-        Assertions.assertEquals( "TestPage", ((SearchResult)res.iterator().next()).getPage().getName(), "page" );
+        Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 

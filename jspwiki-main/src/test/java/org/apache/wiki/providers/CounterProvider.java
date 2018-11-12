@@ -49,6 +49,7 @@ public class CounterProvider
     String m_defaultText = "[Foo], [Bar], [Blat], [Blah]";
 
 
+    @Override
     public void initialize( WikiEngine engine, Properties props )
     {
         m_pages = new WikiPage[]
@@ -67,16 +68,19 @@ public class CounterProvider
         }
     }
 
+    @Override
     public String getProviderInfo()
     {
         return "Very Simple Provider.";
     }
 
+    @Override
     public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
     }
 
+    @Override
     public boolean pageExists( String page )
     {
         m_pageExistsCalls++;
@@ -84,11 +88,13 @@ public class CounterProvider
         return findPage( page ) != null;
     }
 
+    @Override
     public boolean pageExists( String page, int version )
     {
         return pageExists (page);
     }
 
+    @Override
     public Collection findPages( QueryItem[] query )
     {
         return null;
@@ -105,6 +111,7 @@ public class CounterProvider
         return null;
     }
 
+    @Override
     public WikiPage getPageInfo( String page, int version )
     {            
         m_getPageCalls++;
@@ -117,11 +124,12 @@ public class CounterProvider
         return p;
     }
 
+    @Override
     public Collection getAllPages()
     {
         m_getAllPagesCalls++;
 
-        Vector<WikiPage> v = new Vector<WikiPage>();
+        Vector<WikiPage> v = new Vector<>();
 
         for( int i = 0; i < m_pages.length; i++ )
         {
@@ -131,31 +139,37 @@ public class CounterProvider
         return v;
     }
 
+    @Override
     public Collection getAllChangedSince( Date date )
     {
         return new Vector();
     }
 
+    @Override
     public int getPageCount()
     {
         return m_pages.length;
     }
 
-    public List getVersionHistory( String page )
+    @Override
+    public List< WikiPage > getVersionHistory( String page )
     {
-        return new Vector();
+        return new Vector<>();
     }
 
+    @Override
     public String getPageText( String page, int version )
     {
         m_getPageTextCalls++;
         return m_defaultText;
     }
 
+    @Override
     public void deleteVersion( String page, int version )
     {
     }
 
+    @Override
     public void deletePage( String page )
     {
     }
@@ -163,6 +177,7 @@ public class CounterProvider
     /* (non-Javadoc)
      * @see org.apache.wiki.providers.WikiPageProvider#movePage(java.lang.String, java.lang.String)
      */
+    @Override
     public void movePage( String from, String to ) throws ProviderException
     {
         // TODO Auto-generated method stub

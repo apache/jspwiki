@@ -86,7 +86,7 @@ public class RenderingManagerTest {
         sw.stop();
         // System.out.println("  Nocache took "+sw);
 
-        long nocachetime = sw.getTime();
+        // long nocachetime = sw.getTime();
 
         sw.reset();
         sw.start();
@@ -106,7 +106,7 @@ public class RenderingManagerTest {
         sw.stop();
         // System.out.println("  Cache took "+sw);
 
-        long speedup = nocachetime / sw.getTime();
+        // long speedup = nocachetime / sw.getTime();
         // System.out.println("  Approx speedup: "+speedup+"x");
     }
 

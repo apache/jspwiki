@@ -315,12 +315,12 @@ public class UserManagerTest {
 
         // Now, look in Admin's queue, and verify there's a pending Decision there
         DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
-        Collection decisions = dq.getActorDecisions( m_engine.adminSession() );
+        Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 1, decisions.size() );
 
         // Verify that the Decision has all the facts and attributes we need
-        Decision d = ( Decision )decisions.iterator().next();
-        List facts = d.getFacts();
+        Decision d = decisions.iterator().next();
+        List< Fact > facts = d.getFacts();
         Assertions.assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
         Assertions.assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
         Assertions.assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
@@ -366,12 +366,12 @@ public class UserManagerTest {
 
         // Now, look in Admin's queue, and verify there's a pending Decision there
         DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
-        Collection decisions = dq.getActorDecisions( m_engine.adminSession() );
+        Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 1, decisions.size() );
 
         // Verify that the Decision has all the facts and attributes we need
-        Decision d = ( Decision )decisions.iterator().next();
-        List facts = d.getFacts();
+        Decision d = decisions.iterator().next();
+        List< Fact > facts = d.getFacts();
         Assertions.assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
         Assertions.assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
         Assertions.assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );

@@ -177,9 +177,9 @@ public class BasicAttachmentProviderTest
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        List res = m_provider.listAllChanged( new Date(0L) );
+        List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
-        Attachment a0 = (Attachment) res.get(0);
+        Attachment a0 = res.get(0);
 
         Assertions.assertEquals( att.getName(), a0.getName(), "name" );
     }
@@ -200,12 +200,12 @@ public class BasicAttachmentProviderTest
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
-        List res = m_provider.listAllChanged( new Date(0L) );
+        List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
         Assertions.assertEquals( 2, res.size(), "list size" );
 
-        Attachment a2 = (Attachment) res.get(0);  // Most recently changed
-        Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+        Attachment a2 = res.get(0);  // Most recently changed
+        Attachment a1 = res.get(1);  // Least recently changed
 
         Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
         Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
@@ -236,12 +236,12 @@ public class BasicAttachmentProviderTest
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
-            List res = m_provider.listAllChanged( new Date(0L) );
+            List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
             Assertions.assertEquals( 2, res.size(), "list size" );
 
-            Attachment a2 = (Attachment) res.get(0);  // Most recently changed
-            Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+            Attachment a2 = res.get(0);  // Most recently changed
+            Attachment a1 = res.get(1);  // Least recently changed
 
             Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
             Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
@@ -280,12 +280,12 @@ public class BasicAttachmentProviderTest
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
-            List res = m_provider.listAllChanged( new Date(0L) );
+            List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
             Assertions.assertEquals( 2, res.size(), "list size" );
 
-            Attachment a2 = (Attachment) res.get(0);  // Most recently changed
-            Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+            Attachment a2 = res.get(0);  // Most recently changed
+            Attachment a1 = res.get(1);  // Least recently changed
 
             Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
             Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
@@ -325,12 +325,12 @@ public class BasicAttachmentProviderTest
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
-            List res = m_provider.listAllChanged( new Date(0L) );
+            List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
             Assertions.assertEquals( 2, res.size(), "list size" );
 
-            Attachment a2 = (Attachment) res.get(0);  // Most recently changed
-            Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+            Attachment a2 = res.get(0);  // Most recently changed
+            Attachment a1 = res.get(1);  // Least recently changed
 
             Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
             Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
@@ -357,12 +357,12 @@ public class BasicAttachmentProviderTest
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
-        List res = m_provider.listAllChanged( new Date(0L) );
+        List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
         Assertions.assertEquals( 2, res.size(), "list size" );
 
-        Attachment a2 = (Attachment) res.get(0);  // Most recently changed
-        Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+        Attachment a2 = res.get(0);  // Most recently changed
+        Attachment a1 = res.get(1);  // Least recently changed
 
         Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
         Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
