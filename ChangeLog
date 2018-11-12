@@ -1,3 +1,11 @@
+2018-11-13  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-09: fix JSP compilation error; added jspc plugin to ensure JSPs remain well-formed
+
+       * JSPWiki's custom tags TLD moved to main module
+
+       * some more polishing and minor refactors
+
 2018-11-11  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * no version bump: some more polishing and minor refactors
@@ -5,19 +13,19 @@
 2018-11-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-08: try to load as many external third-party plugin jars as possible, instead  
-	     of all-or-nothing
+         of all-or-nothing
 
-	   * small backwards-incompatible changes: 
-	     - CryptoUtil#verifySaltedPassword doesn't throw UnsupportedEncodingException anymore
-	     - TextUtil#urlDecode methods don't throw UnsupportedOperationException anymore
+       * small backwards-incompatible changes: 
+         - CryptoUtil#verifySaltedPassword doesn't throw UnsupportedEncodingException anymore
+         - TextUtil#urlDecode methods don't throw UnsupportedOperationException anymore
          - ClassUtil#getMappedObject methods now throw ReflectiveOperationException, IllegalArgumentException 
-		   instead of WikiException
+           instead of WikiException
          - ClassUtil#getMappedClass method now throws ClassNotFoundException instead of WikiException
 
-	   * fix possible concurrency issue at ReferenceManager#serializeAttrsToDisk
+       * fix possible concurrency issue at ReferenceManager#serializeAttrsToDisk
 
-	   * remove commons-codec usage from source (it's carried onto the war as a transitive 
-	     dependency though), plus several other small refactors
+       * remove commons-codec usage from source (it's carried onto the war as a transitive 
+         dependency though), plus several other small refactors
 
 2018-11-02  Juan Pablo Santos (juanpablo AT apache DOT org)
 
