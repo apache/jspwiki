@@ -24,6 +24,7 @@ import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
 import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
@@ -64,6 +65,7 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
             if( matchedLink != null ) {
                 String sectref = "#section-" + wikiContext.getEngine().encodeName( matchedLink + "-" + MarkupParser.wikifyLink( namedSection ) );
                 sectref = sectref.replace('%', '_');
+                link.setUrl( CharSubSequence.of( link.getUrl().toString() + sectref ) );
                 new LocalReadLinkAttributeProviderState( wikiContext ).setAttributes( attributes, link );
             } else {
                 new LocalEditLinkAttributeProviderState( wikiContext, link.getWikiLink() ).setAttributes( attributes, link );
