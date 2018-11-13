@@ -185,7 +185,6 @@
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <attachClasses>true</attachClasses>
           <webResources>
             <!-- Output directory configured above with the YUICompressor Maven plugin
             <resource>
