@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
@@ -289,26 +288,15 @@ public abstract class AbstractFileProvider
     private String getPageText( String page )
     {
         String result  = null;
-        InputStream in = null;
 
         File pagedata = findPage( page );
 
-        if( pagedata.exists() )
-        {
-            if( pagedata.canRead() )
-            {
-                try
-                {
-                    in = new FileInputStream( pagedata );
+        if( pagedata.exists() ) {
+            if( pagedata.canRead() ) {
+                try( InputStream in = new FileInputStream( pagedata ) ) {
                     result = FileUtil.readContents( in, m_encoding );
-                }
-                catch( IOException e )
-                {
+                } catch( IOException e ) {
                     log.error("Failed to read", e);
-                }
-                finally
-                {
-                    IOUtils.closeQuietly( in );
                 }
             }
             else
@@ -329,26 +317,13 @@ public abstract class AbstractFileProvider
      *  {@inheritDoc}
      */
     @Override
-    public void putPageText( WikiPage page, String text )
-        throws ProviderException
-    {
+    public void putPageText( WikiPage page, String text ) throws ProviderException {
         File file = findPage( page.getName() );
-        PrintWriter out = null;
 
-        try
-        {
-            out = new PrintWriter(new OutputStreamWriter( new FileOutputStream( file ),
-                                                          m_encoding ));
-
+        try( PrintWriter out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( file ), m_encoding ) ) ) {
             out.print( text );
-        }
-        catch( IOException e )
-        {
+        } catch( IOException e ) {
             log.error( "Saving failed", e );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( out );
         }
     }
 
@@ -437,8 +412,6 @@ public abstract class AbstractFileProvider
 
         for( int i = 0; i < wikipages.length; i++ )
         {
-            FileInputStream input = null;
-
             // log.debug("Searching page "+wikipages[i].getPath() );
 
             String filename = wikipages[i].getName();
@@ -447,23 +420,14 @@ public abstract class AbstractFileProvider
 
             wikiname = unmangleName( wikiname );
 
-            try
-            {
-                input = new FileInputStream( wikipages[i] );
+            try( FileInputStream input = new FileInputStream( wikipages[i] ) ) {
                 String pagetext = FileUtil.readContents( input, m_encoding );
                 SearchResult comparison = matcher.matchPageContent( wikiname, pagetext );
-                if( comparison != null )
-                {
+                if( comparison != null ) {
                     res.add( comparison );
                 }
-            }
-            catch( IOException e )
-            {
+            } catch( IOException e ) {
                 log.error( "Failed to read " + filename, e );
-            }
-            finally
-            {
-                IOUtils.closeQuietly( input );
             }
         }
 
@@ -480,9 +444,7 @@ public abstract class AbstractFileProvider
      *  @throws {@inheritDoc}
      */
     @Override
-    public WikiPage getPageInfo( String page, int version )
-        throws ProviderException
-    {
+    public WikiPage getPageInfo( String page, int version ) throws ProviderException {
         File file = findPage( page );
 
         if( !file.exists() )
@@ -642,16 +604,14 @@ public abstract class AbstractFileProvider
      *  A simple filter which filters only those filenames which correspond to the
      *  file extension used.
      */
-    public static class WikiFileFilter
-        implements FilenameFilter
-    {
+    public static class WikiFileFilter implements FilenameFilter {
         /**
          *  {@inheritDoc}
          */
         @Override
-        public boolean accept( File dir, String name )
-        {
+        public boolean accept( File dir, String name ) {
             return name.endsWith( FILE_EXT );
         }
     }
+
 }
