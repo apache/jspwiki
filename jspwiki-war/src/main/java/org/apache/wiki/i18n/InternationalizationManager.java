@@ -79,12 +79,8 @@ public class InternationalizationManager {
      */
     public ResourceBundle getBundle( String bundle, Locale locale ) throws MissingResourceException
     {
-        if( locale == null )
-        {
-            locale = Locale.getDefault();
-        }
 
-        ResourceBundle b = ResourceBundle.getBundle( bundle, locale , new ResourceBundle.Control() {
+        ResourceBundle b = ResourceBundle.getBundle( bundle, Locale.ROOT , new ResourceBundle.Control() {
             @Override
             public List<Locale> getCandidateLocales(String baseName, Locale locale) {
                 return Collections.singletonList(Locale.ROOT);
