@@ -47,6 +47,6 @@
     String newEntry = p.getNewEntryPage( wiki, pagereq );
 
     // Redirect to a new page for user to edit
-    response.sendRedirect( wiki.getEditURL(newEntry) );
+    response.sendRedirect( wikiContext.getURL( WikiContext.EDIT, newEntry ) );
 %>
 

@@ -40,7 +40,7 @@
     String pagereq = wikiContext.getName();
 
     // Get the search results
-    Collection list = null;
+    Collection< SearchResult > list = null;
     String query = request.getParameter( "query");
     String go    = request.getParameter("go");
 
@@ -74,7 +74,7 @@
         {
             if( list != null && list.size() > 0 )
             {
-                SearchResult sr = (SearchResult) list.iterator().next();
+                SearchResult sr = list.iterator().next();
 
                 WikiPage wikiPage = sr.getPage();
 

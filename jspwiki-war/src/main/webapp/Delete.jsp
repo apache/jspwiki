@@ -81,9 +81,9 @@
     {
         log.info("Deleting a range of pages from "+pagereq);
 
-        for( Enumeration params = request.getParameterNames(); params.hasMoreElements(); )
+        for( Enumeration< String > params = request.getParameterNames(); params.hasMoreElements(); )
         {
-            String paramName = (String)params.nextElement();
+            String paramName = params.nextElement();
 
             if( paramName.startsWith("delver") )
             {
