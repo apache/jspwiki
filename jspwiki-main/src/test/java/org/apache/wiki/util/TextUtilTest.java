@@ -21,7 +21,6 @@ package org.apache.wiki.util;
 import java.io.File;
 import java.util.Properties;
 
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -379,27 +378,6 @@ public class TextUtilTest
 
         Assertions.assertEquals( "this is a property", TextUtil.getStringProperty(props,"foo",""), "foo" );
         Assertions.assertEquals( 60, TextUtil.getIntegerProperty(props,"bar",0), "bar" );
-    }
-
-    @Test
-    public void testGetRequiredProperty() throws Exception
-    {
-        String[] vals = { "foo", " this is a property ", "bar", "60" };
-        Properties props = TextUtil.createProperties(vals);
-        Assertions.assertEquals( "60", TextUtil.getRequiredProperty( props, "bar" ) );
-    }
-
-    @Test
-    public void testGetRequiredPropertyNRPE()
-    {
-        String[] vals = { "foo", " this is a property ", "bar", "60" };
-        Properties props = TextUtil.createProperties(vals);
-        try
-        {
-            TextUtil.getRequiredProperty( props, "ber" );
-            Assertions.fail( "NoRequiredPropertyException should've been thrown!" );
-        }
-        catch (NoRequiredPropertyException nrpe) {}
     }
 
     @Test

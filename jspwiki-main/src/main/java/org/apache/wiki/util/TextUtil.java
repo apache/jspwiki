@@ -27,7 +27,6 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 
 
 /**
@@ -427,23 +426,6 @@ public final class TextUtil {
             result = val.trim();
         }
         return result;
-    }
-
-    /**
-     *  Throws an exception if a property is not found.
-     *
-     *  @param props A set of properties to search the key in.
-     *  @param key   The key to look for.
-     *  @return The required property
-     *
-     *  @throws NoRequiredPropertyException If the search key is not in the property set.
-     */
-    public static String getRequiredProperty( Properties props, String key ) throws NoRequiredPropertyException {
-        String value = getStringProperty( props, key, null );
-        if( value == null ) {
-            throw new NoRequiredPropertyException( "Required property not found", key );
-        }
-        return value;
     }
 
     /**

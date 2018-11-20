@@ -90,24 +90,21 @@
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     Properties properties = wiki.getWikiProperties();
-    String channelDescription = TextUtil.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-    String channelLanguage    = TextUtil.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+    String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+    String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
 
     //
     //  Now, list items.
     //
     List< WikiPage > changed;
     
-    if( "blog".equals( mode ) )
-    {
+    if( "blog".equals( mode ) ) {
         org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
         changed = plug.findBlogEntries(wiki,
                                        wikipage.getName(),
                                        new Date(0L),
                                        new Date());
-    }
-    else
-    {
+    } else {
         changed = ( List< WikiPage > )wiki.getVersionHistory( wikipage.getName() );
     }
     
@@ -117,16 +114,14 @@
     boolean hasChanged = false;
     Date    latest     = new Date(0);
 
-    for( Iterator< WikiPage > i = changed.iterator(); i.hasNext(); )
-    {
+    for( Iterator< WikiPage > i = changed.iterator(); i.hasNext(); ) {
         WikiPage p = i.next();
 
         if( !HttpUtil.checkFor304( request, p.getName(), p.getLastModified() ) ) hasChanged = true;
         if( p.getLastModified().after( latest ) ) latest = p.getLastModified();
     }
 
-    if( !hasChanged && changed.size() > 0 )
-    {
+    if( !hasChanged && changed.size() > 0 ) {
         response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
         w.exitState();
         return;
@@ -150,9 +145,7 @@
     Element element = m_rssCache.get(hashKey);
     if (element != null) {
       rss = (String) element.getObjectValue();
-    }
-    else
-    { 
+    } else { 
         rss = wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type );
         m_rssCache.put(new Element(hashKey,rss));
     }

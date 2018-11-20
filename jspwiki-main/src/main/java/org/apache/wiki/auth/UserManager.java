@@ -62,7 +62,6 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.MailUtil;
-import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
@@ -106,7 +105,7 @@ public class UserManager {
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** Associates wiki sessions with profiles */
-    private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<WikiSession,UserProfile>();
+    private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<>();
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database;
@@ -155,7 +154,7 @@ public class UserManager {
 
         try
         {
-            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
+            dbClassName = m_engine.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
             final Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );

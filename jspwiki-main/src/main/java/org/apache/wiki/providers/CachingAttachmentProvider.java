@@ -37,7 +37,6 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
-import org.apache.wiki.util.TextUtil;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -123,7 +122,7 @@ public class CachingAttachmentProvider
         //
         //  Find and initialize real provider.
         //
-        String classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
+        String classname = engine.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
 
         try
         {

@@ -179,7 +179,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         if (useCache) {
             classname = "org.apache.wiki.providers.CachingProvider";
         } else {
-            classname = TextUtil.getRequiredProperty(props, PROP_PAGEPROVIDER);
+            classname = m_engine.getRequiredProperty(props, PROP_PAGEPROVIDER);
         }
 
         try {

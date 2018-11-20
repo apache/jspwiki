@@ -18,14 +18,13 @@
  */
 
 package org.apache.wiki;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
@@ -33,9 +32,11 @@ import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
 import org.apache.wiki.util.TextUtil;
-
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import net.sf.ehcache.CacheManager;
 
 public class WikiEngineTest
@@ -454,13 +455,13 @@ public class WikiEngineTest
         // check a few pre-conditions
 
         Collection< String > c = refMgr.findReferrers( "TestAtt.txt" );
-        Assertions.assertTrue( c!=null && ((String)c.iterator().next()).equals( NAME1 ), "normal, unexisting page" );
+        Assertions.assertTrue( c!=null && c.iterator().next().equals( NAME1 ), "normal, unexisting page" );
 
         c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
         Assertions.assertTrue( c==null || c.size()==0, "no attachment" );
 
         c = refMgr.findUncreated();
-        Assertions.assertTrue( c!=null && c.size()==1 && ((String)c.iterator().next()).equals( "TestAtt.txt" ), "unknown attachment" );
+        Assertions.assertTrue( c!=null && c.size()==1 && c.iterator().next().equals( "TestAtt.txt" ), "unknown attachment" );
 
         // now we create the attachment
 
@@ -477,10 +478,10 @@ public class WikiEngineTest
             Assertions.assertTrue( c==null || c.size()==0, "no normal page" );
 
             c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
-            Assertions.assertTrue( c!=null && ((String)c.iterator().next()).equals( NAME1 ), "attachment exists now" );
+            Assertions.assertTrue( c!=null && c.iterator().next().equals( NAME1 ), "attachment exists now" );
 
             c = refMgr.findUnreferenced();
-            Assertions.assertTrue( c.size()==1 && ((String)c.iterator().next()).equals( NAME1 ), "unreferenced" );
+            Assertions.assertTrue( c.size()==1 && c.iterator().next().equals( NAME1 ), "unreferenced" );
         }
         finally
         {
@@ -516,7 +517,7 @@ public class WikiEngineTest
 
             c = refMgr.findUnreferenced();
             Assertions.assertEquals( c.size(), 1, "unreferenced count" );
-            Assertions.assertTrue( ((String)c.iterator().next()).equals( NAME1 ), "unreferenced" );
+            Assertions.assertTrue( c.iterator().next().equals( NAME1 ), "unreferenced" );
         }
         finally
         {
@@ -552,7 +553,7 @@ public class WikiEngineTest
 
             c = refMgr.findUnreferenced();
             Assertions.assertEquals( c.size(), 1, "unreferenced count" );
-            Assertions.assertTrue( ((String)c.iterator().next()).equals( NAME1 ), "unreferenced" );
+            Assertions.assertTrue( c.iterator().next().equals( NAME1 ), "unreferenced" );
         }
         finally
         {
@@ -844,6 +845,27 @@ public class WikiEngineTest
         m_engine.saveText( name, "" );
 
         Assertions.assertEquals( TextUtil.normalizePostData( "" ), m_engine.getText( name ), "wrong content" );
+    }
+    
+    @Test
+    public void testGetRequiredProperty() throws Exception
+    {
+        String[] vals = { "foo", " this is a property ", "bar", "60" };
+        Properties props = TextUtil.createProperties(vals);
+        Assertions.assertEquals( "60", m_engine.getRequiredProperty( props, "bar" ) );
+    }
+
+    @Test
+    public void testGetRequiredPropertyNRPE()
+    {
+        String[] vals = { "foo", " this is a property ", "bar", "60" };
+        Properties props = TextUtil.createProperties(vals);
+        try
+        {
+            m_engine.getRequiredProperty( props, "ber" );
+            Assertions.fail( "NoRequiredPropertyException should've been thrown!" );
+        }
+        catch (NoRequiredPropertyException nrpe) {}
     }
 
 }

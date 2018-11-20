@@ -27,10 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -52,6 +51,7 @@ import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -293,7 +293,7 @@ public class WikiEngine
     private AdminBeanManager m_adminBeanManager;
 
     /** Stores wikiengine attributes. */
-    private Map<String,Object> m_attributes = Collections.synchronizedMap(new HashMap<String,Object>());
+    private Map<String,Object> m_attributes = new ConcurrentHashMap<>();
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -1959,16 +1959,30 @@ public class WikiEngine
      *  @return Variable value, or null, if there is no such variable.
      *  @since 2.2
      */
-    public String getVariable( WikiContext context, String name )
-    {
-        try
-        {
+    public String getVariable( WikiContext context, String name ) {
+        try {
             return m_variableManager.getValue( context, name );
-        }
-        catch( NoSuchVariableException e )
-        {
+        } catch( NoSuchVariableException e ) {
             return null;
         }
+    }
+    
+    /**
+     *  Throws an exception if a property is not found.
+     *
+     *  @param props A set of properties to search the key in.
+     *  @param key   The key to look for.
+     *  @return The required property
+     *
+     *  @throws NoRequiredPropertyException If the search key is not in the property set.
+     *  @since 2.0.26 (on TextUtils, moved To WikiEngine on 2.11.0-M1)
+     */
+    public String getRequiredProperty( Properties props, String key ) throws NoRequiredPropertyException {
+        String value = TextUtil.getStringProperty( props, key, null );
+        if( value == null ) {
+            throw new NoRequiredPropertyException( "Required property not found", key );
+        }
+        return value;
     }
 
     /**

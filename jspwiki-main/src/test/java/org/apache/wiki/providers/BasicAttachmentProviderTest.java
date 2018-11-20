@@ -30,7 +30,6 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +57,7 @@ public class BasicAttachmentProviderTest
     {
         m_engine  = new TestEngine(props);
 
-        TestEngine.deleteAll( new File(TextUtil.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR )) );
+        TestEngine.deleteAll( new File(m_engine.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR )) );
 
         m_provider = new BasicAttachmentProvider();
         m_provider.initialize( m_engine, props );

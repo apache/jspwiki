@@ -37,7 +37,6 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
-import org.apache.wiki.util.TextUtil;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -145,7 +144,7 @@ public class CachingProvider implements WikiPageProvider {
         //
         //  Find and initialize real provider.
         //
-        String classname = TextUtil.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
+        String classname = m_engine.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
 
 
         try
