@@ -1,3 +1,9 @@
+2018-11-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-10: backwards-incompatible change - move TextUtil.getRequiredProperty to WikiEngine
+
+       * some more polishing and minor refactors
+
 2018-11-13  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-09: fix JSP compilation error; added jspc plugin to ensure JSPs remain well-formed
