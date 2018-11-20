@@ -759,6 +759,15 @@
               <pluginExecutions>
                 <pluginExecution>
                   <pluginExecutionFilter>
+                    <groupId>io.leonard.maven.plugins</groupId>
+                    <artifactId>jspc-maven-plugin</artifactId>
+                    <versionRange>[2.4.6,)</versionRange>
+                    <goals><goal>compile</goal></goals>
+                  </pluginExecutionFilter>
+                  <action><ignore /></action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>yuicompressor-maven-plugin</artifactId>
                     <versionRange>[1.3.2,)</versionRange>
