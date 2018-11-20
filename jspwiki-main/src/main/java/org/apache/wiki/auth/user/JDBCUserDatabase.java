@@ -193,8 +193,7 @@ import org.apache.wiki.util.Serializer;
  * 
  * @since 2.3
  */
-public class JDBCUserDatabase extends AbstractUserDatabase
-{
+public class JDBCUserDatabase extends AbstractUserDatabase {
 
     private static final String NOTHING = "";
 
@@ -317,93 +316,74 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      * 
      * @param loginName the login name of the user profile that shall be deleted
      */
-    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
-    {
+    @Override
+    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         findByLoginName( loginName );
-        Connection conn = null;
 
-        try
+        try( Connection conn = m_ds.getConnection() ; 
+             PreparedStatement ps1 = conn.prepareStatement( m_deleteUserByLoginName ); 
+             PreparedStatement ps2 = conn.prepareStatement( m_deleteRoleByLoginName ) )
         {
             // Open the database connection
-            conn = m_ds.getConnection();
-            if( m_supportsCommits )
-            {
+            if( m_supportsCommits ) {
                 conn.setAutoCommit( false );
             }
 
-            PreparedStatement ps;
             // Delete user record
-            ps = conn.prepareStatement( m_deleteUserByLoginName );
-            ps.setString( 1, loginName );
-            ps.execute();
-            ps.close();
+            ps1.setString( 1, loginName );
+            ps1.execute();
 
             // Delete role record
-            ps = conn.prepareStatement( m_deleteRoleByLoginName );
-            ps.setString( 1, loginName );
-            ps.execute();
-            ps.close();
+            ps2.setString( 1, loginName );
+            ps2.execute();
 
             // Commit and close connection
-            if( m_supportsCommits )
-            {
+            if( m_supportsCommits ) {
                 conn.commit();
             }
-        }
-        catch( SQLException e )
-        {
+        } catch( SQLException e ) {
             throw new WikiSecurityException( e.getMessage(), e );
-        }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
         }
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
-    public UserProfile findByEmail( String index ) throws NoSuchPrincipalException
-    {
+    @Override
+    public UserProfile findByEmail( String index ) throws NoSuchPrincipalException {
         return findByPreparedStatement( m_findByEmail, index );
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#findByFullName(java.lang.String)
      */
-    public UserProfile findByFullName( String index ) throws NoSuchPrincipalException
-    {
+    @Override
+    public UserProfile findByFullName( String index ) throws NoSuchPrincipalException {
         return findByPreparedStatement( m_findByFullName, index );
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#findByLoginName(java.lang.String)
      */
-    public UserProfile findByLoginName( String index ) throws NoSuchPrincipalException
-    {
+    @Override
+    public UserProfile findByLoginName( String index ) throws NoSuchPrincipalException {
         return findByPreparedStatement( m_findByLoginName, index );
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#findByWikiName(String)
      */
-    public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
-    {
+    @Override
+    public UserProfile findByUid( String uid ) throws NoSuchPrincipalException {
         return findByPreparedStatement( m_findByUid, uid );
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#findByWikiName(String)
      */
-    public UserProfile findByWikiName( String index ) throws NoSuchPrincipalException
-    {
+    @Override
+    public UserProfile findByWikiName( String index ) throws NoSuchPrincipalException {
         return findByPreparedStatement( m_findByWikiName, index );
     }
 
@@ -414,43 +394,24 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      * 
      * @return the WikiNames
      */
-    public Principal[] getWikiNames() throws WikiSecurityException
-    {
-        Set<Principal> principals = new HashSet<Principal>();
-        Connection conn = null;
-        try
+    @Override
+    public Principal[] getWikiNames() throws WikiSecurityException {
+        Set<Principal> principals = new HashSet<>();
+        try( Connection conn = m_ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement( m_findAll );
+             ResultSet rs = ps.executeQuery() )
         {
-            conn = m_ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement( m_findAll );
-            ResultSet rs = ps.executeQuery();
-            while ( rs.next() )
-            {
+            while ( rs.next() ) {
                 String wikiName = rs.getString( m_wikiName );
-                if( wikiName == null )
-                {
+                if( wikiName == null ) {
                     log.warn( "Detected null wiki name in XMLUserDataBase. Check your user database." );
-                }
-                else
-                {
+                } else {
                     Principal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
                     principals.add( principal );
                 }
             }
-            ps.close();
-        }
-        catch( SQLException e )
-        {
+        } catch( SQLException e ) {
             throw new WikiSecurityException( e.getMessage(), e );
-        }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
         }
 
         return principals.toArray( new Principal[principals.size()] );
@@ -460,21 +421,16 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine,
      *      java.util.Properties)
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
-    {
-        String userTable;
-        String role;
-        String roleTable;
-
+    @Override
+    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException {
         String jndiName = props.getProperty( PROP_DB_DATASOURCE, DEFAULT_DB_JNDI_NAME );
-        try
-        {
+        try {
             Context initCtx = new InitialContext();
             Context ctx = (Context) initCtx.lookup( "java:comp/env" );
             m_ds = (DataSource) ctx.lookup( jndiName );
 
             // Prepare the SQL selectors
-            userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
+            String userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
             m_email = props.getProperty( PROP_DB_EMAIL, DEFAULT_DB_EMAIL );
             m_fullName = props.getProperty( PROP_DB_FULL_NAME, DEFAULT_DB_FULL_NAME );
             m_lockExpiry = props.getProperty( PROP_DB_LOCK_EXPIRY, DEFAULT_DB_LOCK_EXPIRY );
@@ -520,8 +476,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                               + "WHERE " + m_loginName + "=?";
 
             // Prepare the role insert SQL
-            roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
-            role = props.getProperty( PROP_DB_ROLE, DEFAULT_DB_ROLE );
+            String roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
+            String role = props.getProperty( PROP_DB_ROLE, DEFAULT_DB_ROLE );
             m_insertRole = "INSERT INTO " + roleTable + " (" + m_loginName + "," + role + ") VALUES (?,?)";
             m_findRoles = "SELECT * FROM " + roleTable + " WHERE " + m_loginName + "=?";
 
@@ -535,98 +491,55 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             m_renameProfile = "UPDATE " + userTable + " SET " + m_loginName + "=?," + m_modified + "=? WHERE " + m_loginName
                               + "=?";
             m_renameRoles = "UPDATE " + roleTable + " SET " + m_loginName + "=? WHERE " + m_loginName + "=?";
-        }
-        catch( NamingException e )
-        {
+        } catch( NamingException e ) {
             log.error( "JDBCUserDatabase initialization error: " + e.getMessage() );
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
 
         // Test connection by doing a quickie select
-        Connection conn = null;
-        try
-        {
-            conn = m_ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement( m_findAll );
-            ps.close();
-        }
-        catch( SQLException e )
-        {
+        try( Connection conn = m_ds.getConnection(); PreparedStatement ps = conn.prepareStatement( m_findAll ) ) {
+        } catch( SQLException e ) {
             log.error( "DB connectivity error: " + e.getMessage() );
             throw new WikiSecurityException("DB connectivity error: " + e.getMessage(), e );
-        }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
         }
         log.info( "JDBCUserDatabase initialized from JNDI DataSource: " + jndiName );
 
         // Determine if the datasource supports commits
-        try
-        {
-            conn = m_ds.getConnection();
+        try( Connection conn = m_ds.getConnection() ) {
             DatabaseMetaData dmd = conn.getMetaData();
-            if( dmd.supportsTransactions() )
-            {
+            if( dmd.supportsTransactions() ) {
                 m_supportsCommits = true;
                 conn.setAutoCommit( false );
                 log.info( "JDBCUserDatabase supports transactions. Good; we will use them." );
             }
-        }
-        catch( SQLException e )
-        {
+        } catch( SQLException e ) {
             log.warn( "JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
-        }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
         }
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#rename(String, String)
      */
-    public void rename( String loginName, String newName )
-                                                          throws NoSuchPrincipalException,
-                                                              DuplicateUserException,
-                                                              WikiSecurityException
-    {
+    @Override
+    public void rename( String loginName, String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         UserProfile profile = findByLoginName( loginName );
 
         // Get user with the proposed name; if found, it's a collision
-        try
-        {
+        try {
             UserProfile otherProfile = findByLoginName( newName );
-            if( otherProfile != null )
-            {
+            if( otherProfile != null ) {
                 throw new DuplicateUserException( "security.error.cannot.rename", newName );
             }
-        }
-        catch( NoSuchPrincipalException e )
-        {
+        } catch( NoSuchPrincipalException e ) {
             // Good! That means it's safe to save using the new name
         }
 
-        Connection conn = null;
-        try
+        try( Connection conn = m_ds.getConnection(); 
+             PreparedStatement ps1 = conn.prepareStatement( m_renameProfile );
+             PreparedStatement ps2 = conn.prepareStatement( m_renameRoles ) )
         {
-            // Open the database connection
-            conn = m_ds.getConnection();
-            if( m_supportsCommits )
-            {
+            if( m_supportsCommits ) {
                 conn.setAutoCommit( false );
             }
 
@@ -634,94 +547,69 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             Date modDate = new Date( ts.getTime() );
 
             // Change the login ID for the user record
-            PreparedStatement ps = conn.prepareStatement( m_renameProfile );
-            ps.setString( 1, newName );
-            ps.setTimestamp( 2, ts );
-            ps.setString( 3, loginName );
-            ps.execute();
-            ps.close();
+            ps1.setString( 1, newName );
+            ps1.setTimestamp( 2, ts );
+            ps1.setString( 3, loginName );
+            ps1.execute();
 
             // Change the login ID for the role records
-            ps = conn.prepareStatement( m_renameRoles );
-            ps.setString( 1, newName );
-            ps.setString( 2, loginName );
-            ps.execute();
-            ps.close();
+            ps2.setString( 1, newName );
+            ps2.setString( 2, loginName );
+            ps2.execute();
 
             // Set the profile name and mod time
             profile.setLoginName( newName );
             profile.setLastModified( modDate );
 
             // Commit and close connection
-            if( m_supportsCommits )
-            {
+            if( m_supportsCommits ) {
                 conn.commit();
             }
-        }
-        catch( SQLException e )
-        {
+        } catch( SQLException e ) {
             throw new WikiSecurityException( e.getMessage(), e );
-        }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
         }
     }
 
     /**
      * @see org.apache.wiki.auth.user.UserDatabase#save(org.apache.wiki.auth.user.UserProfile)
      */
-    public void save( UserProfile profile ) throws WikiSecurityException
-    {
+    @Override
+    public void save( UserProfile profile ) throws WikiSecurityException {
         String initialRole = "Authenticated";
 
         // Figure out which prepared statement to use & execute it
         String loginName = profile.getLoginName();
-        PreparedStatement ps = null;
         UserProfile existingProfile = null;
 
-        try
-        {
+        try {
             existingProfile = findByLoginName( loginName );
-        }
-        catch( NoSuchPrincipalException e )
-        {
+        } catch( NoSuchPrincipalException e ) {
             // Existing profile will be null
         }
 
         // Get a clean password from the passed profile.
-        // Blank password is the same as null, which means we re-use the
-        // existing one.
+        // Blank password is the same as null, which means we re-use the existing one.
         String password = profile.getPassword();
         String existingPassword = (existingProfile == null) ? null : existingProfile.getPassword();
-        if( NOTHING.equals( password ) )
-        {
+        if( NOTHING.equals( password ) ) {
             password = null;
         }
-        if( password == null )
-        {
+        if( password == null ) {
             password = existingPassword;
         }
 
         // If password changed, hash it before we save
-        if( !StringUtils.equals( password, existingPassword ) )
-        {
+        if( !StringUtils.equals( password, existingPassword ) ) {
             password = getHash( password );
         }
 
-        Connection conn = null;
-        try
+        try( Connection conn = m_ds.getConnection();
+             PreparedStatement ps1 = conn.prepareStatement( m_insertProfile );
+             PreparedStatement ps2 = conn.prepareStatement( m_findRoles );
+             PreparedStatement ps3 = conn.prepareStatement( m_insertRole );
+             PreparedStatement ps4 = conn.prepareStatement( m_updateProfile ) )
         {
-            // Open the database connection
-            conn = m_ds.getConnection();
-            if( m_supportsCommits )
-            {
+            if( m_supportsCommits ) {
                 conn.setAutoCommit( false );
             }
 
@@ -731,94 +619,70 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             if( existingProfile == null )
             {
                 // User is new: insert new user record
-                ps = conn.prepareStatement( m_insertProfile );
-                ps.setString( 1, profile.getUid() );
-                ps.setString( 2, profile.getEmail() );
-                ps.setString( 3, profile.getFullname() );
-                ps.setString( 4, password );
-                ps.setString( 5, profile.getWikiName() );
-                ps.setTimestamp( 6, ts );
-                ps.setString( 7, profile.getLoginName() );
-                try
-                {
-                    ps.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
-                }
-                catch ( IOException e )
-                {
+                ps1.setString( 1, profile.getUid() );
+                ps1.setString( 2, profile.getEmail() );
+                ps1.setString( 3, profile.getFullname() );
+                ps1.setString( 4, password );
+                ps1.setString( 5, profile.getWikiName() );
+                ps1.setTimestamp( 6, ts );
+                ps1.setString( 7, profile.getLoginName() );
+                try {
+                    ps1.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
+                } catch ( IOException e ) {
                     throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
-                ps.setTimestamp( 9, ts );
-                ps.execute();
-                ps.close();
+                ps1.setTimestamp( 9, ts );
+                ps1.execute();
 
                 // Insert new role record
-                ps = conn.prepareStatement( m_findRoles );
-                ps.setString( 1, profile.getLoginName() );
-                ResultSet rs = ps.executeQuery();
+                ps2.setString( 1, profile.getLoginName() );
                 int roles = 0;
-                while ( rs.next() )
-                {
-                    roles++;
+                try ( ResultSet rs = ps2.executeQuery() ) {
+                    while ( rs.next() ) {
+                        roles++;
+                    }
                 }
-                ps.close();
-                if( roles == 0 )
-                {
-                    ps = conn.prepareStatement( m_insertRole );
-                    ps.setString( 1, profile.getLoginName() );
-                    ps.setString( 2, initialRole );
-                    ps.execute();
-                    ps.close();
+                
+                if( roles == 0 ) {
+                    ps3.setString( 1, profile.getLoginName() );
+                    ps3.setString( 2, initialRole );
+                    ps3.execute();
                 }
 
                 // Set the profile creation time
                 profile.setCreated( modDate );
-            }
-            else
-            {
+            } else {
                 // User exists: modify existing record
-                ps = conn.prepareStatement( m_updateProfile );
-                ps.setString( 1, profile.getUid() );
-                ps.setString( 2, profile.getEmail() );
-                ps.setString( 3, profile.getFullname() );
-                ps.setString( 4, password );
-                ps.setString( 5, profile.getWikiName() );
-                ps.setTimestamp( 6, ts );
-                ps.setString( 7, profile.getLoginName() );
+                ps4.setString( 1, profile.getUid() );
+                ps4.setString( 2, profile.getEmail() );
+                ps4.setString( 3, profile.getFullname() );
+                ps4.setString( 4, password );
+                ps4.setString( 5, profile.getWikiName() );
+                ps4.setTimestamp( 6, ts );
+                ps4.setString( 7, profile.getLoginName() );
                 try
                 {
-                    ps.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
+                    ps4.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
                 }
                 catch ( IOException e )
                 {
                     throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
-                ps.setDate( 9, lockExpiry );
-                ps.setString( 10, profile.getLoginName() );
-                ps.execute();
-                ps.close();
+                ps4.setDate( 9, lockExpiry );
+                ps4.setString( 10, profile.getLoginName() );
+                ps4.execute();
             }
             // Set the profile mod time
             profile.setLastModified( modDate );
 
             // Commit and close connection
-            if( m_supportsCommits )
-            {
+            if( m_supportsCommits ) {
                 conn.commit();
             }
         }
         catch( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage(), e );
-        }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
         }
     }
 
@@ -836,101 +700,67 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         UserProfile profile = null;
         boolean found = false;
         boolean unique = true;
-        Connection conn = null;
-        try
-        {
-            // Open the database connection
-            conn = m_ds.getConnection();
-            if( m_supportsCommits )
-            {
+        try( Connection conn = m_ds.getConnection(); PreparedStatement ps = conn.prepareStatement( sql ) ) {
+            if( m_supportsCommits ) {
                 conn.setAutoCommit( false );
             }
-
-            PreparedStatement ps = conn.prepareStatement( sql );
             
             // Set the parameter to search by
-            if ( index instanceof String )
-            {
+            if ( index instanceof String ) {
                 ps.setString( 1, (String)index );
-            }
-            else if ( index instanceof Long )
-            {
+            } else if ( index instanceof Long ) {
                 ps.setLong( 1, ( (Long)index).longValue() );
-            }
-            else 
-            {
+            } else {
                 throw new IllegalArgumentException( "Index type not recognized!" );
             }
             
             // Go and get the record!
-            ResultSet rs = ps.executeQuery();
-            while ( rs.next() )
-            {
-                if( profile != null )
-                {
-                    unique = false;
-                    break;
-                }
-                profile = newProfile();
-                
-                // Fetch the basic user attributes
-                profile.setUid( rs.getString( m_uid ) );
-                if ( profile.getUid() == null )
-                {
-                    profile.setUid( generateUid( this ) );
-                }
-                profile.setCreated( rs.getTimestamp( m_created ) );
-                profile.setEmail( rs.getString( m_email ) );
-                profile.setFullname( rs.getString( m_fullName ) );
-                profile.setLastModified( rs.getTimestamp( m_modified ) );
-                Date lockExpiry = rs.getDate( m_lockExpiry );
-                profile.setLockExpiry( rs.wasNull() ? null : lockExpiry );
-                profile.setLoginName( rs.getString( m_loginName ) );
-                profile.setPassword( rs.getString( m_password ) );
-                
-                // Fetch the user attributes
-                String rawAttributes = rs.getString( m_attributes );
-                if ( rawAttributes != null )
-                {
-                    try
-                    {
-                        Map<String,? extends Serializable> attributes = Serializer.deserializeFromBase64( rawAttributes );
-                        profile.getAttributes().putAll( attributes );
+            try ( ResultSet rs = ps.executeQuery() ) {
+                while ( rs.next() ) {
+                    if( profile != null ) {
+                        unique = false;
+                        break;
                     }
-                    catch ( IOException e )
-                    {
-                        log.error( "Could not parse user profile attributes!", e );
+                    profile = newProfile();
+                    
+                    // Fetch the basic user attributes
+                    profile.setUid( rs.getString( m_uid ) );
+                    if ( profile.getUid() == null ) {
+                        profile.setUid( generateUid( this ) );
                     }
+                    profile.setCreated( rs.getTimestamp( m_created ) );
+                    profile.setEmail( rs.getString( m_email ) );
+                    profile.setFullname( rs.getString( m_fullName ) );
+                    profile.setLastModified( rs.getTimestamp( m_modified ) );
+                    Date lockExpiry = rs.getDate( m_lockExpiry );
+                    profile.setLockExpiry( rs.wasNull() ? null : lockExpiry );
+                    profile.setLoginName( rs.getString( m_loginName ) );
+                    profile.setPassword( rs.getString( m_password ) );
+                    
+                    // Fetch the user attributes
+                    String rawAttributes = rs.getString( m_attributes );
+                    if ( rawAttributes != null ) {
+                        try {
+                            Map<String,? extends Serializable> attributes = Serializer.deserializeFromBase64( rawAttributes );
+                            profile.getAttributes().putAll( attributes );
+                        } catch ( IOException e ) {
+                            log.error( "Could not parse user profile attributes!", e );
+                        }
+                    }
+                    found = true;
                 }
-                found = true;
             }
-            ps.close();
-        }
-        catch( SQLException e )
-        {
+        } catch( SQLException e ) {
             throw new NoSuchPrincipalException( e.getMessage() );
         }
-        finally
-        {
-            try
-            {
-                if( conn != null ) conn.close();
-            }
-            catch( Exception e )
-            {
-            }
-        }
 
-        if( !found )
-        {
+        if( !found ) {
             throw new NoSuchPrincipalException( "Could not find profile in database!" );
         }
-        if( !unique )
-        {
+        if( !unique ) {
             throw new NoSuchPrincipalException( "More than one profile in database!" );
         }
         return profile;
-
     }
 
 }
