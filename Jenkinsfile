@@ -55,7 +55,7 @@ try {
         }
         emailext body: "See ${env.BUILD_URL}",
                  replyTo: 'dev@jspwiki.apache.org', 
-                 to: 'commits@apache.org',
+                 to: 'commits@jspwiki.apache.org',
                  subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
     }
 }
