@@ -51,10 +51,10 @@ public class SessionMonitor implements HttpSessionListener
     private static Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
-    private static ConcurrentHashMap<WikiEngine, SessionMonitor>          c_monitors   = new ConcurrentHashMap<WikiEngine, SessionMonitor>();
+    private static ConcurrentHashMap<WikiEngine, SessionMonitor>          c_monitors   = new ConcurrentHashMap<>();
 
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
-    private final Map<String, WikiSession>                 m_sessions   = new WeakHashMap<String, WikiSession>();
+    private final Map<String, WikiSession>                 m_sessions   = new WeakHashMap<>();
 
     private       WikiEngine          m_engine;
 
@@ -199,7 +199,7 @@ public class SessionMonitor implements HttpSessionListener
      */
     public final Principal[] userPrincipals()
     {
-        Collection<Principal> principals = new ArrayList<Principal>();
+        Collection<Principal> principals = new ArrayList<>();
         synchronized ( m_sessions ) {
             for (WikiSession session : m_sessions.values()) {
                 principals.add( session.getUserPrincipal() );
@@ -250,9 +250,11 @@ public class SessionMonitor implements HttpSessionListener
      * 
      * @param se the HTTP session event
      */
+    @Override
     public void sessionCreated( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
+        log.debug( "Created session: " + session.getId() + "." );
     }
 
     /**
@@ -260,6 +262,7 @@ public class SessionMonitor implements HttpSessionListener
      * container destroys an HTTP session.
      * @param se the HTTP session event
      */
+    @Override
     public void sessionDestroyed( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
@@ -272,7 +275,7 @@ public class SessionMonitor implements HttpSessionListener
 
             monitor.remove(session);
 
-            log.debug("Removed session "+session.getId()+".");
+            log.debug( "Removed session " + session.getId() + "." );
 
             if( storedSession != null )
             {

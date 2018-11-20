@@ -21,7 +21,14 @@ package org.apache.wiki;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +36,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
-import org.apache.wiki.auth.*;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.SessionMonitor;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
@@ -104,11 +115,11 @@ public final class WikiSession implements WikiEventListener
 
     private static final String ALL                   = "*";
 
-    private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<WikiSession>();
+    private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<>();
 
     private final Subject       m_subject             = new Subject();
 
-    private final Map<String,Set<String>> m_messages  = new HashMap<String,Set<String>>();
+    private final Map<String,Set<String>> m_messages  = new HashMap<>();
 
     /** The WikiEngine that created this session. */
     private WikiEngine          m_engine              = null;
@@ -290,7 +301,7 @@ public final class WikiSession implements WikiEventListener
         Set<String> messages = m_messages.get( topic );
         if (messages == null )
         {
-            messages = new LinkedHashSet<String>();
+            messages = new LinkedHashSet<>();
             m_messages.put( topic, messages );
         }
         messages.add( StringUtils.defaultString( message ) );
@@ -354,7 +365,7 @@ public final class WikiSession implements WikiEventListener
      */
     public Principal[] getPrincipals()
     {
-        ArrayList<Principal> principals = new ArrayList<Principal>();
+        ArrayList<Principal> principals = new ArrayList<>();
 
         // Take the first non Role as the main Principal
         for( Principal principal : m_subject.getPrincipals() )
@@ -383,7 +394,7 @@ public final class WikiSession implements WikiEventListener
      */
     public Principal[] getRoles()
     {
-        Set<Principal> roles = new HashSet<Principal>();
+        Set<Principal> roles = new HashSet<>();
 
         // Add all of the Roles possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( Role.class ) );
@@ -433,6 +444,7 @@ public final class WikiSession implements WikiEventListener
      * by the WikiSession.
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      */
+    @Override
     public void actionPerformed( WikiEvent event )
     {
         if ( event instanceof WikiSecurityEvent )

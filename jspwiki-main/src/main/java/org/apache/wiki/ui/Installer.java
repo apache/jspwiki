@@ -294,8 +294,7 @@ public class Installer
     }
     
     /**
-     * Simply sanitizes any URL which contains backslashes (sometimes Windows
-     * users may have them)
+     * Simply sanitizes any URL which contains backslashes (sometimes Windows users may have them)
      * @param key the key of the property to sanitize
      */
     private void sanitizeURL( String key )

@@ -18,12 +18,15 @@
  */
 package org.apache.wiki.auth.user;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wiki.WikiSession;
 
 /**
  * Default implementation for representing wiki user information, such as the
@@ -39,7 +42,7 @@ public final class DefaultUserProfile implements UserProfile
 
     private static final String WHITESPACE = "\\s";
     
-    private Map<String,Serializable> attributes = new HashMap<String,Serializable>();
+    private Map<String,Serializable> attributes = new HashMap<>();
 
     private Date     created   = null;
 
@@ -81,6 +84,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals( Object o )
     {
         if ( ( o != null ) && ( o instanceof UserProfile ) )
@@ -94,6 +98,7 @@ public final class DefaultUserProfile implements UserProfile
         return false;
     }
 
+    @Override
     public int hashCode()
     {
         return (fullname  != null ? fullname.hashCode()  : 0) ^
@@ -108,6 +113,7 @@ public final class DefaultUserProfile implements UserProfile
      * @return the creation date
      * @see org.apache.wiki.auth.user.UserProfile#getCreated()
      */
+    @Override
     public Date getCreated()
     {
         return created;
@@ -117,6 +123,7 @@ public final class DefaultUserProfile implements UserProfile
      * Returns the user's e-mail address.
      * @return the e-mail address
      */
+    @Override
     public String getEmail()
     {
         return email;
@@ -126,6 +133,7 @@ public final class DefaultUserProfile implements UserProfile
      * Returns the user's full name.
      * @return the full name
      */
+    @Override
     public String getFullname()
     {
         return fullname;
@@ -136,6 +144,7 @@ public final class DefaultUserProfile implements UserProfile
      * @return the last-modified date
      * @see org.apache.wiki.auth.user.UserProfile#getLastModified()
      */
+    @Override
     public Date getLastModified()
     {
         return modified;
@@ -145,6 +154,7 @@ public final class DefaultUserProfile implements UserProfile
      * Returns the user's login name.
      * @return the login name
      */
+    @Override
     public String getLoginName()
     {
         return loginName;
@@ -159,6 +169,7 @@ public final class DefaultUserProfile implements UserProfile
      * itself.
      * @return the password
      */
+    @Override
     public String getPassword()
     {
         return password;
@@ -168,6 +179,7 @@ public final class DefaultUserProfile implements UserProfile
      * Returns the user's wiki name.
      * @return the wiki name.
      */
+    @Override
     public String getWikiName()
     {
         return wikiname;
@@ -180,6 +192,7 @@ public final class DefaultUserProfile implements UserProfile
      * to determine the status.
      * @see org.apache.wiki.auth.user.UserProfile#isNew()
      */
+    @Override
     public boolean isNew()
     {
         return  modified == null;
@@ -189,6 +202,7 @@ public final class DefaultUserProfile implements UserProfile
      * @param date the creation date
      * @see org.apache.wiki.auth.user.UserProfile#setCreated(java.util.Date)
      */
+    @Override
     public void setCreated(Date date)
     {
         created = date;
@@ -198,6 +212,7 @@ public final class DefaultUserProfile implements UserProfile
      * Sets the user's e-mail address.
      * @param email the e-mail address
      */
+    @Override
     public void setEmail( String email )
     {
     	this.email = email;
@@ -207,6 +222,7 @@ public final class DefaultUserProfile implements UserProfile
      * Sets the user's full name. For example, "Janne Jalkanen."
      * @param arg the full name
      */
+    @Override
     public void setFullname( String arg )
     {
         fullname = arg;
@@ -223,6 +239,7 @@ public final class DefaultUserProfile implements UserProfile
      * @param date the last-modified date
      * @see org.apache.wiki.auth.user.UserProfile#setLastModified(java.util.Date)
      */
+    @Override
     public void setLastModified( Date date )
     {
         modified = date;
@@ -236,6 +253,7 @@ public final class DefaultUserProfile implements UserProfile
      * wiki name is typically of type FirstnameLastName ("JanneJalkanen").
      * @param name the login name
      */
+    @Override
     public void setLoginName( String name )
     {
         loginName = name;
@@ -251,6 +269,7 @@ public final class DefaultUserProfile implements UserProfile
      * elsewhere.
      * @param arg the password
      */
+    @Override
     public void setPassword( String arg )
     {
         password = arg;
@@ -263,7 +282,8 @@ public final class DefaultUserProfile implements UserProfile
      * @param name the wiki name
      * @deprecated This method will be removed in a future release.
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated
+    @Override
     public void setWikiName( String name )
     {
     }
@@ -272,6 +292,7 @@ public final class DefaultUserProfile implements UserProfile
      * Returns a string representation of this user profile.
      * @return the string
      */
+    @Override
     public String toString()
     {
         return "[DefaultUserProfile: '" + getFullname() + "']";
@@ -302,6 +323,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String,Serializable> getAttributes()
     {
         return attributes;
@@ -310,6 +332,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public Date getLockExpiry()
     {
         return isLocked() ? lockExpiry : null;
@@ -318,6 +341,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getUid()
     {
         return uid;
@@ -326,6 +350,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isLocked()
     {
         boolean locked =  lockExpiry != null && System.currentTimeMillis() < lockExpiry.getTime();
@@ -341,6 +366,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setLockExpiry( Date expiry )
     {
     	this.lockExpiry = expiry;
@@ -349,6 +375,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setUid( String uid )
     {
         this.uid = uid;

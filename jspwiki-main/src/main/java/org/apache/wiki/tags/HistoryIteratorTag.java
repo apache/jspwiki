@@ -19,14 +19,14 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 
@@ -49,10 +49,9 @@ public class HistoryIteratorTag
     
     static    Logger    log = Logger.getLogger( HistoryIteratorTag.class );
 
-    public final int doStartTag()
-    {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
+    @Override
+    public final int doStartTag() {
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
@@ -63,7 +62,8 @@ public class HistoryIteratorTag
         {
             if( page != null && engine.pageExists(page) )
             {
-                Collection versions = engine.getVersionHistory( page.getName() );
+                @SuppressWarnings("unchecked")
+                List< WikiPage > versions = ( List< WikiPage > )engine.getVersionHistory( page.getName() );
 
                 if( versions == null )
                 {
@@ -77,11 +77,8 @@ public class HistoryIteratorTag
                 {
                     WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( (WikiPage)m_iterator.next() );
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                              context,
-                                              PageContext.REQUEST_SCOPE );
-                    pageContext.setAttribute( getId(),
-                                              context.getPage() );
+                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+                    pageContext.setAttribute( getId(), context.getPage() );
                 }
                 else
                 {
@@ -100,6 +97,7 @@ public class HistoryIteratorTag
         return SKIP_BODY;
     }
 
+    @Override
     public final int doAfterBody()
     {
         if( bodyContent != null )
@@ -121,11 +119,8 @@ public class HistoryIteratorTag
         {
             WikiContext context = (WikiContext)m_wikiContext.clone();
             context.setPage( (WikiPage)m_iterator.next() );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(),
-                                      context.getPage() );
+            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( getId(), context.getPage() );
             return EVAL_BODY_BUFFERED;
         }
 

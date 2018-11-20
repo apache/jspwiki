@@ -95,6 +95,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int doStartTag()
     {
         m_wikiContext = WikiContext.findContext(pageContext);
@@ -129,22 +130,18 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         //
         //  Push it to the iterator stack, and set the id.
         //
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  context,
-                                  PageContext.REQUEST_SCOPE );
-        pageContext.setAttribute( getId(),
-                                  o );
+        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( getId(), o );
     }
 
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int doEndTag()
     {
         // Return back to the original.
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  m_wikiContext,
-                                  PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, m_wikiContext, PageContext.REQUEST_SCOPE );
 
         return EVAL_PAGE;
     }
@@ -152,6 +149,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int doAfterBody()
     {
         if( bodyContent != null )
@@ -188,6 +186,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  
      *  @throws Throwable I have no idea why this would throw anything
      */
+    @Override
     public void doCatch(Throwable arg0) throws Throwable
     {
     }
@@ -198,6 +197,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  if you override this method, or else some of the things may not
      *  work as expected.
      */
+    @Override
     public void doFinally()
     {
         resetIterator();
