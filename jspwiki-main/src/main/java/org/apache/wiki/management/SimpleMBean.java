@@ -62,7 +62,7 @@ public abstract class SimpleMBean implements DynamicMBean {
     private static Method findGetterSetter( Class<?> clazz, String name, Class<?> parm )
     {
         try
-        {
+        { 
             Class<?>[] params = { parm };
             Class<?>[] emptyparms = {};
 
@@ -206,37 +206,19 @@ public abstract class SimpleMBean implements DynamicMBean {
      *  @throws MBeanException
      *  @throws ReflectionException
      */
+    @Override
     public Object getAttribute(String name)
         throws AttributeNotFoundException, MBeanException, ReflectionException
     {
         Method m;
         Object res = null;
-        try
-        {
+        try {
             String mname = "get"+StringUtils.capitalize( name );
             m = findGetterSetter( getClass(), mname, null );
 
             if( m == null ) throw new AttributeNotFoundException( name );
             res = m.invoke( this, (Object[])null );
-        }
-        catch (SecurityException e)
-        {
-            // TODO Auto-generated catch block
-        	LOG.error( e.getMessage(), e );
-        }
-        catch (IllegalArgumentException e)
-        {
-            // TODO Auto-generated catch block
-        	LOG.error( e.getMessage(), e );
-        }
-        catch (IllegalAccessException e)
-        {
-            // TODO Auto-generated catch block
-        	LOG.error( e.getMessage(), e );
-        }
-        catch (InvocationTargetException e)
-        {
-            // TODO Auto-generated catch block
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
         	LOG.error( e.getMessage(), e );
         }
 
@@ -249,29 +231,14 @@ public abstract class SimpleMBean implements DynamicMBean {
      *  @param arg0 The attribute names to get
      *  @return A list of attributes
      */
-    public AttributeList getAttributes(String[] arg0)
-    {
+    @Override
+    public AttributeList getAttributes(String[] arg0) {
         AttributeList list = new AttributeList();
 
-        for( int i = 0; i < arg0.length; i++ )
-        {
-            try
-            {
+        for( int i = 0; i < arg0.length; i++ ) {
+            try {
                 list.add( new Attribute(arg0[i], getAttribute(arg0[i])) );
-            }
-            catch (AttributeNotFoundException e)
-            {
-                // TODO Auto-generated catch block
-                LOG.error( e.getMessage(), e );
-            }
-            catch (MBeanException e)
-            {
-                // TODO Auto-generated catch block
-                LOG.error( e.getMessage(), e );
-            }
-            catch (ReflectionException e)
-            {
-                // TODO Auto-generated catch block
+            } catch (AttributeNotFoundException | MBeanException | ReflectionException e) {
                 LOG.error( e.getMessage(), e );
             }
         }
@@ -284,6 +251,7 @@ public abstract class SimpleMBean implements DynamicMBean {
      *
      *  @return the MBeanInfo
      */
+    @Override
     public MBeanInfo getMBeanInfo()
     {
         return m_beanInfo;
@@ -295,6 +263,7 @@ public abstract class SimpleMBean implements DynamicMBean {
      *  @param arg0 Method name
      *  @param arg1 A list of arguments for the invocation
      */
+    @Override
     public Object invoke(String arg0, Object[] arg1, String[] arg2)
         throws MBeanException, ReflectionException
     {
@@ -323,9 +292,10 @@ public abstract class SimpleMBean implements DynamicMBean {
             }
         }
 
-        throw new ReflectionException(null, "There is no such method "+arg0); // TODO: Can you put a null exception?
+        throw new ReflectionException(null, "There is no such method "+arg0); 
     }
 
+    @Override
     public void setAttribute(Attribute attr)
         throws AttributeNotFoundException,
                InvalidAttributeValueException,
@@ -359,6 +329,7 @@ public abstract class SimpleMBean implements DynamicMBean {
         }
     }
 
+    @Override
     public AttributeList setAttributes(AttributeList arg0)
     {
         AttributeList result = new AttributeList();
@@ -370,29 +341,10 @@ public abstract class SimpleMBean implements DynamicMBean {
             //  Attempt to set the attribute.  If it succeeds (no exception),
             //  then we just add it to the list of successfull sets.
             //
-            try
-            {
+            try {
                 setAttribute( attr );
                 result.add( attr );
-            }
-            catch (AttributeNotFoundException e)
-            {
-                // TODO Auto-generated catch block
-                LOG.error( e.getMessage(), e );
-            }
-            catch (InvalidAttributeValueException e)
-            {
-                // TODO Auto-generated catch block
-                LOG.error( e.getMessage(), e );
-            }
-            catch (MBeanException e)
-            {
-                // TODO Auto-generated catch block
-                LOG.error( e.getMessage(), e );
-            }
-            catch (ReflectionException e)
-            {
-                // TODO Auto-generated catch block
+            } catch (AttributeNotFoundException | InvalidAttributeValueException | MBeanException | ReflectionException e ) {
                 LOG.error( e.getMessage(), e );
             }
         }
