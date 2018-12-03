@@ -1,3 +1,7 @@
+2018-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * prepare release for 2.11.0.M1
+
 2018-11-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-10: backwards-incompatible change - move TextUtil.getRequiredProperty to WikiEngine
