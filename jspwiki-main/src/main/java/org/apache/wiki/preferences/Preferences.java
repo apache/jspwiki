@@ -142,9 +142,9 @@ public class Preferences
             for (String key : map.keySet()) {
                 key = TextUtil.replaceEntities( key );
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
-                String value = map.get(key);
+                Object value = map.get(key);
                 if (value != null) {
-                	prefs.put( key, value );
+                    prefs.put( key, value.toString() );
                 }
             }
         }
