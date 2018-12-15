@@ -108,7 +108,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/haddock/</cssDestinationFolder>
+              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
               <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
             </configuration>
           </execution>
@@ -221,7 +221,7 @@
               <outputDirectory>${project.build.directory}/jspwiki/data/jspwiki-files</outputDirectory>
             </configuration>
           </execution>
-        </executions>  
+        </executions>
       </plugin>
     </plugins>
   </build>

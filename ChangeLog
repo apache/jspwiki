@@ -1,6 +1,13 @@
+2018-12-15  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M1-git-12: fixing bugs related to the new default template.
+         -Rename HADDOCK template to DEFAULT template.
+         -Moving a number of default jsp's (common for all templates)
+         from templates/210 to templates/default.
+
 2018-12-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-11: fix from 2.11.0.M1-rc1 - revert change from commit 87bf9b941fdf (Nov/11/2018) 
+       * 2.11.0-M1-git-11: fix from 2.11.0.M1-rc1 - revert change from commit 87bf9b941fdf (Nov/11/2018)
 	     that ended up causing lots of ClassCastException
 
 2018-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -27,19 +34,19 @@
 
 2018-11-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-08: try to load as many external third-party plugin jars as possible, instead  
+       * 2.11.0-M1-git-08: try to load as many external third-party plugin jars as possible, instead
          of all-or-nothing
 
-       * small backwards-incompatible changes: 
+       * small backwards-incompatible changes:
          - CryptoUtil#verifySaltedPassword doesn't throw UnsupportedEncodingException anymore
          - TextUtil#urlDecode methods don't throw UnsupportedOperationException anymore
-         - ClassUtil#getMappedObject methods now throw ReflectiveOperationException, IllegalArgumentException 
+         - ClassUtil#getMappedObject methods now throw ReflectiveOperationException, IllegalArgumentException
            instead of WikiException
          - ClassUtil#getMappedClass method now throws ClassNotFoundException instead of WikiException
 
        * fix possible concurrency issue at ReferenceManager#serializeAttrsToDisk
 
-       * remove commons-codec usage from source (it's carried onto the war as a transitive 
+       * remove commons-codec usage from source (it's carried onto the war as a transitive
          dependency though), plus several other small refactors
 
 2018-11-02  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -57,8 +64,8 @@
 2018-10-29  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-05: maven build refactor
-         - java code split into its own module: custom extensions should now rely on 
-           the new org.apache.jspwiki:jspwiki-main dependency, instead of the 
+         - java code split into its own module: custom extensions should now rely on
+           the new org.apache.jspwiki:jspwiki-main dependency, instead of the
            org.apache.jspwiki:jspwiki-war:classes old one
          - parent-pom: clean-up + dependencies and plugins versions' set as maven properties
          - jspwiki-markdown module included into main war
@@ -67,7 +74,7 @@
          - PropertiesUtils moved to the util package
          - ReferenceManager#findReferrers returns Set< String > instead of Collection< String >
          - AttachmentManager#listAttachments returns a List<Attachment> instead of a Collection
-         - WikiEngine#findPages( String query, WikiContext wikiContext ) is removed, use 
+         - WikiEngine#findPages( String query, WikiContext wikiContext ) is removed, use
            WikiEngine#getSearchManager()#findPages( String query, WikiContext wikiContext ) instead
 
 2018-10-26  Juan Pablo Santos (juanpablo AT apache DOT org)
