@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.ui;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
@@ -157,22 +157,12 @@ public class TemplateManager extends ModuleManager {
      *  Check the existence of a template.
      */
     // FIXME: Does not work yet
-    public boolean templateExists( String templateName )
-    {
+    public boolean templateExists( String templateName ) {
         ServletContext context = m_engine.getServletContext();
-
         InputStream in = context.getResourceAsStream( getPath(templateName)+"ViewTemplate.jsp");
 
-        if( in != null )
-        {
-            try
-            {
-                in.close();
-            }
-            catch (IOException e)
-            {
-            }
-
+        if( in != null ) {
+            IOUtils.closeQuietly( in );
             return true;
         }
 
@@ -188,31 +178,17 @@ public class TemplateManager extends ModuleManager {
      *  @param name The name of the resource
      *  @return The name of the resource which was found.
      */
-    private static String findResource( ServletContext sContext, String name )
-    {
+    private static String findResource( ServletContext sContext, String name ) {
         InputStream is = sContext.getResourceAsStream( name );
 
-        if( is == null )
-        {
-            String defname = makeFullJSPName( DEFAULT_TEMPLATE,
-                                              removeTemplatePart(name) );
+        if( is == null ) {
+            String defname = makeFullJSPName( DEFAULT_TEMPLATE, removeTemplatePart(name) );
             is = sContext.getResourceAsStream( defname );
 
-            if( is != null )
-                name = defname;
-            else
-                name = null;
+            name = is != null ? defname : null;
         }
 
-        if( is != null )
-        {
-            try
-            {
-                is.close();
-            }
-            catch( IOException e )
-            {}
-        }
+        IOUtils.closeQuietly( is );
 
         return name;
     }
@@ -730,14 +706,14 @@ public class TemplateManager extends ModuleManager {
 
         if( resourcemap == null )
         {
-            resourcemap = new HashMap<String,Vector<String>>();
+            resourcemap = new HashMap<>();
         }
 
         Vector<String> resources = resourcemap.get( type );
 
         if( resources == null )
         {
-            resources = new Vector<String>();
+            resources = new Vector<>();
         }
 
         String resourceString = null;
