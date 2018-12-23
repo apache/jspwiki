@@ -61,7 +61,10 @@
       //  Filter down to only those that we actually have a permission to view
       AuthorizationManager mgr = wiki.getAuthorizationManager();
 
-      ArrayList< SearchResult > items = new ArrayList<>();
+      //ArrayList< SearchResult > items = new ArrayList<>();
+      //"The '<>' Diamond operator is not allowed for source level below 1.7"
+      //The compiler that eg. tomcat is running is older than 1.7. -- need mod to tomcat/conf/web.xml
+      ArrayList< SearchResult > items = new ArrayList< SearchResult >();
 
       for( Iterator< SearchResult > i = list.iterator(); i.hasNext(); )
       {

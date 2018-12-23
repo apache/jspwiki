@@ -1,3 +1,9 @@
+2018-12-24  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M1-git-13: AJAX based search results are not shown.
+         Fixing AJAXSearch.jsp.
+         The java '<>' diamond operator is not allowed for source level below 1.7.
+
 2018-12-15  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M1-git-12: fixing bugs related to the new default template.
