@@ -64,7 +64,6 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
@@ -126,7 +125,7 @@ public class LuceneSearchProvider implements SearchProvider {
     private static final int MAX_FRAGMENTS = 3;
 
     /** The maximum number of hits to return from searches. */
-    public static final int MAX_SEARCH_HITS = 99999;
+    public static final int MAX_SEARCH_HITS = 99_999;
     
     private static String c_punctuationSpaces = StringUtils.repeat(" ", MarkupParser.PUNCTUATION_CHARS_ALLOWED.length() );
 
@@ -217,7 +216,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
                 log.info("Starting Lucene reindexing, this can take a couple of minutes...");
 
-                Directory luceneDir = new SimpleFSDirectory(dir, null);
+                Directory luceneDir = new SimpleFSDirectory( dir.toPath() );
                 try( IndexWriter writer = getIndexWriter( luceneDir ) )
                 {
                     Collection< WikiPage > allPages = m_engine.getPageManager().getAllPages();
@@ -359,7 +358,7 @@ public class LuceneSearchProvider implements SearchProvider {
             pageRemoved( page );
 
             // Now add back the new version.
-            luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
             writer = getIndexWriter( luceneDir );
             
             luceneIndexPage( page, text, writer );
@@ -388,8 +387,8 @@ public class LuceneSearchProvider implements SearchProvider {
         try
         {
             Class< ? > clazz = ClassUtil.findClass( "", m_analyzerClass );
-            Constructor< ? > constructor = clazz.getConstructor( Version.LUCENE_47.getClass() );
-            Analyzer analyzer = (Analyzer) constructor.newInstance( Version.LUCENE_47 );
+            Constructor< ? > constructor = clazz.getConstructor();
+            Analyzer analyzer = (Analyzer) constructor.newInstance();
             return analyzer;
         }
         catch( Exception e )
@@ -479,7 +478,7 @@ public class LuceneSearchProvider implements SearchProvider {
         IndexWriter writer = null;
         try
         {
-            Directory luceneDir = new SimpleFSDirectory(new File(m_luceneDirectory), null);
+            Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
             writer = getIndexWriter( luceneDir );
             Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
@@ -498,7 +497,7 @@ public class LuceneSearchProvider implements SearchProvider {
             LockObtainFailedException, IOException, ProviderException 
     {
         IndexWriter writer = null;
-        IndexWriterConfig writerConfig = new IndexWriterConfig( Version.LUCENE_47, getLuceneAnalyzer() );
+        IndexWriterConfig writerConfig = new IndexWriterConfig( getLuceneAnalyzer() );
         writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
         writer = new IndexWriter( luceneDir, writerConfig );
         
@@ -512,7 +511,7 @@ public class LuceneSearchProvider implements SearchProvider {
         {
             if( writer != null ) 
             {
-                writer.close( true );
+                writer.close();
             }
         }
         catch( IOException e )
@@ -583,7 +582,7 @@ public class LuceneSearchProvider implements SearchProvider {
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
-            QueryParser qp = new MultiFieldQueryParser( Version.LUCENE_47, queryfields, getLuceneAnalyzer() );
+            QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
 
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
@@ -598,7 +597,7 @@ public class LuceneSearchProvider implements SearchProvider {
             try
             {
                 File dir = new File(m_luceneDirectory);
-                Directory luceneDir = new SimpleFSDirectory(dir, null);
+                Directory luceneDir = new SimpleFSDirectory( dir.toPath() );
                 IndexReader reader = DirectoryReader.open(luceneDir);
                 searcher = new IndexSearcher(reader);
             }

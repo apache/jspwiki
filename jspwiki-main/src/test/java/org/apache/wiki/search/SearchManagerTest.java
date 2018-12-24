@@ -83,7 +83,7 @@ public class SearchManagerTest {
 
             res = m_mgr.findPages( text, ctx );
 
-//            debugSearchResults( res );
+            // debugSearchResults( res );
         }
         return res;
     }
