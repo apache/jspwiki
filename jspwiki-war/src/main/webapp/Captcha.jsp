@@ -40,11 +40,12 @@
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 
-    String content = request.getParameter("text");
+    String reqPage = TextUtil.replaceEntities( request.getParameter( "page" ) );
+    String content = TextUtil.replaceEntities( request.getParameter( "text" ) );
 
     if( content != null )
     {
-        String ticket = request.getParameter("Asirra_Ticket");
+        String ticket = TextUtil.replaceEntities( request.getParameter( "Asirra_Ticket" ) );
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod("http://challenge.asirra.com/cgi/Asirra?action=ValidateTicket&ticket="+ticket);
 
@@ -53,10 +54,10 @@
 
         if( status == HttpStatus.SC_OK )
         {
-            if( body.indexOf("Pass") != -1 )
+            if( body.indexOf( "Pass" ) != -1 )
             {
-                session.setAttribute("captcha","ok");
-                response.sendRedirect( wikiContext.getURL(WikiContext.EDIT, request.getParameter("page") ) );
+                session.setAttribute( "captcha", "ok" );
+                response.sendRedirect( wikiContext.getURL( WikiContext.EDIT, reqPage ) );
                 return;
             }
         }
@@ -65,7 +66,7 @@
     }
 
     // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
 %>
 <html>
 
@@ -106,14 +107,15 @@
 
    <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
       <input type="hidden" value="foo" name="text" />
-      <input type="hidden" value='<%=request.getParameter("page")%>' name='page'/>
+      <input type="hidden" value='<%=reqPage%>' name='page'/>
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>
       <script type="text/javascript">
-         asirraState.SetEnlargedPosition("right");
-         // asirraState.SetCellsPerRow(6);
+         asirraState.SetEnlargedPosition( "right" );
+         // asirraState.SetCellsPerRow( 6 );
       </script>
       <br />
       <input type="button" value="<fmt:message key="captcha.submit" />" onclick="javascript:Asirra_CheckIfHuman(HumanCheckComplete)" />
   </form>
 </div>
 </body>
+</html>
