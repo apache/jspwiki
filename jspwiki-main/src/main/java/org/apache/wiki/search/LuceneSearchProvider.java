@@ -27,11 +27,11 @@ import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -119,7 +119,7 @@ public class LuceneSearchProvider implements SearchProvider {
     protected static final String LUCENE_PAGE_NAME     = "name";
 
     private String           m_luceneDirectory;
-    protected Vector<Object[]> m_updates = new Vector<>(); // Vector because multi-threaded.
+    protected List<Object[]> m_updates = Collections.synchronizedList( new ArrayList<>() ); 
 
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;

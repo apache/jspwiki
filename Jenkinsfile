@@ -52,7 +52,7 @@ try {
         stage( 'build website' ) {
             withEnv( [ "Path+JDK=$JAVA_JDK_8/bin", "Path+MAVEN=$MAVEN_3_LATEST/bin", "JAVA_HOME=$JAVA_JDK_8" ] ) {
                 dir( jbake ) {
-                    git branch: jbake, url: siteRepo, credentialsId: creds
+                    git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
                     sh 'mvn clean process-resources'
                 }
                 stash name: 'jbake-website'
@@ -66,7 +66,7 @@ try {
             cleanWs()
             unstash 'jbake-website'
             dir( asfsite ) {
-                git branch: asfsite, url: siteRepo, credentialsId: creds
+                git branch: asfsite, url: siteRepo, credentialsId: creds, poll: false
                 sh "cp -rf ../$jbake/target/content/* ./"
                 timeout( 15 ) { // 15 minutes
                     sh 'git add .'
