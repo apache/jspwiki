@@ -71,7 +71,7 @@ try {
                 timeout( 15 ) { // 15 minutes
                     sh 'git add .'
                     sh 'git commit -m "Automatic Site Publish by Buildbot"'
-                    echo "pushing to $repo"
+                    echo "pushing to $siteRepo"
                     sh "git push origin asf-site"
                 }
             }
