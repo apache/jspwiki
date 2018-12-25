@@ -18,36 +18,71 @@
  */
 
 try {
-    def repo = 'https://github.com/apache/jspwiki'
-    
+    def buildRepo = 'https://github.com/apache/jspwiki'
+    def siteRepo = 'https://gitbox.apache.org/repos/asf/jspwiki-site.git'
+    def creds = '9b041bd0-aea9-4498-a576-9eeb771411dd'
+
+    def asfsite = 'asf-site'
+    def build = 'build'
+    def jbake = 'jbake'
+
     node( 'ubuntu' ) {
         def JAVA_JDK_8=tool name: 'JDK 1.8 (latest)', type: 'hudson.model.JDK'
         echo "Will use Java $JAVA_JDK_8"
-        
+
         def MAVEN_3_LATEST=tool name: 'Maven 3 (latest)', type: 'hudson.tasks.Maven$MavenInstallation'
         echo "Will use Maven $MAVEN_3_LATEST"
-        
-        stage( 'checkout' ) {
+
+        stage( 'clean ws' ) {
             cleanWs()
-            git repo
         }
 
-        stage( 'build' ) {
+        stage( 'build source' ) {
+            dir( build ) {
+                git url: buildRepo, poll: true
+                withEnv( [ "Path+JDK=$JAVA_JDK_8/bin", "Path+MAVEN=$MAVEN_3_LATEST/bin", "JAVA_HOME=$JAVA_JDK_8" ] ) {
+                    withSonarQubeEnv( 'ASF Sonar Analysis' ) {
+                        echo "Will use SonarQube instance at $SONAR_HOST_URL"
+                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Papache-release $SONAR_MAVEN_GOAL"
+                    }
+                }
+            }
+        }
+
+        stage( 'build website' ) {
             withEnv( [ "Path+JDK=$JAVA_JDK_8/bin", "Path+MAVEN=$MAVEN_3_LATEST/bin", "JAVA_HOME=$JAVA_JDK_8" ] ) {
-			    withSonarQubeEnv( 'ASF Sonar Analysis' ) {
-			        echo "Will use SonarQube instance at $SONAR_HOST_URL"
-                    sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package $SONAR_MAVEN_GOAL"
-				}
+                dir( jbake ) {
+                    git branch: jbake, url: siteRepo, credentialsId: creds
+                    sh 'mvn clean process-resources'
+                }
+                stash name: 'jbake-website'
             }
         }
         
     }
-    
+
+    node( 'git-websites' ) {
+        stage( 'publish website' ) {
+            cleanWs()
+            unstash 'jbake-website'
+            dir( asfsite ) {
+                git branch: asfsite, url: siteRepo, credentialsId: creds
+                sh "cp -rf ../$jbake/target/content/* ./"
+                timeout( 15 ) { // 15 minutes
+                    sh 'git add .'
+                    sh 'git commit -m "Automatic Site Publish by Buildbot"'
+                    echo "pushing to $repo"
+                    sh "git push origin asf-site"
+                }
+            }
+        }
+    }
+
     currentBuild.result = 'SUCCESS'
-    
+
 } catch( Exception err ) {
     currentBuild.result = 'FAILURE'
-	echo err.message
+    echo err.message
 } finally {
     node( 'ubuntu' ) {
         if( currentBuild.result == null ) {
