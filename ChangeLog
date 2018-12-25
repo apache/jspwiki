@@ -10,6 +10,10 @@
        
        * escape entities on Captcha.jsp request parameters
 
+       * Jenkinsfile now builds both source and website, jspwiki-site job can still be triggered manually
+
+       * few more polishing and minor refactors
+
 2018-12-24  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M1-git-13: AJAX based search results are not shown.
