@@ -141,13 +141,14 @@ public class PageSorter implements Comparator< Object > {
      * 
      * @param props this WikiEngine's properties.
      */
+    @SuppressWarnings( "unchecked" )
     public void initialize( Properties props ) {
         // Default is Java natural order
         m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
         String className = props.getProperty( PROP_PAGE_NAME_COMPARATOR );
         if( className != null && className.length() > 0 ) {
             try {
-                m_comparator = ClassUtil.getMappedObject( "org.apache.wiki.util.comparators." + className );
+                m_comparator = (Comparator<String>) ClassUtil.findClass( "org.apache.wiki.util.comparators", className ).newInstance();
             } catch( Exception e ) {
                 log.error( "Falling back to default \"natural\" comparator", e );
             }
