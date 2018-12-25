@@ -848,6 +848,48 @@
         </plugins>
       </build>
     </profile>
+    
+    <profile> <!-- attach additional artifacts to build lifecycle -->
+      <id>attach-additional-artifacts</id> 
+      
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>additional_artifacts</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>artifact-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>artifact-javadocs</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <organization>

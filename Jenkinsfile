@@ -43,7 +43,7 @@ try {
                 withEnv( [ "Path+JDK=$JAVA_JDK_8/bin", "Path+MAVEN=$MAVEN_3_LATEST/bin", "JAVA_HOME=$JAVA_JDK_8" ] ) {
                     withSonarQubeEnv( 'ASF Sonar Analysis' ) {
                         echo "Will use SonarQube instance at $SONAR_HOST_URL"
-                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Papache-release $SONAR_MAVEN_GOAL"
+                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts $SONAR_MAVEN_GOAL"
                     }
                 }
             }
