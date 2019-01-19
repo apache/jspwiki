@@ -357,7 +357,7 @@ public final class WikiSession implements WikiEventListener
         ArrayList<Principal> principals = new ArrayList<Principal>();
 
         // Take the first non Role as the main Principal
-        for( Principal principal : m_subject.getPrincipals() )
+        for( Principal principal : new ArrayList<>(m_subject.getPrincipals()) )
         {
             if ( AuthenticationManager.isUserPrincipal( principal ) )
             {
