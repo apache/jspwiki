@@ -32,6 +32,7 @@ import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
@@ -195,17 +196,13 @@ public class Preferences
      * @return a Locale object.
      * @since 2.8
      */
-    public static Locale getLocale( WikiContext context )
-    {
+    public static Locale getLocale( WikiContext context ) {
         Locale loc = null;
 
         String langSetting = getPreference( context, "Language" );
 
-        //
         // parse language and construct valid Locale object
-        //
-        if( langSetting != null )
-        {
+        if( langSetting != null ) {
             String language = "";
             String country  = "";
             String variant  = "";
@@ -215,22 +212,30 @@ public class Preferences
             if( res.length > 2 ) variant = res[2];
             if( res.length > 1 ) country = res[1];
 
-            if( res.length > 0 )
-            {
+            if( res.length > 0 ) {
                 language = res[0];
 
                 loc = new Locale( language, country, variant );
             }
         }
+        
+        // see if default locale is set server side
+        if( loc == null ) {
+            String locale = context.getEngine().getWikiProperties().getProperty( "jspwiki.preferences.default-locale" );
+            try {
+                loc = LocaleUtils.toLocale( locale );
+            } catch( IllegalArgumentException iae ) {
+                log.error( iae.getMessage() );
+            }
+        }
 
         // otherwise try to find out the browser's preferred language setting, or use the JVM's default
-        if( loc == null )
-        {
+        if( loc == null ) {
             HttpServletRequest request = context.getHttpRequest();
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
 
-        //log.info( "using locale "+loc.toString() );
+        log.debug( "using locale "+loc.toString() );
         return loc;
     }
 
