@@ -26,30 +26,35 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   
-  <artifactId>jspwiki-selenium-tests</artifactId>
-  <packaging>war</packaging>
+  <artifactId>jspwiki-selenide-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <description>templates of selenium tests for jspwiki</description>
+  <description>selenide tests for jspwiki</description>
   
   <dependencies>
     <dependency>
+      <groupId>com.codeborne</groupId>
+      <artifactId>selenide</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.jspwiki</groupId>
-      <artifactId>jspwiki-war</artifactId>
+      <artifactId>jspwiki-main</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
     </dependency>
   </dependencies>
-  
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-war-plugin</artifactId>
-          <configuration>
-            <failOnMissingWebXml>false</failOnMissingWebXml>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>
