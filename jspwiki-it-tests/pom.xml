@@ -24,169 +24,250 @@
     <artifactId>jspwiki-builder</artifactId>
     <version>2.11.0.M1-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>org.apache.jspwiki.it</groupId>
   <artifactId>jspwiki-it-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
-  
+
   <modules>
-    <module>jspwiki-selenium-tests</module>
+    <module>jspwiki-selenide-tests</module>
     <module>jspwiki-it-test-custom</module>
     <module>jspwiki-it-test-custom-absolute-urls</module>
     <module>jspwiki-it-test-custom-jdbc</module>
     <module>jspwiki-it-test-cma</module>
     <module>jspwiki-it-test-cma-jdbc</module>
   </modules>
-  
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.jspwiki</groupId>
+      <artifactId>jspwiki-war</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <profiles>
     <profile>
       <id>integration-tests</id>
+
+      <properties>
+        <hsqldb.daemon>true</hsqldb.daemon>
+      </properties>
+
       <build>
-        <finalName>${project.artifactId}</finalName>
-        <testResources><!-- this enables tests reuse [1/2] -->
+        <testResources><!-- tests reuse [1/2]: share common resources -->
           <testResource>
-            <directory>${project.basedir}/../jspwiki-selenium-tests/src/test/resources</directory>
-            <filtering>true</filtering>
+            <directory>${project.basedir}/../jspwiki-selenide-tests/src/test/resources</directory>
           </testResource>
         </testResources>
 
         <resources>
-          <resource><!-- this enables tests reuse [2/2] -->
-            <directory>${project.basedir}/../jspwiki-selenium-tests/src/main/resources</directory>
+          <resource><!-- tests reuse [2/2]: share common resources -->
+            <directory>${project.basedir}/../jspwiki-selenide-tests/src/main/resources</directory>
             <filtering>true</filtering>
           </resource>
         </resources>
 
         <pluginManagement>
-        <plugins>
-          <plugin>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.4</version>
-          </plugin>
+          <plugins>
+            <plugin>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>${plugin.surefire.version}</version>
+              <configuration>
+                <dependenciesToScan>
+                  <dependency>${project.groupId}:jspwiki-selenide-tests</dependency>
+                </dependenciesToScan>
+                <systemPropertyVariables>
+                  <it-jspwiki.base.url>http://localhost:8080/${it-jspwiki.context}</it-jspwiki.base.url>
+                  <it-jspwiki.config.headless>false</it-jspwiki.config.headless>
+                  <it-jspwiki.config.reports-folder>${project.basedir}/target/selenide</it-jspwiki.config.reports-folder>
+                  <it-jspwiki.config.start-maximized>true</it-jspwiki.config.start-maximized>
+                  <it-jspwiki.config.wdm.target-path>${project.basedir}/target/wdm</it-jspwiki.config.wdm.target-path>
+                  <it-jspwiki.login.janne.username>janne</it-jspwiki.login.janne.username>
+                  <it-jspwiki.login.janne.password>myP@5sw0rd</it-jspwiki.login.janne.password>
+                </systemPropertyVariables>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>run-integration-tests</id>
+                  <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
 
-          <!-- Activates the HSQLDB database for IT tests -->
-          <plugin>
-            <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
-            <artifactId>inmemdb-maven-plugin</artifactId>
-            <version>1.3.0</version>
-            <configuration>
-              <monitorKey>inmem</monitorKey>
-              <monitorPort>11157</monitorPort>
-            </configuration>
-            <executions>
-              <execution>
-                <id>run</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
+            <plugin>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>${plugin.war.version}</version>
+            </plugin>
+
+            <!-- Activates the HSQLDB database for IT tests -->
+            <plugin>
+              <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
+              <artifactId>inmemdb-maven-plugin</artifactId>
+              <version>${plugin.inmemdb.version}</version>
+              <configuration>
+                <monitorKey>inmem</monitorKey>
+                <monitorPort>11157</monitorPort>
+                <daemon>${hsqldb.daemon}</daemon>
+                <database>jspwiki</database>
+                <username>SA</username>
+                <password></password>
+                <sources>
+                  <!-- ensure ITs can load data when run from either it-builder, their submodules or jspwiki's parent pom -->
+                  <script><sourceFile>./jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script>
+                  <script><sourceFile>../jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script> 
+                  <script><sourceFile>./jspwiki-it-tests/jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script> 
+                </sources>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>run</id>
+                  <phase>pre-integration-test</phase>
+                  <goals><goal>run</goal></goals>
+                </execution>
+                <execution>
+                  <id>stop</id>
+                  <phase>post-integration-test</phase>
+                  <goals><goal>stop</goal></goals>
+                </execution>
+              </executions>
+              <dependencies>
+                <dependency>
+                  <groupId>org.hsqldb</groupId>
+                  <artifactId>hsqldb</artifactId>
+                  <version>${hsqldb.version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>org.hsqldb</groupId>
+                  <artifactId>sqltool</artifactId>
+                  <version>${hsqldb.version}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+
+            <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file) -->
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
                 <configuration>
-                  <daemon>true</daemon>
-                  <type>hsqldb</type>
-                  <database>jspwiki</database>
-                  <username>sa</username>
-                  <password />
-                  <sources>
-                    <script>
-                      <sourceFile>jspwiki-selenium-tests/src/main/config/hsql-userdb-setup.sql</sourceFile>
-                    </script>
-                  </sources>
+                  <datasources>
+                    <datasource>
+                      <jndiName>jdbc/GroupDatabase</jndiName>
+                      <driverClass>org.hsqldb.jdbc.JDBCDriver</driverClass>
+                      <url>jdbc:hsqldb:hsql://localhost/jspwiki</url>
+                      <username>SA</username>
+                      <password></password>
+                      <connectionProperties>
+                        <maxTotal>10</maxTotal>
+                        <maxIdle>5</maxIdle>
+                        <maxWaitMillis>5000</maxWaitMillis>
+                      </connectionProperties>
+                    </datasource>
+                    <datasource>
+                      <jndiName>jdbc/UserDatabase</jndiName>
+                      <driverClass>org.hsqldb.jdbc.JDBCDriver</driverClass>
+                      <url>jdbc:hsqldb:hsql://localhost/jspwiki</url>
+                      <username>SA</username>
+                      <password></password>
+                      <connectionProperties>
+                        <maxTotal>10</maxTotal>
+                        <maxIdle>5</maxIdle>
+                        <maxWaitMillis>5000</maxWaitMillis>
+                      </connectionProperties>
+                    </datasource>
+                  </datasources>
+                  <users>
+                    <user>
+                      <name>admin</name>
+                      <password>myP@5sw0rd</password>
+                      <roles>
+                        <role>Admin</role>
+                        <role>Authenticated</role>
+                      </roles>
+                    </user>
+                    <user>
+                      <name>janne</name>
+                      <password>myP@5sw0rd</password>
+                      <roles>
+                        <role>Authenticated</role>
+                      </roles>
+                    </user>
+                  </users>
+                  <properties>
+                    <cargo.jvmargs>-Djava.awt.headless=true</cargo.jvmargs>
+                  </properties>
                 </configuration>
-              </execution>
-              <execution>
-                <id>stop</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-            <!-- <browser>*firefox</browser> -->
-            <!-- <browser>*iexplore</browser> -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>selenium-maven-plugin</artifactId>
-            <version>2.3</version>
-            <configuration>
-              <browser>*googlechrome</browser>
-              <startURL>http://localhost:8080/${project.artifactId}/</startURL>
-              <suite>target/test-classes/selenium/TestSuite.html</suite>
-              <background>true</background>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>selenese</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file)
-               located in pom.xml of submodules using them. -->
-          <plugin>
-            <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-maven2-plugin</artifactId>
-			<configuration>
-              <wait>false</wait>
-            </configuration>
-            <executions>
-              <execution>
-                <id>container-start</id>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-                <phase>pre-integration-test</phase>
-                <configuration>
-                  <fork>true</fork>
-                  <systemProperties>
-                    <user.language>en</user.language>
-                    <user.region>US</user.region>
-                  </systemProperties>
-                </configuration>
-              </execution>
-              <execution>
-                <id>container-stop</id>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-                <phase>post-integration-test</phase>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>2.3.0</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
+                <container>
+                  <dependencies>
+                    <dependency>
+                      <groupId>org.hsqldb</groupId>
+                      <artifactId>hsqldb</artifactId>
+                      <classpath>shared</classpath>
+                    </dependency>
+                  </dependencies>
+                </container>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>container-start</id>
+                  <goals>
+                    <goal>start</goal>
+                  </goals>
+                  <phase>pre-integration-test</phase>
+                </execution>
+                <execution>
+                  <id>container-stop</id>
+                  <goals>
+                    <goal>stop</goal>
+                  </goals>
+                  <phase>post-integration-test</phase>
+                  <configuration>
+                    <ignoreFailures>true</ignoreFailures>
+                  </configuration>
+                </execution>
+              </executions>
+              <dependencies>
+                <dependency>
+                  <groupId>org.hsqldb</groupId>
+                  <artifactId>hsqldb</artifactId>
+                  <version>${hsqldb.version}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
         </pluginManagement>
       </build>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.jspwiki</groupId>
-          <artifactId>jspwiki-war</artifactId>
-          <version>${project.version}</version>
-          <type>war</type>
-        </dependency>
-
-        <dependency>
-          <groupId>org.seleniumhq.selenium</groupId>
-          <!-- (un)comment based on your browser preferences for tests execution -->
-          <artifactId>selenium-chrome-driver</artifactId>
-          <!-- <artifactId>selenium-ie-driver</artifactId> -->
-          <!-- <artifactId>selenium-firefox-driver</artifactId> -->
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 </project>
