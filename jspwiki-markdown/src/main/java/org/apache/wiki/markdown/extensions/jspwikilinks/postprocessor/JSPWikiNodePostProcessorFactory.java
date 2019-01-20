@@ -20,10 +20,10 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import org.apache.wiki.WikiContext;
 
-import com.vladsch.flexmark.ast.Document;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
+import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.options.DataHolder;
 
 

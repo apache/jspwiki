@@ -24,9 +24,9 @@ import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.renderer.AttributablePart;
+import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
 
 

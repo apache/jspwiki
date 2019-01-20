@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.util.NodeTracker;
+import com.vladsch.flexmark.util.ast.Node;
 
 
 /**

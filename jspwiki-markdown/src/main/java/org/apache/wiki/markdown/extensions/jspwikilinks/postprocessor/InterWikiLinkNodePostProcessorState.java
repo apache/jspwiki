@@ -31,8 +31,8 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.ast.Document;
 import com.vladsch.flexmark.util.NodeTracker;
+import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
