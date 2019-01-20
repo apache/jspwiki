@@ -12,6 +12,11 @@
 -- limitations under the License.
 --
 
+drop table users if exists cascade;
+drop table roles if exists cascade;
+drop table groups if exists cascade;
+drop table group_members if exists cascade;
+
 create table users (
   uid varchar(100),
   email varchar_ignorecase(100),
@@ -47,13 +52,6 @@ create table group_members (
     (name,member)
 );
 
-create user jspwiki password "password";
-
-grant select, insert, update, delete on users to jspwiki;
-grant select, insert, update, delete on roles to jspwiki;
-grant select, insert, update, delete on groups to jspwiki;
-grant select, insert, update, delete on group_members to jspwiki;
-
 insert into users (
   uid,
   email,
@@ -69,7 +67,7 @@ insert into users (
   'janne',
   '{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==',
   'JanneJalkanen',
-  'attribute1=some random value\nattribute2=another value'
+  'rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAF3CAAAAAIAAAABdAAKYXR0cmlidXRlMXQAK3NvbWUgcmFuZG9tIHZhbHVlXG5hdHRyaWJ1dGUyPWFub3RoZXIgdmFsdWV4'
 );
   
 insert into users (
@@ -195,4 +193,3 @@ insert into group_members (
   'Admin',
   'Administrator'
 );
-
