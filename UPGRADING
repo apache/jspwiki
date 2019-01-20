@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.10.0-incubating - Upgrading Notes
+Apache JSPWiki 2.11.0-incubating - Upgrading Notes
 ==================================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,18 @@ Apache JSPWiki 2.10.0-incubating - Upgrading Notes
     under the License.  
 
 The license file can be found in LICENSE.
+
+Upgrading JSPWiki to 2.11.0
+---------------------------
+
+1. New requirements
+  * Java 8 needed to run JSPWiki
+  * Servlet 3.1 / JSP 2.3 compliant JEE server (i.e., Tomcat 8.5 and onwards) 
+  
+2. Haddock as new default template
+  * if you need to revert to the 2.10 default template, you should set the jspwiki.templateDir property to 210 on your jspwiki[-custom].properties file 
+
+3. Backwards API incompatible changes: https://jspwiki.apache.org/japicmp/2.11.0.M1/
 
 Upgrading JSPWiki to 2.10.0
 ---------------------------
