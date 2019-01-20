@@ -1,3 +1,21 @@
+2019-01-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M1-git-15: selenide-based functional tests infrastructure + login/logout associated tests
+         (selenium tests currently kept for reference)
+
+       * JSPWiki locale can be set server-side - to determine the locale used, the following order is used:
+         1.- user-preference settings
+         2.- if not set, see if there is a locale set server-side, as noted by 
+             jspwiki.preferences.default-locale setting on jspwiki[-custom].properties
+         3.- if not set, browser's preferred language setting
+         4.- if not set, JVM's default
+
+       * upgrade bundled dependencies
+         - commons-fileupload to 1.4
+         - flexmark to 0.40.8
+         - hsqldb updated to 2.4.1 
+         - cargo plugin to 1.7.1
+
 2018-12-25  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M1-git-14: upgrade bundled dependencies
