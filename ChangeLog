@@ -1,16 +1,16 @@
 2019-01-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-15: selenide-based functional tests infrastructure + login/logout associated tests
-         (selenium tests currently kept for reference)
+       * 2.11.0-M1-git-15: JSPWIKI-1086 - selenide-based functional tests infrastructure + login/logout 
+         associated tests (selenium tests currently kept for reference)
 
-       * JSPWiki locale can be set server-side - to determine the locale used, the following order is used:
+       * JSPWIKI-1085 - JSPWiki locale can be set server-side - to determine the locale used, the following order is used:
          1.- user-preference settings
          2.- if not set, see if there is a locale set server-side, as noted by 
              jspwiki.preferences.default-locale setting on jspwiki[-custom].properties
          3.- if not set, browser's preferred language setting
          4.- if not set, JVM's default
 
-       * upgrade bundled dependencies
+       * JSPWIKI-1087 - upgrade bundled dependencies
          - commons-fileupload to 1.4
          - flexmark to 0.40.8
          - hsqldb updated to 2.4.1 
@@ -28,7 +28,7 @@
        
        * escape entities on Captcha.jsp request parameters
 
-       * Jenkinsfile now builds both source and website, jspwiki-site job can still be triggered manually
+       * JSPWIKI-1084 - Jenkinsfile now builds both source and website, jspwiki-site job can still be triggered manually
 
        * few more polishing and minor refactors
 
@@ -40,15 +40,15 @@
 
 2018-12-15  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.11.0-M1-git-12: fixing bugs related to the new default template.
-         -Rename HADDOCK template to DEFAULT template.
-         -Moving a number of default jsp's (common for all templates)
-         from templates/210 to templates/default.
+       * 2.11.0-M1-git-12: JSPWIKI-1083 - fixing bugs related to the new default template.
+         - Rename HADDOCK template to DEFAULT template.
+         - Moving a number of default jsp's (common for all templates)
+           from templates/210 to templates/default.
 
 2018-12-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-11: fix from 2.11.0.M1-rc1 - revert change from commit 87bf9b941fdf (Nov/11/2018)
-	     that ended up causing lots of ClassCastException
+       * 2.11.0-M1-git-11: JSPWIKI-1082 - fix from 2.11.0.M1-rc1 - revert change from commit 
+	     87bf9b941fdf (Nov/11/2018) that ended up causing lots of ClassCastException
 
 2018-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
 
@@ -74,8 +74,8 @@
 
 2018-11-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-08: try to load as many external third-party plugin jars as possible, instead
-         of all-or-nothing
+       * 2.11.0-M1-git-08: JSPWIKI-1080 try to load as many external third-party plugin jars as possible, 
+         instead of all-or-nothing
 
        * small backwards-incompatible changes:
          - CryptoUtil#verifySaltedPassword doesn't throw UnsupportedEncodingException anymore
@@ -103,7 +103,7 @@
 
 2018-10-29  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-05: maven build refactor
+       * 2.11.0-M1-git-05: JSPWIKI-1081 - maven build refactor
          - java code split into its own module: custom extensions should now rely on
            the new org.apache.jspwiki:jspwiki-main dependency, instead of the
            org.apache.jspwiki:jspwiki-war:classes old one
@@ -119,7 +119,7 @@
 
 2018-10-26  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-04: update tests to JUnit 5.3.1
+       * 2.11.0-M1-git-04: JSPWIKI-1078 - update tests to JUnit 5.3.1
 
        * updated versions of maven plugins
 
@@ -127,10 +127,10 @@
 
 2018-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-03: Haddock is now the default template
+       * 2.11.0-M1-git-03: JSPWIKI-1083 - Haddock is now the default template
          - to bring back the 2.10 template set the jspwiki.templateDir property to "210"
 
-       * added the following pages to the core pages' bundles, as they enable some more haddock functionality
+       * JSPWIKI-1077 - added the following pages to the core pages' bundles, as they enable some more haddock functionality
          - CSSBackgroundGradients: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Gradients
          - CSSBackgroundPatterns: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Patterns
          - CSSInstagramFilters: see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Instagram%20Filters
@@ -143,15 +143,15 @@
 
 2018-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-02: minimum required Servlet / JSP is now 3.1 / 2.3
+       * 2.11.0-M1-git-02: JSPWIKI-1076 - minimum required Servlet / JSP is now 3.1 / 2.3
 
-       * add jspwiki-markdown to the main build
+       * JSPWIKI-1079 - add jspwiki-markdown to the main build
 
        * flexmark updated to 0.34.46
 
 2018-09-14  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-01: minimum required to build/run is now Java 8 / Maven 3.5.0
+       * 2.11.0-M1-git-01: JSPWIKI-1076 - minimum required to build/run is now Java 8 / Maven 3.5.0
 
        * fix for JSPWIKI-932 - Failed to start managers. java.util.ConcurrentModificationException
 
