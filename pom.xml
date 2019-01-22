@@ -48,7 +48,7 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <ehcache.version>2.10.6</ehcache.version>
-    <flexmark.version>0.40.8</flexmark.version>
+    <flexmark.version>0.40.12</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.3.1</gson.version>
     <hsqldb.version>2.4.1</hsqldb.version>
