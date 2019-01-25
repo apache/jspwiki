@@ -16,7 +16,7 @@
 
        * JSPWIKI-1087 - upgrade bundled dependencies
          - commons-fileupload to 1.4
-         - flexmark to 0.40.8
+         - flexmark to 0.40.12
          - hsqldb updated to 2.4.1 
          - cargo plugin to 1.7.1
 
