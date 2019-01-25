@@ -1,5 +1,9 @@
 2019-01-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
+       * prepare release for 2.11.0.M1
+
+2019-01-20  Juan Pablo Santos (juanpablo AT apache DOT org)
+
        * 2.11.0-M1-git-15: JSPWIKI-1086 - selenide-based functional tests infrastructure + login/logout 
          associated tests (selenium tests currently kept for reference)
 
