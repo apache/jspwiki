@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.11.0.M1-SNAPSHOT</version>
+    <version>2.11.0.M1</version>
   </parent>
 
   <groupId>org.apache.jspwiki.it</groupId>
@@ -141,7 +141,7 @@
                 <daemon>${hsqldb.daemon}</daemon>
                 <database>jspwiki</database>
                 <username>SA</username>
-                <password></password>
+                <password />
                 <sources>
                   <!-- ensure ITs can load data when run from either it-builder, their submodules or jspwiki's parent pom -->
                   <script><sourceFile>./jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script>
@@ -187,7 +187,7 @@
                       <driverClass>org.hsqldb.jdbc.JDBCDriver</driverClass>
                       <url>jdbc:hsqldb:hsql://localhost/jspwiki</url>
                       <username>SA</username>
-                      <password></password>
+                      <password />
                       <connectionProperties>
                         <maxTotal>10</maxTotal>
                         <maxIdle>5</maxIdle>
@@ -199,7 +199,7 @@
                       <driverClass>org.hsqldb.jdbc.JDBCDriver</driverClass>
                       <url>jdbc:hsqldb:hsql://localhost/jspwiki</url>
                       <username>SA</username>
-                      <password></password>
+                      <password />
                       <connectionProperties>
                         <maxTotal>10</maxTotal>
                         <maxIdle>5</maxIdle>
