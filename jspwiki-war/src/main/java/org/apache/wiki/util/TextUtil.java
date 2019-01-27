@@ -337,10 +337,10 @@ public final class TextUtil {
      */
     public static int parseIntParameter( String value, int defvalue ) {
         int val = defvalue;
-
+        if (value == null) return defvalue;
         try {
             val = Integer.parseInt( value.trim() );
-        } catch( Exception e ) {}
+        } catch( Exception ignore ) {}
 
         return val;
     }
