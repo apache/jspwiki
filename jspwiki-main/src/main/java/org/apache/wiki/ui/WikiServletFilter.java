@@ -114,7 +114,7 @@ public class WikiServletFilter implements Filter
         if( m_engine == null )
         {
             PrintWriter out = response.getWriter();
-            out.print("<html><head><title>Fatal problem with JSPWiki</title></head>");
+            out.print("<!DOCTYPE html><html lang=\"en\"><head><title>Fatal problem with JSPWiki</title></head>");
             out.print("<body>");
             out.print("<h1>JSPWiki has not been started</h1>");
             out.print("<p>JSPWiki is not running.  This is probably due to a configuration error in your jspwiki.properties file, ");
