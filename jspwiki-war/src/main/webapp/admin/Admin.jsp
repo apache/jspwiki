@@ -44,7 +44,8 @@
     if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.adminui.enable")) )
     {
         %>
-        <html>
+        <!DOCTYPE html>
+        <html lang="en">
         <head>
           <base href="../"/>
           <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
