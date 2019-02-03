@@ -1,4 +1,11 @@
-2019-02-24  Dirk Frederickx (brushed AT apache DOT org)
+2019-02-03  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M2-git-02
+
+       * JSPWIKI-1074: Fixed buggy header width in Fixed Page Layout
+
+
+2019-02-03  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M2-git-01
 

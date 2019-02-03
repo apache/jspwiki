@@ -32,6 +32,14 @@ Section: Responsive styles for small viewports or screens
 
 */
 
+/* support for var(--css-properties) */
+@supports not(--some-test-prop:red) {
+	.form-group.pref-appearance {
+		display:none;
+	}
+}
+
+
 /*
 very small screen-sizes,  phones in portrait mode
 */
@@ -151,6 +159,24 @@ Medium size screens,  tablets,  phones in landscape mode
 	// TableX.Sort.less
 	// TableX.Filter.less
 	// forms.less
+	.form-control {
+		width:auto;
+		display:inline;
+		//padding: @padding-xs-vertical @padding-xs-horizontal;
+
+	}
+	.form-group select {
+		padding-top: @padding-xs-vertical;
+		padding-bottom:@padding-xs-vertical;
+
+        background-size: @padding-small-horizontal @padding-small-horizontal;
+        background-position:@padding-small-horizontal center;
+
+	}
+	label.form-switch {
+		padding-top: @padding-small-vertical;
+		padding-bottom:@padding-small-vertical;
+	}
 	// modals.less
 
 	// pagination.less
@@ -197,6 +223,9 @@ Medium size screens,  tablets,  phones in landscape mode
 	// Viewer.Carousel.less
 
 	// Template.View.less
+
+	// Make container 100% fluid
+	.container { padding:0; }
 
 	.header, .footer {
 	    .btn [class^="icon-"]:before { font-size: 1em;  }
@@ -269,12 +298,10 @@ Medium size screens,  tablets,  phones in landscape mode
 	   the sidebar will overlay the main page which remains fit to 100% of the screen-size
 	*/
 	.content {
-		.sidebar, &:after { width: @wiki-small-viewport-dialog-width; }
-	}
-
-	//hide sidebar
-	.content {
-		.sidebar, &:after { margin-left:-100%; }
+		.sidebar, &:after {
+				width: @wiki-small-viewport-dialog-width;
+				margin-left:-100%;
+		}
 	}
 	.sidebar { position:absolute; }
 
