@@ -74,7 +74,7 @@ String.I18N.PREFIX = "javascript.";
 
 <%-- FIXME: for now, reuse haddock's stylesheet --%>
 <link rel="stylesheet" media="screen, projection, print" type="text/css"
-     href="<wiki:Link format='url' templatefile='../../templates/haddock/haddock.css'/>"/>
+     href="<wiki:Link format='url' templatefile='../../templates/default/haddock.css'/>"/>
 
 </head>
 

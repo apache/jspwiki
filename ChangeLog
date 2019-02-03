@@ -1,15 +1,21 @@
+2019-02-24  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M2-git-01
+
+       * JSPWIKI-1090: Fixed READER view, bug caused by the rename of the HADDOCK template
+
 2019-01-25  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * prepare release for 2.11.0.M1
 
 2019-01-20  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-15: JSPWIKI-1086 - selenide-based functional tests infrastructure + login/logout 
+       * 2.11.0-M1-git-15: JSPWIKI-1086 - selenide-based functional tests infrastructure + login/logout
          associated tests (selenium tests currently kept for reference)
 
        * JSPWIKI-1085 - JSPWiki locale can be set server-side - to determine the locale used, the following order is used:
          1.- user-preference settings
-         2.- if not set, see if there is a locale set server-side, as noted by 
+         2.- if not set, see if there is a locale set server-side, as noted by
              jspwiki.preferences.default-locale setting on jspwiki[-custom].properties
          3.- if not set, browser's preferred language setting
          4.- if not set, JVM's default
@@ -17,7 +23,7 @@
        * JSPWIKI-1087 - upgrade bundled dependencies
          - commons-fileupload to 1.4
          - flexmark to 0.40.12
-         - hsqldb updated to 2.4.1 
+         - hsqldb updated to 2.4.1
          - cargo plugin to 1.7.1
 
 2018-12-25  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -29,7 +35,7 @@
          - junit to 5.3.2
          - lucene to 7.6.0
          - tomcat to 8.5.37
-       
+
        * escape entities on Captcha.jsp request parameters
 
        * JSPWIKI-1084 - Jenkinsfile now builds both source and website, jspwiki-site job can still be triggered manually
@@ -51,7 +57,7 @@
 
 2018-12-07  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-11: JSPWIKI-1082 - fix from 2.11.0.M1-rc1 - revert change from commit 
+       * 2.11.0-M1-git-11: JSPWIKI-1082 - fix from 2.11.0.M1-rc1 - revert change from commit
 	     87bf9b941fdf (Nov/11/2018) that ended up causing lots of ClassCastException
 
 2018-12-03  Juan Pablo Santos (juanpablo AT apache DOT org)
@@ -78,7 +84,7 @@
 
 2018-11-05  Juan Pablo Santos (juanpablo AT apache DOT org)
 
-       * 2.11.0-M1-git-08: JSPWIKI-1080 try to load as many external third-party plugin jars as possible, 
+       * 2.11.0-M1-git-08: JSPWIKI-1080 try to load as many external third-party plugin jars as possible,
          instead of all-or-nothing
 
        * small backwards-incompatible changes:
