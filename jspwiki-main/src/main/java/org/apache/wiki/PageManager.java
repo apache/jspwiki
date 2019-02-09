@@ -49,6 +49,7 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.pages.PageSorter;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
@@ -158,6 +159,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 
     private LockReaper m_reaper = null;
 
+    private PageSorter pageSorter = new PageSorter();
+
     /**
      * Creates a new PageManager.
      *
@@ -181,6 +184,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         } else {
             classname = m_engine.getRequiredProperty(props, PROP_PAGEPROVIDER);
         }
+
+        pageSorter.initialize( props );
 
         try {
             log.debug("Page provider class: '" + classname + "'");
@@ -796,6 +801,10 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             }
         }
         return pageChanged;
+    }
+
+    public PageSorter getPageSorter() {
+        return pageSorter;
     }
 
 }
