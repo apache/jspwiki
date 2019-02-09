@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -361,13 +363,12 @@ public class AttachmentManager
      *  @throws ProviderException If there was something wrong in the backend.
      */
     public List< Attachment > listAttachments( WikiPage wikipage ) throws ProviderException {
-        if( m_provider == null )
-        {
+        if( m_provider == null ) {
             return new ArrayList<>();
         }
 
-        List< Attachment >atts = m_provider.listAttachments( wikipage );
-        m_engine.getPageSorter().sortPages( (List) atts );
+        List< Attachment >atts = new ArrayList<>( m_provider.listAttachments( wikipage ) );
+        Collections.< Attachment >sort( atts, Comparator.comparing( Attachment::getName, m_engine.getPageManager().getPageSorter() ) );
 
         return atts;
     }
