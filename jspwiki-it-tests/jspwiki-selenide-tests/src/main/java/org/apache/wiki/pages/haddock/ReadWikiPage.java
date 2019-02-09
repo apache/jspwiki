@@ -22,13 +22,9 @@ import org.openqa.selenium.By;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 
 public class ReadWikiPage implements HaddockPage {
-
-    public ReadWikiPage hoverLoginArea() {
-        Selenide.$( By.className( "icon-user" ) ).hover();
-        return this;
-    }
     
     public String authenticatedText() {
         return Selenide.$( By.className( "wikipage" ) ).text().trim();
@@ -39,10 +35,34 @@ public class ReadWikiPage implements HaddockPage {
         return new LoginPage();
     }
     
+    public ReadWikiPage clickOnShowReaderView() {
+        Selenide.$( By.linkText( "Show Reader View" ) ).click();
+        return new ReadWikiPage();
+    }
+
+    public ReadWikiPage hoverLoginArea() {
+        Selenide.$( By.className( "icon-user" ) ).hover();
+        return this;
+    }
+    
+    public ReadWikiPage hoverMoreArea() {
+        Selenide.$( By.id( "more" ) ).hover();
+        return this;
+    }
+    
     public ReadWikiPage logout() {
         Selenide.$( By.linkText( "Log out" ) ).click();
         Selenide.$( By.className( "btn-success" ) ).waitUntil( Condition.visible, 1_000L ).click();
         return this;
+    }
+    
+    public ReadWikiPage navigateTo( String wikiPageName ) {
+        Selenide.$( By.linkText( wikiPageName ) ).click(); 
+        return new ReadWikiPage();
+    }
+    
+    public SelenideElement sidebar() {
+        return Selenide.$( By.className( "sidebar" ) );
     }
 
 }

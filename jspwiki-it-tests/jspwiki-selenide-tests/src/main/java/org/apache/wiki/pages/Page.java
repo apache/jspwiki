@@ -18,6 +18,9 @@
  */
 package org.apache.wiki.pages;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.wiki.its.environment.Env;
 
 import com.codeborne.selenide.Selenide;
@@ -49,6 +52,10 @@ public interface Page {
     static String baseUrl() {
         return Env.TESTS_BASE_URL;
     }
+    
+    static File download( String url ) throws IOException {
+        return Selenide.download( url );
+    }
 
     /**
      * returns the actual page title.
@@ -74,5 +81,12 @@ public interface Page {
      * @return page's wiki title.
      */
     String wikiTitle();
+    
+    /**
+     * returns page's wiki content.
+     * 
+     * @return page's wiki content.
+     */
+    String wikiPageContent();
 
 }

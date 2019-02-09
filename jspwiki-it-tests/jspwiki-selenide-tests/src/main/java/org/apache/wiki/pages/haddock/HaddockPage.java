@@ -19,6 +19,7 @@
 package org.apache.wiki.pages.haddock;
 
 import org.apache.wiki.pages.Page;
+import org.openqa.selenium.By;
 
 import com.codeborne.selenide.Selenide;
 
@@ -30,6 +31,14 @@ public interface HaddockPage extends Page {
     @Override
     default String wikiTitle() {
         return Selenide.$( "div.pagename a" ).text();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default String wikiPageContent() {
+        return Selenide.$( By.className( "page-content" ) ).text(); 
     }
 
 }
