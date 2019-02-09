@@ -348,14 +348,21 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     }
     
     /**
-     *  Compares a page with another using the defined PageNameComparator.  See org.apache.wiki.util.PageSorter.
+     *  Compares a page with another by name using the defined PageNameComparator.  If the same name, compares their versions.
      *  
-     *  @param page The object to compare against
+     *  @param page The page to compare against
      *  @return -1, 0 or 1
      */
-    public int compareTo( WikiPage page )
-    {
-        return m_engine.getPageSorter().compare( this, page );
+    public int compareTo( WikiPage page ) {
+        if( this == page ) {
+            return 0; // the same object
+        }
+
+        int res = m_engine.getPageManager().getPageSorter().compare( this.getName(), page.getName() );
+        if( res == 0 ) {
+            res = this.getVersion() - page.getVersion();
+        }
+        return res;
     }
     
     /**
