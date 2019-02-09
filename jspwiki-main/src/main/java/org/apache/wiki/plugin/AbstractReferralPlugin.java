@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -37,13 +39,13 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.PageSorter;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.pages.PageSorter;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.preferences.Preferences;
@@ -250,31 +252,31 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
         
         initSorter( context, params );
     }
-    
+
+    protected List< WikiPage > filterWikiPageCollection( Collection< WikiPage > pages ) {
+        List< String > pageNames = filterCollection( pages.stream()
+                                                          .map( page -> page.getName() )
+                                                          .collect( Collectors.toList() ) );
+        return pages.stream()
+                    .filter( wikiPage -> pageNames.contains( wikiPage.getName() ) )
+                    .collect( Collectors.toList() );
+    }
+
     /**
      *  Filters a collection according to the include and exclude parameters.
      *  
      *  @param c The collection to filter.
      *  @return A filtered collection.
      */
-    protected Collection filterCollection( Collection c )
+    protected List< String > filterCollection( Collection< String > c )
     {
-        ArrayList<Object> result = new ArrayList<>();
+        ArrayList< String > result = new ArrayList<>();
 
         PatternMatcher pm = new Perl5Matcher();
 
-        for( Iterator i = c.iterator(); i.hasNext(); )
+        for( Iterator< String > i = c.iterator(); i.hasNext(); )
         {
-            String pageName = null;
-            Object objectje = i.next();
-            if( objectje instanceof WikiPage )
-            {
-                pageName = ((WikiPage) objectje).getName();
-            }
-            else
-            {
-                pageName = (String) objectje;
-            }
+            String pageName = i.next();
 
             //
             //  If include parameter exists, then by default we include only those
@@ -310,14 +312,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
 
             if( includeThis )
             {
-                if( objectje instanceof WikiPage )
-                {
-                    result.add( objectje );
-                }
-                else
-                {
-                    result.add( pageName );
-                }
+                result.add( pageName );
                 //
                 //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
                 WikiPage page = null;
@@ -350,11 +345,9 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
      *  @param c The collection to filter.
      *  @return A filtered and sorted collection.
      */
-    @SuppressWarnings( "unchecked" )
-    protected Collection filterAndSortCollection( Collection c )
-    {
-        ArrayList<Object> result = (ArrayList<Object>)filterCollection( c );
-        m_sorter.sortPages( result );
+    protected List< String > filterAndSortCollection( Collection< String > c ) {
+        List< String > result = filterCollection( c );
+        result.sort( m_sorter );
         return result;
     }
 
@@ -464,30 +457,21 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
     /**
      * Helper method to initialize the comparator for this page.
      */
-    private void initSorter( WikiContext context, Map<String, String> params )
-    {
+    private void initSorter( WikiContext context, Map< String, String > params ) {
         String order = params.get( PARAM_SORTORDER );
-        if( order == null || order.length() == 0 )
-        {
+        if( order == null || order.length() == 0 ) {
             // Use the configured comparator
-            m_sorter = context.getEngine().getPageSorter();
-        }
-        else if( order.equalsIgnoreCase( PARAM_SORTORDER_JAVA ) )
-        {
+            m_sorter = context.getEngine().getPageManager().getPageSorter();
+        } else if( order.equalsIgnoreCase( PARAM_SORTORDER_JAVA ) ) {
             // use Java "natural" ordering
             m_sorter = new PageSorter( JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR );
-        }
-        else if( order.equalsIgnoreCase( PARAM_SORTORDER_LOCALE ) )
-        {
+        } else if( order.equalsIgnoreCase( PARAM_SORTORDER_LOCALE ) ) {
             // use this locale's ordering
             m_sorter = new PageSorter( LocaleComparator.DEFAULT_LOCALE_COMPARATOR );
-        }
-        else if( order.equalsIgnoreCase( PARAM_SORTORDER_HUMAN ) )
-        {
+        } else if( order.equalsIgnoreCase( PARAM_SORTORDER_HUMAN ) ) {
             // use human ordering
             m_sorter = new PageSorter( HumanComparator.DEFAULT_HUMAN_COMPARATOR );
-        }
-        else
+        } else {
             try
             {
                 Collator collator = new RuleBasedCollator( order );
@@ -497,7 +481,9 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
             catch( ParseException pe )
             {
                 log.info( "Failed to parse requested collator - using default ordering", pe );
-                m_sorter = context.getEngine().getPageSorter();
+                m_sorter = context.getEngine().getPageManager().getPageSorter();
             }
+        }
     }
+
 }

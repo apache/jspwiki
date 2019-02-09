@@ -18,10 +18,19 @@
 */
 package org.apache.wiki.plugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.oro.text.regex.*;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -45,12 +54,12 @@ import org.apache.wiki.util.TextUtil;
  *  </ul>
  *
  */
-public class ReferredPagesPlugin implements WikiPlugin
-{
+public class ReferredPagesPlugin implements WikiPlugin {
+
     private static Logger log = Logger.getLogger( ReferredPagesPlugin.class );
     private WikiEngine     m_engine;
     private int            m_depth;
-    private HashSet<String> m_exists  = new HashSet<String>();
+    private HashSet<String> m_exists  = new HashSet<>();
     private StringBuffer   m_result  = new StringBuffer(1024);
     private PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern        m_includePattern;
@@ -85,9 +94,7 @@ public class ReferredPagesPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
+    public String execute( WikiContext context, Map<String, String> params ) throws PluginException {
         m_engine = context.getEngine();
 
         WikiPage         page   = context.getPage();
@@ -170,12 +177,9 @@ public class ReferredPagesPlugin implements WikiPlugin
 
 
     /**
-     * Retrieves a list of all referred pages. Is called recursively
-     * depending on the depth parameter
+     * Retrieves a list of all referred pages. Is called recursively depending on the depth parameter.
      */
-    @SuppressWarnings("unchecked")
-    private void getReferredPages( WikiContext context, String pagename, int depth )
-    {
+    private void getReferredPages( WikiContext context, String pagename, int depth ) {
         if( depth >= m_depth ) return;  // end of recursion
         if( pagename == null ) return;
         if( !m_engine.pageExists(pagename) ) return;
@@ -187,22 +191,20 @@ public class ReferredPagesPlugin implements WikiPlugin
         handleLinks( context, allPages, ++depth, pagename );
     }
 
-    private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename)
-    {
+    private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename) {
         boolean isUL = false;
-        HashSet<String> localLinkSet = new HashSet<String>();  // needed to skip multiple
+        HashSet<String> localLinkSet = new HashSet<>();  // needed to skip multiple
         // links to the same page
         localLinkSet.add(pagename);
 
-        ArrayList<String> allLinks = new ArrayList<String>();
+        ArrayList<String> allLinks = new ArrayList<>();
 
         if( links != null )
             allLinks.addAll( links );
 
-        if( m_formatSort ) context.getEngine().getPageSorter().sort( allLinks );
+        if( m_formatSort ) context.getEngine().getPageManager().getPageSorter().sort( allLinks );
 
-        for( Iterator<String> i = allLinks.iterator(); i.hasNext(); )
-        {
+        for( Iterator<String> i = allLinks.iterator(); i.hasNext(); ) {
             String link = i.next() ;
 
             if( localLinkSet.contains( link ) ) continue; // skip multiple links to the same page
@@ -213,31 +215,25 @@ public class ReferredPagesPlugin implements WikiPlugin
             if(  m_matcher.matches( link , m_excludePattern ) ) continue;
             if( !m_matcher.matches( link , m_includePattern ) ) continue;
 
-            if( m_exists.contains( link ) )
-            {
-                if( !m_formatCompact )
-                {
-                    if( !isUL )
-                    {
-                        isUL = true; m_result.append("<ul>\n");
+            if( m_exists.contains( link ) ) {
+                if( !m_formatCompact ) {
+                    if( !isUL ) {
+                        isUL = true;
+                        m_result.append("<ul>\n");
                     }
 
                     //See https://www.w3.org/wiki/HTML_lists  for proper nesting of UL and LI
                     m_result.append("<li> " + link + "\n");
 
-                    getReferredPages( context, link, depth );  // added recursive
-                                                      // call - on general
-                                                      // request
+                    getReferredPages( context, link, depth );  // added recursive call - on general request
 
                     m_result.append("\n</li>\n");
 
                 }
-            }
-            else
-            {
-                if( !isUL )
-                {
-                    isUL = true; m_result.append("<ul>\n");
+            } else {
+                if( !isUL ) {
+                    isUL = true; 
+                    m_result.append("<ul>\n");
                 }
 
                 String href = context.getURL(WikiContext.VIEW,link);
@@ -252,7 +248,9 @@ public class ReferredPagesPlugin implements WikiPlugin
             }
         }
 
-        if( isUL ) m_result.append("</ul>\n");
+        if( isUL ) {
+            m_result.append("</ul>\n");
+        }
     }
-}
 
+}

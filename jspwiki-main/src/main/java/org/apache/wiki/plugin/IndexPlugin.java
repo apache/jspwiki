@@ -19,23 +19,22 @@
 
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.plugin.AbstractReferralPlugin;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
  *  A WikiPlugin that creates an index of pages according to a certain pattern.
@@ -73,7 +72,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
         masterDiv.addContent(indexDiv);
         try {
             List<String> pages = listPages(context,include,exclude);
-            context.getEngine().getPageSorter().sort(pages);
+            context.getEngine().getPageManager().getPageSorter().sort(pages);
             char initialChar = ' ';
             Element currentDiv = new Element("div",xmlns_XHTML);            
             for ( String name : pages ) {

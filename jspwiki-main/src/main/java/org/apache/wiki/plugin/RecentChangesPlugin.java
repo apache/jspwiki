@@ -75,7 +75,6 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map<String, String> params ) throws PluginException {
         int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
         String   spacing  = "4";
@@ -103,7 +102,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         // FIXME: Should really have a since date on the getRecentChanges method.
         Collection< WikiPage > changes = engine.getRecentChanges();
         super.initialize( context, params );
-        changes = super.filterCollection(changes);
+        changes = filterWikiPageCollection( changes );
         
         if ( changes != null ) {
             Date olddate = new Date( 0 );

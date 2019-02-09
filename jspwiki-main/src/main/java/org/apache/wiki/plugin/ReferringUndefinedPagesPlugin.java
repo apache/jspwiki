@@ -18,19 +18,18 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TreeMap;
+
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
-
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TreeMap;
 /**
  *  <p>Lists all pages containing links to Undefined Pages (pages containing dead links).</p>
  *
@@ -39,17 +38,11 @@ import java.util.TreeMap;
  *  @since 2.10.0
  */
 public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
-    private static Logger log = Logger.getLogger(ReferringUndefinedPagesPlugin.class);
 
-    /**
-     * Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>.
-     */
+    /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX = "max";
 
-    /**
-     * Parameter name for setting the text to show when the maximum items is overruled.
-     * Value is <tt>{@value}</tt>.
-     */
+    /** Parameter name for setting the text to show when the maximum items is overruled. Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXTRAS = "extras";
 
     public String execute(WikiContext context, Map<String, String> params) throws PluginException {
@@ -101,6 +94,3 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
     }
 
 }
-
-
-
