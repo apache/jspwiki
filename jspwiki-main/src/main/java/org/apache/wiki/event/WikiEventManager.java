@@ -281,7 +281,7 @@ public final class WikiEventManager
      * @return an unmodifiable Set containing the WikiEventListeners attached to the client
      * @throws java.lang.UnsupportedOperationException  if any attempt is made to modify the Set
      */
-    public static Set getWikiEventListeners( Object client )
+    public static Set<WikiEventListener> getWikiEventListeners( Object client )
         throws UnsupportedOperationException
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
@@ -302,14 +302,14 @@ public final class WikiEventManager
     {
         // get the Map.entry object for the entire Map, then check match on entry (listener)
         WikiEventManager mgr = getInstance();
-        Map sources = mgr.getDelegates();
+        Map< Object, WikiEventDelegate > sources = mgr.getDelegates();
         synchronized( sources )
         {
             // get an iterator over the Map.Enty objects in the map
-            Iterator it = sources.entrySet().iterator();
+            Iterator< Map.Entry< Object, WikiEventDelegate > > it = sources.entrySet().iterator();
             while( it.hasNext() )
             {
-                Map.Entry entry = (Map.Entry)it.next();
+                Map.Entry< Object, WikiEventDelegate > entry = it.next();
                 // the entry value is the delegate
                 WikiEventDelegate delegate = (WikiEventDelegate)entry.getValue();
 
@@ -361,7 +361,7 @@ public final class WikiEventManager
     /**
      *  Return the client-to-delegate Map.
      */
-    private Map getDelegates()
+    private Map< Object, WikiEventDelegate > getDelegates()
     {
         return m_delegates;
     }
@@ -441,7 +441,7 @@ public final class WikiEventManager
 
         private ArrayList<WeakReference<WikiEventListener>> m_listenerList = new ArrayList<>();
 
-        private Class  m_class  = null;
+        private Class< ? >  m_class  = null;
 
         /**
          *  Constructor for an WikiEventDelegateImpl, provided
@@ -453,7 +453,7 @@ public final class WikiEventManager
         {
             if( client instanceof Class )
             {
-                m_class = (Class)client;
+                m_class = (Class< ? >)client;
             }
         }
 
@@ -461,7 +461,7 @@ public final class WikiEventManager
          *  Returns the class of the client-less delegate, null if
          *  this delegate is attached to a client Object.
          */
-        protected Class getClientClass()
+        protected Class< ? > getClientClass()
         {
             return m_class;
         }
@@ -475,15 +475,15 @@ public final class WikiEventManager
          * @return an unmodifiable Set containing this delegate's WikiEventListeners
          * @throws java.lang.UnsupportedOperationException  if any attempt is made to modify the Set
          */
-        public Set getWikiEventListeners()
+        public Set<WikiEventListener> getWikiEventListeners()
         {
             synchronized( m_listenerList )
             {
                 TreeSet<WikiEventListener> set = new TreeSet<>( new WikiEventListenerComparator() );
 
-                for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                for( Iterator< WeakReference< WikiEventListener > >  i = m_listenerList.iterator(); i.hasNext(); )
                 {
-                    WikiEventListener l = (WikiEventListener) ((WeakReference)i.next()).get();
+                    WikiEventListener l = i.next().get();
 
                     if( l != null )
                     {
@@ -521,9 +521,9 @@ public final class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                for( Iterator< WeakReference< WikiEventListener > > i = m_listenerList.iterator(); i.hasNext(); )
                 {
-                    WikiEventListener l = (WikiEventListener) ((WeakReference)i.next()).get();
+                    WikiEventListener l = i.next().get();
 
                     if( l == listener )
                     {
@@ -564,7 +564,7 @@ public final class WikiEventManager
                 {
                     for( int i = 0; i < m_listenerList.size(); i++ )
                     {
-                        WikiEventListener listener = (WikiEventListener) ((WeakReference)m_listenerList.get(i)).get();
+                        WikiEventListener listener = m_listenerList.get( i ).get();
 
                         if( listener != null )
                         {
@@ -583,7 +583,7 @@ public final class WikiEventManager
                     {
                         for( int i = 0; i < m_listenerList.size(); i++ )
                         {
-                            WeakReference w = m_listenerList.get(i);
+                            WeakReference< WikiEventListener > w = m_listenerList.get( i );
 
                             if( w.get() == null ) m_listenerList.remove(i--);
                         }
