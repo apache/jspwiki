@@ -26,28 +26,24 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.comparators.JavaNaturalComparator;
 
 /**
  * Wrapper class for managing and using the PageNameComparator.
  * <p>
- * <b>Note</b> - this class is deliberately not null safe. Never call any of the
- * methods with a null argument!
+ * <b>Note</b> - this class is deliberately not null safe. Never call any of the methods with a null argument!
  */
-public class PageSorter implements Comparator< Object > {
+public class PageSorter implements Comparator< String > {
     
-    private static Logger log = Logger.getLogger( PageSorter.class );
+    private static final Logger LOG = Logger.getLogger( PageSorter.class );
 
     // The name of the property that specifies the desired page name comparator
     protected static final String PROP_PAGE_NAME_COMPARATOR = "jspwiki.pageNameComparator.class";
 
-    private Comparator<String> m_comparator;
+    private Comparator< String > m_comparator;
 
-    /**
-     * Default constructor uses Java "natural" ordering.
-     */
+    /** Default constructor uses Java "natural" ordering. */
     public PageSorter() {
         m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
     }
@@ -62,34 +58,6 @@ public class PageSorter implements Comparator< Object > {
     }
 
     /**
-     * Compare two page names (Object version). Arguments must be either String
-     * or WikiPage.
-     * 
-     * @throws IllegalArgumentException if incorrect argument types.
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    @Override
-    public int compare( Object o1, Object o2 ) {
-        if( o1 instanceof String ) {
-            if( o2 instanceof String ) {
-                return m_comparator.compare( (String) o1, (String) o2 );
-            }
-            if( o2 instanceof WikiPage ) {
-                return m_comparator.compare( (String) o1, ((WikiPage) o2).getName() );
-            }
-        } else if( o1 instanceof WikiPage ) {
-            if( o2 instanceof WikiPage ) {
-                return m_comparator.compare( ((WikiPage) o1).getName(), ((WikiPage) o2).getName() );
-            }
-            if( o2 instanceof String ) {
-                return m_comparator.compare( ((WikiPage) o1).getName(), (String) o2 );
-            }
-        }
-
-        throw new IllegalArgumentException( "Can only compare String or WikiPage" );
-    }
-
-    /**
      * Compare two page names (String version).
      * 
      * @param pageName1 the first page name
@@ -97,29 +65,9 @@ public class PageSorter implements Comparator< Object > {
      * @return see java.util.Comparator
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
+    @Override
     public int compare( String pageName1, String pageName2 ) {
         return m_comparator.compare( pageName1, pageName2 );
-    }
-
-    /**
-     * Compare two pages (WikiPage version). Compares them by name first. If the
-     * same name, compares their versions.
-     * 
-     * @param page1 the first page
-     * @param page2 the second page
-     * @return see java.util.Comparator
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    public int compare( WikiPage page1, WikiPage page2 ) {
-        if( page1 == page2 ) {
-            return 0; // the same object
-        }
-
-        int res = m_comparator.compare( page1.getName(), page2.getName() );
-        if( res == 0 ) {
-            res = page1.getVersion() - page2.getVersion();
-        }
-        return res;
     }
 
     @Override
@@ -151,7 +99,7 @@ public class PageSorter implements Comparator< Object > {
             try {
                 m_comparator = (Comparator<String>) ClassUtil.findClass( "org.apache.wiki.util.comparators", className ).newInstance();
             } catch( Exception e ) {
-                log.error( "Falling back to default \"natural\" comparator", e );
+                LOG.error( "Falling back to default \"natural\" comparator", e );
             }
         }
     }
@@ -176,28 +124,6 @@ public class PageSorter implements Comparator< Object > {
      */
     public void sort( String[] nameArray ) {
         Arrays.sort( nameArray, m_comparator );
-    }
-
-    /**
-     * Sorts the specified list into ascending order based on the
-     * PageNameComparator. The actual sort is done using
-     * <code>Collections.sort()</code>.
-     * 
-     * @param pageList the pages to be sorted
-     */
-    public void sortPages( List< Object > pageList ) {
-        Collections.< Object >sort( pageList, this );
-    }
-
-    /**
-     * Sorts the specified array into ascending order based on the
-     * PageNameComparator. The actual sort is done using
-     * <code>Arrays.sort()</code>.
-     * 
-     * @param pageArray the pages to be sorted
-     */
-    public void sortPages( Object[] pageArray ) {
-        Arrays.sort( pageArray, this );
     }
 
 }
