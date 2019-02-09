@@ -24,7 +24,8 @@
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <title>JSPWiki administration</title>
   <wiki:Include page="commonheader.jsp"/>
