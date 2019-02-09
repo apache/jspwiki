@@ -25,7 +25,7 @@ package org.apache.wiki.its.environment;
 public class Env {
     
     /** Base url on which the functional tests are run. Default value is {@code https://jspwiki-wiki.apache.org}. */
-    public static String TESTS_BASE_URL = System.getProperty( "it-jspwiki.base.url", "http://localhost:8080/jspwiki-it-test-custom" );
+    public static String TESTS_BASE_URL = System.getProperty( "it-jspwiki.base.url", "https://jspwiki-wiki.apache.org" );
     
     /** Should the browser start on headless mode? Only for Firefox / Chrome. Default value is {@code false}. */
     public static boolean TESTS_CONFIG_HEADLESS = Boolean.valueOf( System.getProperty( "it-jspwiki.config.headless", "false" ) );
