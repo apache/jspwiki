@@ -17,13 +17,13 @@
     under the License.
  */
 
-package org.apache.wiki;
+package org.apache.wiki.pages;
 
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
-
+import org.apache.wiki.pages.PageSorter;
 import org.apache.wiki.util.comparators.HumanComparator;
 import org.apache.wiki.util.comparators.LocaleComparator;
 

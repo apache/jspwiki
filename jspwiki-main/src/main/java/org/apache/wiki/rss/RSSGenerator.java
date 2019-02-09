@@ -34,8 +34,8 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.comparators.PageTimeComparator;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).

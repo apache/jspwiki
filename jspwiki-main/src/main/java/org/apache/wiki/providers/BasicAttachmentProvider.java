@@ -44,10 +44,10 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.comparators.PageTimeComparator;
 
 /**
  *  Provides basic, versioning attachments.
