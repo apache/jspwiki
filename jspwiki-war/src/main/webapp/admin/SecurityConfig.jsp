@@ -34,6 +34,9 @@
   WikiEngine wiki;
   SecurityVerifier verifier;
 %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <%
   WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
   if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
@@ -47,8 +50,6 @@
   if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.securityconfig.enable")) )
   {
       %>
-      <!DOCTYPE html>
-      <html lang="en">
       <head>
         <base href="../"/>
         <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
@@ -73,9 +74,7 @@
   }
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
 <head>
   <title>JSPWiki Security Configuration Verifier</title>
   <base href="../"/>
