@@ -49,6 +49,7 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageSorter;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;

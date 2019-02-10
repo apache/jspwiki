@@ -24,6 +24,7 @@
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="org.apache.wiki.pages.PageLock" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -220,8 +221,7 @@
             // FIXME: Cut-n-paste code.
             wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
             session.setAttribute( "message", ex.getMessage() );
-            session.setAttribute(EditorManager.REQ_EDITEDTEXT,
-                                 EditorManager.getEditedText(pageContext));
+            session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
             session.setAttribute("author",user);
             session.setAttribute("link",link != null ? link : "" );
             if( htmlText != null ) session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
@@ -238,8 +238,7 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        session.setAttribute(EditorManager.REQ_EDITEDTEXT,
-                             EditorManager.getEditedText(pageContext));
+        session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
         session.setAttribute("author",user);
         session.setAttribute("link",link != null ? link : "" );
 
