@@ -65,7 +65,7 @@ public abstract class AbstractStep implements Step
 
     /**
      * Protected constructor that creates a new Step with a specified message key.
-     * After construction, the protected method {@link #setWorkflow(Workflow)} should be
+     * After construction, the method {@link #setWorkflow(Workflow)} should be
      * called.
      *
      * @param messageKey
@@ -273,10 +273,10 @@ public abstract class AbstractStep implements Step
     // --------------------------Helper methods--------------------------
 
     /**
-     * Protected method that sets the parent Workflow post-construction.
+     * method that sets the parent Workflow post-construction.
      * @param workflow the parent workflow to set
      */
-    protected final synchronized void setWorkflow( Workflow workflow )
+    public final synchronized void setWorkflow( Workflow workflow )
     {
         m_workflow = workflow;
     }

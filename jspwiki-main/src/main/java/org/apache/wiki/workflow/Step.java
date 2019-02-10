@@ -241,4 +241,6 @@ public interface Step extends Serializable
      */
     Step getSuccessor( Outcome outcome );
 
+    void setWorkflow( Workflow workflow );
+
 }
