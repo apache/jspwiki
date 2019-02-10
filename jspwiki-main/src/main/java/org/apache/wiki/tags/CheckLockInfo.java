@@ -18,28 +18,27 @@
  */
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 /**
  *  A companion to CheckLogTag.
  */
-public class CheckLockInfo
-    extends TagExtraInfo
-{
+public class CheckLockInfo extends TagExtraInfo {
+
     /**
      *  {@inheritDoc}
      */
     @Override
-    public VariableInfo[] getVariableInfo(TagData data)
-    {
-        VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
-                                                 "org.apache.wiki.PageLock",
+    public VariableInfo[] getVariableInfo(TagData data) {
+        VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
+                                                 "org.apache.wiki.pages.PageLock",
                                                  true,
                                                  VariableInfo.NESTED )
         };
 
         return var;
     }
+
 }
