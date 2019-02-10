@@ -260,7 +260,7 @@
   </div>
 
   <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
-      <div">
+      <div>
         <textarea name="htmlPageText"
              autofocus="autofocus"><%=pageAsHtml%></textarea>
       </div>
