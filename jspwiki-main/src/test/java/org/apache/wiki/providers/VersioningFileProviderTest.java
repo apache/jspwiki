@@ -27,11 +27,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.Users;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

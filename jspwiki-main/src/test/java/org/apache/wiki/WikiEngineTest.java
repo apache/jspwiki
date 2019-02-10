@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;

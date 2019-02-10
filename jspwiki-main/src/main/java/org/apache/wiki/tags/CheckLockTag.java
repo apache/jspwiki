@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.PageManager;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageLock;
+import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.http.HttpSession;
 

@@ -17,17 +17,18 @@
     under the License.
  */
 
-package org.apache.wiki;
+package org.apache.wiki.pages;
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.wiki.TestEngine;
 import org.apache.wiki.providers.CachingProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PageManagerTest
+public class DefaultPageManagerTest
 {
     Properties props = TestEngine.getTestProperties();
 
@@ -51,7 +52,7 @@ public class PageManagerTest
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "true" );
-        PageManager m = new PageManager( engine, props );
+        PageManager m = new DefaultPageManager( engine, props );
 
         Assertions.assertTrue( m.getProvider() instanceof CachingProvider );
     }
@@ -61,7 +62,7 @@ public class PageManagerTest
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "false" );
-        PageManager m = new PageManager( engine, props );
+        PageManager m = new DefaultPageManager( engine, props );
 
         Assertions.assertTrue( !(m.getProvider() instanceof CachingProvider) );
     }

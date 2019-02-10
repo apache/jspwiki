@@ -48,8 +48,8 @@
   
 <classmappings>
   <mapping>
-    <requestedClass>org.apache.wiki.PageManager</requestedClass>
-    <mappedClass>org.apache.wiki.PageManager</mappedClass>
+    <requestedClass>org.apache.wiki.pages.PageManager</requestedClass>
+    <mappedClass>org.apache.wiki.pages.DefaultPageManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.ReferenceManager</requestedClass>

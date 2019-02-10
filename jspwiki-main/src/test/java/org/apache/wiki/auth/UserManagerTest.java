@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
@@ -36,6 +35,7 @@ import org.apache.wiki.auth.user.DuplicateUserException;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionQueue;
 import org.apache.wiki.workflow.DecisionRequiredException;
