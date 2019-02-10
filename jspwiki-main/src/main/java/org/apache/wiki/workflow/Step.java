@@ -241,6 +241,11 @@ public interface Step extends Serializable
      */
     Step getSuccessor( Outcome outcome );
 
+    /**
+     * Sets the parent Workflow post-construction. Should be called after building a {@link Step}.
+     *
+     * @param workflow the parent workflow to set
+     */
     void setWorkflow( Workflow workflow );
 
 }
