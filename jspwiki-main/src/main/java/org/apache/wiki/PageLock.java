@@ -111,5 +111,8 @@ public class PageLock
         return (time / (1000L * 60)) + 1;
     }
     
-    // FIXME: Should really have a isExpired() method as well.
+    public boolean isExpired() {
+        Date now = new Date();
+        return now.after( getExpiryTime() );
+    }
 }

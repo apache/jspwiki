@@ -557,11 +557,10 @@ public class PageManager extends ModuleManager implements WikiEventListener {
         @Override
         public void backgroundTask() throws Exception {
             Collection<PageLock> entries = m_pageLocks.values();
-            Date now = new Date();
             for (Iterator<PageLock> i = entries.iterator(); i.hasNext(); ) {
                 PageLock p = i.next();
 
-                if (now.after(p.getExpiryTime())) {
+                if ( p.isExpired() ) {
                     i.remove();
 
                     log.debug("Reaped lock: " + p.getPage() +
