@@ -104,10 +104,10 @@ public final class WorkflowBuilder
      */
     public Workflow buildApprovalWorkflow( Principal submitter,
                                            String workflowApproverKey,
-                                           Task prepTask,
+                                           Step prepTask,
                                            String decisionKey,
                                            Fact[] facts,
-                                           Task completionTask,
+                                           Step completionTask,
                                            String rejectedMessageKey ) throws WikiException
     {
         WorkflowManager mgr = m_engine.getWorkflowManager();

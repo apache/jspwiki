@@ -93,7 +93,7 @@ import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
-import org.apache.wiki.workflow.Task;
+import org.apache.wiki.workflow.Step;
 import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowBuilder;
 import org.apache.wiki.workflow.WorkflowManager;
@@ -1714,8 +1714,8 @@ public class WikiEngine
         // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
         WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
         Principal submitter = context.getCurrentUser();
-        Task prepTask = new PageManager.PreSaveWikiPageTask( context, proposedText );
-        Task completionTask = new PageManager.SaveWikiPageTask();
+        Step prepTask = new DefaultPageManager.PreSaveWikiPageTask( context, proposedText );
+        Step completionTask = new DefaultPageManager.SaveWikiPageTask();
         String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
         boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         Fact[] facts = new Fact[5];
