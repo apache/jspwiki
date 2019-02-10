@@ -151,7 +151,7 @@
           </td >
 
           <%-- Current actor --%>
-          <td><${workflow.currentActor.name}</td>
+          <td>${workflow.currentActor.name}</td>
 
           <%-- When did the actor start this step? --%>
           <td>
