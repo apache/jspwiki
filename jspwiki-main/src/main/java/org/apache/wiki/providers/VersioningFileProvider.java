@@ -873,12 +873,12 @@ public class VersioningFileProvider
     @Override
     public Collection getAllPages() throws ProviderException
     {
-        Collection pages = super.getAllPages();
-        Collection<WikiPage> returnedPages = new ArrayList<>();
+        Collection< WikiPage > pages = super.getAllPages();
+        Collection< WikiPage > returnedPages = new ArrayList<>();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( Iterator< WikiPage > i = pages.iterator(); i.hasNext(); )
         {
-            WikiPage page = (WikiPage) i.next();
+            WikiPage page = i.next();
 
             WikiPage info = getPageInfo( page.getName(), WikiProvider.LATEST_VERSION );
 
