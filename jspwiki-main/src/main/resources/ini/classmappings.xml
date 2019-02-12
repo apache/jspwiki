@@ -112,6 +112,10 @@
     <mappedClass>org.apache.wiki.search.SearchManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.tasks.TasksManager</requestedClass>
+    <mappedClass>org.apache.wiki.tasks.DefaultTasksManager</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.ui.EditorManager</requestedClass>
     <mappedClass>org.apache.wiki.ui.EditorManager</mappedClass>
   </mapping>

@@ -55,7 +55,7 @@ public class XmlUtilTest {
         Assertions.assertEquals( 0, elements.size() );
 
         elements = XmlUtil.parse( ClassUtil.MAPPINGS, "/classmappings/mapping" );
-        Assertions.assertEquals( 19, elements.size() );
+        Assertions.assertEquals( 20, elements.size() );
     }
 
     @Test
