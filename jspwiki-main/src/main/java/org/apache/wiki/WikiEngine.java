@@ -71,7 +71,6 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.pages.DefaultPageManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.parser.MarkupParser;
@@ -81,6 +80,7 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
 import org.apache.wiki.search.SearchManager;
+import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
@@ -251,6 +251,8 @@ public class WikiEngine
     private InternationalizationManager m_internationalizationManager;
 
     private ProgressManager  m_progressManager;
+    
+    private TasksManager m_tasksManager;
 
     /** Constructs URLs */
     private URLConstructor   m_urlConstructor;
@@ -556,7 +558,6 @@ public class WikiEngine
             m_progressManager   = new ProgressManager();
 
             // Initialize the authentication, authorization, user and acl managers
-
             m_authenticationManager.initialize( this, props );
             m_authorizationManager.initialize( this, props );
             m_userManager.initialize( this, props );
@@ -566,6 +567,7 @@ public class WikiEngine
             // Start the Workflow manager
             m_workflowMgr = ClassUtil.getMappedObject(WorkflowManager.class.getName());
             m_workflowMgr.initialize(this, props);
+            m_tasksManager = ClassUtil.getMappedObject(TasksManager.class.getName());
 
             m_internationalizationManager = ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
             m_templateManager = ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
@@ -1669,74 +1671,63 @@ public class WikiEngine
 
 
     /**
-     *  Writes the WikiText of a page into the
-     *  page repository. If the <code>jspwiki.properties</code> file contains
-     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and
-     *  its value resolves to a valid user, {@link org.apache.wiki.auth.authorize.Group}
-     *  or {@link org.apache.wiki.auth.authorize.Role}, this method will
-     *  place a {@link org.apache.wiki.workflow.Decision} in the approver's
-     *  workflow inbox and throw a {@link org.apache.wiki.workflow.DecisionRequiredException}.
-     *  If the submitting user is authenticated and the page save is rejected,
-     *  a notification will be placed in the user's decision queue.
+     *  Writes the WikiText of a page into the page repository. If the <code>jspwiki.properties</code> file contains
+     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and its value resolves to a valid user, 
+     *  {@link org.apache.wiki.auth.authorize.Group} or {@link org.apache.wiki.auth.authorize.Role}, this method will
+     *  place a {@link org.apache.wiki.workflow.Decision} in the approver's workflow inbox and throw a 
+     *  {@link org.apache.wiki.workflow.DecisionRequiredException}. If the submitting user is authenticated and the 
+     *  page save is rejected, a notification will be placed in the user's decision queue.
      *
      *  @since 2.1.28
      *  @param context The current WikiContext
      *  @param text    The Wiki markup for the page.
-     *  @throws WikiException if the save operation encounters an error during the
-     *  save operation. If the page-save operation requires approval, the exception will
-     *  be of type {@link org.apache.wiki.workflow.DecisionRequiredException}. Individual
-     *  PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also
-     *  throw a {@link org.apache.wiki.api.exceptions.RedirectException}.
+     *  @throws WikiException if the save operation encounters an error during the save operation. If the page-save 
+     *  operation requires approval, the exception will be of type {@link org.apache.wiki.workflow.DecisionRequiredException}. 
+     *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a 
+     *  {@link org.apache.wiki.api.exceptions.RedirectException}.
      */
-    public void saveText( WikiContext context, String text )
-        throws WikiException
-    {
+    public void saveText( WikiContext context, String text ) throws WikiException {
         // Check if page data actually changed; bail if not
         WikiPage page = context.getPage();
         String oldText = getPureText( page );
         String proposedText = TextUtil.normalizePostData( text );
-        if ( oldText != null && oldText.equals( proposedText ) )
-        {
+        if ( oldText != null && oldText.equals( proposedText ) ) {
             return;
         }
 
         // Check if creation of empty pages is allowed; bail if not
-        boolean allowEmpty = TextUtil.getBooleanProperty( m_properties,
-                                                          PROP_ALLOW_CREATION_OF_EMPTY_PAGES,
-                                                          false );
-        if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) )
-        {
+        boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, PROP_ALLOW_CREATION_OF_EMPTY_PAGES, false );
+        if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) ) {
             return;
         }
 
-        // Create approval workflow for page save; add the diffed, proposed
-        // and old text versions as Facts for the approver (if approval is required)
-        // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
+        // Create approval workflow for page save; add the diffed, proposed and old text versions as 
+        // Facts for the approver (if approval is required). If submitter is authenticated, any reject 
+        // messages will appear in his/her workflow inbox.
         WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
         Principal submitter = context.getCurrentUser();
-        Step prepTask = new DefaultPageManager.PreSaveWikiPageTask( context, proposedText );
-        Step completionTask = new DefaultPageManager.SaveWikiPageTask();
+        Step prepTask = m_tasksManager.buildPreSaveWikiPageTask( context, proposedText );
+        Step completionTask = m_tasksManager.buildSaveWikiPageTask();
         String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
         boolean isAuthenticated = context.getWikiSession().isAuthenticated();
-        Fact[] facts = new Fact[5];
-        facts[0] = new Fact( PageManager.FACT_PAGE_NAME, page.getName() );
-        facts[1] = new Fact( PageManager.FACT_DIFF_TEXT, diffText );
-        facts[2] = new Fact( PageManager.FACT_PROPOSED_TEXT, proposedText );
-        facts[3] = new Fact( PageManager.FACT_CURRENT_TEXT, oldText);
-        facts[4] = new Fact( PageManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
-        String rejectKey = isAuthenticated ? PageManager.SAVE_REJECT_MESSAGE_KEY : null;
+        Fact[] facts = new Fact[ 5 ];
+        facts[ 0 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PAGE_NAME, page.getName() );
+        facts[ 1 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_DIFF_TEXT, diffText );
+        facts[ 2 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, proposedText );
+        facts[ 3 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_CURRENT_TEXT, oldText);
+        facts[ 4 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
+        String rejectKey = isAuthenticated ? WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY : null;
         Workflow workflow = builder.buildApprovalWorkflow( submitter,
-                                                           PageManager.SAVE_APPROVER,
+                                                           WorkflowManager.WF_WP_SAVE_APPROVER,
                                                            prepTask,
-                                                           PageManager.SAVE_DECISION_MESSAGE_KEY,
+                                                           WorkflowManager.WF_WP_SAVE_DECISION_MESSAGE_KEY,
                                                            facts,
                                                            completionTask,
                                                            rejectKey );
-        m_workflowMgr.start(workflow);
+        m_workflowMgr.start( workflow );
 
         // Let callers know if the page-save requires approval
-        if ( workflow.getCurrentStep() instanceof Decision )
-        {
+        if ( workflow.getCurrentStep() instanceof Decision ) {
             throw new DecisionRequiredException( "The page contents must be approved before they become active." );
         }
     }
@@ -2256,6 +2247,15 @@ public class WikiEngine
     public UserManager getUserManager()
     {
         return m_userManager;
+    }
+
+    /**
+     *  Returns the TasksManager employed by this WikiEngine.
+     *  @return The current TasksManager instance.
+     */
+    public TasksManager getTasksManager()
+    {
+        return m_tasksManager;
     }
 
     /**
