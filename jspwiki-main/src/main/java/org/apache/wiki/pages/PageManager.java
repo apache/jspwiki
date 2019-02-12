@@ -1,3 +1,21 @@
+/* 
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package org.apache.wiki.pages;
 
 import java.util.Collection;
@@ -19,28 +37,6 @@ public interface PageManager extends WikiEventListener {
     String PROP_USECACHE = "jspwiki.usePageCache";
     /** The property value for setting the amount of time before the page locks expire. Value is {@value}. */
     String PROP_LOCKEXPIRY = "jspwiki.lockExpiryTime";
-    /** The message key for storing the text for the presave task.  Value is <tt>{@value}</tt> */
-    String PRESAVE_TASK_MESSAGE_KEY = "task.preSaveWikiPage";
-    /** The workflow attribute which stores the wikiContext. */
-    String PRESAVE_WIKI_CONTEXT = "wikiContext";
-    /** The name of the key from jspwiki.properties which defines who shall approve the workflow of storing a wikipage.  Value is <tt>{@value}</tt> */
-    String SAVE_APPROVER = "workflow.saveWikiPage";
-    /** The message key for storing the Decision text for saving a page.  Value is {@value}. */
-    String SAVE_DECISION_MESSAGE_KEY = "decision.saveWikiPage";
-    /** The message key for rejecting the decision to save the page.  Value is {@value}. */
-    String SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
-    /** The message key of the text to finally approve a page save.  Value is {@value}. */
-    String SAVE_TASK_MESSAGE_KEY = "task.saveWikiPage";
-    /** Fact name for storing the page name.  Value is {@value}. */
-    String FACT_PAGE_NAME = "fact.pageName";
-    /** Fact name for storing a diff text. Value is {@value}. */
-    String FACT_DIFF_TEXT = "fact.diffText";
-    /** Fact name for storing the current text.  Value is {@value}. */
-    String FACT_CURRENT_TEXT = "fact.currentText";
-    /** Fact name for storing the proposed (edited) text.  Value is {@value}. */
-    String FACT_PROPOSED_TEXT = "fact.proposedText";
-    /** Fact name for storing whether the user is authenticated or not.  Value is {@value}. */
-    String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
     /**
      * Returns the page provider currently in use.
