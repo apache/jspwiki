@@ -33,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
@@ -56,9 +55,6 @@ import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.workflow.Outcome;
-import org.apache.wiki.workflow.Task;
-import org.apache.wiki.workflow.Workflow;
 
 
 /**
@@ -444,105 +440,6 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
                               ", and expired " + p.getExpiryTime());
                 }
             }
-        }
-    }
-
-    // workflow task inner classes....................................................
-
-    /**
-     * Inner class that handles the page pre-save actions. If the proposed page
-     * text is the same as the current version, the {@link #execute()} method
-     * returns {@link org.apache.wiki.workflow.Outcome#STEP_ABORT}. Any
-     * WikiExceptions thrown by page filters will be re-thrown, and the workflow
-     * will abort.
-     */
-    public static class PreSaveWikiPageTask extends Task {
-        private static final long serialVersionUID = 6304715570092804615L;
-        private final WikiContext m_context;
-        private final String m_proposedText;
-
-        /**
-         * Creates the task.
-         *
-         * @param context      The WikiContext
-         * @param proposedText The text that was just saved.
-         */
-        public PreSaveWikiPageTask(WikiContext context, String proposedText) {
-            super(PRESAVE_TASK_MESSAGE_KEY);
-            m_context = context;
-            m_proposedText = proposedText;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Outcome execute() throws WikiException {
-            // Retrieve attributes
-            WikiEngine engine = m_context.getEngine();
-            Workflow workflow = getWorkflow();
-
-            // Get the wiki page
-            WikiPage page = m_context.getPage();
-
-            // Figure out who the author was. Prefer the author
-            // set programmatically; otherwise get from the
-            // current logged in user
-            if (page.getAuthor() == null) {
-                Principal wup = m_context.getCurrentUser();
-
-                if (wup != null) {
-                    page.setAuthor(wup.getName());
-                }
-            }
-
-            // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
-            String saveText = engine.getFilterManager().doPreSaveFiltering(m_context, m_proposedText);
-
-            // Stash the wiki context, old and new text as workflow attributes
-            workflow.setAttribute(PRESAVE_WIKI_CONTEXT, m_context);
-            workflow.setAttribute(FACT_PROPOSED_TEXT, saveText);
-            return Outcome.STEP_COMPLETE;
-        }
-    }
-
-    /**
-     * Inner class that handles the actual page save and post-save actions. Instances
-     * of this class are assumed to have been added to an approval workflow via
-     * {@link org.apache.wiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, org.apache.wiki.workflow.Fact[], Task, String)};
-     * they will not function correctly otherwise.
-     */
-    public static class SaveWikiPageTask extends Task {
-        private static final long serialVersionUID = 3190559953484411420L;
-
-        /**
-         * Creates the Task.
-         */
-        public SaveWikiPageTask() {
-            super(SAVE_TASK_MESSAGE_KEY);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Outcome execute() throws WikiException {
-            // Retrieve attributes
-            WikiContext context = (WikiContext) getWorkflow().getAttribute(PRESAVE_WIKI_CONTEXT);
-            String proposedText = (String) getWorkflow().getAttribute(FACT_PROPOSED_TEXT);
-
-            WikiEngine engine = context.getEngine();
-            WikiPage page = context.getPage();
-
-            // Let the rest of the engine handle actual saving.
-            engine.getPageManager().putPageText(page, proposedText);
-
-            // Refresh the context for post save filtering.
-            engine.getPage(page.getName());
-            engine.textToHTML(context, proposedText);
-            engine.getFilterManager().doPostSaveFiltering(context, proposedText);
-
-            return Outcome.STEP_COMPLETE;
         }
     }
 

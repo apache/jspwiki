@@ -23,14 +23,11 @@ import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,14 +58,13 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
-import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
-import org.apache.wiki.workflow.Outcome;
-import org.apache.wiki.workflow.Task;
+import org.apache.wiki.workflow.Step;
 import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowBuilder;
+import org.apache.wiki.workflow.WorkflowManager;
 
 
 /**
@@ -87,18 +83,10 @@ public class UserManager {
 
     private WikiEngine m_engine;
 
-    private static Logger log = Logger.getLogger(UserManager.class);
+    private static final Logger log = Logger.getLogger(UserManager.class);
 
     /** Message key for the "save profile" message. */
-    public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
     private static final String PROP_DATABASE               = "jspwiki.userdatabase";
-    protected static final String SAVE_TASK_MESSAGE_KEY     = "task.createUserProfile";
-    protected static final String SAVED_PROFILE             = "userProfile";
-    protected static final String SAVE_DECISION_MESSAGE_KEY = "decision.createUserProfile";
-    protected static final String FACT_SUBMITTER            = "fact.submitter";
-    protected static final String PREFS_LOGIN_NAME          = "prefs.loginname";
-    protected static final String PREFS_FULL_NAME           = "prefs.fullname";
-    protected static final String PREFS_EMAIL               = "prefs.email";
 
     public static final String JSON_USERS = "users";
 
@@ -338,38 +326,7 @@ public class UserManager {
         // For new accounts, create approval workflow for user profile save.
         if ( newProfile && oldProfile != null && oldProfile.isNew() )
         {
-            final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
-            final Principal submitter = session.getUserPrincipal();
-            final Task completionTask = new SaveUserProfileTask( m_engine, session.getLocale() );
-
-            // Add user profile attribute as Facts for the approver (if required)
-            final boolean hasEmail = profile.getEmail() != null;
-            final Fact[] facts = new Fact[ hasEmail ? 4 : 3];
-            facts[0] = new Fact( PREFS_FULL_NAME, profile.getFullname() );
-            facts[1] = new Fact( PREFS_LOGIN_NAME, profile.getLoginName() );
-            facts[2] = new Fact( FACT_SUBMITTER, submitter.getName() );
-            if ( hasEmail )
-            {
-                facts[3] = new Fact( PREFS_EMAIL, profile.getEmail() );
-            }
-            final Workflow workflow = builder.buildApprovalWorkflow( submitter,
-                                                               SAVE_APPROVER,
-                                                               null,
-                                                               SAVE_DECISION_MESSAGE_KEY,
-                                                               facts,
-                                                               completionTask,
-                                                               null );
-
-            workflow.setAttribute( SAVED_PROFILE, profile );
-            m_engine.getWorkflowManager().start(workflow);
-
-            final boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
-
-            // If the profile requires approval, redirect user to message page
-            if ( approvalRequired )
-            {
-                throw new DecisionRequiredException( "This profile must be approved before it becomes active" );
-            }
+            startUserProfileCreationWorkflow(session, profile);
 
             // If the profile doesn't need approval, then just log the user in
 
@@ -414,6 +371,41 @@ public class UserManager {
                 // Fire an event that says we have new a new profile (new principals)
                 fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
             }
+        }
+    }
+
+    public void startUserProfileCreationWorkflow( final WikiSession session, final UserProfile profile ) throws WikiException {
+        final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
+        final Principal submitter = session.getUserPrincipal();
+        final Step completionTask = m_engine.getTasksManager().buildSaveUserProfileTask( m_engine, session.getLocale() );
+
+        // Add user profile attribute as Facts for the approver (if required)
+        final boolean hasEmail = profile.getEmail() != null;
+        final Fact[] facts = new Fact[ hasEmail ? 4 : 3];
+        facts[0] = new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() );
+        facts[1] = new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() );
+        facts[2] = new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, submitter.getName() );
+        if ( hasEmail )
+        {
+            facts[3] = new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() );
+        }
+        final Workflow workflow = builder.buildApprovalWorkflow( submitter, 
+                                                                 WorkflowManager.WF_UP_CREATE_SAVE_APPROVER, 
+                                                                 null, 
+                                                                 WorkflowManager.WF_UP_CREATE_SAVE_DECISION_MESSAGE_KEY, 
+                                                                 facts, 
+                                                                 completionTask, 
+                                                                 null );
+
+        workflow.setAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE, profile );
+        m_engine.getWorkflowManager().start(workflow);
+
+        final boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
+
+        // If the profile requires approval, redirect user to message page
+        if ( approvalRequired )
+        {
+            throw new DecisionRequiredException( "This profile must be approved before it becomes active" );
         }
     }
 
@@ -734,92 +726,6 @@ public class UserManager {
         {
         }
 
-    }
-
-    // workflow task inner classes....................................................
-
-    /**
-     * Inner class that handles the actual profile save action. Instances
-     * of this class are assumed to have been added to an approval workflow via
-     * {@link org.apache.wiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, org.apache.wiki.workflow.Fact[], Task, String)};
-     * they will not function correctly otherwise.
-     *
-     */
-    public static class SaveUserProfileTask extends Task
-    {
-        private static final long serialVersionUID = 6994297086560480285L;
-        private final UserDatabase m_db;
-        private final WikiEngine m_engine;
-        private final Locale m_loc;
-
-        /**
-         * Constructs a new Task for saving a user profile.
-         * @param engine the wiki engine
-         * @deprecated will be removed in 2.10 scope. Consider using
-         * {@link #UserManager.SaveUserProfileTask(WikiEngine, Locale)} instead
-         */
-        @Deprecated
-        public SaveUserProfileTask( WikiEngine engine )
-        {
-            super( SAVE_TASK_MESSAGE_KEY );
-            m_engine = engine;
-            m_db = engine.getUserManager().getUserDatabase();
-            m_loc = null;
-        }
-
-        public SaveUserProfileTask( WikiEngine engine, Locale loc )
-        {
-            super( SAVE_TASK_MESSAGE_KEY );
-            m_engine = engine;
-            m_db = engine.getUserManager().getUserDatabase();
-            m_loc = loc;
-        }
-
-        /**
-         * Saves the user profile to the user database.
-         * @return {@link org.apache.wiki.workflow.Outcome#STEP_COMPLETE} if the
-         * task completed successfully
-         * @throws WikiException if the save did not complete for some reason
-         */
-        @Override
-        public Outcome execute() throws WikiException
-        {
-            // Retrieve user profile
-            final UserProfile profile = (UserProfile) getWorkflow().getAttribute( SAVED_PROFILE );
-
-            // Save the profile (userdatabase will take care of timestamps for us)
-            m_db.save( profile );
-
-            // Send e-mail if user supplied an e-mail address
-            if ( profile.getEmail() != null )
-            {
-                try
-                {
-                    final InternationalizationManager i18n = m_engine.getInternationalizationManager();
-                    final String app = m_engine.getApplicationName();
-                    final String to = profile.getEmail();
-                    final String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
-                                               "notification.createUserProfile.accept.subject", app );
-
-                    final String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
-                                               "notification.createUserProfile.accept.content", app,
-                                               profile.getLoginName(),
-                                               profile.getFullname(),
-                                               profile.getEmail(),
-                                               m_engine.getURL( WikiContext.LOGIN, null, null, true ) );
-                    MailUtil.sendMessage( m_engine.getWikiProperties(), to, subject, content);
-                }
-                catch ( final AddressException e)
-                {
-                }
-                catch ( final MessagingException me )
-                {
-                    log.error( "Could not send registration confirmation e-mail. Is the e-mail server running?", me );
-                }
-            }
-
-            return Outcome.STEP_COMPLETE;
-        }
     }
 
     // events processing .......................................................
