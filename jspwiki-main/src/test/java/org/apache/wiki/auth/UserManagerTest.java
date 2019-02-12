@@ -41,6 +41,7 @@ import org.apache.wiki.workflow.DecisionQueue;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
 import org.apache.wiki.workflow.Outcome;
+import org.apache.wiki.workflow.WorkflowManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +64,7 @@ public class UserManagerTest {
         Properties props = TestEngine.getTestProperties();
 
         // Make sure user profile save workflow is OFF
-        props.remove( "jspwiki.approver" + UserManager.SAVE_APPROVER );
+        props.remove( "jspwiki.approver" + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER );
 
         // Make sure we are using the XML user database
         props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
@@ -86,7 +87,7 @@ public class UserManagerTest {
         Properties props = TestEngine.getTestProperties();
 
         // Turn on user profile saves by the Admin group
-        props.put( "jspwiki.approver." + UserManager.SAVE_APPROVER, "Admin" );
+        props.put( "jspwiki.approver." + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER, "Admin" );
 
         // Make sure we are using the XML user database
         props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
@@ -321,11 +322,11 @@ public class UserManagerTest {
         // Verify that the Decision has all the facts and attributes we need
         Decision d = decisions.iterator().next();
         List< Fact > facts = d.getFacts();
-        Assertions.assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
-        Assertions.assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
-        Assertions.assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
-        Assertions.assertEquals( new Fact( UserManager.PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
-        Assertions.assertEquals( profile, d.getWorkflow().getAttribute( UserManager.SAVED_PROFILE ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
+        Assertions.assertEquals( profile, d.getWorkflow().getAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
 
         // Approve the profile
         d.decide( Outcome.DECISION_APPROVE );
@@ -372,11 +373,11 @@ public class UserManagerTest {
         // Verify that the Decision has all the facts and attributes we need
         Decision d = decisions.iterator().next();
         List< Fact > facts = d.getFacts();
-        Assertions.assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
-        Assertions.assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
-        Assertions.assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
-        Assertions.assertEquals( new Fact( UserManager.PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
-        Assertions.assertEquals( profile, d.getWorkflow().getAttribute( UserManager.SAVED_PROFILE ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
+        Assertions.assertEquals( profile, d.getWorkflow().getAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
 
         // Approve the profile
         d.decide( Outcome.DECISION_DENY );

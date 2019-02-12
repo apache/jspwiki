@@ -31,7 +31,6 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -244,7 +243,7 @@ public class ApprovalWorkflowTest
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
         Assertions.assertEquals(1, decisions.size());
         decision = (Decision)decisions.iterator().next();
-        Assertions.assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
+        Assertions.assertEquals(WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
 
         // Once Janne disposes of the notification, his queue should be empty
         decision.decide(Outcome.DECISION_ACKNOWLEDGE);
