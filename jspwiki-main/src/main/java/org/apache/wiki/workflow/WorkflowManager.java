@@ -40,12 +40,45 @@ import org.apache.wiki.event.WorkflowEvent;
 
 /**
  * <p>
- * Monitor class that tracks running Workflows. The WorkflowManager also keeps
- * track of the names of users or groups expected to approve particular
- * Workflows.
+ * Monitor class that tracks running Workflows. The WorkflowManager also keeps track of the names of
+ * users or groups expected to approve particular Workflows.
  * </p>
  */
 public class WorkflowManager implements WikiEventListener {
+
+    /** The workflow attribute which stores the wikiContext. */
+    public static final String WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT = "wikiContext";
+    /** The name of the key from jspwiki.properties which defines who shall approve the workflow of storing a wikipage.  Value is <tt>{@value}</tt> */
+    public static final String WF_WP_SAVE_APPROVER = "workflow.saveWikiPage";
+    /** The message key for storing the Decision text for saving a page.  Value is {@value}. */
+    public static final String WF_WP_SAVE_DECISION_MESSAGE_KEY = "decision.saveWikiPage";
+    /** The message key for rejecting the decision to save the page.  Value is {@value}. */
+    public static final String WF_WP_SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
+    /** Fact name for storing the page name.  Value is {@value}. */
+    public static final String WF_WP_SAVE_FACT_PAGE_NAME = "fact.pageName";
+    /** Fact name for storing a diff text. Value is {@value}. */
+    public static final String WF_WP_SAVE_FACT_DIFF_TEXT = "fact.diffText";
+    /** Fact name for storing the current text.  Value is {@value}. */
+    public static final String WF_WP_SAVE_FACT_CURRENT_TEXT = "fact.currentText";
+    /** Fact name for storing the proposed (edited) text.  Value is {@value}. */
+    public static final String WF_WP_SAVE_FACT_PROPOSED_TEXT = "fact.proposedText";
+    /** Fact name for storing whether the user is authenticated or not.  Value is {@value}. */
+    public static final String WF_WP_SAVE_FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
+
+    /** The workflow attribute which stores the user profile. */
+    public static final String WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE = "userProfile";
+    /** The name of the key from jspwiki.properties which defines who shall approve the workflow of creating a user profile.  Value is <tt>{@value}</tt> */
+    public static final String WF_UP_CREATE_SAVE_APPROVER = "workflow.createUserProfile";
+    /** The message key for storing the Decision text for saving a user profile.  Value is {@value}. */
+    public static final String WF_UP_CREATE_SAVE_DECISION_MESSAGE_KEY = "decision.createUserProfile";
+    /** Fact name for storing a the submitter name. Value is {@value}. */
+    public static final String WF_UP_CREATE_SAVE_FACT_SUBMITTER = "fact.submitter";
+    /** Fact name for storing the preferences' login name. Value is {@value}. */
+    public static final String WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME = "prefs.loginname";
+    /** Fact name for storing the preferences' full name. Value is {@value}. */
+    public static final String WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME = "prefs.fullname";
+    /** Fact name for storing the preferences' email. Value is {@value}. */
+    public static final String WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL = "prefs.email";
 
     private final DecisionQueue m_queue = new DecisionQueue();
 
@@ -245,19 +278,14 @@ public class WorkflowManager implements WikiEventListener {
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    public Collection< Workflow > getOwnerWorkflows( WikiSession session )
-    {
+    public Collection< Workflow > getOwnerWorkflows( WikiSession session ) {
         List<Workflow> workflows = new ArrayList<>();
-        if ( session.isAuthenticated() )
-        {
+        if ( session.isAuthenticated() ) {
             Principal[] sessionPrincipals = session.getPrincipals();
-            for ( Workflow w : m_workflows )
-            {
+            for ( Workflow w : m_workflows ) {
                 Principal owner = w.getOwner();
-                for ( Principal sessionPrincipal : sessionPrincipals )
-                {
-                    if ( sessionPrincipal.equals( owner ) )
-                    {
+                for ( Principal sessionPrincipal : sessionPrincipals ) {
+                    if ( sessionPrincipal.equals( owner ) ) {
                         workflows.add( w );
                         break;
                     }
@@ -268,23 +296,19 @@ public class WorkflowManager implements WikiEventListener {
     }
 
     /**
-     * Listens for {@link org.apache.wiki.event.WorkflowEvent} objects emitted
-     * by Workflows. In particular, this method listens for
-     * {@link org.apache.wiki.event.WorkflowEvent#CREATED},
-     * {@link org.apache.wiki.event.WorkflowEvent#ABORTED} and
-     * {@link org.apache.wiki.event.WorkflowEvent#COMPLETED} events. If a
-     * workflow is created, it is automatically added to the cache. If one is
-     * aborted or completed, it is automatically removed.
+     * Listens for {@link org.apache.wiki.event.WorkflowEvent} objects emitted by Workflows. In particular, this 
+     * method listens for {@link org.apache.wiki.event.WorkflowEvent#CREATED}, 
+     * {@link org.apache.wiki.event.WorkflowEvent#ABORTED} and {@link org.apache.wiki.event.WorkflowEvent#COMPLETED} 
+     * events. If a workflow is created, it is automatically added to the cache. If one is aborted or completed, it 
+     * is automatically removed.
+     * 
      * @param event the event passed to this listener
      */
     @Override
-    public void actionPerformed(WikiEvent event)
-    {
-        if (event instanceof WorkflowEvent)
-        {
+    public void actionPerformed(WikiEvent event) {
+        if (event instanceof WorkflowEvent) {
             Workflow workflow = event.getSrc();
-            switch ( event.getType() )
-            {
+            switch ( event.getType() ) {
                 case WorkflowEvent.ABORTED:
                     // Remove from manager
                     remove( workflow );
@@ -304,21 +328,16 @@ public class WorkflowManager implements WikiEventListener {
     }
 
     /**
-     * Protected helper method that adds a newly created Workflow to the cache,
-     * and sets its <code>workflowManager</code> and <code>Id</code>
-     * properties if not set.
+     * Protected helper method that adds a newly created Workflow to the cache, and sets its 
+     * <code>workflowManager</code> and <code>Id</code> properties if not set.
      *
-     * @param workflow
-     *            the workflow to add
+     * @param workflow the workflow to add
      */
-    protected synchronized void add( Workflow workflow )
-    {
-        if ( workflow.getWorkflowManager() == null )
-        {
+    protected synchronized void add( Workflow workflow ) {
+        if ( workflow.getWorkflowManager() == null ) {
             workflow.setWorkflowManager( this );
         }
-        if ( workflow.getId() == Workflow.ID_NOT_SET )
-        {
+        if ( workflow.getId() == Workflow.ID_NOT_SET ) {
             workflow.setId( nextId() );
         }
         m_workflows.add( workflow );
@@ -329,15 +348,13 @@ public class WorkflowManager implements WikiEventListener {
      * and moves it to the workflow history list. This method defensively
      * checks to see if the workflow has not yet been removed.
      *
-     * @param workflow
-     *            the workflow to remove
+     * @param workflow the workflow to remove
      */
-    protected synchronized void remove(Workflow workflow)
-    {
-        if ( m_workflows.contains( workflow ) )
-        {
+    protected synchronized void remove(Workflow workflow) {
+        if ( m_workflows.contains( workflow ) ) {
             m_workflows.remove( workflow );
             m_completed.add( workflow );
         }
     }
+
 }
