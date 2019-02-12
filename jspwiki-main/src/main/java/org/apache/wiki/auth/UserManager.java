@@ -99,13 +99,6 @@ public class UserManager {
     private UserDatabase     m_database;
 
     /**
-     * Constructs a new UserManager instance.
-     */
-    public UserManager()
-    {
-    }
-
-    /**
      * Initializes the engine for its nefarious purposes.
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
