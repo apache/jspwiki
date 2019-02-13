@@ -62,24 +62,68 @@ Forms:
   -webkit-appearance: none;  //remove default safari and chrome style
   -moz-appearance: none;    //remove default firefox style
 
-  background: url('@{imagePath}/form-select-arrow.png') no-repeat;  //replace arrow
-  background-position: @padding-base-horizontal center;
+  background-color: @btn-default-bg;
+  background-image:
+	linear-gradient(120deg, @wikiTriangleColor @wikiTriangleSize, transparent @wikiTriangleSize),
+    linear-gradient(-120deg, @wikiTriangleColor @wikiTriangleSize, transparent @wikiTriangleSize);
+
+  background-size: @wikiTriangleSize*2;
+  background-repeat: no-repeat;
+  background-position:
+	( @padding-base-horizontal + @wikiTriangleSize/2 ) @padding-base-vertical*1.5,
+	( @padding-base-horizontal - @wikiTriangleSize*3/2 ) @padding-base-vertical*1.5;
+
   text-indent: 0.01px;   //remove default arrow from firefox
   text-overflow: '';   //remove default arrow from firefox
 
   //inherit styles from .btn
   cursor: pointer;
   border: 1px solid transparent;
-  padding: @padding-base-vertical @padding-base-horizontal @padding-base-vertical @padding-base-horizontal+16;
+  padding: @padding-base-vertical @padding-base-horizontal @padding-base-vertical @padding-base-horizontal*2;
   border-radius: @border-radius-base;
 
   //inherit styles from .btn-default
   color: @btn-default-color;
   border-color: @btn-default-border;
-  background-color: @btn-default-bg;
 
 }
 /* CHECKME IEfix ?? .from-group select::-ms-expand { display: none; } */
+
+
+.form-control  { color: @btn-default-color; } //consistent text color with eg select controls etc.
+
+//toggle switch
+label.form-switch {
+	height:auto;
+	font-weight:normal;
+}
+label.form-switch > input[type=checkbox],
+input[type=checkbox].form-switch {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -o-appearance: none;
+    position: relative;
+    top:0.25em;
+    height:1.25em;
+    width:2.5em;
+    margin:0;
+    border-radius:0.6125em;
+    box-shadow:inset -1.25em 0 0 1px @wikiFormSwitchColor;
+    background-color:@white;
+    border:1px solid @wikiFormSwitchColor;
+    cursor:pointer;
+    user-select:none;
+    transition:0.2s;
+
+    &:checked {
+	    box-shadow: inset 1.25em 0 0 1px @wikiFormSwitchColorOn;
+        border: 1px solid @wikiFormSwitchColorOn;
+    }
+    &:focus {
+		outline:none;
+		background:none !important;
+	}
+}
 
 
 /* Wiki Form plugins*/
@@ -94,4 +138,35 @@ Forms:
     input[type=checkbox], input[type=radio]{
         margin:10px 1em 10px 0;
     }
+}
+
+/*User Preferences*/
+
+//test support for var(--css-properties)
+/*
+:root {
+	--someTestProp:red;
+}
+@supports not(--someTestProp: red ) {
+	.form-group.pref-appearance {
+		display:none;
+	}
+}
+
+@supports ( not (--a: 0)) {
+  // not supported
+}
+*/
+
+input#prefLayout[type=checkbox]{
+
+	&:before {
+		color: #000;
+		position: absolute;
+		margin-left: 2px;
+		margin-top: 6px;
+		width: 15px;
+		height: 10px;
+		border: solid 1px currentColor;
+}
 }

@@ -123,12 +123,22 @@
   </div>
   </c:if>
 
-  <div class="form-group">
+  <div class="form-group form-inline">
     <label class="control-label form-col-20" for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label>
-    <label class="btn btn-default">
+    <label class="form-control form-switch">
       <input class="" id="prefSectionEditing" name="prefSectionEditing"  data-pref="SectionEditing"
          type="checkbox" ${prefs.SectionEditing ? 'checked="checked"' : ''} >
       <fmt:message key="prefs.user.sectionediting.text"/>
+    </label>
+  </div>
+
+  <div class="form-group form-inline ">
+    <label class="control-label form-col-20" for="prefAppearance"><fmt:message key="prefs.user.appearance"/></label>
+    <label class="form-control form-switch xpref-appearance">
+      <!--<fmt:message key="prefs.user.appearance.light"/>-->
+      <input id="prefAppearance" name="prefAppearance"  data-pref="Appearance"
+           type="checkbox" class="" value="on" ${prefs.Appearance ? 'checked="checked"' : ''} >
+      <fmt:message key="prefs.user.appearance.dark"/>
     </label>
   </div>
 

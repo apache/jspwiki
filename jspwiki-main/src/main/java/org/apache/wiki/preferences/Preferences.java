@@ -103,7 +103,7 @@ public class Preferences
         String dateFormat = ctx.getEngine().getInternationalizationManager().get( InternationalizationManager.CORE_BUNDLE,
                                                                                   getLocale( ctx ),
                                                                                   "common.datetimeformat" );
-        
+
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
         prefs.put("DateFormat", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.dateformat", dateFormat ) );
         prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", java.util.TimeZone.getDefault().getID() ) );
@@ -112,6 +112,7 @@ public class Preferences
         prefs.put("Layout", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.layout", "fluid" ) );
         prefs.put("Language", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.language", getLocale( ctx ).toString() ) );
         prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting", "true" ) );
+        prefs.put("Appearance", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.appearance", "true" ) );
 
         // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
         prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
@@ -169,7 +170,7 @@ public class Preferences
 
         return null;
     }
-    
+
     /**
      *  Returns a preference value programmatically.
      *  FIXME
@@ -218,7 +219,7 @@ public class Preferences
                 loc = new Locale( language, country, variant );
             }
         }
-        
+
         // see if default locale is set server side
         if( loc == null ) {
             String locale = context.getEngine().getWikiProperties().getProperty( "jspwiki.preferences.default-locale" );

@@ -19,6 +19,15 @@
     under the License.
 */
 
+
+/*
+Credit: Lea Verou
+Gets rid of the annoying outline for mouse users but preserves it for keyboard users,
+and is ignored by browsers that don’t support :focus-visible.
+*/
+:focus:not(:focus-visible) { outline: none }
+
+
 //bootstrap
 p, .p {
   margin: 0 0 (@line-height-computed / 2);
@@ -48,18 +57,13 @@ DOM structure:
 .editsection, .hashlink {
 
     .btn; .btn-default; .btn-xs;
+    line-height:1;
     margin-right: .25em;
     .transition(all 1s ease);
     &:hover { .opacity(1); border-color:transparent; }
 
 }
 
-/* The original jspwiki margins on headers were  somewhat larger then bootstrap
-h2,h3,h4 {
-    margin:1em 0 0.5em 0;
-    line-height:1.5;
-}
-*/
 h2,h3,h4 {
 
     .editsection, .hashlink { .opacity(0); }
@@ -239,13 +243,31 @@ span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
 //checkme - should be defined in bootstrap
 [class*=bg-]:not(.columns) {
     padding: @padding-base-vertical  @padding-base-horizontal;
-    a {  color:inherit; }
+    a, a:link, a:visited {  color:inherit; }
 }
 
-.bg-success { background-color: @state-success-bg; }
-.bg-info    { background-color: @state-info-bg; }
-.bg-warning { background-color: @state-warning-bg; }
-.bg-danger  { background-color: @state-danger-bg; }
+.bg-success { background-color: @state-success-bg; color:@state-success-text;}
+.bg-info    { background-color: @state-info-bg; color:@state-info-text;}
+.bg-warning { background-color: @state-warning-bg; color:@state-warning-text;}
+.bg-danger  { background-color: @state-danger-bg; color:@state-danger-text;}
+
+.text-aqua  { color: @aqua; }
+.text-blue  { color: @blue; }
+.text-navy  { color: @navy; }
+.text-teal  { color: @teal; }
+.text-green  { color: @green; }
+.text-olive  { color: @olive; }
+.text-lime   { color: @lime; }
+.text-yellow { color: @yellow; }
+.text-orange { color: @orange; }
+.text-red    { color: @red; }
+.text-fuchsia { color: @fuchsia; }
+.text-purple  { color: @purple; }
+.text-maroon  { color: @maroon; }
+.text-white   { color: @white; }
+.text-silver  { color: @silver; }
+.text-gray, .text-grey  { color: @gray; }
+.text-black   { color: @black; }
 
 .bg-aqua  { background-color: @aqua; color:hsla(197, 100%, 20%, 1.0);}
 .bg-blue  { background-color: @blue; color:hsla(208, 100%, 85%, 1.0);}
@@ -261,7 +283,7 @@ span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
 .bg-purple  { background-color: @purple; color:hsla(292, 88%, 82%, 1.0);}
 .bg-maroon  { background-color: @maroon; color:hsla(331, 74%, 70%, 1.0);}
 .bg-white   { background-color: @white; color: @black; }
-.bg-silver  { background-color: @silver; }
+.bg-silver  { background-color: @silver; color: @black; }
 .bg-gray, .bg-grey  { background-color: @gray; color:@white; }
 .bg-black   { background-color: @black; color:@white; }
 
@@ -363,6 +385,8 @@ tt {
     }
 }
 .list-nostyle { list-style: none; }
+/*Credit: https://unfetteredthoughts.net/2017/09/26/voiceover-and-list-style-type-none/ */
+.list-nostyle li:before { content: "\200B"; /* add zero-width space */ }
 .list-group.raised li { border:none; }
 
 
@@ -660,6 +684,8 @@ blockquote:last-child { margin-bottom:0; }
 //TODO: why not use .panel iso .alert as base for these communication boxes
 .default, .success, .information, .info,  .warning, .error, .danger {
     .alert;
+    padding: ((@line-height-computed - 1) / 2);   //re-use same padding as a PRE block
+
 }
 //support inline information blocks
 span.default, span.success, span.information, span.info,  span.warning, span.error, span.danger {

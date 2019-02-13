@@ -193,6 +193,7 @@
             -->
             <resource>
               <directory>${project.build.directory}/generated-sources/wro</directory>
+              <directory>src/main/styles/static</directory>
             </resource>
           </webResources>
         </configuration>

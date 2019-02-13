@@ -335,16 +335,19 @@
       <wiki:PageExists page="MoreMenu">
 
         <wiki:CheckRequestContext context='view|info|diff|upload|createGroup'>
-          <li class="divider "></li>
+	      <wiki:PageExists>
+            <li class="divider "></li>
+          </wiki:PageExists>
         </wiki:CheckRequestContext>
+
         <wiki:CheckRequestContext context='prefs|edit'>
           <wiki:UserCheck status="authenticated">
             <li class="divider "></li>
           </wiki:UserCheck>
         </wiki:CheckRequestContext>
 
+        <li class="more-menu"><wiki:InsertPage page="MoreMenu" /></li>
 
-      <li class="more-menu"><wiki:InsertPage page="MoreMenu" /></li>
       </wiki:PageExists>
 
     </ul>

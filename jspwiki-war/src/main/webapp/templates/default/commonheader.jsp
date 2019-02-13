@@ -61,6 +61,11 @@ String.I18N.PREFIX = "javascript.";
 <link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
      href="<wiki:Link format='url' templatefile='haddock.css'/>" />
 
+<c:if test="${prefs.Appearance }">
+<link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
+     href="<wiki:Link format='url' templatefile='../../scripts-dev/src/main/styles/themes/dark.css'/>"/>
+</c:if>
+
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
 
@@ -69,7 +74,6 @@ String.I18N.PREFIX = "javascript.";
 <script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
 
 <wiki:IncludeResources type="script"/>
-
 
 
 <meta name="wikiContext" content='<wiki:Variable var="requestcontext" />' />
