@@ -1,3 +1,13 @@
+2019-02-14  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M2-git-06
+       
+       * lots of internal refactorings, mostly around a) Task's implementations extracted to their own package 
+         and b) PageManager and PageLock moved to o.a.w.pages package, in order to untangle some class/package
+         circular dependencies
+       
+       * JUnit updated to 5.4.0
+
 2019-02-13  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M2-git-05
