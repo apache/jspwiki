@@ -19,7 +19,7 @@
 package org.apache.wiki;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -27,13 +27,13 @@ import java.util.Collection;
  */
 public class LinkCollector implements StringTransmutator {
 	
-    private ArrayList< String > m_items = new ArrayList< String >();
+    private List< String > m_items = new ArrayList<>();
 
     /**
      * Returns a List of Strings representing links.
      * @return the link collection
      */
-    public Collection< String > getLinks() {
+    public List< String > getLinks() {
         return m_items;
     }
 
