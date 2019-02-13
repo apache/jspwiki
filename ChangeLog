@@ -1,23 +1,33 @@
+2019-02-13  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M2-git-04
+
+       * JSPWIKI-1091: Broken DIFF view
+         Added some missing JSP in default template. (caused by template rename)
+
+       * Added missing <html lang=..> localization
+
+
 2019-02-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M2-git-03
-       
+
        * merged [PR#10](https://github.com/apache/jspwiki/pull/10): DOCTYPE and HTML lang="en" attribute addition
          (thanks to Scott Fredrickson)
-       
+
        * `o.a.w.util` package ready to be extracted to its own module
-       
+
        * new `o.a.w.pages` package, with `PageSorter` becoming a `Comparator< String >` and no longer accesible from WikiContext
          * `PageSorter` is accesed now through `PageManager`
          * to compare WikiPages use `wikiPage.compareTo( anotherWikiPage );`
-         * `sortPages` methods are also gone, as an alternative you can use something along these lines (see 
+         * `sortPages` methods are also gone, as an alternative you can use something along these lines (see
            `AttachmentManager#listAttachments` for another example):
            `Collections.< WikiPage >sort( pages, Comparator.comparing( WikiPage::getName, m_engine.getPageManager().getPageSorter() ) );`
-         * as a side effect of this change, `AbstractReferalPlugin#filter[AndSort]Collection` methods operate with 
-           `Collection< String >` instead of with plain `Collection` (except for `RecentChangesPlugin`, plugins 
-           inheriting this method were already doing it), custom plugins inheriting this method will have to use 
-           new `filterWikiPageCollection` method instead 
-       
+         * as a side effect of this change, `AbstractReferalPlugin#filter[AndSort]Collection` methods operate with
+           `Collection< String >` instead of with plain `Collection` (except for `RecentChangesPlugin`, plugins
+           inheriting this method were already doing it), custom plugins inheriting this method will have to use
+           new `filterWikiPageCollection` method instead
+
        * other internal code refactors
 
 2019-02-03  Dirk Frederickx (brushed AT apache DOT org)

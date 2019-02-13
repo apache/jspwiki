@@ -65,6 +65,9 @@
     wikiContext.getWikiSession().addMessage( msg );
 %>
 
+<!doctype html>
+<html lang="${prefs.Language}" name="top">
+  <body>
    <h3>JSPWiki has detected an error</h3>
 
    <dl>
@@ -93,4 +96,5 @@
    sleep.  It's not like it's the end of the world.
    </p>
 
-   <br clear="all" />
+  </body>
+</html>

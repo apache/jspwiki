@@ -20,9 +20,10 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="org.apache.wiki.*" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <!doctype html>
-<html lang="en">
+<html lang="${prefs.Language}" name="top">
   <head>
 
   <title>

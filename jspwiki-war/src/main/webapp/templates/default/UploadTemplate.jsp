@@ -25,7 +25,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <!doctype html>
-<html lang="en">
+<html lang="${prefs.Language}" name="top">
   <head>
 
   <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
