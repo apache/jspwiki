@@ -20,10 +20,10 @@
 package org.apache.wiki.plugin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -141,8 +141,8 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
     private List<String> listPages( WikiContext context, String include, String exclude ) throws ProviderException {
         Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
         Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
-        List<String> result = new ArrayList<>();
-        Collection<String> pages = context.getEngine().getReferenceManager().findCreated();
+        List< String > result = new ArrayList<>();
+        Set< String > pages = context.getEngine().getReferenceManager().findCreated();
         for ( Iterator<String> i = pages.iterator(); i.hasNext(); ) {
             String pageName = i.next();
             if ( excludePtrn.matcher( pageName ).matches() ) continue;
