@@ -21,13 +21,13 @@ package org.apache.wiki.workflow;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -98,9 +98,9 @@ public class WorkflowManager implements WikiEventListener {
     public WorkflowManager()
     {
         m_next = 1;
-        m_workflows = new HashSet<>();
-        m_approvers = new HashMap<>();
-        m_completed = new ArrayList<>();
+        m_workflows = ConcurrentHashMap.newKeySet();
+        m_approvers = new ConcurrentHashMap<>();
+        m_completed = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -125,7 +125,9 @@ public class WorkflowManager implements WikiEventListener {
      * @return the current workflows
      */
     public Collection< Workflow > getWorkflows() {
-        return new HashSet<>( m_workflows );
+        Set< Workflow > workflows = ConcurrentHashMap.newKeySet();
+        workflows.addAll( m_workflows );
+        return workflows;
     }
 
     /**
@@ -133,7 +135,7 @@ public class WorkflowManager implements WikiEventListener {
      * @return the finished workflows
      */
     public List< Workflow > getCompletedWorkflows() {
-        return new ArrayList< >( m_completed );
+        return new CopyOnWriteArrayList< >( m_completed );
     }
 
     private WikiEngine m_engine = null;
@@ -333,7 +335,7 @@ public class WorkflowManager implements WikiEventListener {
      *
      * @param workflow the workflow to add
      */
-    protected synchronized void add( Workflow workflow ) {
+    protected void add( Workflow workflow ) {
         if ( workflow.getWorkflowManager() == null ) {
             workflow.setWorkflowManager( this );
         }
@@ -350,7 +352,7 @@ public class WorkflowManager implements WikiEventListener {
      *
      * @param workflow the workflow to remove
      */
-    protected synchronized void remove(Workflow workflow) {
+    protected void remove(Workflow workflow) {
         if ( m_workflows.contains( workflow ) ) {
             m_workflows.remove( workflow );
             m_completed.add( workflow );
