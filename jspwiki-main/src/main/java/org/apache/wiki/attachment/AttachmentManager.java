@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -533,7 +532,7 @@ public class AttachmentManager
 
         m_provider.putAttachmentData( att, in );
 
-        m_engine.getReferenceManager().updateReferences( att.getName(), new Vector< String >() );
+        m_engine.getReferenceManager().updateReferences( att.getName(), new ArrayList< String >() );
 
         WikiPage parent = new WikiPage( m_engine, att.getParentName() );
         m_engine.updateReferences( parent );
