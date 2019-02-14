@@ -63,7 +63,7 @@ String.I18N.PREFIX = "javascript.";
 
 <c:if test="${prefs.Appearance }">
 <link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
-     href="<wiki:Link format='url' templatefile='../../scripts-dev/src/main/styles/themes/dark.css'/>"/>
+     href="<wiki:Link format='url' templatefile='haddock-dark.css'/>"/>
 </c:if>
 
 <wiki:IncludeResources type="stylesheet"/>
