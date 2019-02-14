@@ -13,10 +13,17 @@
  */
 package org.apache.wiki;
 
-import java.io.*;
-import java.util.*;
-
-import org.apache.wiki.Release;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeSet;
 
 /**
  * Simple utility that shows you a sorted list of property differences between
@@ -45,7 +52,7 @@ public class TranslationsCheck
         if( args.length == 0 )
         {
             System.out.println("Usage: java TranslationsCheck <language> [<path>]");
-            System.out.println("Example: java TranslationsCheck nl jspwiki-war/src/main/resources]");
+            System.out.println("Example: java TranslationsCheck nl [jspwiki-main/src/main/resources]");
             return;
         }
 
