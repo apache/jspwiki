@@ -147,7 +147,17 @@ public class TestEngine extends WikiEngine
      * @return the new request
      */
     public MockHttpServletRequest newHttpRequest( String path ) {
-        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path ) {
+            @Override
+            public ServletContext getServletContext() { // stripes mock returns null
+                return new MockServletContext( "/JSPWiki" ) {
+                    @Override
+                    public String getRealPath( final String path ) { // stripes mock returns null
+                        return path ;
+                    }
+                };
+            }
+        };
         request.setSession( new MockHttpSession( this.getServletContext() ) );
         request.addLocale( new Locale( "" ) );
         return request;

@@ -21,6 +21,8 @@ package org.apache.wiki;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +46,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -129,6 +132,9 @@ public class WikiEngine
 
     /** The default inlining pattern.  Currently "*.png" */
     public static final String DEFAULT_INLINEPATTERN = "*.png";
+    
+    /** The name used for the default template. The value is {@value}. */
+    public static final String DEFAULT_TEMPLATE_NAME = "default";
 
     /** Property for application name */
     public static final String PROP_APPNAME = "jspwiki.applicationName";
@@ -525,6 +531,7 @@ public class WikiEngine
         m_useUTF8        = StandardCharsets.UTF_8.name().equals( TextUtil.getStringProperty( props, PROP_ENCODING, StandardCharsets.ISO_8859_1.name() ) );
         m_beautifyTitle  = TextUtil.getBooleanProperty( props, PROP_BEAUTIFYTITLE, m_beautifyTitle );
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
+        enforceValidTemplateDirectory();
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
         //
@@ -676,6 +683,34 @@ public class WikiEngine
         log.info("WikiEngine configured.");
         m_isConfigured = true;
     }
+    
+    /**
+     * Checks if the template directory specified in the wiki's properties actually exists. If it doesn't, then {@code m_templateDir} is
+     * set to {@link #DEFAULT_TEMPLATE_NAME}.
+     * <p>
+     * This checks the existence of the <tt>ViewTemplate.jsp</tt> file, which exists in every template using {@code m_servletContext.getRealPath("/")}.
+     * <p>
+     * {@code m_servletContext.getRealPath("/")} can return {@code null} on certain servers/conditions (f.ex, packed wars), an extra check
+     * against {@code m_servletContext.getResource} is made.
+     */
+    void enforceValidTemplateDirectory() {
+        if( m_servletContext != null ) {
+            final String viewTemplate = "templates" + File.separator + getTemplateDir() + File.separator + "ViewTemplate.jsp";
+            boolean exists = new File( m_servletContext.getRealPath("/") + viewTemplate ).exists();
+            if( !exists ) {
+                try {
+                    URL url = m_servletContext.getResource( viewTemplate );
+                    exists = url != null && StringUtils.isNotEmpty( url.getFile() );
+                } catch( MalformedURLException e ) {
+                    exists = false;
+                }
+            }
+            if( !exists ) {
+                log.warn( getTemplateDir() + " template not found, updating WikiEngine's default template to " + DEFAULT_TEMPLATE_NAME );
+                m_templateDir = DEFAULT_TEMPLATE_NAME;
+            }
+        }
+    }
 
     /**
      *  Initializes the reference manager. Scans all existing WikiPages for
@@ -734,7 +769,7 @@ public class WikiEngine
      *  @since 1.9.20
      *  @return The template directory as initialized by the engine.
      */
-    public String getTemplateDir()
+    public String getTemplateDir() 
     {
         return m_templateDir;
     }
