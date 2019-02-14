@@ -21,6 +21,7 @@ package org.apache.wiki;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.PropertyPermission;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -73,103 +74,99 @@ public class WikiContext
     private    WikiPage   m_realPage;
     private    WikiEngine m_engine;
     private    String     m_template = "default";
-
+    
     private    HashMap<String,Object> m_variableMap = new HashMap<>();
 
-    /**
-     *  Stores the HttpServletRequest.  May be null, if the request did not
-     *  come from a servlet.
-     */
+    /** Stores the HttpServletRequest.  May be null, if the request did not come from a servlet. */
     protected  HttpServletRequest m_request = null;
 
     private    WikiSession m_session = null;
-
+    
     /** User is administering JSPWiki (Install, SecurityConfig). */
-    public static final String    INSTALL  = WikiCommand.INSTALL.getRequestContext();
+    public static final String INSTALL = WikiCommand.INSTALL.getRequestContext();
 
-    /** The VIEW context - the user just wants to view the page
-        contents. */
-    public static final String    VIEW     = PageCommand.VIEW.getRequestContext();
+    /** The VIEW context - the user just wants to view the page contents. */
+    public static final String VIEW = PageCommand.VIEW.getRequestContext();
 
     /** User wants to view or administer workflows. */
-    public static final String    WORKFLOW = WikiCommand.WORKFLOW.getRequestContext();
+    public static final String WORKFLOW = WikiCommand.WORKFLOW.getRequestContext();
 
     /** The EDIT context - the user is editing the page. */
-    public static final String    EDIT     = PageCommand.EDIT.getRequestContext();
+    public static final String EDIT = PageCommand.EDIT.getRequestContext();
 
     /** User is preparing for a login/authentication. */
-    public static final String    LOGIN    = WikiCommand.LOGIN.getRequestContext();
+    public static final String LOGIN = WikiCommand.LOGIN.getRequestContext();
 
     /** User is preparing to log out. */
-    public static final String    LOGOUT   = WikiCommand.LOGOUT.getRequestContext();
+    public static final String LOGOUT = WikiCommand.LOGOUT.getRequestContext();
 
     /** JSPWiki wants to display a message. */
-    public static final String    MESSAGE  = WikiCommand.MESSAGE.getRequestContext();
+    public static final String MESSAGE = WikiCommand.MESSAGE.getRequestContext();
 
     /** User is viewing a DIFF between the two versions of the page. */
-    public static final String    DIFF     = PageCommand.DIFF.getRequestContext();
+    public static final String DIFF = PageCommand.DIFF.getRequestContext();
 
     /** User is viewing page history. */
-    public static final String    INFO     = PageCommand.INFO.getRequestContext();
+    public static final String INFO = PageCommand.INFO.getRequestContext();
 
     /** User is previewing the changes he just made. */
-    public static final String    PREVIEW  = PageCommand.PREVIEW.getRequestContext();
+    public static final String PREVIEW = PageCommand.PREVIEW.getRequestContext();
 
     /** User has an internal conflict, and does quite not know what to
         do. Please provide some counseling. */
-    public static final String    CONFLICT = PageCommand.CONFLICT.getRequestContext();
+    public static final String CONFLICT = PageCommand.CONFLICT.getRequestContext();
 
     /** An error has been encountered and the user needs to be informed. */
-    public static final String    ERROR    = WikiCommand.ERROR.getRequestContext();
+    public static final String ERROR = WikiCommand.ERROR.getRequestContext();
 
     /** User is uploading something. */
-    public static final String    UPLOAD   = PageCommand.UPLOAD.getRequestContext();
+    public static final String UPLOAD = PageCommand.UPLOAD.getRequestContext();
 
     /** User is commenting something. */
-    public static final String    COMMENT  = PageCommand.COMMENT.getRequestContext();
+    public static final String COMMENT = PageCommand.COMMENT.getRequestContext();
 
     /** User is searching for content. */
-    public static final String    FIND     = WikiCommand.FIND.getRequestContext();
+    public static final String FIND = WikiCommand.FIND.getRequestContext();
 
     /** User wishes to create a new group */
-    public static final String    CREATE_GROUP = WikiCommand.CREATE_GROUP.getRequestContext();
+    public static final String CREATE_GROUP = WikiCommand.CREATE_GROUP.getRequestContext();
 
     /** User is deleting an existing group. */
-    public static final String    DELETE_GROUP = GroupCommand.DELETE_GROUP.getRequestContext();
+    public static final String DELETE_GROUP = GroupCommand.DELETE_GROUP.getRequestContext();
 
     /** User is editing an existing group. */
-    public static final String    EDIT_GROUP = GroupCommand.EDIT_GROUP.getRequestContext();
+    public static final String EDIT_GROUP = GroupCommand.EDIT_GROUP.getRequestContext();
 
     /** User is viewing an existing group */
-    public static final String    VIEW_GROUP = GroupCommand.VIEW_GROUP.getRequestContext();
+    public static final String VIEW_GROUP = GroupCommand.VIEW_GROUP.getRequestContext();
 
     /** User is editing preferences */
-    public static final String    PREFS    = WikiCommand.PREFS.getRequestContext();
+    public static final String PREFS = WikiCommand.PREFS.getRequestContext();
 
     /** User is renaming a page. */
-    public static final String    RENAME   = PageCommand.RENAME.getRequestContext();
+    public static final String RENAME = PageCommand.RENAME.getRequestContext();
 
     /** User is deleting a page or an attachment. */
-    public static final String    DELETE   = PageCommand.DELETE.getRequestContext();
+    public static final String DELETE = PageCommand.DELETE.getRequestContext();
 
     /** User is downloading an attachment. */
-    public static final String    ATTACH   = PageCommand.ATTACH.getRequestContext();
+    public static final String ATTACH = PageCommand.ATTACH.getRequestContext();
 
     /** RSS feed is being generated. */
-    public static final String    RSS      = PageCommand.RSS.getRequestContext();
+    public static final String RSS = PageCommand.RSS.getRequestContext();
 
     /** This is not a JSPWiki context, use it to access static files. */
-    public static final String    NONE     = PageCommand.NONE.getRequestContext();
+    public static final String NONE = PageCommand.NONE.getRequestContext();
 
     /** Same as NONE; this is just a clarification. */
-    public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
+    public static final String OTHER = PageCommand.OTHER.getRequestContext();
 
     /** User is doing administrative things. */
-    public static final String    ADMIN    = WikiCommand.ADMIN.getRequestContext();
+    public static final String ADMIN = WikiCommand.ADMIN.getRequestContext();
 
-    private static final Logger   log      = Logger.getLogger( WikiContext.class );
+    private static final Logger log = Logger.getLogger( WikiContext.class );
 
-    private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
+    private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 
     /**
      *  Create a new WikiContext for the given WikiPage. Delegates to
@@ -662,12 +659,12 @@ public class WikiContext
             copy.m_engine = m_engine;
             copy.m_command = m_command;
 
-            copy.m_template       = m_template;
-            copy.m_variableMap    = m_variableMap;
-            copy.m_request        = m_request;
-            copy.m_session        = m_session;
-            copy.m_page           = m_page;
-            copy.m_realPage       = m_realPage;
+            copy.m_template    = m_template;
+            copy.m_variableMap = m_variableMap;
+            copy.m_request     = m_request;
+            copy.m_session     = m_session;
+            copy.m_page        = m_page;
+            copy.m_realPage    = m_realPage;
             return copy;
         }
         catch( CloneNotSupportedException e ){} // Never happens
@@ -682,6 +679,7 @@ public class WikiContext
      *  @since  2.8.0
      *  @return A deep clone of the WikiContext.
      */
+    @SuppressWarnings("unchecked")
     public WikiContext deepClone()
     {
         try
@@ -694,12 +692,12 @@ public class WikiContext
             copy.m_engine  = m_engine;
             copy.m_command = m_command; // Static structure
 
-            copy.m_template       = m_template;
-            copy.m_variableMap    = (HashMap<String,Object>)m_variableMap.clone();
-            copy.m_request        = m_request;
-            copy.m_session        = m_session;
-            copy.m_page           = (WikiPage)m_page.clone();
-            copy.m_realPage       = (WikiPage)m_realPage.clone();
+            copy.m_template    = m_template;
+            copy.m_variableMap = (HashMap<String,Object>)m_variableMap.clone();
+            copy.m_request     = m_request;
+            copy.m_session     = m_session;
+            copy.m_page        = (WikiPage)m_page.clone();
+            copy.m_realPage    = (WikiPage)m_realPage.clone();
             return copy;
         }
         catch( CloneNotSupportedException e ){} // Never happens
@@ -814,9 +812,6 @@ public class WikiContext
      */
     protected void setDefaultTemplate( HttpServletRequest request )
     {
-        // FIXME: Most definitely this should be checked for
-        //        existence, or else it is possible to create pages that
-        //        cannot be shown.
         String defaultTemplate = m_engine.getTemplateDir();
 
         //  Figure out which template we should be using for this page.
