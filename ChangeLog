@@ -1,3 +1,22 @@
+2019-02-15  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M2-git-07
+       
+       * JSPWIKI-1088: Fallback to default template if jspwiki.templateDir if the requested template folder is 
+         not found
+       
+       * JSPWIKI-1092: Upgrade bundled dependencies
+         * flexmark to 0.40.16
+         * gson to 2.8.5
+         * lucene to 7.7.0
+         * nekohtml to 1.9.22
+         * stripes to 1.7.0-async (needed to test JSPWIKI-1088)
+         * tomcat to 8.5.38
+       
+       * fixed css path and packaging of webresources
+       
+       * updated both new and missing es resources
+
 2019-02-14  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M2-git-06
