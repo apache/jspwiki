@@ -52,7 +52,7 @@
     String usertext = EditorManager.getEditedText(pageContext);
 
 %>
-<wiki:RequestResource type="stylesheet" resource="templates/haddock/haddock-wysiwyg.css" />
+<wiki:RequestResource type="stylesheet" resource="templates/default/haddock-wysiwyg.css" />
 <wiki:RequestResource type="script" resource="scripts/haddock-wysiwyg.js" />
 <c:set var='context'><wiki:Variable var='requestcontext' /></c:set>
 <wiki:CheckRequestContext context="edit">

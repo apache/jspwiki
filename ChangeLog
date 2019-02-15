@@ -1,10 +1,17 @@
+2019-02-15  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M2-git-08
+
+       * WYSIWYG editor was still pointing to the Haddock template.
+
+
 2019-02-15  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M2-git-07
-       
-       * JSPWIKI-1088: Fallback to default template if jspwiki.templateDir if the requested template folder is 
+
+       * JSPWIKI-1088: Fallback to default template if jspwiki.templateDir if the requested template folder is
          not found
-       
+
        * JSPWIKI-1092: Upgrade bundled dependencies
          * flexmark to 0.40.16
          * gson to 2.8.5
@@ -12,19 +19,19 @@
          * nekohtml to 1.9.22
          * stripes to 1.7.0-async (needed to test JSPWIKI-1088)
          * tomcat to 8.5.38
-       
+
        * fixed css path and packaging of webresources
-       
+
        * updated both new and missing es resources
 
 2019-02-14  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M2-git-06
-       
-       * lots of internal refactorings, mostly around a) Task's implementations extracted to their own package 
+
+       * lots of internal refactorings, mostly around a) Task's implementations extracted to their own package
          and b) PageManager and PageLock moved to o.a.w.pages package, in order to untangle some class/package
          circular dependencies
-       
+
        * JUnit updated to 5.4.0
 
 2019-02-13  Dirk Frederickx (brushed AT apache DOT org)
