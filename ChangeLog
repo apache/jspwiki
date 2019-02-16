@@ -1,5 +1,15 @@
 2019-02-15  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.11.0-M2-git-09
+
+       * Clean browsers LocalStorage cache of unsaved page edits
+         when switching between plain & WYSIWYG editors.
+
+       * Fix (resizable) height of the wysiwig editor HTML viewer.
+
+
+2019-02-15  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.11.0-M2-git-08
 
        * WYSIWYG editor was still pointing to the Haddock template.

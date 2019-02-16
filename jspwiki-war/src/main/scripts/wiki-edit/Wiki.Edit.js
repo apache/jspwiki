@@ -34,6 +34,7 @@ Class: Wiki.Edit
 var PreviewSemaphore,  //global semaphore to avoid double running the XHR preview
     LocalCache; //name of the localstorage key
 
+
 wiki.add("textarea#editorarea", function( main ){
 
     var form = main.form, snipe, preview;
@@ -103,7 +104,16 @@ wiki.add("textarea#editorarea", function( main ){
 
     }
 
-});
+
+}).add("textarea[name=htmlPageText]", function( main){
+
+    LocalCache = "wiki" + wiki.PageName;
+    if(LocalCache in localStorage){
+        localStorage.removeItem( LocalCache );
+    }
+
+})
+
 
 
 /*
@@ -140,7 +150,6 @@ Function: livepreview
     Make AJAX call to the wiki server to convert the contents of the textarea
     (wiki markup) to HTML.
 */
-
 function livepreview(content, preview, previewToggle){
 
     var isEmpty = content == "",
@@ -271,5 +280,7 @@ function jspwikiSectionParser( text ){
     return result;
 
 }
+
+
 
 })( Wiki );

@@ -274,14 +274,16 @@ Wiki.add("[name=htmlPageText]", function( element){
     function containerHeight(){ return editor.container.getStyle("height"); }
     function editorHeight(){ return editor.iframe.getStyle("height"); }
     function editorContent(){ return editor.getContent(); }
-    function resizePreview(){ preview.setStyle("height", containerHeight()); }
+    function resizePreview(){
+        preview.setStyle("height", containerHeight());
+        form.htmlPageText.setStyle("height", editorHeight());
+    }
 
     var form = element.form,
         editor,
         preview = form.getElement(".ajaxpreview"),
         resizer = form.getElement(".resizer"),
         resizeCookie = "editorHeight",
-
         html2markup = Wiki.getXHRPreview( editorContent, preview );
 
     Wiki.configPrefs( form, function(cmd, isChecked){
@@ -299,8 +301,8 @@ Wiki.add("[name=htmlPageText]", function( element){
 
   		    editor = this;
             Wiki.resizer(resizer, $$(editor.iframe), resizePreview );
-            resizePreview();
             html2markup();
+            resizePreview();
 
   		},
   		onChange: html2markup,
