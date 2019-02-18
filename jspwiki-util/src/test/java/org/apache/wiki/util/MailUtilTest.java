@@ -81,8 +81,6 @@ public class MailUtilTest
     @Test
     public void testSendMail()
     {
-        m_props.setProperty( "jspwiki.usePageCache", "true" );
-
         String user = System.getProperty( "user.name" ) + "@localhost";
 
         try
