@@ -116,6 +116,7 @@
 
   <modules>
     <module>jspwiki-wikipages</module>
+    <module>jspwiki-util</module>
     <module>jspwiki-main</module>
     <module>jspwiki-markdown</module>
     <module>jspwiki-war</module>
