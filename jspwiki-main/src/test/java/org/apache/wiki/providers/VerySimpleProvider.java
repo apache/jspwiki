@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.providers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.search.SearchResult;
 
 /**
  *  This is a simple provider that is used by some of the tests.  It has some
@@ -93,7 +95,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Always returns null.
      */
     @Override
-    public Collection findPages( QueryItem[] query )
+    public Collection< SearchResult > findPages( QueryItem[] query )
     {
         return null;
     }
@@ -118,18 +120,18 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Returns a single page.
      */
     @Override
-    public Collection getAllPages()
+    public Collection< WikiPage > getAllPages()
     {
-        Vector<WikiPage> v = new Vector<>();
-        v.add( getPageInfo( PAGENAME, 5 ) );
-        return v;
+        List< WikiPage > l = new ArrayList<>();
+        l.add( getPageInfo( PAGENAME, 5 ) );
+        return l;
     }
 
     /**
      *  Returns the same as getAllPages().
      */
     @Override
-    public Collection getAllChangedSince( Date date )
+    public Collection< WikiPage > getAllChangedSince( Date date )
     {
         return getAllPages();
     }

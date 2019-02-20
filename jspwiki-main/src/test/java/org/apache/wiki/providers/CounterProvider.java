@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.providers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.search.SearchResult;
 
 /**
  *  A provider who counts the hits to different parts.
@@ -95,7 +97,7 @@ public class CounterProvider
     }
 
     @Override
-    public Collection findPages( QueryItem[] query )
+    public Collection< SearchResult > findPages( QueryItem[] query )
     {
         return null;
     }
@@ -125,24 +127,24 @@ public class CounterProvider
     }
 
     @Override
-    public Collection getAllPages()
+    public Collection< WikiPage > getAllPages()
     {
         m_getAllPagesCalls++;
 
-        Vector<WikiPage> v = new Vector<>();
+        List<WikiPage> l = new ArrayList<>();
 
         for( int i = 0; i < m_pages.length; i++ )
         {
-            v.add( m_pages[i] );
+            l.add( m_pages[i] );
         }
 
-        return v;
+        return l;
     }
 
     @Override
-    public Collection getAllChangedSince( Date date )
+    public Collection< WikiPage > getAllChangedSince( Date date )
     {
-        return new Vector();
+        return new ArrayList<>();
     }
 
     @Override
