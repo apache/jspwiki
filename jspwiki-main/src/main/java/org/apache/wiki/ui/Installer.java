@@ -293,22 +293,6 @@ public class Installer
         m_props.put( key, s );
     }
     
-    /**
-     * Simply sanitizes any URL which contains backslashes (sometimes Windows users may have them)
-     * @param key the key of the property to sanitize
-     */
-    private void sanitizeURL( String key )
-    {
-        String s = m_props.getProperty( key );
-        s = TextUtil.replaceString( s, "\\", "/" );
-        s = s.trim();
-        if (!s.endsWith("/"))
-        {
-            s = s + "/";
-        }
-        m_props.put( key, s );
-    }
-
     private void validateNotNull( String key, String message )
     {
         String value = m_props.getProperty( key );
