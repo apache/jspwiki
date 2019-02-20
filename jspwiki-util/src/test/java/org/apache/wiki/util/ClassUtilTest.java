@@ -58,9 +58,9 @@ public class ClassUtilTest
     public void testFindClass()
         throws Exception
     {
-        Class< ? > foo = ClassUtil.findClass( "org.apache.wiki", "WikiPage" );
+        Class< ? > foo = ClassUtil.findClass( "java.util", "List" );
 
-        Assertions.assertEquals( foo.getName(), "org.apache.wiki.WikiPage" );
+        Assertions.assertEquals( foo.getName(), "java.util.List" );
     }
 
     /**
@@ -83,11 +83,11 @@ public class ClassUtilTest
 
     @Test
     public void testAssignable() {
-        Assertions.assertTrue( ClassUtil.assignable( "org.apache.wiki.parser.JSPWikiMarkupParser", "org.apache.wiki.parser.MarkupParser" ) );
-        Assertions.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
-        Assertions.assertFalse( ClassUtil.assignable( null, "org.apache.wiki.parser.JSPWikiMarkupParser" ) );
-        Assertions.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", null ) );
-        Assertions.assertFalse( ClassUtil.assignable( "org.apache.wiki.parser.MarkupParser", "org.apache.wiki.WikiEngine" ) );
+        Assertions.assertTrue( ClassUtil.assignable( "java.util.ArrayList", "java.util.List" ) );
+        Assertions.assertFalse( ClassUtil.assignable( "java.util.List", "java.util.ArrayList" ) );
+        Assertions.assertFalse( ClassUtil.assignable( null, "java.util.ArrayList" ) );
+        Assertions.assertFalse( ClassUtil.assignable( "java.util.List", null ) );
+        Assertions.assertFalse( ClassUtil.assignable( "java.util.List", "java.util.HashMap" ) );
     }
 
 }

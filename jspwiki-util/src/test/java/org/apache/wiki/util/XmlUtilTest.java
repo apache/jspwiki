@@ -34,7 +34,7 @@ public class XmlUtilTest {
     @Test
     public void testParseFromClasspath() {
         List< Element > elements = XmlUtil.parse( "ini/jspwiki_module.xml", "/modules/plugin" );
-        Assertions.assertEquals( 4, elements.size() ); // 2 on src/main/resources, another 2 on src/test/resources
+        Assertions.assertEquals( 2, elements.size() ); // 2 on src/test/resources
 
         elements = XmlUtil.parse( "ini/jspwiki_module.xml", "/modules/filter" );
         Assertions.assertEquals( 1, elements.size() );
@@ -55,7 +55,7 @@ public class XmlUtilTest {
         Assertions.assertEquals( 0, elements.size() );
 
         elements = XmlUtil.parse( ClassUtil.MAPPINGS, "/classmappings/mapping" );
-        Assertions.assertEquals( 20, elements.size() );
+        Assertions.assertEquals( 1, elements.size() );
     }
 
     @Test
