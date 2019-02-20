@@ -34,17 +34,6 @@ public interface UserDatabase
 {
 
     /**
-     * No-op method that in previous versions of JSPWiki was intended to
-     * atomically commit changes to the user database. Now, the {@link #rename(String, String)},
-     * {@link #save(UserProfile)} and {@link #deleteByLoginName(String)} methods
-     * are atomic themselves.
-     * @throws WikiSecurityException
-     * @deprecated there is no need to call this method because the save, rename and
-     * delete methods contain their own commit logic
-     */
-    void commit() throws WikiSecurityException;
-
-    /**
      * Looks up and deletes the first {@link UserProfile} in the user database
      * that matches a profile having a given login name. If the user database
      * does not contain a user with a matching attribute, throws a

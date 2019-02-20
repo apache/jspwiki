@@ -595,16 +595,6 @@ public class UserManager {
 
         /**
          * No-op.
-         * @throws WikiSecurityException never...
-         */
-        @Override
-        public void commit() throws WikiSecurityException
-        {
-            // No operation
-        }
-
-        /**
-         * No-op.
          * @param loginName the login name to delete
          * @throws WikiSecurityException never...
          */
