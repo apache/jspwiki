@@ -78,7 +78,6 @@ public interface WikiAttachmentProvider
      *  @return A collection of Attachment objects.  May be empty, but never null.
      *  @throws ProviderException If something goes wrong when listing the attachments.
      */
-
     List< Attachment > listAttachments( WikiPage page )
         throws ProviderException;
 
@@ -87,7 +86,7 @@ public interface WikiAttachmentProvider
      * @param query An array of QueryItem objects to search for
      * @return A Collection of Attachment objects.  May be empty, but never null.
      */
-    Collection findAttachments( QueryItem[] query );
+    Collection< Attachment > findAttachments( QueryItem[] query );
 
     /**
      *  Lists changed attachments since given date.  Can also be used to fetch

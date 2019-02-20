@@ -534,9 +534,9 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
     @Override
-    public Collection findAttachments( QueryItem[] query )
+    public Collection< Attachment > findAttachments( QueryItem[] query )
     {
-        return null;
+        return new ArrayList<>();
     }
 
     /**

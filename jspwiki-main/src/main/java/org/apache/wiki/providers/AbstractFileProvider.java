@@ -331,7 +331,7 @@ public abstract class AbstractFileProvider
      *  {@inheritDoc}
      */
     @Override
-    public Collection getAllPages()
+    public Collection< WikiPage > getAllPages()
         throws ProviderException
     {
         log.debug("Getting all pages...");
@@ -376,9 +376,9 @@ public abstract class AbstractFileProvider
      *  @return {@inheritDoc}
      */
     @Override
-    public Collection getAllChangedSince( Date date )
+    public Collection< WikiPage > getAllChangedSince( Date date )
     {
-        return new ArrayList(); // FIXME
+        return new ArrayList<>(); // FIXME
     }
 
     /**
@@ -402,7 +402,7 @@ public abstract class AbstractFileProvider
      * @return {@inheritDoc}
      */
     @Override
-    public Collection findPages( QueryItem[] query )
+    public Collection< SearchResult > findPages( QueryItem[] query )
     {
         File wikipagedir = new File( m_pageDirectory );
         TreeSet<SearchResult> res = new TreeSet<>( new SearchResultComparator() );
@@ -517,7 +517,7 @@ public abstract class AbstractFileProvider
      * @since 2.10.2
      */
     protected void setCustomProperties(WikiPage page, Properties properties) {
-        Enumeration propertyNames = properties.propertyNames();
+        Enumeration< ? > propertyNames = properties.propertyNames();
     	while (propertyNames.hasMoreElements()) {
     		String key = (String) propertyNames.nextElement();
     		if (!key.equals(WikiPage.AUTHOR) && !key.equals(WikiPage.CHANGENOTE) && !key.equals(WikiPage.VIEWCOUNT)) {
@@ -576,7 +576,7 @@ public abstract class AbstractFileProvider
     		if (customProperties.size()>MAX_PROPLIMIT) {
     			throw new IOException("Too many custom properties. You are adding "+customProperties.size()+", but max limit is "+MAX_PROPLIMIT);
     		}
-            Enumeration propertyNames = customProperties.propertyNames();
+            Enumeration< ? > propertyNames = customProperties.propertyNames();
         	while (propertyNames.hasMoreElements()) {
         		String key = (String) propertyNames.nextElement();
         		String value = (String)customProperties.get(key);

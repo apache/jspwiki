@@ -36,6 +36,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.util.ClassUtil;
 
 import net.sf.ehcache.Cache;
@@ -367,7 +368,7 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection getAllPages() throws ProviderException {
+    public Collection< WikiPage > getAllPages() throws ProviderException {
         Collection< WikiPage > all;
 
         if (m_gotall == false) {
@@ -385,8 +386,9 @@ public class CachingProvider implements WikiPageProvider {
                 m_gotall = true;
             }
         } else {
-            List<String> keys = m_cache.getKeysWithExpiryCheck();
-            all = new TreeSet<WikiPage>();
+            @SuppressWarnings("unchecked")
+            List< String > keys = m_cache.getKeysWithExpiryCheck();
+            all = new TreeSet<>();
             for (String key : keys) {
                 Element element = m_cache.get(key);
                 WikiPage cachedPage = ( WikiPage )element.getObjectValue();
@@ -410,7 +412,7 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection getAllChangedSince( Date date )
+    public Collection< WikiPage > getAllChangedSince( Date date )
     {
         return m_provider.getAllChangedSince( date );
     }
@@ -429,7 +431,7 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection findPages( QueryItem[] query )
+    public Collection< SearchResult > findPages( QueryItem[] query )
     {
         //
         //  If the provider is a fast searcher, then

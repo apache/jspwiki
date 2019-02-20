@@ -26,6 +26,8 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.search.SearchResult;
+
 
 /**
  *  Each Wiki page provider should implement this interface.
@@ -40,11 +42,9 @@ import org.apache.wiki.search.QueryItem;
  *  <P>
  *  FIXME: In reality we should have an AbstractWikiPageProvider,
  *  which would provide intelligent backups for subclasses.
- *
  */
-public interface WikiPageProvider
-    extends WikiProvider
-{
+public interface WikiPageProvider extends WikiProvider {
+
     /**
      *  Attempts to save the page text for page "page".  Note that the
      *  provider creates a new version regardless of what the version
@@ -54,8 +54,7 @@ public interface WikiPageProvider
      *  @param text The text to save.
      *  @throws ProviderException If something goes wrong.
      */
-    void putPageText( WikiPage page, String text )
-        throws ProviderException;
+    void putPageText( WikiPage page, String text ) throws ProviderException;
 
     /**
      *  Return true, if page exists.
@@ -63,7 +62,6 @@ public interface WikiPageProvider
      *  @param page The page name.
      *  @return true, if the page exists; false otherwise.
      */
-
     boolean pageExists( String page );
 
     /**
@@ -86,7 +84,7 @@ public interface WikiPageProvider
      *  @param query An array of QueryItems to match
      *  @return A Collection of WikiPages.
      */
-    Collection findPages( QueryItem[] query );
+    Collection< SearchResult > findPages( QueryItem[] query );
 
     /**
      *  Returns info about the page.
@@ -96,8 +94,7 @@ public interface WikiPageProvider
      *  @param version The version number
      *  @throws ProviderException If something goes wrong.
      */
-    WikiPage getPageInfo( String page, int version )
-        throws ProviderException;
+    WikiPage getPageInfo( String page, int version ) throws ProviderException;
 
     /**
      *  Returns all pages.  Each element in the returned
@@ -106,9 +103,7 @@ public interface WikiPageProvider
      *  @return A collection of WikiPages
      *  @throws ProviderException If something goes wrong.
      */
-
-    Collection getAllPages()
-        throws ProviderException;
+    Collection< WikiPage > getAllPages() throws ProviderException;
 
     /**
      *  Gets a list of recent changes.
@@ -117,8 +112,7 @@ public interface WikiPageProvider
      *  @return A Collection of WikiPages
      *  @since 1.6.4
      */
-
-    Collection getAllChangedSince( Date date );
+    Collection< WikiPage > getAllChangedSince( Date date );
 
     /**
      *  Gets the number of pages.
@@ -127,9 +121,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong
      *  @since 1.6.4
      */
-
-    int getPageCount()
-        throws ProviderException;
+    int getPageCount() throws ProviderException;
 
     /**
      *  Returns version history.  Each element should be
@@ -150,9 +142,7 @@ public interface WikiPageProvider
      *  @return The content of the page, or null, if the page does not exist.
      *  @throws ProviderException If something goes wrong.
      */
-
-    String getPageText( String page, int version )
-        throws ProviderException;
+    String getPageText( String page, int version ) throws ProviderException;
 
     /**
      *  Removes a specific version from the repository.  The implementations
@@ -166,9 +156,7 @@ public interface WikiPageProvider
      *
      *  @throws ProviderException If the page cannot be removed for some reason.
      */
-
-    void deleteVersion( String pageName, int version )
-        throws ProviderException;
+    void deleteVersion( String pageName, int version ) throws ProviderException;
 
     /**
      *  Removes an entire page from the repository.  The implementations
@@ -189,23 +177,16 @@ public interface WikiPageProvider
      *
      *  @throws ProviderException If the page could not be removed for some reason.
      */
-    void deletePage( String pageName )
-        throws ProviderException;
+    void deletePage( String pageName ) throws ProviderException;
 
-     
-     /**
-      * Move a page
-      *
-      * @param from  Name of the page to move.
-      * @param to    New name of the page.
-      *
-      * @throws ProviderException If the page could not be moved for some reason.
-      */
-     void movePage(String from, String to)
-         throws ProviderException;
+    /**
+     * Move a page
+     *
+     * @param from  Name of the page to move.
+     * @param to    New name of the page.
+     *
+     * @throws ProviderException If the page could not be moved for some reason.
+     */
+    void movePage(String from, String to) throws ProviderException;
 
 }
-
-
-
-

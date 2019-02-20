@@ -206,7 +206,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public Collection findAttachments( QueryItem[] query )
+    public Collection< Attachment > findAttachments( QueryItem[] query )
     {
         return m_provider.findAttachments( query );
     }
@@ -232,7 +232,8 @@ public class CachingAttachmentProvider
                 m_gotall = true;
             }
         } else {
-            List<String> keys = m_attCache.getKeysWithExpiryCheck();
+            @SuppressWarnings("unchecked")
+            List< String > keys = m_attCache.getKeysWithExpiryCheck();
             all = new ArrayList<>();
             for (String key : keys) {
                 Element element = m_attCache.get(key);
@@ -278,6 +279,7 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Attachment getAttachmentInfo(WikiPage page, String name, int version) throws ProviderException {
         if (log.isDebugEnabled()) {
@@ -299,7 +301,9 @@ public class CachingAttachmentProvider
             log.debug(page.getName() + " wasn't in the cache");
             c = refresh(page);
 
-            if (c == null) return null; // No such attachment
+            if (c == null) {
+                return null; // No such attachment
+            }
         } else {
             log.debug(page.getName() + " FOUND in the cache");
             c = (Collection<Attachment>) element.getObjectValue();

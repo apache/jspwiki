@@ -871,7 +871,7 @@ public class VersioningFileProvider
      */
     // FIXME: This is kinda slow, we should need to do this only once.
     @Override
-    public Collection getAllPages() throws ProviderException
+    public Collection< WikiPage > getAllPages() throws ProviderException
     {
         Collection< WikiPage > pages = super.getAllPages();
         Collection< WikiPage > returnedPages = new ArrayList<>();
