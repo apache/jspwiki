@@ -61,9 +61,7 @@ import org.jdom2.JDOMException;
  * <code>admin/SecurityConfig.jsp</code>.
  * @since 2.4
  */
-public final class SecurityVerifier
-{
-    private static final long     serialVersionUID             = -3859563355089169941L;
+public final class SecurityVerifier {
 
     private WikiEngine            m_engine;
 
