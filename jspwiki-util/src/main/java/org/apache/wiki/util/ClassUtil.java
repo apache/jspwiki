@@ -356,7 +356,7 @@ public final class ClassUtil {
      *  @return A Class object which you can then instantiate.
      *  @throws ClassNotFoundException
      */
-    private static Class< ? > getMappedClass( String requestedClass ) throws ClassNotFoundException {
+    public static Class< ? > getMappedClass( String requestedClass ) throws ClassNotFoundException {
         String mappedClass = c_classMappings.get( requestedClass );
         
         if( mappedClass == null )

@@ -64,7 +64,6 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.acl.AclManager;
-import org.apache.wiki.auth.acl.DefaultAclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
@@ -2330,7 +2329,7 @@ public class WikiEngine
         {
             try
             {
-                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, DefaultAclManager.class.getName() );
+                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
                 m_aclManager = ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
                 m_aclManager.initialize( this, m_properties );
             }
