@@ -1,3 +1,11 @@
+2019-02-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M2-git-10
+       
+       * o.a.jwpiki.util package moved to its own submodule
+       
+       * remove DefaultAclManager dependency from WikiEngine and other small refactors
+
 2019-02-15  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M2-git-09
