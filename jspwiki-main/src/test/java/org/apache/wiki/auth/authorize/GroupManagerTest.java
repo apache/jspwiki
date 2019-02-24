@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.
  */
-package org.apache.wiki.auth;
+package org.apache.wiki.auth.authorize;
 import java.security.Principal;
 import java.util.Properties;
 
@@ -25,6 +25,12 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.SecurityEventTrap;
+import org.apache.wiki.auth.Users;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.event.WikiSecurityEvent;

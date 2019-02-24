@@ -16,13 +16,15 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.auth;
 
 import java.security.Principal;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 
