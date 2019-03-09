@@ -162,6 +162,15 @@ var Snipe = new Class({
         });
 
 
+        //add drag&drop handler: drag or paste data into the textarea
+        if( options.dragAndDrop ){
+
+            textarea.onDragAndDrop(options.dragAndDrop, function(){
+                self.fireEvent("change")
+            });
+        }
+
+
         self.reset();
 
         element.addEvents({
@@ -708,7 +717,7 @@ var Snipe = new Class({
 
             // match "pfx{selection}sfx" into ["pfx","selection","sfx"]
             // do not match "pfx~{do-not-match}sfx"
-            if( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^!\{\}][^\{\}]*)\}([\S\s]*)/ ) ){
+            if(( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^!{}][^{}]*)\}([\S\s]*)/ ) )){
             //if( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^\{\}]+)\}([\S\s]*)/ ) ){
 
                 //console.log("Snipe:action complex snippet 'pfx{selection}sfx' ", pfx, sel, sfx, caret.thin );

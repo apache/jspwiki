@@ -32,10 +32,10 @@
     <js>/scripts/moo-extend/Function.Extend.js</js>
     <js>/scripts/moo-extend/Behavior.js</js>
     <js>/scripts/moo-extend/String.Extend.js</js>
+    <!--<js>/scripts/moo-extend/Date.Extend.js</js>-->
     <js>/scripts/moo-extend/Array.Extend.js</js>
     <js>/scripts/moo-extend/Array.NaturalSort.js</js>
     <js>/scripts/moo-extend/Element.Extend.js</js>
-    <js>/scripts/moo-extend/Element.Placeholder.js</js>
     <js>/scripts/moo-extend/Color.js</js>
     <js>/scripts/moo-extend/HighlightQuery.js</js>
     <js>/scripts/moo-extend/Accesskey.js</js>
@@ -67,7 +67,6 @@
   </group>
 
   <group name="haddock">
-
     <group-ref>lib</group-ref>
     <group-ref>mooextend</group-ref>
     <group-ref>behaviors</group-ref>
@@ -92,7 +91,6 @@
   </group>
 
   <group name="haddock-edit">
-
     <js>/scripts/moo-extend/Date.Extend.js</js>
     <js>/scripts/moo-extend/Array.Extend.HSV.js</js>
 
@@ -105,6 +103,7 @@
     <js>/scripts/dialog/Dialog.Find.js</js>
 
     <js>/scripts/moo-extend/Textarea.js</js>
+    <js>/scripts/wiki-edit/Html2Wiki.js</js>
     <js>/scripts/wiki-edit/Undoable.js</js>
     <js>/scripts/wiki-edit/Snipe.js</js>
     <js>/scripts/wiki-edit/Snipe.Snips.js</js>

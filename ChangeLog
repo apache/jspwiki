@@ -1,5 +1,14 @@
 2019-03-09  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.11.0-M3-git-02
+
+       * Adding Drag & Drop capabilities to the standard JSPWiki editor:
+         links automatically are converted to [descriptiol|url] format
+         other content (text, tables, etc...) will be converted to wiki-markup.
+
+
+2019-03-09  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.11.0-M3-git-01
 
        * UserPreferences fixes

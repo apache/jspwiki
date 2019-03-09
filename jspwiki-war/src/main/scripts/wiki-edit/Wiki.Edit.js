@@ -27,7 +27,7 @@ Class: Wiki.Edit
 */
 
 /*eslint-env browser*/
-/*global Wiki, Snipe, Request */
+/*global $, Wiki, Snipe, Request */
 
 !(function( wiki ){
 
@@ -43,7 +43,7 @@ wiki.add("textarea#editorarea", function( main ){
 
     onbeforeunload( window, main );
 
-    if( snipe = getFormElem("textarea.snipeable") ){
+    if(( snipe = getFormElem("textarea.snipeable") )){
 
         snipe = new Snipe( snipe, {
             container: form,
@@ -52,14 +52,15 @@ wiki.add("textarea#editorarea", function( main ){
                 redo: getFormElem("[data-cmd=redo]")
             },
             snippets: wiki.Snips,
-            directsnips: wiki.DirectSnips
+            directsnips: wiki.DirectSnips,
+            dragAndDrop: processDragAndDropData
         });
 
         wiki.configPrefs(form, function(cmd, isChecked){
             snipe.set(cmd, isChecked);
         });
 
-        if( preview = getFormElem(".ajaxpreview") ){
+        if(( preview = getFormElem(".ajaxpreview") )){
 
             var snipeHasChanged = false;
 
@@ -105,7 +106,7 @@ wiki.add("textarea#editorarea", function( main ){
     }
 
 
-}).add("textarea[name=htmlPageText]", function( main){
+}).add("textarea[name=htmlPageText]", function( /*main*/ ){
 
     LocalCache = "wiki" + wiki.PageName;
     if(LocalCache in localStorage){
@@ -113,8 +114,6 @@ wiki.add("textarea#editorarea", function( main ){
     }
 
 })
-
-
 
 /*
 Function: onbeforeunload
@@ -266,7 +265,7 @@ function jspwikiSectionParser( text ){
         title = tt[i + 1].split(/[\r\n]/)[0]
 
             //remove unescaped(~) inline wiki markup __,"",{{,}}, %%(*), /%
-            .replace(/(^|[^~])(__|""|\{\{|\}\}|%%\([^\)]+\)|%%\S+\s|%%\([^\)]+\)|\/%)/g, "$1")
+            .replace(/(^|[^~])(__|""|\{\{|\}\}|%%\([^)]+\)|%%\S+\s|%%\([^)]+\)|\/%)/g, "$1")
 
             //and remove wiki-markup escape chars ~
             .replace(/~([^~])/g, "$1");
@@ -281,6 +280,18 @@ function jspwikiSectionParser( text ){
 
 }
 
+/*
+Function
+    Call back handler, invoked when data is dragged or copied into the editor textarea.
+    Call Html2Wiki.js to process the incoming data & convert to wiki markup
+
+*/
+function processDragAndDropData( dataTransfer ){
+
+    return wiki.url2links( dataTransfer.getData('text/uri-list') )
+        || wiki.html2wiki( dataTransfer.getData('text/html') );
+
+}
 
 
 })( Wiki );
