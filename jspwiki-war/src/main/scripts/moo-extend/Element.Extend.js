@@ -155,7 +155,7 @@ Element.implement({
             event.preventDefault;
 
 
-        };
+        }
 
         toggle = this.getParent( toggle );
 
@@ -477,8 +477,9 @@ Element.implement({
 
     /*
     Function: mapTextNodes
-
-        Walk all text nodes recursively and map their value via a callback function.
+        Allows you to search and replace using strings or regular expressions within HTML documents.
+        Keeps the HTML intact, and only changes text nodes.
+        It walks all text nodes recursively and maps their value via a callback function.
 
     Arguments:
         fn - callback function returning the processed textnodes (string)
@@ -486,6 +487,20 @@ Element.implement({
                                      which contain pre-formatted text
         includedEmptyNodes - (bool) skip/process empty text nodes
 
+    Example:
+        $('#my_div').stringReplace('half empty', 'half full');
+        $('#my_div').mapTextNodes( function(s){
+            return s
+                .replace( /(c)/i, "&copy;" )à
+                .replace( /(tm)/i, "&trade;" )
+                .replace( /(sm)/i, "&#8480;" );
+        );
+
+    */
+    /*
+    nodeReplace: function(findRegExp, replace){
+        this.mapTextNodes( function(s){ return s.replace(findRegExp, replace); });
+    }
     */
     mapTextNodes: function(fn, includePreCodeNodes, includeEmptyNodes){
 

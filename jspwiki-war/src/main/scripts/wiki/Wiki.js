@@ -56,11 +56,11 @@ Depends on :
 
 /*
 Class: Wiki
-    Javascript support functions for jspwiki.  (singleton)
+    Javascript support functions for jspwiki.
 */
 var Wiki = {
 
-    version: "haddock04",  //used to validate compatible preference cookies
+    version: "haddock04",  //js version, used to validate compatible preference cookies
 
     initialize: function(){
 
@@ -71,63 +71,57 @@ var Wiki = {
         wiki.once = behavior.once.bind(behavior);
         wiki.update = behavior.update.bind(behavior);
 
-
-
-        //jspwiki behaviors; needed to support the haddock template jsp's
+        //add the standard jspwiki behaviors; needed to render the haddock JSP templates
         wiki.add( "body", wiki.caniuse )
 
             .add( "[accesskey]", Accesskey )
 
-            //toggle effect:  toggle .active class on this element when clicking toggle element
             .add( "[data-toggle]", function(element){
-
+                //toggle the .active class on this element when clicking the "data-toggle" element
                 element.onToggle( element.get("data-toggle"), function(isActive){
                     var pref = element.get("data-toggle-pref");
                     if (pref) {
+                        //console.log( pref, isActive );
                         wiki.prefs.set(pref, isActive ? "active" : "");
                     }
                 });
             })
 
-            //generate modal confirmation boxes, eg prompting to execute
-            //an unrecoverable action such as deleting a page or attachment
             .add( "[data-modal]", function(element){
+                //render modal confirmation dialog
+                //prior to executing unrecoverable actions such as deleting a page or attachment
                 element.onModal( element.get("data-modal") );
             })
 
-            //hover effects: show/hide an element when hovering over the data-hover-parent element
             .add( "[data-hover-parent]", function(element){
+                //show/hide an element when hovering over the "data-hover-parent" element
                 element.onHover( element.get("data-hover-parent") );
             })
 
-            //resize the "data-resize" elements when dragging this element
-            //.add( "[data-resize]", wiki.resizer.bind(wiki) )
             .add( "[data-resize]", function(element){
+                //when dragging this element, resize the "data-resize" element
                 wiki.resizer(element, $$(element.get("data-resize")) );
             })
 
             //add header scroll-up/down effect
-            .add(".fixed-header > .header", wiki.yoyo)
+            .add( ".fixed-header > .header", wiki.yoyo )
 
-            //sticky toolbar in the editor
             .add(".sticky", function (element) {
-                element.onSticky();
+                element.onSticky();  //eg used by the sticky toolbar in the editor
             })
 
-            //highlight previous search query retreived from a cookie or referrer page
+            //highlight previous search query, retreived from a cookie or the referrer page
             .add( ".page-content", function(element){
-
                 var previousQuery = "PrevQuery";
 
                 HighlightQuery( element, wiki.prefs.get(previousQuery) );
                 wiki.prefs.erase(previousQuery);
-
             })
 
-            //activate quick navigation searchbox
+            //searchbox dropdown engines
             .add( ".searchbox .dropdown-menu", function(element){
-
-                var recentSearch = "RecentSearch", prefs = wiki.prefs;
+                var recentSearch = "RecentSearch",
+                    prefs = wiki.prefs;
 
                 //activate Recent Searches functionality
                 new wiki.Recents( element, {
@@ -137,7 +131,7 @@ var Wiki = {
                     }
                 });
 
-                //activate Quick Navigation functionality
+                //activate Quick Navigation functionality, with type-ahead search
                 new wiki.Findpages(element, {
                     rpc: function(value, callback){
                         wiki.jsonrpc("/search/pages", [value, 16], callback);
@@ -187,6 +181,8 @@ var Wiki = {
 
         body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
 
+        //body.ifClass( "ontouchstart" in document.documentElement, "can-touch" );
+
     },
 
 
@@ -210,6 +206,7 @@ var Wiki = {
             path: wiki.BasePath,
             duration: 20
         });
+        //console.log(wiki.prefs.hash);
 
         //Object.each(wiki.prefs.hash, function(item,key){ console.log("PREFS  ",key,"=>",item); });
 
@@ -219,7 +216,7 @@ var Wiki = {
         }
 
         //The initial Sidebar will be active depending on a cookie state.
-        //However, for small screen,  the default state will be hidden.
+        //However, for small screens,  the sidebar will be hidden by default.
         wiki.media("(min-width:768px)", function( screenIsLarge ){
 
             if(!screenIsLarge){
@@ -227,6 +224,13 @@ var Wiki = {
             }
 
         });
+
+        //FIXME
+        //The default Language is taken from a preference cookie, with fallback to the browser setting
+        //String.I18N.DEFAULT_LOCAL_LANGUAGE = wiki.prefs.get("Language")  || navigator.language || "en";
+        //The default Date & Time format is taken for m a preference cookie, with fallback
+        //String.I18N.DEFAULT_DATE_FORMAT = wiki.prefs.get("DateFormat") || "dd mmm yyyy hh:mm";
+
 
         //wiki.url = null;  //CHECK:  why this is needed?
         //console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
@@ -236,17 +240,17 @@ var Wiki = {
 
         }
 
+        //jump to the right section if the referrer page (previous edit) says so
         //console.log( "section", document.referrer, document.referrer.match( /\&section=(\d+)$/ ) );
         wiki.scrollTo( ( document.referrer.match( /&section=(\d+)$/ ) || [0,-1])[1] );
 
-        // initialize all registered behaviors
+        // now we are ready to run all the registered behaviors
         wiki.update();
 
-        //on page-load, also read the #hash and fire popstate events
+        //read the #hash and fire popstate events
         wiki.popstate();
 
         wiki.autofocus();
-
     },
 
 
@@ -325,7 +329,7 @@ var Wiki = {
     /*
     Function: popstate
         When pressing the back-button, the "popstate" event is fired.
-        This popstate function will fire a internal 'popstate' event
+        This popstate function will fire an internal 'popstate' event
         on the target DOM element.
 
         Behaviors (such as Tabs or Accordions) can push the ID of their
@@ -374,6 +378,7 @@ var Wiki = {
             // find              input#query2
             els = $$("input[autofocus=autofocus], textarea[autofocus=autofocus]");
             while( els[0] ){
+
                 element = els.shift();
                 //console.log("autofocus", element, element.autofocus, element.isVisible(), element.offsetWidth, element.offsetHeight, "$", element.getStyle("display"), "$");
                 if( element.isVisible() ){
@@ -422,7 +427,7 @@ var Wiki = {
 
     /*
     Function: dropdowns
-        Parse special wikipages such ase MoreMenu, HomeMenu
+        Parse special wikipage parts such ase MoreMenu, HomeMenu
         and format them as bootstrap compatible dropdown menus.
     */
     dropdowns: function(){
@@ -586,7 +591,8 @@ var Wiki = {
         });
 
         //Persist the selected editor type in the pref cookie
-        form.getElements("a.editor-type").addEvent("click", function(){
+        //????form.getElements(".dropdown-menu a[data-cmd=editor]").addEvent("click", ...
+        form.getElements("a.editor-type").addEvent("click", function () {
 
             wiki.prefs.set("editor", this.get("text"));
 

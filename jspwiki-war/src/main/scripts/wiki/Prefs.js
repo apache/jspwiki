@@ -18,6 +18,11 @@
     specific language governing permissions and limitations
     under the License.
 */
+
+/*eslint-env browser*/
+/*global Wiki */
+
+
 /*
 Javascript routines to support JSPWiki UserPreferences
     PreferencesContent.jsp
@@ -67,9 +72,19 @@ Javascript routines to support JSPWiki UserPreferences
 
                     form.getElements( datapref ).each( function(el){
 
-                        wiki.prefs.set( el.get( "data-pref" ), getValue(el) );
+                        if( el.type!="radio" || el.checked ){
+                            wiki.prefs.set( el.get( "data-pref" ), getValue(el) );
+                        }
 
                     });
+
+                    /*
+                    var key, formData = new FormData( form );
+                    for( key of formData.keys() ){
+                        wiki.prefs.set( key, formData.get(key) );   //FFS:  key = the name of input element,  not the pref name
+                    }
+                    */
+
                     break;
 
                 default :  //"clearAssertedName"
@@ -77,12 +92,14 @@ Javascript routines to support JSPWiki UserPreferences
                     //FFS: no need for an AreYouSure dialog ??
                     wiki.prefs.empty();
 
-            };
+            }
 
             //on normal submit, leave the page without asking confirmation
             windowUnload();
 
         };
+
+        //FFS: add click-triggers to some preferences:  prefLayout, prefOrientation,
 
     });
 
