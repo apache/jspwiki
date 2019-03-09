@@ -70,8 +70,8 @@ Forms:
   background-size: @wikiTriangleSize*2;
   background-repeat: no-repeat;
   background-position:
-	( @padding-base-horizontal + @wikiTriangleSize/2 ) @padding-base-vertical*1.5,
-	( @padding-base-horizontal - @wikiTriangleSize*3/2 ) @padding-base-vertical*1.5;
+	( @padding-base-horizontal + @wikiTriangleSize/2 ) @padding-base-vertical*2,
+	( @padding-base-horizontal - @wikiTriangleSize*3/2 ) @padding-base-vertical*2;
 
   text-indent: 0.01px;   //remove default arrow from firefox
   text-overflow: '';   //remove default arrow from firefox
@@ -108,16 +108,22 @@ input[type=checkbox].form-switch {
     width:2.5em;
     margin:0;
     border-radius:0.6125em;
-    box-shadow:inset -1.25em 0 0 1px @wikiFormSwitchColor;
+    box-shadow:inset -1.25em 0 0 1px @wikiFormSwitch-bg;
     background-color:@white;
-    border:1px solid @wikiFormSwitchColor;
+    border:1px solid @wikiFormSwitch-border;
     cursor:pointer;
     user-select:none;
     transition:0.2s;
 
+	&:hover {
+	    box-shadow:inset -1.25em 0 0 1px darken(@wikiFormSwitch-bg,10%);
+	}
     &:checked {
-	    box-shadow: inset 1.25em 0 0 1px @wikiFormSwitchColorOn;
-        border: 1px solid @wikiFormSwitchColorOn;
+	    box-shadow: inset 1.25em 0 0 1px @wikiFormSwitchOn-bg;
+        border: 1px solid @wikiFormSwitchOn-border;
+		&:hover {
+		    box-shadow:inset 1.25em 0 0 1px darken(@wikiFormSwitchOn-bg,10%);
+		}
     }
     &:focus {
 		outline:none;
@@ -158,15 +164,8 @@ input[type=checkbox].form-switch {
 }
 */
 
-input#prefLayout[type=checkbox]{
-
-	&:before {
-		color: #000;
-		position: absolute;
-		margin-left: 2px;
-		margin-top: 6px;
-		width: 15px;
-		height: 10px;
-		border: solid 1px currentColor;
-}
+//remove shadow from active radio-buttons; and define active color
+.form-group .btn.active {
+	box-shadow: none;
+	.button-variant(@wikiRadioActive-color; @wikiRadioActive-bg; @wikiRadioActive-border);
 }
