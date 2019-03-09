@@ -1,3 +1,21 @@
+2019-03-09  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M3-git-01
+
+       * UserPreferences fixes
+         - new toggle style for on/off switches
+         - restyle bi-model checkboxes for Page Layout setting
+         - fix a few style issues in the UserPreferences when in Dark Mode
+
+       * The JSPWiki template should by default open up in the light mode.
+
+       * Consistent css-style for the toolbar of the jspwiki wysiwyg editor
+
+       * Added Description meta-tag to improve on-page SEO
+
+       * Added the Content-Security-Policy meta-tag to reduce the risk of XSS attacks.
+
+
 2019-03-04  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * prepare release for 2.11.0.M2

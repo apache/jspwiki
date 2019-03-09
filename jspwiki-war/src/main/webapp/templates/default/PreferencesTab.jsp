@@ -165,18 +165,30 @@
   </c:if>
 
   <div class="form-group">
-    <label class="hidden" for="prefLayout"><fmt:message key="prefs.user.layout"/></label>
     <label class="control-label form-col-20" for="prefOrientation"><fmt:message key="prefs.user.layout"/></label>
-    <select id="prefLayout" name="prefLayout" data-pref="Layout">
-      <option value='fluid' ${prefs.Layout=='fluid' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fluid"/></option>
-      <option value='fixed' ${prefs.Layout=='fixed' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.layout.fixed"/></option>
-    </select>
-    <select id="prefOrientation" name="prefOrientation" data-pref="Orientation">
-      <option value='fav-left' ${prefs.Orientation=='fav-left' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.left"/></option>
-      <option value='fav-right' ${prefs.Orientation=='fav-right' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.right"/></option>
-      <%-- <option value='fav-hidden' ${prefs.Orientation=='fav-hidden' ? 'selected="selected"' : ''} ><fmt:message key="prefs.user.orientation.hidden"/></option>  --%>
-    </select>
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default" >
+        <input type="radio" data-pref="Layout"
+                            name="prefLayout" ${prefs.Layout!='fixed' ? "checked='checked'" : ""} value="fluid"><fmt:message key='prefs.user.layout.fluid' />
+      </label>
+      <label class="btn btn-default">
+        <input type="radio" data-pref="Layout"
+                            name="prefLayout" ${prefs.Layout=='fixed' ? "checked='checked'" : ""} value="fixed"><fmt:message key='prefs.user.layout.fixed' />
+      </label>
+    </div>
+
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default">
+        <input type="radio" data-pref="Orientation"
+                            name="prefOrientation" ${prefs.Orientation=='fav-left' ? "checked='checked'" : ""} value="fav-left"><fmt:message key='prefs.user.orientation.left' />
+      </label>
+      <label class="btn btn-default">
+        <input type="radio" data-pref="Orientation"
+                            name="prefOrientation" ${prefs.Orientation=='fav-right' ? "checked='checked'" : ""} value="fav-right"><fmt:message key='prefs.user.orientation.right' />
+      </label>
+    </div>
   </div>
+
 
   <div class="form-group">
     <label class="control-label form-col-20" for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label>

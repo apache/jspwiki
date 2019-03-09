@@ -120,10 +120,18 @@ images/feather-small.png   wxh  162x286
 
 // Forms
 @wikiFormFontColor: hsl(240, 100%, 23%);  //font color for input, textarea form element
-@wikiFormSwitchColor:fade(@silver, 70%);
-@wikiFormSwitchColorOn:fade(@blue, 70%);
-@wikiTriangleSize: @padding-base-horizontal/2;
+@wikiFormSwitch-bg:fade(@silver, 70%);
+@wikiFormSwitch-border:fade(@silver, 70%);
+@wikiFormSwitchOn-bg:fade(@blue, 70%);
+@wikiFormSwitchOn-border:fade(@blue, 70%);
+
+@wikiTriangleSize: @padding-base-horizontal/2.5;
 @wikiTriangleColor: @wiki-header-bg;
+
+@wikiRadioActive-color: @btn-primary-color;
+@wikiRadioActive-bg: lighten(@wiki-header-bg,10%);
+@wikiRadioActive-border: lighten(@wiki-header-bg,10%);
+
 
 // Highlight
 @wiki-hover:  @dropdown-link-hover-bg;

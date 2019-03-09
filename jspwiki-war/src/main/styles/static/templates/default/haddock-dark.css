@@ -57,15 +57,19 @@ html {
 
   --border-color: var(--background-lighter);
 
-  --context-primary: #0088cc;
-  --context-success: #47a447;
-  --context-info: #5bc0de;
-  --context-warning: #ed9c28;
-  --context-error: #d53f3a;
-  --color-black: #111;
-  --color-white: #fff;
+  --context-primary: hsl(200, 100%, 40%); /*#0088cc*/
+  --context-success: hsl(120, 40%, 46%); /*#47a447*/
+  --context-info: hsl(194, 66%, 61%); /*#5bc0de*/
+  --context-info-darker: hsl(193, 53%, 43%); /*10% darker */
+  --context-warning: hsl(35, 85%, 54%); /*#ed9c28*/
+  --context-error: hsl(	2, 65%, 53%); /*#d53f3a*/
+  --color-black: hsl(0, 0%, 7%); /*#111*/
+  --color-white: hsl(0,0%, 100%); /*#fff*/
 
-  --wikiTriangleColor: var(--context-info);
+
+  --button-active: hsl(214, 68%, 58%);
+  --button-active-darker: hsl(214, 68%, 51%);
+  --wikiTriangleColor: var(--button-active);
   --wikiTriangleSize: 4.8px;
   --padding-base-horizontal: 12px;
   --padding-base-vertical: 6px;
@@ -192,15 +196,24 @@ html {
 
 label.form-switch > input[type=checkbox],
 input[type=checkbox].form-switch {
-	box-shadow:inset -1.25em 0 0 1px var(--background-lighter);
-    background-color:transparent;
-    border:1px solid var(--background-lighter);
+	box-shadow:inset -1.25em 0 0 1px var(--text-color-normal);
+    background-color:var(--background-light);
+    border:1px solid var(--text-color-normal);
 }
-
+label.form-switch > input[type=checkbox]:hover,
+input[type=checkbox].form-switch:hover {
+	box-shadow:inset -1.25em 0 0 1px var(--text-color-normal);
+    border: 1px solid var(--text-color-normal);
+}
 label.form-switch > input[type=checkbox]:checked,
 input[type=checkbox].form-switch:checked {
-	box-shadow: inset 1.25em 0 0 1px var(--context-info);
-    border: 1px solid var(--context-info);
+	box-shadow: inset 1.25em 0 0 1px var(--button-active);
+    border: 1px solid var(--button-active);
+}
+label.form-switch > input[type=checkbox]:checked:hover,
+input[type=checkbox].form-switch:checked:hover {
+	box-shadow:inset 1.25em 0 0 1px var(--button-active-darker);
+    border: 1px solid var(--button-active-darker);
 }
 label.form-switch > input[type=checkbox]:focus,
 input[type=checkbox].form-switch:focus {

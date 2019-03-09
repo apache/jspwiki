@@ -162,8 +162,10 @@ Medium size screens,  tablets,  phones in landscape mode
 		padding-top: @padding-xs-vertical;
 		padding-bottom:@padding-xs-vertical;
 
-	    background-size: @padding-small-horizontal @padding-small-horizontal;
-	    background-position:@padding-small-horizontal center;
+	    background-position:
+			( @padding-small-horizontal + @wikiTriangleSize/2 ) @padding-small-vertical*1,
+			( @padding-small-horizontal - @wikiTriangleSize*3/2 ) @padding-small-vertical*1;
+
 	}
 	label.form-switch {
 		padding-top: @padding-small-vertical;

@@ -309,7 +309,8 @@ Wiki.add("[name=htmlPageText]", function( element){
   		onEditorKeyUp: html2markup,
         onEditorPaste: html2markup,
   		//onEditorMouseUp: html2markup,
-	    actions: 'bold italic underline strikethrough | formatBlock justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule | undo redo removeformat | createlink unlink | urlimage | toggleview'
+	    //actions: 'bold italic underline strikethrough | formatBlock justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule | undo redo removeformat | createlink unlink | urlimage | toggleview'
+	    actions: 'formatBlock | bold italic strikethrough |  justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule | undo redo removeformat | createlink unlink | urlimage | toggleview'
 	});
 
 });

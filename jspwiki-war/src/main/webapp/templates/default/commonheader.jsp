@@ -44,6 +44,16 @@ BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-i
 <meta charset="<wiki:ContentEncoding />">
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<%--
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+--%>
+
+<%--
+<wiki:PageExists>
+  <meta name="Description" content="Page version <wiki:PageVersion />, last modified by <wiki:Author format='plain'/>, on <wiki:PageDate format='${prefs["DateFormat"]}'/>" />
+</wiki:PageExists>
+--%>
+
 
 <%-- COOKIE read client preferences --%>
 <%
