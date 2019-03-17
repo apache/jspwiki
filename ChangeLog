@@ -1,3 +1,9 @@
+2019-03-17  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M3-git-03
+
+       * Remove unused top level JSP. See also [JSPWIKI-1093]
+
 2019-03-09  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M3-git-02
