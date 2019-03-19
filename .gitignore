@@ -5,3 +5,5 @@ target
 nb-configuration.xml
 **/*.iml
 .idea
+.metadata
+.checkstyle

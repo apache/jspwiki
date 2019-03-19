@@ -1,3 +1,7 @@
+2019-03-19  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * JSPWIKI-1094: mvn eclipse:eclipse fails, patch provided by Christian Fröhler, thanks! (no version bump)
+
 2019-03-17  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M3-git-03
@@ -9,7 +13,7 @@
        * 2.11.0-M3-git-02
 
        * Adding Drag & Drop capabilities to the standard JSPWiki editor:
-         links automatically are converted to [descriptiol|url] format
+         links automatically are converted to [description|url] format
          other content (text, tables, etc...) will be converted to wiki-markup.
 
 

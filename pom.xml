@@ -403,11 +403,11 @@
             <additionalConfig>
               <file>
                 <name>.checkstyle</name>
-                <location>./jspwiki-war/src/main/config/dev/jspwiki-checkstyle.xml</location>
+                <location>${maven.multiModuleProjectDirectory}/jspwiki-war/src/main/config/dev/jspwiki-checkstyle.xml</location>
               </file>
               <file>
                 <name>.settings/org.eclipse.jdt.core.prefs</name>
-                <location>./jspwiki-war/src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
+                <location>${maven.multiModuleProjectDirectory}/jspwiki-war/src/main/config/dev/jspwiki-eclipse-codestyle.xml</location>
               </file>
             </additionalConfig>
             <additionalProjectnatures>
