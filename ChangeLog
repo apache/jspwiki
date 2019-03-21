@@ -1,3 +1,16 @@
+2019-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M3-git-04
+
+       * JSPWIKI-1095: DefaultURLConstructor#getForwardPage( HttpServletRequest req ) now always returns "Wiki.jsp"
+
+       * JSPWIKI-1096: Upgrade bundled dependencies for 2.11.0-M3
+         * flexmark to 0.40.24
+         * lucene to 8.0.0
+         * selenide to 5.2.2
+         * slf4j to 1.7.26
+         * tomcat to 8.5.39
+
 2019-03-19  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * JSPWIKI-1094: mvn eclipse:eclipse fails, patch provided by Christian Fröhler, thanks! (no version bump)
