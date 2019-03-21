@@ -277,6 +277,6 @@ public class DefaultURLConstructor
      */
     public String getForwardPage( HttpServletRequest request )
     {
-        return request.getPathInfo();
+        return "Wiki.jsp";
     }
 }
