@@ -52,7 +52,7 @@ public final class Release {
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "M3";
+    private static final String    POSTFIX       = "M4-git";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
