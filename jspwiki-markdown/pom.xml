@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-war</artifactId>
+		<artifactId>jspwiki-knowwe-war</artifactId>
       <version>${project.version}</version>
       <classifier>classes</classifier>
       <scope>provided</scope>
@@ -41,7 +41,7 @@
     
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-war</artifactId>
+		<artifactId>jspwiki-knowwe-war</artifactId>
       <type>test-jar</type>
       <version>${project.version}</version>
       <scope>test</scope>
