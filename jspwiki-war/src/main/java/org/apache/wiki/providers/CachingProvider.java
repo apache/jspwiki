@@ -18,6 +18,14 @@
  */
 package org.apache.wiki.providers;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.TreeSet;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -33,14 +41,6 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.TreeSet;
 
 
 /**
@@ -535,7 +535,7 @@ public class CachingProvider implements WikiPageProvider {
     /**
      *  {@inheritDoc}
      */
-    public void deleteVersion( String pageName, int version )
+	public void deleteVersion(WikiPage page, int version)
         throws ProviderException
     {
         //
@@ -544,7 +544,7 @@ public class CachingProvider implements WikiPageProvider {
         //
         synchronized( this )
         {
-            WikiPage cached = getPageInfoFromCache( pageName );
+			WikiPage cached = getPageInfoFromCache(page.getName());
 
             int latestcached = (cached != null) ? cached.getVersion() : Integer.MIN_VALUE;
 
@@ -554,19 +554,19 @@ public class CachingProvider implements WikiPageProvider {
             if( version == WikiPageProvider.LATEST_VERSION ||
                 version == latestcached )
             {
-                m_cache.remove(pageName);
-                m_textCache.remove(pageName);
+				m_cache.remove(page.getName());
+				m_textCache.remove(page.getName());
             }
 
-            m_provider.deleteVersion( pageName, version );
-            m_historyCache.remove(pageName);
+			m_provider.deleteVersion(page, version);
+			m_historyCache.remove(page.getName());
         }
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void deletePage( String pageName )
+	public void deletePage(WikiPage page)
         throws ProviderException
     {
         //
@@ -574,24 +574,24 @@ public class CachingProvider implements WikiPageProvider {
         //
         synchronized(this)
         {
-            m_cache.put(new Element(pageName, null));
-            m_textCache.put(new Element( pageName, null ));
-            m_historyCache.put(new Element(pageName, null));
-            m_provider.deletePage(pageName);
+			m_cache.put(new Element(page.getName(), null));
+			m_textCache.put(new Element(page.getName(), null));
+			m_historyCache.put(new Element(page.getName(), null));
+			m_provider.deletePage(page);
         }
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void movePage(String from, String to) throws ProviderException {
+	public void movePage(WikiPage from, String to) throws ProviderException {
         m_provider.movePage(from, to);
 
         synchronized (this) {
             // Clear any cached version of the old page and new page
-            m_cache.remove(from);
-            m_textCache.remove(from);
-            m_historyCache.remove(from);
+			m_cache.remove(from.getName());
+			m_textCache.remove(from.getName());
+			m_historyCache.remove(from.getName());
             log.debug("Removing to page " + to + " from cache");
             m_cache.remove(to);
             m_textCache.remove(to);

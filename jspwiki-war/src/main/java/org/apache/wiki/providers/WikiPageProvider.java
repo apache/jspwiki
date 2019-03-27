@@ -18,11 +18,12 @@
  */
 package org.apache.wiki.providers;
 
-import java.util.List;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.search.QueryItem;
 
@@ -162,13 +163,13 @@ public interface WikiPageProvider
      *
      *  @since 2.0.17.
      *
-     *  @param pageName Name of the page to be removed.
+	 *  @param page The page to be removed.
      *  @param version  Version of the page to be removed.  May be LATEST_VERSION.
      *
      *  @throws ProviderException If the page cannot be removed for some reason.
      */
 
-    void deleteVersion( String pageName, int version )
+	void deleteVersion(WikiPage page, int version)
         throws ProviderException;
 
     /**
@@ -186,23 +187,23 @@ public interface WikiPageProvider
      *
      *  @since 2.0.17.
      *
-     *  @param pageName Name of the page to be removed completely.
+	 *  @param page The page to be removed completely.
      *
      *  @throws ProviderException If the page could not be removed for some reason.
      */
-    void deletePage( String pageName )
+	void deletePage(WikiPage page)
         throws ProviderException;
 
      
      /**
       * Move a page
       *
-      * @param from  Name of the page to move.
+	  * @param from  The page to move.
       * @param to    New name of the page.
       *
       * @throws ProviderException If the page could not be moved for some reason.
       */
-     void movePage(String from, String to)
+	 void movePage(WikiPage from, String to)
          throws ProviderException;
 
 }

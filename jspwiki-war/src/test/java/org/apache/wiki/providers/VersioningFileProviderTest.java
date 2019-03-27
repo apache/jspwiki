@@ -18,6 +18,7 @@
  */
 
 package org.apache.wiki.providers;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -37,8 +39,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import net.sf.ehcache.CacheManager;
 
 // FIXME: Should this thingy go directly to the VersioningFileProvider,
 //        or should it rely on the WikiEngine API?
@@ -497,7 +497,8 @@ public class VersioningFileProviderTest
         PageManager mgr = engine.getPageManager();
         WikiPageProvider provider = mgr.getProvider();
 
-        provider.deletePage( NAME1 );
+		WikiPage p = new WikiPage(engine, NAME1);
+		provider.deletePage(p);
 
         File f = new File( files, NAME1+AbstractFileProvider.FILE_EXT );
         Assert.assertFalse( "file exists", f.exists() );
@@ -517,7 +518,8 @@ public class VersioningFileProviderTest
         List l = provider.getVersionHistory( NAME1 );
         Assert.assertEquals( "wrong # of versions", 3, l.size() );
 
-        provider.deleteVersion( NAME1, 2 );
+		WikiPage p = new WikiPage(engine, NAME1);
+		provider.deleteVersion(p, 2);
 
         l = provider.getVersionHistory( NAME1 );
 

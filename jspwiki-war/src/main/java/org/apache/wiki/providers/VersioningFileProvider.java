@@ -741,12 +741,12 @@ public class VersioningFileProvider
      *  @throws {@inheritDoc}
      */
     // FIXME: Should log errors.
-    public void deletePage( String page )
+	public void deletePage(WikiPage page)
         throws ProviderException
     {
         super.deletePage( page );
 
-        File dir = findOldPageDir( page );
+		File dir = findOldPageDir(page.getName());
 
         if( dir.exists() && dir.isDirectory() )
         {
@@ -776,12 +776,12 @@ public class VersioningFileProvider
      *  Using deleteVersion() is definitely not recommended.
      *
      */
-    public void deleteVersion( String page, int version )
+	public void deleteVersion(WikiPage page, int version)
         throws ProviderException
     {
-        File dir = findOldPageDir( page );
+		File dir = findOldPageDir(page.getName());
 
-        int latest = findLatestVersion( page );
+		int latest = findLatestVersion(page.getName());
 
         if( version == WikiPageProvider.LATEST_VERSION ||
             version == latest ||
@@ -792,9 +792,9 @@ public class VersioningFileProvider
             //
             try
             {
-                Properties props = getPageProperties( page );
+				Properties props = getPageProperties(page.getName());
                 props.remove( ((latest > 0) ? latest : 1)+".author" );
-                putPageProperties( page, props );
+				putPageProperties(page.getName(), props);
             }
             catch( IOException e )
             {
@@ -809,9 +809,9 @@ public class VersioningFileProvider
             //
             //  Copy the old file to the new location
             //
-            latest = findLatestVersion( page );
+			latest = findLatestVersion(page.getName());
 
-            File pageDir = findOldPageDir( page );
+			File pageDir = findOldPageDir(page.getName());
             File previousFile = new File( pageDir, Integer.toString(latest)+FILE_EXT );
 
             InputStream in = null;
@@ -822,7 +822,7 @@ public class VersioningFileProvider
                 if( previousFile.exists() )
                 {
                     in = new BufferedInputStream( new FileInputStream( previousFile ) );
-                    File pageFile = findPage(page);
+					File pageFile = findPage(page.getName());
                     out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
 
                     FileUtil.copyContents( in, out );
@@ -893,18 +893,18 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
-    public void movePage( String from,
-                          String to )
+	public void movePage(WikiPage from,
+						 String to)
         throws ProviderException
     {
         // Move the file itself
-        File fromFile = findPage( from );
+		File fromFile = findPage(from.getName());
         File toFile = findPage( to );
 
         fromFile.renameTo( toFile );
 
         // Move any old versions
-        File fromOldDir = findOldPageDir( from );
+		File fromOldDir = findOldPageDir(from.getName());
         File toOldDir = findOldPageDir( to );
 
         fromOldDir.renameTo( toOldDir );

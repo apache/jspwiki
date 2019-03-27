@@ -265,7 +265,7 @@ public class FileSystemProviderTest {
 
         Assert.assertTrue( "property file does not exist", f.exists() );
 
-        m_provider.deletePage( "Test" );
+		m_provider.deletePage(p);
 
         f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
 

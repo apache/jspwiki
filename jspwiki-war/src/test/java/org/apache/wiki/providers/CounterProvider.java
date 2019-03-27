@@ -152,18 +152,18 @@ public class CounterProvider
         return m_defaultText;
     }
 
-    public void deleteVersion( String page, int version )
+	public void deleteVersion(WikiPage page, int version)
     {
     }
 
-    public void deletePage( String page )
+	public void deletePage(WikiPage page)
     {
     }
 
     /* (non-Javadoc)
      * @see org.apache.wiki.providers.WikiPageProvider#movePage(java.lang.String, java.lang.String)
      */
-    public void movePage( String from, String to ) throws ProviderException
+	public void movePage(WikiPage from, String to) throws ProviderException
     {
         // TODO Auto-generated method stub
         
