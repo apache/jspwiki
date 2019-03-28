@@ -168,14 +168,14 @@ public class BasicAttachmentProvider
         return f;
     }
 
-	protected static String mangleName(String wikiname)
+    private static String mangleName( String wikiname )
     {
         String res = TextUtil.urlEncodeUTF8( wikiname );
 
         return res;
     }
 
-	protected static String unmangleName(String filename)
+    private static String unmangleName( String filename )
     {
         return TextUtil.urlDecodeUTF8( filename );
     }
@@ -732,10 +732,10 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
 
-	public void moveAttachmentsForPage(WikiPage oldParent, String newParent)
+    public void moveAttachmentsForPage( String oldParent, String newParent )
         throws ProviderException
     {
-		File srcDir = findPageDir(oldParent.getName());
+        File srcDir = findPageDir( oldParent );
         File destDir = findPageDir( newParent );
 
         log.debug("Trying to move all attachments from "+srcDir+" to "+destDir);

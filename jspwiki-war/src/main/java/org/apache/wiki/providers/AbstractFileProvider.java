@@ -523,12 +523,12 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
-	public void deleteVersion(WikiPage page, int version)
+    public void deleteVersion( String pageName, int version )
         throws ProviderException
     {
         if( version == WikiProvider.LATEST_VERSION )
         {
-			File f = findPage(page.getName());
+            File f = findPage( pageName );
 
             f.delete();
         }
@@ -537,10 +537,10 @@ public abstract class AbstractFileProvider
     /**
      *  {@inheritDoc}
      */
-	public void deletePage(WikiPage page)
+    public void deletePage( String pageName )
         throws ProviderException
     {
-		File f = findPage(page.getName());
+        File f = findPage( pageName );
 
         f.delete();
     }

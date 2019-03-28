@@ -62,10 +62,10 @@ public class PageRenamer
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-	public String renamePage(final WikiContext context,
-							 final String renameFrom,
-							 final String renameTo,
-							 final boolean changeReferrers)
+    public String renamePage(final WikiContext context, 
+                              final String renameFrom, 
+                              final String renameTo, 
+                              final boolean changeReferrers )
         throws WikiException
     {
         //
@@ -96,15 +96,11 @@ public class PageRenamer
         //
         WikiEngine engine = context.getEngine();
         WikiPage fromPage = engine.getPage( renameFrom );
-
+        
         if( fromPage == null )
         {
             throw new WikiException("No such page "+renameFrom);
         }
-		//
-		// Insert actual user for versioning
-		//
-		fromPage.setAuthor(context.getCurrentUser().getName());
         
         WikiPage toPage = engine.getPage( renameToClean );
         
@@ -137,11 +133,11 @@ public class PageRenamer
             engine.getReferenceManager().pageRemoved( fromAttPage );
         }
 
-		engine.getPageManager().getProvider().movePage(fromPage, renameToClean);
+        engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
 
         if( engine.getAttachmentManager().attachmentsEnabled() )
         {
-			engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage(fromPage, renameToClean);
+            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
         
         //

@@ -182,12 +182,12 @@ public class FileSystemProvider
     /**
      *  {@inheritDoc}
      */
-	public void deletePage(WikiPage pageName) throws ProviderException
+    public void deletePage(String pageName) throws ProviderException
     {
         super.deletePage(pageName);
 
-		File file = new File(getPageDirectory(),
-				mangleName(pageName.getName()) + PROP_EXT);
+        File file = new File( getPageDirectory(), 
+                              mangleName(pageName)+PROP_EXT );
         
         if( file.exists() ) file.delete();
     }
@@ -195,11 +195,11 @@ public class FileSystemProvider
     /**
      *  {@inheritDoc}
      */
-	public void movePage(WikiPage from,
-						 String to)
+    public void movePage( String from,
+                          String to )
         throws ProviderException
     {
-		File fromPage = findPage(from.getName());
+        File fromPage = findPage( from );
         File toPage = findPage( to );
         
         fromPage.renameTo( toPage );
