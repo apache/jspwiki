@@ -519,7 +519,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      * @throws ProviderException if the page fails
      */
     public void deleteVersion(WikiPage page) throws ProviderException {
-        m_provider.deleteVersion(page.getName(), page.getVersion());
+		m_provider.deleteVersion(page, page.getVersion());
 
         // FIXME: If this was the latest, reindex Lucene
         // FIXME: Update RefMgr
@@ -533,7 +533,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
      */
     public void deletePage(WikiPage page) throws ProviderException {
         fireEvent(WikiPageEvent.PAGE_DELETE_REQUEST, page.getName());
-        m_provider.deletePage(page.getName());
+		m_provider.deletePage(page);
         fireEvent(WikiPageEvent.PAGE_DELETED, page.getName());
     }
 

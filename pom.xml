@@ -29,7 +29,7 @@
   <artifactId>jspwiki-knowwe-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>2.10.4-SNAPSHOT</version>
+  <version>2.10.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard J2EE components (Java, servlets, JSP).</description>

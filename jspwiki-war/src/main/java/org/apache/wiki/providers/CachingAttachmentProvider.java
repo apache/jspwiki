@@ -20,14 +20,20 @@ package org.apache.wiki.providers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
 import org.apache.log4j.Logger;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
@@ -349,7 +355,7 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
-    public void moveAttachmentsForPage( String oldParent, String newParent ) throws ProviderException
+	public void moveAttachmentsForPage(WikiPage oldParent, String newParent) throws ProviderException
     {
         m_provider.moveAttachmentsForPage(oldParent, newParent);
         m_cache.remove(newParent);
