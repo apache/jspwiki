@@ -137,7 +137,7 @@ public class XHtmlElementToWikiTranslator
                 String cssClass = base.getAttributeValue( "class" );
 
                 // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
-                boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment" );
+                boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment|inline-code" );
 
                 Map styleProps = null;
 
@@ -148,18 +148,13 @@ public class XHtmlElementToWikiTranslator
                     styleProps = getStylePropertiesLowerCase( base );
                 }
 
+                if( cssClass != null && "inline-code".equals(cssClass) )
+                {
+                    monospace = true;
+                }
+
                 if( styleProps != null )
                 {
-                    String fontFamily = (String)styleProps.get( "font-family" );
-                    String whiteSpace = (String)styleProps.get( "white-space" );
-                    if( fontFamily != null && ( fontFamily.indexOf( "monospace" ) >= 0
-                            && whiteSpace != null && whiteSpace.indexOf( "pre" ) >= 0  ) )
-                    {
-                        styleProps.remove( "font-family" );
-                        styleProps.remove( "white-space" );
-                        monospace = true;
-                    }
-
                     String weight = (String)styleProps.remove( "font-weight" );
                     String style = (String)styleProps.remove( "font-style" );
 
