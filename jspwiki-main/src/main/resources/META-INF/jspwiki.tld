@@ -55,6 +55,10 @@
     <name>Author</name>
     <tag-class>org.apache.wiki.tags.AuthorTag</tag-class>
     <body-content>empty</body-content>
+    <attribute>
+       <name>format</name>
+       <rtexprvalue>true</rtexprvalue><!-- value is empty or 'plain' -->
+    </attribute>
   </tag>
 
   <tag>

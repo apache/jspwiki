@@ -134,14 +134,7 @@
         </span>
       </li>
       <li class="dropdown-header"><fmt:message key="info.author"/> :
-        <span>
-        <%-- wiki:Author sometimes returns a link(ok) or a plain text, we always need a link! --%>
-        <c:set var="author"><wiki:Author/></c:set>
-        <c:choose>
-          <c:when test="${ fn:contains(author,'href=')}">${author}</c:when>
-          <c:otherwise><a href="#">${author}</a></c:otherwise>
-        </c:choose>
-        </span>
+		<wiki:Author format="plain"/>
       </li>
       <li class="dropdown-header">
         <wiki:RSSImageLink mode="wiki" title="<fmt:message key='info.feed'/>"/>

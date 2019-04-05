@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.tags;
 
@@ -39,7 +39,15 @@ public class AuthorTag
     extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
+
+
+    public String m_format = "";
+
+    public void setFormat( String format )
+    {
+        m_format = format;  //empty or "plain"
+    }
+
     /**
      *  {@inheritDoc}
      */
@@ -55,17 +63,18 @@ public class AuthorTag
         if( author != null && author.length() > 0 )
         {
             author = TextUtil.replaceEntities(author);
-            if( engine.pageExists(author) )
+
+            if( engine.pageExists(author) && !( "plain".equalsIgnoreCase( m_format ) ) )
             {
                 // FIXME: It's very boring to have to do this.
                 //        Slow, too.
 
                 RenderingManager mgr = engine.getRenderingManager();
-                
+
                 MarkupParser p = mgr.getParser( m_wikiContext, "["+author+"|"+author+"]" );
 
                 WikiDocument d = p.parse();
-                
+
                 author = mgr.getHTML( m_wikiContext, d );
             }
 

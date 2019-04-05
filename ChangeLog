@@ -5,12 +5,12 @@
        * Added interwiki link for location links (google maps)
          eg: [Atomium|Location:Atomium, City of Brussels, Belgium]
 
-
        * Added plain editor configs as regular properties.
          By default, the editor preview, autosuggestion and tabcompletion are set.
 
        * Various small js / css tweaks.
 
+       * Add format option to <wiki:Author/> to render force rendering of text iso link
 
 2019-03-22  Juan Pablo Santos (juanpablo AT apache DOT org)
 
