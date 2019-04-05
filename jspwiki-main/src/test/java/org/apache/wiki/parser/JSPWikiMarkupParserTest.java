@@ -2623,9 +2623,36 @@ public class JSPWikiMarkupParserTest
     public void testDivStyle2()
     throws Exception
     {
+        String src = "%%foo.bar\ntest\n%%\n";
+
+        Assertions.assertEquals( "<div class=\"foo bar\">\ntest\n</div>\n", translate(src) );
+    }
+
+    @Test
+    public void testDivStyle3()
+    throws Exception
+    {
         String src = "%%(foo:bar;)\ntest\n%%\n";
 
         Assertions.assertEquals( "<div style=\"foo:bar;\">\ntest\n</div>\n", translate(src) );
+    }
+
+    @Test
+    public void testDivStyle4()
+    throws Exception
+    {
+        String src = "%%zoo(foo:bar;)\ntest\n%%\n";
+
+        Assertions.assertEquals( "<div style=\"foo:bar;\" class=\"zoo\">\ntest\n</div>\n", translate(src) );
+    }
+
+    @Test
+    public void testDivStyle5()
+    throws Exception
+    {
+        String src = "%%zoo1.zoo2(foo:bar;)\ntest\n%%\n";
+
+        Assertions.assertEquals( "<div style=\"foo:bar;\" class=\"zoo1 zoo2\">\ntest\n</div>\n", translate(src) );
     }
 
     @Test

@@ -2051,7 +2051,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             else if( Character.isLetter( (char) ch ) )
             {
                 pushBack( ch );
-                clazz = readUntil( " \t\n\r" );
+                clazz = readUntil( "( \t\n\r" );
                 //Note: ref.https://www.w3.org/TR/CSS21/syndata.html#characters
                 //CSS Classnames can contain only the characters [a-zA-Z0-9] and
                 //ISO 10646 characters U+00A0 and higher, plus the "-" and the "_".
@@ -2067,6 +2067,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 }
                 ch = nextToken();
 
+                //check for %%class1.class2( style information )
+                if( ch == '(' )
+                {
+                    style = readBraceContent('(',')');
+                }
                 //
                 //  Pop out only spaces, so that the upcoming EOL check does not check the
                 //  next line.
