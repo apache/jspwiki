@@ -188,7 +188,7 @@
             <li>
               <a>
                 <label for="livepreview">
-                  <input type="checkbox" data-cmd="livepreview" id="livepreview"/>
+                  <input type="checkbox" data-cmd="livepreview" id="livepreview" ${prefs.livepreview ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh"/>
                 </label>
               </a>
@@ -196,7 +196,7 @@
             <li>
               <a>
                 <label for="previewcolumn">
-                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" />
+                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" ${prefs.previewcolumn ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.sidebysidepreview'/> <span class="icon-columns"/>
                 </label>
               </a>

@@ -184,7 +184,7 @@
             <li>
               <a>
                 <label for="autosuggest">
-                  <input type="checkbox" data-cmd="autosuggest" id="autosuggest" />
+                  <input type="checkbox" data-cmd="autosuggest" id="autosuggest" ${prefs.autosuggest ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.autosuggest'/>
                 </label>
               </a>
@@ -192,7 +192,7 @@
             <li>
               <a>
                 <label for="tabcompletion">
-                  <input type="checkbox" data-cmd="tabcompletion" id="tabcompletion" />
+                  <input type="checkbox" data-cmd="tabcompletion" id="tabcompletion" ${prefs.tabcompletion ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.tabcompletion'/>
                 </label>
               </a>
@@ -200,7 +200,7 @@
             <li>
               <a>
                 <label for="smartpairs">
-                  <input type="checkbox" data-cmd="smartpairs" id="smartpairs" />
+                  <input type="checkbox" data-cmd="smartpairs" id="smartpairs" ${prefs.smartpairs ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.smartpairs'/>
                 </label>
               </a>
@@ -209,7 +209,7 @@
             <li>
               <a>
                 <label for="livepreview">
-                  <input type="checkbox" data-cmd="livepreview" id="livepreview"/>
+                  <input type="checkbox" data-cmd="livepreview" id="livepreview" ${prefs.livepreview ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh"/>
                 </label>
               </a>
@@ -217,7 +217,7 @@
             <li>
               <a>
                 <label for="previewcolumn">
-                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" />
+                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" ${prefs.previewcolumn ? 'checked="checked"' : ''}/>
                   <fmt:message key='editor.plain.sidebysidepreview'/> <span class="icon-columns"/>
                 </label>
               </a>
