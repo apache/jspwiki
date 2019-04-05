@@ -242,7 +242,7 @@ String.implement({
 
         var name = element.grab /*isElement*/ ? element.className : element;
 
-        name = (name.match( /\b(default|primary|success|info|warning|danger)(\b|$)/ )||[,'default'])[1];
+        name = (name.match( /\b(default|primary|success|info|warning|danger)(\b|$)/ )||[0,'default'])[1];
 
         return this + " " + this + "-" + name ;
 

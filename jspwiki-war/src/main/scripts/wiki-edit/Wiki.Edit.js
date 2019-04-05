@@ -281,10 +281,9 @@ function jspwikiSectionParser( text ){
 }
 
 /*
-Function
+Function: processDragAndDropData
     Call back handler, invoked when data is dragged or copied into the editor textarea.
-    Call Html2Wiki.js to process the incoming data & convert to wiki markup
-
+    Convert url links or html to convert to wiki markup
 */
 function processDragAndDropData( dataTransfer ){
 

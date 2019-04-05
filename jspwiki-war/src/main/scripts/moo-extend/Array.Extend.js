@@ -71,7 +71,7 @@ Array.implement({
                 else if ( item instanceof Element ){ elements.push(item); }
                 else if ( ""+item === item /*isString*/ ){ elements.push(item.slick()); }
                 else if ( type == "object" ){ elements.getLast().set(item); }
-                else if ( item.pop /*isArray*/ ){ elements.getLast().adopt(item.slick()); }
+                else if ( Array.isArray(item) ){ elements.getLast().adopt(item.slick()); }
             }
         });
 

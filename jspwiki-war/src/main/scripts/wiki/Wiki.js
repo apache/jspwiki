@@ -594,7 +594,7 @@ var Wiki = {
         //????form.getElements(".dropdown-menu a[data-cmd=editor]").addEvent("click", ...
         form.getElements("a.editor-type").addEvent("click", function () {
 
-            wiki.prefs.set("editor", this.get("text"));
+            wiki.prefs.set("editor", this.textContent);
 
         });
 

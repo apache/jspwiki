@@ -140,7 +140,7 @@ Viewer.Slimbox = new Class({
 
         return elements.each( function(el, idx){
 
-            caption = el.get("text") || el.title || el.alt;
+            caption = el.textContent || el.title || el.alt;
 
             if( btn ){
                 el = btn.slick({
@@ -261,7 +261,7 @@ Viewer.Slimbox = new Class({
         self.get(".caption").set({
             href: url,
             html: ( many ? hints.nofm.xsubs( cursor + 1, max)  : "" ) +
-                    (el.title || el.alt || el.get("text") || ""  )
+                    (el.title || el.alt || el.textContent || ""  )
 
         });
 

@@ -123,9 +123,11 @@ Wiki.Search = new Class({
             update: result,
             onComplete: function(){
 
-                new GraphBar( result.getElement( ".graphBars" ));
-                self.fireEvent( "onComplete" );
-
+                var g = result.getElement( ".graphBars" );
+                if(g){
+                    new GraphBar( result.getElement( ".graphBars" ));
+                    self.fireEvent( "onComplete" );
+                }
             }
         }).send();
 

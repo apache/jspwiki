@@ -1,3 +1,15 @@
+2019-03-17  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M4-git-01
+
+       * Added interwiki link for location links (google maps)
+
+       * Added plain editor configs as regular properties.
+         By default, the editor preview, autosuggestion and tabcompletion are set.
+
+       * Various small js / css tweaks.
+
+
 2019-03-22  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * prepare release for 2.11.0.M3

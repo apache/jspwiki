@@ -108,7 +108,7 @@ Viewer.Carousel = new Class({
                              Number(width - el.width).limit(0, width) / 2 + "px"
                 }},
                 "div.carousel-caption", {
-                    html: (el.title || el.alt || el.get("text"))
+                    html: (el.title || el.alt || el.textContent)
                 }
             ]);
             indicators.push("li");

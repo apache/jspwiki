@@ -180,7 +180,7 @@ var Tab = new Class({
 
             //then create div.tab-<pane-title> groups
             container.groupChildren(header, "div", function(pane, caption){
-                pane.addClass( "tab-" + caption.get("text").trim().replace(/\s+/g, "-").camelCase() );
+                pane.addClass( "tab-" + caption.textContent.trim().replace(/\s+/g, "-").camelCase() );
                 pane.set("data-pane", caption.get("html").stripScripts());
                 if( caption.match("[data-activePane]") ){ pane.addClass("active"); }
                 pane.id = caption.id;

@@ -531,6 +531,20 @@ a.interwiki[href*="Group.jsp?group="] {
         background-color:@link-hover-color;
     }
 }
+a[href^="https://maps.google.com/maps?q="],
+a[href^="https://maps.apple.com/maps?q="],
+a[href^="https://www.bing.com/maps/default.aspx?rtp="] {
+    &::before {
+        margin-right:.15em;
+        color:@link-color;
+        .icon--all;
+        content:@icon-map-marker;
+    }
+    &:hover::before {
+        text-decoration:none;
+        //background-color:@link-hover-color;
+    }
+}
 a.interwiki[href^="rss.jsp"],
 .feed {
 	&:after {
@@ -539,6 +553,13 @@ a.interwiki[href^="rss.jsp"],
 	}
     &:hover { text-decoration:none; }
 }
+
+a[href^="mailto:"]::after {
+    .icon--text;
+    content:"mail-to";
+    margin-left:.15em;
+}
+
 .dropdown-menu > li > a.feed { padding-left:0; }
 
 /*

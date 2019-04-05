@@ -245,7 +245,7 @@ Behavior: Viewer
     })
     .add(".maps", function( map ){
 
-        var address = map.get("text").trim(),
+        var address = map.textContent.trim(),
             mapSvc = map.className.replace("-maps","").replace("maps","google"),
             url = "https://maps.{0}.com/maps?q=".xsubs(mapSvc) + encodeURIComponent( address );
 
@@ -457,7 +457,7 @@ Behavior:Columns
 Dynamic Style: Code-Prettifier
     JSPWiki wrapper around http://google-code-prettify.googlecode.com/svn/trunk/README.html
 
-    TODO: add option to overrule the choice of language:
+    TODO: add option to set the choice of language:
     >    "bsh", "c", "cc", "cpp", "cs", "csh", "cyc", "cv", "htm", "html",
     >    "java", "js", "m", "mxml", "perl", "pl", "pm", "py", "rb", "sh",
     >    "xhtml", "xml", "xsl"

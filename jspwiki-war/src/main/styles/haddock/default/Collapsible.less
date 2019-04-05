@@ -131,11 +131,9 @@ div[class^=collapsebox] {
 
     > .panel-heading { padding-left:0; } //remove some left space next to the bullet
 
-    //coloured collapseboxes get white bullets
+    //bullets get color ot text
     &:not(.panel-default) .bullet {
-        &.xpand, &.xpand:hover { border-top-color: @white; }
-        &.clpse, &.clpse:hover { border-left-color: @white; }
+        &.xpand, &.xpand:hover { border-top-color: currentColor; }
+        &.clpse, &.clpse:hover { border-left-color: currentColor; }
     }
 }
-
-

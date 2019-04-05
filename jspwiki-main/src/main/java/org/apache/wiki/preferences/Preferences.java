@@ -114,6 +114,14 @@ public class Preferences
         prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting", "true" ) );
         prefs.put("Appearance", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.appearance", "true" ) );
 
+        //editor cookies
+        prefs.put("autosuggest", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.autosuggest", "true" ) );
+        prefs.put("tabcompletion", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.tabcompletion", "true" ) );
+        prefs.put("smartpairs", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.smartpairs", "false" ) );
+        prefs.put("livepreview", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.livepreview", "true" ) );
+        prefs.put("previewcolumn", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.previewcolumn", "true" ) );
+
+
         // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
         prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
 

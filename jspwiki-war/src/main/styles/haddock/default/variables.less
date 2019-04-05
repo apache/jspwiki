@@ -72,8 +72,6 @@ images/feather-small.png   wxh  162x286
 @panel-default-border:        @pre-border-color;
 @panel-default-heading-bg:    @pre-bg;
 
-@modal-backdrop-bg: hsl(16, 44%, 63%); //copper blush
-
 // JPSWiki variables
 // Main color scheme
 @wiki-header-bg:    hsla(214, 68%, 58%, 0.9); //@brand-primary;
@@ -104,8 +102,10 @@ images/feather-small.png   wxh  162x286
 @wiki-commentbox-ratio: percentage( 1 / (1 + @golden-square) ); //27.6373%
 @wiki-commentbox-width: @wiki-commentbox-ratio * 100% / (100% - @wiki-sidebar-width);
 @wiki-commentbox-width-inverse: (100% - @wiki-commentbox-width);
+
+@modal-backdrop-bg: hsl(16, 44%, 63%); //copper blush
 @wiki-modal-max-width: 100 * (1-@sidebar-ratio);
-@wiki-modal-max-height: 90;
+@wiki-modal-max-height: 40;
 
 //Nav bar
 @wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;

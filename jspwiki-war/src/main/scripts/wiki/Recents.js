@@ -93,7 +93,7 @@ Wiki.Recents = new Class({
 
         } else {
 
-            form.query.value = element.get("text");
+            form.query.value = element.textContent;
             form.submit();
 
         }
