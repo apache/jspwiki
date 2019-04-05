@@ -3,6 +3,8 @@
        * 2.11.0-M4-git-01
 
        * Added interwiki link for location links (google maps)
+         eg: [Atomium|Location:Atomium, City of Brussels, Belgium]
+
 
        * Added plain editor configs as regular properties.
          By default, the editor preview, autosuggestion and tabcompletion are set.
