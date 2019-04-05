@@ -136,12 +136,12 @@ public class HtmlStringToWikiTranslatorTest {
         Assertions.assertEquals(
                 "\n* Diese Karte kann von jedem editiert und um neue Links erweitert werden. \\\\Klickt einfach unten neben der Karte auf {{{[edit]}}}\n",
                 html2wiki.translate(
-                        "<ul><li> Diese Karte kann von jedem editiert und um neue Links erweitert werden.<br>Klickt einfach unten neben der Karte auf <span style=\"font-family: monospace; white-space: pre;\">[edit]</span></li></ul>" ) );
+                        "<ul><li> Diese Karte kann von jedem editiert und um neue Links erweitert werden.<br>Klickt einfach unten neben der Karte auf <span class=\"inline-code\">[edit]</span></li></ul>" ) );
 
         Assertions.assertEquals(
                 "\n* Diese Karte kann von jedem editiert und um neue Links erweitert werden. \\\\Klickt einfach unten neben der Karte auf {{{[edit]}}}\n",
                 html2wiki.translate(
-                        "<ul><li> Diese Karte kann von jedem editiert und um neue Links erweitert werden.<br>Klickt einfach unten neben der Karte auf <span style=\"font-family: monospace; white-space: pre;\">[edit]</span></li></ul>" ) );
+                        "<ul><li> Diese Karte kann von jedem editiert und um neue Links erweitert werden.<br>Klickt einfach unten neben der Karte auf <span class=\"inline-code\">[edit]</span></li></ul>" ) );
 
     }
 
@@ -160,7 +160,7 @@ public class HtmlStringToWikiTranslatorTest {
          */
 
         Assertions.assertEquals( "Fahrt einfac{{{h mit\u00A0\u00A0 \n der \u00A0 Maus}}} drueber", html2wiki
-                .translate( "Fahrt einfac<span style=\"font-family: monospace; white-space: pre;\">h mit&nbsp;&nbsp; <br> der &nbsp; Maus</span> drueber" ) );
+                .translate( "Fahrt einfac<span class=\"inline-code\">h mit&nbsp;&nbsp; <br> der &nbsp; Maus</span> drueber" ) );
 
     }
 

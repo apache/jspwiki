@@ -1151,7 +1151,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{2345}}}6";
 
-        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">2345</span>6", translate(src) );
+        Assertions.assertEquals( "1<span class=\"inline-code\">2345</span>6", translate(src) );
     }
 
     @Test
@@ -1160,7 +1160,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
 
-        Assertions.assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
+        Assertions.assertEquals( "1 <span class=\"inline-code\"> {{{ 2345 </span> }}} 6", translate(src) );
     }
 
     @Test
@@ -1169,7 +1169,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "foo\n\nbar{{{2345}}}6";
 
-        Assertions.assertEquals( "<p>foo\n</p><p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
+        Assertions.assertEquals( "<p>foo\n</p><p>bar<span class=\"inline-code\">2345</span>6</p>", translate(src) );
     }
 
     @Test
@@ -1187,7 +1187,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{{{{2345~}}}}}}6";
 
-        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">{{{2345}}}</span>6", translate(src) );
+        Assertions.assertEquals( "1<span class=\"inline-code\">{{{2345}}}</span>6", translate(src) );
     }
 
     @Test
@@ -1196,7 +1196,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1 {{{ {{{ 2345 ~}}} }}} 6";
 
-        Assertions.assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 }}} </span> 6", translate(src) );
+        Assertions.assertEquals( "1 <span class=\"inline-code\"> {{{ 2345 }}} </span> 6", translate(src) );
     }
 
     @Test
@@ -1205,7 +1205,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{ {{{2345~}} }}}6";
 
-        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> {{{2345~}} </span>6", translate(src) );
+        Assertions.assertEquals( "1<span class=\"inline-code\"> {{{2345~}} </span>6", translate(src) );
     }
 
     @Test
@@ -1214,7 +1214,7 @@ public class JSPWikiMarkupParserTest
     {
         String src = "1{{{ ~ }}}6";
 
-        Assertions.assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> ~ </span>6", translate(src) );
+        Assertions.assertEquals( "1<span class=\"inline-code\"> ~ </span>6", translate(src) );
     }
 
 

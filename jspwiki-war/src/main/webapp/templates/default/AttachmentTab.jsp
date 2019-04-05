@@ -37,7 +37,7 @@
 <wiki:Permission permission="upload">
 
   <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='${progressId}'/></wiki:Link>"
-         class="accordion<wiki:HasAttachments>-close</wiki:HasAttachments>"
+         class="accordion<wiki:HasAttachments></wiki:HasAttachments>"
             id="uploadform"
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>" >

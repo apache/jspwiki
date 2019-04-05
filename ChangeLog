@@ -1,4 +1,13 @@
-2019-03-17  Dirk Frederickx (brushed AT apache DOT org)
+2019-04-05  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M4-git-02
+
+       * [JSPWIKI-1101] Improve rendering of {{{inline preformatted text}}}
+
+       * Change UI for attachement upload: by default, the FILE SELECTION input should be visible
+
+
+2019-04-05  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M4-git-01
 

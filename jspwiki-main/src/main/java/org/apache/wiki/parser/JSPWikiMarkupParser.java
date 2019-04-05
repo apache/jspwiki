@@ -1516,7 +1516,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     return pushElement( new Element("pre") );
                 }
 
-                return pushElement( new Element("span").setAttribute("style","font-family:monospace; white-space:pre;") );
+                return pushElement( new Element("span").setAttribute("class","inline-code") );
             }
 
             pushBack( ch2 );
