@@ -235,6 +235,8 @@ public final class MailUtil {
 
     protected static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
 
+    protected static final String PROP_MAIL_SSL_PROTOCOLS      = "mail.smtp.ssl.protocols";
+
     private static String c_fromAddress = null;
     
     /**
@@ -404,6 +406,7 @@ public final class MailUtil {
         mailProps.put( PROP_MAIL_TIMEOUT, timeout );
         mailProps.put( PROP_MAIL_CONNECTION_TIMEOUT, conntimeout );
         mailProps.put( PROP_MAIL_STARTTLS, starttls ? TRUE : FALSE );
+        mailProps.put(PROP_MAIL_SSL_PROTOCOLS, "TLSv1.2");  // required for JavaMail 1.4.7, not required for >= 1.6.2
 
         // Add SMTP authentication if required
         Session session = null;
