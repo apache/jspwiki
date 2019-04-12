@@ -18,18 +18,24 @@
  */
 package org.apache.wiki.util;
 
+import java.net.URL;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -291,6 +297,56 @@ public final class MailUtil {
             {
                 log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
                          + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
+            }
+        }
+        catch (MessagingException e)
+        {
+            log.error(e);
+            throw e;
+        }
+    }
+
+    public static void sendMultiPartMessage(Properties props, String to, String subject,
+                                            String htmlContent, Map<String, URL> imageUrlsByCid) throws MessagingException{
+        Session session = getMailSession( props );
+        getSenderEmailAddress(session, props);
+
+        try
+        {
+            // Create and address the message
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(c_fromAddress));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject(subject, "UTF-8");
+            msg.setSentDate(new Date());
+
+            //
+            MimeMultipart msgMultipart = new MimeMultipart("related");
+            msg.setContent(msgMultipart);
+
+            // add part for HTML content
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setText(htmlContent, "UTF-8");
+            bodyPart.setHeader("Content-Type", "text/html; charset=UTF-8");
+            msgMultipart.addBodyPart(bodyPart);
+
+            // add multi-part for image
+            for (Map.Entry<String, URL> entry : imageUrlsByCid.entrySet()) {
+                MimeBodyPart part = new MimeBodyPart();
+                DataHandler dh = new DataHandler(entry.getValue());
+                part.setDataHandler(dh);
+                part.addHeader("Content-ID", "<" + entry.getKey() + ">");
+                part.addHeader("Content-Type", dh.getContentType());
+                part.setDisposition(Part.INLINE);
+                msgMultipart.addBodyPart(part);
+            }
+
+            // Send and log it
+            Transport.send(msg);
+            if (log.isInfoEnabled())
+            {
+                log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
+                        + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
             }
         }
         catch (MessagingException e)
