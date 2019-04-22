@@ -121,7 +121,9 @@
       <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
       <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
 
-      <td class="attach-name" title="${att.fileName}"><wiki:LinkTo>${att.fileName}</wiki:LinkTo></td>
+      <td class="attach-name" title="${att.fileName}">
+        <wiki:LinkTo>${fn:escapeXml(att.fileName)}</wiki:LinkTo>
+      </td>
 
       <td><wiki:PageVersion /></td>
 

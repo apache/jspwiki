@@ -45,6 +45,16 @@ String.implement({
     },
 
     /*
+    Function: escapeHtml
+    */
+    escapeHtml: function(){
+    	return this.replace(/[<>'"&]/g, function(s) {
+    	    return {'<':'&lt;','>':'&gt;',"'":'&apos;','"':'&quot;','&':'&amp;'}[s];
+	    	//return '&#' + s.charCodeAt(0) + ';';
+	    });
+    },
+
+    /*
     Function: deCamelize
         Convert camelCase string to space-separated set of words.
 

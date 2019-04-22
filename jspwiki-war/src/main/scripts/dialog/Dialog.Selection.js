@@ -95,7 +95,15 @@ Dialog.Selection = new Class({
         if( typeOf(content) == "string" ){ content = content.split("|"); }
 
         //convert [array] into {object} with name:value pairs
-        if( typeOf(content) == "array" ){ content = content.associate(content); }
+        if( typeOf(content) == "array" ){
+
+            //value should be html escaped !!
+            content = content.reduce( function(accu, item){
+                accu[item] = item.escapeHtml();
+                return accu;
+            }, {});
+
+        }
 
         //convert {object} in DOM elements (ul/li collection)
         if( typeOf(content) == "object" ){

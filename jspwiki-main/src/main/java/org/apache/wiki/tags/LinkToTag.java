@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.tags;
 
@@ -45,11 +45,11 @@ public class LinkToTag
     extends WikiLinkTag
 {
     private static final long serialVersionUID = 0L;
-    
+
     private String m_version = null;
     public String m_title = "";
     public String m_accesskey = "";
-    
+
     public void initTag()
     {
         super.initTag();
@@ -76,7 +76,7 @@ public class LinkToTag
         m_accesskey = access;
     }
 
-    
+
     public int doWikiStartTag()
         throws IOException
     {
@@ -105,7 +105,7 @@ public class LinkToTag
 
         if( isattachment )
         {
-            url = m_wikiContext.getURL(WikiContext.ATTACH,pageName,
+            url = m_wikiContext.getURL(WikiContext.ATTACH, pageName,
                                        (getVersion() != null) ? "version="+getVersion() : null );
             linkclass = "attachment";
         }
@@ -123,7 +123,7 @@ public class LinkToTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a class=\""+linkclass+"\" href=\""+url+"\" accesskey=\"" 
+            out.print("<a class=\""+linkclass+"\" href=\""+url+"\" accesskey=\""
                           + m_accesskey + "\" title=\"" + m_title + "\">");
             break;
           case URL:
