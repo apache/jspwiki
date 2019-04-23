@@ -4,6 +4,9 @@
 
        * [JSPWIKI-1108] interwiki links with illegal characters causes XSS vulnerability
 
+       * [JSPWIKI-1107] uploading attachments with illegal filename causes XSS vulnerability
+         Fixing side-effect on slimbox links, when rendering the caption with illegal characters.
+
 2019-04-22  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M4-git-04
