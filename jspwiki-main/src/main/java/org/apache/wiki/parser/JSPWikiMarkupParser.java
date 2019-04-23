@@ -1315,7 +1315,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     }
                     else
                     {
-                        Object[] args = { extWiki };
+                        Object[] args = { escapeHTMLEntities(extWiki) };
+
                         addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
                     }
                 }
@@ -2076,7 +2077,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //  Pop out only spaces, so that the upcoming EOL check does not check the
                 //  next line.
                 //
-                if( ch == '\n' || ch == '\r' )
+                else if( ch == '\n' || ch == '\r' )
                 {
                     pushBack(ch);
                 }
