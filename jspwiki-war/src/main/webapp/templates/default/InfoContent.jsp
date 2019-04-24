@@ -340,7 +340,7 @@
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
     <tr>
 
-      <td class="attach-name"><wiki:LinkTo version="${att.version}">${fn:escapeXml((att.fileName)}</wiki:LinkTo></td>
+      <td class="attach-name"><wiki:LinkTo version="${att.version}">${fn:escapeXml(att.fileName)}</wiki:LinkTo></td>
 
       <td><wiki:PageVersion /></td>
 
