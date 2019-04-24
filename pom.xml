@@ -83,27 +83,27 @@
     <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
     <plugin.jar.version>3.1.0</plugin.jar.version>
-    <plugin.javadoc.version>3.0.1</plugin.javadoc.version>
+    <plugin.javadoc.version>3.1.0</plugin.javadoc.version>
     <plugin.jxr.version>3.0.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.0.0</plugin.project-info-reports.version>
     <plugin.release.version>2.5.3</plugin.release.version>
     <plugin.resources.version>3.1.0</plugin.resources.version>
     <plugin.source.version>3.0.1</plugin.source.version>
-    <plugin.surefire.version>2.22.0</plugin.surefire.version>
+    <plugin.surefire.version>2.22.1</plugin.surefire.version>
     <plugin.war.version>3.2.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
-    <plugin.jspc.version>2.4.6</plugin.jspc.version>
-    <plugin.checksum.version>1.7</plugin.checksum.version>
+    <plugin.jspc.version>3.1.0</plugin.jspc.version>
+    <plugin.checksum.version>1.8</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.7.2</plugin.cargo.version>
+    <plugin.cargo.version>1.7.3</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.selenium.version>2.3</plugin.selenium.version>
     <plugin.sonar.version>3.4.0.905</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
-    <maven.compiler.source>${jdk}</maven.compiler.source> <!-- override values from parent pom -->
-    <maven.compiler.target>${jdk}</maven.compiler.target>
+    <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->
+    <maven.compiler.target>${jdk.version}</maven.compiler.target>
     <minimize>true</minimize> <!-- wro4j compression -->
   </properties>
 
