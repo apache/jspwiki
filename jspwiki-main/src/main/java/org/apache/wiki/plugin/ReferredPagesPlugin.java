@@ -134,8 +134,8 @@ public class ReferredPagesPlugin implements WikiPlugin {
 
         m_result.append("<div class=\"ReferredPagesPlugin\">\n");
         m_result.append("<a class=\"wikipage\" href=\""+ href +
-                        "\" title=\"" + title +
-                        "\">" + rootname + "</a>\n");
+                        "\" title=\"" + TextUtil.replaceEntities(title) +
+                        "\">" + TextUtil.replaceEntities(rootname) + "</a>\n");
         m_exists.add(rootname);
 
         // pre compile all needed patterns
@@ -232,7 +232,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
                 }
             } else {
                 if( !isUL ) {
-                    isUL = true; 
+                    isUL = true;
                     m_result.append("<ul>\n");
                 }
 

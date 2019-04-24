@@ -1,5 +1,12 @@
 2019-04-23  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.11.0-M4-git-06
+
+       * [JSPWIKI-1109] ReferredPagesPlugin with illegal characters in parameters
+         causes XSS vulnerability
+
+2019-04-23  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.11.0-M4-git-05
 
        * [JSPWIKI-1108] interwiki links with illegal characters causes XSS vulnerability
