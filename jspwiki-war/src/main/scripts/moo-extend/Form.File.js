@@ -201,7 +201,7 @@ Form.File = new Class({
                 for( var i=0; i< input.files.length; i++){
                     var file = input.files[i];
                     fileNames += (i > 0 ? "<br />" : "")
-                              +  file.name.replace(/.*[\\\/]/, "")
+                              +  file.name.replace(/.*[\\\/]/, "").escapeHtml()
                               + " <span class='badge'>" + readableFileSize( file.size )+ "</span>";
                 }
 
