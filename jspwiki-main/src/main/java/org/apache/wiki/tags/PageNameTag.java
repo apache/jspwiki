@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.tags;
 
@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Returns the currently requested page name.
@@ -33,7 +34,7 @@ public class PageNameTag
     extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
+
     public final int doWikiStartTag()
         throws IOException
     {
@@ -44,7 +45,7 @@ public class PageNameTag
         {
             if( page instanceof Attachment )
             {
-                pageContext.getOut().print( ((Attachment)page).getFileName() );
+                pageContext.getOut().print( TextUtil.replaceEntities( ((Attachment)page).getFileName() ) );
             }
             else
             {
