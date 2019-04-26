@@ -1,6 +1,6 @@
-2019-04-23  Dirk Frederickx (brushed AT apache DOT org)
+2019-04-25  Dirk Frederickx (brushed AT apache DOT org)
 
-       * 2.11.0-M4-git-06
+       * 2.11.0-M4-git-07
 
        * [JSPWIKI-1107] uploading attachments with illegal filename causes XSS vulnerability
          Fixing file upload vulnerability.
