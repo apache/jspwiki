@@ -35,17 +35,20 @@
 
 <body class="context-<wiki:Variable var='requestcontext' />">
 
-<div class="container${prefs.Layout=='fluid' ? '-fluid' : ''}  ${prefs.Orientation}">
+<div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation} fixed-header">
 
   <wiki:Include page="Header.jsp" />
 
-  <c:set var="sidebar"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
+  <c:set var="sidebarState"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
+  <c:set var="sidebarCookie" value="Sidebar" />
   <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
-    <c:set var="sidebar" value="" />
+    <c:set var="sidebarState" value="" />
+    <c:set var="sidebarCookie" value="" />
   </wiki:CheckRequestContext>
 
-  <div class="content ${sidebar}" data-toggle="li#menu,.sidebar>.close" data-toggle-pref="Sidebar" >
-    <div class="page">
+  <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
+                                       data-toggle-pref="${sidebarCookie}" >
+    <div class="page" role="content">
       <wiki:PageExists>
         <wiki:Include page="AttachmentTab.jsp"/>
       </wiki:PageExists>
