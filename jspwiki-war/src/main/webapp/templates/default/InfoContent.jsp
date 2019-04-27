@@ -355,7 +355,7 @@
 
       <%-- see styles/fontjspwiki/icon.less : icon-file-<....>-o  --%>
       <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
-      <c:set var="type" value="${ fn:length(parts)>1 ? parts[fn:length(parts)-1] : ''}" />
+      <c:set var="type" value="${ fn:length(parts)>1 ? fn:escapeXml(parts[fn:length(parts)-1]) : ''}" />
       <td class="attach-type"><span class="icon-file-${fn:toLowerCase(type)}-o"></span>${type}</td>
 
       <td><wiki:Author /></td>
