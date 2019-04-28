@@ -26,7 +26,7 @@ import org.apache.wiki.markdown.MarkdownForJSPWikiExtension;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
-import com.vladsch.flexmark.Extension;
+import com.vladsch.flexmark.util.builder.Extension;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
 import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.parser.Parser;
