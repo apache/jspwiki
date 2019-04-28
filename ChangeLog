@@ -1,3 +1,11 @@
+2019-04-28  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M4-git-09
+
+       * [JSPWIKI-1110] Upgrade bundled dependencies for 2.11.0.M4
+       
+       * generate aggregated javadocs for http://jspwiki.apache.org/apidocs/index.html
+
 2019-04-27  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M4-git-08
