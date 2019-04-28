@@ -46,11 +46,11 @@ try {
                         echo "Will use SonarQube instance at $SONAR_HOST_URL"
                         sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts $SONAR_MAVEN_GOAL"
                     }
+                    pom = readMavenPom file: 'pom.xml'
+                    writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
+                    writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
+                    sh 'mvn package javadoc:aggregate-no-fork -DskipTests -pl !jspwiki-portable'
                 }
-                pom = readMavenPom file: 'pom.xml'
-                writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
-                writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
-                sh 'mvn package javadoc:aggregate-no-fork -DskipTests -pl !jspwiki-portable'
             }
         }
 
