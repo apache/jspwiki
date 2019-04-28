@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -35,6 +35,7 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * Builds a simple weblog.
@@ -58,7 +59,7 @@ public class WeblogEntryPlugin implements WikiPlugin {
     public static final String PARAM_ENTRYTEXT = "entrytext";
     /**
      * Optional parameter: page that actually contains the blog.
-     * This lets us provide a "new entry" link for a blog page 
+     * This lets us provide a "new entry" link for a blog page
      * somewhere else than on the page itself.
      */
     // "page" for uniform naming with WeblogPlugin...
@@ -108,7 +109,7 @@ public class WeblogEntryPlugin implements WikiPlugin {
 
         StringBuilder sb = new StringBuilder();
 
-        String entryText = params.get(PARAM_ENTRYTEXT);
+        String entryText = TextUtil.replaceEntities( params.get(PARAM_ENTRYTEXT) );
         if (entryText == null) {
             entryText = rb.getString("weblogentryplugin.newentry");
         }

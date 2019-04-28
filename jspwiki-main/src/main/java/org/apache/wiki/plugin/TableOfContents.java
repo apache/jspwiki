@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -37,7 +37,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
 /**
- *  Provides a table of contents. 
+ *  Provides a table of contents.
  *  <p>Parameters : </p>
  *  <ul>
  *  <li><b>title</b> - The title of the table of contents.</li>
@@ -55,13 +55,13 @@ public class TableOfContents
 
     /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";
-    
+
     /** Parameter name for setting whether the headings should be numbered. */
     public static final String PARAM_NUMBERED = "numbered";
-    
+
     /** Parameter name for setting where the numbering should start. */
     public static final String PARAM_START = "start";
-    
+
     /** Parameter name for setting what the prefix for the heading is. */
     public static final String PARAM_PREFIX = "prefix";
 
@@ -170,12 +170,10 @@ public class TableOfContents
         sb.append("<h4 id=\"section-TOC\">");
         if( title != null )
         {
-            //sb.append("<h4>"+TextUtil.replaceEntities(title)+"</h4>\n");
             sb.append(TextUtil.replaceEntities(title));
         }
         else
         {
-            //sb.append("<h4>"+rb.getString("tableofcontents.title")+"</h4>\n");
             sb.append(rb.getString("tableofcontents.title"));
         }
         sb.append("</h4>\n");
@@ -211,7 +209,7 @@ public class TableOfContents
             if (m_level1Index < 0) m_level1Index = 0;
             m_level2Index = 0;
             m_level3Index = 0;
-            m_prefix = params.get(PARAM_PREFIX);
+            m_prefix = TextUtil.replaceEntities( params.get(PARAM_PREFIX) );
             if (m_prefix == null) m_prefix = "";
             m_lastLevel = Heading.HEADING_LARGE;
         }
@@ -220,7 +218,7 @@ public class TableOfContents
         {
             String wikiText = engine.getPureText( page );
             boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, WikiEngine.PROP_RUNFILTERS, "true" ) );
-            
+
             if( runFilters ) {
 				try {
 					FilterManager fm = engine.getFilterManager();
@@ -231,9 +229,9 @@ public class TableOfContents
 					throw new PluginException("Unable to construct table of contents (see logs)");
 				}
             }
-            
+
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
-            
+
             MarkupParser parser = engine.getRenderingManager().getParser( context, wikiText );
             parser.addHeadingListener( this );
             parser.parse();

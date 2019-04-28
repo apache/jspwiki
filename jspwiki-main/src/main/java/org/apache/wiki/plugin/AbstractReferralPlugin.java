@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -74,7 +74,7 @@ import org.apache.wiki.util.comparators.LocaleComparator;
  *  <li><b>sortOrder</b> - specifies the sort order for the resulting list.  Options are
  *  'human', 'java', 'locale' or a <code>RuleBasedCollator</code> rule string. (since 2.8.3)</li>
  *  </ul>
- *  
+ *
  */
 public abstract class AbstractReferralPlugin implements WikiPlugin
 {
@@ -82,37 +82,37 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;
-    
+
     /** Parameter name for setting the maximum width.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAXWIDTH         = "maxwidth";
 
     /** Parameter name for the separator string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SEPARATOR        = "separator";
-    
+
     /** Parameter name for the output after the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_AFTER            = "after";
-    
+
     /** Parameter name for the output before the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_BEFORE           = "before";
 
     /** Parameter name for setting the list of excluded patterns.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXCLUDE          = "exclude";
-    
+
     /** Parameter name for setting the list of included patterns.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_INCLUDE          = "include";
-    
+
     /** Parameter name for the show parameter.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SHOW             = "show";
-    
+
     /** Parameter name for setting show to "pages".  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SHOW_VALUE_PAGES = "pages";
-    
+
     /** Parameter name for setting show to "count".  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SHOW_VALUE_COUNT = "count";
-    
+
     /** Parameter name for showing the last modification count.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LASTMODIFIED     = "showLastModified";
-    
+
     /** Parameter name for specifying the sort order.  Value is <tt>{@value}</tt>. */
     protected static final String PARAM_SORTORDER        = "sortOrder";
     protected static final String PARAM_SORTORDER_HUMAN  = "human";
@@ -127,7 +127,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
     protected           Pattern[]  m_exclude;
     protected           Pattern[]  m_include;
     protected           PageSorter m_sorter;
-    
+
     protected           String m_show = "pages";
     protected           boolean m_lastModified=false;
     // the last modified date of the page that has been last modified:
@@ -154,7 +154,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
 
         if( s != null )
         {
-            m_separator = s;
+            m_separator = TextUtil.replaceEntities( s );
             // pre-2.1.145 there was a separator at the end of the list
             // if they set the parameters, we use the new format of
             // before Item1 after separator before Item2 after separator before Item3 after
@@ -249,7 +249,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
                 }
             }
         }
-        
+
         initSorter( context, params );
     }
 
@@ -264,7 +264,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
 
     /**
      *  Filters a collection according to the include and exclude parameters.
-     *  
+     *
      *  @param c The collection to filter.
      *  @return A filtered collection.
      */
@@ -341,7 +341,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
 
     /**
      *  Filters and sorts a collection according to the include and exclude parameters.
-     *  
+     *
      *  @param c The collection to filter.
      *  @return A filtered and sorted collection.
      */
@@ -453,7 +453,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
             return text;
         }
     }
-    
+
     /**
      * Helper method to initialize the comparator for this page.
      */

@@ -223,7 +223,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
                     }
 
                     //See https://www.w3.org/wiki/HTML_lists  for proper nesting of UL and LI
-                    m_result.append("<li> " + link + "\n");
+                    m_result.append("<li> " + TextUtil.replaceEntities(link) + "\n");
 
                     getReferredPages( context, link, depth );  // added recursive call - on general request
 
@@ -237,7 +237,8 @@ public class ReferredPagesPlugin implements WikiPlugin {
                 }
 
                 String href = context.getURL(WikiContext.VIEW,link);
-                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a>\n" );
+                m_result.append("<li><a class=\"wikipage\" href=\""+ href + "\">"
+                                + TextUtil.replaceEntities(link) + "</a>\n" );
 
                 m_exists.add( link );
 

@@ -41,6 +41,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  Denounces a link by removing it from any search engine.
@@ -164,7 +165,7 @@ public class Denounce implements WikiPlugin
         if( linkAllowed )
         {
             // FIXME: Should really call TranslatorReader
-            return "<a href=\""+link+"\">"+text+"</a>";
+            return "<a href=\""+link+"\">"+ TextUtil.replaceEntities(text) +"</a>";
         }
 
         return c_denounceText;

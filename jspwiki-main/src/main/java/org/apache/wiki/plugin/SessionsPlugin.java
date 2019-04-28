@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -28,12 +28,13 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.util.TextUtil;
 
 /**
  *  <p>Displays information about active wiki sessions. The parameter
  *  <code>property</code> specifies what information is displayed.
  *  If omitted, the number of sessions is returned.
- *  
+ *
  *  <p>Parameters : </p>
  *  <ul>
  *  <li><b>property</b> - specify what output to display, valid values are:</li>
@@ -51,7 +52,7 @@ public class SessionsPlugin
 {
     /** The parameter name for setting the property value. */
     public static final String PARAM_PROP = "property";
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -60,7 +61,7 @@ public class SessionsPlugin
     {
         WikiEngine engine = context.getEngine();
         String prop = params.get( PARAM_PROP );
-        
+
         if ( "users".equals( prop ) )
         {
             Principal[] principals = WikiSession.userPrincipals( engine );
@@ -70,7 +71,7 @@ public class SessionsPlugin
                 s.append(principals[i].getName() + ", ");
             }
             // remove the last comma and blank :
-            return s.substring(0, s.length() - (s.length() > 2 ? 2 : 0) );
+            return TextUtil.replaceEntities( s.substring(0, s.length() - (s.length() > 2 ? 2 : 0) ) );
         }
 
         //
@@ -109,7 +110,9 @@ public class SessionsPlugin
                 s.append( entry.getKey() + "(" + entry.getValue().toString() + "), " );
             }
             // remove the last comma and blank :
-            if (s.length() >= 2) return s.substring(0,    s.length() - 2);
+            //if (s.length() >= 2) return s.substring(0,    s.length() - 2);
+            return TextUtil.replaceEntities( s.substring(0, s.length() - (s.length() > 2 ? 2 : 0) ) );
+
         }
 
         return String.valueOf( WikiSession.sessions( engine ) );
