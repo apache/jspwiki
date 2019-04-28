@@ -1,5 +1,14 @@
 2019-04-28  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.11.0-M4-git-11
+
+       * [JSPWIKI-1107] Fixing XSS vulnerability in the navigation breadcrumbs (Trail link)
+
+       * Small ui improvement: make Attachment lists sortable on the attachment size field
+
+
+2019-04-28  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.11.0-M4-git-10
 
        * [JSPWIKI-1107], [JSPWIKI-1109] Fixing XSS vulnerability in various plugins.

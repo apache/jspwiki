@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,11 +14,12 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
@@ -68,7 +69,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Returns the maxpages.  This may differ from what was set by setMaxpages().
-     *  
+     *
      *  @return The current size of the pages.
      */
     public int getMaxpages()
@@ -78,7 +79,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Sets how many pages to show.
-     *  
+     *
      *  @param maxpages The amount.
      */
     public void setMaxpages(int maxpages)
@@ -88,7 +89,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Get the separator string.
-     *  
+     *
      *  @return The string set in setSeparator()
      */
     public String getSeparator()
@@ -98,12 +99,12 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Set the separator string.
-     *  
+     *
      *  @param separator A string which separates the page names.
      */
     public void setSeparator(String separator)
     {
-        m_separator = separator;
+        m_separator = TextUtil.replaceEntities( separator );
     }
 
     /**
@@ -174,7 +175,8 @@ public class BreadcrumbsTag extends WikiTagBase
 
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
-            out.print("<a class=\"" + linkclass + "\" href=\"" + m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
+            out.print("<a class=\"" + linkclass + "\" href=\"" + m_wikiContext.getViewURL(curPage)+ "\">"
+                        + TextUtil.replaceEntities( curPage ) + "</a>");
 
             if( i < queueSize - 2 )
             {
@@ -210,7 +212,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
             return null;
         }
-        
+
         /**
          * @param pageName
          *            the page to be deleted from the breadcrumb

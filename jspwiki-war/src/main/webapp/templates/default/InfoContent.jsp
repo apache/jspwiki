@@ -348,8 +348,7 @@
 	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 	  </td>
 
-      <td class="nowrap" title="${att.size} bytes">
-        <%-- <fmt:formatNumber value='${att.size/1024.0}' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/> --%>
+      <td class="nowrap" title="${att.size} bytes" data-sortvalue="${att.size}">
         <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( att.getSize() ) %>
       </td>
 
