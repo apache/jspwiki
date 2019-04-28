@@ -2,7 +2,7 @@
 
        * 2.11.0-M4-git-10
 
-       * [JSPWIKI-1107] Fixing XSS vulnerability in various plugins.
+       * [JSPWIKI-1107], [JSPWIKI-1109] Fixing XSS vulnerability in various plugins.
 
        * [JSPWIKI-1106] Adding the jspwiki.attachment.forceDownload property
 
