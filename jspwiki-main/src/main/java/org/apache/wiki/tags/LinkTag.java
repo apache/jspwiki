@@ -419,10 +419,11 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     {
         try
         {
+            WikiEngine engine = m_wikiContext.getEngine();
+
             if( !m_overrideAbsolute )
             {
                 // TODO: see WikiContext.getURL(); this check needs to be specified somewhere.
-                WikiEngine engine = m_wikiContext.getEngine();
                 m_absolute = "absolute".equals( engine.getWikiProperties().getProperty( WikiEngine.PROP_REFSTYLE ) );
             }
 
@@ -438,6 +439,11 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
             sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
             sb.append( (m_tabindex != null) ? "tabindex=\""+m_tabindex+"\" " : "" );
+
+            if( engine.getPage( m_pageName ) instanceof Attachment )
+            {
+                sb.append( engine.getAttachmentManager().forceDownload( m_pageName ) ? "download " : "" );
+            }
 
             switch( m_format )
             {

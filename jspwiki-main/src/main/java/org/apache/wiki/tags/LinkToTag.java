@@ -102,12 +102,19 @@ public class LinkToTag
         JspWriter out = pageContext.getOut();
         String url;
         String linkclass;
+        String forceDownload = "";
 
         if( isattachment )
         {
             url = m_wikiContext.getURL(WikiContext.ATTACH, pageName,
                                        (getVersion() != null) ? "version="+getVersion() : null );
             linkclass = "attachment";
+
+            if( m_wikiContext.getEngine().getAttachmentManager().forceDownload( pageName ) )
+            {
+                forceDownload = "download ";
+            }
+
         }
         else
         {
@@ -124,7 +131,8 @@ public class LinkToTag
         {
           case ANCHOR:
             out.print("<a class=\""+linkclass+"\" href=\""+url+"\" accesskey=\""
-                          + m_accesskey + "\" title=\"" + m_title + "\">");
+                          + m_accesskey + "\" title=\"" + m_title
+                          + "\" " + forceDownload + ">");
             break;
           case URL:
             out.print( url );

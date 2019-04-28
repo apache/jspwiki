@@ -394,6 +394,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
+                if(  m_engine.getAttachmentManager().forceDownload( attlink ) )
+                {
+                    el.setAttribute("download", "");
+                }
+
                 pushElement(el);
                 popElement(el.getName());
 
@@ -435,6 +440,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
         return el;
     }
+
 
     /**
      *  Figures out if a link is an off-site link.  This recognizes

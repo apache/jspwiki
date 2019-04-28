@@ -132,7 +132,7 @@ public class AttachmentServlet extends HttpServlet {
             m_allowedPatterns = new String[0];
 
         String forbidden = TextUtil.getStringProperty( props,
-                AttachmentManager.PROP_FORDBIDDENEXTENSIONS,
+                AttachmentManager.PROP_FORBIDDENEXTENSIONS,
                 null );
 
         if( forbidden != null && forbidden.length() > 0 )

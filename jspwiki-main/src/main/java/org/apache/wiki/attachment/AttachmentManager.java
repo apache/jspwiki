@@ -43,6 +43,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -77,7 +78,15 @@ public class AttachmentManager
     /**
      *  A space-separated list of attachment types which cannot be uploaded
      */
-    public static final String PROP_FORDBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
+    public static final String PROP_FORBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
+
+    /**
+     *  A space-separated list of attachment types which never will open in the browser.
+     */
+    public static final String PROP_FORCEDOWNLOAD = "jspwiki.attachment.forceDownload";
+
+    /** List of attachment types which are forced to be downloaded */
+    private String[] m_forceDownloadPatterns;
 
     static Logger log = Logger.getLogger( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
@@ -175,6 +184,15 @@ public class AttachmentManager
             log.error( "Attachment provider reports IO error", e );
             m_provider = null;
         }
+
+        String forceDownload = TextUtil.getStringProperty( props, PROP_FORCEDOWNLOAD, null );
+
+        if( forceDownload != null && forceDownload.length() > 0 )
+            m_forceDownloadPatterns = forceDownload.toLowerCase().split("\\s");
+        else
+            m_forceDownloadPatterns = new String[0];
+
+
     }
 
     /**
@@ -387,6 +405,30 @@ public class AttachmentManager
             return listAttachments( wikipage ).size() > 0;
         }
         catch( Exception e ) {}
+
+        return false;
+    }
+
+    /**
+     *  Check if attachement link should force a download iso opening the attachment in the browser.
+     *
+     *  @param name  Name of attachment to be checked
+     *  @return true, if the attachment should be downloaded when clicking the link
+     *  @since 2.11.0 M4
+    */
+    public boolean forceDownload( String name )
+    {
+        if( name == null || name.length() == 0 ) return false;
+
+        name = name.toLowerCase();
+
+        if( name.indexOf('.') == -1) return true;  //force download on attachments without extension or type indication
+
+        for( int i = 0; i < m_forceDownloadPatterns.length; i++ )
+        {
+            if( name.endsWith(m_forceDownloadPatterns[i]) && m_forceDownloadPatterns[i].length() > 0 )
+                return true;
+        }
 
         return false;
     }

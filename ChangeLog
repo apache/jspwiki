@@ -4,6 +4,9 @@
 
        * [JSPWIKI-1107] Fixing XSS vulnerability in various plugins.
 
+       * [JSPWIKI-1106] Adding the jspwiki.attachment.forceDownload property
+
+
 2019-04-28  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M4-git-09
