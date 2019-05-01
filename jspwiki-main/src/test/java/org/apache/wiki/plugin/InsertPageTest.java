@@ -86,7 +86,7 @@ public class InsertPageTest
 
         Assertions.assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
 
-        Assertions.assertEquals( "<div style=\"\">foo\n</div> <div style=\"\">foo\n</div>\n", testEngine.getHTML("ThisPage"), "found != 2" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div> <div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML("ThisPage"), "found != 2" );
 
     }
 
@@ -101,7 +101,7 @@ public class InsertPageTest
 
         Assertions.assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
 
-        Assertions.assertEquals( "<div style=\"\">foo\n</div>\n", testEngine.getHTML("ThisPage"), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML("ThisPage"), "found != 1" );
     }
 
 
@@ -115,7 +115,7 @@ public class InsertPageTest
         testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
         testEngine.saveText( "Test Page", "foo[{ALLOW view Anonymous}]" );
 
-        Assertions.assertEquals( "<div style=\"\">foo\n</div>\n", testEngine.getHTML( "ThisPage" ), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML( "ThisPage" ), "found != 1" );
     }
 
     /**
@@ -129,7 +129,7 @@ public class InsertPageTest
         testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
         testEngine.saveText( "TestPage", "foo[{ALLOW view Anonymous}]" );
 
-        Assertions.assertEquals( "<div style=\"\">foo\n</div>\n", testEngine.getHTML( "ThisPage" ), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML( "ThisPage" ), "found != 1" );
     }
 
 }
