@@ -1,3 +1,13 @@
+2019-05-1  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M4-git-12
+
+       * [JSPWIKI-1104] InsertPagePlugin now also supports cookie based
+         inserts.
+         The UserPreferences page has been extended to allow the users to view and
+         delete page-based cookies.
+
+
 2019-04-28  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M4-git-11

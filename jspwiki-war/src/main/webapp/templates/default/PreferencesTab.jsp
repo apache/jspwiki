@@ -208,4 +208,29 @@
     </select>
   </div>
 
+  <hr />
+
+  <div class="form-group table-striped-bordered-condensed-fit-sort">
+    <label class="control-label form-col-20" style="vertical-align:top;"><fmt:message key="prefs.user.pagecookies"/></label>
+    <table class="wikitable" style="display:inline-block;">
+    <tr>
+      <th><fmt:message key="prefs.user.pagecookies.type"/></th>
+      <th><fmt:message key="prefs.user.pagecookies.page"/></th>
+      <th><fmt:message key="prefs.user.pagecookies.actions"/></th>
+    </tr>
+    <c:forEach var="aCookie" items="${pageContext.request.cookies}" >
+      <c:if test="${fn:startsWith(aCookie.name,'JSPWiki.') }">
+        <c:set var="cookiePieces" value="${fn:split(aCookie.name, '.')}" />
+        <c:set var="cookieType" value="${cookiePieces[1]}" />
+        <c:set var="cookiePage" value="${fn:replace(cookiePieces[2], '%20', ' ')}" />
+        <tr>
+          <td>${cookieType}</td>
+          <td><wiki:Link cssClass="slimbox" page="${cookiePage}">${cookiePage}</wiki:Link></td>
+          <td><div class="btn btn-xs btn-danger" data-delete-cookie="${aCookie.name}"><fmt:message key="prefs.user.pagecookie.delete"/></div></td>
+        </tr>
+      </c:if>
+    </c:forEach>
+    </table>
+  </div>
+
 </form>

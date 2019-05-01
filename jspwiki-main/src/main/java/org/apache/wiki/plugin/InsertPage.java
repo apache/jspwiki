@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -31,6 +32,9 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.preferences.Preferences;
+
 
 /**
  *  Inserts page contents.  Muchos thanks to Scott Hurlbert for the initial code.
@@ -58,12 +62,16 @@ public class InsertPage
     public static final String PARAM_MAXLENGTH = "maxlength";
     /** Parameter name for setting the class.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_CLASS     = "class";
+    /** Parameter name for setting the show option.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SHOW   = "show";
     /** Parameter name for setting the section.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SECTION   = "section";
     /** Parameter name for setting the default.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DEFAULT   = "default";
 
     private static final String DEFAULT_STYLE = "";
+
+    private static final String ONCE_COOKIE = "JSPWiki.Once.";
 
     /** This attribute is stashed in the WikiContext to make sure that we don't
      *  have circular references.
@@ -84,9 +92,13 @@ public class InsertPage
         String clazz        = params.get( PARAM_CLASS );
         String includedPage = params.get( PARAM_PAGENAME );
         String style        = params.get( PARAM_STYLE );
+        Boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
         String defaultstr   = params.get( PARAM_DEFAULT );
         int    section      = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
         int    maxlen       = TextUtil.parseIntParameter(params.get( PARAM_MAXLENGTH ), -1 );
+
+        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+
 
         if( style == null ) style = DEFAULT_STYLE;
 
@@ -133,9 +145,6 @@ public class InsertPage
                     previousIncludes = new ArrayList<String>();
                 }
 
-                previousIncludes.add( page.getName() );
-                context.setVariable( ATTR_RECURSE, previousIncludes );
-
                 //
                 // Check for permissions
                 //
@@ -147,6 +156,30 @@ public class InsertPage
                     res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
                     return res.toString();
                 }
+
+                //
+                // Show Once
+                // Check for page-cookie, only include page if cookie is not yet set
+                //
+                String cookieName = "";
+
+                if( showOnce )
+                {
+                    cookieName = ONCE_COOKIE +
+                                 TextUtil.urlEncodeUTF8( page.getName() )
+                                         .replaceAll( "\\+", "%20" );
+
+                    if( HttpUtil.retrieveCookieValue( context.getHttpRequest(),
+                                                      cookieName ) != null )
+                    {
+                        return "";  //silent exit
+                    }
+
+                }
+
+                // move here, after premature exit points (permissions, page-cookie)
+                previousIncludes.add( page.getName() );
+                context.setVariable( ATTR_RECURSE, previousIncludes );
 
                 /**
                  *  We want inclusion to occur within the context of
@@ -174,12 +207,18 @@ public class InsertPage
                 if( pageData.length() > maxlen )
                 {
                     pageData = pageData.substring( 0, maxlen )+" ...";
-                    moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">More...</a></p>";
+                    moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">"+rb.getString("insertpage.more")+"</a></p>";
                 }
 
-                res.append("<div style=\""+style+"\""+(clazz != null ? " class=\""+clazz+"\"" : "")+">");
+                res.append("<div class=\"inserted-page ");
+                if( clazz != null ) res.append( clazz );
+                if( style != DEFAULT_STYLE ) res.append("\" style=\""+style );
+                if( showOnce ) res.append("\" data-once=\""+cookieName );
+                res.append("\" >");
+
                 res.append( engine.textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
+
                 res.append("</div>");
 
                 //

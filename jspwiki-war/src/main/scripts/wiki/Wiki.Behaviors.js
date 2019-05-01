@@ -190,10 +190,13 @@ Behavior:Alert (based on Bootstrap)
 */
     .add(".alert", function(element){
 
-        element.addClass("alert-warning alert-dismissable").grab(
+        element.addClass("alert-dismissable").grab(
 
             "button.close[type=button][html=&times;]".slick()
-                .addEvent("click", function(){ element.dispose(); }),
+                .addEvent("click", function(){
+                    element.remove();
+
+                }),
             "top"
 
         );
@@ -236,7 +239,7 @@ Behavior: Viewer
         Viewer.preload(a.href, { width: 800, height: 600 }, function( element ){
 
             var next = a.getNext();
-            if( next && next.match("img.outlink") ){ next.dispose(); }
+            if( next && next.matches("img.outlink") ){ next.remove(); }
 
             element.addClass("viewport").replaces(a);
 
@@ -311,9 +314,9 @@ becomes
 //helper function, to collect the links to be converted
 function filterJSPWikiLinks(element){
 
-    return element.match("a") ?
+    return element.matches("a") ?
         element :
-        element.getElements( element.match(".slimbox-attachments") ?
+        element.getElements( element.matches(".slimbox-attachments") ?
             "a[href].attachment" :
             // otherwise,  catch several different cases in one go
             //    img:not([href$=/attachment_small.png]):not(.outlink)  ::jspwiki small icons
@@ -411,7 +414,7 @@ function collapseFn(element, cookie){
 
     cookie = cookie || wiki.PageName;
 
-    cookie = new Cookie.Flags("JSPWikiCollapse" + cookie, {path: wiki.BasePath, duration: 20});
+    cookie = new Cookie.Flags("JSPWiki.Collapse." + cookie, {path: wiki.BaseUrl, duration: 20});
 
     if( clazz == list ){
 
@@ -482,7 +485,7 @@ Example:
 
         element.addClass("prettyprint");
         /*html5 expects  <pre><code>  */
-        if( element.match("pre") ){
+        if( element.matches("pre") ){
             element.innerHTML = "<code>" + element.innerHTML + "</code>";
         }
 
@@ -491,7 +494,7 @@ Example:
 
         element.addClass("prettyprint");
         /*html5 expects  <pre><code>  */
-        if( element.match("pre") ){
+        if( element.matches("pre") ){
             element.innerHTML = "<code>" + element.innerHTML + "</code>";
         }
 
@@ -835,7 +838,7 @@ div[this is the parent container]
         var bgBox = image.getParent(".bg"),
             clazz = bgBox.className; //contains possibly other styles to be applied to the background image
 
-        if( bgBox && bgBox.match("td") ){
+        if( bgBox && bgBox.matches("td") ){
             bgBox = bgBox.getParent("table");
         }
 

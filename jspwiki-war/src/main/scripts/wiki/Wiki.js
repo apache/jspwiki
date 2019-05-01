@@ -103,6 +103,9 @@ var Wiki = {
                 wiki.resizer(element, $$(element.get("data-resize")) );
             })
 
+            //cookie based page insertions
+            .add(".context-view .inserted-page[data-once]", wiki.insertPage )
+
             //add header scroll-up/down effect
             .add( ".fixed-header > .header", wiki.yoyo )
 
@@ -149,7 +152,6 @@ var Wiki = {
                 wiki.search = new wiki.Search( form, {
                     xhrURL: wiki.XHRSearch,
                     onComplete: function(){
-                        //console.log(form.query.get("value"));
                         wiki.prefs.set("PrevQuery", form.query.get("value"));
                     }
                 });
@@ -207,8 +209,6 @@ var Wiki = {
             duration: 20
         });
         //console.log(wiki.prefs.hash);
-
-        //Object.each(wiki.prefs.hash, function(item,key){ console.log("PREFS  ",key,"=>",item); });
 
         if( wiki.version != wiki.prefs.get("version") ){
             wiki.prefs.empty();
@@ -450,7 +450,7 @@ var Wiki = {
                 li.inject(parentLi, "before");
 
             }
-            ul.dispose();
+            ul.remove();
 
         });
 
@@ -469,7 +469,7 @@ var Wiki = {
             if( element.getNext("p *,hr") ){
                 "li.divider".slick().inject(parentLi, "before") ;
             }
-            element.dispose();
+            element.remove();
 
         });
 
@@ -584,7 +584,7 @@ var Wiki = {
         //Handle all configuration checkboxes
         form.getElements("[type=checkbox][data-cmd]").each( function( el ){
 
-            el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
+            //el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
             el.addEvent("click", onCheck );
             onCheck.apply(el);
 
@@ -820,6 +820,40 @@ var Wiki = {
 
         }
 
+    },
+
+    //behavior linked to ".context-view .inserted-page[data-once]"
+    insertPage: function( element ){
+
+        var onceCookie = element.getAttribute("data-once"),
+            okButton = ".btn.btn-success";
+
+        //do not handle the notification (and cookie) when this is the inserted-page itself
+        if( onceCookie.test( RegExp( "." + Wiki.PageName.replace(/\s/g,"%20")+"$" ) ) ){
+            if( !element.closest(".page") ) element.remove();
+            return;
+        }
+
+        if( !element.getElement( okButton ) ){
+            element.grab([
+                "div.modal-footer", [
+                    "button.btn.btn-success", { text: "dialog.confirm".localize() }                            ]
+            ].slick());
+        }
+
+        element.getElement( okButton ).addEvent("click", function(){
+            $.cookie( onceCookie, Date() );   //register the current timestamp
+            element.remove();
+        });
+
+        //if no other additional css class is set, add the default .modal class
+        if( element.className.trim() === "inserted-page" ){
+            element.addClass("modal");      //element.classList.add("modal");
+        }
+
+        if( element.matches(".modal") ){
+            element.openModal( ); // open the modal dialog
+        }
     }
 
 };

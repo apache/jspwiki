@@ -76,6 +76,7 @@ images/feather-small.png   wxh  162x286
 // Main color scheme
 @wiki-header-bg:    hsla(214, 68%, 58%, 0.9); //@brand-primary;
 //@wiki-header-bg: -webkit-linear-gradient(108deg,rgba(112,208,238,0.8), rgba(74,137,220,0.9)/*rgba(42,132,210,0.8)*/ 90%);
+@wiki-footer-bg:    @wiki-header-bg;
 
 @wiki-header-color: @white;
 @wiki-page-bg:      @white;
@@ -105,7 +106,7 @@ images/feather-small.png   wxh  162x286
 
 @modal-backdrop-bg: hsl(16, 44%, 63%); //copper blush
 @wiki-modal-max-width: 100 * (1-@sidebar-ratio);
-@wiki-modal-max-height: 40;
+@wiki-modal-max-height: 100 * (1-@sidebar-ratio);
 
 //Nav bar
 @wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;

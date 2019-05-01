@@ -39,10 +39,11 @@ body[.show-modal]
   position: fixed;
   //position: absolute;
   max-width: unit(@wiki-modal-max-width, vw);
-  max-height: unit(@wiki-modal-max-height,vh);
+  max-height: unit(@wiki-modal-max-height, vh);
   top: unit( (100 - @wiki-modal-max-height)/2,vh);
   left: 50%; margin-right:-50%;
   transform: translate(-50%);
+  overflow: auto;
 
   padding: @modal-inner-padding;
 
@@ -85,6 +86,8 @@ body[.show-modal]
 .modal-footer {
     margin-top: @modal-inner-padding;
     text-align: center; // right align buttons
+    position:relative;
+    bottom:0;
 
     // Properly space out buttons
     .btn + .btn {

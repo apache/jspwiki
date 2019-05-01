@@ -83,7 +83,7 @@ Wiki.Recents = new Class({
 
         var self = this, form = self.form;
 
-        if( element.match(".clear") ){
+        if( element.matches(".clear") ){
 
             //element.getSiblings("li.recents").destroy();
             //element.destroy();

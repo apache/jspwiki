@@ -41,7 +41,7 @@ Javascript routines to support JSPWiki UserPreferences
     var datapref = "*[data-pref]"; //data preference form elements
 
     function getValue( el ){
-        return ( el.match( "[type=checkbox]" ) ? el.checked : el.value );
+        return ( el.matches( "[type=checkbox]" ) ? el.checked : el.value );
     }
 
     function windowUnload( onbeforeunload ){
@@ -99,7 +99,17 @@ Javascript routines to support JSPWiki UserPreferences
 
         };
 
-        //FFS: add click-triggers to some preferences:  prefLayout, prefOrientation,
+        function deleteCookie(event){
+
+            var cookie = this.getAttribute("data-delete-cookie");
+
+            $.cookie.delete(cookie);
+            this.closest("tr").remove();
+        }
+
+        form.getElements("[data-delete-cookie]").forEach( function(element){
+            element.onclick = deleteCookie;
+        })
 
     });
 

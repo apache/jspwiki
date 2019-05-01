@@ -56,7 +56,7 @@
       --%>
       <c:forEach items="${breadCrumbTrail}" varStatus="status" begin="2">
           <c:set var="crumb" value="${breadCrumbTrail[fn:length(breadCrumbTrail) - status.index]}" />
-          <li><wiki:Link page="${crumb}">${fn:escapeXml(crumb)}</wiki:Link></li>
+          <li><wiki:Translate>[${crumb}]</wiki:Translate></li>
       </c:forEach>
 
     </ul>
