@@ -418,14 +418,14 @@ public class TestEngine extends WikiEngine
      * @param props the properties supplied by callers
      * @return the corrected/clean properties
      */
-    private static Properties cleanTestProps( Properties props )
-    {
-        String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
-        String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
+    private static Properties cleanTestProps( final Properties props ) {
+        final String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
+        final String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
+        final String testDir = pageDir.substring( 0, pageDir.lastIndexOf( '/' ) ) +
+                               stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis();
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir",
-        		           pageDir.substring( 0, pageDir.lastIndexOf( '/' ) ) +
-        		           stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis() );
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir", testDir );
+        props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", testDir );
         return props;
     }
 
