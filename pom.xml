@@ -69,6 +69,7 @@
     <selenide.version>5.2.2</selenide.version>
     <slf4j.version>1.7.26</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
+    <tika.version>1.20</tika.version>
     <tomcat.version>8.5.40</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
@@ -119,6 +120,7 @@
     <module>jspwiki-util</module>
     <module>jspwiki-main</module>
     <module>jspwiki-markdown</module>
+    <module>jspwiki-tika-searchprovider</module>
     <module>jspwiki-war</module>
     <module>jspwiki-portable</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
@@ -239,6 +241,12 @@
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-analyzers-common</artifactId>
         <version>${lucene.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-parsers</artifactId>
+        <version>${tika.version}</version>
       </dependency>
 
       <dependency>
