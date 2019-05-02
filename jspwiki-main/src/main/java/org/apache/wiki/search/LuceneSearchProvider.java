@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -109,8 +108,8 @@ public class LuceneSearchProvider implements SearchProvider {
 
     /** These attachment file suffixes will be indexed. */
     public static final String[] SEARCHABLE_FILE_SUFFIXES = new String[] { ".txt", ".ini", ".xml", ".html", "htm", ".mm", ".htm",
-                                                                          ".xhtml", ".java", ".c", ".cpp", ".php", ".asm", ".sh",
-                                                                          ".properties", ".kml", ".gpx", ".loc" };
+                                                                           ".xhtml", ".java", ".c", ".cpp", ".php", ".asm", ".sh",
+                                                                           ".properties", ".kml", ".gpx", ".loc", ".md", ".xml" };
 
     protected static final String LUCENE_ID            = "id";
     protected static final String LUCENE_PAGE_CONTENTS = "contents";
@@ -292,7 +291,7 @@ public class LuceneSearchProvider implements SearchProvider {
      * @param att Attachment to get content for. Filename extension is used to determine the type of the attachment.
      * @return String representing the content of the file.
      * FIXME This is a very simple implementation of some text-based attachment, mainly used for testing.
-     * This should be replaced /moved to Attachment search providers or some other 'pluggable' wat to search attachments
+     * This should be replaced /moved to Attachment search providers or some other 'pluggable' way to search attachments
      */
     protected String getAttachmentContent( Attachment att )
     {
@@ -310,30 +309,14 @@ public class LuceneSearchProvider implements SearchProvider {
             }
         }
 
-        String out = null;
+        String out = filename;
         if( searchSuffix )
         {
-            InputStream attStream = null;
-            StringWriter sout = new StringWriter();
-            
-            try
-            {
-                attStream = mgr.getAttachmentStream( att );
-                FileUtil.copyContents( new InputStreamReader(attStream), sout );
-                out = sout.toString();
-            }
-            catch (ProviderException e)
-            {
+            try( final InputStream attStream = mgr.getAttachmentStream( att ); final StringWriter sout = new StringWriter() ) {
+                FileUtil.copyContents( new InputStreamReader( attStream ), sout );
+                out = out + " " + sout.toString();
+            } catch( ProviderException | IOException e ) {
                 log.error("Attachment cannot be loaded", e);
-            }
-            catch (IOException e)
-            {
-                log.error("Attachment cannot be loaded", e);
-            }
-            finally 
-            {
-            	IOUtils.closeQuietly( attStream );
-            	IOUtils.closeQuietly( sout );
             }
         }
 
