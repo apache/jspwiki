@@ -50,8 +50,8 @@ public class TikaSearchProviderTest {
     @Test
     void testGetAttachmentContent() throws Exception {
         engine.saveText( "test-tika", "blablablabla" );
-        byte[] filePng = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "favicon.png" ).toURI() ) );
         byte[] filePdf = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "aaa-diagram.pdf" ).toURI() ) );
+        byte[] filePng = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "favicon.png" ).toURI() ) );
         engine.addAttachment( "test-tika", "aaa-diagram.pdf", filePdf );
         engine.addAttachment( "test-tika", "favicon.png", filePng );
 
@@ -66,7 +66,7 @@ public class TikaSearchProviderTest {
             Thread.sleep( 100L );
         }
 
-        Collection< SearchResult > res = waitForIndex( "favicon.png" , "testGetAttachmentContent" );
+        Collection< SearchResult > res = waitForIndex( "aaa-diagram.pdf" , "testGetAttachmentContent" );
         Assertions.assertNotNull( res );
         Assertions.assertEquals( 2, res.size(), debugSearchResults( res ) );
 
