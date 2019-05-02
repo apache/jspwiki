@@ -33,7 +33,7 @@ import java.util.Properties;
 
 public class TikaSearchProviderTest {
 
-    private static final long SLEEP_TIME = 20_000L;
+    private static final long SLEEP_TIME = 2_000L;
     private static final int SLEEP_COUNT = 50;
     TestEngine engine;
     Properties props;

@@ -425,7 +425,7 @@ public class TestEngine extends WikiEngine
                                stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis();
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", testDir );
-        props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", testDir );
+        // props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", testDir );
         return props;
     }
 
