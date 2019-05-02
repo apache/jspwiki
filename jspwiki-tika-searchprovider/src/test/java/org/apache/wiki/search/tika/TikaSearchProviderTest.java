@@ -33,8 +33,8 @@ import java.util.Properties;
 
 public class TikaSearchProviderTest {
 
-    private static final long SLEEP_TIME = 2_000L;
-    private static final int SLEEP_COUNT = 50;
+    private static final long SLEEP_TIME = 200L;
+    private static final int SLEEP_COUNT = 500;
     TestEngine engine;
     Properties props;
 
@@ -55,10 +55,20 @@ public class TikaSearchProviderTest {
         engine.addAttachment( "test-tika", "aaa-diagram.pdf", filePdf );
         engine.addAttachment( "test-tika", "favicon.png", filePng );
 
+        TikaSearchProvider tsp = ( TikaSearchProvider )engine.getSearchManager().getSearchEngine();
+        while( !tsp.pendingUpdates().isEmpty() ) { // allow Lucene full index to finish
+            Thread.sleep( 100L );
+        }
+
         engine.getSearchManager().getSearchEngine().reindexPage( engine.getPage( "test-tika" ) );
+
+        while( !tsp.pendingUpdates().isEmpty() ) { // allow Lucene reindex to finish
+            Thread.sleep( 100L );
+        }
+
         Collection< SearchResult > res = waitForIndex( "favicon.png" , "testGetAttachmentContent" );
         Assertions.assertNotNull( res );
-        Assertions.assertEquals( 1, res.size(), debugSearchResults( res ) );
+        Assertions.assertEquals( 2, res.size(), debugSearchResults( res ) );
 
         res = waitForIndex( "application\\/pdf" , "testGetAttachmentContent" );
         Assertions.assertNotNull( res );
@@ -80,18 +90,16 @@ public class TikaSearchProviderTest {
      * Should cover for both index and initial delay
      */
     Collection< SearchResult > waitForIndex( String text, String testName ) throws Exception {
-        Collection< SearchResult > res = null;
+        MockHttpServletRequest request = engine.newHttpRequest();
+        WikiContext ctx = engine.createContext( request, WikiContext.VIEW );
+        Collection< SearchResult > res = engine.getSearchManager().findPages( text, ctx );
         for( long l = 0; l < SLEEP_COUNT; l++ ) {
             if( res == null || res.isEmpty() ) {
                 Thread.sleep( SLEEP_TIME );
             } else {
                 break;
             }
-            MockHttpServletRequest request = engine.newHttpRequest();
-            WikiContext ctx = engine.createContext( request, WikiContext.EDIT );
-
             res = engine.getSearchManager().findPages( text, ctx );
-
         }
         return res;
     }

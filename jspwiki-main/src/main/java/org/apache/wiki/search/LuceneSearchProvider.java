@@ -503,7 +503,6 @@ public class LuceneSearchProvider implements SearchProvider {
         }
     }
 
-
     /**
      *  Adds a page-text pair to the lucene update queue.  Safe to call always
      *
@@ -531,6 +530,15 @@ public class LuceneSearchProvider implements SearchProvider {
                 log.debug("Scheduling page " + page.getName() + " for index update");
             }
         }
+    }
+
+    /**
+     * Returns a copy of the list of lucene's pending updates - useful for testing.
+     *
+     * @return a copy of the list of lucene's pending updates.
+     */
+    public List< Object[] > pendingUpdates() {
+        return new ArrayList<>( m_updates );
     }
 
     /**
