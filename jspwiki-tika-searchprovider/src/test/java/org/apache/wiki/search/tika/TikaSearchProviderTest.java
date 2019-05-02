@@ -33,7 +33,7 @@ import java.util.Properties;
 
 public class TikaSearchProviderTest {
 
-    private static final long SLEEP_TIME = 2_000L;
+    private static final long SLEEP_TIME = 20_000L;
     private static final int SLEEP_COUNT = 50;
     TestEngine engine;
     Properties props;
@@ -79,7 +79,7 @@ public class TikaSearchProviderTest {
     /**
      * Should cover for both index and initial delay
      */
-    Collection<SearchResult> waitForIndex( String text, String testName ) throws Exception {
+    Collection< SearchResult > waitForIndex( String text, String testName ) throws Exception {
         Collection< SearchResult > res = null;
         for( long l = 0; l < SLEEP_COUNT; l++ ) {
             if( res == null || res.isEmpty() ) {
