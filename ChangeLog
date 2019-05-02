@@ -1,4 +1,19 @@
-2019-05-1  Dirk Frederickx (brushed AT apache DOT org)
+2019-05-02  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M4-git-13
+
+       * [JSPWIKI-469] new TikaSearchProvider to index a lot more of attachments. It is not bundled
+       by default, as it brings in a lot of dependencies (+55MB).
+         * See https://jspwiki-wiki.apache.org/Wiki.jsp?page=TikaSearchProvider for installation instructions
+         * Search provider contributed by Ulf Dittmer, thanks!
+
+       * LuceneSearchProvider now indexes all attachment filenames, whether their content is parsed or not,
+       and also scans .md and .xml files.
+
+       * Updated missing es translations
+
+
+2019-05-01  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M4-git-12
 
