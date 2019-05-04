@@ -533,15 +533,6 @@ public class LuceneSearchProvider implements SearchProvider {
     }
 
     /**
-     * Returns a copy of the list of lucene's pending updates - useful for testing.
-     *
-     * @return a copy of the list of lucene's pending updates.
-     */
-    public List< Object[] > pendingUpdates() {
-        return new ArrayList<>( m_updates );
-    }
-
-    /**
      *  {@inheritDoc}
      */
     @Override
