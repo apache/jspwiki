@@ -17,17 +17,14 @@
 package org.apache.wiki.search.tika;
 
 import net.sf.ehcache.CacheManager;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.attachment.Attachment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Properties;
 
 
@@ -56,52 +53,15 @@ public class TikaSearchProviderTest {
         engine.addAttachment( "test-tika", "favicon.png", filePng );
 
         TikaSearchProvider tsp = ( TikaSearchProvider )engine.getSearchManager().getSearchEngine();
-        while( !tsp.pendingUpdates().isEmpty() ) { // allow Lucene full index to finish
-            Thread.sleep( 100L );
-        }
 
-        engine.getSearchManager().getSearchEngine().reindexPage( engine.getPage( "test-tika" ) );
+        Attachment attPdf = engine.getAttachmentManager().getAttachmentInfo( "test-tika/aaa-diagram.pdf" );
+        String pdfIndexed = tsp.getAttachmentContent( attPdf );
+        Assertions.assertTrue( pdfIndexed.contains( "aaa-diagram.pdf" ) );
+        Assertions.assertTrue( pdfIndexed.contains( "WebContainerAuthorizer" ) );
 
-        while( !tsp.pendingUpdates().isEmpty() ) { // allow Lucene reindex to finish
-            Thread.sleep( 100L );
-        }
-
-        Collection< SearchResult > res = waitForIndex( "aaa-diagram.pdf" , "testGetAttachmentContent" );
-        Assertions.assertNotNull( res );
-        Assertions.assertEquals( 2, res.size(), debugSearchResults( res ) );
-
-        res = waitForIndex( "application\\/pdf" , "testGetAttachmentContent" );
-        Assertions.assertNotNull( res );
-        Assertions.assertEquals( 1, res.size(), debugSearchResults( res ) );
-    }
-
-    String debugSearchResults( Collection< SearchResult > res ) {
-        StringBuilder sb = new StringBuilder();
-        for( SearchResult next : res ) {
-            sb.append( System.lineSeparator() + "* page: " + next.getPage() );
-            for( String s : next.getContexts() ) {
-                sb.append( System.lineSeparator() + "** snippet: " + s );
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Should cover for both index and initial delay
-     */
-    Collection< SearchResult > waitForIndex( String text, String testName ) throws Exception {
-        MockHttpServletRequest request = engine.newHttpRequest();
-        WikiContext ctx = engine.createContext( request, WikiContext.VIEW );
-        Collection< SearchResult > res = engine.getSearchManager().findPages( text, ctx );
-        for( long l = 0; l < SLEEP_COUNT; l++ ) {
-            if( res == null || res.isEmpty() ) {
-                Thread.sleep( SLEEP_TIME );
-            } else {
-                break;
-            }
-            res = engine.getSearchManager().findPages( text, ctx );
-        }
-        return res;
+        Attachment attPng = engine.getAttachmentManager().getAttachmentInfo( "test-tika/favicon.png" );
+        String pngIndexed = tsp.getAttachmentContent( attPng );
+        Assertions.assertTrue( pngIndexed.contains( "favicon.png" ) );
     }
 
 }
