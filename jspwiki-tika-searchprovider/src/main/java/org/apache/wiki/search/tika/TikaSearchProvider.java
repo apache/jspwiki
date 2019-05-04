@@ -57,68 +57,68 @@ import org.apache.tika.sax.BodyContentHandler;
 public class TikaSearchProvider extends LuceneSearchProvider {
 
     private static final Logger LOG = Logger.getLogger( TikaSearchProvider.class );
-	AutoDetectParser parser;
-	Set< String > textualMetadataFields;
+    AutoDetectParser parser;
+    Set< String > textualMetadataFields;
 
-	public TikaSearchProvider() {
-		parser = new AutoDetectParser();
+    public TikaSearchProvider() {
+        parser = new AutoDetectParser();
 
-		// metadata fields that also are indexed
-		textualMetadataFields = new HashSet<>();
-		textualMetadataFields.add( TikaCoreProperties.TITLE.getName() );
-		textualMetadataFields.add( TikaCoreProperties.COMMENTS.getName() );
-		textualMetadataFields.add( TikaCoreProperties.KEYWORDS.getName() );
-		textualMetadataFields.add( TikaCoreProperties.DESCRIPTION.getName() );
-		textualMetadataFields.add( TikaCoreProperties.TYPE.getName() );
-		textualMetadataFields.add( TikaMetadataKeys.RESOURCE_NAME_KEY );
-		textualMetadataFields.add( PDF.DOC_INFO_TITLE.getName() );
-		textualMetadataFields.add( PDF.DOC_INFO_KEY_WORDS.getName() );
-		textualMetadataFields.add( PDF.DOC_INFO_SUBJECT.getName() );
-		textualMetadataFields.add( OfficeOpenXMLCore.SUBJECT.getName() );
-		textualMetadataFields.add( Office.KEYWORDS.getName() );
-		textualMetadataFields.add( TikaCoreProperties.TYPE.getName() );
-		textualMetadataFields.add( HttpHeaders.CONTENT_TYPE );
-		textualMetadataFields.add( IPTC.HEADLINE.getName() );
-		textualMetadataFields.add( Database.COLUMN_NAME.getName() );
-		textualMetadataFields.add( Database.TABLE_NAME.getName() );
-		textualMetadataFields.add( CreativeCommons.WORK_TYPE );
-		textualMetadataFields.add( ClimateForcast.COMMENT );
-		textualMetadataFields.add( ClimateForcast.HISTORY );
-		textualMetadataFields.add( ClimateForcast.INSTITUTION );
-	}
+        // metadata fields that also are indexed
+        textualMetadataFields = new HashSet<>();
+        textualMetadataFields.add( TikaCoreProperties.TITLE.getName() );
+        textualMetadataFields.add( TikaCoreProperties.COMMENTS.getName() );
+        textualMetadataFields.add( TikaCoreProperties.KEYWORDS.getName() );
+        textualMetadataFields.add( TikaCoreProperties.DESCRIPTION.getName() );
+        textualMetadataFields.add( TikaCoreProperties.TYPE.getName() );
+        textualMetadataFields.add( TikaMetadataKeys.RESOURCE_NAME_KEY );
+        textualMetadataFields.add( PDF.DOC_INFO_TITLE.getName() );
+        textualMetadataFields.add( PDF.DOC_INFO_KEY_WORDS.getName() );
+        textualMetadataFields.add( PDF.DOC_INFO_SUBJECT.getName() );
+        textualMetadataFields.add( OfficeOpenXMLCore.SUBJECT.getName() );
+        textualMetadataFields.add( Office.KEYWORDS.getName() );
+        textualMetadataFields.add( TikaCoreProperties.TYPE.getName() );
+        textualMetadataFields.add( HttpHeaders.CONTENT_TYPE );
+        textualMetadataFields.add( IPTC.HEADLINE.getName() );
+        textualMetadataFields.add( Database.COLUMN_NAME.getName() );
+        textualMetadataFields.add( Database.TABLE_NAME.getName() );
+        textualMetadataFields.add( CreativeCommons.WORK_TYPE );
+        textualMetadataFields.add( ClimateForcast.COMMENT );
+        textualMetadataFields.add( ClimateForcast.HISTORY );
+        textualMetadataFields.add( ClimateForcast.INSTITUTION );
+    }
 
     /**
-	 * {@inheritDoc}
+     * {@inheritDoc}
      * @param att Attachment to get content for. Filename extension is used to determine the type of the attachment.
      * @return String representing the content of the file.
      */
     @Override
     protected String getAttachmentContent( final Attachment att ) {
-		// LOG.debug("indexing "+att.getFileName());
+        // LOG.debug("indexing "+att.getFileName());
         final AttachmentManager mgr = getEngine().getAttachmentManager();
-		final StringBuilder out = new StringBuilder();
+        final StringBuilder out = new StringBuilder();
 
-		try( final InputStream attStream = mgr.getAttachmentStream( att ) ) {
-			final Metadata metadata = new Metadata();
-			metadata.set( TikaMetadataKeys.RESOURCE_NAME_KEY, att.getFileName() );
+        try( final InputStream attStream = mgr.getAttachmentStream( att ) ) {
+            final Metadata metadata = new Metadata();
+            metadata.set( TikaMetadataKeys.RESOURCE_NAME_KEY, att.getFileName() );
 
-			final ContentHandler handler = new BodyContentHandler(-1 );
-			// -1 disables the character size limit; otherwise only the first 100.000 characters are indexed
+            final ContentHandler handler = new BodyContentHandler(-1 );
+            // -1 disables the character size limit; otherwise only the first 100.000 characters are indexed
 
-			parser.parse( attStream, handler, metadata );
-			out.append( handler.toString() );
+            parser.parse( attStream, handler, metadata );
+            out.append( handler.toString() );
 
-			final String[] names = metadata.names();
-			for( int j = 0; j < names.length; j++ ) {
-				if( textualMetadataFields.contains( names[ j ] ) ) {
-					out.append( " " ).append( metadata.get( names[ j ] ) );
-				}
-			}
-		} catch( TikaException | SAXException e ) {
-			LOG.error( "Attachment cannot be parsed", e );
-		} catch( ProviderException | IOException e ) {
-			LOG.error( "Attachment cannot be loaded", e );
-		}
+            final String[] names = metadata.names();
+            for( int j = 0; j < names.length; j++ ) {
+                if( textualMetadataFields.contains( names[ j ] ) ) {
+                    out.append( " " ).append( metadata.get( names[ j ] ) );
+                }
+            }
+        } catch( TikaException | SAXException e ) {
+            LOG.error( "Attachment cannot be parsed", e );
+        } catch( ProviderException | IOException e ) {
+            LOG.error( "Attachment cannot be loaded", e );
+        }
 
         return out.toString();
     }
