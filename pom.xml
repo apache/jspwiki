@@ -90,7 +90,7 @@
     <plugin.release.version>2.5.3</plugin.release.version>
     <plugin.resources.version>3.1.0</plugin.resources.version>
     <plugin.source.version>3.0.1</plugin.source.version>
-    <plugin.surefire.version>2.22.1</plugin.surefire.version>
+    <plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
     <plugin.war.version>3.2.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.1.0</plugin.jspc.version>
