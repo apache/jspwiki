@@ -28,12 +28,6 @@ try {
     def pom
 
     node( 'ubuntu' ) {
-        def JAVA_JDK_8=tool name: 'JDK 1.8 (latest)', type: 'hudson.model.JDK'
-        echo "Will use Java $JAVA_JDK_8"
-
-        def MAVEN_3_LATEST=tool name: 'Maven 3 (latest)', type: 'hudson.tasks.Maven$MavenInstallation'
-        echo "Will use Maven $MAVEN_3_LATEST"
-
         stage( 'clean ws' ) {
             cleanWs()
         }
@@ -41,10 +35,10 @@ try {
         stage( 'build source' ) {
             dir( build ) {
                 git url: buildRepo, poll: true
-                withEnv( [ "Path+JDK=$JAVA_JDK_8/bin", "Path+MAVEN=$MAVEN_3_LATEST/bin", "JAVA_HOME=$JAVA_JDK_8" ] ) {
+                withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
                     withSonarQubeEnv( 'ASF Sonar Analysis' ) {
                         echo "Will use SonarQube instance at $SONAR_HOST_URL"
-                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts $SONAR_MAVEN_GOAL -e -up"
+                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts $SONAR_MAVEN_GOAL -up"
                     }
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
@@ -55,7 +49,7 @@ try {
         }
 
         stage( 'build website' ) {
-            withEnv( [ "Path+JDK=$JAVA_JDK_8/bin", "Path+MAVEN=$MAVEN_3_LATEST/bin", "JAVA_HOME=$JAVA_JDK_8" ] ) {
+            withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
                 dir( jbake ) {
                     git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
                     sh 'mvn clean process-resources -Dplugin.japicmp.jspwiki-new=' + pom.version
