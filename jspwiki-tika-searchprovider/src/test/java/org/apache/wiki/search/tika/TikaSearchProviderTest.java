@@ -46,20 +46,20 @@ public class TikaSearchProviderTest {
 
     @Test
     void testGetAttachmentContent() throws Exception {
-        engine.saveText( "test-tika", "blablablabla" );
+        engine.saveText( "Test-tika", "blablablabla" );
         byte[] filePdf = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "aaa-diagram.pdf" ).toURI() ) );
         byte[] filePng = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "favicon.png" ).toURI() ) );
-        engine.addAttachment( "test-tika", "aaa-diagram.pdf", filePdf );
-        engine.addAttachment( "test-tika", "favicon.png", filePng );
+        engine.addAttachment( "Test-tika", "aaa-diagram.pdf", filePdf );
+        engine.addAttachment( "Test-tika", "favicon.png", filePng );
 
         TikaSearchProvider tsp = ( TikaSearchProvider )engine.getSearchManager().getSearchEngine();
 
-        Attachment attPdf = engine.getAttachmentManager().getAttachmentInfo( "test-tika/aaa-diagram.pdf" );
+        Attachment attPdf = engine.getAttachmentManager().getAttachmentInfo( "Test-tika/aaa-diagram.pdf" );
         String pdfIndexed = tsp.getAttachmentContent( attPdf );
         Assertions.assertTrue( pdfIndexed.contains( "aaa-diagram.pdf" ) );
         Assertions.assertTrue( pdfIndexed.contains( "WebContainerAuthorizer" ) );
 
-        Attachment attPng = engine.getAttachmentManager().getAttachmentInfo( "test-tika/favicon.png" );
+        Attachment attPng = engine.getAttachmentManager().getAttachmentInfo( "Test-tika/favicon.png" );
         String pngIndexed = tsp.getAttachmentContent( attPng );
         Assertions.assertTrue( pngIndexed.contains( "favicon.png" ) );
     }
