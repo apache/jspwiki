@@ -102,7 +102,9 @@ public class RSSImageLinkTag
 
                 if( rssURL != null )
                 {
-                    out.print("<a class=\"feed\" href=\""+rssURL+"\">&nbsp;</a>");
+                    out.print("<a class=\"feed\" href=\""+rssURL);
+                    out.print( " title='"+rb.getString( "rss.title.full" )+"'>" );
+                    out.print( "&nbsp;</a> ");
                 }
             }
             else

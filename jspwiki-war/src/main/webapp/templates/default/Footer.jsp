@@ -28,7 +28,7 @@
   <wiki:InsertPage page="CopyrightNotice"/>
 
   <div class="wiki-version"><%=Release.APPNAME%> v<%=Release.getVersionString()%>
-    <wiki:RSSImageLink />
+    <wiki:RSSImageLink title="<fmt:message key='fav.aggregatewiki.title'/>" mode="full"/>
   </div>
 
 </div>

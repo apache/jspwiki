@@ -30,7 +30,7 @@
 
   <%-- FFS <div onclick="" class="btn">
     the onclick="" is needed for hover effect on ipad https://www.codehaven.co.uk/fix-css-hover-on-iphone-ipad/ --%>
-  <a href="#" class="btn">
+  <a href="#" aria-label="<fmt:message key='sbox.search.button'/>" class="btn">
     <span class="icon-search"></span><span class="caret"></span>
   </a>
   <ul class="dropdown-menu" data-hover-parent=".searchbox">

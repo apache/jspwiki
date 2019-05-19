@@ -24,7 +24,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <!doctype html>
-<html lang="${prefs.Language}" name="top">
+<html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
   <head>
 
   <title>
@@ -60,7 +60,7 @@
 
   <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
                                        data-toggle-pref="${sidebarCookie}" >
-    <div class="page" role="content">
+    <div class="page" role="main">
       <wiki:Content/>
       <wiki:Include page="PageInfo.jsp"/>
     </div>

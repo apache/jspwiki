@@ -1,3 +1,9 @@
+2019-05-17  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-01
+
+       * Various accessibility improvements (ref. https://accessibilityinsights.io)
+
 2019-05-11  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * prepare release for 2.11.0.M4

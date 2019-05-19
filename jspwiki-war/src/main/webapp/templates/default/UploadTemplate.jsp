@@ -48,7 +48,7 @@
 
   <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
                                        data-toggle-pref="${sidebarCookie}" >
-    <div class="page" role="content">
+    <div class="page" role="main">
       <wiki:PageExists>
         <wiki:Include page="AttachmentTab.jsp"/>
       </wiki:PageExists>

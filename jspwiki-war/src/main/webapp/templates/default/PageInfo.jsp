@@ -39,7 +39,7 @@
         <fmt:param><wiki:Author /></fmt:param>
       </fmt:message>
     </wiki:CheckVersion>
-    <wiki:RSSImageLink mode="wiki" />
+    <wiki:RSSImageLink mode="wiki" title="<fmt:message key='info.feed'/> />
     <a href="#top" title="<fmt:message key='actions.gototop'/>" class="btn">Top<span class="caret-up"></span></a>
   </wiki:PageExists>
 
