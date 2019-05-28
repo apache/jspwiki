@@ -99,7 +99,6 @@
     String pageAsHtml;
     try
     {
-        //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
         pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
     }
         catch( Exception e )
@@ -262,7 +261,7 @@
   <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
       <div>
         <textarea name="htmlPageText"
-             autofocus="autofocus"><%=pageAsHtml%></textarea>
+             autofocus="autofocus"><%=pageAsHtml.replace("&", "&amp;")%></textarea>
       </div>
       <div class="ajaxpreview" >Preview comes here</div>
   </div>
@@ -294,8 +293,8 @@ Wiki.add("[name=htmlPageText]", function( element){
       //allowedContent:"div(tabs)",
       //allowedContent:" ... ",
       disallowedContent:"h1;h5;h6;blockquote",
-      language: Wiki.prefs.get( "Language" ), //"${prefs.Language}",
-      height: Wiki.prefs.get( resizeCookie ),
+      language: Wiki.prefs( "Language" ), //"${prefs.Language}",
+      height: Wiki.prefs( resizeCookie ),
       startupFocus: true,
       contentsCss: $("main-stylesheet").href,
       //resize_enabled: false,
@@ -307,7 +306,7 @@ Wiki.add("[name=htmlPageText]", function( element){
             html2markup();
         },
         resize: function(){
-            Wiki.prefs.set(resizeCookie, editorHeight());
+            Wiki.prefs(resizeCookie, editorHeight());
             resizePreview();
         },
         change: html2markup

@@ -22,41 +22,72 @@
 /*global $ */
 
 /*
-Minimal cookie handling 
+Minimal cookie handling
 
 Get a cookie
->>  $.cookie("sweetCookie");
+>  $.cookie("sweetCookie");
 
 Set a cookie  (returns the name of the cookie)
->> $.cookie("sweetCookie", "some-data");
->> $.cookie("sweetCookie", "some-data", { expiry: 5 });  //expires in 5 days
+> $.cookie("sweetCookie", "some-data");
+> $.cookie("sweetCookie", "some-data", { expiry: 5 });  //expires in 5 days
+> $.cookie({name:"sweetCookie", expiry:5}, "some-data");  //expires in 5 days
 */
-$.cookie = function(name, value, options) {
+$.cookie = function (name, value, options) {
 
-    if(value == undefined) {
+    if (name.name) {
+        options = name;
+        name = options.name;
+    }
+
+    if (!/%/.test(name)) { name = encodeURIComponent(name); } //fixme
+
+    if (value == undefined) {
         // read cookie
-		    var value = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
-		    return (value) ? decodeURIComponent(value[1]).replace(/\+/g, " ") : null;
+        value = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
+        return (value) ? decodeURIComponent(value[1]).replace(/\+/g, " ") : null;
     }
 
     // write or delete a cookie
-    if( /\s/.test(name) ) name = encodeURIComponent(name);
-    var brownies = name  + '=' + encodeURIComponent(value);
+    var brownies = name + '=' + encodeURIComponent(value);
 
-    if (options){
+    if (options) {
         if ('path' in options) brownies += ';path=' + options.path;
         if ('domain' in options) brownies += ';domain=' + options.domain;
         if ('secure' in options && options.secure) brownies += ';secure';
-        if ('expiry' in options){
+        if ('expiry' in options) {
             var expiry = options.expiry;
-            if (!isNaN(expiry)  ){
-                //its a number, indicating the relative number of days ; to be converted to milliseconds  
-                expiry = new Date(expiry * 864e5 /*1000 * 60 * 60 * 24*/ + Date.now() );
+            if (!isNaN(expiry)) {
+                //its a number, indicating the relative number of days ; to be converted to milliseconds
+                expiry = new Date(expiry * 864e5 /*1000 * 60 * 60 * 24*/ + Date.now());
             }
             brownies += ';expires=' + expiry.toUTCString();
-        }  
+        }
     }
     document.cookie = brownies;
-    //console.log(document.cookie)
 }
-$.cookie.delete = function(name){ $.cookie(name, "" ,{expiry:-1}); }
+$.cookie.delete = function (name) { $.cookie(name, "", { expiry: -1 }); }
+
+
+/*
+JSON encoded cookies
+
+> $.cookie.json({name:cookie-name, expiry:20}, "version");         //get version
+> $.cookie.json({name:cookie-name, expiry:20}, "version", "v-27"); //change version
+> $.cookie.json({name:cookie-name, expiry:20}, "");                //erase cookie
+
+*/
+$.cookie.json = function (cookieParams, key, value) {
+
+    var $cookie = $.cookie,
+        json = $cookie(cookieParams);  //read the browser cookie
+
+    if (key == "") { $cookie.delete(cookieParams.name); }
+
+    json = JSON.parse(json) || {};  //ffs: do we need to catch SyntaxError?
+
+    if (value != undefined) { //write prefs
+        json[key] = value;
+        $cookie(cookieParams, JSON.stringify(json));
+    }
+    return json[key];
+}

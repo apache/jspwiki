@@ -35,6 +35,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
+<wiki:RequestResource type="stylesheet" resource="templates/default/haddock-wysiwyg.css" />
+<wiki:RequestResource type="script" resource="scripts/haddock-wysiwyg.js" />
 <%--
     This provides a wysiwy editor for JSPWiki. (based on mooeditable)
 --%>
@@ -50,10 +52,7 @@
     wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
 
     String usertext = EditorManager.getEditedText(pageContext);
-
 %>
-<wiki:RequestResource type="stylesheet" resource="templates/default/haddock-wysiwyg.css" />
-<wiki:RequestResource type="script" resource="scripts/haddock-wysiwyg.js" />
 <c:set var='context'><wiki:Variable var='requestcontext' /></c:set>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
@@ -92,7 +91,6 @@
     String pageAsHtml;
     try
     {
-        //pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
         pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
     }
         catch( Exception e )
@@ -122,7 +120,9 @@
        protocol = "https://";
    }
    */
+
 %>
+
 <form method="post" accept-charset="<wiki:ContentEncoding/>"
       action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
@@ -256,8 +256,13 @@
 
   <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
       <div>
+        <%--
+        XSS note
+        Textareas automatically decodes html entities : so &lt;  is converted to <
+        To avoid this, double escape the & char =>  so &amp;lt; is converted to &lt;
+        --%>
         <textarea name="htmlPageText"
-             autofocus="autofocus"><%=pageAsHtml%></textarea>
+             autofocus="autofocus"><%= pageAsHtml.replace("&", "&amp;")%></textarea>
       </div>
       <div class="ajaxpreview">Preview comes here</div>
   </div>
@@ -308,9 +313,7 @@ Wiki.add("[name=htmlPageText]", function( element){
   		onChange: html2markup,
   		onEditorKeyUp: html2markup,
         onEditorPaste: html2markup,
-  		//onEditorMouseUp: html2markup,
-	    //actions: 'bold italic underline strikethrough | formatBlock justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule | undo redo removeformat | createlink unlink | urlimage | toggleview'
-	    actions: 'formatBlock | bold italic strikethrough |  justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule | undo redo removeformat | createlink unlink | urlimage | toggleview'
+	    actions: 'formatBlock | bold italic strikethrough | justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule / undo redo removeformat | createlink unlink | urlimage | toggleview'
 	});
 
 });

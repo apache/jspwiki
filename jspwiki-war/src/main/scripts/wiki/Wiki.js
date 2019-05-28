@@ -21,7 +21,7 @@
 
 
 /*eslint-env browser*/
-/*global $, $$, Form, Hash, Behavior, HighlightQuery, Accesskey, Dialog */
+/*global $, $$, Form, Behavior, HighlightQuery, Accesskey, Dialog, $.cookie */
 /*exported  Wiki */
 
 /*
@@ -82,7 +82,7 @@ var Wiki = {
                     var pref = element.get("data-toggle-pref");
                     if (pref) {
                         //console.log( pref, isActive );
-                        wiki.prefs.set(pref, isActive ? "active" : "");
+                        wiki.prefs(pref, isActive ? "active" : "");
                     }
                 });
             })
@@ -117,8 +117,8 @@ var Wiki = {
             .add( ".page-content", function(element){
                 var previousQuery = "PrevQuery";
 
-                HighlightQuery( element, wiki.prefs.get(previousQuery) );
-                wiki.prefs.erase(previousQuery);
+                HighlightQuery( element, wiki.prefs(previousQuery) );
+                wiki.prefs(previousQuery,"");
             })
 
             //searchbox dropdown engines
@@ -128,9 +128,9 @@ var Wiki = {
 
                 //activate Recent Searches functionality
                 new wiki.Recents( element, {
-                    items: prefs.get(recentSearch),
+                    items: prefs(recentSearch),
                     onChange: function( items ){
-                        items ? prefs.set(recentSearch, items) : prefs.erase(recentSearch);
+                        items ? prefs(recentSearch, items) : prefs(recentSearch,"");
                     }
                 });
 
@@ -152,7 +152,7 @@ var Wiki = {
                 wiki.search = new wiki.Search( form, {
                     xhrURL: wiki.XHRSearch,
                     onComplete: function(){
-                        wiki.prefs.set("PrevQuery", form.query.get("value"));
+                        wiki.prefs("PrevQuery", form.query.get("value"));
                     }
                 });
             })
@@ -187,6 +187,19 @@ var Wiki = {
 
     },
 
+    /*
+    Function: prefs
+        Read/Write the JSPWikiUserPrefs cookie, JSON-encoded.
+        Uses $.cookie.json
+
+    > wiki.prefs("version");                //get version
+    > wiki.prefs("version","new-version");  //set version to a new value
+    > wiki.prefs("")                        //erase user-preference cookie
+    */
+    prefs: function(key, value){
+
+        return $.cookie.json({name:"JSPWikiUserPrefs", path:this.BaseUrl, expiry:20}, key, value);
+    },
 
     /*
     Function: domready
@@ -204,20 +217,14 @@ var Wiki = {
 
         wiki.meta();
 
-        wiki.prefs = new Hash.Cookie("JSPWikiUserPrefs", {
-            path: wiki.BasePath,
-            duration: 20
-        });
-        //console.log(wiki.prefs.hash);
-
-        if( wiki.version != wiki.prefs.get("version") ){
-            wiki.prefs.empty();
-            wiki.prefs.set("version", wiki.version);
+        if( wiki.version != wiki.prefs("version") ){
+            wiki.prefs("");
+            wiki.prefs("version", wiki.version);
         }
 
         //The initial Sidebar will be active depending on a cookie state.
         //However, for small screens,  the sidebar will be hidden by default.
-        wiki.media("(min-width:768px)", function( screenIsLarge ){
+        wiki.media( "(min-width:768px)", function( screenIsLarge ){
 
             if(!screenIsLarge){
                 $$(".content")[0].removeClass("active"); //always hide sidebar on pageload for narrow screens
@@ -227,14 +234,11 @@ var Wiki = {
 
         //FIXME
         //The default Language is taken from a preference cookie, with fallback to the browser setting
-        //String.I18N.DEFAULT_LOCAL_LANGUAGE = wiki.prefs.get("Language")  || navigator.language || "en";
+        //String.I18N.DEFAULT_LOCAL_LANGUAGE = wiki.prefs("Language") || navigator.language || "en";
         //The default Date & Time format is taken for m a preference cookie, with fallback
-        //String.I18N.DEFAULT_DATE_FORMAT = wiki.prefs.get("DateFormat") || "dd mmm yyyy hh:mm";
+        //String.I18N.DEFAULT_DATE_FORMAT = wiki.prefs("DateFormat") || "dd mmm yyyy hh:mm";
 
-
-        //wiki.url = null;  //CHECK:  why this is needed?
-        //console.log( wiki.prefs.get("SectionEditing") , wiki.EditPermission ,wiki.Context );
-        if( wiki.prefs.get("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
+        if( wiki.prefs("SectionEditing") && wiki.EditPermission && (wiki.Context != "preview") ){
 
             wiki.addEditLinks( wiki.toUrl( wiki.PageName, true ) );
 
@@ -262,7 +266,7 @@ var Wiki = {
 
         function queryChanged( event ){ callback( event.matches ); }
 
-        if( /*window.*/ matchMedia ){
+        if( /*window.*/matchMedia ){
 
             var mediaQueryList = matchMedia( query );
             mediaQueryList.addListener( queryChanged );
@@ -344,14 +348,15 @@ var Wiki = {
 
         var target = $(location.hash.slice(1)),
             events,
+            pagecontent = ".page-content",
             popstate = "popstate";
 
         //console.log( popstate, location.hash, target );
 
         //only send popstate events to targets within the main page; eg not sidebar
-        if( target && target.getParent(".page-content") ){
+        if( target && target.closest(pagecontent) ){
 
-            while( !target.hasClass("page-content") ){
+            while( !target.matches(pagecontent) ){
 
                 events = target.retrieve("events"); //mootools specific - to read registered events on elements
 
@@ -367,6 +372,7 @@ var Wiki = {
         }
     },
 
+    //CHECKME
     autofocus: function(){
 
         var els, element;
@@ -387,7 +393,6 @@ var Wiki = {
                 }
             }
         }
-
     },
 
     /*
@@ -413,15 +418,15 @@ var Wiki = {
             host = location.host;
 
         $$("meta[name^=wiki]").each( function(el){
-            wiki[el.get("name").slice(4)] = el.get("content") || "";
+            wiki[el.get("name").slice(4)] = el.content || "";
         });
 
         // BasePath: if JSPWiki is installed in the root, then we have to make sure that
         // the cookie-cutter works properly here.
         url = wiki.BaseUrl;
         url = url ? url.slice(url.indexOf(host) + host.length, -1) : "";
-        wiki.BasePath = (url /*===""*/) ? url : "/";
-        //console.log(url, host, wiki.BaseUrl + " basepath: " + wiki.BasePath);
+        wiki.BasePath = url || "/";
+        //console.log(url, host, "BaseUrl", wiki.BaseUrl, "BasePath: " + wiki.BasePath);
 
     },
 
@@ -466,7 +471,7 @@ var Wiki = {
             element.getElements('a').each( function(link){
                 ["li",[link]].slick().inject(parentLi, "before");
             });
-            if( element.getNext("p *,hr") ){
+            if( element.getElement("+p *,+hr") ){
                 "li.divider".slick().inject(parentLi, "before") ;
             }
             element.remove();
@@ -551,7 +556,7 @@ var Wiki = {
 
         this.getSections().each( function(element, index){
 
-            element.grab("a.editsection".slick({ html: description, href: url + index }));
+            element.appendChild("a.editsection".slick({ html: description, href: url + index }));
 
         });
 
@@ -576,7 +581,7 @@ var Wiki = {
                 isChecked = this.checked;
 
             wiki.toggleLivePreview(form, cmd, isChecked);
-            wiki.prefs.set(cmd, isChecked);  //persist in the pref cookie
+            wiki.prefs(cmd, isChecked);  //persist in the pref cookie
             if( onChangeFn ){ onChangeFn(cmd, isChecked); }
 
         }
@@ -584,7 +589,7 @@ var Wiki = {
         //Handle all configuration checkboxes
         form.getElements("[type=checkbox][data-cmd]").each( function( el ){
 
-            //el.checked = !!wiki.prefs.get(el.getAttribute("data-cmd"));
+            //el.checked = !!wiki.prefs(el.getAttribute("data-cmd"));
             el.addEvent("click", onCheck );
             onCheck.apply(el);
 
@@ -594,7 +599,7 @@ var Wiki = {
         //????form.getElements(".dropdown-menu a[data-cmd=editor]").addEvent("click", ...
         form.getElements("a.editor-type").addEvent("click", function () {
 
-            wiki.prefs.set("editor", this.textContent);
+            wiki.prefs("editor", this.textContent);
 
         });
 
@@ -635,7 +640,7 @@ var Wiki = {
                 */
 
                 if( !state ){ previewcontainer = previewcontainer.getParent(); }
-                previewcontainer.grab(ajaxpreview);
+                previewcontainer.appendChild(ajaxpreview);
 
             }
         }
@@ -646,6 +651,7 @@ var Wiki = {
         var wiki = this,
             loading = "loading",
             preview = function(p){ previewElement.removeClass(loading).set("text", p);};
+
 
         return (function(){
 
@@ -705,7 +711,7 @@ var Wiki = {
 
         //set the initial size of the targets
         if( pref ){
-            targets.setStyle("height", prefs.get(pref) || 300 );
+            targets.setStyle("height", prefs(pref) || 300 );
         }
 
         target = targets.pop();
@@ -715,7 +721,7 @@ var Wiki = {
             modifiers: { x: null },
             onDrag: function(){
                 var h = this.value.now.y;
-                if( pref ){ prefs.set(pref, h); }
+                if( pref ){ prefs(pref, h); }
                 if( targets ){ targets.setStyle("height", h); }
                 if( dragCallback ){ dragCallback(h); }
             },
@@ -835,7 +841,7 @@ var Wiki = {
         }
 
         if( !element.getElement( okButton ) ){
-            element.grab([
+            element.appendChild([
                 "div.modal-footer", [
                     "button.btn.btn-success", { text: "dialog.confirm".localize() }                            ]
             ].slick());

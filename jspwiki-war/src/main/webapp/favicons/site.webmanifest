@@ -1,7 +1,27 @@
 {
     "name": "JSPWiki",
     "short_name": "JSPWiki",
+    "start_url":".",
+    "display": "standalone",
+    "background_color": "#4B8ADD",
+    "theme_color": "#4B8ADD",
+    "description": "JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java and JSP. JSPWiki supports all the traditional wiki features, as well as very detailed access control and security integration using JAAS.  For more information see https://jspwiki-wiki.apache.org/",
     "icons": [
+        {
+            "src": "favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "favicon.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
         {
             "src": "android-chrome-192x192.png",
             "sizes": "192x192",
@@ -12,8 +32,5 @@
             "sizes": "512x512",
             "type": "image/png"
         }
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+    ]
 }

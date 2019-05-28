@@ -86,6 +86,8 @@
   <group name="haddock-wysiwyg">
     <css>/scripts/wiki-wysiwyg/Assets/MooEditable/MooEditable.css</css>
     <css>/scripts/wiki-wysiwyg/Assets/MooEditable/MooEditable.Extras.css</css>
+    <css>/styles/haddock/default/wiki-wysiwyg.less</css>
+
     <js>/scripts/wiki-wysiwyg/Source/MooEditable/MooEditable.js</js>
     <js>/scripts/wiki-wysiwyg/Source/MooEditable/MooEditable.UI.MenuList.js</js>
     <js>/scripts/wiki-wysiwyg/Source/MooEditable/MooEditable.Extras.js</js>

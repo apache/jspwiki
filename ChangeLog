@@ -1,8 +1,23 @@
+2019-05-28  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-02
+
+        * Improved styling of the WYSIWYG editor toolbar
+
+       * [JSPWIKI-1111] Improve handling of &entities;  in the WYSIWYG editor.
+
+       * Improve the web app manifest making JSPWiki a progressive web app.
+         You can now install JSPWIKI on the homescreen of your mobile device or tablet
+         for quicker access and improve experience.
+
+       * [JSPWIKI-1097] JS updates to replace mootools js  (cookie handling)
+
+
 2019-05-17  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-01
 
-       * Various accessibility improvements (ref. https://accessibilityinsights.io)
+       * Accessibility improvements (ref. https://accessibilityinsights.io)
 
 2019-05-11  Juan Pablo Santos (juanpablo AT apache DOT org)
 

@@ -38,14 +38,19 @@ Javascript routines to support JSPWiki UserPreferences
 */
 !(function( wiki ){
 
-    var datapref = "*[data-pref]"; //data preference form elements
+    var datapref = "[data-pref]"; //data preference form elements
 
     function getValue( el ){
-        return ( el.matches( "[type=checkbox]" ) ? el.checked : el.value );
+        return (el.type == "checkbox") ? el.checked : el.value;
     }
 
     function windowUnload( onbeforeunload ){
         window.onbeforeunload = onbeforeunload || function(){};
+    }
+
+    function deleteCookie(event){
+        $.cookie.delete( this.getAttribute("data-delete-cookie") );
+        this.closest("tr").remove();
     }
 
     wiki.add("#preferences", function( form ){
@@ -53,63 +58,51 @@ Javascript routines to support JSPWiki UserPreferences
         //when leaving this pages check for changed preferences. If so, ask first.
         windowUnload( function(){
 
+            //if( $$(datapref, form).some( function(el){
             if( form.getElements( datapref ).some( function(el){
 
-                //if(getValue(el) != el.getDefaultValue()){ console.log(el.get('data-pref'),getValue(el),el.getDefaultValue());}
                 return ( getValue(el) != el.getDefaultValue() );
 
             }) ){ return "prefs.areyousure".localize(); }
 
         });
 
-        //save & clear button handlers
-        //form.getElements("[name=action]").addEvent( function(event){
-        form.action[0].onclick = form.action[1].onclick = function(event){
+        //setAssertedName
+        //$("[name=action][value=setAssertedName]", form).onclick = function(event){
+        form.getElement("[name=action][value=setAssertedName]").onclick = function(event){
 
-            switch( event.target.value ){
-
-                case "setAssertedName" :
-
-                    form.getElements( datapref ).each( function(el){
-
-                        if( el.type!="radio" || el.checked ){
-                            wiki.prefs.set( el.get( "data-pref" ), getValue(el) );
-                        }
-
-                    });
-
-                    /*
-                    var key, formData = new FormData( form );
-                    for( key of formData.keys() ){
-                        wiki.prefs.set( key, formData.get(key) );   //FFS:  key = the name of input element,  not the pref name
-                    }
-                    */
-
-                    break;
-
-                default :  //"clearAssertedName"
-
-                    //FFS: no need for an AreYouSure dialog ??
-                    wiki.prefs.empty();
-
-            }
-
-            //on normal submit, leave the page without asking confirmation
+            form.getElements( datapref ).each( function(el){
+                if( el.type != "radio" || el.checked ){
+                    wiki.prefs( el.get( "data-pref" ), getValue(el) );
+                }
+            });
             windowUnload();
-
-        };
-
-        function deleteCookie(event){
-
-            var cookie = this.getAttribute("data-delete-cookie");
-
-            $.cookie.delete(cookie);
-            this.closest("tr").remove();
         }
+        //clearAssertedName: cookie is reset by the server
+        //FFS: no need for an AreYouSure dialog ??
 
+        //$.bind( $$("[data-delete-cookie]",form), "click", deleteCookie);
         form.getElements("[data-delete-cookie]").forEach( function(element){
             element.onclick = deleteCookie;
-        })
+        });
+
+        //FFS: add click-triggers to some preferences:  prefLayout, prefOrientation,
+        form.prefAppearance.onchange = function(event){
+            console.log( this, getValue(this) );
+
+        }
+
+        form.prefLayout.onclick = function(event){
+            console.log( this, getValue(this) );
+
+
+        }
+
+        form.prefOrientation.onclick = function(event){
+            console.log( this, getValue(this) );
+
+
+        }
 
     });
 

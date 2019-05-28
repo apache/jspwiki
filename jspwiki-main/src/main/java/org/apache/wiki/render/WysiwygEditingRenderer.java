@@ -164,7 +164,8 @@ public class WysiwygEditingRenderer
 
         m_document.setContext( m_context );
 
-        XMLOutputter output = new XMLOutputter();
+        CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
+        XMLOutputter output = new XMLOutputter(processor);
 
         StringWriter out = new StringWriter();
 

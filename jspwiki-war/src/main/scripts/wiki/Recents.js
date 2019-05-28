@@ -44,7 +44,7 @@ DOM-structure:
 Examples:
 >    wiki.add(".searchbox-recents", function(element){
 >       new Wiki.Recents(element, {
->           items: wiki.prefs.get("RecentSearch"),
+>           items: wiki.prefs("RecentSearch"),
 >           onChange: function(recents){ wiki.set("RecentSearch",recents); }
 >       });
 >   });

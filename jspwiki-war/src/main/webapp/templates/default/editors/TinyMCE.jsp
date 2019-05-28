@@ -35,21 +35,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
+
+<wiki:RequestResource type="script" resource="/JSPWiki-211/scripts/tinymce/js/tinymce/tinymce.min.js" />
+<%--
+<wiki:RequestResource type="script" resource="tinymce.cachefly.net/4.2/tinymce.min.js" />
+--%>
+
 <%--
     This provides the WYSIWYG TinyMCE for JSPWiki.
 --%>
 <%
     WikiContext context = WikiContext.findContext( pageContext );
     WikiEngine engine = context.getEngine();
-
-    /* local download of TinyMCE */
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           context.getURL( WikiContext.NONE, "scripts/tinymce/js/tinymce/tinymce.min.js" ) );
-
-    /*  Use TinyMCE from a CDN
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           "//tinymce.cachefly.net/4.2/tinymce.min.js" );
-    */
 
     context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
@@ -100,7 +97,6 @@
     String pageAsHtml;
     try
     {
-        //pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
         pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
 
     }
@@ -270,7 +266,7 @@
   <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
       <div>
         <textarea name="htmlPageText"
-             autofocus="autofocus"><%=pageAsHtml%></textarea>
+             autofocus="autofocus"><%=pageAsHtml.replace("&", "&amp;")%></textarea>
       </div>
       <div class="ajaxpreview" >Preview comes here</div>
   </div>
@@ -302,8 +298,8 @@ Wiki.add("[name=htmlPageText]", function( element){
       //content_css : "template/haddock/haddock.css",
       //extended_valid_elements: "...]",
       //invalid_elements: blockquote ...",
-      language: Wiki.prefs.get( "Language" ), //"${prefs.Language}",
-      height: Wiki.prefs.get( resizeCookie ),
+      language: Wiki.prefs( "Language" ), //"${prefs.Language}",
+      height: Wiki.prefs( resizeCookie ),
       content_css: $("main-stylesheet").href,
       //plugins from the standard 4.2.2. package
       plugins: 'anchor charmap code fullscreen image insertdatetime link lists media paste preview searchreplace table wordcount',
@@ -320,7 +316,7 @@ Wiki.add("[name=htmlPageText]", function( element){
             }).delay(100);
         });
         editor.on("ResizeEditor", function(){
-           Wiki.prefs.set(resizeCookie, editorHeight() );
+           Wiki.prefs(resizeCookie, editorHeight() );
            resizePreview();
         });
         editor.on("change", html2markup );

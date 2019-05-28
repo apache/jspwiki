@@ -48,11 +48,9 @@ BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-i
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 --%>
 
-<%--
 <wiki:PageExists>
   <meta name="Description" content="Page version <wiki:PageVersion />, last modified by <wiki:Author format='plain'/>, on <wiki:PageDate format='${prefs["DateFormat"]}'/>" />
 </wiki:PageExists>
---%>
 
 
 <%-- COOKIE read client preferences --%>
