@@ -97,7 +97,7 @@ wiki.add("textarea#editorarea", function( main ){
             var cache = localStorage.getItem(LocalCache),
                 modal = getFormElem(".localstorage");
 
-            modal.grab("pre".slick({text:cache}) )
+            modal.appendChild("pre".slick({text:cache}) )
                 .openModal( function(){
                     snipe.set("value", cache);
                 });

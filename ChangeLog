@@ -1,5 +1,15 @@
 2019-05-28  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.11.0-M5-git-03
+
+        * [JSPWIKI-1112] EDITOR input fields (changenote,comment-signature )
+          vulnerable to XSS.
+
+       * [JSPWIKI-1097] Minor JS updates (cookie handling, %%collapse)
+
+
+2019-05-28  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.11.0-M5-git-02
 
         * Improved styling of the WYSIWYG editor toolbar
@@ -10,7 +20,7 @@
          You can now install JSPWIKI on the homescreen of your mobile device or tablet
          for quicker access and improve experience.
 
-       * [JSPWIKI-1097] JS updates to replace mootools js  (cookie handling)
+       * [JSPWIKI-1097] JS updates to start replacing mootools.js  (cookie handling)
 
 
 2019-05-17  Dirk Frederickx (brushed AT apache DOT org)

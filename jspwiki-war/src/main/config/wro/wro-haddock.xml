@@ -27,6 +27,7 @@
     <js>/scripts/lib/mootools-more-1.6.0.js</js>
     <js>/scripts/lib/prettify4mar13.js</js>
     <js>/scripts/util/cookies.js</js>
+    <js>/scripts/util/polyfill.js</js>
   </group>
 
   <group name="mooextend" abstract="true">
@@ -34,13 +35,13 @@
     <js>/scripts/moo-extend/Behavior.js</js>
     <js>/scripts/moo-extend/String.Extend.js</js>
     <!--<js>/scripts/moo-extend/Date.Extend.js</js>-->
+    <js>/scripts/moo-extend/Cookie.Flags.js</js>
     <js>/scripts/moo-extend/Array.Extend.js</js>
     <js>/scripts/moo-extend/Array.NaturalSort.js</js>
     <js>/scripts/moo-extend/Element.Extend.js</js>
     <js>/scripts/moo-extend/Color.js</js>
     <js>/scripts/moo-extend/HighlightQuery.js</js>
     <js>/scripts/moo-extend/Accesskey.js</js>
-    <js>/scripts/moo-extend/Cookie.Flags.js</js>
     <js>/scripts/moo-extend/Tips.js</js>
     <js>/scripts/moo-extend/Request.File.js</js>
     <js>/scripts/moo-extend/Form.MultipleFile.js</js>
@@ -76,9 +77,9 @@
     <js>/scripts/wiki/Search.js</js>
     <js>/scripts/wiki/Recents.js</js>
     <js>/scripts/wiki/Findpages.js</js>
-    <js>/scripts/wiki/Category.js</js>
-    <js>/scripts/wiki/Wiki.Behaviors.js</js>
     <js>/scripts/wiki/Prefs.js</js>
+    <js>/scripts/wiki/Wiki.Behaviors.js</js>
+    <js>/scripts/wiki/Category.js</js>
 
     <css>/styles/haddock/default/build.less</css>
   </group>

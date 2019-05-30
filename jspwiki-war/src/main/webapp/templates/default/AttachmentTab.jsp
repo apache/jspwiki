@@ -122,7 +122,7 @@
       <c:set var="type" value="${ fn:length(parts)>1 ? fn:escapeXml(parts[fn:length(parts)-1]) : ''}" />
 
       <td class="attach-name" title="${att.fileName}">
-        <wiki:LinkTo>${fn:escapeXml(att.fileName)}</wiki:LinkTo>
+        <wiki:LinkTo><c:out value="${att.fileName}" /></wiki:LinkTo>
       </td>
 
       <td><wiki:PageVersion /></td>
@@ -153,7 +153,7 @@
       </td>
 
       <c:set var="changenote" value="<%= (String)att.getAttribute( WikiPage.CHANGENOTE ) %>" />
-      <td class="changenote">${changenote}</td>
+      <td class="changenote"><c:out value="${changenote}"/></td>
 
     </tr>
     </wiki:AttachmentsIterator>

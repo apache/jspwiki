@@ -224,7 +224,7 @@
         {
             if( link != null )
             {
-                Cookie linkcookie = new Cookie("link", link);
+                Cookie linkcookie = new Cookie("link", TextUtil.urlEncodeUTF8(link) );
                 linkcookie.setMaxAge(1001*24*60*60);
                 response.addCookie( linkcookie );
             }

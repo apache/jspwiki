@@ -204,7 +204,7 @@
         </td>
 
         <c:set var="changenote" value="<%= (String)currentPage.getAttribute( WikiPage.CHANGENOTE ) %>" />
-        <td class="changenote">${changenote}</td>
+        <td class="changenote"><c:out value="${changenote}"/></td>
 
       </tr>
       </c:if>
@@ -340,7 +340,7 @@
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
     <tr>
 
-      <td class="attach-name"><wiki:LinkTo version="${att.version}">${fn:escapeXml(att.fileName)}</wiki:LinkTo></td>
+      <td class="attach-name"><wiki:LinkTo version="${att.version}"><c:out value="${att.fileName}" /></wiki:LinkTo></td>
 
       <td><wiki:PageVersion /></td>
 
@@ -370,7 +370,7 @@
       --%>
 
       <c:set var="changenote" value="<%= (String)att.getAttribute( WikiPage.CHANGENOTE ) %>" />
-      <td class="changenote">${changenote}</td>
+        <td class="changenote"><c:out value="${changenote}"/></td>
 
     </tr>
     </wiki:HistoryIterator><%-- </wiki:AttachmentsIterator> --%>

@@ -190,7 +190,7 @@ Behavior:Alert (based on Bootstrap)
 */
     .add(".alert", function(element){
 
-        element.addClass("alert-dismissable").grab(
+        element.addClass("alert-dismissable").appendChild(
 
             "button.close[type=button][html=&times;]".slick()
                 .addEvent("click", function(){
@@ -209,7 +209,7 @@ Behavior: Quote (based on Bootstrap)
 */
     .add(".quote", function(element){
 
-        "blockquote".slick().wraps( "p".slick().wraps(element) );
+        "blockquote".slick().wraps( element );
 
     })
 
@@ -551,7 +551,7 @@ Behavior: Table behaviors
 
     .add(".sortable,div[class*=table-]", function(element){
 
-        element.ifClass(element.hasClass("sortable"), "table-sort");
+        element.ifClass(element.matches(".sortable"), "table-sort");
 
         var args = "table".sliceArgs(element),
             arg,

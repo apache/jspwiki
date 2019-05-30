@@ -74,10 +74,10 @@ var TCollapsible = this.Collapsible = new Class({
         open: "xpand",
         close: "clpse",
 
-        //cookie: null,    //Cookie.Flags - persist the state of the targets
+        //cookie: null,    //cookie-parameters persist the state of the targets
         //target: "ul,ol", //the elements which will expand/collapse
         //nested: "li",    //(optional) css selector of nested container elements
-        //collapsed: "ol", //css selector to check if default state is collapsed
+        expand: "ul", //css selector to check if default state is expanded or collapse (collapsed == OL)
 
         fx: "height",    //style attribute to animate on collapse
         fxy: "y",        //scroll direction to animate on collapse,
@@ -91,6 +91,11 @@ var TCollapsible = this.Collapsible = new Class({
         self.element = element = document.getElement(element);
         //note: setOptions() makes a copy of all objects, so first copy the cookie!
         self.cookie = options && options.cookie;
+        self.nodes = [];
+        self.states = ( (self.cookie && $.cookie(self.cookie)) || "").split("");
+
+        //console.log(self.cookie, self.nodes,self.states.join(''));
+
         options = self.setOptions(options).options;
 
         if( options.nested ){
@@ -123,7 +128,7 @@ var TCollapsible = this.Collapsible = new Class({
             bullet = element.getElement(bullet) || bullet.slick().inject(element,"top");
             target = element.getElement(options.target);
 
-            if( target && (target.get("text").trim()!="") ){
+            if( target && (target.textContent.trim()!="") ){
 
                 //console.log("FX tween",bullet,target,self.initState(element,target));
                 if( options.fx ){
@@ -144,15 +149,22 @@ var TCollapsible = this.Collapsible = new Class({
     },
 
     //function initState: returns true:expanded; false:collapsed
-    //cookies always overwrite the initial state
+    //state from cookie
     initState:function( element, target ){
 
-        var cookie = this.cookie,
-            isCollapsed = this.options.collapsed;
+        var self = this,
+            expand = target.matches(self.options.expand),
+            nodes = self.nodes,
+            states = self.states,
+            offset = nodes.length;
 
-        isCollapsed = !(isCollapsed && target.match(isCollapsed) );
+        if( offset < states.length ){
+            expand = (states[offset] == 'T');
+        }
+        self.nodes[offset] = element;
+        states[offset] = expand ? "T":"F";
 
-        return cookie ? cookie.get(target, isCollapsed) : isCollapsed;
+        return expand;
     },
 
     //function getState: returns true:expanded, false:collapsed
@@ -169,15 +181,23 @@ var TCollapsible = this.Collapsible = new Class({
             options = self.options,
             nested = options.nested,
             element = nested ? bullet.getParent(nested) : self.element,
-            target, state;
+            target, state, offset;
 
         if( element ){
             target = element.getElement(options.target);
 
             if( target ){
-                state = !self.getState(target);
+                state = !self.getState(target); //toggle state
                 self.update( bullet, target, state );
-                if( cookie ){ cookie.write(target, state); }
+
+                if( cookie ){
+                    offset = self.nodes.indexOf(element);
+                    if( offset >= 0 ){
+                        self.states[offset] = (state ? "T" : "F");
+                        console.log("write",cookie,self.states.join(""))
+                        $.cookie( cookie, self.states.join("") ); //write cookie
+                    }
+                }
             }
         }
     },
