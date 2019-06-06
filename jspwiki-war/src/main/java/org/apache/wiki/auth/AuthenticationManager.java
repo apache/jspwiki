@@ -283,16 +283,14 @@ public class AuthenticationManager {
         WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
         AuthenticationManager authenticationMgr = m_engine.getAuthenticationManager();
         AuthorizationManager authorizationMgr = m_engine.getAuthorizationManager();
-        CallbackHandler handler = null;
+		// Create a callback handler, because sometimes it is missed in isAnonymous block
+		CallbackHandler handler = new WebContainerCallbackHandler(m_engine, request);
         Map<String,String> options = EMPTY_MAP;
 
         // If user not authenticated, check if container logged them in, or if
         // there's an authentication cookie
         if ( !session.isAuthenticated() )
         {
-            // Create a callback handler
-            handler = new WebContainerCallbackHandler( m_engine, request );
-
             // Execute the container login module, then (if that fails) the cookie auth module
             Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
             if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
