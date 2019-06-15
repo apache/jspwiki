@@ -18,122 +18,185 @@
     specific language governing permissions and limitations
     under the License.
 */
+
 /*
 Style: Collapsible
-    Generic support for Collapsible.List, Collapsible.Box
-
-DOM structure:
-(start code)
-    li
-        b.bullet
-        .. content ..
-    li
-        b.bullet(.clpse)(.xpand)
-        ul
-            li .. content ..
-            li .. content ..
-(end)
+    Generic support for Collapsible Lists and Boxes.
+    (see behavior/Collapsible.js)
 */
-.bullet {
-    display:inline-block;
-    outline:0;
-    float:left;
-    line-height:1.4; //heuristic, for vertical
+//fixme: need to overrule [class^=tab-] *:first-child{margin-top:0;}
 
-    // triangular bullets
-    width:0;
-    height:0;
-    border:.4em solid transparent;
-    border-radius: @border-radius-base; //smooth edges
-    border-left-color: @text-color;
-    border-right: none;
-    margin: .3em .9em .3em .7em;
 
-    &.clpse {
-        cursor: pointer;
-        border-left-color: @link-color;
-        &:hover { border-left-color: @link-hover-color; }
+/*
+Collapsible toggle button, and body scroll animation
+*/
+//list buttons are rendered as little triangles, which turn 90deg when clicked
+.collapse-btn {
+	position: relative;
+    color: @gray-light;  //default color
+	border: 0;
+	background: transparent;
+	padding:0;
+
+    &:focus {
+        outline: 0;
     }
-    &.xpand {
-        cursor: pointer;
-        border: .4em solid transparent; //reset
-        border-top-color: @link-color;
-        border-bottom: none;
-        margin: .5em .6em .5em .6em;
-        &:hover { border-top-color: @link-hover-color; }
-    }
+	&:not([disabled]) {
+	    color:@link-color;
 
+    	&:hover, &:focus {
+        	color: @wiki-mark;
+    	}
+	}
+    &::before {
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent currentColor;
+        border-width: @collapse-btn-base/2 0 @collapse-btn-base/2 @collapse-btn-base/2;
+        position: absolute;
+        display: block;
+        top: -@collapse-btn-base*(1 - 1/8);
+        left: -@collapse-btn-base*(1 + 1/4);
+        transition: transform .25s ease-in-out;
+    }
+	&[aria-expanded="false"]::before {
+    	transform: rotate(45deg) translate(@collapse-btn-base/4);
+	}
 }
-.xpand, .clpse { overflow:hidden; }
+.collapse-body {
+    //height will be toggled by javascript to make the animation work
+    transition: height .4s ease-in-out;
+    height: auto;
+    overflow: hidden;
+
+	&[aria-expanded="false"] {
+		display:none;   //make sure nested buttons are not reachable anymore -- hidden content is not focusable
+	}
+}
 
 
 /*
-TODO: Experimental - css3 animation iso mootools tween.
-div.xpand { .transition(all .5s ease); height:auto; }
-div.clpse { .transition(all .5s ease); height:0; }
-*/
-
-
-/*
-Style: Collapsible.List
+Style: Collapsible Lists
 >   %%collapse
 
-DOM structure:
+DOM structure BEFORE:
 (start code)
-div.collapse
-    ul
-        li
-            b.bullet
-            .. li-text ..
-        li
-            b.bullet(.xpand)(.clpse)
-            .. li-text ..
-            ul.xpand|clpse
-                li ..collapsible content ..
-                li ..collapsible content ..
+    div.collapsible
+        ul
+            li
+                List-item-text
+                ul
+                    li ...
 (end)
+
+DOM structure AFTER:
+(start code)
+    div.collapsible
+        ul
+            li
+                button.collapse-btn#UID List-item-text
+                ul.collapsse-body
+                    li ...
 */
 .collapse {
+    ul, ol {
+        list-style:none;
+    }
 
-    > ul, > ol { margin-left:-2em; }  // first ul/ol, shift left to create space for the bullets
-    ul, ol { list-style:none;  }
+	//additional bootstrap list styles
+    .list-nostyle,
+    .list-unstyled,
+    .list-group {
+    	.collapse-btn[disabled] { color:transparent; } //hide the button
 
-    //li:not(.xpand), li:not(.clpse) { list-style:auto; .bullet {display:none;} }
-    li { white-space:nowrap; overflow:hidden; }  //assume li-items fit on one line
+    }
 
+	//unstyled list: a lign all list-items on the left margin
+    & > ul.list-unstyled, & > ol.list-unstyled {
+    	padding-left: 1em;
+    }
+    & li > ul.list-unstyled, & li > ol.list-unstyled {
+    	padding-left:1em;
+    	margin-left:-1em;
+    }
+
+    //list group: draw nested boxes around groups of list items
+    &.list-group {
+    	.collapse-btn {
+    		margin-right: @collapse-btn-base;
+    		&::before {
+				top: -@collapse-btn-base;
+        		left: 0;
+	    	}
+    	}
+    }
 }
 
 
 /*
-Style: Collapsible-Box
+Collapsible Boxes
 >   %%collapsebox
+>   %%collapsebox.closed
 >   %%collapsebox-closed
+>   %%collapsebox.info , etc..
 
-DOM structure:
+DOM structure BEFORE:
 (start code)
-    //before
     div.collapsebox
-        b.bullet.xpand|clpse'[click='...']
-        h1-4  title
-        .. collapsible content ..
-
-    //after
-    div.panel.panel-default
-        div.panel-heading
-            b.bullet.xpand|clpse[onclick="..."]
-            h4.panel-title title
-        div.panel-body.xpand|clpse
-            .. collapsible content ..
+      h4 title
+      ... body ...
 (end)
+
+DOM structure AFTER:
+(start code)
+    div.collapsebox
+      button.collapse-btn#UID
+      h4 title
+      div.collapse-body
+        ... body ...
+(end)
+
 */
-//re-use bootstrap/panels.less
 div[class^=collapsebox] {
+    margin-bottom: @line-height-computed;  //copied from contextual boxes from bootstrap
 
-    > .panel-heading { padding-left:0; } //remove some left space next to the bullet
+	//collapse boxes have animated +/- toggle buttons
+	//inspired by https://codepen.io/El11/pen/gXxxYz
+    .collapse-btn {
+        margin: @line-height-computed/2 0;  //adopt margin from header  -- see bootstrap style.less
+        margin-right: @collapse-btn-base/2;
+        height: @collapse-btn-base;
+        width: @collapse-btn-base;
+        float: left;
 
-    //bullets get color ot text
-    &:not(.panel-default) .bullet {
-        &.xpand, &.xpand:hover { border-top-color: currentColor; }
-        &.clpse, &.clpse:hover { border-left-color: currentColor; }
-    }
+        & + h2,& + h3,& + h4 {
+            margin: 0;
+        }
+        &::before,
+        &::after {
+        	background: @link-color;
+        	position: absolute;
+        	content: '';
+        	border: 0; //overwrite the triangle borders
+        	height: @collapse-btn-base/4;
+        	width: @collapse-btn-base;
+        	left: 0;
+        	top: 0;
+        }
+        &::before {
+        	transform-origin: center;   //vertical leg of plus sign
+        }
+		&:not([disabled]) {
+	    	&:hover, &:focus {
+	    		&::before, &::after {
+        			background: @wiki-mark;
+	    		}
+    		}
+		}
+        &[aria-expanded="false"]::before {
+        	transform: rotate(-90deg);
+        }
+	}
 }

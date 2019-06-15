@@ -33,33 +33,33 @@ Style: TableOfContentsPlugin
 DOM structure:
     (begin)
     div.toc
-        div.collapsebox.panel.panel-default
-            div.panel-head
-                b.bullet xpand|clpse
-                h4#section-TOC Table Of Contents
-            div.xpand|clpse
-                div.panel-body
-                    ul
-                        li.toclevel-1
-                        li.toclevel-2
-                        li.toclevel-3
+        div.collapsebox
+            h4#section-TOC Table Of Contents
+            div.collapse-body
+                ul
+                    li.toclevel-1
+                    li.toclevel-2
+                    li.toclevel-3
     (end)
 */
 .toc {
     width: @wiki-commentbox-width-inverse;
     min-width: @wiki-small-viewport-dialog-width;
 
-    //when collapsed the header bottom border doubles with the bottom panel border
-    .panel-heading { border-bottom:none; }   //ugh -- for now just hide the border
+    .collapsebox {
+		padding: ((@line-height-computed - 1) / 2);   //re-use same padding as a PRE block
+		border-radius: @alert-border-radius;
+    	border: 1px solid @panel-default-border;
+    }
 
     ul {
         .list-unstyled;
         li:hover { background:@dropdown-link-hover-bg; }
         margin-bottom:0;
     }
-    .toclevel-1 { padding-left:1.2em }
-    .toclevel-2 { padding-left:2.4em; }
-    .toclevel-3 { padding-left:3.6em; }
+    .toclevel-1 { padding-left:1em }
+    .toclevel-2 { padding-left:2em; }
+    .toclevel-3 { padding-left:3em; }
 }
 //in case a TOC is added to the sidebar;  it will show the TOC of the main page
 .sidebar .toc {

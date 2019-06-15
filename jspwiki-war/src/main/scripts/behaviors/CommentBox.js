@@ -50,7 +50,7 @@ function CommentBox(element, options){
 
         caption = "h4".slick({ text:caption.deCamelize() });
 
-    } else if( header && header.match("h2,h3,h4") ) {
+    } else if( header && header.matches("h2,h3,h4") ) {
 
         caption = header;
     }

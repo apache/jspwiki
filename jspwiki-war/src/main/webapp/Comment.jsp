@@ -121,6 +121,7 @@
     {
         link = HttpUtil.retrieveCookieValue( request, "link" );
         if( link == null ) link = "";
+        link = TextUtil.urlDecodeUTF8(link);
     }
 
     session.setAttribute( "link", link );

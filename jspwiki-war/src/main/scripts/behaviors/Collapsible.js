@@ -18,360 +18,283 @@
     specific language governing permissions and limitations
     under the License.
 */
+/*eslint-env browser */
+/*global $ */
+
 /*
 Class: Collapsible
+    Implement collapsible lists and collapsible boxes.
+    The state is stored in a cookie.
+    Keyboard navigation is supported: press the spacebar or enter-key to toggle  a section.
+    Expanding or collapsing sections can be animated. (with css support)
 
 Options:
-    options - (object, optional)
+    elements -
+    cookie - (optional) store the state of all collapsibles to a next page load
 
-    bullet - (string) css selector to create collapsible bullets, default is "b.bullet", //"b.bullet[html=&bull;]"
-    open - (string) css class of expanded "bullet" and "target" elements
-    close - (string) css class of collapsed "bullet" and "target" elements
-    hint - (object) hint titles for the open en closed bullet, will be localized
-
-    nested - (optional) css selector of nested container elements, example "li",
-    target - (optional) css selector of the target element which will expand/collapse, eg "ul,ol"
-        The target is a descendent of the main element, default target is the main element itself.
-
-    collapsed - (optional) css selector to match element which should be collapsed at initialization (eg "ol")
-        The initial state will be overruled by the Cookie.Flags, if any.
-    cookie - (optional) Cookie.Flags instance, persistent store of the collapsible state of the targets
-
-    fx - (optional, default = "height") Fx animation parameter - the css style to be animated
-    fxy - (optional, default = "y") Fx animation parameter
-    fxReset - (optional, default = "auto") Fx animation parameter - end value of Fx animated style.
-        At the end of the animation, "fx" is reset to this "fxReset" value. ("auto" or fixed value)
-
-Depends on:
-    String.Extend: xsubs()
-    Element.Extend: ifClass()
-
-DOM structure:
-    (start code)
-    div.collapsible
-        ul
-            li
-                b.bullet.xpand|xpand[onclick="..."]
-                Toggle-text
-                ul.xpand|xpand
-                    li .. collapsible content ..
-    (end)
-
-Example:
-    (start code)
-    ...
-    (end)
+Usage:
+> new Collapsible( $$(".page div[class^=collapse]"),{  cookie:{name:...} })
 */
-!(function(){
 
-var TCollapsible = this.Collapsible = new Class({
+!function () {
 
-    Implements: Options,
+    var _UID = 0,
+        _CollapseButton = "button.collapse-btn",
+        _CollapseBodyClass = "collapse-body",
+        _ClosedStateClass = "closed",
+        _AriaExpanded = "aria-expanded";
 
-    options: {
-        bullet: "b.bullet", //clickable bullet
-        hint: { open:"collapse", close:"expand" },
-        open: "xpand",
-        close: "clpse",
+    /*
+    Collapsible list
 
-        //cookie: null,    //cookie-parameters persist the state of the targets
-        //target: "ul,ol", //the elements which will expand/collapse
-        //nested: "li",    //(optional) css selector of nested container elements
-        expand: "ul", //css selector to check if default state is expanded or collapse (collapsed == OL)
+    DOM structure BEFORE:
+    (start code)
+        div.collapse
+            ul
+                li
+                    List-item-text
+                    ul
+                        li ...
+    (end)
 
-        fx: "height",    //style attribute to animate on collapse
-        fxy: "y",        //scroll direction to animate on collapse,
-        fxReset: "auto"    //end value after animation is complete on expanded element: "auto" or fixed width
-    },
+    DOM structure AFTER:
+    (start code)
+        div.collapse
+            ul
+                li
+                  button.collapse-btn#UID List-item-text
+                  ul.collapse-body
+                    li ...
+    (end)
+    */
+    function buildCollapsibleList(li) {
 
-    initialize: function(element, options){
+        var collapseBody = li.getElement("> ul,> ol");
 
-        var self = this;
+        if (collapseBody && collapseBody.firstChild) {
 
-        self.element = element = document.getElement(element);
-        //note: setOptions() makes a copy of all objects, so first copy the cookie!
-        self.cookie = options && options.cookie;
-        self.nodes = [];
-        self.states = ( (self.cookie && $.cookie(self.cookie)) || "").split("");
+            li.ifClass(collapseBody.matches("ol"), _ClosedStateClass);
+            collapseBody.addClass(_CollapseBodyClass);
+        }
+        return li;
+    }
 
-        //console.log(self.cookie, self.nodes,self.states.join(''));
+    /*
+    Collapsible box
 
-        options = self.setOptions(options).options;
+    DOM structure BEFORE:
+    (start code)
+        div.collapsebox
+          h4 title
+          ... body ...
+    (end)
 
-        if( options.nested ){
+    DOM structure AFTER:
+    (start code)
+        div.collapsebox
+          button.collapse-btn#UID
+          h4 title
+          div.collapse-body
+            ... body ...
+    (end)
+    */
+    function buildCollapsibleBox(el) {
 
-            element.getElements( options.nested ).each( self.build, self );
+        var header = el.firstElementChild,
+            next,
+            collapseBody;
+
+        if (header && header.nextSibling) {
+
+            collapseBody = ("div." + _CollapseBodyClass).slick();
+            while ((next = header.nextSibling)) { collapseBody.appendChild(next); }
+
+            el.appendChild(collapseBody); //append after the header
+
+            if (el.className.test(/-closed\b/)) { el.addClass(_ClosedStateClass); }
+            //if( el.hasClass("closed"){ ... }
+        }
+        return el;
+    }
+
+    /*
+    A11Y
+    */
+    function setAriaExpanded(el, state) {
+
+        el.setAttribute(_AriaExpanded, state);
+    }
+
+    /*
+    Function: addCollapseToggle(el, index)
+        Add a collapse BUTTON to the dom and set the proper event handlers
+
+    DOM structure AFTER:
+    (start code)
+        <ELEMENT el>
+          label#UID.collapse-label   #text-content
+          <ELEMENT>.collapse-body
+            ...
+    */
+    function addCollapseToggle(el, index) {
+
+        var id = this.UID + index,
+            isCollapsed = el.hasClass(_ClosedStateClass),
+            collapseBody = el.getElement("> ." + _CollapseBodyClass),
+            button;
+
+        if (this.flags[index]) { isCollapsed = (this.flags[index] == 'T'); }
+        this.flags[index] = isCollapsed ? "T" : "F";
+
+        //put the label with open/close triangle
+        //$.create( _CollapseButton, {id:id, disabled:!collapseBody, start:el});
+        button = _CollapseButton.slick({ id: id });
+        button.disabled = !collapseBody;
+        el.insertBefore(button, el.firstChild);
+
+        if (collapseBody) {
+
+            button.addEvent("click", toggle.bind(this));
+            button.addEvent("keydown", keyToggle);
+
+            if (isCollapsed) { collapseBody.style.height = 0; }
+            setAriaExpanded(collapseBody, !isCollapsed);
+            setAriaExpanded(button, !isCollapsed);
+
+            collapseBody.addEvent("transitionend", animationEnd);
+        }
+    }
+
+    /*
+    EventHandler: keyToggle
+        Collapse/Expand the body by pressing the spacebar or return-key on a collapse button with :focus
+    */
+    function keyToggle(ev) {
+
+        var code = ev.keyCode;
+
+        if (code === 32 || code === 13) {
+
+            ev.preventDefault();
+            ev.target.click();  //trigger button
+        }
+    }
+
+    /*
+    EventHandler: animationEnd
+        Runs after completing the "height" animation on the collapseBody.
+
+        - if state=collapsed,  (height =  0px)
+            aria-expanded is still true,
+            now set the aria-expanded to false, which sets "display:none" (in the css)
+            to make sure the nested buttons, links etc. are not reachable anymore via te keyboard
+
+        - if state = expanded,  (height = n px)
+            aria-expanded is already true
+            now remove "height" from the inline style to return back to 'auto' height
+    */
+    function animationEnd() {
+
+        if (this.style.height == "0px") {
+
+            setAriaExpanded(this, false); //finalize the collapsed state of the body
 
         } else {
 
-            self.build( element );
+            this.style.height = null;
 
         }
+    }
 
-        element.addEvent(
-            //EG: "click:relay(b.bullet.xpand,b.bullet.clpse)"
-            "click:relay({0}.{1},{0}.{2})".xsubs(options.bullet,options.open,options.close),
-            function(event){ event.stop(); self.toggle(this); }
-        );
+    /*
+    EventHandler: toggle(event)
+        Store the new state in a cookie; and make sure all animations work.
+    */
+    function toggle(ev) {
 
-    },
+        var button = ev.target,
+            collapseBody = button.getElement("~ ." + _CollapseBodyClass), //get next-child .collapse-body
+            collapseBodyTransition = collapseBody.style.transition,
+            isExpanded = !collapseBody.style.height; //height = null(expanded) || 0px (collapsed)
 
-    build: function( element ){
 
-        var self = this,
-            options = self.options,
-            bullet = options.bullet,
-            target;
+        function animateHeight(animate2steps, collapseMe){
 
-        if( !self.skip(element) ){
+            requestAnimationFrame(function () {
 
-            bullet = element.getElement(bullet) || bullet.slick().inject(element,"top");
-            target = element.getElement(options.target);
+                collapseBody.style.height = collapseMe ? 0 : collapseBody.scrollHeight + "px";
 
-            if( target && (target.textContent.trim()!="") ){
+                if (animate2steps) {
 
-                //console.log("FX tween",bullet,target,self.initState(element,target));
-                if( options.fx ){
-                    target.set("tween",{
-                        property: options.fx,
-                        onComplete: function(){ self.fxReset( this.element ); }
-                    });
+                    collapseBody.style.transition = collapseBodyTransition;
+                    animateHeight(false, true);
                 }
-
-                self.update(bullet, target, self.initState(element,target), true);
-            }
+            });
         }
-    },
 
-    //dummy skip function, can be overwritten by descendent classes
-    skip: function( /*element*/ ){
-        return false;
-    },
+        if (isExpanded) {
 
-    //function initState: returns true:expanded; false:collapsed
-    //state from cookie
-    initState:function( element, target ){
+            // *** transition from expanded to collapsed ***
 
-        var self = this,
-            expand = target.matches(self.options.expand),
-            nodes = self.nodes,
-            states = self.states,
-            offset = nodes.length;
+            // first temporarily disable css transitions
+            collapseBody.style.transition = "";
 
-        if( offset < states.length ){
-            expand = (states[offset] == 'T');
-        }
-        self.nodes[offset] = element;
-        states[offset] = expand ? "T":"F";
+            // on the next frame, explicitly set the height to its current pixel height, removing the 'auto' height
+            // then put height=0 to collapse the boddy
+            // finally, at the end of the transition ( see animationEnd() ):
+            // set the aria-expanded to false, which sets "display:none" (in the css)
+            // to make sure the nested [tabindex=0] are not reachable anymore
+            animateHeight(true);
 
-        return expand;
-    },
+        } else {
 
-    //function getState: returns true:expanded, false:collapsed
-    getState: function( target ){
+            // *** transition from collapsed to expanded ***
+            //first set the ariaExpanded=true,  which removes the "display:none" style (in the css)
+            setAriaExpanded(collapseBody, true);
 
-        return target.hasClass(this.options.open);
-
-    },
-
-    toggle: function(bullet){
-
-        var self = this,
-            cookie = self.cookie,
-            options = self.options,
-            nested = options.nested,
-            element = nested ? bullet.getParent(nested) : self.element,
-            target, state, offset;
-
-        if( element ){
-            target = element.getElement(options.target);
-
-            if( target ){
-                state = !self.getState(target); //toggle state
-                self.update( bullet, target, state );
-
-                if( cookie ){
-                    offset = self.nodes.indexOf(element);
-                    if( offset >= 0 ){
-                        self.states[offset] = (state ? "T" : "F");
-                        console.log("write",cookie,self.states.join(""))
-                        $.cookie( cookie, self.states.join("") ); //write cookie
-                    }
-                }
-            }
-        }
-    },
-
-    update: function( bullet, target, expand, force ){
-
-        var options = this.options, open=options.open, close=options.close;
-
-        if( bullet ){
-
-            bullet.ifClass(expand, open, close)
-                  .set( "title", options.hint[expand ? "open" : "close"].localize() );
-
-        }
-        if( target ){
-
-            this.animate( target.ifClass(expand, open, close), expand, force );
+            // on the next frame, set the height (which is 0) to the real height
+            // finally, at the end of the transition ( see animationEnd() )
+            // remove the "height" from the inline style to return it back to 'auto' height
+            animateHeight();
 
         }
 
-    },
+        setAriaExpanded(button, !isExpanded);
+        this.flags[ button.id.split("-")[1] ] = isExpanded ? "T" : "F";  //new state: collapsed=="T"
 
-    animate: function( element, expand, force ){
-
-        var fx = element.get("tween"),
-            fxReset = this.options.fxReset,
-            max = (fxReset!="auto") ? fxReset : element.getScrollSize()[this.options.fxy];
-
-        if( this.options.fx ){
-
-            if( force ){
-                fx.set( expand ? fxReset : 0);
-            } else {
-                fx.start( expand ? max : [max,0] );
-            }
-
-        }
-
-    },
-
-    fxReset: function(element){
-
-        var options = this.options;
-
-        if( options.fx && this.getState(element) ){
-
-            element.setStyle(options.fx, options.fxReset);
-
-        }
-
-    }
-
-});
-
-
-/*
-Class: Collapsible.List
-    Converts ul/ol lists into collapsible trees.
-    Converts every nested ul/ol into a collasible item.
-    By default, OL elements are collapsed.
-
-DOM Structure:
-    (start code)
-    div.collapsible
-        ul
-            li
-                b.bullet.xpand|xpand[onclick="..."]
-                Toggle-text
-                ul.xpand|xpand
-                    li ... collapsible content ...
-    (end)
-*/
-TCollapsible/*this.Collapsible*/.List = new Class({
-
-    Extends:TCollapsible,
-
-    initialize: function(element,options){
-
-        this.parent( element, Object.merge({
-            target:   "> ul, > ol",
-            nested:   "li",
-            collapsed:"ol"
-        },options));
-
-    },
-
-    // SKIP empty LI elements  (so, do not insert collapse-bullets)
-    // LI element is not-empty when is has
-    // - a child-node different from ul/ol
-    // - a non-empty #text-nodes
-    // Otherwise, it is considered
-    skip: function(element){
-
-        var n = element.firstChild,isTextNode, re=/ul|ol/i;
-
-        while( n ){
-
-            isTextNode = (n.nodeType==3);
-
-            if( ( !isTextNode && ( !re.test(n.tagName) ) )
-             || (  isTextNode && ( n.nodeValue.trim()!="") ) ){
-
-                     return false;
-            }
-            n=n.nextSibling;
-        }
-
-        return true; //skip this element
-
-    }
-
-});
-
-/*
-Class: Collapsible.Box
-    Makes a collapsible box.
-    - the first element becomes the visible title, which gets a bullet inserted
-    - all other child elements are wrapped into a collapsible element
-
-Options:
-
-
-DOM Structure:
-    (start code)
-    div.collapsebox.panel.panel-default
-        div.panel-heading
-            b.bullet.xpand|clpse[onclick="..."]
-            h4.panel-title title
-        div.panel-body.xpand|clpse
-            .. collapsible content ..
-    (end)
-
-*/
-TCollapsible/*this.Collapsible*/.Box = new Class({
-
-    Extends:TCollapsible,
-
-    initialize:function(element,options){
-
-        //FFS: how to protect against empty boxes..
-        //if( element.getChildren().length >= 2 ){      //we don"t do empty boxes
-
-            options.collapsed = options.collapsed ? "div":""; // T/F converted to matching css selector
-            options.target = options.target || "!^"; //or  "> :last-child" or "> .panel-body"
-
-            this.parent( element, options );
-        //}
-    },
-
-    build: function( element ){
-
-        var options = this.options, heading, body, next
-            panelCSS = "panel".fetchContext(element);
-
-        //we don"t do double invocations
-        if( !element.getElement( options.bullet ) ){
-
-            //build bootstrap panel layout
-            element.className += " "+panelCSS;
-
-            heading = ["div.panel-heading",[options.bullet]].slick().wraps(
-                element.getFirst().addClass("panel-title")
-            );
-
-            body = "div.panel-body".slick();
-                while(next = heading.nextSibling) body.appendChild( next );
-
-            //if( body.get("text").trim()!="" ) this-is-and-empty-box !!
-
-            this.parent( element.grab( "div".slick().grab(body) ) );
-
+        if (this.pims) {
+            $.cookie(this.pims, this.flags.join(""));
         }
     }
 
-});
+    /*
+    Collapsible
+        Creates a new instance,
+        adding collapsible behaviour to a set of elements, and keeping their states in a cookie.
+    */
+    this.Collapsible = function (elements, options) {
 
-})();
+        var self = this, els = [];
+
+        self.UID = "C0llapse" + _UID++ + "-";
+        self.pims = options.cookie;
+        self.flags = ((self.pims && $.cookie(self.pims)) || "").split("");
+
+        elements.forEach(function (el) {
+
+            if (el.matches(".collapse")) {
+
+                el.getElements("li").forEach(function (el) {
+                    els.push(buildCollapsibleList(el));
+                });
+            }
+            else /*if( el.matches(".collapsebox") )*/ {
+
+                els.push(buildCollapsibleBox(el));
+            }
+        });
+        els.forEach(addCollapseToggle, /*bind to:*/ self);
+        //console.log(self.flags.join(""));
+    }
+
+}();

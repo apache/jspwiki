@@ -35,7 +35,6 @@
     <js>/scripts/moo-extend/Behavior.js</js>
     <js>/scripts/moo-extend/String.Extend.js</js>
     <!--<js>/scripts/moo-extend/Date.Extend.js</js>-->
-    <js>/scripts/moo-extend/Cookie.Flags.js</js>
     <js>/scripts/moo-extend/Array.Extend.js</js>
     <js>/scripts/moo-extend/Array.NaturalSort.js</js>
     <js>/scripts/moo-extend/Element.Extend.js</js>

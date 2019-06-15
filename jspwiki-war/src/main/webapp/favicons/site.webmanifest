@@ -1,10 +1,10 @@
 {
-    "name": "JSPWiki",
+    "name": "jspωiki",
     "short_name": "JSPWiki",
-    "start_url":".",
+    "start_url": "..",
     "display": "standalone",
-    "background_color": "#4B8ADD",
-    "theme_color": "#4B8ADD",
+    "background_color": "#4b8Add",
+    "theme_color": "#4b8Add",
     "description": "JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java and JSP. JSPWiki supports all the traditional wiki features, as well as very detailed access control and security integration using JAAS.  For more information see https://jspwiki-wiki.apache.org/",
     "icons": [
         {

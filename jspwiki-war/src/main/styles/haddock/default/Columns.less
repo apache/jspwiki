@@ -54,13 +54,22 @@ DOM structure:
 
     .col > [class*="bg-"],
     .col > .default,
+    .col > .collapsebox,
     .col > .info, .col > .information,
     .col > .success,
     .col > .warning,
     .col > .danger, .col > .error {
-        margin:  -@padding-base-vertical  -@padding-base-horizontal ;
+        margin: -@padding-base-vertical -@padding-base-horizontal ;
         min-height: 100%;
     }
+
+    .col > pre:first-child:last-child {
+        margin: -@padding-base-vertical -@padding-base-horizontal ;
+    }
+    &.border > .col > pre:first-child:last-child {
+    	border: none;
+    }
+
     .col > pre:only-child {
     	margin:-@padding-base-vertical 0;
     }

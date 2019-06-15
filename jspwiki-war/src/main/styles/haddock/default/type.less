@@ -58,8 +58,16 @@ DOM structure:
 
     .btn; .btn-default; .btn-xs;
     margin-right: .25em;
-    .transition(all 1s ease);
-    &:hover { .opacity(1); border-color:transparent; }
+    .transition(all .5s ease);
+    &:hover, &:focus {
+    	.opacity(1);
+    	border-color:transparent;
+    }
+    &:focus {
+    	outline:none;
+    	border-color: @link-color;
+    	box-shadow: 0 0 .25em @link-color;
+    }
 	user-select:none;
 }
 
@@ -438,6 +446,10 @@ a:hover {
     //text-decoration: underline;
     -webkit-text-decoration-skip: ink;
 }
+a:focus {
+	outline:none;
+	box-shadow: 0 0 .25em @link-color;
+}
 
 //mimic :hover, for old ie cases which may not yet support :hover
 .hover { background-color:@wiki-hover; }
@@ -662,7 +674,11 @@ div.dropcaps {
 
 //%%quote .. /%
 //.quote is replaced by <blockquote>, to reuse bootstraps styling -- see Wiki.Behaviour.js
-blockquote:last-child { margin-bottom:0; }
+blockquote {
+	border-left: @line-height-computed/2 solid @blockquote-border-color;
+
+    &:last-child { margin-bottom:0; }
+}
 
 //when showing the quote style in a dialog dropdown, use .quote-item -- see Wiki.Snips.js
 .dialog .quote-item {

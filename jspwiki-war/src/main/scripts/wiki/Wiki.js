@@ -365,9 +365,7 @@ var Wiki = {
                     target.fireEvent(popstate);
 
                 }
-
                 target = target.getParent();
-
             }
         }
     },
@@ -858,7 +856,7 @@ var Wiki = {
         }
 
         if( element.matches(".modal") ){
-            element.openModal( ); // open the modal dialog
+            element.openModal( function(){} ); // open the modal dialog
         }
     }
 

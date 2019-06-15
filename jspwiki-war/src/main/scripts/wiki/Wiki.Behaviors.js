@@ -144,9 +144,6 @@ Behavior:%%graphBar .. /%
     .add("*[class^=graphBars]", GraphBar )
 
 
-    //FIXME -- OBSOLETE ?? top level TAB of the page
-    //.add(".page > .tabmenu a:not([href])", Tab )
-
 /*
 Behavior:tabs & pills
 >   %%tabbedSection .. /%
@@ -220,14 +217,6 @@ Behavior: Quote (based on Bootstrap)
 
     })
 
-
-    //FIXME  under construction
-    .add(".typography", function(element){
-
-        element.mapTextNodes( function(s){ return s.replace( /---/g, "&mdash;" );  });
-
-
-    })
 
 /*
 Behavior: Viewer
@@ -405,33 +394,21 @@ Depends on:
 */
 
 //helper function
-function collapseFn(element, cookie){
+function collapseFn(elements, pagename){
 
-    var TCollapsible = Collapsible,
-        clazz = element.className,
-        list = "collapse",
-        box = list + "box";
+    new Collapsible( elements, {
+        cookie: {
+            name: "JSPWiki.Collapse." + (pagename || wiki.PageName),
+            path: wiki.BaseUrl,
+            duration: 20
+        }
+    });
 
-    cookie = cookie || wiki.PageName;
-
-    cookie = new Cookie.Flags("JSPWiki.Collapse." + cookie, {path: wiki.BaseUrl, duration: 20});
-
-    if( clazz == list ){
-
-        new TCollapsible.List(element, { cookie: cookie });
-
-    } else if( clazz.indexOf(box) == 0 ){
-
-        new TCollapsible.Box(element, {
-            cookie: cookie,
-            collapsed: clazz.indexOf(box + "-closed") == 0
-        });
-    }
 }
 
 wiki
-    .add(".page div[class^=collapse]", collapseFn )
-    .add(".sidebar div[class^=collapse]", collapseFn, "Sidebar")
+    .once(".page div[class^=collapse]", collapseFn )
+    .once(".sidebar div[class^=collapse]", collapseFn, "Sidebar")
 
 /*
 Behavior:Comment Box

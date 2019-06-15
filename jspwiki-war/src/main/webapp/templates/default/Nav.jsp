@@ -114,7 +114,7 @@
   <%-- info --%>
   <wiki:CheckRequestContext context='view|info|upload|rename|edit|comment|conflict'>
   <wiki:PageExists>
-  <li id="info" tabindex="0">
+  <li id="info" tabindex="0" role="contentinfo">
       <a href="#" accessKey="i">
         <span class="icon-info-menu"></span>
         <span><fmt:message key='info.tab'/></span>

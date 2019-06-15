@@ -39,7 +39,7 @@ $.cookie = function (name, value, options) {
         name = options.name;
     }
 
-    if (!/%/.test(name)) { name = encodeURIComponent(name); } //fixme
+    if (!/%/.test(name)) { name = encodeURIComponent(name); } //avoided double encoding..
 
     if (value == undefined) {
         // read cookie
