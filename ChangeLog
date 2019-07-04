@@ -1,8 +1,17 @@
+2019-04-07  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-05
+
+       * Adapt to JAVA EE 7 XMLS scheme namespace to support container authentication.
+         Minimum requirement since 2.11.0-M1 is JSP Servlet 3.1.
+         (testcases with older web.xml still to be updated)
+
+
 2019-06-15  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-04
 
-       * [JSPWIKI-1097] Refactored %%collapse and %%collapsbox.
+       * [JSPWIKI-1097] Refactored %%collapse and %%collapsebox.
          Added keyboard support to expand/collapse lists and boxes. Bugfixes on cookie handling.
 
 

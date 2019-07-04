@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.auth.authorize;
 
@@ -54,7 +54,8 @@ import org.xml.sax.SAXException;
  */
 public class WebContainerAuthorizer implements WebAuthorizer
 {
-    private static final String J2EE_SCHEMA_25_NAMESPACE = "http://java.sun.com/xml/ns/javaee";
+    //private static final String J2EE_SCHEMA_25_NAMESPACE = "http://java.sun.com/xml/ns/javaee";
+    private static final String J2EE_SCHEMA_25_NAMESPACE = "http://xmlns.jcp.org/xml/ns/javaee";
 
     protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
 
@@ -144,7 +145,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
 
     /**
      * Determines whether a user associated with an HTTP request possesses
-     * a particular role. This method simply delegates to 
+     * a particular role. This method simply delegates to
      * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}
      * by converting the Principal's name to a String.
      * @param request the HTTP request
