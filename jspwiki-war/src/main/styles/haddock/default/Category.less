@@ -73,6 +73,11 @@ Style: Popup
 .popup {
     position:absolute;
     z-index:10;
+	//reset font to initial body values (see bootstrap/scaffolding.less
+    font-family: @font-family-base;
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+
     background:@black;
     background:@tooltip-bg;
     border-radius:@border-radius-base;

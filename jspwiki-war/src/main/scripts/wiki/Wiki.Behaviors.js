@@ -172,7 +172,7 @@ Behavior:Accordion
     .add(".pillsAccordion,.pills-accordion", Accordion, { type: "pills" })
 
 /*
-Behavior:JSPWiki Categories
+Behavior: Categories
 >   %%category .. /%
 */
     .add( ".category a.wikipage", function(element) {

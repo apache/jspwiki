@@ -43,7 +43,7 @@ function HighlightQuery( node, query, template ){
     try {
 
         var words = decodeURIComponent(query)
-                .stripScripts() //xss vulnerability
+                .escapeHtml() //xss vulnerability
                 .replace( /\+/g, " " )
                 .replace( /\s+-\S+/g, "" )
                 .replace( /([([{\\^$|)?*.+])/g, "\\$1" ) //escape metachars

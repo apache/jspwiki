@@ -60,9 +60,11 @@ Collapsible toggle button, and body scroll animation
         top: -@collapse-btn-base*(1 - 1/8);
         left: -@collapse-btn-base*(1 + 1/4);
         transition: transform .25s ease-in-out;
+    	transform: rotate(45deg) translate(@collapse-btn-base/4);
+
     }
 	&[aria-expanded="false"]::before {
-    	transform: rotate(45deg) translate(@collapse-btn-base/4);
+    	transform: rotate(0) translate(0);
 	}
 }
 .collapse-body {
@@ -165,7 +167,7 @@ div[class^=collapsebox] {
 	//collapse boxes have animated +/- toggle buttons
 	//inspired by https://codepen.io/El11/pen/gXxxYz
     .collapse-btn {
-        margin: @line-height-computed/2 0;  //adopt margin from header  -- see bootstrap style.less
+        margin-top: @line-height-computed/2;  //adopt margin from header  -- see bootstrap style.less
         margin-right: @collapse-btn-base/2;
         height: @collapse-btn-base;
         width: @collapse-btn-base;
@@ -185,8 +187,12 @@ div[class^=collapsebox] {
         	left: 0;
         	top: 0;
         }
+        &[disabled]::after {
+        	background: @gray-light;
+        }
         &::before {
-        	transform-origin: center;   //vertical leg of plus sign
+        	transform: rotate(0);
+        	transform-origin: center;   //vertical leg of the plus sign
         }
 		&:not([disabled]) {
 	    	&:hover, &:focus {

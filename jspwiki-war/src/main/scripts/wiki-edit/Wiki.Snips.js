@@ -526,6 +526,7 @@ Wiki.Snips = {
         "SET {name}='value'":"Set a Wiki variable",
         "${varname}":"Get a Wiki variable",
         "If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
+        "SET keywords={keyword1, keyword2}":"Set Page Keywords",
         "SET alias='{pagename}'":"Set Page Alias",
         "SET page-styles='prettify-nonum table-condensed-fit'":"Set Page Styles",
         "SET sidebar='off'":"Hide Sidebar",

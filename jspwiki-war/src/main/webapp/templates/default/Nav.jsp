@@ -18,6 +18,8 @@
 --%>
 
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="java.util.StringTokenizer" %>
+
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -28,6 +30,11 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );
+
+  String text = c.getEngine().getText(c, c.getPage());
+  StringTokenizer tokens = new StringTokenizer( text );
+  //avg reading speeds: https://iovs.arvojournals.org/article.aspx?articleid=2166061
+
 %>
 <c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
 
@@ -48,9 +55,10 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" data-hover-parent="li">
+      <%--
       <li class="dropdown-header"><fmt:message key="header.yourtrail"/></li>
       <li class="divider"></li>
-
+      --%>
       <%--  FIXME: breadcrumbs tag returns items in wrong order: most recent item is at back of the list !!
       <li><wiki:Breadcrumbs separator="</li><li>" /></li>
       --%>
@@ -155,6 +163,21 @@
           <c:if test="${attachments > 0}"><span class="badge">${attachments}</span></c:if>
         </wiki:Link>
       </li>
+      <li class="divider"></li>
+      <li class="dropdown-header">
+        <fmt:message key="info.readingtime">
+            <fmt:param><fmt:formatNumber pattern="#.#" value="${readingTime}" /></fmt:param>
+            <fmt:param>${wordCount}</fmt:param>
+        </fmt:message>
+      </li>
+      <c:set var="keywords"><wiki:Variable var='keywords' default='' /></c:set>
+      <c:if test="${!empty keywords}">
+      <li class="dropdown-header">
+        <fmt:message key="info.keywords">
+            <fmt:param>${keywords}</fmt:param>
+        </fmt:message>
+      </li>
+      </c:if>
     </ul>
   </li>
   </wiki:PageExists>

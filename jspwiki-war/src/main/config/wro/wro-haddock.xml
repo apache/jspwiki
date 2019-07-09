@@ -28,6 +28,9 @@
     <js>/scripts/lib/prettify4mar13.js</js>
     <js>/scripts/util/cookies.js</js>
     <js>/scripts/util/polyfill.js</js>
+    <js>/scripts/util/hash.js</js>
+    <js>/scripts/util/extend-string.js</js>
+    <js>/scripts/util/extend-element.js</js>
   </group>
 
   <group name="mooextend" abstract="true">

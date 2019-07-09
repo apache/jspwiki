@@ -1,3 +1,17 @@
+2019-09-07  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-06
+
+       * Adding keyword support for JSPWiki pages.
+         Use [{SET keywords=a,b,c}] to add keywords to a page.
+         They will be shown in the info drop-down menu, and are added as
+         META tags to your page.
+
+       * Remove XSS vulnerability on the plain editor section drop-down
+
+       * [JSPWIKI-1097] Various smaller JS refactorings
+
+
 2019-04-07  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-05

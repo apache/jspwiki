@@ -109,6 +109,8 @@ Usage:
             collapseBody = ("div." + _CollapseBodyClass).slick();
             while ((next = header.nextSibling)) { collapseBody.appendChild(next); }
 
+            if(collapseBody.textContent.trim() == '') return el
+
             el.appendChild(collapseBody); //append after the header
 
             if (el.className.test(/-closed\b/)) { el.addClass(_ClosedStateClass); }

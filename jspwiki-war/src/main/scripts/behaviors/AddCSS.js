@@ -94,10 +94,12 @@ function AddCSS(element) {
         need to be inserted at the top of the DOM, i.e. just at the top of the BODY element.
         Other CCS is injected in the order of appearance.
         */
-        if (element.getParent(".sidebar")) {
+        if (element.closest(".sidebar")) {
 
-            $(document.body).grab(css, "top");
-            element.destroy();
+            var body = document.body;
+            body.insertBefore(css, body.firstChild);
+            //$.start(css, document.body);
+            element.remove();
 
         } else {
 

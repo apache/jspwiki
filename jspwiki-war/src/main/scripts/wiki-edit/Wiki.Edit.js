@@ -268,7 +268,8 @@ function jspwikiSectionParser( text ){
             .replace(/(^|[^~])(__|""|\{\{|\}\}|%%\([^)]+\)|%%\S+\s|%%\([^)]+\)|\/%)/g, "$1")
 
             //and remove wiki-markup escape chars ~
-            .replace(/~([^~])/g, "$1");
+            .replace(/~([^~])/g, "$1")
+            .escapeHtml();
 
         //depth: convert length of header markup (!!!,!!,!) into #depth-level:  3,2,1 => 0,1,2
         result[ i/2 ] = { title: title, start: pos, depth: 3 - hlen };

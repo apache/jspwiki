@@ -70,11 +70,15 @@ Wiki.Findpages = new Class({
     },
 
     getValue: function(){
-        return this.query.value.stripScripts();
+
+        return this.query.value.escapeHtml();
+
     },
 
     empty: function(){
-        this.element.getElements("li.findpages").destroy();
+
+        $.remove("li.findpages", this.element);
+
     },
 
     search: function(){

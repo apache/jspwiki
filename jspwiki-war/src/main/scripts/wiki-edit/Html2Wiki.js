@@ -22,6 +22,8 @@
 /*eslint-env browser*/
 /*global Wiki*/
 
+//uses String.slick(), String.xsubs()
+
 /*
 Html2Wiki
     Mini html to wiki markup convertor for JSPWiki.

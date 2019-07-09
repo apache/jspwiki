@@ -49,7 +49,12 @@ BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-i
 --%>
 
 <wiki:PageExists>
-  <meta name="Description" content="Page version <wiki:PageVersion />, last modified by <wiki:Author format='plain'/>, on <wiki:PageDate format='${prefs["DateFormat"]}'/>" />
+  <meta name="author" content="<wiki:Author format='plain'/>">
+  <meta name="description" content="Page version <wiki:PageVersion />, last modified by <wiki:Author format='plain'/>, on <wiki:PageDate format='${prefs["DateFormat"]}'/>" />
+  <c:set var="keywords"><wiki:Variable var='keywords' default='' /></c:set>
+  <c:if test="${!empty keywords}">
+    <meta name="keywords" content="<wiki:Variable var='keywords' default='' />" /><%--seo keywords--%>
+  </c:if>
 </wiki:PageExists>
 
 
