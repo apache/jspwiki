@@ -21,45 +21,52 @@
 /*eslint-env browser */
 /*global $ */
 
+/*
+Function: escapeHml()
 
-/* 
-$.extend(String.prototype, {..
-    escapeHtml: function(s){
-
-    },
-});
+Example:
+>   "ab<span>cd".escapeHtml() => "ab&#60;span&#62;cd"
 */
-
-// STRING
 String.prototype.escapeHtml = function (s) {
     return this.replace(/[<>'"&]/g, function (s) {
         return '&#' + s.charCodeAt(0) + ';';
     });
 }
 
+/*
+Function: escapeRegExp()
+
+Example:
+>   "animals.sheep[1]"".escapeRegExp() =>  "animals\.sheep\[1\]"
+*/
 String.prototype.escapeRegExp = function () {
     // Credit: XRegExp 0.6.1 (c) 2007-2008 Steven Levithan <http://stevenlevithan.com/regex/xregexp/> MIT License
     return this.replace(/[-[\]{}()*+?.\\^$|,#\s]/g, '\\$&');
 }
 
 /*
-Function: xsubs (extended Substitute)
-    Equal to substitute(), but also supports anonymous arguments.
+Function: xsubs (object || arguments)
+    Substitutes {keywords} in a string using an object or indexed arguments.
+    Removes undefined keywords and ignores escaped keywords.
 
-Named arguments:
->    "Hello {text}".xsubs({text:"world"}) ==>  "Hello world"
-Anonymous arguments:
->    "Hello {0}{1}".xsubs("world", "!") ===  "Hello world!"
+Example:
+>   //Object with key - value pairs:  named {keywords}
+>   "Hello {text}".xsubs({text:"world"}) ==>  "Hello world"
+>   "Hello escaped \\{text}".xsubs({text:"world"}) ==>  "Hello escaped {text}"
+
+>   //List of anonymous arguments: indexed keywords starting from 0 {0}, {1} ...
+>   "Hello {0}{1}".xsubs("world", "!") ===  "Hello world!"
+>   "Hello {0}{1}".xsubs(["world", "!"]) ===  "Hello world!"
 */
 String.prototype.xsubs = function (object, regexp) {
 
     if (typeOf(object) != "object") {
 
-        object = Array.from(arguments);
+        object = Array.prototype.slice.call(arguments);
         regexp = null;
     }
 
-    return String(this).replace(regexp || (/\\?\{([^{}]+)\}/g), function (match, name) {
+    return this.replace(regexp || (/\\?\{([^{}]+)\}/g), function (match, name) {
 
         if (match.charAt(0) == '\\') return match.slice(1);
 
@@ -114,7 +121,7 @@ Examples:
         "javascript.moreInfo": "More",
         "javascript.imageInfo": "Image {0} of {1}",  //indexed parms
         "javascript.imageInfo2": "Image {imgCount} of {totalCount}"   //named parms
-        "javascript.curlyBraces": "Show \{Curly Braces}",  //escaped curly braces
+        "javascript.curlyBraces": "Show \\{Curly Braces}",  //escaped curly braces
     }
     String.I18N.PREFIX="javascript.";
 
@@ -129,9 +136,9 @@ String.prototype.localize = function( params ){
 
     var I18N = String.I18N;
 
-    return ( I18N[I18N.PREFIX + this] || this ).substitute(
+    return ( I18N[I18N.PREFIX + this] || this ).xsubs(
 
-        ( typeOf(params) == "object" ) ? params : Array.from(arguments)
+        ( typeOf(params) == "object" ) ? params : Array.prototype.slice.call(arguments)
 
     );
 }

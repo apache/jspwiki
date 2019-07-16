@@ -38,6 +38,10 @@
 %>
 <c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
 
+<c:set var="wordCount" value="<%= tokens.countTokens() %>" />
+<c:set var="readingTime" value="${wordCount / 228}" />
+
+
 <%-- navigation bar --%>
 <div class="navigation" role="navigation">
 

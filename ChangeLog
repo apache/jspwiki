@@ -1,3 +1,12 @@
+2019-16-07  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-07
+
+       * [JSPWIKI-1097] Various smaller JS refactorings, and bugfixes.
+
+       * Trim spaces from the rendered html to reduce page weight.
+
+
 2019-09-07  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-06

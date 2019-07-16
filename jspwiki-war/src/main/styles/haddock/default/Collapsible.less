@@ -63,6 +63,7 @@ Collapsible toggle button, and body scroll animation
     	transform: rotate(45deg) translate(@collapse-btn-base/4);
 
     }
+    &[disabled]::before,
 	&[aria-expanded="false"]::before {
     	transform: rotate(0) translate(0);
 	}

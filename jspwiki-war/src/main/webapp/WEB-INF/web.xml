@@ -30,6 +30,17 @@
    </description>
    <display-name>JSPWiki</display-name>
 
+   <!--
+   Supported starting from servlet specification 2.5
+   Credit:  https://raibledesigns.com/rd/entry/trim_spaces_in_your_jsp1
+   -->
+   <jsp-config>
+     <jsp-property-group>
+       <url-pattern>*.jsp</url-pattern>
+       <trim-directive-whitespaces>true</trim-directive-whitespaces>
+     </jsp-property-group>
+   </jsp-config>
+
    <!-- Resource bundle default location -->
    <context-param>
      <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>

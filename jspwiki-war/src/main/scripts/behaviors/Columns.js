@@ -43,22 +43,17 @@ DOM Structure
         div.col[styles={width:xx%}]
 (end)
 */
-function Columns(element, options){
+function Columns(element, options) {
 
-    var divider = "hr",
-        columnCount = element.getChildren(divider).length,
-        width;
+    var columnCount = element.getElements(">hr").length + 1,
+        width = 100 / columnCount + "%";
 
-    columnCount++;
+    //add one extra group-start-element at the top
+    element.insertBefore("hr".slick(), element.firstChild)
 
-    width = 100 / columnCount + "%";
+    $.wrapChildren(element, "hr", "div.col", function (column) {
 
-    element
-        .grab(divider.slick(), "top") //add one extra group-start-element at the top
+        column.setStyle("width", width);
 
-        .groupChildren(divider, "div.col", function(column){
-            column.setStyle("width", width);
-
-        });
-
+    });
 }

@@ -21,29 +21,13 @@
 /*eslint-env browser */
 /*global $ */
 
+// FUNCTION
+
 /*
-Function: setHash
-    Set URL #HASH without page jump; fallback if pushState not supported
-
-Example:
->	"here is a new hash".setHash();
+$.toFunction
+  Converts the passed argument into an executable function.
+  If the passed argument is a function, it will return that function itself.
+  Otherwise, it will return a function that returns the passed argument.
 */
-$.setHash = function(newHash) {
+$.toFunction = function(o){ return o instanceof Function ? o : function(){ return o; }; }
 
-    if (history.pushState) {
-
-        //history.pushState( state-object, title-ffs, "#" + hash );
-        history.pushState(null, "", "#" + newHash);
-
-    } else {
-
-        var el = $(newHash),        //fixme  $("#"+newHash)
-            id = el && el.id;
-
-        el && el.removeAttribute(id); //prevent page jump
-
-        location.hash = "#" + newHash;
-
-        el && el.setAttribute("id", id);
-    }
-}

@@ -23,7 +23,7 @@
 
 // ELEMENT
 // convienience dom manipulation functions
-// FFS:  monkey-patch on Element.prototype;  or global $ namespace
+// FFS:  patch on Element.prototype;  or global $ namespace
 
 $.replaces = function (newElement, existingElement) {
 
@@ -120,7 +120,7 @@ Arguments
 
 DOM Structure:
 (start code)
-    // before 
+    // before
     a
     delimitter1
     b
