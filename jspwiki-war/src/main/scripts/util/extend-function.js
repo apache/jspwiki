@@ -29,5 +29,9 @@ $.toFunction
   If the passed argument is a function, it will return that function itself.
   Otherwise, it will return a function that returns the passed argument.
 */
-$.toFunction = function(o){ return o instanceof Function ? o : function(){ return o; }; }
+$.toFunction = function(o){
+
+    return o instanceof Function ? o : function(){ return o; };
+
+}
 

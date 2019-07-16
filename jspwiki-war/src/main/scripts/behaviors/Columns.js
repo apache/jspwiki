@@ -49,7 +49,7 @@ function Columns(element, options) {
         width = 100 / columnCount + "%";
 
     //add one extra group-start-element at the top
-    element.insertBefore("hr".slick(), element.firstChild)
+    element.insertBefore("hr".slick(), element.firstChild);
 
     $.wrapChildren(element, "hr", "div.col", function (column) {
 

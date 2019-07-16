@@ -109,7 +109,7 @@ Usage:
             collapseBody = ("div." + _CollapseBodyClass).slick();
             while ((next = header.nextSibling)) { collapseBody.appendChild(next); }
 
-            if(collapseBody.textContent.trim() == '') return el
+            if (collapseBody.textContent.trim() == '') return el;
 
             el.appendChild(collapseBody); //append after the header
 
@@ -148,7 +148,7 @@ Usage:
         if (this.flags[index]) { isCollapsed = (this.flags[index] == 'T'); }
         this.flags[index] = isCollapsed ? "T" : "F";
 
-        //put the label with open/close triangle
+        //put the label with open/close collapse icon (in css)
         //$.create( _CollapseButton, {id:id, disabled:!collapseBody, start:el});
         button = _CollapseButton.slick({ id: id });
         button.disabled = !collapseBody;
@@ -220,7 +220,7 @@ Usage:
             isExpanded = !collapseBody.style.height; //height = null(expanded) || 0px (collapsed)
 
 
-        function animateHeight(animate2steps, collapseMe){
+        function animateHeight(animate2steps, collapseMe) {
 
             requestAnimationFrame(function () {
 
@@ -262,7 +262,7 @@ Usage:
         }
 
         setAriaExpanded(button, !isExpanded);
-        this.flags[ button.id.split("-")[1] ] = isExpanded ? "T" : "F";  //new state: collapsed=="T"
+        this.flags[button.id.split("-")[1]] = isExpanded ? "T" : "F";  //new state: collapsed=="T"
 
         if (this.pims) {
             $.cookie(this.pims, this.flags.join(""));
