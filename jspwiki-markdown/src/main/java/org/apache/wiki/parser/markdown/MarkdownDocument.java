@@ -18,21 +18,20 @@
  */
 package org.apache.wiki.parser.markdown;
 
-import java.util.Arrays;
-
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.toc.TocExtension;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.builder.Extension;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.markdown.MarkdownForJSPWikiExtension;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
-import com.vladsch.flexmark.util.builder.Extension;
-import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
-import com.vladsch.flexmark.ext.toc.TocExtension;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.options.MutableDataSet;
+import java.util.Arrays;
 
 
 /**

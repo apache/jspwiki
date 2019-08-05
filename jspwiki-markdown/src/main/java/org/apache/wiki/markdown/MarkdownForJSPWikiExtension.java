@@ -18,14 +18,13 @@
  */
 package org.apache.wiki.markdown;
 
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.JSPWikiLinkAttributeProviderFactory;
 import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.JSPWikiNodePostProcessorFactory;
 import org.apache.wiki.markdown.renderer.JSPWikiNodeRendererFactory;
-
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.options.MutableDataHolder;
 
 
 /**

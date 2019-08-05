@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import com.vladsch.flexmark.util.NodeTracker;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
 
 
 /**
@@ -31,7 +31,7 @@ public interface NodePostProcessorState < T extends Node > {
      * performs further processing before rendering.
      *
      * @param state to record node addition/deletion
-     * @param link the specific node in which the post-processing is taking place.
+     * @param node the specific node in which the post-processing is taking place.
      */
     void process( NodeTracker state, T node );
 

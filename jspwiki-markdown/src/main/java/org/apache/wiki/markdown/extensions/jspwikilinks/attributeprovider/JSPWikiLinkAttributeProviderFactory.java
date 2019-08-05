@@ -40,10 +40,10 @@ public class JSPWikiLinkAttributeProviderFactory extends IndependentAttributePro
     /**
      * {@inheritDoc}
      *
-     * @see com.vladsch.flexmark.html.AttributeProviderFactory#create(com.vladsch.flexmark.html.renderer.LinkResolverContext)
+     * @see com.vladsch.flexmark.html.AttributeProviderFactory#apply(com.vladsch.flexmark.html.renderer.LinkResolverContext)
      */
     @Override
-    public AttributeProvider create( final LinkResolverContext context ) {
+    public AttributeProvider apply( final LinkResolverContext context ) {
         return new JSPWikiLinkAttributeProvider( wikiContext );
     }
 

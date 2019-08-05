@@ -18,13 +18,12 @@
 */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.wiki.WikiContext;
-
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
 import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.options.DataHolder;
+import com.vladsch.flexmark.util.data.DataHolder;
+import org.apache.wiki.WikiContext;
 
 
 /**
@@ -44,7 +43,7 @@ public class JSPWikiNodePostProcessorFactory extends NodePostProcessorFactory {
      * {@inheritDoc}
      */
     @Override
-    public NodePostProcessor create( final Document document ) {
+    public NodePostProcessor apply( final Document document ) {
         return new JSPWikiLinkNodePostProcessor( m_context, document );
     }
 

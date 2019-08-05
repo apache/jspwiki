@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
+import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
-
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**

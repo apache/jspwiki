@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -31,9 +31,8 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 
 /**

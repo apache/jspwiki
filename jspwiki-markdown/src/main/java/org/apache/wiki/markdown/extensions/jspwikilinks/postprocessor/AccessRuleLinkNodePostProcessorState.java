@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
+import com.vladsch.flexmark.util.ast.NodeTracker;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -25,8 +26,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.render.RenderingManager;
-
-import com.vladsch.flexmark.util.NodeTracker;
 
 
 /**
