@@ -18,21 +18,6 @@
  */
 package org.apache.wiki.search;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -81,6 +66,21 @@ import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -331,34 +331,19 @@ public class LuceneSearchProvider implements SearchProvider {
      */
     protected synchronized void updateLuceneIndex( WikiPage page, String text )
     {
-        IndexWriter writer = null;
-
         log.debug("Updating Lucene index for page '" + page.getName() + "'...");
+        pageRemoved( page );
 
-        Directory luceneDir = null;
-        try
-        {
-            pageRemoved( page );
-
-            // Now add back the new version.
-            luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
-            writer = getIndexWriter( luceneDir );
-            
+        // Now add back the new version.
+        try( Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+             IndexWriter writer = getIndexWriter( luceneDir ); ) {
             luceneIndexPage( page, text, writer );
-        }
-        catch ( IOException e )
-        {
+        } catch ( IOException e ) {
             log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
             // reindexPage( page );
-        }
-        catch( Exception e )
-        {
+        } catch( Exception e ) {
             log.error("Unexpected Lucene exception - please check configuration!",e);
             // reindexPage( page );
-        }
-        finally
-        {
-            close( writer );
         }
 
         log.debug("Done updating Lucene index for page '" + page.getName() + "'.");
@@ -456,53 +441,27 @@ public class LuceneSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void pageRemoved( WikiPage page )
-    {
-        IndexWriter writer = null;
-        try
-        {
-            Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
-            writer = getIndexWriter( luceneDir );
+    public void pageRemoved( WikiPage page ) {
+        try( Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+             IndexWriter writer = getIndexWriter( luceneDir ); ) {
             Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
-        }
-        catch ( Exception e )
-        {
+        } catch ( Exception e ) {
             log.error("Unable to remove page '" + page.getName() + "' from Lucene index", e);
-        }
-        finally
-        {
-            close( writer );
         }
     }
     
     IndexWriter getIndexWriter( Directory luceneDir ) throws CorruptIndexException, 
             LockObtainFailedException, IOException, ProviderException 
     {
-        IndexWriter writer = null;
         IndexWriterConfig writerConfig = new IndexWriterConfig( getLuceneAnalyzer() );
         writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
-        writer = new IndexWriter( luceneDir, writerConfig );
+        IndexWriter writer = new IndexWriter( luceneDir, writerConfig );
         
         // writer.setInfoStream( System.out );
         return writer;
     }
     
-    void close( IndexWriter writer ) 
-    {
-        try
-        {
-            if( writer != null ) 
-            {
-                writer.close();
-            }
-        }
-        catch( IOException e )
-        {
-            log.error( e );
-        }
-    }
-
     /**
      *  Adds a page-text pair to the lucene update queue.  Safe to call always
      *
