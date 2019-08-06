@@ -24,48 +24,48 @@
 <fmt:setBundle basename="templates.default"/>
 <!doctype html>
 <html lang="${prefs.Language}" name="top">
-  <head>
+<head>
 
-  <title>
-    <fmt:message key="view.title.view">
-      <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
-      <fmt:param><wiki:PageName /></fmt:param>
-    </fmt:message>
-  </title>
-  <wiki:Include page="commonheader.jsp"/>
-  <wiki:CheckVersion mode="notlatest">
-    <meta name="robots" content="noindex,nofollow" />
-  </wiki:CheckVersion>
-  <wiki:CheckRequestContext context="diff|info">
-    <meta name="robots" content="noindex,nofollow" />
-  </wiki:CheckRequestContext>
-  <wiki:CheckRequestContext context="!view">
-    <meta name="robots" content="noindex,follow" />
-  </wiki:CheckRequestContext>
+	<title>
+		<fmt:message key="view.title.view">
+			<fmt:param><wiki:Variable var="ApplicationName"/></fmt:param>
+			<fmt:param><wiki:PageName/></fmt:param>
+		</fmt:message>
+	</title>
+	<wiki:Include page="commonheader.jsp"/>
+	<wiki:CheckVersion mode="notlatest">
+		<meta name="robots" content="noindex,nofollow"/>
+	</wiki:CheckVersion>
+	<wiki:CheckRequestContext context="diff|info">
+		<meta name="robots" content="noindex,nofollow"/>
+	</wiki:CheckRequestContext>
+	<wiki:CheckRequestContext context="!view">
+		<meta name="robots" content="noindex,follow"/>
+	</wiki:CheckRequestContext>
 </head>
 
 <body class="context-<wiki:Variable var='requestcontext' default='' />">
 
 <div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation} fixed-header">
+	<div id="header-spacer"></div>
+	<wiki:Include page="Header.jsp"/>
 
-  <wiki:Include page="Header.jsp" />
+	<c:set var="sidebarState"><wiki:Variable var="sidebar" default="${prefs.Sidebar}"/></c:set>
+	<c:set var="sidebarCookie" value="Sidebar"/>
+	<wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
+		<c:set var="sidebarState" value=""/>
+		<c:set var="sidebarCookie" value=""/>
+	</wiki:CheckRequestContext>
 
-  <c:set var="sidebarState"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
-  <c:set var="sidebarCookie" value="Sidebar" />
-  <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
-    <c:set var="sidebarState" value="" />
-    <c:set var="sidebarCookie" value="" />
-  </wiki:CheckRequestContext>
-
-  <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
-                                       data-toggle-pref="${sidebarCookie}" >
-    <div class="page">
-      <wiki:Content/>
-      <wiki:Include page="PageInfo.jsp"/>
-    </div>
-    <wiki:Include page="Sidebar.jsp"/>
-  </div>
-  <wiki:Include page="Footer.jsp" />
+	<div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
+		 data-toggle-pref="${sidebarCookie}">
+		<div class="page">
+			<wiki:Content/>
+			<wiki:Include page="PageInfo.jsp"/>
+		</div>
+		<wiki:Include page="Sidebar.jsp"/>
+	</div>
+	<wiki:Include page="Footer.jsp"/>
 
 </div>
 

@@ -324,7 +324,7 @@ var Wiki = {
 
 			//add spacer just infront of fixed element,
 			//and adjust height == header (fixed elements do not take space in the dom)
-			spacer = "div".slick().inject(header, "before"),
+			spacer = document.getElementById("header-spacer"),
 			busy;
 
 		function update() {
