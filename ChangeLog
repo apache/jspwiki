@@ -1,3 +1,15 @@
+2019-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M5-git-08
+
+       * JSPWIKI-1115: Upgrade bundled dependencies for 2.11.0.M5
+         * Flexmark 0.50.26
+         * JUnit 5.5.1
+         * Lucene 8.1.1
+         * Selenide 5.2.8
+         * Tika 1.22
+         * Tomcat 8.5.43
+
 2019-16-07  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-07
@@ -5,7 +17,6 @@
        * [JSPWIKI-1097] Various smaller JS refactorings, and bugfixes.
 
        * Trim spaces from the rendered html to reduce page weight.
-
 
 2019-09-07  Dirk Frederickx (brushed AT apache DOT org)
 

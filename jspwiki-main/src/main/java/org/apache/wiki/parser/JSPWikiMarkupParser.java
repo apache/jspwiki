@@ -18,24 +18,6 @@
  */
 package org.apache.wiki.parser;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Stack;
-
-import javax.xml.transform.Result;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -65,6 +47,23 @@ import org.jdom2.Element;
 import org.jdom2.IllegalDataException;
 import org.jdom2.ProcessingInstruction;
 import org.jdom2.Verifier;
+
+import javax.xml.transform.Result;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Stack;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
@@ -1102,35 +1101,37 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
     }
 
-    private Element handleAccessRule( String ruleLine )
-    {
-        if( m_wysiwygEditorMode )
-        {
+    private Element handleAccessRule( String ruleLine ) {
+        if( m_wysiwygEditorMode ) {
             m_currentElement.addContent( "[" + ruleLine + "]" );
         }
 
-        if( !m_parseAccessRules ) return m_currentElement;
-        Acl acl;
-        WikiPage          page = m_context.getRealPage();
-        // UserDatabase      db = m_context.getEngine().getUserDatabase();
+        if( !m_parseAccessRules ) {
+            return m_currentElement;
+        }
+        final WikiPage page = m_context.getRealPage();
+        // UserDatabase db = m_context.getEngine().getUserDatabase();
 
-        if( ruleLine.startsWith( "{" ) )
+        if( ruleLine.startsWith( "{" ) ) {
             ruleLine = ruleLine.substring( 1 );
-        if( ruleLine.endsWith( "}" ) )
+        }
+
+        if( ruleLine.endsWith( "}" ) ) {
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
+        }
 
-        if( log.isDebugEnabled() ) log.debug("page="+page.getName()+", ACL = "+ruleLine);
+        if( log.isDebugEnabled() ) {
+            log.debug("page="+page.getName()+", ACL = "+ruleLine);
+        }
 
-        try
-        {
-            acl = m_engine.getAclManager().parseAcl( page, ruleLine );
-
+        try {
+            final Acl acl = m_engine.getAclManager().parseAcl( page, ruleLine );
             page.setAcl( acl );
 
-            if( log.isDebugEnabled() ) log.debug( acl.toString() );
-        }
-        catch( WikiSecurityException wse )
-        {
+            if( log.isDebugEnabled() ) {
+                log.debug( acl.toString() );
+            }
+        } catch( final WikiSecurityException wse ) {
             return makeError( wse.getMessage() );
         }
 
@@ -1140,39 +1141,31 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Handles metadata setting [{SET foo=bar}]
      */
-    private Element handleMetadata( String link )
-    {
-        if( m_wysiwygEditorMode )
-        {
+    private Element handleMetadata( final String link ) {
+        if( m_wysiwygEditorMode ) {
             m_currentElement.addContent( "[" + link + "]" );
         }
 
-        try
-        {
-            String args = link.substring( link.indexOf(' '), link.length()-1 );
+        try {
+            final String args = link.substring( link.indexOf(' '), link.length()-1 );
+            final String name = args.substring( 0, args.indexOf('=') ).trim();
+            String val  = args.substring( args.indexOf('=')+1 ).trim();
 
-            String name = args.substring( 0, args.indexOf('=') );
-            String val  = args.substring( args.indexOf('=')+1, args.length() );
-
-            name = name.trim();
-            val  = val.trim();
-
-            if( val.startsWith("'") ) val = val.substring( 1 );
-            if( val.endsWith("'") )   val = val.substring( 0, val.length()-1 );
+            if( val.startsWith("'") ) {
+                val = val.substring( 1 );
+            }
+            if( val.endsWith("'") ) {
+                val = val.substring( 0, val.length()-1 );
+            }
 
             // log.debug("SET name='"+name+"', value='"+val+"'.");
 
-            if( name.length() > 0 && val.length() > 0 )
-            {
-                val = m_engine.getVariableManager().expandVariables( m_context,
-                                                                     val );
-
+            if( name.length() > 0 && val.length() > 0 ) {
+                val = m_engine.getVariableManager().expandVariables( m_context, val );
                 m_context.getPage().setAttribute( name, val );
             }
-        }
-        catch( Exception e )
-        {
-            ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+        } catch( final Exception e ) {
+            final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
             return makeError( MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), link ) );
         }
 
