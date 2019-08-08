@@ -18,23 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -51,6 +34,23 @@ import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.TextUtil;
+
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *  <p>Builds a simple weblog.
@@ -69,6 +69,7 @@ import org.apache.wiki.util.TextUtil;
  *    <li><b>pageformat</b> - What the entry pages should look like.</li>
  *    <li><b>startDate</b> - Date when to start.  Format is "ddMMyy."</li>
  *    <li><b>maxEntries</b> - How many entries to show at most.</li>
+ *    <li><b>preview</b> - How many characters of the text to show on the preview page.</li>
  *  </ul>
  *  <p>The "days" and "startDate" can also be sent in HTTP parameters,
  *  and the names are "weblog.days" and "weblog.startDate", respectively.</p>
@@ -106,6 +107,8 @@ public class WeblogPlugin
     public static final String  PARAM_MAXENTRIES   = "maxEntries";
     /** Parameter name for the page.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_PAGE         = "page";
+    /** Parameter name for the preview.  Value is <tt>{@value}</tt>. */
+    public static final String  PARAM_PREVIEW      = "preview";
 
     /** The attribute which is stashed to the WikiPage attributes to check if a page
      *  is a weblog or not. You may check for its presence.
@@ -283,7 +286,7 @@ public class WeblogPlugin
                 if( mgr.checkPermission( context.getWikiSession(),
                                          new PagePermission(p, PagePermission.VIEW_ACTION) ) )
                 {
-                    addEntryHTML(context, entryFormat, hasComments, sb, p);
+                    addEntryHTML(context, entryFormat, hasComments, sb, p, params);
                 }
             }
 
@@ -308,8 +311,9 @@ public class WeblogPlugin
      *  @param entry
      *  @throws ProviderException
      */
-    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments, StringBuilder buffer, WikiPage entry)
-        throws ProviderException
+    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments,
+            StringBuilder buffer, WikiPage entry, Map<String, String> params)
+            throws ProviderException
     {
         WikiEngine engine = context.getEngine();
         ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
@@ -352,7 +356,43 @@ public class WeblogPlugin
         buffer.append("</div>\n");
 
         buffer.append("<div class=\"weblogentrybody\">\n");
-        buffer.append( html );
+        int preview = TextUtil.parseIntParameter(params.get(PARAM_PREVIEW), 0);
+        if (preview > 0)
+        {
+            //
+            // We start with the first 'preview' number of characters from the text,
+            // and then add characters to it until we get to a linebreak or a period.
+            // The idea is that cutting off at a linebreak is less likely
+            // to disturb the HTML and leave us with garbled output.
+            //
+            boolean hasBeenCutOff = false;
+            int cutoff = Math.min(preview, html.length());
+            while (cutoff < html.length())
+            {
+                if (html.charAt(cutoff) == '\r' || html.charAt(cutoff) == '\n')
+                {
+                    hasBeenCutOff = true;
+                    break;
+                }
+                else if (html.charAt(cutoff) == '.')
+                {
+                    // we do want the period
+                    cutoff++;
+                    hasBeenCutOff = true;
+                    break;
+                }
+                cutoff++;
+            }
+            buffer.append(html.substring(0, cutoff));
+            if (hasBeenCutOff)
+            {
+                buffer.append(" <a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">"+rb.getString("weblogentryplugin.more")+"</a>\n");
+            }
+        }
+        else
+        {
+            buffer.append(html);
+        }
         buffer.append("</div>\n");
 
         //
