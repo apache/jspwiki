@@ -26,7 +26,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -46,7 +45,6 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
@@ -78,7 +76,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -116,6 +113,7 @@ public class LuceneSearchProvider implements SearchProvider {
     protected static final String LUCENE_AUTHOR        = "author";
     protected static final String LUCENE_ATTACHMENTS   = "attachment";
     protected static final String LUCENE_PAGE_NAME     = "name";
+    protected static final String LUCENE_PAGE_KEYWORDS = "keywords";
 
     private String           m_luceneDirectory;
     protected List<Object[]> m_updates = Collections.synchronizedList( new ArrayList<>() ); 
@@ -329,19 +327,18 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @param page The WikiPage to check
      *  @param text The page text to index.
      */
-    protected synchronized void updateLuceneIndex( WikiPage page, String text )
-    {
+    protected synchronized void updateLuceneIndex( final WikiPage page, final String text ) {
         log.debug("Updating Lucene index for page '" + page.getName() + "'...");
         pageRemoved( page );
 
         // Now add back the new version.
-        try( Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
-             IndexWriter writer = getIndexWriter( luceneDir ); ) {
+        try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+             final IndexWriter writer = getIndexWriter( luceneDir ) ) {
             luceneIndexPage( page, text, writer );
-        } catch ( IOException e ) {
+        } catch( final IOException e ) {
             log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
             // reindexPage( page );
-        } catch( Exception e ) {
+        } catch( final Exception e ) {
             log.error("Unexpected Lucene exception - please check configuration!",e);
             // reindexPage( page );
         }
@@ -376,15 +373,17 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @return the created index Document
      *  @throws IOException If there's an indexing problem
      */
-    protected Document luceneIndexPage( WikiPage page, String text, IndexWriter writer )
-        throws IOException
-    {
-        if( log.isDebugEnabled() ) log.debug( "Indexing "+page.getName()+"..." );
+    protected Document luceneIndexPage( final WikiPage page, final String text, final IndexWriter writer ) throws IOException {
+        if( log.isDebugEnabled() ) {
+            log.debug( "Indexing "+page.getName()+"..." );
+        }
         
         // make a new, empty document
-        Document doc = new Document();
+        final Document doc = new Document();
 
-        if( text == null ) return doc;
+        if( text == null ) {
+            return doc;
+        }
 
         // Raw name is the keyword we'll use to refer to this document for updates.
         Field field = new Field( LUCENE_ID, page.getName(), StringField.TYPE_STORED );
@@ -395,9 +394,9 @@ public class LuceneSearchProvider implements SearchProvider {
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
-        String unTokenizedTitle = StringUtils.replaceChars( page.getName(),
-                                                            MarkupParser.PUNCTUATION_CHARS_ALLOWED,
-                                                            c_punctuationSpaces );
+        final String unTokenizedTitle = StringUtils.replaceChars( page.getName(),
+                                                                  MarkupParser.PUNCTUATION_CHARS_ALLOWED,
+                                                                  c_punctuationSpaces );
 
         field = new Field( LUCENE_PAGE_NAME,
                            TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle,
@@ -405,32 +404,31 @@ public class LuceneSearchProvider implements SearchProvider {
         doc.add( field );
 
         // Allow searching by authorname
-
-        if( page.getAuthor() != null )
-        {
+        if( page.getAuthor() != null ) {
             field = new Field( LUCENE_AUTHOR, page.getAuthor(), TextField.TYPE_STORED );
             doc.add( field );
         }
 
         // Now add the names of the attachments of this page
-        try
-        {
-            List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments(page);
+        try {
+            final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments(page);
             String attachmentNames = "";
 
-            for( Iterator< Attachment > it = attachments.iterator(); it.hasNext(); )
-            {
-                Attachment att = it.next();
+            for( final Attachment att : attachments ) {
                 attachmentNames += att.getName() + ";";
             }
             field = new Field( LUCENE_ATTACHMENTS, attachmentNames, TextField.TYPE_STORED );
             doc.add( field );
 
-        }
-        catch(ProviderException e)
-        {
+        } catch( final ProviderException e ) {
             // Unable to read attachments
-            log.error("Failed to get attachments for page", e);
+            log.error( "Failed to get attachments for page", e );
+        }
+
+        // also index page keywords, if available
+        if( page.getAttribute( "keywords" ) != null ) {
+            field = new Field( LUCENE_PAGE_KEYWORDS, page.getAttribute( "keywords" ).toString(), TextField.TYPE_STORED );
+            doc.add( field );
         }
         writer.addDocument(doc);
 
@@ -441,19 +439,17 @@ public class LuceneSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void pageRemoved( WikiPage page ) {
-        try( Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
-             IndexWriter writer = getIndexWriter( luceneDir ); ) {
-            Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
+    public void pageRemoved( final WikiPage page ) {
+        try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+             final IndexWriter writer = getIndexWriter( luceneDir ); ) {
+            final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
-        } catch ( Exception e ) {
+        } catch ( final Exception e ) {
             log.error("Unable to remove page '" + page.getName() + "' from Lucene index", e);
         }
     }
     
-    IndexWriter getIndexWriter( Directory luceneDir ) throws CorruptIndexException, 
-            LockObtainFailedException, IOException, ProviderException 
-    {
+    IndexWriter getIndexWriter( Directory luceneDir ) throws IOException, ProviderException {
         IndexWriterConfig writerConfig = new IndexWriterConfig( getLuceneAnalyzer() );
         writerConfig.setOpenMode( OpenMode.CREATE_OR_APPEND );
         IndexWriter writer = new IndexWriter( luceneDir, writerConfig );
@@ -513,115 +509,67 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @return A Collection of SearchResult instances
      *  @throws ProviderException if there is a problem with the backend
      */
-    public Collection< SearchResult > findPages( String query, int flags, WikiContext wikiContext )
-        throws ProviderException
-    {
-        IndexSearcher  searcher = null;
+    public Collection< SearchResult > findPages( final String query, final int flags, final WikiContext wikiContext ) throws ProviderException {
         ArrayList<SearchResult> list = null;
         Highlighter highlighter = null;
 
-        try
-        {
-            String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
-            QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+        try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+             final IndexReader reader = DirectoryReader.open( luceneDir ) ) {
+            final String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS, LUCENE_PAGE_KEYWORDS };
+            final QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+            final Query luceneQuery = qp.parse( query );
+            final IndexSearcher searcher = new IndexSearcher( reader );
 
-            //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
-            Query luceneQuery = qp.parse( query );
-
-            if( (flags & FLAG_CONTEXTS) != 0 )
-            {
+            if( (flags & FLAG_CONTEXTS) != 0 ) {
                 highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
                                               new SimpleHTMLEncoder(),
                                               new QueryScorer(luceneQuery));
             }
 
-            try
-            {
-                File dir = new File(m_luceneDirectory);
-                Directory luceneDir = new SimpleFSDirectory( dir.toPath() );
-                IndexReader reader = DirectoryReader.open(luceneDir);
-                searcher = new IndexSearcher(reader);
-            }
-            catch( Exception ex )
-            {
-                log.info("Lucene not yet ready; indexing not started",ex);
-                return null;
-            }
-
-            ScoreDoc[] hits = searcher.search(luceneQuery, MAX_SEARCH_HITS).scoreDocs;
-
-            AuthorizationManager mgr = m_engine.getAuthorizationManager();
+            final ScoreDoc[] hits = searcher.search(luceneQuery, MAX_SEARCH_HITS).scoreDocs;
+            final AuthorizationManager mgr = m_engine.getAuthorizationManager();
 
             list = new ArrayList<>(hits.length);
-            for ( int curr = 0; curr < hits.length; curr++ )
-            {
+            for ( int curr = 0; curr < hits.length; curr++ ) {
                 int docID = hits[curr].doc;
                 Document doc = searcher.doc( docID );
                 String pageName = doc.get(LUCENE_ID);
                 WikiPage page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
 
-                if(page != null)
-                {
-                    if(page instanceof Attachment)
-                    {
+                if( page != null ) {
+                    if( page instanceof Attachment ) {
                         // Currently attachments don't look nice on the search-results page
                         // When the search-results are cleaned up this can be enabled again.
                     }
 
-                    PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
+                    final PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
 	                if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
-	
-	                    int score = (int)(hits[curr].score * 100);
-	
-	
+                        final int score = (int)(hits[curr].score * 100);
+
 	                    // Get highlighted search contexts
-	                    String text = doc.get(LUCENE_PAGE_CONTENTS);
+	                    final String text = doc.get(LUCENE_PAGE_CONTENTS);
 	
 	                    String[] fragments = new String[0];
 	                    if( text != null && highlighter != null ) {
-	                        TokenStream tokenStream = getLuceneAnalyzer()
-	                        .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
+	                        TokenStream tokenStream = getLuceneAnalyzer().tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
 	                        fragments = highlighter.getBestFragments(tokenStream, text, MAX_FRAGMENTS);
 	                    }
-	
-	                    SearchResult result = new SearchResultImpl( page, score, fragments );     
+
+                        final SearchResult result = new SearchResultImpl( page, score, fragments );
 	                    list.add(result);
 	                }
-                }
-                else
-                {
+                } else {
                     log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
                     pageRemoved(new WikiPage( m_engine, pageName ));
                 }
             }
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             log.error("Failed during lucene search",e);
-        }
-        catch( ParseException e )
-        {
-            log.info("Broken query; cannot parse query ",e);
-
-            throw new ProviderException("You have entered a query Lucene cannot process: "+e.getMessage());
-        }
-        catch( InvalidTokenOffsetsException e )
-        {
+        } catch( final ParseException e ) {
+            log.info("Broken query; cannot parse query: " + query, e);
+            throw new ProviderException( "You have entered a query Lucene cannot process [" + query + "]: " + e.getMessage() );
+        } catch( final InvalidTokenOffsetsException e ) {
             log.error("Tokens are incompatible with provided text ",e);
-        }
-        finally
-        {
-            if( searcher != null )
-            {
-                try
-                {
-                    searcher.getIndexReader().close();
-                }
-                catch( IOException e )
-                {
-                    log.error( e );
-                }
-            }
         }
 
         return list;

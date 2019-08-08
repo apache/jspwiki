@@ -18,10 +18,8 @@
  */
 package org.apache.wiki.search;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.junit.jupiter.api.AfterEach;
@@ -29,8 +27,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
 
 public class SearchManagerTest {
 
@@ -42,9 +41,9 @@ public class SearchManagerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Properties props = TestEngine.getTestProperties();
-        String workDir = props.getProperty( "jspwiki.workDir" );
-        String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
+        final Properties props = TestEngine.getTestProperties();
+        final String workDir = props.getProperty( "jspwiki.workDir" );
+        final String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
 
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.initialdelay", "1" );
@@ -57,7 +56,7 @@ public class SearchManagerTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
     	TestEngine.emptyWorkDir( props );
     }
 
@@ -212,6 +211,22 @@ public class SearchManagerTest {
 
         Thread.yield();
         Collection< SearchResult > res = waitForIndex( "TestPage" , "testTitleSearch2" );
+
+        Assertions.assertNotNull( res, "null result" );
+        Assertions.assertEquals( 1, res.size(), "no pages" );
+
+        Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
+        m_engine.deleteTestPage("TestPage");
+    }
+
+    @Test
+    public void testKeywordsSearch() throws Exception {
+        String txt = "[{SET keywords=perry,mason,attorney,law}] Nonsensical content that should not match";
+
+        m_engine.saveText("TestPage", txt);
+
+        Thread.yield();
+        Collection< SearchResult > res = waitForIndex( "perry" , "testKeywordsSearch" );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
