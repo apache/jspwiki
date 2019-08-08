@@ -19,17 +19,9 @@
 
 package org.apache.wiki;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Locale;
-import java.util.Properties;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpSession;
+import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -43,13 +35,20 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-import net.sourceforge.stripes.mock.MockHttpSession;
-import net.sourceforge.stripes.mock.MockServletContext;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Locale;
+import java.util.Properties;
 
 /**
  *  Simple test engine that always assumes pages are found.
@@ -399,6 +398,20 @@ public class TestEngine extends WikiEngine
         page.setAuthor(Users.JANNE);
         WikiContext context = new WikiContext( this, request, page );
         saveText( context, content );
+    }
+
+    /**
+     * Some pages may produce some i18n text, so we enforce english locale in order to
+     * be able to compare properly to assertion texts.
+     *
+     * @param pagename name of the page.
+     * @return (english) contents corresponding to the given page name.
+     */
+    public String getI18nHTML( String pagename ) {
+        WikiPage page = getPage( pagename, WikiPageProvider.LATEST_VERSION );
+        WikiContext context = new WikiContext( this, newHttpRequest(), page );
+        context.setRequestContext( WikiContext.NONE );
+        return getHTML( context, page );
     }
 
     public static void trace()

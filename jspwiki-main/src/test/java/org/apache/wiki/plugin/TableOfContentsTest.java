@@ -22,17 +22,14 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 /**
  *
@@ -55,21 +52,6 @@ public class TableOfContentsTest
         testEngine.deletePage( "Test" );
     }
 
-    /**
-     * TableOfContents plugin produces some i18n text, so we enforce english locale in order to
-     * be able to compare properly to assertion texts.
-     *
-     * @param pagename name of the page.
-     * @return (english) contents corresponding to the given page name.
-     */
-    String getI18nHTML( String pagename )
-    {
-        WikiPage page = testEngine.getPage( pagename, WikiPageProvider.LATEST_VERSION );
-        WikiContext context = new WikiContext( testEngine, testEngine.newHttpRequest(), page );
-        context.setRequestContext( WikiContext.NONE );
-        return testEngine.getHTML( context, page );
-    }
-
     @Test
     public void testHeadingVariables()
         throws Exception
@@ -78,7 +60,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
         Assertions.assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -98,7 +80,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -123,7 +105,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -159,7 +141,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -197,7 +179,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -227,7 +209,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         Assertions.assertTrue( res.indexOf("Table of Contents") != -1 );
     }
@@ -240,7 +222,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         Assertions.assertTrue( res.indexOf("<i>") == -1, "<i>" ); // Check that there is no HTML left
         Assertions.assertTrue( res.indexOf("</i>") == -1, "</i>" ); // Check that there is no HTML left
@@ -253,7 +235,7 @@ public class TableOfContentsTest
 
         testEngine.saveText( "Test", src );
 
-        String res = getI18nHTML( "Test" );
+        String res = testEngine.getI18nHTML( "Test" );
 
         Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test\"" ) != -1, "Final HTML 1" );
         Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1, "Final HTML 2" );
