@@ -2,7 +2,12 @@
 
        * 2.11.0-M5-git-08
 
-       * JSPWIKI-1115: Upgrade bundled dependencies for 2.11.0.M5
+       * [JSPWIKI-427]: Keywords for Lucene Index
+
+       * [JSPWIKI-1114]: Show only part of Weblog entry on the overview page. Contributed by
+         Ulf Dittmer, thanks!
+
+       * [JSPWIKI-1115]: Upgrade bundled dependencies for 2.11.0.M5
          * Flexmark 0.50.26
          * JUnit 5.5.1
          * Lucene 8.1.1
@@ -22,7 +27,7 @@
 
        * 2.11.0-M5-git-06
 
-       * Adding keyword support for JSPWiki pages.
+       * [JSPWIKI-427]: Adding keyword support for JSPWiki pages.
          Use [{SET keywords=a,b,c}] to add keywords to a page.
          They will be shown in the info drop-down menu, and are added as
          META tags to your page.
