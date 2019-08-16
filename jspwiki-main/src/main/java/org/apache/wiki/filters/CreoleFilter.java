@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.filters;
 
-import java.util.Properties;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.api.exceptions.FilterException;
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
+
+import java.util.Properties;
 
 /**
  * <p>Provides the Implementation for mixed mode creole: If you activate
@@ -33,7 +33,7 @@ import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
  * markup to JSPWiki markup. Therefore the files will be saved 
  * with mixed markup.
  * <p>
- * <b>WARNING</b>: There's no turning back after insalling this
+ * <b>WARNING</b>: There's no turning back after installing this
  * filter. Since your wiki pages are saved in Creole markup you can
  * not deactivate it afterwards.
  * <p>
@@ -48,32 +48,25 @@ import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
  * @see <a href="http://www.wikicreole.org/wiki/MixedMode">[[WikiCreole:MixedMode]]</a> 
  */
 
-public class CreoleFilter extends BasicPageFilter 
-{
+public class CreoleFilter extends BasicPageFilter {
     
     private static final Logger log = Logger.getLogger(CreoleFilter.class);
     
     /**
      *  {@inheritDoc}
      */
-    public void initialize(WikiEngine engine, Properties props) throws FilterException 
-    {
+    public void initialize(WikiEngine engine, Properties props) throws FilterException {
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String preSave( WikiContext wikiContext, String content )
-    throws FilterException
-    {
-        try 
-        {
+    public String preSave( WikiContext wikiContext, String content ) {
+        try {
             String username=wikiContext.getCurrentUser().getName();
             Properties prop = wikiContext.getEngine().getWikiProperties();
             return new CreoleToJSPWikiTranslator().translateSignature(prop, content,username);
-        }
-        catch(Exception e )
-        {
+        } catch(Exception e ) {
             log.error( e.getMessage(), e );
             return e.getMessage();
         }
@@ -82,16 +75,11 @@ public class CreoleFilter extends BasicPageFilter
     /**
      *  {@inheritDoc}
      */
-    public String preTranslate(WikiContext wikiContext, String content)
-        throws FilterException 
-    {
-        try
-        {
+    public String preTranslate(WikiContext wikiContext, String content) {
+        try {
             Properties prop = wikiContext.getEngine().getWikiProperties();
             return new CreoleToJSPWikiTranslator().translate(prop ,content);
-        } 
-        catch (Exception e) 
-        {
+        } catch (Exception e) {
             log.error( e.getMessage(), e );
             return content
                    + "\n \n %%error \n"
