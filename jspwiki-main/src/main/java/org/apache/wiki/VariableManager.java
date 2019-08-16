@@ -18,16 +18,6 @@
  */
 package org.apache.wiki;
 
-import java.lang.reflect.Method;
-import java.security.Principal;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
@@ -36,6 +26,15 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.preferences.Preferences;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.lang.reflect.Method;
+import java.security.Principal;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
@@ -69,22 +68,6 @@ public class VariableManager
     }
 
     /**
-     *  Returns true if the link is really command to insert
-     *  a variable.
-     *  <P>
-     *  Currently we just check if the link starts with "{$".
-     *
-     *  @param link The link text
-     *  @return true, if this represents a variable link.
-     *  @deprecated Use {@link LinkParsingOperations#isVariableLink(String)}
-     */
-    @Deprecated
-    public static boolean isVariableLink( String link )
-    {
-        return new LinkParsingOperations( null ).isVariableLink( link );
-    }
-
-    /**
      *  Parses the link and finds a value.  This is essentially used once
      *  {@link LinkParsingOperations#isVariableLink(String)} has found that
      *  the link text actually contains a variable.  For example, you could
@@ -97,17 +80,13 @@ public class VariableManager
      *          start with "{$", is zero length, etc.)
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    public String parseAndGetValue( WikiContext context,
-                                    String link )
-        throws IllegalArgumentException,
-               NoSuchVariableException
-    {
-        if( !link.startsWith("{$") )
+    public String parseAndGetValue( WikiContext context, String link ) throws IllegalArgumentException, NoSuchVariableException {
+        if( !link.startsWith("{$") ) {
             throw new IllegalArgumentException( "Link does not start with {$" );
-
-        if( !link.endsWith("}") )
+        }
+        if( !link.endsWith("}") ) {
             throw new IllegalArgumentException( "Link does not end with }" );
-
+        }
         String varName = link.substring(2,link.length()-1);
 
         return getValue( context, varName.trim() );
@@ -126,9 +105,7 @@ public class VariableManager
      *  @return The source string with variables expanded.
      */
     // FIXME: somewhat slow.
-    public String expandVariables( WikiContext context,
-                                   String      source )
-    {
+    public String expandVariables( WikiContext context, String source ) {
     	StringBuilder result = new StringBuilder();
 
         for( int i = 0; i < source.length(); i++ )
@@ -222,22 +199,17 @@ public class VariableManager
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    public String getValue( WikiContext context,
-                            String      varName )
-        throws IllegalArgumentException,
-               NoSuchVariableException
-    {
-        if( varName == null )
+    public String getValue( WikiContext context, String varName ) throws IllegalArgumentException, NoSuchVariableException {
+        if( varName == null ) {
             throw new IllegalArgumentException( "Null variable name." );
-
-        if( varName.length() == 0 )
+        }
+        if( varName.length() == 0 ) {
             throw new IllegalArgumentException( "Zero length variable name." );
-
+        }
         // Faster than doing equalsIgnoreCase()
         String name = varName.toLowerCase();
 
-        for( int i = 0; i < THE_BIG_NO_NO_LIST.length; i++ )
-        {
+        for( int i = 0; i < THE_BIG_NO_NO_LIST.length; i++ ) {
             if( name.equals(THE_BIG_NO_NO_LIST[i]) )
                 return ""; // FIXME: Should this be something different?
         }
