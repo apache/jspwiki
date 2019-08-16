@@ -27,8 +27,8 @@ import org.apache.wiki.WikiEngine;
   * @see     org.apache.wiki.event.WikiEvent
   * @since   2.4.20
   */
-public class WikiEngineEvent extends WikiEvent
-{
+public class WikiEngineEvent extends WikiEvent {
+
     private static final long serialVersionUID = 1829433967558773970L;
 
     /** Indicates a WikiEngine initialization event, fired as the 
@@ -50,9 +50,6 @@ public class WikiEngineEvent extends WikiEvent
 
     private WikiEngine m_engine;
 
-    // ............
-
-
      /**
       *  Constructs an instance of this event.
       * @param eventSource  the Object that is the source of the event,
@@ -60,30 +57,23 @@ public class WikiEngineEvent extends WikiEvent
       * method thows a ClassCastException
       * @param type the event type
       */
-    public WikiEngineEvent( Object eventSource, int type )
-    {
+    public WikiEngineEvent( Object eventSource, int type ) {
         super( eventSource, type );
         m_engine = (WikiEngine)eventSource;
     }
-
 
     /**
      *  Sets the type of this event.
      *
      * @param type      the type of this WikiEngineEvent.
      */
-    protected void setType( int type )
-    {
-        if ( type >= INITIALIZING && type <= STOPPED )
-        {
+    protected void setType( int type ) {
+        if ( type >= INITIALIZING && type <= STOPPED ) {
             super.setType(type);
-        }
-        else
-        {
+        } else {
             super.setType(ERROR);
         }
     }
-
 
     /**
      *  Returns the WikiEngine that spawned this event.
@@ -95,19 +85,6 @@ public class WikiEngineEvent extends WikiEvent
         return m_engine;
     }
 
-
-    /**
-     *  Returns the WikiEngine that spawned this event.
-     *
-     * @return  the WikiEngine that spawned this event.
-     * @deprecated  use {@link #getEngine()} instead.
-     */
-    public WikiEngine getWikiEngine()
-    {
-        return m_engine;
-    }
-
-
    /**
      * Returns <code>true</code> if the int value is a WikiPageEvent type.
      * @param type the event type
@@ -118,16 +95,13 @@ public class WikiEngineEvent extends WikiEvent
         return type >= INITIALIZING && type <= STOPPED;
     }
 
-
     /**
      *  Returns a textual representation of the event type.
      *
      * @return a String representation of the type
      */
-    public final String eventName()
-    {
-        switch ( getType() )
-        {
+    public final String eventName() {
+        switch ( getType() ) {
             case INITIALIZING:         return "INITIALIZING";
             case INITIALIZED:          return "INITIALIZED";
             case SHUTDOWN:             return "SHUTDOWN";
@@ -136,16 +110,13 @@ public class WikiEngineEvent extends WikiEvent
         }
     }
 
-
     /**
      *  Returns a human-readable description of the event type.
      *
      * @return a String description of the type
      */
-    public final String getTypeDescription()
-    {
-        switch ( getType() )
-        {
+    public final String getTypeDescription() {
+        switch ( getType() ) {
             case INITIALIZING:         return "wiki engine initializing";
             case INITIALIZED:          return "wiki engine initialized";
             case SHUTDOWN:             return "wiki engine shutting down";
@@ -154,4 +125,4 @@ public class WikiEngineEvent extends WikiEvent
         }
     }
 
-} // end class org.apache.wiki.event.WikiEngineEvent
+}
