@@ -1,5 +1,15 @@
 2019-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
+       * 2.11.0-M5-git-09
+
+       * [JSPWIKI-893]: Cannot search for bold words with GermanAnalyzer
+
+       * replaced all deprecated code
+
+       * [JSPWIKI-1115]: Upgrade SLF4J to 1.7.28
+
+2019-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
+
        * 2.11.0-M5-git-08
 
        * [JSPWIKI-427]: Keywords for Lucene Index
