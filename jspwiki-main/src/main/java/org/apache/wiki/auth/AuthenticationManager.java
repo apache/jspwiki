@@ -93,29 +93,6 @@ public class AuthenticationManager {
     /** If this jspwiki.properties property is <code>true</code>, allow cookies to be used for authentication. */
     public static final String                 PROP_ALLOW_COOKIE_AUTH = "jspwiki.cookieAuthentication";
     
-    /**
-     *  This property determines whether we use JSPWiki authentication or not.
-     *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
-     *  <p>
-     *  Setting this is now deprecated - we do not guarantee that it works.
-     *  
-     * @deprecated - to be removed on 2.11.0
-     */
-    @Deprecated
-    public  static final String                PROP_SECURITY       = "jspwiki.security";
-
-    /** Value specifying that the user wants to use the container-managed security, just like in JSPWiki 2.2.
-     * @deprecated - to be removed on 2.11.0
-      */
-    @Deprecated
-    public static final String                SECURITY_OFF      = "off";
-
-    /** Value specifying that the user wants to use the built-in JAAS-based system.
-     * @deprecated - to be removed on 2.11.0
-     */
-    @Deprecated
-    public static final String                SECURITY_JAAS     = "jaas";
-
     /** Whether logins should be throttled to limit brute-forcing attempts. Defaults to true. */
     public static final String                 PROP_LOGIN_THROTTLING = "jspwiki.login.throttling";
 
@@ -139,14 +116,6 @@ public class AuthenticationManager {
     /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}; 
      * initialized by {@link #initialize(WikiEngine, Properties)}. */
     protected Map<String,String> m_loginModuleOptions = new HashMap<String,String>();
-
-    /** Just to provide compatibility with the old versions.  The same
-     *  as SECURITY_OFF.
-     *
-     *  @deprecated use {@link #SECURITY_OFF} instead - to be removed on 2.11.0
-     */
-    @Deprecated
-    protected static final String             SECURITY_CONTAINER = "container";
 
     /** The default {@link javax.security.auth.spi.LoginModule} class name to use for custom authentication. */
     private static final String                 DEFAULT_LOGIN_MODULE = "org.apache.wiki.auth.login.UserDatabaseLoginModule";
@@ -337,25 +306,6 @@ public class AuthenticationManager {
         
         // If by some unusual turn of events the Anonymous login module doesn't work, login failed!
         return false;
-    }
-    
-    /**
-     * Attempts to perform a WikiSession login for the given username/password
-     * combination using JSPWiki's custom authentication mode. This method is identical to
-     * {@link #login(WikiSession, String, String)}, except that user's HTTP request is not made available
-     * to LoginModules via the {@link org.apache.wiki.auth.login.HttpRequestCallback}.
-     * @param session the current wiki session; may not be <code>null</code>.
-     * @param username The user name. This is a login name, not a WikiName. In
-     *            most cases they are the same, but in some cases, they might
-     *            not be.
-     * @param password the password
-     * @return true, if the username/password is valid
-     * @throws org.apache.wiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
-     * @deprecated use {@link #login(WikiSession, HttpServletRequest, String, String)} instead
-     */
-    public boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
-    {
-        return login( session, null, username, password );
     }
     
     /**
