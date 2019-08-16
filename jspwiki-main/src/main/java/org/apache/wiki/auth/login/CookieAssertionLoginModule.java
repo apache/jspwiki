@@ -18,7 +18,10 @@
  */
 package org.apache.wiki.auth.login;
 
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.TextUtil;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -28,11 +31,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.util.HttpUtil;
-import org.apache.wiki.util.TextUtil;
+import java.io.IOException;
 
 /**
  * <p>
@@ -55,17 +54,12 @@ import org.apache.wiki.util.TextUtil;
  * @see CookieAuthenticationLoginModule
  * @since 2.3
  */
-public class CookieAssertionLoginModule extends AbstractLoginModule
-{
+public class CookieAssertionLoginModule extends AbstractLoginModule {
 
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiAssertedName";
 
-    /** Believed to be unused.
-     *  @deprecated */
-    public static final String PROMPT            = "User name";
-
-    protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
+    protected static final Logger log = Logger.getLogger( CookieAssertionLoginModule.class );
 
     /**
      * Logs in the user by calling back to the registered CallbackHandler with
