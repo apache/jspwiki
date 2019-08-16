@@ -187,15 +187,6 @@ public interface UserProfile extends Serializable
      * @param uid the unique identifier to set
      */
     void setUid( String uid );
-    
-    /**
-     * No-op method. In previous versions of JSPWiki, the method
-     * set the user's wiki name directly. Now, the wiki name is automatically
-     * calculated based on the full name.
-     * @param name the wiki name
-     * @deprecated This method will be removed in a future release.
-     */
-    void setWikiName( String name );
 
     /**
      * Returns a string representation of this user profile.
