@@ -67,7 +67,7 @@
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
     <selenide.version>5.2.8</selenide.version>
-    <slf4j.version>1.7.26</slf4j.version>
+    <slf4j.version>1.7.28</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>1.22</tika.version>
     <tomcat.version>8.5.43</tomcat.version>
@@ -75,32 +75,31 @@
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>1.8</plugin.antrun.version>
-    <plugin.assembly.version>3.1.0</plugin.assembly.version>
+    <plugin.assembly.version>3.1.1</plugin.assembly.version>
     <plugin.clean.version>3.1.0</plugin.clean.version>
-    <plugin.compiler.version>3.8.0</plugin.compiler.version>
+    <plugin.compiler.version>3.8.1</plugin.compiler.version>
     <plugin.dependency.version>3.1.1</plugin.dependency.version>
     <plugin.eclipse.version>2.10</plugin.eclipse.version>
     <plugin.enforcer.version>1.4.1</plugin.enforcer.version>
     <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
-    <plugin.jar.version>3.1.0</plugin.jar.version>
-    <plugin.javadoc.version>3.1.0</plugin.javadoc.version>
+    <plugin.jar.version>3.1.2</plugin.jar.version>
+    <plugin.javadoc.version>3.1.1</plugin.javadoc.version>
     <plugin.jxr.version>3.0.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.0.0</plugin.project-info-reports.version>
     <plugin.release.version>2.5.3</plugin.release.version>
     <plugin.resources.version>3.1.0</plugin.resources.version>
-    <plugin.source.version>3.0.1</plugin.source.version>
+    <plugin.source.version>3.1.0</plugin.source.version>
     <plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
-    <plugin.war.version>3.2.2</plugin.war.version>
+    <plugin.war.version>3.2.3</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.1.0</plugin.jspc.version>
     <plugin.checksum.version>1.8</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.7.3</plugin.cargo.version>
+    <plugin.cargo.version>1.7.6</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
-    <plugin.selenium.version>2.3</plugin.selenium.version>
-    <plugin.sonar.version>3.4.0.905</plugin.sonar.version>
+    <plugin.sonar.version>3.6.0.1398</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->
@@ -394,6 +393,10 @@
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
+            <compilerArgs>
+              <arg>-Xlint:deprecation</arg>
+              <arg>-parameters</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
 
@@ -722,15 +725,6 @@
               <format>html</format>
               <format>xml</format>
             </formats>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>selenium-maven-plugin</artifactId>
-          <version>${plugin.selenium.version}</version>
-          <configuration>
-            <background>true</background>
           </configuration>
         </plugin>
 
