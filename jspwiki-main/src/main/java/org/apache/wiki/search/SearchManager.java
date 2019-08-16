@@ -38,7 +38,6 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.ClassUtil;
-import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -64,12 +63,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
     private static final String DEFAULT_SEARCHPROVIDER  = "org.apache.wiki.search.LuceneSearchProvider";
 
-    /** Old option, now deprecated. */
-    private static final String PROP_USE_LUCENE        = "jspwiki.useLucene";
-
-    /**
-     *  Property name for setting the search provider. Value is <tt>{@value}</tt>.
-     */
+    /** Property name for setting the search provider. Value is <tt>{@value}</tt>. */
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
     private SearchProvider    m_searchProvider;
@@ -279,31 +273,11 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         }
     }
 
-    private void loadSearchProvider(Properties properties) {
+    private void loadSearchProvider( final Properties properties ) {
         //
-        // See if we're using Lucene, and if so, ensure that its
-        // index directory is up to date.
+        // See if we're using Lucene, and if so, ensure that its index directory is up to date.
         //
-        String useLucene = properties.getProperty(PROP_USE_LUCENE);
-
-        // FIXME: Obsolete, remove, or change logic to first load searchProvder?
-        // If the old jspwiki.useLucene property is set we use that instead of the searchProvider class.
-        if( useLucene != null )
-        {
-            log.info( PROP_USE_LUCENE+" is deprecated; please use "+PROP_SEARCHPROVIDER+"=<your search provider> instead." );
-            if( TextUtil.isPositive( useLucene ) )
-            {
-                m_searchProvider = new LuceneSearchProvider();
-            }
-            else
-            {
-                m_searchProvider = new BasicSearchProvider();
-            }
-            log.debug("useLucene was set, loading search provider " + m_searchProvider);
-            return;
-        }
-
-        String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
+        final String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
 
         try {
             Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
