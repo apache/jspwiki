@@ -6,7 +6,9 @@
 
        * replaced all deprecated code
 
-       * [JSPWIKI-1115]: Upgrade SLF4J to 1.7.28
+       * [JSPWIKI-1115]: Upgrade SLF4J to 1.7.28 and commons-lang from 2.6 to 3.9
+         * dev-only breaking change: if you were using commons-lang transitively on your extension,
+           you must declare it explicitly or migrate it to commons-lang 3
 
 2019-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 

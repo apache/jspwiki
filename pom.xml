@@ -46,7 +46,8 @@
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.6</commons-io.version>
-    <commons-lang.version>2.6</commons-lang.version>
+    <commons-lang.version>3.9</commons-lang.version>
+    <commons-text.version>1.7</commons-text.version>
     <ehcache.version>2.10.6</ehcache.version>
     <flexmark.version>0.50.26</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
@@ -177,9 +178,15 @@
       </dependency>
 
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
         <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>${commons-text.version}</version>
       </dependency>
 
       <dependency>
