@@ -18,8 +18,6 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
 
@@ -62,9 +60,8 @@ import org.apache.wiki.auth.AuthenticationManager;
  *
  *  @since 2.0
  */
-public class UserCheckTag
-    extends WikiTagBase
-{
+public class UserCheckTag extends WikiTagBase {
+
     private static final long serialVersionUID = 3256438110127863858L;
     private static final String ASSERTED = "asserted";
     private static final String AUTHENTICATED = "authenticated";
@@ -82,8 +79,7 @@ public class UserCheckTag
      *  {@inheritDoc}
      */
     @Override
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_status = null;
     }
@@ -103,116 +99,70 @@ public class UserCheckTag
      *  
      *  @param status The status to be checked.
      */
-    public void setStatus( String status )
+    public void setStatus( final String status )
     {
         m_status = status.toLowerCase();
     }
-
-
-    /**
-     *  Sets the "exists" attribute, which is converted on-the-fly into
-     *  an equivalent "status" -attribute.  This is only for backwards compatibility.
-     *
-     *  @param arg If true, works exactly as status = authenticated.  If false, works
-     *             as if status = anonymous.
-     *  @deprecated
-     */
-    public void setExists( String arg )
-    {
-        if("true".equals(arg))
-        {
-            m_status = AUTHENTICATED;
-        }
-        else
-        {
-            m_status = ANONYMOUS;
-        }
-    }
-
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.tags.WikiTagBase#doWikiStartTag()
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiSession session = m_wikiContext.getWikiSession();
-        String status = session.getStatus();
-        AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
-        boolean containerAuth = mgr.isContainerAuthenticated();
-        boolean cookieAssertions = mgr.allowsCookieAssertions();
+    public final int doWikiStartTag() {
+        final WikiSession session = m_wikiContext.getWikiSession();
+        final String status = session.getStatus();
+        final AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
+        final boolean containerAuth = mgr.isContainerAuthenticated();
+        final boolean cookieAssertions = mgr.allowsCookieAssertions();
 
-        if( m_status != null )
-        {
-            if ( ANONYMOUS.equals( m_status )) 
-            {
-                if (status.equals(WikiSession.ANONYMOUS))
-                {
+        if( m_status != null ) {
+            switch( m_status ) {
+            case ANONYMOUS:
+                if( status.equals( WikiSession.ANONYMOUS ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
-            }
-            else if( AUTHENTICATED.equals( m_status ))
-            { 
-                if (status.equals(WikiSession.AUTHENTICATED)) 
-                {
+                break;
+            case AUTHENTICATED:
+                if( status.equals( WikiSession.AUTHENTICATED ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
-            }
-            else if( ASSERTED.equals( m_status )) 
-            { 
-                if (status.equals(WikiSession.ASSERTED)) 
-                {
+                break;
+            case ASSERTED:
+                if( status.equals( WikiSession.ASSERTED ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
-            }
-            else if( ASSERTIONS_ALLOWED.equals( m_status ))
-            { 
-                if ( cookieAssertions )
-                {
+                break;
+            case ASSERTIONS_ALLOWED:
+                if( cookieAssertions ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 return SKIP_BODY;
-            }
-            else if( ASSERTIONS_NOT_ALLOWED.equals( m_status ))
-            { 
-                if ( !cookieAssertions )
-                {
+            case ASSERTIONS_NOT_ALLOWED:
+                if( !cookieAssertions ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 return SKIP_BODY;
-            }
-            else if( CONTAINER_AUTH.equals( m_status )) 
-            { 
-                if ( containerAuth )
-                {
+            case CONTAINER_AUTH:
+                if( containerAuth ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 return SKIP_BODY;
-            }
-            else if( CUSTOM_AUTH.equals( m_status )) 
-            { 
-                if ( !containerAuth )
-                {
+            case CUSTOM_AUTH:
+                if( !containerAuth ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 return SKIP_BODY;
-            }
-            else if( KNOWN.equals( m_status )) 
-            { 
-                if ( !session.isAnonymous() )
-                {
+            case KNOWN:
+                if( !session.isAnonymous() ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 return SKIP_BODY;
-            }
-            else if( NOT_AUTHENTICATED.equals( m_status ))
-            { 
-                if (!status.equals(WikiSession.AUTHENTICATED)) 
-                {
+            case NOT_AUTHENTICATED:
+                if( !status.equals( WikiSession.AUTHENTICATED ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
+                break;
             }
         }
 
