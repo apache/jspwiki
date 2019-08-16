@@ -18,19 +18,17 @@
  */
 package org.apache.wiki.auth.login;
 
-import java.security.Principal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import org.apache.log4j.Logger;
+import org.apache.wiki.auth.WikiPrincipal;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.auth.WikiPrincipal;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Abstract JAAS {@link javax.security.auth.spi.LoginModule}that implements
@@ -40,14 +38,12 @@ import org.apache.wiki.auth.WikiPrincipal;
  * {@link #logout()} should be sufficient for most purposes.
  * @since 2.3
  */
-public abstract class AbstractLoginModule implements LoginModule
-{
+public abstract class AbstractLoginModule implements LoginModule {
 
-    private static final Logger   log = Logger.getLogger( AbstractLoginModule.class );
+    private static final Logger log = Logger.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
-
-    protected Map<String,?>             m_options;
+    protected Map< String, ? > m_options;
 
     /**
      * Collection of Principals set during login module initialization.
@@ -58,7 +54,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * if login succeeds.
      * @deprecated
      */
-    protected Collection<Principal>      m_previousWikiPrincipals;
+    protected Collection< Principal > m_previousWikiPrincipals;
 
     /**
      * Implementing classes should add Principals to this collection; these
@@ -66,7 +62,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * These Principals will be added to the Subject
      * during the {@link #commit()} phase of login.
      */
-    protected Collection<Principal> m_principals;
+    protected Collection< Principal > m_principals;
 
     /**
      * Implementing classes should add Principals to this collection
@@ -76,7 +72,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * {@link org.apache.wiki.auth.authorize.Role}.
      * @deprecated
      */
-    protected Collection<Principal>      m_principalsToRemove;
+    protected Collection< Principal > m_principalsToRemove;
 
     /**
      * Implementing classes should add Principals to this collection to specify
@@ -91,13 +87,13 @@ public abstract class AbstractLoginModule implements LoginModule
      * should over-write {@link org.apache.wiki.auth.authorize.Role#ANONYMOUS}.
      * @deprecated
      */
-    protected Collection<Principal>      m_principalsToOverwrite;
+    protected Collection< Principal > m_principalsToOverwrite;
 
-    protected Map<String,?>             m_state;
+    protected Map< String, ? > m_state;
 
-    protected Subject         m_subject;
+    protected Subject m_subject;
 
-    protected static final String NULL           = "(null)";
+    protected static final String NULL = "(null)";
 
     /**
      * Aborts the login; called if the LoginContext's overall authentication
@@ -108,10 +104,9 @@ public abstract class AbstractLoginModule implements LoginModule
      * {@link #m_principalsToRemove}.
      * It always returns <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#abort()
-     * @throws LoginException if the abort itself fails
      * @return True, always.
      */
-    public final boolean abort() throws LoginException
+    public final boolean abort()
     {
         removePrincipals( m_principals );
         removePrincipals( m_principalsToRemove );
@@ -182,10 +177,10 @@ public abstract class AbstractLoginModule implements LoginModule
      */
     public final void initialize( Subject subject, CallbackHandler callbackHandler, Map<String,?> sharedState, Map<String,?> options )
     {
-        m_previousWikiPrincipals = new HashSet<Principal>();
-        m_principals = new HashSet<Principal>();
-        m_principalsToRemove = new HashSet<Principal>();
-        m_principalsToOverwrite = new HashSet<Principal>();
+        m_previousWikiPrincipals = new HashSet<>();
+        m_principals = new HashSet<>();
+        m_principalsToRemove = new HashSet<>();
+        m_principalsToOverwrite = new HashSet<>();
         m_subject = subject;
         m_handler = callbackHandler;
         m_state = sharedState;
@@ -221,7 +216,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * @throws LoginException if the logout itself fails
      * @see javax.security.auth.spi.LoginModule#logout()
      */
-    public final boolean logout() throws LoginException
+    public final boolean logout()
     {
         removePrincipals( m_principals );
         removePrincipals( m_principalsToRemove );
