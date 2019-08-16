@@ -18,12 +18,6 @@
  */
 package org.apache.wiki.rss;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -36,6 +30,12 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.util.TextUtil;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).
@@ -54,8 +54,8 @@ import org.apache.wiki.util.TextUtil;
  */
 // FIXME: Limit diff and page content size.
 // FIXME3.0: This class would need a bit of refactoring.  Method names, e.g. are confusing.
-public class RSSGenerator
-{
+public class RSSGenerator {
+
     static Logger              log = Logger.getLogger( RSSGenerator.class );
     private WikiEngine         m_engine;
 
@@ -63,34 +63,22 @@ public class RSSGenerator
     private String             m_channelLanguage    = "en-us";
     private boolean            m_enabled = true;
 
-    /**
-     *  Parameter value to represent RSS 1.0 feeds.  Value is <tt>{@value}</tt>. 
-     */
+    /** Parameter value to represent RSS 1.0 feeds.  Value is <tt>{@value}</tt>. */
     public static final String RSS10 = "rss10";
 
-    /**
-     *  Parameter value to represent RSS 2.0 feeds.  Value is <tt>{@value}</tt>. 
-     */
+    /** Parameter value to represent RSS 2.0 feeds.  Value is <tt>{@value}</tt>. */
     public static final String RSS20 = "rss20";
     
-    /**
-     *  Parameter value to represent Atom feeds.  Value is <tt>{@value}</tt>. 
-     */
+    /** Parameter value to represent Atom feeds.  Value is <tt>{@value}</tt>.  */
     public static final String ATOM  = "atom";
 
-    /**
-     *  Parameter value to represent a 'blog' style feed. Value is <tt>{@value}</tt>.
-     */
+    /** Parameter value to represent a 'blog' style feed. Value is <tt>{@value}</tt>. */
     public static final String MODE_BLOG = "blog";
     
-    /**
-     *  Parameter value to represent a 'wiki' style feed. Value is <tt>{@value}</tt>.
-     */
+    /** Parameter value to represent a 'wiki' style feed. Value is <tt>{@value}</tt>. */
     public static final String MODE_WIKI = "wiki";
 
-    /**
-     *  Parameter value to represent a 'full' style feed. Value is <tt>{@value}</tt>.
-     */
+    /** Parameter value to represent a 'full' style feed. Value is <tt>{@value}</tt>. */
     public static final String MODE_FULL = "full";
 
     /**
@@ -101,15 +89,12 @@ public class RSSGenerator
     public static final String PROP_CHANNEL_DESCRIPTION = "jspwiki.rss.channelDescription";
 
     /**
-     *  Defines the property name for the RSS channel language.  Default value for the
-     *  language is "en-us".
+     *  Defines the property name for the RSS channel language.  Default value for the language is "en-us".
      *  @since 1.7.6.
      */
     public static final String PROP_CHANNEL_LANGUAGE    = "jspwiki.rss.channelLanguage";
 
-    /**
-     *  Defins the property name for the RSS channel title.  Value is <tt>{@value}</tt>.
-     */
+    /** Defines the property name for the RSS channel title.  Value is <tt>{@value}</tt>. */
     public static final String PROP_CHANNEL_TITLE       = "jspwiki.rss.channelTitle";
 
     /**
@@ -130,27 +115,11 @@ public class RSSGenerator
      */
     public static final String PROP_INTERVAL            = "jspwiki.rss.interval";
 
-    /**
-     *  Defines the property name for the RSS author.  Value is <tt>{@value}</tt>.
-     */
+    /** Defines the property name for the RSS author.  Value is <tt>{@value}</tt>. */
     public static final String PROP_RSS_AUTHOR          = "jspwiki.rss.author";
 
-    /**
-     *  Defines the property name for the RSS author email.  Value is <tt>{@value}</tt>.
-     */
+    /** Defines the property name for the RSS author email.  Value is <tt>{@value}</tt>. */
     public static final String PROP_RSS_AUTHOREMAIL     = "jspwiki.rss.author.email";
-
-    /**
-     *  Property name for the RSS copyright info.  Value is <tt>{@value}</tt>.
-     */
-    public static final String PROP_RSS_COPYRIGHT       = "jspwiki.rss.copyright";
-
-    /** Just for compatibilty.  @deprecated */
-    public static final String PROP_RSSAUTHOR           = PROP_RSS_AUTHOR;
-
-    /** Just for compatibilty.  @deprecated */
-    public static final String PROP_RSSAUTHOREMAIL      = PROP_RSS_AUTHOREMAIL;
-
 
     private static final int MAX_CHARACTERS             = Integer.MAX_VALUE-1;
 
@@ -161,15 +130,10 @@ public class RSSGenerator
      *  @param properties The properties.
      *  @throws NoRequiredPropertyException If something is missing from the given property set.
      */
-    public RSSGenerator( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException
-    {
+    public RSSGenerator( WikiEngine engine, Properties properties ) {
         m_engine = engine;
-
-        m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION,
-                                                       m_channelDescription );
-        m_channelLanguage    = properties.getProperty( PROP_CHANNEL_LANGUAGE,
-                                                       m_channelLanguage );
+        m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, m_channelDescription );
+        m_channelLanguage    = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
     }
 
     /**
