@@ -225,21 +225,6 @@ public class JDBCGroupDatabase implements GroupDatabase {
     private WikiEngine m_engine = null;
 
     /**
-     * No-op method that in previous versions of JSPWiki was intended to
-     * atomically commit changes to the user database. Now, the
-     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods are
-     * atomic themselves.
-     * 
-     * @throws WikiSecurityException never...
-     * @deprecated there is no need to call this method because the save and
-     *             delete methods contain their own commit logic
-     */
-    @Deprecated
-    public void commit() throws WikiSecurityException
-    {
-    }
-
-    /**
      * Looks up and deletes a {@link Group} from the group database. If the
      * group database does not contain the supplied Group. this method throws a
      * {@link NoSuchPrincipalException}. The method commits the results of the

@@ -18,29 +18,18 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import java.security.Principal;
-import java.util.Properties;
-
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiSecurityException;
+
+import java.security.Principal;
+import java.util.Properties;
 
 /**
  * Defines an interface for loading, persisting and storing wiki groups.
  * @since 2.4.22
  */
-public interface GroupDatabase
-{
-    /**
-     * No-op method that in previous versions of JSPWiki was intended to 
-     * atomically commit changes to the user database. Now, the
-     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
-     * are atomic themselves.
-     * @throws WikiSecurityException never...
-     * @deprecated there is no need to call this method because the save and
-     * delete methods contain their own commit logic
-     */
-    void commit() throws WikiSecurityException;
+public interface GroupDatabase {
 
     /**
      * Looks up and deletes a {@link Group} from the group database. If the
@@ -90,4 +79,5 @@ public interface GroupDatabase
      * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
     Group[] groups() throws WikiSecurityException;
+
 }

@@ -109,21 +109,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private WikiEngine            m_engine         = null;
 
-    private Map<String, Group>                   m_groups         = new HashMap<>();
-
-    /**
-     * No-op method that in previous versions of JSPWiki was intended to
-     * atomically commit changes to the user database. Now, the
-     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
-     * are atomic themselves.
-     * @throws WikiSecurityException never...
-     * @deprecated there is no need to call this method because the save and
-     * delete methods contain their own commit logic
-     */
-    @Deprecated
-    @Override
-    public void commit() throws WikiSecurityException
-    { }
+    private Map<String, Group>    m_groups         = new HashMap<>();
 
     /**
       * Looks up and deletes a {@link Group} from the group database. If the
