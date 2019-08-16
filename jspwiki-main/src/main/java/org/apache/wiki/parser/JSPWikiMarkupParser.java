@@ -440,39 +440,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el;
     }
 
-
-    /**
-     *  Figures out if a link is an off-site link.  This recognizes
-     *  the most common protocols by checking how it starts.
-     *
-     *  @param link The link to check.
-     *  @return true, if this is a link outside of this wiki.
-     *  @since 2.4
-     *  @deprecated - use {@link LinkParsingOperations#isExternalLink(String)} instead.
-     */
-    @Deprecated
-    public static boolean isExternalLink( String link )
-    {
-        return new LinkParsingOperations(null).isExternalLink( link );
-    }
-
-    /**
-     *  Returns true if the link is really command to insert
-     *  a plugin.
-     *  <P>
-     *  Currently we just check if the link starts with "{INSERT",
-     *  or just plain "{" but not "{$".
-     *
-     *  @param link Link text, i.e. the contents of text between [].
-     *  @return True, if this link seems to be a command to insert a plugin here.
-     *  @deprecated Use {@link LinkParsingOperations#isPluginLink(String)} instead,
-     */
-    @Deprecated
-    public static boolean isPluginLink( String link )
-    {
-        return new LinkParsingOperations( null ).isPluginLink( link );
-    }
-
     /**
      *  These are all of the HTML 4.01 block-level elements.
      */
