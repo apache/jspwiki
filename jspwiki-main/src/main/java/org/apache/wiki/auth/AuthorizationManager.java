@@ -19,26 +19,6 @@
 package org.apache.wiki.auth;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.security.AccessControlException;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.Permission;
-import java.security.Principal;
-import java.security.PrivilegedAction;
-import java.security.ProtectionDomain;
-import java.security.cert.Certificate;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.WeakHashMap;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -62,6 +42,25 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.CodeSource;
+import java.security.Permission;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.security.ProtectionDomain;
+import java.security.cert.Certificate;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.WeakHashMap;
 
 /**
  * <p>Manages all access control and authorization; determines what authenticated
@@ -494,18 +493,6 @@ public class AuthorizationManager {
             log.error("Could not initialize local security policy: " + e.getMessage() );
             throw new WikiException( "Could not initialize local security policy: " + e.getMessage(), e );
         }
-    }
-
-    /**
-     * Returns <code>true</code> if JSPWiki's JAAS authorization system
-     * is used for authorization in addition to container controls.
-     * @return the result
-     * @deprecated functionality deprecated - returns true always. To be removed on 2.11.0
-     */
-    @Deprecated
-    protected boolean isJAASAuthorized()
-    {
-        return true;
     }
 
     /**
