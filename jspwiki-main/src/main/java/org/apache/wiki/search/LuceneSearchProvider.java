@@ -375,7 +375,7 @@ public class LuceneSearchProvider implements SearchProvider {
      */
     protected Document luceneIndexPage( final WikiPage page, final String text, final IndexWriter writer ) throws IOException {
         if( log.isDebugEnabled() ) {
-            log.debug( "Indexing "+page.getName()+"..." );
+            log.debug( "Indexing " + page.getName() + "..." );
         }
         
         // make a new, empty document
@@ -384,13 +384,14 @@ public class LuceneSearchProvider implements SearchProvider {
         if( text == null ) {
             return doc;
         }
+        final String indexedText = text.replace( "__", " " ); // be nice to Language Analyzers - cfr. JSPWIKI-893
 
         // Raw name is the keyword we'll use to refer to this document for updates.
         Field field = new Field( LUCENE_ID, page.getName(), StringField.TYPE_STORED );
         doc.add( field );
 
         // Body text.  It is stored in the doc for search contexts.
-        field = new Field( LUCENE_PAGE_CONTENTS, text, TextField.TYPE_STORED );
+        field = new Field( LUCENE_PAGE_CONTENTS, indexedText, TextField.TYPE_STORED );
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
@@ -411,7 +412,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
         // Now add the names of the attachments of this page
         try {
-            final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments(page);
+            final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( page );
             String attachmentNames = "";
 
             for( final Attachment att : attachments ) {

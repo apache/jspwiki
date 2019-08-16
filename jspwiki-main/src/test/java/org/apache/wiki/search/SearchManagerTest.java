@@ -33,7 +33,7 @@ import java.util.Properties;
 
 public class SearchManagerTest {
 
-    private static final long SLEEP_TIME = 2000L;
+    private static final long SLEEP_TIME = 2_000L;
     private static final int SLEEP_COUNT = 50;
     TestEngine m_engine;
     SearchManager m_mgr;
@@ -62,8 +62,7 @@ public class SearchManagerTest {
 
     @Test
     public void testDefaultProvider() {
-        Assertions.assertEquals( "org.apache.wiki.search.LuceneSearchProvider",
-                      m_mgr.getSearchEngine().getClass().getName() );
+        Assertions.assertEquals( "org.apache.wiki.search.LuceneSearchProvider", m_mgr.getSearchEngine().getClass().getName() );
     }
 
     /**
