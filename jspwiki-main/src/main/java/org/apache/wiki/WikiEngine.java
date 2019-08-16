@@ -18,34 +18,6 @@
  */
 package org.apache.wiki;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
@@ -99,6 +71,33 @@ import org.apache.wiki.workflow.Step;
 import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowBuilder;
 import org.apache.wiki.workflow.WorkflowManager;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -544,7 +543,7 @@ public class WikiEngine
         {
             Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                                                        TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
-            m_urlConstructor = (URLConstructor) urlclass.newInstance();
+            m_urlConstructor = (URLConstructor) urlclass.getDeclaredConstructor().newInstance();
             m_urlConstructor.initialize( this, props );
 
             m_pageManager           = ClassUtil.getMappedObject( PageManager.class.getName(), this, props );
@@ -938,8 +937,7 @@ public class WikiEngine
             String res = request.getParameter( name );
             if( res != null )
             {
-                res = new String(res.getBytes("ISO-8859-1"),
-                                 getContentEncoding() );
+                res = new String(res.getBytes( StandardCharsets.ISO_8859_1), getContentEncoding() );
             }
 
             return res;

@@ -18,23 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.TreeMap;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -59,6 +42,22 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.util.TextUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.TreeMap;
+
 
 /**
  * This plugin counts the number of times a page has been viewed.<br/>
@@ -76,8 +75,8 @@ import org.apache.wiki.util.TextUtil;
  * 
  * @since 2.8
  */
-public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin, InitializablePlugin
-{
+public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin, InitializablePlugin {
+
     private static final Logger log = Logger.getLogger( PageViewPlugin.class );
 
     /** The page view manager. */
@@ -591,35 +590,21 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         /**
          * Load the page view counters from file.
          */
-        private void loadCounters()
-        {
-            if( m_counters != null && m_storage != null )
-            {
+        private void loadCounters() {
+            if( m_counters != null && m_storage != null ) {
                 log.info( "Loading counters." );
-                synchronized( this )
-                {
-                    InputStream fis = null;
-                    try
-                    {
-                        fis = new FileInputStream( new File( m_workDir, COUNTER_PAGE ) );
+                synchronized( this ) {
+                    try( InputStream fis = new FileInputStream( new File( m_workDir, COUNTER_PAGE ) ) ) {
                         m_storage.load( fis );
-                    }
-                    catch( IOException ioe )
-                    {
+                    } catch( IOException ioe ) {
                         log.error( "Can't load page counter store: " + ioe.getMessage() + " , will create a new one!" );
-                    }
-                    finally
-                    {
-                        IOUtils.closeQuietly( fis );
                     }
 
                     // Copy the collection into a sorted map
                     Iterator< Entry< Object, Object > > iter = m_storage.entrySet().iterator();
 
-                    while ( iter != null && iter.hasNext() )
-                    {
+                    while ( iter != null && iter.hasNext() ) {
                         Entry< ?, ? > entry = iter.next();
-
                         m_counters.put( (String) entry.getKey(), new Counter( (String) entry.getValue() ) );
                     }
                     
@@ -630,35 +615,19 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
         /**
          * Save the page view counters to file.
-         * 
          */
-        protected void storeCounters()
-        {
-            if( m_counters != null && m_storage != null && m_dirty )
-            {
+        protected void storeCounters() {
+            if( m_counters != null && m_storage != null && m_dirty ) {
                 log.info( "Storing " + m_counters.size() + " counter values." );
-
-                synchronized( this )
-                {
-                    OutputStream fos = null;
-
+                synchronized( this ) {
                     // Write out the collection of counters
-                    try
-                    {
-                        fos = new FileOutputStream( new File( m_workDir, COUNTER_PAGE ) );
-
+                    try( final OutputStream fos = new FileOutputStream( new File( m_workDir, COUNTER_PAGE ) ) ) {
                         m_storage.store( fos, "\n# The number of times each page has been viewed.\n# Do not modify.\n" );
                         fos.flush();
 
                         m_dirty = false;
-                    }
-                    catch( IOException ioe )
-                    {
+                    } catch( IOException ioe ) {
                         log.error( "Couldn't store counters values: " + ioe.getMessage() );
-                    }
-                    finally
-                    {
-                        IOUtils.closeQuietly( fos );
                     }
                 }
             }

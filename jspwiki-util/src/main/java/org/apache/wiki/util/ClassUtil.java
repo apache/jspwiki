@@ -18,6 +18,11 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jdom2.Element;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -33,11 +38,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jdom2.Element;
 
 /**
  *  Contains useful utilities for class file manipulation.  This is a static class,
@@ -345,7 +345,7 @@ public final class ClassUtil {
         //
         //  No arguments, so we can just call a default constructor and ignore the arguments.
         //
-        return ( T )cl.newInstance();
+        return ( T )cl.getDeclaredConstructor().newInstance();
     }
 
     /**

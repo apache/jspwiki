@@ -18,18 +18,17 @@
  */
 package org.apache.wiki.filters;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.util.TextUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.filters.BasicPageFilter;
-import org.apache.wiki.util.TextUtil;
 
 /**
  *  This class is an example of how to have a simple filter.  It removes
@@ -46,47 +45,41 @@ public class ProfanityFilter extends BasicPageFilter {
     private static String[] c_profanities = new String[0];
     
     static {
-    	BufferedReader br = null;
-    	InputStream in = null;
-        try {
-            ClassLoader loader = ProfanityFilter.class.getClassLoader();
-            in = loader.getResourceAsStream( PROPERTYFILE );
-            
+        final ClassLoader loader = ProfanityFilter.class.getClassLoader();
+        try( final InputStream in = loader.getResourceAsStream( PROPERTYFILE ) ) {
             if( in == null ) {
                 throw new IOException( "No property file found! (Check the installation, it should be there.)" );
             }
-            
-            br = new BufferedReader( new InputStreamReader( in ) );
-            List< String > profs = new ArrayList< String >();
-            
-            String str;
-            while ( ( str = br.readLine() ) != null ) {
-                if( str.length() > 0 && !str.startsWith( "#" ) ) { // allow comments on profanities file
-                    profs.add( str );
+            try( final BufferedReader br =  new BufferedReader( new InputStreamReader( in ) ) ) {
+                final List< String > profs = new ArrayList<>();
+
+                String str;
+                while ( ( str = br.readLine() ) != null ) {
+                    if( str.length() > 0 && !str.startsWith( "#" ) ) { // allow comments on profanities file
+                        profs.add( str );
+                    }
                 }
+                c_profanities = profs.toArray( new String[0] );
             }
-            c_profanities = profs.toArray( new String[0] );
-        } catch( IOException e ) {
+        } catch( final IOException e ) {
             log.error( "Unable to load profanities from " + PROPERTYFILE, e );
-        } catch( Exception e ) {
+        } catch( final Exception e ) {
             log.error( "Unable to initialize Profanity Filter", e );
-        } finally {
-        	IOUtils.closeQuietly( br );
-        	IOUtils.closeQuietly( in );
         }
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String preTranslate( WikiContext context, String content ) {
+    public String preTranslate( final WikiContext context, String content ) {
         for( int i = 0; i < c_profanities.length; i++ ) {
-            String word = c_profanities[ i ];
-            String replacement = word.charAt( 0 ) + "*" + word.charAt( word.length() - 1 );
+            final String word = c_profanities[ i ];
+            final String replacement = word.charAt( 0 ) + "*" + word.charAt( word.length() - 1 );
 
             content = TextUtil.replaceStringCaseUnsensitive( content, word, replacement );
         }
 
         return content;
     }
+
 }

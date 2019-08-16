@@ -18,16 +18,15 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;
-import org.jdom2.JDOMException;
 import org.jdom2.Text;
-import org.jdom2.xpath.XPath;
+import org.jdom2.xpath.XPathFactory;
+
+import java.io.IOException;
+import java.util.List;
+
 
 /**
  *  A simple renderer that just renders all the text() nodes from the DOM tree.
@@ -35,12 +34,10 @@ import org.jdom2.xpath.XPath;
  *
  *  @since  2.4
  */
-public class CleanTextRenderer
-    extends WikiRenderer
-{
-    private static final String ALL_TEXT_NODES = "//text()";
+public class CleanTextRenderer extends WikiRenderer {
 
-    protected static final Logger log = Logger.getLogger( CleanTextRenderer.class );
+    private static final String ALL_TEXT_NODES = "//text()";
+    private static final Logger log = Logger.getLogger( CleanTextRenderer.class );
 
     /**
      *  Create a renderer.
@@ -48,40 +45,28 @@ public class CleanTextRenderer
      *  @param context A WikiContext in which the rendering will take place.
      *  @param doc The WikiDocument which shall be rendered.
      */
-    public CleanTextRenderer( WikiContext context, WikiDocument doc )
-    {
+    public CleanTextRenderer( final WikiContext context, final WikiDocument doc ) {
         super( context, doc );
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String getString() throws IOException
-    {
-    	StringBuilder sb = new StringBuilder();
-
-        try
-        {
-            XPath xp = XPath.newInstance( ALL_TEXT_NODES );
-
-            List< ? > nodes = xp.selectNodes(m_document.getDocument());
-
-            for( Iterator< ? > i = nodes.iterator(); i.hasNext(); )
-            {
-                Object el = i.next();
-
-                if( el instanceof Text )
-                {
-                    sb.append( ((Text)el).getValue() );
+    public String getString() throws IOException {
+    	final StringBuilder sb = new StringBuilder();
+        try {
+            final List< ? > nodes = XPathFactory.instance().compile( ALL_TEXT_NODES ).evaluate( m_document.getDocument() );
+            for( final Object el : nodes ) {
+                if( el instanceof Text ) {
+                    sb.append( ( ( Text )el ).getValue() );
                 }
             }
-        }
-        catch( JDOMException e )
-        {
+        } catch( final IllegalStateException e ) {
             log.error("Could not parse XPATH expression");
-            throw new IOException( e.getMessage() );
+            throw new IOException( e.getMessage(), e );
         }
 
         return sb.toString();
     }
+
 }

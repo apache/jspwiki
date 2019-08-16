@@ -18,6 +18,23 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.util.ClassUtil;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.jstl.fmt.LocaleSupport;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,24 +53,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.fmt.LocaleSupport;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.modules.ModuleManager;
-import org.apache.wiki.modules.WikiModuleInfo;
-import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.preferences.Preferences.TimeFormat;
-import org.apache.wiki.util.ClassUtil;
 
 
 /**
@@ -159,13 +158,13 @@ public class TemplateManager extends ModuleManager {
     // FIXME: Does not work yet
     public boolean templateExists( String templateName ) {
         ServletContext context = m_engine.getServletContext();
-        InputStream in = context.getResourceAsStream( getPath(templateName)+"ViewTemplate.jsp");
-
-        if( in != null ) {
-            IOUtils.closeQuietly( in );
-            return true;
+        try( final InputStream in = context.getResourceAsStream( getPath( templateName ) + "ViewTemplate.jsp" ) ) {
+            if( in != null ) {
+                return true;
+            }
+        } catch( IOException e ) {
+            log.error( e.getMessage(), e );
         }
-
         return false;
     }
 
@@ -178,19 +177,19 @@ public class TemplateManager extends ModuleManager {
      *  @param name The name of the resource
      *  @return The name of the resource which was found.
      */
-    private static String findResource( ServletContext sContext, String name ) {
-        InputStream is = sContext.getResourceAsStream( name );
-
-        if( is == null ) {
-            String defname = makeFullJSPName( DEFAULT_TEMPLATE, removeTemplatePart(name) );
-            is = sContext.getResourceAsStream( defname );
-
-            name = is != null ? defname : null;
+    private static String findResource( final ServletContext sContext, final String name ) {
+        String resourceName = name;
+        try( final InputStream is = sContext.getResourceAsStream( resourceName ) ) {
+            if( is == null ) {
+                final String defname = makeFullJSPName( DEFAULT_TEMPLATE, removeTemplatePart( resourceName ) );
+                try( final InputStream iis = sContext.getResourceAsStream( defname ) ) {
+                    resourceName = iis != null ? defname : null;
+                }
+            }
+        } catch( final IOException e ) {
+            log.error( "unable to open " + name + " as resource stream", e );
         }
-
-        IOUtils.closeQuietly( is );
-
-        return name;
+        return resourceName;
     }
 
     /**

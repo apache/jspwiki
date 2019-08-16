@@ -18,18 +18,6 @@
  */
 package org.apache.wiki.filters;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -45,6 +33,17 @@ import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PriorityList;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -192,7 +191,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      */
     protected void initialize( Properties props ) throws WikiException {
         InputStream xmlStream = null;
-        String      xmlFile   = props.getProperty( PROP_FILTERXML );
+        String xmlFile = props.getProperty( PROP_FILTERXML ) ;
 
         try {
             registerFilters();
@@ -233,7 +232,13 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
         } catch( IOException e ) {
             log.error("Unable to read property file", e);
         } finally {
-        	IOUtils.closeQuietly( xmlStream );
+            try {
+                if( xmlStream != null ) {
+                    xmlStream.close();
+                }
+            } catch( final IOException ioe ) {
+                // ignore
+            }
         }
     }
 

@@ -18,6 +18,23 @@
  */
 package org.apache.wiki.auth.authorize;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
+import org.jdom2.xpath.XPathFactory;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
@@ -27,23 +44,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
-import org.jdom2.xpath.XPath;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 /**
  * Authorizes users by delegating role membership checks to the servlet
  * container. In addition to implementing methods for the
@@ -52,9 +52,8 @@ import org.xml.sax.SAXException;
  * descriptor to determine if the container manages authorization.
  * @since 2.3
  */
-public class WebContainerAuthorizer implements WebAuthorizer
-{
-    //private static final String J2EE_SCHEMA_25_NAMESPACE = "http://java.sun.com/xml/ns/javaee";
+public class WebContainerAuthorizer implements WebAuthorizer  {
+
     private static final String J2EE_SCHEMA_25_NAMESPACE = "http://xmlns.jcp.org/xml/ns/javaee";
 
     protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
@@ -233,54 +232,45 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @param role the role
      * @return <code>true</code> if the resource is constrained to the role,
      *         <code>false</code> otherwise
-     * @throws JDOMException if elements cannot be parsed correctly
      */
-    public boolean isConstrained( String url, Role role ) throws JDOMException
-    {
-        Element root = m_webxml.getRootElement();
-        XPath xpath;
-        String selector;
+    public boolean isConstrained( final String url, final Role role ) {
+        final Element root = m_webxml.getRootElement();
+        final Namespace jeeNs = Namespace.getNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
 
         // Get all constraints that have our URL pattern
         // (Note the crazy j: prefix to denote the 2.4 j2ee schema)
-        selector = "//j:web-app/j:security-constraint[j:web-resource-collection/j:url-pattern=\"" + url + "\"]";
-        xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
-        List<?> constraints = xpath.selectNodes( root );
+        final String constrainsSelector = "//j:web-app/j:security-constraint[j:web-resource-collection/j:url-pattern=\"" + url + "\"]";
+        final List< Element > constraints = XPathFactory.instance()
+                                                        .compile( constrainsSelector, Filters.element(), null, jeeNs )
+                                                        .evaluate( root );
 
         // Get all constraints that match our Role pattern
-        selector = "//j:web-app/j:security-constraint[j:auth-constraint/j:role-name=\"" + role.getName() + "\"]";
-        xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
-        List<?> roles = xpath.selectNodes( root );
+        final String rolesSelector = "//j:web-app/j:security-constraint[j:auth-constraint/j:role-name=\"" + role.getName() + "\"]";
+        final List< Element > roles = XPathFactory.instance()
+                                                  .compile( rolesSelector, Filters.element(), null, jeeNs )
+                                                  .evaluate( root );
 
         // If we can't find either one, we must not be constrained
-        if ( constraints.size() == 0 )
-        {
+        if ( constraints.size() == 0 ) {
             return false;
         }
 
         // Shortcut: if the role is ALL, we are constrained
-        if ( role.equals( Role.ALL ) )
-        {
+        if ( role.equals( Role.ALL ) ) {
             return true;
         }
 
         // If no roles, we must not be constrained
-        if ( roles.size() == 0 )
-        {
+        if ( roles.size() == 0 ) {
             return false;
         }
 
         // If a constraint is contained in both lists, we must be constrained
-        for ( Iterator<?> c = constraints.iterator(); c.hasNext(); )
-        {
-            Element constraint = (Element)c.next();
-            for ( Iterator<?> r = roles.iterator(); r.hasNext(); )
-            {
-                Element roleConstraint = (Element)r.next();
-                if ( constraint.equals( roleConstraint ) )
-                {
+        for ( Iterator< Element > c = constraints.iterator(); c.hasNext(); ) {
+            final Element constraint = c.next();
+            for ( Iterator< Element > r = roles.iterator(); r.hasNext(); ) {
+                final Element roleConstraint = r.next();
+                if ( constraint.equals( roleConstraint ) ) {
                     return true;
                 }
             }
@@ -329,32 +319,29 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * <code>new Role("Administrator")</code>.
      * @param webxml the web application deployment descriptor
      * @return an array of Role objects
-     * @throws JDOMException if elements cannot be parsed correctly
      */
-    protected Role[] getRoles( Document webxml ) throws JDOMException
-    {
-        Set<Role> roles = new HashSet<>();
-        Element root = webxml.getRootElement();
+    protected Role[] getRoles( final Document webxml ) {
+        final Set<Role> roles = new HashSet<>();
+        final Element root = webxml.getRootElement();
+        final Namespace jeeNs = Namespace.getNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
 
         // Get roles referred to by constraints
-        String selector = "//j:web-app/j:security-constraint/j:auth-constraint/j:role-name";
-        XPath xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
-        List<?> nodes = xpath.selectNodes( root );
-        for( Iterator<?> it = nodes.iterator(); it.hasNext(); )
-        {
-            String role = ( (Element) it.next() ).getTextTrim();
+        final String constrainsSelector = "//j:web-app/j:security-constraint/j:auth-constraint/j:role-name";
+        final List< Element > constraints = XPathFactory.instance()
+                                                        .compile( constrainsSelector, Filters.element(), null, jeeNs )
+                                                        .evaluate( root );
+        for( final Iterator< Element > it = constraints.iterator(); it.hasNext(); ) {
+            final String role = ( it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
 
         // Get all defined roles
-        selector = "//j:web-app/j:security-role/j:role-name";
-        xpath = XPath.newInstance( selector );
-        xpath.addNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
-        nodes = xpath.selectNodes( root );
-        for( Iterator<?> it = nodes.iterator(); it.hasNext(); )
-        {
-            String role = ( (Element) it.next() ).getTextTrim();
+        final String rolesSelector = "//j:web-app/j:security-role/j:role-name";
+        final List< Element > nodes = XPathFactory.instance()
+                                                  .compile( rolesSelector, Filters.element(), null, jeeNs )
+                                                  .evaluate( root );
+        for( final Iterator< Element > it = nodes.iterator(); it.hasNext(); ) {
+            final String role = ( it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
 

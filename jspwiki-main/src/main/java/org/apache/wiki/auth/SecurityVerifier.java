@@ -18,27 +18,8 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.AccessControlException;
-import java.security.AccessController;
-import java.security.KeyStore;
-import java.security.Permission;
-import java.security.Principal;
-import java.security.PrivilegedAction;
-import java.security.ProtectionDomain;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-import javax.security.auth.spi.LoginModule;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -54,7 +35,23 @@ import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.freshcookies.security.policy.PolicyReader;
-import org.jdom2.JDOMException;
+
+import javax.security.auth.Subject;
+import javax.security.auth.spi.LoginModule;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.KeyStore;
+import java.security.Permission;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.security.ProtectionDomain;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Helper class for verifying JSPWiki's security configuration. Invoked by
@@ -384,50 +381,40 @@ public final class SecurityVerifier {
         s.append( "</thead>\n" );
         s.append( "<tbody>\n" );
 
-        try
+        WebContainerAuthorizer wca = (WebContainerAuthorizer) authorizer;
+        for( int i = 0; i < CONTAINER_ACTIONS.length; i++ )
         {
-            WebContainerAuthorizer wca = (WebContainerAuthorizer) authorizer;
-            for( int i = 0; i < CONTAINER_ACTIONS.length; i++ )
-            {
-                String action = CONTAINER_ACTIONS[i];
-                String jsp = CONTAINER_JSPS[i];
+            String action = CONTAINER_ACTIONS[i];
+            String jsp = CONTAINER_JSPS[i];
 
-                // Print whether the page is constrained for each role
-                boolean allowsAnonymous = !wca.isConstrained( jsp, Role.ALL );
-                s.append( "  <tr>\n" );
-                s.append( "    <td>" + action + "</td>\n" );
-                s.append( "    <td>" + jsp + "</td>\n" );
+            // Print whether the page is constrained for each role
+            boolean allowsAnonymous = !wca.isConstrained( jsp, Role.ALL );
+            s.append( "  <tr>\n" );
+            s.append( "    <td>" + action + "</td>\n" );
+            s.append( "    <td>" + jsp + "</td>\n" );
+            s.append( "    <td title=\"" );
+            s.append( allowsAnonymous ? "ALLOW: " : "DENY: " );
+            s.append( jsp );
+            s.append( " Anonymous" );
+            s.append( "\"" );
+            s.append( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" );
+            s.append( "&nbsp;</td>\n" );
+            for( Principal role : roles )
+            {
+                boolean allowed = allowsAnonymous || wca.isConstrained( jsp, (Role)role );
                 s.append( "    <td title=\"" );
-                s.append( allowsAnonymous ? "ALLOW: " : "DENY: " );
+                s.append( allowed ? "ALLOW: " : "DENY: " );
                 s.append( jsp );
-                s.append( " Anonymous" );
+                s.append( " " );
+                s.append( role.getClass().getName() );
+                s.append( " &quot;" );
+                s.append( role.getName() );
+                s.append( "&quot;" );
                 s.append( "\"" );
-                s.append( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" );
+                s.append( allowed ? BG_GREEN + ">" : BG_RED + ">" );
                 s.append( "&nbsp;</td>\n" );
-                for( Principal role : roles )
-                {
-                    boolean allowed = allowsAnonymous || wca.isConstrained( jsp, (Role)role );
-                    s.append( "    <td title=\"" );
-                    s.append( allowed ? "ALLOW: " : "DENY: " );
-                    s.append( jsp );
-                    s.append( " " );
-                    s.append( role.getClass().getName() );
-                    s.append( " &quot;" );
-                    s.append( role.getName() );
-                    s.append( "&quot;" );
-                    s.append( "\"" );
-                    s.append( allowed ? BG_GREEN + ">" : BG_RED + ">" );
-                    s.append( "&nbsp;</td>\n" );
-                }
-                s.append( "  </tr>\n" );
             }
-        }
-        catch( JDOMException e )
-        {
-            // If we couldn't evaluate constraints it means
-            // there's some sort of IO mess or parsing issue
-            LOG.error( "Malformed XML in web.xml", e );
-            throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage() , e);
+            s.append( "  </tr>\n" );
         }
 
         s.append( "</tbody>\n" );

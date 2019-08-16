@@ -18,6 +18,18 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.pages.PageTimeComparator;
+import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,19 +47,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.pages.PageTimeComparator;
-import org.apache.wiki.search.QueryItem;
-import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.TextUtil;
 
 /**
  *  Provides basic, versioning attachments.
@@ -288,41 +287,23 @@ public class BasicAttachmentProvider
      *  Writes the page properties back to the file system.
      *  Note that it WILL overwrite any previous properties.
      */
-    private void putPageProperties( Attachment att, Properties properties ) throws IOException, ProviderException {
-        File attDir = findAttachmentDir( att );
-        File propertyFile = new File( attDir, PROPERTY_FILE );
-
-        OutputStream out = null;
-        
-        try {
-        	out = new FileOutputStream( propertyFile );
+    private void putPageProperties( final Attachment att, final Properties properties ) throws IOException, ProviderException {
+        final File attDir = findAttachmentDir( att );
+        final File propertyFile = new File( attDir, PROPERTY_FILE );
+        try( OutputStream out = new FileOutputStream( propertyFile ) ) {
             properties.store( out, " JSPWiki page properties for " + att.getName() + ". DO NOT MODIFY!" );
-        } catch ( IOException ioe ) {
-        	IOUtils.closeQuietly( out );
-        	throw ioe;
-        } finally {
-        	IOUtils.closeQuietly( out );
         }
     }
 
     /**
      *  Reads page properties from the file system.
      */
-    private Properties getPageProperties( Attachment att ) throws IOException, ProviderException {
-        Properties props = new Properties();
-
-        File propertyFile = new File( findAttachmentDir(att), PROPERTY_FILE );
-
+    private Properties getPageProperties( final Attachment att ) throws IOException, ProviderException {
+        final Properties props = new Properties();
+        final File propertyFile = new File( findAttachmentDir(att), PROPERTY_FILE );
         if( propertyFile.exists() ) {
-            InputStream in = null;
-            try {
-            	in = new FileInputStream( propertyFile );
+            try( final InputStream in = new FileInputStream( propertyFile ) ) {
                 props.load( in );
-            } catch ( IOException ioe ) {
-            	IOUtils.closeQuietly( in );
-            	throw ioe;
-            } finally {
-            	IOUtils.closeQuietly( in );
             }
         }
         
@@ -334,7 +315,6 @@ public class BasicAttachmentProvider
      */
     @Override
     public void putAttachmentData( Attachment att, InputStream data ) throws ProviderException, IOException {
-        OutputStream out = null;
         File attDir = findAttachmentDir( att );
 
         if(!attDir.exists())
@@ -345,17 +325,12 @@ public class BasicAttachmentProvider
         int latestVersion = findLatestVersion( att );
 
         // System.out.println("Latest version is "+latestVersion);
+        int versionNumber = latestVersion+1;
 
-        try
-        {
-            int versionNumber = latestVersion+1;
-
-            File newfile = new File( attDir, versionNumber+"."+
-                                     getFileExtension(att.getFileName()) );
-
+        File newfile = new File( attDir, versionNumber + "." + getFileExtension( att.getFileName() ) );
+        try( final OutputStream out = new FileOutputStream( newfile ) ) {
             log.info("Uploading attachment "+att.getFileName()+" to page "+att.getParentName());
             log.info("Saving attachment contents to "+newfile.getAbsolutePath());
-            out = new FileOutputStream(newfile);
 
             FileUtil.copyContents( data, out );
 
@@ -377,16 +352,9 @@ public class BasicAttachmentProvider
             }
             
             putPageProperties( att, props );
-        }
-        catch( IOException e )
-        {
+        } catch( IOException e ) {
             log.error( "Could not save attachment data: ", e );
-            IOUtils.closeQuietly( out );
             throw (IOException) e.fillInStackTrace();
-        }
-        finally
-        {
-            IOUtils.closeQuietly( out );
         }
     }
 
@@ -394,8 +362,7 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
     @Override
-    public String getProviderInfo()
-    {
+    public String getProviderInfo() {
         return "";
     }
 
@@ -585,46 +552,35 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
     @Override
-    public Attachment getAttachmentInfo( WikiPage page, String name, int version )
-        throws ProviderException
-    {
-        Attachment att = new Attachment( m_engine, page.getName(), name );
-        File dir = findAttachmentDir( att );
+    public Attachment getAttachmentInfo( final WikiPage page, final String name, int version ) throws ProviderException {
+        final Attachment att = new Attachment( m_engine, page.getName(), name );
+        final File dir = findAttachmentDir( att );
 
-        if( !dir.exists() )
-        {
+        if( !dir.exists() ) {
             // log.debug("Attachment dir not found - thus no attachment can exist.");
             return null;
         }
         
-        if( version == WikiProvider.LATEST_VERSION )
-        {
+        if( version == WikiProvider.LATEST_VERSION ) {
             version = findLatestVersion(att);
         }
 
         att.setVersion( version );
         
         // Should attachment be cachable by the client (browser)?
-        if (m_disableCache != null) 
-        {
+        if (m_disableCache != null) {
             Matcher matcher = m_disableCache.matcher(name);
-            if (matcher.matches()) 
-            {
+            if (matcher.matches()) {
                 att.setCacheable(false);
             }
         }
-        
 
         // System.out.println("Fetching info on version "+version);
-        try
-        {
+        try {
             Properties props = getPageProperties(att);
-
             att.setAuthor( props.getProperty( version+".author" ) );
-
-            String changeNote = props.getProperty( version+".changenote" );
-            if( changeNote != null )
-            {
+            final String changeNote = props.getProperty( version+".changenote" );
+            if( changeNote != null ) {
                 att.setAttribute(WikiPage.CHANGENOTE, changeNote);
             }
             
@@ -632,14 +588,10 @@ public class BasicAttachmentProvider
 
             att.setSize( f.length() );
             att.setLastModified( new Date(f.lastModified()) );
-        }
-        catch( FileNotFoundException e )
-        {
+        } catch( FileNotFoundException e ) {
             log.error( "Can't get attachment properties for " + att, e );
             return null;
-        }
-        catch( IOException e )
-        {
+        } catch( IOException e ) {
             log.error("Can't read page properties", e );
             throw new ProviderException("Cannot read page properties: "+e.getMessage());
         }

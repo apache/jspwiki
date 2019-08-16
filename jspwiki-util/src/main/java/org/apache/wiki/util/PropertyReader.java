@@ -18,6 +18,11 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.apache.log4j.Logger;
+
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,13 +33,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.servlet.ServletContext;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -169,16 +167,12 @@ public final class PropertyReader {
      */
     public static Properties getDefaultProperties() {
         Properties props = new Properties();
-        InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_CONFIG );
-        
-        if( in != null ) {
-            try {
+        try( InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_CONFIG ) ) {
+            if( in != null ) {
                 props.load( in );
-            } catch( IOException e ) {
-                LOG.error( "Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage(), e );
-            } finally {
-            	IOUtils.closeQuietly( in );
             }
+        } catch( IOException e ) {
+            LOG.error( "Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage(), e );
         }
         
         return props;
@@ -193,18 +187,14 @@ public final class PropertyReader {
      */
     public static Properties getCombinedProperties( String fileName ) {
         Properties newPropertySet = getDefaultProperties();
-        InputStream in = PropertyReader.class.getResourceAsStream( fileName );
-
-        if( in != null ) {
-            try {
+        try( InputStream in = PropertyReader.class.getResourceAsStream( fileName ) ) {
+            if( in != null ) {
                 newPropertySet.load( in );
-            } catch( IOException e ) {
-                LOG.error( "Unable to load propertyfile '" + fileName + "'" + e.getMessage(), e );
-            } finally {
-            	IOUtils.closeQuietly( in );
+            } else {
+                LOG.error( "*** Custom property file \"" + fileName + "\" not found, relying on default file alone." );
             }
-        } else {
-            LOG.error( "*** Custom property file \"" + fileName + "\" not found, relying on default file alone." );
+        } catch( IOException e ) {
+            LOG.error( "Unable to load propertyfile '" + fileName + "'" + e.getMessage(), e );
         }
 
         return newPropertySet;

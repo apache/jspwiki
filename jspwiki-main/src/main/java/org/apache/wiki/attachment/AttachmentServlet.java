@@ -18,30 +18,12 @@
  */
 package org.apache.wiki.attachment;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.SocketException;
-import java.security.Permission;
-import java.security.Principal;
-import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -58,6 +40,23 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -193,177 +192,138 @@ public class AttachmentServlet extends HttpServlet {
      *  of the attachment, 'version' specifying the version indicator.
      *
      */
-
     // FIXME: Messages would need to be localized somehow.
-    public void doGet( HttpServletRequest  req, HttpServletResponse res )
-            throws IOException, ServletException
-    {
-        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+    public void doGet( final HttpServletRequest  req, final HttpServletResponse res ) throws IOException {
+        final WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+        final AttachmentManager mgr = m_engine.getAttachmentManager();
+        final AuthorizationManager authmgr = m_engine.getAuthorizationManager();
 
-        String version  = req.getParameter( HDR_VERSION );
-        String nextPage = req.getParameter( "nextpage" );
+        final String version = req.getParameter( HDR_VERSION );
+        final String nextPage = req.getParameter( "nextpage" );
+        final String page = context.getPage().getName();
+        int ver = WikiProvider.LATEST_VERSION;
 
-        String msg      = "An error occurred. Ouch.";
-        int    ver      = WikiProvider.LATEST_VERSION;
-
-        AttachmentManager mgr = m_engine.getAttachmentManager();
-        AuthorizationManager authmgr = m_engine.getAuthorizationManager();
-
-
-        String page = context.getPage().getName();
-
-        if( page == null )
-        {
-            log.info("Invalid attachment name.");
+        if( page == null ) {
+            log.info( "Invalid attachment name." );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST );
             return;
         }
 
-        OutputStream out = null;
-        InputStream  in  = null;
-
-        try
-        {
+        final OutputStream out = res.getOutputStream();
+        try {
             log.debug("Attempting to download att "+page+", version "+version);
-            if( version != null )
-            {
+            if( version != null ) {
                 ver = Integer.parseInt( version );
             }
 
-            Attachment att = mgr.getAttachmentInfo( page, ver );
-
-            if( att != null )
-            {
+            final Attachment att = mgr.getAttachmentInfo( page, ver );
+            if( att != null ) {
                 //
                 //  Check if the user has permission for this attachment
                 //
 
-                Permission permission = PermissionFactory.getPagePermission( att, "view" );
-                if( !authmgr.checkPermission( context.getWikiSession(), permission ) )
-                {
+                final Permission permission = PermissionFactory.getPagePermission( att, "view" );
+                if( !authmgr.checkPermission( context.getWikiSession(), permission ) ) {
                     log.debug("User does not have permission for this");
                     res.sendError( HttpServletResponse.SC_FORBIDDEN );
                     return;
                 }
 
-
                 //
                 //  Check if the client already has a version of this attachment.
                 //
-                if( HttpUtil.checkFor304( req, att.getName(), att.getLastModified() ) )
-                {
-                    log.debug("Client has latest version already, sending 304...");
+                if( HttpUtil.checkFor304( req, att.getName(), att.getLastModified() ) ) {
+                    log.debug( "Client has latest version already, sending 304..." );
                     res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
                     return;
                 }
 
-                String mimetype = getMimeType( context, att.getFileName() );
-
+                final String mimetype = getMimeType( context, att.getFileName() );
                 res.setContentType( mimetype );
 
                 //
                 //  We use 'inline' instead of 'attachment' so that user agents
                 //  can try to automatically open the file.
                 //
-
-                res.addHeader( "Content-Disposition",
-                        "inline; filename=\"" + att.getFileName() + "\";" );
-
+                res.addHeader( "Content-Disposition", "inline; filename=\"" + att.getFileName() + "\";" );
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
-                if( !att.isCacheable() )
-                {
+                if( !att.isCacheable() ) {
                     res.addHeader( "Pragma", "no-cache" );
                     res.addHeader( "Cache-control", "no-cache" );
                 }
 
                 // If a size is provided by the provider, report it.
-                if( att.getSize() >= 0 )
-                {
+                if( att.getSize() >= 0 ) {
                     // log.info("size:"+att.getSize());
                     res.setContentLength( (int)att.getSize() );
                 }
 
-                out = res.getOutputStream();
-                in  = mgr.getAttachmentStream( context, att );
+                try( final InputStream  in = mgr.getAttachmentStream( context, att ) ) {
+                    int read;
+                    final byte[] buffer = new byte[ BUFFER_SIZE ];
 
-                int read = 0;
-                byte[] buffer = new byte[BUFFER_SIZE];
-
-                while( (read = in.read( buffer )) > -1 )
-                {
-                    out.write( buffer, 0, read );
+                    while( ( read = in.read( buffer ) ) > -1 ) {
+                        out.write( buffer, 0, read );
+                    }
                 }
 
-                if(log.isDebugEnabled())
-                {
-                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+HttpUtil.getRemoteAddress(req);
-                    log.debug( msg );
+                if( log.isDebugEnabled() ) {
+                    log.debug( "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+HttpUtil.getRemoteAddress(req) );
                 }
                 if( nextPage != null ) {
                     res.sendRedirect( validateNextPage( nextPage, m_engine.getURL( WikiContext.ERROR, "", null, false ) ) );
                 }
 
             } else {
-                msg = "Attachment '" + page + "', version " + ver + " does not exist.";
-
+                final String msg = "Attachment '" + page + "', version " + ver + " does not exist.";
                 log.info( msg );
                 res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
             }
-        }
-        catch( ProviderException pe )
-        {
-            msg = "Provider error: "+pe.getMessage();
-
+        } catch( final ProviderException pe ) {
             log.debug("Provider failed while reading", pe);
             //
             //  This might fail, if the response is already committed.  So in that
             //  case we just log it.
             //
-            try {
-                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
-            }
-            catch( IllegalStateException e ) {}
-        }
-        catch( NumberFormatException nfe )
-        {
+            sendError( res, "Provider error: "+ pe.getMessage() );
+        } catch( final NumberFormatException nfe ) {
             log.warn( "Invalid version number: " + version );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
-        }
-        catch( SocketException se )
-        {
+        } catch( final SocketException se ) {
             //
             //  These are very common in download situations due to aggressive
             //  clients.  No need to try and send an error.
             //
-            log.debug("I/O exception during download",se);
-        }
-        catch( IOException ioe )
-        {
+            log.debug( "I/O exception during download", se );
+        } catch( final IOException ioe ) {
             //
             //  Client dropped the connection or something else happened.
             //  We don't know where the error came from, so we'll at least
             //  try to send an error and catch it quietly if it doesn't quite work.
             //
-            msg = "Error: " + ioe.getMessage();
-            log.debug("I/O exception during download",ioe);
-
-            try
-            {
-                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg );
+            log.debug( "I/O exception during download", ioe );
+            sendError( res, "Error: " + ioe.getMessage() );
+        } finally {
+            //
+            //  Quite often, aggressive clients close the connection when they have received the last bits.
+            //  Therefore, we close the output, but ignore any exception that might come out of it.
+            //
+            try {
+                if( out != null ) {
+                    out.close();
+                }
+            } catch( final IOException ioe ) {
+                // ignore
             }
-            catch( IllegalStateException e ) {}
         }
-        finally
-        {
-            IOUtils.closeQuietly( in );
+    }
 
-            //
-            //  Quite often, aggressive clients close the connection when they have
-            //  received the last bits.  Therefore, we close the output, but ignore
-            //  any exception that might come out of it.
-            //
-            IOUtils.closeQuietly( out );
+    void sendError( final HttpServletResponse res, final String message ) throws IOException {
+        try {
+            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message );
+        } catch( final IllegalStateException e ) {
+            // ignore
         }
     }
 
@@ -408,9 +368,7 @@ public class AttachmentServlet extends HttpServlet {
      * content of the file.
      *
      */
-    public void doPost( HttpServletRequest  req, HttpServletResponse res )
-            throws IOException, ServletException
-    {
+    public void doPost( HttpServletRequest  req, HttpServletResponse res ) throws IOException {
         try
         {
             String nextPage = upload( req );
@@ -462,17 +420,14 @@ public class AttachmentServlet extends HttpServlet {
         String attName = "(unknown)";
         String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
-
         String progressId = req.getParameter( "progressid" );
 
         // Check that we have a file upload request
-        if( !ServletFileUpload.isMultipartContent(req) )
-        {
+        if( !ServletFileUpload.isMultipartContent(req) ) {
             throw new RedirectException( "Not a file upload", errorPage );
         }
 
-        try
-        {
+        try {
             FileItemFactory factory = new DiskFileItemFactory();
 
             // Create the context _before_ Multipart operations, otherwise
@@ -485,8 +440,7 @@ public class AttachmentServlet extends HttpServlet {
 
             ServletFileUpload upload = new ServletFileUpload(factory);
             upload.setHeaderEncoding("UTF-8");
-            if( !context.hasAdminPermissions() )
-            {
+            if( !context.hasAdminPermissions() ) {
                 upload.setFileSizeMax( m_maxSize );
             }
             upload.setProgressListener( pl );
@@ -495,14 +449,11 @@ public class AttachmentServlet extends HttpServlet {
             String   wikipage   = null;
             String   changeNote = null;
             //FileItem actualFile = null;
-            List<FileItem> fileItems = new java.util.ArrayList<FileItem>();
+            List<FileItem> fileItems = new ArrayList<>();
 
-            for( FileItem item : items )
-            {
-                if( item.isFormField() )
-                {
-                    if( item.getFieldName().equals("page") )
-                    {
+            for( FileItem item : items ) {
+                if( item.isFormField() ) {
+                    if( item.getFieldName().equals("page") ) {
                         //
                         // FIXME: Kludge alert.  We must end up with the parent page name,
                         //        if this is an upload of a new revision
@@ -512,81 +463,52 @@ public class AttachmentServlet extends HttpServlet {
                         int x = wikipage.indexOf("/");
 
                         if( x != -1 ) wikipage = wikipage.substring(0,x);
-                    }
-                    else if( item.getFieldName().equals("changenote") )
-                    {
+                    } else if( item.getFieldName().equals("changenote") ) {
                         changeNote = item.getString("UTF-8");
-                        if (changeNote != null)
-                        {
+                        if (changeNote != null) {
                             changeNote = TextUtil.replaceEntities(changeNote);
                         }
-                    }
-                    else if( item.getFieldName().equals( "nextpage" ) )
-                    {
+                    } else if( item.getFieldName().equals( "nextpage" ) ) {
                         nextPage = validateNextPage( item.getString("UTF-8"), errorPage );
                     }
-                }
-                else
-                {
+                } else {
                     fileItems.add( item );
                 }
             }
 
-            if( fileItems.size() == 0 )
-            {
+            if( fileItems.size() == 0 ) {
                 throw new RedirectException( "Broken file upload", errorPage );
 
             } else {
-
-                for( FileItem actualFile : fileItems ){
-
+                for( FileItem actualFile : fileItems ) {
                     String filename = actualFile.getName();
                     long   fileSize = actualFile.getSize();
-                    InputStream in  = actualFile.getInputStream();
-
-                    try
-                    {
+                    try( InputStream in  = actualFile.getInputStream() ) {
                         executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
                     }
-                    finally
-                    {
-                        IOUtils.closeQuietly( in );
-                    }
-
                 }
             }
 
-        }
-        catch( ProviderException e )
-        {
+        } catch( ProviderException e ) {
             msg = "Upload failed because the provider failed: "+e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException(msg);
-        }
-        catch( IOException e )
-        {
-            // Show the submit page again, but with a bit more
-            // intimidating output.
+        } catch( IOException e ) {
+            // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
             throw e;
-        }
-        catch (FileUploadException e)
-        {
-            // Show the submit page again, but with a bit more
-            // intimidating output.
+        } catch (FileUploadException e) {
+            // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg, e );
-        }
-        finally
-        {
+        } finally {
             m_engine.getProgressManager().stopProgress( progressId );
-            // FIXME: In case of exceptions should absolutely
-            //        remove the uploaded file.
+            // FIXME: In case of exceptions should absolutely remove the uploaded file.
         }
 
         return nextPage;

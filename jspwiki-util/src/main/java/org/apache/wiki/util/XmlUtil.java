@@ -47,10 +47,9 @@ import java.util.Set;
  *  
  * @since 2.10
  */
-public final class XmlUtil
-{	
+public final class XmlUtil  {
+
 	private static final Logger log = Logger.getLogger( XmlUtil.class );
-	
 	private XmlUtil() {}
 	
 	/**
@@ -83,9 +82,8 @@ public final class XmlUtil
 				log.error( "error parsing " + xml + " resources", jdome );
 			}
 		}
-		return Collections.<Element>emptyList();
+		return Collections.emptyList();
 	}
-	
 	
 	/**
 	 * Parses the given stream and returns the requested nodes. If there's an error accessing or parsing the stream, an
@@ -95,14 +93,13 @@ public final class XmlUtil
 	 * @param requestedNodes requestd nodes on the xml stream.
 	 * @return the requested nodes of the XML stream.
 	 */
-	public static List<Element> parse( InputStream xmlStream, String requestedNodes )
-	{
+	public static List< Element > parse( InputStream xmlStream, String requestedNodes ) {
 		if( xmlStream != null && StringUtils.isNotEmpty( requestedNodes ) ) {
 			SAXBuilder builder = new SAXBuilder();
 			try {
-                Document doc = builder.build(xmlStream);
+                Document doc = builder.build( xmlStream );
                 XPathFactory xpfac = XPathFactory.instance();
-                XPathExpression< Element > xp = xpfac.compile(requestedNodes,Filters.element());
+                XPathExpression< Element > xp = xpfac.compile( requestedNodes,Filters.element() );
 				return xp.evaluate( doc );
 			} catch ( IOException ioe ) {
 				log.error( "Couldn't load all " + xmlStream + " resources", ioe );
@@ -110,7 +107,7 @@ public final class XmlUtil
 				log.error( "error parsing " + xmlStream + " resources", jdome );
 			}
 		}		
-		return Collections.<Element>emptyList();
+		return Collections.emptyList();
 	}
 
 }

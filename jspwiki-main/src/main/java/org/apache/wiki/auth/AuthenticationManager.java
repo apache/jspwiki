@@ -18,30 +18,6 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -61,6 +37,29 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Manages authentication activities for a WikiEngine: user login, logout, and
@@ -153,7 +152,7 @@ public class AuthenticationManager {
     private static final String                 DEFAULT_LOGIN_MODULE = "org.apache.wiki.auth.login.UserDatabaseLoginModule";
     
     /** Empty principal set. */
-    private static final Set<Principal> NO_PRINCIPALS = new HashSet<Principal>();
+    private static final Set<Principal> NO_PRINCIPALS = new HashSet<>();
 
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private boolean                     m_allowsCookieAssertions  = true;
@@ -208,7 +207,7 @@ public class AuthenticationManager {
         }
         catch (ClassNotFoundException e)
         {
-            e.printStackTrace();
+            log.error( e.getMessage(), e );
             throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
         
@@ -393,11 +392,7 @@ public class AuthenticationManager {
             delayLogin(username);
         }
         
-        CallbackHandler handler = new WikiCallbackHandler(
-                m_engine,
-                null,
-                username,
-                password );
+        CallbackHandler handler = new WikiCallbackHandler( m_engine, null, username, password );
         
         // Execute the user's specified login module
         Set<Principal> principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
@@ -517,8 +512,7 @@ public class AuthenticationManager {
      *         {@link org.apache.wiki.auth.authorize.Role},
      *         <code>false</code> otherwise
      */
-    public static boolean isRolePrincipal( Principal principal )
-    {
+    public static boolean isRolePrincipal( final Principal principal ) {
         return principal instanceof Role || principal instanceof GroupPrincipal;
     }
 
@@ -530,8 +524,7 @@ public class AuthenticationManager {
      *         {@link org.apache.wiki.auth.authorize.Role},
      *         <code>true</code> otherwise
      */
-    public static boolean isUserPrincipal( Principal principal )
-    {
+    public static boolean isUserPrincipal( final Principal principal ) {
         return !isRolePrincipal( principal );
     }
 
@@ -543,30 +536,19 @@ public class AuthenticationManager {
      * method is called. The parameters passed to <code>initialize</code> is a 
      * dummy Subject, an empty shared-state Map, and an options Map the caller supplies.
      * 
-     * @param clazz
-     *            the LoginModule class to instantiate
-     * @param handler
-     *            the callback handler to supply to the LoginModule
-     * @param options
-     *            a Map of key/value strings for initializing the LoginModule
+     * @param clazz the LoginModule class to instantiate
+     * @param handler the callback handler to supply to the LoginModule
+     * @param options a Map of key/value strings for initializing the LoginModule
      * @return the set of Principals returned by the JAAS method {@link Subject#getPrincipals()}
-     * @throws WikiSecurityException
-     *             if the LoginModule could not be instantiated for any reason
+     * @throws WikiSecurityException if the LoginModule could not be instantiated for any reason
      */
     protected Set<Principal> doJAASLogin(Class<? extends LoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException
     {
         // Instantiate the login module
-        LoginModule loginModule = null;
-        try
-        {
-            loginModule = clazz.newInstance();
-        }
-        catch (InstantiationException e)
-        {
-            throw new WikiSecurityException(e.getMessage(), e );
-        }
-        catch (IllegalAccessException e)
-        {
+        final LoginModule loginModule;
+        try {
+            loginModule = clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new WikiSecurityException(e.getMessage(), e );
         }
 
@@ -633,51 +615,39 @@ public class AuthenticationManager {
 
         URL path = null;
         
-        if( engine.getServletContext() != null )
-        {
-        	OutputStream os = null;
-        	InputStream is = null;
-            try
-            {
-            	URL url = engine.getServletContext().getResource("/WEB-INF/" + name);
-            	if (url != null)
-            	{
-            		return url;
-            	}
-            	
-                log.info( "looking for /" + name + " on classpath" );
-                //  create a tmp file of the policy loaded as an InputStream and return the URL to it
-                //  
-                is = AuthenticationManager.class.getResourceAsStream( "/" + name );
+        if( engine.getServletContext() != null ) {
+            final File tmpFile;
+        	try {
+                tmpFile = File.createTempFile( "temp." + name, "" );
+            } catch( final IOException e ) {
+        	    log.error( "unable to create a temp file to load onto the policy", e );
+        	    return null;
+            }
+            tmpFile.deleteOnExit();
+            log.info( "looking for /" + name + " on classpath" );
+            //  create a tmp file of the policy loaded as an InputStream and return the URL to it
+            try( final InputStream is = AuthenticationManager.class.getResourceAsStream( "/" + name );
+                 final OutputStream os = new FileOutputStream( tmpFile )  ) {
                 if( is == null ) {
                     throw new FileNotFoundException( name + " not found" );
                 }
-                File tmpFile = File.createTempFile( "temp." + name, "" );
-                tmpFile.deleteOnExit();
-
-                os = new FileOutputStream(tmpFile);
-
-                byte[] buff = new byte[1024];
-                int bytes = 0;
-                while ((bytes = is.read(buff)) != -1) {
-                    os.write(buff, 0, bytes);
+            	final URL url = engine.getServletContext().getResource( "/WEB-INF/" + name );
+            	if( url != null ) {
+            		return url;
+            	}
+            	
+                final byte[] buff = new byte[1024];
+                int bytes;
+                while( ( bytes = is.read( buff ) ) != -1 ) {
+                    os.write( buff, 0, bytes );
                 }
 
                 path = tmpFile.toURI().toURL();
-            }
-            catch( MalformedURLException e )
-            {
+            } catch( final MalformedURLException e ) {
                 // This should never happen unless I screw up
                 log.fatal( "Your code is b0rked.  You are a bad person.", e );
-            }
-            catch (IOException e)
-            {
+            } catch( final IOException e ) {
                log.error( "failed to load security policy from file " + name + ",stacktrace follows", e );
-            }
-            finally 
-            {
-            	IOUtils.closeQuietly( is );
-            	IOUtils.closeQuietly( os );
             }
         }
         return path;
@@ -689,12 +659,9 @@ public class AuthenticationManager {
      * @param principals the principal set
      * @return the login principal
      */
-    protected Principal getLoginPrincipal(Set<Principal> principals)
-    {
-        for (Principal principal: principals )
-        {
-            if ( isUserPrincipal( principal ) )
-            {
+    protected Principal getLoginPrincipal( final Set< Principal > principals ) {
+        for( final Principal principal : principals ) {
+            if ( isUserPrincipal( principal ) ) {
                 return principal;
             }
         }
@@ -708,8 +675,7 @@ public class AuthenticationManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    public synchronized void addWikiEventListener( WikiEventListener listener )
-    {
+    public synchronized void addWikiEventListener( final WikiEventListener listener ) {
         WikiEventManager.addWikiEventListener( this, listener );
     }
 
@@ -718,8 +684,7 @@ public class AuthenticationManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    public synchronized void removeWikiEventListener( WikiEventListener listener )
-    {
+    public synchronized void removeWikiEventListener( final WikiEventListener listener ) {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
 
@@ -732,11 +697,9 @@ public class AuthenticationManager {
      * @param principal  the subject of the event, which may be <code>null</code>
      * @param target     the changed Object, which may be <code>null</code>
      */
-    protected void fireEvent( int type, Principal principal, Object target )
-    {
-        if ( WikiEventManager.isListening(this) )
-        {
-            WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,target));
+    protected void fireEvent( final int type, final Principal principal, final Object target ) {
+        if ( WikiEventManager.isListening( this ) ) {
+            WikiEventManager.fireEvent( this, new WikiSecurityEvent( this, type, principal, target ) );
         }
     }
     

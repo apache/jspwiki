@@ -18,6 +18,14 @@
  */
 package org.apache.wiki.htmltowiki;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.jdom2.Attribute;
+import org.jdom2.Content;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Text;
+import org.jdom2.xpath.XPathFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,15 +34,9 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.jdom2.Attribute;
-import org.jdom2.Content;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Text;
-import org.jdom2.xpath.XPath;
 
 /**
  * Converting XHtml to Wiki Markup.  This is the class which does all of the heavy loading.
@@ -139,7 +141,7 @@ public class XHtmlElementToWikiTranslator
                 // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
                 boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment|inline-code" );
 
-                Map styleProps = null;
+                Map< Object, Object > styleProps = null;
 
                 // Only get the styles if it's not a link element. Styles for link elements are
                 // handled as an AugmentedWikiLink instead.
@@ -553,7 +555,7 @@ public class XHtmlElementToWikiTranslator
                 else if( n.equals( "form" ) )
                 {
                     // remove the hidden input where name="formname" since a new one will be generated again when the xhtml is rendered.
-                    Element formName = (Element)XPath.selectSingleNode( e, "INPUT[@name='formname']" );
+                    Element formName = getXPathElement( e, "INPUT[@name='formname']" );
                     if( formName != null )
                     {
                         formName.detach();
@@ -693,9 +695,9 @@ public class XHtmlElementToWikiTranslator
         }
     }
 
-    private void printImage( Element base ) throws JDOMException
+    private void printImage( Element base )
     {
-        Element child = (Element)XPath.selectSingleNode( base, "TBODY/TR/TD/*" );
+        Element child = getXPathElement( base, "TBODY/TR/TD/*" );
         if( child == null )
         {
             child = base;
@@ -726,7 +728,7 @@ public class XHtmlElementToWikiTranslator
         map.put( "height", img.getAttributeValue( "height" ) );
         map.put( "width", img.getAttributeValue( "width" ) );
         map.put( "alt", img.getAttributeValue( "alt" ) );
-        map.put( "caption", emptyToNull( XPath.newInstance( "CAPTION" ).valueOf( base ) ) );
+        map.put( "caption", emptyToNull( ( Element )XPathFactory.instance().compile(  "CAPTION" ).evaluateFirst( base ) ) );
         map.put( "link", href );
         map.put( "border", img.getAttributeValue( "border" ) );
         map.put( "style", base.getAttributeValue( "style" ) );
@@ -749,28 +751,37 @@ public class XHtmlElementToWikiTranslator
         }
     }
 
-    private String emptyToNull( String s )
-    {
-        return s == null ? null : (s.replaceAll( "\\s", "" ).length() == 0 ? null : s);
+    Element getXPathElement( final Element base, final String expression ) {
+        final List< ? > nodes = XPathFactory.instance().compile( expression ).evaluate( base );
+        if( nodes == null || nodes.size() == 0 ) {
+            return null;
+        } else {
+            return ( Element )nodes.get( 0 );
+        }
     }
 
-    private String propsToStyleString( Map styleProps )
-    {
+    private String emptyToNull( final Element e ) {
+        if( e == null ) {
+            return null;
+        }
+        final String s = e.getText();
+        return s == null ? null : ( s.replaceAll( "\\s", "" ).length() == 0 ? null : s );
+    }
+
+    private String propsToStyleString( final Map< Object, Object >  styleProps ) {
     	StringBuilder style = new StringBuilder();
-        for( Iterator i = styleProps.entrySet().iterator(); i.hasNext(); )
-        {
-            Map.Entry entry = (Map.Entry)i.next();
+        for( Iterator< Map.Entry< Object, Object > > i = styleProps.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry< Object, Object > entry = i.next();
             style.append( " " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( ";" );
         }
         return style.toString();
     }
 
-    private boolean isIgnorableWikiMarkupLink( Element a )
-    {
-        String ref = a.getAttributeValue( "href" );
-        String clazz = a.getAttributeValue( "class" );
-        return (ref != null && ref.startsWith( m_config.getPageInfoJsp() ))
-               || (clazz != null && clazz.trim().equalsIgnoreCase( m_config.getOutlink() ));
+    private boolean isIgnorableWikiMarkupLink( final Element a ) {
+        final String ref = a.getAttributeValue( "href" );
+        final String clazz = a.getAttributeValue( "class" );
+        return ( ref != null && ref.startsWith( m_config.getPageInfoJsp() ) )
+            || ( clazz != null && clazz.trim().equalsIgnoreCase( m_config.getOutlink() ) );
     }
 
     /**
@@ -897,7 +908,7 @@ public class XHtmlElementToWikiTranslator
         return sb.toString().trim();
     }
 
-    private Map getStylePropertiesLowerCase( Element base ) throws IOException
+    private Map< Object, Object > getStylePropertiesLowerCase( Element base ) throws IOException
     {
         String n = base.getName().toLowerCase();
 
@@ -975,7 +986,7 @@ public class XHtmlElementToWikiTranslator
         }
 
         style = style.replace( ';', '\n' ).toLowerCase();
-        LinkedHashMap m = new LinkedHashMap();
+        LinkedHashMap< Object, Object > m = new LinkedHashMap<>();
         new PersistentMapDecorator( m ).load( new ByteArrayInputStream( style.getBytes() ) );
         return m;
     }

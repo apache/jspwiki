@@ -18,6 +18,15 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.util.FileUtil;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -32,16 +41,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.util.FileUtil;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.
@@ -69,9 +68,8 @@ import org.apache.wiki.util.FileUtil;
  *  on the files contents based on its name.
  *
  */
-public class VersioningFileProvider
-    extends AbstractFileProvider
-{
+public class VersioningFileProvider extends AbstractFileProvider {
+
     private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
 
     /** Name of the directory where the old versions are stored. */
@@ -220,14 +218,10 @@ public class VersioningFileProvider
     /**
      *  Reads page properties from the file system.
      */
-    private Properties getPageProperties( String page )
-        throws IOException
-    {
-        File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
-
-        if( propertyFile.exists() )
-        {
-            long lastModified = propertyFile.lastModified();
+    private Properties getPageProperties( final String page ) throws IOException {
+        final File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
+        if( propertyFile.exists() ) {
+            final long lastModified = propertyFile.lastModified();
 
             //
             //   The profiler showed that when calling the history of a page the propertyfile
@@ -239,31 +233,17 @@ public class VersioningFileProvider
 
             CachedProperties cp = m_cachedProperties;
 
-            if( cp != null
-                && cp.m_page.equals(page)
-                && cp.m_lastModified == lastModified)
-            {
+            if( cp != null && cp.m_page.equals( page ) && cp.m_lastModified == lastModified ) {
                 return cp.m_props;
             }
 
-            InputStream in = null;
-
-            try
-            {
-                in = new BufferedInputStream(new FileInputStream( propertyFile ));
-
+            try( InputStream in = new BufferedInputStream(new FileInputStream( propertyFile ) ) ) {
                 Properties props = new Properties();
-
-                props.load(in);
-
+                props.load( in );
                 cp = new CachedProperties( page, props, lastModified );
                 m_cachedProperties = cp; // Atomic
 
                 return props;
-            }
-            finally
-            {
-            	IOUtils.closeQuietly( in );
             }
         }
 
@@ -274,43 +254,25 @@ public class VersioningFileProvider
      *  Writes the page properties back to the file system.
      *  Note that it WILL overwrite any previous properties.
      */
-    private void putPageProperties( String page, Properties properties )
-        throws IOException
-    {
-        File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
-        OutputStream out = null;
-
-        try
-        {
-            out = new FileOutputStream( propertyFile );
-
+    private void putPageProperties( final String page, final Properties properties ) throws IOException {
+        final File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
+        try( final OutputStream out = new FileOutputStream( propertyFile ) ) {
             properties.store( out, " JSPWiki page properties for "+page+". DO NOT MODIFY!" );
         }
-        finally
-        {
-        	IOUtils.closeQuietly( out );
-        }
 
-        // The profiler showed the probability was very high that when
-        // calling for the history of a page the propertyfile would be
-        // read as much times as there were versions of that file.
-        // It is statistically likely the propertyfile will be examined
-        // many times before it is updated.
-        CachedProperties cp =
-                new CachedProperties( page, properties, propertyFile.lastModified() );
+        // The profiler showed the probability was very high that when  calling for the history of
+        // a page the propertyfile would be read as much times as there were versions of that file.
+        // It is statistically likely the propertyfile will be examined many times before it is updated.
+        final CachedProperties cp = new CachedProperties( page, properties, propertyFile.lastModified() );
         m_cachedProperties = cp; // Atomic
     }
 
     /**
-     *  Figures out the real version number of the page and also checks
-     *  for its existence.
+     *  Figures out the real version number of the page and also checks for its existence.
      *
      *  @throws NoSuchVersionException if there is no such version.
      */
-    private int realVersion( String page, int requestedVersion )
-        throws NoSuchVersionException,
-               ProviderException
-    {
+    private int realVersion( String page, int requestedVersion ) throws NoSuchVersionException {
         //
         //  Quickly check for the most common case.
         //
@@ -361,39 +323,21 @@ public class VersioningFileProvider
 
 
     // FIXME: Should this really be here?
-    private String readFile( File pagedata )
-        throws ProviderException
-    {
-        String      result = null;
-        InputStream in     = null;
-
-        if( pagedata.exists() )
-        {
-            if( pagedata.canRead() )
-            {
-                try
-                {
-                    in = new FileInputStream( pagedata );
+    private String readFile( final File pagedata ) throws ProviderException {
+        String result = null;
+        if( pagedata.exists() ) {
+            if( pagedata.canRead() ) {
+                try( final InputStream in = new FileInputStream( pagedata ) ) {
                     result = FileUtil.readContents( in, m_encoding );
-                }
-                catch( IOException e )
-                {
+                } catch( IOException e ) {
                     log.error("Failed to read", e);
                     throw new ProviderException("I/O error: "+e.getMessage());
                 }
-                finally
-                {
-                	IOUtils.closeQuietly( in );
-                }
-            }
-            else
-            {
+            } else {
                 log.warn("Failed to read page from '"+pagedata.getAbsolutePath()+"', possibly a permissions problem");
                 throw new ProviderException("I cannot read the requested page.");
             }
-        }
-        else
-        {
+        } else {
             // This is okay.
             // FIXME: is it?
             log.info("New page");
@@ -417,30 +361,22 @@ public class VersioningFileProvider
      *  {@inheritDoc}
      */
     @Override
-    public synchronized void putPageText( WikiPage page, String text )
-        throws ProviderException
-    {
+    public synchronized void putPageText( final WikiPage page, final String text ) throws ProviderException {
         //
         //  This is a bit complicated.  We'll first need to
         //  copy the old file to be the newest file.
         //
-
-        File pageDir = findOldPageDir( page.getName() );
-
-        if( !pageDir.exists() )
-        {
+        final int  latest  = findLatestVersion( page.getName() );
+        final File pageDir = findOldPageDir( page.getName() );
+        if( !pageDir.exists() ) {
             pageDir.mkdirs();
         }
 
-        int  latest  = findLatestVersion( page.getName() );
-
-        try
-        {
+        try {
             //
             // Copy old data to safety, if one exists.
             //
-
-            File oldFile = findPage( page.getName() );
+            final File oldFile = findPage( page.getName() );
 
             // Figure out which version should the old page be?
             // Numbers should always start at 1.
@@ -448,19 +384,12 @@ public class VersioningFileProvider
             // "first"       = 1  ==> 2
 
             int versionNumber = (latest > 0) ? latest : 1;
-            boolean firstUpdate = (versionNumber == 1);
+            final boolean firstUpdate = (versionNumber == 1);
 
-            if( oldFile != null && oldFile.exists() )
-            {
-                InputStream in = null;
-                OutputStream out = null;
-
-                try
-                {
-                    in = new BufferedInputStream( new FileInputStream( oldFile ) );
-                    File pageFile = new File( pageDir, Integer.toString( versionNumber )+FILE_EXT );
-                    out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
-
+            if( oldFile != null && oldFile.exists() ) {
+                final File pageFile = new File( pageDir, versionNumber + FILE_EXT );
+                try( InputStream in = new BufferedInputStream( new FileInputStream( oldFile ) );
+                     OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) ) ) {
                     FileUtil.copyContents( in, out );
 
                     //
@@ -473,31 +402,23 @@ public class VersioningFileProvider
                     //
                     versionNumber++;
                 }
-                finally
-                {
-                	IOUtils.closeQuietly( out );
-                	IOUtils.closeQuietly( in );
-                }
             }
 
             //
             //  Let superclass handler writing data to a new version.
             //
-
             super.putPageText( page, text );
 
             //
             //  Finally, write page version data.
             //
-
             // FIXME: No rollback available.
             Properties props = getPageProperties( page.getName() );
 
             String authorFirst = null;
             // if the following file exists, we are NOT migrating from FileSystemProvider
             File pagePropFile = new File(getPageDirectory() + File.separator + PAGEDIR + File.separator + mangleName(page.getName()) + File.separator + "page" + FileSystemProvider.PROP_EXT);
-            if ( firstUpdate && ! pagePropFile.exists())
-            {
+            if( firstUpdate && ! pagePropFile.exists() ) {
                 // we might not yet have a versioned author because the
                 // old page was last maintained by FileSystemProvider
                 Properties props2 = getHeritagePageProperties( page.getName() );
@@ -517,18 +438,14 @@ public class VersioningFileProvider
             props.setProperty( versionNumber + ".author", newAuthor );
 
             String changeNote = (String) page.getAttribute(WikiPage.CHANGENOTE);
-            if( changeNote != null )
-            {
-                props.setProperty( versionNumber+".changenote", changeNote );
+            if( changeNote != null ) {
+                props.setProperty( versionNumber + ".changenote", changeNote );
             }
 
             // Get additional custom properties from page and add to props
-            getCustomProperties(page, props);
-
+            getCustomProperties( page, props );
             putPageProperties( page.getName(), props );
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             log.error( "Saving failed", e );
             throw new ProviderException("Could not save page text: "+e.getMessage());
         }
@@ -682,53 +599,33 @@ public class VersioningFileProvider
      * FileSystemProvider when coming under Versioning management.
      * Simulate an initial version.
      */
-    private Properties getHeritagePageProperties( String page )
-        throws IOException
-    {
-        File propertyFile = new File( getPageDirectory(),
-                        mangleName(page) + FileSystemProvider.PROP_EXT );
-        if ( propertyFile.exists() )
-        {
-            long lastModified = propertyFile.lastModified();
+    private Properties getHeritagePageProperties( final String page ) throws IOException {
+        final File propertyFile = new File( getPageDirectory(), mangleName( page ) + FileSystemProvider.PROP_EXT );
+        if ( propertyFile.exists() ) {
+            final long lastModified = propertyFile.lastModified();
 
             CachedProperties cp = m_cachedProperties;
-            if ( cp != null
-                && cp.m_page.equals(page)
-                && cp.m_lastModified == lastModified )
-            {
+            if ( cp != null && cp.m_page.equals(page) && cp.m_lastModified == lastModified ) {
                 return cp.m_props;
             }
 
-            InputStream in = null;
-            try
-            {
-                in = new BufferedInputStream(
-                            new FileInputStream( propertyFile ));
+            try( final InputStream in = new BufferedInputStream( new FileInputStream( propertyFile ) ) ) {
+                final Properties props = new Properties();
+                props.load( in );
 
-                Properties props = new Properties();
-                props.load(in);
-
-                String originalAuthor = props.getProperty(WikiPage.AUTHOR);
-                if ( originalAuthor.length() > 0 )
-                {
-                    // simulate original author as if already versioned
-                    // but put non-versioned property in special cache too
+                final String originalAuthor = props.getProperty( WikiPage.AUTHOR );
+                if ( originalAuthor.length() > 0 ) {
+                    // simulate original author as if already versioned but put non-versioned property in special cache too
                     props.setProperty( "1.author", originalAuthor );
 
-                    // The profiler showed the probability was very high
-                    // that when calling for the history of a page the
-                    // propertyfile would be read as much times as there were
-                    // versions of that file. It is statistically likely the
-                    // propertyfile will be examined many times before it is updated.
+                    // The profiler showed the probability was very high that when calling for the history of a page the
+                    // propertyfile would be read as much times as there were versions of that file. It is statistically
+                    // likely the propertyfile will be examined many times before it is updated.
                     cp = new CachedProperties( page, props, propertyFile.lastModified() );
                     m_cachedProperties = cp; // Atomic
                 }
 
                 return props;
-            }
-            finally
-            {
-                IOUtils.closeQuietly( in );
             }
         }
 
@@ -775,34 +672,24 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      *
-     *  Deleting versions has never really worked,
-     *  JSPWiki assumes that version histories are "not gappy".
+     *  Deleting versions has never really worked, JSPWiki assumes that version histories are "not gappy".
      *  Using deleteVersion() is definitely not recommended.
-     *
      */
     @Override
-    public void deleteVersion( String page, int version )
-        throws ProviderException
-    {
-        File dir = findOldPageDir( page );
-
+    public void deleteVersion( final String page, final int version ) throws ProviderException {
+        final File dir = findOldPageDir( page );
         int latest = findLatestVersion( page );
-
         if( version == WikiPageProvider.LATEST_VERSION ||
             version == latest ||
-            (version == 1 && latest == -1) )
-        {
+            (version == 1 && latest == -1) ) {
             //
             //  Delete the properties
             //
-            try
-            {
-                Properties props = getPageProperties( page );
+            try {
+                final Properties props = getPageProperties( page );
                 props.remove( ((latest > 0) ? latest : 1)+".author" );
                 putPageProperties( page, props );
-            }
-            catch( IOException e )
-            {
+            } catch( final IOException e ) {
                 log.error("Unable to modify page properties",e);
                 throw new ProviderException("Could not modify page properties: " + e.getMessage());
             }
@@ -816,52 +703,32 @@ public class VersioningFileProvider
             //
             latest = findLatestVersion( page );
 
-            File pageDir = findOldPageDir( page );
-            File previousFile = new File( pageDir, Integer.toString(latest)+FILE_EXT );
-
-            InputStream in = null;
-            OutputStream out = null;
-
-            try
-            {
-                if( previousFile.exists() )
-                {
-                    in = new BufferedInputStream( new FileInputStream( previousFile ) );
-                    File pageFile = findPage(page);
-                    out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
-
+            final File pageDir = findOldPageDir( page );
+            final File previousFile = new File( pageDir, latest + FILE_EXT );
+            final File pageFile = findPage(page);
+            try( final InputStream in = new BufferedInputStream( new FileInputStream( previousFile ) );
+                 final OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) ) ) {
+                if( previousFile.exists() ) {
                     FileUtil.copyContents( in, out );
-
                     //
                     // We need also to set the date, since we rely on this.
                     //
                     pageFile.setLastModified( previousFile.lastModified() );
                 }
-            }
-            catch( IOException e )
-            {
+            } catch( final IOException e ) {
                 log.fatal("Something wrong with the page directory - you may have just lost data!",e);
-            }
-            finally
-            {
-            	IOUtils.closeQuietly( in );
-            	IOUtils.closeQuietly( out );
             }
 
             return;
         }
 
-        File pageFile = new File( dir, ""+version+FILE_EXT );
+        final File pageFile = new File( dir, ""+version+FILE_EXT );
 
-        if( pageFile.exists() )
-        {
-            if( !pageFile.delete() )
-            {
-                log.error("Unable to delete page.");
+        if( pageFile.exists() ) {
+            if( !pageFile.delete() ) {
+                log.error("Unable to delete page." + pageFile.getPath() );
             }
-        }
-        else
-        {
+        } else {
             throw new NoSuchVersionException("Page "+page+", version="+version);
         }
     }
@@ -871,17 +738,11 @@ public class VersioningFileProvider
      */
     // FIXME: This is kinda slow, we should need to do this only once.
     @Override
-    public Collection< WikiPage > getAllPages() throws ProviderException
-    {
-        Collection< WikiPage > pages = super.getAllPages();
-        Collection< WikiPage > returnedPages = new ArrayList<>();
-
-        for( Iterator< WikiPage > i = pages.iterator(); i.hasNext(); )
-        {
-            WikiPage page = i.next();
-
+    public Collection< WikiPage > getAllPages() throws ProviderException {
+        final Collection< WikiPage > pages = super.getAllPages();
+        final Collection< WikiPage > returnedPages = new ArrayList<>();
+        for( final WikiPage page : pages ) {
             WikiPage info = getPageInfo( page.getName(), WikiProvider.LATEST_VERSION );
-
             returnedPages.add( info );
         }
 
@@ -901,56 +762,43 @@ public class VersioningFileProvider
      *  {@inheritDoc}
      */
     @Override
-    public void movePage( String from,
-                          String to )
-        throws ProviderException
-    {
+    public void movePage( final String from, final String to ) {
         // Move the file itself
-        File fromFile = findPage( from );
-        File toFile = findPage( to );
-
+        final File fromFile = findPage( from );
+        final File toFile = findPage( to );
         fromFile.renameTo( toFile );
 
         // Move any old versions
-        File fromOldDir = findOldPageDir( from );
-        File toOldDir = findOldPageDir( to );
-
+        final File fromOldDir = findOldPageDir( from );
+        final File toOldDir = findOldPageDir( to );
         fromOldDir.renameTo( toOldDir );
     }
 
     /*
-     * The profiler showed that when calling the history of a page, the
-     * propertyfile was read just as many times as there were versions
-     * of that file. The loading of a propertyfile is a cpu-intensive job.
-     * This Class holds onto the last propertyfile read, because the
-     * probability is high that the next call will with ask for the same
-     * propertyfile. The time it took to show a historypage with 267
-     * versions dropped by 300%. Although each propertyfile in a history
-     * could be cached, there is likely to be little performance gain over
-     * simply keeping the last one requested.
+     * The profiler showed that when calling the history of a page, the propertyfile was read just as many
+     * times as there were versions of that file. The loading of a propertyfile is a cpu-intensive job.
+     * This Class holds onto the last propertyfile read, because the probability is high that the next call
+     * will with ask for the same propertyfile. The time it took to show a historypage with 267 versions dropped
+     * by 300%. Although each propertyfile in a history could be cached, there is likely to be little performance
+     * gain over simply keeping the last one requested.
      */
-    private static class CachedProperties
-    {
+    private static class CachedProperties {
         String m_page;
         Properties m_props;
         long m_lastModified;
 
         /*
-         * Because a Constructor is inherently synchronised, there is
-         * no need to synchronise the arguments.
+         * Because a Constructor is inherently synchronised, there is no need to synchronise the arguments.
          *
          * @param engine WikiEngine instance
          * @param props  Properties to use for initialization
          */
-        public CachedProperties(String pageName, Properties props,
-                                long lastModified) {
-            if ( pageName == null )
-            {
+        public CachedProperties( final String pageName, final Properties props, final long lastModified ) {
+            if ( pageName == null ) {
                 throw new NullPointerException ( "pageName must not be null!" );
             }
             this.m_page = pageName;
-            if ( props == null )
-            {
+            if ( props == null ) {
                 throw new NullPointerException ( "properties must not be null!" );
             }
             m_props = props;
