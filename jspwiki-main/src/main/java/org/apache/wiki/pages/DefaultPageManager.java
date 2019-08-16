@@ -18,19 +18,7 @@
  */
 package org.apache.wiki.pages;
 
-import java.io.IOException;
-import java.security.Permission;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiEngine;
@@ -55,6 +43,18 @@ import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
+
+import java.io.IOException;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**

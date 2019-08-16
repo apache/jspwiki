@@ -18,6 +18,23 @@
  */
 package org.apache.wiki.auth.user;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.Serializer;
+import org.apache.wiki.util.TextUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,24 +51,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.auth.NoSuchPrincipalException;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.util.Serializer;
-import org.apache.wiki.util.TextUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
 
 /**
  * <p>Manages {@link DefaultUserProfile} objects using XML files for persistence.

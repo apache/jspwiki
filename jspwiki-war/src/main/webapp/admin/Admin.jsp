@@ -23,7 +23,7 @@
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.commons.lang.time.StopWatch" %>
+<%@ page import="org.apache.commons.lang3.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 

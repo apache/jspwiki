@@ -19,9 +19,9 @@
 
 package org.apache.wiki.util.comparators;
 
-import java.util.Comparator;
+import org.apache.commons.lang3.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Comparator;
 
 /**
  * A comparator that sorts Strings using Java's "natural" order.

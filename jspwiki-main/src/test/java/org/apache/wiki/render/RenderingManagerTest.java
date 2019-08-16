@@ -18,9 +18,8 @@
  */
 package org.apache.wiki.render;
 
-import java.util.Properties;
-
-import org.apache.commons.lang.time.StopWatch;
+import net.sf.ehcache.CacheManager;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -31,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.util.Properties;
 
 public class RenderingManagerTest {
 

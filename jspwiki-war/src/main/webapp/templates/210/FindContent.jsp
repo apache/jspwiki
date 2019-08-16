@@ -21,7 +21,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="org.apache.commons.lang3.*" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

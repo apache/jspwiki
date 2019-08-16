@@ -18,11 +18,15 @@
  */
 package org.apache.wiki.ui;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.NDC;
+import org.apache.wiki.WatchDog;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.url.DefaultURLConstructor;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -34,16 +38,11 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.NDC;
-import org.apache.wiki.WatchDog;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.url.DefaultURLConstructor;
-import org.apache.wiki.util.TextUtil;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 
 /**

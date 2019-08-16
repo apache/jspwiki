@@ -17,10 +17,7 @@
     under the License.
  */
 package org.apache.wiki.auth.authorize;
-import java.security.Principal;
-import java.util.Properties;
-
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
@@ -31,13 +28,14 @@ import org.apache.wiki.auth.SecurityEventTrap;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.auth.authorize.Group;
-import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.security.Principal;
+import java.util.Properties;
 
 public class GroupManagerTest
 {

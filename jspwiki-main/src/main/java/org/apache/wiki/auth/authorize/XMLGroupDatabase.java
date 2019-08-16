@@ -18,6 +18,21 @@
  */
 package org.apache.wiki.auth.authorize;
 
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.TextUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,22 +48,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.auth.NoSuchPrincipalException;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.util.TextUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -423,9 +422,9 @@ public class XMLGroupDatabase implements GroupDatabase
             {
                 io.write( "  <" + GROUP_TAG + " " );
                 io.write( GROUP_NAME );
-                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getName() )+ "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( group.getName() )+ "\" " );
                 io.write( CREATOR );
-                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getCreator() ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( group.getCreator() ) + "\" " );
                 io.write( CREATED );
                 io.write( "=\"" + m_format.format( group.getCreated() ) + "\" " );
                 io.write( MODIFIER );
@@ -439,7 +438,7 @@ public class XMLGroupDatabase implements GroupDatabase
                 {
                     io.write( "    <" + MEMBER_TAG + " " );
                     io.write( PRINCIPAL );
-                    io.write( "=\"" + StringEscapeUtils.escapeXml(member.getName()) + "\" " );
+                    io.write( "=\"" + StringEscapeUtils.escapeXml11(member.getName()) + "\" " );
                     io.write( "/>\n" );
                 }
 

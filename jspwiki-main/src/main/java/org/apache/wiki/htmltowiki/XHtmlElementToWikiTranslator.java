@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.htmltowiki;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
@@ -96,7 +96,7 @@ public class XHtmlElementToWikiTranslator
 
     private void print( String s )
     {
-        s = StringEscapeUtils.unescapeHtml( s );
+        s = StringEscapeUtils.unescapeHtml4( s );
         m_out.print( s );
     }
 

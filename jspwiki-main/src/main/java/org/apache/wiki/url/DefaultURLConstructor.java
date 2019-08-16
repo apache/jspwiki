@@ -18,17 +18,16 @@
  */
 package org.apache.wiki.url;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 /**
  *  Implements the default URL constructor using links directly to the

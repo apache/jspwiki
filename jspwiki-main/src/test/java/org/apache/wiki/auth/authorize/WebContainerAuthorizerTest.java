@@ -17,16 +17,16 @@
     under the License.
  */
 package org.apache.wiki.auth.authorize;
-import java.security.Principal;
-import java.util.Properties;
-
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.jdom2.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.security.Principal;
+import java.util.Properties;
 
 public class WebContainerAuthorizerTest
 {

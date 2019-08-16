@@ -18,6 +18,21 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.search.SearchMatcher;
+import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.search.SearchResultComparator;
+import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,21 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.search.QueryItem;
-import org.apache.wiki.search.SearchMatcher;
-import org.apache.wiki.search.SearchResult;
-import org.apache.wiki.search.SearchResultComparator;
-import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.TextUtil;
 
 
 /**

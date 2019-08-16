@@ -19,10 +19,10 @@
 
 package org.apache.wiki.util.comparators;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.Collator;
 import java.util.Comparator;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * A comparator that sorts Strings using a Collator. This class is needed

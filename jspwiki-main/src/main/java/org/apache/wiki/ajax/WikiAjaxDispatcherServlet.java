@@ -19,6 +19,19 @@
  */
 package org.apache.wiki.ajax;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Permission;
 import java.util.ArrayList;
@@ -26,20 +39,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.util.TextUtil;
 
 /**
  * This provides a simple ajax servlet for handling /ajax/<ClassName> requests.

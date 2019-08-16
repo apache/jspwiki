@@ -18,11 +18,7 @@
 */
 package org.apache.wiki.ui.admin.beans;
 
-import java.util.Collection;
-
-import javax.management.NotCompliantMBeanException;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -31,6 +27,9 @@ import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
+
+import javax.management.NotCompliantMBeanException;
+import java.util.Collection;
 
 public abstract class ModuleBean extends SimpleAdminBean {
 

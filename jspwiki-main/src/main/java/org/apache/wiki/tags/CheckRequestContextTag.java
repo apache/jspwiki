@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import java.io.IOException;
 
 /**
  *  Includes body, if the request context matches.  To understand more about

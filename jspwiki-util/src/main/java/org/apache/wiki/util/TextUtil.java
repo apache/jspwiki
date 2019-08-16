@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -25,8 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.Random;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**

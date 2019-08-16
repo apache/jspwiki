@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.rss;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+
+import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents an abstract feed.
@@ -192,6 +191,6 @@ public abstract class Feed {
      * @return A formatted string.
      */
     public static String format( String s ) {
-        return StringEscapeUtils.escapeXml( s );
+        return StringEscapeUtils.escapeXml11( s );
     }
 }

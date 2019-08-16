@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;

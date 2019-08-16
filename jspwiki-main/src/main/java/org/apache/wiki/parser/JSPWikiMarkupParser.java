@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.parser;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
@@ -2121,7 +2121,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
             try
             {
-                style = StringEscapeUtils.unescapeHtml(style);
+                style = StringEscapeUtils.unescapeHtml4(style);
                 if( style != null && style.indexOf("javascript:") != -1 )
                 {
                     log.debug("Attempt to output javascript within CSS:"+style);

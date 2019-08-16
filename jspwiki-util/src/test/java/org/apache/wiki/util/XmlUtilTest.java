@@ -18,16 +18,15 @@
  */
 package org.apache.wiki.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.List;
-
-import org.apache.commons.io.IOUtils;
 import org.jdom2.Element;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 public class XmlUtilTest {
 
@@ -59,27 +58,26 @@ public class XmlUtilTest {
     }
 
     @Test
-    public void testParseFromStream() throws FileNotFoundException {
-        InputStream is = new FileInputStream( new File ("./src/test/resources/ini/jspwiki_module.xml" ) );
-        List< Element > elements = XmlUtil.parse( is, "/modules/plugin" );
-        Assertions.assertEquals( 2, elements.size() );
+    public void testParseFromStream() throws IOException {
+        try( InputStream is = new FileInputStream( new File ("./src/test/resources/ini/jspwiki_module.xml" ) ) ) {
+            List< Element > elements = XmlUtil.parse( is, "/modules/plugin" );
+            Assertions.assertEquals( 2, elements.size() );
 
-        elements = XmlUtil.parse( is, "/modules/filter" );
-        Assertions.assertEquals( 0, elements.size() );
+            elements = XmlUtil.parse( is, "/modules/filter" );
+            Assertions.assertEquals( 0, elements.size() );
 
-        elements = XmlUtil.parse( is, "/modules/editor" );
-        Assertions.assertEquals( 0, elements.size() );
+            elements = XmlUtil.parse( is, "/modules/editor" );
+            Assertions.assertEquals( 0, elements.size() );
 
-        elements = XmlUtil.parse( is, "/modules/heck" );
-        Assertions.assertEquals( 0, elements.size() );
+            elements = XmlUtil.parse( is, "/modules/heck" );
+            Assertions.assertEquals( 0, elements.size() );
 
-        elements = XmlUtil.parse( ( InputStream )null, "/modules/editor" );
-        Assertions.assertEquals( 0, elements.size() );
+            elements = XmlUtil.parse( ( InputStream )null, "/modules/editor" );
+            Assertions.assertEquals( 0, elements.size() );
 
-        elements = XmlUtil.parse( is, null );
-        Assertions.assertEquals( 0, elements.size() );
-
-        IOUtils.closeQuietly( is );
+            elements = XmlUtil.parse( is, null );
+            Assertions.assertEquals( 0, elements.size() );
+        }
     }
 
 }

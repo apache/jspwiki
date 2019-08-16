@@ -18,21 +18,7 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.IOException;
-import java.security.Permission;
-import java.security.Principal;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.WeakHashMap;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -65,6 +51,19 @@ import org.apache.wiki.workflow.Step;
 import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowBuilder;
 import org.apache.wiki.workflow.WorkflowManager;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.security.Permission;
+import java.security.Principal;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.WeakHashMap;
 
 
 /**

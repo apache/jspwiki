@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;

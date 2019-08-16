@@ -17,23 +17,12 @@
     under the License.
  */
 package org.apache.wiki;
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.ArrayUtils;
+import net.sourceforge.stripes.mock.MockFilterChain;
+import net.sourceforge.stripes.mock.MockFilterConfig;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpServletResponse;
+import net.sourceforge.stripes.mock.MockServletContext;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Users;
@@ -46,11 +35,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sourceforge.stripes.mock.MockFilterChain;
-import net.sourceforge.stripes.mock.MockFilterConfig;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-import net.sourceforge.stripes.mock.MockHttpServletResponse;
-import net.sourceforge.stripes.mock.MockServletContext;
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 public class WikiSessionTest
 {

@@ -18,20 +18,7 @@
  */
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.text.Collator;
-import java.text.ParseException;
-import java.text.RuleBasedCollator;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -56,6 +43,19 @@ import org.apache.wiki.util.comparators.CollatorComparator;
 import org.apache.wiki.util.comparators.HumanComparator;
 import org.apache.wiki.util.comparators.JavaNaturalComparator;
 import org.apache.wiki.util.comparators.LocaleComparator;
+
+import java.io.IOException;
+import java.text.Collator;
+import java.text.ParseException;
+import java.text.RuleBasedCollator;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *  This is a base class for all plugins using referral things.

@@ -18,6 +18,19 @@
  */
 package org.apache.wiki.preferences;
 
+import com.google.gson.Gson;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.PropertyReader;
+import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,21 +41,6 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.lang.LocaleUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.util.HttpUtil;
-import org.apache.wiki.util.PropertyReader;
-import org.apache.wiki.util.TextUtil;
-
-import com.google.gson.Gson;
 
 /**
  *  Represents an object which is used to store user preferences.

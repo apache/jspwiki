@@ -18,7 +18,7 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="org.apache.commons.text.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
@@ -44,10 +44,10 @@
     String usertext = (String)session.getAttribute( EditorManager.REQ_EDITEDTEXT );
 
     // Make the user and conflicting text presentable for display.
-    usertext = StringEscapeUtils.escapeXml( usertext );
+    usertext = StringEscapeUtils.escapeXml11( usertext );
 
     String conflicttext = wiki.getText(pagereq);
-    conflicttext = StringEscapeUtils.escapeXml( conflicttext );
+    conflicttext = StringEscapeUtils.escapeXml11( conflicttext );
 
     pageContext.setAttribute( "conflicttext",
                               conflicttext,

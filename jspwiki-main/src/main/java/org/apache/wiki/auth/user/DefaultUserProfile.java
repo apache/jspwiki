@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.auth.user;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.WikiSession;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.WikiSession;
 
 /**
  * Default implementation for representing wiki user information, such as the

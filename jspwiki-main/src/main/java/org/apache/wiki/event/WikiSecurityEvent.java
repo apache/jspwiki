@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.event;
 
-import java.security.Principal;
-
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import java.security.Principal;
 
 /**
  * <p>Event class for security events: login/logout, wiki group adds/changes, and

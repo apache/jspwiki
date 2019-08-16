@@ -18,12 +18,7 @@
  */
 package org.apache.wiki.auth.user;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -34,6 +29,11 @@ import org.apache.wiki.util.CryptoUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.Serializable;
+import java.security.Principal;
+import java.util.Map;
+import java.util.Properties;
 
 
 public class XMLUserDatabaseTest {

@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.ui.admin;
 
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.NotCompliantMBeanException;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.management.SimpleMBean;
+
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
+import javax.management.NotCompliantMBeanException;
 
 /**
  *  Provides an easy-to-use interface for JSPWiki AdminBeans, which also

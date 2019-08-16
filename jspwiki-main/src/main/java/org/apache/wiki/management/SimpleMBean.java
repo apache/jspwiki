@@ -18,9 +18,8 @@
  */
 package org.apache.wiki.management;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -36,9 +35,9 @@ import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ReflectionException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 /**
  *  A simple MBean which does not require an interface class unlike

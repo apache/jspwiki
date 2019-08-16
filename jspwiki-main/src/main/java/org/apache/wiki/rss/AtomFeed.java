@@ -18,17 +18,7 @@
  */
 package org.apache.wiki.rss;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -39,6 +29,15 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *  Provides an Atom 1.0 standard feed, with enclosures.

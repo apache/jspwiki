@@ -18,6 +18,18 @@
  */
 package org.apache.wiki.auth.user;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.Serializer;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
@@ -32,19 +44,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.auth.NoSuchPrincipalException;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.util.Serializer;
 
 /**
  * <p>

@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.auth.permissions;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.WikiPage;
+
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Arrays;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.WikiPage;
 
 /**
  * <p>

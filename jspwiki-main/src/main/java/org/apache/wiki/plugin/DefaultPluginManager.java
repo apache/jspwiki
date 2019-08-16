@@ -19,27 +19,8 @@
 
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServlet;
-
-import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
@@ -67,6 +48,24 @@ import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
+
+import javax.servlet.http.HttpServlet;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager

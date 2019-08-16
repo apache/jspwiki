@@ -18,11 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.security.Permission;
-
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
@@ -34,6 +30,9 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.GroupCommand;
+
+import java.io.IOException;
+import java.security.Permission;
 
 /**
  *  Tells whether the user in the current wiki context possesses a particular

@@ -21,7 +21,7 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -53,7 +53,7 @@ public class VariableLinkNodePostProcessorState implements NodePostProcessorStat
         if( !m_wysiwygEditorMode ) {
             try {
                 final String parsedVariable = wikiContext.getEngine().getVariableManager().parseAndGetValue( wikiContext, variable );
-                final HtmlInline content = new HtmlInline( CharSubSequence.of( StringEscapeUtils.escapeXml( parsedVariable ) ) );
+                final HtmlInline content = new HtmlInline( CharSubSequence.of( StringEscapeUtils.escapeXml11( parsedVariable ) ) );
                 NodePostProcessorStateCommonOperations.addContent( state, link, content );
             } catch( final NoSuchVariableException e ) {
                 NodePostProcessorStateCommonOperations.makeError( state, link, "No such variable: " + variable + " (" + e.getMessage() + ")" );

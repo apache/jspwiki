@@ -18,6 +18,19 @@
  */
 package org.apache.wiki;
 
+import org.apache.commons.lang3.time.StopWatch;
+import org.apache.log4j.Logger;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiEventUtils;
+import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.util.TextUtil;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -41,19 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.filters.BasicPageFilter;
-import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventUtils;
-import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.modules.InternalModule;
-import org.apache.wiki.providers.WikiPageProvider;
-import org.apache.wiki.util.TextUtil;
 
 /*
   BUGS

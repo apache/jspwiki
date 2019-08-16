@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.stress;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
 public class Benchmark extends StopWatch
 {

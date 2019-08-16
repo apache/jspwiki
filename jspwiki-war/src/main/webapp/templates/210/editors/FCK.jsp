@@ -28,7 +28,7 @@
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.filters.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="org.apache.commons.text.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -81,7 +81,7 @@
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = "";
 
-   String pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
+   String pageAsHtml = StringEscapeUtils.escapeEcmaScript( engine.getRenderingManager().getHTML( context, usertext ) );
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for FCK has been rendered.

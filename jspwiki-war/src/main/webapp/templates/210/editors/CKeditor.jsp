@@ -29,7 +29,7 @@
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 
 <%@ page import="org.apache.wiki.filters.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="org.apache.commons.text.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -97,7 +97,7 @@
    String pageAsHtml;
    try
    {
-       //pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
+       //pageAsHtml = StringEscapeUtils.escapeEcmaScript( renderingManager.getHTML( context, usertext ) );
        pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
    }
        catch( Exception e )
