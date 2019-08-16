@@ -39,15 +39,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * <p>
@@ -99,17 +101,17 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private static final String   PRINCIPAL        = "principal";
 
+    private static final String  DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
+
     private Document              m_dom            = null;
 
     private DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
-
-    private DateFormat            m_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
 
     private File                  m_file           = null;
 
     private WikiEngine            m_engine         = null;
 
-    private Map<String, Group>    m_groups         = new HashMap<>();
+    private Map<String, Group>    m_groups         = new ConcurrentHashMap<>();
 
     /**
       * Looks up and deletes a {@link Group} from the group database. If the
@@ -211,10 +213,8 @@ public class XMLGroupDatabase implements GroupDatabase
      * @throws WikiSecurityException if the Group could not be saved successfully
      */
     @Override
-    public void save( Group group, Principal modifier ) throws WikiSecurityException
-    {
-        if ( group == null || modifier == null )
-        {
+    public void save( Group group, Principal modifier ) throws WikiSecurityException {
+        if ( group == null || modifier == null ) {
             throw new IllegalArgumentException( "Group or modifier cannot be null." );
         }
 
@@ -239,67 +239,50 @@ public class XMLGroupDatabase implements GroupDatabase
         saveDOM();
     }
 
-    private void buildDOM() throws WikiSecurityException
-    {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    private void buildDOM() {
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating( false );
         factory.setExpandEntityReferences( false );
         factory.setIgnoringComments( true );
         factory.setNamespaceAware( false );
-        try
-        {
+        try {
             m_dom = factory.newDocumentBuilder().parse( m_file );
             log.debug( "Database successfully initialized" );
             m_lastModified = m_file.lastModified();
             m_lastCheck    = System.currentTimeMillis();
-        }
-        catch( ParserConfigurationException e )
-        {
+        } catch( final ParserConfigurationException e ) {
             log.error( "Configuration error: " + e.getMessage() );
-        }
-        catch( SAXException e )
-        {
+        } catch( final SAXException e ) {
             log.error( "SAX error: " + e.getMessage() );
-        }
-        catch( FileNotFoundException e )
-        {
+        } catch( final FileNotFoundException e ) {
             log.info( "Group database not found; creating from scratch..." );
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             log.error( "IO error: " + e.getMessage() );
         }
-        if ( m_dom == null )
-        {
-            try
-            {
+        if ( m_dom == null ) {
+            try {
                 //
                 // Create the DOM from scratch
                 //
                 m_dom = factory.newDocumentBuilder().newDocument();
                 m_dom.appendChild( m_dom.createElement( "groups" ) );
-            }
-            catch( ParserConfigurationException e )
-            {
+            } catch( final ParserConfigurationException e ) {
                 log.fatal( "Could not create in-memory DOM" );
             }
         }
 
         // Ok, now go and read this sucker in
-        if ( m_dom != null )
-        {
-            NodeList groupNodes = m_dom.getElementsByTagName( GROUP_TAG );
-            for( int i = 0; i < groupNodes.getLength(); i++ )
-            {
-                Element groupNode = (Element) groupNodes.item( i );
-                String groupName = groupNode.getAttribute( GROUP_NAME );
-                if ( groupName == null )
-                {
+        if ( m_dom != null ) {
+            final NodeList groupNodes = m_dom.getElementsByTagName( GROUP_TAG );
+            for( int i = 0; i < groupNodes.getLength(); i++ ) {
+                final Element groupNode = (Element) groupNodes.item( i );
+                final String groupName = groupNode.getAttribute( GROUP_NAME );
+                if ( groupName == null ) {
                     log.warn( "Detected null group name in XMLGroupDataBase. Check your group database." );
                 }
                 else
                 {
-                    Group group = buildGroup( groupNode, groupName );
+                    final Group group = buildGroup( groupNode, groupName );
                     m_groups.put( groupName, group );
                 }
             }
@@ -309,24 +292,12 @@ public class XMLGroupDatabase implements GroupDatabase
     private long m_lastCheck    = 0;
     private long m_lastModified = 0;
 
-    private void checkForRefresh()
-    {
-        long time = System.currentTimeMillis();
-
-        if( time - m_lastCheck > 60*1000L )
-        {
-            long lastModified = m_file.lastModified();
-
-            if( lastModified > m_lastModified )
-            {
-                try
-                {
-                    buildDOM();
-                }
-                catch( WikiSecurityException e )
-                {
-                    log.error("Could not refresh DOM",e);
-                }
+    private void checkForRefresh() {
+        final long time = System.currentTimeMillis();
+        if( time - m_lastCheck > 60*1000L ) {
+            final long lastModified = m_file.lastModified();
+            if( lastModified > m_lastModified ) {
+                buildDOM();
             }
         }
     }
@@ -334,50 +305,39 @@ public class XMLGroupDatabase implements GroupDatabase
      * Constructs a Group based on a DOM group node.
      * @param groupNode the node in the DOM containing the node
      * @param name the name of the group
-     * @throws NoSuchPrincipalException
-     * @throws WikiSecurityException
      */
-    private Group buildGroup( Element groupNode, String name )
-    {
+    private Group buildGroup( final Element groupNode, final String name ) {
         // It's an error if either param is null (very odd)
-        if ( groupNode == null || name == null )
-        {
+        if ( groupNode == null || name == null ) {
             throw new IllegalArgumentException( "DOM element or name cannot be null." );
         }
 
         // Construct a new group
-        Group group = new Group( name, m_engine.getApplicationName() );
+        final Group group = new Group( name, m_engine.getApplicationName() );
 
         // Get the users for this group, and add them
-        NodeList members = groupNode.getElementsByTagName( MEMBER_TAG );
-        for( int i = 0; i < members.getLength(); i++ )
-        {
-            Element memberNode = (Element) members.item( i );
-            String principalName = memberNode.getAttribute( PRINCIPAL );
-            Principal member = new WikiPrincipal( principalName );
+        final NodeList members = groupNode.getElementsByTagName( MEMBER_TAG );
+        for( int i = 0; i < members.getLength(); i++ ) {
+            final Element memberNode = (Element) members.item( i );
+            final String principalName = memberNode.getAttribute( PRINCIPAL );
+            final Principal member = new WikiPrincipal( principalName );
             group.add( member );
         }
 
         // Add the created/last-modified info
-        String creator = groupNode.getAttribute( CREATOR );
-        String created = groupNode.getAttribute( CREATED );
-        String modifier = groupNode.getAttribute( MODIFIER );
-        String modified = groupNode.getAttribute( LAST_MODIFIED );
-        try
-        {
-            group.setCreated( m_format.parse( created ) );
-            group.setLastModified( m_format.parse( modified ) );
-        }
-        catch ( ParseException e )
-        {
+        final String creator = groupNode.getAttribute( CREATOR );
+        final String created = groupNode.getAttribute( CREATED );
+        final String modifier = groupNode.getAttribute( MODIFIER );
+        final String modified = groupNode.getAttribute( LAST_MODIFIED );
+        try {
+            group.setCreated( new SimpleDateFormat( DATE_FORMAT ).parse( created ) );
+            group.setLastModified( new SimpleDateFormat( DATE_FORMAT ).parse( modified ) );
+        } catch ( final ParseException e ) {
             // If parsing failed, use the platform default
-            try
-            {
+            try {
                 group.setCreated( m_defaultFormat.parse( created ) );
                 group.setLastModified( m_defaultFormat.parse( modified ) );
-            }
-            catch ( ParseException e2)
-            {
+            } catch ( final ParseException e2 ) {
                 log.warn( "Could not parse 'created' or 'lastModified' " + "attribute for " + " group'"
                           + group.getName() + "'." + " It may have been tampered with." );
             }
@@ -387,41 +347,34 @@ public class XMLGroupDatabase implements GroupDatabase
         return group;
     }
 
-    private void saveDOM() throws WikiSecurityException
-    {
-        if ( m_dom == null )
-        {
+    private void saveDOM() throws WikiSecurityException {
+        if ( m_dom == null ) {
             log.fatal( "Group database doesn't exist in memory." );
         }
 
-        File newFile = new File( m_file.getAbsolutePath() + ".new" );
-        try
-        {
-            BufferedWriter io = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( newFile ), "UTF-8" ) );
-
+        final File newFile = new File( m_file.getAbsolutePath() + ".new" );
+        try( final BufferedWriter io = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( newFile ), StandardCharsets.UTF_8 ) ) ) {
             // Write the file header and document root
             io.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
             io.write( "<groups>\n" );
 
             // Write each profile as a <group> node
-            for( Group group : m_groups.values() )
-            {
+            for( final Group group : m_groups.values() ) {
                 io.write( "  <" + GROUP_TAG + " " );
                 io.write( GROUP_NAME );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( group.getName() )+ "\" " );
                 io.write( CREATOR );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( group.getCreator() ) + "\" " );
                 io.write( CREATED );
-                io.write( "=\"" + m_format.format( group.getCreated() ) + "\" " );
+                io.write( "=\"" + new SimpleDateFormat( DATE_FORMAT ).format( group.getCreated() ) + "\" " );
                 io.write( MODIFIER );
                 io.write( "=\"" + group.getModifier() + "\" " );
                 io.write( LAST_MODIFIED );
-                io.write( "=\"" + m_format.format( group.getLastModified() ) + "\"" );
+                io.write( "=\"" + new SimpleDateFormat( DATE_FORMAT ).format( group.getLastModified() ) + "\"" );
                 io.write( ">\n" );
 
                 // Write each member as a <member> node
-                for( Principal member : group.members() )
-                {
+                for( final Principal member : group.members() ) {
                     io.write( "    <" + MEMBER_TAG + " " );
                     io.write( PRINCIPAL );
                     io.write( "=\"" + StringEscapeUtils.escapeXml11(member.getName()) + "\" " );
@@ -432,28 +385,21 @@ public class XMLGroupDatabase implements GroupDatabase
                 io.write( "  </" + GROUP_TAG + ">\n" );
             }
             io.write( "</groups>" );
-            io.close();
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             throw new WikiSecurityException( e.getLocalizedMessage(), e );
         }
 
         // Copy new file over old version
-        File backup = new File( m_file.getAbsolutePath() + ".old" );
-        if ( backup.exists() && !backup.delete())
-        {
+        final File backup = new File( m_file.getAbsolutePath() + ".old" );
+        if ( backup.exists() && !backup.delete()) {
             log.error( "Could not delete old group database backup: " + backup );
         }
-        if ( !m_file.renameTo( backup ) )
-        {
+        if ( !m_file.renameTo( backup ) ) {
             log.error( "Could not create group database backup: " + backup );
         }
-        if ( !newFile.renameTo( m_file ) )
-        {
+        if ( !newFile.renameTo( m_file ) ) {
             log.error( "Could not save database: " + backup + " restoring backup." );
-            if ( !backup.renameTo( m_file ) )
-            {
+            if ( !backup.renameTo( m_file ) ) {
                 log.error( "Restore failed. Check the file permissions." );
             }
             log.error( "Could not save database: " + m_file + ". Check the file permissions" );
