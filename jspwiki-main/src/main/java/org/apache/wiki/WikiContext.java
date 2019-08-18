@@ -18,15 +18,6 @@
  */
 package org.apache.wiki;
 
-import java.security.Permission;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.PropertyPermission;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
@@ -41,6 +32,14 @@ import org.apache.wiki.ui.Installer;
 import org.apache.wiki.ui.PageCommand;
 import org.apache.wiki.ui.WikiCommand;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.PageContext;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.PropertyPermission;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -601,9 +600,7 @@ public class WikiContext
      *  @param page The page to which to link
      *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
      */
-    public String getURL( String context,
-                          String page )
-    {
+    public String getURL( String context, String page ) {
         return getURL( context, page, null );
     }
 
@@ -618,18 +615,11 @@ public class WikiContext
      *
      *  @return An URL to the given context and page.
      */
-    public String getURL( String context,
-                          String page,
-                          String params )
-    {
+    public String getURL( String context, String page, String params ) {
         boolean absolute = "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE ));
 
         // FIXME: is rather slow
-        return m_engine.getURL( context,
-                                page,
-                                params,
-                                absolute );
-
+        return m_engine.getURL( context, page, params, absolute );
     }
 
     /**
