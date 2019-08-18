@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.tags;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *  Iterates through editors.
@@ -34,27 +33,20 @@ import org.apache.wiki.ui.EditorManager;
  *  @since 2.4.12
  */
 
-public class EditorIteratorTag
-    extends IteratorTag
-{
+public class EditorIteratorTag extends IteratorTag  {
+
     private static final long serialVersionUID = 0L;
+    private static final Logger log = Logger.getLogger( EditorIteratorTag.class );
 
-    static    Logger    log = Logger.getLogger( EditorIteratorTag.class );
-
-    public final int doStartTag()
-    {
+    public final int doStartTag() {
         m_wikiContext = WikiContext.findContext(pageContext);
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final EditorManager mgr = engine.getEditorManager();
+        final String[] editorList = mgr.getEditorList();
+        final Collection< Editor > editors = new ArrayList<>();
 
-        WikiEngine engine = m_wikiContext.getEngine();
-        EditorManager mgr    = engine.getEditorManager();
-
-        String[] editorList = mgr.getEditorList();
-
-        Collection<Editor> editors = new ArrayList<Editor>();
-
-        for ( int i = 0; i < editorList.length; i++ )
-        {
-            editors.add(new Editor(m_wikiContext, editorList[i]));
+        for ( int i = 0; i < editorList.length; i++ ) {
+            editors.add( new Editor( m_wikiContext, editorList[ i ] ) );
         }
         setList( editors );
 

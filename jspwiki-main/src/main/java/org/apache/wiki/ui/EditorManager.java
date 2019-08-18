@@ -18,16 +18,6 @@
  */
 package org.apache.wiki.ui;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -37,6 +27,15 @@ import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
+
+import javax.servlet.jsp.PageContext;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 
 /**
@@ -106,7 +105,7 @@ public class EditorManager extends ModuleManager {
      */
     private void registerEditors() {
         log.info( "Registering editor modules" );
-        m_editors = new HashMap<String, WikiEditorInfo>();
+        m_editors = new HashMap<>();
 
         //
         // Register all editors which have created a resource containing its properties.

@@ -25,14 +25,13 @@ import org.apache.wiki.WikiContext;
  *
  *  @since 2.4.12
  */
-public class Editor
-{
-    private String m_editorName;
-    private WikiContext m_wikiContext;
-    private EditorManager m_editorManager;
+public class Editor {
 
-    public Editor( WikiContext wikiContext, String editorName )
-    {
+    private final String m_editorName;
+    private final WikiContext m_wikiContext;
+    private final EditorManager m_editorManager;
+
+    public Editor( final WikiContext wikiContext, final String editorName ) {
         m_wikiContext = wikiContext;
         m_editorName = editorName;
         m_editorManager = wikiContext.getEngine().getEditorManager();
@@ -47,16 +46,15 @@ public class Editor
     /** @deprecated */
     public String getURL()
     {
-        String uri = m_wikiContext.getHttpRequest().getRequestURI();
+        final String uri = m_wikiContext.getHttpRequest().getRequestURI();
         String para = m_wikiContext.getHttpRequest().getQueryString();
 
         // if para already contains editor parameter, replace instead of append it
         // FIXME: Should cut out parameter instead of simple setting strin to null, maybe
         // in futur releases it may change and theres the danger that trailing parameters get lost
-        int idx = para.indexOf(EditorManager.PARA_EDITOR + "=");
-        if (idx >= 0)
-        {
-            para = para.substring(0, idx-1);
+        final int idx = para.indexOf( EditorManager.PARA_EDITOR + "=" );
+        if( idx >= 0 ) {
+            para = para.substring( 0, idx - 1 );
         }
 
         return uri + "?" + para + "&amp;" + EditorManager.PARA_EDITOR + "=" + m_editorName;
@@ -71,13 +69,12 @@ public class Editor
         return isSelected( "selected='selected'", "" );
     }
 
-    public String isSelected( String ifSelected )
+    public String isSelected( final String ifSelected )
     {
         return isSelected( ifSelected, "" );
     }
 
-    public String isSelected( String ifSelected, String ifNotSelected )
-    {
+    public String isSelected( final String ifSelected, final String ifNotSelected ) {
         if ( m_editorName.equals(m_editorManager.getEditorName(m_wikiContext) ) )
         {
             return ifSelected;
