@@ -64,9 +64,8 @@ import java.util.PropertyPermission;
  *  @see org.apache.wiki.plugin.Counter
  *
  */
-public class WikiContext
-    implements Cloneable, Command
-{
+public class WikiContext implements Cloneable, Command {
+
     private    Command m_command = null;
 
     private    WikiPage   m_page;
@@ -600,7 +599,7 @@ public class WikiContext
      *  @param page The page to which to link
      *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
      */
-    public String getURL( String context, String page ) {
+    public String getURL( final String context, final String page ) {
         return getURL( context, page, null );
     }
 
@@ -615,8 +614,8 @@ public class WikiContext
      *
      *  @return An URL to the given context and page.
      */
-    public String getURL( String context, String page, String params ) {
-        boolean absolute = "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE ));
+    public String getURL( final String context, final String page, final String params ) {
+        final boolean absolute = "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE ));
 
         // FIXME: is rather slow
         return m_engine.getURL( context, page, params, absolute );
@@ -638,10 +637,8 @@ public class WikiContext
      *  @return A shallow clone of the WikiContext
      */
     @Override
-	public Object clone()
-    {
-        try
-        {
+	public Object clone() {
+        try {
             // super.clone() must always be called to make sure that inherited objects
             // get the right type
             WikiContext copy = (WikiContext)super.clone();
@@ -656,8 +653,7 @@ public class WikiContext
             copy.m_page        = m_page;
             copy.m_realPage    = m_realPage;
             return copy;
-        }
-        catch( CloneNotSupportedException e ){} // Never happens
+        } catch( CloneNotSupportedException e ){} // Never happens
 
         return null;
     }

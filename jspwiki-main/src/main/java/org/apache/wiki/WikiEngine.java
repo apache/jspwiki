@@ -74,7 +74,6 @@ import org.apache.wiki.workflow.WorkflowManager;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
@@ -788,14 +787,9 @@ public class WikiEngine
      *  @since 1.6.1
      *  @return The Base URL.
      */
-
-    public String getBaseURL()
-    {
-    	String contextPath = m_servletContext.getContextPath();
-
-        return contextPath;
+    public String getBaseURL() {
+    	return m_servletContext.getContextPath();
     }
-
 
     /**
      *  Returns the moment when this engine was started.
@@ -803,7 +797,6 @@ public class WikiEngine
      *  @since 2.0.15.
      *  @return The start time of this wiki.
      */
-
     public Date getStartTime()
     {
         return (Date)m_startTime.clone();
@@ -822,49 +815,11 @@ public class WikiEngine
      * @param pageName The name of the page.  May be null, in which case defaults to the front page.
      * @return An absolute URL to the page.
      */
-    public String getViewURL( String pageName )
-    {
-        if( pageName == null )
-        {
+    public String getViewURL( String pageName ) {
+        if( pageName == null ) {
             pageName = getFrontPage();
         }
-        return getURLConstructor().makeURL(WikiContext.VIEW, pageName, "absolute".equals(PROP_REFSTYLE), null);
-    }
-
-    /**
-     *  Returns the basic URL to an editor.  Please use WikiContext.getURL() or
-     *  WikiEngine.getURL() instead.
-     *
-     *  @see #getURL(String, String, String, boolean)
-     *  @see WikiContext#getURL(String, String)
-     *  @deprecated
-     *
-     *  @param pageName The name of the page.
-     *  @return An URI.
-     *
-     *  @since 2.0.3
-     */
-    @Deprecated
-    public String getEditURL( String pageName )
-    {
-        return m_urlConstructor.makeURL( WikiContext.EDIT, pageName, false, null );
-    }
-
-    /**
-     *  Returns the basic attachment URL.Please use WikiContext.getURL() or
-     *  WikiEngine.getURL() instead.
-     *
-     *  @see #getURL(String, String, String, boolean)
-     *  @see WikiContext#getURL(String, String)
-     *  @since 2.0.42.
-     *  @param attName Attachment name
-     *  @deprecated
-     *  @return An URI.
-     */
-    @Deprecated
-    public String getAttachmentURL( String attName )
-    {
-        return m_urlConstructor.makeURL( WikiContext.ATTACH, attName, false, null );
+        return getURLConstructor().makeURL( WikiContext.VIEW, pageName, "absolute".equals( PROP_REFSTYLE ), null );
     }
 
     /**
@@ -876,9 +831,10 @@ public class WikiEngine
      *  @param absolute If true, will generate an absolute URL regardless of properties setting.
      *  @return An URL (absolute or relative).
      */
-    public String getURL( String context, String pageName, String params, boolean absolute )
-    {
-        if( pageName == null ) pageName = getFrontPage();
+    public String getURL( final String context, String pageName, final String params, final boolean absolute ) {
+        if( pageName == null ) {
+            pageName = getFrontPage();
+        }
         return m_urlConstructor.makeURL( context, pageName, absolute, params );
     }
 
@@ -908,49 +864,6 @@ public class WikiEngine
     }
 
     /**
-     *  This is a safe version of the Servlet.Request.getParameter() routine.
-     *  Unfortunately, the default version always assumes that the incoming
-     *  character set is ISO-8859-1, even though it was something else.
-     *  This means that we need to make a new string using the correct
-     *  encoding.
-     *  <P>
-     *  For more information, see:
-     *     <A HREF="http://www.jguru.com/faq/view.jsp?EID=137049">JGuru FAQ</A>.
-     *  <P>
-     *  Incidentally, this is almost the same as encodeName(), below.
-     *  I am not yet entirely sure if it's safe to merge the code.
-     *
-     *  @param request The servlet request
-     *  @param name    The parameter name to get.
-     *  @return The parameter value or null
-     *  @since 1.5.3
-     *  @deprecated JSPWiki now requires servlet API 2.3, which has a better
-     *              way of dealing with this stuff.  This will be removed in
-     *              the near future.
-     */
-
-    @Deprecated
-    public String safeGetParameter( ServletRequest request, String name )
-    {
-        try
-        {
-            String res = request.getParameter( name );
-            if( res != null )
-            {
-                res = new String(res.getBytes( StandardCharsets.ISO_8859_1), getContentEncoding() );
-            }
-
-            return res;
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            log.fatal( "Unsupported encoding", e );
-            return "";
-        }
-
-    }
-
-    /**
      *  Returns the query string (the portion after the question mark).
      *
      *  @param request The HTTP request to parse.
@@ -959,33 +872,25 @@ public class WikiEngine
      *
      *  @since 2.1.3
      */
-    public String safeGetQueryString( HttpServletRequest request )
-    {
-        if (request == null)
-        {
+    public String safeGetQueryString( final HttpServletRequest request ) {
+        if (request == null) {
             return "";
         }
 
-        try
-        {
+        try {
             String res = request.getQueryString();
-            if( res != null )
-            {
-                res = new String(res.getBytes("ISO-8859-1"),
-                                 getContentEncoding() );
+            if( res != null ) {
+                res = new String( res.getBytes( StandardCharsets.ISO_8859_1 ), getContentEncoding() );
 
                 //
                 // Ensure that the 'page=xyz' attribute is removed
-                // FIXME: Is it really the mandate of this routine to
-                //        do that?
+                // FIXME: Is it really the mandate of this routine to do that?
                 //
-                int pos1 = res.indexOf("page=");
-                if (pos1 >= 0)
-                {
-                    String tmpRes = res.substring(0, pos1);
-                    int pos2 = res.indexOf("&",pos1) + 1;
-                    if ( (pos2 > 0) && (pos2 < res.length()) )
-                    {
+                final int pos1 = res.indexOf("page=");
+                if( pos1 >= 0 ) {
+                    String tmpRes = res.substring( 0, pos1 );
+                    final int pos2 = res.indexOf( "&",pos1 ) + 1;
+                    if ( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
                         tmpRes = tmpRes + res.substring(pos2);
                     }
                     res = tmpRes;
@@ -993,9 +898,7 @@ public class WikiEngine
             }
 
             return res;
-        }
-        catch( UnsupportedEncodingException e )
-        {
+        } catch( UnsupportedEncodingException e ) {
             log.fatal( "Unsupported encoding", e );
             return "";
         }
@@ -1293,14 +1196,10 @@ public class WikiEngine
      *  @return A decoded string.
      *  @see #encodeName(String)
      */
-    public String decodeName( String pagerequest )
-    {
-        try
-        {
+    public String decodeName( final String pagerequest ) {
+        try {
             return URLDecoder.decode( pagerequest, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
-        }
-        catch( UnsupportedEncodingException e )
-        {
+        } catch( UnsupportedEncodingException e ) {
             throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.", e);
         }
     }
