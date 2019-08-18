@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,14 +39,13 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
-
-import org.apache.log4j.Logger;
+import java.nio.charset.StandardCharsets;
 
 /**
  *  Generic utilities related to file and stream handling.
  */
-public final class FileUtil
-{
+public final class FileUtil {
+
     /** Size of the buffer used when copying large chunks of data. */
     private static final int      BUFFER_SIZE = 4096;
     private static final Logger   log         = Logger.getLogger(FileUtil.class);
@@ -66,52 +67,31 @@ public final class FileUtil
      *  @throws IOException If the content creation failed.
      *  @see java.io.File#createTempFile(String,String,File)
      */
-    public static File newTmpFile( String content, String encoding )
-        throws IOException
-    {
-        Writer out = null;
-        Reader in  = null;
-        File   f   = null;
-
-        try
-        {
-            f = File.createTempFile( "jspwiki", null );
-
-            in = new StringReader( content );
-
-            out = new OutputStreamWriter( new FileOutputStream( f ),
-                                          encoding );
-
+    public static File newTmpFile( final String content, final Charset encoding ) throws IOException {
+        final File f = File.createTempFile( "jspwiki", null );
+        try( final Reader in = new StringReader( content );
+             final Writer out = new OutputStreamWriter( new FileOutputStream( f ), encoding ) ) {
             copyContents( in, out );
-        }
-        finally
-        {
-            if( in  != null ) in.close();
-            if( out != null ) out.close();
         }
 
         return f;
     }
 
     /**
-     *  Creates a new temporary file using the default encoding
-     *  of ISO-8859-1 (Latin1).
+     *  Creates a new temporary file using the default encoding of ISO-8859-1 (Latin1).
      *
      *  @param content The content to put into the file.
      *  @throws IOException If writing was unsuccessful.
      *  @return A handle to the newly created file.
-     *  @see #newTmpFile( String, String )
+     *  @see #newTmpFile( String, Charset )
      *  @see java.io.File#createTempFile(String,String,File)
      */
-    public static File newTmpFile( String content )
-        throws IOException
-    {
-        return newTmpFile( content, "ISO-8859-1" );
+    public static File newTmpFile( final String content ) throws IOException {
+        return newTmpFile( content, StandardCharsets.ISO_8859_1 );
     }
 
     /**
-     *  Runs a simple command in given directory.
-     *  The environment is inherited from the parent process (e.g. the
+     *  Runs a simple command in given directory. The environment is inherited from the parent process (e.g. the
      *  one in which this Java VM runs).
      *
      *  @return Standard output from the command.
@@ -120,51 +100,32 @@ public final class FileUtil
      *  @throws IOException If the command failed
      *  @throws InterruptedException If the command was halted
      */
-    public static String runSimpleCommand( String command, String directory )
-        throws IOException,
-               InterruptedException
-    {
-    	StringBuilder result = new StringBuilder();
+    public static String runSimpleCommand( final String command, final String directory ) throws IOException, InterruptedException {
+        log.info( "Running simple command " + command + " in " + directory );
+        final StringBuilder result = new StringBuilder();
+        final Process process = Runtime.getRuntime().exec( command, null, new File( directory ) );
 
-        log.info("Running simple command "+command+" in "+directory);
-
-        Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
-
-        BufferedReader stdout = null;
-        BufferedReader stderr = null;
-
-        try
-        {
-            stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
-            stderr = new BufferedReader( new InputStreamReader(process.getErrorStream()) );
-
+        try( final BufferedReader stdout = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+             final BufferedReader stderr = new BufferedReader( new InputStreamReader( process.getErrorStream() ) ) ) {
             String line;
 
-            while( (line = stdout.readLine()) != null )
-            {
+            while( (line = stdout.readLine()) != null ) {
                 result.append( line+"\n");
             }
 
-            StringBuilder error = new StringBuilder();
-            while( (line = stderr.readLine()) != null )
-            {
+            final StringBuilder error = new StringBuilder();
+            while( (line = stderr.readLine()) != null ) {
                 error.append( line+"\n");
             }
 
-            if( error.length() > 0 )
-            {
+            if( error.length() > 0 ) {
                 log.error("Command failed, error stream is: "+error);
             }
 
             process.waitFor();
-
-        }
-        finally
-        {
+        } finally {
             // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
             process.getInputStream().close();
-            if( stdout != null ) stdout.close();
-            if( stderr != null ) stderr.close();
         }
 
         return result.toString();
@@ -172,46 +133,36 @@ public final class FileUtil
 
 
     /**
-     *  Just copies all characters from <I>in</I> to <I>out</I>.  The copying
-     *  is performed using a buffer of bytes.
+     *  Just copies all characters from <I>in</I> to <I>out</I>.  The copying is performed using a buffer of bytes.
      *
      *  @since 1.5.8
      *  @param in The reader to copy from
      *  @param out The reader to copy to
      *  @throws IOException If reading or writing failed.
      */
-    public static void copyContents( Reader in, Writer out )
-        throws IOException
-    {
+    public static void copyContents( final Reader in, final Writer out ) throws IOException {
         char[] buf = new char[BUFFER_SIZE];
-        int bytesRead = 0;
-
-        while ((bytesRead = in.read(buf)) > 0)
-        {
-            out.write(buf, 0, bytesRead);
+        int bytesRead;
+        while( ( bytesRead = in.read( buf ) ) > 0 ) {
+            out.write( buf, 0, bytesRead );
         }
 
         out.flush();
     }
 
     /**
-     *  Just copies all bytes from <I>in</I> to <I>out</I>.  The copying is
-     *  performed using a buffer of bytes.
+     *  Just copies all bytes from <I>in</I> to <I>out</I>.  The copying is performed using a buffer of bytes.
      *
      *  @since 1.9.31
      *  @param in The inputstream to copy from
      *  @param out The outputstream to copy to
      *  @throws IOException In case reading or writing fails.
      */
-    public static void copyContents( InputStream in, OutputStream out )
-        throws IOException
-    {
+    public static void copyContents( final InputStream in, final OutputStream out ) throws IOException {
         byte[] buf = new byte[BUFFER_SIZE];
-        int bytesRead = 0;
-
-        while ((bytesRead = in.read(buf)) > 0)
-        {
-            out.write(buf, 0, bytesRead);
+        int bytesRead;
+        while( ( bytesRead = in.read( buf ) ) > 0 ) {
+            out.write( buf, 0, bytesRead );
         }
 
         out.flush();
