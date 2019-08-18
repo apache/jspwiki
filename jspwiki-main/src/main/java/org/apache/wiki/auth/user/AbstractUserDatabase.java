@@ -18,14 +18,7 @@
  */
 package org.apache.wiki.auth.user;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.UUID;
-
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -34,6 +27,14 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.ByteUtils;
 import org.apache.wiki.util.CryptoUtil;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Abstract UserDatabase class that provides convenience methods for finding
@@ -260,8 +261,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param db The database for which the UID should be generated.
      * @return A random, unique UID.
      */
-    protected static String generateUid( UserDatabase db )
-    {
+    protected static String generateUid( UserDatabase db ) {
         // Keep generating UUIDs until we find one that doesn't collide
         String uid = null;
         boolean collision;
@@ -290,19 +290,13 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param text the text to hash
      * @return the result hash
      */
-    protected String getHash( String text )
-    {
-        String hash = null;
-        try
-        {
-            hash = CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8) );
-        }
-        catch( NoSuchAlgorithmException e )
-        {
+    protected String getHash( final String text ) {
+        try {
+            return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8 ) );
+        } catch( final NoSuchAlgorithmException e ) {
             log.error( "Error creating salted SHA password hash:" + e.getMessage() );
-            hash = text;
+            return text;
         }
-        return hash;
     }
 
     /**
@@ -312,22 +306,16 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @return the result hash
      * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
      */
-    protected String getOldHash( String text )
-    {
-        String hash = null;
-        try
-        {
-            MessageDigest md = MessageDigest.getInstance( "SHA" );
-            md.update( text.getBytes(StandardCharsets.UTF_8) );
+    protected String getOldHash( final String text ) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance( "SHA" );
+            md.update( text.getBytes( StandardCharsets.UTF_8 ) );
             byte[] digestedBytes = md.digest();
-            hash = ByteUtils.bytes2hex( digestedBytes );
-        }
-        catch( NoSuchAlgorithmException e )
-        {
+            return ByteUtils.bytes2hex( digestedBytes );
+        } catch( final NoSuchAlgorithmException e ) {
             log.error( "Error creating SHA password hash:" + e.getMessage() );
-            hash = text;
+            return text;
         }
-        return hash;
     }
 
     /**
@@ -335,19 +323,11 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param value the string to parse
      * @return the value parsed
      */
-    protected long parseLong( String value )
-    {
-        if ( value == null || value.length() == 0 )
-        {
-            return 0;
-        }
-        try
-        {
-            return Long.parseLong( value );
-        }
-        catch ( NumberFormatException e )
-        {
-            return 0;
+    protected long parseLong( final String value ) {
+        if( NumberUtils.isParsable( value ) ) {
+            return Long.valueOf( value );
+        } else {
+            return 0L;
         }
     }
 
