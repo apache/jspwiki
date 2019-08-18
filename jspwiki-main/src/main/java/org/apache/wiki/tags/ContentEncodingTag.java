@@ -18,30 +18,25 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.wiki.WikiEngine;
+
+import java.io.IOException;
 
 /**
  *  Returns the app name.
  *
  *  @since 2.0
  */
-public class ContentEncodingTag
-    extends WikiTagBase
-{
+public class ContentEncodingTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
 
     /**
      *  {@inheritDoc}
      */
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
         pageContext.getOut().print( engine.getContentEncoding() );
-
         return SKIP_BODY;
     }
 }

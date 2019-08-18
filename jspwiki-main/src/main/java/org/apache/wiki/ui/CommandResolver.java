@@ -18,14 +18,6 @@
  */
 package org.apache.wiki.ui;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
@@ -35,6 +27,13 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>Resolves special pages, JSPs and Commands on behalf of a
@@ -429,35 +428,26 @@ public final class CommandResolver
      * @param request the HTTP request
      * @return the resolved page name
      */
-    protected String extractPageFromParameter( String requestContext, HttpServletRequest request )
-    {
+    protected String extractPageFromParameter( final String requestContext, final HttpServletRequest request ) {
         String page;
 
         // Extract the page name from the URL directly
-        try
-        {
+        try {
             page = m_engine.getURLConstructor().parsePage( requestContext, request, m_engine.getContentEncoding() );
-            if ( page != null )
-            {
-                try
-                {
+            if ( page != null ) {
+                try {
                     // Look for singular/plural variants; if one
                     // not found, take the one the user supplied
-                    String finalPage = getFinalPageName( page );
-                    if ( finalPage != null )
-                    {
+                    final String finalPage = getFinalPageName( page );
+                    if ( finalPage != null ) {
                         page = finalPage;
                     }
-                }
-                catch( ProviderException e )
-                {
+                } catch( final ProviderException e ) {
                     // FIXME: Should not ignore!
                 }
                 return page;
             }
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             m_log.error( "Unable to create context", e );
             throw new InternalWikiException( "Big internal booboo, please check logs." , e);
         }

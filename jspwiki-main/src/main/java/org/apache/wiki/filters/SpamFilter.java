@@ -18,25 +18,7 @@
  */
 package org.apache.wiki.filters;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
-
+import net.sf.akismet.Akismet;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -69,7 +51,24 @@ import org.suigeneris.jrcs.diff.delta.DeleteDelta;
 import org.suigeneris.jrcs.diff.delta.Delta;
 import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
-import net.sf.akismet.Akismet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Random;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 
 /**
@@ -1084,12 +1083,11 @@ public class SpamFilter extends BasicPageFilter {
      * @param pageContext The PageContext
      * @return A HTML string which contains input fields for the SpamFilter.
      */
-    public static final String insertInputFields( PageContext pageContext ) {
-        WikiContext ctx = WikiContext.findContext( pageContext );
-        WikiEngine engine = ctx.getEngine();
-
-        StringBuilder sb = new StringBuilder();
-        if( engine.getContentEncoding().equals( "UTF-8" ) ) {
+    public static final String insertInputFields( final PageContext pageContext ) {
+        final WikiContext ctx = WikiContext.findContext( pageContext );
+        final WikiEngine engine = ctx.getEngine();
+        final StringBuilder sb = new StringBuilder();
+        if( engine.getContentEncoding().equals( StandardCharsets.UTF_8 ) ) {
             sb.append( "<input name='encodingcheck' type='hidden' value='\u3041' />\n" );
         }
 

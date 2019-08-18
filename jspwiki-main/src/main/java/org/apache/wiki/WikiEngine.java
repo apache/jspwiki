@@ -82,6 +82,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -877,31 +878,26 @@ public class WikiEngine
             return "";
         }
 
-        try {
-            String res = request.getQueryString();
-            if( res != null ) {
-                res = new String( res.getBytes( StandardCharsets.ISO_8859_1 ), getContentEncoding() );
+        String res = request.getQueryString();
+        if( res != null ) {
+            res = new String( res.getBytes( StandardCharsets.ISO_8859_1 ), getContentEncoding() );
 
-                //
-                // Ensure that the 'page=xyz' attribute is removed
-                // FIXME: Is it really the mandate of this routine to do that?
-                //
-                final int pos1 = res.indexOf("page=");
-                if( pos1 >= 0 ) {
-                    String tmpRes = res.substring( 0, pos1 );
-                    final int pos2 = res.indexOf( "&",pos1 ) + 1;
-                    if ( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
-                        tmpRes = tmpRes + res.substring(pos2);
-                    }
-                    res = tmpRes;
+            //
+            // Ensure that the 'page=xyz' attribute is removed
+            // FIXME: Is it really the mandate of this routine to do that?
+            //
+            final int pos1 = res.indexOf("page=");
+            if( pos1 >= 0 ) {
+                String tmpRes = res.substring( 0, pos1 );
+                final int pos2 = res.indexOf( "&",pos1 ) + 1;
+                if ( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
+                    tmpRes = tmpRes + res.substring(pos2);
                 }
+                res = tmpRes;
             }
-
-            return res;
-        } catch( UnsupportedEncodingException e ) {
-            log.fatal( "Unsupported encoding", e );
-            return "";
         }
+
+        return res;
     }
 
     /**
@@ -1211,12 +1207,11 @@ public class WikiEngine
      *  @since 1.5.3
      *  @return The content encoding (either UTF-8 or ISO-8859-1).
      */
-    public String getContentEncoding()
-    {
-        if( m_useUTF8 )
-            return "UTF-8";
-
-        return "ISO-8859-1";
+    public Charset getContentEncoding() {
+        if( m_useUTF8 ) {
+            return StandardCharsets.UTF_8;
+        }
+        return StandardCharsets.ISO_8859_1;
     }
 
     /**

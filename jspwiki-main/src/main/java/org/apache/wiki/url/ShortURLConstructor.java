@@ -18,17 +18,15 @@
  */
 package org.apache.wiki.url;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
+import java.util.Properties;
 
 
 /**
@@ -200,16 +198,10 @@ public class ShortURLConstructor
     /**
      * {@inheritDoc}
      */
-    public String parsePage( String context,
-                             HttpServletRequest request,
-                             String encoding )
-        throws UnsupportedEncodingException
-    {
-        String pagereq = request.getParameter( "page" );
-
-        if( pagereq == null )
-        {
-            pagereq = parsePageFromURL( request, encoding );
+    public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
+        final String pagereq = request.getParameter( "page" );
+        if( pagereq == null ) {
+            return parsePageFromURL( request, encoding );
         }
 
         return pagereq;

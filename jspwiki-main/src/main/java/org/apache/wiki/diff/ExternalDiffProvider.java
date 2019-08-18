@@ -19,18 +19,20 @@
 
 package org.apache.wiki.diff;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Properties;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 /**
  * This DiffProvider allows external command line tools to be used to generate
@@ -47,7 +49,7 @@ public class ExternalDiffProvider implements DiffProvider
     public static final String PROP_DIFFCOMMAND    = "jspwiki.diffCommand";
 
     private String m_diffCommand = null;
-    private String m_encoding;
+    private Charset m_encoding;
 
     private static final char DIFF_ADDED_SYMBOL    = '+';
     private static final char DIFF_REMOVED_SYMBOL  = '-';
@@ -118,7 +120,7 @@ public class ExternalDiffProvider implements DiffProvider
             String output = FileUtil.runSimpleCommand(cmd, f1.getParent());
 
             // FIXME: Should this rely on the system default encoding?
-            String rawWikiDiff = new String(output.getBytes("ISO-8859-1"), m_encoding);
+            String rawWikiDiff = new String( output.getBytes( StandardCharsets.ISO_8859_1 ), m_encoding );
 
             String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
 
@@ -127,21 +129,17 @@ public class ExternalDiffProvider implements DiffProvider
             else
                 diff = htmlWikiDiff;
 
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             log.error("Failed to do file diff", e);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             log.error("Interrupted", e);
-        }
-        finally
-        {
-            if( f1 != null )
+        } finally {
+            if( f1 != null ) {
                 f1.delete();
-            if( f2 != null )
+            }
+            if( f2 != null ) {
                 f2.delete();
+            }
         }
 
         return diff;
@@ -154,10 +152,10 @@ public class ExternalDiffProvider implements DiffProvider
      * green, those starting with - reddish (hm, got to think of color blindness
      * here...).
      */
-    static String colorizeDiff(String diffText) throws IOException
-    {
-        if( diffText == null )
+    static String colorizeDiff(String diffText) throws IOException {
+        if( diffText == null ) {
             return "Invalid diff - probably something wrong with server setup.";
+        }
 
         String line = null;
         String start = null;

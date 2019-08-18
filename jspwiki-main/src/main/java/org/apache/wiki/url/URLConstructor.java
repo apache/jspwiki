@@ -18,11 +18,12 @@
  */
 package org.apache.wiki.url;
 
-import java.util.Properties;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wiki.WikiEngine;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Properties;
 
 
 /**
@@ -67,7 +68,7 @@ public interface URLConstructor {
      *  @return This method must return the name of the resource.
      *  @throws IOException If parsing failes
      */
-    String parsePage( String context, HttpServletRequest request, String encoding ) throws IOException;
+    String parsePage( String context, HttpServletRequest request, Charset encoding ) throws IOException;
 
     /**
      *  Returns information which JSP page should continue handling this type of request.

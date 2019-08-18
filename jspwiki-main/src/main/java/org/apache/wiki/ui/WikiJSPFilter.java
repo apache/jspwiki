@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 
 /**
@@ -102,8 +103,8 @@ public class WikiJSPFilter extends WikiServletFilter
             responseWrapper = new JSPWikiServletResponseWrapper( (HttpServletResponse)response, m_wiki_encoding, useEncoding);
 
             // fire PAGE_REQUESTED event
-            String pagename = DefaultURLConstructor.parsePageFromURL(
-                    (HttpServletRequest)request, response.getCharacterEncoding() );
+            String pagename = DefaultURLConstructor.parsePageFromURL( ( HttpServletRequest )request,
+                                                                      Charset.forName( response.getCharacterEncoding() ) );
             fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
 
             super.doFilter( request, responseWrapper, chain );

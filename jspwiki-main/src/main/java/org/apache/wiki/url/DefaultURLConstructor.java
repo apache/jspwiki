@@ -26,7 +26,7 @@ import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
@@ -36,9 +36,8 @@ import java.util.Properties;
  *
  *  @since 2.2
  */
-public class DefaultURLConstructor
-    implements URLConstructor
-{
+public class DefaultURLConstructor implements URLConstructor {
+
     protected WikiEngine m_engine;
 
     /**
@@ -51,11 +50,8 @@ public class DefaultURLConstructor
      *
      * {@inheritDoc}
      */
-    public void initialize( WikiEngine engine,
-                            Properties properties )
-    {
+    public void initialize( final WikiEngine engine, final Properties properties ) {
         m_engine = engine;
-
         m_pathPrefix = engine.getBaseURL() + "/";
     }
 
@@ -76,11 +72,12 @@ public class DefaultURLConstructor
      *                 the setting in jspwiki.properties.
      * @return A replacement.
      */
-    protected final String doReplacement( String baseptrn, String name, boolean absolute )
-    {
+    protected final String doReplacement( String baseptrn, final String name, final boolean absolute ) {
         String baseurl = m_pathPrefix;
 
-        if( absolute ) baseurl = m_engine.getBaseURL() + "/";
+        if( absolute ) {
+            baseurl = m_engine.getBaseURL() + "/";
+        }
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );
@@ -97,10 +94,8 @@ public class DefaultURLConstructor
      *
      *  We also convert any %2F's back to slashes to make nicer-looking URLs.
      */
-    private String encodeURI( String uri )
-    {
+    private String encodeURI( String uri ) {
         uri = m_engine.encodeName(uri);
-
         uri = StringUtils.replace( uri, "+", "%20" );
         uri = StringUtils.replace( uri, "%2F", "/" );
 
@@ -114,17 +109,14 @@ public class DefaultURLConstructor
      * @return A pattern for replacement.
      * @throws IllegalArgumentException if the context cannot be found
      */
-    public static String getURLPattern( String context, String name )
-        throws IllegalArgumentException
-    {
-        if( context.equals(WikiContext.VIEW) && name == null)
-        {
+    public static String getURLPattern( final String context, final String name ) throws IllegalArgumentException {
+        if( context.equals(WikiContext.VIEW) && name == null) {
             // FIXME
             return "%uWiki.jsp";
         }
 
         // Find the action matching our pattern (could throw exception)
-        Command command = CommandResolver.findCommand( context );
+        final Command command = CommandResolver.findCommand( context );
 
         return command.getURLPattern();
     }
@@ -132,10 +124,7 @@ public class DefaultURLConstructor
     /**
      *  Constructs the actual URL based on the context.
      */
-    private String makeURL( String context,
-                            String name,
-                            boolean absolute )
-    {
+    private String makeURL( final String context, final String name, final boolean absolute ) {
         return doReplacement( getURLPattern(context,name), name, absolute );
     }
 
@@ -145,31 +134,19 @@ public class DefaultURLConstructor
      *
      *  {@inheritDoc}
      */
-    public String makeURL( String context,
-                           String name,
-                           boolean absolute,
-                           String parameters )
-    {
-        if( parameters != null && parameters.length() > 0 )
-        {
-            if( context.equals(WikiContext.ATTACH) )
-            {
+    public String makeURL( final String context, final String name, final boolean absolute, String parameters ) {
+        if( parameters != null && parameters.length() > 0 ) {
+            if( context.equals(WikiContext.ATTACH) ) {
                 parameters = "?"+parameters;
-            }
-            else if( context.equals(WikiContext.NONE) )
-            {
+            } else if( context.equals(WikiContext.NONE) ) {
                 parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
-            }
-            else
-            {
+            } else {
                 parameters = "&amp;"+parameters;
             }
-        }
-        else
-        {
+        } else {
             parameters = "";
         }
-        return makeURL( context, name, absolute )+parameters;
+        return makeURL( context, name, absolute ) + parameters;
     }
 
     /**
@@ -178,57 +155,15 @@ public class DefaultURLConstructor
      *
      *  {@inheritDoc}
      */
-    public String parsePage( String context,
-                             HttpServletRequest request,
-                             String encoding )
-        throws UnsupportedEncodingException
-    {
+    public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
         String pagereq = request.getParameter( "page" );
-
-        if( context.equals(WikiContext.ATTACH) )
-        {
+        if( context.equals(WikiContext.ATTACH) ) {
             pagereq = parsePageFromURL( request, encoding );
         }
 
         return pagereq;
     }
 
-    /**
-     *  There's a bug in Tomcat until 5.5.16 at least: The "+" sign is not
-     *  properly decoded by the servlet container, and therefore request.getPathInfo()
-     *  will return faulty results for paths which contains + signs to signify spaces.
-     *  <p>
-     *  This method provides a workaround by simply parsing the getRequestURI(), which
-     *  is returned from the servlet container undedecoded.
-     *  <p>
-     *  Please see <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=39278">Tomcat Bug 39278</a>
-     *  for more information.
-     *
-     *  @param request A HTTP servlet request
-     *  @param encoding The used encoding
-     *  @return a String, decoded by JSPWiki, specifying extra path information that comes
-     *          after the servlet path but before the query string in the request URL;
-     *          or null if the URL does not have any extra path information
-     *  @throws UnsupportedEncodingException
-     */
-    /*
-    private static String getPathInfo( HttpServletRequest request, String encoding )
-        throws UnsupportedEncodingException
-    {
-        String c = request.getContextPath(); // Undecoded
-        String s = request.getServletPath(); // Decoded
-        String u = request.getRequestURI();  // Undecoded
-
-        c = URLDecoder.decode( c, encoding );
-        u = URLDecoder.decode( u, encoding );
-
-        String pi = u.substring( s.length()+c.length() );
-
-        if( pi.length() == 0 ) pi = null;
-
-        return pi;
-    }
-    */
     /**
      *  Takes the name of the page from the request URI.
      *  The initial slash is also removed.  If there is no page,
@@ -238,29 +173,18 @@ public class DefaultURLConstructor
      *  @param encoding The encoding to use
      *
      *  @return a parsed page name, or null, if it cannot be found
-     *
-     *  @throws UnsupportedEncodingException If the encoding is not recognized.
      */
-    public static String parsePageFromURL( HttpServletRequest request,
-                                           String encoding )
-        throws UnsupportedEncodingException
-    {
-        String name = request.getPathInfo();
-
-        if( name == null || name.length() <= 1 )
-        {
+    public static String parsePageFromURL( final HttpServletRequest request, final Charset encoding ) {
+        final String name = request.getPathInfo();
+        if( name == null || name.length() <= 1 ) {
             return null;
-        }
-        else if( name.charAt(0) == '/' )
-        {
-            name = name.substring(1);
+        } else if( name.charAt(0) == '/' ) {
+            return name.substring(1);
         }
 
         //
-        //  This is required, because by default all URLs are handled
-        //  as Latin1, even if they are really UTF-8.
+        //  This is required, because by default all URLs are handled as Latin1, even if they are really UTF-8.
         //
-
         // name = TextUtil.urlDecode( name, encoding );
 
         return name;
@@ -271,11 +195,10 @@ public class DefaultURLConstructor
      *  This method is not needed for the DefaultURLConstructor.
      *
      * @param request The HTTP Request that was used to end up in this page.
-     * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name,
-     *         JSPWiki will figure out the page.
+     * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name, JSPWiki will figure out the page.
      */
-    public String getForwardPage( HttpServletRequest request )
-    {
+    public String getForwardPage( final HttpServletRequest request ) {
         return "Wiki.jsp";
     }
+
 }

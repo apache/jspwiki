@@ -365,14 +365,12 @@ public class VariableManager
             return Release.getVersionString();
         }
 
-        public String getEncoding()
-        {
-            return m_context.getEngine().getContentEncoding();
+        public String getEncoding() {
+            return m_context.getEngine().getContentEncoding().displayName();
         }
 
-        public String getTotalpages()
-        {
-            return Integer.toString(m_context.getEngine().getPageCount());
+        public String getTotalpages() {
+            return Integer.toString( m_context.getEngine().getPageCount() );
         }
 
         public String getPageprovider()
@@ -385,16 +383,13 @@ public class VariableManager
             return m_context.getEngine().getCurrentProviderInfo();
         }
 
-        public String getAttachmentprovider()
-        {
-            WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
+        public String getAttachmentprovider() {
+            final WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
             return (p != null) ? p.getClass().getName() : "-";
         }
 
-        public String getAttachmentproviderdescription()
-        {
-            WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
-
+        public String getAttachmentproviderdescription() {
+            final WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
             return (p != null) ? p.getProviderInfo() : "-";
         }
 

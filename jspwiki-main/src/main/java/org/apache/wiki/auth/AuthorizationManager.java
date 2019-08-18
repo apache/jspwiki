@@ -453,8 +453,7 @@ public class AuthorizationManager {
      * @param properties the set of properties used to initialize the wiki engine
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
-    public void initialize( WikiEngine engine, Properties properties ) throws WikiException
-    {
+    public void initialize( final WikiEngine engine, final Properties properties ) throws WikiException {
         m_engine = engine;
 
         //
@@ -464,32 +463,26 @@ public class AuthorizationManager {
         m_authorizer.initialize( engine, properties );
 
         // Initialize local security policy
-        try
-        {
-            String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
-            URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
+        try {
+            final String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
+            final URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
 
-            if (policyURL != null)
-            {
-                File policyFile = new File( policyURL.toURI().getPath() );
+            if (policyURL != null) {
+                final File policyFile = new File( policyURL.toURI().getPath() );
                 log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
-                m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
+                m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding().displayName() );
                 m_localPolicy.refresh();
                 log.info( "Initialized default security policy: " + policyFile.getAbsolutePath() );
-            }
-            else
-            {
-                String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " +
-                            "Please ensure that the jspwiki.policy file exists in the default location. " +
-                		    "This file should exist regardless of the existance of a global policy file. " +
-                            "The global policy file is identified by the java.security.policy variable. ";
-                WikiSecurityException wse = new WikiSecurityException( sb );
+            } else {
+                final String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " +
+                                  "Please ensure that the jspwiki.policy file exists in the default location. " +
+                		          "This file should exist regardless of the existance of a global policy file. " +
+                                  "The global policy file is identified by the java.security.policy variable. ";
+                final WikiSecurityException wse = new WikiSecurityException( sb );
                 log.fatal( sb, wse );
                 throw wse;
             }
-        }
-        catch ( Exception e)
-        {
+        } catch ( final Exception e) {
             log.error("Could not initialize local security policy: " + e.getMessage() );
             throw new WikiException( "Could not initialize local security policy: " + e.getMessage(), e );
         }
@@ -504,34 +497,24 @@ public class AuthorizationManager {
      * @return a Authorizer used to get page authorization information
      * @throws WikiException
      */
-    private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
-    {
-        String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
-        return (Authorizer) locateImplementation( authClassName );
+    private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException {
+        final String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
+        return ( Authorizer )locateImplementation( authClassName );
     }
 
-    private Object locateImplementation( String clazz ) throws WikiException
-    {
-        if ( clazz != null )
-        {
-            try
-            {
-                Class<?> authClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", clazz );
+    private Object locateImplementation( final String clazz ) throws WikiException {
+        if ( clazz != null ) {
+            try {
+                Class< ? > authClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", clazz );
                 Object impl = authClass.newInstance();
                 return impl;
-            }
-            catch( ClassNotFoundException e )
-            {
+            } catch( ClassNotFoundException e ) {
                 log.fatal( "Authorizer " + clazz + " cannot be found", e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be found", e );
-            }
-            catch( InstantiationException e )
-            {
+            } catch( InstantiationException e ) {
                 log.fatal( "Authorizer " + clazz + " cannot be created", e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be created", e );
-            }
-            catch( IllegalAccessException e )
-            {
+            } catch( IllegalAccessException e ) {
                 log.fatal( "You are not allowed to access this authorizer class", e );
                 throw new WikiException( "You are not allowed to access this authorizer class", e );
             }

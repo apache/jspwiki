@@ -121,8 +121,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException if no registered servlet can be found
      */
-    private void performAction(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    private void performAction( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
         final String path = req.getRequestURI();
         final String servletName = getServletName(path);
         if (servletName!=null) {
@@ -130,8 +129,8 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
             if (container != null) {
                 final WikiAjaxServlet servlet = container.servlet;
                 if ( validatePermission(req,container) ) {
-                    req.setCharacterEncoding(m_engine.getContentEncoding());
-                    res.setCharacterEncoding(m_engine.getContentEncoding());
+                    req.setCharacterEncoding(m_engine.getContentEncoding().displayName());
+                    res.setCharacterEncoding(m_engine.getContentEncoding().displayName());
                     final String actionName = AjaxUtil.getNextPathPart(req.getRequestURI(), servlet.getServletMapping());
                     log.debug("actionName="+actionName);
                     final Object params = req.getParameter("params");
@@ -184,7 +183,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     /**
      * Find the {@link AjaxServletContainer} as registered in {@link #registerServlet}.
      *
-     * @param servletName the name of the servlet from {@link #getServletName}
+     * @param servletAlias the name of the servlet from {@link #getServletName}
      * @return The first servlet found, or null.
      */
     private AjaxServletContainer findServletContainer(String servletAlias) {

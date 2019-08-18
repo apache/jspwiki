@@ -18,22 +18,26 @@
  */
 package org.apache.wiki.ui;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.tags.WikiTagBase;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Filter that verifies that the {@link org.apache.wiki.WikiEngine} is running, and
@@ -129,10 +133,10 @@ public class WikiServletFilter implements Filter
         }   
         
         // If we haven't done so, wrap the request
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletRequest httpRequest = ( HttpServletRequest )request;
         
         // Set the character encoding
-        httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
+        httpRequest.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
         
         if ( !isWrapped( request ) )
         {
