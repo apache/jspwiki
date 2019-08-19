@@ -37,31 +37,12 @@ public class Editor {
         m_editorManager = wikiContext.getEngine().getEditorManager();
     }
 
-    public String getName()
-    {
+    public String getName() {
         return m_editorName;
     }
 
-    // FIXME: Fails, if the editoriterator is on a non-editor page.
-    /** @deprecated */
-    public String getURL()
-    {
-        final String uri = m_wikiContext.getHttpRequest().getRequestURI();
-        String para = m_wikiContext.getHttpRequest().getQueryString();
-
-        // if para already contains editor parameter, replace instead of append it
-        // FIXME: Should cut out parameter instead of simple setting strin to null, maybe
-        // in futur releases it may change and theres the danger that trailing parameters get lost
-        final int idx = para.indexOf( EditorManager.PARA_EDITOR + "=" );
-        if( idx >= 0 ) {
-            para = para.substring( 0, idx - 1 );
-        }
-
-        return uri + "?" + para + "&amp;" + EditorManager.PARA_EDITOR + "=" + m_editorName;
-    }
-
     /**
-     *  Convinience method which returns XHTML for an option element.
+     *  Convenience method which returns XHTML for an option element.
      * @return "selected='selected'", if this editor is selected.
      */
     public String isSelected( )
@@ -75,15 +56,15 @@ public class Editor {
     }
 
     public String isSelected( final String ifSelected, final String ifNotSelected ) {
-        if ( m_editorName.equals(m_editorManager.getEditorName(m_wikiContext) ) )
-        {
+        if( m_editorName.equals( m_editorManager.getEditorName( m_wikiContext ) ) ) {
             return ifSelected;
         }
         return ifNotSelected;
     }
 
-    public String toString()
-    {
+    @Override
+    public String toString() {
         return m_editorName;
     }
+    
 }
