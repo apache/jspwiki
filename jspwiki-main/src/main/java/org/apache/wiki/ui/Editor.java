@@ -66,5 +66,5 @@ public class Editor {
     public String toString() {
         return m_editorName;
     }
-    
+
 }

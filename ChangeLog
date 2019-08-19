@@ -1,3 +1,12 @@
+2019-08-19  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M5-git-10
+
+       * Removed @Deprecated code. A complete analysis of what have changed will be available at
+         http://jspwiki.apache.org/japicmp/index.html once 2.11.0.M5 gets released
+
+       * [INFRA-18845]: switch Sonar instance to sonarcloud.io
+
 2019-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M5-git-09
