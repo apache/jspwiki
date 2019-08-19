@@ -37,7 +37,7 @@ try {
                 git url: buildRepo, poll: true
                 withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
                     withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
-                        def sonarOptions = '-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io' // sonar.login read from SONAR_TOKEN env var
+                        def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                         echo 'Will use SonarQube instance at https://sonarcloud.io'
                         sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts sonar:sonar -up $sonarOptions"
                     }
