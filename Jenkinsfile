@@ -36,9 +36,10 @@ try {
             dir( build ) {
                 git url: buildRepo, poll: true
                 withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
-                    withSonarQubeEnv( 'ASF Sonar Analysis' ) {
-                        echo "Will use SonarQube instance at $SONAR_HOST_URL"
-                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts $SONAR_MAVEN_GOAL -up"
+                    withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
+                        def sonarOptions = '-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io' // sonar.login read from SONAR_TOKEN env var
+                        echo 'Will use SonarQube instance at https://sonarcloud.io'
+                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pattach-additional-artifacts sonar:sonar -up $sonarOptions"
                     }
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
