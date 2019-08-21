@@ -18,8 +18,12 @@
  */
 package org.apache.wiki.auth.login;
 
-import java.io.*;
-import java.util.UUID;
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.TextUtil;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -27,13 +31,19 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.HttpUtil;
-import org.apache.wiki.util.TextUtil;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  *  Logs in an user based on a cookie stored in the user's computer.  The cookie
@@ -235,52 +245,24 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
      *  @param response The HttpServletResponse
      *  @param username The username for whom to create the cookie.
      */
-    // FIXME3.0: For 3.0, switch to using java.util.UUID so that we can
-    //           get rid of jug.jar
-    public static void setLoginCookie( WikiEngine engine, HttpServletResponse response, String username )
-    {
-        UUID uid = UUID.randomUUID();
-
-        int days = TextUtil.getIntegerProperty( engine.getWikiProperties(),
-                                                PROP_LOGIN_EXPIRY_DAYS,
-                                                DEFAULT_EXPIRY_DAYS );
-
-        Cookie userId = new Cookie( LOGIN_COOKIE_NAME, uid.toString() );
+    public static void setLoginCookie( final WikiEngine engine, final HttpServletResponse response, final String username ) {
+        final UUID uid = UUID.randomUUID();
+        final int days = TextUtil.getIntegerProperty( engine.getWikiProperties(), PROP_LOGIN_EXPIRY_DAYS, DEFAULT_EXPIRY_DAYS );
+        final Cookie userId = new Cookie( LOGIN_COOKIE_NAME, uid.toString() );
         userId.setMaxAge( days * 24 * 60 * 60 );
         response.addCookie( userId );
 
-        File cf = getCookieFile( engine, uid.toString() );
-        Writer out = null;
-
-        try
-        {
-            //
+        final File cf = getCookieFile( engine, uid.toString() );
+        if( cf != null ) {
             //  Write the cookie content to the cookie store file.
-            //
-            out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(cf), "UTF-8" ) );
-            FileUtil.copyContents( new StringReader(username), out );
+            try( final Writer out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(cf), StandardCharsets.UTF_8 ) ) ) {
+                FileUtil.copyContents( new StringReader(username), out );
 
-            if( log.isDebugEnabled() )
-            {
-                log.debug( "Created login cookie for user "+username+" for "+days+" days" );
-            }
-        }
-        catch( IOException ex )
-        {
-            log.error("Unable to create cookie file to store user id: "+uid);
-        }
-        finally
-        {
-            if( out != null )
-            {
-                try
-                {
-                    out.close();
+                if( log.isDebugEnabled() ) {
+                    log.debug( "Created login cookie for user "+username+" for "+days+" days" );
                 }
-                catch( IOException ex )
-                {
-                    log.error("Unable to close stream");
-                }
+            } catch( final IOException ex ) {
+                log.error( "Unable to create cookie file to store user id: " + uid );
             }
         }
     }
