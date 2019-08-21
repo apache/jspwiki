@@ -66,18 +66,22 @@
 %>
 
 <!doctype html>
-<html lang="${prefs.Language}" name="top">
+<html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
+  <head>
+    <title><wiki:Variable var="applicationname" />: ERROR Page</title>
+  </head>
+
   <body>
    <h3>JSPWiki has detected an error</h3>
 
    <dl>
-      <dt><b>Error Message</b></dt>
+      <dt>Error Message</dt>
       <dd>
          <wiki:Messages div="error" />
       </dd>
-      <dt><b>Exception</b></dt>
+      <dt>Exception</dt>
       <dd><%=realcause.getClass().getName()%></dd>
-      <dt><b>Place where detected</b></dt>
+      <dt>Place where detected</dt>
       <dd><%=FileUtil.getThrowingMethod(realcause)%></dd>
    </dl>
    <p>

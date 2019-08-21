@@ -128,10 +128,10 @@ DOM structure AFTER:
     //list group: draw nested boxes around groups of list items
     &.list-group {
     	.collapse-btn {
-    		margin-right: @collapse-btn-base;
+    		//margin-right: @collapse-btn-base;
     		&::before {
-				top: -@collapse-btn-base;
-        		left: 0;
+				//top: -@collapse-btn-base;
+        		//left: 0;
 	    	}
     	}
     }
@@ -162,6 +162,7 @@ DOM structure AFTER:
 (end)
 
 */
+div.list-group,
 div[class^=collapsebox] {
     margin-bottom: @line-height-computed;  //copied from contextual boxes from bootstrap
 

@@ -95,7 +95,7 @@ Snipe.Commands = new Class({
             dlg ? dlg.toggle() : self.action( cmd );
 
             // input fields (eg checkboxes) keep the default behaviour; other click events are disabled
-            if( !this.match("input") ){ event.stop(); }
+            if( !this.matches("input") ){ event.stop(); }
 
 
         });
@@ -189,7 +189,7 @@ Snipe.Commands = new Class({
         //console.log("Commands.action ", command, " value:", value, " btn=", button, " dlg=", dialog);
         //if( button ) button = document.id( button);
 
-        if( button && button.match(".disabled") ){
+        if( button && button.matches(".disabled") ){
 
             //nothing to be done here
 
@@ -230,7 +230,7 @@ Snipe.Commands = new Class({
     */
     createDialog: function( command ){
 
-        var dialog = Function.from( this.dialogs[command] )();
+        var dialog = $.toFunction( this.dialogs[command] )();
 
         //console.log("Snipe.Commands: createDialog() " + command + " ",dialog );
 

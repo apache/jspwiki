@@ -47,7 +47,7 @@
 
 <body class="context-<wiki:Variable var='requestcontext' default='' />">
 
-<div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation} fixed-header">
+<div class="container${prefs.Layout=='fixed' ? ' ' : '-fluid ' } ${prefs.Orientation} fixed-header">
 
   <wiki:Include page="Header.jsp" />
 

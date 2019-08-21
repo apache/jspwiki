@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
@@ -27,6 +27,7 @@
 <%@ page import="org.apache.commons.lang3.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
@@ -68,7 +69,8 @@
     // Set the content type and include the response content
     response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
 %>
-<html>
+<!doctype html>
+<html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
 
 <head>
   <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
@@ -88,16 +90,16 @@
           return false;
        }
     }
-    
+
     function i18nAsirra() {
        document.getElementById("asirra_InstructionsTextId").innerHTML = "<fmt:message key="captcha.asirra.please.select" />";
-	   for ( var i = 0; i < 12; i++) 
+	   for ( var i = 0; i < 12; i++)
        {
           document.getElementById("asirra_AdoptMeDiv" + i).getElementsByTagName("a")[0].innerHTML= '<font size="-1">' + '<fmt:message key="captcha.asirra.adopt.me" />' + '</font>' ;
        }
        document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[0].title="<fmt:message key="captcha.asirra.a.get.challenge" />";
        document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[1].title="<fmt:message key="captcha.asirra.a.whatsthis" />";
-       document.getElementById("mainForm").style.display="block"; // show form when i18n is done 
+       document.getElementById("mainForm").style.display="block"; // show form when i18n is done
     }
    </script>
 </head>

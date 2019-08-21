@@ -45,7 +45,7 @@
 
 <body class="context-<wiki:Variable var='requestcontext' />" >
 
-<div class="container${prefs.Layout=='fluid' ? '-fluid' : ''} ${prefs.Orientation}">
+<div class="container${prefs.Layout=='fixed' ? ' ' : '-fluid ' } ${prefs.Orientation}">
 
   <wiki:Include page="Header.jsp" />
   <div class="content" data-toggle="li#menu,.sidebar>.close" >

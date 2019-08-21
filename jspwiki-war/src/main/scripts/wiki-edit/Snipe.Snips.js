@@ -56,7 +56,7 @@ Snipe.Snips = new Class({
 
         for( cmd in snips ){
 
-            snip = Function.from( snips[cmd] )( workarea, cmd );
+            snip = $.toFunction( snips[cmd] )( workarea, cmd );
 
             // short format of snip
             if( typeOf(snip) == "string" ){ snip = { snippet:snip }; }
@@ -169,7 +169,7 @@ Snipe.Snips = new Class({
 
                 } else {
 
-                    result = Function.from(suggest)(workarea, caret, fromStart);
+                    result = $.toFunction(suggest)(workarea, caret, fromStart);
 
                 }
 

@@ -41,7 +41,7 @@ ol:last-child {
 /*
 Headings:
     The headings h2, h3 and h4 get a {{clear:left}} so they can appear
-    side by side with .commentboxes.
+    side by side with floated-right commentboxes.
 
     The {{.editsection}} and {{.hashlink}} define the styling of the
     [[Edit] and # hash-hover link on each heading.
@@ -147,7 +147,7 @@ br { clear: both; }
 }
 
 //dl { .dl-horizontal; }
-dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
+dl dd { margin-left: @list-item-indent; }   //reset flat style of bootstrap/type
 
 //copied from bootstrap scaffolding
 .hr {
@@ -377,6 +377,7 @@ pre {
 //inline code: jspwiki uses <tt> ; styles copied from bootstrap/code.less
 tt {
     padding: 2px 4px;
+    position: relative;
     color: @code-color;
     background-color: @code-bg;
     white-space: nowrap;
@@ -418,9 +419,9 @@ ul[class*=list-] > li > [class*="bg-"]:only-child {
 
 
 
-.indent-1 { margin-left: 40px !important; }
-.indent-2 { margin-left: 80px !important; }
-.indent-3 { margin-left: 120px !important; }
+.indent-1 { margin-left:   @list-item-indent !important; }
+.indent-2 { margin-left: 2*@list-item-indent !important; }
+.indent-3 { margin-left: 3*@list-item-indent !important; }
 
 /*
 Links:

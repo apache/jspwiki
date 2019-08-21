@@ -34,4 +34,3 @@ $.toFunction = function(o){
     return o instanceof Function ? o : function(){ return o; };
 
 }
-

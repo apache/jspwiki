@@ -138,23 +138,22 @@ Element.implement({
 
                 //on touch devices, a starttouch also generates a mouseenter on :hover links
                 //however, there is no mouseleave when clicking outside the hover menu
-                //so temporary add a touchend handler on the document to help close the menu
+                //so we need to temporary add a touchend handler on the document to help close the menu
                 document.addEvent("touchend", toggleMenu);
                 toggle.addClass("open");
                 if( onOpen ){ onOpen(); }
 
             } else {
 
-                //close the menu if toggle receives the event or a (touchend-)event is received outside the menu
+                //close the menu if toggle receives the event
+                //or a (touchend-)event is received outside the menu
                 if( (event.target != toggle) && toggle.contains(event.target) ){ return; }
 
                 toggle.removeClass("open");
                 document.removeEvent("touchend", toggleMenu);
 
             }
-            event.preventDefault;
-
-
+            event.preventDefault();
         }
 
         toggle = this.getParent( toggle );
@@ -244,7 +243,7 @@ Element.implement({
     Function onModal
         Open a modal dialog with ""message"".
 
-        Used on clickable elements (input, button, a.href) to get a
+        Used on certain clickable elements (input, button, a.href) to get a
         confirmation prior to executing the default behaviour of the CLICK.
 
     Example:
@@ -273,8 +272,7 @@ Element.implement({
         function onClick(event){
             event.preventDefault();
             modal.openModal( function(){
-                //console.log(self);
-                self.removeEvent("click",onClick).click();
+                self.removeEvent("click", onClick).click();
             });
         }
 
@@ -290,20 +288,22 @@ Element.implement({
 
             modal.ifClass(!event, "active");
             document.body.ifClass(!event, "show-modal");
-            if( event && this.match(".btn-success") ){ callback(); }
+            if( event && this.matches(".btn-success") ){ callback(); }
 
+        }
+
+        if( !modal.getElement(".btn.btn-success") ){
+            //add buttons at the bottom of the modal dialog
+            modal.appendChild([
+                "div.modal-footer", [
+                    "button.btn.btn-success", { text: "dialog.confirm".localize() },
+                    "button.btn.btn-danger", { text: "dialog.cancel".localize() }
+                    ]
+                ].slick());
         }
 
         if( !modal.hasClass(init) ){
 
-            if( !modal.getElement("> .modal-footer") ){
-                modal.grab([
-                    "div.modal-footer", [
-                        "button.btn.btn-success", { text: "Confirm" },  //FIXME: i18n
-                        "button.btn.btn-danger", { text: "Cancel" }
-                        ]
-                    ].slick());
-            }
             //move it just before the backdrop element for easy css styling
             modal.inject( document.getBackdrop(), "before" )
                  .addClass( init )

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
@@ -27,8 +27,8 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 
-<% 
-  WikiContext c = WikiContext.findContext( pageContext );  
+<%
+  WikiContext c = WikiContext.findContext( pageContext );
   List history = c.getEngine().getVersionHistory(c.getPage().getName());
   pageContext.setAttribute( "history", history );
   pageContext.setAttribute( "diffprovider", c.getEngine().getVariable(c,"jspwiki.diffProvider"));
@@ -66,7 +66,7 @@
   </c:if>
 
   <div class="diffbody">
-    <wiki:InsertDiff><i><fmt:message key="diff.nodiff"/></i></wiki:InsertDiff> 
+    <wiki:InsertDiff><p></p><p class="warning"><fmt:message key="diff.nodiff"/></p></wiki:InsertDiff>
   </div>
 </div>
 </form>

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -30,13 +30,13 @@
     <fmt:param><wiki:EditLink><wiki:PageName /></wiki:EditLink></fmt:param>
   </fmt:message>
 </wiki:Tab>
- 
+
 <wiki:Tab id="conflictOther" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.modified")%>' >
-  <tt><%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%></tt>      
+  <pre><%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%></pre>
 </wiki:Tab>
- 
+
 <wiki:Tab id="conflictOwn" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.yourtext")%>' >
-  <tt><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></tt>
+  <pre><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></pre>
 </wiki:Tab>
 
 </wiki:TabbedSection>

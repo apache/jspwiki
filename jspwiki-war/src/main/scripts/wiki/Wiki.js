@@ -544,7 +544,6 @@ var Wiki = {
     Function: addEditLinks
         Add to each Section title (h2/h3/h4) a quick edit link.
         FFS: should better move server side
-        FFS: add section #hash to automatically go back to the section being edited
     */
     addEditLinks: function( url ){
 

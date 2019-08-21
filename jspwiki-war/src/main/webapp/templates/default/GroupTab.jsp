@@ -128,22 +128,18 @@
         group = groupMgr.getGroup( name );
         members = group.members();
         Arrays.sort( members, new PrincipalComparator() );
-
-        membersAsString = new StringBuffer();
-        for ( int i = 0; i < members.length; i++ )
-        {
-          membersAsString.append( members[i].getName().trim() );
-          if( i+1 < members.length ){ membersAsString.append( ", " ); }
-        }
-
+        pageContext.setAttribute("members", members);
     %>
     <c:set var="group" value="<%= group %>" />
-    <c:set var="members" value="<%= membersAsString %>" />
     <tr class="${param.group == group.name ? 'highlight' : ''}">
       <%--<td><wiki:Link jsp='Group.jsp'><wiki:Param name='group' value='${group.name}'/>${group.name}</wiki:Link></td>--%>
-      <td><c:if test="${group.name =='Admin'}"><span class="icon-unlock-alt"></span></c:if> ${group.name}</td>
-      <td>${members}</td>
-
+      <td><c:if test="${group.name =='Admin'}"><span class="icon-unlock-alt"></span> </c:if>${group.name}</td>
+      <td>
+        <c:forEach items="${members}" var="member" varStatus="iterator">
+          <c:if test="${iterator.index > 0}">, </c:if>
+          ${member.name}
+        </c:forEach>
+      </td>
       <td><fmt:formatDate value="${group.created}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
       <td>${group.creator}</td>
       <td><fmt:formatDate value="${group.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>

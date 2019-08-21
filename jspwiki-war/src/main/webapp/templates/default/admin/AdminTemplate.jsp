@@ -37,7 +37,7 @@
 <div id="page" >
 <h1>JSPWiki Administration</h1>
 <div class="information">Not all things can be configured here.  Some things need to be configured
-in your <tt>jspwiki.properties</tt> file.</div>
+in your <code>jspwiki.properties</code> file.</div>
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

@@ -90,6 +90,9 @@ wiki.once( "img:not(outlink)", function(imgs){
 /*
 Behavior: GraphBars, Progress-bars
 
+%%progress-red-striped 50/%  =>  %%graphBars-progress-red-striped-minv0-maxv100 %%gBar 50/% /%
+%%progress-red-striped 50/75 /%  =>  %%graphBars-progress-red-striped-minv0-maxv75 %%gBar 50/% /%
+
 %%progress 50 /%
 %%progress 50/75 /%
 %%progress-inside 50 /%
@@ -111,13 +114,6 @@ wiki.add("*[class^=progress]", function(element){
 
     ( element.get("tag") + clazz + "-minv0-maxv" + maxv  ).slick().wraps(element);
     element.className = "gBar";
-
-
-/*
-%%progress-red-striped 50/%  =>  %%graphBars-progress-red-striped-minv0-maxv100 %%gBar 50/% /%
-%%progress-red-striped 50/75 /%  =>  %%graphBars-progress-red-striped-minv0-maxv75 %%gBar 50/% /%
-
-*/
 
     })
 
@@ -233,20 +229,20 @@ Behavior: Viewer
             element.addClass("viewport").replaces(a);
 
         });
-
     })
-    .add(".maps", function( map ){
+
+
+    .add(".maps,.map", function( map ){
 
         var address = map.textContent.trim(),
-            mapSvc = map.className.replace("-maps","").replace("maps","google"),
-            url = "https://maps.{0}.com/maps?q=".xsubs(mapSvc) + encodeURIComponent( address );
+            //mapSvc = map.className.replace("-maps","").replace(/maps?/,"google"),
+            url = "https://maps.google.com/maps?q=" + encodeURIComponent( address );
 
         Viewer.preload(url, { width: 800, height: 600 }, function( element ){
 
             element.addClass("viewport").replaces(map);
 
         });
-
     });
 
 
