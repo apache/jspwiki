@@ -51,12 +51,18 @@ import org.jdom2.Element;
 public final class ClassUtil {
 
     private static final Logger log = Logger.getLogger(ClassUtil.class);
+
+	/**
+	 * System property to overwrite the class definition xml
+	 */
+	public static final String CUSTOM_MAPPINGS = "jspwiki.custom.classmapping";
     /**
      *  The location of the classmappings.xml document. It will be searched for
-     *  in the classpath.  It's value is "{@value}".
+	 *  in the classpath.  It's default value is "ini/classmappings.xml", but may be overwritten with
+	 *  the system property "{@value CUSTOM_MAPPINGS}".
      */
-    public  static final String MAPPINGS = "ini/classmappings.xml";
-    
+	public static final String MAPPINGS = System.getProperty(CUSTOM_MAPPINGS, "ini/classmappings.xml");
+
     private static Map<String, String> c_classMappings = new Hashtable<String, String>();
 
     private static boolean classLoaderSetup = false;
@@ -292,11 +298,11 @@ public final class ClassUtil {
     /**
      *  This method is used to locate and instantiate a mapped class.
      *  You may redefine anything in the resource file which is located in your classpath
-     *  under the name <code>ClassUtil.MAPPINGS ({@value #MAPPINGS})</code>.
+	 *  under the name <code>ClassUtil.MAPPINGS ({@link #MAPPINGS})</code>.
      *  <p>
      *  This is an extremely powerful system, which allows you to remap many of
      *  the JSPWiki core classes to your own class.  Please read the documentation
-     *  included in the default <code>{@value #MAPPINGS}</code> file to see
+	 *  included in the default <code>{@link #MAPPINGS}</code> file to see
      *  how this method works. 
      *  
      *  @param requestedClass The name of the class you wish to instantiate.
@@ -314,11 +320,11 @@ public final class ClassUtil {
     /**
      *  This method is used to locate and instantiate a mapped class.
      *  You may redefine anything in the resource file which is located in your classpath
-     *  under the name <code>{@value #MAPPINGS}</code>.
+	 *  under the name <code>{@link #MAPPINGS}</code>.
      *  <p>
      *  This is an extremely powerful system, which allows you to remap many of
      *  the JSPWiki core classes to your own class.  Please read the documentation
-     *  included in the default <code>{@value #MAPPINGS}</code> file to see
+	 *  included in the default <code>{@link #MAPPINGS}</code> file to see
      *  how this method works. 
      *  <p>
      *  This method takes in an object array for the constructor arguments for classes
