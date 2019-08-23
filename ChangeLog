@@ -1,3 +1,11 @@
+2019-21-08  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M5-git-12
+
+       * [JSPWIKI-1115]: Upgrade flexmark to 0.50.28 and tomcat to 8.5.45
+
+       * Ended up removing/replacing all @Deprecated code
+
 2019-21-08  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-11
