@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.login;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.auth.WikiPrincipal;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -46,48 +45,12 @@ public abstract class AbstractLoginModule implements LoginModule {
     protected Map< String, ? > m_options;
 
     /**
-     * Collection of Principals set during login module initialization.
-     * These represent the user's identities prior to the overall login.
-     * Typically these will contain earlier, less-authoritative principals
-     * like a WikiPrincipal for the user cookie, or an IP address.
-     * These Principals are forcibly removed during the commit phase
-     * if login succeeds.
-     * @deprecated
-     */
-    protected Collection< Principal > m_previousWikiPrincipals;
-
-    /**
      * Implementing classes should add Principals to this collection; these
      * will be added to the principal set when the overall login succeeds.
      * These Principals will be added to the Subject
      * during the {@link #commit()} phase of login.
      */
     protected Collection< Principal > m_principals;
-
-    /**
-     * Implementing classes should add Principals to this collection
-     * to specify what Principals <em>must</em> be removed if login for
-     * this module, or for the entire login configuration overall, fails.
-     * Generally, these will be Principals of type
-     * {@link org.apache.wiki.auth.authorize.Role}.
-     * @deprecated
-     */
-    protected Collection< Principal > m_principalsToRemove;
-
-    /**
-     * Implementing classes should add Principals to this collection to specify
-     * what Principals, perhaps suppled by other LoginModules, <em>must</em>
-     * be removed if login for this module, or for the entire login
-     * configuration overall, succeeds. Generally, these will be Principals of
-     * type {@link org.apache.wiki.auth.authorize.Role}. For example,
-     * {@link CookieAssertionLoginModule} adds
-     * {@link org.apache.wiki.auth.authorize.Role#ANONYMOUS} to its
-     * <code>m_principalsToOverwrite</code> collection because when it
-     * succeeds, its own {@link org.apache.wiki.auth.authorize.Role#AUTHENTICATED}
-     * should over-write {@link org.apache.wiki.auth.authorize.Role#ANONYMOUS}.
-     * @deprecated
-     */
-    protected Collection< Principal > m_principalsToOverwrite;
 
     protected Map< String, ? > m_state;
 
@@ -101,7 +64,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      * LoginModules did not succeed). Specifically, it removes
      * Principals from the Subject that are associated with the
      * individual LoginModule; these will be those contained in
-     * {@link #m_principalsToRemove}.
+     * {@link #m_principals}.
      * It always returns <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#abort()
      * @return True, always.
@@ -109,11 +72,9 @@ public abstract class AbstractLoginModule implements LoginModule {
     public final boolean abort()
     {
         removePrincipals( m_principals );
-        removePrincipals( m_principalsToRemove );
 
         // Clear the principals/principalsToRemove sets
         m_principals.clear();
-        m_principalsToRemove.clear();
 
         return true;
     }
@@ -125,7 +86,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      * <code>m_principals</code> member variable is consulted to determine
      * whether to add the principals. If its size is 0 (because the login
      * failed), the login is considered to have failed; in this case,
-     * all principals in {@link #m_principalsToRemove} are removed
+     * all principals in {@link #m_principals} are removed
      * from the Subject's set. Otherwise, the principals added to
      * <code>m_principals</code> in the {@link #login()} method are added to
      * the Subject's set.
@@ -134,30 +95,22 @@ public abstract class AbstractLoginModule implements LoginModule {
      *         failed
      * @see javax.security.auth.spi.LoginModule#commit()
      */
-    public final boolean commit()
-    {
-        if ( succeeded() )
-        {
-            removePrincipals( m_previousWikiPrincipals );
-            for ( Principal principal : m_principals )
-            {
+    public final boolean commit() {
+        if ( succeeded() ) {
+            for ( final Principal principal : m_principals ) {
                 m_subject.getPrincipals().add( principal );
-                if ( log.isDebugEnabled() )
-                {
+                if ( log.isDebugEnabled() ) {
                     log.debug("Committed Principal " + principal.getName() );
                 }
             }
-            removePrincipals( m_principalsToOverwrite );
             return true;
         }
 
         // If login did not succeed, clean up after ourselves
         removePrincipals( m_principals );
-        removePrincipals( m_principalsToRemove );
 
         // Clear the principals/principalsToRemove sets
         m_principals.clear();
-        m_principalsToRemove.clear();
 
         return false;
     }
@@ -167,34 +120,25 @@ public abstract class AbstractLoginModule implements LoginModule {
      * callback handler, options and shared state. In particular, the member
      * variable <code>m_principals</code> is initialized as a blank Set.
      * @see javax.security.auth.spi.LoginModule#initialize(javax.security.auth.Subject,
-     *      javax.security.auth.callback.CallbackHandler, java.util.Map,
-     *      java.util.Map)
+     *      javax.security.auth.callback.CallbackHandler, java.util.Map, java.util.Map)
      *      
      * @param subject {@inheritDoc}
      * @param callbackHandler {@inheritDoc}
      * @param sharedState {@inheritDoc}
      * @param options {@inheritDoc}
      */
-    public final void initialize( Subject subject, CallbackHandler callbackHandler, Map<String,?> sharedState, Map<String,?> options )
-    {
-        m_previousWikiPrincipals = new HashSet<>();
+    public final void initialize( final Subject subject, final CallbackHandler callbackHandler, final Map<String,?> sharedState, final Map<String,?> options ) {
         m_principals = new HashSet<>();
-        m_principalsToRemove = new HashSet<>();
-        m_principalsToOverwrite = new HashSet<>();
         m_subject = subject;
         m_handler = callbackHandler;
         m_state = sharedState;
         m_options = options;
-        if ( subject == null )
-        {
+        if ( subject == null ) {
             throw new IllegalStateException( "Subject cannot be null" );
         }
-        if ( callbackHandler == null )
-        {
+        if ( callbackHandler == null ) {
             throw new IllegalStateException( "Callback handler cannot be null" );
         }
-        // Stash the previous WikiPrincipals; we will flush these if login succeeds
-        m_previousWikiPrincipals.addAll( subject.getPrincipals( WikiPrincipal.class ) );
     }
 
     /**
@@ -209,21 +153,17 @@ public abstract class AbstractLoginModule implements LoginModule {
     public abstract boolean login() throws LoginException;
 
     /**
-     * Logs the user out. Removes all principals in {@link #m_principalsToRemove}
+     * Logs the user out. Removes all principals in {@link #m_principals}
      * from the Subject's principal set.
      * @return <code>true</code> if the commit succeeded, or
      *         <code>false</code> if this LoginModule should be ignored
-     * @throws LoginException if the logout itself fails
      * @see javax.security.auth.spi.LoginModule#logout()
      */
-    public final boolean logout()
-    {
+    public final boolean logout() {
         removePrincipals( m_principals );
-        removePrincipals( m_principalsToRemove );
 
         // Clear the principals/principalsToRemove sets
         m_principals.clear();
-        m_principalsToRemove.clear();
 
         return true;
     }
@@ -244,15 +184,11 @@ public abstract class AbstractLoginModule implements LoginModule {
      * Principal set.
      * @param principals the principals to remove
      */
-    private void removePrincipals( Collection<Principal> principals )
-    {
-        for ( Principal principal : principals )
-        {
-            if ( m_subject.getPrincipals().contains( principal ) )
-            {
+    private void removePrincipals( final Collection<Principal> principals ) {
+        for ( final Principal principal : principals ) {
+            if ( m_subject.getPrincipals().contains( principal ) ) {
                 m_subject.getPrincipals().remove( principal );
-                if ( log.isDebugEnabled() )
-                {
+                if ( log.isDebugEnabled() ) {
                     log.debug("Removed Principal " + principal.getName() );
                 }
             }
