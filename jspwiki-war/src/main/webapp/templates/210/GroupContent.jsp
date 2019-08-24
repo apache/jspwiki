@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -61,7 +61,7 @@
     modifier = group.getModifier();
     if ( group.getLastModified() != null )
     {
-      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ; 
+      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ;
     }
   }
   name = TextUtil.replaceEntities(name);
@@ -102,7 +102,7 @@
 %>
  <table class="wikitable">
     <tr>
-      <th><fmt:message key="group.name"/></th>
+      <th scope="col"><fmt:message key="group.name"/></th>
       <td>
         <fmt:message key="group.groupintro">
           <fmt:param><em><%=name%></em></fmt:param>
@@ -111,7 +111,7 @@
     </tr>
     <!-- Members -->
     <tr>
-      <th><fmt:message key="group.members"/>
+      <th scope="col"><fmt:message key="group.members"/>
       </th>
       <td><%
             for ( int i = 0; i < members.length; i++ )
@@ -146,11 +146,11 @@
   }
 %>
 
-  <wiki:Permission permission="deleteGroup"> 
+  <wiki:Permission permission="deleteGroup">
   <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
          class="wikiform"
             id="deleteGroup"
-        onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>') 
+        onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>')
         && Wiki.submitOnce(this) );"
         method="POST" accept-charset="UTF-8">
       <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />

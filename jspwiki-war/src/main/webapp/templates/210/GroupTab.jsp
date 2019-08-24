@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -40,30 +40,30 @@
     java.util.Arrays.sort( m, new PrincipalComparator() );
 
     String delim = "\", \"";
-      
+
     StringBuffer ss = new StringBuffer();
     MessageFormat mf = null;
     Object[] args = null;
-      
+
       ss.append( "WikiGroup.putGroup( \"" );
-      
+
       ss.append( name );
       ss.append( delim );
-      
+
       for( int j=0; j < m.length; j++ ) { ss.append( m[j].getName().trim()+"\\n" ); }
-      
+
       ss.append( delim );
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
       args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
       ss.append( mf.format( args ) );
-      
+
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
       args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
       ss.append( mf.format( args ) );
-      
+
       ss.append( "\", " );
       ss.append( ( cursor ) ? "true" : "false" );
-      
+
       ss.append( ");\n" );
 
 
@@ -75,24 +75,24 @@
 
 <table id='wikigroups' class='wikitable' >
 <tr>
-  <th><fmt:message key="group.name" /></th>
-  <th><fmt:message key="group.members" /></th>
+  <th scope="col"><fmt:message key="group.name" /></th>
+  <th scope="col"><fmt:message key="group.members" /></th>
 </tr>
 <tr>
   <td id="groupnames" rowspan="2">
-    <div id="grouptemplate" 
-            style="display:none; " 
+    <div id="grouptemplate"
+            style="display:none; "
             title='<fmt:message key="grp.groupnames.title"/>'
           onclick="WikiGroup.toggle(); WikiGroup.onMouseOverGroup(this);"
       onmouseover="WikiGroup.onMouseOverGroup(this);" ></div>
 
     <wiki:Permission permission="createGroups">
-    <div id="groupfield" 
+    <div id="groupfield"
       onmouseover="WikiGroup.onMouseOverGroup(this);" >
-      <input type="text" size="30" 
+      <input type="text" size="30"
                id="newgroup"
             value='<fmt:message key="grp.newgroupname"/>'
-           onblur="if( this.value == '' ) { this.value = this.defaultValue; }; " 
+           onblur="if( this.value == '' ) { this.value = this.defaultValue; }; "
           onfocus="if( this.value == this.defaultValue ) { this.value = ''; WikiGroup.onClickNew(); }; "/>
     </div>
     </wiki:Permission>
@@ -102,39 +102,39 @@
     <textarea rows="8" cols="30" disabled="disabled"
               name="membersfield" id="membersfield" ></textarea>
     </div>
-    <form action="<wiki:Link format='url' jsp='Group.jsp'/>" 
-              id="groupForm" 
+    <form action="<wiki:Link format='url' jsp='Group.jsp'/>"
+              id="groupForm"
           method="post" accept-charset="<wiki:ContentEncoding />" >
       <div>
       <input type="hidden" name="group"   value="" />
       <input type="hidden" name="members" value="" />
       <input type="hidden" name="action"  value="save" />
       <input type="button" disabled="disabled"
-             name="saveButton" id="saveButton" 
-            value='<fmt:message key="grp.savegroup"/>' 
+             name="saveButton" id="saveButton"
+            value='<fmt:message key="grp.savegroup"/>'
           onclick="WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='EditGroup.jsp' />' );" /></div>
 
       <wiki:Permission permission="createGroups">
       <div>
-      <input type="button" disabled="disabled"  
+      <input type="button" disabled="disabled"
              name="createButton" id="createButton"
-            value='<fmt:message key="grp.savenewgroup"/>' 
+            value='<fmt:message key="grp.savenewgroup"/>'
             style="display:none; "
           onclick="WikiGroup.onSubmitNew( this.form, '<wiki:Link format='url' jsp='NewGroup.jsp' />' );" /></div>
       </wiki:Permission>
 
       <div>
       <input type="button" disabled="disabled"
-             name="cancelButton" id="cancelButton" 
-            value='<fmt:message key="grp.cancel"/>' 
+             name="cancelButton" id="cancelButton"
+            value='<fmt:message key="grp.cancel"/>'
           onclick="WikiGroup.toggle();" /></div>
 
       <wiki:Permission permission="deleteGroup">
       <div>
-      <input type="button" disabled="disabled" 
+      <input type="button" disabled="disabled"
              name="deleteButton" id="deleteButton"
-            value='<fmt:message key="grp.deletegroup"/>' 
-          onclick="confirm( '<fmt:message key="grp.deletegroup.confirm"/>' ) 
+            value='<fmt:message key="grp.deletegroup"/>'
+          onclick="confirm( '<fmt:message key="grp.deletegroup.confirm"/>' )
                 && WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='DeleteGroup.jsp' />' );" /></div>
       </wiki:Permission>
     </form>
@@ -155,7 +155,7 @@
 <%
   String groupname = request.getParameter( "group" );
 %>
- 
+
 <script type="text/javascript">//<![CDATA[
 <%
   WikiContext c = WikiContext.findContext( pageContext );

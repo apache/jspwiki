@@ -165,12 +165,12 @@
     <div class="table-filter-sort-condensed-striped">
     <table class="table" >
       <tr>
-        <th><fmt:message key="info.version"/></th>
-        <th><fmt:message key="info.date"/></th>
-        <th><fmt:message key="info.size"/></th>
-        <th><fmt:message key="info.author"/></th>
-        <th><fmt:message key="info.changes"/></th>
-        <th><fmt:message key="info.changenote"/></th>
+        <th scope="col"><fmt:message key="info.version"/></th>
+        <th scope="col"><fmt:message key="info.date"/></th>
+        <th scope="col"><fmt:message key="info.size"/></th>
+        <th scope="col"><fmt:message key="info.author"/></th>
+        <th scope="col"><fmt:message key="info.changes"/></th>
+        <th scope="col"><fmt:message key="info.changenote"/></th>
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
@@ -217,8 +217,8 @@
     <h4 id="page-refs"><fmt:message key="info.tab.links" /></h4>
     <table class="table">
       <tr>
-      <th><fmt:message key="info.tab.incoming" /></th>
-      <th><fmt:message key="info.tab.outgoing" /></th>
+      <th scope="col"><fmt:message key="info.tab.incoming" /></th>
+      <th scope="col"><fmt:message key="info.tab.outgoing" /></th>
       </tr>
       <tr>
       <td>
@@ -323,18 +323,18 @@
   <div class="slimbox-attachments table-filter-sort-condensed-striped">
   <table class="table">
     <tr>
-      <th><fmt:message key="info.attachment.name"/></th>
-      <th><fmt:message key="info.version"/></th>
-      <th><fmt:message key="info.date"/></th>
-      <th><fmt:message key="info.size"/></th>
-      <th><fmt:message key="info.attachment.type"/></th>
-      <th><fmt:message key="info.author"/></th>
+      <th scope="col"><fmt:message key="info.attachment.name"/></th>
+      <th scope="col"><fmt:message key="info.version"/></th>
+      <th scope="col"><fmt:message key="info.date"/></th>
+      <th scope="col"><fmt:message key="info.size"/></th>
+      <th scope="col"><fmt:message key="info.attachment.type"/></th>
+      <th scope="col"><fmt:message key="info.author"/></th>
       <%--
       <wiki:Permission permission="upload">
-         <th><fmt:message key="info.actions"/></th>
+         <th scope="col"><fmt:message key="info.actions"/></th>
       </wiki:Permission>
       --%>
-      <th><fmt:message key="info.changenote"/></th>
+      <th scope="col"><fmt:message key="info.changenote"/></th>
     </tr>
 
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>

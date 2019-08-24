@@ -129,8 +129,8 @@
     <table class="wikitable  table-striped" >
 
       <tr>
-         <th align="left"><fmt:message key="find.results.page"/></th>
-         <th align="left"><fmt:message key="find.results.score"/></th>
+         <th scope="col" align="left"><fmt:message key="find.results.page"/></th>
+         <th scope="col" align="left"><fmt:message key="find.results.score"/></th>
       </tr>
 
       <wiki:SearchResultIterator id="searchref" start="${param.start}" maxItems="<%=maxitems%>">

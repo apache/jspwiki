@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -71,7 +71,7 @@
   <table class="wikitable">
     <!-- Name -->
     <tr>
-      <th><label><fmt:message key="newgroup.name"/></label></th>
+      <th scope="row"><label><fmt:message key="newgroup.name"/></label></th>
       <td><input type="text" name="group" size="30" value="<%=name%>" />
       <div class="formhelp">
         <fmt:message key="newgroup.name.description"/>
@@ -89,7 +89,7 @@
       }
     %>
     <tr>
-      <th><label><fmt:message key="group.members"/></label></th>
+      <th scope="row"><label><fmt:message key="group.members"/></label></th>
       <td><textarea id="members" name="members" rows="20" cols="40"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="formhelp">
         <fmt:message key="newgroup.members.description"/>

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -89,11 +89,11 @@
 
     <table class="wikitable">
     <tr>
-      <th><fmt:message key="group.name"/></th>
+      <th scope="col"><fmt:message key="group.name"/></th>
       <td><%=name%></td>
     </tr>
     <tr>
-      <th><label><fmt:message key="group.members"/></label></th>
+      <th scope="col"><label><fmt:message key="group.members"/></label></th>
       <td>
       <textarea id="members" name="members" rows="10" cols="30"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="formhelp"><fmt:message key="editgroup.memberlist"/></div>
@@ -108,11 +108,11 @@
       <input type="hidden" name="action" value="save" />
   </form>
 
-  <wiki:Permission permission="deleteGroup"> 
+  <wiki:Permission permission="deleteGroup">
   <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
          class="wikiform"
             id="deleteGroup"
-        onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>') 
+        onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>')
         && Wiki.submitOnce(this) );"
         method="POST" accept-charset="UTF-8">
       <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />

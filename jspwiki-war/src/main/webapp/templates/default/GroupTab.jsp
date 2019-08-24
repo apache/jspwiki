@@ -110,13 +110,13 @@
 <div class="table-filter-sort-condensed-striped">
   <table class="table">
     <thead>
-      <th><fmt:message key="group.name"/></th>
-      <th><fmt:message key="group.members"/></th>
-      <th><fmt:message key="group.created"/></th>
-      <th><fmt:message key="group.thecreator"/></th>
-      <th><fmt:message key="group.modified"/></th>
-      <th><fmt:message key="group.themodifier"/></th>
-      <th><fmt:message key="group.actions"/></th>
+      <th scope="col"><fmt:message key="group.name"/></th>
+      <th scope="col"><fmt:message key="group.members"/></th>
+      <th scope="col"><fmt:message key="group.created"/></th>
+      <th scope="col"><fmt:message key="group.thecreator"/></th>
+      <th scope="col"><fmt:message key="group.modified"/></th>
+      <th scope="col"><fmt:message key="group.themodifier"/></th>
+      <th scope="col"><fmt:message key="group.actions"/></th>
     </thead>
     <tbody>
     <%

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -98,13 +98,13 @@
   <div class="zebra-table"><div class="slimbox-img sortable">
   <table class="wikitable">
     <tr>
-      <th><fmt:message key="info.attachment.type"/></th>
-      <th><fmt:message key="info.attachment.name"/></th>
-      <th><fmt:message key="info.size"/></th>
-      <th><fmt:message key="info.version"/></th>
-      <th><fmt:message key="info.date"/></th>
-      <th><fmt:message key="info.author"/></th>
-      <wiki:Permission permission="delete"><th><fmt:message key="info.actions"/></th></wiki:Permission>
+      <th scope="col"><fmt:message key="info.attachment.type"/></th>
+      <th scope="col"><fmt:message key="info.attachment.name"/></th>
+      <th scope="col"><fmt:message key="info.size"/></th>
+      <th scope="col"><fmt:message key="info.version"/></th>
+      <th scope="col"><fmt:message key="info.date"/></th>
+      <th scope="col"><fmt:message key="info.author"/></th>
+      <wiki:Permission permission="delete"><th scope="col"><fmt:message key="info.actions"/></th></wiki:Permission>
       <th class="changenote"><fmt:message key="info.changenote"/></th>
     </tr>
 

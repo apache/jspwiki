@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page errorPage="/Error.jsp" %>
@@ -26,7 +26,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <script language="JavaScript">
-  function SubmitOutcomeIfSelected(selectId) 
+  function SubmitOutcomeIfSelected(selectId)
   {
     if ( selectId.selectedIndex > 0 )
     {
@@ -61,11 +61,11 @@
   </div>
   <table class="wikitable">
     <thead>
-      <th width="5%"  align="center"><fmt:message key="workflow.id"/></th>
-      <th width="45%" align="left"><fmt:message key="workflow.item"/></th>
-      <th width="15%" align="left"><fmt:message key="workflow.actions"/></th>
-      <th width="15%" align="left"><fmt:message key="workflow.requester"/></th>
-      <th width="20%" align="left"><fmt:message key="workflow.startTime"/></th>
+      <th scope="col" width="5%"  align="center"><fmt:message key="workflow.id"/></th>
+      <th scope="col" width="45%" align="left"><fmt:message key="workflow.item"/></th>
+      <th scope="col" width="15%" align="left"><fmt:message key="workflow.actions"/></th>
+      <th scope="col" width="15%" align="left"><fmt:message key="workflow.requester"/></th>
+      <th scope="col" width="20%" align="left"><fmt:message key="workflow.startTime"/></th>
     </thead>
     <tbody>
       <% i = 1; %>
@@ -84,7 +84,7 @@
           </td>
           <!-- Possible actions (outcomes) -->
           <td align="left">
-            <form id="<c:out value='decision.${decision.id}'/>" 
+            <form id="<c:out value='decision.${decision.id}'/>"
               action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
               <input type="hidden" name="action" value="decide" />
               <input type="hidden" name="id" value="<c:out value='${decision.id}' />" />
@@ -107,7 +107,7 @@
           <tr class="<%=evenOdd%>" class="hideDiv">
             <td>&nbsp;</td>
             <td colspan="4" class="split">
-              <a href="#" 
+              <a href="#"
                 title="<fmt:message key='workflow.details.title' />"
               onclick="$('decision.<c:out value="${decision.workflow.id}"/>').toggle();" >
                 <fmt:message key="workflow.details" />
@@ -121,7 +121,7 @@
             </td>
           </tr>
         </c:if>
-        
+
         <% i++; %>
       </c:forEach>
     </tbody>
@@ -143,11 +143,11 @@
   </div>
   <table class="wikitable">
     <thead>
-      <th width="5%"  align="center"><fmt:message key="workflow.id"/></th>
-      <th width="45%" align="left"><fmt:message key="workflow.item"/></th>
-      <th width="15%" align="left"><fmt:message key="workflow.actions"/></th>
-      <th width="15%" align="left"><fmt:message key="workflow.actor"/></th>
-      <th width="20%" align="left"><fmt:message key="workflow.startTime"/></th>
+      <th scope="col" width="5%"  align="center"><fmt:message key="workflow.id"/></th>
+      <th scope="col" width="45%" align="left"><fmt:message key="workflow.item"/></th>
+      <th scope="col" width="15%" align="left"><fmt:message key="workflow.actions"/></th>
+      <th scope="col" width="15%" align="left"><fmt:message key="workflow.actor"/></th>
+      <th scope="col" width="20%" align="left"><fmt:message key="workflow.startTime"/></th>
     </thead>
     <% i = 1; %>
     <tbody>

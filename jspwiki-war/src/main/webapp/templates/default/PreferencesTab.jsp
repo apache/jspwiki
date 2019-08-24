@@ -214,9 +214,9 @@
     <label class="control-label form-col-20" style="vertical-align:top;"><fmt:message key="prefs.user.pagecookies"/></label>
     <table class="wikitable" style="display:inline-block;">
     <tr>
-      <th><fmt:message key="prefs.user.pagecookies.type"/></th>
-      <th><fmt:message key="prefs.user.pagecookies.page"/></th>
-      <th><fmt:message key="prefs.user.pagecookies.actions"/></th>
+      <th scope="col"><fmt:message key="prefs.user.pagecookies.type"/></th>
+      <th scope="col"><fmt:message key="prefs.user.pagecookies.page"/></th>
+      <th scope="col"><fmt:message key="prefs.user.pagecookies.actions"/></th>
     </tr>
     <c:forEach var="aCookie" items="${pageContext.request.cookies}" >
       <c:if test="${fn:startsWith(aCookie.name,'JSPWiki.') }">
