@@ -105,7 +105,7 @@
       <th scope="col"><fmt:message key="info.date"/></th>
       <th scope="col"><fmt:message key="info.author"/></th>
       <wiki:Permission permission="delete"><th scope="col"><fmt:message key="info.actions"/></th></wiki:Permission>
-      <th class="changenote"><fmt:message key="info.changenote"/></th>
+      <th scope="col" class="changenote"><fmt:message key="info.changenote"/></th>
     </tr>
 
     <wiki:AttachmentsIterator id="att">

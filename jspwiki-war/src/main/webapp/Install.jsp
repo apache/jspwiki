@@ -76,9 +76,8 @@ if ( !installer.adminExists() )
     response.setHeader("Cache-Control", "no-cache" );
     response.setContentType("text/html; charset=UTF-8");
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
   <title><fmt:message key="install.jsp.title" /></title>
   <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css"/>'/>
