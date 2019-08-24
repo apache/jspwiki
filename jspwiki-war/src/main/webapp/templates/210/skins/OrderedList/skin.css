@@ -97,7 +97,7 @@ h2,h3,h4 {
 /* +++ 240 Pre-formatted text blocks and code +++ */
 tt,pre {
 	color:#ffff99;
-	font-family:Monaco, "Courier New", Courier, mono;
+	font-family:Monaco, "Courier New", Courier, monospace;
 }
 pre {
 	background:#3f464a;

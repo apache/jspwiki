@@ -44,9 +44,10 @@
     if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.adminui.enable")) )
     {
         %>
-        <!DOCTYPE html>
+        <!doctype html>
         <html lang="en">
         <head>
+          <title><wiki:Variable var="applicationname" />: ADMIN UI</title>
           <base href="../"/>
           <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
           <wiki:IncludeResources type="stylesheet"/>
@@ -58,7 +59,7 @@
            <pre>
                jspwiki-x.adminui.enable=true
            </pre>
-           <p>in your <tt>jspwiki-custom.properties</tt> file.</p>
+           <p>in your <code>jspwiki-custom.properties</code> file.</p>
            <p>Have a nice day.  Don't forget to eat lots of fruits and vegetables.</p>
         </body>
         </html>

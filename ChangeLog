@@ -1,3 +1,9 @@
+2019-24-08  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-13
+
+       * Various small fixes in html & jsp files, reported by sonarcloud.
+
 2019-24-08  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M5-git-12

@@ -50,6 +50,7 @@
   {
       %>
       <head>
+        <title><wiki:Variable var="applicationname" />: JSPWiki Security Configuration Verifier</title>
         <base href="../"/>
         <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
         <wiki:IncludeResources type="stylesheet"/>
@@ -62,7 +63,7 @@
          <pre>
              jspwiki-x.securityconfig.enable=true
          </pre>
-         <p>in your <tt>jspwiki-custom.properties</tt> file.</p>
+         <p>in your <code>jspwiki-custom.properties</code> file.</p>
          <p>Once you are done with debugging your security configuration, please turn this page
          off again by removing the preceding line, so that your system is safe again.</p>
          <p>Have a nice day.  May the Force be with you.</p>
@@ -75,7 +76,7 @@
 %>
 
 <head>
-  <title>JSPWiki Security Configuration Verifier</title>
+  <title><wiki:Variable var="applicationname" />: JSPWiki Security Configuration Verifier</title>
   <base href="../"/>
   <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
   <wiki:IncludeResources type="stylesheet"/>
@@ -260,7 +261,7 @@ And as an additional check, we will try to load each <code>Permission</code> cla
 
 <p>Now comes the <em>really</em> fun part. Using the current security policy, we will test the PagePermissions each JSPWiki role possesses for a range of pages. The roles we will test include the standard JSPWiki roles (Authenticated, All, etc.) plus any others you may have listed in the security policy. In addition to the PagePermissions, we will also test the WikiPermissions. The results of these tests should tell you what behaviors you can expect based on your security policy file. If we had problems finding, parsing or verifying the policy file, these tests will likely fail.</p>
 
-<p>The colors in each cell show the results of the test. <font style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</font> means success; <font style="background-color: #ffc0c0;">&nbsp;red&nbsp;</font> means failure. Hovering over a role name or individual cell will display more detailed information about the role or test.</p>
+<p>The colors in each cell show the results of the test. <span style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</span> means success; <span style="background-color: #ffc0c0;">&nbsp;red&nbsp;</span> means failure. Hovering over a role name or individual cell will display more detailed information about the role or test.</p>
 
 <%=verifier.policyRoleTable()%>
 
@@ -283,7 +284,7 @@ In addition, because you are using container-managed security, constraints on us
 
     <p>Here is how your web container will control role-based access to some common JSPWiki actions and their assocated JSPs. These restrictions will be enforced even if your Java security policy is more permissive.</p>
 
-    <p>The colors in each cell show the results of the test. <font style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</font> means success; <font style="background-color: #ffc0c0;">&nbsp;red&nbsp;</font> means failure.</p>
+    <p>The colors in each cell show the results of the test. <span style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</span> means success; <span style="background-color: #ffc0c0;">&nbsp;red&nbsp;</span> means failure.</p>
 
     <!-- Print table showing role restrictions by JSP -->
     <%=verifier.containerRoleTable()%>

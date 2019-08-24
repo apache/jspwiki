@@ -95,7 +95,7 @@ b { font-weight : 600 ; }
 
 /* header & footer ...................................... */
 
-#header, 
+#header,
 #footer {
   color: #F1F4F7 ;
   font-size : 95% ;
@@ -299,7 +299,6 @@ hr {
   color: #94A2AE ;
 }
 .pagename {
-  font-size: 175%;
   line-height: 1.4;
   font-weight: 600;
   margin-bottom: 0.5em;
@@ -309,15 +308,14 @@ hr {
   color: white ;
   min-width : 20em ;
   border-radius: 9px; -moz-border-radius: 9px;
-  border-radius: 9px; -moz-border-radius: 9px;
   /* horizontal gradient background ........... */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#001C37', endColorstr='white');
   background: -moz-linear-gradient(left, #001C37, white);
   background: -ms-linear-gradient(left, #001C37, white);
   background: -o-linear-gradient(left, #001C37, white);
   background: -webkit-gradient(linear, 0 0, 100% 0, from(#001C37), to(white));
-  background: -webkit-linear-gradient(left, #001C37, white);
-  background: linear-gradient(left, #001C37, white);
+  background: -webkit-linear-gradient(to left, #001C37, white);
+  background: linear-gradient(to left, #001C37, white);
 }
 h2 .editsection,
 h2 .hashlink { font-size: 67% }
@@ -562,7 +560,6 @@ a.footnote {
   background-repeat: no-repeat;
 }
 .information,.warning,.error{
-  border-radius: 9px; -moz-border-radius: 9px;
   border-radius: 9px; -moz-border-radius: 9px;
 }
 td .information,
@@ -864,7 +861,7 @@ a.tool:hover,
   font-size: 90% ;
   border-radius: 4px; -moz-border-radius: 4px;
   color: #37414A ;
-  background-color:rgba(156,162,168,0.5) !important ;
+  /*background-color:rgba(156,162,168,0.5) !important ;*/
   /* userbox gradient */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='white', endColorstr='#9EB1C3'); /* for IE */
   background: -webkit-gradient(linear, left, right, from(white), to(#9EB1C3)); /* for webkit browsers */
@@ -1667,7 +1664,7 @@ div.coverflow img {
   position: absolute;
   border: 0;
 }
-diFFFFFF.coverflow .slider {
+div.coverflow .slider {
   z-index: 10001;
   position: relative;
   border: 1px solid #CCDEED;
@@ -1893,7 +1890,6 @@ b { font-weight: 600 ; }
   background-color: #CCDEED ;
   border: thin dotted #d6e0e0 ;
   font-size : smaller ; line-height: 80% ;
-  border-radius: 9px; -moz-border-radius: 9px;
   border-radius: 9px; -moz-border-radius: 9px;
 }
 .floatright {

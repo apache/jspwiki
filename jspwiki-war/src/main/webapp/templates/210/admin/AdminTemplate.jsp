@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ page import="java.util.*" %>
@@ -29,7 +29,7 @@
 <head>
 <title>JSPWiki administration</title>
   <wiki:Include page="commonheader.jsp"/>
-  <link rel="stylesheet" media="screen, projection, print" type="text/css" 
+  <link rel="stylesheet" media="screen, projection, print" type="text/css"
         href="<wiki:Link format='url' templatefile='admin/admin.css'/>"/>
 </head>
 <body class="view">
@@ -37,7 +37,7 @@
 <div id="page" >
 <h1>JSPWiki Administration</h1>
 <div class="information">Not all things can be configured here.  Some things need to be configured
-in your <tt>jspwiki.properties</tt> file.</div>
+in your <code>jspwiki.properties</code> file.</div>
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
@@ -53,7 +53,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
 
      <wiki:AdminBeanIterator type="core" id="ab">
       <wiki:Tab id="${ab.id}" title="${ab.title}">
-      
+
       <div class="formcontainer">
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
         <input type="hidden" name="tab-admin" value="core"/>
@@ -88,8 +88,8 @@ in your <tt>jspwiki.properties</tt> file.</div>
    <wiki:TabbedSection defaultTab="${param['tab-editors']}">
      <wiki:AdminBeanIterator type="editors" id="ab">
       <wiki:Tab id="${ab.id}" title="${ab.title}">
-      
-      <div class="formcontainer"> 
+
+      <div class="formcontainer">
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
          <input type="hidden" name="tab-admin" value="editors"/>
          <input type="hidden" name="tab-editors" value="${ab.title}" />
