@@ -39,9 +39,6 @@
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 
-  String parm_renameto = (String)request.getParameter( "renameto" );
-  if( parm_renameto == null ) parm_renameto = wikiPage.getName();
-
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
@@ -123,7 +120,8 @@
 
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input class="btn btn-success" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
-      <input class="form-control form-col-50" type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
+      <input class="form-control form-col-50" type="text" name="renameto"
+             value="<c:out value='${param.renameto}' default='<%= wikiPage.getName() %>'/>" size="40" />
       <label class="btn btn-default" for="references">
         <input type="checkbox" name="references" id="references" checked="checked" />
         <fmt:message key="info.updatereferrers"/>

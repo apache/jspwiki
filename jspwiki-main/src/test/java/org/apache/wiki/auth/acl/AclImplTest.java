@@ -248,7 +248,7 @@ public class AclImplTest
         ObjectInputStream in = new ObjectInputStream( new ByteArrayInputStream(stuff) );
 
         AclImpl newacl = (AclImpl) in.readObject();
-        assert( newacl.toString().equals(m_acl.toString()) );
+        Assertions.assertEquals( newacl.toString(), m_acl.toString() );
     }
 
 }

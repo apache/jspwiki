@@ -109,15 +109,15 @@
 
   <p>
   <fmt:message key="find.externalsearch"/>
-    <a class="external"
+    &nbsp;<a class="external"
         href="http://www.google.com/search?q=<c:out value='${param.query}'/>"
         title="Google Search '<c:out value='${param.query}'/>'"
-       target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
+       target="_blank">Google</a>
     |
     <a class="external"
         href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${param.query}'/>"
         title="Wikipedia Search '<c:out value='${param.query}'/>'"
-       target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
+       target="_blank">Wikipedia</a>
   </p>
 
   <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9"
@@ -129,8 +129,8 @@
     <table class="wikitable  table-striped" >
 
       <tr>
-         <th scope="col" align="left"><fmt:message key="find.results.page"/></th>
-         <th scope="col" align="left"><fmt:message key="find.results.score"/></th>
+         <th scope="col"><fmt:message key="find.results.page"/></th>
+         <th scope="col"><fmt:message key="find.results.score"/></th>
       </tr>
 
       <wiki:SearchResultIterator id="searchref" start="${param.start}" maxItems="<%=maxitems%>">

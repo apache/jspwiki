@@ -1,3 +1,11 @@
+2019-27-08  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-14
+
+       * XSS vulnerability on the page rename parameter
+
+       * Few sonarcloud fixes
+
 2019-24-08  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-13
