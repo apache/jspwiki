@@ -79,34 +79,35 @@ function addNew()
      <input type="hidden" name='bean' value='org.apache.wiki.ui.admin.beans.UserBean'/>
      <input type="hidden" id="loginid" name="loginid" value="" />
      <table>
+     <caption class="hide">User Details form</caption>
      <tr>
-       <td><label for="loginname">Login name</label></td>
+       <th scope="row"><label for="loginname">Login name</label></th>
        <td>
            <input type="text" name="loginname" id="loginname"
                   size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="password">Password </label></td>
+       <th scope="row"><label for="password">Password </label></th>
        <td>
           <input type="password" name="password" id="password" size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="password2">Confirm password</label></td>
+       <th scope="row"><label for="password2">Confirm password</label></th>
        <td>
          <input type="password" name="password2" id="password2" size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="fullname">Full name</label></td>
+       <th scope="row"><label for="fullname">Full name</label></th>
        <td>
          <input type="text" name="fullname" id="fullname"
                 size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="email">Email</label></td>
+       <th scope="row"><label for="email">Email</label></th>
        <td>
          <input type="text" name="email" id="email"
                 size="20" value="" />
@@ -114,12 +115,12 @@ function addNew()
      </tr>
 
      <tr class="additinfo">
-       <td><label>Creation date</label></td>
+       <th scope="row"><label>Creation date</label></th>
        <td class="formvalue" id="creationdate">
        </td>
      </tr>
      <tr class="additinfo">
-       <td><label>Last modified</label></td>
+       <th scope="row"><label>Last modified</label></th>
        <td class="formvalue" id="lastmodified">
        </td>
      </tr>

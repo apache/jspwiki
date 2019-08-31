@@ -105,7 +105,7 @@
 
 <wiki:SearchResults>
 
-  <h4><fmt:message key="find.heading.results"><fmt:param><c:out value="${param.query}"/></fmt:param></fmt:message></h4>
+  <h4 id="find-heading-results"><fmt:message key="find.heading.results"><fmt:param><c:out value="${param.query}"/></fmt:param></fmt:message></h4>
 
   <p>
   <fmt:message key="find.externalsearch"/>
@@ -126,7 +126,7 @@
 
     <div class="graphBars">
     <div class="zebra-table">
-    <table class="wikitable  table-striped" >
+    <table class="wikitable  table-striped" aria-describedby="find-heading-results">
 
       <tr>
          <th scope="col"><fmt:message key="find.results.page"/></th>

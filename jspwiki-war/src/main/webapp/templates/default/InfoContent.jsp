@@ -161,7 +161,7 @@
     <c:set var="last" value="<%= startitem + pagesize %>"/>
 
     <div class="table-filter-sort-condensed-striped">
-    <table class="table" >
+    <table class="table" aria-describedby="history">
       <tr>
         <th scope="col"><fmt:message key="info.version"/></th>
         <th scope="col"><fmt:message key="info.date"/></th>
@@ -213,7 +213,7 @@
     ${pagination}
 
     <h4 id="page-refs"><fmt:message key="info.tab.links" /></h4>
-    <table class="table">
+    <table class="table" aria-describedby="page-refs">
       <tr>
       <th scope="col"><fmt:message key="info.tab.incoming" /></th>
       <th scope="col"><fmt:message key="info.tab.outgoing" /></th>
@@ -316,10 +316,11 @@
   </wiki:Permission>
 </form>
 
+
 <%-- TODO why no pagination here - number of attach versions of one page limited ?--%>
-<%--<h4><fmt:message key='info.attachment.history' /></h4>--%>
+  <h4 id="info-attachment-history"><fmt:message key='info.attachment.history' /></h4>
   <div class="slimbox-attachments table-filter-sort-condensed-striped">
-  <table class="table">
+  <table class="table" aria-describedby="info-attachment-history">
     <tr>
       <th scope="col"><fmt:message key="info.attachment.name"/></th>
       <th scope="col"><fmt:message key="info.version"/></th>

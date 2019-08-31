@@ -56,10 +56,8 @@
 </c:if>
 
 <c:if test="${!empty decisions}">
-  <div class="formhelp">
-    <fmt:message key="workflow.actor.instructions"/>
-  </div>
-  <table class="wikitable">
+  <p id="workflow-owner-instructions"><fmt:message key="workflow.owner.instructions"/></p>
+  <table class="wikitable" aria-describedby="workflow-actor-instructions">
     <thead>
       <th scope="col" width="5%"  align="center"><fmt:message key="workflow.id"/></th>
       <th scope="col" width="45%" align="left"><fmt:message key="workflow.item"/></th>
@@ -129,7 +127,7 @@
 </c:if>
 
 <!-- Running workflows for which current user is the owner -->
-<h4><fmt:message key="workflow.workflows.heading" /></h4>
+<h4 id="workflows"><fmt:message key="workflow.workflows.heading" /></h4>
 
 <c:if test="${empty workflows}">
   <div class="information">
@@ -138,10 +136,8 @@
 </c:if>
 
 <c:if test="${!empty workflows}">
-  <div class="formhelp">
-    <fmt:message key="workflow.owner.instructions"/>
-  </div>
-  <table class="wikitable">
+  <p id="workflow-owner-instructions"><fmt:message key="workflow.owner.instructions"/></p>
+  <table class="wikitable" aria-describedby="workflow-owner-instructions">
     <thead>
       <th scope="col" width="5%"  align="center"><fmt:message key="workflow.id"/></th>
       <th scope="col" width="45%" align="left"><fmt:message key="workflow.item"/></th>

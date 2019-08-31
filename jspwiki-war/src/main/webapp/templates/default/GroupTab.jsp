@@ -107,8 +107,10 @@
   <div class="modal"><fmt:message key='grp.deletegroup.confirm'/></div>
 </form>
 
+<h4 id="allgroups"><fmt:message key='grp.allgroups'/></h4>
 <div class="table-filter-sort-condensed-striped">
-  <table class="table">
+  <table class="table" aria-described-by="allgroups">
+    <caption class="hide">Group Details</caption>
     <thead>
       <th scope="col"><fmt:message key="group.name"/></th>
       <th scope="col"><fmt:message key="group.members"/></th>

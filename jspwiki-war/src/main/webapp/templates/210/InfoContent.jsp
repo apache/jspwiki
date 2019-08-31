@@ -207,7 +207,7 @@
         <th scope="col"><fmt:message key="info.size"/></th>
         <th scope="col"><fmt:message key="info.author"/></th>
         <th scope="col"><fmt:message key="info.changes"/></th>
-        <th class='changenote'><fmt:message key="info.changenote"/></th>
+        <th class="changenote" scope="col"><fmt:message key="info.changenote"/></th>
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
@@ -354,7 +354,7 @@
          <th scope="col"><fmt:message key="info.actions"/></th>
       </wiki:Permission>
       --%>
-      <th  class='changenote'><fmt:message key="info.changenote"/></th>
+      <th  class="changenote" scope="col"><fmt:message key="info.changenote"/></th>
     </tr>
 
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>

@@ -101,8 +101,9 @@
     </form>
   </wiki:Permission>
 
+  <h4 id="attach-list"><fmt:message key='attach.list'/></h4>
   <div class="slimbox-attachments table-filter-striped-sort-condensed">
-  <table class="table">
+  <table class="table" aria-describedby="attach-list">
     <tr>
       <th scope="col"><fmt:message key="info.attachment.name"/></th>
       <th scope="col"><fmt:message key="info.version"/></th>

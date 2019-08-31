@@ -211,8 +211,10 @@
   <hr />
 
   <div class="form-group table-striped-bordered-condensed-fit-sort">
-    <label class="control-label form-col-20" style="vertical-align:top;"><fmt:message key="prefs.user.pagecookies"/></label>
-    <table class="wikitable" style="display:inline-block;">
+    <label id="pref-user-pagecookies" class="control-label form-col-20" style="vertical-align:top;">
+      <fmt:message key="prefs.user.pagecookies"/>
+    </label>
+    <table class="wikitable" style="display:inline-block;" aria-describedby="pref-user-pagecookies">
     <tr>
       <th scope="col"><fmt:message key="prefs.user.pagecookies.type"/></th>
       <th scope="col"><fmt:message key="prefs.user.pagecookies.page"/></th>

@@ -125,7 +125,7 @@ Falling back to the plain editor.
     </wiki:Permission>
 --%>
     <tr>
-    <td><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></td>
+    <th scope="row"><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></th>
     <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="${changenote}"/></td>
 
     </tr>
