@@ -82,7 +82,7 @@
     String cancel  = request.getParameter("cancel");
     String author  = TextUtil.replaceEntities( request.getParameter("author") );
     String link    = TextUtil.replaceEntities( request.getParameter("link") );
-    String remember = request.getParameter("remember");
+    String remember = TextUtil.replaceEntities( request.getParameter("remember") );
     String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
 
     WikiPage wikipage = wikiContext.getPage();
@@ -105,7 +105,11 @@
         remember = (String)session.getAttribute("remember");
     }
 
-    if( remember == null ) remember = "false";
+    if( remember == null ) {
+        remember = "false";
+    } else {
+        remember = "true";
+    }
 
     session.setAttribute("remember",remember);
 

@@ -5,6 +5,8 @@
        * Fixed InfoContent.jsp vulnerability in old jspwiki template (templates/211/...)
          related to the rename parameter.
 
+       * Fixed preview.jsp vulnerability related to the remember parameter.
+
 
 2019-31-08  Dirk Frederickx (brushed AT apache DOT org)
 
