@@ -41,9 +41,6 @@
   String tabParam = (String)request.getParameter( "tab" );
   if ( tabParam == null ) tabParam = "info";
 
-  String parm_renameto = (String)request.getParameter( "renameto" );
-  if( parm_renameto == null ) parm_renameto = wikiPage.getName();
-
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
@@ -143,7 +140,8 @@
       <p>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
-      <input type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
+      <input type="text" name="renameto"
+             value="<c:out value='${param.renameto}' default='<%= wikiPage.getName() %>'/>" size="40" />
       &nbsp;&nbsp;
       <input type="checkbox" name="references" checked="checked" />
       <fmt:message key="info.updatereferrers"/>

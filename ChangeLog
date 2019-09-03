@@ -1,5 +1,13 @@
 2019-31-08  Dirk Frederickx (brushed AT apache DOT org)
 
+       * 2.11.0-M5-git-16
+
+       * Fixed InfoContent.jsp vulnerability in old jspwiki template (templates/211/...)
+         related to the rename parameter.
+
+
+2019-31-08  Dirk Frederickx (brushed AT apache DOT org)
+
        * 2.11.0-M5-git-15
 
        * Improve UI accessibility (ref. sonarcloud report)

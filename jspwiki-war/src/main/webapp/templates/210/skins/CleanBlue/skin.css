@@ -314,7 +314,6 @@ hr {
   background: -ms-linear-gradient(left, #001C37, white);
   background: -o-linear-gradient(left, #001C37, white);
   background: -webkit-gradient(linear, 0 0, 100% 0, from(#001C37), to(white));
-  background: -webkit-linear-gradient(to left, #001C37, white);
   background: linear-gradient(to left, #001C37, white);
 }
 h2 .editsection,
