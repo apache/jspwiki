@@ -130,7 +130,7 @@ public class WikiEngine
 
     /** The default inlining pattern.  Currently "*.png" */
     public static final String DEFAULT_INLINEPATTERN = "*.png";
-    
+
     /** The name used for the default template. The value is {@value}. */
     public static final String DEFAULT_TEMPLATE_NAME = "default";
 
@@ -255,7 +255,7 @@ public class WikiEngine
     private InternationalizationManager m_internationalizationManager;
 
     private ProgressManager  m_progressManager;
-    
+
     private TasksManager m_tasksManager;
 
     /** Constructs URLs */
@@ -681,7 +681,7 @@ public class WikiEngine
         log.info("WikiEngine configured.");
         m_isConfigured = true;
     }
-    
+
     /**
      * Checks if the template directory specified in the wiki's properties actually exists. If it doesn't, then {@code m_templateDir} is
      * set to {@link #DEFAULT_TEMPLATE_NAME}.
@@ -767,7 +767,7 @@ public class WikiEngine
      *  @since 1.9.20
      *  @return The template directory as initialized by the engine.
      */
-    public String getTemplateDir() 
+    public String getTemplateDir()
     {
         return m_templateDir;
     }
@@ -1598,18 +1598,18 @@ public class WikiEngine
 
     /**
      *  Writes the WikiText of a page into the page repository. If the <code>jspwiki.properties</code> file contains
-     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and its value resolves to a valid user, 
+     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and its value resolves to a valid user,
      *  {@link org.apache.wiki.auth.authorize.Group} or {@link org.apache.wiki.auth.authorize.Role}, this method will
-     *  place a {@link org.apache.wiki.workflow.Decision} in the approver's workflow inbox and throw a 
-     *  {@link org.apache.wiki.workflow.DecisionRequiredException}. If the submitting user is authenticated and the 
+     *  place a {@link org.apache.wiki.workflow.Decision} in the approver's workflow inbox and throw a
+     *  {@link org.apache.wiki.workflow.DecisionRequiredException}. If the submitting user is authenticated and the
      *  page save is rejected, a notification will be placed in the user's decision queue.
      *
      *  @since 2.1.28
      *  @param context The current WikiContext
      *  @param text    The Wiki markup for the page.
-     *  @throws WikiException if the save operation encounters an error during the save operation. If the page-save 
-     *  operation requires approval, the exception will be of type {@link org.apache.wiki.workflow.DecisionRequiredException}. 
-     *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a 
+     *  @throws WikiException if the save operation encounters an error during the save operation. If the page-save
+     *  operation requires approval, the exception will be of type {@link org.apache.wiki.workflow.DecisionRequiredException}.
+     *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a
      *  {@link org.apache.wiki.api.exceptions.RedirectException}.
      */
     public void saveText( WikiContext context, String text ) throws WikiException {
@@ -1627,8 +1627,8 @@ public class WikiEngine
             return;
         }
 
-        // Create approval workflow for page save; add the diffed, proposed and old text versions as 
-        // Facts for the approver (if approval is required). If submitter is authenticated, any reject 
+        // Create approval workflow for page save; add the diffed, proposed and old text versions as
+        // Facts for the approver (if approval is required). If submitter is authenticated, any reject
         // messages will appear in his/her workflow inbox.
         WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
         Principal submitter = context.getCurrentUser();
@@ -1878,7 +1878,7 @@ public class WikiEngine
             return null;
         }
     }
-    
+
     /**
      *  Throws an exception if a property is not found.
      *
@@ -2042,6 +2042,7 @@ public class WikiEngine
             else
             {
                 Collection<String> refTo = m_referenceManager.findRefersTo(pageName);
+                //May return null, if the page does not exist or has not been indexed yet.
 
                 if (m_attachmentManager.hasAttachments( p ))
                 {
@@ -2049,7 +2050,8 @@ public class WikiEngine
                     for( Iterator< Attachment > atti = attachments.iterator(); atti.hasNext(); )
                     {
                         Attachment attachment = atti.next();
-                        refTo.remove(attachment.getName());
+
+                        if( refTo != null ) refTo.remove(attachment.getName());
 
                         m_attachmentManager.deleteAttachment( attachment );
                     }
