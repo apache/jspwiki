@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki;
 
@@ -148,7 +148,7 @@ public class ReferenceManager
     private Map<String,Set<String>> m_unmutableReferredBy;
 
     /** The WikiEngine that owns this object. */
-    private WikiEngine     m_engine;
+    //private WikiEngine     m_engine;   //inherited from BasicPageFilter class
 
     private boolean        m_matchEnglishPlurals = false;
 
@@ -458,7 +458,7 @@ public class ReferenceManager
                 p.setHasMetadata();
             }
         }
-        
+
 
         return saved;
     }
@@ -481,11 +481,11 @@ public class ReferenceManager
             //  Create a digest for the name
             //
             f = new File( f, hashName );
-            
+
             try( ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
                 Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() ); // new Set to avoid concurrency issue
 
-                if( entries.size() == 0 ) 
+                if( entries.size() == 0 )
                 {
                     //  Nothing to serialize, therefore we will just simply remove the
                     //  serialization file so that the next time we boot, we don't
@@ -516,12 +516,12 @@ public class ReferenceManager
                 log.debug("serialization for "+p.getName()+" done - took "+sw);
             }
         }
-        
+
     }
 
     /**
      *  After the page has been saved, updates the reference lists.
-     *  
+     *
      *  @param context {@inheritDoc}
      *  @param content {@inheritDoc}
      */
@@ -689,7 +689,7 @@ public class ReferenceManager
 
     /**
      * Returns the refers-to list. For debugging.
-     * 
+     *
      * @return The refers-to list.
      */
     protected Map< String, Collection< String > > getRefersTo()
@@ -699,7 +699,7 @@ public class ReferenceManager
 
     /**
      * Returns the referred-by list. For debugging.
-     * 
+     *
      * @return Referred-by lists.
      */
     protected Map< String, Set< String > > getReferredBy()
@@ -865,7 +865,7 @@ public class ReferenceManager
     /**
      *  Finds all unreferenced pages. This requires a linear scan through
      *  m_referredBy to locate keys with null or empty values.
-     *  
+     *
      *  @return The Collection of Strings
      */
     public synchronized Collection< String > findUnreferenced()
@@ -875,7 +875,7 @@ public class ReferenceManager
         for( String key : m_referredBy.keySet() )
         {
             Set<?> refs = getReferenceList( m_referredBy, key );
-            
+
             if( refs == null || refs.isEmpty() )
             {
                 unref.add( key );
@@ -895,7 +895,7 @@ public class ReferenceManager
      * Returns a Collection containing Strings of unreferenced page names.
      * Each non-existant page name is shown only once - we don't return information
      * on who referred to it.
-     * 
+     *
      * @return A Collection of Strings
      */
     public synchronized Collection< String > findUncreated()
@@ -928,7 +928,7 @@ public class ReferenceManager
      *  Searches for the given page in the given Map, and returns
      *  the set of references.  This method also takes care of English plural
      *  matching.
-     *  
+     *
      *  @param coll The Map to search in
      *  @param pagename The name to find.
      *  @return The references list.

@@ -78,7 +78,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
     protected ConcurrentHashMap<String, PageLock> m_pageLocks = new ConcurrentHashMap<>();
 
-    private WikiEngine m_engine;
+    //private WikiEngine m_engine;   //inherited protected field from the ModuleManager
 
     private int m_expiryTime = 60;
 

@@ -26,6 +26,7 @@ import javax.security.auth.Subject;
 
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 public class GroupPermissionTest
@@ -34,6 +35,7 @@ public class GroupPermissionTest
     /*
      * Class under test for boolean equals(java.lang.Object)
      */
+    @Test
     public final void testEqualsObject()
     {
         GroupPermission p1 = new GroupPermission( "mywiki:Test", "view,edit,delete" );
@@ -45,6 +47,7 @@ public class GroupPermissionTest
         Assertions.assertFalse( p3.equals( p4 ) );
     }
 
+    @Test
     public final void testCreateMask()
     {
         Assertions.assertEquals( 1, GroupPermission.createMask( "view" ) );
@@ -57,6 +60,7 @@ public class GroupPermissionTest
     /*
      * Class under test for java.lang.String toString()
      */
+    @Test
     public final void testToString()
     {
         GroupPermission p;
@@ -71,6 +75,7 @@ public class GroupPermissionTest
     /**
      * Tests wiki name support.
      */
+    @Test
     public final void testWikiNames()
     {
         GroupPermission p1;
@@ -95,6 +100,7 @@ public class GroupPermissionTest
         Assertions.assertTrue( p1.implies( p2 ) );
     }
 
+    @Test
     public final void testImpliesMember()
     {
         GroupPermission p1;
@@ -134,6 +140,7 @@ public class GroupPermissionTest
     /*
      * Class under test for boolean implies(java.security.Permission)
      */
+    @Test
     public final void testImpliesPermission()
     {
         GroupPermission p1;
@@ -258,6 +265,7 @@ public class GroupPermissionTest
         Assertions.assertFalse( p2.implies( p1 ) );
     }
 
+    @Test
     public final void testImplies()
     {
         Assertions.assertTrue( GroupPermission.DELETE.implies( GroupPermission.EDIT ) );
@@ -265,6 +273,7 @@ public class GroupPermissionTest
         Assertions.assertTrue( GroupPermission.EDIT.implies( GroupPermission.VIEW ) );
     }
 
+    @Test
     public final void testImpliedMask()
     {
         int result = ( GroupPermission.DELETE_MASK | GroupPermission.EDIT_MASK | GroupPermission.VIEW_MASK );
@@ -274,6 +283,7 @@ public class GroupPermissionTest
         Assertions.assertEquals( result, GroupPermission.impliedMask( GroupPermission.EDIT_MASK ) );
     }
 
+    @Test
     public final void testGetName()
     {
         GroupPermission p;
@@ -287,6 +297,7 @@ public class GroupPermissionTest
     /*
      * Class under test for java.lang.String getActions()
      */
+    @Test
     public final void testGetActions()
     {
         GroupPermission p = new GroupPermission( "Test", "VIEW,edit,delete" );

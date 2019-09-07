@@ -34,6 +34,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -47,6 +48,7 @@ public class UserDatabaseLoginModuleTest
 
     Subject      m_subject;
 
+    @Test
     public final void testLogin()
     {
         try
@@ -87,6 +89,7 @@ public class UserDatabaseLoginModuleTest
         }
     }
 
+    @Test
     public final void testLogout()
     {
         try
@@ -114,7 +117,7 @@ public class UserDatabaseLoginModuleTest
     }
 
     /**
-     * 
+     *
      */
     @BeforeEach
     public void setUp() throws Exception

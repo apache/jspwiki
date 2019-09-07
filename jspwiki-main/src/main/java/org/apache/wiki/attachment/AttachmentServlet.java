@@ -272,7 +272,12 @@ public class AttachmentServlet extends HttpServlet {
                     log.debug( "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+HttpUtil.getRemoteAddress(req) );
                 }
                 if( nextPage != null ) {
-                    res.sendRedirect( validateNextPage( nextPage, m_engine.getURL( WikiContext.ERROR, "", null, false ) ) );
+                    res.sendRedirect(
+                        validateNextPage(
+                            TextUtil.urlEncodeUTF8(nextPage),
+                            m_engine.getURL( WikiContext.ERROR, "", null, false )
+                        )
+                    );
                 }
 
             } else {

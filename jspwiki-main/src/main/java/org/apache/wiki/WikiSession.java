@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki;
 
@@ -479,6 +479,7 @@ public final class WikiSession implements WikiEventListener
                     case WikiSecurityEvent.LOGIN_INITIATED:
                     {
                         // Do nothing
+                        break;
                     }
                     case WikiSecurityEvent.PRINCIPAL_ADD:
                     {
@@ -496,12 +497,12 @@ public final class WikiSession implements WikiEventListener
                         if ( this.equals( target ) )
                         {
                             m_status = ANONYMOUS;
-                            
+
                             // Set the login/user principals and login status
                             Set<Principal> principals = m_subject.getPrincipals();
                             m_loginPrincipal = (Principal)e.getPrincipal();
                             m_userPrincipal = m_loginPrincipal;
-                            
+
                             // Add the login principal to the Subject, and set the built-in roles
                             principals.clear();
                             principals.add( m_loginPrincipal );
@@ -516,12 +517,12 @@ public final class WikiSession implements WikiEventListener
                         if ( this.equals( target ) )
                         {
                             m_status = ASSERTED;
-                            
+
                             // Set the login/user principals and login status
                             Set<Principal> principals = m_subject.getPrincipals();
                             m_loginPrincipal = (Principal)e.getPrincipal();
                             m_userPrincipal = m_loginPrincipal;
-                            
+
                             // Add the login principal to the Subject, and set the built-in roles
                             principals.clear();
                             principals.add( m_loginPrincipal );
@@ -536,18 +537,18 @@ public final class WikiSession implements WikiEventListener
                         if ( this.equals( target ) )
                         {
                             m_status = AUTHENTICATED;
-                            
+
                             // Set the login/user principals and login status
                             Set<Principal> principals = m_subject.getPrincipals();
                             m_loginPrincipal = (Principal)e.getPrincipal();
                             m_userPrincipal = m_loginPrincipal;
-                            
+
                             // Add the login principal to the Subject, and set the built-in roles
                             principals.clear();
                             principals.add( m_loginPrincipal );
                             principals.add( Role.ALL );
                             principals.add( Role.AUTHENTICATED );
-                            
+
                             // Add the user and group principals
                             injectUserProfilePrincipals();  // Add principals for the user profile
                             injectGroupPrincipals();  // Inject group principals
@@ -577,16 +578,16 @@ public final class WikiSession implements WikiEventListener
                             {
                                 throw new IllegalStateException( "User profile FullName cannot be null." );
                             }
-                            
+
                             Set<Principal> principals = m_subject.getPrincipals();
                             m_loginPrincipal = new WikiPrincipal( newProfile.getLoginName() );
-                            
+
                             // Add the login principal to the Subject, and set the built-in roles
                             principals.clear();
                             principals.add( m_loginPrincipal );
                             principals.add( Role.ALL );
                             principals.add( Role.AUTHENTICATED );
-                            
+
                             // Add the user and group principals
                             injectUserProfilePrincipals();  // Add principals for the user profile
                             injectGroupPrincipals();  // Inject group principals
@@ -635,7 +636,7 @@ public final class WikiSession implements WikiEventListener
     {
         // Flush the existing GroupPrincipals
         m_subject.getPrincipals().removeAll( m_subject.getPrincipals(GroupPrincipal.class) );
-        
+
         // Get the GroupManager and test for each Group
         GroupManager manager = m_engine.getGroupManager();
         for ( Principal group : manager.getRoles() )
@@ -679,16 +680,16 @@ public final class WikiSession implements WikiEventListener
             {
                 // Add the Principal to the Subject
                 m_subject.getPrincipals().add( principal );
-                
+
                 // Set the user principal if needed; we prefer FullName, but the WikiName will also work
                 boolean isFullNamePrincipal = ( principal instanceof WikiPrincipal && ((WikiPrincipal)principal).getType() == WikiPrincipal.FULL_NAME );
                 if ( isFullNamePrincipal )
                 {
-                   m_userPrincipal = principal; 
+                   m_userPrincipal = principal;
                 }
                 else if ( !( m_userPrincipal instanceof WikiPrincipal ) )
                 {
-                    m_userPrincipal = principal; 
+                    m_userPrincipal = principal;
                 }
             }
         }

@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.ui.admin.beans;
 
@@ -33,7 +33,7 @@ public class CoreBean
 {
     private static final String[] ATTRIBUTES = { "pages", "version" };
     private static final String[] METHODS = { };
-    private WikiEngine m_engine;
+    //private WikiEngine m_engine; //inherited proteced filed from SimpleAdminBean
 
     public CoreBean( WikiEngine engine ) throws NotCompliantMBeanException
     {

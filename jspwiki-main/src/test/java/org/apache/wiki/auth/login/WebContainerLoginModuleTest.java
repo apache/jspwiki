@@ -33,6 +33,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -47,6 +48,7 @@ public class WebContainerLoginModuleTest
 
     private TestEngine m_engine;
 
+    @Test
     public final void testLogin()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
@@ -77,6 +79,7 @@ public class WebContainerLoginModuleTest
         }
     }
 
+    @Test
     public final void testLogout()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );

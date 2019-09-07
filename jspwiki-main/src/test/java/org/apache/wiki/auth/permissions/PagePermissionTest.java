@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth.permissions;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -28,6 +29,7 @@ public class PagePermissionTest
     /*
      * Class under test for boolean equals(java.lang.Object)
      */
+    @Test
     public final void testEqualsObject()
     {
         PagePermission p1 = new PagePermission( "mywiki:Main", "view,edit,delete" );
@@ -39,6 +41,7 @@ public class PagePermissionTest
         Assertions.assertFalse( p3.equals( p4 ) );
     }
 
+    @Test
     public final void testCreateMask()
     {
         Assertions.assertEquals( 1, PagePermission.createMask( "view" ) );
@@ -50,6 +53,7 @@ public class PagePermissionTest
     /*
      * Class under test for java.lang.String toString()
      */
+    @Test
     public final void testToString()
     {
         PagePermission p;
@@ -62,6 +66,7 @@ public class PagePermissionTest
     /**
      * Tests wiki name support.
      */
+    @Test
     public final void testWikiNames()
     {
         PagePermission p1;
@@ -87,6 +92,7 @@ public class PagePermissionTest
         Assertions.assertFalse( p1.implies( p2 ) );
     }
 
+    @Test
     public final void testImpliesAttachments()
     {
         PagePermission p1;
@@ -102,6 +108,7 @@ public class PagePermissionTest
     /*
      * Class under test for boolean implies(java.security.Permission)
      */
+    @Test
     public final void testImpliesPermission()
     {
         PagePermission p1;
@@ -288,6 +295,7 @@ public class PagePermissionTest
         Assertions.assertFalse( p3.implies( p1 ) );
     }
 
+    @Test
     public final void testImplies()
     {
         Assertions.assertFalse(PagePermission.RENAME.implies( PagePermission.MODIFY ) );
@@ -315,6 +323,7 @@ public class PagePermissionTest
         Assertions.assertTrue( PagePermission.COMMENT.implies( PagePermission.VIEW ) );
     }
 
+    @Test
     public final void testImpliedMask()
     {
         int result = ( PagePermission.DELETE_MASK | PagePermission.MODIFY_MASK | PagePermission.EDIT_MASK
@@ -339,6 +348,7 @@ public class PagePermissionTest
         Assertions.assertEquals( result, PagePermission.impliedMask( PagePermission.UPLOAD_MASK ) );
     }
 
+    @Test
     public final void testGetName()
     {
         PagePermission p;
@@ -352,6 +362,7 @@ public class PagePermissionTest
     /*
      * Class under test for java.lang.String getActions()
      */
+    @Test
     public final void testGetActions()
     {
         PagePermission p = new PagePermission( "Main", "VIEW,edit,delete" );

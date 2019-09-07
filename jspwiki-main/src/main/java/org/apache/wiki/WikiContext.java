@@ -72,14 +72,14 @@ public class WikiContext implements Cloneable, Command {
     private    WikiPage   m_realPage;
     private    WikiEngine m_engine;
     private    String     m_template = "default";
-    
+
     private    HashMap<String,Object> m_variableMap = new HashMap<>();
 
     /** Stores the HttpServletRequest.  May be null, if the request did not come from a servlet. */
     protected  HttpServletRequest m_request = null;
 
     private    WikiSession m_session = null;
-    
+
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String INSTALL = WikiCommand.INSTALL.getRequestContext();
 
@@ -805,6 +805,8 @@ public class WikiContext implements Cloneable, Command {
         if ( request != null )
         {
             template = request.getParameter( "skin" );
+
+            if( template != null ) template = template.replaceAll("\\p{Punct}", "");
         }
 
         // If request doesn't supply the value, extract from wiki page

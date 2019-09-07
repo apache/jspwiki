@@ -33,7 +33,7 @@ import java.util.Collection;
 
 public abstract class ModuleBean extends SimpleAdminBean {
 
-    protected WikiEngine m_engine;
+    //protected WikiEngine m_engine; //inherited protected field from SimpleAdminBean
 
     private static final String VER_WARNING = "<span class='warning'>This module is not compatible with this version of JSPWiki.</span>";
 
