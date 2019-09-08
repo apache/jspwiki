@@ -89,7 +89,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1990,7 +1989,7 @@ public class WikiEngine
      *  @since 2.2
      */
 
-    public String getRedirectURL( WikiContext context )
+    public String getRedirectURL( final WikiContext context )
     {
         return context.getRedirectURL();
     }
@@ -2006,18 +2005,14 @@ public class WikiEngine
      *  @see org.apache.wiki.ui.Command
      *  @since 2.1.15.
      */
-    // FIXME: We need to have a version which takes a fixed page
-    //        name as well, or check it elsewhere.
-    public WikiContext createContext( HttpServletRequest request,
-                                      String requestContext )
-    {
-        if( !m_isConfigured )
-        {
-            throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
+    // FIXME: We need to have a version which takes a fixed page name as well, or check it elsewhere.
+    public WikiContext createContext( final HttpServletRequest request, final String requestContext ) {
+        if( !m_isConfigured ) {
+            throw new InternalWikiException( "WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
         }
 
         // Build the wiki context
-        Command command = m_commandResolver.findCommand( request, requestContext );
+        final Command command = m_commandResolver.findCommand( request, requestContext );
         return new WikiContext( this, request, command );
     }
 
@@ -2028,30 +2023,21 @@ public class WikiEngine
      * @param pageName The name of the page.
      * @throws ProviderException If something goes wrong.
      */
-    public void deletePage( String pageName )
-        throws ProviderException
-    {
-        WikiPage p = getPage( pageName );
+    public void deletePage( final String pageName ) throws ProviderException {
+        final WikiPage p = getPage( pageName );
+        if( p != null ) {
+            if( p instanceof Attachment ) {
+                m_attachmentManager.deleteAttachment( ( Attachment )p );
+            } else {
+                final Collection< String > refTo = m_referenceManager.findRefersTo( pageName );
+                // May return null, if the page does not exist or has not been indexed yet.
 
-        if( p != null )
-        {
-            if( p instanceof Attachment )
-            {
-                m_attachmentManager.deleteAttachment( (Attachment) p );
-            }
-            else
-            {
-                Collection<String> refTo = m_referenceManager.findRefersTo(pageName);
-                //May return null, if the page does not exist or has not been indexed yet.
-
-                if (m_attachmentManager.hasAttachments( p ))
-                {
-                    List< Attachment > attachments = m_attachmentManager.listAttachments( p );
-                    for( Iterator< Attachment > atti = attachments.iterator(); atti.hasNext(); )
-                    {
-                        Attachment attachment = atti.next();
-
-                        if( refTo != null ) refTo.remove(attachment.getName());
+                if( m_attachmentManager.hasAttachments( p ) ) {
+                    final List< Attachment > attachments = m_attachmentManager.listAttachments( p );
+                    for( final Attachment attachment : attachments ) {
+                        if( refTo != null ) {
+                            refTo.remove( attachment.getName() );
+                        }
 
                         m_attachmentManager.deleteAttachment( attachment );
                     }
@@ -2068,15 +2054,10 @@ public class WikiEngine
      *  @param page The page object.
      *  @throws ProviderException If something goes wrong.
      */
-    public void deleteVersion( WikiPage page )
-        throws ProviderException
-    {
-        if( page instanceof Attachment )
-        {
+    public void deleteVersion( final WikiPage page ) throws ProviderException {
+        if( page instanceof Attachment ) {
             m_attachmentManager.deleteVersion( (Attachment) page );
-        }
-        else
-        {
+        } else {
             m_pageManager.deleteVersion( page );
         }
     }
