@@ -22,8 +22,6 @@
  */
 package org.apache.wiki.ui;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -32,30 +30,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PageCommandTest
-{
-    TestEngine     testEngine;
+public class PageCommandTest {
 
+    TestEngine     testEngine;
     WikiPage       testPage;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
-        Properties props = TestEngine.getTestProperties();
-        testEngine = new TestEngine( props );
+    public void setUp() throws Exception {
+        testEngine = new TestEngine();
         testEngine.saveText( "TestPage", "This is a test." );
         testPage = testEngine.getPage( "TestPage" );
     }
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         testEngine.deletePage( "TestPage" );
     }
 
     @Test
-    public void testStaticCommand()
-    {
+    public void testStaticCommand() {
         Command a = PageCommand.VIEW;
         Assertions.assertEquals( "view", a.getRequestContext() );
         Assertions.assertEquals( "Wiki.jsp", a.getJSP() );
@@ -85,8 +78,7 @@ public class PageCommandTest
     }
 
     @Test
-    public void testTargetedCommand()
-    {
+    public void testTargetedCommand() {
         // Get view command
         Command a = PageCommand.VIEW;
 
