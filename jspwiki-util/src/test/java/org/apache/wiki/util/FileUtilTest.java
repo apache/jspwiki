@@ -21,6 +21,8 @@ package org.apache.wiki.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -78,7 +80,8 @@ public class FileUtilTest
      * ISO Latin 1 from a pipe.
      */
     @Test
-    public void testReadContentsFromPipe() throws Exception {
+    @EnabledOnOs( OS.LINUX )
+    public void testReadContentsFromPipeOnLinux() throws Exception {
         String src = "abc\n123456\n\nfoobar.\n";
 
         // Make a very long string.
