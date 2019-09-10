@@ -1,3 +1,15 @@
+2019-10-09  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M5-git-18
+
+       * [JSPWIKI-1115]: a few more dependency upgrades before 2.11.0-M5
+         * Commons Text to 1.8
+         * Flexmark to 0.50.40
+         * Hsqldb to 2.5.0
+         * JUnit to 5.5.2
+         * Lucene to 8.2.0
+         * Selenide to 5.3.1
+
 2019-07-09  Dirk Frederickx (brushed AT apache DOT org)
 
        * 2.11.0-M5-git-17
