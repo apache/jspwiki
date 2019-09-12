@@ -1,3 +1,10 @@
+2019-07-09  Dirk Frederickx (brushed AT apache DOT org)
+
+       * 2.11.0-M5-git-19
+
+       * Fix javascript build error,  and some favicon errors.
+
+
 2019-10-09  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M5-git-18
