@@ -29,7 +29,7 @@
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>2.11.0.M5-SNAPSHOT</version>
+  <version>2.11.0.M5</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard JEE components (Java, servlets, JSP).</description>
@@ -112,7 +112,7 @@
     <connection>scm:git:https://github.com/apache/jspwiki.git</connection>
     <developerConnection>scm:git:https://github.com/apache/jspwiki.git</developerConnection>
     <url>https://github.com/apache/jspwiki</url>
-    <tag>HEAD</tag>
+    <tag>2.11.0.M5-RC3</tag>
   </scm>
 
   <modules>
