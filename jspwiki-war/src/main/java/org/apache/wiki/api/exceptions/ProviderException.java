@@ -37,4 +37,7 @@ public class ProviderException extends WikiException {
         super( msg );
     }
 
+	public ProviderException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
 }

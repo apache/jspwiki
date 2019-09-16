@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -746,6 +747,7 @@ public class VersioningFileProvider
     {
         super.deletePage( page );
 
+		boolean hasError = false;
 		File dir = findOldPageDir(page.getName());
 
         if( dir.exists() && dir.isDirectory() )
@@ -754,17 +756,38 @@ public class VersioningFileProvider
 
             for( int i = 0; i < files.length; i++ )
             {
-                files[i].delete();
+				try {
+					Files.delete(files[i].toPath());
+				}
+				catch (IOException e) {
+					log.error("Can't delete file " + files[i].getAbsolutePath() + " " + e.getMessage(), e);
+					hasError = true;
+				}
             }
 
             File propfile = new File( dir, PROPERTYFILE );
 
             if( propfile.exists() )
             {
-                propfile.delete();
+				try {
+					Files.delete(propfile.toPath());
+				}
+				catch (IOException e) {
+					log.error("Can't delete file " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
+					hasError = true;
+				}
             }
 
-            dir.delete();
+			try {
+				Files.delete(dir.toPath());
+			}
+			catch (IOException e) {
+				log.error("Can't delete directory " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
+				hasError = true;
+			}
+		}
+		if (hasError) {
+			throw new ProviderException("Can't completely delete the old version for file " + page.getName());
         }
     }
 
