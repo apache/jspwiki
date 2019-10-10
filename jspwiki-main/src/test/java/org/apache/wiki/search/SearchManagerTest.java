@@ -97,7 +97,6 @@ public class SearchManagerTest {
         final Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch" ).until( findsResultsFor( res, "mankind" ) );
 
-        Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
@@ -112,7 +111,6 @@ public class SearchManagerTest {
         final Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch2" ).until( findsResultsFor( res,"mankind" ) );
 
-        Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage( "TestPage" );
@@ -131,7 +129,6 @@ public class SearchManagerTest {
         Awaitility.await( "testSimpleSearch3" ).until( findsResultsFor( res, "Babylon" ) );
         res = m_mgr.findPages( "mankind", ctx ); // check for text present in 1st m_engine.saveText() but not in 2nd
 
-        Assertions.assertNotNull( res, "found results" );
         Assertions.assertEquals( 0, res.size(), "empty results" );
 
         res = m_mgr.findPages( "Babylon", ctx );
@@ -152,7 +149,6 @@ public class SearchManagerTest {
         Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch4" ).until( findsResultsFor( res, "mankind" ) );
 
-        Assertions.assertNotNull( res, "found results" );
         Assertions.assertEquals( 1, res.size(), "result not found" );
 
         m_engine.saveText( ctx, "[{ALLOW view Authenticated}] It was the dawn of the third age of mankind... page is blocked" );
@@ -172,7 +168,6 @@ public class SearchManagerTest {
         final Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testTitleSearch" ).until( findsResultsFor( res, "Test" ) );
 
-        Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
@@ -186,7 +181,6 @@ public class SearchManagerTest {
         final Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testTitleSearch2" ).until( findsResultsFor( res, "TestPage" ) );
 
-        Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
@@ -201,7 +195,6 @@ public class SearchManagerTest {
         final Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testKeywordsSearch" ).until( findsResultsFor( res, "perry" ) );
 
-        Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
