@@ -22,19 +22,20 @@ import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+
 
 public class SearchManagerTest {
 
-    private static final long SLEEP_TIME = 2_000L;
-    private static final int SLEEP_COUNT = 50;
     TestEngine m_engine;
     SearchManager m_mgr;
     Properties props;
@@ -65,88 +66,69 @@ public class SearchManagerTest {
         Assertions.assertEquals( "org.apache.wiki.search.LuceneSearchProvider", m_mgr.getSearchEngine().getClass().getName() );
     }
 
-    /**
-     * Should cover for both index and initial delay
-     */
-    Collection< SearchResult > waitForIndex( String text, String testName ) throws Exception {
-        Collection< SearchResult > res = null;
-        for( long l = 0; l < SLEEP_COUNT; l++ ) {
-            if( res == null || res.isEmpty() ) {
-                Thread.sleep( SLEEP_TIME );
-            } else {
-                break;
+    void debugSearchResults( final Collection< SearchResult > res ) {
+        res.forEach( next -> {
+            System.out.println( "page: " + next.getPage() );
+            for( final String s : next.getContexts() ) {
+                System.out.println( "snippet: " + s );
             }
-            MockHttpServletRequest request = m_engine.newHttpRequest();
-            WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
-
-            res = m_mgr.findPages( text, ctx );
-
-            // debugSearchResults( res );
-        }
-        return res;
+        } );
     }
 
-	void debugSearchResults( Collection< SearchResult > res ) {
-		Iterator< SearchResult > iterator = res.iterator();
-		while( iterator.hasNext() ) {
-			SearchResult next = iterator.next();
-			System.out.println( "page: " + next.getPage() );
-			for( String s : next.getContexts() ) {
-				System.out.println( "snippet: " + s );
-			}
-		}
-	}
+    Callable< Boolean > findsResultsFor( final Collection< SearchResult > res, final String text ) {
+        return () -> {
+            final MockHttpServletRequest request = m_engine.newHttpRequest();
+            final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
+            final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
+            if( search != null && search.size() > 0 ) {
+                // debugSearchResults( search );
+                res.addAll( search );
+                return true;
+            }
+            return false;
+        };
+    }
 
     @Test
     public void testSimpleSearch() throws Exception {
-        String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
-
+        final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         m_engine.saveText("TestPage", txt);
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "mankind" , "testSimpleSearch" );
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testSimpleSearch" ).until( findsResultsFor( res, "mankind" ) );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
-
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
     @Test
     public void testSimpleSearch2() throws Exception {
-        String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
-
+        final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         m_engine.saveText("TestPage", txt);
-
         m_engine.saveText("TestPage", txt + " 2");
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "mankind" , "testSimpleSearch2" );
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testSimpleSearch2" ).until( findsResultsFor( res,"mankind" ) );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
-
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage( "TestPage" );
     }
 
     @Test
     public void testSimpleSearch3() throws Exception {
-        String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
-
-        MockHttpServletRequest request = m_engine.newHttpRequest();
+        final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
+        final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
-
-        WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
-
+        final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
         m_engine.saveText( ctx, txt );
-
         m_engine.saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "Babylon" , "testSimpleSearch3" ); // wait until 2nd m_engine.saveText() takes effect
-
+        Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testSimpleSearch3" ).until( findsResultsFor( res, "Babylon" ) );
         res = m_mgr.findPages( "mankind", ctx ); // check for text present in 1st m_engine.saveText() but not in 2nd
 
         Assertions.assertNotNull( res, "found results" );
@@ -155,24 +137,20 @@ public class SearchManagerTest {
         res = m_mgr.findPages( "Babylon", ctx );
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
-
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
     @Test
     public void testSimpleSearch4() throws Exception {
-        String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
-
-        MockHttpServletRequest request = m_engine.newHttpRequest();
+        final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
+        final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
-
-        WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
-
+        final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
         m_engine.saveText( ctx, txt );
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "mankind" , "testSimpleSearch4" );
+        Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testSimpleSearch4" ).until( findsResultsFor( res, "mankind" ) );
 
         Assertions.assertNotNull( res, "found results" );
         Assertions.assertEquals( 1, res.size(), "result not found" );
@@ -188,48 +166,43 @@ public class SearchManagerTest {
 
     @Test
     public void testTitleSearch() throws Exception {
-        String txt = "Nonsensical content that should not match";
-
+        final String txt = "Nonsensical content that should not match";
         m_engine.saveText("TestPage", txt);
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "Test" , "testTitleSearch" );
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testTitleSearch" ).until( findsResultsFor( res, "Test" ) );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
-
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
     @Test
     public void testTitleSearch2() throws Exception {
-        String txt = "Nonsensical content that should not match";
-
+        final String txt = "Nonsensical content that should not match";
         m_engine.saveText("TestPage", txt);
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "TestPage" , "testTitleSearch2" );
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testTitleSearch2" ).until( findsResultsFor( res, "TestPage" ) );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
-
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
 
     @Test
     public void testKeywordsSearch() throws Exception {
-        String txt = "[{SET keywords=perry,mason,attorney,law}] Nonsensical content that should not match";
+        final String txt = "[{SET keywords=perry,mason,attorney,law}] Nonsensical content that should not match";
 
         m_engine.saveText("TestPage", txt);
 
-        Thread.yield();
-        Collection< SearchResult > res = waitForIndex( "perry" , "testKeywordsSearch" );
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "testKeywordsSearch" ).until( findsResultsFor( res, "perry" ) );
 
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
-
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
     }
