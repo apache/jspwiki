@@ -78,6 +78,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -90,6 +92,7 @@ public class LuceneSearchProvider implements SearchProvider {
     protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
 
     private WikiEngine m_engine;
+    private Executor searchExecutor;
 
     // Lucene properties.
 
@@ -134,6 +137,7 @@ public class LuceneSearchProvider implements SearchProvider {
             throws NoRequiredPropertyException, IOException
     {
         m_engine = engine;
+        searchExecutor = Executors.newCachedThreadPool();
 
         m_luceneDirectory = engine.getWorkDir()+File.separator+LUCENE_DIR;
 
@@ -519,7 +523,7 @@ public class LuceneSearchProvider implements SearchProvider {
             final String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS, LUCENE_PAGE_KEYWORDS };
             final QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
             final Query luceneQuery = qp.parse( query );
-            final IndexSearcher searcher = new IndexSearcher( reader );
+            final IndexSearcher searcher = new IndexSearcher( reader, searchExecutor );
 
             if( (flags & FLAG_CONTEXTS) != 0 ) {
                 highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
