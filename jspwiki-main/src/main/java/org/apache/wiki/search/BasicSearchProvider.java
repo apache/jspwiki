@@ -18,14 +18,6 @@
  */
 package org.apache.wiki.search;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -36,6 +28,14 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.providers.WikiPageProvider;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
@@ -167,7 +167,7 @@ public class BasicSearchProvider implements SearchProvider
         Iterator< WikiPage > it = allPages.iterator();
         while( it.hasNext() ) {
             try {
-                WikiPage page = (WikiPage) it.next();
+                WikiPage page = it.next();
                 if (page != null) {
                 	
                     PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
