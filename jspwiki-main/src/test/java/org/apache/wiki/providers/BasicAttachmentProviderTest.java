@@ -19,14 +19,6 @@
 
 package org.apache.wiki.providers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.StringReader;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
@@ -34,6 +26,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.StringReader;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 public class BasicAttachmentProviderTest
 {
@@ -193,7 +193,7 @@ public class BasicAttachmentProviderTest
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Thread.sleep( 2000L ); // So that we get a bit of granularity.
+        Thread.sleep( 200L ); // So that we get a bit of granularity.
 
         Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -229,7 +229,7 @@ public class BasicAttachmentProviderTest
 
             m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-            Thread.sleep( 2000L ); // So that we get a bit of granularity.
+            Thread.sleep( 200L ); // So that we get a bit of granularity.
 
             Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -273,7 +273,7 @@ public class BasicAttachmentProviderTest
 
         try
         {
-            Thread.sleep( 2000L ); // So that we get a bit of granularity.
+            Thread.sleep( 200L ); // So that we get a bit of granularity.
 
             Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -318,7 +318,7 @@ public class BasicAttachmentProviderTest
 
         try
         {
-            Thread.sleep( 2000L ); // So that we get a bit of granularity.
+            Thread.sleep( 200L ); // So that we get a bit of granularity.
 
             Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -350,7 +350,7 @@ public class BasicAttachmentProviderTest
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Thread.sleep( 2000L ); // So that we get a bit of granularity.
+        Thread.sleep( 200L ); // So that we get a bit of granularity.
 
         Attachment att2 = new Attachment( m_engine, NAME2, "test2." );
 
