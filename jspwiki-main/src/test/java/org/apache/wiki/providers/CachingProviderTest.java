@@ -19,22 +19,22 @@
 
 package org.apache.wiki.providers;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.FileUtil;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.Properties;
 
 public class CachingProviderTest
 {
@@ -105,8 +105,7 @@ public class CachingProviderTest
         FileUtil.copyContents( new StringReader(content), out );
         out.close();
 
-        Thread.sleep( 4000L ); // Make sure we wait long enough
-
+        Awaitility.await( "testSneakyAdd" ).until( () -> engine.getPage( "Testi" ) != null );
         WikiPage p = engine.getPage( "Testi" );
         Assertions.assertNotNull( p, "page did not exist?" );
 
