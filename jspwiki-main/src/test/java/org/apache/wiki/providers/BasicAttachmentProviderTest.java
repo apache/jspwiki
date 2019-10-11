@@ -71,7 +71,7 @@ public class BasicAttachmentProviderTest {
     }
 
     private File makeAttachmentFile() throws Exception {
-        final File tmpFile = File.createTempFile("test","txt");
+        final File tmpFile = File.createTempFile("test-",".txt");
         return copyContents( tmpFile );
     }
 
