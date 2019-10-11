@@ -35,6 +35,8 @@ import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+
 
 public class BasicAttachmentProviderTest {
 
@@ -50,9 +52,8 @@ public class BasicAttachmentProviderTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine  = new TestEngine( props );
-
-        TestEngine.deleteAll( new File( m_engine.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR ) ) );
+        props.setProperty( BasicAttachmentProvider.PROP_STORAGEDIR, "target/test-classes/testrepository" + System.currentTimeMillis() );
+        m_engine = new TestEngine( props );
 
         m_provider = new BasicAttachmentProvider();
         m_provider.initialize( m_engine, props );
@@ -62,17 +63,10 @@ public class BasicAttachmentProviderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws Exception {
         m_engine.deleteTestPage( NAME1 );
         m_engine.deleteTestPage( NAME2 );
-
-        final String tmpfiles = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-        File f = new File( tmpfiles, NAME1 + BasicAttachmentProvider.DIR_EXTENSION );
-        TestEngine.deleteAll( f );
-
-        f = new File( tmpfiles, NAME2 + BasicAttachmentProvider.DIR_EXTENSION );
-        TestEngine.deleteAll( f );
-
+        TestEngine.deleteAll( new File( m_engine.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR ) ) );
         TestEngine.emptyWorkDir();
     }
 
@@ -146,13 +140,22 @@ public class BasicAttachmentProviderTest {
         Assertions.assertEquals( att.getName(), a0.getName(), "name" );
     }
 
+    Callable< Boolean > attachmentIsSaved( final Attachment att ) {
+        return () -> {
+            final List< Attachment > attachments = m_provider.listAllChanged( new Date( 0L ) );
+            return attachments.size() > 0
+                && attachments.get( 0 ).getLastModified().getTime() < System.currentTimeMillis()
+                && att.getName().equals( attachments.get( 0 ).getName() );
+        };
+    }
+
     @Test
     public void testListAll() throws Exception {
         final File in = makeAttachmentFile();
         final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Awaitility.await( "testListAll" ).until( () -> m_provider.listAllChanged( new Date( 0L ) ).size() > 0 );
+        Awaitility.await( "testListAll" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
@@ -181,7 +184,7 @@ public class BasicAttachmentProviderTest {
         final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Awaitility.await( "testListAllExtrafile" ).until( () -> m_provider.listAllChanged( new Date( 0L ) ).size() > 0 );
+        Awaitility.await( "testListAllExtrafile" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
@@ -203,15 +206,14 @@ public class BasicAttachmentProviderTest {
     @Test
     public void testListAllExtrafileInAttachmentDir() throws Exception {
         final File in = makeAttachmentFile();
-        final File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
+        final File sDir = new File( m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ) );
         final File attDir = new File( sDir, NAME1+"-att" );
 
         final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
         makeExtraFile( attDir, "ping.pong" );
 
-        Awaitility.await( "testListAllExtrafileInAttachmentDir" )
-                  .until( () -> m_provider.listAllChanged( new Date( 0L ) ).size() > 0 );
+        Awaitility.await( "testListAllExtrafileInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -243,8 +245,7 @@ public class BasicAttachmentProviderTest {
         final File extrafile = new File( attDir, "ping.pong" );
         extrafile.mkdir();
 
-        Awaitility.await( "testListAllExtradirInAttachmentDir" )
-                  .until( () -> m_provider.listAllChanged( new Date( 0L ) ).size() > 0 );
+        Awaitility.await( "testListAllExtradirInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -267,7 +268,7 @@ public class BasicAttachmentProviderTest {
         final Attachment att = new Attachment( m_engine, NAME1, "test1." );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Awaitility.await( "testListAllNoExtension" ).until( () -> m_provider.listAllChanged( new Date( 0L ) ).size() > 0 );
+        Awaitility.await( "testListAllNoExtension" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2." );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
