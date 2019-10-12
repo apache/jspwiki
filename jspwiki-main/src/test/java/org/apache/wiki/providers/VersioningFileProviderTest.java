@@ -18,15 +18,7 @@
  */
 
 package org.apache.wiki.providers;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -38,7 +30,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
 // FIXME: Should this thingy go directly to the VersioningFileProvider,
 //        or should it rely on the WikiEngine API?
@@ -71,7 +70,7 @@ public class VersioningFileProviderTest
         TestEngine.emptyWorkDir(null);
 
         engine = new TestEngine(PROPS);
-        files = PROPS.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        files = engine.getWikiProperties().getProperty( AbstractFileProvider.PROP_PAGEDIR );
     }
 
     @AfterEach
@@ -284,7 +283,7 @@ public class VersioningFileProviderTest
         engine = new TestEngine(PROPS);
 
         // the new TestEngine will have assigned a new page directory
-        files = PROPS.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        files = engine.getWikiProperties().getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
         // we cannot switch PageProviders within a single test, so the
         // initial FileSystemProvider wiki page must be faked.
