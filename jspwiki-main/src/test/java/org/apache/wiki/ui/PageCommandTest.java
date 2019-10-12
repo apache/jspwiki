@@ -32,12 +32,11 @@ import org.junit.jupiter.api.Test;
 
 public class PageCommandTest {
 
-    TestEngine     testEngine;
+    TestEngine     testEngine = TestEngine.build();
     WikiPage       testPage;
 
     @BeforeEach
     public void setUp() throws Exception {
-        testEngine = new TestEngine();
         testEngine.saveText( "TestPage", "This is a test." );
         testPage = testEngine.getPage( "TestPage" );
     }
