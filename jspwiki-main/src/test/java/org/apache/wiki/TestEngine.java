@@ -118,6 +118,18 @@ public class TestEngine extends WikiEngine
         return m_janneWikiSession;
     }
 
+    public static TestEngine build() {
+        return build( getTestProperties() );
+    }
+
+    public static TestEngine build( final Properties props ) {
+        try {
+            return new TestEngine( props );
+        } catch(  WikiException we ) {
+            throw new UnsupportedOperationException( "Unable to build TestEngine: " + we.getMessage(), we );
+        }
+    }
+
     public TestEngine() throws WikiException {
         this( getTestProperties() );
     }
