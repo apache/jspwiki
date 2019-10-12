@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ import java.nio.charset.StandardCharsets;
 public final class FileUtil {
 
     /** Size of the buffer used when copying large chunks of data. */
-    private static final int      BUFFER_SIZE = 4096;
+    private static final int      BUFFER_SIZE = 8192;
     private static final Logger   log         = Logger.getLogger(FileUtil.class);
 
     /**
@@ -166,6 +167,12 @@ public final class FileUtil {
         }
 
         out.flush();
+
+        // FileOutputStream.flush is an empty method, so in this case we grab the underlying file descriptor and force from there thw write to disk
+        if( out instanceof FileOutputStream ) {
+            FileDescriptor fd = ( ( FileOutputStream )out ).getFD();
+            fd.sync();
+        }
     }
 
     /**
@@ -231,29 +238,10 @@ public final class FileUtil {
      *  @return String read from the Reader
      *  @throws IOException If reading fails.
      */
-    public static String readContents( Reader in )
-        throws IOException
-    {
-        Writer out = null;
-
-        try
-        {
-            out = new StringWriter();
-
+    public static String readContents( final Reader in ) throws IOException {
+        try( Writer out = new StringWriter() ) {
             copyContents( in, out );
-
             return out.toString();
-        }
-        finally
-        {
-            try
-            {
-                out.close();
-            }
-            catch( Exception e )
-            {
-                log.error("Not able to close the stream while reading contents.");
-            }
         }
     }
 
