@@ -20,10 +20,11 @@
 package org.apache.wiki.providers;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.AfterEach;
+import org.awaitility.core.ConditionFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +41,8 @@ import java.util.concurrent.Callable;
 
 public class BasicAttachmentProviderTest {
 
-    public static final String NAME1 = "TestPage";
-    public static final String NAME2 = "TestPageToo";
+    public static final String NAME1 = "FirstTestPage";
+    public static final String NAME2 = "AfterFirstTestPage";
 
     Properties props = TestEngine.getTestProperties();
     TestEngine m_engine;
@@ -52,7 +53,6 @@ public class BasicAttachmentProviderTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        props.setProperty( BasicAttachmentProvider.PROP_STORAGEDIR, "target/test-classes/testrepository" + System.currentTimeMillis() );
         m_engine = new TestEngine( props );
 
         m_provider = new BasicAttachmentProvider();
@@ -60,14 +60,6 @@ public class BasicAttachmentProviderTest {
 
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAME2, "Foobar2" );
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        m_engine.deleteTestPage( NAME1 );
-        m_engine.deleteTestPage( NAME2 );
-        TestEngine.deleteAll( new File( m_engine.getRequiredProperty( props, BasicAttachmentProvider.PROP_STORAGEDIR ) ) );
-        TestEngine.emptyWorkDir();
     }
 
     private File makeAttachmentFile() throws Exception {
@@ -140,12 +132,32 @@ public class BasicAttachmentProviderTest {
         Assertions.assertEquals( att.getName(), a0.getName(), "name" );
     }
 
+    @Test
+    public void testGetAttachmentDataRaisesProviderExceptionIfInexistentFileOnDisk() {
+        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        Assertions.assertThrows( ProviderException.class, () -> m_provider.getAttachmentData( att ) );
+    }
+
+    ConditionFactory awaitility() {
+        return Awaitility.given().ignoreException( ProviderException.class );
+    }
+
+    /**
+     * Actual save on disk is OS-dependent, meaning the files of two consecutive attachment saves may end up having the
+     * same last modified date. As we'll check the order of {@link BasicAttachmentProvider#listAllChanged(Date)}, we must
+     * wait until the file saved is actually on disk.
+     *
+     * If after all, the next saves of two consecutive attachments end up with the same last modified date,
+     * {@link BasicAttachmentProvider#listAllChanged(Date)} will sort attachments using wiki page names and versions,
+     * so we're preparing attachment names too in order to not mangle with the assertions.
+     *
+     * @param att attachment to check
+     * @return {@code Callable< Boolean.TRUE >} or {@code ProviderException}.
+     */
     Callable< Boolean > attachmentIsSaved( final Attachment att ) {
         return () -> {
-            final List< Attachment > attachments = m_provider.listAllChanged( new Date( 0L ) );
-            return attachments.size() > 0
-                && attachments.get( 0 ).getLastModified().getTime() < System.currentTimeMillis()
-                && att.getName().equals( attachments.get( 0 ).getName() );
+            m_provider.getAttachmentData( att ).close(); // throws exception if file does not exist on disk
+            return true;
         };
     }
 
@@ -155,7 +167,7 @@ public class BasicAttachmentProviderTest {
         final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Awaitility.await( "testListAll" ).until( attachmentIsSaved( att ) );
+        awaitility().await( "testListAll" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
@@ -184,7 +196,7 @@ public class BasicAttachmentProviderTest {
         final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Awaitility.await( "testListAllExtrafile" ).until( attachmentIsSaved( att ) );
+        awaitility().await( "testListAllExtrafile" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
@@ -213,7 +225,7 @@ public class BasicAttachmentProviderTest {
         m_provider.putAttachmentData( att, new FileInputStream(in) );
         makeExtraFile( attDir, "ping.pong" );
 
-        Awaitility.await( "testListAllExtrafileInAttachmentDir" ).until( attachmentIsSaved( att ) );
+        awaitility().await( "testListAllExtrafileInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -245,7 +257,7 @@ public class BasicAttachmentProviderTest {
         final File extrafile = new File( attDir, "ping.pong" );
         extrafile.mkdir();
 
-        Awaitility.await( "testListAllExtradirInAttachmentDir" ).until( attachmentIsSaved( att ) );
+        awaitility().await( "testListAllExtradirInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
@@ -268,7 +280,7 @@ public class BasicAttachmentProviderTest {
         final Attachment att = new Attachment( m_engine, NAME1, "test1." );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
-        Awaitility.await( "testListAllNoExtension" ).until( attachmentIsSaved( att ) );
+        awaitility().await( "testListAllNoExtension" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = new Attachment( m_engine, NAME2, "test2." );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
