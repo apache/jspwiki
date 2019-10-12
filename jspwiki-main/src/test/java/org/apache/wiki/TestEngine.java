@@ -445,14 +445,25 @@ public class TestEngine extends WikiEngine
      * @return the corrected/clean properties
      */
     private static Properties cleanTestProps( final Properties props ) {
-        final String pageDir = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
-        final String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
-        final String testDir = pageDir.substring( 0, pageDir.lastIndexOf( '/' ) ) +
-                               stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ) + System.currentTimeMillis();
+        long millis = System.currentTimeMillis();
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir", testDir );
-        props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", testDir );
+        props.setProperty( "jspwiki.fileSystemProvider.pageDir", cleanNewDirFrom( props.getProperty( "jspwiki.fileSystemProvider.pageDir" ), millis ) );
+        props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", cleanNewDirFrom( props.getProperty( "jspwiki.basicAttachmentProvider.storageDir" ), millis ) );
+        props.setProperty( "jspwiki.workDir", cleanNewDirFrom( props.getProperty( "jspwiki.workDir" ), millis ) );
         return props;
+    }
+
+    private static String cleanNewDirFrom( final String pageDir, final long millis ) {
+        if( StringUtils.isBlank( pageDir ) ) {
+            return "";
+        }
+        if( pageDir.lastIndexOf( '/' ) == -1 ) {
+            return "target/" + millis + "-" + pageDir;
+        }
+        final String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
+        return pageDir.substring( 0, pageDir.lastIndexOf( '/' ) + 1 )
+             + millis // place all related tests' folders one next to the others
+             + stripNumbers.replaceAll( "\\d", StringUtils.EMPTY );
     }
 
 }
