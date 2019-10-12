@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
+import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
@@ -46,7 +47,7 @@ public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorSt
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node)
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {

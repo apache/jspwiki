@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 
-import com.vladsch.flexmark.util.html.Attributes;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 
 /**
@@ -46,7 +46,7 @@ public class LocalEditLinkAttributeProviderState implements NodeAttributeProvide
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, Node)
      */
     @Override
     public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {

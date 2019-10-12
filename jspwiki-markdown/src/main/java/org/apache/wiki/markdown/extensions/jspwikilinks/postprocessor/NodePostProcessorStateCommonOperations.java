@@ -48,7 +48,7 @@ class NodePostProcessorStateCommonOperations {
 
     static void addOutlinkImage( final NodeTracker state, final Node node, final WikiContext wikiContext, final boolean useOutlinkImage ) {
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        boolean wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        final boolean wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable.booleanValue();
 
         if( useOutlinkImage && !wysiwygEditorMode ) {
             final String m_outlinkImageURL = wikiContext.getURL( WikiContext.NONE, MarkupParser.OUTLINK_IMAGE );

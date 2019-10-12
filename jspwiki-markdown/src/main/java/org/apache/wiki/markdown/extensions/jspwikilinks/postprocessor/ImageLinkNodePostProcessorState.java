@@ -19,6 +19,7 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.WikiContext;
@@ -44,7 +45,7 @@ public class ImageLinkNodePostProcessorState implements NodePostProcessorState< 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node)
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {

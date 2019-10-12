@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
+import com.vladsch.flexmark.util.ast.Node;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
@@ -46,7 +47,7 @@ public class ImageLinkAttributeProviderState implements NodeAttributeProviderSta
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(Attributes, Node)
      */
     @Override
     public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
