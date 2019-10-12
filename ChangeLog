@@ -1,10 +1,21 @@
+2019-12-10  Juan Pablo Santos (juanpablo AT apache DOT org)
+
+       * 2.11.0-M6-git-02
+
+       * FileUtils.copyContents( InputStream, OutputStream ) enforces writes to disk for FileOutputStream through
+         their associated FileDescriptor.
+
+       * new static methods to build TestEngine instances which do not throw checked Exceptions and thus allows
+         TestEngine instances to be built as member of test classes, instead of rebuilding for every test and saving
+         some time in the process.
+
 2019-10-10  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M6-git-01
 
        * Introduce Awaitility to speed up tests formerly relaying on Thread.sleep(..)
 
-       * LuceneSearchProvider now uses an Executor to increase performance on searches
+       * LuceneSearchProvider now uses an Executor to increase performance on searches.
 
 2019-12-09  Dirk Frederickx (brushed AT apache DOT org)
 
