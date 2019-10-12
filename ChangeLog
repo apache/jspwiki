@@ -9,6 +9,9 @@
          TestEngine instances to be built as member of test classes, instead of rebuilding for every test and saving
          some time in the process.
 
+       * TestEngine will generate separate page, attachment and work directories, in order to allow each instance
+         to work with a clean file installation.
+
 2019-10-10  Juan Pablo Santos (juanpablo AT apache DOT org)
 
        * 2.11.0-M6-git-01
