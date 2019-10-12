@@ -167,8 +167,8 @@ public class BasicAttachmentProviderTest {
         final Attachment a2 = res.get(0);  // Most recently changed
         final Attachment a1 = res.get(1);  // Least recently changed
 
-        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
-        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name :: " + res );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name :: " + res );
     }
 
 
@@ -196,8 +196,8 @@ public class BasicAttachmentProviderTest {
         final Attachment a2 = res.get(0);  // Most recently changed
         final Attachment a1 = res.get(1);  // Least recently changed
 
-        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
-        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name :: " + res );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name :: " + res );
     }
 
     /**
@@ -226,8 +226,8 @@ public class BasicAttachmentProviderTest {
         final Attachment a2 = res.get(0);  // Most recently changed
         final Attachment a1 = res.get(1);  // Least recently changed
 
-        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
-        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name :: " + res );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name :: " + res );
     }
 
     /**
@@ -258,8 +258,8 @@ public class BasicAttachmentProviderTest {
         final Attachment a2 = res.get(0);  // Most recently changed
         final Attachment a1 = res.get(1);  // Least recently changed
 
-        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
-        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name :: " + res );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name :: " + res );
     }
 
     @Test
@@ -280,8 +280,8 @@ public class BasicAttachmentProviderTest {
         final Attachment a2 = res.get(0);  // Most recently changed
         final Attachment a1 = res.get(1);  // Least recently changed
 
-        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name" );
-        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name" );
+        Assertions.assertEquals( att.getName(), a1.getName(), "a1 name :: " + res );
+        Assertions.assertEquals( att2.getName(), a2.getName(), "a2 name :: " + res );
     }
 
 }
