@@ -1,4 +1,4 @@
-```
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -15,7 +15,7 @@ software distributed under the License is distributed on an
 KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
-```
+-->
 
 **2019-10-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
@@ -50,12 +50,12 @@ under the License.
 * _2.11.0-M5-git-18_
 
 * [JSPWIKI-1115](https://issues.apache.org/jira/browse/JSPWIKI-1115): a few more dependency upgrades before 2.11.0-M5
-  * Commons Text to 1.8
-  * Flexmark to 0.50.40
-  * Hsqldb to 2.5.0
-  * JUnit to 5.5.2
-  * Lucene to 8.2.0
-  * Selenide to 5.3.1
+    * Commons Text to 1.8
+    * Flexmark to 0.50.40
+    * Hsqldb to 2.5.0
+    * JUnit to 5.5.2
+    * Lucene to 8.2.0
+    * Selenide to 5.3.1
 
 **2019-09-07  Dirk Frederickx (brushed AT apache DOT org)**
 
@@ -127,7 +127,7 @@ under the License.
 * replaced all deprecated code
 
 * [JSPWIKI-1115](https://issues.apache.org/jira/browse/JSPWIKI-1115): Upgrade SLF4J to 1.7.28 and commons-lang from 2.6 to 3.9
-  * dev-only breaking change: if you were using commons-lang transitively on your extension,
+    * dev-only breaking change: if you were using commons-lang transitively on your extension,
     you must declare it explicitly or migrate it to commons-lang 3
 
 **2019-08-06  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -140,12 +140,12 @@ under the License.
   Ulf Dittmer, thanks!
 
 * [JSPWIKI-1115](https://issues.apache.org/jira/browse/JSPWIKI-1115): Upgrade bundled dependencies for 2.11.0.M5
-  * Flexmark 0.50.26
-  * JUnit 5.5.1
-  * Lucene 8.1.1
-  * Selenide 5.2.8
-  * Tika 1.22
-  * Tomcat 8.5.43
+    * Flexmark 0.50.26
+    * JUnit 5.5.1
+    * Lucene 8.1.1
+    * Selenide 5.2.8
+    * Tika 1.22
+    * Tomcat 8.5.43
 
 **2019-16-07  Dirk Frederickx (brushed AT apache DOT org)**
 
@@ -227,8 +227,8 @@ under the License.
 
 * [JSPWIKI-469](https://issues.apache.org/jira/browse/JSPWIKI-469) new [TikaSearchProvider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=TikaSearchProvider) to index a lot more of attachments. It is not bundled
 by default, as it brings in a lot of dependencies (+55MB).
-  * See [TikaSearchProvider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=TikaSearchProvider) for installation instructions
-  * Search provider contributed by Ulf Dittmer, thanks!
+    * See [TikaSearchProvider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=TikaSearchProvider) for installation instructions
+    * Search provider contributed by Ulf Dittmer, thanks!
 
 * `LuceneSearchProvider` now indexes all attachment filenames, whether their content is parsed or not,
 and also scans `.md` and `.xml` files.
@@ -348,11 +348,11 @@ and also scans `.md` and `.xml` files.
 * [JSPWIKI-1095](https://issues.apache.org/jira/browse/JSPWIKI-1095): `DefaultURLConstructor#getForwardPage( HttpServletRequest req )` now always returns `Wiki.jsp`
 
 * [JSPWIKI-1096](https://issues.apache.org/jira/browse/JSPWIKI-1096): Upgrade bundled dependencies for 2.11.0-M3
-  * flexmark to 0.40.24
-  * lucene to 8.0.0
-  * selenide to 5.2.2
-  * slf4j to 1.7.26
-  * tomcat to 8.5.39
+    * flexmark to 0.40.24
+    * lucene to 8.0.0
+    * selenide to 5.2.2
+    * slf4j to 1.7.26
+    * tomcat to 8.5.39
 
 **2019-03-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
@@ -378,9 +378,9 @@ and also scans `.md` and `.xml` files.
 * _2.11.0-M3-git-01_
 
 * UserPreferences fixes
-  * new toggle style for on/off switches
-  * restyle bi-model checkboxes for Page Layout setting
-  * fix a few style issues in the UserPreferences when in Dark Mode
+    * new toggle style for on/off switches
+    * restyle bi-model checkboxes for Page Layout setting
+    * fix a few style issues in the UserPreferences when in Dark Mode
 
 * The JSPWiki template should by default open up in the light mode.
 
@@ -428,12 +428,12 @@ and also scans `.md` and `.xml` files.
   not found
 
 * [JSPWIKI-1092](https://issues.apache.org/jira/browse/JSPWIKI-1092): Upgrade bundled dependencies
-  * flexmark to 0.40.16
-  * gson to 2.8.5
-  * lucene to 7.7.0
-  * nekohtml to 1.9.22
-  * stripes to 1.7.0-async (needed to test [JSPWIKI-1088)
-  * tomcat to 8.5.38
+    * flexmark to 0.40.16
+    * gson to 2.8.5
+    * lucene to 7.7.0
+    * nekohtml to 1.9.22
+    * stripes to 1.7.0-async (needed to test [JSPWIKI-1088)
+    * tomcat to 8.5.38
 
 * fixed css path and packaging of webresources
 
@@ -476,12 +476,12 @@ and also scans `.md` and `.xml` files.
 * `o.a.w.util` package ready to be extracted to its own module
 
 * new `o.a.w.pages` package, with `PageSorter` becoming a `Comparator< String >` and no longer accesible from WikiContext
-  * `PageSorter` is accesed now through `PageManager`
-  * to compare WikiPages use `wikiPage.compareTo( anotherWikiPage );`
-  * `sortPages` methods are also gone, as an alternative you can use something along these lines (see
+    * `PageSorter` is accesed now through `PageManager`
+    * to compare WikiPages use `wikiPage.compareTo( anotherWikiPage );`
+    * `sortPages` methods are also gone, as an alternative you can use something along these lines (see
     `AttachmentManager#listAttachments` for another example):
     `Collections.< WikiPage >sort( pages, Comparator.comparing( WikiPage::getName, m_engine.getPageManager().getPageSorter() ) );`
-  * as a side effect of this change, `AbstractReferalPlugin#filter[AndSort]Collection` methods operate with
+    * as a side effect of this change, `AbstractReferalPlugin#filter[AndSort]Collection` methods operate with
     `Collection< String >` instead of with plain `Collection` (except for `RecentChangesPlugin`, plugins
     inheriting this method were already doing it), custom plugins inheriting this method will have to use
     new `filterWikiPageCollection` method instead
@@ -517,20 +517,20 @@ and also scans `.md` and `.xml` files.
   - if not set, JVM's default
 
 * [JSPWIKI-1087](https://issues.apache.org/jira/browse/JSPWIKI-1087) - upgrade bundled dependencies
-  * commons-fileupload to 1.4
-  * flexmark to 0.40.12
-  * hsqldb updated to 2.4.1
-  * cargo plugin to 1.7.1
+    * commons-fileupload to 1.4
+    * flexmark to 0.40.12
+    * hsqldb updated to 2.4.1
+    * cargo plugin to 1.7.1
 
 **2018-12-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M1-git-14_: upgrade bundled dependencies
-  * commons-fileupload to 1.3.3
-  * ehcache to 2.10.6
-  * flexmark to 0.35.0
-  * junit to 5.3.2
-  * lucene to 7.6.0
-  * tomcat to 8.5.37
+    * commons-fileupload to 1.3.3
+    * ehcache to 2.10.6
+    * flexmark to 0.35.0
+    * junit to 5.3.2
+    * lucene to 7.6.0
+    * tomcat to 8.5.37
 
 * escape entities on `Captcha.jsp` request parameters
 
@@ -547,8 +547,8 @@ and also scans `.md` and `.xml` files.
 **2018-12-15  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.11.0-M1-git-12_: [JSPWIKI-1083](https://issues.apache.org/jira/browse/JSPWIKI-1083) - fixing bugs related to the new default template.
-  * Rename HADDOCK template to DEFAULT template.
-  * Moving a number of default jsp's (common for all templates)
+    * Rename HADDOCK template to DEFAULT template.
+    * Moving a number of default jsp's (common for all templates)
     from templates/210 to templates/default.
 
 **2018-12-07  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -584,11 +584,11 @@ and also scans `.md` and `.xml` files.
   instead of all-or-nothing
 
 * small backwards-incompatible changes:
-  * `CryptoUtil#verifySaltedPassword` doesn't throw `UnsupportedEncodingException` anymore
-  * `TextUtil#urlDecode` methods don't throw `UnsupportedOperationException` anymore
-  * `ClassUtil#getMappedObject` methods now throw `ReflectiveOperationException`, `IllegalArgumentException`
+    * `CryptoUtil#verifySaltedPassword` doesn't throw `UnsupportedEncodingException` anymore
+    * `TextUtil#urlDecode` methods don't throw `UnsupportedOperationException` anymore
+    * `ClassUtil#getMappedObject` methods now throw `ReflectiveOperationException`, `IllegalArgumentException`
     instead of `WikiException`
-  * `ClassUtil#getMappedClass` method now throws `ClassNotFoundException` instead of `WikiException`
+    * `ClassUtil#getMappedClass` method now throws `ClassNotFoundException` instead of `WikiException`
 
 * fix possible concurrency issue at `ReferenceManager#serializeAttrsToDisk`
 
@@ -617,10 +617,10 @@ and also scans `.md` and `.xml` files.
   - `jspwiki-markdown` module included into main war
 
 * several small code refactors, including some backwards-incompatible ones:
-  * `PropertiesUtils` moved to the `util` package
-  * `ReferenceManager#findReferrers` returns `Set< String >` instead of `Collection< String >`
-  * `AttachmentManager#listAttachments` returns a `List< Attachment >` instead of a `Collection`
-  * `WikiEngine#findPages( String query, WikiContext wikiContext )` is removed, use
+    * `PropertiesUtils` moved to the `util` package
+    * `ReferenceManager#findReferrers` returns `Set< String >` instead of `Collection< String >`
+    * `AttachmentManager#listAttachments` returns a `List< Attachment >` instead of a `Collection`
+    * `WikiEngine#findPages( String query, WikiContext wikiContext )` is removed, use
     `WikiEngine#getSearchManager()#findPages( String query, WikiContext wikiContext )` instead
 
 **2018-10-26  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -634,18 +634,18 @@ and also scans `.md` and `.xml` files.
 **2018-10-21  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M1-git-03_: [JSPWIKI-1083](https://issues.apache.org/jira/browse/JSPWIKI-1083) - Haddock is now the default template
-  * to bring back the 2.10 template set the `jspwiki.templateDir` property to `210`
+    * to bring back the 2.10 template set the `jspwiki.templateDir` property to `210`
 
 * [JSPWIKI-1077](https://issues.apache.org/jira/browse/JSPWIKI-1077) - added the following pages to the core pages' bundles, as they enable some more haddock functionality
-  * [CSSBackgroundGradients](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Gradients)
-  * [CSSBackgroundPatterns](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Patterns)
-  * [CSSInstagramFilters](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Instagram%20Filters)
-  * [CSSPrettifyThemeTomorrowNightBlue](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Tomorrow%20Night%20Blue)
-  * [CSSPrettifyThemeTomorrowPrism](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Prism)
-  * [CSSRibbon](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Ribbon)
-  * [CSSStripedText](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Striped%20Text)
-  * [CSSThemeCleanBlue](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Clean%20Blue%20Theme)
-  * [CSSThemeDark](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Dark%20Theme)
+    * [CSSBackgroundGradients](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Gradients)
+    * [CSSBackgroundPatterns](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Background%20Patterns)
+    * [CSSInstagramFilters](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Instagram%20Filters)
+    * [CSSPrettifyThemeTomorrowNightBlue](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Tomorrow%20Night%20Blue)
+    * [CSSPrettifyThemeTomorrowPrism](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Prettify%20Theme%20Prism)
+    * [CSSRibbon](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Ribbon)
+    * [CSSStripedText](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Striped%20Text)
+    * [CSSThemeCleanBlue](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Clean%20Blue%20Theme)
+    * [CSSThemeDark](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Dark%20Theme)
 
 **2018-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
@@ -681,12 +681,12 @@ and also scans `.md` and `.xml` files.
   functionality to recover unsaved page edits.
 
   You can test this like so:
-  * open a page for edit in the haddock template
-  * make some changes to the page
-  * move to another page without saving (or close the browser tab)
-  * click LEAVE when the popup `changes you made may not be saved` appears.
-  * reopen the page for edit
-  * you should now receive a new popup which allows you to restore or abandon
+    * open a page for edit in the haddock template
+    * make some changes to the page
+    * move to another page without saving (or close the browser tab)
+    * click LEAVE when the popup `changes you made may not be saved` appears.
+    * reopen the page for edit
+    * you should now receive a new popup which allows you to restore or abandon
     the unsaved changes
 
 
@@ -762,8 +762,8 @@ and also scans `.md` and `.xml` files.
 
 * _2.10.4-git-09_  Better support for mobile devices in the Haddock Template
      See [JSPWIKI-835](https://issues.apache.org/jira/browse/JSPWIKI-835)
-     * Updates various styles to better fit small screens.  (tabs, accordion, columns, ...)
-     * On small screens,  the sidebar is by default closed.
+       * Updates various styles to better fit small screens.  (tabs, accordion, columns, ...)
+       * On small screens,  the sidebar is by default closed.
 On wider screens, the sidebar is open/closed based on the previous state
 which is saved in a cookie.
 
@@ -772,15 +772,15 @@ which is saved in a cookie.
 * _2.10.4-git-08_  Adding support for mobile devices to the Haddock Template
      See [JSPWIKI-835](https://issues.apache.org/jira/browse/JSPWIKI-835)
      Part-1 -- many style adjustment to fit smaller screens
-     * Sidebar now slides over the main page on mobile devices
-     * Header (pagename, and menu bar) are better fit for small screens
-     * Width of several menu's and dropdowns is restricted for small screens
-     * Editor toolbar resized for small screens
+       * Sidebar now slides over the main page on mobile devices
+       * Header (pagename, and menu bar) are better fit for small screens
+       * Width of several menu's and dropdowns is restricted for small screens
+       * Editor toolbar resized for small screens
 
      Other:
-     * [JSPWIKI-1058](https://issues.apache.org/jira/browse/JSPWIKI-1058) Editor toolbar now remains on screen, even when scrolling down
-     * Small tweaks of the `RecentChanges` output
-     * [JSPWIKI-1068](https://issues.apache.org/jira/browse/JSPWIKI-1068) : fixing positioning of the `TitleBox`
+       * [JSPWIKI-1058](https://issues.apache.org/jira/browse/JSPWIKI-1058) Editor toolbar now remains on screen, even when scrolling down
+       * Small tweaks of the `RecentChanges` output
+       * [JSPWIKI-1068](https://issues.apache.org/jira/browse/JSPWIKI-1068) : fixing positioning of the `TitleBox`
 
 
 **2018-04-19  Dirk Frederickx (brushed AT apache DOT org)**
@@ -870,10 +870,10 @@ which is saved in a cookie.
 * _2.10.3-git-46_
 
 * [JSPWIKI-802](https://issues.apache.org/jira/browse/JSPWIKI-802) - Markdown support
-  * urls are not set on attribute provider derived classes, as this has some
+    * urls are not set on attribute provider derived classes, as this has some
     unwanted side effects. Introduced `JSPWikiLink`, a wrapper around Flexmark's
     links which retain the original wiki link.
-  * updated Flexmark to 0.28.24.
+    * updated Flexmark to 0.28.24.
 
 **2017-12-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
@@ -987,8 +987,8 @@ which is saved in a cookie.
   escape HTML entities in captions.
 
 * several CSS stylesheet additions
-  * image styles: effects, captions, frames, animation
-  * background styles: color, background images
+    * image styles: effects, captions, frames, animation
+    * background styles: color, background images
 
 * `%%columns`: bugfix, few more column styles
 
@@ -1312,8 +1312,8 @@ which is saved in a cookie.
 * _2.10.3-svn-2_  Few more small fixes on the HADDOCK template
 
 * Added 2 new inter wiki references :
-  * `[Raw:MainPage]` for displaying the raw wikimarkup of a page
-  * `[Reader:MainPage]` to display a simplified reader view of a page
+    * `[Raw:MainPage]` for displaying the raw wikimarkup of a page
+    * `[Reader:MainPage]` to display a simplified reader view of a page
       (no left menu, layout fit for printing)
 
 * Fixing JS error on <IE11 : `missing Array.from()` (compatibility with mootools 1.5.1)
@@ -1476,8 +1476,8 @@ WYSIWYG further enhancements
   Was breaking all editing js functions !
 
 * IEx tweaks
-  * remove unnecessary scrollbars
-  * attempt to resolve the broken icon-fonts on IE11
+    * remove unnecessary scrollbars
+    * attempt to resolve the broken icon-fonts on IE11
 
 * `%%add-css` style fix to handle special html entities
 
@@ -1512,8 +1512,8 @@ Some more Haddock template "tweaks":
   (hopefully no more cookie clean-up is needed when upgrading JSPWiki)
 
 * Sidebar:
-  * The sidebar height now extends till the bottom of the page
-  * 3 Sidebar modes are now working: left(default), right and hidden
+    * The sidebar height now extends till the bottom of the page
+    * 3 Sidebar modes are now working: left(default), right and hidden
 
 * Fixed the `<wiki:Link>` tag to support `cssClass` as attribute.
 
@@ -1617,9 +1617,9 @@ WYSIWYG editor in JSPWiki
 * _2.10.2-svn-24_
 
 * Minor improvements:
-  * Use of `StringBuilder` over `StringBuffer` whenever possible.
-  * SLF4J upgraded to 1.7.12
-  * JUnit upgraded to 4.12, Jetty upgraded to 8.1.15
+    * Use of `StringBuilder` over `StringBuffer` whenever possible.
+    * SLF4J upgraded to 1.7.12
+    * JUnit upgraded to 4.12, Jetty upgraded to 8.1.15
 
 **2015-07-05  Dirk Frederickx (brushed AT apache DOT org)**
 
@@ -1875,7 +1875,7 @@ Summary of main changes:
 
 * First steps integrating [Siegfried Goeschl's Wiki On A Stick](https://github.com/sgoeschl/apache-jspwiki)
   (thanks!), portable module still pending.
-  * Fixes [JSPWIKI-826](https://issues.apache.org/jira/browse/JSPWIKI-826) - [Portable] PropertyReader ignores the web app class loader
+    * Fixes [JSPWIKI-826](https://issues.apache.org/jira/browse/JSPWIKI-826) - [Portable] PropertyReader ignores the web app class loader
 
 * Lucene updated to 4.7.0
 
@@ -2064,9 +2064,9 @@ markup.
 * [JSPWIKI-712](https://issues.apache.org/jira/browse/JSPWIKI-712) Entites in ChangeNote should be decoded with "keep editing"
 
 * [JSPWIKI-797](https://issues.apache.org/jira/browse/JSPWIKI-797) Refactoring the JSPWiki javascript routines, upgrade js libs:
-  * mootools-core-1.4.5
-  * mootools-more-1.4.0.1
-  * prettify (dd. 4 mar 2013)
+    * mootools-core-1.4.5
+    * mootools-more-1.4.0.1
+    * prettify (dd. 4 mar 2013)
 
 * [JSPWIKI-798](https://issues.apache.org/jira/browse/JSPWIKI-798) Refactoring the JSPWiki main CSS stylesheet -
  now based on the BOOTSTRAP CSS Framework
