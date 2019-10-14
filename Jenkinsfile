@@ -53,6 +53,8 @@ try {
             withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
                 dir( jbake ) {
                     git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
+                    sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
+                    sh "cat ./src/main/config/changelog-header.txt ./src/main/config/changelog.md > ./src/main/jbake/content/development/changelog.md"
                     sh 'mvn clean process-resources -Dplugin.japicmp.jspwiki-new=' + pom.version
                 }
                 stash name: 'jbake-website'
