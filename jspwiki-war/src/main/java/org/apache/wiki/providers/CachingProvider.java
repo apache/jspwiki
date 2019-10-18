@@ -66,7 +66,7 @@ public class CachingProvider implements WikiPageProvider {
 
     private static final Logger log = Logger.getLogger( CachingProvider.class );
 
-    private CacheManager m_cacheManager = CacheManager.getInstance();
+	private CacheManager m_cacheManager;
 
     private WikiPageProvider m_provider;
     // FIXME: Find another way to the search engine to use instead of from WikiEngine?
@@ -105,6 +105,12 @@ public class CachingProvider implements WikiPageProvider {
      */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException, IOException {
+		if (System.getProperty("ehcacheConfig") != null) {
+			m_cacheManager = CacheManager.create(System.getProperty("ehcacheConfig"));
+		}
+		else {
+			m_cacheManager = CacheManager.getInstance();
+		}
         log.debug("Initing CachingProvider");
 
         // engine is used for getting the search engine
