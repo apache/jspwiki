@@ -42,7 +42,6 @@ import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
-
 /**
  *  Provides a caching page provider.  This class rests on top of a
  *  real provider class and provides a cache to speed things up.  Only
@@ -107,6 +106,7 @@ public class CachingProvider implements WikiPageProvider {
         throws NoRequiredPropertyException, IOException {
 		if (System.getProperty("ehcacheConfig") != null) {
 			m_cacheManager = CacheManager.create(System.getProperty("ehcacheConfig"));
+			log.info("Using custom ehcache destination: " + System.getProperty("ehcacheConfig"));
 		}
 		else {
 			m_cacheManager = CacheManager.getInstance();
