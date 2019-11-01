@@ -50,7 +50,7 @@
     <commons-lang.version>3.9</commons-lang.version>
     <commons-text.version>1.8</commons-text.version>
     <ehcache.version>2.10.6</ehcache.version>
-    <flexmark.version>0.50.40</flexmark.version>
+    <flexmark.version>0.50.42</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.8.5</gson.version>
     <hsqldb.version>2.5.0</hsqldb.version>
@@ -68,11 +68,11 @@
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>5.3.1</selenide.version>
+    <selenide.version>5.5.0</selenide.version>
     <slf4j.version>1.7.28</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>1.22</tika.version>
-    <tomcat.version>8.5.45</tomcat.version>
+    <tomcat.version>8.5.47</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
