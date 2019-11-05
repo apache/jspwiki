@@ -21,7 +21,7 @@ under the License.
 
 * _2.11.0-M6-git-04_
 
-* [JSPWIKI-JSPWIKI-1120](https://issues.apache.org/jira/browse/JSPWIKI-JSPWIKI-1120): Strings and Boxed types should be compared using "equals()". 
+* [JSPWIKI-1120](https://issues.apache.org/jira/browse/JSPWIKI-1120): Strings and Boxed types should be compared using "equals()". 
   Contributed by Haris Adzemovic, thanks!
 
 **2019-11-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
