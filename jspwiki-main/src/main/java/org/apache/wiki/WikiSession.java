@@ -484,7 +484,7 @@ public final class WikiSession implements WikiEventListener
                     case WikiSecurityEvent.PRINCIPAL_ADD:
                     {
                         WikiSession target = (WikiSession)e.getTarget();
-                        if ( this.equals( target ) && m_status == AUTHENTICATED )
+                        if ( this.equals( target ) && m_status.equals(AUTHENTICATED) )
                         {
                             Set<Principal> principals = m_subject.getPrincipals();
                             principals.add( (Principal)e.getPrincipal());
@@ -569,7 +569,7 @@ public final class WikiSession implements WikiEventListener
                     {
                         // Refresh user principals based on new user profile
                         WikiSession source = e.getSrc();
-                        if ( this.equals( source ) && m_status == AUTHENTICATED )
+                        if ( this.equals( source ) && m_status.equals(AUTHENTICATED) )
                         {
                             // To prepare for refresh, set the new full name as the primary principal
                             UserProfile[] profiles = (UserProfile[])e.getTarget();

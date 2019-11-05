@@ -212,7 +212,7 @@ public class InsertPage
 
                 res.append("<div class=\"inserted-page ");
                 if( clazz != null ) res.append( clazz );
-                if( style != DEFAULT_STYLE ) res.append("\" style=\""+style );
+                if( !style.equals(DEFAULT_STYLE) ) res.append("\" style=\""+style );
                 if( showOnce ) res.append("\" data-once=\""+cookieName );
                 res.append("\" >");
 
