@@ -32,9 +32,9 @@ under the License.
   See https://jspwiki-wiki.apache.org/Wiki.jsp?page=Docker for details.
   
 * Dependency updates
-  * Flexmark to 0.50.42
-  * Selenide to 5.5.0
-  * Tomcat to 8.5.47
+    * Flexmark to 0.50.42
+    * Selenide to 5.5.0
+    * Tomcat to 8.5.47
 
 **2019-10-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
