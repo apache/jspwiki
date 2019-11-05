@@ -24,14 +24,6 @@ under the License.
 * [JSPWIKI-JSPWIKI-1120](https://issues.apache.org/jira/browse/JSPWIKI-JSPWIKI-1120): Strings and Boxed types should be compared using "equals()". 
   Contributed by Haris Adzemovic, thanks!
 
-* Bringing in Docker support to ASF repo from https://github.com/metskem/docker-jspwiki. 
-  See https://jspwiki-wiki.apache.org/Wiki.jsp?page=Docker for details.
-  
-* Dependency updates
-  * Flexmark to 0.50.42
-  * Selenide to 5.5.0
-  * Tomcat to 8.5.47
-
 **2019-11-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M6-git-03_
