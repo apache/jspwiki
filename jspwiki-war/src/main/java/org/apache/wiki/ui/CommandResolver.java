@@ -122,7 +122,7 @@ public final class CommandResolver
             if ( key.startsWith( PROP_SPECIALPAGE ) )
             {
                 String specialPage = key.substring( PROP_SPECIALPAGE.length() );
-                String jsp = (String) properties.getProperty(key);
+                String jsp = properties.getProperty(key);
                 if ( specialPage != null && jsp != null )
                 {
                     specialPage = specialPage.trim();
@@ -440,7 +440,11 @@ public final class CommandResolver
             page = m_engine.getURLConstructor().parsePage( requestContext, request, m_engine.getContentEncoding() );
             if ( page != null )
             {
-                page = URLDecoder.decode(page, m_engine.getContentEncoding());
+                if (!"att".equals(requestContext)) {
+                    // page requests come encoded, attachment requests come decoded...
+                    // so if attachment name contains a +, it would get decoded to white space, causing 404
+                    page = URLDecoder.decode(page, m_engine.getContentEncoding());
+                }
                 try
                 {
                     // Look for singular/plural variants; if one
