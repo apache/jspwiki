@@ -441,8 +441,8 @@ public final class CommandResolver
             page = m_engine.getURLConstructor().parsePage( requestContext, request, m_engine.getContentEncoding() );
             if ( page != null )
             {
-                if (!WikiContext.ATTACH.equals(requestContext)) {
-                    // page requests come encoded, attachment requests come decoded...
+                if (!(WikiContext.ATTACH.equals(requestContext) || WikiContext.DELETE.equals(requestContext))) {
+                    // page requests come encoded, attachment requests (att + del) come decoded...
                     // so if attachment name contains a +, it would get decoded to white space, causing 404
                     page = URLDecoder.decode(page, m_engine.getContentEncoding());
                 }
