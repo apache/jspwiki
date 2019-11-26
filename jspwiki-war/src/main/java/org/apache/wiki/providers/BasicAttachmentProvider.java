@@ -26,6 +26,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +70,7 @@ import org.apache.wiki.util.comparators.PageTimeComparator;
  *            picture.png/
  *               attachment.properties
  *               1.png
- *             
+ *
  *  </PRE>
  *
  *  The names of the directories will be URLencoded.
@@ -84,16 +85,16 @@ public class BasicAttachmentProvider
 {
     private WikiEngine         m_engine;
     private String             m_storageDir;
-    
+
     /** The property name for where the attachments should be stored.  Value is <tt>{@value}</tt>. */
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
-    
+
     /*
      * Disable client cache for files with patterns
      * since 2.5.96
      */
     private Pattern            m_disableCache = null;
-    
+
     /** The property name for specifying which attachments are not cached.  Value is <tt>{@value}</tt>. */
     public static final String PROP_DISABLECACHE = "jspwiki.basicAttachmentProvider.disableCache";
 
@@ -102,16 +103,16 @@ public class BasicAttachmentProvider
 
     /** The default extension for the page attachment directory name. */
     public static final String DIR_EXTENSION   = "-att";
-    
+
     /** The default extension for the attachment directory. */
     public static final String ATTDIR_EXTENSION = "-dir";
-    
+
     static final Logger log = Logger.getLogger( BasicAttachmentProvider.class );
 
     /**
      *  {@inheritDoc}
      */
-    public void initialize( WikiEngine engine, Properties properties ) 
+    public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
@@ -138,12 +139,12 @@ public class BasicAttachmentProvider
         //
         // Some sanity checks
         //
-        if( !f.exists() ) 
+        if( !f.exists() )
             throw new IOException("Could not find or create attachment storage directory '"+m_storageDir+"'");
 
-        if( !f.canWrite() ) 
+        if( !f.canWrite() )
             throw new IOException("Cannot write to the attachment storage directory '"+m_storageDir+"'");
-        
+
         if( !f.isDirectory() )
             throw new IOException("Your attachment storage points to a file, not a directory: '"+m_storageDir+"'");
     }
@@ -179,14 +180,14 @@ public class BasicAttachmentProvider
     {
         return TextUtil.urlDecodeUTF8( filename );
     }
-    
+
     /**
      *  Finds the dir in which the attachment lives.
      */
     private File findAttachmentDir( Attachment att )
         throws ProviderException
     {
-        File f = new File( findPageDir(att.getParentName()), 
+        File f = new File( findPageDir(att.getParentName()),
                            mangleName(att.getFileName()+ATTDIR_EXTENSION) );
 
         //
@@ -266,7 +267,7 @@ public class BasicAttachmentProvider
      *  Returns the file extension.  For example "test.png" returns "png".
      *  <p>
      *  If file has no extension, will return "bin"
-     *  
+     *
      *  @param filename The file name to check
      *  @return The extension.  If no extension is found, returns "bin".
      */
@@ -292,7 +293,7 @@ public class BasicAttachmentProvider
         File propertyFile = new File( attDir, PROPERTY_FILE );
 
         OutputStream out = null;
-        
+
         try {
         	out = new FileOutputStream( propertyFile );
             properties.store( out, " JSPWiki page properties for " + att.getName() + ". DO NOT MODIFY!" );
@@ -324,7 +325,7 @@ public class BasicAttachmentProvider
             	IOUtils.closeQuietly( in );
             }
         }
-        
+
         return props;
     }
 
@@ -367,13 +368,13 @@ public class BasicAttachmentProvider
             }
 
             props.setProperty( versionNumber+".author", author );
-            
+
             String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
             if( changeNote != null )
             {
                 props.setProperty( versionNumber+".changenote", changeNote );
             }
-            
+
             putPageProperties( att, props );
         }
         catch( IOException e )
@@ -466,7 +467,7 @@ public class BasicAttachmentProvider
             if( attachments != null )
             {
                 //
-                //  We now have a list of all potential attachments in 
+                //  We now have a list of all potential attachments in
                 //  the directory.
                 //
                 for( int i = 0; i < attachments.length; i++ )
@@ -555,7 +556,7 @@ public class BasicAttachmentProvider
         {
             String pageId = unmangleName( pagesWithAttachments[i] );
             pageId = pageId.substring( 0, pageId.length()-DIR_EXTENSION.length() );
-            
+
             Collection c = listAttachments( new WikiPage( m_engine, pageId ) );
 
             for( Iterator it = c.iterator(); it.hasNext(); )
@@ -588,24 +589,24 @@ public class BasicAttachmentProvider
             // log.debug("Attachment dir not found - thus no attachment can exist.");
             return null;
         }
-        
+
         if( version == WikiProvider.LATEST_VERSION )
         {
             version = findLatestVersion(att);
         }
 
         att.setVersion( version );
-        
+
         // Should attachment be cachable by the client (browser)?
-        if (m_disableCache != null) 
+        if (m_disableCache != null)
         {
             Matcher matcher = m_disableCache.matcher(name);
-            if (matcher.matches()) 
+            if (matcher.matches())
             {
                 att.setCacheable(false);
             }
         }
-        
+
 
         // System.out.println("Fetching info on version "+version);
         try
@@ -619,7 +620,7 @@ public class BasicAttachmentProvider
             {
                 att.setAttribute(WikiPage.CHANGENOTE, changeNote);
             }
-            
+
             File f = findFile( dir, att );
 
             att.setSize( f.length() );
@@ -653,7 +654,7 @@ public class BasicAttachmentProvider
 
             for( int i = latest; i >= 1; i-- )
             {
-                Attachment a = getAttachmentInfo( new WikiPage( m_engine, att.getParentName() ), 
+                Attachment a = getAttachmentInfo( new WikiPage( m_engine, att.getParentName() ),
                                                   att.getFileName(), i );
 
                 if( a != null )
@@ -689,12 +690,17 @@ public class BasicAttachmentProvider
         File dir = findAttachmentDir( att );
         String[] files = dir.list();
 
-        for( int i = 0; i < files.length; i++ )
-        {
-            File file = new File( dir.getAbsolutePath() + "/" + files[i] );
-            file.delete();
-        }
-        dir.delete();
+		try {
+			for( int i = 0; i < files.length; i++ )
+			{
+				File file = new File( dir.getAbsolutePath() + "/" + files[i] );
+				Files.delete(file.toPath());
+			}
+            Files.delete(dir.toPath());
+		}
+		catch (IOException e) {
+			throw new ProviderException("Could not delete attachment: " + att.getName(), e);
+		}
     }
 
 
