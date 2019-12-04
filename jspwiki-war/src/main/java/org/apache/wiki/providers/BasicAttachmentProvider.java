@@ -112,7 +112,8 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public void initialize( WikiEngine engine, Properties properties )
+    @Override
+    public void initialize(WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
@@ -332,7 +333,8 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public void putAttachmentData( Attachment att, InputStream data ) throws ProviderException, IOException {
+    @Override
+    public void putAttachmentData(Attachment att, InputStream data ) throws ProviderException, IOException {
         OutputStream out = null;
         File attDir = findAttachmentDir( att );
 
@@ -367,12 +369,12 @@ public class BasicAttachmentProvider
                 author = "unknown"; // FIXME: Should be localized, but cannot due to missing WikiContext
             }
 
-            props.setProperty( versionNumber+".author", author );
+            props.setProperty(authorKey(versionNumber), author );
 
             String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
             if( changeNote != null )
             {
-                props.setProperty( versionNumber+".changenote", changeNote );
+                props.setProperty(changeNoteKey(versionNumber), changeNote );
             }
 
             putPageProperties( att, props );
@@ -389,9 +391,14 @@ public class BasicAttachmentProvider
         }
     }
 
+    private String authorKey(int versionNumber) {
+        return versionNumber+".author";
+    }
+
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getProviderInfo()
     {
         return "";
@@ -431,7 +438,8 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public InputStream getAttachmentData( Attachment att )
+    @Override
+    public InputStream getAttachmentData(Attachment att )
         throws IOException,
                ProviderException
     {
@@ -453,7 +461,8 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection listAttachments( WikiPage page )
+    @Override
+    public Collection listAttachments(WikiPage page )
         throws ProviderException
     {
         Collection<Attachment> result = new ArrayList<Attachment>();
@@ -529,7 +538,8 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findAttachments( QueryItem[] query )
+    @Override
+    public Collection findAttachments(QueryItem[] query )
     {
         return null;
     }
@@ -538,7 +548,8 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
     // FIXME: Very unoptimized.
-    public List listAllChanged( Date timestamp )
+    @Override
+    public List listAllChanged(Date timestamp )
         throws ProviderException
     {
         File attDir = new File( m_storageDir );
@@ -578,7 +589,8 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
-    public Attachment getAttachmentInfo( WikiPage page, String name, int version )
+    @Override
+    public Attachment getAttachmentInfo(WikiPage page, String name, int version )
         throws ProviderException
     {
         Attachment att = new Attachment( m_engine, page.getName(), name );
@@ -613,9 +625,9 @@ public class BasicAttachmentProvider
         {
             Properties props = getPageProperties(att);
 
-            att.setAuthor( props.getProperty( version+".author" ) );
+            att.setAuthor( props.getProperty(authorKey(version)) );
 
-            String changeNote = props.getProperty( version+".changenote" );
+            String changeNote = props.getProperty(changeNoteKey(version));
             if( changeNote != null )
             {
                 att.setAttribute(WikiPage.CHANGENOTE, changeNote);
@@ -641,10 +653,15 @@ public class BasicAttachmentProvider
         return att;
     }
 
+    private String changeNoteKey(int version) {
+        return version+".changenote";
+    }
+
     /**
      *  {@inheritDoc}
      */
-    public List getVersionHistory( Attachment att )
+    @Override
+    public List getVersionHistory(Attachment att )
     {
         ArrayList<Attachment> list = new ArrayList<Attachment>();
 
@@ -675,16 +692,37 @@ public class BasicAttachmentProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void deleteVersion( Attachment att )
         throws ProviderException
     {
-        // FIXME: Does nothing yet.
+        File attDir = findAttachmentDir( att );
+
+        // delete file
+        final File versionFile = new File(attDir, att.getVersion() + "." + getFileExtension(att.getFileName()));
+        if (versionFile.exists()) {
+            versionFile.delete();
+        }
+
+        // cleanup page properties
+        try {
+            final Properties pageProperties = getPageProperties(att);
+
+            pageProperties.remove(changeNoteKey(att.getVersion()));
+            pageProperties.remove(authorKey(att.getVersion()));
+
+            putPageProperties( att, pageProperties );
+        }
+        catch (IOException e) {
+            throw new ProviderException("Could not delete attachment: " + att.getName() + ", version: " + att.getVersion(), e);
+        }
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void deleteAttachment( Attachment att )
+    @Override
+    public void deleteAttachment(Attachment att )
         throws ProviderException
     {
         File dir = findAttachmentDir( att );
@@ -713,7 +751,8 @@ public class BasicAttachmentProvider
         /**
          *  {@inheritDoc}
          */
-        public boolean accept( File dir, String name )
+        @Override
+        public boolean accept(File dir, String name )
         {
             return name.endsWith( DIR_EXTENSION );
         }
@@ -728,7 +767,8 @@ public class BasicAttachmentProvider
         /**
          *  {@inheritDoc}
          */
-        public boolean accept( File dir, String name )
+        @Override
+        public boolean accept(File dir, String name )
         {
             return !name.equals( PROPERTY_FILE );
         }
@@ -738,7 +778,8 @@ public class BasicAttachmentProvider
      *  {@inheritDoc}
      */
 
-	public void moveAttachmentsForPage(WikiPage oldParent, String newParent)
+	@Override
+    public void moveAttachmentsForPage(WikiPage oldParent, String newParent)
         throws ProviderException
     {
 		File srcDir = findPageDir(oldParent.getName());
