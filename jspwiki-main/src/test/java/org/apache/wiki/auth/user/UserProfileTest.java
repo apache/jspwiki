@@ -17,15 +17,13 @@
     under the License.
  */
 package org.apache.wiki.auth.user;
-import java.util.Date;
-import java.util.Properties;
-
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Date;
 
 /**
  *  Tests the DefaultUserProfile class.
@@ -38,9 +36,7 @@ public class UserProfileTest
     public void setUp()
         throws Exception
     {
-            Properties props = TestEngine.getTestProperties();
-            PropertyConfigurator.configure(props);
-            WikiEngine engine  = new TestEngine(props);
+            WikiEngine engine  = new TestEngine();
             m_db = engine.getUserManager().getUserDatabase();
     }
 
