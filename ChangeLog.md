@@ -17,7 +17,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-**2019-11-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+**2019-12-06  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M6-git-05_
 
