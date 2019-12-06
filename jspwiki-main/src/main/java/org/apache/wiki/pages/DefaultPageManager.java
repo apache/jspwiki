@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -91,9 +92,10 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      *
      * @param engine WikiEngine instance
      * @param props  Properties to use for initialization
+     * @throws NoSuchElementException {@value #PROP_PAGEPROVIDER} property not found on WikiEngine properties
      * @throws WikiException If anything goes wrong, you get this.
      */
-    public DefaultPageManager(WikiEngine engine, Properties props) throws WikiException {
+    public DefaultPageManager(WikiEngine engine, Properties props) throws NoSuchElementException, WikiException {
         super(engine);
         String classname;
         m_engine = engine;
@@ -107,7 +109,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         if (useCache) {
             classname = "org.apache.wiki.providers.CachingProvider";
         } else {
-            classname = m_engine.getRequiredProperty(props, PROP_PAGEPROVIDER);
+            classname = TextUtil.getRequiredProperty(props, PROP_PAGEPROVIDER);
         }
 
         pageSorter.initialize( props );

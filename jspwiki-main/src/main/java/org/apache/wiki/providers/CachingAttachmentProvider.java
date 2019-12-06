@@ -18,15 +18,9 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -37,10 +31,18 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+
 
 /**
  *  Provides a caching attachment provider.  This class rests on top of a
@@ -95,10 +97,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException
-    {
+    public void initialize( WikiEngine engine, Properties properties ) throws NoRequiredPropertyException, IOException {
         log.info("Initing CachingAttachmentProvider");
 
         String attCollCacheName = engine.getApplicationName() + "." + ATTCOLLCACHE_NAME;
@@ -122,7 +121,12 @@ public class CachingAttachmentProvider
         //
         //  Find and initialize real provider.
         //
-        String classname = engine.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
+        final String classname;
+        try {
+            classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
+        } catch( final NoSuchElementException e ) {
+            throw new NoRequiredPropertyException( e.getMessage(), AttachmentManager.PROP_PROVIDER );
+        }
 
         try
         {

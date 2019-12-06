@@ -18,14 +18,9 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.TreeSet;
-
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -38,10 +33,16 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.TreeSet;
 
 
 /**
@@ -105,14 +106,13 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException, IOException {
+    public void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         log.debug("Initing CachingProvider");
 
         // engine is used for getting the search engine
         m_engine = engine;
 
-        String cacheName = engine.getApplicationName() + "." + CACHE_NAME;
+        final String cacheName = engine.getApplicationName() + "." + CACHE_NAME;
         if (m_cacheManager.cacheExists(cacheName)) {
             m_cache = m_cacheManager.getCache(cacheName);
         } else {
@@ -145,8 +145,12 @@ public class CachingProvider implements WikiPageProvider {
         //
         //  Find and initialize real provider.
         //
-        String classname = m_engine.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
-
+        final String classname;
+        try {
+            classname = TextUtil.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
+        } catch( final NoSuchElementException e ) {
+            throw new NoRequiredPropertyException( e.getMessage(), PageManager.PROP_PAGEPROVIDER );
+        }
 
         try
         {
