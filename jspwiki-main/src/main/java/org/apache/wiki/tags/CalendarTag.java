@@ -18,21 +18,20 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -47,7 +46,6 @@ import org.apache.wiki.util.TextUtil;
  *
  *  If neither calendar.date nor weblog.startDate parameters exist,
  *  then the calendar will default to the current month.
- *
  *
  *  @since 2.0
  */
@@ -97,9 +95,9 @@ public class CalendarTag extends WikiTagBase {
      *  @see SimpleDateFormat
      *  @see org.apache.wiki.plugin.WeblogPlugin
      */
-    public void setPageformat( String format )
+    public void setPageformat( final String format )
     {
-        m_pageFormat = new SimpleDateFormat(format);
+        m_pageFormat = new SimpleDateFormat( format );
     }
 
     /**
@@ -110,9 +108,9 @@ public class CalendarTag extends WikiTagBase {
      *  @param format The URL format in the SimpleDateFormat fashion.
      *  @see SimpleDateFormat
      */
-    public void setUrlformat( String format )
+    public void setUrlformat( final String format )
     {
-        m_urlFormat = new SimpleDateFormat(format);
+        m_urlFormat = new SimpleDateFormat( format );
     }
 
     /**
@@ -122,17 +120,14 @@ public class CalendarTag extends WikiTagBase {
      *  
      *  @see SimpleDateFormat
      */
-    public void setMonthurlformat( String format )
+    public void setMonthurlformat( final String format )
     {
         m_monthUrlFormat = new SimpleDateFormat( format );
     }
 
-    private String format( String txt )
-    {
-        WikiPage p = m_wikiContext.getPage();
-
-        if( p != null )
-        {
+    private String format( final String txt ) {
+        final WikiPage p = m_wikiContext.getPage();
+        if( p != null ) {
             return TextUtil.replaceString( txt, "%p", p.getName() );
         }
 
@@ -142,167 +137,131 @@ public class CalendarTag extends WikiTagBase {
     /**
      *  Returns a link to the given day.
      */
-    private String getDayLink( Calendar day )
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        String result = "";
+    private String getDayLink( final Calendar day ) {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final String result;
 
-        if( m_pageFormat != null )
-        {
-            String pagename = m_pageFormat.format( day.getTime() );
+        if( m_pageFormat != null ) {
+            final String pagename = m_pageFormat.format( day.getTime() );
             
-            if( engine.pageExists( pagename ) )
-            {
-                if( m_urlFormat != null )
-                {
-                    String url = m_urlFormat.format( day.getTime() );
-
+            if( engine.pageExists( pagename ) ) {
+                if( m_urlFormat != null ) {
+                    final String url = m_urlFormat.format( day.getTime() );
                     result = "<td class=\"link\"><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";
-                }
-                else
-                {
+                } else {
                     result = "<td class=\"link\"><a href=\""+m_wikiContext.getViewURL( pagename )+"\">"+
                              day.get( Calendar.DATE )+"</a></td>";
                 }
-            }
-            else
-            {
+            } else {
                 result = "<td class=\"days\">"+day.get(Calendar.DATE)+"</td>";
             }
-        }
-        else if( m_urlFormat != null )
-        {
-            String url = m_urlFormat.format( day.getTime() );
-
+        } else if( m_urlFormat != null ) {
+            final String url = m_urlFormat.format( day.getTime() );
             result = "<td><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";
-        }
-        else
-        {
+        } else {
             result = "<td class=\"days\">"+day.get(Calendar.DATE)+"</td>";
         }
 
-        return format(result);
+        return format( result );
     }
 
-    private String getMonthLink( Calendar day )
-    {
-        SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM yyyy" );
-        String result;
+    private String getMonthLink( final Calendar day ) {
+        final SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM yyyy" );
+        final String result;
 
-        if( m_monthUrlFormat == null )
-        {
+        if( m_monthUrlFormat == null ) {
             result = monthfmt.format( day.getTime() );
-        }
-        else
-        {
-            Calendar cal = (Calendar)day.clone();
-            int firstDay = cal.getActualMinimum( Calendar.DATE );
-            int lastDay  = cal.getActualMaximum( Calendar.DATE );
+        } else {
+            final Calendar cal = (Calendar)day.clone();
+            final int firstDay = cal.getActualMinimum( Calendar.DATE );
+            final int lastDay  = cal.getActualMaximum( Calendar.DATE );
 
             cal.set( Calendar.DATE, lastDay );
             String url = m_monthUrlFormat.format( cal.getTime() );
 
-            url = TextUtil.replaceString( url, "%d", Integer.toString( lastDay-firstDay+1 ) );
+            url = TextUtil.replaceString( url, "%d", Integer.toString( lastDay - firstDay + 1 ) );
 
             result = "<a href=\""+url+"\">"+monthfmt.format(cal.getTime())+"</a>";
         }
 
-        return format(result);
-        
+        return format( result );
     }
-    private String getMonthNaviLink( Calendar day, String txt, String queryString )
-    {
-        String result = "";
+
+    private String getMonthNaviLink( final Calendar day, final String txt, String queryString ) {
+        final String result;
         queryString = TextUtil.replaceEntities( queryString );
-        Calendar nextMonth = Calendar.getInstance();
+        final Calendar nextMonth = Calendar.getInstance();
         nextMonth.set( Calendar.DATE, 1 );  
         nextMonth.add( Calendar.DATE, -1);
         nextMonth.add( Calendar.MONTH, 1 ); // Now move to 1st day of next month
 
-        if ( day.before(nextMonth) )
-        {
-            WikiPage thePage = m_wikiContext.getPage();
-            String pageName = thePage.getName();
+        if ( day.before( nextMonth ) ) {
+            final WikiPage thePage = m_wikiContext.getPage();
+            final String pageName = thePage.getName();
 
-            String calendarDate = m_dateFormat.format(day.getTime());
-            String url = m_wikiContext.getURL( WikiContext.VIEW, pageName, 
-                                               "calendar.date="+calendarDate );
+            final String calendarDate = m_dateFormat.format( day.getTime() );
+            String url = m_wikiContext.getURL( WikiContext.VIEW, pageName,"calendar.date="+calendarDate );
 
-            if ( (queryString != null) && (queryString.length() > 0) )
-            {
+            if( queryString != null && queryString.length() > 0 ) {
                 //
-                // Ensure that the 'calendar.date=ddMMyy' has been removed 
-                // from the queryString
+                // Ensure that the 'calendar.date=ddMMyy' has been removed from the queryString
                 //
 
                 // FIXME: Might be useful to have an entire library of 
                 //        routines for this.  Will fail if it's not calendar.date 
                 //        but something else.
 
-                int pos1 = queryString.indexOf("calendar.date=");
-                if (pos1 >= 0)
-                {
-                    String tmp = queryString.substring(0,pos1);
+                final int pos1 = queryString.indexOf("calendar.date=");
+                if( pos1 >= 0 ) {
+                    String tmp = queryString.substring( 0, pos1 );
                     // FIXME: Will this fail when we use & instead of &amp?
                     // FIXME: should use some parsing routine
-                    int pos2 = queryString.indexOf("&",pos1) + 1;
-                    if ( (pos2 > 0) && (pos2 < queryString.length()) )
-                    {
+                    final int pos2 = queryString.indexOf("&", pos1 ) + 1;
+                    if ( ( pos2 > 0 ) && ( pos2 < queryString.length() ) ) {
                         tmp = tmp + queryString.substring(pos2);
                     }
                     queryString = tmp;
                 }
 
-                if( queryString != null && queryString.length() > 0 )
-                {
-                    url = url + "&amp;"+queryString;
+                if( queryString.length() > 0 ) {
+                    url = url + "&amp;" + queryString;
                 }
             }
             result = "<td><a href=\""+url+"\">"+txt+"</a></td>";
-        }
-        else
-        {
+        } else {
             result="<td> </td>";
         }    
 
-        return format(result);
+        return format( result );
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        WikiEngine       engine   = m_wikiContext.getEngine();
-        JspWriter        out      = pageContext.getOut();
-        Calendar         cal      = Calendar.getInstance();
-        Calendar         prevCal  = Calendar.getInstance();
-        Calendar         nextCal  = Calendar.getInstance();
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final JspWriter out = pageContext.getOut();
+        final Calendar cal = Calendar.getInstance();
+        final Calendar prevCal = Calendar.getInstance();
+        final Calendar nextCal = Calendar.getInstance();
 
         //
         //  Check if there is a parameter in the request to set the date.
         //
         String calendarDate = pageContext.getRequest().getParameter( "calendar.date" );
-        if( calendarDate == null )
-        {
+        if( calendarDate == null ) {
             calendarDate = pageContext.getRequest().getParameter( "weblog.startDate" );
         }
         
-        if( calendarDate != null )
-        {
-            try
-            {
-                Date d = m_dateFormat.parse( calendarDate );
+        if( calendarDate != null ) {
+            try {
+                final Date d = m_dateFormat.parse( calendarDate );
                 cal.setTime( d );
                 prevCal.setTime( d );
                 nextCal.setTime( d );
-            }
-            catch( ParseException e )
-            {
-                log.warn( "date format wrong: "+calendarDate );
+            } catch( final ParseException e ) {
+                log.warn( "date format wrong: " + calendarDate );
             }
         }
 
@@ -315,8 +274,8 @@ public class CalendarTag extends WikiTagBase {
 
         out.write( "<table class=\"calendar\">\n" );
 
-        HttpServletRequest httpServletRequest = m_wikiContext.getHttpRequest();
-        String queryString = engine.safeGetQueryString( httpServletRequest );
+        final HttpServletRequest httpServletRequest = m_wikiContext.getHttpRequest();
+        final String queryString = HttpUtil.safeGetQueryString( httpServletRequest, engine.getContentEncoding() );
         out.write( "<tr>"+
                    getMonthNaviLink(prevCal,"&lt;&lt;", queryString)+
                    "<td colspan=5 class=\"month\">"+
@@ -326,7 +285,7 @@ public class CalendarTag extends WikiTagBase {
                    "</tr>\n"
                  );
 
-        int month = cal.get( Calendar.MONTH );
+        final int month = cal.get( Calendar.MONTH );
         cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY ); // Then, find the first day of the week.
 
         out.write( "<tr><td class=\"weekdays\">Mon</td>"+
@@ -338,28 +297,22 @@ public class CalendarTag extends WikiTagBase {
                    "<td class=\"weekdays\">Sun</td></tr>\n" );
 
         boolean noMoreDates = false;
-        while( !noMoreDates )
-        {
+        while( !noMoreDates ) {
             out.write( "<tr>" );
             
-            for( int i = 0; i < 7; i++ )
-            {
-                int mth = cal.get( Calendar.MONTH );
+            for( int i = 0; i < 7; i++ ) {
+                final int mth = cal.get( Calendar.MONTH );
 
-                if( mth != month )
-                {
+                if( mth != month ) {
                     out.write("<td class=\"othermonth\">"+cal.get(Calendar.DATE)+"</td>");
-                }
-                else
-                {
+                } else {
                     out.write( getDayLink(cal) );
                 }
 
                 cal.add( Calendar.DATE, 1 );
             }
 
-            if( cal.get( Calendar.MONTH ) != month )
-            {
+            if( cal.get( Calendar.MONTH ) != month ) {
                 noMoreDates = true;
             }
 
