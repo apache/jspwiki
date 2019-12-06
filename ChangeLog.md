@@ -17,6 +17,26 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2019-11-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M6-git-05_
+
+* Couple of methods moved out of `WikiEngine`
+    * `safeGetQueryParameter`: moved as an static method on `HttpUtil`; it now requires content encoding as a parameter
+    * `getRequiredProperty`: moved back as an static method to `TextUtil` - it now throws a `NoSuchElementException` (unchecked) instead of `NoRequiredPropertyException` (checked)
+
+* Maven plugins changes
+    * Change javadocs' doclet to [UMLDoclet](https://github.com/talsma-ict/umldoclet), which can be used with JDK >= 9 (see associated note on [`mvn_cheat-sheet.md`](https://github.com/apache/jspwiki/blob/master/mvn_cheat-sheet.md#3-reports-specific) for details)
+    * Set `compilerVersion` to `jdk.version` on jspc-maven-plugin 
+  
+* Dependency updates
+    * Flexmark to 0.50.44
+    * Lucene to 8.3.1
+    * Selenide to 5.5.1
+    * SLF4J to 1.7.29
+    * Tika to 1.23
+    * Tomcat to 8.5.49
+
 **2019-11-05  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M6-git-04_
