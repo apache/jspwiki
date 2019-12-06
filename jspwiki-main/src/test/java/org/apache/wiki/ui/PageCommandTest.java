@@ -25,26 +25,10 @@ package org.apache.wiki.ui;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class PageCommandTest {
-
-    TestEngine     testEngine = TestEngine.build();
-    WikiPage       testPage;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        testEngine.saveText( "TestPage", "This is a test." );
-        testPage = testEngine.getPage( "TestPage" );
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        testEngine.deletePage( "TestPage" );
-    }
 
     @Test
     public void testStaticCommand() {
@@ -77,7 +61,11 @@ public class PageCommandTest {
     }
 
     @Test
-    public void testTargetedCommand() {
+    public void testTargetedCommand() throws Exception {
+        final TestEngine testEngine = TestEngine.build();
+        testEngine.saveText( "TestPage", "This is a test." );
+        final WikiPage testPage = testEngine.getPage( "TestPage" );
+
         // Get view command
         Command a = PageCommand.VIEW;
 
