@@ -864,48 +864,12 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the query string (the portion after the question mark).
-     *
-     *  @param request The HTTP request to parse.
-     *  @return The query string.  If the query string is null,
-     *          returns an empty string.
-     *
-     *  @since 2.1.3
-     */
-    public String safeGetQueryString( final HttpServletRequest request ) {
-        if (request == null) {
-            return "";
-        }
-
-        String res = request.getQueryString();
-        if( res != null ) {
-            res = new String( res.getBytes( StandardCharsets.ISO_8859_1 ), getContentEncoding() );
-
-            //
-            // Ensure that the 'page=xyz' attribute is removed
-            // FIXME: Is it really the mandate of this routine to do that?
-            //
-            final int pos1 = res.indexOf("page=");
-            if( pos1 >= 0 ) {
-                String tmpRes = res.substring( 0, pos1 );
-                final int pos2 = res.indexOf( "&",pos1 ) + 1;
-                if ( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
-                    tmpRes = tmpRes + res.substring(pos2);
-                }
-                res = tmpRes;
-            }
-        }
-
-        return res;
-    }
-
-    /**
      *  Returns an URL to some other Wiki that we know.
      *
      *  @param  wikiName The name of the other wiki.
      *  @return null, if no such reference was found.
      */
-    public String getInterWikiURL( String wikiName )
+    public String getInterWikiURL( final String wikiName )
     {
         return TextUtil.getStringProperty(m_properties,PROP_INTERWIKIREF+wikiName,null);
     }

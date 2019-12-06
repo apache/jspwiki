@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,7 +67,6 @@ public final class HttpUtil {
      *  @param cookieName The name of the cookie to fetch.
      *  @return Value of the cookie, or null, if there is no such cookie.
      */
-
     public static String retrieveCookieValue( HttpServletRequest request, String cookieName ) {
         Cookie[] cookies = request.getCookies();
 
@@ -194,8 +195,43 @@ public final class HttpUtil {
         return uri;
     }
 
-	static boolean notBeginningWithHttpOrHttps( String uri ) {
+	static boolean notBeginningWithHttpOrHttps( final String uri ) {
 		return uri.length() > 0 && !( ( uri.startsWith("http://" ) || uri.startsWith( "https://" ) ) );
 	}
+
+    /**
+     *  Returns the query string (the portion after the question mark).
+     *
+     *  @param request The HTTP request to parse.
+     *  @return The query string. If the query string is null, returns an empty string.
+     *
+     *  @since 2.1.3 (method moved from WikiEngine on 2.11.0.M6)
+     */
+    public static String safeGetQueryString( final HttpServletRequest request, final Charset contentEncoding ) {
+        if( request == null ) {
+            return "";
+        }
+
+        String res = request.getQueryString();
+        if( res != null ) {
+            res = new String( res.getBytes( StandardCharsets.ISO_8859_1 ), contentEncoding );
+
+            //
+            // Ensure that the 'page=xyz' attribute is removed
+            // FIXME: Is it really the mandate of this routine to do that?
+            //
+            final int pos1 = res.indexOf("page=");
+            if( pos1 >= 0 ) {
+                String tmpRes = res.substring( 0, pos1 );
+                final int pos2 = res.indexOf( "&",pos1 ) + 1;
+                if ( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
+                    tmpRes = tmpRes + res.substring(pos2);
+                }
+                res = tmpRes;
+            }
+        }
+
+        return res;
+    }
 
 }
