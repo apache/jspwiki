@@ -35,7 +35,7 @@ import com.codeborne.selenide.junit5.ScreenShooterExtension;
 public class LoginIT {
     
     @Test
-    void loginAndLogout() throws Exception {
+    void loginAndLogout() {
         ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
@@ -54,7 +54,7 @@ public class LoginIT {
     }
     
     @Test
-    void loginKO() throws Exception {
+    void loginKO() {
         ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );

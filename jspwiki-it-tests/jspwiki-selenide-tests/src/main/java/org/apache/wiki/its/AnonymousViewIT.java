@@ -18,18 +18,17 @@
  */
 package org.apache.wiki.its;
 
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.not;
-
-import java.io.File;
-
+import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.pages.Page;
 import org.apache.wiki.pages.haddock.ReadWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.codeborne.selenide.junit5.ScreenShooterExtension;
+import java.io.File;
+
+import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.not;
 
 
 /**
@@ -39,7 +38,7 @@ import com.codeborne.selenide.junit5.ScreenShooterExtension;
 public class AnonymousViewIT {
     
     @Test
-    void anonymousView() throws Exception {
+    void anonymousView() {
         ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
