@@ -38,7 +38,7 @@ under the License.
 | mvn org.codehaus.cargo:cargo-maven2-plugin:run                    | (from main war module) starts JSPWiki on a Tomcat8 instance at http://localhost:8080/JSPWiki with an attached debugger    |
 |                                                                   | on port 5005                                                                                                              |
 | mvn clean deploy -Papache-release -Dgpg.passphrase=<passphrase>   | deploys generated artifact to a repository. If -Dgpg.passphrase is not given, expects a gpg-agent running                 |
-| mvn clean install -Pintegration-tests                             | performs a build, enabling functional tests execution (best run from the jspwiki-it-tests folder)                           |
+| mvn clean install -Pintegration-tests                             | performs a build, enabling functional tests execution (best run from the jspwiki-it-tests folder)                         |
 | mvn wro4j:run -Dminimize=true                                     | merge & compress js & css files                                                                                           |
 | mvn wro4j:run -Dminimize=false                                    | only merge the js & css files  (no compression)                                                                           |
 | mvn clean install -Dmaven.test.skip -Dminimize=false              | performs a build, skipping the tests and skip compression                                                                 |
@@ -52,4 +52,5 @@ under the License.
 | mvn cobertura:cobertura                                           | generates a cobertura maven report. See: http://mojo.codehaus.org/cobertura-maven-plugin/usage.html                       |
 | mvn javadoc:javadoc                                               | creates javadocs; if graphviz binaries (www.graphviz.org) are found on $PATH, the javadocs will display                   |
 |                                                                   | some UML class/package level diagrams                                                                                     |
+| mvn javadoc:javadoc -Djdk.javadoc.doclet.version=2.0.6            | same as above, but with JDK >= 9                                                                                          |
 | mvn sonar:sonar                                                   | generates a Sonar report. Expects a Sonar server running at http://localhost:9000/                                        |
