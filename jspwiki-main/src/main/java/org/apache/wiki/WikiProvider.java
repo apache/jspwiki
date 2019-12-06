@@ -18,10 +18,10 @@
  */
 package org.apache.wiki;
 
-import java.util.Properties;
-import java.io.IOException;
-
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+
+import java.io.IOException;
+import java.util.Properties;
 
 
 /**
@@ -45,9 +45,7 @@ public interface WikiProvider
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
      *  @throws IOException If there is an IO problem
      */
-    void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException;
+    void initialize( WikiEngine engine, Properties properties ) throws NoRequiredPropertyException, IOException;
 
     /**
      *  Return a valid HTML string for information.  May be anything.
