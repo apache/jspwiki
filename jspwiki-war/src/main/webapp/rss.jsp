@@ -90,8 +90,8 @@
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     Properties properties = wiki.getWikiProperties();
-    String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-    String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+    String channelDescription = TextUtil.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+    String channelLanguage    = TextUtil.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
 
     //
     //  Now, list items.
