@@ -44,6 +44,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
@@ -61,6 +62,7 @@ import java.security.Principal;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
@@ -102,8 +104,7 @@ public class UserManager {
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
-    public void initialize( WikiEngine engine, Properties props )
-    {
+    public void initialize( final WikiEngine engine, final Properties props ) {
         m_engine = engine;
 
         // Attach the PageManager as a listener
@@ -115,57 +116,40 @@ public class UserManager {
     }
 
     /**
-     * Returns the UserDatabase employed by this WikiEngine. The UserDatabase is
-     * lazily initialized by this method, if it does not exist yet. If the
-     * initialization fails, this method will use the inner class
-     * DummyUserDatabase as a default (which is enough to get JSPWiki running).
+     * Returns the UserDatabase employed by this WikiEngine. The UserDatabase is lazily initialized by this method, if it does
+     * not exist yet. If the initialization fails, this method will use the inner class DummyUserDatabase as a default (which
+     * is enough to get JSPWiki running).
+     *
      * @return the dummy user database
      * @since 2.3
      */
-    public UserDatabase getUserDatabase()
-    {
-        // FIXME: Must not throw RuntimeException, but something else.
-        if( m_database != null )
-        {
+    public UserDatabase getUserDatabase() {
+        if( m_database != null ) {
             return m_database;
         }
 
         String dbClassName = UNKNOWN_CLASS;
 
-        try
-        {
-            dbClassName = m_engine.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
+        try {
+            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
 
-            log.info("Attempting to load user database class "+dbClassName);
+            log.info( "Attempting to load user database class " + dbClassName );
             final Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
             m_database = (UserDatabase) dbClass.newInstance();
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
             log.info("UserDatabase initialized.");
-        }
-        catch( final NoRequiredPropertyException e )
-        {
+        } catch( final NoSuchElementException | NoRequiredPropertyException e ) {
             log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki.", e );
-        }
-        catch( final ClassNotFoundException e )
-        {
+        } catch( final ClassNotFoundException e ) {
             log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
-        }
-        catch( final InstantiationException e )
-        {
+        } catch( final InstantiationException e ) {
             log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
-        }
-        catch( final IllegalAccessException e )
-        {
+        } catch( final IllegalAccessException e ) {
             log.error( "You are not allowed to access this user database class", e );
-        }
-        catch( final WikiSecurityException e )
-        {
+        } catch( final WikiSecurityException e ) {
             log.error( "Exception initializing user database: " + e.getMessage(), e );
-        }
-        finally
-        {
-            if( m_database == null )
-            {
+        } finally {
+            if( m_database == null ) {
                 log.info("I could not create a database object you specified (or didn't specify), so I am falling back to a default.");
                 m_database = new DummyUserDatabase();
             }
@@ -197,38 +181,28 @@ public class UserManager {
      * is anonymous or asserted, or if the user cannot be found in the user
      * database
      */
-    public UserProfile getUserProfile( WikiSession session )
-    {
+    public UserProfile getUserProfile( final WikiSession session ) {
         // Look up cached user profile
         UserProfile profile = m_profiles.get( session );
         boolean newProfile = profile == null;
         Principal user = null;
 
         // If user is authenticated, figure out if this is an existing profile
-        if ( session.isAuthenticated() )
-        {
+        if ( session.isAuthenticated() ) {
             user = session.getUserPrincipal();
-            try
-            {
+            try {
                 profile = getUserDatabase().find( user.getName() );
                 newProfile = false;
-            }
-            catch( final NoSuchPrincipalException e )
-            {
-            }
+            } catch( final NoSuchPrincipalException e ) { }
         }
 
-        if ( newProfile )
-        {
+        if ( newProfile ) {
             profile = getUserDatabase().newProfile();
-            if ( user != null )
-            {
+            if ( user != null ) {
                 profile.setLoginName( user.getName() );
             }
-            if ( !profile.isNew() )
-            {
-                throw new IllegalStateException(
-                        "New profile should be marked 'new'. Check your UserProfile implementation." );
+            if ( !profile.isNew() ) {
+                throw new IllegalStateException( "New profile should be marked 'new'. Check your UserProfile implementation." );
             }
         }
 
@@ -287,10 +261,9 @@ public class UserManager {
 
         // Check if another user profile already has the fullname or loginname
         final UserProfile oldProfile = getUserProfile( session );
-        final boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null )
-            ? false
-            : !( oldProfile.getFullname().equals( profile.getFullname() ) &&
-                 oldProfile.getLoginName().equals( profile.getLoginName() ) );
+        final boolean nameChanged = ( oldProfile != null && oldProfile.getFullname() != null ) &&
+                                    !( oldProfile.getFullname().equals( profile.getFullname() ) &&
+                                    oldProfile.getLoginName().equals( profile.getLoginName() ) );
         UserProfile otherProfile;
         try
         {
@@ -585,21 +558,17 @@ public class UserManager {
     }
 
     /**
-     * This is a database that gets used if nothing else is available. It does
-     * nothing of note - it just mostly throws NoSuchPrincipalExceptions if
-     * someone tries to log in.
+     * This is a database that gets used if nothing else is available. It does nothing of note - it just mostly throws
+     * NoSuchPrincipalExceptions if someone tries to log in.
      */
-    public static class DummyUserDatabase extends AbstractUserDatabase
-    {
+    public static class DummyUserDatabase extends AbstractUserDatabase {
 
         /**
          * No-op.
          * @param loginName the login name to delete
-         * @throws WikiSecurityException never...
          */
         @Override
-        public void deleteByLoginName( String loginName ) throws WikiSecurityException
-        {
+        public void deleteByLoginName( String loginName ) {
             // No operation
         }
 
@@ -607,11 +576,10 @@ public class UserManager {
          * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param index the name to search for
          * @return the user profile
-         * @throws NoSuchPrincipalException never...
+         * @throws NoSuchPrincipalException always...
          */
         @Override
-        public UserProfile findByEmail(String index) throws NoSuchPrincipalException
-        {
+        public UserProfile findByEmail(final String index) throws NoSuchPrincipalException {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
@@ -619,11 +587,10 @@ public class UserManager {
          * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param index the name to search for
          * @return the user profile
-         * @throws NoSuchPrincipalException never...
+         * @throws NoSuchPrincipalException always...
          */
         @Override
-        public UserProfile findByFullName(String index) throws NoSuchPrincipalException
-        {
+        public UserProfile findByFullName(final String index) throws NoSuchPrincipalException {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
@@ -631,11 +598,10 @@ public class UserManager {
          * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param index the name to search for
          * @return the user profile
-         * @throws NoSuchPrincipalException never...
+         * @throws NoSuchPrincipalException always...
          */
         @Override
-        public UserProfile findByLoginName(String index) throws NoSuchPrincipalException
-        {
+        public UserProfile findByLoginName(final String index) throws NoSuchPrincipalException {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
@@ -643,33 +609,29 @@ public class UserManager {
          * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param uid the unique identifier to search for
          * @return the user profile
-         * @throws NoSuchPrincipalException never...
+         * @throws NoSuchPrincipalException always...
          */
         @Override
-        public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
-        {
+        public UserProfile findByUid( final String uid ) throws NoSuchPrincipalException {
             throw new NoSuchPrincipalException("No user profiles available");
         }
         /**
          * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param index the name to search for
          * @return the user profile
-         * @throws NoSuchPrincipalException never...
+         * @throws NoSuchPrincipalException always...
          */
         @Override
-        public UserProfile findByWikiName(String index) throws NoSuchPrincipalException
-        {
+        public UserProfile findByWikiName(final String index) throws NoSuchPrincipalException {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
         /**
          * No-op.
          * @return a zero-length array
-         * @throws WikiSecurityException never...
          */
         @Override
-        public Principal[] getWikiNames() throws WikiSecurityException
-        {
+        public Principal[] getWikiNames() {
             return new Principal[0];
         }
 
@@ -678,34 +640,28 @@ public class UserManager {
          *
          * @param engine the wiki engine
          * @param props the properties used to initialize the wiki engine
-         * @throws NoRequiredPropertyException never...
          */
         @Override
-        public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
-        {
+        public void initialize(final WikiEngine engine, final Properties props) {
         }
 
         /**
          * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param loginName the login name
          * @param newName the proposed new login name
-         * @throws DuplicateUserException never...
-         * @throws WikiSecurityException never...
+         * @throws NoSuchPrincipalException always...
          */
         @Override
-        public void rename( String loginName, String newName ) throws DuplicateUserException, WikiSecurityException
-        {
+        public void rename( final String loginName, final String newName ) throws NoSuchPrincipalException {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
         /**
          * No-op.
          * @param profile the user profile
-         * @throws WikiSecurityException never...
          */
         @Override
-        public void save( UserProfile profile ) throws WikiSecurityException
-        {
+        public void save( final UserProfile profile ) {
         }
 
     }
@@ -752,12 +708,11 @@ public class UserManager {
     /**
      *  Implements the JSON API for usermanager.
      *  <p>
-     *  Even though this gets serialized whenever container shuts down/restarts,
-     *  this gets reinstalled to the session when JSPWiki starts.  This means
-     *  that it's not actually necessary to save anything.
+     *  Even though this gets serialized whenever container shuts down/restarts, this gets reinstalled to the session when JSPWiki starts.
+     *  This means that it's not actually necessary to save anything.
      */
-    public static final class JSONUserModule implements WikiAjaxServlet
-    {
+    public static final class JSONUserModule implements WikiAjaxServlet {
+
 		private volatile UserManager m_manager;
 
         /**
@@ -777,11 +732,10 @@ public class UserManager {
         @Override
         public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params) throws ServletException, IOException {
         	try {
-        		String uid = null;
-            	if (params.size()<1) {
+            	if( params.size() < 1 ) {
             		return;
             	}
-        		uid = params.get(0);
+        		final String uid = params.get(0);
 	        	log.debug("uid="+uid);
 	        	if (StringUtils.isNotBlank(uid)) {
 		            final UserProfile prof = getUserInfo(uid);
@@ -799,17 +753,14 @@ public class UserManager {
          *  @return A UserProfile object
          *  @throws NoSuchPrincipalException If such a name does not exist.
          */
-        public UserProfile getUserInfo( String uid )
-            throws NoSuchPrincipalException
-        {
-            if( m_manager != null )
-            {
+        public UserProfile getUserInfo( String uid ) throws NoSuchPrincipalException {
+            if( m_manager != null ) {
                 final UserProfile prof = m_manager.getUserDatabase().find( uid );
-
                 return prof;
             }
 
             throw new IllegalStateException("The manager is offline.");
         }
     }
+
 }
