@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Random;
 
@@ -389,6 +390,24 @@ public final class TextUtil {
             return defval;
         }
         return val.trim();
+    }
+
+    /**
+     *  Throws an exception if a property is not found.
+     *
+     *  @param props A set of properties to search the key in.
+     *  @param key   The key to look for.
+     *  @return The required property
+     *
+     *  @throws NoSuchElementException If the search key is not in the property set.
+     *  @since 2.0.26 (on TextUtils, moved To WikiEngine on 2.11.0-M1 and back to TextUtils on 2.11.0-M6)
+     */
+    public static String getRequiredProperty( Properties props, String key ) throws NoSuchElementException {
+        String value = getStringProperty( props, key, null );
+        if( value == null ) {
+            throw new NoSuchElementException( "Required property not found: " + key );
+        }
+        return value;
     }
 
     /**

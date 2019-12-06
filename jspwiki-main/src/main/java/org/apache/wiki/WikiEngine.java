@@ -1843,24 +1843,6 @@ public class WikiEngine
     }
 
     /**
-     *  Throws an exception if a property is not found.
-     *
-     *  @param props A set of properties to search the key in.
-     *  @param key   The key to look for.
-     *  @return The required property
-     *
-     *  @throws NoRequiredPropertyException If the search key is not in the property set.
-     *  @since 2.0.26 (on TextUtils, moved To WikiEngine on 2.11.0-M1)
-     */
-    public String getRequiredProperty( Properties props, String key ) throws NoRequiredPropertyException {
-        String value = TextUtil.getStringProperty( props, key, null );
-        if( value == null ) {
-            throw new NoRequiredPropertyException( "Required property not found", key );
-        }
-        return value;
-    }
-
-    /**
      *  Returns the current PageManager which is responsible for storing
      *  and managing WikiPages.
      *

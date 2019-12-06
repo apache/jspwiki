@@ -847,26 +847,5 @@ public class WikiEngineTest
 
         Assertions.assertEquals( TextUtil.normalizePostData( "" ), m_engine.getText( name ), "wrong content" );
     }
-    
-    @Test
-    public void testGetRequiredProperty() throws Exception
-    {
-        String[] vals = { "foo", " this is a property ", "bar", "60" };
-        Properties props = TextUtil.createProperties(vals);
-        Assertions.assertEquals( "60", m_engine.getRequiredProperty( props, "bar" ) );
-    }
-
-    @Test
-    public void testGetRequiredPropertyNRPE()
-    {
-        String[] vals = { "foo", " this is a property ", "bar", "60" };
-        Properties props = TextUtil.createProperties(vals);
-        try
-        {
-            m_engine.getRequiredProperty( props, "ber" );
-            Assertions.fail( "NoRequiredPropertyException should've been thrown!" );
-        }
-        catch (NoRequiredPropertyException nrpe) {}
-    }
 
 }
