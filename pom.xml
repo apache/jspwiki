@@ -72,7 +72,7 @@
     <selenide.version>5.5.1</selenide.version>
     <slf4j.version>1.7.29</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>1.22</tika.version>
+    <tika.version>1.23</tika.version>
     <tomcat.version>8.5.49</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
