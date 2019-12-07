@@ -482,6 +482,9 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${plugin.javadoc.version}</version>
           <configuration>
+            <additionalOptions>
+              <additionalOption>-Xdoclint:none</additionalOption>
+            </additionalOptions>
             <author>${project.organization.name}</author>
             <bottom>Copyright © {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
             <breakiterator>true</breakiterator>
