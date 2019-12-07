@@ -484,6 +484,7 @@
           <configuration>
             <additionalOptions>
               <additionalOption>-Xdoclint:none</additionalOption>
+              <additionalOption>--allow-script-in-comments</additionalOption>
             </additionalOptions>
             <author>${project.organization.name}</author>
             <bottom>Copyright © {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
@@ -494,7 +495,6 @@
               <artifactId>umldoclet</artifactId>
               <version>${jdk.javadoc.doclet.version}</version>
             </docletArtifact>
-            <doclint>none</doclint>
             <linksource>true</linksource>
             <sourcetab>4</sourcetab>
             <quiet>true</quiet>
