@@ -442,7 +442,7 @@ public class CachingProvider implements WikiPageProvider {
     //         necessary variables.
     //
 
-    private void refreshMetadata(WikiPage page, int version)
+    private void refreshMetadata( WikiPage page )
     {
         if( page != null && !page.hasMetadata() )
         {
@@ -450,13 +450,7 @@ public class CachingProvider implements WikiPageProvider {
 
             try
             {
-                String data;
-                if (version == LATEST_VERSION) {
-                    data = getTextFromCache(page.getName());
-                }
-                else {
-                    data = m_provider.getPageText(page.getName(), version);
-                }
+                String data = m_provider.getPageText(page.getName(), page.getVersion());
 
                 WikiContext ctx = new WikiContext( m_engine, page );
                 MarkupParser parser = mgr.getParser( ctx, data );
@@ -504,7 +498,7 @@ public class CachingProvider implements WikiPageProvider {
             //refreshMetadata( page );
         }
 
-        refreshMetadata(page, version);
+        refreshMetadata( page );
 
         return page;
     }
