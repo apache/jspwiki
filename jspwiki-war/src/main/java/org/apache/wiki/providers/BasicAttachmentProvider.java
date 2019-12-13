@@ -485,6 +485,14 @@ public class BasicAttachmentProvider
 
                     if( f.isDirectory() )
                     {
+                        final File[] files = f.listFiles();
+                        if (files == null || files.length == 0) {
+                            // can happen with git synced wiki contents, just clean up
+                            log.warn("Cleaning up empty attachment folder: " + f.getPath());
+                            f.delete();
+                            continue;
+                        }
+
                         String attachmentName = unmangleName( attachments[i] );
 
                         //
@@ -634,6 +642,7 @@ public class BasicAttachmentProvider
             }
 
             File f = findFile( dir, att );
+            if (f == null) return null;
 
             att.setSize( f.length() );
             att.setLastModified( new Date(f.lastModified()) );
