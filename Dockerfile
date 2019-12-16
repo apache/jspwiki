@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM maven:3.6-jdk-8 as package
+FROM maven:3.6-jdk-11 as package
 
 WORKDIR /tmp
 
