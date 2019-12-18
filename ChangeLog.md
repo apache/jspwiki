@@ -29,7 +29,7 @@ under the License.
     * Change javadocs' doclet to [UMLDoclet](https://github.com/talsma-ict/umldoclet), which can be used with JDK >= 9 (see associated note on [`mvn_cheat-sheet.md`](https://github.com/apache/jspwiki/blob/master/mvn_cheat-sheet.md#3-reports-specific) for details)
     * Set `compilerVersion` to `jdk.version` on jspc-maven-plugin 
   
-* Dependency updates
+* [JSPWIKI-1126](https://issues.apache.org/jira/browse/JSPWIKI-1126): Dependency updates
     * Flexmark to 0.50.44
     * Lucene to 8.3.1
     * Selenide to 5.5.1
@@ -48,7 +48,7 @@ under the License.
 
 * _2.11.0-M6-git-03_
 
-* Bringing in Docker support to ASF repo from https://github.com/metskem/docker-jspwiki. 
+* [JSPWIKI-1125](https://issues.apache.org/jira/browse/JSPWIKI-1125): Bringing in Docker support to ASF repo from https://github.com/metskem/docker-jspwiki. 
   See https://jspwiki-wiki.apache.org/Wiki.jsp?page=Docker for details.
   
 * Dependency updates
@@ -63,11 +63,9 @@ under the License.
 * `FileUtils.copyContents( InputStream, OutputStream )` enforces writes to disk for `FileOutputStream` through
   their associated `FileDescriptor`.
 
-* new static methods to build `TestEngine` instances which do not throw checked Exceptions and thus allows
-  instances to be built as member of test classes, instead of rebuilding for every test, saving some 
-  time in the process.
-
-* `TestEngine` will generate separate page, attachment and work directories, in order to allow each instance
+* [JSPWIKI-1124](https://issues.apache.org/jira/browse/JSPWIKI-1124): `TestEngine` improvements
+    * new static methods to build `TestEngine` instances which do not throw checked Exceptions and thus allows instances to be built as member of test classes, instead of rebuilding for every test, saving some time in the process.
+    * `TestEngine` will generate separate page, attachment and work directories, in order to allow each instance
   to work with a clean file installation.
 
 **2019-10-10  Juan Pablo Santos (juanpablo AT apache DOT org)**
