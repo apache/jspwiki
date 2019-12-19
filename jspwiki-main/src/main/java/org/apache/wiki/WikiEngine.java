@@ -26,7 +26,6 @@ import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -113,10 +112,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *  There's basically only a single WikiEngine for each web application, and
  *  you should always get it using the WikiEngine.getInstance() method.
  */
-public class WikiEngine
-{
-    private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
+public class WikiEngine  {
 
+    private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
     /** True, if log4j has been configured. */
@@ -636,21 +634,14 @@ public class WikiEngine
         //
         //  Initialize the good-to-have-but-not-fatal modules.
         //
-        try
-        {
-            if( TextUtil.getBooleanProperty( props,
-                                             RSSGenerator.PROP_GENERATE_RSS,
-                                             false ) )
-            {
+        try {
+            if( TextUtil.getBooleanProperty( props, RSSGenerator.PROP_GENERATE_RSS,false ) ) {
                 m_rssGenerator = (RSSGenerator)ClassUtil.getMappedObject(RSSGenerator.class.getName(), this, props );
             }
 
             m_pageRenamer = (PageRenamer)ClassUtil.getMappedObject(PageRenamer.class.getName(), this, props );
-        }
-        catch( Exception e )
-        {
-            log.error( "Unable to start RSS generator - JSPWiki will still work, "+
-                       "but there will be no RSS feed.", e );
+        } catch( final Exception e ) {
+            log.error( "Unable to start RSS generator - JSPWiki will still work, but there will be no RSS feed.", e );
         }
 
         // Start the RSS generator & generator thread
@@ -2076,7 +2067,7 @@ public class WikiEngine
     public String renamePage( WikiContext context,
                               String renameFrom,
                               String renameTo,
-                              boolean changeReferrers)
+                              boolean changeReferrers )
         throws WikiException
     {
         String newPageName = m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
@@ -2196,7 +2187,7 @@ public class WikiEngine
      * Registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    public final synchronized void addWikiEventListener( final WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -2205,7 +2196,7 @@ public class WikiEngine
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    public final synchronized void removeWikiEventListener( final WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -2214,11 +2205,9 @@ public class WikiEngine
      * Fires a WikiEngineEvent to all registered listeners.
      * @param type  the event type
      */
-    protected final void fireEvent( int type )
-    {
-        if ( WikiEventManager.isListening(this) )
-        {
-            WikiEventManager.fireEvent(this,new WikiEngineEvent(this,type));
+    protected final void fireEvent( final int type ) {
+        if( WikiEventManager.isListening(this ) ) {
+            WikiEventManager.fireEvent( this, new WikiEngineEvent(this, type ) );
         }
     }
 
@@ -2226,11 +2215,9 @@ public class WikiEngine
      * Fires a WikiPageEvent to all registered listeners.
      * @param type  the event type
      */
-    protected final void firePageEvent( int type, String pageName )
-    {
-        if ( WikiEventManager.isListening(this) )
-        {
-            WikiEventManager.fireEvent(this,new WikiPageEvent(this,type,pageName));
+    protected final void firePageEvent( final int type, final String pageName ) {
+        if( WikiEventManager.isListening(this ) ) {
+            WikiEventManager.fireEvent(this,new WikiPageEvent(this, type, pageName ) );
         }
     }
 
@@ -2239,11 +2226,9 @@ public class WikiEngine
      * @param oldName the former page name
      * @param newName the new page name
      */
-    protected final void firePageRenameEvent(String oldName, String newName )
-    {
-        if ( WikiEventManager.isListening(this) )
-        {
-            WikiEventManager.fireEvent(this,new WikiPageRenameEvent(this,oldName,newName));
+    protected final void firePageRenameEvent( final String oldName, final String newName ) {
+        if( WikiEventManager.isListening(this) ) {
+            WikiEventManager.fireEvent(this, new WikiPageRenameEvent(this, oldName, newName ) );
         }
     }
 
@@ -2255,7 +2240,7 @@ public class WikiEngine
      * @param key the attribute name
      * @param value the value
      */
-    public void setAttribute( String key, Object value )
+    public void setAttribute( final String key, final Object value )
     {
         m_attributes.put( key, value );
     }
@@ -2266,7 +2251,7 @@ public class WikiEngine
      *  @param key the attribute name
      *  @return the value
      */
-    public Object getAttribute( String key )
+    public Object getAttribute( final String key )
     {
         return m_attributes.get( key );
     }
@@ -2277,7 +2262,7 @@ public class WikiEngine
      *  @param key The key of the attribute to remove.
      *  @return The previous attribute, if it existed.
      */
-    public Object removeAttribute( String key )
+    public Object removeAttribute( final String key )
     {
         return m_attributes.remove( key );
     }
