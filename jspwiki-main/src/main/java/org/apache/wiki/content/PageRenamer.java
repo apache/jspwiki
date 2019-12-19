@@ -40,14 +40,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  Provides page renaming functionality.  Note that there used to be
- *  a similarly named class in 2.6, but due to unclear copyright, the
- *  class was completely rewritten from scratch for 2.8.
+ * Provides page renaming functionality. Note that there used to be a similarly named class in 2.6, but due to unclear copyright, the
+ * class was completely rewritten from scratch for 2.8.
  *
- *  @since 2.8
+ * @since 2.8
  */
-public class PageRenamer
-{
+public class PageRenamer {
 
     private static final Logger log = Logger.getLogger( PageRenamer.class );
     
@@ -64,9 +62,7 @@ public class PageRenamer
      *  @throws WikiException If the page cannot be renamed.
      */
     public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
-        //
         //  Sanity checks first
-        //
         if( renameFrom == null || renameFrom.length() == 0 ) {
             throw new WikiException( "From name may not be null or empty" );
         }
@@ -74,101 +70,71 @@ public class PageRenamer
             throw new WikiException( "To name may not be null or empty" );
         }
        
-        //
         //  Clean up the "to" -name so that it does not contain anything illegal
-        //
-        String renameToClean = MarkupParser.cleanLink( renameTo.trim() );
-        
-        if( renameToClean.equals(renameFrom) ) {
+        final String renameToClean = MarkupParser.cleanLink( renameTo.trim() );
+        if( renameToClean.equals( renameFrom ) ) {
             throw new WikiException( "You cannot rename the page to itself" );
         }
         
-        //
         //  Preconditions: "from" page must exist, and "to" page must not yet exist.
-        //
-        WikiEngine engine = context.getEngine();
-        WikiPage fromPage = engine.getPage( renameFrom );
-        
+        final WikiEngine engine = context.getEngine();
+        final WikiPage fromPage = engine.getPage( renameFrom );
         if( fromPage == null ) {
             throw new WikiException("No such page "+renameFrom);
         }
-        
         WikiPage toPage = engine.getPage( renameToClean );
-        
         if( toPage != null ) {
             throw new WikiException( "Page already exists " + renameToClean );
         }
         
-        //
-        //  Options
-        //
-        m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, m_camelCase );
+        final Set< String > referrers = getReferencesToChange( fromPage, engine );
 
-        Set< String > referrers = getReferencesToChange( fromPage, engine );
-
-        //
         //  Do the actual rename by changing from the frompage to the topage, including all of the attachments
-        //
-        
         //  Remove references to attachments under old name
-        List< Attachment > attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
-        for( Attachment att:attachmentsOldName ) {
-            WikiPage fromAttPage = engine.getPage( att.getName() );
+        final List< Attachment > attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
+        for( final Attachment att: attachmentsOldName ) {
+            final WikiPage fromAttPage = engine.getPage( att.getName() );
             engine.getReferenceManager().pageRemoved( fromAttPage );
         }
 
         engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
-
         if( engine.getAttachmentManager().attachmentsEnabled() ) {
             engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
         
-        //
         //  Add a comment to the page notifying what changed.  This adds a new revision to the repo with no actual change.
-        //
         toPage = engine.getPage( renameToClean );
-        
         if( toPage == null ) {
-            throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
+            throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
         }
-
         toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
-        
         engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
 
-        //
         //  Update the references
-        //
         engine.getReferenceManager().pageRemoved( fromPage );
         engine.updateReferences( toPage );
 
-        //
         //  Update referrers
-        //
         if( changeReferrers ) {
             updateReferrers( context, fromPage, toPage, referrers );
         }
 
-        //
         //  re-index the page including its attachments
-        //
         engine.getSearchManager().reindexPage( toPage );
         
-        Collection< Attachment > attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
+        final Collection< Attachment > attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
         for( final Attachment att:attachmentsNewName ) {
             final WikiPage toAttPage = engine.getPage( att.getName() );
             // add reference to attachment under new page name
             engine.updateReferences( toAttPage );
-            engine.getSearchManager().reindexPage(att);
+            engine.getSearchManager().reindexPage( att );
         }
 
         // Currently not used internally by JSPWiki itself, but you can use it for something else.
         WikiEventManager.fireEvent( this, new WikiPageRenameEvent( this, renameFrom, renameToClean ) );
 
-        //
         //  Done, return the new name.
-        //
         return renameToClean;
     }
 
@@ -180,72 +146,59 @@ public class PageRenamer
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<String>referrers )
-    {
-        WikiEngine engine = context.getEngine();
-        
-        if( referrers.isEmpty() ) return; // No referrers
-        
-        for( String pageName : referrers )
-        {
-            //  In case the page was just changed from under us, let's do this
-            //  small kludge.
-            if( pageName.equals( fromPage.getName() ) )
-            {
+    private void updateReferrers( final WikiContext context, final WikiPage fromPage, final WikiPage toPage, final Set< String > referrers ) {
+        if( referrers.isEmpty() ) { // No referrers
+            return;
+        }
+
+        final WikiEngine engine = context.getEngine();
+        for( String pageName : referrers ) {
+            //  In case the page was just changed from under us, let's do this small kludge.
+            if( pageName.equals( fromPage.getName() ) ) {
                 pageName = toPage.getName();
             }
             
-            WikiPage p = engine.getPage( pageName );
-            
-            String sourceText = engine.getPureText( p );
-            
+            final WikiPage p = engine.getPage( pageName );
+
+            final String sourceText = engine.getPureText( p );
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
-            
-            if( m_camelCase )
+
+            m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, m_camelCase );
+            if( m_camelCase ) {
                 newText = replaceCCReferrerString( context, newText, fromPage.getName(), toPage.getName() );
+            }
             
-            if( !sourceText.equals( newText ) )
-            {
+            if( !sourceText.equals( newText ) ) {
                 p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
                 p.setAuthor( context.getCurrentUser().getName() );
          
-                try
-                {
+                try {
                     engine.getPageManager().putPageText( p, newText );
                     engine.updateReferences( p );
-                }
-                catch( ProviderException e )
-                {
-                    //
-                    //  We fail with an error, but we will try to continue to rename
-                    //  other referrers as well.
-                    //
+                } catch( final ProviderException e ) {
+                    //  We fail with an error, but we will try to continue to rename other referrers as well.
                     log.error("Unable to perform rename.",e);
                 }
             }
         }
     }
 
-    private Set<String> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
-    {
-        Set<String> referrers = new TreeSet<String>();
-        
-        Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
-        if( r != null ) referrers.addAll( r );
-        
-        try
-        {
-            List<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
-
-            for( Attachment att : attachments  )
-            {
-                Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
-
-                if( c != null ) referrers.addAll(c);
-            }
+    private Set<String> getReferencesToChange( final WikiPage fromPage, final WikiEngine engine ) {
+        final Set< String > referrers = new TreeSet<>();
+        final Collection< String > r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        if( r != null ) {
+            referrers.addAll( r );
         }
-        catch( ProviderException e )
-        {
+        
+        try {
+            final List< Attachment > attachments = engine.getAttachmentManager().listAttachments( fromPage );
+            for( final Attachment att : attachments  ) {
+                final Collection< String > c = engine.getReferenceManager().findReferrers( att.getName() );
+                if( c != null ) {
+                    referrers.addAll( c );
+                }
+            }
+        } catch( final ProviderException e ) {
             // We will continue despite this error
             log.error( "Provider error while fetching attachments for rename", e );
         }
@@ -255,31 +208,21 @@ public class PageRenamer
     /**
      *  Replaces camelcase links.
      */
-    private String replaceCCReferrerString( WikiContext context, String sourceText, String from, String to )
-    {
-        StringBuilder sb = new StringBuilder( sourceText.length()+32 );
-        
-        Pattern linkPattern = Pattern.compile( "\\p{Lu}+\\p{Ll}+\\p{Lu}+[\\p{L}\\p{Digit}]*" );
-        
-        Matcher matcher = linkPattern.matcher( sourceText );
-        
+    private String replaceCCReferrerString( final WikiContext context, final String sourceText, final String from, final String to ) {
+        final StringBuilder sb = new StringBuilder( sourceText.length()+32 );
+        final Pattern linkPattern = Pattern.compile( "\\p{Lu}+\\p{Ll}+\\p{Lu}+[\\p{L}\\p{Digit}]*" );
+        final Matcher matcher = linkPattern.matcher( sourceText );
         int start = 0;
         
-        while( matcher.find(start) )
-        {
-            String match = matcher.group();
-
+        while( matcher.find( start ) ) {
+            final String match = matcher.group();
             sb.append( sourceText.substring( start, matcher.start() ) );
-
-            int lastOpenBrace = sourceText.lastIndexOf( '[', matcher.start() );
-            int lastCloseBrace = sourceText.lastIndexOf( ']', matcher.start() );
+            final int lastOpenBrace = sourceText.lastIndexOf( '[', matcher.start() );
+            final int lastCloseBrace = sourceText.lastIndexOf( ']', matcher.start() );
             
-            if( match.equals( from ) && lastCloseBrace >= lastOpenBrace )
-            {
+            if( match.equals( from ) && lastCloseBrace >= lastOpenBrace ) {
                 sb.append( to );
-            }
-            else
-            {
+            } else {
                 sb.append( match );
             }
             
@@ -291,35 +234,24 @@ public class PageRenamer
         return sb.toString();
     }
 
-    private String replaceReferrerString( WikiContext context, String sourceText, String from, String to )
-    {
-        StringBuilder sb = new StringBuilder( sourceText.length()+32 );
+    private String replaceReferrerString( final WikiContext context, final String sourceText, final String from, final String to ) {
+        final StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         
-        //
-        //  This monstrosity just looks for a JSPWiki link pattern.  But it is pretty
-        //  cool for a regexp, isn't it?  If you can understand this in a single reading,
-        //  you have way too much time in your hands.
-        //
-        Pattern linkPattern = Pattern.compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
-        
-        Matcher matcher = linkPattern.matcher( sourceText );
-        
+        // This monstrosity just looks for a JSPWiki link pattern.  But it is pretty cool for a regexp, isn't it?  If you can
+        // understand this in a single reading, you have way too much time in your hands.
+        final Pattern linkPattern = Pattern.compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
+        final Matcher matcher = linkPattern.matcher( sourceText );
         int start = 0;
         
-        // System.out.println("====");
-        // System.out.println("SRC="+sourceText.trim());
-        while( matcher.find(start) )
-        {
+        while( matcher.find( start ) ) {
             char charBefore = (char)-1;
             
-            if( matcher.start() > 0 ) 
-                charBefore = sourceText.charAt( matcher.start()-1 );
+            if( matcher.start() > 0 ) {
+                charBefore = sourceText.charAt( matcher.start() - 1 );
+            }
             
-            if( matcher.group(1).length() > 0 || charBefore == '~' || charBefore == '[' ) 
-            {
-                //
+            if( matcher.group(1).length() > 0 || charBefore == '~' || charBefore == '[' ) {
                 //  Found an escape character, so I am escaping.
-                //
                 sb.append( sourceText.substring( start, matcher.end() ) );
                 start = matcher.end();
                 continue;
@@ -327,25 +259,14 @@ public class PageRenamer
 
             String text = matcher.group(2);
             String link = matcher.group(4);
-            String attr = matcher.group(6);
+            final String attr = matcher.group(6);
              
-            /*
-            System.out.println("MATCH="+matcher.group(0));
-            System.out.println("   text="+text);
-            System.out.println("   link="+link);
-            System.out.println("   attr="+attr);
-            */
-            if( link.length() == 0 )
-            {
+            if( link.length() == 0 ) {
                 text = replaceSingleLink( context, text, from, to );
-            }
-            else
-            {
+            } else {
                 link = replaceSingleLink( context, link, from, to );
                 
-                //
                 //  A very simple substitution, but should work for quite a few cases.
-                //
                 text = TextUtil.replaceString( text, from, to );
             }
         
@@ -353,9 +274,13 @@ public class PageRenamer
             //  Construct the new string
             //
             sb.append( sourceText.substring( start, matcher.start() ) );
-            sb.append( "["+text );
-            if( link.length() > 0 ) sb.append( "|" + link );
-            if( attr.length() > 0 ) sb.append( "|" + attr );
+            sb.append( "[" ).append( text );
+            if( link.length() > 0 ) {
+                sb.append( "|" ).append( link );
+            }
+            if( attr.length() > 0 ) {
+                sb.append( "|" ).append( attr );
+            }
             sb.append( "]" );
             
             start = matcher.end();
