@@ -96,6 +96,10 @@
     <mappedClass>org.apache.wiki.auth.authorize.GroupManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.content.PageRenamer</requestedClass>
+    <mappedClass>org.apache.wiki.content.WikiPageRenamer</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.diff.DifferenceManager</requestedClass>
     <mappedClass>org.apache.wiki.diff.DifferenceManager</mappedClass>
   </mapping>

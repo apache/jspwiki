@@ -19,12 +19,7 @@
 
 package org.apache.wiki;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
@@ -38,7 +33,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
 
 public class WikiEngineTest
 {
@@ -766,7 +764,7 @@ public class WikiEngineTest
 
         WikiContext ctx = new WikiContext( m_engine, m_engine.getPage("OldNameTestPage") );
 
-        m_engine.renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
+        m_engine.getPageRenamer().renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
         Assertions.assertFalse( m_engine.pageExists( "OldNameTestPage"), "did not vanish" );
         Assertions.assertTrue( m_engine.pageExists( "NewNameTestPage"), "did not appear" );

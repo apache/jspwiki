@@ -635,10 +635,10 @@ public class WikiEngine  {
         //
         try {
             if( TextUtil.getBooleanProperty( props, RSSGenerator.PROP_GENERATE_RSS,false ) ) {
-                m_rssGenerator = (RSSGenerator)ClassUtil.getMappedObject(RSSGenerator.class.getName(), this, props );
+                m_rssGenerator = ClassUtil.getMappedObject( RSSGenerator.class.getName(), this, props );
             }
 
-            m_pageRenamer = (PageRenamer)ClassUtil.getMappedObject(PageRenamer.class.getName(), this, props );
+            m_pageRenamer = ClassUtil.getMappedObject( PageRenamer.class.getName(), this, props );
         } catch( final Exception e ) {
             log.error( "Unable to start RSS generator - JSPWiki will still work, but there will be no RSS feed.", e );
         }
