@@ -18,13 +18,6 @@
  */
 package org.apache.wiki.content;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
@@ -38,6 +31,13 @@ import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *  Provides page renaming functionality.  Note that there used to be
@@ -63,32 +63,23 @@ public class PageRenamer
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-    public String renamePage(final WikiContext context, 
-                              final String renameFrom, 
-                              final String renameTo, 
-                              final boolean changeReferrers )
-        throws WikiException
-    {
+    public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
         //
         //  Sanity checks first
         //
-        if( renameFrom == null || renameFrom.length() == 0 )
-        {
+        if( renameFrom == null || renameFrom.length() == 0 ) {
             throw new WikiException( "From name may not be null or empty" );
         }
-        if( renameTo == null || renameTo.length() == 0 )
-        {
+        if( renameTo == null || renameTo.length() == 0 ) {
             throw new WikiException( "To name may not be null or empty" );
         }
        
         //
         //  Clean up the "to" -name so that it does not contain anything illegal
         //
-        
         String renameToClean = MarkupParser.cleanLink( renameTo.trim() );
         
-        if( renameToClean.equals(renameFrom) )
-        {
+        if( renameToClean.equals(renameFrom) ) {
             throw new WikiException( "You cannot rename the page to itself" );
         }
         
@@ -98,56 +89,48 @@ public class PageRenamer
         WikiEngine engine = context.getEngine();
         WikiPage fromPage = engine.getPage( renameFrom );
         
-        if( fromPage == null )
-        {
+        if( fromPage == null ) {
             throw new WikiException("No such page "+renameFrom);
         }
         
         WikiPage toPage = engine.getPage( renameToClean );
         
-        if( toPage != null )
-        {
+        if( toPage != null ) {
             throw new WikiException( "Page already exists " + renameToClean );
         }
         
         //
         //  Options
         //
-        
-        m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), 
-                                                   JSPWikiMarkupParser.PROP_CAMELCASELINKS, 
-                                                   m_camelCase );
+        m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, m_camelCase );
 
-        Set<String> referrers = getReferencesToChange( fromPage, engine );
+        Set< String > referrers = getReferencesToChange( fromPage, engine );
 
         //
-        //  Do the actual rename by changing from the frompage to the topage, including
-        //  all of the attachments
+        //  Do the actual rename by changing from the frompage to the topage, including all of the attachments
         //
         
         //  Remove references to attachments under old name
-        List<Attachment> attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
-        for (Attachment att:attachmentsOldName)
-        {
+        List< Attachment > attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
+        for( Attachment att:attachmentsOldName ) {
             WikiPage fromAttPage = engine.getPage( att.getName() );
             engine.getReferenceManager().pageRemoved( fromAttPage );
         }
 
         engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
 
-        if( engine.getAttachmentManager().attachmentsEnabled() )
-        {
+        if( engine.getAttachmentManager().attachmentsEnabled() ) {
             engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
         
         //
-        //  Add a comment to the page notifying what changed.  This adds a new revision
-        //  to the repo with no actual change.
+        //  Add a comment to the page notifying what changed.  This adds a new revision to the repo with no actual change.
         //
-        
         toPage = engine.getPage( renameToClean );
         
-        if( toPage == null ) throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
+        if( toPage == null ) {
+            throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
+        }
 
         toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
@@ -157,27 +140,24 @@ public class PageRenamer
         //
         //  Update the references
         //
-        
         engine.getReferenceManager().pageRemoved( fromPage );
         engine.updateReferences( toPage );
 
         //
         //  Update referrers
         //
-        if( changeReferrers )
-        {
+        if( changeReferrers ) {
             updateReferrers( context, fromPage, toPage, referrers );
         }
 
         //
         //  re-index the page including its attachments
         //
-        engine.getSearchManager().reindexPage(toPage);
+        engine.getSearchManager().reindexPage( toPage );
         
-        Collection<Attachment> attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
-        for (Attachment att:attachmentsNewName)
-        {
-            WikiPage toAttPage = engine.getPage( att.getName() );
+        Collection< Attachment > attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
+        for( final Attachment att:attachmentsNewName ) {
+            final WikiPage toAttPage = engine.getPage( att.getName() );
             // add reference to attachment under new page name
             engine.updateReferences( toAttPage );
             engine.getSearchManager().reindexPage(att);
@@ -387,21 +367,22 @@ public class PageRenamer
     }
 
     /**
-     *  This method does a correct replacement of a single link, taking into
-     *  account anchors and attachments.
+     *  This method does a correct replacement of a single link, taking into account anchors and attachments.
      */
-    private String replaceSingleLink( WikiContext context, String original, String from, String newlink )
-    {
-        int hash = original.indexOf( '#' );
-        int slash = original.indexOf( '/' );
-        String reallink = original;
-        String oldStyleRealLink;
-        
-        if( hash != -1 ) reallink = original.substring( 0, hash );
-        if( slash != -1 ) reallink = original.substring( 0,slash );
-        
-        reallink = MarkupParser.cleanLink( reallink );
-        oldStyleRealLink = MarkupParser.wikifyLink( reallink );
+    private String replaceSingleLink( final WikiContext context, final String original, final String from, final String newlink ) {
+        final int hash = original.indexOf( '#' );
+        final int slash = original.indexOf( '/' );
+        String realLink = original;
+
+        if( hash != -1 ) {
+            realLink = original.substring( 0, hash );
+        }
+        if( slash != -1 ) {
+            realLink = original.substring( 0,slash );
+        }
+
+        realLink = MarkupParser.cleanLink( realLink );
+        final String oldStyleRealLink = MarkupParser.wikifyLink( realLink );
         
         //WikiPage realPage  = context.getEngine().getPage( reallink );
         // WikiPage p2 = context.getEngine().getPage( from );
@@ -412,18 +393,18 @@ public class PageRenamer
         //
         //  Yes, these point to the same page.
         //
-        if( reallink.equals(from) || original.equals(from) || oldStyleRealLink.equals(from) )
-        {
+        if( realLink.equals( from ) || original.equals( from ) || oldStyleRealLink.equals( from ) ) {
             //
             //  if the original contains blanks, then we should introduce a link, for example:  [My Page]  =>  [My Page|My Renamed Page]
-            int blank = reallink.indexOf( " ");
+            final int blank = realLink.indexOf( " ");
             
-            if( blank != -1 )
-            {
+            if( blank != -1 ) {
                 return original + "|" + newlink;
             }
             
-            return newlink + ((hash > 0) ? original.substring( hash ) : "") + ((slash > 0) ? original.substring( slash ) : "") ;
+            return newlink +
+                   ( ( hash > 0 ) ? original.substring( hash ) : "" ) +
+                   ( ( slash > 0 ) ? original.substring( slash ) : "" ) ;
         }
         
         return original;
