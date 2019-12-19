@@ -42,7 +42,6 @@ import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageTimeComparator;
@@ -2049,33 +2048,6 @@ public class WikiEngine  {
     }
 
     /**
-     * Renames, or moves, a wiki page. Can also alter referring wiki
-     * links to point to the renamed page.
-     *
-     * @param context           The context during which this rename takes
-     *                          place.
-     * @param renameFrom        Name of the source page.
-     * @param renameTo          Name of the destination page.
-     * @param changeReferrers   If true, then changes any referring links
-     *                          to point to the renamed page.
-     *
-     * @return The name of the page that the source was renamed to.
-     *
-     * @throws WikiException    In the case of an error, such as the destination
-     *                          page already existing.
-     */
-    public String renamePage( WikiContext context,
-                              String renameFrom,
-                              String renameTo,
-                              boolean changeReferrers )
-        throws WikiException
-    {
-        String newPageName = m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
-        firePageRenameEvent(renameFrom, newPageName);
-        return newPageName;
-    }
-
-    /**
      *  Returns the PageRenamer employed by this WikiEngine.
      *  @since 2.5.141
      *  @return The current PageRenamer instance.
@@ -2218,17 +2190,6 @@ public class WikiEngine  {
     protected final void firePageEvent( final int type, final String pageName ) {
         if( WikiEventManager.isListening(this ) ) {
             WikiEventManager.fireEvent(this,new WikiPageEvent(this, type, pageName ) );
-        }
-    }
-
-    /**
-     * Fires a WikiPageRenameEvent to all registered listeners.
-     * @param oldName the former page name
-     * @param newName the new page name
-     */
-    protected final void firePageRenameEvent( final String oldName, final String newName ) {
-        if( WikiEventManager.isListening(this) ) {
-            WikiEventManager.fireEvent(this, new WikiPageRenameEvent(this, oldName, newName ) );
         }
     }
 

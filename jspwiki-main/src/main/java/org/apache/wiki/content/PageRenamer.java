@@ -131,11 +131,23 @@ public class PageRenamer {
             engine.getSearchManager().reindexPage( att );
         }
 
-        // Currently not used internally by JSPWiki itself, but you can use it for something else.
-        WikiEventManager.fireEvent( this, new WikiPageRenameEvent( this, renameFrom, renameToClean ) );
+        firePageRenameEvent( renameFrom, renameToClean );
 
         //  Done, return the new name.
         return renameToClean;
+    }
+
+    /**
+     * Fires a WikiPageRenameEvent to all registered listeners. Currently not used internally by JSPWiki itself, but you can use it for
+     * something else.
+     *
+     * @param oldName the former page name
+     * @param newName the new page name
+     */
+    public void firePageRenameEvent( final String oldName, final String newName ) {
+        if( WikiEventManager.isListening(this) ) {
+            WikiEventManager.fireEvent(this, new WikiPageRenameEvent(this, oldName, newName ) );
+        }
     }
 
     /**

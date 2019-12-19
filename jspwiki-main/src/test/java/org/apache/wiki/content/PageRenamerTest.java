@@ -17,16 +17,7 @@
     under the License.
  */
 package org.apache.wiki.content;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-
-import java.util.Collection;
-import java.util.Properties;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import net.sf.ehcache.CacheManager;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -34,14 +25,20 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
+import java.util.Properties;
 
 public class PageRenamerTest
 {
     TestEngine m_engine;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         Properties props = TestEngine.getTestProperties();
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
         CacheManager.getInstance().removeAllCaches();
@@ -50,8 +47,7 @@ public class PageRenamerTest
     }
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
+    public void tearDown() {
         m_engine.deleteTestPage("TestPage");
         m_engine.deleteTestPage("TestPage2");
         m_engine.deleteTestPage("FooTest");
@@ -73,10 +69,8 @@ public class PageRenamerTest
     }
 
     @Test
-    public void testSimpleRename()
-        throws Exception
-    {
-        // Count the numberof existing references
+    public void testSimpleRename() throws Exception {
+        // Count the number of existing references
         int refCount = m_engine.getReferenceManager().findCreated().size();
 
         m_engine.saveText("TestPage", "the big lazy dog thing" );
@@ -85,7 +79,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "TestPage", "FooTest", false);
+        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", false);
 
         WikiPage newpage = m_engine.getPage("FooTest");
 
@@ -111,7 +105,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
@@ -137,7 +131,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
@@ -162,7 +156,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
@@ -187,7 +181,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
@@ -215,7 +209,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "Test", "TestPage", true);
+        m_engine.getPageRenamer().renamePage(context, "Test", "TestPage", true);
 
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION );
 
@@ -235,7 +229,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
@@ -314,7 +308,7 @@ public class PageRenamerTest
 
         WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.renamePage(context, src, dst, true);
+        m_engine.getPageRenamer().renamePage(context, src, dst, true);
     }
 
     @Test

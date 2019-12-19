@@ -64,7 +64,7 @@
     {
         if (renameTo.length() > 0)
         {
-            String renamedTo = wiki.renamePage(wikiContext, renameFrom, renameTo, changeReferences);
+            String renamedTo = wiki.getPageRenamer().renamePage(wikiContext, renameFrom, renameTo, changeReferences);
 
             FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
             if( trail != null )
