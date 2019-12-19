@@ -17,6 +17,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2019-12-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-01_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): Separate rendering engine from core
+    * `PageRenamer` renamed as `WikiPageRenamer`, with new `PageRenamer` extracted as interface of `WikiPageRenamer`
+    * `pageRename(..)` method deleted from `WikiEngine`, use the one located on `PageRenamer`
+    * custom `PageRenamer`s should also fire the appropiate `WikiPageRenameEvent` on `pageRename(..)` method
+
 **2019-12-06  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M6-git-05_
