@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.pages;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiPage;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 
 /**
  *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
@@ -32,8 +32,7 @@ import org.apache.wiki.WikiPage;
  *  If the lastModified date is the same, then the next key is the page name.
  *  If the page name is also equal, then returns 0 for equality.
  */
-// FIXME: Does not implement equals().
-public class PageTimeComparator implements Comparator<WikiPage>, Serializable {
+public class PageTimeComparator implements Comparator< WikiPage >, Serializable {
 	
     private static final long serialVersionUID = 0L;
 
@@ -42,14 +41,14 @@ public class PageTimeComparator implements Comparator<WikiPage>, Serializable {
     /**
      *  {@inheritDoc}
      */
-    public int compare( WikiPage w1, WikiPage w2 ) {
+    public int compare( final WikiPage w1, final WikiPage w2 ) {
         if( w1 == null || w2 == null ) {
             log.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?
         }
 
-        Date w1LastMod = w1.getLastModified();
-        Date w2LastMod = w2.getLastModified();
+        final Date w1LastMod = w1.getLastModified();
+        final Date w2LastMod = w2.getLastModified();
 
         if( w1LastMod == null ) {
             log.error( "NULL MODIFY DATE WITH " + w1.getName() );
@@ -60,7 +59,7 @@ public class PageTimeComparator implements Comparator<WikiPage>, Serializable {
         }
 
         // This gets most recent on top
-        int timecomparison = w2LastMod.compareTo( w1LastMod );
+        final int timecomparison = w2LastMod.compareTo( w1LastMod );
 
         if( timecomparison == 0 ) {
             return w1.compareTo( w2 );
