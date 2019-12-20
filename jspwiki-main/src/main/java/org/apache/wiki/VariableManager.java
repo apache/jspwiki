@@ -37,13 +37,12 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- *  Manages variables.  Variables are case-insensitive.  A list of all
- *  available variables is on a Wiki page called "WikiVariables".
+ *  Manages variables.  Variables are case-insensitive.  A list of all available variables is on a Wiki page called "WikiVariables".
  *
  *  @since 1.9.20.
  */
-public class VariableManager
-{
+public class VariableManager {
+
     private static Logger log = Logger.getLogger( VariableManager.class );
 
     // FIXME: These are probably obsolete.
@@ -51,10 +50,8 @@ public class VariableManager
     public static final String VAR_MSG   = "msg";
 
     /**
-     *  Contains a list of those properties that shall never be shown.
-     *  Put names here in lower case.
+     *  Contains a list of those properties that shall never be shown. Put names here in lower case.
      */
-
     static final String[] THE_BIG_NO_NO_LIST = {
         "jspwiki.auth.masterpassword"
     };
@@ -63,7 +60,7 @@ public class VariableManager
      *  Creates a VariableManager object using the property list given.
      *  @param props The properties.
      */
-    public VariableManager( Properties props )
+    public VariableManager( final Properties props )
     {
     }
 
@@ -76,18 +73,17 @@ public class VariableManager
      *  @param  context The WikiContext
      *  @param  link    The link text containing the variable name.
      *  @return The variable value.
-     *  @throws IllegalArgumentException If the format is not valid (does not
-     *          start with "{$", is zero length, etc.)
+     *  @throws IllegalArgumentException If the format is not valid (does not start with "{$", is zero length, etc.)
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    public String parseAndGetValue( WikiContext context, String link ) throws IllegalArgumentException, NoSuchVariableException {
-        if( !link.startsWith("{$") ) {
+    public String parseAndGetValue( final WikiContext context, final String link ) throws IllegalArgumentException, NoSuchVariableException {
+        if( !link.startsWith( "{$" ) ) {
             throw new IllegalArgumentException( "Link does not start with {$" );
         }
-        if( !link.endsWith("}") ) {
+        if( !link.endsWith( "}" ) ) {
             throw new IllegalArgumentException( "Link does not end with }" );
         }
-        String varName = link.substring(2,link.length()-1);
+        final String varName = link.substring( 2, link.length() - 1 );
 
         return getValue( context, varName.trim() );
     }
@@ -188,7 +184,7 @@ public class VariableManager
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    public String getValue( WikiContext context, String varName ) throws IllegalArgumentException, NoSuchVariableException {
+    public String getValue( final WikiContext context, final String varName ) throws IllegalArgumentException, NoSuchVariableException {
         if( varName == null ) {
             throw new IllegalArgumentException( "Null variable name." );
         }
@@ -196,15 +192,15 @@ public class VariableManager
             throw new IllegalArgumentException( "Zero length variable name." );
         }
         // Faster than doing equalsIgnoreCase()
-        String name = varName.toLowerCase();
+        final String name = varName.toLowerCase();
 
-        for( int i = 0; i < THE_BIG_NO_NO_LIST.length; i++ ) {
-            if( name.equals(THE_BIG_NO_NO_LIST[i]) )
+        for( final String value : THE_BIG_NO_NO_LIST ) {
+            if( name.equals( value ) ) {
                 return ""; // FIXME: Should this be something different?
+            }
         }
 
-        try
-        {
+        try {
             //
             //  Using reflection to get system variables adding a new system variable
             //  now only involves creating a new method in the SystemVariables class
@@ -214,86 +210,75 @@ public class VariableManager
             //      return "Hello World";
             //    }
             //
-            SystemVariables sysvars = new SystemVariables(context);
-            String methodName = "get"+Character.toUpperCase(name.charAt(0))+name.substring(1);
-            Method method = sysvars.getClass().getMethod(methodName);
-            return (String)method.invoke(sysvars);
-        }
-        catch( NoSuchMethodException e1 )
-        {
+            final SystemVariables sysvars = new SystemVariables( context );
+            final String methodName = "get" + Character.toUpperCase( name.charAt( 0 ) ) + name.substring( 1 );
+            final Method method = sysvars.getClass().getMethod( methodName );
+            return ( String )method.invoke( sysvars );
+        } catch( final NoSuchMethodException e1 ) {
             //
             //  It is not a system var. Time to handle the other cases.
             //
-            //  Check if such a context variable exists,
-            //  returning its string representation.
+            //  Check if such a context variable exists, returning its string representation.
             //
-            if( (context.getVariable( varName )) != null )
-            {
+            if( ( context.getVariable( varName ) ) != null ) {
                 return context.getVariable( varName ).toString();
             }
 
             //
-            //  Well, I guess it wasn't a final straw.  We also allow
-            //  variables from the session and the request (in this order).
+            //  Well, I guess it wasn't a final straw.  We also allow variables from the session and the request (in this order).
             //
+            final HttpServletRequest req = context.getHttpRequest();
+            if( req != null && req.getSession() != null ) {
+                final HttpSession session = req.getSession();
 
-            HttpServletRequest req = context.getHttpRequest();
-            if( req != null && req.getSession() != null )
-            {
-                HttpSession session = req.getSession();
+                try {
+                    String s = ( String )session.getAttribute( varName );
 
-                try
-                {
-                    String s;
-
-                    if( (s = (String)session.getAttribute( varName )) != null )
+                    if( s != null ) {
                         return s;
+                    }
 
-                    if( (s = context.getHttpParameter( varName )) != null )
+                    s = context.getHttpParameter( varName );
+                    if( s != null ) {
                         return s;
+                    }
+                } catch( final ClassCastException e ) {
+                    log.debug( "Not a String: " + varName );
                 }
-                catch( ClassCastException e ) {}
             }
 
             //
             // And the final straw: see if the current page has named metadata.
             //
-
-            WikiPage pg = context.getPage();
-            if( pg != null )
-            {
-                Object metadata = pg.getAttribute( varName );
-                if( metadata != null )
+            final WikiPage pg = context.getPage();
+            if( pg != null ) {
+                final Object metadata = pg.getAttribute( varName );
+                if( metadata != null ) {
                     return metadata.toString();
+                }
             }
 
             //
-            // And the final straw part 2: see if the "real" current page has
-            // named metadata. This allows a parent page to control a inserted
-            // page through defining variables
+            // And the final straw part 2: see if the "real" current page has named metadata. This allows
+            // a parent page to control a inserted page through defining variables
             //
-            WikiPage rpg = context.getRealPage();
-            if( rpg != null )
-            {
-                Object metadata = rpg.getAttribute( varName );
-                if( metadata != null )
+            final WikiPage rpg = context.getRealPage();
+            if( rpg != null ) {
+                final Object metadata = rpg.getAttribute( varName );
+                if( metadata != null ) {
                     return metadata.toString();
+                }
             }
 
             //
-            // Next-to-final straw: attempt to fetch using property name
-            // We don't allow fetching any other properties than those starting
-            // with "jspwiki.".  I know my own code, but I can't vouch for bugs
+            // Next-to-final straw: attempt to fetch using property name. We don't allow fetching any other
+            // properties than those starting with "jspwiki.".  I know my own code, but I can't vouch for bugs
             // in other people's code... :-)
             //
-
-            if( varName.startsWith("jspwiki.") )
-            {
-                Properties props = context.getEngine().getWikiProperties();
-
-                String s = props.getProperty( varName );
-                if( s != null )
-                {
+            if( varName.startsWith("jspwiki.") ) {
+                final Properties props = context.getEngine().getWikiProperties();
+                final String s = props.getProperty( varName );
+                if( s != null ) {
                     return s;
                 }
             }
@@ -301,15 +286,13 @@ public class VariableManager
             //
             //  Final defaults for some known quantities.
             //
-
-            if( varName.equals( VAR_ERROR ) || varName.equals( VAR_MSG ) )
+            if( varName.equals( VAR_ERROR ) || varName.equals( VAR_MSG ) ) {
                 return "";
+            }
 
-            throw new NoSuchVariableException( "No variable "+varName+" defined." );
-        }
-        catch( Exception e )
-        {
-            log.info("Interesting exception: cannot fetch variable value",e);
+            throw new NoSuchVariableException( "No variable " + varName + " defined." );
+        } catch( final Exception e ) {
+            log.info("Interesting exception: cannot fetch variable value", e );
         }
         return "";
     }
@@ -332,9 +315,9 @@ public class VariableManager
     @SuppressWarnings( "unused" )
     private static class SystemVariables
     {
-        private WikiContext m_context;
+        private final WikiContext m_context;
 
-        public SystemVariables(WikiContext context)
+        public SystemVariables( final WikiContext context )
         {
             m_context=context;
         }
@@ -382,43 +365,37 @@ public class VariableManager
             return (p != null) ? p.getProviderInfo() : "-";
         }
 
-        public String getInterwikilinks()
-        {
-        	StringBuilder res = new StringBuilder();
+        public String getInterwikilinks() {
+            final StringBuilder res = new StringBuilder();
 
-            for( String link : m_context.getEngine().getAllInterWikiLinks() )
-            {
+            for( final String link : m_context.getEngine().getAllInterWikiLinks() ) {
                 if( res.length() > 0 ) {
-                    res.append(", ");
+                    res.append( ", " );
                 }
                 res.append( link );
                 res.append( " --> " );
-                res.append( m_context.getEngine().getInterWikiURL(link) );
+                res.append( m_context.getEngine().getInterWikiURL( link ) );
             }
             return res.toString();
         }
 
-        public String getInlinedimages()
-        {
-        	StringBuilder res = new StringBuilder();
-
-            for( String ptrn : m_context.getEngine().getAllInlinedImagePatterns() )
-            {
+        public String getInlinedimages() {
+            final StringBuilder res = new StringBuilder();
+            for( final String ptrn : m_context.getEngine().getAllInlinedImagePatterns() ) {
                 if( res.length() > 0 ) {
-                    res.append(", ");
+                    res.append( ", " );
                 }
 
-                res.append(ptrn);
+                res.append( ptrn );
             }
 
             return res.toString();
         }
 
-        public String getPluginpath()
-        {
-            String s = m_context.getEngine().getPluginManager().getPluginSearchPath();
+        public String getPluginpath() {
+            final String s = m_context.getEngine().getPluginManager().getPluginSearchPath();
 
-            return (s == null) ? "-" : s;
+            return ( s == null ) ? "-" : s;
         }
 
         public String getBaseurl()
@@ -426,30 +403,26 @@ public class VariableManager
             return m_context.getEngine().getBaseURL();
         }
 
-        public String getUptime()
-        {
-            Date now = new Date();
-            long secondsRunning = (now.getTime() - m_context.getEngine().getStartTime().getTime()) / 1000L;
+        public String getUptime() {
+            final Date now = new Date();
+            long secondsRunning = ( now.getTime() - m_context.getEngine().getStartTime().getTime() ) / 1_000L;
 
-            long seconds = secondsRunning % 60;
-            long minutes = (secondsRunning /= 60) % 60;
-            long hours = (secondsRunning /= 60) % 24;
-            long days = secondsRunning /= 24;
+            final long seconds = secondsRunning % 60;
+            final long minutes = (secondsRunning /= 60) % 60;
+            final long hours = (secondsRunning /= 60) % 24;
+            final long days = secondsRunning /= 24;
 
             return days + "d, " + hours + "h " + minutes + "m " + seconds + "s";
         }
 
-        public String getLoginstatus()
-        {
-            WikiSession session = m_context.getWikiSession();
-            return Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE ).getString( "varmgr." + session.getStatus());
+        public String getLoginstatus() {
+            final WikiSession session = m_context.getWikiSession();
+            return Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE ).getString( "varmgr." + session.getStatus() );
         }
 
-        public String getUsername()
-        {
-            Principal wup = m_context.getCurrentUser();
-
-            ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+        public String getUsername() {
+            final Principal wup = m_context.getCurrentUser();
+            final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
             return wup != null ? wup.getName() : rb.getString( "varmgr.not.logged.in" );
         }
 
@@ -458,24 +431,21 @@ public class VariableManager
             return m_context.getRequestContext();
         }
 
-        public String getPagefilters()
-        {
-            FilterManager fm = m_context.getEngine().getFilterManager();
-            List<PageFilter> filters = fm.getFilterList();
-            StringBuilder sb = new StringBuilder();
-
-            for (PageFilter pf : filters )
-            {
-                String f = pf.getClass().getName();
-
-                if( pf instanceof InternalModule )
+        public String getPagefilters() {
+            final FilterManager fm = m_context.getEngine().getFilterManager();
+            final List< PageFilter > filters = fm.getFilterList();
+            final StringBuilder sb = new StringBuilder();
+            for( final PageFilter pf : filters ) {
+                final String f = pf.getClass().getName();
+                if( pf instanceof InternalModule ) {
                     continue;
+                }
 
-                if( sb.length() > 0 )
-                    sb.append(", ");
-                sb.append(f);
+                if( sb.length() > 0 ) {
+                    sb.append( ", " );
+                }
+                sb.append( f );
             }
-
             return sb.toString();
         }
     }
