@@ -57,7 +57,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.VariableManager</requestedClass>
-    <mappedClass>org.apache.wiki.VariableManager</mappedClass>
+    <mappedClass>org.apache.wiki.WikiVariableManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.api.engine.FilterManager</requestedClass>
