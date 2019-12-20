@@ -17,6 +17,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2019-12-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-02_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): Separate rendering engine from core
+    * `DifferenceManager` renamed as `WikiDifferenceManager`, with new `DifferenceManager` extracted as interface of `WikiDifferenceManager`
+    * `getDiff(..)` method deleted from `WikiEngine`, use the one located on `DifferenceManager`
+    * `VariableManager` renamed as `WikiVariableManager`, with new `VariableManager` extracted as interface of `WikiVariableManager`
+    * `getVariable(..)` method deleted from `WikiEngine`, use the one located on `VariableManager`
+
 **2019-12-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-01_
