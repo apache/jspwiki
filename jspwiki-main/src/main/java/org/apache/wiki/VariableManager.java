@@ -44,7 +44,7 @@ public interface VariableManager {
      *  @throws IllegalArgumentException If the format is not valid (does not start with "{$", is zero length, etc.)
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    String parseAndGetValue( final WikiContext context, final String link ) throws IllegalArgumentException, NoSuchVariableException;
+    String parseAndGetValue( WikiContext context, String link ) throws IllegalArgumentException, NoSuchVariableException;
 
     /**
      *  This method does in-place expansion of any variables.  However, the expansion is not done twice, that is,
@@ -56,7 +56,7 @@ public interface VariableManager {
      *  @param source  The source string.
      *  @return The source string with variables expanded.
      */
-    String expandVariables( final WikiContext context, final String source );
+    String expandVariables( WikiContext context, String source );
 
     /**
      *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}. The only difference is that
@@ -67,7 +67,7 @@ public interface VariableManager {
      *  @param defValue A default value.
      *  @return The variable value, or if not found, the default value.
      */
-    String getValue( final WikiContext context, final String varName, final String defValue );
+    String getValue( WikiContext context, String varName, String defValue );
 
     /**
      *  Shortcut to getValue(). However, this method does not throw a NoSuchVariableException, but returns null
@@ -78,7 +78,7 @@ public interface VariableManager {
      *  @return Variable value, or null, if there is no such variable.
      *  @since 2.2 on WikiEngine, moved to VariableManager on 2.11.0
      */
-    String getVariable( final WikiContext context, final String name );
+    String getVariable( WikiContext context, String name );
 
     /**
      *  Returns a value of the named variable.  The resolving order is
@@ -104,6 +104,6 @@ public interface VariableManager {
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    String getValue( final WikiContext context, final String varName ) throws IllegalArgumentException, NoSuchVariableException;
+    String getValue( WikiContext context, String varName ) throws IllegalArgumentException, NoSuchVariableException;
 
 }
