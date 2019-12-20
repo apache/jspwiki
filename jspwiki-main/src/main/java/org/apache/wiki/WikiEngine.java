@@ -1737,35 +1737,6 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns a diff of two versions of a page.
-     *  <p>
-     *  Note that the API was changed in 2.6 to provide a WikiContext object!
-     *
-     *  @param context The WikiContext of the page you wish to get a diff from
-     *  @param version1 Version number of the old page.  If WikiPageProvider.LATEST_VERSION (-1), then uses current page.
-     *  @param version2 Version number of the new page.  If WikiPageProvider.LATEST_VERSION (-1), then uses current page.
-     *
-     *  @return A HTML-ized difference between two pages.  If there is no difference, returns an empty string.
-     */
-    public String getDiff( WikiContext context, int version1, int version2 )
-    {
-        String page = context.getPage().getName();
-        String page1 = getPureText( page, version1 );
-        String page2 = getPureText( page, version2 );
-
-        // Kludge to make diffs for new pages to work this way.
-
-        if( version1 == WikiPageProvider.LATEST_VERSION )
-        {
-            page1 = "";
-        }
-
-        String diff  = m_differenceManager.makeDiff( context, page1, page2 );
-
-        return diff;
-    }
-
-    /**
      *  Returns this object's ReferenceManager.
      *  @return The current ReferenceManager instance.
      *
