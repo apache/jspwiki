@@ -18,19 +18,19 @@
  */
 package org.apache.wiki.diff;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 
+import java.io.IOException;
+import java.util.Properties;
+
+
 /**
  *  Provides an SPI for creating a diff between two page versions.
  */
-public interface DiffProvider extends WikiProvider
-{
+public interface DiffProvider extends WikiProvider {
     /**
      * The return string is to be XHTML compliant ready to display html.  No further
      * processing of this text will be done by the wiki engine.
@@ -40,27 +40,23 @@ public interface DiffProvider extends WikiProvider
      * @param oldWikiText the old text
      * @param newWikiText the new text
      */
-    String makeDiffHtml(WikiContext context, String oldWikiText, String newWikiText);
+    String makeDiffHtml( WikiContext context, String oldWikiText, String newWikiText );
     
     /**
      *  If there is no diff provider set, this provider will work instead.
      */
-    class NullDiffProvider implements DiffProvider
-    {
+    class NullDiffProvider implements DiffProvider {
         /**
          *  {@inheritDoc}
          */
-        public String makeDiffHtml(WikiContext ctx, String oldWikiText, String newWikiText)
-        {
+        public String makeDiffHtml( final WikiContext ctx, final String oldWikiText, final String newWikiText ) {
             return "You are using the NullDiffProvider, check your properties file.";
         }
 
         /**
          *  {@inheritDoc}
          */
-        public void initialize(WikiEngine engine, Properties properties) 
-            throws NoRequiredPropertyException, IOException
-        {
+        public void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         }
 
         /**

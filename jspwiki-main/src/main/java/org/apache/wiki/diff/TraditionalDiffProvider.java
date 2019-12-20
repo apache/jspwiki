@@ -19,14 +19,6 @@
 
 package org.apache.wiki.diff;
 
-import java.io.IOException;
-import java.text.ChoiceFormat;
-import java.text.Format;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -44,28 +36,31 @@ import org.suigeneris.jrcs.diff.delta.Chunk;
 import org.suigeneris.jrcs.diff.delta.DeleteDelta;
 import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
+import java.io.IOException;
+import java.text.ChoiceFormat;
+import java.text.Format;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
 
 /**
  * This is the JSPWiki 'traditional' diff.  It uses an internal diff engine.
- * 
  */
-public class TraditionalDiffProvider implements DiffProvider
-{
-    private static final Logger log = Logger.getLogger(TraditionalDiffProvider.class);
+public class TraditionalDiffProvider implements DiffProvider {
 
+    private static final Logger log = Logger.getLogger( TraditionalDiffProvider.class );
     private static final String CSS_DIFF_ADDED = "<tr><td class=\"diffadd\">";
     private static final String CSS_DIFF_REMOVED = "<tr><td class=\"diffrem\">";
     private static final String CSS_DIFF_UNCHANGED = "<tr><td class=\"diff\">";
     private static final String CSS_DIFF_CLOSE = "</td></tr>" + Diff.NL;
 
-
     /**
      *  Constructs the provider.
      */
-    public TraditionalDiffProvider()
-    {
+    public TraditionalDiffProvider() {
     }
-
 
     /**
      * {@inheritDoc}
@@ -80,9 +75,7 @@ public class TraditionalDiffProvider implements DiffProvider
      * {@inheritDoc}
      * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
-    public void initialize(WikiEngine engine, Properties properties)
-        throws NoRequiredPropertyException, IOException
-    {
+    public void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
     }
 
     /**
@@ -95,105 +88,91 @@ public class TraditionalDiffProvider implements DiffProvider
      * 
      * @return Full HTML diff.
      */
-    public String makeDiffHtml( WikiContext ctx, String p1, String p2 )
-    {
-        String diffResult = "";
+    public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
+        final String diffResult;
 
-        try
-        {
-            String[] first  = Diff.stringToArray(TextUtil.replaceEntities(p1));
-            String[] second = Diff.stringToArray(TextUtil.replaceEntities(p2));
-            Revision rev = Diff.diff(first, second, new MyersDiff());
+        try {
+            final String[] first  = Diff.stringToArray(TextUtil.replaceEntities(p1));
+            final String[] second = Diff.stringToArray(TextUtil.replaceEntities(p2));
+            final Revision rev = Diff.diff(first, second, new MyersDiff());
 
-            if( rev == null || rev.size() == 0 )
-            {
+            if( rev == null || rev.size() == 0 ) {
                 // No difference
-
                 return "";
             }
 
-            StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
+            final StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
 
-            ret.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
-            rev.accept( new RevisionPrint(ctx,ret) );
-            ret.append("</table>\n");
+            ret.append( "<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" );
+            rev.accept( new RevisionPrint( ctx, ret ) );
+            ret.append( "</table>\n" );
 
             return ret.toString();
-        }
-        catch( DifferentiationFailedException e )
-        {
+        } catch( final DifferentiationFailedException e ) {
             diffResult = "makeDiff failed with DifferentiationFailedException";
-            log.error(diffResult, e);
+            log.error( diffResult, e );
         }
 
         return diffResult;
     }
 
 
-    private static final class RevisionPrint
-        implements RevisionVisitor
-    {
-        private StringBuffer m_result = null;
+    private static final class RevisionPrint implements RevisionVisitor {
+
+        private StringBuffer m_result;
         private WikiContext  m_context;
         private ResourceBundle m_rb;
         
-        private RevisionPrint(WikiContext ctx,StringBuffer sb)
-        {
+        private RevisionPrint( final WikiContext ctx, final StringBuffer sb ) {
             m_result = sb;
             m_context = ctx;
             m_rb = Preferences.getBundle( ctx, InternationalizationManager.CORE_BUNDLE );
         }
 
-        public void visit(Revision rev)
-        {
+        public void visit( final Revision rev ) {
             // GNDN (Goes nowhere, does nothing)
         }
 
-        public void visit(AddDelta delta)
-        {
-            Chunk changed = delta.getRevised();
-            print(changed, m_rb.getString( "diff.traditional.added" ) );
-            changed.toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
+        public void visit( final AddDelta delta ) {
+            final Chunk changed = delta.getRevised();
+            print( changed, m_rb.getString( "diff.traditional.added" ) );
+            changed.toString( m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE );
         }
 
-        public void visit(ChangeDelta delta)
-        {
-            Chunk changed = delta.getOriginal();
-            print(changed, m_rb.getString( "diff.traditional.changed") );
-            changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
-            delta.getRevised().toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
+        public void visit( final ChangeDelta delta ) {
+            final Chunk changed = delta.getOriginal();
+            print(changed, m_rb.getString( "diff.traditional.changed" ) );
+            changed.toString( m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE );
+            delta.getRevised().toString( m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE );
         }
 
-        public void visit(DeleteDelta delta)
-        {
-            Chunk changed = delta.getOriginal();
-            print(changed, m_rb.getString( "diff.traditional.removed") );
-            changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
+        public void visit( final DeleteDelta delta ) {
+            final Chunk changed = delta.getOriginal();
+            print( changed, m_rb.getString( "diff.traditional.removed" ) );
+            changed.toString( m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE );
         }
 
-        private void print(Chunk changed, String type)
-        {
-            m_result.append(CSS_DIFF_UNCHANGED);
-            
-            String[] choiceString = 
-            {
+        private void print( final Chunk changed, final String type ) {
+            m_result.append( CSS_DIFF_UNCHANGED );
+
+            final String[] choiceString = {
                m_rb.getString("diff.traditional.oneline"),
                m_rb.getString("diff.traditional.lines")
             };
-            double[] choiceLimits = { 1, 2 };
-            
-            MessageFormat fmt = new MessageFormat("");
+            final double[] choiceLimits = { 1, 2 };
+
+            final MessageFormat fmt = new MessageFormat("");
             fmt.setLocale( Preferences.getLocale(m_context) );
-            ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
+            final ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
             fmt.applyPattern( type );
-            Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };
+            final Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };
             fmt.setFormats( formats );
-            
-            Object[] params = { changed.first() + 1, 
-                                changed.size(),
-                                changed.size() };
+
+            final Object[] params = { changed.first() + 1,
+                                      changed.size(),
+                                      changed.size() };
             m_result.append( fmt.format(params) );
-            m_result.append(CSS_DIFF_CLOSE);
+            m_result.append( CSS_DIFF_CLOSE );
         }
     }
 }

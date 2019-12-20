@@ -35,11 +35,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
- * This DiffProvider allows external command line tools to be used to generate
- * the diff.
+ * This DiffProvider allows external command line tools to be used to generate the diff.
  */
-public class ExternalDiffProvider implements DiffProvider
-{
+public class ExternalDiffProvider implements DiffProvider {
+
     private static final Logger log = Logger.getLogger(ExternalDiffProvider.class);
 
     /**
@@ -85,13 +84,9 @@ public class ExternalDiffProvider implements DiffProvider
      * {@inheritDoc}
      * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
-    public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException, IOException
-    {
+    public void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         m_diffCommand = properties.getProperty( PROP_DIFFCOMMAND );
-
-        if( (null == m_diffCommand) || (m_diffCommand.trim().equals( "" )) )
-        {
+        if( m_diffCommand == null || m_diffCommand.trim().equals( "" ) ) {
             throw new NoRequiredPropertyException( "ExternalDiffProvider missing required property", PROP_DIFFCOMMAND );
         }
 
@@ -103,36 +98,33 @@ public class ExternalDiffProvider implements DiffProvider
      * Makes the diff by calling "diff" program.
      * {@inheritDoc}
      */
-    public String makeDiffHtml( WikiContext ctx, String p1, String p2 )
-    {
+    public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
         File f1 = null;
         File f2 = null;
         String diff = null;
 
-        try
-        {
+        try {
             f1 = FileUtil.newTmpFile(p1, m_encoding);
             f2 = FileUtil.newTmpFile(p2, m_encoding);
 
             String cmd = TextUtil.replaceString(m_diffCommand, "%s1", f1.getPath());
             cmd = TextUtil.replaceString(cmd, "%s2", f2.getPath());
 
-            String output = FileUtil.runSimpleCommand(cmd, f1.getParent());
+            final String output = FileUtil.runSimpleCommand(cmd, f1.getParent());
 
             // FIXME: Should this rely on the system default encoding?
-            String rawWikiDiff = new String( output.getBytes( StandardCharsets.ISO_8859_1 ), m_encoding );
+            final String rawWikiDiff = new String( output.getBytes( StandardCharsets.ISO_8859_1 ), m_encoding );
+            final String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
 
-            String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
-
-            if (m_traditionalColorization) //FIXME, see comment near declaration...
-                diff = colorizeDiff(htmlWikiDiff);
-            else
+            if (m_traditionalColorization) { //FIXME, see comment near declaration...
+                diff = colorizeDiff( htmlWikiDiff );
+            } else {
                 diff = htmlWikiDiff;
-
-        } catch (IOException e) {
-            log.error("Failed to do file diff", e);
-        } catch (InterruptedException e) {
-            log.error("Interrupted", e);
+            }
+        } catch( final IOException e ) {
+            log.error("Failed to do file diff", e );
+        } catch( final InterruptedException e ) {
+            log.error("Interrupted", e );
         } finally {
             if( f1 != null ) {
                 f1.delete();
@@ -149,30 +141,26 @@ public class ExternalDiffProvider implements DiffProvider
     /**
      * Goes through output provided by a diff command and inserts HTML tags to
      * make the result more legible. Currently colors lines starting with a +
-     * green, those starting with - reddish (hm, got to think of color blindness
-     * here...).
+     * green, those starting with - reddish (hm, got to think of color blindness here...).
      */
-    static String colorizeDiff(String diffText) throws IOException {
+    static String colorizeDiff( final String diffText ) throws IOException {
         if( diffText == null ) {
             return "Invalid diff - probably something wrong with server setup.";
         }
 
-        String line = null;
-        String start = null;
-        String stop = null;
+        String line;
+        String start;
+        String stop;
 
-        BufferedReader in = new BufferedReader( new StringReader( diffText ) );
-        StringBuilder out = new StringBuilder();
+        final BufferedReader in = new BufferedReader( new StringReader( diffText ) );
+        final StringBuilder out = new StringBuilder();
 
         out.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
-        while( (line = in.readLine()) != null )
-        {
+        while( (line = in.readLine()) != null ) {
             stop = CSS_DIFF_CLOSE;
 
-            if( line.length() > 0 )
-            {
-                switch( line.charAt( 0 ) )
-                {
+            if( line.length() > 0 ) {
+                switch( line.charAt( 0 ) ) {
                     case DIFF_ADDED_SYMBOL:
                         start = CSS_DIFF_ADDED;
                         break;
@@ -182,18 +170,18 @@ public class ExternalDiffProvider implements DiffProvider
                     default:
                         start = CSS_DIFF_UNCHANGED;
                 }
-            }
-            else
-            {
+            } else {
                 start = CSS_DIFF_UNCHANGED;
             }
 
-            out.append( start );
-            out.append( line.trim() );
-            out.append( stop + "\n" );
+            out.append( start )
+               .append( line.trim() )
+               .append( stop )
+               .append( "\n" );
         }
 
         out.append( "</table>\n" );
         return out.toString();
     }
+
 }

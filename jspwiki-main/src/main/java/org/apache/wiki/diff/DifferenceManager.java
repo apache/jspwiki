@@ -19,21 +19,22 @@
 
 package org.apache.wiki.diff;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.util.ClassUtil;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
+
 
 /**
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
  */
 public class DifferenceManager {
-    private static final Logger log = Logger.getLogger(DifferenceManager.class);
+    private static final Logger log = Logger.getLogger( DifferenceManager.class );
 
     /**
      * Property value for storing a diff provider.  Value is {@value}.
@@ -48,42 +49,32 @@ public class DifferenceManager {
      * @param engine The WikiEngine.
      * @param props  A set of properties.
      */
-    public DifferenceManager(WikiEngine engine, Properties props) {
-        loadProvider(props);
+    public DifferenceManager( final WikiEngine engine, final Properties props ) {
+        loadProvider( props );
+        initializeProvider( engine, props );
 
-        initializeProvider(engine, props);
-
-        log.info("Using difference provider: " + m_provider.getProviderInfo());
+        log.info( "Using difference provider: " + m_provider.getProviderInfo() );
     }
 
-    private void loadProvider(Properties props) {
-        String providerClassName = props.getProperty(PROP_DIFF_PROVIDER,
-                TraditionalDiffProvider.class.getName());
-
+    private void loadProvider( final Properties props ) {
+        final String providerClassName = props.getProperty( PROP_DIFF_PROVIDER, TraditionalDiffProvider.class.getName() );
         try {
-            Class<?> providerClass = ClassUtil.findClass("org.apache.wiki.diff", providerClassName);
-            m_provider = (DiffProvider) providerClass.newInstance();
-        } catch (ClassNotFoundException e) {
-            log.warn("Failed loading DiffProvider, will use NullDiffProvider.", e);
-        } catch (InstantiationException e) {
-            log.warn("Failed loading DiffProvider, will use NullDiffProvider.", e);
-        } catch (IllegalAccessException e) {
+            final Class< ? > providerClass = ClassUtil.findClass("org.apache.wiki.diff", providerClassName );
+            m_provider = (DiffProvider) providerClass.getDeclaredConstructor().newInstance();
+        } catch( final ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e ) {
             log.warn("Failed loading DiffProvider, will use NullDiffProvider.", e);
         }
 
-        if (null == m_provider) {
+        if( m_provider == null ) {
             m_provider = new DiffProvider.NullDiffProvider();
         }
     }
 
 
-    private void initializeProvider(WikiEngine engine, Properties props) {
+    private void initializeProvider( final WikiEngine engine, final Properties props ) {
         try {
             m_provider.initialize(engine, props);
-        } catch (NoRequiredPropertyException e1) {
-            log.warn("Failed initializing DiffProvider, will use NullDiffProvider.", e1);
-            m_provider = new DiffProvider.NullDiffProvider(); //doesn't need init'd
-        } catch (IOException e1) {
+        } catch( final NoRequiredPropertyException | IOException e1 ) {
             log.warn("Failed initializing DiffProvider, will use NullDiffProvider.", e1);
             m_provider = new DiffProvider.NullDiffProvider(); //doesn't need init'd
         }
@@ -97,17 +88,17 @@ public class DifferenceManager {
      * @param secondWikiText the new text
      * @return XHTML, or empty string, if no difference detected.
      */
-    public String makeDiff(WikiContext context, String firstWikiText, String secondWikiText) {
-        String diff = null;
+    public String makeDiff( final WikiContext context, final String firstWikiText, final String secondWikiText ) {
+        String diff;
         try {
-            diff = m_provider.makeDiffHtml(context, firstWikiText, secondWikiText);
+            diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText );
 
-            if (diff == null) {
+            if( diff == null ) {
                 diff = "";
             }
-        } catch (Exception e) {
+        } catch( final Exception e ) {
             diff = "Failed to create a diff, check the logs.";
-            log.warn(diff, e);
+            log.warn( diff, e );
         }
         return diff;
     }
