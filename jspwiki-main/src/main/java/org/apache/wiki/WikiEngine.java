@@ -1650,21 +1650,18 @@ public class WikiEngine  {
      *
      *  @return Set of WikiPage objects.
      */
-
-    // FIXME: Should really get a Date object and do proper comparisons. This is terribly wasteful.
-    public Set< WikiPage > getRecentChanges()
-    {
+    public Set< WikiPage > getRecentChanges() {
         try {
-            Collection<WikiPage>   pages = m_pageManager.getAllPages();
-            Collection<Attachment>  atts = m_attachmentManager.getAllAttachments();
+            final Collection< WikiPage >   pages = m_pageManager.getAllPages();
+            final Collection< Attachment >  atts = m_attachmentManager.getAllAttachments();
 
-            TreeSet<WikiPage> sortedPages = new TreeSet<>( new PageTimeComparator() );
+            final TreeSet< WikiPage > sortedPages = new TreeSet<>( new PageTimeComparator() );
 
             sortedPages.addAll( pages );
             sortedPages.addAll( atts );
 
             return sortedPages;
-        } catch( ProviderException e ) {
+        } catch( final ProviderException e ) {
             log.error( "Unable to fetch all pages: ",e);
             return null;
         }
@@ -1812,24 +1809,6 @@ public class WikiEngine  {
     public VariableManager getVariableManager()
     {
         return m_variableManager;
-    }
-
-    /**
-     *  Shortcut to getVariableManager().getValue(). However, this method does not
-     *  throw a NoSuchVariableException, but returns null in case the variable does
-     *  not exist.
-     *
-     *  @param context WikiContext to look the variable in
-     *  @param name Name of the variable to look for
-     *  @return Variable value, or null, if there is no such variable.
-     *  @since 2.2
-     */
-    public String getVariable( WikiContext context, String name ) {
-        try {
-            return m_variableManager.getValue( context, name );
-        } catch( NoSuchVariableException e ) {
-            return null;
-        }
     }
 
     /**

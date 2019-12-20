@@ -30,7 +30,7 @@
   WikiContext c = WikiContext.findContext( pageContext );
 %>
 <c:set var="history" value="<%= c.getEngine().getVersionHistory(c.getPage().getName()) %>" />
-<c:set var="diffprovider" value='<%= c.getEngine().getVariable(c,"jspwiki.diffProvider") %>' />
+<c:set var="diffprovider" value='<%= c.getEngine().getVariableManager().getVariable(c,"jspwiki.diffProvider") %>' />
 <wiki:PageExists>
 <form action="<wiki:Link jsp='Diff.jsp' format='url' />"
        class="diffbody form-inline"

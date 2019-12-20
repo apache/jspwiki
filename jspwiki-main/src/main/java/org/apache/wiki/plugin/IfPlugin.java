@@ -139,8 +139,7 @@ public class IfPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute(WikiContext context, Map<String, String> params) throws PluginException
-    {
+    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         return ifInclude( context,params )
                 ? context.getEngine().textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
                 : "" ;
@@ -158,34 +157,29 @@ public class IfPlugin implements WikiPlugin
      * @throws PluginException If something goes wrong
      * @return True, if the condition holds.
      */
-    public static boolean ifInclude( WikiContext context, Map<String, String> params ) throws PluginException
-    {
-        boolean include = false;
+    public static boolean ifInclude( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final String group    = params.get( PARAM_GROUP );
+        final String user     = params.get( PARAM_USER );
+        final String ip       = params.get( PARAM_IP );
+        final String page     = params.get( PARAM_PAGE );
+        final String contains = params.get( PARAM_CONTAINS );
+        final String var      = params.get( PARAM_VAR );
+        final String is       = params.get( PARAM_IS );
+        final String exists   = params.get( PARAM_EXISTS );
 
-        String group    = params.get( PARAM_GROUP );
-        String user     = params.get( PARAM_USER );
-        String ip       = params.get( PARAM_IP );
-        String page     = params.get( PARAM_PAGE );
-        String contains = params.get( PARAM_CONTAINS );
-        String var      = params.get( PARAM_VAR );
-        String is       = params.get( PARAM_IS );
-        String exists   = params.get( PARAM_EXISTS );
-
-        include |= checkGroup(context, group);
+        boolean include = checkGroup( context, group );
         include |= checkUser(context, user);
         include |= checkIP(context, ip);
 
-        if( page != null )
-        {
-            String content = context.getEngine().getPureText(page, WikiProvider.LATEST_VERSION).trim();
+        if( page != null ) {
+            final String content = context.getEngine().getPureText(page, WikiProvider.LATEST_VERSION).trim();
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkExists(context,page,exists);
         }
 
-        if( var != null )
-        {
-            String content = context.getEngine().getVariable(context, var);
+        if( var != null ) {
+            final String content = context.getEngine().getVariableManager().getVariable(context, var);
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkVarExists(content,exists);

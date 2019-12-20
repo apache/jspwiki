@@ -18,22 +18,24 @@
  */
 package org.apache.wiki.rss;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.servlet.ServletContext;
-
-import org.jdom2.Element;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *  Represents an RSS 2.0 feed (with enclosures).  This feed provides no
@@ -150,10 +152,10 @@ public class RSS20Feed extends Feed
         channel.addContent( new Element("language").setText(getChannelLanguage()));
         channel.addContent( new Element("generator").setText("JSPWiki "+Release.VERSTR));
 
-        String mail = engine.getVariable(m_wikiContext,RSSGenerator.PROP_RSS_AUTHOREMAIL);
+        String mail = engine.getVariableManager().getVariable(m_wikiContext,RSSGenerator.PROP_RSS_AUTHOREMAIL);
         if( mail != null )
         {
-            String editor = engine.getVariable( m_wikiContext,RSSGenerator.PROP_RSS_AUTHOR );
+            String editor = engine.getVariableManager().getVariable( m_wikiContext,RSSGenerator.PROP_RSS_AUTHOR );
 
             if( editor != null )
                 mail = mail + " ("+editor+")";
@@ -174,15 +176,12 @@ public class RSS20Feed extends Feed
 
         output.setFormat( Format.getPrettyFormat() );
 
-        try
-        {
-            StringWriter res = new StringWriter();
+        try {
+            final StringWriter res = new StringWriter();
             output.output( root, res );
 
             return res.toString();
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             return null;
         }
     }

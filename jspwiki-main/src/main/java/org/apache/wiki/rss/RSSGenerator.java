@@ -421,14 +421,14 @@ public class RSSGenerator {
     {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
-        String language = m_engine.getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
+        String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
 
         if( language != null )
             feed.setChannelLanguage( language );
         else
             feed.setChannelLanguage( m_channelLanguage );
 
-        String channelDescription = m_engine.getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
+        String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
 
         if( channelDescription != null )
         {
@@ -490,39 +490,39 @@ public class RSSGenerator {
      *  @return A String of valid RSS or Atom.
      *  @throws ProviderException If reading of pages was not possible.
      */
-    protected String generateBlogRSS( WikiContext wikiContext, List< WikiPage > changed, Feed feed )
-        throws ProviderException
-    {
-        if( log.isDebugEnabled() ) log.debug("Generating RSS for blog, size="+changed.size());
+    protected String generateBlogRSS( WikiContext wikiContext, List< WikiPage > changed, Feed feed ) {
+        if( log.isDebugEnabled() ) {
+            log.debug( "Generating RSS for blog, size=" + changed.size() );
+        }
 
-        String ctitle = m_engine.getVariable( wikiContext, PROP_CHANNEL_TITLE );
+        String ctitle = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_TITLE );
 
-        if( ctitle != null )
+        if( ctitle != null ) {
             feed.setChannelTitle( ctitle );
-        else
-            feed.setChannelTitle( m_engine.getApplicationName()+":"+wikiContext.getPage().getName() );
+        } else {
+            feed.setChannelTitle( m_engine.getApplicationName() + ":" + wikiContext.getPage().getName() );
+        }
 
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
 
-        String language = m_engine.getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
+        String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
 
-        if( language != null )
+        if( language != null ) {
             feed.setChannelLanguage( language );
-        else
+        } else {
             feed.setChannelLanguage( m_channelLanguage );
+        }
 
-        String channelDescription = m_engine.getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
+        String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
 
-        if( channelDescription != null )
-        {
+        if( channelDescription != null ) {
             feed.setChannelDescription( channelDescription );
         }
 
         Collections.sort( changed, new PageTimeComparator() );
 
         int items = 0;
-        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ )
-        {
+        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             WikiPage page = i.next();
 
             Entry e = new Entry();
@@ -531,19 +531,10 @@ public class RSSGenerator {
 
             String url;
 
-            if( page instanceof Attachment )
-            {
-                url = m_engine.getURL( WikiContext.ATTACH,
-                                       page.getName(),
-                                       null,
-                                       true );
-            }
-            else
-            {
-                url = m_engine.getURL( WikiContext.VIEW,
-                                       page.getName(),
-                                       null,
-                                       true );
+            if( page instanceof Attachment ) {
+                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null,true );
+            } else {
+                url = m_engine.getURL( WikiContext.VIEW, page.getName(),null, true );
             }
 
             e.setURL( url );
@@ -557,15 +548,18 @@ public class RSSGenerator {
             String title = "";
             int firstLine = pageText.indexOf('\n');
 
-            if( firstLine > 0 )
-            {
+            if( firstLine > 0 ) {
                 title = pageText.substring( 0, firstLine ).trim();
             }
 
-            if( title.length() == 0 ) title = page.getName();
+            if( title.length() == 0 ) {
+                title = page.getName();
+            }
 
             // Remove wiki formatting
-            while( title.startsWith("!") ) title = title.substring(1);
+            while( title.startsWith("!") ) {
+                title = title.substring(1);
+            }
 
             e.setTitle( title );
 
@@ -573,28 +567,24 @@ public class RSSGenerator {
             //  Description
             //
 
-            if( firstLine > 0 )
-            {
+            if( firstLine > 0 ) {
                 int maxlen = pageText.length();
                 if( maxlen > MAX_CHARACTERS ) maxlen = MAX_CHARACTERS;
 
-                if( maxlen > 0 )
-                {
+                if( maxlen > 0 ) {
                     pageText = m_engine.textToHTML( wikiContext,
                                                     pageText.substring( firstLine+1,
                                                                         maxlen ).trim() );
 
-                    if( maxlen == MAX_CHARACTERS ) pageText += "...";
+                    if( maxlen == MAX_CHARACTERS ) {
+                        pageText += "...";
+                    }
 
                     e.setContent( pageText );
-                }
-                else
-                {
+                } else {
                     e.setContent( title );
                 }
-            }
-            else
-            {
+            } else {
                 e.setContent( title );
             }
 

@@ -93,59 +93,40 @@ public class VariableManager
     }
 
     /**
-     *  This method does in-place expansion of any variables.  However,
-     *  the expansion is not done twice, that is, a variable containing text $variable
-     *  will not be expanded.
+     *  This method does in-place expansion of any variables.  However, the expansion is not done twice, that is,
+     *  a variable containing text $variable will not be expanded.
      *  <P>
-     *  The variables should be in the same format ({$variablename} as in the web
-     *  pages.
+     *  The variables should be in the same format ({$variablename} as in the web pages.
      *
      *  @param context The WikiContext of the current page.
      *  @param source  The source string.
      *  @return The source string with variables expanded.
      */
     // FIXME: somewhat slow.
-    public String expandVariables( WikiContext context, String source ) {
-    	StringBuilder result = new StringBuilder();
+    public String expandVariables( final WikiContext context, final String source ) {
+        final StringBuilder result = new StringBuilder();
+        for( int i = 0; i < source.length(); i++ ) {
+            if( source.charAt(i) == '{' ) {
+                if( i < source.length()-2 && source.charAt(i+1) == '$' ) {
+                    final int end = source.indexOf( '}', i );
 
-        for( int i = 0; i < source.length(); i++ )
-        {
-            if( source.charAt(i) == '{' )
-            {
-                if( i < source.length()-2 && source.charAt(i+1) == '$' )
-                {
-                    int end = source.indexOf( '}', i );
-
-                    if( end != -1 )
-                    {
-                        String varname = source.substring( i+2, end );
+                    if( end != -1 ) {
+                        final String varname = source.substring( i+2, end );
                         String value;
 
-                        try
-                        {
+                        try {
                             value = getValue( context, varname );
-                        }
-                        catch( NoSuchVariableException e )
-                        {
-                            value = e.getMessage();
-                        }
-                        catch( IllegalArgumentException e )
-                        {
+                        } catch( final NoSuchVariableException | IllegalArgumentException e ) {
                             value = e.getMessage();
                         }
 
                         result.append( value );
                         i = end;
-                        continue;
                     }
-                }
-                else
-                {
+                } else {
                     result.append( '{' );
                 }
-            }
-            else
-            {
+            } else {
                 result.append( source.charAt(i) );
             }
         }
@@ -154,25 +135,33 @@ public class VariableManager
     }
 
     /**
-     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}.
-     *  The only difference is that this method does not throw an exception, but it
-     *  returns the given default value instead.
+     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}. The only difference is that
+     *  this method does not throw an exception, but it returns the given default value instead.
      *
      *  @param context WikiContext
      *  @param varName The name of the variable
      *  @param defValue A default value.
      *  @return The variable value, or if not found, the default value.
      */
-    public String getValue( WikiContext context, String varName, String defValue )
-    {
-        try
-        {
+    public String getValue( final WikiContext context, final String varName, final String defValue ) {
+        try {
             return getValue( context, varName );
-        }
-        catch( NoSuchVariableException e )
-        {
+        } catch( final NoSuchVariableException e ) {
             return defValue;
         }
+    }
+
+    /**
+     *  Shortcut to getValue(). However, this method does not throw a NoSuchVariableException, but returns null
+     *  in case the variable does not exist.
+     *
+     *  @param context WikiContext to look the variable in
+     *  @param name Name of the variable to look for
+     *  @return Variable value, or null, if there is no such variable.
+     *  @since 2.2 on WikiEngine, moved to VariableManager on 2.11.0
+     */
+    public String getVariable( final WikiContext context, final String name ) {
+        return getValue( context, name, null );
     }
 
     /**
