@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 
 import java.io.IOException;
@@ -34,11 +35,10 @@ import java.util.Properties;
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
  */
 public class DifferenceManager {
+
     private static final Logger log = Logger.getLogger( DifferenceManager.class );
 
-    /**
-     * Property value for storing a diff provider.  Value is {@value}.
-     */
+    /** Property value for storing a diff provider.  Value is {@value}. */
     public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";
 
     private DiffProvider m_provider;
@@ -102,5 +102,30 @@ public class DifferenceManager {
         }
         return diff;
     }
+
+    /**
+     *  Returns a diff of two versions of a page.
+     *  <p>
+     *  Note that the API was changed in 2.6 to provide a WikiContext object!
+     *
+     *  @param context The WikiContext of the page you wish to get a diff from
+     *  @param version1 Version number of the old page.  If WikiPageProvider.LATEST_VERSION (-1), then uses current page.
+     *  @param version2 Version number of the new page.  If WikiPageProvider.LATEST_VERSION (-1), then uses current page.
+     *
+     *  @return A HTML-ized difference between two pages.  If there is no difference, returns an empty string.
+     */
+    public String getDiff( final WikiContext context, final int version1, final int version2 ) {
+        final String page = context.getPage().getName();
+        String page1 = context.getEngine().getPureText( page, version1 );
+        final String page2 = context.getEngine().getPureText( page, version2 );
+
+        // Kludge to make diffs for new pages to work this way.
+        if( version1 == WikiPageProvider.LATEST_VERSION ) {
+            page1 = "";
+        }
+
+        return makeDiff( context, page1, page2 );
+    }
+
 }
 

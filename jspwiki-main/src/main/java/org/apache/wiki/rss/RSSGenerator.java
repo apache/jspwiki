@@ -194,9 +194,9 @@ public class RSSGenerator {
         WikiContext ctx = new WikiContext( m_engine, page );
         if( page.getVersion() > 1 )
         {
-            String diff = m_engine.getDiff( ctx,
-                                            page.getVersion()-1, // FIXME: Will fail when non-contiguous versions
-                                            page.getVersion() );
+            String diff = m_engine.getDifferenceManager().getDiff( ctx,
+                                                          page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
+                                                                   page.getVersion() );
 
             buf.append(author+" changed this page on "+page.getLastModified()+":<br /><hr /><br />" );
             buf.append(diff);
@@ -238,17 +238,11 @@ public class RSSGenerator {
      *  
      *  @return A RSS 1.0 feed in the "full" mode.
      */
-    public String generate()
-    {
-        WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
+    public String generate() {
+        final WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
         context.setRequestContext( WikiContext.RSS );
-        Feed feed = new RSS10Feed( context );
-
-        String result = generateFullWikiRSS( context, feed );
-
-        result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + result;
-
-        return result;
+        final Feed feed = new RSS10Feed( context );
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + generateFullWikiRSS( context, feed );
     }
 
     /**
@@ -257,14 +251,10 @@ public class RSSGenerator {
      * @param mode the RSS mode: {@link #RSS10}, {@link #RSS20} or {@link #ATOM}.
      * @return the content type
      */
-    public static String getContentType( String mode )
-    {
-        if( mode.equals( RSS10 )||mode.equals(RSS20) )
-        {
+    public static String getContentType( final String mode ) {
+        if( mode.equals( RSS10 ) || mode.equals( RSS20 ) ) {
             return "application/rss+xml";
-        }
-        else if( mode.equals(ATOM) )
-        {
+        } else if( mode.equals( ATOM ) ) {
             return "application/atom+xml";
         }
 
@@ -282,41 +272,27 @@ public class RSSGenerator {
      * @throws ProviderException If the underlying provider failed.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
-    public String generateFeed( WikiContext wikiContext, List< WikiPage > changed, String mode, String type )
-        throws ProviderException, IllegalArgumentException
-    {
-        Feed feed = null;
-        String res = null;
+    public String generateFeed( final WikiContext wikiContext, final List< WikiPage > changed, final String mode, final String type ) throws IllegalArgumentException {
+        final Feed feed;
+        final String res;
 
-        if( ATOM.equals(type) )
-        {
+        if( ATOM.equals(type) ) {
             feed = new AtomFeed( wikiContext );
-        }
-        else if( RSS20.equals( type ) )
-        {
+        } else if( RSS20.equals( type ) ) {
             feed = new RSS20Feed( wikiContext );
-        }
-        else
-        {
+        } else {
             feed = new RSS10Feed( wikiContext );
         }
 
         feed.setMode( mode );
 
-        if( MODE_BLOG.equals( mode ) )
-        {
+        if( MODE_BLOG.equals( mode ) ) {
             res = generateBlogRSS( wikiContext, changed, feed );
-        }
-        else if( MODE_FULL.equals(mode) )
-        {
+        } else if( MODE_FULL.equals(mode) ) {
             res = generateFullWikiRSS( wikiContext, feed );
-        }
-        else if( MODE_WIKI.equals(mode) )
-        {
+        } else if( MODE_WIKI.equals(mode) ) {
             res = generateWikiPageRSS( wikiContext, changed, feed );
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException( "Invalid value for feed mode: "+mode );
         }
 
@@ -340,7 +316,7 @@ public class RSSGenerator {
      * methods output anything.
      * @param enabled whether RSS generation is considered enabled.
      */
-    public synchronized void setEnabled( boolean enabled )
+    public synchronized void setEnabled( final boolean enabled )
     {
         m_enabled = enabled;
     }

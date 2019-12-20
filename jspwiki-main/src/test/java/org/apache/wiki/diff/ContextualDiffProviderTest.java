@@ -18,9 +18,6 @@
  */
 package org.apache.wiki.diff;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -28,6 +25,9 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class ContextualDiffProviderTest
 {
@@ -40,25 +40,25 @@ public class ContextualDiffProviderTest
      */
     private void specializedNotation(ContextualDiffProvider diff)
     {
-        diff.m_changeEndHtml = "|";
-        diff.m_changeStartHtml = "|";
+        diff.CHANGE_END_HTML = "|";
+        diff.CHANGE_START_HTML = "|";
 
-        diff.m_deletionEndHtml = "-";
-        diff.m_deletionStartHtml = "-";
+        diff.DELETION_END_HTML = "-";
+        diff.DELETION_START_HTML = "-";
 
-        diff.m_diffEnd = "";
-        diff.m_diffStart = "";
+        diff.DIFF_END = "";
+        diff.DIFF_START = "";
 
-        diff.m_elidedHeadIndicatorHtml = "...";
-        diff.m_elidedTailIndicatorHtml = "...";
+        diff.ELIDED_HEAD_INDICATOR_HTML = "...";
+        diff.ELIDED_TAIL_INDICATOR_HTML = "...";
 
         diff.m_emitChangeNextPreviousHyperlinks = false;
 
-        diff.m_insertionEndHtml = "^";
-        diff.m_insertionStartHtml = "^";
+        diff.INSERTION_END_HTML = "^";
+        diff.INSERTION_START_HTML = "^";
 
-        diff.m_lineBreakHtml = "";
-        diff.m_alternatingSpaceHtml = "_";
+        diff.LINE_BREAK_HTML = "";
+        diff.ALTERNATING_SPACE_HTML = "_";
     }
 
 

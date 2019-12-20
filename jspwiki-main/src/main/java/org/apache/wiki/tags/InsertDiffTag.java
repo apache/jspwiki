@@ -18,14 +18,13 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
 
 /**
  *  Writes difference between two pages using a HTML table.  If there is
@@ -52,8 +51,7 @@ public class InsertDiffTag extends WikiTagBase {
     protected String m_pageName;
 
     /** {@inheritDoc} */
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_pageName = null;
     }
@@ -62,7 +60,7 @@ public class InsertDiffTag extends WikiTagBase {
      *  Sets the page name.
      *  @param page Page to get diff from.
      */
-    public void setPage( String page )
+    public void setPage( final String page )
     {
         m_pageName = page;
     }
@@ -77,39 +75,27 @@ public class InsertDiffTag extends WikiTagBase {
     }
 
     /** {@inheritDoc} */
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiContext ctx;
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiContext ctx;
         
-        if( m_pageName == null )
-        {
+        if( m_pageName == null ) {
             ctx = m_wikiContext;
-        }
-        else
-        {
-            ctx = (WikiContext)m_wikiContext.clone();
+        } else {
+            ctx = ( WikiContext )m_wikiContext.clone();
             ctx.setPage( engine.getPage(m_pageName) );
         }
 
-        Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION,
-                                                             PageContext.REQUEST_SCOPE );
-        Integer verold = (Integer) pageContext.getAttribute( ATTR_OLDVERSION,
-                                                             PageContext.REQUEST_SCOPE );
+        final Integer vernew = ( Integer )pageContext.getAttribute( ATTR_NEWVERSION, PageContext.REQUEST_SCOPE );
+        final Integer verold = ( Integer )pageContext.getAttribute( ATTR_OLDVERSION, PageContext.REQUEST_SCOPE );
 
         log.debug("Request diff between version "+verold+" and "+vernew);
 
-        if( ctx.getPage() != null )
-        {
-            JspWriter out = pageContext.getOut();
+        if( ctx.getPage() != null ) {
+            final JspWriter out = pageContext.getOut();
+            final String diff = engine.getDifferenceManager().getDiff( ctx, vernew.intValue(), verold.intValue() );
 
-            String diff = engine.getDiff( ctx, 
-                                          vernew.intValue(), 
-                                          verold.intValue() );
-
-            if( diff.length() == 0 )
-            {
+            if( diff.length() == 0 ) {
                 return EVAL_BODY_INCLUDE;
             }
 
@@ -118,5 +104,6 @@ public class InsertDiffTag extends WikiTagBase {
 
         return SKIP_BODY;
     }
+
 }
 
