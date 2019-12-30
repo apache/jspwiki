@@ -18,22 +18,20 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;
 
+import java.io.IOException;
+
 /**
- *  Provides an interface to the basic rendering engine.
- *  This class is an abstract class instead of an interface because
- *  it is expected that rendering capabilities are increased at some
- *  point, and I would hate if renderers broke.  This class allows
- *  some sane defaults to be implemented.
+ *  Provides an interface to the basic rendering engine. This class is an abstract class instead of an interface because
+ *  it is expected that rendering capabilities are increased at some point, and I would hate if renderers broke.
+ *  This class allows some sane defaults to be implemented.
  *
  *  @since  2.4
  */
-public abstract class WikiRenderer
-{
+public abstract class WikiRenderer {
+
     protected WikiContext     m_context;
     protected WikiDocument    m_document;
 
@@ -46,8 +44,7 @@ public abstract class WikiRenderer
      *  @param context A WikiContext in which the rendering will take place.
      *  @param doc The WikiDocument which shall be rendered.
      */
-    protected WikiRenderer( WikiContext context, WikiDocument doc )
-    {
+    protected WikiRenderer( final WikiContext context, final WikiDocument doc ) {
         m_context = context;
         m_document = doc;
         doc.setContext( context ); // Make sure it is set

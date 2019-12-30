@@ -26,7 +26,6 @@ import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
@@ -1290,7 +1289,7 @@ public class WikiEngine  {
      *  @return String of WikiText.
      *  @since 2.1.13.
      */
-    public String getPureText( WikiPage page )
+    public String getPureText( final WikiPage page )
     {
         return getPureText( page.getName(), page.getVersion() );
     }
@@ -1303,16 +1302,9 @@ public class WikiEngine  {
      *  @param  page WikiPage reference.
      *  @return HTML-rendered version of the page.
      */
-
-    public String getHTML( WikiContext context, WikiPage page )
-    {
-        String pagedata = null;
-
-        pagedata = getPureText( page.getName(), page.getVersion() );
-
-        String res = textToHTML( context, pagedata );
-
-        return res;
+    public String getHTML( final WikiContext context, final WikiPage page ) {
+        final String pagedata = getPureText( page.getName(), page.getVersion() );
+        return textToHTML( context, pagedata );
     }
 
     /**
@@ -1321,7 +1313,7 @@ public class WikiEngine  {
      *  @param page WikiName of the page to convert.
      *  @return HTML-rendered version of the page.
      */
-    public String getHTML( String page )
+    public String getHTML( final String page )
     {
         return getHTML( page, WikiPageProvider.LATEST_VERSION );
     }
@@ -1335,17 +1327,11 @@ public class WikiEngine  {
      *  @param version Version number to fetch
      *  @return HTML-rendered page text.
      */
-    public String getHTML( String pagename, int version )
-    {
-        WikiPage page = getPage( pagename, version );
-
-        WikiContext context = new WikiContext( this,
-                                               page );
+    public String getHTML( final String pagename, final int version ) {
+        final WikiPage page = getPage( pagename, version );
+        final WikiContext context = new WikiContext( this, page );
         context.setRequestContext( WikiContext.NONE );
-
-        String res = getHTML( context, page );
-
-        return res;
+        return getHTML( context, page );
     }
 
     /**
@@ -1355,58 +1341,53 @@ public class WikiEngine  {
      *  @param context  The WikiContext in which the page is to be rendered
      *  @return Rendered page text
      */
-    public String textToHTML( WikiContext context, String pagedata )
-    {
+    public String textToHTML( final WikiContext context, String pagedata ) {
         String result = "";
 
-        boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
+        final boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
 
-        StopWatch sw = new StopWatch();
+        final StopWatch sw = new StopWatch();
         sw.start();
-        try
-        {
-            if( runFilters )
+        try {
+            if( runFilters ) {
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
+            }
 
             result = m_renderingManager.getHTML( context, pagedata );
 
-            if( runFilters )
+            if( runFilters ) {
                 result = m_filterManager.doPostTranslateFiltering( context, result );
-        }
-        catch( FilterException e )
-        {
+            }
+        } catch( final FilterException e ) {
+            log.error( "page filter threw exception: ", e );
             // FIXME: Don't yet know what to do
         }
         sw.stop();
-        if( log.isDebugEnabled() )
-            log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
+        if( log.isDebugEnabled() ) {
+            log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
+        }
 
         return result;
     }
 
     /**
-     * Protected method that signals that the WikiEngine will be
-     * shut down by the servlet container. It is called by
-     * {@link WikiServlet#destroy()}. When this method is called,
-     * it fires a "shutdown" WikiEngineEvent to all registered
-     * listeners.
+     * Protected method that signals that the WikiEngine will be shut down by the servlet container. It is called by
+     * {@link WikiServlet#destroy()}. When this method is called, it fires a "shutdown" WikiEngineEvent to all registered listeners.
      */
-    protected void shutdown()
-    {
+    protected void shutdown() {
         fireEvent( WikiEngineEvent.SHUTDOWN );
         m_filterManager.destroy();
     }
 
     /**
-     *  Reads a WikiPageful of data from a String and returns all links
-     *  internal to this Wiki in a Collection.
+     *  Reads a WikiPageful of data from a String and returns all links internal to this Wiki in a Collection.
      *
      *  @param page The WikiPage to scan
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    public Collection< String > scanWikiLinks( WikiPage page, String pagedata ) {
-        LinkCollector localCollector = new LinkCollector();
+    public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
+        final LinkCollector localCollector = new LinkCollector();
 
         textToHTML( new WikiContext( this, page ),
                     pagedata,
@@ -1430,11 +1411,10 @@ public class WikiEngine  {
      *  @return HTML-rendered page text.
      */
 
-    public String textToHTML( WikiContext context,
-                              String pagedata,
-                              StringTransmutator localLinkHook,
-                              StringTransmutator extLinkHook )
-    {
+    public String textToHTML( final WikiContext context,
+                              final String pagedata,
+                              final StringTransmutator localLinkHook,
+                              final StringTransmutator extLinkHook ) {
         return textToHTML( context, pagedata, localLinkHook, extLinkHook, null, true, false );
     }
 
@@ -1449,12 +1429,11 @@ public class WikiEngine  {
      *  @return HTML-rendered page text.
      */
 
-    public String textToHTML( WikiContext context,
-                              String pagedata,
-                              StringTransmutator localLinkHook,
-                              StringTransmutator extLinkHook,
-                              StringTransmutator attLinkHook )
-    {
+    public String textToHTML( final WikiContext context,
+                              final String pagedata,
+                              final StringTransmutator localLinkHook,
+                              final StringTransmutator extLinkHook,
+                              final StringTransmutator attLinkHook ) {
         return textToHTML( context, pagedata, localLinkHook, extLinkHook, attLinkHook, true, false );
     }
 
@@ -1466,68 +1445,61 @@ public class WikiEngine  {
      *  @param localLinkHook Is called whenever a wiki link is found
      *  @param extLinkHook   Is called whenever an external link is found
      *  @param parseAccessRules Parse the access rules if we encounter them
-     *  @param justParse Just parses the pagedata, does not actually render.  In this case,
-     *                   this methods an empty string.
+     *  @param justParse Just parses the pagedata, does not actually render.  In this case, this methods an empty string.
      *  @return HTML-rendered page text.
-
      */
-    private String textToHTML( WikiContext context,
+    private String textToHTML( final WikiContext context,
                                String pagedata,
-                               StringTransmutator localLinkHook,
-                               StringTransmutator extLinkHook,
-                               StringTransmutator attLinkHook,
-                               boolean            parseAccessRules,
-                               boolean            justParse )
-    {
+                               final StringTransmutator localLinkHook,
+                               final StringTransmutator extLinkHook,
+                               final StringTransmutator attLinkHook,
+                               final boolean            parseAccessRules,
+                               final boolean            justParse ) {
         String result = "";
 
-        if( pagedata == null )
-        {
+        if( pagedata == null ) {
             log.error("NULL pagedata to textToHTML()");
             return null;
         }
 
-        boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
+        final boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
 
-        try
-        {
-            StopWatch sw = new StopWatch();
+        try {
+            final StopWatch sw = new StopWatch();
             sw.start();
 
-            if( runFilters && m_filterManager != null )
+            if( runFilters && m_filterManager != null ) {
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
+            }
 
-            MarkupParser mp = m_renderingManager.getParser( context, pagedata );
+            final MarkupParser mp = m_renderingManager.getParser( context, pagedata );
             mp.addLocalLinkHook( localLinkHook );
             mp.addExternalLinkHook( extLinkHook );
             mp.addAttachmentLinkHook( attLinkHook );
 
-            if( !parseAccessRules ) mp.disableAccessRules();
+            if( !parseAccessRules ) {
+                mp.disableAccessRules();
+            }
 
-            WikiDocument doc = mp.parse();
+            final WikiDocument doc = mp.parse();
 
-            //
             //  In some cases it's better just to parse, not to render
-            //
-            if( !justParse )
-            {
+            if( !justParse ) {
                 result = m_renderingManager.getHTML( context, doc );
 
-                if( runFilters && m_filterManager != null )
+                if( runFilters && m_filterManager != null ) {
                     result = m_filterManager.doPostTranslateFiltering( context, result );
+                }
             }
 
             sw.stop();
 
-            if( log.isDebugEnabled() )
-                log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
-        }
-        catch( IOException e )
-        {
+            if( log.isDebugEnabled() ) {
+                log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
+            }
+        } catch( final IOException e ) {
             log.error( "Failed to scan page data: ", e );
-        }
-        catch( FilterException e )
-        {
+        } catch( final FilterException e ) {
         	log.error( "page filter threw exception: ", e );
             // FIXME: Don't yet know what to do
         }

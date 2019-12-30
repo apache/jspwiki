@@ -18,14 +18,13 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.parser.WikiDocument;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.parser.WikiDocument;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  *  Implements a WikiRendered that outputs XHTML.  Because the internal DOM
@@ -34,9 +33,8 @@ import org.apache.wiki.parser.WikiDocument;
  *
  *  @since  2.4
  */
-public class XHTMLRenderer
-    extends WikiRenderer
-{
+public class XHTMLRenderer extends WikiRenderer {
+
     private static final String LINEBREAK = "\n";
 
     /**
@@ -45,7 +43,7 @@ public class XHTMLRenderer
      *  @param context A WikiContext in which the rendering will take place.
      *  @param doc The WikiDocument which shall be rendered.
      */
-    public XHTMLRenderer( WikiContext context, WikiDocument doc )
+    public XHTMLRenderer( final WikiContext context, final WikiDocument doc )
     {
         super( context, doc );
     }
@@ -53,24 +51,20 @@ public class XHTMLRenderer
     /**
      *  {@inheritDoc}
      */
-    public String getString()
-        throws IOException
-    {
+    public String getString() throws IOException {
         m_document.setContext( m_context );
 
-        CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
-        XMLOutputter output = new XMLOutputter(processor);
-
-        StringWriter out = new StringWriter();
-
-        Format fmt = Format.getRawFormat();
+        final CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
+        final XMLOutputter output = new XMLOutputter(processor);
+        final StringWriter out = new StringWriter();
+        final Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
         fmt.setLineSeparator( LINEBREAK );
 
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );
 
-        String result = out.toString();
-        return result;
+        return out.toString();
     }
+
 }

@@ -18,11 +18,6 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.parser.WikiDocument;
@@ -30,14 +25,17 @@ import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  Implements DOM-to-Creole rendering.
  *  <p>
  *  FIXME: This class is not yet completely done.
  *
  */
-public class CreoleRenderer extends WikiRenderer
-{
+public class CreoleRenderer extends WikiRenderer {
+
     private static final String IMG_START = "{{";
     private static final String IMG_END = "}}";
     private static final String PLUGIN_START = "<<";
@@ -76,67 +74,51 @@ public class CreoleRenderer extends WikiRenderer
     private int m_listCount = 0;
     private char m_listChar = 'x';
 
-    private List<PluginContent> m_plugins = new ArrayList<PluginContent>();
+    private final List< PluginContent > m_plugins = new ArrayList<>();
 
     /**
      *  Creates a new Creole Renderer.
-     *
      */
-    public CreoleRenderer( WikiContext ctx, WikiDocument doc )
+    public CreoleRenderer( final WikiContext ctx, final WikiDocument doc )
     {
         super( ctx, doc );
     }
 
     /**
      * Renders an element into the StringBuilder given
-     * @param ce
-     * @param sb
+     * @param ce element to render
+     * @param sb stringbuilder holding the element render
      */
-    private void renderElement( Element ce, StringBuilder sb )
-    {
+    private void renderElement( final Element ce, final StringBuilder sb ) {
         String endEl = EMPTY_STRING;
-        for( int i = 0; i < ELEMENTS.length; i+=3 )
-        {
-            if( ELEMENTS[i].equals(ce.getName()) )
-            {
+        for( int i = 0; i < ELEMENTS.length; i+=3 ) {
+            if( ELEMENTS[i].equals(ce.getName()) ) {
                 sb.append( ELEMENTS[i+1] );
                 endEl = ELEMENTS[i+2];
             }
         }
 
-        if( UL.equals(ce.getName()) )
-        {
+        if( UL.equals(ce.getName()) ) {
             m_listCount++;
             m_listChar = '*';
-        }
-        else if( OL.equals(ce.getName()) )
-        {
+        } else if( OL.equals(ce.getName()) ) {
             m_listCount++;
             m_listChar = '#';
-        }
-        else if( LI.equals(ce.getName()) )
-        {
+        } else if( LI.equals(ce.getName()) ) {
             for(int i = 0; i < m_listCount; i++ ) sb.append( m_listChar );
             sb.append( ONE_SPACE );
-        }
-        else if( A.equals(ce.getName()) )
-        {
-            String href = ce.getAttributeValue( HREF_ATTRIBUTE );
-            String text = ce.getText();
+        } else if( A.equals( ce.getName() ) ) {
+            final String href = ce.getAttributeValue( HREF_ATTRIBUTE );
+            final String text = ce.getText();
 
-            if( href.equals(text) )
-            {
-                sb.append( HREF_START + href + HREF_END );
-            }
-            else
-            {
-                sb.append( HREF_START + href+ HREF_DELIMITER + text +HREF_END);
+            if( href.equals( text ) ) {
+                sb.append( HREF_START ).append( href ).append( HREF_END );
+            } else {
+                sb.append( HREF_START ).append( href ).append( HREF_DELIMITER ).append( text ).append( HREF_END);
             }
             // Do not render anything else
             return;
-        }
-        else if( PRE.equals(ce.getName()) )
-        {
+        } else if( PRE.equals( ce.getName() ) ) {
             sb.append( PRE_START );
             sb.append( ce.getText() );
             sb.append( PRE_END );
@@ -144,43 +126,27 @@ public class CreoleRenderer extends WikiRenderer
             return;
         }
 
-        //
         //  Go through the children
-        //
-        for( Iterator< Content > i = ce.getContent().iterator(); i.hasNext(); )
-        {
-            Content c = i.next();
+        for( final Content c : ce.getContent() ) {
+            if( c instanceof PluginContent ) {
+                final PluginContent pc = ( PluginContent )c;
 
-            if( c instanceof PluginContent )
-            {
-                PluginContent pc = (PluginContent)c;
-
-                if( pc.getPluginName().equals( PLUGIN_IMAGE ) )
-                {
-                    sb.append( IMG_START + pc.getParameter( PARAM_SRC ) + IMG_END );
-                }
-                else
-                {
+                if( pc.getPluginName().equals( PLUGIN_IMAGE ) ) {
+                    sb.append( IMG_START ).append( pc.getParameter( PARAM_SRC ) ).append( IMG_END );
+                } else {
                     m_plugins.add(pc);
-                    sb.append( PLUGIN_START + pc.getPluginName() + ONE_SPACE + m_plugins.size() + PLUGIN_END );
+                    sb.append( PLUGIN_START ).append( pc.getPluginName() ).append( ONE_SPACE ).append( m_plugins.size() ).append( PLUGIN_END );
                 }
-            }
-            else if( c instanceof Text )
-            {
-                sb.append( ((Text)c).getText() );
-            }
-            else if( c instanceof Element )
-            {
-                renderElement( (Element)c, sb );
+            } else if( c instanceof Text ) {
+                sb.append( ( ( Text )c ).getText() );
+            } else if( c instanceof Element ) {
+                renderElement( ( Element )c, sb );
             }
         }
 
-        if( UL.equals( ce.getName() ) || OL.equals( ce.getName() ) )
-        {
+        if( UL.equals( ce.getName() ) || OL.equals( ce.getName() ) ) {
             m_listCount--;
-        }
-        else if( P.equals( ce.getName() ) )
-        {
+        } else if( P.equals( ce.getName() ) ) {
             sb.append( LINEBREAK );
         }
 
@@ -190,18 +156,12 @@ public class CreoleRenderer extends WikiRenderer
     /**
      *  {@inheritDoc}
      */
-    public String getString() throws IOException
-    {
-    	StringBuilder sb = new StringBuilder(1000);
+    public String getString() {
+    	final StringBuilder sb = new StringBuilder(1000);
+        final Element ce = m_document.getRootElement();
 
-        Element ce = m_document.getRootElement();
-
-        //
         //  Traverse through the entire tree of everything.
-        //
-
         renderElement( ce, sb );
-
         return sb.toString();
     }
 

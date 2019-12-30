@@ -18,10 +18,6 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Iterator;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.parser.MarkupParser;
@@ -31,19 +27,20 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Iterator;
+
 /**
- *  Implements a WikiRendered that outputs XHTML in a format that is suitable
- *  for use by a WYSIWYG XHTML editor.
+ *  Implements a WikiRenderer that outputs XHTML in a format that is suitable for use by a WYSIWYG XHTML editor.
  *
  *  @since  2.5
  */
-public class WysiwygEditingRenderer
-    extends WikiRenderer
-{
+public class WysiwygEditingRenderer extends WikiRenderer {
 
     private static final String A_ELEMENT = "a";
     private static final String IMG_ELEMENT = "img";
-//    private static final String PRE_ELEMENT = "pre";
+    // private static final String PRE_ELEMENT = "pre";
     private static final String CLASS_ATTRIBUTE = "class";
     private static final String HREF_ATTRIBUTE = "href";
     private static final String TITLE_ATTRIBUTE = "title";
@@ -55,7 +52,7 @@ public class WysiwygEditingRenderer
      *  @param context A WikiContext in which the rendering will take place.
      *  @param doc The WikiDocument which shall be rendered.
      */
-    public WysiwygEditingRenderer( WikiContext context, WikiDocument doc )
+    public WysiwygEditingRenderer( final WikiContext context, final WikiDocument doc )
     {
         super( context, doc );
     }
@@ -64,34 +61,27 @@ public class WysiwygEditingRenderer
      * Recursively walk the XHTML DOM tree and manipulate specific elements to
      * make them better for WYSIWYG editing.
      */
-    private void processChildren(Element baseElement)
-    {
-        for( Iterator< Element > itr = baseElement.getChildren().iterator(); itr.hasNext(); )
-        {
-            Element element = itr.next();
-            String elementName = element.getName().toLowerCase();
-            Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
+    private void processChildren( final Element baseElement ) {
+        for( final Iterator< Element > itr = baseElement.getChildren().iterator(); itr.hasNext(); ) {
+            final Element element = itr.next();
+            final String elementName = element.getName().toLowerCase();
+            final Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
 
-            if( elementName.equals( A_ELEMENT ) )
-            {
-                if( classAttr != null )
-                {
-                    String classValue = classAttr.getValue();
-                    Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
-
-                    XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
+            if( elementName.equals( A_ELEMENT ) ) {
+                if( classAttr != null ) {
+                    final String classValue = classAttr.getValue();
+                    final Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
+                    final XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
 
                     // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
                     // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
-                    String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
-                    String editPageLinkUrl = wikiConfig.getEditJspPage();
+                    final String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                    final String editPageLinkUrl = wikiConfig.getEditJspPage();
 
                     //if( classValue.equals( WIKIPAGE )
                     //    || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
                     if( //classValue.equals( WIKIPAGE ) &&
-                        ( hrefAttr != null )
-                    &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
-                    {
+                        ( hrefAttr != null ) &&  ( hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) ) {
                         // Remove the leading url string so that users will only see the
                         // wikipage's name when editing an existing wiki link.
                         // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
@@ -106,15 +96,11 @@ public class WysiwygEditingRenderer
                         // to this wiki string: "TargetPage#Heading2".
                         hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
 
-                    }
-                    else if( //classValue.equals( EDITPAGE ) &&
-                            ( hrefAttr != null )
-                         && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
-                    {
+                    } else if( //classValue.equals( EDITPAGE ) &&
+                            ( hrefAttr != null ) && ( hrefAttr.getValue().startsWith( editPageLinkUrl ) ) ) {
 
-                        Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
-                        if( titleAttr != null )
-                        {
+                        final Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
+                        if( titleAttr != null ) {
                                 // remove the title since we don't want to eventually save the default undefined page title.
                                 titleAttr.detach();
                         }
@@ -123,30 +109,20 @@ public class WysiwygEditingRenderer
                         newHref = m_context.getEngine().decodeName( newHref );
 
                         hrefAttr.setValue( newHref );
-                    }
-
-                    else if( classValue.equals( MarkupParser.HASHLINK ) )
-                    {
+                    } else if( classValue.equals( MarkupParser.HASHLINK ) ) {
                         itr.remove(); //remove element without disturbing the ongoing iteration
                         continue;  //take next iteration of the for loop
                     }
                 }
-            } // end of check for "a" element
-
-            else if ( elementName.equals( IMG_ELEMENT ) )
-            {
-                if( classAttr != null )
-                {
-                    String classValue = classAttr.getValue();
-
-                    if( classValue.equals( MarkupParser.OUTLINK ) )
-                    {
-                        itr.remove(); //remove element without disturbing the ongoing iteration
-                        continue; //take next iteration of the for loop
+            // end of check for "a" element
+            } else if ( elementName.equals( IMG_ELEMENT ) ) {
+                if( classAttr != null ) {
+                    final String classValue = classAttr.getValue();
+                    if( classValue.equals( MarkupParser.OUTLINK ) ) {
+                        itr.remove(); // remove element without disturbing the ongoing iteration
+                        continue; // take next iteration of the for loop
                     }
-
                 }
-
             }
 
             processChildren( element );
@@ -156,20 +132,16 @@ public class WysiwygEditingRenderer
     /**
      *  {@inheritDoc}
      */
-    public String getString()
-        throws IOException
-    {
-        Element rootElement = m_document.getRootElement();
+    public String getString() throws IOException {
+        final Element rootElement = m_document.getRootElement();
         processChildren( rootElement );
 
         m_document.setContext( m_context );
 
-        CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
-        XMLOutputter output = new XMLOutputter(processor);
-
-        StringWriter out = new StringWriter();
-
-        Format fmt = Format.getRawFormat();
+        final CustomXMLOutputProcessor processor = new CustomXMLOutputProcessor();
+        final XMLOutputter output = new XMLOutputter(processor);
+        final StringWriter out = new StringWriter();
+        final Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
         fmt.setLineSeparator( LINEBREAK );
 
@@ -178,4 +150,5 @@ public class WysiwygEditingRenderer
 
         return out.toString();
     }
+
 }
