@@ -44,7 +44,7 @@ import java.util.ResourceBundle;
  */
 public class WikiVariableManager implements VariableManager {
 
-    private static Logger log = Logger.getLogger( WikiVariableManager.class );
+    private static final Logger log = Logger.getLogger( WikiVariableManager.class );
 
     /**
      *  Contains a list of those properties that shall never be shown. Put names here in lower case.
