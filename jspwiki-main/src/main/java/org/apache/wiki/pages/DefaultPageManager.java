@@ -95,11 +95,11 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @throws NoSuchElementException {@value #PROP_PAGEPROVIDER} property not found on WikiEngine properties
      * @throws WikiException If anything goes wrong, you get this.
      */
-    public DefaultPageManager(WikiEngine engine, Properties props) throws NoSuchElementException, WikiException {
+    public DefaultPageManager(final WikiEngine engine, final Properties props) throws NoSuchElementException, WikiException {
         super(engine);
-        String classname;
+        final String classname;
         m_engine = engine;
-        boolean useCache = "true".equals(props.getProperty(PROP_USECACHE));
+        final boolean useCache = "true".equals(props.getProperty(PROP_USECACHE));
 
         m_expiryTime = TextUtil.parseIntParameter(props.getProperty(PROP_LOCKEXPIRY), 60);
 
@@ -116,24 +116,24 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
         try {
             LOG.debug("Page provider class: '" + classname + "'");
-            Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
+            final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
             m_provider = (WikiPageProvider) providerclass.newInstance();
 
             LOG.debug("Initializing page provider class " + m_provider);
             m_provider.initialize(m_engine, props);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             LOG.error("Unable to locate provider class '" + classname + "' (" + e.getMessage() + ")", e);
             throw new WikiException("No provider class. (" + e.getMessage() + ")", e);
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             LOG.error("Unable to create provider class '" + classname + "' (" + e.getMessage() + ")", e);
             throw new WikiException("Faulty provider class. (" + e.getMessage() + ")", e);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             LOG.error("Illegal access to provider class '" + classname + "' (" + e.getMessage() + ")", e);
             throw new WikiException("Illegal provider class. (" + e.getMessage() + ")", e);
-        } catch (NoRequiredPropertyException e) {
+        } catch (final NoRequiredPropertyException e) {
             LOG.error("Provider did not found a property it was looking for: " + e.getMessage(), e);
             throw e;  // Same exception works.
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("An I/O exception occurred while trying to create a new page provider: " + classname, e);
             throw new WikiException("Unable to start page provider: " + e.getMessage(), e);
         }
@@ -164,30 +164,20 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         if (pageName == null || pageName.length() == 0) {
             throw new ProviderException("Illegal page name");
         }
-        String text = null;
+        String text;
 
         try {
             text = m_provider.getPageText(pageName, version);
-        } catch (final RepositoryModifiedException e) {
+        } catch ( final RepositoryModifiedException e ) {
             //  This only occurs with the latest version.
-            LOG.info("Repository has been modified externally while fetching page " + pageName);
+            LOG.info( "Repository has been modified externally while fetching page " + pageName );
 
             //  Empty the references and yay, it shall be recalculated
-            final WikiPage p = m_provider.getPageInfo(pageName, version);
+            final WikiPage p = m_provider.getPageInfo( pageName, version );
 
             m_engine.getReferenceManager().updateReferences( p );
-
-            if (p != null) {
-                m_engine.getSearchManager().reindexPage(p);
-                text = m_provider.getPageText(pageName, version);
-            } else {
-                //
-                //  Make sure that it no longer exists in internal data structures either.
-                //
-                final WikiPage dummy = new WikiPage(m_engine, pageName);
-                m_engine.getSearchManager().pageRemoved(dummy);
-                m_engine.getReferenceManager().pageRemoved(dummy);
-            }
+            m_engine.getSearchManager().reindexPage( p );
+            text = m_provider.getPageText( pageName, version );
         }
 
         return text;
