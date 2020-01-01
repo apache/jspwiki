@@ -160,7 +160,7 @@ public class ReferenceManager extends BasicPageFilter implements InternalModule,
      */
     private void updatePageReferences( final WikiPage page ) throws ProviderException {
         final String content = m_engine.getPageManager().getPageText( page.getName(), WikiPageProvider.LATEST_VERSION );
-        final Collection< String > links = m_engine.scanWikiLinks( page, content );
+        final Collection< String > links = scanWikiLinks( page, content );
         final TreeSet< String > res = new TreeSet<>( links );
         final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( page );
         for( final Attachment att : attachments ) {
@@ -411,8 +411,29 @@ public class ReferenceManager extends BasicPageFilter implements InternalModule,
     @Override
 	public void postSave( final WikiContext context, final String content ) {
         final WikiPage page = context.getPage();
-        updateReferences( page.getName(), context.getEngine().scanWikiLinks( page, content ) );
+        updateReferences( page.getName(), scanWikiLinks( page, content ) );
         serializeAttrsToDisk( page );
+    }
+
+    /**
+     *  Reads a WikiPageful of data from a String and returns all links internal to this Wiki in a Collection.
+     *
+     *  @param page The WikiPage to scan
+     *  @param pagedata The page contents
+     *  @return a Collection of Strings
+     */
+    public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
+        final LinkCollector localCollector = new LinkCollector();
+
+        m_engine.textToHTML( new WikiContext( m_engine, page ),
+                pagedata,
+                localCollector,
+                null,
+                localCollector,
+                false,
+                true );
+
+        return localCollector.getLinks();
     }
 
     /**
@@ -468,6 +489,16 @@ public class ReferenceManager extends BasicPageFilter implements InternalModule,
                 f.delete();
             }
         }
+    }
+
+    /**
+     *  Updates all references for the given page.
+     *
+     *  @param page wiki page for which references should be updated
+     */
+    public void updateReferences( final WikiPage page ) {
+        final String pageData = m_engine.getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+        updateReferences( page.getName(), scanWikiLinks( page, pageData ) );
     }
 
     /**

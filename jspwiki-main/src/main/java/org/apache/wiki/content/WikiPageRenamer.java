@@ -114,7 +114,7 @@ public class WikiPageRenamer implements PageRenamer {
 
         //  Update the references
         engine.getReferenceManager().pageRemoved( fromPage );
-        engine.updateReferences( toPage );
+        engine.getReferenceManager().updateReferences( toPage );
 
         //  Update referrers
         if( changeReferrers ) {
@@ -128,7 +128,7 @@ public class WikiPageRenamer implements PageRenamer {
         for( final Attachment att:attachmentsNewName ) {
             final WikiPage toAttPage = engine.getPage( att.getName() );
             // add reference to attachment under new page name
-            engine.updateReferences( toAttPage );
+            engine.getReferenceManager().updateReferences( toAttPage );
             engine.getSearchManager().reindexPage( att );
         }
 
@@ -187,7 +187,7 @@ public class WikiPageRenamer implements PageRenamer {
          
                 try {
                     engine.getPageManager().putPageText( p, newText );
-                    engine.updateReferences( p );
+                    engine.getReferenceManager().updateReferences( p );
                 } catch( final ProviderException e ) {
                     //  We fail with an error, but we will try to continue to rename other referrers as well.
                     log.error("Unable to perform rename.",e);

@@ -514,9 +514,8 @@ public class AttachmentManager
     }
 
     /**
-     *  Stores an attachment that lives in the given file.
-     *  If the attachment did not exist previously, this method
-     *  will create it.  If it did exist, it stores a new version.
+     *  Stores an attachment that lives in the given file. If the attachment did not exist previously, this method will create it.
+     *  If it did exist, it stores a new version.
      *
      *  @param att Attachment to store this under.
      *  @param source A file to read from.
@@ -524,27 +523,15 @@ public class AttachmentManager
      *  @throws IOException If writing the attachment failed.
      *  @throws ProviderException If something else went wrong.
      */
-    public void storeAttachment( Attachment att, File source )
-        throws IOException,
-               ProviderException
-    {
-        FileInputStream in = null;
-
-        try
-        {
-            in = new FileInputStream( source );
+    public void storeAttachment( final Attachment att, final File source ) throws IOException, ProviderException {
+        try( final FileInputStream in = new FileInputStream( source ) ) {
             storeAttachment( att, in );
-        }
-        finally
-        {
-            if( in != null ) in.close();
         }
     }
 
     /**
-     *  Stores an attachment directly from a stream.
-     *  If the attachment did not exist previously, this method
-     *  will create it.  If it did exist, it stores a new version.
+     *  Stores an attachment directly from a stream. If the attachment did not exist previously, this method will create it.
+     *  If it did exist, it stores a new version.
      *
      *  @param att Attachment to store this under.
      *  @param in  InputStream from which the attachment contents will be read.
@@ -552,32 +539,23 @@ public class AttachmentManager
      *  @throws IOException If writing the attachment failed.
      *  @throws ProviderException If something else went wrong.
      */
-    public void storeAttachment( Attachment att, InputStream in )
-        throws IOException,
-               ProviderException
-    {
-        if( m_provider == null )
-        {
+    public void storeAttachment( final Attachment att, final InputStream in ) throws IOException, ProviderException {
+        if( m_provider == null ) {
             return;
         }
 
-        //
         //  Checks if the actual, real page exists without any modifications
         //  or aliases.  We cannot store an attachment to a non-existent page.
-        //
-        if( !m_engine.getPageManager().pageExists( att.getParentName() ) )
-        {
+        if( !m_engine.getPageManager().pageExists( att.getParentName() ) ) {
             // the caller should catch the exception and use the exception text as an i18n key
-            throw new ProviderException(  "attach.parent.not.exist"  );
+            throw new ProviderException( "attach.parent.not.exist" );
         }
 
         m_provider.putAttachmentData( att, in );
+        m_engine.getReferenceManager().updateReferences( att.getName(), new ArrayList<>() );
 
-        m_engine.getReferenceManager().updateReferences( att.getName(), new ArrayList< String >() );
-
-        WikiPage parent = new WikiPage( m_engine, att.getParentName() );
-        m_engine.updateReferences( parent );
-
+        final WikiPage parent = new WikiPage( m_engine, att.getParentName() );
+        m_engine.getReferenceManager().updateReferences( parent );
         m_engine.getSearchManager().reindexPage( att );
     }
 
@@ -590,18 +568,14 @@ public class AttachmentManager
      *          disabled.
      *  @throws ProviderException If the provider fails for some reason.
      */
-    public List<Attachment> getVersionHistory( String attachmentName )
-        throws ProviderException
-    {
-        if( m_provider == null )
-        {
+    public List< Attachment > getVersionHistory( final String attachmentName ) throws ProviderException {
+        if( m_provider == null ) {
             return null;
         }
 
-        Attachment att = getAttachmentInfo( (WikiContext)null, attachmentName );
+        final Attachment att = getAttachmentInfo( null, attachmentName );
 
-        if( att != null )
-        {
+        if( att != null ) {
             return m_provider.getVersionHistory( att );
         }
 

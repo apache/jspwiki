@@ -160,7 +160,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getPageText(java.lang.String, int)
      */
     @Override
-    public String getPageText(String pageName, int version) throws ProviderException {
+    public String getPageText( final String pageName, final int version) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
             throw new ProviderException("Illegal page name");
         }
@@ -168,19 +168,14 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
         try {
             text = m_provider.getPageText(pageName, version);
-        } catch (RepositoryModifiedException e) {
-            //
+        } catch (final RepositoryModifiedException e) {
             //  This only occurs with the latest version.
-            //
             LOG.info("Repository has been modified externally while fetching page " + pageName);
 
-            //
             //  Empty the references and yay, it shall be recalculated
-            //
-            //WikiPage p = new WikiPage( pageName );
-            WikiPage p = m_provider.getPageInfo(pageName, version);
+            final WikiPage p = m_provider.getPageInfo(pageName, version);
 
-            m_engine.updateReferences(p);
+            m_engine.getReferenceManager().updateReferences( p );
 
             if (p != null) {
                 m_engine.getSearchManager().reindexPage(p);
@@ -189,7 +184,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
                 //
                 //  Make sure that it no longer exists in internal data structures either.
                 //
-                WikiPage dummy = new WikiPage(m_engine, pageName);
+                final WikiPage dummy = new WikiPage(m_engine, pageName);
                 m_engine.getSearchManager().pageRemoved(dummy);
                 m_engine.getReferenceManager().pageRemoved(dummy);
             }
@@ -294,38 +289,26 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getPageInfo(java.lang.String, int)
      */
     @Override
-    public WikiPage getPageInfo(String pageName, int version) throws ProviderException {
+    public WikiPage getPageInfo( final String pageName, final int version) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
             throw new ProviderException("Illegal page name '" + pageName + "'");
         }
 
-        WikiPage page = null;
+        WikiPage page;
 
         try {
             page = m_provider.getPageInfo(pageName, version);
-        } catch (RepositoryModifiedException e) {
-            //
+        } catch ( final RepositoryModifiedException e) {
             //  This only occurs with the latest version.
-            //
             LOG.info("Repository has been modified externally while fetching info for " + pageName);
             page = m_provider.getPageInfo(pageName, version);
             if (page != null) {
-                m_engine.updateReferences(page);
+                m_engine.getReferenceManager().updateReferences(page);
             } else {
                 m_engine.getReferenceManager().pageRemoved(new WikiPage(m_engine, pageName));
             }
         }
 
-        //
-        //  Should update the metadata.
-        //
-        /*
-        if( page != null && !page.hasMetadata() )
-        {
-            WikiContext ctx = new WikiContext(m_engine,page);
-            m_engine.textToHTML( ctx, getPageText(pageName,version) );
-        }
-        */
         return page;
     }
 

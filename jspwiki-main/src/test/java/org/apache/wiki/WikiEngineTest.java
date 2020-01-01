@@ -226,18 +226,6 @@ public class WikiEngineTest
     }
 
     @Test
-    public void testReadLinks()
-        throws Exception
-    {
-        String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
-
-        Object[] result = m_engine.scanWikiLinks( new WikiPage(m_engine, "Test"), src ).toArray();
-
-        Assertions.assertEquals( "Foobar", result[0], "item 0" );
-        Assertions.assertEquals( "This is a link", result[1], "item 1" );
-    }
-
-    @Test
     public void testBeautifyTitle()
     {
         String src = "WikiNameThingy";

@@ -1380,27 +1380,6 @@ public class WikiEngine  {
     }
 
     /**
-     *  Reads a WikiPageful of data from a String and returns all links internal to this Wiki in a Collection.
-     *
-     *  @param page The WikiPage to scan
-     *  @param pagedata The page contents
-     *  @return a Collection of Strings
-     */
-    public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
-        final LinkCollector localCollector = new LinkCollector();
-
-        textToHTML( new WikiContext( this, page ),
-                    pagedata,
-                    localCollector,
-                    null,
-                    localCollector,
-                    false,
-                    true );
-
-        return localCollector.getLinks();
-    }
-
-    /**
      *  Just convert WikiText to HTML.
      *
      *  @param context The WikiContext in which to do the conversion
@@ -1448,13 +1427,13 @@ public class WikiEngine  {
      *  @param justParse Just parses the pagedata, does not actually render.  In this case, this methods an empty string.
      *  @return HTML-rendered page text.
      */
-    private String textToHTML( final WikiContext context,
-                               String pagedata,
-                               final StringTransmutator localLinkHook,
-                               final StringTransmutator extLinkHook,
-                               final StringTransmutator attLinkHook,
-                               final boolean            parseAccessRules,
-                               final boolean            justParse ) {
+    public String textToHTML( final WikiContext context,
+                              String pagedata,
+                              final StringTransmutator localLinkHook,
+                              final StringTransmutator extLinkHook,
+                              final StringTransmutator attLinkHook,
+                              final boolean            parseAccessRules,
+                              final boolean            justParse ) {
         String result = "";
 
         if( pagedata == null ) {
@@ -1505,19 +1484,6 @@ public class WikiEngine  {
         }
 
         return result;
-    }
-
-    /**
-     *  Updates all references for the given page.
-     *
-     *  @param page wiki page for which references should be updated
-     */
-    public void updateReferences( WikiPage page )
-    {
-        String pageData = getPureText( page.getName(), WikiProvider.LATEST_VERSION );
-
-        m_referenceManager.updateReferences( page.getName(),
-                                             scanWikiLinks( page, pageData ) );
     }
 
 
