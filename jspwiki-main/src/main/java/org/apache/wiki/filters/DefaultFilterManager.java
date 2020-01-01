@@ -64,28 +64,27 @@ import java.util.Properties;
  *  format is really very simple:
  *  <pre>
  *  <?xml version="1.0"?>
+ *  &lt;pagefilters>
  *
- *  <pagefilters>
+ *    &lt;filter>
+ *      &lt;class>org.apache.wiki.filters.ProfanityFilter&lt;/class>
+ *    &lt;filter>
  *
- *    <filter>
- *      <class>org.apache.wiki.filters.ProfanityFilter</class>
- *    </filter>
+ *    &lt;filter>
+ *      &lt;class>org.apache.wiki.filters.TestFilter&lt;/class>
  *
- *    <filter>
- *      <class>org.apache.wiki.filters.TestFilter</class>
+ *      &lt;param>
+ *        &lt;name>foobar&lt;/name>
+ *        &lt;value>Zippadippadai&lt;/value>
+ *      &lt;/param>
  *
- *      <param>
- *        <name>foobar</name>
- *        <value>Zippadippadai</value>
- *      </param>
+ *      &lt;param>
+ *        &lt;name>blatblaa&lt;/name>
+ *        &lt;value>5&lt;/value>
+ *      &lt;/param>
  *
- *      <param>
- *        <name>blatblaa</name>
- *        <value>5</value>
- *      </param>
- *
- *    </filter>
- *  </pagefilters>
+ *    &lt;/filter>
+ *  &lt;/pagefilters>
  *  </pre>
  *
  *  The &lt;filter> -sections define the filters.  For more information, please see
