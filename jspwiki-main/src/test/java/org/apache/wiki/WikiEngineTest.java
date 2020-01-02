@@ -27,6 +27,7 @@ import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

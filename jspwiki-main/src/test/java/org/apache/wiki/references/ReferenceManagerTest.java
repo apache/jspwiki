@@ -11,8 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wiki;
+package org.apache.wiki.references;
 import net.sf.ehcache.CacheManager;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.Util;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -325,14 +328,15 @@ public class ReferenceManagerTest  {
      * with one user, one WikiEngine only.
      */
     public static String dumpReferenceManager( final ReferenceManager rm ) {
+        final DefaultReferenceManager drm = ( DefaultReferenceManager )rm;
     	final StringBuilder buf = new StringBuilder();
         try {
             buf.append( "================================================================\n" );
             buf.append( "Referred By list:\n" );
-            Set< String > keys = rm.getReferredBy().keySet();
+            Set< String > keys = drm.getReferredBy().keySet();
             for( final String key : keys ) {
                 buf.append( key ).append( " referred by: " );
-                final Set< String > refs = rm.getReferredBy().get( key );
+                final Set< String > refs = drm.getReferredBy().get( key );
                 for( final String aRef : refs ) {
                     buf.append( aRef ).append( " " );
                 }
@@ -342,10 +346,10 @@ public class ReferenceManagerTest  {
 
             buf.append( "----------------------------------------------------------------\n" );
             buf.append( "Refers To list:\n" );
-            keys = rm.getRefersTo().keySet();
+            keys = drm.getRefersTo().keySet();
             for( final String key : keys ) {
                 buf.append( key ).append( " refers to: " );
-                final Collection< String > refs = rm.getRefersTo().get( key );
+                final Collection< String > refs = drm.getRefersTo().get( key );
                 if(refs != null) {
                     for( final String aRef : refs ) {
                         buf.append( aRef ).append( " " );

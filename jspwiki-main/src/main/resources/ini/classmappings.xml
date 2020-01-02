@@ -52,10 +52,6 @@
     <mappedClass>org.apache.wiki.pages.DefaultPageManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.ReferenceManager</requestedClass>
-    <mappedClass>org.apache.wiki.ReferenceManager</mappedClass>
-  </mapping>
-  <mapping>
     <requestedClass>org.apache.wiki.VariableManager</requestedClass>
     <mappedClass>org.apache.wiki.WikiVariableManager</mappedClass>
   </mapping>
@@ -106,6 +102,10 @@
   <mapping>
     <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>
     <mappedClass>org.apache.wiki.i18n.InternationalizationManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.references.ReferenceManager</requestedClass>
+    <mappedClass>org.apache.wiki.references.DefaultReferenceManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>

@@ -16,18 +16,22 @@
     specific language governing permissions and limitations
     under the License.
  */
-package org.apache.wiki;
+package org.apache.wiki.references;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.LinkCollector;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.TextUtil;
 
@@ -106,13 +110,13 @@ import java.util.TreeSet;
  *  The owning class must take responsibility of filling in any pre-existing information, probably by loading each and every WikiPage
  *  and calling this class to update the references when created.
  *
- *  @since 1.6.1
+ *  @since 1.6.1 (as of 2.11.0, moved to org.apache.wiki.references)
  */
 
 // FIXME: The way that we save attributes is now a major booboo, and must be
 //        replace forthwith.  However, this is a workaround for the great deal
 //        of problems that occur here...
-public class ReferenceManager extends BasicPageFilter implements InternalModule, WikiEventListener {
+public class DefaultReferenceManager extends BasicPageFilter implements ReferenceManager {
 
     /**
      *  Maps page wikiname to a Collection of pages it refers to. The Collection must contain Strings. The Collection may contain
@@ -130,7 +134,7 @@ public class ReferenceManager extends BasicPageFilter implements InternalModule,
 
     private boolean m_matchEnglishPlurals;
 
-    private static final Logger log = Logger.getLogger(ReferenceManager.class);
+    private static final Logger log = Logger.getLogger( DefaultReferenceManager.class);
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
 
@@ -142,7 +146,7 @@ public class ReferenceManager extends BasicPageFilter implements InternalModule,
      *
      *  @param engine The WikiEngine to which this is managing references to.
      */
-    public ReferenceManager( final WikiEngine engine ) {
+    public DefaultReferenceManager( final WikiEngine engine ) {
         m_refersTo = new HashMap<>();
         m_referredBy = new HashMap<>();
         m_engine = engine;

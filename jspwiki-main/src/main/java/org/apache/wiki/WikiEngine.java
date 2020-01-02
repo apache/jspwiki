@@ -47,6 +47,7 @@ import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
@@ -148,9 +149,7 @@ public class WikiEngine  {
     Double negative, cause for most servers you don't need the property */
     public static final String PROP_NO_FILTER_ENCODING     = "jspwiki.nofilterencoding";
 
-    /** The name for the property which allows you to set the current reference
-     *  style.  The value is {@value}.
-     */
+    /** The name for the property which allows you to set the current reference style.  The value is {@value}. */
     public static final String PROP_REFSTYLE     = "jspwiki.referenceStyle";
 
     /** Property name for the "spaces in titles" -hack. */
@@ -173,7 +172,6 @@ public class WikiEngine  {
     public static final String PROP_FRONTPAGE    = "jspwiki.frontPage";
 
     /** Property name for setting the url generator instance */
-
     public static final String PROP_URLCONSTRUCTOR = "jspwiki.urlConstructor";
 
     /** If this property is set to false, all filters are disabled when translating. */
@@ -182,22 +180,20 @@ public class WikiEngine  {
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
 
-    /** The name of the property containing the ACLManager implementing class.
-     *  The value is {@value}. */
+    /** The name of the property containing the ACLManager implementing class. The value is {@value}. */
     public static final String PROP_ACL_MANAGER_IMPL = "jspwiki.aclManager";
 
     /** If this property is set to false, we don't allow the creation of empty pages */
     public static final String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
     /** Should the user info be saved with the page data as well? */
-    private boolean          m_saveUserInfo = true;
+    private boolean m_saveUserInfo = true;
 
     /** If true, uses UTF8 encoding for all data */
-    private boolean          m_useUTF8      = true;
+    private boolean m_useUTF8 = true;
 
-    /** Store the file path to the basic URL.  When we're not running as
-        a servlet, it defaults to the user's current directory. */
-    private String           m_rootPath = System.getProperty("user.dir");
+    /** Store the file path to the basic URL.  When we're not running as a servlet, it defaults to the user's current directory. */
+    private String m_rootPath = System.getProperty("user.dir");
 
     /** Stores references between wikipages. */
     private ReferenceManager m_referenceManager = null;
@@ -303,13 +299,10 @@ public class WikiEngine  {
      *  @param config The ServletConfig object for this servlet.
      *
      *  @return A WikiEngine instance.
-     *  @throws InternalWikiException in case something fails.  This
-     *          is a RuntimeException, so be prepared for it.
+     *  @throws InternalWikiException in case something fails.  This is a RuntimeException, so be prepared for it.
      */
-
     // FIXME: It seems that this does not work too well, jspInit()
     // does not react to RuntimeExceptions, or something...
-
     public static synchronized WikiEngine getInstance( ServletConfig config )
         throws InternalWikiException
     {
