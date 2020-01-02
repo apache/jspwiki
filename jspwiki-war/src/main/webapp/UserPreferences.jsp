@@ -18,7 +18,6 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.VariableManager" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page import="org.apache.wiki.WikiSession" %>
 <%@ page import="org.apache.wiki.WikiEngine" %>
@@ -31,6 +30,7 @@
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>

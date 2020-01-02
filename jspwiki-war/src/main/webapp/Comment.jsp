@@ -34,6 +34,7 @@
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.preferences.Preferences.TimeFormat" %>
+<%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
