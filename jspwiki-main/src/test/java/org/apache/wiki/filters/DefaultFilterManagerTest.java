@@ -18,28 +18,20 @@
  */
 
 package org.apache.wiki.filters;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
 public class DefaultFilterManagerTest {
+
     Properties props = TestEngine.getTestProperties();
-
-    TestEngine engine;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        PropertyConfigurator.configure(props);
-        engine = new TestEngine(props);
-    }
+    TestEngine engine = TestEngine.build();
 
     @Test
     public void testInitFilters() throws Exception {
