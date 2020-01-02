@@ -93,7 +93,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.diff.DifferenceManager</requestedClass>
-    <mappedClass>org.apache.wiki.diff.WikiDifferenceManager</mappedClass>
+    <mappedClass>org.apache.wiki.diff.DefaultDifferenceManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>

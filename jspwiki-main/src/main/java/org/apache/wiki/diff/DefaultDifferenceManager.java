@@ -34,9 +34,9 @@ import java.util.Properties;
 /**
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
  */
-public class WikiDifferenceManager implements DifferenceManager {
+public class DefaultDifferenceManager implements DifferenceManager {
 
-    private static final Logger log = Logger.getLogger( WikiDifferenceManager.class );
+    private static final Logger log = Logger.getLogger( DefaultDifferenceManager.class );
 
     private DiffProvider m_provider;
 
@@ -46,7 +46,7 @@ public class WikiDifferenceManager implements DifferenceManager {
      * @param engine The WikiEngine.
      * @param props  A set of properties.
      */
-    public WikiDifferenceManager( final WikiEngine engine, final Properties props ) {
+    public DefaultDifferenceManager( final WikiEngine engine, final Properties props ) {
         loadProvider( props );
         initializeProvider( engine, props );
 
