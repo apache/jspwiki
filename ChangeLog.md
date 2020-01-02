@@ -17,6 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-01-03  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-03_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): Separate rendering engine from core
+    * `ReferenceManager` renamed + moved to `org.apache.wiki.references.DefaultReferenceManager`, with new 
+    `org.apache.wiki.references.ReferenceManager` extracted as interface of the latter
+    * `scanWikiLinks(..)` and `updateReferences(..)` methods from `WikiEngine` moved to `ReferenceManager`
+* `WikiDifferenceManager`, `WikiVariableManager` and `WikiPageRenamer` renamed to `DefaultDifferenceManager`, `DefaultVariableManager` 
+  and `DefaultPageRenamer` respectively; it's a better suited prefix for default implementations and also follows the existing naming
+  with the existing bunch of `Default[XYZ]Manager` that currently exist
+* Moved `[Default]VariableManager` to their own package under `org.apache.wiki.variables`
+* Dependency updates
+    * Flexmark to 0.50.46
+    * Lucene to 8.4.0
+    * Selenide to 5.6.0
+    * Tomcat to 8.5.50
+* Applied format & fixes suggested by intellij to a big bunch of files
+
 **2019-12-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-02_
