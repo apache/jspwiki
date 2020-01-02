@@ -16,9 +16,14 @@
     specific language governing permissions and limitations
     under the License.
  */
-package org.apache.wiki;
+package org.apache.wiki.variables;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.Release;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
@@ -42,9 +47,9 @@ import java.util.ResourceBundle;
  *
  *  @since 1.9.20.
  */
-public class WikiVariableManager implements VariableManager {
+public class DefaultVariableManager implements VariableManager {
 
-    private static final Logger log = Logger.getLogger( WikiVariableManager.class );
+    private static final Logger log = Logger.getLogger( DefaultVariableManager.class );
 
     /**
      *  Contains a list of those properties that shall never be shown. Put names here in lower case.
@@ -57,7 +62,7 @@ public class WikiVariableManager implements VariableManager {
      *  Creates a VariableManager object using the property list given.
      *  @param props The properties.
      */
-    public WikiVariableManager( final Properties props ) {
+    public DefaultVariableManager( final Properties props ) {
     }
 
     /**

@@ -52,10 +52,6 @@
     <mappedClass>org.apache.wiki.pages.DefaultPageManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.VariableManager</requestedClass>
-    <mappedClass>org.apache.wiki.WikiVariableManager</mappedClass>
-  </mapping>
-  <mapping>
     <requestedClass>org.apache.wiki.api.engine.FilterManager</requestedClass>
     <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass>
   </mapping>
@@ -126,6 +122,10 @@
   <mapping>
     <requestedClass>org.apache.wiki.ui.TemplateManager</requestedClass>
     <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
+  </mapping>
+  <mapping>
+    <requestedClass>org.apache.wiki.variables.VariableManager</requestedClass>
+    <mappedClass>org.apache.wiki.variables.DefaultVariableManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>

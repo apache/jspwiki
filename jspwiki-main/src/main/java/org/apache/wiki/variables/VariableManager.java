@@ -16,8 +16,9 @@
     specific language governing permissions and limitations
     under the License.
  */
-package org.apache.wiki;
+package org.apache.wiki.variables;
 
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.parser.LinkParsingOperations;
 

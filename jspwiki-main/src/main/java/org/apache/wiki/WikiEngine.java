@@ -62,6 +62,7 @@ import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.variables.VariableManager;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
@@ -202,7 +203,7 @@ public class WikiEngine  {
     private PluginManager    m_pluginManager;
 
     /** Stores the Variable manager */
-    private VariableManager  m_variableManager;
+    private VariableManager m_variableManager;
 
     /** Stores the Attachment manager */
     private AttachmentManager m_attachmentManager = null;
