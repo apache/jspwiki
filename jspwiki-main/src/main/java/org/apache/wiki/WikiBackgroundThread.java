@@ -32,11 +32,11 @@ import org.apache.wiki.event.WikiEventListener;
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener {
 	
-    private static final Logger LOG = Logger.getLogger(WikiBackgroundThread.class);
+    private static final Logger LOG = Logger.getLogger( WikiBackgroundThread.class );
     private volatile boolean m_killMe = false;
     private final WikiEngine m_engine;
     private final int m_interval;
-    private static final long POLLING_INTERVAL = 1000L;
+    private static final long POLLING_INTERVAL = 1_000L;
     
     /**
      * Constructs a new instance of this background thread with a specified sleep interval, and adds the new instance 
@@ -46,7 +46,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * @param sleepInterval the interval between invocations of
      * the thread's {@link Thread#run()} method, in seconds
      */
-    public WikiBackgroundThread( WikiEngine engine, int sleepInterval ) {
+    public WikiBackgroundThread( final WikiEngine engine, final int sleepInterval ) {
         super();
         m_engine = engine;
         m_interval = sleepInterval;
@@ -60,9 +60,9 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * @param event {@inheritDoc}
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      */
-    public final void actionPerformed( WikiEvent event ) {
+    public final void actionPerformed( final WikiEvent event ) {
         if ( event instanceof WikiEngineEvent ) {
-            if ( ((WikiEngineEvent)event).getType() == WikiEngineEvent.SHUTDOWN ) {
+            if ( event.getType() == WikiEngineEvent.SHUTDOWN ) {
                 LOG.warn( "Detected wiki engine shutdown: killing " + getName() + "." );
                 m_killMe = true;
             }
@@ -110,15 +110,13 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
             LOG.warn( "Starting up background thread: " + name + ".");
             startupTask();
             
-            // Perform the background task; check every
-            // second for thread death
+            // Perform the background task; check every second for thread death
             while( !m_killMe ) {
                 // Perform the background task
                 // log.debug( "Running background task: " + name + "." );
                 backgroundTask();
                 
-                // Sleep for the interval we're supposed to, but
-                // wake up every POLLING_INTERVAL to see if thread should die
+                // Sleep for the interval we're supposed to, but wake up every POLLING_INTERVAL to see if thread should die
                 boolean interrupted = false;
                 try {
                     for( int i = 0; i < m_interval; i++ ) {
@@ -132,16 +130,16 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
                     if( interrupted ) {
                         break;
                     }
-                } catch( Throwable t ) {
+                } catch( final Throwable t ) {
                     LOG.error( "Background thread error: (stack trace follows)", t );
                 }
             }
             
             // Perform the shutdown task
             shutdownTask();
-        } catch( Throwable t ) {
+        } catch( final Throwable t ) {
             LOG.error( "Background thread error: (stack trace follows)", t );
-            throw new InternalWikiException( t.getMessage() ,t);
+            throw new InternalWikiException( t.getMessage() ,t );
         }
     }
     
