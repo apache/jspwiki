@@ -27,7 +27,6 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -40,6 +39,7 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiPageRenameEvent;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;

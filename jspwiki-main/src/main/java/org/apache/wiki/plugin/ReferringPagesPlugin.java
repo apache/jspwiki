@@ -18,19 +18,19 @@
  */
 package org.apache.wiki.plugin;
 
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.log4j.Logger;
-import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
+
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *  Displays the pages referring to the current page.
@@ -44,8 +44,7 @@ import org.apache.wiki.util.TextUtil;
  *
  *  From AbstractReferralPlugin:
  *  <ul>
- *  <li><b>separator</b> - How to separate generated links; default is a wikitext line break,
- *             producing a vertical list.</li>
+ *  <li><b>separator</b> - How to separate generated links; default is a wikitext line break, producing a vertical list.</li>
  *  <li><b>maxwidth</b> - maximum width, in chars, of generated links.</li>
  *  </ul>
  */
@@ -101,9 +100,9 @@ public class ReferringPagesPlugin
                 extras = rb.getString("referringpagesplugin.more");
             }
 
-            if( log.isDebugEnabled() )
-                log.debug( "Fetching referring pages for "+page.getName()+
-                           " with a max of "+items);
+            if( log.isDebugEnabled() ) {
+                log.debug( "Fetching referring pages for " + page.getName() + " with a max of "+items);
+            }
 
             if( links != null && links.size() > 0 )
             {

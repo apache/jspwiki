@@ -18,18 +18,18 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.util.TextUtil;
+
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-
-import org.apache.wiki.ReferenceManager;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.util.TextUtil;
 /**
  *  <p>Lists all pages containing links to Undefined Pages (pages containing dead links).</p>
  *

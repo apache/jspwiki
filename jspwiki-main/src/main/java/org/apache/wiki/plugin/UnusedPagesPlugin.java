@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.util.TextUtil;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.wiki.ReferenceManager;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.util.TextUtil;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.

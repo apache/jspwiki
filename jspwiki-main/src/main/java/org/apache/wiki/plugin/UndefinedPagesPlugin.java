@@ -18,12 +18,13 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.references.ReferenceManager;
+
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.wiki.ReferenceManager;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Plugin that enumerates the pages in the wiki that have not yet been defined.
@@ -33,40 +34,31 @@ import org.apache.wiki.api.exceptions.PluginException;
  *  <li><b>separator</b> - how to separate generated links; default is a wikitext line break,  producing a vertical list</li>
  * <li><b> maxwidth</b> - maximum width, in chars, of generated links.</li>
  * </ul>
- *
  */
-public class UndefinedPagesPlugin
-    extends AbstractReferralPlugin
-{
+public class UndefinedPagesPlugin extends AbstractReferralPlugin {
+
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection< String > links = refmgr.findUncreated();
-
+    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final ReferenceManager refmgr = context.getEngine().getReferenceManager();
         super.initialize( context, params );
 
+        Collection< String > links = refmgr.findUncreated();
         links = filterAndSortCollection( links );
-        
-        String wikitext = null;
-        
-        if (m_lastModified)
-        {
-            throw new PluginException("parameter " + PARAM_LASTMODIFIED + " is not valid for the UndefinedPagesPlugin");
+
+        if( m_lastModified ) {
+            throw new PluginException( "parameter " + PARAM_LASTMODIFIED + " is not valid for the UndefinedPagesPlugin" );
         }
-        
-        if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
-        {
+
+        final String wikitext;
+        if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {
             wikitext = "" + links.size();
-        }
-        else
-        {
+        } else {
             wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
         }
         
         return makeHTML( context, wikitext );
     }
+
 }
