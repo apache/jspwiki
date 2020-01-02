@@ -89,7 +89,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.content.PageRenamer</requestedClass>
-    <mappedClass>org.apache.wiki.content.WikiPageRenamer</mappedClass>
+    <mappedClass>org.apache.wiki.content.DefaultPageRenamer</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.diff.DifferenceManager</requestedClass>

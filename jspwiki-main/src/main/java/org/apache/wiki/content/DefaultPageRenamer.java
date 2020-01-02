@@ -46,9 +46,9 @@ import java.util.regex.Pattern;
  *
  * @since 2.8
  */
-public class WikiPageRenamer implements PageRenamer {
+public class DefaultPageRenamer implements PageRenamer {
 
-    private static final Logger log = Logger.getLogger( WikiPageRenamer.class );
+    private static final Logger log = Logger.getLogger( DefaultPageRenamer.class );
     
     private boolean m_camelCase = false;
     
