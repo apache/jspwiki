@@ -26,11 +26,9 @@ import java.util.Comparator;
 import java.util.Date;
 
 /**
- *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
- *  be WikiPage objects, or else you will receive a ClassCastException.
+ *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST be WikiPage objects, or else you will receive a ClassCastException.
  *  <p>
- *  If the lastModified date is the same, then the next key is the page name.
- *  If the page name is also equal, then returns 0 for equality.
+ *  If the lastModified date is the same, then the next key is the page name. If the page name is also equal, then returns 0 for equality.
  */
 public class PageTimeComparator implements Comparator< WikiPage >, Serializable {
 	

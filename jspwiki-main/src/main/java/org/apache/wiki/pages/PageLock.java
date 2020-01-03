@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.pages;
 
+import org.apache.wiki.WikiPage;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import org.apache.wiki.WikiPage;
 
 /**
  *  Describes a lock acquired by an user on a page.  For the most part,
@@ -49,11 +49,7 @@ public class PageLock
      *  @param acquired The timestamp when the lock is acquired
      *  @param expiry   The timestamp when the lock expires.
      */
-    public PageLock( WikiPage page, 
-                     String locker,
-                     Date acquired,
-                     Date expiry )
-    {
+    public PageLock( final WikiPage page, final String locker, final Date acquired, final Date expiry ) {
         m_page         = page.getName();
         m_locker       = locker;
         m_lockAcquired = (Date)acquired.clone();
@@ -106,15 +102,14 @@ public class PageLock
      *  
      *  @return Time left in minutes.
      */
-    public long getTimeLeft()
-    {
-        long time = m_lockExpiry.getTime() - new Date().getTime();
+    public long getTimeLeft() {
+        final long time = m_lockExpiry.getTime() - new Date().getTime();
 
-        return (time / (1000L * 60)) + 1;
+        return ( time / ( 1000L * 60 ) ) + 1;
     }
     
     public boolean isExpired() {
-        Date now = new Date();
+        final Date now = new Date();
         return now.after( getExpiryTime() );
     }
 }

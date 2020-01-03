@@ -53,7 +53,7 @@ public interface PageManager extends WikiEventListener {
      * @return A Collection of WikiPage objects.
      * @throws ProviderException If the backend has problems.
      */
-    Collection<WikiPage> getAllPages() throws ProviderException;
+    Collection< WikiPage > getAllPages() throws ProviderException;
 
     /**
      * Fetches the page text from the repository.  This method also does some sanity checks,
@@ -65,7 +65,7 @@ public interface PageManager extends WikiEventListener {
      * @return The page content as a raw string
      * @throws ProviderException If the backend has issues.
      */
-    String getPageText(String pageName, int version) throws ProviderException;
+    String getPageText( String pageName, int version ) throws ProviderException;
 
     /**
      * Returns the WikiEngine to which this PageManager belongs to.
@@ -82,7 +82,7 @@ public interface PageManager extends WikiEventListener {
      * @param content Wikimarkup to save
      * @throws ProviderException If something goes wrong in the saving phase
      */
-    void putPageText(WikiPage page, String content) throws ProviderException;
+    void putPageText( WikiPage page, String content ) throws ProviderException;
 
     /**
      * Locks page for editing.  Note, however, that the PageManager will in no way prevent you from actually editing this page;
@@ -92,14 +92,14 @@ public interface PageManager extends WikiEventListener {
      * @param user Username to use for locking
      * @return null, if page could not be locked.
      */
-    PageLock lockPage(WikiPage page, String user);
+    PageLock lockPage( WikiPage page, String user );
 
     /**
      * Marks a page free to be written again.  If there has not been a lock, will fail quietly.
      *
      * @param lock A lock acquired in lockPage().  Safe to be null.
      */
-    void unlockPage(PageLock lock);
+    void unlockPage( PageLock lock );
 
     /**
      * Returns the current lock owner of a page.  If the page is not locked, will return null.
@@ -107,7 +107,7 @@ public interface PageManager extends WikiEventListener {
      * @param page The page to check the lock for
      * @return Current lock, or null, if there is no lock
      */
-    PageLock getCurrentLock(WikiPage page);
+    PageLock getCurrentLock( WikiPage page );
 
     /**
      * Returns a list of currently applicable locks.  Note that by the time you get the list,
@@ -126,7 +126,7 @@ public interface PageManager extends WikiEventListener {
      * @return A WikiPage object, or null, if the page does not exist
      * @throws ProviderException If there is something wrong with the page name or the repository
      */
-    WikiPage getPageInfo(String pageName, int version) throws ProviderException;
+    WikiPage getPageInfo( String pageName, int version ) throws ProviderException;
 
     /**
      * Gets a version history of page.  Each element in the returned List is a WikiPage.
@@ -135,7 +135,7 @@ public interface PageManager extends WikiEventListener {
      * @return If the page does not exist, returns null, otherwise a List of WikiPages.
      * @throws ProviderException If the repository fails.
      */
-    List<WikiPage> getVersionHistory(String pageName) throws ProviderException;
+    List<WikiPage> getVersionHistory( String pageName ) throws ProviderException;
 
     /**
      *  Returns the provider name.
@@ -168,7 +168,7 @@ public interface PageManager extends WikiEventListener {
      * @return A boolean value describing the existence of a page
      * @throws ProviderException If the backend fails or the name is illegal.
      */
-    boolean pageExists(String pageName) throws ProviderException;
+    boolean pageExists( String pageName ) throws ProviderException;
 
     /**
      * Checks for existence of a specific page and version.
@@ -179,7 +179,7 @@ public interface PageManager extends WikiEventListener {
      * @throws ProviderException If backend fails or name is illegal
      * @since 2.3.29
      */
-    boolean pageExists(String pageName, int version) throws ProviderException;
+    boolean pageExists( String pageName, int version ) throws ProviderException;
 
     /**
      * Deletes only a specific version of a WikiPage.
@@ -187,7 +187,7 @@ public interface PageManager extends WikiEventListener {
      * @param page The page to delete.
      * @throws ProviderException if the page fails
      */
-    void deleteVersion(WikiPage page) throws ProviderException;
+    void deleteVersion( WikiPage page ) throws ProviderException;
 
     /**
      *  Deletes a page or an attachment completely, including all versions.  If the page does not exist, does nothing.
@@ -195,7 +195,7 @@ public interface PageManager extends WikiEventListener {
      * @param pageName The name of the page.
      * @throws ProviderException If something goes wrong.
      */
-    void deletePage( final String pageName ) throws ProviderException;
+    void deletePage( String pageName ) throws ProviderException;
 
     /**
      * Deletes an entire page, all versions, all traces.
@@ -203,7 +203,7 @@ public interface PageManager extends WikiEventListener {
      * @param page The WikiPage to delete
      * @throws ProviderException If the repository operation fails
      */
-    void deletePage(WikiPage page) throws ProviderException;
+    void deletePage( WikiPage page ) throws ProviderException;
 
     /**
      * Listens for {@link org.apache.wiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
