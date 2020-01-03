@@ -17,8 +17,7 @@
     under the License.
  */
 package org.apache.wiki.plugin;
-import java.util.Properties;
-
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -28,27 +27,15 @@ import org.apache.wiki.auth.Users;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+public class IfPluginTest {
 
-public class IfPluginTest
-{
-
-    TestEngine testEngine;
-
-    @BeforeEach
-    public void setUp() throws Exception
-    {
-        Properties props = TestEngine.getTestProperties();
-        testEngine = new TestEngine( props );
-    }
+    TestEngine testEngine = TestEngine.build();
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
-        testEngine.deletePage( "Test" );
+    public void tearDown() throws Exception {
+        testEngine.getPageManager().deletePage( "Test" );
     }
 
     /**

@@ -568,7 +568,7 @@ public class WikiEngineTest
 
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
-        m_engine.deletePage( page.getName() );
+        m_engine.getPageManager().deletePage( page.getName() );
 
         Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
     }
@@ -596,7 +596,7 @@ public class WikiEngineTest
 
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
-        m_engine.deletePage( page.getName() );
+        m_engine.getPageManager().deletePage( page.getName() );
 
         Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
         Assertions.assertFalse( attfile.exists(), "Attachment has not been removed" );
@@ -628,9 +628,9 @@ public class WikiEngineTest
 
         att = m_engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
 
-        m_engine.deletePage(att.getName());
+        m_engine.getPageManager().deletePage(att.getName());
 
-        m_engine.deletePage( NAME1 );
+        m_engine.getPageManager().deletePage( NAME1 );
 
         Assertions.assertNull( m_engine.getPage(NAME1), "Page not removed" );
         Assertions.assertNull( m_engine.getPage(NAME1+"/TestAtt.txt"), "Att not removed" );
@@ -653,7 +653,7 @@ public class WikiEngineTest
 
         WikiPage page = engine.getPage( NAME1, 3 );
 
-        engine.deleteVersion( page );
+        engine.getPageManager().deleteVersion( page );
 
         Assertions.assertNull( engine.getPage( NAME1, 3 ), "got page" );
 
@@ -675,7 +675,7 @@ public class WikiEngineTest
 
         WikiPage page = engine.getPage( NAME1, 1 );
 
-        engine.deleteVersion( page );
+        engine.getPageManager().deleteVersion( page );
 
         Assertions.assertNull( engine.getPage( NAME1, 1 ), "got page" );
 
@@ -714,7 +714,7 @@ public class WikiEngineTest
         // FIXME: The following must run as well
         Assertions.assertEquals( "notbar", v2.getAttribute("foo"), "V2" );
 
-        engine.deletePage( NAME1 );
+        engine.getPageManager().deletePage( NAME1 );
     }
 
     @Test

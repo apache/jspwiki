@@ -18,7 +18,6 @@
  */
 
 package org.apache.wiki.plugin;
-import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -30,31 +29,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class DefaultPluginManagerTest
-{
-    public static final String NAME1 = "Test1";
+import java.util.Properties;
+
+public class DefaultPluginManagerTest {
 
     Properties props = TestEngine.getTestProperties();
-
-    WikiEngine engine;
+    WikiEngine engine = TestEngine.build();
+    DefaultPluginManager manager = new DefaultPluginManager( engine, props );
 
     WikiContext context;
 
-    DefaultPluginManager manager;
-
     @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        engine = new TestEngine(props);
+    public void setUp() throws Exception {
         context = new WikiContext( engine, new WikiPage(engine, "Testpage") );
-        manager = new DefaultPluginManager( engine, props );
     }
 
     @AfterEach
     public void tearDown() throws ProviderException
     {
-        engine.deletePage("Testpage");
+        engine.getPageManager().deletePage("Testpage");
     }
 
     @Test

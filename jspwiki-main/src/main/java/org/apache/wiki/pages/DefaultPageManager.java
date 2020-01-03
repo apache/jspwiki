@@ -27,6 +27,7 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
@@ -363,18 +364,52 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return m_provider.pageExists(pageName, version);
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#deleteVersion(org.apache.wiki.WikiPage)
      */
     @Override
-    public void deleteVersion(WikiPage page) throws ProviderException {
-        m_provider.deleteVersion(page.getName(), page.getVersion());
-
-        // FIXME: If this was the latest, reindex Lucene
-        // FIXME: Update RefMgr
+    public void deleteVersion( final WikiPage page ) throws ProviderException {
+        if( page instanceof Attachment ) {
+            m_engine.getAttachmentManager().deleteVersion( (Attachment) page );
+        } else {
+            m_provider.deleteVersion(page.getName(), page.getVersion());
+            // FIXME: If this was the latest, reindex Lucene
+            // FIXME: Update RefMgr
+        }
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#deletePage(java.lang.String)
+     */
+    public void deletePage( final String pageName ) throws ProviderException {
+        final WikiPage p = m_engine.getPage( pageName );
+        if( p != null ) {
+            if( p instanceof Attachment ) {
+                m_engine.getAttachmentManager().deleteAttachment( ( Attachment )p );
+            } else {
+                final Collection< String > refTo = m_engine.getReferenceManager().findRefersTo( pageName );
+                // May return null, if the page does not exist or has not been indexed yet.
+
+                if( m_engine.getAttachmentManager().hasAttachments( p ) ) {
+                    final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( p );
+                    for( final Attachment attachment : attachments ) {
+                        if( refTo != null ) {
+                            refTo.remove( attachment.getName() );
+                        }
+
+                        m_engine.getAttachmentManager().deleteAttachment( attachment );
+                    }
+                }
+                deletePage( p );
+                fireEvent( WikiPageEvent.PAGE_DELETED, pageName );
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#deletePage(org.apache.wiki.WikiPage)
      */
     @Override

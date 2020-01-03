@@ -1835,52 +1835,6 @@ public class WikiEngine  {
     }
 
     /**
-     *  Deletes a page or an attachment completely, including all versions.  If the page
-     *  does not exist, does nothing.
-     *
-     * @param pageName The name of the page.
-     * @throws ProviderException If something goes wrong.
-     */
-    public void deletePage( final String pageName ) throws ProviderException {
-        final WikiPage p = getPage( pageName );
-        if( p != null ) {
-            if( p instanceof Attachment ) {
-                m_attachmentManager.deleteAttachment( ( Attachment )p );
-            } else {
-                final Collection< String > refTo = m_referenceManager.findRefersTo( pageName );
-                // May return null, if the page does not exist or has not been indexed yet.
-
-                if( m_attachmentManager.hasAttachments( p ) ) {
-                    final List< Attachment > attachments = m_attachmentManager.listAttachments( p );
-                    for( final Attachment attachment : attachments ) {
-                        if( refTo != null ) {
-                            refTo.remove( attachment.getName() );
-                        }
-
-                        m_attachmentManager.deleteAttachment( attachment );
-                    }
-                }
-                m_pageManager.deletePage( p );
-                firePageEvent( WikiPageEvent.PAGE_DELETED, pageName );
-            }
-        }
-    }
-
-    /**
-     *  Deletes a specific version of a page or an attachment.
-     *
-     *  @param page The page object.
-     *  @throws ProviderException If something goes wrong.
-     */
-    public void deleteVersion( final WikiPage page ) throws ProviderException {
-        if( page instanceof Attachment ) {
-            m_attachmentManager.deleteVersion( (Attachment) page );
-        } else {
-            m_pageManager.deleteVersion( page );
-        }
-    }
-
-    /**
      *  Returns the URL of the global RSS file.  May be null, if the
      *  RSS file generation is not operational.
      *  @since 1.7.10

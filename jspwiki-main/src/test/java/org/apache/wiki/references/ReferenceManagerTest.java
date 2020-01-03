@@ -82,7 +82,7 @@ public class ReferenceManagerTest  {
         Assertions.assertNotNull( c, "referrers expected" );
         Assertions.assertTrue( c.size() == 1 && c.contains("Foobar") );
 
-        engine.deletePage( "Foobar" );
+        engine.getPageManager().deletePage( "Foobar" );
         c = mgr.findReferrers("Foobar2");
         Assertions.assertNull( c );
 

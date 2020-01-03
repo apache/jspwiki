@@ -19,31 +19,18 @@
 
 package org.apache.wiki.plugin;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class GroupsTest
-{
-    Properties props = TestEngine.getTestProperties();
-    TestEngine testEngine;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        testEngine = new TestEngine(props);
-    }
+public class GroupsTest {
+    TestEngine testEngine = TestEngine.build();
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
-        testEngine.deletePage( "Test" );
+    public void tearDown() throws Exception {
+        testEngine.getPageManager().deletePage( "Test" );
     }
 
     @Test

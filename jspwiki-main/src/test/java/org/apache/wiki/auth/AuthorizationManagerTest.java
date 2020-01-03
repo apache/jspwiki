@@ -114,7 +114,7 @@ public class AuthorizationManagerTest
         // Delete the test page
         try
         {
-            m_engine.deletePage( "TestDefaultPage" );
+            m_engine.getPageManager().deletePage( "TestDefaultPage" );
         }
         catch( ProviderException e )
         {
@@ -294,7 +294,7 @@ public class AuthorizationManagerTest
 
         // Delete test page & attachment
         m_engine.getAttachmentManager().deleteAttachment( att );
-        m_engine.deletePage( "Test" );
+        m_engine.getPageManager().deletePage( "Test" );
     }
 
     @Test
@@ -326,7 +326,7 @@ public class AuthorizationManagerTest
 
         // Delete test page & attachment
         m_engine.getAttachmentManager().deleteAttachment( att );
-        m_engine.deletePage( "Test" );
+        m_engine.getPageManager().deletePage( "Test" );
     }
 
     @Test
@@ -468,7 +468,7 @@ public class AuthorizationManagerTest
         // Cleanup
         try
         {
-            m_engine.deletePage( "Test" );
+            m_engine.getPageManager().deletePage( "Test" );
         }
         catch( ProviderException e )
         {
@@ -590,7 +590,7 @@ public class AuthorizationManagerTest
         // Cleanup
         try
         {
-            m_engine.deletePage( "Test" );
+            m_engine.getPageManager().deletePage( "Test" );
         }
         catch( ProviderException e )
         {

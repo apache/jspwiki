@@ -26,10 +26,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Properties;
 
 /**
  *
@@ -37,19 +34,11 @@ import java.util.Properties;
  */
 public class TableOfContentsTest
 {
-    TestEngine testEngine;
-
-    @BeforeEach
-    public void setUp() throws Exception
-    {
-        Properties props = TestEngine.getTestProperties();
-        testEngine = new TestEngine( props );
-    }
+    TestEngine testEngine = TestEngine.build();
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
-        testEngine.deletePage( "Test" );
+    public void tearDown() throws Exception {
+        testEngine.getPageManager().deletePage( "Test" );
     }
 
     @Test

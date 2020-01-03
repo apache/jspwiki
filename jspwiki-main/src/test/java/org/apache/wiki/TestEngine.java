@@ -282,15 +282,6 @@ public class TestEngine extends WikiEngine
         return pagename;
     }
 
-    public void deletePage( final String pageName ) throws ProviderException {
-        try {
-            super.deletePage( pageName );
-        } catch( final ProviderException | RuntimeException e ) {
-            log.error( e.getMessage(), e );
-            throw e;
-        }
-    }
-
     /**
      *  Removes a page, but not any auxiliary information.  Works only
      *  with FileSystemProvider.

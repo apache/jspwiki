@@ -55,8 +55,8 @@ public class DefaultAclManagerTest
     {
         try
         {
-            m_engine.deletePage( "TestDefaultPage" );
-            m_engine.deletePage( "TestAclPage" );
+            m_engine.getPageManager().deletePage( "TestDefaultPage" );
+            m_engine.getPageManager().deletePage( "TestAclPage" );
         }
         catch ( ProviderException e )
         {

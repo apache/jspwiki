@@ -18,11 +18,6 @@
  */
 package org.apache.wiki.workflow;
 
-import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.engine.FilterManager;
@@ -35,13 +30,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ApprovalWorkflowTest
-{
+import java.security.Principal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+
+public class ApprovalWorkflowTest {
+
     WorkflowBuilder m_builder;
     TestEngine m_engine;
     WorkflowManager m_wm;
     DecisionQueue m_dq;
-
 
     @BeforeEach
     public void setUp() throws Exception
@@ -209,7 +208,7 @@ public class ApprovalWorkflowTest
         Assertions.assertEquals(0, decisions.size());
 
         // Delete the page we created
-        m_engine.deletePage( pageName );
+        m_engine.getPageManager().deletePage( pageName );
     }
 
     @Test

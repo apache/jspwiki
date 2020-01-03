@@ -12,15 +12,7 @@
  * limitations under the License.
  */
 package org.apache.wiki.attachment;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -31,7 +23,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Properties;
 
 public class AttachmentManagerTest
 {
@@ -361,7 +360,7 @@ public class AttachmentManagerTest
         }
         finally
         {
-            m_engine.deletePage("TestPage");
+            m_engine.getPageManager().deletePage("TestPage");
         }
     }
 

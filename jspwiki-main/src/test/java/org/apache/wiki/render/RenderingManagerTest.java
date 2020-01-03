@@ -27,28 +27,17 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Properties;
 
 public class RenderingManagerTest {
 
-    RenderingManager m_manager;
-    TestEngine       m_engine;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        Properties props = TestEngine.getTestProperties();
-        m_engine = new TestEngine( props );
-
-        m_manager = m_engine.getRenderingManager();
-    }
+    TestEngine       m_engine = TestEngine.build();
+    RenderingManager m_manager = m_engine.getRenderingManager();
 
     @AfterEach
     public void tearDown() throws Exception {
-        m_engine.deletePage( "TestPage" );
+        m_engine.getPageManager().deletePage( "TestPage" );
+        CacheManager.getInstance().removeAllCaches();
     }
 
     /**

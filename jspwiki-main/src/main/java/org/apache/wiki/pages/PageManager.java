@@ -18,15 +18,15 @@
  */
 package org.apache.wiki.pages;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.providers.WikiPageProvider;
+
+import java.util.Collection;
+import java.util.List;
 
 
 public interface PageManager extends WikiEventListener {
@@ -47,7 +47,7 @@ public interface PageManager extends WikiEventListener {
 
     /**
      * Returns all pages in some random order.  If you need just the page names,
-     * please see {@link org.apache.wiki.ReferenceManager#findCreated() ReferenceManager#findCreated()}, which is probably a lot
+     * please see {@link org.apache.wiki.references.ReferenceManager#findCreated() ReferenceManager#findCreated()}, which is probably a lot
      * faster.  This method may cause repository access.
      *
      * @return A Collection of WikiPage objects.
@@ -85,8 +85,7 @@ public interface PageManager extends WikiEventListener {
     void putPageText(WikiPage page, String content) throws ProviderException;
 
     /**
-     * Locks page for editing.  Note, however, that the PageManager
-     * will in no way prevent you from actually editing this page;
+     * Locks page for editing.  Note, however, that the PageManager will in no way prevent you from actually editing this page;
      * the lock is just for information.
      *
      * @param page WikiPage to lock
@@ -103,8 +102,7 @@ public interface PageManager extends WikiEventListener {
     void unlockPage(PageLock lock);
 
     /**
-     * Returns the current lock owner of a page.  If the page is not
-     * locked, will return null.
+     * Returns the current lock owner of a page.  If the page is not locked, will return null.
      *
      * @param page The page to check the lock for
      * @return Current lock, or null, if there is no lock
@@ -115,8 +113,7 @@ public interface PageManager extends WikiEventListener {
      * Returns a list of currently applicable locks.  Note that by the time you get the list,
      * the locks may have already expired, so use this only for informational purposes.
      *
-     * @return List of PageLock objects, detailing the locks.  If no locks exist, returns
-     *         an empty list.
+     * @return List of PageLock objects, detailing the locks.  If no locks exist, returns an empty list.
      * @since 2.0.22.
      */
     List<PageLock> getActiveLocks();
@@ -127,8 +124,7 @@ public interface PageManager extends WikiEventListener {
      * @param pageName The name of the page
      * @param version  A version number
      * @return A WikiPage object, or null, if the page does not exist
-     * @throws ProviderException If there is something wrong with the page
-     *                           name or the repository
+     * @throws ProviderException If there is something wrong with the page name or the repository
      */
     WikiPage getPageInfo(String pageName, int version) throws ProviderException;
 
@@ -185,6 +181,14 @@ public interface PageManager extends WikiEventListener {
      * @throws ProviderException if the page fails
      */
     void deleteVersion(WikiPage page) throws ProviderException;
+
+    /**
+     *  Deletes a page or an attachment completely, including all versions.  If the page does not exist, does nothing.
+     *
+     * @param pageName The name of the page.
+     * @throws ProviderException If something goes wrong.
+     */
+    void deletePage( final String pageName ) throws ProviderException;
 
     /**
      * Deletes an entire page, all versions, all traces.

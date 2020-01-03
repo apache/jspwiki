@@ -194,7 +194,7 @@ public class UserManagerTest {
         Assertions.assertEquals( expectedText, actualText );
 
         // Remove our test page
-        m_engine.deletePage( pageName );
+        m_engine.getPageManager().deletePage( pageName );
 
         // Setup Step 6: re-create the group with our old test user names in it
         group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
@@ -259,7 +259,7 @@ public class UserManagerTest {
         groupManager.removeGroup( group.getName() );
         Assertions.assertEquals( oldGroupCount, groupManager.getRoles().length );
 
-        m_engine.deletePage( pageName );
+        m_engine.getPageManager().deletePage( pageName );
         Assertions.assertEquals( oldPageCount, pageManager.getTotalPageCount() );
     }
 

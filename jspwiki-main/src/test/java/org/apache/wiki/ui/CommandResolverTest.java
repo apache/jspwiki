@@ -52,8 +52,8 @@ public class CommandResolverTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        m_engine.deletePage( "SinglePage" );
-        m_engine.deletePage( "PluralPage" );
+        m_engine.getPageManager().deletePage( "SinglePage" );
+        m_engine.getPageManager().deletePage( "PluralPage" );
     }
 
     @Test
