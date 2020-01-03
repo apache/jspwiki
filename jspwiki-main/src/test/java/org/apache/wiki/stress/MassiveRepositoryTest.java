@@ -17,23 +17,20 @@
     under the License.  
  */
 package org.apache.wiki.stress;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.util.Properties;
-import java.util.Random;
-
-import org.junit.jupiter.api.Assertions;
 import net.sf.ehcache.CacheManager;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.util.Properties;
+import java.util.Random;
 
 public class MassiveRepositoryTest {
 	
@@ -148,7 +145,7 @@ public class MassiveRepositoryTest {
         
         System.out.println("\nTook "+sw.toString()+", which is "+sw.toString(numRevisions)+" adds/second");
         
-        Assertions.assertEquals( numPages, engine.getPageCount(), "Right number of pages" );
+        Assertions.assertEquals( numPages, engine.getPageManager().getTotalPageCount(), "Right number of pages" );
         
         //
         //  Rendering random pages

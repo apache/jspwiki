@@ -343,7 +343,7 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getTotalpages() {
-            return Integer.toString( m_context.getEngine().getPageCount() );
+            return Integer.toString( m_context.getEngine().getPageManager().getTotalPageCount() );
         }
 
         public String getPageprovider() {

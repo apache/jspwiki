@@ -18,25 +18,22 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import javax.management.NotCompliantMBeanException;
-
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
+import javax.management.NotCompliantMBeanException;
+
+
 /**
  *  An AdminBean which manages the JSPWiki core operations.
- *
  */
-public class CoreBean
-    extends SimpleAdminBean
-{
+public class CoreBean extends SimpleAdminBean {
+
     private static final String[] ATTRIBUTES = { "pages", "version" };
     private static final String[] METHODS = { };
-    //private WikiEngine m_engine; //inherited proteced filed from SimpleAdminBean
 
-    public CoreBean( WikiEngine engine ) throws NotCompliantMBeanException
-    {
+    public CoreBean( final WikiEngine engine ) throws NotCompliantMBeanException {
         m_engine = engine;
     }
 
@@ -45,9 +42,8 @@ public class CoreBean
      *
      *  @return the page content
      */
-    public int getPages()
-    {
-        return m_engine.getPageCount();
+    public int getPages() {
+        return m_engine.getPageManager().getTotalPageCount();
     }
 
     public String getPagesDescription()
@@ -74,7 +70,6 @@ public class CoreBean
     {
         return CORE;
     }
-
 
     public String getId()
     {
