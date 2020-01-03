@@ -74,15 +74,13 @@ import java.util.concurrent.ConcurrentHashMap;
 //        from WikiEngine (which is too big now) into this class.
 public class DefaultPageManager extends ModuleManager implements PageManager {
 
-    private static final Logger LOG = Logger.getLogger(DefaultPageManager.class);
+    private static final Logger LOG = Logger.getLogger( DefaultPageManager.class );
 
     private WikiPageProvider m_provider;
 
-    protected ConcurrentHashMap<String, PageLock> m_pageLocks = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
 
-    //private WikiEngine m_engine;   //inherited protected field from the ModuleManager
-
-    private int m_expiryTime = 60;
+    private int m_expiryTime;
 
     private LockReaper m_reaper = null;
 
@@ -184,7 +182,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return text;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getEngine()
      */
     @Override
@@ -192,11 +191,12 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return m_engine;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#putPageText(org.apache.wiki.WikiPage, java.lang.String)
      */
     @Override
-    public void putPageText(WikiPage page, String content) throws ProviderException {
+    public void putPageText( final WikiPage page, final String content ) throws ProviderException {
         if (page == null || page.getName() == null || page.getName().length() == 0) {
             throw new ProviderException("Illegal page name");
         }
@@ -204,11 +204,12 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         m_provider.putPageText(page, content);
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#lockPage(org.apache.wiki.WikiPage, java.lang.String)
      */
     @Override
-    public PageLock lockPage(WikiPage page, String user) {
+    public PageLock lockPage( final WikiPage page, final String user) {
         if (m_reaper == null) {
             //
             //  Start the lock reaper lazily.  We don't want to start it in
@@ -227,7 +228,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
             //
             //  Lock is available, so make a lock.
             //
-            Date d = new Date();
+            final Date d = new Date();
             lock = new PageLock(page, user, d, new Date(d.getTime() + m_expiryTime * 60 * 1000L));
             m_pageLocks.put(page.getName(), lock);
             LOG.debug("Locked page " + page.getName() + " for " + user);
@@ -239,44 +240,42 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return lock;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#unlockPage(org.apache.wiki.pages.PageLock)
      */
     @Override
-    public void unlockPage(PageLock lock) {
+    public void unlockPage( final PageLock lock ) {
         if (lock == null) {
             return;
         }
 
-        m_pageLocks.remove(lock.getPage());
-        LOG.debug("Unlocked page " + lock.getPage());
+        m_pageLocks.remove( lock.getPage() );
+        LOG.debug( "Unlocked page " + lock.getPage() );
 
-        fireEvent(WikiPageEvent.PAGE_UNLOCK, lock.getPage());
+        fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPage() );
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getCurrentLock(org.apache.wiki.WikiPage)
      */
     @Override
-    public PageLock getCurrentLock(WikiPage page) {
-        return m_pageLocks.get(page.getName());
+    public PageLock getCurrentLock( final WikiPage page ) {
+        return m_pageLocks.get( page.getName() );
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getActiveLocks()
      */
     @Override
-    public List<PageLock> getActiveLocks() {
-        ArrayList<PageLock> result = new ArrayList<>();
-
-        for (PageLock lock : m_pageLocks.values()) {
-            result.add(lock);
-        }
-
-        return result;
+    public List< PageLock > getActiveLocks() {
+        return  new ArrayList<>( m_pageLocks.values() );
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPageInfo(java.lang.String, int)
      */
     @Override
@@ -303,13 +302,14 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return page;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getVersionHistory(java.lang.String)
      */
     @Override
-    public List< WikiPage > getVersionHistory(String pageName) throws ProviderException {
-        if (pageExists(pageName)) {
-            return m_provider.getVersionHistory(pageName);
+    public List< WikiPage > getVersionHistory( final String pageName ) throws ProviderException {
+        if( pageExists( pageName ) ) {
+            return m_provider.getVersionHistory( pageName );
         }
 
         return null;
@@ -340,17 +340,18 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     public int getTotalPageCount() {
         try {
             return m_provider.getAllPages().size();
-        } catch (ProviderException e) {
-            LOG.error("Unable to count pages: ", e);
+        } catch( final ProviderException e ) {
+            LOG.error( "Unable to count pages: ", e );
             return -1;
         }
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#pageExists(java.lang.String)
      */
     @Override
-    public boolean pageExists(String pageName) throws ProviderException {
+    public boolean pageExists( final String pageName ) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
             throw new ProviderException("Illegal page name");
         }
@@ -358,11 +359,12 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return m_provider.pageExists(pageName);
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#pageExists(java.lang.String, int)
      */
     @Override
-    public boolean pageExists(String pageName, int version) throws ProviderException {
+    public boolean pageExists( final String pageName, final int version ) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
             throw new ProviderException("Illegal page name");
         }
@@ -381,7 +383,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     @Override
     public void deleteVersion( final WikiPage page ) throws ProviderException {
         if( page instanceof Attachment ) {
-            m_engine.getAttachmentManager().deleteVersion( (Attachment) page );
+            m_engine.getAttachmentManager().deleteVersion( ( Attachment )page );
         } else {
             m_provider.deleteVersion(page.getName(), page.getVersion());
             // FIXME: If this was the latest, reindex Lucene
@@ -423,10 +425,10 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#deletePage(org.apache.wiki.WikiPage)
      */
     @Override
-    public void deletePage(WikiPage page) throws ProviderException {
-        fireEvent(WikiPageEvent.PAGE_DELETE_REQUEST, page.getName());
-        m_provider.deletePage(page.getName());
-        fireEvent(WikiPageEvent.PAGE_DELETED, page.getName());
+    public void deletePage( final WikiPage page ) throws ProviderException {
+        fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
+        m_provider.deletePage( page.getName() );
+        fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
     }
 
     /**
@@ -440,24 +442,24 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
          *
          * @param engine WikiEngine to own this thread.
          */
-        public LockReaper(WikiEngine engine) {
+        public LockReaper( final WikiEngine engine) {
             super(engine, 60);
             setName("JSPWiki Lock Reaper");
         }
 
         @Override
-        public void backgroundTask() throws Exception {
-            Collection<PageLock> entries = m_pageLocks.values();
-            for (Iterator<PageLock> i = entries.iterator(); i.hasNext(); ) {
-                PageLock p = i.next();
+        public void backgroundTask() {
+            final Collection< PageLock > entries = m_pageLocks.values();
+            for( final Iterator<PageLock> i = entries.iterator(); i.hasNext(); ) {
+                final PageLock p = i.next();
 
                 if ( p.isExpired() ) {
                     i.remove();
 
-                    LOG.debug("Reaped lock: " + p.getPage() +
-                              " by " + p.getLocker() +
-                              ", acquired " + p.getAcquisitionTime() +
-                              ", and expired " + p.getExpiryTime());
+                    LOG.debug( "Reaped lock: " + p.getPage() +
+                               " by " + p.getLocker() +
+                               ", acquired " + p.getAcquisitionTime() +
+                               ", and expired " + p.getExpiryTime() );
                 }
             }
         }
@@ -473,9 +475,9 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @param pagename the wiki page name as a String
      * @see org.apache.wiki.event.WikiPageEvent
      */
-    protected final void fireEvent(int type, String pagename) {
-        if (WikiEventManager.isListening(this)) {
-            WikiEventManager.fireEvent(this, new WikiPageEvent(m_engine, type, pagename));
+    protected final void fireEvent( final int type, final String pagename ) {
+        if( WikiEventManager.isListening( this ) ) {
+            WikiEventManager.fireEvent( this, new WikiPageEvent( m_engine, type, pagename ) );
         }
     }
 
@@ -492,7 +494,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      *  {@inheritDoc}
      */
     @Override
-    public WikiModuleInfo getModuleInfo(String moduleName) {
+    public WikiModuleInfo getModuleInfo( final String moduleName ) {
     	return null;
     }
 
@@ -500,72 +502,68 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#actionPerformed(org.apache.wiki.event.WikiEvent)
      */
     @Override
-    public void actionPerformed(WikiEvent event) {
-        if (!(event instanceof WikiSecurityEvent)) {
+    public void actionPerformed( final WikiEvent event ) {
+        if( !( event instanceof WikiSecurityEvent ) ) {
             return;
         }
 
-        WikiSecurityEvent se = (WikiSecurityEvent) event;
-        if (se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED) {
-            UserProfile[] profiles = (UserProfile[]) se.getTarget();
-            Principal[] oldPrincipals = new Principal[]
-                    {new WikiPrincipal(profiles[0].getLoginName()),
-                            new WikiPrincipal(profiles[0].getFullname()),
-                            new WikiPrincipal(profiles[0].getWikiName())};
-            Principal newPrincipal = new WikiPrincipal(profiles[1].getFullname());
+        final WikiSecurityEvent se = ( WikiSecurityEvent ) event;
+        if( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED ) {
+            final UserProfile[] profiles = (UserProfile[]) se.getTarget();
+            final Principal[] oldPrincipals = new Principal[] { new WikiPrincipal( profiles[ 0 ].getLoginName() ),
+                                                                new WikiPrincipal( profiles[ 0 ].getFullname()),
+                                                                new WikiPrincipal( profiles[ 0 ].getWikiName() ) };
+            final Principal newPrincipal = new WikiPrincipal( profiles[ 1 ].getFullname() );
 
             // Examine each page ACL
             try {
                 int pagesChanged = 0;
-                Collection< WikiPage > pages = getAllPages();
-                for (Iterator< WikiPage > it = pages.iterator(); it.hasNext(); ) {
-                    WikiPage page = it.next();
-                    boolean aclChanged = changeAcl(page, oldPrincipals, newPrincipal);
-                    if (aclChanged) {
+                final Collection< WikiPage > pages = getAllPages();
+                for( final WikiPage page : pages ) {
+                    final boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
+                    if( aclChanged ) {
                         // If the Acl needed changing, change it now
                         try {
-                            m_engine.getAclManager().setPermissions(page, page.getAcl());
-                        } catch (WikiSecurityException e) {
+                            m_engine.getAclManager().setPermissions( page, page.getAcl() );
+                        } catch( final WikiSecurityException e ) {
                             LOG.error("Could not change page ACL for page " + page.getName() + ": " + e.getMessage(), e);
                         }
                         pagesChanged++;
                     }
                 }
-                LOG.info("Profile name change for '" + newPrincipal.toString() +
-                        "' caused " + pagesChanged + " page ACLs to change also.");
-            } catch (ProviderException e) {
+                LOG.info( "Profile name change for '" + newPrincipal.toString() + "' caused " + pagesChanged + " page ACLs to change also." );
+            } catch( final ProviderException e ) {
                 // Oooo! This is really bad...
-                LOG.error("Could not change user name in Page ACLs because of Provider error:" + e.getMessage(), e);
+                LOG.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage(), e );
             }
         }
     }
 
     /**
-     * For a single wiki page, replaces all Acl entries matching a supplied array of Principals
-     * with a new Principal.
+     * For a single wiki page, replaces all Acl entries matching a supplied array of Principals with a new Principal.
      *
-     * @param page          the wiki page whose Acl is to be modified
-     * @param oldPrincipals an array of Principals to replace; all AclEntry objects whose
-     *                      {@link AclEntry#getPrincipal()} method returns one of these Principals will be replaced
-     * @param newPrincipal  the Principal that should receive the old Principals' permissions
+     * @param page the wiki page whose Acl is to be modified
+     * @param oldPrincipals an array of Principals to replace; all AclEntry objects whose {@link AclEntry#getPrincipal()} method returns
+     *                      one of these Principals will be replaced
+     * @param newPrincipal the Principal that should receive the old Principals' permissions
      * @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
      */
-    protected boolean changeAcl(WikiPage page, Principal[] oldPrincipals, Principal newPrincipal) {
-        Acl acl = page.getAcl();
+    protected boolean changeAcl( final WikiPage page, final Principal[] oldPrincipals, final Principal newPrincipal ) {
+        final Acl acl = page.getAcl();
         boolean pageChanged = false;
-        if (acl != null) {
-            Enumeration<AclEntry> entries = acl.entries();
-            Collection<AclEntry> entriesToAdd = new ArrayList<>();
-            Collection<AclEntry> entriesToRemove = new ArrayList<>();
-            while (entries.hasMoreElements()) {
-                AclEntry entry = entries.nextElement();
-                if (ArrayUtils.contains(oldPrincipals, entry.getPrincipal())) {
+        if( acl != null ) {
+            final Enumeration< AclEntry > entries = acl.entries();
+            final Collection< AclEntry > entriesToAdd = new ArrayList<>();
+            final Collection< AclEntry > entriesToRemove = new ArrayList<>();
+            while( entries.hasMoreElements() ) {
+                final AclEntry entry = entries.nextElement();
+                if( ArrayUtils.contains(oldPrincipals, entry.getPrincipal() ) ) {
                     // Create new entry
-                    AclEntry newEntry = new AclEntryImpl();
-                    newEntry.setPrincipal(newPrincipal);
-                    Enumeration<Permission> permissions = entry.permissions();
-                    while (permissions.hasMoreElements()) {
-                        Permission permission = permissions.nextElement();
+                    final AclEntry newEntry = new AclEntryImpl();
+                    newEntry.setPrincipal( newPrincipal );
+                    final Enumeration<Permission> permissions = entry.permissions();
+                    while( permissions.hasMoreElements() ) {
+                        final Permission permission = permissions.nextElement();
                         newEntry.addPermission(permission);
                     }
                     pageChanged = true;
@@ -573,13 +571,11 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
                     entriesToAdd.add(newEntry);
                 }
             }
-            for (Iterator<AclEntry> ix = entriesToRemove.iterator(); ix.hasNext(); ) {
-                AclEntry entry = ix.next();
-                acl.removeEntry(entry);
+            for( final AclEntry entry : entriesToRemove ) {
+                acl.removeEntry( entry );
             }
-            for (Iterator<AclEntry> ix = entriesToAdd.iterator(); ix.hasNext(); ) {
-                AclEntry entry = ix.next();
-                acl.addEntry(entry);
+            for( final AclEntry entry : entriesToAdd ) {
+                acl.addEntry( entry );
             }
         }
         return pageChanged;
