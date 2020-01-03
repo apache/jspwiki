@@ -315,7 +315,16 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return null;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#getCurrentProvider()
+     */
+    public String getCurrentProvider() {
+        return getProvider().getClass().getName();
+    }
+
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getProviderDescription()
      */
     @Override
@@ -323,7 +332,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return m_provider.getProviderInfo();
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getTotalPageCount()
      */
     @Override

@@ -1553,29 +1553,6 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the provider name.
-     *  @return The full class name of the current page provider.
-     */
-
-    public String getCurrentProvider()
-    {
-        return m_pageManager.getProvider().getClass().getName();
-    }
-
-    /**
-     *  Return information about current provider.  This method just calls
-     *  the corresponding PageManager method, which in turn calls the
-     *  provider method.
-     *
-     *  @return A textual description of the current provider.
-     *  @since 1.6.4
-     */
-    public String getCurrentProviderInfo()
-    {
-        return m_pageManager.getProviderDescription();
-    }
-
-    /**
      *  Returns a Collection of WikiPages, sorted in time
      *  order of last change (i.e. first object is the most
      *  recently changed).  This method also includes attachments.

@@ -346,14 +346,12 @@ public class DefaultVariableManager implements VariableManager {
             return Integer.toString( m_context.getEngine().getPageCount() );
         }
 
-        public String getPageprovider()
-        {
-            return m_context.getEngine().getCurrentProvider();
+        public String getPageprovider() {
+            return m_context.getEngine().getPageManager().getCurrentProvider();
         }
 
-        public String getPageproviderdescription()
-        {
-            return m_context.getEngine().getCurrentProviderInfo();
+        public String getPageproviderdescription() {
+            return m_context.getEngine().getPageManager().getProviderDescription();
         }
 
         public String getAttachmentprovider() {

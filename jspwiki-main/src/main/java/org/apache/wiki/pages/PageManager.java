@@ -138,6 +138,13 @@ public interface PageManager extends WikiEventListener {
     List<WikiPage> getVersionHistory(String pageName) throws ProviderException;
 
     /**
+     *  Returns the provider name.
+     *
+     *  @return The full class name of the current page provider.
+     */
+    String getCurrentProvider();
+
+    /**
      * Returns a human-readable description of the current provider.
      *
      * @return A human-readable description.
