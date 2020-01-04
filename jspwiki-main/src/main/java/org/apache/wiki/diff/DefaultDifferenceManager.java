@@ -113,8 +113,8 @@ public class DefaultDifferenceManager implements DifferenceManager {
      */
     public String getDiff( final WikiContext context, final int version1, final int version2 ) {
         final String page = context.getPage().getName();
-        String page1 = context.getEngine().getPureText( page, version1 );
-        final String page2 = context.getEngine().getPureText( page, version2 );
+        String page1 = context.getEngine().getPageManager().getPureText( page, version1 );
+        final String page2 = context.getEngine().getPageManager().getPureText( page, version2 );
 
         // Kludge to make diffs for new pages to work this way.
         if( version1 == WikiPageProvider.LATEST_VERSION ) {

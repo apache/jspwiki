@@ -107,7 +107,7 @@ public class PageRenamerTest
 
         m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPageManager().getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest]", data.trim(), "no rename" );
 
@@ -133,7 +133,7 @@ public class PageRenamerTest
 
         m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPageManager().getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "FooTest", data.trim(), "no rename" );
         Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage");
@@ -158,7 +158,7 @@ public class PageRenamerTest
 
         m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPageManager().getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest#heading1]", data.trim(), "no rename" );
         Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage");
@@ -183,7 +183,7 @@ public class PageRenamerTest
 
         m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPageManager().getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest] [FooTest] [linktext|FooTest] FooTest [linktext|FooTest] [FooTest#Anchor] [FooTest] FooTest [FooTest]",
                                  data.trim(), 
@@ -211,7 +211,7 @@ public class PageRenamerTest
 
         m_engine.getPageRenamer().renamePage(context, "Test", "TestPage", true);
 
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION );
+        String data = m_engine.getPageManager().getPureText("TestPage2", WikiProvider.LATEST_VERSION );
 
         Assertions.assertEquals( "[TestPage] [TestPage#anchor] test Test [TestPage] [link|TestPage] [link|TestPage]", data.trim(), "wrong data" );
     }
@@ -231,7 +231,7 @@ public class PageRenamerTest
 
         m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
 
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        String data = m_engine.getPageManager().getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest/foo.txt] [linktext|FooTest/bar.jpg]", data.trim(), "no rename" );
 
@@ -481,7 +481,7 @@ public class PageRenamerTest
 
         rename( "TestPageReferred", "TestPageReferredNew" );
 
-        String data = m_engine.getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
+        String data = m_engine.getPageManager().getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "[Test Page Referred|TestPageReferredNew]", data.trim(), "page not renamed" );
 
         Collection< String > refs = m_engine.getReferenceManager().findReferrers( "TestPageReferred" );
@@ -502,7 +502,7 @@ public class PageRenamerTest
 
         rename( "Link one", "Link uno" );
 
-        String data = m_engine.getPureText( "RenameTest", WikiProvider.LATEST_VERSION );
+        String data = m_engine.getPageManager().getPureText( "RenameTest", WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "[link one|Link uno] [link two]", data.trim(), "page not renamed" );
 
         Collection< String > refs = m_engine.getReferenceManager().findReferrers( "Link one" );

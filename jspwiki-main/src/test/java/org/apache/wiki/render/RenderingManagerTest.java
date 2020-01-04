@@ -59,7 +59,7 @@ public class RenderingManagerTest {
         for( int i = 0; i < 300; i++ )
         {
             WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
-            String pagedata = m_engine.getPureText( page );
+            String pagedata = m_engine.getPageManager().getPureText( page );
 
             WikiContext context = new WikiContext( m_engine, page );
 
@@ -79,14 +79,11 @@ public class RenderingManagerTest {
         sw.reset();
         sw.start();
 
-        for( int i = 0; i < 300; i++ )
-        {
-            WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
-            String pagedata = m_engine.getPureText( page );
-
-            WikiContext context = new WikiContext( m_engine, page );
-
-            String html = m_manager.getHTML( context, pagedata );
+        for( int i = 0; i < 300; i++ ) {
+            final WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
+            final String pagedata = m_engine.getPageManager().getPureText( page );
+            final WikiContext context = new WikiContext( m_engine, page );
+            final String html = m_manager.getHTML( context, pagedata );
 
             Assertions.assertNotNull("cached got null response",html);
         }

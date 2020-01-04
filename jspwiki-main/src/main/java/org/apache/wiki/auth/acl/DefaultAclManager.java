@@ -205,24 +205,24 @@ public class DefaultAclManager implements AclManager {
      * @throws WikiSecurityException of the Acl cannot be set
      * @since 2.5
      */
-    public void setPermissions(WikiPage page, Acl acl) throws WikiSecurityException {
-        PageManager pageManager = m_engine.getPageManager();
+    public void setPermissions( final WikiPage page, final Acl acl ) throws WikiSecurityException {
+        final PageManager pageManager = m_engine.getPageManager();
 
         // Forcibly expire any page locks
-        PageLock lock = pageManager.getCurrentLock(page);
-        if (lock != null) {
-            pageManager.unlockPage(lock);
+        final PageLock lock = pageManager.getCurrentLock( page );
+        if( lock != null ) {
+            pageManager.unlockPage( lock );
         }
 
         // Remove all of the existing ACLs.
-        String pageText = m_engine.getPureText(page);
-        Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher(pageText);
-        String cleansedText = matcher.replaceAll("");
-        String newText = DefaultAclManager.printAcl(page.getAcl()) + cleansedText;
+        final String pageText = m_engine.getPageManager().getPureText( page );
+        final Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
+        final String cleansedText = matcher.replaceAll("" );
+        final String newText = DefaultAclManager.printAcl( page.getAcl() ) + cleansedText;
         try {
-            pageManager.putPageText(page, newText);
-        } catch (ProviderException e) {
-            throw new WikiSecurityException("Could not set Acl. Reason: ProviderExcpetion " + e.getMessage(), e);
+            pageManager.putPageText( page, newText );
+        } catch( final ProviderException e ) {
+            throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage(), e );
         }
     }
 

@@ -210,13 +210,8 @@ public class RPCHandler
         return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
     }
 
-    public byte[] getPage( String pagename )
-        throws XmlRpcException
-    {
-        pagename = parsePageCheckCondition( pagename );
-
-        String text = m_engine.getPureText( pagename, -1 );
-
+    public byte[] getPage( final String pagename ) throws XmlRpcException {
+        final String text = m_engine.getPageManager().getPureText( parsePageCheckCondition( pagename ), -1 );
         return toRPCBase64( text );
     }
 
@@ -225,7 +220,7 @@ public class RPCHandler
     {
         pagename = parsePageCheckCondition( pagename );
 
-        return toRPCBase64( m_engine.getPureText( pagename, version ) );
+        return toRPCBase64( m_engine.getPageManager().getPureText( pagename, version ) );
     }
 
     public byte[] getPageHTML( String pagename )
@@ -250,7 +245,7 @@ public class RPCHandler
         pagename = parsePageCheckCondition( pagename );
 
         WikiPage page = m_engine.getPageManager().getPage( pagename );
-        String pagedata = m_engine.getPureText( page );
+        String pagedata = m_engine.getPageManager().getPureText( page );
 
         LinkCollector localCollector = new LinkCollector();
         LinkCollector extCollector   = new LinkCollector();

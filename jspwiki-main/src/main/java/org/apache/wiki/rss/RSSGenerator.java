@@ -519,7 +519,7 @@ public class RSSGenerator {
             //  Title
             //
 
-            String pageText = m_engine.getPureText(page.getName(), WikiProvider.LATEST_VERSION );
+            String pageText = m_engine.getPageManager().getPureText(page.getName(), WikiProvider.LATEST_VERSION );
 
             String title = "";
             int firstLine = pageText.indexOf('\n');

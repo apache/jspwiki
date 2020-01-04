@@ -18,10 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
@@ -35,6 +31,10 @@ import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *  Provides a table of contents.
@@ -214,17 +214,16 @@ public class TableOfContents
             m_lastLevel = Heading.HEADING_LARGE;
         }
 
-        try
-        {
-            String wikiText = engine.getPureText( page );
-            boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, WikiEngine.PROP_RUNFILTERS, "true" ) );
+        try {
+            String wikiText = engine.getPageManager().getPureText( page );
+            final boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, WikiEngine.PROP_RUNFILTERS, "true" ) );
 
             if( runFilters ) {
 				try {
-					FilterManager fm = engine.getFilterManager();
+					final FilterManager fm = engine.getFilterManager();
 					wikiText = fm.doPreTranslateFiltering(context, wikiText);
 
-				} catch (Exception e) {
+				} catch( final Exception e ) {
 					log.error("Could not construct table of contents: Filter Error", e);
 					throw new PluginException("Unable to construct table of contents (see logs)");
 				}
@@ -232,14 +231,12 @@ public class TableOfContents
 
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
 
-            MarkupParser parser = engine.getRenderingManager().getParser( context, wikiText );
+            final MarkupParser parser = engine.getRenderingManager().getParser( context, wikiText );
             parser.addHeadingListener( this );
             parser.parse();
 
-            sb.append( "<ul>\n"+m_buf.toString()+"</ul>\n" );
-        }
-        catch( IOException e )
-        {
+            sb.append( "<ul>\n" ).append( m_buf.toString() ).append( "</ul>\n" );
+        } catch( final IOException e ) {
             log.error("Could not construct table of contents", e);
             throw new PluginException("Unable to construct table of contents (see logs)");
         }

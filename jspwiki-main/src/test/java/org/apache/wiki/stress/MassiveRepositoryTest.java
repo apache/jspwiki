@@ -134,7 +134,7 @@ public class MassiveRepositoryTest {
         {
             String page = getName( random.nextInt( numPages ) );
             
-            String content = engine.getPureText( page, WikiProvider.LATEST_VERSION );
+            String content = engine.getPageManager().getPureText( page, WikiProvider.LATEST_VERSION );
             
             content = TextUtil.replaceString( content, "X", "XX" );
             

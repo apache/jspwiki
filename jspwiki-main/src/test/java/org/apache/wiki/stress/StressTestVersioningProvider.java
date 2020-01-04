@@ -106,7 +106,7 @@ public class StressTestVersioningProvider {
         mark.start();
 
         for( WikiPage page : pages ) {
-            String foo = engine.getPureText( page );
+            String foo = engine.getPageManager().getPureText( page );
             Assertions.assertNotNull( foo );
         }
         mark.stop();

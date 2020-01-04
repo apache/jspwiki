@@ -172,7 +172,7 @@ public class IfPlugin implements WikiPlugin
         include |= checkIP(context, ip);
 
         if( page != null ) {
-            final String content = context.getEngine().getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            final String content = context.getEngine().getPageManager().getPureText(page, WikiProvider.LATEST_VERSION).trim();
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkExists(context,page,exists);

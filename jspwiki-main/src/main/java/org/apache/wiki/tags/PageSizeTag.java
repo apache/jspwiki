@@ -18,47 +18,39 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import java.io.IOException;
 
 /**
  *  Returns the currently requested page or attachment size.
  *
  *  @since 2.0
  */
-public class PageSizeTag
-    extends WikiTagBase
-{
+public class PageSizeTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( PageSizeTag.class );
     
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage page = m_wikiContext.getPage();
 
-        try
-        {
-            if( page != null )
-            {
+        try {
+            if( page != null ) {
                 long size = page.getSize();
 
-                if( size == -1 && engine.pageExists(page) ) // should never happen with attachments
-                {
-                    size = engine.getPureText( page.getName(), page.getVersion() ).length();
+                if( size == -1 && engine.pageExists(page) ) { // should never happen with attachments
+                    size = engine.getPageManager().getPureText( page.getName(), page.getVersion() ).length();
                     page.setSize( size );
                 }
 
                 pageContext.getOut().write( Long.toString(size) );
             }
-        }
-        catch( ProviderException e )
-        {
+        } catch( final ProviderException e ) {
             log.warn("Providers did not work: ",e);
             pageContext.getOut().write("Error determining page size: "+e.getMessage());
         }

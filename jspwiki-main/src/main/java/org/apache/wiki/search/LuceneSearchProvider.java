@@ -478,7 +478,7 @@ public class LuceneSearchProvider implements SearchProvider {
             if( page instanceof Attachment ) {
                 text = getAttachmentContent( (Attachment) page );
             } else {
-                text = m_engine.getPureText( page );
+                text = m_engine.getPageManager().getPureText( page );
             }
 
             if( text != null ) {

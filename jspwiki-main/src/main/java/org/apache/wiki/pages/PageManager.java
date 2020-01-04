@@ -56,9 +56,8 @@ public interface PageManager extends WikiEventListener {
     Collection< WikiPage > getAllPages() throws ProviderException;
 
     /**
-     * Fetches the page text from the repository.  This method also does some sanity checks,
-     * like checking for the pageName validity, etc.  Also, if the page repository has been
-     * modified externally, it is smart enough to handle such occurrences.
+     * Fetches the page text from the repository.  This method also does some sanity checks, like checking for the pageName validity, etc.
+     * Also, if the page repository has been modified externally, it is smart enough to handle such occurrences.
      *
      * @param pageName The name of the page to fetch.
      * @param version  The version to find
@@ -66,6 +65,36 @@ public interface PageManager extends WikiEventListener {
      * @throws ProviderException If the backend has issues.
      */
     String getPageText( String pageName, int version ) throws ProviderException;
+
+    /**
+     *  Returns the pure text of a page, no conversions.  Use this if you are writing something that depends on the parsing
+     *  of the page. Note that you should always check for page existence through pageExists() before attempting to fetch
+     *  the page contents.
+     *
+     *  This method is pretty similar to {@link #getPageText(String, int)}, except that it doesn't throw {@link ProviderException},
+     *  it logs and swallows them.
+     *
+     *  @param page The name of the page to fetch.
+     *  @param version If WikiPageProvider.LATEST_VERSION, then uses the latest version.
+     *  @return The page contents.  If the page does not exist, returns an empty string.
+     */
+    String getPureText( String page, int version );
+
+    /**
+     *  Returns the pure text of a page, no conversions.  Use this if you are writing something that depends on the parsing
+     *  the page. Note that you should always check for page existence through pageExists() before attempting to fetch
+     *  the page contents.
+     *
+     *  This method is pretty similar to {@link #getPageText(String, int)}, except that it doesn't throw {@link ProviderException},
+     *  it logs and swallows them.
+     *
+     *  @param page A handle to the WikiPage
+     *  @return String of WikiText.
+     *  @since 2.1.13, moved to PageManager on 2.11.0.
+     */
+    default String getPureText( final WikiPage page ) {
+        return getPureText( page.getName(), page.getVersion() );
+    }
 
     /**
      * Returns the WikiEngine to which this PageManager belongs to.

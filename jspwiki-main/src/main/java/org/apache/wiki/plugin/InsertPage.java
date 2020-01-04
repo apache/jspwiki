@@ -183,17 +183,13 @@ public class InsertPage
                 WikiContext includedContext = (WikiContext) context.clone();
                 includedContext.setPage( page );
 
-                String pageData = engine.getPureText( page );
+                String pageData = engine.getPageManager().getPureText( page );
                 String moreLink = "";
 
-                if( section != -1 )
-                {
-                    try
-                    {
+                if( section != -1 ) {
+                    try {
                         pageData = TextUtil.getSection( pageData, section );
-                    }
-                    catch( IllegalArgumentException e )
-                    {
+                    } catch( final IllegalArgumentException e ) {
                         throw new PluginException( e.getMessage() );
                     }
                 }

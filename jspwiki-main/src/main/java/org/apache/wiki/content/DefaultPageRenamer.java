@@ -110,7 +110,7 @@ public class DefaultPageRenamer implements PageRenamer {
         }
         toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
-        engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
+        engine.getPageManager().putPageText( toPage, engine.getPageManager().getPureText( toPage ) );
 
         //  Update the references
         engine.getReferenceManager().pageRemoved( fromPage );
@@ -173,7 +173,7 @@ public class DefaultPageRenamer implements PageRenamer {
             
             final WikiPage p = engine.getPageManager().getPage( pageName );
 
-            final String sourceText = engine.getPureText( p );
+            final String sourceText = engine.getPageManager().getPureText( p );
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
 
             m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, m_camelCase );

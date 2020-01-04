@@ -501,7 +501,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @param page wiki page for which references should be updated
      */
     public void updateReferences( final WikiPage page ) {
-        final String pageData = m_engine.getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+        final String pageData = m_engine.getPageManager().getPureText( page.getName(), WikiProvider.LATEST_VERSION );
         updateReferences( page.getName(), scanWikiLinks( page, pageData ) );
     }
 

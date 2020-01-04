@@ -139,7 +139,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getProvider()
      */
     @Override
@@ -147,7 +148,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return m_provider;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getAllPages()
      */
     @Override
@@ -155,18 +157,19 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         return m_provider.getAllPages();
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPageText(java.lang.String, int)
      */
     @Override
-    public String getPageText( final String pageName, final int version) throws ProviderException {
+    public String getPageText( final String pageName, final int version ) throws ProviderException {
         if (pageName == null || pageName.length() == 0) {
-            throw new ProviderException("Illegal page name");
+            throw new ProviderException( "Illegal page name" );
         }
         String text;
 
         try {
-            text = m_provider.getPageText(pageName, version);
+            text = m_provider.getPageText( pageName, version );
         } catch ( final RepositoryModifiedException e ) {
             //  This only occurs with the latest version.
             LOG.info( "Repository has been modified externally while fetching page " + pageName );
@@ -180,6 +183,26 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         }
 
         return text;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#getPureText(String, int)
+     */
+    public String getPureText( final String page, final int version ) {
+        String result = null;
+
+        try {
+            result = getPageText( page, version );
+        } catch( final ProviderException e ) {
+            LOG.error( "ProviderException getPureText for page " + page + " [version " + version + "]", e );
+        } finally {
+            if( result == null ) {
+                result = "";
+            }
+        }
+
+        return result;
     }
 
     /**

@@ -109,7 +109,7 @@ public class RPCHandlerUTF8
         checkPermission( PagePermission.VIEW );
 
         Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
+        Vector<Hashtable<String, Object>> result = new Vector<>();
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
@@ -171,30 +171,16 @@ public class RPCHandlerUTF8
         return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
     }
 
-    public String getPage( String pagename )
-        throws XmlRpcException
-    {
-        pagename = parsePageCheckCondition( pagename );
-
-        String text = m_engine.getPureText( pagename, -1 );
-
-        return text;
+    public String getPage( final String pagename ) throws XmlRpcException {
+        return m_engine.getPageManager().getPureText( parsePageCheckCondition( pagename ), -1 );
     }
 
-    public String getPageVersion( String pagename, int version )
-        throws XmlRpcException
-    {
-        pagename = parsePageCheckCondition( pagename );
-
-        return m_engine.getPureText( pagename, version );
+    public String getPageVersion( final String pagename, final int version ) throws XmlRpcException {
+        return m_engine.getPageManager().getPureText( parsePageCheckCondition( pagename ), version );
     }
 
-    public String getPageHTML( String pagename )
-        throws XmlRpcException
-    {
-        pagename = parsePageCheckCondition( pagename );
-
-        return m_engine.getHTML( pagename );
+    public String getPageHTML( final String pagename ) throws XmlRpcException  {
+        return m_engine.getHTML( parsePageCheckCondition( pagename ) );
     }
 
     public String getPageHTMLVersion( String pagename, int version )
@@ -211,7 +197,7 @@ public class RPCHandlerUTF8
         pagename = parsePageCheckCondition( pagename );
 
         WikiPage page = m_engine.getPageManager().getPage( pagename );
-        String pagedata = m_engine.getPureText( page );
+        String pagedata = m_engine.getPageManager().getPureText( page );
 
         LinkCollector localCollector = new LinkCollector();
         LinkCollector extCollector   = new LinkCollector();
@@ -226,7 +212,7 @@ public class RPCHandlerUTF8
                              extCollector,
                              attCollector );
 
-        Vector<Hashtable<String, String>> result = new Vector<Hashtable<String, String>>();
+        Vector<Hashtable<String, String>> result = new Vector<>();
 
         // FIXME: Contains far too much common with RPCHandler.  Refactor!
 

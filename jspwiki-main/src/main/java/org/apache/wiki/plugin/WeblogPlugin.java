@@ -450,13 +450,9 @@ public class WeblogPlugin
         buffer.append("</div>\n");
     }
 
-    private int guessNumberOfComments( WikiEngine engine, String commentpage )
-        throws ProviderException
-    {
-        String pagedata = engine.getPureText( commentpage, WikiProvider.LATEST_VERSION );
-
-        if( pagedata == null || pagedata.trim().length() == 0 )
-        {
+    private int guessNumberOfComments( final WikiEngine engine, final String commentpage ) {
+        final String pagedata = engine.getPageManager().getPureText( commentpage, WikiProvider.LATEST_VERSION );
+        if( pagedata == null || pagedata.trim().length() == 0 ) {
             return 0;
         }
 

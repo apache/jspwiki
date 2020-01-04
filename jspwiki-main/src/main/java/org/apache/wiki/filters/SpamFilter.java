@@ -862,27 +862,26 @@ public class SpamFilter extends BasicPageFilter {
      *  @param newText
      *  @return Empty string, if there is no change.
      */
-    private static Change getChange( WikiContext context, String newText ) {
-        WikiPage page = context.getPage();
-        StringBuffer change = new StringBuffer();
-        WikiEngine engine = context.getEngine();
+    private static Change getChange( final WikiContext context, final String newText ) {
+        final WikiPage page = context.getPage();
+        final StringBuffer change = new StringBuffer();
+        final WikiEngine engine = context.getEngine();
         // Get current page version
 
-        Change ch = new Change();
+        final Change ch = new Change();
         
         try {
-            String oldText = engine.getPureText( page.getName(), WikiProvider.LATEST_VERSION );
-
-            String[] first  = Diff.stringToArray( oldText );
-            String[] second = Diff.stringToArray( newText );
-            Revision rev = Diff.diff( first, second, new MyersDiff() );
+            final String oldText = engine.getPageManager().getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+            final String[] first  = Diff.stringToArray( oldText );
+            final String[] second = Diff.stringToArray( newText );
+            final Revision rev = Diff.diff( first, second, new MyersDiff() );
 
             if( rev == null || rev.size() == 0 ) {
                 return ch;
             }
             
             for( int i = 0; i < rev.size(); i++ ) {
-                Delta d = rev.getDelta( i );
+                final Delta d = rev.getDelta( i );
 
                 if( d instanceof AddDelta ) {
                     d.getRevised().toString( change, "", "\r\n" );
@@ -896,14 +895,14 @@ public class SpamFilter extends BasicPageFilter {
                     ch.m_removals++;
                 }
             }
-        } catch( DifferentiationFailedException e ) {
+        } catch( final DifferentiationFailedException e ) {
             log.error( "Diff failed", e );
         }
 
         //
         //  Don't forget to include the change note, too
         //
-        String changeNote = ( String )page.getAttribute( WikiPage.CHANGENOTE );
+        final String changeNote = ( String )page.getAttribute( WikiPage.CHANGENOTE );
 
         if( changeNote != null ) {
             change.append( "\r\n" );

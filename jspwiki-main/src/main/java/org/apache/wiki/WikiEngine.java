@@ -1198,9 +1198,8 @@ public class WikiEngine  {
      * @param version  Version of the page to fetch
      * @return WikiText.
      */
-    public String getText( String page, int version )
-    {
-        String result = getPureText( page, version );
+    public String getText( final String page, final int version ) {
+        final String result = getPageManager().getPureText( page, version );
 
         //
         //  Replace ampersand first, or else all quotes and stuff
@@ -1210,9 +1209,7 @@ public class WikiEngine  {
         result = TextUtil.replaceString( result, "&", "&amp;" );
         */
 
-        result = TextUtil.replaceEntities( result );
-
-        return result;
+        return TextUtil.replaceEntities( result );
     }
 
     /**
@@ -1229,63 +1226,11 @@ public class WikiEngine  {
      *  @param context The WikiContext
      *  @param page    A page reference (not an attachment)
      *  @return The page content as HTMLized String.
-     *  @see   #getPureText(WikiPage)
+     *  @see PageManager#getPureText(WikiPage)
      */
-    public String getText( WikiContext context, WikiPage page )
+    public String getText( final WikiContext context, final WikiPage page )
     {
         return getText( page.getName(), page.getVersion() );
-    }
-
-
-    /**
-     *  Returns the pure text of a page, no conversions.  Use this
-     *  if you are writing something that depends on the parsing
-     *  of the page.  Note that you should always check for page
-     *  existence through pageExists() before attempting to fetch
-     *  the page contents.
-     *
-     *  @param page    The name of the page to fetch.
-     *  @param version If WikiPageProvider.LATEST_VERSION, then uses the
-     *  latest version.
-     *  @return The page contents.  If the page does not exist,
-     *          returns an empty string.
-     */
-    // FIXME: Should throw an exception on unknown page/version?
-    public String getPureText( String page, int version )
-    {
-        String result = null;
-
-        try
-        {
-            result = m_pageManager.getPageText( page, version );
-        }
-        catch( ProviderException e )
-        {
-            // FIXME
-        }
-        finally
-        {
-            if( result == null )
-                result = "";
-        }
-
-        return result;
-    }
-
-    /**
-     *  Returns the pure text of a page, no conversions.  Use this
-     *  if you are writing something that depends on the parsing
-     *  the page. Note that you should always check for page
-     *  existence through pageExists() before attempting to fetch
-     *  the page contents.
-     *
-     *  @param page A handle to the WikiPage
-     *  @return String of WikiText.
-     *  @since 2.1.13.
-     */
-    public String getPureText( final WikiPage page )
-    {
-        return getPureText( page.getName(), page.getVersion() );
     }
 
     /**
@@ -1297,7 +1242,7 @@ public class WikiEngine  {
      *  @return HTML-rendered version of the page.
      */
     public String getHTML( final WikiContext context, final WikiPage page ) {
-        final String pagedata = getPureText( page.getName(), page.getVersion() );
+        final String pagedata = getPageManager().getPureText( page.getName(), page.getVersion() );
         return textToHTML( context, pagedata );
     }
 
@@ -1500,7 +1445,7 @@ public class WikiEngine  {
     public void saveText( WikiContext context, String text ) throws WikiException {
         // Check if page data actually changed; bail if not
         WikiPage page = context.getPage();
-        String oldText = getPureText( page );
+        String oldText = getPageManager().getPureText( page );
         String proposedText = TextUtil.normalizePostData( text );
         if ( oldText != null && oldText.equals( proposedText ) ) {
             return;
