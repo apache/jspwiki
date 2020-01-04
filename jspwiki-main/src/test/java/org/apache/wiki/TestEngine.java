@@ -125,7 +125,7 @@ public class TestEngine extends WikiEngine
     public static TestEngine build( final Properties props ) {
         try {
             return new TestEngine( props );
-        } catch(  WikiException we ) {
+        } catch( final WikiException we ) {
             throw new UnsupportedOperationException( "Unable to build TestEngine: " + we.getMessage(), we );
         }
     }
@@ -421,16 +421,28 @@ public class TestEngine extends WikiEngine
     }
 
     private static String cleanNewDirFrom( final String pageDir, final long millis ) {
+        final String testEngineCreationOrigin = getTestEngineCreationOrigin();
         if( StringUtils.isBlank( pageDir ) ) {
-            return "";
+            return "target/" + millis + "-" + testEngineCreationOrigin;
         }
         if( pageDir.lastIndexOf( '/' ) == -1 ) {
-            return "target/" + millis + "-" + pageDir;
+            return "target/" + millis + "-" + testEngineCreationOrigin + "-" + pageDir;
         }
         final String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
         return pageDir.substring( 0, pageDir.lastIndexOf( '/' ) + 1 )
-             + millis // place all related tests' folders one next to the others
-             + stripNumbers.replaceAll( "\\d", StringUtils.EMPTY );
+             + millis
+             + "-" + testEngineCreationOrigin
+             + stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ); // place all related tests' folders one next to the others
+    }
+
+    private static String getTestEngineCreationOrigin() {
+        for( final StackTraceElement trace : Thread.currentThread().getStackTrace() ) {
+            if( !( trace.getClassName().contains( TestEngine.class.getSimpleName() ) ||
+                   trace.getClassName().contains( Thread.class.getSimpleName() ) ) ) {
+                return trace.getClassName() + "-" + trace.getMethodName();
+            }
+        }
+        return "Unable to locate TestEngine creation";
     }
 
 }
