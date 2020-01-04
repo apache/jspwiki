@@ -83,7 +83,7 @@ public class ReferringPagesPlugin
             pageName = context.getPage().getName();
         }
 
-        WikiPage page = context.getEngine().getPage( pageName );
+        WikiPage page = context.getEngine().getPageManager().getPage( pageName );
 
         if( page != null )
         {

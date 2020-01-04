@@ -52,7 +52,7 @@
           <%--<wiki:PageVersion/>--%>
           <select id="version" name="version" onchange="this.form.submit();" >
 <% 
-   int latestVersion = c.getEngine().getPage( pagename, WikiProvider.LATEST_VERSION ).getVersion();
+   int latestVersion = c.getEngine().getPageManager().getPage( pagename, WikiProvider.LATEST_VERSION ).getVersion();
    int thisVersion = p.getVersion();
 
    if( thisVersion == WikiProvider.LATEST_VERSION ) thisVersion = latestVersion; //should not happen

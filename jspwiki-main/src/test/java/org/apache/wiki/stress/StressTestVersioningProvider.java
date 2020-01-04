@@ -18,32 +18,22 @@
  */
 package org.apache.wiki.stress;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.Properties;
 
 
-public class StressTestVersioningProvider 
-{
+public class StressTestVersioningProvider {
     public static final String NAME1 = "Test1";
 
     Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
-
-    TestEngine engine;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        engine = new TestEngine(props);
-    }
+    TestEngine engine = TestEngine.build( props );
 
     @AfterEach
     public void tearDown()
@@ -77,7 +67,7 @@ public class StressTestVersioningProvider
         mark.stop();
 
         System.out.println("Benchmark: "+mark.toString(2000)+" pages/second");
-        WikiPage pageinfo = engine.getPage( NAME1 );
+        WikiPage pageinfo = engine.getPageManager().getPage( NAME1 );
 
         Assertions.assertEquals( maxver, pageinfo.getVersion(), "wrong version" );
 

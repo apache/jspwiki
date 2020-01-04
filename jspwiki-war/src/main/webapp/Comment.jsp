@@ -87,7 +87,7 @@
     String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
 
     WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPage( pagereq );
+    WikiPage latestversion = wiki.getPageManager().getPage( pagereq );
 
     session.removeAttribute( EditorManager.REQ_EDITEDTEXT );
 

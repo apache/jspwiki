@@ -701,14 +701,13 @@ public class SpamFilter extends BasicPageFilter {
             String remote = HttpUtil.getRemoteAddress(req);
             long now = System.currentTimeMillis();
 
-            for( Iterator< Host > i = m_temporaryBanList.iterator(); i.hasNext(); ) {
-                Host host = i.next();
-
+            for( Host host : m_temporaryBanList ) {
                 if( host.getAddress().equals( remote ) ) {
                     long timeleft = ( host.getReleaseTime() - now ) / 1000L;
 
                     log( context, REJECT, REASON_IP_BANNED_TEMPORARILY, change.m_change );
-                    checkStrategy( context, REASON_IP_BANNED_TEMPORARILY, "You have been temporarily banned from modifying this wiki. (" + timeleft + " seconds of ban left)" );
+                    checkStrategy( context, REASON_IP_BANNED_TEMPORARILY,
+                            "You have been temporarily banned from modifying this wiki. (" + timeleft + " seconds of ban left)" );
                 }
             }
         }
@@ -717,9 +716,9 @@ public class SpamFilter extends BasicPageFilter {
     /**
      *  If the spam filter notices changes in the black list page, it will refresh them automatically.
      *
-     *  @param context
+     *  @param context associated WikiContext
      */
-    private void refreshBlacklists( WikiContext context ) {
+    private void refreshBlacklists( final WikiContext context ) {
         try {
 
             boolean rebuild = false;
@@ -727,21 +726,21 @@ public class SpamFilter extends BasicPageFilter {
             //
             //  Rebuild, if the spam words page, the attachment or the IP ban page has changed since.
             //
-            WikiPage sourceSpam = context.getEngine().getPage( m_forbiddenWordsPage );
+            final WikiPage sourceSpam = context.getEngine().getPageManager().getPage( m_forbiddenWordsPage );
             if( sourceSpam != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || sourceSpam.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
                 }
             }
 
-            Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
+            final Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
             if( att != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || att.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
                 }
             }
 
-            WikiPage sourceIPs = context.getEngine().getPage( m_forbiddenIPsPage );
+            final WikiPage sourceIPs = context.getEngine().getPageManager().getPage( m_forbiddenIPsPage );
             if( sourceIPs != null ) {
                 if( m_IPPatterns == null || m_IPPatterns.isEmpty() || sourceIPs.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
@@ -764,17 +763,17 @@ public class SpamFilter extends BasicPageFilter {
                 log.info( "IP filter reloaded - recognizing " + m_IPPatterns.size() + " patterns from page " + m_forbiddenIPsPage );
 
                 if( att != null ) {
-                    InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
-                    StringWriter out = new StringWriter();
-                    FileUtil.copyContents( new InputStreamReader( in,"UTF-8" ), out );
-                    Collection< Pattern > blackList = parseBlacklist( out.toString() );
+                    final InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
+                    final StringWriter out = new StringWriter();
+                    FileUtil.copyContents( new InputStreamReader( in, StandardCharsets.UTF_8 ), out );
+                    final Collection< Pattern > blackList = parseBlacklist( out.toString() );
                     log.info( "...recognizing additional " + blackList.size() + " patterns from blacklist " + m_blacklist );
                     m_spamPatterns.addAll( blackList );
                 }
             }
-        } catch( IOException ex ) {
+        } catch( final IOException ex ) {
             log.info( "Unable to read attachment data, continuing...", ex );
-        } catch( ProviderException ex ) {
+        } catch( final ProviderException ex ) {
             log.info( "Failed to read spam filter attachment, continuing...", ex );
         }
     }

@@ -318,7 +318,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
                 WikiPage page = null;
                 if( m_lastModified )
                 {
-                    page = m_engine.getPage( pageName );
+                    page = m_engine.getPageManager().getPage( pageName );
                     if( page != null )
                     {
                         Date lastModPage = page.getLastModified();

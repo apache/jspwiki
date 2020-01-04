@@ -144,7 +144,7 @@ public class UserManagerTest {
         m_engine.saveText( pageName, "Test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
 
         // 3a. Make sure the page got saved, and that ONLY our test user has permission to read it.
-        WikiPage p = m_engine.getPage( pageName );
+        WikiPage p = m_engine.getPageManager().getPage( pageName );
         Assertions.assertEquals( oldPageCount + 1, pageManager.getTotalPageCount() );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
@@ -179,7 +179,7 @@ public class UserManagerTest {
 
         // Test 3: our page should not contain the old wiki name OR login name
         // in the ACL any more (the full name is always used)
-        p = m_engine.getPage( pageName );
+        p = m_engine.getPageManager().getPage( pageName );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
@@ -204,7 +204,7 @@ public class UserManagerTest {
         // The test user should still be able to see the page (because the login name matches...)
         pageName = "TestPage2" + now;
         m_engine.saveText( pageName, "More test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
-        p = m_engine.getPage( pageName );
+        p = m_engine.getPageManager().getPage( pageName );
         Assertions.assertEquals( oldPageCount + 1, pageManager.getTotalPageCount() );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
@@ -238,7 +238,7 @@ public class UserManagerTest {
 
         // Test 7: our page should not contain the old wiki name OR login name
         // in the ACL any more (the full name is always used)
-        p = m_engine.getPage( pageName );
+        p = m_engine.getPageManager().getPage( pageName );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );

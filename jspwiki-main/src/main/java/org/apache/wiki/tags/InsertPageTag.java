@@ -18,14 +18,13 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 
 /**
  *  Renders WikiPage content.  For InsertPage tag and the InsertPage plugin
@@ -59,14 +58,13 @@ public class InsertPageTag extends WikiTagBase {
     protected String m_pageName = null;
     private   int    m_mode = HTML;
 
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_pageName = null;
         m_mode = HTML;
     }
 
-    public void setPage( String page )
+    public void setPage( final String page )
     {
         m_pageName = page;
     }
@@ -76,24 +74,17 @@ public class InsertPageTag extends WikiTagBase {
         return m_pageName;
     }
 
-    public void setMode( String arg )
-    {
-        if( "plain".equals(arg) )
-        {
+    public void setMode( final String arg ) {
+        if( "plain".equals( arg ) ) {
             m_mode = PLAIN;
-        }
-        else
-        {
+        } else {
             m_mode = HTML;
         }
     }
 
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   insertedPage;
+    public final int doWikiStartTag() throws IOException, ProviderException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage insertedPage;
 
         //
         //  NB: The page might not really exist if the user is currently
@@ -101,29 +92,23 @@ public class InsertPageTag extends WikiTagBase {
         //      AND we got the page from the wikiContext.
         //
 
-        if( m_pageName == null )
-        {
+        if( m_pageName == null ) {
             insertedPage = m_wikiContext.getPage();
             if( !engine.pageExists(insertedPage) ) return SKIP_BODY;
-        }
-        else
-        {
-            insertedPage = engine.getPage( m_pageName );
+        } else {
+            insertedPage = engine.getPageManager().getPage( m_pageName );
         }
 
-        if( insertedPage != null )
-        {
+        if( insertedPage != null ) {
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
             log.debug("Inserting page "+insertedPage);
 
-            JspWriter out = pageContext.getOut();
-
-            WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
+            final JspWriter out = pageContext.getOut();
+            final WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
             
-            switch( m_mode )
-            {
+            switch( m_mode ) {
               case HTML:
                 out.print( engine.getHTML( m_wikiContext, insertedPage ) );
                 break;

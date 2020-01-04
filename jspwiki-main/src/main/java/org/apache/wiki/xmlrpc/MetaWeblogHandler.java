@@ -18,13 +18,6 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import java.io.ByteArrayInputStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -40,6 +33,13 @@ import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.xmlrpc.XmlRpcException;
+
+import java.io.ByteArrayInputStream;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *  Provides handlers for all RPC routines of the MetaWeblog API.
@@ -122,7 +122,7 @@ public class MetaWeblogHandler
                                     String password )
         throws XmlRpcException
     {
-        WikiPage page = m_context.getEngine().getPage( blogid );
+        WikiPage page = m_context.getEngine().getPageManager().getPage( blogid );
 
         checkPermissions( page, username, password, "view" );
 
@@ -147,9 +147,9 @@ public class MetaWeblogHandler
      */
     private Hashtable<String,Object> makeEntry( WikiPage page )
     {
-        Hashtable<String, Object> ht = new Hashtable<String, Object>();
+        Hashtable<String, Object> ht = new Hashtable<>();
 
-        WikiPage firstVersion = m_context.getEngine().getPage( page.getName(), 1 );
+        WikiPage firstVersion = m_context.getEngine().getPageManager().getPage( page.getName(), 1 );
 
         ht.put("dateCreated", firstVersion.getLastModified());
         ht.put("link", getURL(page.getName()));
@@ -201,7 +201,7 @@ public class MetaWeblogHandler
 
         log.info( "metaWeblog.getRecentPosts() called");
 
-        WikiPage page = m_context.getEngine().getPage( blogid );
+        WikiPage page = m_context.getEngine().getPageManager().getPage( blogid );
 
         checkPermissions( page, username, password, "view" );
 
@@ -256,7 +256,7 @@ public class MetaWeblogHandler
         log.info("metaWeblog.newPost() called");
         WikiEngine engine = m_context.getEngine();
 
-        WikiPage page = engine.getPage( blogid );
+        WikiPage page = engine.getPageManager().getPage( blogid );
         checkPermissions( page, username, password, "createPages" );
 
         try
@@ -312,7 +312,7 @@ public class MetaWeblogHandler
 
         log.info("metaWeblog.newMediaObject() called");
 
-        WikiPage page = engine.getPage( blogid );
+        WikiPage page = engine.getPageManager().getPage( blogid );
         checkPermissions( page, username, password, "upload" );
 
         String name = (String) content.get( "name" );
@@ -357,7 +357,7 @@ public class MetaWeblogHandler
         log.info("metaWeblog.editPost("+postid+") called");
 
         // FIXME: Is postid correct?  Should we determine it from the page name?
-        WikiPage page = engine.getPage( postid );
+        WikiPage page = engine.getPageManager().getPage( postid );
         checkPermissions( page, username, password, "edit" );
 
         try
@@ -396,7 +396,7 @@ public class MetaWeblogHandler
     {
         String wikiname = "FIXME";
 
-        WikiPage page = m_context.getEngine().getPage( wikiname );
+        WikiPage page = m_context.getEngine().getPageManager().getPage( wikiname );
 
         checkPermissions( page, username, password, "view" );
 

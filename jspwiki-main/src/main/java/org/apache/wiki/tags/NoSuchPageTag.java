@@ -18,31 +18,29 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import java.io.IOException;
 
 /**
  *  Includes the body in case there is no such page available.
  *
  *  @since 2.0
  */
-public class NoSuchPageTag
-    extends WikiTagBase
-{
+public class NoSuchPageTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
     
     private String m_pageName;
 
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_pageName = null;
     }
 
-    public void setPage( String name )
+    public void setPage( final String name )
     {
         m_pageName = name;
     }
@@ -52,26 +50,17 @@ public class NoSuchPageTag
         return m_pageName;
     }
 
-    public int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
+    public int doWikiStartTag() throws IOException, ProviderException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage page;
 
-        if( m_pageName == null )
-        {
+        if( m_pageName == null ) {
             page = m_wikiContext.getPage();
-        }
-        else
-        {
-            page = engine.getPage( m_pageName );
+        } else {
+            page = engine.getPageManager().getPage( m_pageName );
         }
 
-        // System.out.println("Checking "+page);
-
-        if( page != null && engine.pageExists( page.getName(), page.getVersion() ) )
-        {
+        if( page != null && engine.pageExists( page.getName(), page.getVersion() ) ) {
             return SKIP_BODY;
         }
 

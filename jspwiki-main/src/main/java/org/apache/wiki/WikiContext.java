@@ -181,27 +181,19 @@ public class WikiContext implements Cloneable, Command {
 
     /**
      * <p>
-     * Creates a new WikiContext for the given WikiEngine, Command and
-     * HttpServletRequest.
+     * Creates a new WikiContext for the given WikiEngine, Command and HttpServletRequest.
      * </p>
      * <p>
-     * This constructor will also look up the HttpSession associated with the
-     * request, and determine if a WikiSession object is present. If not, a new
-     * one is created.
+     * This constructor will also look up the HttpSession associated with the request, and determine if a WikiSession object is present.
+     * If not, a new one is created.
      * </p>
      * @param engine The WikiEngine that is handling the request
-     * @param request The HttpServletRequest that should be associated with this
-     *            context. This parameter may be <code>null</code>.
+     * @param request The HttpServletRequest that should be associated with this context. This parameter may be <code>null</code>.
      * @param command the command
-     * @throws IllegalArgumentException if <code>engine</code> or
-     *             <code>command</code> are <code>null</code>
+     * @throws IllegalArgumentException if <code>engine</code> or <code>command</code> are <code>null</code>
      */
-    public WikiContext( WikiEngine engine, HttpServletRequest request, Command command )
-        throws IllegalArgumentException
-    {
-        super();
-        if ( engine == null || command == null )
-        {
+    public WikiContext( final WikiEngine engine, final HttpServletRequest request, final Command command ) throws IllegalArgumentException {
+        if ( engine == null || command == null ) {
             throw new IllegalArgumentException( "Parameter engine and command must not be null." );
         }
 
@@ -211,19 +203,16 @@ public class WikiContext implements Cloneable, Command {
         m_command = command;
 
         // If PageCommand, get the WikiPage
-        if( command instanceof PageCommand )
-        {
-            m_page = (WikiPage)((PageCommand)command).getTarget();
+        if( command instanceof PageCommand ) {
+            m_page = ( WikiPage )command.getTarget();
         }
 
         // If page not supplied, default to front page to avoid NPEs
-        if( m_page == null )
-        {
-            m_page = m_engine.getPage( m_engine.getFrontPage() );
+        if( m_page == null ) {
+            m_page = m_engine.getPageManager().getPage( m_engine.getFrontPage() );
 
             // Front page does not exist?
-            if( m_page == null )
-            {
+            if( m_page == null ) {
                 m_page = new WikiPage( m_engine, m_engine.getFrontPage() );
             }
         }
@@ -231,16 +220,14 @@ public class WikiContext implements Cloneable, Command {
         m_realPage = m_page;
 
         // Special case: retarget any empty 'view' PageCommands to the front page
-        if ( PageCommand.VIEW.equals( command ) && command.getTarget() == null )
-        {
+        if ( PageCommand.VIEW.equals( command ) && command.getTarget() == null ) {
             m_command = command.targetedCommand( m_page );
         }
 
         // Debugging...
-        if( log.isDebugEnabled() )
-        {
-            HttpSession session = ( request == null ) ? null : request.getSession( false );
-            String sid = ( session == null ) ? "(null)" : session.getId();
+        if( log.isDebugEnabled() ) {
+            final HttpSession session = ( request == null ) ? null : request.getSession( false );
+            final String sid = session == null ? "(null)" : session.getId();
             log.debug( "Creating WikiContext for session ID=" + sid + "; target=" + getName() );
         }
 

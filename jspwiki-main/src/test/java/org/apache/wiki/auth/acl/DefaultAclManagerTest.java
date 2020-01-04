@@ -29,49 +29,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
-import java.util.Properties;
 import java.util.regex.Matcher;
 
 public class DefaultAclManagerTest
 {
-    TestEngine m_engine;
+    TestEngine m_engine = TestEngine.build();
 
     @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        Properties props = TestEngine.getTestProperties();
-        m_engine = new TestEngine(props);
-
-        String text = "Foo";
-        m_engine.saveText( "TestDefaultPage", text );
-
-        text = "Bar. [{ALLOW edit Charlie, Herman}] ";
-        m_engine.saveText( "TestAclPage", text );
+    public void setUp() throws Exception {
+        m_engine.saveText( "TestDefaultPage", "Foo" );
+        m_engine.saveText( "TestAclPage", "Bar. [{ALLOW edit Charlie, Herman}] " );
     }
 
     @AfterEach
-    public void tearDown()
-    {
-        try
-        {
+    public void tearDown() {
+        try {
             m_engine.getPageManager().deletePage( "TestDefaultPage" );
             m_engine.getPageManager().deletePage( "TestAclPage" );
-        }
-        catch ( ProviderException e )
-        {
+        } catch ( final ProviderException e ) {
         }
     }
 
     @Test
     public void testGetPermissions()
     {
-        WikiPage page = m_engine.getPage( "TestDefaultPage" );
+        WikiPage page = m_engine.getPageManager().getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
         Assertions.assertNotNull( page.getAcl() );
         Assertions.assertTrue(page.getAcl().isEmpty());
 
-        page = m_engine.getPage( "TestAclPage" );
+        page = m_engine.getPageManager().getPage( "TestAclPage" );
         acl = m_engine.getAclManager().getPermissions( page );
         Assertions.assertNotNull( page.getAcl() );
         Assertions.assertFalse(page.getAcl().isEmpty());
@@ -172,7 +159,7 @@ public class DefaultAclManagerTest
     public void testPrintAcl()
     {
         // Verify that the printed Acl for the test page is OK
-        WikiPage page = m_engine.getPage( "TestAclPage" );
+        WikiPage page = m_engine.getPageManager().getPage( "TestAclPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
         String aclString = DefaultAclManager.printAcl( acl );
         Assertions.assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );

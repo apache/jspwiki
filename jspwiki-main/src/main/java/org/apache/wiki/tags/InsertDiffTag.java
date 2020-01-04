@@ -83,7 +83,7 @@ public class InsertDiffTag extends WikiTagBase {
             ctx = m_wikiContext;
         } else {
             ctx = ( WikiContext )m_wikiContext.clone();
-            ctx.setPage( engine.getPage(m_pageName) );
+            ctx.setPage( engine.getPageManager().getPage(m_pageName) );
         }
 
         final Integer vernew = ( Integer )pageContext.getAttribute( ATTR_NEWVERSION, PageContext.REQUEST_SCOPE );

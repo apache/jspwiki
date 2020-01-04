@@ -44,7 +44,7 @@
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
+  WikiPage firstPage = c.getEngine().getPageManager().getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();

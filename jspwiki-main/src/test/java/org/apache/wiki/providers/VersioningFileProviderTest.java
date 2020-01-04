@@ -27,7 +27,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -52,37 +51,23 @@ public class VersioningFileProviderTest
                 + "#Wed Jan 01 12:27:57 GMT 2012" + "\n"
                 + "author=" + OLD_AUTHOR + "\n";
 
-    // we always use the same properties for this suite, but
-    // they can be changed by our tests and also TestEngine,
-    // and so must be reloaded from source for each test case
-    private Properties PROPS = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
+    private Properties PROPS = TestEngine.getTestProperties( "/jspwiki-vers-custom.properties" );
+    private TestEngine engine = TestEngine.build( PROPS );
 
     // this is the testing page directory
-    private String files;
+    private String files = engine.getWikiProperties().getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
-    private TestEngine engine;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        // make sure that the reference manager cache is cleaned first
-        TestEngine.emptyWorkDir(null);
-
-        engine = new TestEngine(PROPS);
-        files = engine.getWikiProperties().getProperty( AbstractFileProvider.PROP_PAGEDIR );
-    }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         // Remove all/any files and subdirs left in test page directory
         TestEngine.deleteAll( new File(files) );
 
-        // jspwiki always uses a singleton CacheManager, so
-        // clear the cache at the end of every test case to avoid
-        // polluting another test case
+        // clear the cache at the end of every test case to avoid polluting another test case
         CacheManager.getInstance().removeAllCaches();
+
+        // make sure that the reference manager cache is cleaned first
+        TestEngine.emptyWorkDir(null);
     }
 
     /*
@@ -104,7 +89,7 @@ public class VersioningFileProviderTest
         String res = engine.getText( NAME1 );
         Assertions.assertEquals( fakeWikiPage, res, "fetch latest should work" );
 
-        WikiPage page = engine.getPage( NAME1, 1 );
+        WikiPage page = engine.getPageManager().getPage( NAME1, 1 );
         Assertions.assertEquals( 1, page.getVersion(), "original version expected" );
         Assertions.assertEquals( OLD_AUTHOR, page.getAuthor(), "original author" );
     }
@@ -128,7 +113,7 @@ public class VersioningFileProviderTest
         res = engine.getText( NAME1, 1 ); // Should be the first version.
         Assertions.assertEquals( "foobar", res, "fetch by direct version did not work" );
 
-        WikiPage page = engine.getPage( NAME1 );
+        WikiPage page = engine.getPageManager().getPage( NAME1 );
         Assertions.assertEquals( 1, page.getVersion(), "original version expected" );
         Assertions.assertNull( page.getAuthor(), "original author not expected" );
     }
@@ -156,7 +141,7 @@ public class VersioningFileProviderTest
         res = engine.getText( NAME1, 1 ); // Should be the first version.
         Assertions.assertEquals( fakeWikiPage, res, "fetch by direct version did not work" );
 
-        WikiPage page = engine.getPage( NAME1, 1 );
+        WikiPage page = engine.getPageManager().getPage( NAME1, 1 );
         Assertions.assertEquals( 1, page.getVersion(), "original version expected" );
         Assertions.assertEquals( OLD_AUTHOR, page.getAuthor(), "original author" );
     }
@@ -201,11 +186,11 @@ public class VersioningFileProviderTest
         String result4 = engine.getText( NAME1, 1 );
         Assertions.assertEquals( fakeWikiPage, result4, "fetch original by version Assertions.failed" );
 
-        WikiPage pageNew = engine.getPage( NAME1, 2 );
+        WikiPage pageNew = engine.getPageManager().getPage( NAME1, 2 );
         Assertions.assertEquals( 2, pageNew.getVersion(), "new version" );
         Assertions.assertEquals( "Guest", pageNew.getAuthor(), "new author" );
 
-        WikiPage pageOld = engine.getPage( NAME1, 1 );
+        WikiPage pageOld = engine.getPageManager().getPage( NAME1, 1 );
         Assertions.assertEquals( 1, pageOld.getVersion(), "old version" );
         Assertions.assertEquals( OLD_AUTHOR, pageOld.getAuthor(), "old author" );
     }
@@ -253,15 +238,15 @@ public class VersioningFileProviderTest
         String result4 = engine.getText( NAME1, 2 );
         Assertions.assertEquals( text2, result4, "fetch original by version Assertions.failed" );
 
-        WikiPage pageNew = engine.getPage( NAME1 );
+        WikiPage pageNew = engine.getPageManager().getPage( NAME1 );
         Assertions.assertEquals( 3, pageNew.getVersion(), "newest version" );
         Assertions.assertEquals( pageNew.getAuthor(), "Guest", "newest author" );
 
-        WikiPage pageMiddle = engine.getPage( NAME1, 2 );
+        WikiPage pageMiddle = engine.getPageManager().getPage( NAME1, 2 );
         Assertions.assertEquals( 2, pageMiddle.getVersion(), "middle version" );
         Assertions.assertEquals( Users.JANNE, pageMiddle.getAuthor(), "middle author" );
 
-        WikiPage pageOld = engine.getPage( NAME1, 1 );
+        WikiPage pageOld = engine.getPageManager().getPage( NAME1, 1 );
         Assertions.assertEquals( 1, pageOld.getVersion(), "old version" );
         Assertions.assertEquals( OLD_AUTHOR, pageOld.getAuthor(), "old author" );
     }
@@ -320,15 +305,15 @@ public class VersioningFileProviderTest
         String result4 = engine.getText( NAME1, 2 );
         Assertions.assertEquals( text2, result4, "fetch original by version Assertions.failed" );
 
-        WikiPage pageNew = engine.getPage( NAME1 );
+        WikiPage pageNew = engine.getPageManager().getPage( NAME1 );
         Assertions.assertEquals( 3, pageNew.getVersion(), "newest version" );
         Assertions.assertEquals( "Guest", pageNew.getAuthor(), "newest author" );
 
-        WikiPage pageMiddle = engine.getPage( NAME1, 2 );
+        WikiPage pageMiddle = engine.getPageManager().getPage( NAME1, 2 );
         Assertions.assertEquals( 2, pageMiddle.getVersion(), "middle version" );
         Assertions.assertEquals( Users.JANNE, pageMiddle.getAuthor(), "middle author" );
 
-        WikiPage pageOld = engine.getPage( NAME1, 1 );
+        WikiPage pageOld = engine.getPageManager().getPage( NAME1, 1 );
         Assertions.assertEquals( 1, pageOld.getVersion(), "old version" );
         Assertions.assertEquals( OLD_AUTHOR, pageOld.getAuthor(), "old author" );
     }
@@ -347,7 +332,7 @@ public class VersioningFileProviderTest
             engine.saveText( name, text );
         }
 
-        WikiPage pageinfo = engine.getPage( NAME1 );
+        WikiPage pageinfo = engine.getPageManager().getPage( NAME1 );
 
         Assertions.assertEquals( maxver, pageinfo.getVersion(), "wrong version" );
 
@@ -376,7 +361,7 @@ public class VersioningFileProviderTest
 
         engine.saveText( NAME1, text );
 
-        WikiPage page = engine.getPage( NAME1, 1 );
+        WikiPage page = engine.getPageManager().getPage( NAME1, 1 );
 
         Assertions.assertEquals( NAME1, page.getName(), "name" );
         Assertions.assertEquals( 1, page.getVersion(), "version" );
@@ -390,7 +375,7 @@ public class VersioningFileProviderTest
 
         engine.saveText( NAME1, text );
 
-        WikiPage res = engine.getPage(NAME1);
+        WikiPage res = engine.getPageManager().getPage(NAME1);
 
         Assertions.assertEquals( 1, res.getVersion() );
     }
@@ -407,7 +392,7 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text2 );
         engine.saveText( NAME1, text3 );
 
-        WikiPage res = engine.getPage(NAME1);
+        WikiPage res = engine.getPageManager().getPage(NAME1);
 
         Assertions.assertEquals( 3, res.getVersion(), "wrong version" );
 
@@ -428,13 +413,13 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text2 );
         engine.saveText( NAME1, text3 );
 
-        WikiPage res = engine.getPage(NAME1);
+        WikiPage res = engine.getPageManager().getPage(NAME1);
 
         Assertions.assertEquals( 3, res.getVersion(), "wrong version" );
 
-        Assertions.assertEquals( 1, engine.getPage( NAME1, 1 ).getVersion(), "ver1" );
-        Assertions.assertEquals( 2, engine.getPage( NAME1, 2 ).getVersion(), "ver2" );
-        Assertions.assertEquals( 3, engine.getPage( NAME1, 3 ).getVersion(), "ver3" );
+        Assertions.assertEquals( 1, engine.getPageManager().getPage( NAME1, 1 ).getVersion(), "ver1" );
+        Assertions.assertEquals( 2, engine.getPageManager().getPage( NAME1, 2 ).getVersion(), "ver2" );
+        Assertions.assertEquals( 3, engine.getPageManager().getPage( NAME1, 3 ).getVersion(), "ver3" );
 }
 
     /**
@@ -452,7 +437,7 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text2 );
         engine.saveText( NAME1, text3 );
 
-        WikiPage res = engine.getPage(NAME1);
+        WikiPage res = engine.getPageManager().getPage(NAME1);
 
         Assertions.assertEquals( 3, res.getVersion(), "wrong version" );
 
@@ -464,7 +449,7 @@ public class VersioningFileProviderTest
     @Test
     public void testNonexistentPage()
     {
-        Assertions.assertNull( engine.getPage("fjewifjeiw") );
+        Assertions.assertNull( engine.getPageManager().getPage("fjewifjeiw") );
     }
 
     @Test
@@ -546,7 +531,7 @@ public class VersioningFileProviderTest
 
         engine.saveText( context, "test" );
 
-        WikiPage p2 = engine.getPage( NAME1 );
+        WikiPage p2 = engine.getPageManager().getPage( NAME1 );
 
         Assertions.assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
     }
@@ -566,11 +551,11 @@ public class VersioningFileProviderTest
         context.getPage().setAttribute(WikiPage.CHANGENOTE, "Change 2" );
         engine.saveText( context, "test2" );
 
-        WikiPage p2 = engine.getPage( NAME1, 1 );
+        WikiPage p2 = engine.getPageManager().getPage( NAME1, 1 );
 
         Assertions.assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
 
-        WikiPage p3 = engine.getPage( NAME1, 2 );
+        WikiPage p3 = engine.getPageManager().getPage( NAME1, 2 );
 
         Assertions.assertEquals( "Change 2", p3.getAttribute(WikiPage.CHANGENOTE) );
     }
@@ -588,7 +573,7 @@ public class VersioningFileProviderTest
 
         for( int i = 0; i < 5; i++ )
         {
-            WikiPage p2 = (WikiPage)engine.getPage( NAME1 ).clone();
+            WikiPage p2 = (WikiPage)engine.getPageManager().getPage( NAME1 ).clone();
             p2.removeAttribute(WikiPage.CHANGENOTE);
 
             context.setPage( p2 );
@@ -596,7 +581,7 @@ public class VersioningFileProviderTest
             engine.saveText( context, "test"+i );
         }
 
-        WikiPage p3 = engine.getPage( NAME1, -1 );
+        WikiPage p3 = engine.getPageManager().getPage( NAME1, -1 );
 
         Assertions.assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
     }

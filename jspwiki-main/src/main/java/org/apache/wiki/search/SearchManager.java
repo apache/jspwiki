@@ -314,10 +314,10 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      * @throws ProviderException If the provider fails and a search cannot be completed.
      * @throws IOException If something else goes wrong.
      */
-    public Collection< SearchResult > findPages( String query, WikiContext wikiContext )
-        throws ProviderException, IOException
-    {
-        if( query == null ) query = "";
+    public Collection< SearchResult > findPages( String query, final WikiContext wikiContext ) throws ProviderException, IOException {
+        if( query == null ) {
+            query = "";
+        }
         return m_searchProvider.findPages( query, wikiContext );
     }
 
@@ -325,7 +325,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *  Removes the page from the search cache (if any).
      *  @param page  The page to remove
      */
-    public void pageRemoved(WikiPage page)
+    public void pageRemoved( final WikiPage page )
     {
         m_searchProvider.pageRemoved(page);
     }
@@ -337,13 +337,9 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *  @param content {@inheritDoc}
      */
     @Override
-    public void postSave( WikiContext wikiContext, String content )
-    {
-        //
-        //  Makes sure that we're indexing the latest version of this
-        //  page.
-        //
-        WikiPage p = m_engine.getPage( wikiContext.getPage().getName() );
+    public void postSave( final WikiContext wikiContext, final String content ) {
+        //  Makes sure that we're indexing the latest version of this page.
+        final WikiPage p = m_engine.getPageManager().getPage( wikiContext.getPage().getName() );
         reindexPage( p );
     }
 
@@ -352,9 +348,9 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *
      *   @param page The page.
      */
-    public void reindexPage(WikiPage page)
+    public void reindexPage( final WikiPage page )
     {
-        m_searchProvider.reindexPage(page);
+        m_searchProvider.reindexPage( page );
     }
 
     /**
@@ -363,15 +359,12 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *  @param event {@inheritDoc}
      */
     @Override
-    public void actionPerformed(WikiEvent event)
-    {
-        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )
-        {
-            String pageName = ((WikiPageEvent) event).getPageName();
+    public void actionPerformed( final WikiEvent event ) {
+        if( event instanceof WikiPageEvent && event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST ) {
+            final String pageName = ( ( WikiPageEvent ) event ).getPageName();
 
-            WikiPage p = m_engine.getPage( pageName );
-            if( p != null )
-            {
+            final WikiPage p = m_engine.getPageManager().getPage( pageName );
+            if( p != null ) {
                 pageRemoved( p );
             }
         }

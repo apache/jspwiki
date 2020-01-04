@@ -18,12 +18,7 @@
  */
 package org.apache.wiki.render;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -37,7 +32,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 public class MarkdownRendererTest {
@@ -106,14 +105,14 @@ public class MarkdownRendererTest {
         Assertions.assertEquals( "<p> This should be visible if the ACL allows you to see it</p>\n", translate( src ) );
         // in any case, we also check that the created wikipage has the ACL added
         Assertions.assertEquals( "  user = PerryMason: ((\"org.apache.wiki.auth.permissions.PagePermission\",\"JSPWiki:testpage\",\"view\"))\n",
-        		             testEngine.getPage( PAGE_NAME ).getAcl().toString() );
+        		             testEngine.getPageManager().getPage( PAGE_NAME ).getAcl().toString() );
     }
 
     @Test
     public void testMarkupExtensionMetadata() throws Exception {
         String src = "[{SET Perry='Mason'}]() Some text after setting metadata";
         Assertions.assertEquals( "<p> Some text after setting metadata</p>\n", translate( src ) );
-        Assertions.assertEquals( "Mason", testEngine.getPage( PAGE_NAME ).getAttribute( "Perry" ) );
+        Assertions.assertEquals( "Mason", testEngine.getPageManager().getPage( PAGE_NAME ).getAttribute( "Perry" ) );
     }
 
     @Test
@@ -271,7 +270,6 @@ public class MarkdownRendererTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", "./target/md-pageDir" );
         props.setProperty( "jspwiki.renderingManager.markupParser", MarkdownParser.class.getName() );
@@ -287,6 +285,7 @@ public class MarkdownRendererTest {
         }
 
         created.clear();
+        CacheManager.getInstance().removeAllCaches();
     }
 
     String translate( final String src ) throws Exception {

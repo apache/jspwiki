@@ -79,11 +79,11 @@ public class DefaultPageRenamer implements PageRenamer {
         
         //  Preconditions: "from" page must exist, and "to" page must not yet exist.
         final WikiEngine engine = context.getEngine();
-        final WikiPage fromPage = engine.getPage( renameFrom );
+        final WikiPage fromPage = engine.getPageManager().getPage( renameFrom );
         if( fromPage == null ) {
             throw new WikiException("No such page "+renameFrom);
         }
-        WikiPage toPage = engine.getPage( renameToClean );
+        WikiPage toPage = engine.getPageManager().getPage( renameToClean );
         if( toPage != null ) {
             throw new WikiException( "Page already exists " + renameToClean );
         }
@@ -94,7 +94,7 @@ public class DefaultPageRenamer implements PageRenamer {
         //  Remove references to attachments under old name
         final List< Attachment > attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
         for( final Attachment att: attachmentsOldName ) {
-            final WikiPage fromAttPage = engine.getPage( att.getName() );
+            final WikiPage fromAttPage = engine.getPageManager().getPage( att.getName() );
             engine.getReferenceManager().pageRemoved( fromAttPage );
         }
 
@@ -104,7 +104,7 @@ public class DefaultPageRenamer implements PageRenamer {
         }
         
         //  Add a comment to the page notifying what changed.  This adds a new revision to the repo with no actual change.
-        toPage = engine.getPage( renameToClean );
+        toPage = engine.getPageManager().getPage( renameToClean );
         if( toPage == null ) {
             throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
         }
@@ -126,7 +126,7 @@ public class DefaultPageRenamer implements PageRenamer {
         
         final Collection< Attachment > attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
         for( final Attachment att:attachmentsNewName ) {
-            final WikiPage toAttPage = engine.getPage( att.getName() );
+            final WikiPage toAttPage = engine.getPageManager().getPage( att.getName() );
             // add reference to attachment under new page name
             engine.getReferenceManager().updateReferences( toAttPage );
             engine.getSearchManager().reindexPage( att );
@@ -171,7 +171,7 @@ public class DefaultPageRenamer implements PageRenamer {
                 pageName = toPage.getName();
             }
             
-            final WikiPage p = engine.getPage( pageName );
+            final WikiPage p = engine.getPageManager().getPage( pageName );
 
             final String sourceText = engine.getPureText( p );
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );

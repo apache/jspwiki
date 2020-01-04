@@ -299,31 +299,25 @@ public class AttachmentManager
      *  @throws ProviderException If something goes wrong.
      */
 
-    public Attachment getAttachmentInfo( WikiContext context,
+    public Attachment getAttachmentInfo( final WikiContext context,
                                          String attachmentname,
-                                         int version )
-        throws ProviderException
-    {
-        if( m_provider == null )
-        {
+                                         final int version ) throws ProviderException {
+        if( m_provider == null ) {
             return null;
         }
 
         WikiPage currentPage = null;
 
-        if( context != null )
-        {
+        if( context != null ) {
             currentPage = context.getPage();
         }
 
         //
-        //  Figure out the parent page of this attachment.  If we can't find it,
-        //  we'll assume this refers directly to the attachment.
+        //  Figure out the parent page of this attachment.  If we can't find it, we'll assume this refers directly to the attachment.
         //
-        int cutpt = attachmentname.lastIndexOf('/');
+        final int cutpt = attachmentname.lastIndexOf('/');
 
-        if( cutpt != -1 )
-        {
+        if( cutpt != -1 ) {
             String parentPage = attachmentname.substring(0,cutpt);
             parentPage = MarkupParser.cleanLink( parentPage );
             attachmentname = attachmentname.substring(cutpt+1);
@@ -332,7 +326,7 @@ public class AttachmentManager
             // this can't be an attachment
             if(parentPage.length() == 0) return null;
 
-            currentPage = m_engine.getPage( parentPage );
+            currentPage = m_engine.getPageManager().getPage( parentPage );
 
             //
             // Go check for legacy name
@@ -340,30 +334,24 @@ public class AttachmentManager
             // FIXME: This should be resolved using CommandResolver,
             //        not this adhoc way.  This also assumes that the
             //        legacy charset is a subset of the full allowed set.
-            if( currentPage == null )
-            {
-                currentPage = m_engine.getPage( MarkupParser.wikifyLink( parentPage ) );
+            if( currentPage == null ) {
+                currentPage = m_engine.getPageManager().getPage( MarkupParser.wikifyLink( parentPage ) );
             }
         }
 
         //
-        //  If the page cannot be determined, we cannot possibly find the
-        //  attachments.
+        //  If the page cannot be determined, we cannot possibly find the attachments.
         //
-        if( currentPage == null || currentPage.getName().length() == 0 )
-        {
+        if( currentPage == null || currentPage.getName().length() == 0 ) {
             return null;
         }
-
-        // System.out.println("Seeking info on "+currentPage+"::"+attachmentname);
 
         //
         //  Finally, figure out whether this is a real attachment or a generated attachment.
         //
         Attachment att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
 
-        if( att == null )
-        {
+        if( att == null ) {
             att = m_provider.getAttachmentInfo( currentPage, attachmentname, version );
         }
 

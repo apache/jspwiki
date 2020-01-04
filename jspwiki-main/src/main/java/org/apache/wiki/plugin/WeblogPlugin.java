@@ -338,7 +338,7 @@ public class WeblogPlugin
         WikiContext entryCtx = (WikiContext) context.clone();
         entryCtx.setPage( entry );
 
-        String html = engine.getHTML( entryCtx, engine.getPage(entry.getName()) );
+        String html = engine.getHTML( entryCtx, engine.getPageManager().getPage( entry.getName() ) );
 
         // Extract the first h1/h2/h3 as title, and replace with null
         buffer.append("<div class=\"weblogentrytitle\">\n");

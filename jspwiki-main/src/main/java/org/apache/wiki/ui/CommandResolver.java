@@ -486,7 +486,7 @@ public final class CommandResolver
             }
         }
 
-        wikipage = m_engine.getPage( page, version );
+        wikipage = m_engine.getPageManager().getPage( page, version );
 
         if ( wikipage == null )
         {

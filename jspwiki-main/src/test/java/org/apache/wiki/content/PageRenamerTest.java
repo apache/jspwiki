@@ -75,16 +75,16 @@ public class PageRenamerTest
 
         m_engine.saveText("TestPage", "the big lazy dog thing" );
 
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
         m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", false);
 
-        WikiPage newpage = m_engine.getPage("FooTest");
+        WikiPage newpage = m_engine.getPageManager().getPage("FooTest");
 
         Assertions.assertNotNull( newpage, "no new page" );
-        Assertions.assertNull( m_engine.getPage("TestPage"), "old page not gone" );
+        Assertions.assertNull( m_engine.getPageManager().getPage("TestPage"), "old page not gone" );
 
         // Refmgr
         Collection< String > refs = m_engine.getReferenceManager().findCreated();
@@ -101,7 +101,7 @@ public class PageRenamerTest
         m_engine.saveText("TestPage", "foofoo" );
         m_engine.saveText("TestPage2", "[TestPage]");
 
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
@@ -127,7 +127,7 @@ public class PageRenamerTest
         m_engine.saveText("TestPage", "foofoo" );
         m_engine.saveText("TestPage2", "TestPage");
 
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
@@ -152,7 +152,7 @@ public class PageRenamerTest
         m_engine.saveText("TestPage", "foofoo" );
         m_engine.saveText("TestPage2", "[TestPage#heading1]");
 
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
@@ -177,7 +177,7 @@ public class PageRenamerTest
         m_engine.saveText("TestPage", "foofoo" );
         m_engine.saveText("TestPage2", "[TestPage] [TestPage] [linktext|TestPage] TestPage [linktext|TestPage] [TestPage#Anchor] [TestPage] TestPage [TestPage]");
 
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
@@ -205,7 +205,7 @@ public class PageRenamerTest
         m_engine.saveText("Test","foo");
         m_engine.saveText("TestPage2", "[Test] [Test#anchor] test Test [test] [link|test] [link|test]");
 
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
@@ -225,7 +225,7 @@ public class PageRenamerTest
 
         m_engine.addAttachment("TestPage", "foo.txt", "testing".getBytes() );
         m_engine.addAttachment("TestPage", "bar.jpg", "pr0n".getBytes() );
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPageManager().getPage("TestPage");
 
         WikiContext context = new WikiContext(m_engine, p);
 
@@ -263,7 +263,7 @@ public class PageRenamerTest
 
         rename( "TestPage", "FooTest" );
 
-        WikiPage p = m_engine.getPage( "FooTest" );
+        WikiPage p = m_engine.getPageManager().getPage( "FooTest" );
 
         Assertions.assertNotNull( p, "no page" );
 
@@ -278,7 +278,7 @@ public class PageRenamerTest
 
         rename( "TestPage", "FooTest" );
 
-        WikiPage p = m_engine.getPage( "FooTest" );
+        WikiPage p = m_engine.getPageManager().getPage( "FooTest" );
 
         Assertions.assertNotNull( p, "no page" );
 
@@ -295,7 +295,7 @@ public class PageRenamerTest
         WikiPage p;
         rename( "TestPage", "FooTest" );
 
-        p = m_engine.getPage( "FooTest" );
+        p = m_engine.getPageManager().getPage( "FooTest" );
 
         Assertions.assertNotNull( p, "no page" );
 
@@ -304,7 +304,7 @@ public class PageRenamerTest
 
     private void rename( String src, String dst ) throws WikiException
     {
-        WikiPage p = m_engine.getPage(src);
+        WikiPage p = m_engine.getPageManager().getPage(src);
 
         WikiContext context = new WikiContext(m_engine, p);
 

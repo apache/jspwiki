@@ -18,11 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -31,9 +26,14 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.TextUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -106,21 +106,15 @@ public class InsertPage
 
         if( includedPage != null )
         {
-            WikiPage page = null;
-            try
-            {
-                String pageName = engine.getFinalPageName( includedPage );
-                if( pageName != null )
-                {
-                    page = engine.getPage( pageName );
+            WikiPage page;
+            try {
+                final String pageName = engine.getFinalPageName( includedPage );
+                if( pageName != null ) {
+                    page = engine.getPageManager().getPage( pageName );
+                } else {
+                    page = engine.getPageManager().getPage( includedPage );
                 }
-                else
-                {
-                    page = engine.getPage( includedPage );
-                }
-            }
-            catch( ProviderException e )
-            {
+            } catch( final ProviderException e ) {
                 res.append( "<span class=\"error\">Page could not be found by the page provider.</span>" );
                 return res.toString();
             }

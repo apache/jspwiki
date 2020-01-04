@@ -18,15 +18,6 @@
  */
 package org.apache.wiki.tags;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -37,6 +28,14 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.tagext.BodyTag;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  *  Provides a generic link tag for all kinds of linking
@@ -248,7 +247,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 //
                 //  Internal wiki link, but is it an attachment link?
                 //
-                WikiPage p = engine.getPage( m_pageName );
+                WikiPage p = engine.getPageManager().getPage( m_pageName );
 
                 if( p instanceof Attachment )
                 {
@@ -287,7 +286,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         }
         else if( m_pageName != null && m_pageName.length() > 0 )
         {
-            WikiPage p = engine.getPage( m_pageName );
+            WikiPage p = engine.getPageManager().getPage( m_pageName );
 
             String parms = (m_version != null) ? "version="+getVersion() : null;
 
@@ -363,7 +362,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
             if( DiffLinkTag.VER_LATEST.equals(getVersion()) )
             {
-                WikiPage latest = engine.getPage( page, WikiProvider.LATEST_VERSION );
+                WikiPage latest = engine.getPageManager().getPage( page, WikiProvider.LATEST_VERSION );
 
                 r1 = latest.getVersion();
             }
@@ -383,7 +382,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
             if( DiffLinkTag.VER_LATEST.equals(m_compareToVersion) )
             {
-                WikiPage latest = engine.getPage( page, WikiProvider.LATEST_VERSION );
+                WikiPage latest = engine.getPageManager().getPage( page, WikiProvider.LATEST_VERSION );
 
                 r2 = latest.getVersion();
             }
@@ -440,7 +439,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
             sb.append( (m_tabindex != null) ? "tabindex=\""+m_tabindex+"\" " : "" );
 
-            if( engine.getPage( m_pageName ) instanceof Attachment )
+            if( engine.getPageManager().getPage( m_pageName ) instanceof Attachment )
             {
                 sb.append( engine.getAttachmentManager().forceDownload( m_pageName ) ? "download " : "" );
             }

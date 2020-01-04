@@ -205,7 +205,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
             for( final WikiPage page : pages ) {
                 if( !( page instanceof Attachment ) ) {
                     // Refresh with the latest copy
-                    final WikiPage wp = m_engine.getPage( page.getName() );
+                    final WikiPage wp = m_engine.getPageManager().getPage( page.getName() );
 
                     if( wp.getLastModified() == null ) {
                         log.fatal( "Provider returns null lastModified.  Please submit a bug report." );

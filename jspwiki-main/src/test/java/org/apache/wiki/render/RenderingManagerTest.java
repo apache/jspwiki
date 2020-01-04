@@ -58,7 +58,7 @@ public class RenderingManagerTest {
 
         for( int i = 0; i < 300; i++ )
         {
-            WikiPage page = m_engine.getPage( "TestPage" );
+            WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
             String pagedata = m_engine.getPureText( page );
 
             WikiContext context = new WikiContext( m_engine, page );
@@ -81,7 +81,7 @@ public class RenderingManagerTest {
 
         for( int i = 0; i < 300; i++ )
         {
-            WikiPage page = m_engine.getPage( "TestPage" );
+            WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
             String pagedata = m_engine.getPureText( page );
 
             WikiContext context = new WikiContext( m_engine, page );

@@ -18,13 +18,6 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -33,6 +26,13 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.xmlrpc.XmlRpcException;
+
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  *  Provides handlers for all RPC routines.  These routines are used by
@@ -149,7 +149,7 @@ public class RPCHandlerUTF8
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
-        WikiPage p = m_engine.getPage( pagename );
+        WikiPage p = m_engine.getPageManager().getPage( pagename );
 
         checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
         return pagename;
@@ -160,7 +160,7 @@ public class RPCHandlerUTF8
     {
         pagename = parsePageCheckCondition( pagename );
 
-        return encodeWikiPage( m_engine.getPage(pagename) );
+        return encodeWikiPage( m_engine.getPageManager().getPage(pagename) );
     }
 
     public Hashtable getPageInfoVersion( String pagename, int version )
@@ -168,7 +168,7 @@ public class RPCHandlerUTF8
     {
         pagename = parsePageCheckCondition( pagename );
 
-        return encodeWikiPage( m_engine.getPage( pagename, version ) );
+        return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
     }
 
     public String getPage( String pagename )
@@ -210,7 +210,7 @@ public class RPCHandlerUTF8
     {
         pagename = parsePageCheckCondition( pagename );
 
-        WikiPage page = m_engine.getPage( pagename );
+        WikiPage page = m_engine.getPageManager().getPage( pagename );
         String pagedata = m_engine.getPureText( page );
 
         LinkCollector localCollector = new LinkCollector();

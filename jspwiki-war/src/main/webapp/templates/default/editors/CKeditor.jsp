@@ -68,7 +68,7 @@
   String clone = request.getParameter( "clone" );
   if( clone != null )
   {
-    WikiPage p = engine.getPage( clone );
+    WikiPage p = engine.getPageManager().getPage( clone );
     if( p != null )
     {
         AuthorizationManager mgr = engine.getAuthorizationManager();

@@ -539,7 +539,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 int docID = hits[curr].doc;
                 Document doc = searcher.doc( docID );
                 String pageName = doc.get(LUCENE_ID);
-                WikiPage page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
+                WikiPage page = m_engine.getPageManager().getPage(pageName, WikiPageProvider.LATEST_VERSION);
 
                 if( page != null ) {
                     if( page instanceof Attachment ) {

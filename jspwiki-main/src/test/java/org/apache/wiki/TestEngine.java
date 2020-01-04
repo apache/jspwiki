@@ -312,20 +312,15 @@ public class TestEngine extends WikiEngine
     /**
      *  Deletes all attachments related to the given page.
      */
-    public static void deleteAttachments( String page )
-    {
-        Properties properties = getTestProperties();
+    public static void deleteAttachments( final String page ) {
+        final Properties properties = getTestProperties();
 
-        try
-        {
-            String files = properties.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-
-            File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
+        try {
+            final String files = properties.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+            final File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
 
             deleteAll( f );
-        }
-        catch( Exception e )
-        {
+        } catch( final Exception e ) {
             log.error("Could not remove attachments.",e);
         }
     }
@@ -333,17 +328,13 @@ public class TestEngine extends WikiEngine
     /**
      *  Makes a temporary file with some content, and returns a handle to it.
      */
-    public File makeAttachmentFile()
-        throws Exception
-    {
-        File tmpFile = File.createTempFile("test","txt");
+    public File makeAttachmentFile() throws Exception {
+        final File tmpFile = File.createTempFile("test","txt");
         tmpFile.deleteOnExit();
 
-        FileWriter out = new FileWriter( tmpFile );
-
-        FileUtil.copyContents( new StringReader( "asdfa???dfzbvasdjkfbwfkUg783gqdwog" ), out );
-
-        out.close();
+        try( final FileWriter out = new FileWriter( tmpFile ) ) {
+            FileUtil.copyContents( new StringReader( "asdfa???dfzbvasdjkfbwfkUg783gqdwog" ), out );
+        }
 
         return tmpFile;
     }
@@ -354,12 +345,9 @@ public class TestEngine extends WikiEngine
      * @param attachmentName
      * @param data
      */
-    public void addAttachment( String pageName, String attachmentName, byte[] data )
-        throws ProviderException, IOException
-    {
-        Attachment att = new Attachment(this,pageName,attachmentName);
-
-        getAttachmentManager().storeAttachment(att, new ByteArrayInputStream(data));
+    public void addAttachment( final String pageName, final String attachmentName, final byte[] data ) throws ProviderException, IOException {
+        final Attachment att = new Attachment( this,pageName,attachmentName );
+        getAttachmentManager().storeAttachment( att, new ByteArrayInputStream( data ) );
     }
 
     /**
@@ -371,36 +359,28 @@ public class TestEngine extends WikiEngine
      * @param content
      * @throws WikiException
      */
-    public void saveText( String pageName, String content )
-        throws WikiException
-    {
+    public void saveText( final String pageName, final String content ) throws WikiException {
         // Build new request and associate our admin session
-        MockHttpServletRequest request = newHttpRequest();
-        WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession, request,
-                Users.ADMIN,
-                Users.ADMIN_PASS );
+        final MockHttpServletRequest request = newHttpRequest();
+        final WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        this.getAuthenticationManager().login( wikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
 
         // Create page and wiki context
-        WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = new WikiContext( this, request, page );
+        final WikiPage page = new WikiPage( this, pageName );
+        final WikiContext context = new WikiContext( this, request, page );
         saveText( context, content );
     }
 
-    public void saveTextAsJanne( String pageName, String content )
-        throws WikiException
-    {
+    public void saveTextAsJanne( final String pageName, final String content ) throws WikiException {
         // Build new request and associate our Janne session
-        MockHttpServletRequest request = newHttpRequest();
-        WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession, request,
-                Users.JANNE,
-                Users.JANNE_PASS );
+        final MockHttpServletRequest request = newHttpRequest();
+        final WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        this.getAuthenticationManager().login( wikiSession, request, Users.JANNE, Users.JANNE_PASS );
 
         // Create page and wiki context
-        WikiPage page = new WikiPage( this, pageName );
+        final WikiPage page = new WikiPage( this, pageName );
         page.setAuthor(Users.JANNE);
-        WikiContext context = new WikiContext( this, request, page );
+        final WikiContext context = new WikiContext( this, request, page );
         saveText( context, content );
     }
 
@@ -411,21 +391,17 @@ public class TestEngine extends WikiEngine
      * @param pagename name of the page.
      * @return (english) contents corresponding to the given page name.
      */
-    public String getI18nHTML( String pagename ) {
-        WikiPage page = getPage( pagename, WikiPageProvider.LATEST_VERSION );
-        WikiContext context = new WikiContext( this, newHttpRequest(), page );
+    public String getI18nHTML( final String pagename ) {
+        final WikiPage page = getPageManager().getPage( pagename, WikiPageProvider.LATEST_VERSION );
+        final WikiContext context = new WikiContext( this, newHttpRequest(), page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );
     }
 
-    public static void trace()
-    {
-        try
-        {
+    public static void trace() {
+        try {
             throw new Exception("Foo");
-        }
-        catch( Exception e )
-        {
+        } catch( final Exception e ) {
             e.printStackTrace();
         }
     }
@@ -436,7 +412,7 @@ public class TestEngine extends WikiEngine
      * @return the corrected/clean properties
      */
     private static Properties cleanTestProps( final Properties props ) {
-        long millis = System.currentTimeMillis();
+        final long millis = System.currentTimeMillis();
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", cleanNewDirFrom( props.getProperty( "jspwiki.fileSystemProvider.pageDir" ), millis ) );
         props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", cleanNewDirFrom( props.getProperty( "jspwiki.basicAttachmentProvider.storageDir" ), millis ) );

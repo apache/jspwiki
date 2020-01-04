@@ -18,17 +18,6 @@
  */
 package org.apache.wiki.rpc.atom;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -46,6 +35,16 @@ import org.intabulas.sandler.elements.Feed;
 import org.intabulas.sandler.elements.Link;
 import org.intabulas.sandler.elements.Person;
 import org.intabulas.sandler.exceptions.FeedMarshallException;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 
 /**
@@ -117,7 +116,7 @@ public class AtomAPIServlet extends HttpServlet
         {
             String blogid = getPageName( request );
 
-            WikiPage page    = m_engine.getPage( blogid );
+            WikiPage page    = m_engine.getPageManager().getPage( blogid );
 
             if( page == null )
             {
@@ -224,8 +223,8 @@ public class AtomAPIServlet extends HttpServlet
     private Entry getBlogEntry( String entryid )
         throws ProviderException
     {
-        WikiPage page = m_engine.getPage( entryid );
-        WikiPage firstVersion = m_engine.getPage( entryid, 1 );
+        WikiPage page = m_engine.getPageManager().getPage( entryid );
+        WikiPage firstVersion = m_engine.getPageManager().getPage( entryid, 1 );
 
         Entry entry = SyndicationFactory.newSyndicationEntry();
 

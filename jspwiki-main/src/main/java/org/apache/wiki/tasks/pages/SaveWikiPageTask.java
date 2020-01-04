@@ -58,7 +58,7 @@ public class SaveWikiPageTask extends Task {
         engine.getPageManager().putPageText(page, proposedText);
 
         // Refresh the context for post save filtering.
-        engine.getPage(page.getName());
+        engine.getPageManager().getPage(page.getName());
         engine.textToHTML(context, proposedText);
         engine.getFilterManager().doPostSaveFiltering(context, proposedText);
 

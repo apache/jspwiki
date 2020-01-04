@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 
 /**
  *  Writes an edit link.  Body of the link becomes the link text.
@@ -107,7 +107,7 @@ public class EditLinkTag
                 if( page == null )
                 {
                     // No page, so go fetch according to page name.
-                    page = engine.getPage( m_pageName );
+                    page = engine.getPageManager().getPage( m_pageName );
                 }
                 
                 if( page != null )

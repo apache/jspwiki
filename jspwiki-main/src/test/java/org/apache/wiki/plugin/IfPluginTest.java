@@ -71,7 +71,7 @@ public class IfPluginTest {
         String expected = "<p>Content visible for Janne Jalkanen</p>\n";
 
         testEngine.saveText( "Test", src );
-        WikiPage page = testEngine.getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
@@ -92,7 +92,7 @@ public class IfPluginTest {
         String expected = "\n";
 
         testEngine.saveText( "Test", src );
-        WikiPage page = testEngine.getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
@@ -113,7 +113,7 @@ public class IfPluginTest {
         String expected = "<p>Content visible for 127.0.0.1</p>\n";
 
         testEngine.saveText( "Test", src );
-        WikiPage page = testEngine.getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );
@@ -134,7 +134,7 @@ public class IfPluginTest {
         String expected = "\n";
 
         testEngine.saveText( "Test", src );
-        WikiPage page = testEngine.getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
         String res = testEngine.getHTML( context, page );

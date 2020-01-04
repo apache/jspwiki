@@ -92,7 +92,7 @@
     }
 
     WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPage( pagereq );
+    WikiPage latestversion = wiki.getPageManager().getPage( pagereq );
 
     if( latestversion == null )
     {

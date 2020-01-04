@@ -276,6 +276,32 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
     /**
      * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String)
+     */
+    public WikiPage getPage( final String pagereq ) {
+        return getPage( pagereq, WikiProvider.LATEST_VERSION );
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String, int)
+     */
+    public WikiPage getPage( final String pagereq, final int version ) {
+        try {
+            WikiPage p = getPageInfo( pagereq, version );
+            if( p == null ) {
+                p = m_engine.getAttachmentManager().getAttachmentInfo( null, pagereq );
+            }
+
+            return p;
+        } catch( final ProviderException e ) {
+            LOG.error( "Unable to fetch page info for " + pagereq + " [version " + version + "]", e );
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPageInfo(java.lang.String, int)
      */
     @Override
@@ -386,8 +412,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
             m_engine.getAttachmentManager().deleteVersion( ( Attachment )page );
         } else {
             m_provider.deleteVersion(page.getName(), page.getVersion());
-            // FIXME: If this was the latest, reindex Lucene
-            // FIXME: Update RefMgr
+            // FIXME: If this was the latest, reindex Lucene, update RefMgr
         }
     }
 
@@ -396,7 +421,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#deletePage(java.lang.String)
      */
     public void deletePage( final String pageName ) throws ProviderException {
-        final WikiPage p = m_engine.getPage( pageName );
+        final WikiPage p = getPage( pageName );
         if( p != null ) {
             if( p instanceof Attachment ) {
                 m_engine.getAttachmentManager().deleteAttachment( ( Attachment )p );

@@ -18,20 +18,6 @@
  */
 package org.apache.wiki.auth.acl;
 
-import java.security.Permission;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -46,6 +32,20 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
+
+import java.security.Permission;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
@@ -158,7 +158,7 @@ public class DefaultAclManager implements AclManager {
      * @return the Acl representing permissions for the page
      * @since 2.2.121
      */
-    public Acl getPermissions(WikiPage page) {
+    public Acl getPermissions( final WikiPage page ) {
         //
         //  Does the page already have cached ACLs?
         //
@@ -169,15 +169,15 @@ public class DefaultAclManager implements AclManager {
             //
             //  If null, try the parent.
             //
-            if (page instanceof Attachment) {
-                WikiPage parent = m_engine.getPage(((Attachment) page).getParentName());
+            if( page instanceof Attachment ) {
+                final WikiPage parent = m_engine.getPageManager().getPage( ( ( Attachment ) page ).getParentName() );
 
                 acl = getPermissions(parent);
             } else {
                 //
                 //  Or, try parsing the page
                 //
-                WikiContext ctx = new WikiContext(m_engine, page);
+                final WikiContext ctx = new WikiContext(m_engine, page);
 
                 ctx.setVariable(RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE);
 

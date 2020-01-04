@@ -124,7 +124,7 @@ public class CommandResolverTest {
 
     @Test
     public void testFindWikiActionWithParams() {
-        final WikiPage page = m_engine.getPage( "SinglePage" );
+        final WikiPage page = m_engine.getPageManager().getPage( "SinglePage" );
 
         // Passing an EDIT request with page param yields a wrapped action
         MockHttpServletRequest request = m_engine.newHttpRequest( "/Edit.jsp?page=SinglePage" );

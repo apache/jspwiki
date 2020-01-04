@@ -116,7 +116,30 @@ public interface PageManager extends WikiEventListener {
      * @return List of PageLock objects, detailing the locks.  If no locks exist, returns an empty list.
      * @since 2.0.22.
      */
-    List<PageLock> getActiveLocks();
+    List< PageLock > getActiveLocks();
+
+    /**
+     *  Finds the corresponding WikiPage object based on the page name.  It always finds
+     *  the latest version of a page.
+     *
+     *  @param pagereq The name of the page to look for.
+     *  @return A WikiPage object, or null, if the page by the name could not be found.
+     */
+    WikiPage getPage( String pagereq );
+
+    /**
+     *  Finds the corresponding WikiPage object base on the page name and version.
+     *
+     *  @param pagereq The name of the page to look for.
+     *  @param version The version number to look for.  May be WikiProvider.LATEST_VERSION,
+     *  in which case it will look for the latest version (and this method then becomes
+     *  the equivalent of getPage(String).
+     *
+     *  @return A WikiPage object, or null, if the page could not be found; or if there
+     *  is no such version of the page.
+     *  @since 1.6.7 (moved to PageManager on 2.11.0).
+     */
+    WikiPage getPage( String pagereq, int version );
 
     /**
      * Finds a WikiPage object describing a particular page and version.

@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import java.io.IOException;
 
 /**
  *  Does a version check on the page.  Mode is as follows:
@@ -100,7 +100,7 @@ public class CheckVersionTag
             int version = page.getVersion();
             boolean include = false;
 
-            WikiPage latest = engine.getPage( page.getName() );
+            WikiPage latest = engine.getPageManager().getPage( page.getName() );
 
             //log.debug("Doing version check: this="+page.getVersion()+
             //          ", latest="+latest.getVersion());

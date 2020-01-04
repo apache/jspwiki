@@ -24,9 +24,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
-import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
-import org.apache.wiki.providers.VerySimpleProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -39,55 +37,42 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
-public class WikiEngineTest
-{
+public class WikiEngineTest {
+
     public static final String NAME1 = "Test1";
-    public static final long PAGEPROVIDER_RESCAN_PERIOD = 2;
 
     Properties props = TestEngine.getTestProperties();
-
     TestEngine m_engine;
 
-
     @BeforeEach
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() {
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-
-        CacheManager.getInstance().removeAllCaches();
-
-        TestEngine.emptyWorkDir();
-        m_engine = new TestEngine(props);
+        m_engine = TestEngine.build( props );
     }
 
     @AfterEach
-    public void tearDown()
-    {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+    public void tearDown() {
+        final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        if( files != null )
-        {
-            File f = new File( files );
-
+        if( files != null ) {
+            final File f = new File( files );
             TestEngine.deleteAll( f );
         }
 
         TestEngine.emptyWorkDir();
+        CacheManager.getInstance().removeAllCaches();
     }
 
     @Test
-    public void testNonExistentDirectory()
-        throws Exception
-    {
-        String tmpdir = "./target";
-        String dirname = "non-existent-directory";
-        String newdir = tmpdir + File.separator + dirname;
+    public void testNonExistentDirectory() throws Exception {
+        final String tmpdir = "./target";
+        final String dirname = "non-existent-directory";
+        final String newdir = tmpdir + File.separator + dirname;
 
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, newdir );
         new TestEngine( props );
 
-        File f = new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) );
+        final File f = new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) );
         Assertions.assertTrue( f.exists(), "didn't create it" );
         Assertions.assertTrue( f.isDirectory(), "isn't a dir" );
 
@@ -98,30 +83,21 @@ public class WikiEngineTest
      *  Check that calling pageExists( String ) works.
      */
     @Test
-    public void testNonExistentPage()
-        throws Exception
-    {
-        String pagename = "Test1";
-
-        Assertions.assertEquals( false, m_engine.pageExists( pagename ), "Page already exists" );
+    public void testNonExistentPage() {
+        Assertions.assertFalse( m_engine.pageExists( NAME1 ), "Page already exists" );
     }
 
     /**
      *  Check that calling pageExists( WikiPage ) works.
      */
     @Test
-    public void testNonExistentPage2()
-        throws Exception
-    {
-        WikiPage page = new WikiPage(m_engine, "Test1");
-
-        Assertions.assertEquals( false, m_engine.pageExists( page ), "Page already exists" );
+    public void testNonExistentPage2() throws Exception {
+        final WikiPage page = new WikiPage(m_engine, NAME1 );
+        Assertions.assertFalse( m_engine.pageExists( page ), "Page already exists" );
     }
 
     @Test
-    public void testFinalPageName()
-        throws Exception
-    {
+    public void testFinalPageName() throws Exception {
         m_engine.saveText( "Foobar", "1" );
         m_engine.saveText( "Foobars", "2" );
 
@@ -130,9 +106,7 @@ public class WikiEngineTest
     }
 
     @Test
-    public void testFinalPageNameSingular()
-        throws Exception
-    {
+    public void testFinalPageNameSingular() throws Exception {
         m_engine.saveText( "Foobar", "1" );
 
         Assertions.assertEquals( "Foobar", m_engine.getFinalPageName( "Foobars" ), "plural mistake" );
@@ -140,9 +114,7 @@ public class WikiEngineTest
     }
 
     @Test
-    public void testFinalPageNamePlural()
-        throws Exception
-    {
+    public void testFinalPageNamePlural() throws Exception {
         m_engine.saveText( "Foobars", "1" );
 
         Assertions.assertEquals( "Foobars", m_engine.getFinalPageName( "Foobars" ), "plural mistake" );
@@ -150,9 +122,7 @@ public class WikiEngineTest
     }
 
     @Test
-    public void testPutPage()
-        throws Exception
-    {
+    public void testPutPage() throws Exception {
         String text = "Foobar.\r\n";
         String name = NAME1;
 
@@ -281,96 +251,6 @@ public class WikiEngineTest
         String src = "ThisIsAPage";
 
         Assertions.assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
-    }
-
-    /**
-     *  English articles too, pathological case...
-     */
-    /*
-    @Test
-    public void testBeautifyTitleArticle2()
-    {
-        String src = "ThisIsAJSPWikiPage";
-
-        Assertions.assertEquals("This Is A JSP Wiki Page", m_engine.beautifyTitle( src ) );
-    }
-    */
-
-    @Test
-    public void testLatestGet()
-        throws Exception
-    {
-        props.setProperty( "jspwiki.pageProvider",
-                           "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
-
-        WikiEngine engine = new TestEngine( props );
-
-        WikiPage p = engine.getPage( "test", -1 );
-
-        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
-
-        Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
-        Assertions.assertEquals( -1, vsp.m_latestVers, "wrong version" );
-        Assertions.assertNotNull( p, "null" );
-    }
-
-    @Test
-    public void testLatestGet2()
-        throws Exception
-    {
-        props.setProperty( "jspwiki.pageProvider",
-                           "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
-
-        WikiEngine engine = new TestEngine( props );
-
-        String p = engine.getText( "test", -1 );
-
-        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
-
-        Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
-        Assertions.assertEquals( -1, vsp.m_latestVers, "wrong version" );
-        Assertions.assertNotNull( p, "null" );
-    }
-
-    @Test
-    public void testLatestGet3()
-        throws Exception
-    {
-        props.setProperty( "jspwiki.pageProvider",
-                           "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
-
-        WikiEngine engine = new TestEngine( props );
-
-        String p = engine.getHTML( "test", -1 );
-
-        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
-
-        Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
-        Assertions.assertEquals( 5, vsp.m_latestVers, "wrong version" );
-        Assertions.assertNotNull( p, "null" );
-    }
-
-    @Test
-    public void testLatestGet4()
-        throws Exception
-    {
-        props.setProperty( "jspwiki.pageProvider",
-                           "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "true" );
-
-        WikiEngine engine = new TestEngine( props );
-
-        String p = engine.getHTML( VerySimpleProvider.PAGENAME, -1 );
-
-        CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
-        VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
-
-        Assertions.assertEquals( VerySimpleProvider.PAGENAME, vsp.m_latestReq, "wrong page" );
-        Assertions.assertEquals( -1, vsp.m_latestVers,  "wrong version" );
-        Assertions.assertNotNull( p, "null" );
     }
 
     /**
@@ -552,141 +432,6 @@ public class WikiEngineTest
         }
     }
 
-
-
-
-    @Test
-    public void testDeletePage()
-        throws Exception
-    {
-        m_engine.saveText( NAME1, "Test" );
-
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        Assertions.assertTrue( saved.exists(), "Didn't create it!" );
-
-        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
-
-        m_engine.getPageManager().deletePage( page.getName() );
-
-        Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
-    }
-
-
-    @Test
-    public void testDeletePageAndAttachments()
-        throws Exception
-    {
-        m_engine.saveText( NAME1, "Test" );
-
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
-        att.setAuthor( "FirstPost" );
-        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
-
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-        File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
-
-        Assertions.assertTrue( saved.exists(), "Didn't create it!" );
-
-        Assertions.assertTrue( attfile.exists(), "Attachment dir does not exist" );
-
-        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
-
-        m_engine.getPageManager().deletePage( page.getName() );
-
-        Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
-        Assertions.assertFalse( attfile.exists(), "Attachment has not been removed" );
-    }
-
-    @Test
-    public void testDeletePageAndAttachments2()
-        throws Exception
-    {
-        m_engine.saveText( NAME1, "Test" );
-
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
-        att.setAuthor( "FirstPost" );
-        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
-
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-        File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
-
-        Assertions.assertTrue( saved.exists(), "Didn't create it!" );
-
-        Assertions.assertTrue( attfile.exists(), "Attachment dir does not exist" );
-
-        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
-
-        Assertions.assertNotNull( page, "page" );
-
-        att = m_engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
-
-        m_engine.getPageManager().deletePage(att.getName());
-
-        m_engine.getPageManager().deletePage( NAME1 );
-
-        Assertions.assertNull( m_engine.getPage(NAME1), "Page not removed" );
-        Assertions.assertNull( m_engine.getPage(NAME1+"/TestAtt.txt"), "Att not removed" );
-
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers(NAME1);
-
-        Assertions.assertNull( refs, "referrers" );
-    }
-
-    @Test
-    public void testDeleteVersion()
-        throws Exception
-    {
-        props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
-
-        TestEngine engine = new TestEngine( props );
-        engine.saveText( NAME1, "Test1" );
-        engine.saveText( NAME1, "Test2" );
-        engine.saveText( NAME1, "Test3" );
-
-        WikiPage page = engine.getPage( NAME1, 3 );
-
-        engine.getPageManager().deleteVersion( page );
-
-        Assertions.assertNull( engine.getPage( NAME1, 3 ), "got page" );
-
-        String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
-
-        Assertions.assertEquals( "Test2", content.trim(), "content" );
-    }
-
-    @Test
-    public void testDeleteVersion2()
-        throws Exception
-    {
-        props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
-
-        TestEngine engine = new TestEngine( props );
-        engine.saveText( NAME1, "Test1" );
-        engine.saveText( NAME1, "Test2" );
-        engine.saveText( NAME1, "Test3" );
-
-        WikiPage page = engine.getPage( NAME1, 1 );
-
-        engine.getPageManager().deleteVersion( page );
-
-        Assertions.assertNull( engine.getPage( NAME1, 1 ), "got page" );
-
-        String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
-
-        Assertions.assertEquals( "Test3", content.trim(), "content" );
-
-        Assertions.assertEquals( "", engine.getText(NAME1, 1).trim(), "content1" );
-    }
-
-
     /**
      *  Tests BugReadingOfVariableNotWorkingForOlderVersions
      * @throws Exception
@@ -705,9 +450,8 @@ public class WikiEngineTest
 
         engine.saveText( NAME1, "[{SET foo=notbar}]");
 
-        WikiPage v1 = engine.getPage( NAME1, 1 );
-
-        WikiPage v2 = engine.getPage( NAME1, 2 );
+        WikiPage v1 = engine.getPageManager().getPage( NAME1, 1 );
+        WikiPage v2 = engine.getPageManager().getPage( NAME1, 2 );
 
         Assertions.assertEquals( "bar", v1.getAttribute("foo"), "V1" );
 
@@ -751,7 +495,7 @@ public class WikiEngineTest
         Collection< String > pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( "OldNameTestPage", pages.iterator().next(), "has one" );
 
-        WikiContext ctx = new WikiContext( m_engine, m_engine.getPage("OldNameTestPage") );
+        WikiContext ctx = new WikiContext( m_engine, m_engine.getPageManager().getPage("OldNameTestPage") );
 
         m_engine.getPageRenamer().renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
@@ -778,7 +522,7 @@ public class WikiEngineTest
 
         for( int i = 0; i < 5; i++ )
         {
-            WikiPage p2 = (WikiPage)m_engine.getPage( NAME1 ).clone();
+            WikiPage p2 = (WikiPage)m_engine.getPageManager().getPage( NAME1 ).clone();
             p2.removeAttribute(WikiPage.CHANGENOTE);
 
             context.setPage( p2 );
@@ -786,7 +530,7 @@ public class WikiEngineTest
             m_engine.saveText( context, "test"+i );
         }
 
-        WikiPage p3 = m_engine.getPage( NAME1, -1 );
+        WikiPage p3 = m_engine.getPageManager().getPage( NAME1, -1 );
 
         Assertions.assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
     }

@@ -45,7 +45,7 @@
     String pagereq = wikiContext.getName();
 
     WikiPage wikipage      = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPage( pagereq );
+    WikiPage latestversion = wiki.getPageManager().getPage( pagereq );
 
     String delete = request.getParameter( "delete" );
     String deleteall = request.getParameter( "delete-all" );
@@ -65,7 +65,7 @@
     {
         log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+HttpUtil.getRemoteAddress(request) );
 
-        wiki.deletePage( pagereq );
+        wiki.getPageManager().deletePage( pagereq );
 
         FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
         if( trail != null )
@@ -89,10 +89,10 @@
             {
                 int version = Integer.parseInt( paramName.substring(7) );
 
-                WikiPage p = wiki.getPage( pagereq, version );
+                WikiPage p = wiki.getPageManager().getPage( pagereq, version );
 
                 log.debug("Deleting version "+version);
-                wiki.deleteVersion( p );
+                wiki.getPageManager().deleteVersion( p );
             }
         }
 

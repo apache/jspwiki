@@ -277,7 +277,7 @@ public class AuthorizationManagerTest
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, f );
 
-        Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
+        Attachment p = (Attachment) m_engine.getPageManager().getPage( "Test/test1.txt" );
         Permission view = PermissionFactory.getPagePermission( p, "view" );
         Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
@@ -309,7 +309,7 @@ public class AuthorizationManagerTest
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, f );
 
-        Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
+        Attachment p = (Attachment) m_engine.getPageManager().getPage( "Test/test1.txt" );
         Permission view = PermissionFactory.getPagePermission( p, "view" );
         Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
@@ -450,7 +450,7 @@ public class AuthorizationManagerTest
         String src = "[{ALLOW edit Alice}] ";
         m_engine.saveText( "Test", src );
 
-        WikiPage p = m_engine.getPage( "Test" );
+        WikiPage p = m_engine.getPageManager().getPage( "Test" );
         Permission view = PermissionFactory.getPagePermission( p, "view" );
         Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
@@ -572,7 +572,7 @@ public class AuthorizationManagerTest
         String src = "[{ALLOW edit Authenticated}] ";
         m_engine.saveText( "Test", src );
 
-        WikiPage p = m_engine.getPage( "Test" );
+        WikiPage p = m_engine.getPageManager().getPage( "Test" );
         Permission view = PermissionFactory.getPagePermission( p, "view" );
         Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 

@@ -214,7 +214,7 @@ public class AuthorizationManager {
         // If the page or ACL is null, it's allowed.
         //
         String pageName = ((PagePermission)permission).getPage();
-        WikiPage page = m_engine.getPage( pageName );
+        WikiPage page = m_engine.getPageManager().getPage( pageName );
         Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
         if ( page == null ||  acl == null || acl.isEmpty() )
         {

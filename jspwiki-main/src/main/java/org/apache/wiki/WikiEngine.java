@@ -1322,7 +1322,7 @@ public class WikiEngine  {
      *  @return HTML-rendered page text.
      */
     public String getHTML( final String pagename, final int version ) {
-        final WikiPage page = getPage( pagename, version );
+        final WikiPage page = getPageManager().getPage( pagename, version );
         final WikiContext context = new WikiContext( this, page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );
@@ -1566,53 +1566,6 @@ public class WikiEngine  {
             return null;
         }
     }
-
-    /**
-     *  Finds the corresponding WikiPage object based on the page name.  It always finds
-     *  the latest version of a page.
-     *
-     *  @param pagereq The name of the page to look for.
-     *  @return A WikiPage object, or null, if the page by the name could not be found.
-     */
-
-    public WikiPage getPage( String pagereq )
-    {
-        return getPage( pagereq, WikiProvider.LATEST_VERSION );
-    }
-
-    /**
-     *  Finds the corresponding WikiPage object base on the page name and version.
-     *
-     *  @param pagereq The name of the page to look for.
-     *  @param version The version number to look for.  May be WikiProvider.LATEST_VERSION,
-     *  in which case it will look for the latest version (and this method then becomes
-     *  the equivalent of getPage(String).
-     *
-     *  @return A WikiPage object, or null, if the page could not be found; or if there
-     *  is no such version of the page.
-     *  @since 1.6.7.
-     */
-
-    public WikiPage getPage( String pagereq, int version )
-    {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( pagereq, version );
-
-            if( p == null )
-            {
-                p = m_attachmentManager.getAttachmentInfo( (WikiContext)null, pagereq );
-            }
-
-            return p;
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to fetch page info",e);
-            return null;
-        }
-    }
-
 
     /**
      *  Returns a Collection of WikiPages containing the version history of a page.

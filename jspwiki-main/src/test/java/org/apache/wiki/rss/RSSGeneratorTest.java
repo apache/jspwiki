@@ -22,11 +22,7 @@
  */
 package org.apache.wiki.rss;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -38,30 +34,31 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 
 /**
  *
  *  @since
  */
-public class RSSGeneratorTest
-{
+public class RSSGeneratorTest {
+
     TestEngine m_testEngine;
     Properties props = TestEngine.getTestProperties();
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() {
         props.setProperty( RSSGenerator.PROP_GENERATE_RSS, "true" );
-        CacheManager.getInstance().removeAllCaches();
-        m_testEngine = new TestEngine(props);
+        m_testEngine = TestEngine.build( props );
     }
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
+    public void tearDown() {
         TestEngine.deleteAll( new File(props.getProperty( FileSystemProvider.PROP_PAGEDIR )) );
+        CacheManager.getInstance().removeAllCaches();
     }
 
     @Test
@@ -79,7 +76,7 @@ public class RSSGeneratorTest
 
         RSSGenerator gen = m_testEngine.getRSSGenerator();
 
-        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPage("TestBlog") );
+        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPageManager().getPage("TestBlog") );
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
@@ -110,7 +107,7 @@ public class RSSGeneratorTest
 
         RSSGenerator gen = m_testEngine.getRSSGenerator();
 
-        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPage("TestBlog") );
+        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPageManager().getPage("TestBlog") );
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 

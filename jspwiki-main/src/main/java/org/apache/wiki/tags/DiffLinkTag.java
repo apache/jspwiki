@@ -18,10 +18,13 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 
-import org.apache.wiki.*;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 
 /**
  *  Writes a diff link.  Body of the link becomes the link text.
@@ -40,11 +43,9 @@ import org.apache.wiki.*;
  *
  *  @since 2.0
  */
-public class DiffLinkTag
-    extends WikiLinkTag
-{
+public class DiffLinkTag extends WikiLinkTag {
+
     private static final long serialVersionUID = 0L;
-    
     public static final String VER_LATEST   = "latest";
     public static final String VER_PREVIOUS = "previous";
     public static final String VER_CURRENT  = "current";
@@ -63,7 +64,7 @@ public class DiffLinkTag
         return m_version;
     }
 
-    public void setVersion( String arg )
+    public void setVersion( final String arg )
     {
         m_version = arg;
     }
@@ -73,99 +74,66 @@ public class DiffLinkTag
         return m_newVersion;
     }
 
-    public void setNewVersion( String arg )
+    public void setNewVersion( final String arg )
     {
         m_newVersion = arg;
     }
 
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine   = m_wikiContext.getEngine();
-        String     pageName = m_pageName;
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        String pageName = m_pageName;
 
-        if( m_pageName == null )
-        {
-            if( m_wikiContext.getPage() != null )
-            {
+        if( m_pageName == null ) {
+            if( m_wikiContext.getPage() != null ) {
                 pageName = m_wikiContext.getPage().getName();
-            }
-            else
-            {
+            } else {
                 return SKIP_BODY;
             }
         }
 
-        JspWriter out = pageContext.getOut();
+        final JspWriter out = pageContext.getOut();
 
-        int r1 = 0;
-        int r2 = 0;
+        int r1;
+        int r2;
 
-        //
         //  In case the page does not exist, we fail silently.
-        //
-        if(!engine.pageExists(pageName))
-        {
+        if( !engine.pageExists( pageName ) ) {
             return SKIP_BODY;
         }
 
-        if( VER_LATEST.equals(getVersion()) )
-        {
-            WikiPage latest = engine.getPage( pageName, 
-                                              WikiProvider.LATEST_VERSION );
-
-            if( latest == null )
-            {
+        if( VER_LATEST.equals(getVersion()) ) {
+            final WikiPage latest = engine.getPageManager().getPage( pageName, WikiProvider.LATEST_VERSION );
+            if( latest == null ) {
                 // This may occur if matchEnglishPlurals is on, and we access the wrong page name
                 return SKIP_BODY;
             }
             r1 = latest.getVersion();
-        }
-        else if( VER_PREVIOUS.equals(getVersion()) )
-        {
+        } else if( VER_PREVIOUS.equals( getVersion() ) ) {
             r1 = m_wikiContext.getPage().getVersion() - 1;
-            r1 = (r1 < 1 ) ? 1 : r1;
-        }
-        else if( VER_CURRENT.equals(getVersion()) )
-        {
+            r1 = Math.max( r1, 1 );
+        } else if( VER_CURRENT.equals( getVersion() ) ) {
             r1 = m_wikiContext.getPage().getVersion();
-        }
-        else
-        {
+        } else {
             r1 = Integer.parseInt( getVersion() );
         }
 
-        if( VER_LATEST.equals(getNewVersion()) )
-        {
-            WikiPage latest = engine.getPage( pageName,
-                                              WikiProvider.LATEST_VERSION );
-
+        if( VER_LATEST.equals( getNewVersion() ) ) {
+            final WikiPage latest = engine.getPageManager().getPage( pageName, WikiProvider.LATEST_VERSION );
             r2 = latest.getVersion();
-        }
-        else if( VER_PREVIOUS.equals(getNewVersion()) )
-        {
+        } else if( VER_PREVIOUS.equals( getNewVersion() ) ) {
             r2 = m_wikiContext.getPage().getVersion() - 1;
-            r2 = (r2 < 1 ) ? 1 : r2;
-        }
-        else if( VER_CURRENT.equals(getNewVersion()) )
-        {
+            r2 = Math.max( r2, 1 );
+        } else if( VER_CURRENT.equals( getNewVersion() ) ) {
             r2 = m_wikiContext.getPage().getVersion();
-        }
-        else
-        {
+        } else {
             r2 = Integer.parseInt( getNewVersion() );
         }
 
-        String url = m_wikiContext.getURL( WikiContext.DIFF,
-                                           pageName,
-                                           "r1="+r1+"&amp;r2="+r2 );
-        switch( m_format )
-        {
+        final String url = m_wikiContext.getURL( WikiContext.DIFF, pageName, "r1="+r1+"&amp;r2="+r2 );
+        switch( m_format ) {
           case ANCHOR:
             out.print("<a href=\""+url+"\">");
-
             break;
-
           case URL:
             out.print( url );
             break;
@@ -173,4 +141,5 @@ public class DiffLinkTag
 
         return EVAL_BODY_INCLUDE;
     }
+
 }

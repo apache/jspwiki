@@ -20,14 +20,12 @@
 package org.apache.wiki.providers;
 
 import net.sf.ehcache.CacheManager;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -38,25 +36,13 @@ import java.util.Properties;
 
 public class CachingProviderTest
 {
-    protected TestEngine testEngine;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        TestEngine.emptyWorkDir();
-        CacheManager.getInstance().removeAllCaches();
-
-        Properties props2 = TestEngine.getTestProperties();
-        testEngine = new TestEngine(props2);
-        PropertyConfigurator.configure(props2);
-    }
+    protected TestEngine testEngine = TestEngine.build();
 
     @AfterEach
-    public void tearDown()
-    {
-        TestEngine.emptyWorkDir();
+    public void tearDown() {
         testEngine.deleteTestPage("Testi");
+        TestEngine.emptyWorkDir();
+        CacheManager.getInstance().removeAllCaches();
     }
 
     /**
@@ -81,7 +67,7 @@ public class CachingProviderTest
         Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists" );
         Assertions.assertEquals( 4, p.m_getPageTextCalls, "getPageText" );
 
-        engine.getPage( "Foo" );
+        engine.getPageManager().getPage( "Foo" );
 
         Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists2" );
     }
@@ -105,8 +91,8 @@ public class CachingProviderTest
         FileUtil.copyContents( new StringReader(content), out );
         out.close();
 
-        Awaitility.await( "testSneakyAdd" ).until( () -> engine.getPage( "Testi" ) != null );
-        WikiPage p = engine.getPage( "Testi" );
+        Awaitility.await( "testSneakyAdd" ).until( () -> engine.getPageManager().getPage( "Testi" ) != null );
+        WikiPage p = engine.getPageManager().getPage( "Testi" );
         Assertions.assertNotNull( p, "page did not exist?" );
 
         String text = engine.getText( "Testi");

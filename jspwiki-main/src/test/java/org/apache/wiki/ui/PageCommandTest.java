@@ -64,7 +64,7 @@ public class PageCommandTest {
     public void testTargetedCommand() throws Exception {
         final TestEngine testEngine = TestEngine.build();
         testEngine.saveText( "TestPage", "This is a test." );
-        final WikiPage testPage = testEngine.getPage( "TestPage" );
+        final WikiPage testPage = testEngine.getPageManager().getPage( "TestPage" );
 
         // Get view command
         Command a = PageCommand.VIEW;

@@ -19,12 +19,7 @@
 
 package org.apache.wiki.xmlrpc;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Vector;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -35,7 +30,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;
 
 public class RPCHandlerTest
 {
@@ -87,7 +86,7 @@ public class RPCHandlerTest
         Vector previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
-        WikiPage directInfo = m_engine.getPage( NAME1 );
+        WikiPage directInfo = m_engine.getPageManager().getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
         Vector recentChanges = m_handler.getRecentChanges( time );
 
@@ -105,7 +104,7 @@ public class RPCHandlerTest
         Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
-        WikiPage directInfo = m_engine.getPage( NAME1 );
+        WikiPage directInfo = m_engine.getPageManager().getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
         Vector recentChanges = m_handler.getRecentChanges( time );
 
@@ -117,7 +116,7 @@ public class RPCHandlerTest
         throws Exception
     {
         m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
-        WikiPage directInfo = m_engine.getPage( NAME1 );
+        WikiPage directInfo = m_engine.getPageManager().getPage( NAME1 );
 
         Hashtable ht = m_handler.getPageInfo( NAME1 );
         Assertions.assertEquals( (String)ht.get( "name" ), NAME1, "name" );
