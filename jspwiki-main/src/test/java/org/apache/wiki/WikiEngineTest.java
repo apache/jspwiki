@@ -23,7 +23,6 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
@@ -52,7 +51,7 @@ public class WikiEngineTest {
 
     @AfterEach
     public void tearDown() {
-        final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        final String files = m_engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
 
         if( files != null ) {
             final File f = new File( files );
@@ -70,9 +69,9 @@ public class WikiEngineTest {
         final String newdir = tmpdir + File.separator + dirname;
 
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, newdir );
-        new TestEngine( props );
+        m_engine = new TestEngine( props );
 
-        final File f = new File( props.getProperty( FileSystemProvider.PROP_PAGEDIR ) );
+        final File f = new File( m_engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR ) );
         Assertions.assertTrue( f.exists(), "didn't create it" );
         Assertions.assertTrue( f.isDirectory(), "isn't a dir" );
 
@@ -123,84 +122,65 @@ public class WikiEngineTest {
 
     @Test
     public void testPutPage() throws Exception {
-        String text = "Foobar.\r\n";
-        String name = NAME1;
-
+        final String text = "Foobar.\r\n";
+        final String name = NAME1;
         m_engine.saveText( name, text );
 
-        Assertions.assertEquals( true, m_engine.pageExists( name ), "page does not exist" );
+        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
         Assertions.assertEquals( text, m_engine.getText( name ), "wrong content" );
     }
 
     @Test
-    public void testPutPageEntities()
-        throws Exception
-    {
-        String text = "Foobar. &quot;\r\n";
-        String name = NAME1;
-
+    public void testPutPageEntities() throws Exception {
+        final String text = "Foobar. &quot;\r\n";
+        final String name = NAME1;
         m_engine.saveText( name, text );
 
-        Assertions.assertEquals( true, m_engine.pageExists( name ), "page does not exist" );
+        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
         Assertions.assertEquals( "Foobar. &amp;quot;\r\n", m_engine.getText( name ), "wrong content" );
     }
 
     /**
-     *  Cgeck that basic " is changed.
+     *  Check that basic " is changed.
      */
     @Test
-    public void testPutPageEntities2()
-        throws Exception
-    {
-        String text = "Foobar. \"\r\n";
-        String name = NAME1;
-
+    public void testPutPageEntities2() throws Exception {
+        final String text = "Foobar. \"\r\n";
+        final String name = NAME1;
         m_engine.saveText( name, text );
 
-        Assertions.assertEquals( true, m_engine.pageExists( name ), "page does not exist" );
+        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
         Assertions.assertEquals( "Foobar. &quot;\r\n", m_engine.getText( name ), "wrong content" );
     }
 
     @Test
-    public void testGetHTML()
-        throws Exception
-    {
-        String text = "''Foobar.''";
-        String name = NAME1;
-
+    public void testGetHTML() throws Exception {
+        final String text = "''Foobar.''";
+        final String name = NAME1;
         m_engine.saveText( name, text );
 
-        String data = m_engine.getHTML( name );
-
+        final String data = m_engine.getHTML( name );
         Assertions.assertEquals( "<i>Foobar.</i>\n", data );
     }
 
     @Test
-    public void testEncodeNameLatin1()
-    {
-        String name = "abc\u00e5\u00e4\u00f6";
-
+    public void testEncodeNameLatin1() {
+        final String name = "abc\u00e5\u00e4\u00f6";
         Assertions.assertEquals( "abc%E5%E4%F6", m_engine.encodeName(name) );
     }
 
     @Test
-    public void testEncodeNameUTF8()
-        throws Exception
-    {
-        String name = "\u0041\u2262\u0391\u002E";
-
+    public void testEncodeNameUTF8() throws Exception {
+        final String name = "\u0041\u2262\u0391\u002E";
         props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
-
-        WikiEngine engine = new TestEngine( props );
+        final WikiEngine engine = new TestEngine( props );
 
         Assertions.assertEquals( "A%E2%89%A2%CE%91.", engine.encodeName(name) );
     }
 
     @Test
-    public void testBeautifyTitle()
-    {
-        String src = "WikiNameThingy";
-
+    public void testBeautifyTitle() {
+        final String src = "WikiNameThingy";
         Assertions.assertEquals("Wiki Name Thingy", m_engine.beautifyTitle( src ) );
     }
 
@@ -208,10 +188,8 @@ public class WikiEngineTest {
      *  Acronyms should be treated wisely.
      */
     @Test
-    public void testBeautifyTitleAcronym()
-    {
-        String src = "JSPWikiPage";
-
+    public void testBeautifyTitleAcronym() {
+        final String src = "JSPWikiPage";
         Assertions.assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
     }
 
@@ -219,26 +197,20 @@ public class WikiEngineTest {
      *  Acronyms should be treated wisely.
      */
     @Test
-    public void testBeautifyTitleAcronym2()
-    {
-        String src = "DELETEME";
-
+    public void testBeautifyTitleAcronym2() {
+        final String src = "DELETEME";
         Assertions.assertEquals("DELETEME", m_engine.beautifyTitle( src ) );
     }
 
     @Test
-    public void testBeautifyTitleAcronym3()
-    {
-        String src = "JSPWikiFAQ";
-
+    public void testBeautifyTitleAcronym3() {
+        final String src = "JSPWikiFAQ";
         Assertions.assertEquals("JSP Wiki FAQ", m_engine.beautifyTitle( src ) );
     }
 
     @Test
-    public void testBeautifyTitleNumbers()
-    {
-        String src = "TestPage12";
-
+    public void testBeautifyTitleNumbers() {
+        final String src = "TestPage12";
         Assertions.assertEquals("Test Page 12", m_engine.beautifyTitle( src ) );
     }
 
@@ -246,10 +218,8 @@ public class WikiEngineTest {
      *  English articles too.
      */
     @Test
-    public void testBeautifyTitleArticle()
-    {
-        String src = "ThisIsAPage";
-
+    public void testBeautifyTitleArticle() {
+        final String src = "ThisIsAPage";
         Assertions.assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
     }
 
@@ -257,38 +227,26 @@ public class WikiEngineTest {
      *  Checks, if ReferenceManager is informed of new attachments.
      */
     @Test
-    public void testAttachmentRefs()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-        AttachmentManager attMgr = m_engine.getAttachmentManager();
-
+    public void testAttachmentRefs() throws Exception {
+        final ReferenceManager refMgr = m_engine.getReferenceManager();
+        final AttachmentManager attMgr = m_engine.getAttachmentManager();
         m_engine.saveText( NAME1, "fooBar");
 
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
-        try
-        {
-            // and check post-conditions
-            Collection< String > c = refMgr.findUncreated();
-            Assertions.assertTrue( c==null || c.size()==0, "attachment exists: "+c );
+        // and check post-conditions
+        Collection< String > c = refMgr.findUncreated();
+        Assertions.assertTrue( c==null || c.size()==0, "attachment exists: " + c );
 
-            c = refMgr.findUnreferenced();
-            Assertions.assertEquals( 2, c.size(), "unreferenced count" );
-            Iterator< String > i = c.iterator();
-            String first = i.next();
-            String second = i.next();
-            Assertions.assertTrue(  (first.equals( NAME1 ) && second.equals( NAME1+"/TestAtt.txt"))
-                                 || (first.equals( NAME1+"/TestAtt.txt" ) && second.equals( NAME1 )), "unreferenced" );
-        }
-        finally
-        {
-            // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
-        }
+        c = refMgr.findUnreferenced();
+        Assertions.assertEquals( 2, c.size(), "unreferenced count" );
+        final Iterator< String > i = c.iterator();
+        final String first = i.next();
+        final String second = i.next();
+        Assertions.assertTrue(  ( first.equals( NAME1 ) && second.equals( NAME1 + "/TestAtt.txt" ) )
+                             || ( first.equals( NAME1 + "/TestAtt.txt" ) && second.equals( NAME1 ) ), "unreferenced" );
     }
 
     /**
@@ -312,11 +270,9 @@ public class WikiEngineTest {
     */
 
     @Test
-    public void testAttachmentRefs2()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-        AttachmentManager attMgr = m_engine.getAttachmentManager();
+    public void testAttachmentRefs2() throws Exception {
+        final ReferenceManager refMgr = m_engine.getReferenceManager();
+        final AttachmentManager attMgr = m_engine.getAttachmentManager();
 
         m_engine.saveText( NAME1, "[TestAtt.txt]");
 
@@ -333,249 +289,179 @@ public class WikiEngineTest {
 
         // now we create the attachment
 
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
-        try
-        {
-            // and check post-conditions
-            c = refMgr.findUncreated();
-            Assertions.assertTrue( c==null || c.size()==0, "attachment exists: " );
 
-            c = refMgr.findReferrers( "TestAtt.txt" );
-            Assertions.assertTrue( c==null || c.size()==0, "no normal page" );
+        // and check post-conditions
+        c = refMgr.findUncreated();
+        Assertions.assertTrue( c==null || c.size()==0, "attachment exists: " );
 
-            c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
-            Assertions.assertTrue( c!=null && c.iterator().next().equals( NAME1 ), "attachment exists now" );
+        c = refMgr.findReferrers( "TestAtt.txt" );
+        Assertions.assertTrue( c==null || c.size()==0, "no normal page" );
 
-            c = refMgr.findUnreferenced();
-            Assertions.assertTrue( c.size()==1 && c.iterator().next().equals( NAME1 ), "unreferenced" );
-        }
-        finally
-        {
-            // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
-        }
+        c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
+        Assertions.assertTrue( c!=null && c.iterator().next().equals( NAME1 ), "attachment exists now" );
+
+        c = refMgr.findUnreferenced();
+        Assertions.assertTrue( c.size()==1 && c.iterator().next().equals( NAME1 ), "unreferenced" );
     }
 
     /**
      *  Checks, if ReferenceManager is informed if a link to an attachment is added.
      */
     @Test
-    public void testAttachmentRefs3()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-        AttachmentManager attMgr = m_engine.getAttachmentManager();
+    public void testAttachmentRefs3() throws Exception {
+        final ReferenceManager refMgr = m_engine.getReferenceManager();
+        final AttachmentManager attMgr = m_engine.getAttachmentManager();
 
         m_engine.saveText( NAME1, "fooBar");
 
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
         m_engine.saveText( NAME1, " ["+NAME1+"/TestAtt.txt] ");
 
-        try
-        {
-            // and check post-conditions
-            Collection< String > c = refMgr.findUncreated();
-            Assertions.assertTrue( c==null || c.size()==0, "attachment exists" );
+        // and check post-conditions
+        Collection< String > c = refMgr.findUncreated();
+        Assertions.assertTrue( c==null || c.size()==0, "attachment exists" );
 
-            c = refMgr.findUnreferenced();
-            Assertions.assertEquals( c.size(), 1, "unreferenced count" );
-            Assertions.assertTrue( c.iterator().next().equals( NAME1 ), "unreferenced" );
-        }
-        finally
-        {
-            // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
-        }
+        c = refMgr.findUnreferenced();
+        Assertions.assertEquals( c.size(), 1, "unreferenced count" );
+        Assertions.assertEquals( NAME1, c.iterator().next(), "unreferenced" );
     }
 
     /**
      *  Checks, if ReferenceManager is informed if a third page references an attachment.
      */
     @Test
-    public void testAttachmentRefs4()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-        AttachmentManager attMgr = m_engine.getAttachmentManager();
+    public void testAttachmentRefs4() throws Exception {
+        final ReferenceManager refMgr = m_engine.getReferenceManager();
+        final AttachmentManager attMgr = m_engine.getAttachmentManager();
 
         m_engine.saveText( NAME1, "[TestPage2]");
 
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
-
         m_engine.saveText( "TestPage2", "["+NAME1+"/TestAtt.txt]");
 
-        try
-        {
-            // and check post-conditions
-            Collection< String > c = refMgr.findUncreated();
-            Assertions.assertTrue( c==null || c.size()==0, "attachment exists" );
+        // and check post-conditions
+        Collection< String > c = refMgr.findUncreated();
+        Assertions.assertTrue( c==null || c.size()==0, "attachment exists" );
 
-            c = refMgr.findUnreferenced();
-            Assertions.assertEquals( c.size(), 1, "unreferenced count" );
-            Assertions.assertTrue( c.iterator().next().equals( NAME1 ), "unreferenced" );
-        }
-        finally
-        {
-            // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
-            new File( files, "TestPage2"+FileSystemProvider.FILE_EXT ).delete();
-        }
+        c = refMgr.findUnreferenced();
+        Assertions.assertEquals( c.size(), 1, "unreferenced count" );
+        Assertions.assertEquals( NAME1, c.iterator().next(), "unreferenced" );
     }
 
     /**
      *  Tests BugReadingOfVariableNotWorkingForOlderVersions
-     * @throws Exception
      */
     @Test
-    public void testOldVersionVars()
-        throws Exception
-    {
-        Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
-
+    public void testOldVersionVars() throws Exception {
+        final Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
         props.setProperty( PageManager.PROP_USECACHE, "true" );
-
-        TestEngine engine = new TestEngine( props );
-
+        final TestEngine engine = new TestEngine( props );
         engine.saveText( NAME1, "[{SET foo=bar}]" );
-
         engine.saveText( NAME1, "[{SET foo=notbar}]");
 
-        WikiPage v1 = engine.getPageManager().getPage( NAME1, 1 );
-        WikiPage v2 = engine.getPageManager().getPage( NAME1, 2 );
+        final WikiPage v1 = engine.getPageManager().getPage( NAME1, 1 );
+        final WikiPage v2 = engine.getPageManager().getPage( NAME1, 2 );
 
         Assertions.assertEquals( "bar", v1.getAttribute("foo"), "V1" );
-
-        // FIXME: The following must run as well
         Assertions.assertEquals( "notbar", v2.getAttribute("foo"), "V2" );
 
         engine.getPageManager().deletePage( NAME1 );
     }
 
     @Test
-    public void testSpacedNames1()
-        throws Exception
-    {
+    public void testSpacedNames1() throws Exception {
         m_engine.saveText("This is a test", "puppaa");
-
         Assertions.assertEquals( "puppaa", m_engine.getText("This is a test").trim(), "normal" );
     }
 
 
     @Test
-    public void testParsedVariables() throws Exception
-    {
+    public void testParsedVariables() throws Exception {
         m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
-
-        String res = m_engine.getHTML( "TestPage" );
+        final String res = m_engine.getHTML( "TestPage" );
 
         Assertions.assertEquals( "bar\n", res );
     }
 
     /**
      * Tests BugReferenceToRenamedPageNotCleared
-     *
-     * @throws Exception
      */
     @Test
-    public void testRename() throws Exception
-    {
+    public void testRename() throws Exception {
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
 
         Collection< String > pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( "OldNameTestPage", pages.iterator().next(), "has one" );
 
-        WikiContext ctx = new WikiContext( m_engine, m_engine.getPageManager().getPage("OldNameTestPage") );
-
+        final WikiContext ctx = new WikiContext( m_engine, m_engine.getPageManager().getPage("OldNameTestPage") );
         m_engine.getPageRenamer().renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
         Assertions.assertFalse( m_engine.pageExists( "OldNameTestPage"), "did not vanish" );
         Assertions.assertTrue( m_engine.pageExists( "NewNameTestPage"), "did not appear" );
 
         pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
-
         Assertions.assertEquals( 1, pages.size(),  "wrong # of referrers" );
-
         Assertions.assertEquals( "NewNameTestPage", pages.iterator().next(), "has wrong referrer" );
     }
 
     @Test
-    public void testChangeNoteOldVersion2() throws Exception
-    {
-        WikiPage p = new WikiPage( m_engine, NAME1 );
-
-        WikiContext context = new WikiContext(m_engine,p);
-
+    public void testChangeNoteOldVersion2() throws Exception {
+        final WikiPage p = new WikiPage( m_engine, NAME1 );
+        final WikiContext context = new WikiContext(m_engine,p);
         context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
-
         m_engine.saveText( context, "test" );
 
-        for( int i = 0; i < 5; i++ )
-        {
-            WikiPage p2 = (WikiPage)m_engine.getPageManager().getPage( NAME1 ).clone();
-            p2.removeAttribute(WikiPage.CHANGENOTE);
-
+        for( int i = 0; i < 5; i++ ) {
+            final WikiPage p2 = ( WikiPage )m_engine.getPageManager().getPage( NAME1 ).clone();
+            p2.removeAttribute( WikiPage.CHANGENOTE );
             context.setPage( p2 );
-
-            m_engine.saveText( context, "test"+i );
+            m_engine.saveText( context, "test" + i );
         }
 
-        WikiPage p3 = m_engine.getPageManager().getPage( NAME1, -1 );
-
-        Assertions.assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
+        final WikiPage p3 = m_engine.getPageManager().getPage( NAME1, -1 );
+        Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
     }
 
     @Test
-    public void testCreatePage() throws Exception
-    {
-        String text = "Foobar.\r\n";
-        String name = "mrmyxpltz";
-
-        Assertions.assertEquals( false, m_engine.pageExists( name ), "page should not exist right now" );
+    public void testCreatePage() throws Exception {
+        final String text = "Foobar.\r\n";
+        final String name = "mrmyxpltz";
+        Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now" );
 
         m_engine.saveText( name, text );
-
-        Assertions.assertEquals( true, m_engine.pageExists( name ), "page does not exist" );
+        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
     }
 
     @Test
-    public void testCreateEmptyPage() throws Exception
-    {
-        String text = "";
-        String name = "mrmxyzptlk";
-
-        Assertions.assertEquals( false, m_engine.pageExists( name ), "page should not exist right now" );
+    public void testCreateEmptyPage() throws Exception {
+        final String text = "";
+        final String name = "mrmxyzptlk";
+        Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now" );
 
         m_engine.saveText( name, text );
-
-        Assertions.assertEquals( false, m_engine.pageExists( name ), "page should not exist right now neither" );
+        Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now neither" );
     }
 
     @Test
-    public void testSaveExistingPageWithEmptyContent() throws Exception
-    {
-        String text = "Foobar.\r\n";
-        String name = NAME1;
-
+    public void testSaveExistingPageWithEmptyContent() throws Exception {
+        final String text = "Foobar.\r\n";
+        final String name = NAME1;
         m_engine.saveText( name, text );
 
-        Assertions.assertEquals( true, m_engine.pageExists( name ), "page does not exist" );
-
+        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
         // saveText uses normalizePostData to assure it conforms to certain rules
         Assertions.assertEquals( TextUtil.normalizePostData( text ), m_engine.getText( name ), "wrong content" );
 
         m_engine.saveText( name, "" );
-
         Assertions.assertEquals( TextUtil.normalizePostData( "" ), m_engine.getText( name ), "wrong content" );
     }
 
