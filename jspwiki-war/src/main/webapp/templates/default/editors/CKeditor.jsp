@@ -78,7 +78,7 @@
         {
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
-            usertext = engine.getPureText( p );
+            usertext = engine.getPageManager().getPureText( p );
           }
         }
         catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
@@ -89,7 +89,7 @@
 <%
   if( usertext == null )
   {
-    usertext = engine.getPureText( context.getPage() );
+    usertext = engine.getPageManager().getPureText( context.getPage() );
   }
 %>
 </wiki:CheckRequestContext>

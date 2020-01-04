@@ -181,7 +181,7 @@
         //  Build comment part
         //
 
-        StringBuffer pageText = new StringBuffer(wiki.getPureText( wikipage ));
+        StringBuffer pageText = new StringBuffer(wiki.getPageManager().getPureText( wikipage ));
 
         log.debug("Page initial contents are "+pageText.length()+" chars");
 
