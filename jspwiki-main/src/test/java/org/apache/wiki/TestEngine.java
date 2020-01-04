@@ -439,7 +439,8 @@ public class TestEngine extends WikiEngine
         for( final StackTraceElement trace : Thread.currentThread().getStackTrace() ) {
             if( !( trace.getClassName().contains( TestEngine.class.getSimpleName() ) ||
                    trace.getClassName().contains( Thread.class.getSimpleName() ) ) ) {
-                return trace.getClassName() + "-" + trace.getMethodName();
+                return trace.getClassName() + "-" + trace.getMethodName().replace( "<", "" ) // <init> -> init
+                                                                         .replace( ">", "" );
             }
         }
         return "Unable to locate TestEngine creation";
