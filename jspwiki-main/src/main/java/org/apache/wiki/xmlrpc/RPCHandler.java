@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -91,7 +92,7 @@ public class RPCHandler
     public Vector getAllPages()
     {
         checkPermission( PagePermission.VIEW );
-        Collection< WikiPage > pages = m_engine.getRecentChanges();
+        Collection< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
         Vector<String> result = new Vector<>();
 
         for( WikiPage p : pages )
@@ -142,13 +143,12 @@ public class RPCHandler
     }
 
     @Override
-    public Vector getRecentChanges( Date since )
-    {
+    public Vector getRecentChanges( Date since ) {
         checkPermission( PagePermission.VIEW );
-        Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector<Hashtable<String, Object>> result = new Vector<>();
+        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Vector< Hashtable< String, Object > > result = new Vector<>();
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( since );
 
         //
@@ -159,10 +159,8 @@ public class RPCHandler
                   (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         since = cal.getTime();
 
-        for( WikiPage page : pages )
-        {
-            if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
-            {
+        for( final WikiPage page : pages ) {
+            if( page.getLastModified().after( since ) && !(page instanceof Attachment) ) {
                 result.add( encodeWikiPage( page ) );
             }
         }

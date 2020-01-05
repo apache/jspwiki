@@ -100,7 +100,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         log.debug("Calculating recent changes from "+sincedate.getTime());
 
         // FIXME: Should really have a since date on the getRecentChanges method.
-        Collection< WikiPage > changes = engine.getRecentChanges();
+        Collection< WikiPage > changes = engine.getPageManager().getRecentChanges();
         super.initialize( context, params );
         changes = filterWikiPageCollection( changes );
         

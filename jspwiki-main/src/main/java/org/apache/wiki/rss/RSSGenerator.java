@@ -328,52 +328,37 @@ public class RSSGenerator {
      *  @param feed A Feed to generate the feed to.
      *  @return feed.getString().
      */
-    protected String generateFullWikiRSS( WikiContext wikiContext, Feed feed )
-    {
+    protected String generateFullWikiRSS( final WikiContext wikiContext, final Feed feed ) {
         feed.setChannelTitle( m_engine.getApplicationName() );
         feed.setFeedURL( m_engine.getBaseURL() );
         feed.setChannelLanguage( m_channelLanguage );
         feed.setChannelDescription( m_channelDescription );
 
-        Set< WikiPage > changed = m_engine.getRecentChanges();
+        final Set< WikiPage > changed = m_engine.getPageManager().getRecentChanges();
 
-        WikiSession session = WikiSession.guestSession( m_engine );
+        final WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;
-        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ )
-        {
+        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             WikiPage page = i.next();
 
             //
             //  Check if the anonymous user has view access to this page.
             //
 
-            if( !m_engine.getAuthorizationManager().checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) )
-            {
+            if( !m_engine.getAuthorizationManager().checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
                 // No permission, skip to the next one.
                 continue;
             }
 
-            Entry e = new Entry();
+            final String url;
+            if( page instanceof Attachment ) {
+                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null, true );
+            } else {
+                url = m_engine.getURL( WikiContext.VIEW, page.getName(), null, true );
+            }
 
+            final Entry e = new Entry();
             e.setPage( page );
-
-            String url;
-
-            if( page instanceof Attachment )
-            {
-                url = m_engine.getURL( WikiContext.ATTACH,
-                                       page.getName(),
-                                       null,
-                                       true );
-            }
-            else
-            {
-                url = m_engine.getURL( WikiContext.VIEW,
-                                       page.getName(),
-                                       null,
-                                       true );
-            }
-
             e.setURL( url );
             e.setTitle( page.getName() );
             e.setContent( getEntryDescription(page) );

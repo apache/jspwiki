@@ -27,6 +27,7 @@ import org.apache.wiki.providers.WikiPageProvider;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 public interface PageManager extends WikiEventListener {
@@ -212,6 +213,14 @@ public interface PageManager extends WikiEventListener {
      * @return The number of pages, or -1, if there is an error.
      */
     int getTotalPageCount();
+
+    /**
+     *  Returns a Collection of WikiPages, sorted in time order of last change (i.e. first object is the most recently changed).
+     *  This method also includes attachments.
+     *
+     *  @return Set of WikiPage objects.
+     */
+    Set< WikiPage > getRecentChanges();
 
     /**
      * Returns true, if the page exists (any version).

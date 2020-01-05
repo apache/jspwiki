@@ -50,12 +50,15 @@ import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -392,6 +395,24 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         } catch( final ProviderException e ) {
             LOG.error( "Unable to count pages: ", e );
             return -1;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#getRecentChanges()
+     */
+    @Override
+    public Set< WikiPage > getRecentChanges() {
+        try {
+            final TreeSet< WikiPage > sortedPages = new TreeSet<>( new PageTimeComparator() );
+            sortedPages.addAll( getAllPages() );
+            sortedPages.addAll( m_engine.getAttachmentManager().getAllAttachments() );
+
+            return sortedPages;
+        } catch( final ProviderException e ) {
+            LOG.error( "Unable to fetch all pages: ", e );
+            return Collections.emptySet();
         }
     }
 

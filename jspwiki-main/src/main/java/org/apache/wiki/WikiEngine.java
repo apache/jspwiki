@@ -43,7 +43,6 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.WikiPageProvider;
@@ -92,9 +91,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -1485,30 +1482,6 @@ public class WikiEngine  {
         // Let callers know if the page-save requires approval
         if ( workflow.getCurrentStep() instanceof Decision ) {
             throw new DecisionRequiredException( "The page contents must be approved before they become active." );
-        }
-    }
-
-    /**
-     *  Returns a Collection of WikiPages, sorted in time
-     *  order of last change (i.e. first object is the most
-     *  recently changed).  This method also includes attachments.
-     *
-     *  @return Set of WikiPage objects.
-     */
-    public Set< WikiPage > getRecentChanges() {
-        try {
-            final Collection< WikiPage >   pages = m_pageManager.getAllPages();
-            final Collection< Attachment >  atts = m_attachmentManager.getAllAttachments();
-
-            final TreeSet< WikiPage > sortedPages = new TreeSet<>( new PageTimeComparator() );
-
-            sortedPages.addAll( pages );
-            sortedPages.addAll( atts );
-
-            return sortedPages;
-        } catch( final ProviderException e ) {
-            log.error( "Unable to fetch all pages: ",e);
-            return null;
         }
     }
 

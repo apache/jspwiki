@@ -28,10 +28,9 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.xmlrpc.XmlRpcException;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -41,27 +40,21 @@ import java.util.Vector;
  *  @since 1.6.13
  */
 
-public class RPCHandlerUTF8
-    extends AbstractRPCHandler
-{
-    public String getApplicationName()
-    {
-        checkPermission( PagePermission.VIEW );
+public class RPCHandlerUTF8 extends AbstractRPCHandler {
 
+    public String getApplicationName() {
+        checkPermission( PagePermission.VIEW );
         return m_engine.getApplicationName();
     }
 
-    public Vector getAllPages()
-    {
+    public Vector< String > getAllPages() {
         checkPermission( PagePermission.VIEW );
 
-        Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector<String> result = new Vector<String>();
+        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Vector< String > result = new Vector<>();
 
-        for( WikiPage p : pages )
-        {
-            if( !(p instanceof Attachment) )
-            {
+        for( final WikiPage p : pages ) {
+            if( !( p instanceof Attachment ) ) {
                 result.add( p.getName() );
             }
         }
@@ -72,22 +65,17 @@ public class RPCHandlerUTF8
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
-    protected Hashtable<String, Object> encodeWikiPage( WikiPage page )
-    {
-        Hashtable<String, Object> ht = new Hashtable<String, Object>();
-
+    protected Hashtable<String, Object> encodeWikiPage( final WikiPage page ) {
+        final Hashtable<String, Object> ht = new Hashtable<>();
         ht.put( "name", page.getName() );
 
-        Date d = page.getLastModified();
+        final Date d = page.getLastModified();
 
         //
-        //  Here we reset the DST and TIMEZONE offsets of the
-        //  calendar.  Unfortunately, I haven't thought of a better
-        //  way to ensure that we're getting the proper date
-        //  from the XML-RPC thingy, except to manually adjust the date.
+        //  Here we reset the DST and TIMEZONE offsets of the calendar.  Unfortunately, I haven't thought of a better
+        //  way to ensure that we're getting the proper date from the XML-RPC thingy, except to manually adjust the date.
         //
-
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( d );
         cal.add( Calendar.MILLISECOND,
                  - (cal.get( Calendar.ZONE_OFFSET ) +
@@ -96,22 +84,20 @@ public class RPCHandlerUTF8
         ht.put( "lastModified", cal.getTime() );
         ht.put( "version", page.getVersion() );
 
-        if( page.getAuthor() != null )
-        {
+        if( page.getAuthor() != null ) {
             ht.put( "author", page.getAuthor() );
         }
 
         return ht;
     }
 
-    public Vector getRecentChanges( Date since )
-    {
+    public Vector< Hashtable< String, Object > > getRecentChanges( Date since ) {
         checkPermission( PagePermission.VIEW );
 
-        Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector<Hashtable<String, Object>> result = new Vector<>();
+        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Vector< Hashtable< String, Object > > result = new Vector<>();
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( since );
 
         //
@@ -122,10 +108,8 @@ public class RPCHandlerUTF8
                   (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         since = cal.getTime();
 
-        for( WikiPage page : pages )
-        {
-            if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
-            {
+        for( final WikiPage page : pages ) {
+            if( page.getLastModified().after( since ) && !( page instanceof Attachment ) ) {
                 result.add( encodeWikiPage( page ) );
             }
         }
@@ -141,31 +125,22 @@ public class RPCHandlerUTF8
      *  @return Real page name, as Java string.
      *  @throws XmlRpcException, if there is something wrong with the page.
      */
-    private String parsePageCheckCondition( String pagename )
-        throws XmlRpcException
-    {
-        if( !m_engine.pageExists(pagename) )
-        {
+    private String parsePageCheckCondition( final String pagename ) throws XmlRpcException {
+        if( !m_engine.pageExists(pagename) ) {
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
-        WikiPage p = m_engine.getPageManager().getPage( pagename );
+        final WikiPage p = m_engine.getPageManager().getPage( pagename );
 
         checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
         return pagename;
     }
 
-    public Hashtable getPageInfo( String pagename )
-        throws XmlRpcException
-    {
-        pagename = parsePageCheckCondition( pagename );
-
-        return encodeWikiPage( m_engine.getPageManager().getPage(pagename) );
+    public Hashtable<String, Object> getPageInfo( final String pagename ) throws XmlRpcException {
+        return encodeWikiPage( m_engine.getPageManager().getPage( parsePageCheckCondition( pagename ) ) );
     }
 
-    public Hashtable getPageInfoVersion( String pagename, int version )
-        throws XmlRpcException
-    {
+    public Hashtable<String, Object> getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
@@ -183,56 +158,41 @@ public class RPCHandlerUTF8
         return m_engine.getHTML( parsePageCheckCondition( pagename ) );
     }
 
-    public String getPageHTMLVersion( String pagename, int version )
-        throws XmlRpcException
-    {
-        pagename = parsePageCheckCondition( pagename );
-
-        return m_engine.getHTML( pagename, version );
+    public String getPageHTMLVersion( final String pagename, final int version ) throws XmlRpcException {
+        return m_engine.getHTML( parsePageCheckCondition( pagename ), version );
     }
 
-    public Vector listLinks( String pagename )
-        throws XmlRpcException
-    {
+    public Vector< Hashtable< String, String > > listLinks( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        WikiPage page = m_engine.getPageManager().getPage( pagename );
-        String pagedata = m_engine.getPageManager().getPureText( page );
+        final WikiPage page = m_engine.getPageManager().getPage( pagename );
+        final String pagedata = m_engine.getPageManager().getPureText( page );
 
-        LinkCollector localCollector = new LinkCollector();
-        LinkCollector extCollector   = new LinkCollector();
-        LinkCollector attCollector   = new LinkCollector();
+        final LinkCollector localCollector = new LinkCollector();
+        final LinkCollector extCollector   = new LinkCollector();
+        final LinkCollector attCollector   = new LinkCollector();
 
-        WikiContext context = new WikiContext( m_engine, page );
+        final WikiContext context = new WikiContext( m_engine, page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
-        m_engine.textToHTML( context,
-                             pagedata,
-                             localCollector,
-                             extCollector,
-                             attCollector );
+        m_engine.textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
-        Vector<Hashtable<String, String>> result = new Vector<>();
+        final Vector< Hashtable< String, String > > result = new Vector<>();
 
         // FIXME: Contains far too much common with RPCHandler.  Refactor!
 
         //
         //  Add local links.
         //
-        for( Iterator< String > i = localCollector.getLinks().iterator(); i.hasNext(); )
-        {
-            String link = i.next();
-            Hashtable< String, String > ht = new Hashtable< String, String >();
+        for( final String link : localCollector.getLinks() ) {
+            final Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
 
-            if( m_engine.pageExists(link) )
-            {
-                ht.put( "href", context.getViewURL(link) );
-            }
-            else
-            {
-                ht.put( "href", context.getURL(WikiContext.EDIT,link) );
+            if( m_engine.pageExists( link ) ) {
+                ht.put( "href", context.getViewURL( link ) );
+            } else {
+                ht.put( "href", context.getURL( WikiContext.EDIT, link ) );
             }
 
             result.add( ht );
@@ -241,33 +201,26 @@ public class RPCHandlerUTF8
         //
         // Add links to inline attachments
         //
-        for( String link : attCollector.getLinks() )
-        {
-            Hashtable<String, String> ht = new Hashtable<String, String>();
-
+        for( final String link : attCollector.getLinks() ) {
+            final Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
             ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
-
             result.add( ht );
         }
 
         //
-        // External links don't need to be changed into XML-RPC strings,
-        // simply because URLs are by definition ASCII.
+        // External links don't need to be changed into XML-RPC strings, simply because URLs are by definition ASCII.
         //
-
-        for( String link : extCollector.getLinks() )
-        {
-            Hashtable<String, String> ht = new Hashtable<String, String>();
-
+        for( final String link : extCollector.getLinks() )  {
+            final Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );
             ht.put( "href", link );
-
             result.add( ht );
         }
 
         return result;
     }
+
 }

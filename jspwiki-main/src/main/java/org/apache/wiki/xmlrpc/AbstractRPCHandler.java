@@ -18,17 +18,20 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import java.security.Permission;
-import java.util.*;
-
-import org.apache.xmlrpc.AuthenticationFailed;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.xmlrpc.AuthenticationFailed;
+
+import java.security.Permission;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  *  Provides definitions for RPC handler routines.
@@ -36,61 +39,47 @@ import org.apache.wiki.auth.permissions.WikiPermission;
  *  @since 1.6.13
  */
 
-public abstract class AbstractRPCHandler
-    implements WikiRPCHandler
-{
+public abstract class AbstractRPCHandler implements WikiRPCHandler {
+
     /** Error code: no such page. */
     public static final int ERR_NOPAGE       = 1;
     public static final int ERR_NOPERMISSION = 2;
 
-    /**
-     *  Link to a local wiki page.
-     */
+    /** Link to a local wiki page. */
     public static final String LINK_LOCAL    = "local";
 
-    /**
-     *  Link to an external resource.
-     */
+    /** Link to an external resource. */
     public static final String LINK_EXTERNAL = "external";
 
-    /**
-     *  This is an inlined image.
-     */
+    /** This is an inlined image. */
     public static final String LINK_INLINE   = "inline";
 
     protected WikiEngine m_engine;
     protected WikiContext m_context;
 
-
-    /**
-     *  This is the currently implemented JSPWiki XML-RPC code revision.
-     */
+    /** This is the currently implemented JSPWiki XML-RPC code revision. */
     public static final int RPC_VERSION = 1;
 
-    public void initialize( WikiContext context )
-    {
+    public void initialize( final WikiContext context ) {
         m_context = context;
         m_engine  = context.getEngine();
     }
 
     protected abstract Hashtable encodeWikiPage( WikiPage p );
 
-    public Vector getRecentChanges( Date since )
-    {
+    public Vector getRecentChanges( final Date since ) {
         checkPermission( PagePermission.VIEW );
-        Collection< WikiPage > pages = m_engine.getRecentChanges();
-        Vector< Hashtable< ?, ? > > result = new Vector<Hashtable< ?, ? > >();
+        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Vector< Hashtable< ?, ? > > result = new Vector<>();
 
         // Transform UTC into local time.
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( since );
         cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) +
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
-        for( WikiPage page : pages )
-        {
-            if( page.getLastModified().after( cal.getTime() ) )
-            {
+        for( WikiPage page : pages ) {
+            if( page.getLastModified().after( cal.getTime() ) ) {
                 result.add( encodeWikiPage( page ) );
             }
         }
@@ -104,12 +93,12 @@ public abstract class AbstractRPCHandler
      *
      *  @param perm the Permission to check
      */
-    protected void checkPermission( Permission perm )
-    {
-        AuthorizationManager mgr = m_engine.getAuthorizationManager();
+    protected void checkPermission( final Permission perm ) {
+        final AuthorizationManager mgr = m_engine.getAuthorizationManager();
 
-        if( mgr.checkPermission( m_context.getWikiSession(), perm ) )
+        if( mgr.checkPermission( m_context.getWikiSession(), perm ) ) {
             return;
+        }
 
         throw new AuthenticationFailed( "You have no access to this resource, o master" );
     }
@@ -117,10 +106,9 @@ public abstract class AbstractRPCHandler
     /**
      *  Returns the current supported JSPWiki XML-RPC API.
      */
-    public int getRPCVersionSupported()
-    {
+    public int getRPCVersionSupported() {
         checkPermission( WikiPermission.LOGIN );
-
         return RPC_VERSION;
     }
+
 }
