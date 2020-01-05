@@ -359,12 +359,22 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getVersionHistory(java.lang.String)
      */
     @Override
-    public List< WikiPage > getVersionHistory( final String pageName ) throws ProviderException {
-        if( pageExists( pageName ) ) {
-            return m_provider.getVersionHistory( pageName );
+    public < T extends WikiPage > List< T > getVersionHistory( final String pageName ) {
+        List< T > c = null;
+
+        try {
+            if( pageExists( pageName ) ) {
+                c = (List< T >)m_provider.getVersionHistory( pageName );
+            }
+
+            if( c == null ) {
+                c = (List< T >)m_engine.getAttachmentManager().getVersionHistory( pageName );
+            }
+        } catch( final ProviderException e ) {
+            LOG.error( "ProviderException requesting version history for " + pageName, e );
         }
 
-        return null;
+        return c;
     }
 
     /**

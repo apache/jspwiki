@@ -18,6 +18,7 @@
  */
 
 package org.apache.wiki.providers;
+
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -173,7 +174,7 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text );
 
         // confirm the right number of versions have been recorded
-        Collection versionHistory = engine.getVersionHistory(NAME1);
+        List< WikiPage > versionHistory = engine.getPageManager().getVersionHistory(NAME1);
         Assertions.assertEquals( 2, versionHistory.size(), "number of versions" );
 
         // fetch the updated page
@@ -221,7 +222,7 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text3 );
 
         // confirm the right number of versions have been recorded
-        Collection versionHistory = engine.getVersionHistory(NAME1);
+        Collection versionHistory = engine.getPageManager().getVersionHistory(NAME1);
         Assertions.assertEquals( 3, versionHistory.size(), "number of versions" );
 
         // fetch the latest version of the page
@@ -288,7 +289,7 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text3 );
 
         // confirm the right number of versions have been recorded
-        Collection versionHistory = engine.getVersionHistory(NAME1);
+        Collection versionHistory = engine.getPageManager().getVersionHistory(NAME1);
         Assertions.assertEquals( 3, versionHistory.size(), "number of versions" );
 
         // fetch the latest version of the page
@@ -464,7 +465,7 @@ public class VersioningFileProviderTest
         engine.saveText( NAME1, text2 );
         engine.saveText( NAME1, text3 );
 
-        Collection history = engine.getVersionHistory(NAME1);
+        Collection history = engine.getPageManager().getVersionHistory(NAME1);
 
         Assertions.assertEquals( 3, history.size(), "size" );
     }

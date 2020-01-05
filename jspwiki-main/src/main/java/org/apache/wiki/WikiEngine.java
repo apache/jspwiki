@@ -87,7 +87,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -1107,29 +1106,23 @@ public class WikiEngine  {
     }
 
     /**
-     *  Turns a WikiName into something that can be
-     *  called through using an URL.
+     *  Turns a WikiName into something that can be called through using an URL.
      *
      *  @since 1.4.1
      *  @param pagename A name.  Can be actually any string.
      *  @return A properly encoded name.
      *  @see #decodeName(String)
      */
-    public String encodeName( String pagename )
-    {
-        try
-        {
+    public String encodeName( final String pagename ) {
+        try {
             return URLEncoder.encode( pagename, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
-        }
-        catch( UnsupportedEncodingException e )
-        {
+        } catch( final UnsupportedEncodingException e ) {
             throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." , e);
         }
     }
 
     /**
-     *  Decodes a URL-encoded request back to regular life.  This properly heeds
-     *  the encoding as defined in the settings file.
+     *  Decodes a URL-encoded request back to regular life.  This properly heeds the encoding as defined in the settings file.
      *
      *  @param pagerequest The URL-encoded string to decode
      *  @return A decoded string.
@@ -1138,14 +1131,13 @@ public class WikiEngine  {
     public String decodeName( final String pagerequest ) {
         try {
             return URLDecoder.decode( pagerequest, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
-        } catch( UnsupportedEncodingException e ) {
+        } catch( final UnsupportedEncodingException e ) {
             throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.", e);
         }
     }
 
     /**
-     *  Returns the IANA name of the character set encoding we're
-     *  supposed to be using right now.
+     *  Returns the IANA name of the character set encoding we're supposed to be using right now.
      *
      *  @since 1.5.3
      *  @return The content encoding (either UTF-8 or ISO-8859-1).
@@ -1158,9 +1150,8 @@ public class WikiEngine  {
     }
 
     /**
-     * Returns the {@link org.apache.wiki.workflow.WorkflowManager} associated with this
-     * WikiEngine. If the WIkiEngine has not been initialized, this method will return
-     * <code>null</code>.
+     * Returns the {@link org.apache.wiki.workflow.WorkflowManager} associated with this WikiEngine. If the WIkiEngine has not been
+     * initialized, this method will return <code>null</code>.
      * @return the task queue
      */
     public WorkflowManager getWorkflowManager()
@@ -1169,27 +1160,22 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the un-HTMLized text of the latest version of a page.
-     *  This method also replaces the &lt; and &amp; -characters with
-     *  their respective HTML entities, thus making it suitable
-     *  for inclusion on an HTML page.  If you want to have the
-     *  page text without any conversions, use getPureText().
+     *  Returns the un-HTMLized text of the latest version of a page. This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable for inclusion on an HTML page.  If you want to have the page text
+     *  without any conversions, use getPureText().
      *
      *  @param page WikiName of the page to fetch.
      *  @return WikiText.
      */
-    public String getText( String page )
+    public String getText( final String page )
     {
         return getText( page, WikiPageProvider.LATEST_VERSION );
     }
 
     /**
-     *  Returns the un-HTMLized text of the given version of a page.
-     *  This method also replaces the &lt; and &amp; -characters with
-     *  their respective HTML entities, thus making it suitable
-     *  for inclusion on an HTML page.  If you want to have the
-     *  page text without any conversions, use getPureText().
-     *
+     *  Returns the un-HTMLized text of the given version of a page. This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable for inclusion on an HTML page.  If you want to have the page text
+     *  without any conversions, use getPureText().
      *
      * @param page WikiName of the page to fetch
      * @param version  Version of the page to fetch
@@ -1210,14 +1196,10 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the un-HTMLized text of the given version of a page in
-     *  the given context.  USE THIS METHOD if you don't know what
-     *  doing.
+     *  Returns the un-HTMLized text of the given version of a page in the given context.  USE THIS METHOD if you don't know what doing.
      *  <p>
-     *  This method also replaces the &lt; and &amp; -characters with
-     *  their respective HTML entities, thus making it suitable
-     *  for inclusion on an HTML page.  If you want to have the
-     *  page text without any conversions, use getPureText().
+     *  This method also replaces the &lt; and &amp; -characters with their respective HTML entities, thus making it suitable
+     *  for inclusion on an HTML page.  If you want to have the page text without any conversions, use getPureText().
      *
      *  @since 1.9.15.
      *  @param context The WikiContext
@@ -1231,8 +1213,7 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the converted HTML of the page using a different
-     *  context than the default context.
+     *  Returns the converted HTML of the page using a different context than the default context.
      *
      *  @param  context A WikiContext in which you wish to render this page in.
      *  @param  page WikiPage reference.
@@ -1255,8 +1236,7 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the converted HTML of the page's specific version.
-     *  The version must be a positive integer, otherwise the current
+     *  Returns the converted HTML of the page's specific version. The version must be a positive integer, otherwise the current
      *  version is returned.
      *
      *  @param pagename WikiName of the page to convert.
@@ -1439,17 +1419,17 @@ public class WikiEngine  {
      *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a
      *  {@link org.apache.wiki.api.exceptions.RedirectException}.
      */
-    public void saveText( WikiContext context, String text ) throws WikiException {
+    public void saveText( final WikiContext context, final String text ) throws WikiException {
         // Check if page data actually changed; bail if not
-        WikiPage page = context.getPage();
-        String oldText = getPageManager().getPureText( page );
-        String proposedText = TextUtil.normalizePostData( text );
+        final WikiPage page = context.getPage();
+        final String oldText = getPageManager().getPureText( page );
+        final String proposedText = TextUtil.normalizePostData( text );
         if ( oldText != null && oldText.equals( proposedText ) ) {
             return;
         }
 
         // Check if creation of empty pages is allowed; bail if not
-        boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, PROP_ALLOW_CREATION_OF_EMPTY_PAGES, false );
+        final boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, PROP_ALLOW_CREATION_OF_EMPTY_PAGES, false );
         if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) ) {
             return;
         }
@@ -1457,54 +1437,32 @@ public class WikiEngine  {
         // Create approval workflow for page save; add the diffed, proposed and old text versions as
         // Facts for the approver (if approval is required). If submitter is authenticated, any reject
         // messages will appear in his/her workflow inbox.
-        WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
-        Principal submitter = context.getCurrentUser();
-        Step prepTask = m_tasksManager.buildPreSaveWikiPageTask( context, proposedText );
-        Step completionTask = m_tasksManager.buildSaveWikiPageTask();
-        String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
-        boolean isAuthenticated = context.getWikiSession().isAuthenticated();
-        Fact[] facts = new Fact[ 5 ];
+        final WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
+        final Principal submitter = context.getCurrentUser();
+        final Step prepTask = m_tasksManager.buildPreSaveWikiPageTask( context, proposedText );
+        final Step completionTask = m_tasksManager.buildSaveWikiPageTask();
+        final String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
+        final boolean isAuthenticated = context.getWikiSession().isAuthenticated();
+        final Fact[] facts = new Fact[ 5 ];
         facts[ 0 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PAGE_NAME, page.getName() );
         facts[ 1 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_DIFF_TEXT, diffText );
         facts[ 2 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, proposedText );
         facts[ 3 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_CURRENT_TEXT, oldText);
-        facts[ 4 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
-        String rejectKey = isAuthenticated ? WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY : null;
-        Workflow workflow = builder.buildApprovalWorkflow( submitter,
-                                                           WorkflowManager.WF_WP_SAVE_APPROVER,
-                                                           prepTask,
-                                                           WorkflowManager.WF_WP_SAVE_DECISION_MESSAGE_KEY,
-                                                           facts,
-                                                           completionTask,
-                                                           rejectKey );
+        facts[ 4 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_IS_AUTHENTICATED, isAuthenticated );
+        final String rejectKey = isAuthenticated ? WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY : null;
+        final Workflow workflow = builder.buildApprovalWorkflow( submitter,
+                                                                 WorkflowManager.WF_WP_SAVE_APPROVER,
+                                                                 prepTask,
+                                                                 WorkflowManager.WF_WP_SAVE_DECISION_MESSAGE_KEY,
+                                                                 facts,
+                                                                 completionTask,
+                                                                 rejectKey );
         m_workflowMgr.start( workflow );
 
         // Let callers know if the page-save requires approval
         if ( workflow.getCurrentStep() instanceof Decision ) {
             throw new DecisionRequiredException( "The page contents must be approved before they become active." );
         }
-    }
-
-    /**
-     *  Returns a Collection of WikiPages containing the version history of a page.
-     *
-     *  @param page Name of the page to look for
-     *  @return an ordered List of WikiPages, each corresponding to a different revision of the page.
-     */
-    public List< ? extends WikiPage > getVersionHistory( String page ) {
-        List< ? extends WikiPage > c = null;
-
-        try {
-            c = m_pageManager.getVersionHistory( page );
-
-            if( c == null ) {
-                c = m_attachmentManager.getVersionHistory( page );
-            }
-        } catch( ProviderException e ) {
-            log.error( "FIXME", e );
-        }
-
-        return c;
     }
 
     /**
@@ -1547,7 +1505,6 @@ public class WikiEngine  {
      *  Returns the current variable manager.
      *  @return The current VariableManager.
      */
-
     public VariableManager getVariableManager()
     {
         return m_variableManager;
@@ -1637,23 +1594,19 @@ public class WikiEngine  {
     }
 
     /**
-     *  Figure out to which page we are really going to.  Considers
-     *  special page names from the jspwiki.properties, and possible aliases.
-     *  This method delgates requests to
-     *  {@link org.apache.wiki.WikiContext#getRedirectURL()}.
+     *  Figure out to which page we are really going to.  Considers special page names from the jspwiki.properties, and possible aliases.
+     *  This method delgates requests to {@link org.apache.wiki.WikiContext#getRedirectURL()}.
      *  @param context The Wiki Context in which the request is being made.
      *  @return A complete URL to the new page to redirect to
      *  @since 2.2
      */
-
     public String getRedirectURL( final WikiContext context )
     {
         return context.getRedirectURL();
     }
 
     /**
-     *  Shortcut to create a WikiContext from a supplied HTTP request,
-     *  using a default wiki context.
+     *  Shortcut to create a WikiContext from a supplied HTTP request, using a default wiki context.
      *  @param request the HTTP request
      *  @param requestContext the default context to use
      *  @return a new WikiContext object.
@@ -1674,8 +1627,7 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the URL of the global RSS file.  May be null, if the
-     *  RSS file generation is not operational.
+     *  Returns the URL of the global RSS file.  May be null, if the RSS file generation is not operational.
      *  @since 1.7.10
      *  @return The global RSS url
      */
@@ -1690,8 +1642,7 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the root path.  The root path is where the WikiEngine is
-     *  located in the file system.
+     *  Returns the root path.  The root path is where the WikiEngine is located in the file system.
      *
      *  @since 2.2
      *  @return A path to where the Wiki is installed in the local filesystem.
@@ -1711,9 +1662,8 @@ public class WikiEngine  {
     }
 
     /**
-     * Returns the RSSGenerator. If the property <code>jspwiki.rss.generate</code>
-     * has not been set to <code>true</code>, this method will return <code>null</code>,
-     * <em>and callers should check for this value.</em>
+     * Returns the RSSGenerator. If the property <code>jspwiki.rss.generate</code> has not been set to <code>true</code>, this method
+     * will return <code>null</code>, <em>and callers should check for this value.</em>
      * @since 2.1.165
      * @return the RSS generator
      */
@@ -1772,11 +1722,9 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the AclManager employed by this WikiEngine.
-     *  The AclManager is lazily initialized.
+     *  Returns the AclManager employed by this WikiEngine. The AclManager is lazily initialized.
      *  <p>
-     *  The AclManager implementing class may be set by the
-     *  System property {@link #PROP_ACL_MANAGER_IMPL}.
+     *  The AclManager implementing class may be set by the System property {@link #PROP_ACL_MANAGER_IMPL}.
      *  </p>
      *
      * @since 2.3
@@ -1834,8 +1782,7 @@ public class WikiEngine  {
      * Registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( final WikiEventListener listener )
-    {
+    public final synchronized void addWikiEventListener( final WikiEventListener listener ) {
         WikiEventManager.addWikiEventListener( this, listener );
     }
 
@@ -1843,8 +1790,7 @@ public class WikiEngine  {
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( final WikiEventListener listener )
-    {
+    public final synchronized void removeWikiEventListener( final WikiEventListener listener ) {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
 
@@ -1869,8 +1815,7 @@ public class WikiEngine  {
     }
 
     /**
-     * Adds an attribute to the engine for the duration of this engine.  The
-     * value is not persisted.
+     * Adds an attribute to the engine for the duration of this engine.  The value is not persisted.
      *
      * @since 2.4.91
      * @param key the attribute name

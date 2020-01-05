@@ -18,17 +18,16 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.util.List;
 
 /**
  *  Iterates through tags.
@@ -40,57 +39,42 @@ import org.apache.wiki.api.exceptions.ProviderException;
  *
  *  @since 2.0
  */
-
 // FIXME: Too much in common with IteratorTag - REFACTOR
-public class HistoryIteratorTag
-    extends IteratorTag
-{
+public class HistoryIteratorTag extends IteratorTag  {
+
     private static final long serialVersionUID = 0L;
-    
-    static    Logger    log = Logger.getLogger( HistoryIteratorTag.class );
+    private static final Logger LOG = Logger.getLogger( HistoryIteratorTag.class );
 
     @Override
     public final int doStartTag() {
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage page = m_wikiContext.getPage();
 
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
+        try {
+            if( page != null && engine.pageExists( page ) ) {
+                final List< WikiPage > versions = engine.getPageManager().getVersionHistory( page.getName() );
 
-        page = m_wikiContext.getPage();
-
-        try
-        {
-            if( page != null && engine.pageExists(page) )
-            {
-                @SuppressWarnings("unchecked")
-                List< WikiPage > versions = ( List< WikiPage > )engine.getVersionHistory( page.getName() );
-
-                if( versions == null )
-                {
+                if( versions == null ) {
                     // There is no history
                     return SKIP_BODY;
                 }
 
                 m_iterator = versions.iterator();
 
-                if( m_iterator.hasNext() )
-                {
-                    WikiContext context = (WikiContext)m_wikiContext.clone();
-                    context.setPage( (WikiPage)m_iterator.next() );
+                if( m_iterator.hasNext() ) {
+                    final WikiContext context = ( WikiContext )m_wikiContext.clone();
+                    context.setPage( ( WikiPage )m_iterator.next() );
                     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(), context.getPage() );
-                }
-                else
-                {
+                } else {
                     return SKIP_BODY;
                 }
             }
 
             return EVAL_BODY_BUFFERED;
-        }
-        catch( ProviderException e )
-        {
-            log.fatal("Provider failed while trying to iterator through history",e);
+        } catch( final ProviderException e ) {
+            LOG.fatal("Provider failed while trying to iterator through history",e);
             // FIXME: THrow something.
         }
 
@@ -98,27 +82,21 @@ public class HistoryIteratorTag
     }
 
     @Override
-    public final int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
+    public final int doAfterBody() {
+        if( bodyContent != null ) {
+            try {
+                final JspWriter out = getPreviousOut();
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
-                log.error("Unable to get inner tag text", e);
+            } catch( final IOException e ) {
+                LOG.error("Unable to get inner tag text", e);
                 // FIXME: throw something?
             }
         }
 
-        if( m_iterator != null && m_iterator.hasNext() )
-        {
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            context.setPage( (WikiPage)m_iterator.next() );
+        if( m_iterator != null && m_iterator.hasNext() ) {
+            final WikiContext context = ( WikiContext )m_wikiContext.clone();
+            context.setPage( ( WikiPage )m_iterator.next() );
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), context.getPage() );
             return EVAL_BODY_BUFFERED;
@@ -126,4 +104,5 @@ public class HistoryIteratorTag
 
         return SKIP_BODY;
     }
+
 }

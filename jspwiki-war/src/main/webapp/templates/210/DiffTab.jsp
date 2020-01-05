@@ -29,7 +29,7 @@
 
 <%
   WikiContext c = WikiContext.findContext( pageContext );
-  List history = c.getEngine().getVersionHistory(c.getPage().getName());
+  List history = c.getEngine().getPageManager().getVersionHistory(c.getPage().getName());
   pageContext.setAttribute( "history", history );
   pageContext.setAttribute( "diffprovider", c.getEngine().getVariableManager().getVariable(c,"jspwiki.diffProvider"));
  %>

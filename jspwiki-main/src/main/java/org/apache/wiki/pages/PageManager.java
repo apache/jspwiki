@@ -184,11 +184,11 @@ public interface PageManager extends WikiEventListener {
     /**
      * Gets a version history of page.  Each element in the returned List is a WikiPage.
      *
-     * @param pageName The name of the page to fetch history for
-     * @return If the page does not exist, returns null, otherwise a List of WikiPages.
-     * @throws ProviderException If the repository fails.
+     * @param pageName The name of the page or attachment to fetch history for
+     * @return If the page does not exist or there's some problem retrieving the version history, returns null,
+     *         otherwise a List of WikiPages / Attachments, each corresponding to a different revision of the page / attachment.
      */
-    List<WikiPage> getVersionHistory( String pageName ) throws ProviderException;
+    < T extends WikiPage > List< T > getVersionHistory( String pageName );
 
     /**
      *  Returns the provider name.

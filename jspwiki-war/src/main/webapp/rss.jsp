@@ -100,12 +100,9 @@
     
     if( "blog".equals( mode ) ) {
         org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
-        changed = plug.findBlogEntries(wiki,
-                                       wikipage.getName(),
-                                       new Date(0L),
-                                       new Date());
+        changed = plug.findBlogEntries( wiki, wikipage.getName(), new Date(0L), new Date() );
     } else {
-        changed = ( List< WikiPage > )wiki.getVersionHistory( wikipage.getName() );
+        changed = wiki.getPageManager().getVersionHistory( wikipage.getName() );
     }
     
     //
