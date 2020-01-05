@@ -1490,15 +1490,11 @@ public class WikiEngine  {
     /**
      *  Returns the current plugin manager.
      *
-     *  In 2.10 the PluginManager will be returned instead of the generic
-     *
      *  @since 1.6.1
      *  @return The current PluginManager instance
      */
-    @SuppressWarnings("unchecked")
-    public < T extends PluginManager > T getPluginManager()
-    {
-        return (T)m_pluginManager;
+    public PluginManager getPluginManager() {
+        return m_pluginManager;
     }
 
     /**
@@ -1567,10 +1563,8 @@ public class WikiEngine  {
      *  @since 2.1.88
      *  @return The current FilterManager instance
      */
-    @SuppressWarnings("unchecked")
-    public < T extends FilterManager > T getFilterManager()
-    {
-        return (T)m_filterManager;
+    public FilterManager getFilterManager() {
+        return m_filterManager;
     }
 
     /**
