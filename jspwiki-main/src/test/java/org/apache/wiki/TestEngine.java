@@ -423,13 +423,15 @@ public class TestEngine extends WikiEngine
     private static String cleanNewDirFrom( final String pageDir, final long millis ) {
         final String testEngineCreationOrigin = getTestEngineCreationOrigin();
         if( StringUtils.isBlank( pageDir ) ) {
-            return "target/" + millis + "-" + testEngineCreationOrigin;
+            return "target" + File.separator + millis + "-" + testEngineCreationOrigin;
         }
-        if( pageDir.lastIndexOf( '/' ) == -1 ) {
-            return "target/" + millis + "-" + testEngineCreationOrigin + "-" + pageDir;
+        // take into account executions on Windows boxes can have both / and \
+        final int lastDirPosition = Math.max( pageDir.lastIndexOf( '/' ), pageDir.lastIndexOf( File.separator ) );
+        if( lastDirPosition == -1 ) {
+            return "target" + File.separator + millis + "-" + testEngineCreationOrigin + "-" + pageDir;
         }
-        final String stripNumbers = pageDir.substring( pageDir.lastIndexOf( '/' ) );
-        return pageDir.substring( 0, pageDir.lastIndexOf( '/' ) + 1 )
+        final String stripNumbers = pageDir.substring( lastDirPosition );
+        return pageDir.substring( 0, lastDirPosition + 1 )
              + millis
              + "-" + testEngineCreationOrigin
              + stripNumbers.replaceAll( "\\d", StringUtils.EMPTY ); // place all related tests' folders one next to the others
