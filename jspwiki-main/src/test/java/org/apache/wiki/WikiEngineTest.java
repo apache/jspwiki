@@ -64,9 +64,7 @@ public class WikiEngineTest {
 
     @Test
     public void testNonExistentDirectory() throws Exception {
-        final String tmpdir = "./target";
-        final String dirname = "non-existent-directory";
-        final String newdir = tmpdir + File.separator + dirname;
+        final String newdir = "." + File.separator + "target" + File.separator + "non-existent-directory";
 
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, newdir );
         m_engine = new TestEngine( props );
