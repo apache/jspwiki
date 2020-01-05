@@ -177,16 +177,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
     {
         initInlineImagePatterns();
 
-        m_camelCasePattern = (Pattern) m_engine.getAttribute( CAMELCASE_PATTERN );
-        if( m_camelCasePattern == null )
-        {
-            try
-            {
-                m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX,
-                                                         Perl5Compiler.DEFAULT_MASK|Perl5Compiler.READ_ONLY_MASK );
-            }
-            catch( MalformedPatternException e )
-            {
+        m_camelCasePattern = m_engine.getAttribute( CAMELCASE_PATTERN );
+        if( m_camelCasePattern == null ) {
+            try {
+                m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX,Perl5Compiler.DEFAULT_MASK|Perl5Compiler.READ_ONLY_MASK );
+            } catch( final MalformedPatternException e ) {
                 log.fatal("Internal error: Someone put in a faulty pattern.",e);
                 throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader", e);
             }

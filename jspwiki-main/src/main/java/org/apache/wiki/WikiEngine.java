@@ -1832,9 +1832,8 @@ public class WikiEngine  {
      *  @param key the attribute name
      *  @return the value
      */
-    public Object getAttribute( final String key )
-    {
-        return m_attributes.get( key );
+    public <T> T getAttribute( final String key ) {
+        return (T)m_attributes.get( key );
     }
 
     /**

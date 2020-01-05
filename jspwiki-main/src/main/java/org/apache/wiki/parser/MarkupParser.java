@@ -18,16 +18,6 @@
 */
 package org.apache.wiki.parser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -37,6 +27,16 @@ import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.jdom2.Element;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *   Provides an abstract class for the parser instances.
@@ -281,7 +281,7 @@ public abstract class MarkupParser
         //
         //  We cache compiled patterns in the engine, since their creation is really expensive
         //
-        List< Pattern > compiledpatterns = ( List< Pattern > )m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
+        List< Pattern > compiledpatterns = m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
 
         if( compiledpatterns == null ) {
             compiledpatterns = new ArrayList< >( 20 );
