@@ -190,7 +190,7 @@ public class UserManagerTest {
         // Test 4: our page text should have been re-written
         // (The new full name should be in the ACL, but the login name should have been removed)
         String expectedText = "[{ALLOW view Alice," + newName + "}]\nTest text.  More text.\r\n";
-        String actualText = m_engine.getText( pageName );
+        String actualText = m_engine.getPageManager().getText( pageName );
         Assertions.assertEquals( expectedText, actualText );
 
         // Remove our test page
@@ -249,7 +249,7 @@ public class UserManagerTest {
         // Test 8: our page text should have been re-written
         // (The new full name should be in the ACL, but the login name should have been removed)
         expectedText = "[{ALLOW view Alice," + oldName + "}]\nMore test text.  More text.\r\n";
-        actualText = m_engine.getText( pageName );
+        actualText = m_engine.getPageManager().getText( pageName );
         Assertions.assertEquals( expectedText, actualText );
 
         // CLEANUP: delete the profile; user and page; should be back to old counts

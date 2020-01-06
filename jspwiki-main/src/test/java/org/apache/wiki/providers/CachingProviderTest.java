@@ -95,7 +95,7 @@ public class CachingProviderTest
         WikiPage p = engine.getPageManager().getPage( "Testi" );
         Assertions.assertNotNull( p, "page did not exist?" );
 
-        String text = engine.getText( "Testi");
+        String text = engine.getPageManager().getText( "Testi");
         Assertions.assertEquals( "[fuufaa]", text, "text" );
 
         // TODO: ReferenceManager check as well

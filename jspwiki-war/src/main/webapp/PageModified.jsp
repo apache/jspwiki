@@ -46,7 +46,7 @@
     // Make the user and conflicting text presentable for display.
     usertext = StringEscapeUtils.escapeXml11( usertext );
 
-    String conflicttext = wiki.getText(pagereq);
+    String conflicttext = wiki.getPageManager().getText(pagereq);
     conflicttext = StringEscapeUtils.escapeXml11( conflicttext );
 
     pageContext.setAttribute( "conflicttext",

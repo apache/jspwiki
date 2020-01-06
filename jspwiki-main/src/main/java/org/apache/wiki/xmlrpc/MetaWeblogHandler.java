@@ -157,7 +157,7 @@ public class MetaWeblogHandler
         ht.put("postid", page.getName());
         ht.put("userid", page.getAuthor());
 
-        String pageText = m_context.getEngine().getText(page.getName());
+        String pageText = m_context.getEngine().getPageManager().getText(page.getName());
         String title = "";
         int firstLine = pageText.indexOf('\n');
 

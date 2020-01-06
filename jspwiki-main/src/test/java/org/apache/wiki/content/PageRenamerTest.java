@@ -267,7 +267,7 @@ public class PageRenamerTest
 
         Assertions.assertNotNull( p, "no page" );
 
-        Assertions.assertEquals("[FooTest]", m_engine.getText("FooTest").trim() );
+        Assertions.assertEquals("[FooTest]", m_engine.getPageManager().getText("FooTest").trim() );
     }
 
     @Test
@@ -283,7 +283,7 @@ public class PageRenamerTest
         Assertions.assertNotNull( p, "no page" );
 
         // Should be no change
-        Assertions.assertEquals("[TestPage|]", m_engine.getText("TestPage2").trim() );
+        Assertions.assertEquals("[TestPage|]", m_engine.getPageManager().getText("TestPage2").trim() );
     }
 
     @Test
@@ -299,7 +299,7 @@ public class PageRenamerTest
 
         Assertions.assertNotNull( p, "no page" );
 
-        Assertions.assertEquals("[|FooTest]", m_engine.getText("TestPage2").trim() );
+        Assertions.assertEquals("[|FooTest]", m_engine.getPageManager().getText("TestPage2").trim() );
     }
 
     private void rename( String src, String dst ) throws WikiException
@@ -329,7 +329,7 @@ public class PageRenamerTest
 
         rename( "Cdauth", "CdauthNew" );
 
-        Assertions.assertEquals( dst, m_engine.getText("TestPage").trim() );
+        Assertions.assertEquals( dst, m_engine.getPageManager().getText("TestPage").trim() );
     }
 
     @Test
@@ -342,7 +342,7 @@ public class PageRenamerTest
 
         rename ("TestPage2", "Test");
 
-        Assertions.assertEquals( "[Link to Test|Test]", m_engine.getText( "TestPage" ).trim() );
+        Assertions.assertEquals( "[Link to Test|Test]", m_engine.getPageManager().getText( "TestPage" ).trim() );
     }
 
     @Test
@@ -355,7 +355,7 @@ public class PageRenamerTest
 
         rename ("TestPage2", "Test");
 
-        Assertions.assertEquals( "[Link to Test|Test|target='_new']", m_engine.getText( "TestPage" ).trim() );
+        Assertions.assertEquals( "[Link to Test|Test|target='_new']", m_engine.getPageManager().getText( "TestPage" ).trim() );
     }
 
     @Test
@@ -452,7 +452,7 @@ public class PageRenamerTest
 
         rename ("TestPage2", "Test");
 
-        Assertions.assertEquals( "[[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
+        Assertions.assertEquals( "[[Link to TestPage2|TestPage2|target='_new']", m_engine.getPageManager().getText( "TestPage" ).trim() );
     }
 
     @Test
@@ -465,7 +465,7 @@ public class PageRenamerTest
 
         rename ("TestPage2", "Test");
 
-        Assertions.assertEquals( "~[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
+        Assertions.assertEquals( "~[Link to TestPage2|TestPage2|target='_new']", m_engine.getPageManager().getText( "TestPage" ).trim() );
     }
 
     /**

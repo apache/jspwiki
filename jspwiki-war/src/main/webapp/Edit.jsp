@@ -199,7 +199,7 @@
 
             if( append != null )
             {
-                StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+                StringBuffer pageText = new StringBuffer(wiki.getPageManager().getText( pagereq ));
 
                 pageText.append( text );
 

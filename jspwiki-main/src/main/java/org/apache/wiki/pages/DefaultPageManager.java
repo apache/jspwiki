@@ -210,6 +210,15 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
     /**
      * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#getText(String, int)
+     */
+    public String getText( final String page, final int version ) {
+        final String result = getPureText( page, version );
+        return TextUtil.replaceEntities( result );
+    }
+
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getEngine()
      */
     @Override

@@ -228,7 +228,7 @@ public class AtomAPIServlet extends HttpServlet
 
         Entry entry = SyndicationFactory.newSyndicationEntry();
 
-        String pageText = m_engine.getText(page.getName());
+        String pageText = m_engine.getPageManager().getText(page.getName());
         String title = "";
         int firstLine = pageText.indexOf('\n');
 

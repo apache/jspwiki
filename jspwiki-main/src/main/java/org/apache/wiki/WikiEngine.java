@@ -1160,59 +1160,6 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the un-HTMLized text of the latest version of a page. This method also replaces the &lt; and &amp; -characters with
-     *  their respective HTML entities, thus making it suitable for inclusion on an HTML page.  If you want to have the page text
-     *  without any conversions, use getPureText().
-     *
-     *  @param page WikiName of the page to fetch.
-     *  @return WikiText.
-     */
-    public String getText( final String page )
-    {
-        return getText( page, WikiPageProvider.LATEST_VERSION );
-    }
-
-    /**
-     *  Returns the un-HTMLized text of the given version of a page. This method also replaces the &lt; and &amp; -characters with
-     *  their respective HTML entities, thus making it suitable for inclusion on an HTML page.  If you want to have the page text
-     *  without any conversions, use getPureText().
-     *
-     * @param page WikiName of the page to fetch
-     * @param version  Version of the page to fetch
-     * @return WikiText.
-     */
-    public String getText( final String page, final int version ) {
-        final String result = getPageManager().getPureText( page, version );
-
-        //
-        //  Replace ampersand first, or else all quotes and stuff
-        //  get replaced as well with &quot; etc.
-        //
-        /*
-        result = TextUtil.replaceString( result, "&", "&amp;" );
-        */
-
-        return TextUtil.replaceEntities( result );
-    }
-
-    /**
-     *  Returns the un-HTMLized text of the given version of a page in the given context.  USE THIS METHOD if you don't know what doing.
-     *  <p>
-     *  This method also replaces the &lt; and &amp; -characters with their respective HTML entities, thus making it suitable
-     *  for inclusion on an HTML page.  If you want to have the page text without any conversions, use getPureText().
-     *
-     *  @since 1.9.15.
-     *  @param context The WikiContext
-     *  @param page    A page reference (not an attachment)
-     *  @return The page content as HTMLized String.
-     *  @see PageManager#getPureText(WikiPage)
-     */
-    public String getText( final WikiContext context, final WikiPage page )
-    {
-        return getText( page.getName(), page.getVersion() );
-    }
-
-    /**
      *  Returns the converted HTML of the page using a different context than the default context.
      *
      *  @param  context A WikiContext in which you wish to render this page in.

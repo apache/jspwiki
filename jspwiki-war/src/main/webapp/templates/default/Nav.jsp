@@ -31,7 +31,7 @@
 <%
   WikiContext c = WikiContext.findContext( pageContext );
 
-  String text = c.getEngine().getText(c, c.getPage());
+  String text = c.getEngine().getPageManager().getText(c, c.getPage());
   StringTokenizer tokens = new StringTokenizer( text );
   //avg reading speeds: https://iovs.arvojournals.org/article.aspx?articleid=2166061
 

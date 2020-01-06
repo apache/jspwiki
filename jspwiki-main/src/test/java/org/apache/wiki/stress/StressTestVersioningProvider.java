@@ -72,7 +72,7 @@ public class StressTestVersioningProvider {
         Assertions.assertEquals( maxver, pageinfo.getVersion(), "wrong version" );
 
         // +2 comes from \r\n.
-        Assertions.assertEquals( maxver+2, engine.getText(NAME1).length(), "wrong text" );
+        Assertions.assertEquals( maxver+2, engine.getPageManager().getText(NAME1).length(), "wrong text" );
     }
 
     private void runMassiveFileTest(int maxpages)

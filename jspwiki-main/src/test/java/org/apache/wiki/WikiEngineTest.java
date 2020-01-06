@@ -119,39 +119,6 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testPutPage() throws Exception {
-        final String text = "Foobar.\r\n";
-        final String name = NAME1;
-        m_engine.saveText( name, text );
-
-        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
-        Assertions.assertEquals( text, m_engine.getText( name ), "wrong content" );
-    }
-
-    @Test
-    public void testPutPageEntities() throws Exception {
-        final String text = "Foobar. &quot;\r\n";
-        final String name = NAME1;
-        m_engine.saveText( name, text );
-
-        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
-        Assertions.assertEquals( "Foobar. &amp;quot;\r\n", m_engine.getText( name ), "wrong content" );
-    }
-
-    /**
-     *  Check that basic " is changed.
-     */
-    @Test
-    public void testPutPageEntities2() throws Exception {
-        final String text = "Foobar. \"\r\n";
-        final String name = NAME1;
-        m_engine.saveText( name, text );
-
-        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
-        Assertions.assertEquals( "Foobar. &quot;\r\n", m_engine.getText( name ), "wrong content" );
-    }
-
-    @Test
     public void testGetHTML() throws Exception {
         final String text = "''Foobar.''";
         final String name = NAME1;
@@ -377,7 +344,7 @@ public class WikiEngineTest {
     @Test
     public void testSpacedNames1() throws Exception {
         m_engine.saveText("This is a test", "puppaa");
-        Assertions.assertEquals( "puppaa", m_engine.getText("This is a test").trim(), "normal" );
+        Assertions.assertEquals( "puppaa", m_engine.getPageManager().getText("This is a test").trim(), "normal" );
     }
 
 
@@ -447,20 +414,6 @@ public class WikiEngineTest {
 
         m_engine.saveText( name, text );
         Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now neither" );
-    }
-
-    @Test
-    public void testSaveExistingPageWithEmptyContent() throws Exception {
-        final String text = "Foobar.\r\n";
-        final String name = NAME1;
-        m_engine.saveText( name, text );
-
-        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
-        // saveText uses normalizePostData to assure it conforms to certain rules
-        Assertions.assertEquals( TextUtil.normalizePostData( text ), m_engine.getText( name ), "wrong content" );
-
-        m_engine.saveText( name, "" );
-        Assertions.assertEquals( TextUtil.normalizePostData( "" ), m_engine.getText( name ), "wrong content" );
     }
 
 }

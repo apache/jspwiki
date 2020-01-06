@@ -98,6 +98,44 @@ public interface PageManager extends WikiEventListener {
     }
 
     /**
+     *  Returns the un-HTMLized text of the given version of a page. This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable for inclusion on an HTML page.  If you want to have the page text
+     *  without any conversions, use {@link #getPureText(String, int)}.
+     *
+     * @param page WikiName of the page to fetch
+     * @param version  Version of the page to fetch
+     * @return WikiText.
+     */
+    String getText( String page, int version );
+
+    /**
+     *  Returns the un-HTMLized text of the latest version of a page. This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable for inclusion on an HTML page.  If you want to have the page text
+     *  without any conversions, use {@link #getPureText(String, int)}.
+     *
+     *  @param page WikiName of the page to fetch.
+     *  @return WikiText.
+     */
+    default String getText( final String page ) {
+        return getText( page, WikiPageProvider.LATEST_VERSION );
+    }
+
+    /**
+     *  Returns the un-HTMLized text of the given version of a page in the given context.  USE THIS METHOD if you don't know what doing.
+     *  <p>
+     *  This method also replaces the &lt; and &amp; -characters with their respective HTML entities, thus making it suitable
+     *  for inclusion on an HTML page.  If you want to have the page text without any conversions, use {@link #getPureText(WikiPage)}.
+     *
+     *  @since 1.9.15.
+     *  @param page A page reference (not an attachment)
+     *  @return The page content as HTMLized String.
+     *  @see PageManager#getPureText(WikiPage)
+     */
+    default String getText( final WikiPage page ) {
+        return getText( page.getName(), page.getVersion() );
+    }
+
+    /**
      * Returns the WikiEngine to which this PageManager belongs to.
      *
      * @return The WikiEngine object.

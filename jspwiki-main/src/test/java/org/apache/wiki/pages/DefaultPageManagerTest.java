@@ -29,6 +29,7 @@ import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -150,7 +151,7 @@ public class DefaultPageManagerTest {
         engine.getPageManager().deleteVersion( page );
         Assertions.assertNull( engine.getPageManager().getPage( NAME1, 3 ), "got page" );
 
-        final String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+        final String content = engine.getPageManager().getText( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "Test2", content.trim(), "content" );
     }
 
@@ -167,9 +168,9 @@ public class DefaultPageManagerTest {
         engine.getPageManager().deleteVersion( page );
         Assertions.assertNull( engine.getPageManager().getPage( NAME1, 1 ), "got page" );
 
-        final String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+        final String content = engine.getPageManager().getText( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "Test3", content.trim(), "content" );
-        Assertions.assertEquals( "", engine.getText(NAME1, 1).trim(), "content1" );
+        Assertions.assertEquals( "", engine.getPageManager().getText(NAME1, 1).trim(), "content1" );
     }
 
     @Test
@@ -192,7 +193,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
-        final String p = engine.getText( "test", -1 );
+        final String p = engine.getPageManager().getText( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
@@ -227,6 +228,53 @@ public class DefaultPageManagerTest {
         Assertions.assertEquals( VerySimpleProvider.PAGENAME, vsp.m_latestReq, "wrong page" );
         Assertions.assertEquals( -1, vsp.m_latestVers,  "wrong version" );
         Assertions.assertNotNull( p, "null" );
+    }
+
+    @Test
+    public void testPutPage() throws Exception {
+        final String text = "Foobar.\r\n";
+        final String name = NAME1;
+        engine.saveText( name, text );
+
+        Assertions.assertTrue( engine.pageExists( name ), "page does not exist" );
+        Assertions.assertEquals( text, engine.getPageManager().getText( name ), "wrong content" );
+    }
+
+    @Test
+    public void testPutPageEntities() throws Exception {
+        final String text = "Foobar. &quot;\r\n";
+        final String name = NAME1;
+        engine.saveText( name, text );
+
+        Assertions.assertTrue( engine.pageExists( name ), "page does not exist" );
+        Assertions.assertEquals( "Foobar. &amp;quot;\r\n", engine.getPageManager().getText( name ), "wrong content" );
+    }
+
+    /**
+     *  Check that basic " is changed.
+     */
+    @Test
+    public void testPutPageEntities2() throws Exception {
+        final String text = "Foobar. \"\r\n";
+        final String name = NAME1;
+        engine.saveText( name, text );
+
+        Assertions.assertTrue( engine.pageExists( name ), "page does not exist" );
+        Assertions.assertEquals( "Foobar. &quot;\r\n", engine.getPageManager().getText( name ), "wrong content" );
+    }
+
+    @Test
+    public void testSaveExistingPageWithEmptyContent() throws Exception {
+        final String text = "Foobar.\r\n";
+        final String name = NAME1;
+        engine.saveText( name, text );
+
+        Assertions.assertTrue( engine.pageExists( name ), "page does not exist" );
+        // saveText uses normalizePostData to assure it conforms to certain rules
+        Assertions.assertEquals( TextUtil.normalizePostData( text ), engine.getPageManager().getText( name ), "wrong content" );
+
+        engine.saveText( name, "" );
+        Assertions.assertEquals( TextUtil.normalizePostData( "" ), engine.getPageManager().getText( name ), "wrong content" );
     }
 
 }
