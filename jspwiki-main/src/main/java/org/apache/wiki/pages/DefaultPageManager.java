@@ -35,7 +35,6 @@ import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
@@ -76,7 +75,7 @@ import java.util.concurrent.ConcurrentHashMap;
 // FIXME: This class currently only functions just as an extra layer over providers,
 //        complicating things.  We need to move more provider-specific functionality
 //        from WikiEngine (which is too big now) into this class.
-public class DefaultPageManager extends ModuleManager implements PageManager, WikiEventListener {
+public class DefaultPageManager extends ModuleManager implements PageManager {
 
     private static final Logger LOG = Logger.getLogger( DefaultPageManager.class );
 

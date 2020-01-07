@@ -21,6 +21,7 @@ package org.apache.wiki.workflow;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.event.WikiEventListener;
 
 import java.security.Principal;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.Set;
  * particular Workflows.
  * </p>
  */
-public interface WorkflowManager {
+public interface WorkflowManager extends WikiEventListener {
 
     /** The workflow attribute which stores the wikiContext. */
     String WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT = "wikiContext";

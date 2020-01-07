@@ -20,6 +20,7 @@ package org.apache.wiki.pages;
 
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.providers.WikiPageProvider;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public interface PageManager {
+public interface PageManager extends WikiEventListener {
 
     /** The property value for setting the current page provider.  Value is {@value}. */
     String PROP_PAGEPROVIDER = "jspwiki.pageProvider";

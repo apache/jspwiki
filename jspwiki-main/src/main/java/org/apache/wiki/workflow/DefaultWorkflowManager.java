@@ -23,7 +23,6 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.security.Principal;
@@ -42,7 +41,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * users or groups expected to approve particular Workflows.
  * </p>
  */
-public class DefaultWorkflowManager implements WorkflowManager, WikiEventListener {
+public class DefaultWorkflowManager implements WorkflowManager {
 
     private final DecisionQueue m_queue = new DecisionQueue();
     private final Set<Workflow> m_workflows;
