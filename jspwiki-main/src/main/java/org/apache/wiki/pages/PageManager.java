@@ -18,11 +18,8 @@
  */
 package org.apache.wiki.pages;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.providers.WikiPageProvider;
 
 import java.util.Collection;
@@ -30,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public interface PageManager extends WikiEventListener {
+public interface PageManager {
 
     /** The property value for setting the current page provider.  Value is {@value}. */
     String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
@@ -134,13 +131,6 @@ public interface PageManager extends WikiEventListener {
     default String getText( final WikiPage page ) {
         return getText( page.getName(), page.getVersion() );
     }
-
-    /**
-     * Returns the WikiEngine to which this PageManager belongs to.
-     *
-     * @return The WikiEngine object.
-     */
-    WikiEngine getEngine();
 
     /**
      * Puts the page text into the repository.  Note that this method does NOT update
@@ -354,17 +344,6 @@ public interface PageManager extends WikiEventListener {
      * @throws ProviderException If the repository operation fails
      */
     void deletePage( WikiPage page ) throws ProviderException;
-
-    /**
-     * Listens for {@link org.apache.wiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
-     * events. If a user profile's name changes, each page ACL is inspected. If an entry contains
-     * a name that has changed, it is replaced with the new one. No events are emitted
-     * as a consequence of this method, because the page contents are still the same; it is
-     * only the representations of the names within the ACL that are changing.
-     *
-     * @param event The event
-     */
-    void actionPerformed(WikiEvent event);
 
     /**
      * Returns the configured {@link PageSorter}.

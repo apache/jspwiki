@@ -21,20 +21,19 @@ package org.apache.wiki.event;
 
 import  java.util.EventListener;
 
+
 /**
   * Defines an interface for an object that listens for WikiEvents.
   *
   * @since   2.3.92
   */
-public interface WikiEventListener extends EventListener
-{
+public interface WikiEventListener extends EventListener {
 
    /**
      * Fired when a WikiEvent is triggered by an event source.
      *
-     * @param event    a WikiEvent object
+     * @param event a WikiEvent object
      */
     void actionPerformed( WikiEvent event );
 
-
-} // end com.ecryd.jspwiki.event.WikiEventListener
+}

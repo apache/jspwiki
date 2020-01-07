@@ -35,6 +35,7 @@ import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
@@ -75,7 +76,7 @@ import java.util.concurrent.ConcurrentHashMap;
 // FIXME: This class currently only functions just as an extra layer over providers,
 //        complicating things.  We need to move more provider-specific functionality
 //        from WikiEngine (which is too big now) into this class.
-public class DefaultPageManager extends ModuleManager implements PageManager {
+public class DefaultPageManager extends ModuleManager implements PageManager, WikiEventListener {
 
     private static final Logger LOG = Logger.getLogger( DefaultPageManager.class );
 
@@ -218,11 +219,11 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     }
 
     /**
-     * {@inheritDoc}
-     * @see org.apache.wiki.pages.PageManager#getEngine()
+     * Returns the WikiEngine to which this PageManager belongs to.
+     *
+     * @return The WikiEngine object.
      */
-    @Override
-    public WikiEngine getEngine() {
+    protected WikiEngine getEngine() {
         return m_engine;
     }
 
@@ -636,8 +637,14 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     	return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.pages.PageManager#actionPerformed(org.apache.wiki.event.WikiEvent)
+    /**
+     * Listens for {@link org.apache.wiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
+     * events. If a user profile's name changes, each page ACL is inspected. If an entry contains
+     * a name that has changed, it is replaced with the new one. No events are emitted
+     * as a consequence of this method, because the page contents are still the same; it is
+     * only the representations of the names within the ACL that are changing.
+     *
+     * @param event The event
      */
     @Override
     public void actionPerformed( final WikiEvent event ) {
