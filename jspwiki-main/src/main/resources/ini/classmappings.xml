@@ -129,6 +129,6 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>
-    <mappedClass>org.apache.wiki.workflow.WorkflowManager</mappedClass>
+    <mappedClass>org.apache.wiki.workflow.DefaultWorkflowManager</mappedClass>
   </mapping>
 </classmappings>
