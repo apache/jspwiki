@@ -192,7 +192,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         //
         Properties props      = m_engine.getWikiProperties();
 
-        String cclinks = (String)m_context.getPage().getAttribute( PROP_CAMELCASELINKS );
+        String cclinks = m_context.getPage().getAttribute( PROP_CAMELCASELINKS );
 
         if( cclinks != null )
         {

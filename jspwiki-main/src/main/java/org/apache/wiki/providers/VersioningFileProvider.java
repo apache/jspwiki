@@ -437,7 +437,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
             page.setAuthor(newAuthor);
             props.setProperty( versionNumber + ".author", newAuthor );
 
-            String changeNote = (String) page.getAttribute(WikiPage.CHANGENOTE);
+            String changeNote = page.getAttribute(WikiPage.CHANGENOTE);
             if( changeNote != null ) {
                 props.setProperty( versionNumber + ".changenote", changeNote );
             }

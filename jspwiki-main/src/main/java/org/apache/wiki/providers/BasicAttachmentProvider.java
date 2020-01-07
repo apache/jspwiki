@@ -345,7 +345,7 @@ public class BasicAttachmentProvider
 
             props.setProperty( versionNumber+".author", author );
             
-            String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
+            String changeNote = att.getAttribute(WikiPage.CHANGENOTE);
             if( changeNote != null )
             {
                 props.setProperty( versionNumber+".changenote", changeNote );

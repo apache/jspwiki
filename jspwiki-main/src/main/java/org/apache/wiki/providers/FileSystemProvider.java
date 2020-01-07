@@ -18,6 +18,10 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.exceptions.ProviderException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,10 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.exceptions.ProviderException;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.
@@ -76,8 +76,8 @@ public class FileSystemProvider
         try
         {
             String author = page.getAuthor();
-            String changenote = (String)page.getAttribute( WikiPage.CHANGENOTE );
-            String viewcount = (String)page.getAttribute( WikiPage.VIEWCOUNT );
+            String changenote = page.getAttribute( WikiPage.CHANGENOTE );
+            String viewcount = page.getAttribute( WikiPage.VIEWCOUNT );
             
             if( author != null )
             {

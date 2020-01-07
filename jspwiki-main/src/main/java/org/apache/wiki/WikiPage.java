@@ -18,15 +18,15 @@
  */
 package org.apache.wiki;
 
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.providers.WikiPageProvider;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
@@ -103,9 +103,9 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param key The key using which the attribute is fetched
      *  @return The attribute.  If the attribute has not been set, returns null.
      */
-    public Object getAttribute( String key )
+    public < T > T getAttribute( String key )
     {
-        return m_attributes.get( key );
+        return (T)m_attributes.get( key );
     }
 
     /**

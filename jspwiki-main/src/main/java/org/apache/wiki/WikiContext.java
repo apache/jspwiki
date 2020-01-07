@@ -337,7 +337,7 @@ public class WikiContext implements Cloneable, Command {
 
         if( redirURL == null )
         {
-            String alias = (String)m_page.getAttribute( WikiPage.ALIAS );
+            String alias = m_page.getAttribute( WikiPage.ALIAS );
 
             if( alias != null )
             {
@@ -345,7 +345,7 @@ public class WikiContext implements Cloneable, Command {
             }
             else
             {
-                redirURL = (String)m_page.getAttribute( WikiPage.REDIRECT );
+                redirURL = m_page.getAttribute( WikiPage.REDIRECT );
             }
         }
 
@@ -802,7 +802,7 @@ public class WikiContext implements Cloneable, Command {
             WikiPage page = getPage();
             if ( page != null )
             {
-                template = (String)page.getAttribute( WikiEngine.PROP_TEMPLATEDIR );
+                template = page.getAttribute( WikiEngine.PROP_TEMPLATEDIR );
             }
 
         }

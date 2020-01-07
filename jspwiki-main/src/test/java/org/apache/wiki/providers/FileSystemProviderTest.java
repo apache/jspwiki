@@ -18,11 +18,6 @@
  */
 
 package org.apache.wiki.providers;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
@@ -33,6 +28,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 
 
@@ -291,9 +291,9 @@ public class FileSystemProviderTest {
         m_provider.putPageText( testPage, "This page has custom properties" );
         Assertions.assertTrue( file.exists(), "No such file" );
         WikiPage pageRetrieved = m_provider.getPageInfo( pageName, -1 );
-        String value = (String)pageRetrieved.getAttribute("@test");
-        String value2 = (String)pageRetrieved.getAttribute("@test2");
-        String value3 = (String)pageRetrieved.getAttribute("test3");
+        String value = pageRetrieved.getAttribute("@test");
+        String value2 = pageRetrieved.getAttribute("@test2");
+        String value3 = pageRetrieved.getAttribute("test3");
         Assertions.assertNotNull(value);
         Assertions.assertNotNull(value2);
         Assertions.assertNull(value3);

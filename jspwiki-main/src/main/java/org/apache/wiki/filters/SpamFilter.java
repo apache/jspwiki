@@ -753,13 +753,11 @@ public class SpamFilter extends BasicPageFilter {
             //
             if( rebuild ) {
                 m_lastRebuild = new Date();
-                m_spamPatterns = parseWordList( sourceSpam,
-                                                ( sourceSpam != null ) ? ( String )sourceSpam.getAttribute( LISTVAR ) : null );
+                m_spamPatterns = parseWordList( sourceSpam, ( sourceSpam != null ) ? sourceSpam.getAttribute( LISTVAR ) : null );
 
                 log.info( "Spam filter reloaded - recognizing " + m_spamPatterns.size() + " patterns from page " + m_forbiddenWordsPage );
 
-                m_IPPatterns = parseWordList( sourceIPs,
-                        ( sourceIPs != null ) ? ( String )sourceIPs.getAttribute( LISTIPVAR ) : null );
+                m_IPPatterns = parseWordList( sourceIPs,  ( sourceIPs != null ) ? sourceIPs.getAttribute( LISTIPVAR ) : null );
                 log.info( "IP filter reloaded - recognizing " + m_IPPatterns.size() + " patterns from page " + m_forbiddenIPsPage );
 
                 if( att != null ) {
@@ -902,7 +900,7 @@ public class SpamFilter extends BasicPageFilter {
         //
         //  Don't forget to include the change note, too
         //
-        final String changeNote = ( String )page.getAttribute( WikiPage.CHANGENOTE );
+        final String changeNote = page.getAttribute( WikiPage.CHANGENOTE );
 
         if( changeNote != null ) {
             change.append( "\r\n" );

@@ -280,8 +280,9 @@ public class AtomAPIServlet extends HttpServlet
 
             log.debug( p.getName()+" = "+p.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) ;
 
-            if( !("true".equals(p.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) ) )
+            if( !("true".equals(p.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) ) ) {
                 continue;
+            }
 
             String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
 
