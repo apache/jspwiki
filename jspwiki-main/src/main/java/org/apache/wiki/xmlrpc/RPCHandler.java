@@ -34,7 +34,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
@@ -43,21 +42,10 @@ import java.util.Vector;
  *
  *  @since 1.6.6
  */
-// We could use WikiEngine directly, but because of introspection it would
-// show just too many methods to be safe.
-public class RPCHandler
-    extends AbstractRPCHandler
-{
-    private static Logger log = Logger.getLogger( RPCHandler.class );
+// We could use WikiEngine directly, but because of introspection it would show just too many methods to be safe.
+public class RPCHandler extends AbstractRPCHandler {
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public void initialize( WikiContext ctx )
-    {
-        super.initialize( ctx );
-    }
+    private static final Logger log = Logger.getLogger( RPCHandler.class );
 
     /**
      *  Converts Java string into RPC string.
@@ -83,23 +71,19 @@ public class RPCHandler
         return src.getBytes( StandardCharsets.UTF_8 );
     }
 
-    public String getApplicationName()
-    {
+    public String getApplicationName() {
         checkPermission( PagePermission.VIEW );
         return toRPCString(m_engine.getApplicationName());
     }
 
-    public Vector getAllPages()
-    {
+    public Vector getAllPages() {
         checkPermission( PagePermission.VIEW );
         Collection< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
         Vector<String> result = new Vector<>();
 
-        for( WikiPage p : pages )
-        {
-            if( !(p instanceof Attachment) )
-            {
-                result.add( toRPCString(p.getName()) );
+        for( final WikiPage p : pages ) {
+            if( !( p instanceof Attachment ) ) {
+                result.add( toRPCString( p.getName() ) );
             }
         }
 
@@ -181,7 +165,7 @@ public class RPCHandler
     {
         pagename = fromRPCString( pagename );
 
-        if( !m_engine.pageExists(pagename) )
+        if( !m_engine.getPageManager().wikiPageExists(pagename) )
         {
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
@@ -229,17 +213,13 @@ public class RPCHandler
         return toRPCBase64( m_engine.getHTML( pagename ) );
     }
 
-    public byte[] getPageHTMLVersion( String pagename, int version )
-        throws XmlRpcException
-    {
+    public byte[] getPageHTMLVersion( String pagename, int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return toRPCBase64( m_engine.getHTML( pagename, version ) );
     }
 
-    public Vector listLinks( String pagename )
-        throws XmlRpcException
-    {
+    public Vector listLinks( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         WikiPage page = m_engine.getPageManager().getPage( pagename );
@@ -252,21 +232,15 @@ public class RPCHandler
         WikiContext context = new WikiContext( m_engine, page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
-        m_engine.textToHTML( context,
-                             pagedata,
-                             localCollector,
-                             extCollector,
-                             attCollector );
+        m_engine.textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
         Vector<Hashtable<String, String>> result = new Vector<>();
 
         //
         //  Add local links.
         //
-        for( Iterator< String > i = localCollector.getLinks().iterator(); i.hasNext(); )
-        {
-            String link = i.next();
-            Hashtable< String, String > ht = new Hashtable<>();
+        for( final String link : localCollector.getLinks() ) {
+            Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
 
@@ -277,17 +251,13 @@ public class RPCHandler
             //
 
             //
-            //  FIXME: The current link collector interface is not very good, since
-            //  it causes this.
+            //  FIXME: The current link collector interface is not very good, since it causes this.
             //
 
-            if( m_engine.pageExists(link) )
-            {
-                ht.put( "href", context.getURL(WikiContext.VIEW,link) );
-            }
-            else
-            {
-                ht.put( "href", context.getURL(WikiContext.EDIT,link) );
+            if( m_engine.getPageManager().wikiPageExists( link ) ) {
+                ht.put( "href", context.getURL( WikiContext.VIEW, link ) );
+            } else {
+                ht.put( "href", context.getURL( WikiContext.EDIT, link ) );
             }
 
             result.add( ht );
@@ -296,37 +266,26 @@ public class RPCHandler
         //
         // Add links to inline attachments
         //
-        for( Iterator< String > i = attCollector.getLinks().iterator(); i.hasNext(); )
-        {
-            String link = i.next();
-
-            Hashtable< String, String > ht = new Hashtable< >();
-
+        for( String link : attCollector.getLinks() ) {
+            Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
             ht.put( "href", context.getURL( WikiContext.ATTACH, link ) );
-
             result.add( ht );
         }
 
         //
-        // External links don't need to be changed into XML-RPC strings,
-        // simply because URLs are by definition ASCII.
+        // External links don't need to be changed into XML-RPC strings, simply because URLs are by definition ASCII.
         //
-
-        for( Iterator< String > i = extCollector.getLinks().iterator(); i.hasNext(); )
-        {
-            String link = i.next();
-
-            Hashtable< String, String > ht = new Hashtable< >();
-
+        for( String link : extCollector.getLinks() ) {
+            Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );
             ht.put( "href", link );
-
             result.add( ht );
         }
 
         return result;
     }
+
 }

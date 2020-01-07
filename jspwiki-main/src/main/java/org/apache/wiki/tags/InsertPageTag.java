@@ -94,7 +94,7 @@ public class InsertPageTag extends WikiTagBase {
 
         if( m_pageName == null ) {
             insertedPage = m_wikiContext.getPage();
-            if( !engine.pageExists(insertedPage) ) return SKIP_BODY;
+            if( !engine.getPageManager().wikiPageExists(insertedPage) ) return SKIP_BODY;
         } else {
             insertedPage = engine.getPageManager().getPage( m_pageName );
         }

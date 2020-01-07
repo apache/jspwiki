@@ -144,7 +144,7 @@ public class CalendarTag extends WikiTagBase {
         if( m_pageFormat != null ) {
             final String pagename = m_pageFormat.format( day.getTime() );
             
-            if( engine.pageExists( pagename ) ) {
+            if( engine.getPageManager().wikiPageExists( pagename ) ) {
                 if( m_urlFormat != null ) {
                     final String url = m_urlFormat.format( day.getTime() );
                     result = "<td class=\"link\"><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";

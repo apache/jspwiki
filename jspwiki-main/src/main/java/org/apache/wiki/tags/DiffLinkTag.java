@@ -97,7 +97,7 @@ public class DiffLinkTag extends WikiLinkTag {
         int r2;
 
         //  In case the page does not exist, we fail silently.
-        if( !engine.pageExists( pageName ) ) {
+        if( !engine.getPageManager().wikiPageExists( pageName ) ) {
             return SKIP_BODY;
         }
 

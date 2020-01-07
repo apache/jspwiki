@@ -43,7 +43,7 @@ public class PageSizeTag extends WikiTagBase {
             if( page != null ) {
                 long size = page.getSize();
 
-                if( size == -1 && engine.pageExists(page) ) { // should never happen with attachments
+                if( size == -1 && engine.getPageManager().wikiPageExists( page ) ) { // should never happen with attachments
                     size = engine.getPageManager().getPureText( page.getName(), page.getVersion() ).length();
                     page.setSize( size );
                 }
@@ -57,4 +57,5 @@ public class PageSizeTag extends WikiTagBase {
 
         return SKIP_BODY;
     }
+
 }

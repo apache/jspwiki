@@ -126,7 +126,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
      *  @throws XmlRpcException, if there is something wrong with the page.
      */
     private String parsePageCheckCondition( final String pagename ) throws XmlRpcException {
-        if( !m_engine.pageExists(pagename) ) {
+        if( !m_engine.getPageManager().wikiPageExists(pagename) ) {
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
@@ -189,7 +189,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
 
-            if( m_engine.pageExists( link ) ) {
+            if( m_engine.getPageManager().wikiPageExists( link ) ) {
                 ht.put( "href", context.getViewURL( link ) );
             } else {
                 ht.put( "href", context.getURL( WikiContext.EDIT, link ) );

@@ -18,8 +18,6 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -37,29 +35,23 @@ public class HasAttachmentsTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( HasAttachmentsTag.class );
     
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
-        AttachmentManager mgr = engine.getAttachmentManager();
+    public final int doWikiStartTag() {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage page = m_wikiContext.getPage();
+        final AttachmentManager mgr = engine.getAttachmentManager();
 
-        try
-        {
-            if( page != null && engine.pageExists(page) && mgr.attachmentsEnabled() )
-            {
-                if( mgr.hasAttachments(page) )
-                {
+        try {
+            if( page != null && engine.getPageManager().wikiPageExists(page) && mgr.attachmentsEnabled() ) {
+                if( mgr.hasAttachments(page) ) {
                     return EVAL_BODY_INCLUDE;
                 }
             }
-        }
-        catch( ProviderException e )
-        {
+        } catch( final ProviderException e ) {
             log.fatal("Provider failed while trying to check for attachements",e);
             // FIXME: THrow something.
         }
 
         return SKIP_BODY;
     }
+
 }

@@ -261,7 +261,7 @@ public interface PageManager extends WikiEventListener {
     Set< WikiPage > getRecentChanges();
 
     /**
-     * Returns true, if the page exists (any version).
+     * Returns true, if the page exists (any version) on the underlying WikiPageProvider.
      *
      * @param pageName Name of the page.
      * @return A boolean value describing the existence of a page
@@ -270,7 +270,7 @@ public interface PageManager extends WikiEventListener {
     boolean pageExists( String pageName ) throws ProviderException;
 
     /**
-     * Checks for existence of a specific page and version.
+     * Checks for existence of a specific page and version on the underlying WikiPageProvider.
      *
      * @param pageName Name of the page
      * @param version  The version to check
@@ -279,6 +279,57 @@ public interface PageManager extends WikiEventListener {
      * @since 2.3.29
      */
     boolean pageExists( String pageName, int version ) throws ProviderException;
+
+    /**
+     *  Checks for existence of a specific page and version denoted by a WikiPage on the underlying WikiPageProvider.
+     *
+     *  @param page A WikiPage object describing the name and version.
+     *  @return true, if the page (or alias, or attachment) exists.
+     *  @throws ProviderException If something goes badly wrong.
+     *  @since 2.0
+     */
+    default boolean pageExists( final WikiPage page ) throws ProviderException {
+        if( page != null ) {
+            return pageExists( page.getName(), page.getVersion() );
+        }
+        return false;
+    }
+
+    /**
+     *  Returns true, if the requested page (or an alias) exists.  Will consider any version as existing. Will check for all types of
+     *  WikiPages: wiki pages themselves, attachments and special pages (non-existant references to other pages).
+     *
+     *  @param page WikiName of the page.
+     *  @return true, if page (or attachment) exists.
+     */
+    boolean wikiPageExists( String page );
+
+    /**
+     *  Returns true, if the requested page (or an alias) exists with the requested version. Will check for all types of
+     *  WikiPages: wiki pages themselves, attachments and special pages (non-existant references to other pages).
+     *
+     *  @param page Page name
+     *  @param version Page version
+     *  @return True, if page (or alias, or attachment) exists
+     *  @throws ProviderException If the provider fails.
+     */
+    boolean wikiPageExists( String page, int version ) throws ProviderException;
+
+    /**
+     *  Returns true, if the requested page (or an alias) exists, with the specified version in the WikiPage. Will check for all types of
+     *  WikiPages: wiki pages themselves, attachments and special pages (non-existant references to other pages).
+     *
+     *  @param page A WikiPage object describing the name and version.
+     *  @return true, if the page (or alias, or attachment) exists.
+     *  @throws ProviderException If something goes badly wrong.
+     *  @since 2.0
+     */
+    default boolean wikiPageExists( final WikiPage page ) throws ProviderException {
+        if( page != null ) {
+            return wikiPageExists( page.getName(), page.getVersion() );
+        }
+        return false;
+    }
 
     /**
      * Deletes only a specific version of a WikiPage.

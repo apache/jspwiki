@@ -194,7 +194,7 @@ public class ApprovalWorkflowTest {
         }
 
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
-        Assertions.assertFalse( m_engine.pageExists(pageName));
+        Assertions.assertFalse( m_engine.getPageManager().wikiPageExists(pageName));
 
         // Second, GroupPrincipal Admin should see a Decision in its queue
         Collection< Decision > decisions = m_dq.getActorDecisions( m_engine.adminSession() );
@@ -203,7 +203,7 @@ public class ApprovalWorkflowTest {
         // Now, approve the decision and it should go away, and page should appear.
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
-        Assertions.assertTrue( m_engine.pageExists(pageName));
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists(pageName));
         decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals(0, decisions.size());
 
@@ -227,7 +227,7 @@ public class ApprovalWorkflowTest {
         }
 
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
-        Assertions.assertFalse( m_engine.pageExists(pageName));
+        Assertions.assertFalse( m_engine.getPageManager().wikiPageExists(pageName));
 
         // ...and there should be a Decision in GroupPrincipal Admin's queue
         Collection< Decision > decisions = m_dq.getActorDecisions( m_engine.adminSession() );
@@ -236,7 +236,7 @@ public class ApprovalWorkflowTest {
         // Now, DENY the decision and the page should still not exist...
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_DENY);
-        Assertions.assertFalse( m_engine.pageExists(pageName) );
+        Assertions.assertFalse( m_engine.getPageManager().wikiPageExists(pageName) );
 
         // ...but there should also be a notification decision in Janne's queue
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );

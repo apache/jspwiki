@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 
 /**
  *  Writes a link to the Wiki PageInfo.  Body of the link becomes the actual text.
@@ -38,63 +38,46 @@ import org.apache.wiki.WikiPage;
  *  @since 2.0
  */
 // FIXME: Refactor together with LinkToTag and EditLinkTag.
-public class PageInfoLinkTag
-    extends WikiLinkTag
-{
+public class PageInfoLinkTag extends WikiLinkTag {
+
     private static final long serialVersionUID = 0L;
     public String m_title = "";
     public String m_accesskey = "";
     
-    public void setTitle( String title )
+    public void setTitle( final String title )
     {
         m_title = title;
     }
 
-    public void setAccesskey( String access )
+    public void setAccesskey( final String access )
     {
         m_accesskey = access;
     }
     
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
         String     pageName = m_pageName;
 
-        if( m_pageName == null )
-        {
-            WikiPage p = m_wikiContext.getPage();
-
-            if( p != null )
-            {
+        if( m_pageName == null ) {
+            final WikiPage p = m_wikiContext.getPage();
+            if( p != null ) {
                 pageName = p.getName();
-            }
-            else
-            {
+            } else {
                 return SKIP_BODY;
             }
         }
 
-        if( engine.pageExists(pageName) )
-        {
-            JspWriter out = pageContext.getOut();
+        if( engine.getPageManager().wikiPageExists(pageName) ) {
+            final JspWriter out = pageContext.getOut();
+            final String url = m_wikiContext.getURL( WikiContext.INFO, pageName );
 
-            String url = m_wikiContext.getURL( WikiContext.INFO, pageName );
-
-            switch( m_format )
-            {
-              case ANCHOR:
-                out.print("<a class=\"pageinfo\" href=\""+url+"\" accesskey=\"" 
-                          + m_accesskey + "\" title=\"" + m_title + "\">");
-                break;
-              case URL:
-                out.print( url );
-                break;
+            switch( m_format ) {
+              case ANCHOR: out.print("<a class=\"pageinfo\" href=\""+url+"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">"); break;
+              case URL: out.print( url ); break;
             }
-
             return EVAL_BODY_INCLUDE;
         }
-
         return SKIP_BODY;
     }
+
 }

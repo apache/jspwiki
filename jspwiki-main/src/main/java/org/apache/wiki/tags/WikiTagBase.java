@@ -18,78 +18,59 @@
  */
 package org.apache.wiki.tags;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.util.TextUtil;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.util.TextUtil;
 
 /**
- *  Base class for JSPWiki tags.  You do not necessarily have
- *  to derive from this class, since this does some initialization.
+ *  Base class for JSPWiki tags.  You do not necessarily have to derive from this class, since this does some initialization.
  *  <P>
- *  This tag is only useful if you're having an "empty" tag, with
- *  no body content.
+ *  This tag is only useful if you're having an "empty" tag, with no body content.
  *
  *  @since 2.0
  */
-public abstract class WikiTagBase
-    extends TagSupport
-    implements TryCatchFinally
-{
+public abstract class WikiTagBase extends TagSupport implements TryCatchFinally {
+
     private static final long serialVersionUID = -1409836349293777141L;
+    private static final Logger log = Logger.getLogger( WikiTagBase.class );
 
     public static final String ATTR_CONTEXT = "jspwiki.context";
-
-    private static final Logger log = Logger.getLogger( WikiTagBase.class );
 
     protected WikiContext m_wikiContext;
 
     /**
-     *   This method calls the parent setPageContext() but it also
-     *   provides a way for a tag to initialize itself before
-     *   any of the setXXX() methods are called.
+     * This method calls the parent setPageContext() but it also provides a way for a tag to initialize itself before
+     * any of the setXXX() methods are called.
      */
-    public void setPageContext(PageContext arg0)
-    {
-        super.setPageContext(arg0);
-        
+    public void setPageContext( final PageContext arg0 ) {
+        super.setPageContext( arg0 );
         initTag();
     }
 
     /**
-     *  This method is called when the tag is encountered within a new request,
-     *  but before the setXXX() methods are called. 
+     *  This method is called when the tag is encountered within a new request, but before the setXXX() methods are called.
      *  The default implementation does nothing.
      *  @since 2.3.92
      */
-    public void initTag()
-    {
+    public void initTag() {
         m_wikiContext = null;
-        return;
     }
     
-    public int doStartTag()
-        throws JspException
-    {
-        try
-        {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( ATTR_CONTEXT,
-                                                                    PageContext.REQUEST_SCOPE );
-
-            if( m_wikiContext == null )
-            {
+    public int doStartTag() throws JspException {
+        try {
+            m_wikiContext = ( WikiContext )pageContext.getAttribute( ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+            if( m_wikiContext == null ) {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
             }
 
             return doWikiStartTag();
-        }
-        catch( Exception e )
-        {
+        } catch( final Exception e ) {
             log.error( "Tag failed", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
@@ -101,14 +82,11 @@ public abstract class WikiTagBase
      */
     public abstract int doWikiStartTag() throws Exception;
 
-    public int doEndTag()
-        throws JspException
-    {
+    public int doEndTag() throws JspException {
         return EVAL_PAGE;
     }
 
-    public void doCatch( Throwable th ) throws Throwable
-    {
+    public void doCatch( final Throwable th ) throws Throwable {
     	log.error( th.getMessage(), th );
     }
 
@@ -117,7 +95,7 @@ public abstract class WikiTagBase
         m_wikiContext = null;
     }
 
-    public void setId(String id)
+    public void setId( final String id)
     {
         super.setId( TextUtil.replaceEntities( id ) );
     }

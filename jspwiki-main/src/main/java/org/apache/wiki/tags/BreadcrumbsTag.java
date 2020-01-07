@@ -18,14 +18,12 @@
  */
 package org.apache.wiki.tags;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
-
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -124,7 +122,7 @@ public class BreadcrumbsTag extends WikiTagBase
         } else {
             //  check if page still exists (could be deleted/renamed by another user)
             for (int i = 0;i<trail.size();i++) {
-                if (!m_wikiContext.getEngine().pageExists(trail.get(i))) {
+                if (!m_wikiContext.getEngine().getPageManager().wikiPageExists(trail.get(i))) {
                     trail.remove(i);
                 }
             }
@@ -132,7 +130,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
         if (m_wikiContext.getRequestContext().equals(WikiContext.VIEW))
         {
-            if (m_wikiContext.getEngine().pageExists(page))
+            if (m_wikiContext.getEngine().getPageManager().wikiPageExists(page))
             {
                 if (trail.isEmpty())
                 {

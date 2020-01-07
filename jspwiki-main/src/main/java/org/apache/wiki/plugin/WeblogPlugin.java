@@ -404,7 +404,7 @@ public class WeblogPlugin
 
         if( author != null )
         {
-            if( engine.pageExists(author) )
+            if( engine.getPageManager().wikiPageExists(author) )
             {
                 author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.beautifyTitle(author)+"</a>";
             }

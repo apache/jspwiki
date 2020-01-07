@@ -21,9 +21,6 @@ package org.apache.wiki.tags;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.exceptions.ProviderException;
-
-import java.io.IOException;
 
 /**
  *  Does a version check on the page.  Mode is as follows:
@@ -37,13 +34,11 @@ import java.io.IOException;
  *
  *  @since 2.0
  */
-public class CheckVersionTag
-    extends WikiTagBase
-{
+public class CheckVersionTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
     
-    private static enum VersionMode
-    {
+    private enum VersionMode {
         LATEST, NOTLATEST, FIRST, NOTFIRST
     }
 
@@ -53,8 +48,7 @@ public class CheckVersionTag
      * {@inheritDoc}
      */
     @Override
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_mode = VersionMode.LATEST;
     }
@@ -64,22 +58,14 @@ public class CheckVersionTag
      *  
      *  @param arg The mode to set.
      */
-    public void setMode( String arg )
-    {
-        if( "latest".equals(arg) )
-        {
+    public void setMode( final String arg ) {
+        if( "latest".equals(arg) ) {
             m_mode = VersionMode.LATEST;
-        }
-        else if( "notfirst".equals(arg) )
-        {
+        } else if( "notfirst".equals(arg) ) {
             m_mode = VersionMode.NOTFIRST;
-        }
-        else if( "first".equals(arg) )
-        {
+        } else if( "first".equals(arg) ) {
             m_mode = VersionMode.FIRST;
-        }
-        else
-        {
+        } else {
             m_mode = VersionMode.NOTLATEST;
         }
     }
@@ -88,52 +74,28 @@ public class CheckVersionTag
      *  {@inheritDoc}
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+    public final int doWikiStartTag() {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage   page   = m_wikiContext.getPage();
 
-        if( page != null && engine.pageExists(page.getName()) )
-        {
-            int version = page.getVersion();
-            boolean include = false;
+        if( page != null && engine.getPageManager().wikiPageExists(page.getName()) ) {
+            final int version = page.getVersion();
+            final boolean include;
+            final WikiPage latest = engine.getPageManager().getPage( page.getName() );
 
-            WikiPage latest = engine.getPageManager().getPage( page.getName() );
-
-            //log.debug("Doing version check: this="+page.getVersion()+
-            //          ", latest="+latest.getVersion());
-
-            switch( m_mode )
-            {
-                case LATEST:
-                    include = (version < 0) || (latest.getVersion() == version);
-                    break;
-
-                case NOTLATEST:
-                    include = (version > 0) && (latest.getVersion() != version);
-                    break;
-
-                case FIRST:
-                    include = (version == 1 ) || (version < 0 && latest.getVersion() == 1);
-                    break;
-
-                case NOTFIRST:
-                    include = version > 1;
-                    break;
-                
-                default:
-                    throw new InternalWikiException("Mode which is not available!");
+            switch( m_mode ) {
+                case LATEST    : include = (version < 0) || (latest.getVersion() == version); break;
+                case NOTLATEST : include = (version > 0) && (latest.getVersion() != version); break;
+                case FIRST     : include = (version == 1 ) || (version < 0 && latest.getVersion() == 1); break;
+                case NOTFIRST  : include = version > 1; break;
+                default: throw new InternalWikiException("Mode which is not available!");
             }
 
-            if( include )
-            {
-                // log.debug("INCLD");
+            if( include ) {
                 return EVAL_BODY_INCLUDE;
             }
         }
-
         return SKIP_BODY;
     }
+
 }

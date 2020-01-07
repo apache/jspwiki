@@ -52,7 +52,7 @@ public class HistoryIteratorTag extends IteratorTag  {
         final WikiPage page = m_wikiContext.getPage();
 
         try {
-            if( page != null && engine.pageExists( page ) ) {
+            if( page != null && engine.getPageManager().wikiPageExists( page ) ) {
                 final List< WikiPage > versions = engine.getPageManager().getVersionHistory( page.getName() );
 
                 if( versions == null ) {

@@ -468,7 +468,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
 
                 // We won't put it back again if it becomes empty and does not exist.  It will be added
                 // later on anyway, if it becomes referenced again.
-                if( !( refBy.isEmpty() && !m_engine.pageExists( referredPageName ) ) ) {
+                if( !( refBy.isEmpty() && !m_engine.getPageManager().wikiPageExists( referredPageName ) ) ) {
                     m_referredBy.put( referredPageName, refBy );
                 }
             }
@@ -604,7 +604,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
 
             // If the page is referred to by no one AND it doesn't even exist, we might just as well forget about this
             // entry. It will be added again elsewhere if new references appear.
-            if( ( oldRefBy == null || oldRefBy.isEmpty() ) && !m_engine.pageExists( referredPage ) ) {
+            if( ( oldRefBy == null || oldRefBy.isEmpty() ) && !m_engine.getPageManager().wikiPageExists( referredPage ) ) {
                 m_referredBy.remove( referredPage );
             }
         }
@@ -728,7 +728,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
         for( final Collection<String> refs : allReferences ) {
             if( refs != null ) {
                 for( final String aReference : refs ) {
-                    if( !m_engine.pageExists( aReference ) ) {
+                    if( !m_engine.getPageManager().wikiPageExists( aReference ) ) {
                         uncreated.add( aReference );
                     }
                 }

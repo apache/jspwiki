@@ -467,6 +467,56 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
     /**
      * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#wikiPageExists(java.lang.String)
+     */
+    public boolean wikiPageExists( final String page ) {
+        if( m_engine.getCommandResolver().getSpecialPageReference( page ) != null ) {
+            return true;
+        }
+
+        Attachment att = null;
+        try {
+            if( m_engine.getFinalPageName( page ) != null ) {
+                return true;
+            }
+
+            att = m_engine.getAttachmentManager().getAttachmentInfo( null, page );
+        } catch( final ProviderException e ) {
+            LOG.debug( "pageExists() failed to find attachments", e );
+        }
+
+        return att != null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see org.apache.wiki.pages.PageManager#wikiPageExists(java.lang.String, int)
+     */
+    public boolean wikiPageExists( final String page, final int version ) throws ProviderException {
+        if( m_engine.getCommandResolver().getSpecialPageReference( page ) != null ) {
+            return true;
+        }
+
+        boolean isThere = false;
+        final String finalName = m_engine.getFinalPageName( page );
+        if( finalName != null ) {
+            isThere = pageExists( finalName, version );
+        }
+
+        if( !isThere ) {
+            //  Go check if such an attachment exists.
+            try {
+                isThere = m_engine.getAttachmentManager().getAttachmentInfo( null, page, version ) != null;
+            } catch( final ProviderException e ) {
+                LOG.debug( "wikiPageExists() failed to find attachments", e );
+            }
+        }
+
+        return isThere;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#deleteVersion(org.apache.wiki.WikiPage)
      */
     @Override
@@ -474,7 +524,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         if( page instanceof Attachment ) {
             m_engine.getAttachmentManager().deleteVersion( ( Attachment )page );
         } else {
-            m_provider.deleteVersion(page.getName(), page.getVersion());
+            m_provider.deleteVersion( page.getName(), page.getVersion() );
             // FIXME: If this was the latest, reindex Lucene, update RefMgr
         }
     }

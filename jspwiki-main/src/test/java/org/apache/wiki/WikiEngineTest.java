@@ -25,7 +25,6 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.references.ReferenceManager;
-import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,23 +73,6 @@ public class WikiEngineTest {
         Assertions.assertTrue( f.isDirectory(), "isn't a dir" );
 
         f.delete();
-    }
-
-    /**
-     *  Check that calling pageExists( String ) works.
-     */
-    @Test
-    public void testNonExistentPage() {
-        Assertions.assertFalse( m_engine.pageExists( NAME1 ), "Page already exists" );
-    }
-
-    /**
-     *  Check that calling pageExists( WikiPage ) works.
-     */
-    @Test
-    public void testNonExistentPage2() throws Exception {
-        final WikiPage page = new WikiPage(m_engine, NAME1 );
-        Assertions.assertFalse( m_engine.pageExists( page ), "Page already exists" );
     }
 
     @Test
@@ -370,8 +352,8 @@ public class WikiEngineTest {
         final WikiContext ctx = new WikiContext( m_engine, m_engine.getPageManager().getPage("OldNameTestPage") );
         m_engine.getPageRenamer().renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
-        Assertions.assertFalse( m_engine.pageExists( "OldNameTestPage"), "did not vanish" );
-        Assertions.assertTrue( m_engine.pageExists( "NewNameTestPage"), "did not appear" );
+        Assertions.assertFalse( m_engine.getPageManager().wikiPageExists( "OldNameTestPage"), "did not vanish" );
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( "NewNameTestPage"), "did not appear" );
 
         pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( 1, pages.size(),  "wrong # of referrers" );
@@ -394,26 +376,6 @@ public class WikiEngineTest {
 
         final WikiPage p3 = m_engine.getPageManager().getPage( NAME1, -1 );
         Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
-    }
-
-    @Test
-    public void testCreatePage() throws Exception {
-        final String text = "Foobar.\r\n";
-        final String name = "mrmyxpltz";
-        Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now" );
-
-        m_engine.saveText( name, text );
-        Assertions.assertTrue( m_engine.pageExists( name ), "page does not exist" );
-    }
-
-    @Test
-    public void testCreateEmptyPage() throws Exception {
-        final String text = "";
-        final String name = "mrmxyzptlk";
-        Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now" );
-
-        m_engine.saveText( name, text );
-        Assertions.assertFalse( m_engine.pageExists( name ), "page should not exist right now neither" );
     }
 
 }

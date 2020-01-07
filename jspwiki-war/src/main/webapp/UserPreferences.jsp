@@ -97,7 +97,7 @@
         {
             String redirectPage = request.getParameter( "redirect" );
 
-            if( !wiki.pageExists( redirectPage ) )
+            if( !wiki.getPageManager().wikiPageExists( redirectPage ) )
             {
                redirectPage = wiki.getFrontPage();
             }
@@ -116,7 +116,7 @@
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
-        if( !wiki.pageExists( redirectPage ) )
+        if( !wiki.getPageManager().wikiPageExists( redirectPage ) )
         {
           redirectPage = wiki.getFrontPage();
         }

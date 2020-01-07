@@ -18,12 +18,6 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -31,6 +25,12 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.util.List;
+
 
 /**
  *  Iterates through the list of attachments one has.
@@ -42,27 +42,21 @@ import org.apache.wiki.attachment.AttachmentManager;
  *
  *  @since 2.0
  */
-
 // FIXME: Too much in common with IteratorTag - REFACTOR
-public class AttachmentsIteratorTag
-    extends IteratorTag
-{
+public class AttachmentsIteratorTag extends IteratorTag {
     private static final long serialVersionUID = 0L;
     
-    static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
+    private static final Logger log = Logger.getLogger( AttachmentsIteratorTag.class );
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public final int doStartTag()
-    {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
-
-        WikiEngine        engine = m_wikiContext.getEngine();
-        AttachmentManager mgr    = engine.getAttachmentManager();
-        WikiPage          page;
+    public final int doStartTag()  {
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final AttachmentManager mgr = engine.getAttachmentManager();
+        final WikiPage page;
 
         page = m_wikiContext.getPage();
 
@@ -71,14 +65,11 @@ public class AttachmentsIteratorTag
             return SKIP_BODY;
         }
 
-        try
-        {
-            if( page != null && engine.pageExists(page) )
-            {
-                List< Attachment > atts = mgr.listAttachments( page );
+        try {
+            if( page != null && engine.getPageManager().wikiPageExists(page) ) {
+                final List< Attachment > atts = mgr.listAttachments( page );
 
-                if( atts == null )
-                {
+                if( atts == null ) {
                     log.debug("No attachments to display.");
                     // There are no attachments included
                     return SKIP_BODY;
@@ -86,32 +77,21 @@ public class AttachmentsIteratorTag
 
                 m_iterator = atts.iterator();
 
-                if( m_iterator.hasNext() )
-                {
-                    Attachment  att = (Attachment) m_iterator.next();
-
-                    WikiContext context = (WikiContext)m_wikiContext.clone();
+                if( m_iterator.hasNext() ) {
+                    final Attachment  att = (Attachment) m_iterator.next();
+                    final WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( att );
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                              context,
-                                              PageContext.REQUEST_SCOPE );
-
+                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(), att );
-                }
-                else
-                {
+                } else {
                     return SKIP_BODY;
                 }
-            }
-            else
-            {
+            } else {
                 return SKIP_BODY;
             }
 
             return EVAL_BODY_BUFFERED;
-        }
-        catch( ProviderException e )
-        {
+        } catch( final ProviderException e ) {
             log.fatal("Provider failed while trying to iterator through history",e);
             // FIXME: THrow something.
         }
@@ -123,33 +103,23 @@ public class AttachmentsIteratorTag
      *  {@inheritDoc}
      */
     @Override
-    public final int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
+    public final int doAfterBody() {
+        if( bodyContent != null ) {
+            try {
+                final JspWriter out = getPreviousOut();
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
+            } catch( final IOException e ) {
                 log.error("Unable to get inner tag text", e);
                 // FIXME: throw something?
             }
         }
 
-        if( m_iterator != null && m_iterator.hasNext() )
-        {
-            Attachment att = (Attachment) m_iterator.next();
-
-            WikiContext context = (WikiContext)m_wikiContext.clone();
+        if( m_iterator != null && m_iterator.hasNext() ) {
+            final Attachment att = ( Attachment )m_iterator.next();
+            final WikiContext context = ( WikiContext )m_wikiContext.clone();
             context.setPage( att );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-
+            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,  context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), att );
 
             return EVAL_BODY_BUFFERED;
@@ -157,4 +127,5 @@ public class AttachmentsIteratorTag
 
         return SKIP_BODY;
     }
+
 }

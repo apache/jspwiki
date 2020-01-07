@@ -61,7 +61,7 @@
         return;
     }
 
-    if( wikipage == null || !wiki.pageExists(wikipage.getName()) )
+    if( wikipage == null || !wiki.getPageManager().wikiPageExists(wikipage.getName()) )
     {
         response.sendError( 404, "No such page "+wikipage.getName() );
         return;

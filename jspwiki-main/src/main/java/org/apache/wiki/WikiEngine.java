@@ -701,8 +701,7 @@ public class WikiEngine  {
             pages.addAll( m_attachmentManager.getAllAttachments() );
 
             // Build a new manager with default key lists.
-            if( m_referenceManager == null )
-            {
+            if( m_referenceManager == null ) {
                 m_referenceManager = ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
             }
@@ -722,7 +721,6 @@ public class WikiEngine  {
      *
      *  @return The wiki properties
      */
-
     public Properties getWikiProperties()
     {
         return m_properties;
@@ -977,18 +975,15 @@ public class WikiEngine  {
     }
 
     /**
-     *  Beautifies the title of the page by appending non-breaking spaces
-     *  in suitable places.  This is really suitable only for HTML output,
+     *  Beautifies the title of the page by appending non-breaking spaces in suitable places.  This is really suitable only for HTML output,
      *  as it uses the &amp;nbsp; -character.
      *
      *  @param title The title to beautify
      *  @return A beautified title.
      *  @since 2.1.127
      */
-    public String beautifyTitleNoBreak( String title )
-    {
-        if( m_beautifyTitle )
-        {
+    public String beautifyTitleNoBreak( final String title ) {
+        if( m_beautifyTitle ) {
             return TextUtil.beautifyString( title, "&nbsp;" );
         }
 
@@ -996,112 +991,14 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns true, if the requested page (or an alias) exists.  Will consider
-     *  any version as existing.  Will also consider attachments.
-     *
-     *  @param page WikiName of the page.
-     *  @return true, if page (or attachment) exists.
-     */
-    public boolean pageExists( String page )
-    {
-        Attachment att = null;
-
-        try
-        {
-            if( m_commandResolver.getSpecialPageReference(page) != null ) return true;
-
-            if( getFinalPageName( page ) != null )
-            {
-                return true;
-            }
-
-            att = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page );
-        }
-        catch( ProviderException e )
-        {
-            log.debug("pageExists() failed to find attachments",e);
-        }
-
-        return att != null;
-    }
-
-    /**
-     *  Returns true, if the requested page (or an alias) exists with the
-     *  requested version.
-     *
-     *  @param page Page name
-     *  @param version Page version
-     *  @return True, if page (or alias, or attachment) exists
-     *  @throws ProviderException If the provider fails.
-     */
-    public boolean pageExists( String page, int version )
-        throws ProviderException
-    {
-        if( m_commandResolver.getSpecialPageReference(page) != null ) return true;
-
-        String finalName = getFinalPageName( page );
-
-        boolean isThere = false;
-
-        if( finalName != null )
-        {
-            //
-            //  Go and check if this particular version of this page
-            //  exists.
-            //
-            isThere = m_pageManager.pageExists( finalName, version );
-        }
-
-        if( isThere == false )
-        {
-            //
-            //  Go check if such an attachment exists.
-            //
-            try
-            {
-                isThere = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page, version ) != null;
-            }
-            catch( ProviderException e )
-            {
-                log.debug("pageExists() failed to find attachments",e);
-            }
-        }
-
-        return isThere;
-    }
-
-    /**
-     *  Returns true, if the requested page (or an alias) exists, with the
-     *  specified version in the WikiPage.
-     *
-     *  @param page A WikiPage object describing the name and version.
-     *  @return true, if the page (or alias, or attachment) exists.
-     *  @throws ProviderException If something goes badly wrong.
-     *  @since 2.0
-     */
-    public boolean pageExists( WikiPage page )
-        throws ProviderException
-    {
-        if( page != null )
-        {
-            return pageExists( page.getName(), page.getVersion() );
-        }
-        return false;
-    }
-
-    /**
-     *  Returns the correct page name, or null, if no such
-     *  page can be found.  Aliases are considered. This
-     *  method simply delegates to
+     *  Returns the correct page name, or null, if no such page can be found.  Aliases are considered. This method simply delegates to
      *  {@link org.apache.wiki.ui.CommandResolver#getFinalPageName(String)}.
      *  @since 2.0
      *  @param page Page name.
      *  @return The rewritten page name, or null, if the page does not exist.
      *  @throws ProviderException If something goes wrong in the backend.
      */
-    public String getFinalPageName( String page )
-        throws ProviderException
-    {
+    public String getFinalPageName( final String page ) throws ProviderException {
         return m_commandResolver.getFinalPageName( page );
     }
 
@@ -1377,7 +1274,7 @@ public class WikiEngine  {
 
         // Check if creation of empty pages is allowed; bail if not
         final boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, PROP_ALLOW_CREATION_OF_EMPTY_PAGES, false );
-        if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) ) {
+        if ( !allowEmpty && !m_pageManager.wikiPageExists( page ) && text.trim().equals( "" ) ) {
             return;
         }
 

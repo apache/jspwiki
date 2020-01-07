@@ -289,7 +289,7 @@ public class AttachmentManagerTest
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Assertions.assertTrue( m_engine.pageExists( NAME1+"/test1" ), "attachment disappeared" );
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( NAME1+"/test1" ), "attachment disappeared" );
     }
 
     @Test
@@ -301,7 +301,7 @@ public class AttachmentManagerTest
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Assertions.assertTrue( m_engine.pageExists( att.getName() ), "attachment disappeared" );
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( att.getName() ), "attachment disappeared" );
     }
 
     @Test
@@ -313,7 +313,7 @@ public class AttachmentManagerTest
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Assertions.assertTrue( m_engine.pageExists( NAME1+"/test file.bin" ), "attachment disappeared" );
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( NAME1+"/test file.bin" ), "attachment disappeared" );
     }
 
     @Test
@@ -325,7 +325,7 @@ public class AttachmentManagerTest
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Assertions.assertTrue( m_engine.pageExists( att.getName() ), "attachment disappeared" );
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( att.getName() ), "attachment disappeared" );
     }
 
     @Test
@@ -337,7 +337,7 @@ public class AttachmentManagerTest
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Assertions.assertTrue( m_engine.pageExists( att.getName() ), "attachment disappeared" );
+        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( att.getName() ), "attachment disappeared" );
     }
 
     @Test

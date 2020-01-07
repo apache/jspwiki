@@ -188,62 +188,60 @@ public class IfPlugin implements WikiPlugin
         return include;
     }
 
-    private static boolean checkExists( WikiContext context, String page, String exists )
-    {
-        if( exists == null ) return false;
-        return !context.getEngine().pageExists(page) ^ TextUtil.isPositive(exists);
+    private static boolean checkExists( final WikiContext context, final String page, final String exists ) {
+        if( exists == null ) {
+            return false;
+        }
+        return !context.getEngine().getPageManager().wikiPageExists( page ) ^ TextUtil.isPositive(exists);
     }
 
-    private static boolean checkVarExists( String varContent, String exists )
-    {
-        if( exists == null ) return false;
-        return (varContent == null ) ^ TextUtil.isPositive(exists);
+    private static boolean checkVarExists( final String varContent, final String exists ) {
+        if( exists == null ) {
+            return false;
+        }
+        return varContent == null ^ TextUtil.isPositive( exists );
     }
 
-    private static boolean checkGroup( WikiContext context, String group )
-    {
-        if( group == null ) return false;
-        String[] groupList = StringUtils.split(group,'|');
+    private static boolean checkGroup( final WikiContext context, final String group ) {
+        if( group == null ) {
+            return false;
+        }
+        final String[] groupList = StringUtils.split(group,'|');
         boolean include = false;
 
-        for( int i = 0; i < groupList.length; i++ )
-        {
-            String gname = groupList[i];
+        for( final String grp : groupList ) {
+            String gname = grp;
             boolean invert = false;
-            if( groupList[i].startsWith("!") )
-            {
-                if( groupList[i].length() > 1 ) 
-                {
-                    gname = groupList[i].substring( 1 );
+            if( grp.startsWith( "!" ) ) {
+                if( grp.length() > 1 ) {
+                    gname = grp.substring( 1 );
                 }
                 invert = true;
             }
 
-            Principal g = context.getEngine().getAuthorizationManager().resolvePrincipal(gname);
+            final Principal g = context.getEngine().getAuthorizationManager().resolvePrincipal( gname );
 
             include |= context.getEngine().getAuthorizationManager().isUserInRole( context.getWikiSession(), g ) ^ invert;
         }
         return include;
     }
 
-    private static boolean checkUser( WikiContext context, String user )
-    {
-        if( user == null || context.getCurrentUser() == null ) return false;
+    private static boolean checkUser( final WikiContext context, final String user ) {
+        if( user == null || context.getCurrentUser() == null ) {
+            return false;
+        }
 
-        String[] list = StringUtils.split(user,'|');
+        final String[] list = StringUtils.split(user,'|');
         boolean include = false;
 
-        for( int i = 0; i < list.length; i++ )
-        {
-            String userToCheck = list[i];
+        for( final String usr : list ) {
+            String userToCheck = usr;
             boolean invert = false;
-            if( list[i].startsWith("!") )
-            {
+            if( usr.startsWith( "!" ) ) {
                 invert = true;
                 // strip !
-                if(  user.length() > 1 ) 
-                {
-                    userToCheck = list[i].substring( 1 );
+                if( user.length() > 1 ) {
+                    userToCheck = usr.substring( 1 );
                 }
             }
 
@@ -253,67 +251,56 @@ public class IfPlugin implements WikiPlugin
     }
 
     // TODO: Add subnetwork matching, e.g. 10.0.0.0/8
-    private static boolean checkIP( WikiContext context, String ipaddr )
-    {
-        if( ipaddr == null || context.getHttpRequest() == null ) return false;
+    private static boolean checkIP( final WikiContext context, final String ipaddr ) {
+        if( ipaddr == null || context.getHttpRequest() == null ) {
+            return false;
+        }
 
-        
-        String[] list = StringUtils.split(ipaddr,'|');
+        final String[] list = StringUtils.split(ipaddr,'|');
         boolean include = false;
 
-        for( int i = 0; i < list.length; i++ )
-        {
-            String ipaddrToCheck = list[i];
+        for( final String ip : list ) {
+            String ipaddrToCheck = ip;
             boolean invert = false;
-            if( list[i].startsWith("!") )
-            {
+            if( ip.startsWith( "!" ) ) {
                 invert = true;
                 // strip !
-                if(  list[i].length() > 1 ) 
-                {
-                    ipaddrToCheck = list[i].substring( 1 );
+                if( ip.length() > 1 ) {
+                    ipaddrToCheck = ip.substring( 1 );
                 }
             }
 
-            include |= ipaddrToCheck.equals( HttpUtil.getRemoteAddress(context.getHttpRequest()) ) ^ invert;
+            include |= ipaddrToCheck.equals( HttpUtil.getRemoteAddress( context.getHttpRequest() ) ) ^ invert;
         }
         return include;
     }
 
-    private static boolean doMatch( String content, String pattern )
-        throws PluginException
-    {
-        PatternCompiler compiler = new Perl5Compiler();
-        PatternMatcher  matcher  = new Perl5Matcher();
+    private static boolean doMatch( final String content, final String pattern ) throws PluginException {
+        final PatternCompiler compiler = new Perl5Compiler();
+        final PatternMatcher  matcher  = new Perl5Matcher();
 
-        try
-        {
-            Pattern matchp = compiler.compile( pattern, Perl5Compiler.SINGLELINE_MASK );
-            // m_exceptPattern = compiler.compile( exceptPattern, Perl5Compiler.SINGLELINE_MASK );
+        try {
+            final Pattern matchp = compiler.compile( pattern, Perl5Compiler.SINGLELINE_MASK );
             return matcher.matches( content, matchp );
-        }
-        catch( MalformedPatternException e )
-        {
-            throw new PluginException("Faulty pattern "+pattern);
+        } catch( final MalformedPatternException e ) {
+            throw new PluginException( "Faulty pattern " + pattern );
         }
 
     }
 
-    private static boolean checkContains( String pagecontent, String matchPattern )
-        throws PluginException
-    {
-        if( pagecontent == null || matchPattern == null ) return false;
+    private static boolean checkContains( final String pagecontent, final String matchPattern ) throws PluginException {
+        if( pagecontent == null || matchPattern == null ) {
+            return false;
+        }
 
         return doMatch( pagecontent, ".*"+matchPattern+".*" );
     }
 
-    private static boolean checkIs( String content, String matchPattern )
-        throws PluginException
-    {
-        if( content == null || matchPattern == null ) return false;
-
-        matchPattern = "^"+matchPattern+"$";
-
-        return doMatch(content, matchPattern);
+    private static boolean checkIs( final String content, final String matchPattern ) throws PluginException {
+        if( content == null || matchPattern == null ) {
+            return false;
+        }
+        return doMatch( content, "^" + matchPattern + "$");
     }
+
 }

@@ -60,7 +60,7 @@ public class NoSuchPageTag extends WikiTagBase {
             page = engine.getPageManager().getPage( m_pageName );
         }
 
-        if( page != null && engine.pageExists( page.getName(), page.getVersion() ) ) {
+        if( page != null && engine.getPageManager().wikiPageExists( page.getName(), page.getVersion() ) ) {
             return SKIP_BODY;
         }
 

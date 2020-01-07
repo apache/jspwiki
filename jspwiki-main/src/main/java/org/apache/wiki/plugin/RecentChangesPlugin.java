@@ -182,7 +182,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                     authorinfo.setAttribute( XHTML.ATTR_class, "author" );
                     
                     if( author != null ) {
-                        if( engine.pageExists( author ) ) {
+                        if( engine.getPageManager().wikiPageExists( author ) ) {
                             authorinfo.addContent( XhtmlUtil.link( context.getURL( WikiContext.VIEW, author ), author ) );
                         } else {
                             authorinfo.addContent( author );
