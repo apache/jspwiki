@@ -300,9 +300,7 @@ public class WikiEngine  {
      */
     // FIXME: It seems that this does not work too well, jspInit()
     // does not react to RuntimeExceptions, or something...
-    public static synchronized WikiEngine getInstance( ServletConfig config )
-        throws InternalWikiException
-    {
+    public static synchronized WikiEngine getInstance( final ServletConfig config ) throws InternalWikiException {
         return getInstance( config.getServletContext(), null );
     }
 
@@ -318,9 +316,7 @@ public class WikiEngine  {
      *
      *  @return One well-behaving WikiEngine instance.
      */
-    public static synchronized WikiEngine getInstance( ServletConfig config,
-                                                       Properties props )
-    {
+    public static synchronized WikiEngine getInstance( final ServletConfig config, final Properties props ) {
         return getInstance( config.getServletContext(), props );
     }
 
@@ -339,29 +335,20 @@ public class WikiEngine  {
     //        Wiki.jsp.jspInit() [really old code]; it's probably even faster to fetch it
     //        using this method every time than go to pageContext.getAttribute().
 
-    public static synchronized WikiEngine getInstance( ServletContext context,
-                                                       Properties props )
-        throws InternalWikiException
-    {
-        WikiEngine engine = (WikiEngine) context.getAttribute( ATTR_WIKIENGINE );
+    public static synchronized WikiEngine getInstance( final ServletContext context, Properties props ) throws InternalWikiException {
+        WikiEngine engine = ( WikiEngine )context.getAttribute( ATTR_WIKIENGINE );
 
-        if( engine == null )
-        {
-            String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
-
+        if( engine == null ) {
+            final String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
             context.log(" Assigning new engine to "+appid);
-            try
-            {
-                if( props == null )
-                {
+            try {
+                if( props == null ) {
                     props = PropertyReader.loadWebAppProps( context );
                 }
 
                 engine = new WikiEngine( context, appid, props );
                 context.setAttribute( ATTR_WIKIENGINE, engine );
-            }
-            catch( Exception e )
-            {
+            } catch( final Exception e ) {
                 context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
                 log.error( "ERROR: Failed to create a Wiki engine, stacktrace follows " , e);
                 throw new InternalWikiException( "No wiki engine, check logs." , e);
@@ -380,9 +367,7 @@ public class WikiEngine  {
      *  @param properties A set of properties to use to initialize this WikiEngine.
      *  @throws WikiException If the initialization fails.
      */
-    public WikiEngine( Properties properties )
-        throws WikiException
-    {
+    public WikiEngine( final Properties properties ) throws WikiException {
         initialize( properties );
     }
 
@@ -398,33 +383,23 @@ public class WikiEngine  {
      *  @param props   The WikiEngine configuration.
      *  @throws WikiException If the WikiEngine construction fails.
      */
-    protected WikiEngine( ServletContext context, String appid, Properties props )
-        throws WikiException
-    {
-        super();
+    protected WikiEngine( final ServletContext context, final String appid, final Properties props ) throws WikiException {
         m_servletContext = context;
         m_appid          = appid;
 
         // Stash the WikiEngine in the servlet context
-        if ( context != null )
-        {
+        if ( context != null ) {
             context.setAttribute( ATTR_WIKIENGINE,  this );
             m_rootPath = context.getRealPath("/");
         }
 
-        try
-        {
-            //
+        try {
             //  Note: May be null, if JSPWiki has been deployed in a WAR file.
-            //
             initialize( props );
-            log.info("Root path for this Wiki is: '"+m_rootPath+"'");
-        }
-        catch( Exception e )
-        {
-            String msg = Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage();
-            if ( context != null )
-            {
+            log.info( "Root path for this Wiki is: '" + m_rootPath + "'" );
+        } catch( final Exception e ) {
+            final String msg = Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage();
+            if ( context != null ) {
                 context.log( msg );
             }
             throw new WikiException( msg, e );
@@ -434,9 +409,7 @@ public class WikiEngine  {
     /**
      *  Does all the real initialization.
      */
-    private void initialize( Properties props )
-        throws WikiException
-    {
+    private void initialize( final Properties props ) throws WikiException {
         m_startTime  = new Date();
         m_properties = props;
 
@@ -446,18 +419,16 @@ public class WikiEngine  {
         //  the property jspwiki.use.external.logconfig=true, in that case we let log4j figure out the
         //  logging configuration.
         //
-        if( !c_configured )
-        {
-            String useExternalLogConfig = TextUtil.getStringProperty(props,"jspwiki.use.external.logconfig","false");
-            if( useExternalLogConfig == null || useExternalLogConfig.equals("false"))
-            {
+        if( !c_configured ) {
+            final String useExternalLogConfig = TextUtil.getStringProperty( props,"jspwiki.use.external.logconfig","false" );
+            if( useExternalLogConfig == null || useExternalLogConfig.equals( "false" ) ) {
                 PropertyConfigurator.configure( props );
             }
             c_configured = true;
         }
 
-        log.info("*******************************************");
-        log.info(Release.APPNAME+" "+Release.getVersionString()+" starting. Whee!");
+        log.info( "*******************************************" );
+        log.info( Release.APPNAME + " " + Release.getVersionString() + " starting. Whee!" );
 
         fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
 
@@ -493,22 +464,30 @@ public class WikiEngine  {
         }
 
         try {
-            File f = new File( m_workDir );
+            final File f = new File( m_workDir );
             f.mkdirs();
 
             //
             //  A bunch of sanity checks
             //
-            if( !f.exists() ) throw new WikiException("Work directory does not exist: "+m_workDir);
-            if( !f.canRead() ) throw new WikiException("No permission to read work directory: "+m_workDir);
-            if( !f.canWrite() ) throw new WikiException("No permission to write to work directory: "+m_workDir);
-            if( !f.isDirectory() ) throw new WikiException("jspwiki.workDir does not point to a directory: "+m_workDir);
-        } catch( SecurityException e ) {
+            if( !f.exists() ) {
+                throw new WikiException("Work directory does not exist: "+m_workDir);
+            }
+            if( !f.canRead() ) {
+                throw new WikiException("No permission to read work directory: "+m_workDir);
+            }
+            if( !f.canWrite() ) {
+                throw new WikiException("No permission to write to work directory: "+m_workDir);
+            }
+            if( !f.isDirectory() ) {
+                throw new WikiException("jspwiki.workDir does not point to a directory: "+m_workDir);
+            }
+        } catch( final SecurityException e ) {
             log.fatal( "Unable to find or create the working directory: "+m_workDir, e );
             throw new IllegalArgumentException( "Unable to find or create the working dir: " + m_workDir, e );
         }
 
-        log.info("JSPWiki working directory is '"+m_workDir+"'");
+        log.info( "JSPWiki working directory is '" + m_workDir + "'" );
 
         m_saveUserInfo   = TextUtil.getBooleanProperty( props, PROP_STOREUSERNAME, m_saveUserInfo );
         m_useUTF8        = StandardCharsets.UTF_8.name().equals( TextUtil.getStringProperty( props, PROP_ENCODING, StandardCharsets.ISO_8859_1.name() ) );
@@ -524,11 +503,10 @@ public class WikiEngine  {
 
         // FIXME: This part of the code is getting unwieldy.  We must think
         //        of a better way to do the startup-sequence.
-        try
-        {
-            Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
-                                                       TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
-            m_urlConstructor = (URLConstructor) urlclass.getDeclaredConstructor().newInstance();
+        try {
+            final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
+                                                             TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+            m_urlConstructor = ( URLConstructor ) urlclass.getDeclaredConstructor().newInstance();
             m_urlConstructor.initialize( this, props );
 
             m_pageManager           = ClassUtil.getMappedObject( PageManager.class.getName(), this, props );
@@ -588,31 +566,20 @@ public class WikiEngine  {
             //
             m_filterManager.addPageFilter(m_referenceManager, -1001 );
             m_filterManager.addPageFilter(m_searchManager, -1002 );
-        }
-
-        catch( RuntimeException e )
-        {
+        } catch( final RuntimeException e ) {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.fatal( "Failed to start managers.", e );
             throw new WikiException( "Failed to start managers: " + e.getMessage(), e );
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch( final ClassNotFoundException e ) {
             log.fatal( "JSPWiki could not start, URLConstructor was not found: " + e.getMessage(), e );
-            throw new WikiException(e.getMessage(), e );
-        }
-        catch (InstantiationException e)
-        {
+            throw new WikiException( e.getMessage(), e );
+        } catch( final InstantiationException e ) {
             log.fatal( "JSPWiki could not start, URLConstructor could not be instantiated: " + e.getMessage(), e );
-            throw new WikiException(e.getMessage(), e );
-        }
-        catch (IllegalAccessException e)
-        {
+            throw new WikiException( e.getMessage(), e );
+        } catch( final IllegalAccessException e ) {
             log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: " + e.getMessage(), e );
-            throw new WikiException(e.getMessage(), e );
-        }
-        catch( Exception e )
-        {
+            throw new WikiException( e.getMessage(), e );
+        } catch( final Exception e ) {
             // Final catch-all for everything
             log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
             throw new WikiException( "Failed to start. Caused by: " + e.getMessage() +
@@ -633,24 +600,16 @@ public class WikiEngine  {
         }
 
         // Start the RSS generator & generator thread
-        if( m_rssGenerator != null )
-        {
-            m_rssFile = TextUtil.getStringProperty( props,
-                    RSSGenerator.PROP_RSSFILE, "rss.rdf" );
-            File rssFile=null;
-            if (m_rssFile.startsWith(File.separator))
-            {
-                // honor absolute pathnames:
+        if( m_rssGenerator != null ) {
+            m_rssFile = TextUtil.getStringProperty( props, RSSGenerator.PROP_RSSFILE, "rss.rdf" );
+            final File rssFile;
+            if( m_rssFile.startsWith( File.separator ) ) { // honor absolute pathnames:
                 rssFile = new File(m_rssFile );
-            }
-            else
-            {
-                // relative path names are anchored from the webapp root path:
+            } else { // relative path names are anchored from the webapp root path:
                 rssFile = new File( getRootPath(), m_rssFile );
             }
-            int rssInterval = TextUtil.getIntegerProperty( props,
-                    RSSGenerator.PROP_INTERVAL, 3600 );
-            RSSThread rssThread = new RSSThread( this, rssFile, rssInterval );
+            final int rssInterval = TextUtil.getIntegerProperty( props, RSSGenerator.PROP_INTERVAL, 3600 );
+            final RSSThread rssThread = new RSSThread( this, rssFile, rssInterval );
             rssThread.start();
         }
 
@@ -675,9 +634,9 @@ public class WikiEngine  {
             boolean exists = new File( m_servletContext.getRealPath("/") + viewTemplate ).exists();
             if( !exists ) {
                 try {
-                    URL url = m_servletContext.getResource( viewTemplate );
+                    final URL url = m_servletContext.getResource( viewTemplate );
                     exists = url != null && StringUtils.isNotEmpty( url.getFile() );
-                } catch( MalformedURLException e ) {
+                } catch( final MalformedURLException e ) {
                     exists = false;
                 }
             }
@@ -696,7 +655,7 @@ public class WikiEngine  {
      */
     public void initReferenceManager() throws WikiException {
         try {
-            ArrayList<WikiPage> pages = new ArrayList<>();
+            final ArrayList<WikiPage> pages = new ArrayList<>();
             pages.addAll( m_pageManager.getAllPages() );
             pages.addAll( m_attachmentManager.getAllAttachments() );
 
@@ -706,9 +665,9 @@ public class WikiEngine  {
                 m_referenceManager.initialize( pages );
             }
 
-        } catch( ProviderException e ) {
+        } catch( final ProviderException e ) {
             log.fatal("PageProvider is unable to list pages: ", e);
-        } catch( ReflectiveOperationException | IllegalArgumentException e ) {
+        } catch( final ReflectiveOperationException | IllegalArgumentException e ) {
             throw new WikiException( "Could not instantiate ReferenceManager: " + e.getMessage(), e );
         }
     }
@@ -781,12 +740,10 @@ public class WikiEngine  {
 
     /**
      * <p>
-     * Returns the basic absolute URL to a page, without any modifications. You
-     * may add any parameters to this.
+     * Returns the basic absolute URL to a page, without any modifications. You may add any parameters to this.
      * </p>
      * <p>
-     * Since 2.3.90 it is safe to call this method with <code>null</code>
-     * pageName, in which case it will default to the front page.
+     * Since 2.3.90 it is safe to call this method with <code>null</code> pageName, in which case it will default to the front page.
      * </p>
      * @since 2.0.3
      * @param pageName The name of the page.  May be null, in which case defaults to the front page.
@@ -846,9 +803,8 @@ public class WikiEngine  {
      *  @param  wikiName The name of the other wiki.
      *  @return null, if no such reference was found.
      */
-    public String getInterWikiURL( final String wikiName )
-    {
-        return TextUtil.getStringProperty(m_properties,PROP_INTERWIKIREF+wikiName,null);
+    public String getInterWikiURL( final String wikiName ) {
+        return TextUtil.getStringProperty( m_properties,PROP_INTERWIKIREF + wikiName,null );
     }
 
     /**
@@ -856,16 +812,11 @@ public class WikiEngine  {
      *
      *  @return A Collection of Strings.
      */
-    public Collection< String > getAllInterWikiLinks()
-    {
-        ArrayList< String > list = new ArrayList< >();
-
-        for( Enumeration< ? > i = m_properties.propertyNames(); i.hasMoreElements(); )
-        {
-            String prop = ( String )i.nextElement();
-
-            if( prop.startsWith( PROP_INTERWIKIREF ) )
-            {
+    public Collection< String > getAllInterWikiLinks() {
+        final ArrayList< String > list = new ArrayList< >();
+        for( final Enumeration< ? > i = m_properties.propertyNames(); i.hasMoreElements(); ) {
+            final String prop = ( String )i.nextElement();
+            if( prop.startsWith( PROP_INTERWIKIREF ) ) {
                 list.add( prop.substring( prop.lastIndexOf( "." ) + 1 ) );
             }
         }
@@ -878,25 +829,16 @@ public class WikiEngine  {
      *
      *  @return A Collection of Strings with a regexp pattern.
      */
-    public Collection< String > getAllInlinedImagePatterns()
-    {
-        Properties props    = getWikiProperties();
-        ArrayList<String>  ptrnlist = new ArrayList<>();
-
-        for( Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
-        {
-            String name = ( String )e.nextElement();
-
-            if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
-            {
-                String ptrn = TextUtil.getStringProperty( props, name, null );
-
-                ptrnlist.add( ptrn );
+    public Collection< String > getAllInlinedImagePatterns() {
+        final ArrayList< String > ptrnlist = new ArrayList<>();
+        for( Enumeration< ? > e = m_properties.propertyNames(); e.hasMoreElements(); ) {
+            final String name = ( String )e.nextElement();
+            if( name.startsWith( PROP_INLINEIMAGEPTRN ) ) {
+                ptrnlist.add( TextUtil.getStringProperty( m_properties, name, null ) );
             }
         }
 
-        if( ptrnlist.size() == 0 )
-        {
+        if( ptrnlist.size() == 0 ) {
             ptrnlist.add( DEFAULT_INLINEPATTERN );
         }
 
@@ -904,21 +846,18 @@ public class WikiEngine  {
     }
 
     /**
-     *  <p>If the page is a special page, then returns a direct URL
-     *  to that page.  Otherwise returns <code>null</code>.
-     *  This method delegates requests to
-     *  {@link org.apache.wiki.ui.CommandResolver#getSpecialPageReference(String)}.
+     *  <p>If the page is a special page, then returns a direct URL to that page.  Otherwise returns <code>null</code>.
+     *  This method delegates requests to {@link org.apache.wiki.ui.CommandResolver#getSpecialPageReference(String)}.
      *  </p>
      *  <p>
-     *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
-     *  setting.  They're typically used to give Wiki page names to e.g. custom JSP
-     *  pages.
+     *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage setting.  They're typically used to give Wiki page
+     *  names to e.g. custom JSP pages.
      *  </p>
      *
      *  @param original The page to check
      *  @return A reference to the page, or null, if there's no special page.
      */
-    public String getSpecialPageReference( String original )
+    public String getSpecialPageReference( final String original )
     {
         return m_commandResolver.getSpecialPageReference( original );
     }
@@ -928,45 +867,31 @@ public class WikiEngine  {
      *
      *  @return A string describing the name of this application.
      */
-
     // FIXME: Should use servlet context as a default instead of a constant.
-    public String getApplicationName()
-    {
-        String appName = TextUtil.getStringProperty(m_properties,PROP_APPNAME,Release.APPNAME);
-
+    public String getApplicationName() {
+        String appName = TextUtil.getStringProperty( m_properties, PROP_APPNAME, Release.APPNAME );
         return MarkupParser.cleanLink( appName );
     }
 
     /**
-     *  Beautifies the title of the page by appending spaces in suitable
-     *  places, if the user has so decreed in the properties when constructing
-     *  this WikiEngine.  However, attachment names are only beautified by
-     *  the name.
+     *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when
+     *  constructing this WikiEngine.  However, attachment names are only beautified by the name.
      *
      *  @param title The title to beautify
-     *  @return A beautified title (or, if beautification is off,
-     *          returns the title without modification)
+     *  @return A beautified title (or, if beautification is off, returns the title without modification)
      *  @since 1.7.11
      */
-    public String beautifyTitle( String title )
-    {
-        if( m_beautifyTitle )
-        {
-            try
-            {
-                Attachment att = m_attachmentManager.getAttachmentInfo(title);
-
-                if(att == null)
-                {
+    public String beautifyTitle( final String title ) {
+        if( m_beautifyTitle ) {
+            try {
+                final Attachment att = m_attachmentManager.getAttachmentInfo( title );
+                if( att == null ) {
                     return TextUtil.beautifyString( title );
                 }
 
-                String parent = TextUtil.beautifyString( att.getParentName() );
-
+                final String parent = TextUtil.beautifyString( att.getParentName() );
                 return parent + "/" + att.getFileName();
-            }
-            catch( ProviderException e )
-            {
+            } catch( final ProviderException e ) {
                 return title;
             }
         }
@@ -1245,7 +1170,6 @@ public class WikiEngine  {
 
         return result;
     }
-
 
     /**
      *  Writes the WikiText of a page into the page repository. If the <code>jspwiki.properties</code> file contains
@@ -1568,18 +1492,13 @@ public class WikiEngine  {
      * @since 2.3
      * @return The current AclManager.
      */
-    public AclManager getAclManager()
-    {
-        if( m_aclManager == null )
-        {
-            try
-            {
-                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
+    public AclManager getAclManager()  {
+        if( m_aclManager == null ) {
+            try {
+                final String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
                 m_aclManager = ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
                 m_aclManager.initialize( this, m_properties );
-            }
-            catch ( ReflectiveOperationException | IllegalArgumentException e )
-            {
+            } catch( final ReflectiveOperationException | IllegalArgumentException e ) {
                 log.fatal( "unable to instantiate class for AclManager: " + e.getMessage() );
                 throw new InternalWikiException( "Cannot instantiate AclManager, please check logs.", e );
             }
