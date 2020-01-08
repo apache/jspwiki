@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.workflow;
 
-import java.math.BigDecimal;
-import java.security.Principal;
-import java.util.Date;
-
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.Date;
 
 public class WorkflowTest
 {
@@ -87,7 +87,7 @@ public class WorkflowTest
     public void testSetWorkflowManager()
     {
         Assertions.assertNull(w.getWorkflowManager());
-        WorkflowManager m = new WorkflowManager();
+        WorkflowManager m = new DefaultWorkflowManager();
         w.setWorkflowManager(m);
         Assertions.assertEquals(m, w.getWorkflowManager());
     }
