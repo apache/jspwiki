@@ -18,7 +18,9 @@
  */
 package org.apache.wiki;
 
-import java.io.IOException;
+import net.sf.ehcache.CacheManager;
+import org.apache.log4j.Logger;
+import org.apache.wiki.url.DefaultURLConstructor;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -26,11 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.url.DefaultURLConstructor;
-
-import net.sf.ehcache.CacheManager;
+import java.io.IOException;
 
 
 /**
@@ -44,13 +42,13 @@ public class WikiServlet extends HttpServlet {
 
     private static final long serialVersionUID = 3258410651167633973L;
     private WikiEngine m_engine;
-    static final Logger log = Logger.getLogger( WikiServlet.class.getName() );
+    private static final Logger log = Logger.getLogger( WikiServlet.class.getName() );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init( ServletConfig config ) throws ServletException {
+    public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
         m_engine = WikiEngine.getInstance( config );
         log.info( "WikiServlet initialized." );
@@ -77,7 +75,7 @@ public class WikiServlet extends HttpServlet {
      * {@inheritDoc}
      */
     @Override
-    public void doPost( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException {
+    public void doPost( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
         doGet( req, res );
     }
 
@@ -85,7 +83,7 @@ public class WikiServlet extends HttpServlet {
      * {@inheritDoc}
      */
     @Override
-    public void doGet( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException {
+    public void doGet( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
         String pageName = DefaultURLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );
 
         log.info( "Request for page: " + pageName );
@@ -93,9 +91,9 @@ public class WikiServlet extends HttpServlet {
             pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well
         }
 
-        String jspPage = m_engine.getURLConstructor().getForwardPage( req );
-        RequestDispatcher dispatcher = req.getRequestDispatcher( "/" + jspPage + "?page=" +
-                                                                 m_engine.encodeName( pageName ) + "&" + req.getQueryString() );
+        final String jspPage = m_engine.getURLConstructor().getForwardPage( req );
+        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/" + jspPage + "?page=" +
+                                                                       m_engine.encodeName( pageName ) + "&" + req.getQueryString() );
 
         dispatcher.forward( req, res );
     }

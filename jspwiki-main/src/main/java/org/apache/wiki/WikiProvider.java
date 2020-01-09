@@ -30,8 +30,7 @@ import java.util.Properties;
  *
  *  @since 2.0
  */
-public interface WikiProvider
-{
+public interface WikiProvider {
     /**
      *  Passing this to any method should get the latest version
      */
