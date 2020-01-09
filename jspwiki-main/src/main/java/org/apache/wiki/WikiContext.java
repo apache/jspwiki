@@ -42,31 +42,21 @@ import java.util.HashMap;
 import java.util.PropertyPermission;
 
 /**
- *  <p>Provides state information throughout the processing of a page.  A
- *  WikiContext is born when the JSP pages that are the main entry
- *  points, are invoked.  The JSPWiki engine creates the new
- *  WikiContext, which basically holds information about the page, the
- *  handling engine, and in which context (view, edit, etc) the
- *  call was done.</p>
- *  <p>A WikiContext also provides request-specific variables, which can
- *  be used to communicate between plugins on the same page, or
- *  between different instances of the same plugin.  A WikiContext
- *  variable is valid until the processing of the page has ended.  For
+ *  <p>Provides state information throughout the processing of a page.  A WikiContext is born when the JSP pages that are the main entry
+ *  points, are invoked.  The JSPWiki engine creates the new WikiContext, which basically holds information about the page, the
+ *  handling engine, and in which context (view, edit, etc) the call was done.</p>
+ *  <p>A WikiContext also provides request-specific variables, which can be used to communicate between plugins on the same page, or
+ *  between different instances of the same plugin.  A WikiContext variable is valid until the processing of the page has ended.  For
  *  an example, please see the Counter plugin.</p>
- *  <p>When a WikiContext is created, it automatically associates a
- *  {@link WikiSession} object with the user's HttpSession. The
- *  WikiSession contains information about the user's authentication
- *  status, and is consulted by {@link #getCurrentUser()}.
- *  object</p>
- *  <p>Do not cache the page object that you get from the WikiContext; always
- *  use getPage()!</p>
+ *  <p>When a WikiContext is created, it automatically associates a {@link WikiSession} object with the user's HttpSession. The
+ *  WikiSession contains information about the user's authentication status, and is consulted by {@link #getCurrentUser()} object.</p>
+ *  <p>Do not cache the page object that you get from the WikiContext; always use getPage()!</p>
  *
  *  @see org.apache.wiki.plugin.Counter
- *
  */
 public class WikiContext implements Cloneable, Command {
 
-    private    Command m_command = null;
+    private    Command m_command;
 
     private    WikiPage   m_page;
     private    WikiPage   m_realPage;
@@ -76,9 +66,9 @@ public class WikiContext implements Cloneable, Command {
     private    HashMap<String,Object> m_variableMap = new HashMap<>();
 
     /** Stores the HttpServletRequest.  May be null, if the request did not come from a servlet. */
-    protected  HttpServletRequest m_request = null;
+    protected HttpServletRequest m_request;
 
-    private    WikiSession m_session = null;
+    private WikiSession m_session;
 
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String INSTALL = WikiCommand.INSTALL.getRequestContext();
@@ -167,14 +157,12 @@ public class WikiContext implements Cloneable, Command {
     private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 
     /**
-     *  Create a new WikiContext for the given WikiPage. Delegates to
-     * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
+     *  Create a new WikiContext for the given WikiPage. Delegates to {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
+     *
      *  @param engine The WikiEngine that is handling the request.
-     *  @param page   The WikiPage.  If you want to create a
-     *  WikiContext for an older version of a page, you must use this
-     *  constructor.
+     *  @param page The WikiPage. If you want to create a WikiContext for an older version of a page, you must use this constructor.
      */
-    public WikiContext( WikiEngine engine, WikiPage page )
+    public WikiContext( final WikiEngine engine, final WikiPage page )
     {
         this( engine, null, findCommand( engine, null, page ) );
     }
@@ -236,19 +224,15 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     * Creates a new WikiContext for the given WikiEngine, WikiPage and
-     * HttpServletRequest. This method simply looks up the appropriate Command
-     * using {@link #findCommand(WikiEngine, HttpServletRequest, WikiPage)} and
-     * delegates to
+     * Creates a new WikiContext for the given WikiEngine, WikiPage and HttpServletRequest. This method simply looks up the appropriate
+     * Command using {@link #findCommand(WikiEngine, HttpServletRequest, WikiPage)} and delegates to
      * {@link #WikiContext(WikiEngine, HttpServletRequest, Command)}.
+     *
      * @param engine The WikiEngine that is handling the request
-     * @param request The HttpServletRequest that should be associated with this
-     *            context. This parameter may be <code>null</code>.
-     * @param page The WikiPage. If you want to create a WikiContext for an
-     *            older version of a page, you must supply this parameter
+     * @param request The HttpServletRequest that should be associated with this context. This parameter may be <code>null</code>.
+     * @param page The WikiPage. If you want to create a WikiContext for an older version of a page, you must supply this parameter
      */
-    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page)
-    {
+    public WikiContext( final WikiEngine engine, final HttpServletRequest request, final WikiPage page ) {
         this( engine, request, findCommand( engine, request, page ) );
     }
 
@@ -273,44 +257,35 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  Sets a reference to the real page whose content is currently being
-     *  rendered.
+     *  Sets a reference to the real page whose content is currently being rendered.
      *  <p>
-     *  Sometimes you may want to render the page using some other page's context.
-     *  In those cases, it is highly recommended that you set the setRealPage()
-     *  to point at the real page you are rendering.  Please see InsertPageTag
-     *  for an example.
+     *  Sometimes you may want to render the page using some other page's context. In those cases, it is highly recommended that you set
+     *  the setRealPage() to point at the real page you are rendering.  Please see InsertPageTag for an example.
      *  <p>
-     *  Also, if your plugin e.g. does some variable setting, be aware that if it
-     *  is embedded in the LeftMenu or some other page added with InsertPageTag,
-     *  you should consider what you want to do - do you wish to really reference
-     *  the "master" page or the included page.
+     *  Also, if your plugin e.g. does some variable setting, be aware that if it is embedded in the LeftMenu or some other page added
+     *  with InsertPageTag, you should consider what you want to do - do you wish to really reference the "master" page or the included
+     *  page.
      *
      *  @param page  The real page which is being rendered.
      *  @return The previous real page
      *  @since 2.3.14
      *  @see org.apache.wiki.tags.InsertPageTag
      */
-    public WikiPage setRealPage( WikiPage page )
-    {
-        WikiPage old = m_realPage;
+    public WikiPage setRealPage( final WikiPage page ) {
+        final WikiPage old = m_realPage;
         m_realPage = page;
         updateCommand( m_command.getRequestContext() );
         return old;
     }
 
     /**
-     *  Gets a reference to the real page whose content is currently being rendered.
-     *  If your plugin e.g. does some variable setting, be aware that if it
-     *  is embedded in the LeftMenu or some other page added with InsertPageTag,
-     *  you should consider what you want to do - do you wish to really reference
-     *  the "master" page or the included page.
+     *  Gets a reference to the real page whose content is currently being rendered. If your plugin e.g. does some variable setting, be
+     *  aware that if it is embedded in the LeftMenu or some other page added with InsertPageTag, you should consider what you want to
+     *  do - do you wish to really reference the "master" page or the included page.
      *  <p>
-     *  For example, in the default template, there is a page called "LeftMenu".
-     *  Whenever you access a page, e.g. "Main", the master page will be Main, and
-     *  that's what the getPage() will return - regardless of whether your plugin
-     *  resides on the LeftMenu or on the Main page.  However, getRealPage()
-     *  will return "LeftMenu".
+     *  For example, in the default template, there is a page called "LeftMenu". Whenever you access a page, e.g. "Main", the master
+     *  page will be Main, and that's what the getPage() will return - regardless of whether your plugin resides on the LeftMenu or on
+     *  the Main page.  However, getRealPage() will return "LeftMenu".
      *
      *  @return A reference to the real page.
      *  @see org.apache.wiki.tags.InsertPageTag
@@ -322,29 +297,19 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  Figure out to which page we are really going to.  Considers
-     *  special page names from the jspwiki.properties, and possible aliases.
-     *  This method forwards requests to
-     *  {@link org.apache.wiki.ui.CommandResolver#getSpecialPageReference(String)}.
+     *  Figure out to which page we are really going to.  Considers special page names from the jspwiki.properties, and possible aliases.
+     *  This method forwards requests to {@link org.apache.wiki.ui.CommandResolver#getSpecialPageReference(String)}.
      *  @return A complete URL to the new page to redirect to
      *  @since 2.2
      */
-
-    public String getRedirectURL()
-    {
-        String pagename = m_page.getName();
+    public String getRedirectURL() {
+        final String pagename = m_page.getName();
         String redirURL = m_engine.getCommandResolver().getSpecialPageReference( pagename );
-
-        if( redirURL == null )
-        {
-            String alias = m_page.getAttribute( WikiPage.ALIAS );
-
-            if( alias != null )
-            {
+        if( redirURL == null ) {
+            final String alias = m_page.getAttribute( WikiPage.ALIAS );
+            if( alias != null ) {
                 redirURL = getViewURL( alias );
-            }
-            else
-            {
+            } else {
                 redirURL = m_page.getAttribute( WikiPage.REDIRECT );
             }
         }
@@ -378,14 +343,14 @@ public class WikiContext implements Cloneable, Command {
      *  @param page The wikipage
      *  @since 2.1.37.
      */
-    public void setPage( WikiPage page )
-    {
+    public void setPage( final WikiPage page ) {
         m_page = page;
         updateCommand( m_command.getRequestContext() );
     }
 
     /**
      *  Returns the request context.
+     *
      *  @return The name of the request context (e.g. VIEW).
      */
     @Override
@@ -395,12 +360,11 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  Sets the request context.  See above for the different
-     *  request contexts (VIEW, EDIT, etc.)
+     *  Sets the request context.  See above for the different request contexts (VIEW, EDIT, etc.)
      *
      *  @param arg The request context (one of the predefined contexts.)
      */
-    public void setRequestContext( String arg )
+    public void setRequestContext( final String arg )
     {
         updateCommand( arg );
     }
@@ -431,36 +395,33 @@ public class WikiContext implements Cloneable, Command {
      *  @param key The variable name.
      *  @return The variable contents.
      */
-    public Object getVariable( String key )
+    public Object getVariable( final String key )
     {
         return m_variableMap.get( key );
     }
 
     /**
-     *  Sets a variable.  The variable is valid while the WikiContext is valid,
-     *  i.e. while page processing continues.  The variable data is discarded
-     *  once the page processing is finished.
+     *  Sets a variable.  The variable is valid while the WikiContext is valid, i.e. while page processing continues.  The variable data
+     *  is discarded once the page processing is finished.
      *
      *  @param key The variable name.
      *  @param data The variable value.
      */
-    public void setVariable( String key, Object data )
-    {
+    public void setVariable( final String key, final Object data ) {
         m_variableMap.put( key, data );
         updateCommand( m_command.getRequestContext() );
     }
 
     /**
-     * This is just a simple helper method which will first check the context
-     * if there is already an override in place, and if there is not,
+     * This is just a simple helper method which will first check the context if there is already an override in place, and if there is not,
      * it will then check the given properties.
      *
-     * @param key      What key are we searching for?
+     * @param key What key are we searching for?
      * @param defValue Default value for the boolean
-     * @return  {@code true} or {@code false}.
+     * @return {@code true} or {@code false}.
      */
     public boolean getBooleanWikiProperty( final String key, final boolean defValue ) {
-        Object bool = getVariable( key );
+        final Object bool = getVariable( key );
         if( bool != null ) {
             return TextUtil.isPositive( (String) bool );
         }
@@ -469,22 +430,17 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  This method will safely return any HTTP parameters that
-     *  might have been defined.  You should use this method instead
-     *  of peeking directly into the result of getHttpRequest(), since
-     *  this method is smart enough to do all of the right things,
+     *  This method will safely return any HTTP parameters that might have been defined.  You should use this method instead
+     *  of peeking directly into the result of getHttpRequest(), since this method is smart enough to do all of the right things,
      *  figure out UTF-8 encoded parameters, etc.
      *
      *  @since 2.0.13.
      *  @param paramName Parameter name to look for.
      *  @return HTTP parameter, or null, if no such parameter existed.
      */
-    public String getHttpParameter( String paramName )
-    {
+    public String getHttpParameter( final String paramName ) {
         String result = null;
-
-        if( m_request != null )
-        {
+        if( m_request != null ) {
             result = m_request.getParameter( paramName );
         }
 
@@ -492,10 +448,8 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  If the request did originate from a HTTP request,
-     *  then the HTTP request can be fetched here.  However, it the request
-     *  did NOT originate from a HTTP request, then this method will
-     *  return null, and YOU SHOULD CHECK FOR IT!
+     *  If the request did originate from a HTTP request, then the HTTP request can be fetched here.  However, it the request
+     *  did NOT originate from a HTTP request, then this method will return null, and YOU SHOULD CHECK FOR IT!
      *
      *  @return Null, if no HTTP request was done.
      *  @since 2.0.13.
@@ -511,29 +465,25 @@ public class WikiContext implements Cloneable, Command {
      *  @param dir The template name
      *  @since 2.1.15.
      */
-    public void setTemplate( String dir )
+    public void setTemplate( final String dir )
     {
         m_template = dir;
     }
 
     /**
-     * Returns the target of this wiki context: a page, group name or JSP. If
-     * the associated Command is a PageCommand, this method returns the page's
-     * name. Otherwise, this method delegates to the associated Command's
-     * {@link org.apache.wiki.ui.Command#getName()} method. Calling classes
-     * can rely on the results of this method for looking up canonically-correct
-     * page or group names. Because it does not automatically assume that the
-     * wiki context is a PageCommand, calling this method is inherently safer
-     * than calling <code>getPage().getName()</code>.
+     * Returns the target of this wiki context: a page, group name or JSP. If the associated Command is a PageCommand, this method
+     * returns the page's name. Otherwise, this method delegates to the associated Command's {@link org.apache.wiki.ui.Command#getName()}
+     * method. Calling classes can rely on the results of this method for looking up canonically-correct page or group names. Because it
+     * does not automatically assume that the wiki context is a PageCommand, calling this method is inherently safer than calling
+     * {@code getPage().getName()}.
+     *
      * @return the name of the target of this wiki context
      * @see org.apache.wiki.ui.PageCommand#getName()
      * @see org.apache.wiki.ui.GroupCommand#getName()
      */
     @Override
-	public String getName()
-    {
-        if ( m_command instanceof PageCommand )
-        {
+	public String getName() {
+        if ( m_command instanceof PageCommand ) {
             return m_page != null ? m_page.getName() : "<no page>";
         }
         return m_command.getName();
@@ -541,6 +491,7 @@ public class WikiContext implements Cloneable, Command {
 
     /**
      *  Gets the template that is to be used throughout this request.
+     *
      *  @since 2.1.15.
      *  @return template name
      */
@@ -550,18 +501,14 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  Convenience method that gets the current user. Delegates the
-     *  lookup to the WikiSession associated with this WikiContect.
-     *  May return null, in case the current
-     *  user has not yet been determined; or this is an internal system.
-     *  If the WikiSession has not been set, <em>always</em> returns null.
+     *  Convenience method that gets the current user. Delegates the lookup to the WikiSession associated with this WikiContect.
+     *  May return null, in case the current user has not yet been determined; or this is an internal system. If the WikiSession has not
+     *  been set, <em>always</em> returns null.
      *
      *  @return The current user; or maybe null in case of internal calls.
      */
-    public Principal getCurrentUser()
-    {
-        if (m_session == null)
-        {
+    public Principal getCurrentUser() {
+        if (m_session == null) {
             // This shouldn't happen, really...
             return WikiPrincipal.GUEST;
         }
@@ -574,7 +521,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param page The page to which to link.
      *  @return An URL to the page.  This honours the current absolute/relative setting.
      */
-    public String getViewURL( String page )
+    public String getViewURL( final String page )
     {
         return getURL( VIEW, page, null );
     }
@@ -591,13 +538,12 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  Returns an URL from a page. It this WikiContext instance was constructed
-     *  with an actual HttpServletRequest, we will attempt to construct the
-     *  URL using HttpUtil, which preserves the HTTPS portion if it was used.
+     *  Returns an URL from a page. It this WikiContext instance was constructed with an actual HttpServletRequest, we will attempt to
+     *  construct the URL using HttpUtil, which preserves the HTTPS portion if it was used.
      *
      *  @param context The request context (e.g. WikiContext.UPLOAD)
-     *  @param page    The page to which to link
-     *  @param params  A list of parameters, separated with "&amp;"
+     *  @param page The page to which to link
+     *  @param params A list of parameters, separated with "&amp;"
      *
      *  @return An URL to the given context and page.
      */
@@ -610,6 +556,7 @@ public class WikiContext implements Cloneable, Command {
 
     /**
      * Returns the Command associated with this WikiContext.
+     *
      * @return the command
      */
     public Command getCommand()
@@ -628,7 +575,7 @@ public class WikiContext implements Cloneable, Command {
         try {
             // super.clone() must always be called to make sure that inherited objects
             // get the right type
-            WikiContext copy = (WikiContext)super.clone();
+            final WikiContext copy = (WikiContext)super.clone();
 
             copy.m_engine = m_engine;
             copy.m_command = m_command;
@@ -640,26 +587,24 @@ public class WikiContext implements Cloneable, Command {
             copy.m_page        = m_page;
             copy.m_realPage    = m_realPage;
             return copy;
-        } catch( CloneNotSupportedException e ){} // Never happens
+        } catch( final CloneNotSupportedException e ){} // Never happens
 
         return null;
     }
 
     /**
-     *  Creates a deep clone of the WikiContext.  This is useful when you want
-     *  to be sure that you don't accidentally mess with page attributes, etc.
+     *  Creates a deep clone of the WikiContext.  This is useful when you want to be sure that you don't accidentally mess with page
+     *  attributes, etc.
      *
      *  @since  2.8.0
      *  @return A deep clone of the WikiContext.
      */
     @SuppressWarnings("unchecked")
-    public WikiContext deepClone()
-    {
-        try
-        {
+    public WikiContext deepClone() {
+        try {
             // super.clone() must always be called to make sure that inherited objects
             // get the right type
-            WikiContext copy = (WikiContext)super.clone();
+            final WikiContext copy = (WikiContext)super.clone();
 
             //  No need to deep clone these
             copy.m_engine  = m_engine;
@@ -673,16 +618,14 @@ public class WikiContext implements Cloneable, Command {
             copy.m_realPage    = (WikiPage)m_realPage.clone();
             return copy;
         }
-        catch( CloneNotSupportedException e ){} // Never happens
+        catch( final CloneNotSupportedException e ){} // Never happens
 
         return null;
     }
 
     /**
-     *  Returns the WikiSession associated with the context.
-     *  This method is guaranteed to always return a valid WikiSession.
-     *  If this context was constructed without an associated
-     *  HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
+     *  Returns the WikiSession associated with the context. This method is guaranteed to always return a valid WikiSession.
+     *  If this context was constructed without an associated HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
      *
      *  @return The WikiSession associate with this context.
      */
@@ -692,49 +635,37 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  This method can be used to find the WikiContext programmatically
-     *  from a JSP PageContext. We check the request context.
-     *  The wiki context, if it exists,
-     *  is looked up using the key
-     *  {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
+     *  This method can be used to find the WikiContext programmatically from a JSP PageContext. We check the request context.
+     *  The wiki context, if it exists, is looked up using the key {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
      *
      *  @since 2.4
      *  @param pageContext the JSP page context
      *  @return Current WikiContext, or null, of no context exists.
      */
-    public static WikiContext findContext( PageContext pageContext )
-    {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        WikiContext context = (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
-        return context;
+    public static WikiContext findContext( final PageContext pageContext ) {
+        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        return (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
     }
 
     /**
-     * Returns the permission required to successfully execute this context.
-     * For example, the a wiki context of VIEW for a certain page means that
-     * the PagePermission "view" is required for the page. In some cases, no
-     * particular permission is required, in which case a dummy permission will
-     * be returned ({@link java.util.PropertyPermission}<code> "os.name",
-     * "read"</code>). This method is guaranteed to always return a valid,
-     * non-null permission.
+     * Returns the permission required to successfully execute this context. For example, the a wiki context of VIEW for a certain page
+     * means that the PagePermission "view" is required for the page. In some cases, no particular permission is required, in which case
+     * a dummy permission will be returned ({@link java.util.PropertyPermission}<code> "os.name", "read"</code>). This method is guaranteed
+     * to always return a valid, non-null permission.
+     *
      * @return the permission
      * @since 2.4
      */
     @Override
-	public Permission requiredPermission()
-    {
+	public Permission requiredPermission() {
         // This is a filthy rotten hack -- absolutely putrid
-        if ( WikiCommand.INSTALL.equals( m_command ) )
-        {
+        if ( WikiCommand.INSTALL.equals( m_command ) ) {
             // See if admin users exists
-            try
-            {
-                UserManager userMgr = m_engine.getUserManager();
-                UserDatabase userDb = userMgr.getUserDatabase();
+            try {
+                final UserManager userMgr = m_engine.getUserManager();
+                final UserDatabase userDb = userMgr.getUserDatabase();
                 userDb.findByLoginName( Installer.ADMIN_ID );
-            }
-            catch ( NoSuchPrincipalException e )
-            {
+            } catch ( final NoSuchPrincipalException e ) {
                 return DUMMY_PERMISSION;
             }
             return new AllPermission( m_engine.getApplicationName() );
@@ -742,8 +673,7 @@ public class WikiContext implements Cloneable, Command {
 
         // TODO: we should really break the contract so that this
         // method returns null, but until then we will use this hack
-        if ( m_command.requiredPermission() == null )
-        {
+        if( m_command.requiredPermission() == null ) {
             return DUMMY_PERMISSION;
         }
 
@@ -751,116 +681,100 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     * Associates a target with the current Command and returns
-     * the new targeted Command. If the Command associated with this
+     * Associates a target with the current Command and returns the new targeted Command. If the Command associated with this
      * WikiContext is already "targeted", it is returned instead.
+     *
      * @see org.apache.wiki.ui.Command#targetedCommand(java.lang.Object)
      *
      * {@inheritDoc}
      */
     @Override
-	public Command targetedCommand( Object target )
-    {
-        if ( m_command.getTarget() == null )
-        {
+	public Command targetedCommand( final Object target ) {
+        if ( m_command.getTarget() == null ) {
             return m_command.targetedCommand( target );
         }
         return m_command;
     }
 
     /**
-     *  Returns true, if the current user has administrative permissions (i.e. the omnipotent
-     *  AllPermission).
+     *  Returns true, if the current user has administrative permissions (i.e. the omnipotent AllPermission).
      *
      *  @since 2.4.46
      *  @return true, if the user has all permissions.
      */
     public boolean hasAdminPermissions() {
-        return m_engine.getAuthorizationManager().checkPermission( getWikiSession(), new AllPermission(m_engine.getApplicationName()) );
+        return m_engine.getAuthorizationManager().checkPermission( getWikiSession(), new AllPermission( m_engine.getApplicationName() ) );
     }
 
     /**
      * Figures out which template a new WikiContext should be using.
      * @param request the HTTP request
      */
-    protected void setDefaultTemplate( HttpServletRequest request )
-    {
-        String defaultTemplate = m_engine.getTemplateDir();
+    protected void setDefaultTemplate( final HttpServletRequest request ) {
+        final String defaultTemplate = m_engine.getTemplateDir();
 
         //  Figure out which template we should be using for this page.
         String template = null;
-        if ( request != null )
-        {
+        if ( request != null ) {
             template = request.getParameter( "skin" );
 
-            if( template != null ) template = template.replaceAll("\\p{Punct}", "");
+            if( template != null ) {
+                template = template.replaceAll("\\p{Punct}", "");
+            }
         }
 
         // If request doesn't supply the value, extract from wiki page
-        if( template == null )
-        {
-            WikiPage page = getPage();
-            if ( page != null )
-            {
+        if( template == null ) {
+            final WikiPage page = getPage();
+            if ( page != null ) {
                 template = page.getAttribute( WikiEngine.PROP_TEMPLATEDIR );
             }
 
         }
 
         // If something over-wrote the default, set the new value.
-        if ( template != null )
-        {
+        if ( template != null ) {
             setTemplate( template );
-        }
-        else
-        {
+        } else {
             setTemplate( defaultTemplate );
         }
     }
 
     /**
-     * Looks up and returns a PageCommand based on a supplied WikiPage and HTTP
-     * request. First, the appropriate Command is obtained by examining the HTTP
-     * request; the default is {@link PageCommand#VIEW}. If the Command is a
-     * PageCommand (and it should be, in most cases), a targeted Command is
-     * created using the (non-<code>null</code>) WikiPage as target.
+     * Looks up and returns a PageCommand based on a supplied WikiPage and HTTP request. First, the appropriate Command is obtained by
+     * examining the HTTP request; the default is {@link PageCommand#VIEW}. If the Command is a PageCommand (and it should be, in most
+     * cases), a targeted Command is created using the (non-<code>null</code>) WikiPage as target.
+     *
      * @param engine the wiki engine
      * @param request the HTTP request
      * @param page the wiki page
      * @return the correct command
      */
-    protected static Command findCommand( WikiEngine engine, HttpServletRequest request, WikiPage page )
-    {
-        String defaultContext = PageCommand.VIEW.getRequestContext();
+    protected static Command findCommand( final WikiEngine engine, final HttpServletRequest request, final WikiPage page ) {
+        final String defaultContext = PageCommand.VIEW.getRequestContext();
         Command command = engine.getCommandResolver().findCommand( request, defaultContext );
-        if ( command instanceof PageCommand && page != null )
-        {
+        if ( command instanceof PageCommand && page != null ) {
             command = command.targetedCommand( page );
         }
         return command;
     }
 
     /**
-     * Protected method that updates the internally cached Command.
-     * Will always be called when the page name, request context, or variable
+     * Protected method that updates the internally cached Command. Will always be called when the page name, request context, or variable
      * changes.
+     *
      * @param requestContext the desired request context
      * @since 2.4
      */
-    protected void updateCommand( String requestContext )
-    {
-        if ( requestContext == null )
-        {
+    protected void updateCommand( final String requestContext ) {
+        if ( requestContext == null ) {
             m_command = PageCommand.NONE;
-        }
-        else
-        {
-            CommandResolver resolver = m_engine.getCommandResolver();
+        } else {
+            final CommandResolver resolver = m_engine.getCommandResolver();
             m_command = resolver.findCommand( m_request, requestContext );
         }
 
-        if ( m_command instanceof PageCommand && m_page != null )
-        {
+        if ( m_command instanceof PageCommand && m_page != null ) {
             m_command = m_command.targetedCommand( m_page );
         }
     }
