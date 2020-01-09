@@ -18,19 +18,18 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.PageCommand;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  *  Iterates through Search result results.
@@ -89,7 +88,7 @@ public class SearchResultIteratorTag
         }
 
         m_count = 0;
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
         return nextResult();
     }
@@ -107,9 +106,7 @@ public class SearchResultIteratorTag
             WikiContext context = new WikiContext( engine, request, command );
             
             // Stash it in the page context
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), r );
 
             return EVAL_BODY_BUFFERED;
@@ -118,18 +115,13 @@ public class SearchResultIteratorTag
         return SKIP_BODY;
     }
 
-    public int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
+    public int doAfterBody() {
+        if( bodyContent != null ) {
+            try {
+                final JspWriter out = getPreviousOut();
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
+            } catch( final IOException e ) {
                 log.error("Unable to get inner tag text", e);
                 // FIXME: throw something?
             }
@@ -138,10 +130,9 @@ public class SearchResultIteratorTag
         return nextResult();
     }
 
-    public int doEndTag()
-    {
+    public int doEndTag() {
         m_iterator = null;
-
         return super.doEndTag();
     }
+
 }

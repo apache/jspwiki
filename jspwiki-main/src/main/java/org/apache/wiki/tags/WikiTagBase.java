@@ -40,8 +40,6 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
     private static final long serialVersionUID = -1409836349293777141L;
     private static final Logger log = Logger.getLogger( WikiTagBase.class );
 
-    public static final String ATTR_CONTEXT = "jspwiki.context";
-
     protected WikiContext m_wikiContext;
 
     /**
@@ -64,7 +62,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
     
     public int doStartTag() throws JspException {
         try {
-            m_wikiContext = ( WikiContext )pageContext.getAttribute( ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+            m_wikiContext = ( WikiContext )pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
             if( m_wikiContext == null ) {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
             }

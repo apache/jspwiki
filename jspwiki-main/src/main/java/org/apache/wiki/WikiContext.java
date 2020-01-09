@@ -24,7 +24,6 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.GroupCommand;
@@ -69,6 +68,8 @@ public class WikiContext implements Cloneable, Command {
     protected HttpServletRequest m_request;
 
     private WikiSession m_session;
+
+    public static final String ATTR_CONTEXT = "jspwiki.context";
 
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String INSTALL = WikiCommand.INSTALL.getRequestContext();
@@ -636,7 +637,7 @@ public class WikiContext implements Cloneable, Command {
 
     /**
      *  This method can be used to find the WikiContext programmatically from a JSP PageContext. We check the request context.
-     *  The wiki context, if it exists, is looked up using the key {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
+     *  The wiki context, if it exists, is looked up using the key {@link #ATTR_CONTEXT}.
      *
      *  @since 2.4
      *  @param pageContext the JSP page context
@@ -644,7 +645,7 @@ public class WikiContext implements Cloneable, Command {
      */
     public static WikiContext findContext( final PageContext pageContext ) {
         final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        return (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
+        return (WikiContext)request.getAttribute( ATTR_CONTEXT );
     }
 
     /**

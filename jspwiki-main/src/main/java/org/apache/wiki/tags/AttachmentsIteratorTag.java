@@ -53,7 +53,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
      */
     @Override
     public final int doStartTag()  {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
         final WikiEngine engine = m_wikiContext.getEngine();
         final AttachmentManager mgr = engine.getAttachmentManager();
         final WikiPage page;
@@ -81,7 +81,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
                     final Attachment  att = (Attachment) m_iterator.next();
                     final WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( att );
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+                    pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(), att );
                 } else {
                     return SKIP_BODY;
@@ -119,7 +119,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
             final Attachment att = ( Attachment )m_iterator.next();
             final WikiContext context = ( WikiContext )m_wikiContext.clone();
             context.setPage( att );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,  context, PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( WikiContext.ATTR_CONTEXT,  context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), att );
 
             return EVAL_BODY_BUFFERED;

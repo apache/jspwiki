@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiContext;
@@ -75,8 +76,9 @@ import java.nio.charset.Charset;
  * @see TemplateManager
  * @see org.apache.wiki.tags.RequestResourceTag
  */
-public class WikiJSPFilter extends WikiServletFilter
-{
+public class WikiJSPFilter extends WikiServletFilter {
+
+    private static final Logger log = Logger.getLogger( WikiJSPFilter.class );
     private String m_wiki_encoding;
     private boolean useEncoding;
 
@@ -249,9 +251,8 @@ public class WikiJSPFilter extends WikiServletFilter
      *  Simple response wrapper that just allows us to gobble through the entire
      *  response before it's output.
      */
-    private static class JSPWikiServletResponseWrapper
-        extends HttpServletResponseWrapper
-    {
+    private static class JSPWikiServletResponseWrapper extends HttpServletResponseWrapper {
+
         ByteArrayOutputStream m_output;
         private ByteArrayServletOutputStream m_servletOut;
         private PrintWriter m_writer;

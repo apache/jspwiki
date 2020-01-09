@@ -18,16 +18,14 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
-
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.WikiContext;
+import java.io.IOException;
 
 
 /**
@@ -40,22 +38,15 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
 	protected WikiContext m_wikiContext;
     private static final Logger log = Logger.getLogger( WikiBodyTag.class );
 
-    public int doStartTag() throws JspException
-    {
-        try
-        {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                    PageContext.REQUEST_SCOPE );
-
-            if( m_wikiContext == null )
-            {
+    public int doStartTag() throws JspException {
+        try {
+            m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+            if( m_wikiContext == null ) {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
             }
 
             return doWikiStartTag();
-        }
-        catch( Exception e )
-        {
+        } catch( final Exception e ) {
             log.error( "Tag failed", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
@@ -70,14 +61,12 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
      */
     public abstract int doWikiStartTag() throws JspException, IOException;
 
-    public void doCatch(Throwable arg0) throws Throwable
-    {
+    public void doCatch(Throwable arg0) throws Throwable {
     }
 
     public void doFinally()
     {
         m_wikiContext = null;
     }  
-    
     
 }

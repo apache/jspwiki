@@ -18,19 +18,18 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -130,7 +129,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         //
         //  Push it to the iterator stack, and set the id.
         //
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
         pageContext.setAttribute( getId(), o );
     }
 
@@ -141,7 +140,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     public int doEndTag()
     {
         // Return back to the original.
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, m_wikiContext, PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( WikiContext.ATTR_CONTEXT, m_wikiContext, PageContext.REQUEST_SCOPE );
 
         return EVAL_PAGE;
     }
