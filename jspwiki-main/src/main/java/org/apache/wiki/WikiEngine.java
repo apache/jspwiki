@@ -753,6 +753,7 @@ public class WikiEngine  {
         if( pageName == null ) {
             pageName = getFrontPage();
         }
+        //FIXME: final boolean absolute = getVariableManager().getVariable( this, WikiEngine.PROP_REFSTYLE );
         return getURLConstructor().makeURL( WikiContext.VIEW, pageName, "absolute".equals( PROP_REFSTYLE ), null );
     }
 
@@ -1169,68 +1170,6 @@ public class WikiEngine  {
         }
 
         return result;
-    }
-
-    /**
-     *  Writes the WikiText of a page into the page repository. If the <code>jspwiki.properties</code> file contains
-     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and its value resolves to a valid user,
-     *  {@link org.apache.wiki.auth.authorize.Group} or {@link org.apache.wiki.auth.authorize.Role}, this method will
-     *  place a {@link org.apache.wiki.workflow.Decision} in the approver's workflow inbox and throw a
-     *  {@link org.apache.wiki.workflow.DecisionRequiredException}. If the submitting user is authenticated and the
-     *  page save is rejected, a notification will be placed in the user's decision queue.
-     *
-     *  @since 2.1.28
-     *  @param context The current WikiContext
-     *  @param text    The Wiki markup for the page.
-     *  @throws WikiException if the save operation encounters an error during the save operation. If the page-save
-     *  operation requires approval, the exception will be of type {@link org.apache.wiki.workflow.DecisionRequiredException}.
-     *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a
-     *  {@link org.apache.wiki.api.exceptions.RedirectException}.
-     */
-    public void saveText( final WikiContext context, final String text ) throws WikiException {
-        // Check if page data actually changed; bail if not
-        final WikiPage page = context.getPage();
-        final String oldText = getPageManager().getPureText( page );
-        final String proposedText = TextUtil.normalizePostData( text );
-        if ( oldText != null && oldText.equals( proposedText ) ) {
-            return;
-        }
-
-        // Check if creation of empty pages is allowed; bail if not
-        final boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, PROP_ALLOW_CREATION_OF_EMPTY_PAGES, false );
-        if ( !allowEmpty && !m_pageManager.wikiPageExists( page ) && text.trim().equals( "" ) ) {
-            return;
-        }
-
-        // Create approval workflow for page save; add the diffed, proposed and old text versions as
-        // Facts for the approver (if approval is required). If submitter is authenticated, any reject
-        // messages will appear in his/her workflow inbox.
-        final WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
-        final Principal submitter = context.getCurrentUser();
-        final Step prepTask = m_tasksManager.buildPreSaveWikiPageTask( context, proposedText );
-        final Step completionTask = m_tasksManager.buildSaveWikiPageTask();
-        final String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
-        final boolean isAuthenticated = context.getWikiSession().isAuthenticated();
-        final Fact[] facts = new Fact[ 5 ];
-        facts[ 0 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PAGE_NAME, page.getName() );
-        facts[ 1 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_DIFF_TEXT, diffText );
-        facts[ 2 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, proposedText );
-        facts[ 3 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_CURRENT_TEXT, oldText);
-        facts[ 4 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_IS_AUTHENTICATED, isAuthenticated );
-        final String rejectKey = isAuthenticated ? WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY : null;
-        final Workflow workflow = builder.buildApprovalWorkflow( submitter,
-                                                                 WorkflowManager.WF_WP_SAVE_APPROVER,
-                                                                 prepTask,
-                                                                 WorkflowManager.WF_WP_SAVE_DECISION_MESSAGE_KEY,
-                                                                 facts,
-                                                                 completionTask,
-                                                                 rejectKey );
-        m_workflowMgr.start( workflow );
-
-        // Let callers know if the page-save requires approval
-        if ( workflow.getCurrentStep() instanceof Decision ) {
-            throw new DecisionRequiredException( "The page contents must be approved before they become active." );
-        }
     }
 
     /**

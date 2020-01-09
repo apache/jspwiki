@@ -18,8 +18,10 @@
  */
 package org.apache.wiki.pages;
 
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.providers.WikiPageProvider;
 
@@ -132,6 +134,24 @@ public interface PageManager extends WikiEventListener {
     default String getText( final WikiPage page ) {
         return getText( page.getName(), page.getVersion() );
     }
+
+    /**
+     *  Writes the WikiText of a page into the page repository. If the <code>jspwiki.properties</code> file contains
+     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and its value resolves to a valid user,
+     *  {@link org.apache.wiki.auth.authorize.Group} or {@link org.apache.wiki.auth.authorize.Role}, this method will
+     *  place a {@link org.apache.wiki.workflow.Decision} in the approver's workflow inbox and throw a
+     *  {@link org.apache.wiki.workflow.DecisionRequiredException}. If the submitting user is authenticated and the
+     *  page save is rejected, a notification will be placed in the user's decision queue.
+     *
+     *  @since 2.1.28, moved to PageManager on 2.11.0
+     *  @param context The current WikiContext
+     *  @param text    The Wiki markup for the page.
+     *  @throws WikiException if the save operation encounters an error during the save operation. If the page-save
+     *  operation requires approval, the exception will be of type {@link org.apache.wiki.workflow.DecisionRequiredException}.
+     *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a
+     *  {@link org.apache.wiki.api.exceptions.RedirectException}.
+     */
+    void saveText( WikiContext context, String text ) throws WikiException;
 
     /**
      * Puts the page text into the repository.  Note that this method does NOT update

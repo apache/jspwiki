@@ -35,14 +35,10 @@
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 
-    String findParam( PageContext ctx, String key )
-    {
+    String findParam( PageContext ctx, String key ) {
         ServletRequest req = ctx.getRequest();
-
         String val = req.getParameter( key );
-
-        if( val == null )
-        {
+        if( val == null ) {
             val = (String)ctx.findAttribute( key );
         }
 
@@ -54,7 +50,9 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
-    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) {
+        return;
+    }
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
         return;
@@ -76,9 +74,7 @@
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
     String captcha = (String)session.getAttribute("captcha");
 
-    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous()
-         && author != null )
-    {
+    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() && author != null ) {
         user  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
     }
 
@@ -86,16 +82,14 @@
     //  WYSIWYG editor sends us its greetings
     //
     String htmlText = findParam( pageContext, "htmlPageText" );
-    if( htmlText != null && cancel == null )
-    {
+    if( htmlText != null && cancel == null ) {
         text = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
     }
 
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPageManager().getPage( pagereq );
 
-    if( latestversion == null )
-    {
+    if( latestversion == null ) {
         latestversion = wikiContext.getPage();
     }
 
@@ -112,16 +106,14 @@
     //log.debug("Request content type+"+request.getContentType());
     log.debug("preview="+preview+", ok="+ok);
 
-    if( ok != null || captcha != null )
-    {
+    if( ok != null || captcha != null ) {
         log.info("Saving page "+pagereq+". User="+user+", host="+HttpUtil.getRemoteAddress(request) );
 
         //
         //  Check for session expiry
         //
 
-        if( !SpamFilter.checkHash(wikiContext,pageContext) )
-        {
+        if( !SpamFilter.checkHash(wikiContext,pageContext) ) {
             return;
         }
 
@@ -133,8 +125,7 @@
 
         String h = SpamFilter.getSpamHash( latestversion, request );
 
-        if( !h.equals(spamhash) )
-        {
+        if( !h.equals(spamhash) ) {
             //
             // Someone changed the page while we were editing it!
             //
@@ -147,8 +138,7 @@
         }
 
         //
-        //  We expire ALL locks at this moment, simply because someone has
-        //  already broken it.
+        //  We expire ALL locks at this moment, simply because someone has already broken it.
         //
         PageLock lock = wiki.getPageManager().getCurrentLock( wikipage );
         wiki.getPageManager().unlockPage( lock );
@@ -157,28 +147,24 @@
         //
         //  Set author information and other metadata
         //
-
         modifiedPage.setAuthor( user );
 
-        if( changenote == null ) changenote = (String) session.getAttribute("changenote");
+        if( changenote == null ) {
+            changenote = (String) session.getAttribute("changenote");
+        }
 
         session.removeAttribute("changenote");
 
-        if( changenote != null && changenote.length() > 0 )
-        {
+        if( changenote != null && changenote.length() > 0 ) {
             modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
-        }
-        else
-        {
+        } else {
             modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
         }
 
         //
         //  Figure out the actual page text
         //
-
-        if( text == null )
-        {
+        if( text == null ) {
             throw new ServletException( "No parameter text set!" );
         }
 
@@ -186,38 +172,26 @@
         //  If this is an append, then we just append it to the page.
         //  If it is a full edit, then we will replace the previous contents.
         //
-
-        try
-        {
+        try {
             wikiContext.setPage( modifiedPage );
 
-            if( captcha != null )
-            {
+            if( captcha != null ) {
                 wikiContext.setVariable( "captcha", Boolean.TRUE );
                 session.removeAttribute( "captcha" );
             }
 
-            if( append != null )
-            {
+            if( append != null ) {
                 StringBuffer pageText = new StringBuffer(wiki.getPageManager().getText( pagereq ));
-
                 pageText.append( text );
-
-                wiki.saveText( wikiContext, pageText.toString() );
+                wiki.getPageManager().saveText( wikiContext, pageText.toString() );
+            } else {
+                wiki.getPageManager().saveText( wikiContext, text );
             }
-            else
-            {
-                wiki.saveText( wikiContext, text );
-            }
-        }
-        catch( DecisionRequiredException ex )
-        {
+        } catch( DecisionRequiredException ex ) {
         	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
             response.sendRedirect( redirect );
             return;
-        }
-        catch( RedirectException ex )
-        {
+        } catch( RedirectException ex ) {
             // FIXME: Cut-n-paste code.
             wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
             session.setAttribute( "message", ex.getMessage() );
@@ -234,27 +208,23 @@
 
         response.sendRedirect(wiki.getViewURL(pagereq));
         return;
-    }
-    else if( preview != null )
-    {
+    } else if( preview != null ) {
         log.debug("Previewing "+pagereq);
         session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
         session.setAttribute("author",user);
         session.setAttribute("link",link != null ? link : "" );
 
-        if( htmlText != null ) session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
+        if( htmlText != null ) {
+            session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
+        }
 
         session.setAttribute("changenote", changenote != null ? changenote : "" );
         response.sendRedirect( wiki.getURL(WikiContext.PREVIEW,pagereq,null,false) );
         return;
-    }
-    else if( cancel != null )
-    {
+    } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);
         PageLock lock = (PageLock) session.getAttribute( "lock-"+pagereq );
-
-        if( lock != null )
-        {
+        if( lock != null ) {
             wiki.getPageManager().unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
@@ -274,23 +244,16 @@
     //
     String lastchange = SpamFilter.getSpamHash( latestversion, request );
 
-    pageContext.setAttribute( "lastchange",
-                              lastchange,
-                              PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( "lastchange", lastchange, PageContext.REQUEST_SCOPE );
 
     //
     //  Attempt to lock the page.
     //
-    PageLock lock = wiki.getPageManager().lockPage( wikipage,
-                                                    user );
-
-    if( lock != null )
-    {
+    PageLock lock = wiki.getPageManager().lockPage( wikipage, user );
+    if( lock != null ) {
         session.setAttribute( "lock-"+pagereq, lock );
     }
 
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "EditTemplate.jsp" );
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />

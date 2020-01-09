@@ -27,7 +27,7 @@
 
 <div class="sidebar">
 
-  <c:set var="isweblog"><%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %></c:set>
+  <c:set var="isweblog"><%= ( String )WikiContext.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %></c:set>
   <c:if test="${isweblog}">
   <wiki:Calendar pageformat="'${param.page}_blogentry_'ddMMyy'_1'"
                  urlformat="'Wiki.jsp?page=${param.page}&weblog.startDate='ddMMyy'&weblog.days=1'"/>

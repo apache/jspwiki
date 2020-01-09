@@ -365,13 +365,13 @@ public class WikiEngineTest {
         final WikiPage p = new WikiPage( m_engine, NAME1 );
         final WikiContext context = new WikiContext(m_engine,p);
         context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
-        m_engine.saveText( context, "test" );
+        m_engine.getPageManager().saveText( context, "test" );
 
         for( int i = 0; i < 5; i++ ) {
             final WikiPage p2 = ( WikiPage )m_engine.getPageManager().getPage( NAME1 ).clone();
             p2.removeAttribute( WikiPage.CHANGENOTE );
             context.setPage( p2 );
-            m_engine.saveText( context, "test" + i );
+            m_engine.getPageManager().saveText( context, "test" + i );
         }
 
         final WikiPage p3 = m_engine.getPageManager().getPage( NAME1, -1 );

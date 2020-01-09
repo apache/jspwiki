@@ -156,21 +156,15 @@ public class AtomAPIServlet extends HttpServlet
 
             log.debug("Writing entry: "+text);
 
-            m_engine.saveText( context, text.toString() );
+            m_engine.getPageManager().saveText( context, text.toString() );
 
-        }
-        catch( FeedMarshallException e )
-        {
+        } catch( final FeedMarshallException e ) {
             log.error("Received faulty Atom entry",e);
             throw new ServletException("Faulty Atom entry",e);
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             log.error("I/O exception",e);
             throw new ServletException("Could not get body of request",e);
-        }
-        catch( WikiException e )
-        {
+        } catch( final WikiException e ) {
             log.error("Provider exception while posting",e);
             throw new ServletException("JSPWiki cannot save the entry",e);
         }
@@ -220,9 +214,7 @@ public class AtomAPIServlet extends HttpServlet
 
     }
 
-    private Entry getBlogEntry( String entryid )
-        throws ProviderException
-    {
+    private Entry getBlogEntry( String entryid ) {
         WikiPage page = m_engine.getPageManager().getPage( entryid );
         WikiPage firstVersion = m_engine.getPageManager().getPage( entryid, 1 );
 
@@ -257,10 +249,7 @@ public class AtomAPIServlet extends HttpServlet
     /**
      *  Creates and outputs a full list of all available blogs
      */
-    private Feed listBlogs()
-        throws ProviderException,
-               IOException
-    {
+    private Feed listBlogs() throws ProviderException {
         Collection< WikiPage > pages = m_engine.getPageManager().getAllPages();
 
         Feed feed = SyndicationFactory.newSyndicationFeed();
@@ -328,18 +317,14 @@ public class AtomAPIServlet extends HttpServlet
     /**
      *  {@inheritDoc}
      */
-    public void doDelete( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException
-    {
+    public void doDelete( HttpServletRequest request, HttpServletResponse response ) {
         log.debug("Received HTTP DELETE");
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void doPut( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException
-    {
+    public void doPut( HttpServletRequest request, HttpServletResponse response ) {
         log.debug("Received HTTP PUT");
     }
 }

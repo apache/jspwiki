@@ -21,6 +21,7 @@ package org.apache.wiki.pages;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
@@ -44,6 +45,13 @@ import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.workflow.Decision;
+import org.apache.wiki.workflow.DecisionRequiredException;
+import org.apache.wiki.workflow.Fact;
+import org.apache.wiki.workflow.Step;
+import org.apache.wiki.workflow.Workflow;
+import org.apache.wiki.workflow.WorkflowBuilder;
+import org.apache.wiki.workflow.WorkflowManager;
 
 import java.io.IOException;
 import java.security.Permission;
@@ -194,7 +202,6 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      */
     public String getPureText( final String page, final int version ) {
         String result = null;
-
         try {
             result = getPageText( page, version );
         } catch( final ProviderException e ) {
@@ -204,7 +211,6 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
                 result = "";
             }
         }
-
         return result;
     }
 
@@ -215,6 +221,54 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     public String getText( final String page, final int version ) {
         final String result = getPureText( page, version );
         return TextUtil.replaceEntities( result );
+    }
+
+    public void saveText( final WikiContext context, final String text ) throws WikiException {
+        // Check if page data actually changed; bail if not
+        final WikiPage page = context.getPage();
+        final String oldText = getPureText( page );
+        final String proposedText = TextUtil.normalizePostData( text );
+        if ( oldText != null && oldText.equals( proposedText ) ) {
+            return;
+        }
+
+        // Check if creation of empty pages is allowed; bail if not
+        final boolean allowEmpty = TextUtil.getBooleanProperty( m_engine.getWikiProperties(),
+                                                                WikiEngine.PROP_ALLOW_CREATION_OF_EMPTY_PAGES,
+                                                         false );
+        if ( !allowEmpty && !wikiPageExists( page ) && text.trim().equals( "" ) ) {
+            return;
+        }
+
+        // Create approval workflow for page save; add the diffed, proposed and old text versions as
+        // Facts for the approver (if approval is required). If submitter is authenticated, any reject
+        // messages will appear in his/her workflow inbox.
+        final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
+        final Principal submitter = context.getCurrentUser();
+        final Step prepTask = m_engine.getTasksManager().buildPreSaveWikiPageTask( context, proposedText );
+        final Step completionTask = m_engine.getTasksManager().buildSaveWikiPageTask();
+        final String diffText = m_engine.getDifferenceManager().makeDiff( context, oldText, proposedText );
+        final boolean isAuthenticated = context.getWikiSession().isAuthenticated();
+        final Fact[] facts = new Fact[ 5 ];
+        facts[ 0 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PAGE_NAME, page.getName() );
+        facts[ 1 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_DIFF_TEXT, diffText );
+        facts[ 2 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, proposedText );
+        facts[ 3 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_CURRENT_TEXT, oldText);
+        facts[ 4 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_IS_AUTHENTICATED, isAuthenticated );
+        final String rejectKey = isAuthenticated ? WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY : null;
+        final Workflow workflow = builder.buildApprovalWorkflow( submitter,
+                                                                 WorkflowManager.WF_WP_SAVE_APPROVER,
+                                                                 prepTask,
+                                                                 WorkflowManager.WF_WP_SAVE_DECISION_MESSAGE_KEY,
+                                                                 facts,
+                                                                 completionTask,
+                                                                 rejectKey );
+        m_engine.getWorkflowManager().start( workflow );
+
+        // Let callers know if the page-save requires approval
+        if ( workflow.getCurrentStep() instanceof Decision ) {
+            throw new DecisionRequiredException( "The page contents must be approved before they become active." );
+        }
     }
 
     /**

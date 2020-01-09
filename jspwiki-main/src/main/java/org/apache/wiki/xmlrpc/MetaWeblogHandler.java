@@ -205,8 +205,7 @@ public class MetaWeblogHandler
 
         checkPermissions( page, username, password, "view" );
 
-        try
-        {
+        try {
             WeblogPlugin plugin = new WeblogPlugin();
 
             List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine(),
@@ -224,11 +223,8 @@ public class MetaWeblogHandler
                 result.put( "entry", makeEntry( p ) );
             }
 
-        }
-        catch( ProviderException e )
-        {
+        } catch( final ProviderException e ) {
             log.error( "Failed to list recent posts", e );
-
             throw new XmlRpcException( 0, e.getMessage() );
         }
 
@@ -277,7 +273,7 @@ public class MetaWeblogHandler
 
             log.debug("Writing entry: "+text);
 
-            engine.saveText( context, text.toString() );
+            engine.getPageManager().saveText( context, text.toString() );
         }
         catch( Exception e )
         {
@@ -320,16 +316,13 @@ public class MetaWeblogHandler
 
         AttachmentManager attmgr = engine.getAttachmentManager();
 
-        try
-        {
+        try {
             Attachment att = new Attachment( engine, blogid, name );
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 
             url = engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
-        }
-        catch( Exception e )
-        {
+        } catch( final Exception e ) {
             log.error( "Failed to upload attachment", e );
             throw new XmlRpcException( 0, "Failed to upload media object: "+e.getMessage() );
         }
@@ -374,10 +367,8 @@ public class MetaWeblogHandler
 
             log.debug("Updating entry: "+text);
 
-            engine.saveText( context, text.toString() );
-        }
-        catch( Exception e )
-        {
+            engine.getPageManager().saveText( context, text.toString() );
+        } catch( final Exception e ) {
             log.error("Failed to create weblog entry",e);
             throw new XmlRpcException( 0, "Failed to update weblog entry: "+e.getMessage() );
         }

@@ -530,7 +530,7 @@ public class VersioningFileProviderTest
         p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
         WikiContext context = new WikiContext(engine,p);
 
-        engine.saveText( context, "test" );
+        engine.getPageManager().saveText( context, "test" );
 
         WikiPage p2 = engine.getPageManager().getPage( NAME1 );
 
@@ -547,10 +547,10 @@ public class VersioningFileProviderTest
         WikiContext context = new WikiContext(engine,p);
 
         context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
-        engine.saveText( context, "test" );
+        engine.getPageManager().saveText( context, "test" );
 
         context.getPage().setAttribute(WikiPage.CHANGENOTE, "Change 2" );
-        engine.saveText( context, "test2" );
+        engine.getPageManager().saveText( context, "test2" );
 
         WikiPage p2 = engine.getPageManager().getPage( NAME1, 1 );
 
@@ -570,7 +570,7 @@ public class VersioningFileProviderTest
 
         context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
 
-        engine.saveText( context, "test" );
+        engine.getPageManager().saveText( context, "test" );
 
         for( int i = 0; i < 5; i++ )
         {
@@ -579,12 +579,12 @@ public class VersioningFileProviderTest
 
             context.setPage( p2 );
 
-            engine.saveText( context, "test"+i );
+            engine.getPageManager().saveText( context, "test"+i );
         }
 
         WikiPage p3 = engine.getPageManager().getPage( NAME1, -1 );
 
-        Assertions.assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
+        Assertions.assertEquals( null, (String)p3.getAttribute(WikiPage.CHANGENOTE) );
     }
 
     /*

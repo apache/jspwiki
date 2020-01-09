@@ -122,8 +122,8 @@ public class SearchManagerTest {
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
-        m_engine.saveText( ctx, txt );
-        m_engine.saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
+        m_engine.getPageManager().saveText( ctx, txt );
+        m_engine.getPageManager().saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
 
         Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch3" ).until( findsResultsFor( res, "Babylon" ) );
@@ -144,14 +144,14 @@ public class SearchManagerTest {
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
-        m_engine.saveText( ctx, txt );
+        m_engine.getPageManager().saveText( ctx, txt );
 
         Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch4" ).until( findsResultsFor( res, "mankind" ) );
 
         Assertions.assertEquals( 1, res.size(), "result not found" );
 
-        m_engine.saveText( ctx, "[{ALLOW view Authenticated}] It was the dawn of the third age of mankind... page is blocked" );
+        m_engine.getPageManager().saveText( ctx, "[{ALLOW view Authenticated}] It was the dawn of the third age of mankind... page is blocked" );
 
         res = m_mgr.findPages( "mankind" , ctx );
         Assertions.assertNotNull( res, "null result" );

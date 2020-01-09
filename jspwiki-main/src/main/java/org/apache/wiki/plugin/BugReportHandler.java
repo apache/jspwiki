@@ -141,7 +141,7 @@ public class BugReportHandler implements WikiPlugin {
             final WikiPage newPage = new WikiPage( context.getEngine(), pageName );
             final WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );
-            context.getEngine().saveText( newContext, str.toString() );
+            context.getEngine().getPageManager().saveText( newContext, str.toString() );
 
             final MessageFormat formatter = new MessageFormat("");
             formatter.applyPattern( rb.getString("bugreporthandler.new") );

@@ -45,173 +45,109 @@ public class DefaultPluginManagerTest {
     }
 
     @AfterEach
-    public void tearDown() throws ProviderException
-    {
+    public void tearDown() throws ProviderException {
         engine.getPageManager().deletePage("Testpage");
     }
 
     @Test
-    public void testSimpleInsert()
-        throws Exception
-    {
-        String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=foobar}");
-
+    public void testSimpleInsert() throws Exception {
+        final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=foobar}");
         Assertions.assertEquals( "foobar", res );
     }
 
     @Test
-    public void testSimpleInsertNoPackage()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{INSERT SamplePlugin WHERE text=foobar}");
-
-        Assertions.assertEquals( "foobar",
-                      res );
+    public void testSimpleInsertNoPackage() throws Exception {
+        final String res = manager.execute( context, "{INSERT SamplePlugin WHERE text=foobar}");
+        Assertions.assertEquals( "foobar", res );
     }
 
 
     @Test
-    public void testSimpleInsertNoPackage2()
-        throws Exception
-    {
+    public void testSimpleInsertNoPackage2() throws Exception {
         props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
-        DefaultPluginManager m = new DefaultPluginManager( engine, props );
-        String res = m.execute( context,
-                                "{INSERT SamplePlugin2 WHERE text=foobar}");
-
-        Assertions.assertEquals( "foobar",
-                      res );
+        final DefaultPluginManager m = new DefaultPluginManager( engine, props );
+        final String res = m.execute( context,"{INSERT SamplePlugin2 WHERE text=foobar}" );
+        Assertions.assertEquals( "foobar", res );
     }
 
     @Test
-    public void testSimpleInsertNoPackage3()
-        throws Exception
-    {
+    public void testSimpleInsertNoPackage3() throws Exception {
         props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
-        DefaultPluginManager m = new DefaultPluginManager( engine, props );
-        String res = m.execute( context,
-                                "{INSERT SamplePlugin3 WHERE text=foobar}");
-
-        Assertions.assertEquals( "foobar",
-                      res );
+        final DefaultPluginManager m = new DefaultPluginManager( engine, props );
+        final String res = m.execute( context,"{INSERT SamplePlugin3 WHERE text=foobar}" );
+        Assertions.assertEquals( "foobar", res );
     }
 
     /** Check that in all cases org.apache.wiki.plugin is searched. */
     @Test
-    public void testSimpleInsertNoPackage4()
-        throws Exception
-    {
+    public void testSimpleInsertNoPackage4() throws Exception {
         props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
-        DefaultPluginManager m = new DefaultPluginManager( engine, props );
-        String res = m.execute( context,
-                                "{INSERT SamplePlugin WHERE text=foobar}");
-
-        Assertions.assertEquals( "foobar",
-                      res );
+        final DefaultPluginManager m = new DefaultPluginManager( engine, props );
+        final String res = m.execute( context,"{INSERT SamplePlugin WHERE text=foobar}" );
+        Assertions.assertEquals( "foobar", res );
     }
 
 
     @Test
-    public void testSimpleInsert2()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat}");
-
-        Assertions.assertEquals( "foobar2",
-                      res );
+    public void testSimpleInsert2() throws Exception {
+        final String res = manager.execute( context,"{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat}");
+        Assertions.assertEquals( "foobar2", res );
     }
 
     /** Missing closing brace */
     @Test
-    public void testSimpleInsert3()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat");
-
-        Assertions.assertEquals( "foobar2",
-                      res );
+    public void testSimpleInsert3() throws Exception {
+        final String res = manager.execute( context, "{INSERT   org.apache.wiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat");
+        Assertions.assertEquals( "foobar2", res );
     }
 
     @Test
-    public void testQuotedArgs()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{INSERT SamplePlugin WHERE text='this is a space'}");
-
-        Assertions.assertEquals( "this is a space",
-                      res );
+    public void testQuotedArgs() throws Exception {
+        final String res = manager.execute( context, "{INSERT SamplePlugin WHERE text='this is a space'}");
+        Assertions.assertEquals( "this is a space", res );
     }
 
     @Test
-    public void testQuotedArgs2()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{INSERT SamplePlugin WHERE text='this \\'is a\\' space'}");
-
-        Assertions.assertEquals( "this 'is a' space",
-                      res );
+    public void testQuotedArgs2() throws Exception {
+        final String res = manager.execute( context, "{INSERT SamplePlugin WHERE text='this \\'is a\\' space'}" );
+        Assertions.assertEquals( "this 'is a' space", res );
     }
 
     @Test
-    public void testNumberArgs()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{INSERT SamplePlugin WHERE text=15}");
-
-        Assertions.assertEquals( "15",
-                      res );
-    }
-
-    @Test
-    public void testNoInsert()
-        throws Exception
-    {
-        String res = manager.execute( context,
-                                      "{SamplePlugin WHERE text=15}");
-
-        Assertions.assertEquals( "15",
-                      res );
-    }
-
-    // This should be read from tests/etc/ini/jspwiki_module.xml
-    @Test
-    public void testAlias()
-        throws Exception
-    {
-        String res = manager.execute( context, "{samplealias text=15}");
-
+    public void testNumberArgs() throws Exception {
+        final String res = manager.execute( context, "{INSERT SamplePlugin WHERE text=15}" );
         Assertions.assertEquals( "15", res );
     }
 
     @Test
-    public void testAlias2()
-        throws Exception
-    {
-        String res = manager.execute( context, "{samplealias2 text=xyzzy}");
+    public void testNoInsert() throws Exception {
+        final String res = manager.execute( context, "{SamplePlugin WHERE text=15}" );
+        Assertions.assertEquals( "15", res );
+    }
 
+    // This should be read from tests/etc/ini/jspwiki_module.xml
+    @Test
+    public void testAlias() throws Exception {
+        final String res = manager.execute( context, "{samplealias text=15}");
+        Assertions.assertEquals( "15", res );
+    }
+
+    @Test
+    public void testAlias2() throws Exception {
+        final String res = manager.execute( context, "{samplealias2 text=xyzzy}");
         Assertions.assertEquals( "xyzzy", res );
     }
 
     @Test
-    public void testInitPlugin() throws Exception
-    {
+    public void testInitPlugin() throws Exception {
         manager.execute( context, "{JavaScriptPlugin}");
-
         Assertions.assertTrue( JavaScriptPlugin.c_inited );
     }
 
     @Test
-    public void testParserPlugin() throws Exception
-    {
-        engine.saveText(context, "[{SamplePlugin render=true}]");
+    public void testParserPlugin() throws Exception {
+        engine.getPageManager().saveText(context, "[{SamplePlugin render=true}]");
         engine.getHTML( "Testpage" );
-
         Assertions.assertTrue( SamplePlugin.c_rendered );
     }
 

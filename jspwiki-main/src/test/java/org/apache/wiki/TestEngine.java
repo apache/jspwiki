@@ -368,7 +368,7 @@ public class TestEngine extends WikiEngine
         // Create page and wiki context
         final WikiPage page = new WikiPage( this, pageName );
         final WikiContext context = new WikiContext( this, request, page );
-        saveText( context, content );
+        getPageManager().saveText( context, content );
     }
 
     public void saveTextAsJanne( final String pageName, final String content ) throws WikiException {
@@ -381,7 +381,7 @@ public class TestEngine extends WikiEngine
         final WikiPage page = new WikiPage( this, pageName );
         page.setAuthor(Users.JANNE);
         final WikiContext context = new WikiContext( this, request, page );
-        saveText( context, content );
+        getPageManager().saveText( context, content );
     }
 
     /**
