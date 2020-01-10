@@ -20,24 +20,20 @@
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.tags.WikiTagBase" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
     Logger log = Logger.getLogger("JSPWiki"); 
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = wiki.createContext( request, 
-                                                  WikiContext.MESSAGE );
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.MESSAGE );
 
     // Stash the wiki context and message text
-    request.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext );
-    request.setAttribute( "message", request.getParameter("message"));
+    request.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext );
+    request.setAttribute( "message", request.getParameter( "message" ) );
 
     // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />
