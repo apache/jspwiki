@@ -30,7 +30,6 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.RenderingManager;
 import org.jdom2.Text;
 
 import java.io.IOException;
@@ -44,13 +43,10 @@ import java.util.ResourceBundle;
 /**
  * Stores the contents of a plugin in a WikiDocument DOM tree.
  * <p/>
- * If the RenderingManager.WYSIWYG_EDITOR_MODE is set to Boolean.TRUE in the context,
- * then the plugin
- * is rendered as WikiMarkup.  This allows an HTML editor to work without
- * rendering the plugin each time as well.
+ * If the WikiContext.VAR_WYSIWYG_EDITOR_MODE is set to Boolean.TRUE in the context, then the plugin is rendered as WikiMarkup.
+ * This allows an HTML editor to work without rendering the plugin each time as well.
  * <p/>
- * If RenderingManager.VAR_EXECUTE_PLUGINS is set to Boolean.FALSE, then
- * the plugin is not executed.
+ * If WikiContext.VAR_EXECUTE_PLUGINS is set to Boolean.FALSE, then the plugin is not executed.
  *
  * @since 2.4
  */
@@ -176,7 +172,7 @@ public class PluginContent extends Text {
                 final String cmdLine = m_params.get( CMDLINE ).replaceAll( LINEBREAK, ELEMENT_BR );
                 result = result + cmdLine + PLUGIN_END;
             } else {
-                final Boolean b = ( Boolean )context.getVariable(RenderingManager.VAR_EXECUTE_PLUGINS );
+                final Boolean b = ( Boolean )context.getVariable( WikiContext.VAR_EXECUTE_PLUGINS );
                 if (b != null && !b ) {
                     return BLANK;
                 }
@@ -222,7 +218,7 @@ public class PluginContent extends Text {
             final Map< String, String > params = getParameters();
             final WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
             try {
-                if( plugin != null && plugin instanceof ParserStagePlugin ) {
+                if( plugin instanceof ParserStagePlugin ) {
                     ( ( ParserStagePlugin )plugin ).executeParser(this, context, params );
                 }
             } catch( final ClassCastException e ) {

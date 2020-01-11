@@ -154,7 +154,7 @@ public class DefaultRenderingManager implements RenderingManager {
     public WikiDocument getRenderedDocument( final WikiContext context, final String pagedata ) {
         final String pageid = context.getRealPage().getName() + VERSION_DELIMITER +
                               context.getRealPage().getVersion() + VERSION_DELIMITER +
-                              context.getVariable( DefaultRenderingManager.VAR_EXECUTE_PLUGINS );
+                              context.getVariable( WikiContext.VAR_EXECUTE_PLUGINS );
 
         if( useCache( context ) ) {
             final Element element = m_documentCache.get( pageid );

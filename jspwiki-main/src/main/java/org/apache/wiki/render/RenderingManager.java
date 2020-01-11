@@ -57,12 +57,6 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
     String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
 
     /**
-     *  Variable name which tells whether plugins should be executed or not.  Value can be either {@code Boolean.TRUE} or
-     *  {@code Boolean.FALSE}. While not set it's value is {@code null}.
-     */
-    String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
-
-    /**
      *  Initializes the RenderingManager.
      *  Checks for cache size settings, initializes the document cache.
      *  Looks for alternative WikiRenderers, initializes one, or the default

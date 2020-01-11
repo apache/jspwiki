@@ -71,6 +71,12 @@ public class WikiContext implements Cloneable, Command {
 
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
+    /**
+     *  Variable name which tells whether plugins should be executed or not. Value can be either {@code Boolean.TRUE} or
+     *  {@code Boolean.FALSE}. While not set it's value is {@code null}.
+     */
+    public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
+
     /** Name of the variable which is set to Boolean.TRUE or Boolean.FALSE depending on whether WYSIWYG is currently in effect. */
     public static final String VAR_WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
 
