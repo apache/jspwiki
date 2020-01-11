@@ -33,11 +33,8 @@ import java.io.Writer;
  */
 public class CustomXMLOutputProcessor extends AbstractXMLOutputProcessor {
 
-    protected void attributeEscapedEntitiesFilter( final Writer out,
-                                                   final FormatStack fstack, final String value ) throws IOException {
-
+    protected void attributeEscapedEntitiesFilter( final Writer out, final FormatStack fstack, final String value ) throws IOException {
         write( out, Format.escapeAttribute( fstack.getEscapeStrategy(), value ) );
-
     }
 
 }

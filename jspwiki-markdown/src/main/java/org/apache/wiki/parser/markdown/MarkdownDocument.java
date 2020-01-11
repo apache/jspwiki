@@ -59,7 +59,7 @@ public class MarkdownDocument extends WikiDocument {
 	 * @return configuration options for MarkdownRenderers.
 	 */
 	public static MutableDataSet options( final WikiContext context ) {
-		MutableDataSet options = new MutableDataSet();
+		final MutableDataSet options = new MutableDataSet();
 		options.setFrom( ParserEmulationProfile.COMMONMARK );
 		// align style of Markdown's footnotes extension with jspwiki footnotes refs
 		options.set( FootnoteExtension.FOOTNOTE_LINK_REF_CLASS, JSPWikiMarkupParser.CLASS_FOOTNOTE_REF );

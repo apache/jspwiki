@@ -18,10 +18,6 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -32,45 +28,41 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class WysiwygEditingRendererTest
-{
-    protected TestEngine testEngine;
+import java.io.IOException;
+import java.io.StringReader;
+
+public class WysiwygEditingRendererTest {
+
+    TestEngine testEngine = TestEngine.build();
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
-        Properties props = TestEngine.getTestProperties();
-        testEngine = new TestEngine(props);
-
+    public void setUp() throws Exception {
         testEngine.saveText( "WysiwygEditingRendererTest", "test page" );
         testEngine.saveText( "This Pagename Has Spaces", "This Pagename Has Spaces" );
     }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         testEngine.deleteTestPage( "WysiwygEditingRendererTest" );
         testEngine.deleteTestPage( "This Pagename Has Spaces" );
     }
 
-    private String render(String s) throws IOException
-    {
-        WikiPage dummyPage = new WikiPage(testEngine,"TestPage");
-        WikiContext ctx = new WikiContext(testEngine,dummyPage);
+    private String render( final String s ) throws IOException {
+        final WikiPage dummyPage = new WikiPage(testEngine,"TestPage");
+        final WikiContext ctx = new WikiContext(testEngine,dummyPage);
 
-        StringReader in = new StringReader(s);
+        final StringReader in = new StringReader(s);
 
-        JSPWikiMarkupParser p = new JSPWikiMarkupParser( ctx, in );
-        WikiDocument d = p.parse();
+        final JSPWikiMarkupParser p = new JSPWikiMarkupParser( ctx, in );
+        final WikiDocument d = p.parse();
 
-        WysiwygEditingRenderer wer = new WysiwygEditingRenderer( ctx, d );
+        final WysiwygEditingRenderer wer = new WysiwygEditingRenderer( ctx, d );
 
         return wer.getString();
     }
 
     @Test
-    public void testDefinedPageLink() throws Exception
-    {
+    public void testDefinedPageLink() throws Exception {
         String src = "[WysiwygEditingRendererTest]";
         Assertions.assertEquals( "<a class=\"wikipage\" href=\"WysiwygEditingRendererTest\">WysiwygEditingRendererTest</a>", render(src) );
 
@@ -85,8 +77,7 @@ public class WysiwygEditingRendererTest
     }
 
     @Test
-    public void testUndefinedPageLink() throws Exception
-    {
+    public void testUndefinedPageLink() throws Exception {
         String src = "[UndefinedPageLinkHere]";
         Assertions.assertEquals( "<a class=\"createpage\" href=\"UndefinedPageLinkHere\">UndefinedPageLinkHere</a>", render(src) );
 

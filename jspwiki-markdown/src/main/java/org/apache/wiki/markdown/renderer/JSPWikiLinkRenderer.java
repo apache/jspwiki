@@ -18,11 +18,6 @@
 */
 package org.apache.wiki.markdown.renderer;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.wiki.markdown.nodes.JSPWikiLink;
-
 import com.vladsch.flexmark.html.CustomNodeRenderer;
 import com.vladsch.flexmark.html.HtmlWriter;
 import com.vladsch.flexmark.html.renderer.LinkType;
@@ -30,6 +25,10 @@ import com.vladsch.flexmark.html.renderer.NodeRenderer;
 import com.vladsch.flexmark.html.renderer.NodeRendererContext;
 import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.html.renderer.ResolvedLink;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -44,8 +43,8 @@ public class JSPWikiLinkRenderer implements NodeRenderer {
      */
     @Override
     public Set< NodeRenderingHandler< ? > > getNodeRenderingHandlers() {
-        HashSet< NodeRenderingHandler< ? > > set = new HashSet< NodeRenderingHandler< ? > >();
-        set.add( new NodeRenderingHandler< JSPWikiLink >( JSPWikiLink.class, new CustomNodeRenderer< JSPWikiLink >() {
+        final HashSet< NodeRenderingHandler< ? > > set = new HashSet<>();
+        set.add( new NodeRenderingHandler<>( JSPWikiLink.class, new CustomNodeRenderer< JSPWikiLink >() {
 
             /**
              * {@inheritDoc}
@@ -56,7 +55,7 @@ public class JSPWikiLinkRenderer implements NodeRenderer {
                     context.renderChildren( node );
                 } else {
                     // standard Link Rendering
-                    ResolvedLink resolvedLink = context.resolveLink( LinkType.LINK, node.getUrl().unescape(), null );
+                    final ResolvedLink resolvedLink = context.resolveLink( LinkType.LINK, node.getUrl().unescape(), null );
 
                     html.attr( "href", resolvedLink.getUrl() );
                     if( node.getTitle().isNotNull() ) {

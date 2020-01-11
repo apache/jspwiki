@@ -40,7 +40,7 @@ public class VariableLinkNodePostProcessorState implements NodePostProcessorStat
     public VariableLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable.booleanValue();
+        m_wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
     }
 
     /**

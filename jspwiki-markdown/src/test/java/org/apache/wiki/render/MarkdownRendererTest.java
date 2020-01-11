@@ -50,7 +50,7 @@ public class MarkdownRendererTest {
 
     @Test
     public void testMarkupSimpleMarkdown() throws Exception {
-        String src = "This should be a **bold**";
+        final String src = "This should be a **bold**";
 
         Assertions.assertEquals( "<p>This should be a <strong>bold</strong></p>\n", translate( src ) );
     }
@@ -58,123 +58,123 @@ public class MarkdownRendererTest {
     @Test
     public void testMarkupExtensionSelfViewLink() throws Exception {
     	newPage( "MarkupExtensionSelfViewLink" );
-        String src = "This should be a [MarkupExtensionSelfViewLink]()";
+        final String src = "This should be a [MarkupExtensionSelfViewLink]()";
 
         Assertions.assertEquals( "<p>This should be a <a href=\"/test/Wiki.jsp?page=MarkupExtensionSelfViewLink\" class=\"wikipage\">MarkupExtensionSelfViewLink</a></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionSelfEditLink() throws Exception {
-        String src = "This should be a [self<->link]()";
+        final String src = "This should be a [self<->link]()";
 
         Assertions.assertEquals( "<p>This should be a <a href=\"/test/Edit.jsp?page=self%3C-%3Elink\" title=\"Create &quot;self&lt;-&gt;link&quot;\" class=\"createpage\">self&lt;-&gt;link</a></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionExternalLink() throws Exception {
         testEngine.getWikiProperties().setProperty( "jspwiki.translatorReader.useOutlinkImage", "true" );
-        String src = "This should be an [external link](https://jspwiki.apache.org)";
+        final String src = "This should be an [external link](https://jspwiki.apache.org)";
 
         Assertions.assertEquals( "<p>This should be an <a href=\"https://jspwiki.apache.org\" class=\"external\">external link</a><img class=\"outlink\" alt=\"\" src=\"/test/images/out.png\" /></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
         testEngine.getWikiProperties().remove( "jspwiki.translatorReader.useOutlinkImage" );
     }
 
     @Test
     public void testMarkupExtensionInterWikiLink() throws Exception {
-        String src = "This should be an [interwiki link](JSPWiki:About)";
+        final String src = "This should be an [interwiki link](JSPWiki:About)";
 
         Assertions.assertEquals( "<p>This should be an <a href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=About\" class=\"interwiki\">interwiki link</a></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionWrongInterWikiLink() throws Exception {
-        String src = "This should be an [interwiki link](JSPWiko:About)";
+        final String src = "This should be an [interwiki link](JSPWiko:About)";
 
         Assertions.assertEquals( "<p>This should be an <span class=\"error\">No InterWiki reference defined in properties for Wiki called \"JSPWiko\"!</span></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionACL() throws Exception {
-        String src = "[{ALLOW view PerryMason}]() This should be visible if the ACL allows you to see it";
+        final String src = "[{ALLOW view PerryMason}]() This should be visible if the ACL allows you to see it";
         // text is seen because although ACL is added to the page, it is not applied while parsing / rendering
         Assertions.assertEquals( "<p> This should be visible if the ACL allows you to see it</p>\n", translate( src ) );
         // in any case, we also check that the created wikipage has the ACL added
         Assertions.assertEquals( "  user = PerryMason: ((\"org.apache.wiki.auth.permissions.PagePermission\",\"JSPWiki:testpage\",\"view\"))\n",
-        		             testEngine.getPageManager().getPage( PAGE_NAME ).getAcl().toString() );
+        		                 testEngine.getPageManager().getPage( PAGE_NAME ).getAcl().toString() );
     }
 
     @Test
     public void testMarkupExtensionMetadata() throws Exception {
-        String src = "[{SET Perry='Mason'}]() Some text after setting metadata";
+        final String src = "[{SET Perry='Mason'}]() Some text after setting metadata";
         Assertions.assertEquals( "<p> Some text after setting metadata</p>\n", translate( src ) );
         Assertions.assertEquals( "Mason", testEngine.getPageManager().getPage( PAGE_NAME ).getAttribute( "Perry" ) );
     }
 
     @Test
     public void testMarkupExtensionPlugin() throws Exception {
-        String src = "[{SamplePlugin text=test}]()";
+        final String src = "[{SamplePlugin text=test}]()";
         Assertions.assertEquals( "<p>test</p>\n", translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionTOCPluginGetsSubstitutedWithMDTocExtension() throws Exception {
-        String src = "[{TableOfContents}]()\n" +
-                     "# Header 1\n" +
-                     "## Header 2\n" +
-                     "## Header 2\n";
+        final String src = "[{TableOfContents}]()\n" +
+                           "# Header 1\n" +
+                           "## Header 2\n" +
+                           "## Header 2\n";
         Assertions.assertEquals( "<p><div class=\"toc\">\n" +
-                             "<div class=\"collapsebox\">\n" +
-                             "<h4 id=\"section-TOC\">Table of Contents</h4>\n" +
-                             "<ul>\n" +
-                             "<li><a href=\"#header-1\">Header 1</a>\n" +
-                             "<ul>\n" +
-                             "<li><a href=\"#header-2\">Header 2</a></li>\n" +
-                             "<li><a href=\"#header-2-1\">Header 2</a></li>\n" +
-                             "</ul>\n" +
-                             "</li>\n" +
-                             "</ul>\n" +
-                             "</div>\n" +
-                             "</div>\n" +
-                             "</p>\n" +
-                             "<h1 id=\"header-1\">Header 1</h1>\n" +
-                             "<h2 id=\"header-2\">Header 2</h2>\n" +
-                             "<h2 id=\"header-2-1\">Header 2</h2>\n", translate( src ) );
+                                 "<div class=\"collapsebox\">\n" +
+                                 "<h4 id=\"section-TOC\">Table of Contents</h4>\n" +
+                                 "<ul>\n" +
+                                 "<li><a href=\"#header-1\">Header 1</a>\n" +
+                                 "<ul>\n" +
+                                 "<li><a href=\"#header-2\">Header 2</a></li>\n" +
+                                 "<li><a href=\"#header-2-1\">Header 2</a></li>\n" +
+                                 "</ul>\n" +
+                                 "</li>\n" +
+                                 "</ul>\n" +
+                                 "</div>\n" +
+                                 "</div>\n" +
+                                 "</p>\n" +
+                                 "<h1 id=\"header-1\">Header 1</h1>\n" +
+                                 "<h2 id=\"header-2\">Header 2</h2>\n" +
+                                "<h2 id=\"header-2-1\">Header 2</h2>\n", translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionNonExistentPlugin() throws Exception {
-        String src = "[{PampleSlugin text=test}]()";
+        final String src = "[{PampleSlugin text=test}]()";
         Assertions.assertEquals( "<p><span class=\"error\">JSPWiki : testpage - Plugin insertion failed: Could not find plugin PampleSlugin</span></p>\n", translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionVariable0() throws Exception {
-        String src = "Some text with some pre-set variable: [{$applicationname}]()";
+        final String src = "Some text with some pre-set variable: [{$applicationname}]()";
         Assertions.assertEquals( "<p>Some text with some pre-set variable: JSPWiki</p>\n", translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionVariable1() throws Exception {
-        String src = "[{SET Perry='Mason'}]() Some text after setting some metadata: [{$Perry}]()";
+        final String src = "[{SET Perry='Mason'}]() Some text after setting some metadata: [{$Perry}]()";
         Assertions.assertEquals( "<p> Some text after setting some metadata: Mason</p>\n", translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionFootnote0() throws Exception {
-        String src = "Footnote[1]()";
+        final String src = "Footnote[1]()";
         Assertions.assertEquals( "<p>Footnote<a href=\"#ref-testpage-1\" class=\"footnoteref\">[1]</a></p>\n", translate( src ) );
     }
 
     @Test
     public void testMarkupExtensionFootnoteMD() throws Exception {
-        String src = "text [^footnote] embedded.\n\n" +
-        		     "[^footnote]: footnote text\n" +
-        		     "with continuation";
+        final String src = "text [^footnote] embedded.\n\n" +
+        	               "[^footnote]: footnote text\n" +
+                           "with continuation";
         Assertions.assertEquals( "<p>text <sup id=\"fnref-1\"><a class=\"footnoteref\" href=\"#fn-1\">1</a></sup> embedded.</p>\n" +
         		             "<div class=\"footnotes\">\n" +
         		             "<hr />\n" +
@@ -190,44 +190,44 @@ public class MarkdownRendererTest {
 
     @Test
     public void testAttachmentLink() throws Exception {
-        String src = "This should be an [attachment link](Test/TestAtt.txt)";
+        final String src = "This should be an [attachment link](Test/TestAtt.txt)";
         newPage( "Test" );
 
-        Attachment att = new Attachment( testEngine, "Test", "TestAtt.txt" );
+        final Attachment att = new Attachment( testEngine, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
 
         Assertions.assertEquals( "<p>This should be an <a href=\"/test/attach/Test/TestAtt.txt\" class=\"attachment\">attachment link</a>" +
-                             "<a href=\"/test/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\">" +
-                               "<img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" />" +
-                             "</a></p>\n",
-                translate( src ) );
+                                 "<a href=\"/test/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\">" +
+                                   "<img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" />" +
+                                 "</a></p>\n",
+                                 translate( src ) );
     }
 
     @Test
     public void testInlineImages() throws Exception {
-        String src = "Link [test](http://www.ecyrd.com/test.png)";
+        final String src = "Link [test](http://www.ecyrd.com/test.png)";
 
         Assertions.assertEquals( "<p>Link <img class=\"inline\" src=\"http://www.ecyrd.com/test.png\" alt=\"test\" /></p>\n", translate( src ) );
     }
 
     @Test
     public void testInlineImages2() throws Exception {
-        String src = "Link [test](http://www.ecyrd.com/test.ppm)";
+        final String src = "Link [test](http://www.ecyrd.com/test.ppm)";
 
         Assertions.assertEquals( "<p>Link <a href=\"http://www.ecyrd.com/test.ppm\" class=\"external\">test</a></p>\n", translate( src ) );
     }
 
     @Test
     public void testInlineImages3() throws Exception {
-        String src = "Link [test](http://images.com/testi)";
+        final String src = "Link [test](http://images.com/testi)";
 
         Assertions.assertEquals( "<p>Link <img class=\"inline\" src=\"http://images.com/testi\" alt=\"test\" /></p>\n", translate( src ) );
     }
 
     @Test
     public void testInlineImages4() throws Exception {
-        String src = "Link [test](http://foobar.jpg)";
+        final String src = "Link [test](http://foobar.jpg)";
 
         Assertions.assertEquals( "<p>Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"test\" /></p>\n", translate( src ) );
     }
@@ -235,33 +235,33 @@ public class MarkdownRendererTest {
     // No link text should be just embedded link.
     @Test
     public void testInlineImagesLink2() throws Exception {
-        String src = "Link [http://foobar.jpg]()";
+        final String src = "Link [http://foobar.jpg]()";
 
         Assertions.assertEquals( "<p>Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://foobar.jpg\" /></p>\n", translate( src ) );
     }
 
     @Test
     public void testInlineImagesLink() throws Exception {
-        String src = "Link [http://link.to/](http://foobar.jpg)";
+        final String src = "Link [http://link.to/](http://foobar.jpg)";
 
         Assertions.assertEquals( "<p>Link <a href=\"http://link.to/\" class=\"external\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
     }
 
     @Test
     public void testInlineImagesLink3() throws Exception {
-        String src = "Link [SandBox](http://foobar.jpg)";
+        final String src = "Link [SandBox](http://foobar.jpg)";
 
         newPage( "SandBox" );
 
         Assertions.assertEquals( "<p>Link <a href=\"/test/Wiki.jsp?page=SandBox\" class=\"wikipage\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"SandBox\" /></a></p>\n",
-                             translate( src ) );
+                                 translate( src ) );
     }
 
     @Test
     public void testHeadersWithSameNameGetIdWithCounter() throws Exception {
-        String src = "### Awesome H3\n" +
-                     "### Awesome H3";
+        final String src = "### Awesome H3\n" +
+                           "### Awesome H3";
 
         Assertions.assertEquals( "<h3 id=\"awesome-h3\">Awesome H3</h3>\n" +
                              "<h3 id=\"awesome-h3-1\">Awesome H3</h3>\n",
@@ -279,7 +279,7 @@ public class MarkdownRendererTest {
 
     @AfterEach
     public void tearDown() {
-        for( String name : created ) {
+        for( final String name : created ) {
             testEngine.deleteTestPage(name);
             TestEngine.deleteAttachments(name);
         }
@@ -301,9 +301,9 @@ public class MarkdownRendererTest {
     }
 
     String translate( final WikiEngine e, final WikiPage p, final String src ) throws Exception {
-        WikiContext context = new WikiContext( e, testEngine.newHttpRequest(), p );
-        MarkdownParser tr = new MarkdownParser( context, new BufferedReader( new StringReader( src ) ) );
-        MarkdownRenderer conv = new MarkdownRenderer( context, tr.parse() );
+        final WikiContext context = new WikiContext( e, testEngine.newHttpRequest(), p );
+        final MarkdownParser tr = new MarkdownParser( context, new BufferedReader( new StringReader( src ) ) );
+        final MarkdownRenderer conv = new MarkdownRenderer( context, tr.parse() );
         newPage( p.getName(), src );
 
         return conv.getString();

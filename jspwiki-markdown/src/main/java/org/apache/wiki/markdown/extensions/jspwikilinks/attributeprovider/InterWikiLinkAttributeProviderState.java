@@ -45,7 +45,7 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**

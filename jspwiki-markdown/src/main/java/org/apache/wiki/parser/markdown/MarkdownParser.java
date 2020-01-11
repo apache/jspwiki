@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.parser.markdown;
 
-import java.io.IOException;
-import java.io.Reader;
-
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.ast.Node;
+import java.io.IOException;
+import java.io.Reader;
 
 
 /**
@@ -49,8 +48,8 @@ public class MarkdownParser extends MarkupParser {
 	 */
 	@Override
 	public WikiDocument parse() throws IOException {
-		Node document = parser.parseReader( m_in );
-		MarkdownDocument md = new MarkdownDocument( m_context.getPage(), document );
+		final Node document = parser.parseReader( m_in );
+		final MarkdownDocument md = new MarkdownDocument( m_context.getPage(), document );
         md.setContext( m_context );
 
 		return md;

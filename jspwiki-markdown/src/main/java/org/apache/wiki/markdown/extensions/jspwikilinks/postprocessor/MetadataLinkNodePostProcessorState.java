@@ -43,7 +43,7 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
     public MetadataLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
@@ -57,7 +57,7 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
         try {
             final String args = metadataLine.substring( metadataLine.indexOf(' '), metadataLine.length() - 1 );
             String name = args.substring( 0, args.indexOf( '=' ) );
-            String val = args.substring( args.indexOf( '=' ) + 1, args.length() );
+            String val = args.substring( args.indexOf( '=' ) + 1 );
 
             name = name.trim();
             val = val.trim();

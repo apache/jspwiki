@@ -40,7 +40,7 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
     public WysiwygEditingAttributeProviderState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
@@ -52,17 +52,15 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
     public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         if( m_wysiwygEditorMode ) {
             if( attributes.getValue( "class" ) != null ) {
-                String href = attributes.getValue( "href" );
-                XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( wikiContext );
+                final String href = attributes.getValue( "href" );
+                final XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( wikiContext );
                 // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
                 // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
-                String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
-                String editPageLinkUrl = wikiConfig.getEditJspPage();
+                final String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                final String editPageLinkUrl = wikiConfig.getEditJspPage();
                 if( href != null && href.startsWith( wikiPageLinkUrl ) ) {
-                    // Remove the leading url string so that users will only see the
-                    // wikipage's name when editing an existing wiki link.
+                    // Remove the leading url string so that users will only see the wikipage's name when editing an existing wiki link.
                     // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
-
                     String newHref = href.substring( wikiPageLinkUrl.length() );
 
                     // Convert "This%20Pagename%20Has%20Spaces" to "This Pagename Has Spaces"

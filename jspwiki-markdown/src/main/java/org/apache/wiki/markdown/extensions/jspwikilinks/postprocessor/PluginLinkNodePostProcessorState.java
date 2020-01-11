@@ -48,7 +48,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
     public PluginLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
