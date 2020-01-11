@@ -40,7 +40,7 @@ public class LinkCollector implements StringTransmutator {
     /**
      * {@inheritDoc}
      */
-    public String mutate( WikiContext context, String in ) {
+    public String mutate( final WikiContext context, final String in ) {
         m_items.add( in );
         return in;
     }
