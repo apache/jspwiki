@@ -105,7 +105,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.render.RenderingManager</requestedClass>
-    <mappedClass>org.apache.wiki.render.RenderingManager</mappedClass>
+    <mappedClass>org.apache.wiki.render.DefaultRenderingManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.search.SearchManager</requestedClass>
