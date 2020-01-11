@@ -50,7 +50,7 @@
            "//tinymce.cachefly.net/4.2/tinymce.min.js" );
     */
 
-    context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+    context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
 
     WikiPage wikiPage = context.getPage();
@@ -95,21 +95,17 @@
    if( usertext == null ) usertext = "";
 
    String pageAsHtml;
-   try
-   {
+   try {
        //pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.getRenderingManager().getHTML( context, usertext ) );
        pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
-   }
-       catch( Exception e )
-   {
+   } catch( Exception e ) {
        pageAsHtml = "Error in converting wiki-markup to well-formed HTML \n" + e.toString();
        //pageAsHtml = e.toString() + "\n" + usertext; //error
    }
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for TinyMCE has been rendered.
-   context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
-
+   context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 

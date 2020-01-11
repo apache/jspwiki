@@ -19,13 +19,11 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.render.WikiRenderer;
-
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -39,7 +37,7 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
 
     public WysiwygEditingAttributeProviderState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
@@ -71,7 +69,7 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
                     // to this wiki string: "TargetPage#Heading2".
                     attributes.replaceValue( "href", newHref.replaceFirst( WikiRenderer.LINKS_SOURCE, WikiRenderer.LINKS_TRANSLATION ) );
                 } else if( href != null && href.startsWith( editPageLinkUrl ) ) {
-                    String title = attributes.getValue( "title" );
+                    final String title = attributes.getValue( "title" );
                     if( title != null ) {
                         // remove the title since we don't want to eventually save the default undefined page title.
                         attributes.replaceValue( "title", "" );

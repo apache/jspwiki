@@ -25,7 +25,6 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.RenderingManager;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -42,7 +41,7 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
 
     public MetadataLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

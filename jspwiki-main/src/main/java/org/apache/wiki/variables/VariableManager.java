@@ -20,7 +20,6 @@ package org.apache.wiki.variables;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
-import org.apache.wiki.parser.LinkParsingOperations;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all available variables is on a Wiki page called "WikiVariables".
@@ -35,9 +34,9 @@ public interface VariableManager {
 
     /**
      *  Parses the link and finds a value.  This is essentially used once
-     *  {@link LinkParsingOperations#isVariableLink(String)} has found that
-     *  the link text actually contains a variable.  For example, you could
-     *  pass in "{$username}" and get back "JanneJalkanen".
+     *  {@link org.apache.wiki.parser.LinkParsingOperations#isVariableLink(String) LinkParsingOperations#isVariableLink(String)}
+     *  has found that the link text actually contains a variable.  For example, you could pass in "{$username}" and get back
+     *  "JanneJalkanen".
      *
      *  @param  context The WikiContext
      *  @param  link    The link text containing the variable name.

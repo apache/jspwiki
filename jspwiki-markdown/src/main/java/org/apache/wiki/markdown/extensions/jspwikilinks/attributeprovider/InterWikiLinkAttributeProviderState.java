@@ -18,16 +18,14 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
+import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
-
-import com.vladsch.flexmark.ast.Link;
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -44,7 +42,7 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
         this.hasRef = hasRef;
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

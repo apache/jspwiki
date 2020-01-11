@@ -29,7 +29,6 @@ import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
-import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.preferences.Preferences;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,17 +65,9 @@ public class DefaultVariableManager implements VariableManager {
     }
 
     /**
-     *  Parses the link and finds a value.  This is essentially used once
-     *  {@link LinkParsingOperations#isVariableLink(String)} has found that
-     *  the link text actually contains a variable.  For example, you could
-     *  pass in "{$username}" and get back "JanneJalkanen".
-     *
-     *  @param  context The WikiContext
-     *  @param  link    The link text containing the variable name.
-     *  @return The variable value.
-     *  @throws IllegalArgumentException If the format is not valid (does not start with "{$", is zero length, etc.)
-     *  @throws NoSuchVariableException If a variable is not known.
+     *  {@inheritDoc}
      */
+    @Override
     public String parseAndGetValue( final WikiContext context, final String link ) throws IllegalArgumentException, NoSuchVariableException {
         if( !link.startsWith( "{$" ) ) {
             throw new IllegalArgumentException( "Link does not start with {$" );
@@ -90,15 +81,9 @@ public class DefaultVariableManager implements VariableManager {
     }
 
     /**
-     *  This method does in-place expansion of any variables.  However, the expansion is not done twice, that is,
-     *  a variable containing text $variable will not be expanded.
-     *  <P>
-     *  The variables should be in the same format ({$variablename} as in the web pages.
-     *
-     *  @param context The WikiContext of the current page.
-     *  @param source  The source string.
-     *  @return The source string with variables expanded.
+     *  {@inheritDoc}
      */
+    @Override
     // FIXME: somewhat slow.
     public String expandVariables( final WikiContext context, final String source ) {
         final StringBuilder result = new StringBuilder();
@@ -132,14 +117,9 @@ public class DefaultVariableManager implements VariableManager {
     }
 
     /**
-     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}. The only difference is that
-     *  this method does not throw an exception, but it returns the given default value instead.
-     *
-     *  @param context WikiContext
-     *  @param varName The name of the variable
-     *  @param defValue A default value.
-     *  @return The variable value, or if not found, the default value.
+     *  {@inheritDoc}
      */
+    @Override
     public String getValue( final WikiContext context, final String varName, final String defValue ) {
         try {
             return getValue( context, varName );
@@ -149,42 +129,17 @@ public class DefaultVariableManager implements VariableManager {
     }
 
     /**
-     *  Shortcut to getValue(). However, this method does not throw a NoSuchVariableException, but returns null
-     *  in case the variable does not exist.
-     *
-     *  @param context WikiContext to look the variable in
-     *  @param name Name of the variable to look for
-     *  @return Variable value, or null, if there is no such variable.
-     *  @since 2.2 on WikiEngine, moved to VariableManager on 2.11.0
+     *  {@inheritDoc}
      */
+    @Override
     public String getVariable( final WikiContext context, final String name ) {
         return getValue( context, name, null );
     }
 
     /**
-     *  Returns a value of the named variable.  The resolving order is
-     *  <ol>
-     *    <li>Known "constant" name, such as "pagename", etc.  This is so
-     *        that pages could not override certain constants.
-     *    <li>WikiContext local variable.  This allows a programmer to
-     *        set a parameter which cannot be overridden by user.
-     *    <li>HTTP Session
-     *    <li>HTTP Request parameters
-     *    <li>WikiPage variable.  As set by the user with the SET directive.
-     *    <li>jspwiki.properties
-     *  </ol>
-     *
-     *  Use this method only whenever you really need to have a parameter that
-     *  can be overridden by anyone using the wiki.
-     *
-     *  @param context The WikiContext
-     *  @param varName Name of the variable.
-     *
-     *  @return The variable value.
-     *
-     *  @throws IllegalArgumentException If the name is somehow broken.
-     *  @throws NoSuchVariableException If a variable is not known.
+     *  {@inheritDoc}
      */
+    @Override
     public String getValue( final WikiContext context, final String varName ) throws IllegalArgumentException, NoSuchVariableException {
         if( varName == null ) {
             throw new IllegalArgumentException( "Null variable name." );

@@ -18,13 +18,6 @@
 */
 package org.apache.wiki.parser;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.ResourceBundle;
-
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.PatternMatcher;
@@ -39,6 +32,13 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.RenderingManager;
 import org.jdom2.Text;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.ResourceBundle;
 
 
 /**
@@ -78,7 +78,7 @@ public class PluginContent extends Text {
      * @param pluginName The FQN of a plugin.
      * @param parameters A Map of parameters.
      */
-    public PluginContent(String pluginName, Map<String, String> parameters) {
+    public PluginContent( final String pluginName, final Map< String, String > parameters) {
         m_pluginName = pluginName;
         m_params = parameters;
     }
@@ -99,7 +99,7 @@ public class PluginContent extends Text {
      * @param name the name of the parameter.
      * @return The value from the map, or null, if no such parameter exists.
      */
-    public String getParameter(String name) {
+    public String getParameter( final String name) {
         return m_params.get(name);
     }
 
@@ -108,7 +108,7 @@ public class PluginContent extends Text {
      *
      * @return The parameter map.
      */
-    public Map<String, String> getParameters() {
+    public Map< String, String > getParameters() {
         return m_params;
     }
 
@@ -129,22 +129,17 @@ public class PluginContent extends Text {
      * @return The plugin rendered according to the options set in the WikiContext.
      */
     public String getText() {
-        WikiDocument doc = ( WikiDocument )getDocument();
-
-        if (doc == null) {
+        final WikiDocument doc = ( WikiDocument )getDocument();
+        if( doc == null ) {
             //
-            // This element has not yet been attached anywhere, so we simply assume there is
-            // no rendering and return the plugin name.  This is required e.g. when the 
-            // paragraphify() checks whether the element is empty or not.  We can't of course
-            // know whether the rendering would result in an empty string or not, but let us
-            // assume it does not.
+            // This element has not yet been attached anywhere, so we simply assume there is no rendering and return the plugin name.
+            // This is required e.g. when the paragraphify() checks whether the element is empty or not.  We can't of course know
+            // whether the rendering would result in an empty string or not, but let us assume it does not.
             //
-
             return getPluginName();
         }
 
-        WikiContext context = doc.getContext();
-        
+        final WikiContext context = doc.getContext();
         if( context == null ) {
             log.info( "WikiContext garbage-collected, cannot proceed" );
             return getPluginName();
@@ -159,12 +154,12 @@ public class PluginContent extends Text {
      * @param context WikiContext in which the plugin is executed. Must NOT be null.
      * @return plugin contents.
      */
-	public String invoke( WikiContext context ) {
+	public String invoke( final WikiContext context ) {
 		String result;
-		Boolean wysiwygVariable = (Boolean) context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
+		final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         boolean wysiwygEditorMode = false;
-        if (wysiwygVariable != null) {
-            wysiwygEditorMode = wysiwygVariable.booleanValue();
+        if( wysiwygVariable != null ) {
+            wysiwygEditorMode = wysiwygVariable;
         }
 
         try {
@@ -178,43 +173,38 @@ public class PluginContent extends Text {
                 result = PLUGIN_START + m_pluginName + SPACE;
 
                 // convert newlines to <br> in case the plugin has a body.
-                String cmdLine = (m_params.get(CMDLINE)).replaceAll(LINEBREAK, ELEMENT_BR);
-
+                final String cmdLine = m_params.get( CMDLINE ).replaceAll( LINEBREAK, ELEMENT_BR );
                 result = result + cmdLine + PLUGIN_END;
             } else {
-                Boolean b = (Boolean) context.getVariable(RenderingManager.VAR_EXECUTE_PLUGINS);
-                if (b != null && !b.booleanValue()) {
+                final Boolean b = ( Boolean )context.getVariable(RenderingManager.VAR_EXECUTE_PLUGINS );
+                if (b != null && !b ) {
                     return BLANK;
                 }
 
-                WikiEngine engine = context.getEngine();
+                final WikiEngine engine = context.getEngine();
+                final Map< String, String > parsedParams = new HashMap<>();
 
-                Map<String, String> parsedParams = new HashMap<String, String>();
-
-                //
                 //  Parse any variable instances from the string
-                //
-                for (Map.Entry<String, String> e : m_params.entrySet()) {
+                for( final Map.Entry< String, String > e : m_params.entrySet() ) {
                     String val = e.getValue();
-                    val = engine.getVariableManager().expandVariables(context, val);
-                    parsedParams.put(e.getKey(), val);
+                    val = engine.getVariableManager().expandVariables( context, val );
+                    parsedParams.put( e.getKey(), val );
                 }
-                PluginManager pm = engine.getPluginManager();
-                result = pm.execute(context, m_pluginName, parsedParams);
+                final PluginManager pm = engine.getPluginManager();
+                result = pm.execute( context, m_pluginName, parsedParams );
             }
-        } catch (Exception e) {
-            if (wysiwygEditorMode) {
+        } catch( final Exception e ) {
+            if( wysiwygEditorMode ) {
                 result = "";
             } else {
                 // log.info("Failed to execute plugin",e);
-                ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
                 result = MarkupParser.makeError( MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), 
                 		                                               context.getRealPage().getWiki(), 
                 		                                               context.getRealPage().getName(), 
                 		                                               e.getMessage() ) ).getText();
             }
         }
-
 
         return result;
 	}
@@ -225,18 +215,18 @@ public class PluginContent extends Text {
      * @param context The WikiContext
      * @throws PluginException If something goes wrong.
      */
-    public void executeParse(WikiContext context) throws PluginException {
-        PluginManager pm = context.getEngine().getPluginManager();
-        if (pm.pluginsEnabled()) {
-            ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-            Map<String, String> params = getParameters();
-            WikiPlugin plugin = pm.newWikiPlugin(getPluginName(), rb);
+    public void executeParse( final WikiContext context ) throws PluginException {
+        final PluginManager pm = context.getEngine().getPluginManager();
+        if( pm.pluginsEnabled() ) {
+            final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            final Map< String, String > params = getParameters();
+            final WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
             try {
-                if (plugin != null && plugin instanceof ParserStagePlugin) {
-                    ((ParserStagePlugin) plugin).executeParser(this, context, params);
+                if( plugin != null && plugin instanceof ParserStagePlugin ) {
+                    ( ( ParserStagePlugin )plugin ).executeParser(this, context, params );
                 }
-            } catch (ClassCastException e) {
-                throw new PluginException(MessageFormat.format(rb.getString("plugin.error.notawikiplugin"), getPluginName()), e);
+            } catch( final ClassCastException e ) {
+                throw new PluginException( MessageFormat.format( rb.getString("plugin.error.notawikiplugin"), getPluginName() ), e );
             }
         }
     }
@@ -251,43 +241,38 @@ public class PluginContent extends Text {
      * @throws PluginException If plugin invocation is faulty
      * @since 2.10.0
      */
-    public static PluginContent parsePluginLine(WikiContext context, String commandline, int pos) throws PluginException {
-        PatternMatcher matcher = new Perl5Matcher();
+    public static PluginContent parsePluginLine( final WikiContext context, final String commandline, final int pos ) throws PluginException {
+        final PatternMatcher matcher = new Perl5Matcher();
 
         try {
-            PluginManager pm = context.getEngine().getPluginManager();
-            if (matcher.contains(commandline, pm.getPluginPattern())) {
-
-                MatchResult res = matcher.getMatch();
-
-                String plugin = res.group(2);
-                String args = commandline.substring(res.endOffset(0),
-                        commandline.length() -
-                                (commandline.charAt(commandline.length() - 1) == '}' ? 1 : 0));
-                Map<String, String> arglist = pm.parseArgs(args);
+            final PluginManager pm = context.getEngine().getPluginManager();
+            if( matcher.contains( commandline, pm.getPluginPattern() ) ) {
+                final MatchResult res = matcher.getMatch();
+                final String plugin = res.group( 2 );
+                final String args = commandline.substring( res.endOffset( 0 ),
+                                                           commandline.length() - ( commandline.charAt( commandline.length() - 1 ) == '}' ? 1 : 0 ) );
+                final Map< String, String > arglist = pm.parseArgs( args );
 
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
-                if (pos != -1) {
-                    int end = pos + commandline.length() + 2;
-                    String bounds = pos + "|" + end;
-                    arglist.put(PluginManager.PARAM_BOUNDS, bounds);
+                if( pos != -1 ) {
+                    final int end = pos + commandline.length() + 2;
+                    final String bounds = pos + "|" + end;
+                    arglist.put( PluginManager.PARAM_BOUNDS, bounds );
                 }
 
-                PluginContent result = new PluginContent(plugin, arglist);
-
-                return result;
+                return new PluginContent( plugin, arglist );
             }
-        } catch (ClassCastException e) {
-            log.error("Invalid type offered in parsing plugin arguments.", e);
-            throw new InternalWikiException("Oops, someone offered !String!", e);
-        } catch (NoSuchElementException e) {
-            String msg = "Missing parameter in plugin definition: " + commandline;
-            log.warn(msg, e);
-            throw new PluginException(msg);
-        } catch (IOException e) {
-            String msg = "Zyrf.  Problems with parsing arguments: " + commandline;
-            log.warn(msg, e);
-            throw new PluginException(msg);
+        } catch( final ClassCastException e ) {
+            log.error( "Invalid type offered in parsing plugin arguments.", e );
+            throw new InternalWikiException( "Oops, someone offered !String!", e );
+        } catch( final NoSuchElementException e ) {
+            final String msg = "Missing parameter in plugin definition: " + commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
+        } catch( final IOException e ) {
+            final String msg = "Zyrf.  Problems with parsing arguments: " + commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
         }
 
         return null;

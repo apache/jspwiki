@@ -19,22 +19,20 @@
 package org.apache.wiki.parser;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.jdom2.Text;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
-import org.apache.wiki.render.RenderingManager;
+import org.jdom2.Text;
 
 /**
  *  Stores the contents of a WikiVariable in a WikiDocument DOM tree.
  *  <p>
- *  When the WikiDocument is rendered, if the {@link RenderingManager#WYSIWYG_EDITOR_MODE}
- *  is set to {@link Boolean#TRUE}, the variable declaration is rendered instead
- *  of the variable value.
+ *  When the WikiDocument is rendered, if the {@link WikiContext#VAR_WYSIWYG_EDITOR_MODE} is set to {@link Boolean#TRUE}, the
+ *  variable declaration is rendered instead of the variable value.
  *
  *  @since  2.4
  */
-public class VariableContent extends Text
-{
+public class VariableContent extends Text {
+
     private static final long serialVersionUID = 1L;
 
     private String m_varName;
@@ -44,7 +42,7 @@ public class VariableContent extends Text
      *  
      *  @param varName The name of the variable.
      */
-    public VariableContent( String varName )
+    public VariableContent( final String varName )
     {
         m_varName = varName;
     }
@@ -54,36 +52,27 @@ public class VariableContent extends Text
      *   
      *   @return The rendered value of the variable.
      */
-    public String getValue()
-    {
-        String result = "";
-        WikiDocument root = (WikiDocument) getDocument();
+    public String getValue() {
+        String result;
+        final WikiDocument root = (WikiDocument) getDocument();
 
-        if( root == null )
-        {
+        if( root == null ) {
             // See similar note in PluginContent
             return m_varName;
         }
         
-        WikiContext context = root.getContext();
-
-        if( context == null )
+        final WikiContext context = root.getContext();
+        if( context == null ) {
             return "No WikiContext available: INTERNAL ERROR";
-    
-        Boolean wysiwygEditorMode = (Boolean)context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
-        
-        if( wysiwygEditorMode != null && wysiwygEditorMode.booleanValue() )
-        {
-            result = "[" + m_varName + "]";
         }
-        else
-        {
-            try
-            {
+    
+        final Boolean wysiwygEditorMode = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        if( wysiwygEditorMode != null && wysiwygEditorMode ) {
+            result = "[" + m_varName + "]";
+        } else {
+            try {
                 result = context.getEngine().getVariableManager().parseAndGetValue( context, m_varName );
-            }
-            catch( NoSuchVariableException e )
-            {
+            } catch( final NoSuchVariableException e ) {
                 result = MarkupParser.makeError( "No such variable: " + e.getMessage() ).getText(); 
             }
         }
@@ -95,8 +84,7 @@ public class VariableContent extends Text
      *  Returns exactly getValue().
      *  @return Whatever getValue() returns.
      */
-    public String getText()
-    {
+    public String getText() {
         return getValue();
     }
 
@@ -104,8 +92,8 @@ public class VariableContent extends Text
      *  Returns a debug-suitable string.
      *  @return Debug string
      */
-    public String toString()
-    {
-        return "VariableElement[\""+m_varName+"\"]";
+    public String toString() {
+        return "VariableElement[\"" + m_varName + "\"]";
     }
+
 }

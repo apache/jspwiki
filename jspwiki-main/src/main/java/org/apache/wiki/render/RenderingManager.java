@@ -57,12 +57,6 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
     String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
 
     /**
-     *  Name of the WikiContext variable which is set to Boolean.TRUE or Boolean.FALSE depending on whether WYSIWYG is currently
-     *  in effect.
-     */
-    String WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
-
-    /**
      *  Variable name which tells whether plugins should be executed or not.  Value can be either {@code Boolean.TRUE} or
      *  {@code Boolean.FALSE}. While not set it's value is {@code null}.
      */
@@ -97,19 +91,6 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
     WikiDocument getRenderedDocument( WikiContext context, String pagedata );
 
     /**
-     *  Simply renders a WikiDocument to a String.  This version does not get the document from the cache - in fact, it does
-     *  not cache the document at all.  This is very useful, if you have something that you want to render outside the caching
-     *  routines.  Because the cache is based on full pages, and the cache keys are based on names, use this routine if you're
-     *  rendering anything for yourself.
-     *
-     *  @param context The WikiContext to render in
-     *  @param doc A proper WikiDocument
-     *  @return Rendered HTML.
-     *  @throws IOException If the WikiDocument is poorly formed.
-     */
-    String getHTML( WikiContext context, WikiDocument doc ) throws IOException;
-
-    /**
      * Returns a WikiRenderer instance, initialized with the given context and doc. The object is an XHTMLRenderer,
      * unless overridden in jspwiki.properties with PROP_RENDERER.
      *
@@ -129,6 +110,19 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      * @return A WikiRenderer instance meant for WYSIWYG editing, for this document, or null, if no such renderer could be instantiated.
      */
     WikiRenderer getWysiwygRenderer( WikiContext context, WikiDocument doc );
+
+    /**
+     *  Simply renders a WikiDocument to a String.  This version does not get the document from the cache - in fact, it does
+     *  not cache the document at all.  This is very useful, if you have something that you want to render outside the caching
+     *  routines.  Because the cache is based on full pages, and the cache keys are based on names, use this routine if you're
+     *  rendering anything for yourself.
+     *
+     *  @param context The WikiContext to render in
+     *  @param doc A proper WikiDocument
+     *  @return Rendered HTML.
+     *  @throws IOException If the WikiDocument is poorly formed.
+     */
+    String getHTML( WikiContext context, WikiDocument doc ) throws IOException;
 
     /**
      *   Convenience method for rendering, using the default parser and renderer.  Note that you can't use this method

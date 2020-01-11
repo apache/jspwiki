@@ -26,7 +26,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
-import org.apache.wiki.render.RenderingManager;
 
 
 /**
@@ -39,7 +38,7 @@ public class VariableLinkNodePostProcessorState implements NodePostProcessorStat
 
     public VariableLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
     }
 

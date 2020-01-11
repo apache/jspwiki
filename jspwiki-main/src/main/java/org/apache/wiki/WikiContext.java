@@ -71,6 +71,9 @@ public class WikiContext implements Cloneable, Command {
 
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
+    /** Name of the variable which is set to Boolean.TRUE or Boolean.FALSE depending on whether WYSIWYG is currently in effect. */
+    public static final String VAR_WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
+
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String INSTALL = WikiCommand.INSTALL.getRequestContext();
 

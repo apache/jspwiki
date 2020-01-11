@@ -29,7 +29,6 @@ import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.text.MessageFormat;
@@ -53,7 +52,7 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
         this.linkOperations = new LinkParsingOperations( wikiContext );
         this.document = document;
         this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

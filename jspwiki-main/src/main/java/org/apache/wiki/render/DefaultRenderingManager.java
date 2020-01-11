@@ -200,7 +200,7 @@ public class DefaultRenderingManager implements RenderingManager {
      */
     @Override
     public String getHTML( final WikiContext context, final WikiDocument doc ) throws IOException {
-        final Boolean wysiwygVariable = ( Boolean )context.getVariable( WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         final boolean wysiwygEditorMode;
         if( wysiwygVariable != null ) {
             wysiwygEditorMode = wysiwygVariable;

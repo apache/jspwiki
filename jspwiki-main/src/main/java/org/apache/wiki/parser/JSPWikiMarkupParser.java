@@ -39,7 +39,6 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.render.CleanTextRenderer;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.jdom2.Attribute;
 import org.jdom2.Content;
@@ -173,8 +172,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     // FIXME: parsers should be pooled for better performance.
-    private void initialize()
-    {
+    private void initialize() {
         initInlineImagePatterns();
 
         m_camelCasePattern = m_engine.getAttribute( CAMELCASE_PATTERN );
@@ -187,38 +185,29 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
             m_engine.setAttribute( CAMELCASE_PATTERN, m_camelCasePattern );
         }
-        //
+
         //  Set the properties.
-        //
-        Properties props      = m_engine.getWikiProperties();
+        final Properties props = m_engine.getWikiProperties();
+        final String cclinks = m_context.getPage().getAttribute( PROP_CAMELCASELINKS );
 
-        String cclinks = m_context.getPage().getAttribute( PROP_CAMELCASELINKS );
-
-        if( cclinks != null )
-        {
+        if( cclinks != null ) {
             m_camelCaseLinks = TextUtil.isPositive( cclinks );
-        }
-        else
-        {
-            m_camelCaseLinks  = TextUtil.getBooleanProperty( props,
-                                                             PROP_CAMELCASELINKS,
-                                                             m_camelCaseLinks );
+        } else {
+            m_camelCaseLinks  = TextUtil.getBooleanProperty( props, PROP_CAMELCASELINKS, m_camelCaseLinks );
         }
 
-        Boolean wysiwygVariable = (Boolean)m_context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        if( wysiwygVariable != null )
-        {
-            m_wysiwygEditorMode = wysiwygVariable.booleanValue();
+        final Boolean wysiwygVariable = (Boolean)m_context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        if( wysiwygVariable != null ) {
+            m_wysiwygEditorMode = wysiwygVariable;
         }
 
-        m_plainUris           = m_context.getBooleanWikiProperty( PROP_PLAINURIS, m_plainUris );
-        m_useOutlinkImage     = m_context.getBooleanWikiProperty( PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
-        m_useAttachmentImage  = m_context.getBooleanWikiProperty( PROP_USEATTACHMENTIMAGE, m_useAttachmentImage );
-        m_allowHTML           = m_context.getBooleanWikiProperty( PROP_ALLOWHTML, m_allowHTML );
-        m_useRelNofollow      = m_context.getBooleanWikiProperty( PROP_USERELNOFOLLOW, m_useRelNofollow );
+        m_plainUris          = m_context.getBooleanWikiProperty( PROP_PLAINURIS, m_plainUris );
+        m_useOutlinkImage    = m_context.getBooleanWikiProperty( PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
+        m_useAttachmentImage = m_context.getBooleanWikiProperty( PROP_USEATTACHMENTIMAGE, m_useAttachmentImage );
+        m_allowHTML          = m_context.getBooleanWikiProperty( PROP_ALLOWHTML, m_allowHTML );
+        m_useRelNofollow     = m_context.getBooleanWikiProperty( PROP_USERELNOFOLLOW, m_useRelNofollow );
 
-        if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
-        {
+        if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null ) {
             disableAccessRules();
         }
 

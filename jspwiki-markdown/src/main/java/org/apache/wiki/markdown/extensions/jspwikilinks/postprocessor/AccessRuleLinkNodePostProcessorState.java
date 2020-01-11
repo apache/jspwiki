@@ -26,7 +26,6 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
-import org.apache.wiki.render.RenderingManager;
 
 
 /**
@@ -40,7 +39,7 @@ public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorSt
 
     public AccessRuleLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

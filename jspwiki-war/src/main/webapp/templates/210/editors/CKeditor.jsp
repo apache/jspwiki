@@ -50,7 +50,7 @@
            "//cdn.ckeditor.com/4.5.1/standard/ckeditor.js" );
     */
 
-    context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+    context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
 
     WikiPage wikiPage = context.getPage();
@@ -108,7 +108,7 @@
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for CKeditor has been rendered.
-   context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
+   context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
 
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
