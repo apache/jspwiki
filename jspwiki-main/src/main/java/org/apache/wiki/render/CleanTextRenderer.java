@@ -18,26 +18,17 @@
  */
 package org.apache.wiki.render;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;
-import org.jdom2.Text;
-import org.jdom2.xpath.XPathFactory;
-
-import java.io.IOException;
-import java.util.List;
+import org.apache.wiki.util.XmlUtil;
 
 
 /**
- *  A simple renderer that just renders all the text() nodes from the DOM tree.
- *  This is very useful for cleaning away all of the XHTML.
+ *  A simple renderer that just renders all the text() nodes from the DOM tree. This is very useful for cleaning away all of the XHTML.
  *
  *  @since  2.4
  */
 public class CleanTextRenderer extends WikiRenderer {
-
-    private static final String ALL_TEXT_NODES = "//text()";
-    private static final Logger log = Logger.getLogger( CleanTextRenderer.class );
 
     /**
      *  Create a renderer.
@@ -52,21 +43,8 @@ public class CleanTextRenderer extends WikiRenderer {
     /**
      *  {@inheritDoc}
      */
-    public String getString() throws IOException {
-    	final StringBuilder sb = new StringBuilder();
-        try {
-            final List< ? > nodes = XPathFactory.instance().compile( ALL_TEXT_NODES ).evaluate( m_document.getDocument() );
-            for( final Object el : nodes ) {
-                if( el instanceof Text ) {
-                    sb.append( ( ( Text )el ).getValue() );
-                }
-            }
-        } catch( final IllegalStateException e ) {
-            log.error("Could not parse XPATH expression");
-            throw new IOException( e.getMessage(), e );
-        }
-
-        return sb.toString();
+    public String getString() {
+    	return m_document != null ? XmlUtil.extractTextFromDocument( m_document.getDocument() ) : "";
     }
 
 }

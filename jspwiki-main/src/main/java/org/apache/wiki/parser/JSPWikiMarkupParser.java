@@ -38,8 +38,8 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
@@ -85,7 +85,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     protected static final int              IMAGEWIKILINK = 9;
     protected static final int              ATTACHMENT    = 10;
 
-    private static Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
+    private static final Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
 
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
@@ -221,17 +221,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param text Text that should be passed to the mutate() method of each of the mutators in the chain.
      *  @return The result of the mutation.
      */
-    protected String callMutatorChain( Collection< StringTransmutator > list, String text )
-    {
-        if( list == null || list.size() == 0 )
-        {
+    protected String callMutatorChain( final Collection< StringTransmutator > list, String text ) {
+        if( list == null || list.size() == 0 ) {
             return text;
         }
 
-        for( Iterator< StringTransmutator > i = list.iterator(); i.hasNext(); )
-        {
-            StringTransmutator m = i.next();
-
+        for( final StringTransmutator m : list ) {
             text = m.mutate( m_context, text );
         }
 
@@ -808,19 +803,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private JSPWikiMarkupParser m_cleanTranslator;
 
     /**
-     *  Does a lazy init.  Otherwise, we would get into a situation
-     *  where HTMLRenderer would try and boot a TranslatorReader before
+     *  Does a lazy init.  Otherwise, we would get into a situation where HTMLRenderer would try and boot a TranslatorReader before
      *  the TranslatorReader it is contained by is up.
      */
-    private JSPWikiMarkupParser getCleanTranslator()
-    {
-        if( m_cleanTranslator == null )
-        {
-            WikiContext dummyContext = new WikiContext( m_engine,
-                                                        m_context.getHttpRequest(),
-                                                        m_context.getPage() );
+    private JSPWikiMarkupParser getCleanTranslator() {
+        if( m_cleanTranslator == null ) {
+            final WikiContext dummyContext = new WikiContext( m_engine, m_context.getHttpRequest(), m_context.getPage() );
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
-
             m_cleanTranslator.m_allowHTML = true;
         }
 
@@ -834,27 +823,20 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  Counts also duplicate headings (= headings with similar name), and
      *  attaches a counter.
      */
-    private String makeHeadingAnchor( String baseName, String title, Heading hd )
-    {
+    private String makeHeadingAnchor( final String baseName, String title, final Heading hd ) {
         hd.m_titleText = title;
         title = MarkupParser.wikifyLink( title );
-
         hd.m_titleSection = m_engine.encodeName(title);
 
-        if( m_titleSectionCounter.containsKey( hd.m_titleSection ) )
-        {
-            Integer count = m_titleSectionCounter.get( hd.m_titleSection );
-            count = count + 1;
+        if( m_titleSectionCounter.containsKey( hd.m_titleSection ) ) {
+            final Integer count = m_titleSectionCounter.get( hd.m_titleSection ) + 1;
             m_titleSectionCounter.put( hd.m_titleSection, count );
             hd.m_titleSection += "-" + count;
-        }
-        else
-        {
+        } else {
             m_titleSectionCounter.put( hd.m_titleSection, 1 );
         }
 
-        hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
-                           "-"+hd.m_titleSection;
+        hd.m_titleAnchor = "section-" + m_engine.encodeName( baseName ) + "-" + hd.m_titleSection;
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '/', '_' );
 
@@ -863,20 +845,15 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private String makeSectionTitle( String title ) {
         title = title.trim();
-        final String outTitle;
-
         try {
             final JSPWikiMarkupParser dtr = getCleanTranslator();
             dtr.setInputReader( new StringReader( title ) );
 
-            final CleanTextRenderer ctt = new CleanTextRenderer( m_context, dtr.parse() );
-            outTitle = ctt.getString();
+            return XmlUtil.extractTextFromDocument( dtr.parse() );
         } catch( final IOException e ) {
             log.fatal("CleanTranslator not working", e );
             throw new InternalWikiException( "CleanTranslator not working as expected, when cleaning title"+ e.getMessage() , e );
         }
-
-        return outTitle;
     }
 
     /**

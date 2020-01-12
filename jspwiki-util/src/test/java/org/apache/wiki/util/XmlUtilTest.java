@@ -18,7 +18,9 @@
  */
 package org.apache.wiki.util;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -77,6 +79,21 @@ public class XmlUtilTest {
 
             elements = XmlUtil.parse( is, null );
             Assertions.assertEquals( 0, elements.size() );
+        }
+    }
+
+    @Test
+    public void testExtractTestFrom() throws Exception {
+        Assertions.assertEquals( "", XmlUtil.extractTextFromDocument( null ) );
+        final SAXBuilder builder = new SAXBuilder();
+        try( final InputStream is = new FileInputStream( new File ("./src/test/resources/ini/classmappings.xml" ) ) ) {
+            final Document doc = builder.build( is );
+            final String text = XmlUtil.extractTextFromDocument( doc );
+            Assertions.assertEquals( "\n" +
+                                     "  \n" +
+                                     "    java.util.List\n" +
+                                     "    java.util.ArrayList\n" +
+                                     "  \n", text );
         }
     }
 
