@@ -66,9 +66,13 @@ public class DefaultRenderingManager implements RenderingManager {
     /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
     private static final int    DEFAULT_CACHESIZE     = 1_000;
     private static final String VERSION_DELIMITER     = "::";
-    private static final String PROP_PARSER           = "jspwiki.renderingManager.markupParser";
-    private static final String PROP_RENDERER         = "jspwiki.renderingManager.renderer";
-    private static final String PROP_WYSIWYG_RENDERER = "jspwiki.renderingManager.renderer.wysiwyg";
+
+    /** The name of the default renderer. */
+    private static final String DEFAULT_PARSER = JSPWikiMarkupParser.class.getName();
+    /** The name of the default renderer. */
+    private static final String DEFAULT_RENDERER = XHTMLRenderer.class.getName();
+    /** The name of the default WYSIWYG renderer. */
+    private static final String DEFAULT_WYSIWYG_RENDERER = WysiwygEditingRenderer.class.getName();
 
     /** Stores the WikiDocuments that have been cached. */
     private Cache m_documentCache;

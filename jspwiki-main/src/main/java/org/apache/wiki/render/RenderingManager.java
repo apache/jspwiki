@@ -24,7 +24,6 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
-import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
@@ -44,14 +43,14 @@ import java.util.Properties;
  */
 public interface RenderingManager extends WikiEventListener, InternalModule {
 
-    /** The name of the default renderer. */
-    String DEFAULT_PARSER = JSPWikiMarkupParser.class.getName();
+    /** markup parser property. */
+    String PROP_PARSER           = "jspwiki.renderingManager.markupParser";
 
-    /** The name of the default renderer. */
-    String DEFAULT_RENDERER = XHTMLRenderer.class.getName();
+    /** default renderer property. */
+    String PROP_RENDERER         = "jspwiki.renderingManager.renderer";
 
-    /** The name of the default WYSIWYG renderer. */
-    String DEFAULT_WYSIWYG_RENDERER = WysiwygEditingRenderer.class.getName();
+    /** default wysiwyg renderer property. */
+    String PROP_WYSIWYG_RENDERER = "jspwiki.renderingManager.renderer.wysiwyg";
 
     /** Name of the regular page cache. */
     String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
