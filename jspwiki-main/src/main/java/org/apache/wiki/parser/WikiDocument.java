@@ -18,40 +18,36 @@
 */
 package org.apache.wiki.parser;
 
-import java.lang.ref.WeakReference;
-
-import org.jdom2.Document;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.jdom2.Document;
+
+import java.lang.ref.WeakReference;
 
 /**
- *  Stores the DOM tree of a rendered WikiPage.  This class
- *  extends the org.jdom.Document to provide some extra metadata
+ *  Stores the DOM tree of a rendered WikiPage. This class extends the org.jdom.Document to provide some extra metadata
  *  specific to JSPWiki.
  *  <p>
- *  The document is not stored as metadata in the WikiPage because
- *  otherwise it could not be cached separately.
+ *  The document is not stored as metadata in the WikiPage because otherwise it could not be cached separately.
  *  
  *  @since  2.4
  */
-public class WikiDocument extends Document
-{
+public class WikiDocument extends Document {
+
     private static final long serialVersionUID = 1L;
     
-    private WikiPage                   m_page;
-    private String                     m_wikiText;
-
-    private WeakReference<WikiContext> m_context;
+    private WikiPage m_page;
+    private String m_wikiText;
+    private WeakReference< WikiContext > m_context;
     
     /**
      *  Creates a new WikiDocument for a specific page.
      * 
      *  @param page The page to which this document refers to.
      */
-    public WikiDocument( WikiPage page )
+    public WikiDocument( final WikiPage page )
     {
-        m_page     = page;
+        m_page = page;
     }
     
     /**
@@ -59,7 +55,7 @@ public class WikiDocument extends Document
      *  
      *  @param data The WikiMarkup
      */
-    public void setPageData( String data )
+    public void setPageData( final String data )
     {
         m_wikiText = data;
     }
@@ -85,17 +81,15 @@ public class WikiDocument extends Document
     }
 
     /**
-     *  Set the WikiContext in which the WikiDocument is rendered. The
-     *  WikiContext is stored in a WeakReference, which means that it 
-     *  can be garbagecollected away.  This is to allow for caching of
-     *  the WikiDocument without having to carry the WikiContext around
+     *  Set the WikiContext in which the WikiDocument is rendered. The WikiContext is stored in a WeakReference, which means that it
+     *  can be garbagecollected away.  This is to allow for caching of the WikiDocument without having to carry the WikiContext around
      *  for a long time.
      *  
      *  @param ctx A WikiContext.
      */
-    public void setContext( WikiContext ctx )
+    public void setContext( final WikiContext ctx )
     {
-        m_context = new WeakReference<WikiContext>( ctx );
+        m_context = new WeakReference<>( ctx );
     }
     
     /**
@@ -108,4 +102,5 @@ public class WikiDocument extends Document
     {
         return m_context.get();
     }
+
 }
