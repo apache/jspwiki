@@ -59,7 +59,7 @@ public class XmlUtilTest {
 
     @Test
     public void testParseFromStream() throws IOException {
-        try( InputStream is = new FileInputStream( new File ("./src/test/resources/ini/jspwiki_module.xml" ) ) ) {
+        try( final InputStream is = new FileInputStream( new File ("./src/test/resources/ini/jspwiki_module.xml" ) ) ) {
             List< Element > elements = XmlUtil.parse( is, "/modules/plugin" );
             Assertions.assertEquals( 2, elements.size() );
 

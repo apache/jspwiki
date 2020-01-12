@@ -57,28 +57,28 @@ public final class XmlUtil  {
 	 * empty list is returned.
 	 * 
 	 * @param xml file to parse; matches all resources from classpath, filters repeated items.
-	 * @param requestedNodes requestd nodes on the xml file
+	 * @param requestedNodes requested nodes on the xml file
 	 * @return the requested nodes of the XML file.
 	 */
-	public static List<Element> parse( String xml, String requestedNodes )
+	public static List<Element> parse( final String xml, final String requestedNodes )
 	{
 		if( StringUtils.isNotEmpty( xml ) && StringUtils.isNotEmpty( requestedNodes ) ) {
-			Set<Element> readed = new HashSet<Element>();
-			SAXBuilder builder = new SAXBuilder();
+			final Set<Element> readed = new HashSet<>();
+			final SAXBuilder builder = new SAXBuilder();
 			try {
-				Enumeration< URL > resources = XmlUtil.class.getClassLoader().getResources( xml );
+				final Enumeration< URL > resources = XmlUtil.class.getClassLoader().getResources( xml );
 				while( resources.hasMoreElements() ) {
-	                URL resource = resources.nextElement();
+					final URL resource = resources.nextElement();
 	                log.debug( "reading " + resource.toString() );
-	                Document doc = builder.build( resource );
-	                XPathFactory xpfac = XPathFactory.instance();
-	                XPathExpression<Element> xp = xpfac.compile( requestedNodes, Filters.element() );
+					final Document doc = builder.build( resource );
+					final XPathFactory xpfac = XPathFactory.instance();
+					final XPathExpression<Element> xp = xpfac.compile( requestedNodes, Filters.element() );
 	                readed.addAll( xp.evaluate( doc ) ); // filter out repeated items
 	            }
-				return new ArrayList<Element>( readed );
-			} catch ( IOException ioe ) {
+				return new ArrayList<>( readed );
+			} catch( final IOException ioe ) {
 				log.error( "Couldn't load all " + xml + " resources", ioe );
-			} catch ( JDOMException jdome ) {
+			} catch( final JDOMException jdome ) {
 				log.error( "error parsing " + xml + " resources", jdome );
 			}
 		}
@@ -93,17 +93,17 @@ public final class XmlUtil  {
 	 * @param requestedNodes requestd nodes on the xml stream.
 	 * @return the requested nodes of the XML stream.
 	 */
-	public static List< Element > parse( InputStream xmlStream, String requestedNodes ) {
+	public static List< Element > parse( final InputStream xmlStream, final String requestedNodes ) {
 		if( xmlStream != null && StringUtils.isNotEmpty( requestedNodes ) ) {
-			SAXBuilder builder = new SAXBuilder();
+			final SAXBuilder builder = new SAXBuilder();
 			try {
-                Document doc = builder.build( xmlStream );
-                XPathFactory xpfac = XPathFactory.instance();
-                XPathExpression< Element > xp = xpfac.compile( requestedNodes,Filters.element() );
+				final Document doc = builder.build( xmlStream );
+				final XPathFactory xpfac = XPathFactory.instance();
+				final XPathExpression< Element > xp = xpfac.compile( requestedNodes,Filters.element() );
 				return xp.evaluate( doc );
-			} catch ( IOException ioe ) {
+			} catch( final IOException ioe ) {
 				log.error( "Couldn't load all " + xmlStream + " resources", ioe );
-			} catch ( JDOMException jdome ) {
+			} catch( final JDOMException jdome ) {
 				log.error( "error parsing " + xmlStream + " resources", jdome );
 			}
 		}		
