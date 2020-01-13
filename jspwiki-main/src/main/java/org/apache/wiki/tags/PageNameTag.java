@@ -18,41 +18,35 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.TextUtil;
+
+import java.io.IOException;
 
 /**
  *  Returns the currently requested page name.
  *
  *  @since 2.0
  */
-public class PageNameTag
-    extends WikiTagBase
-{
+public class PageNameTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
 
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+    public final int doWikiStartTag() throws IOException {
+        final WikiEngine engine = m_wikiContext.getEngine();
+        final WikiPage page = m_wikiContext.getPage();
 
-        if( page != null )
-        {
-            if( page instanceof Attachment )
-            {
+        if( page != null ) {
+            if( page instanceof Attachment ) {
                 pageContext.getOut().print( TextUtil.replaceEntities( ((Attachment)page).getFileName() ) );
-            }
-            else
-            {
-                pageContext.getOut().print( engine.beautifyTitle( m_wikiContext.getName() ) );
+            } else {
+                pageContext.getOut().print( engine.getRenderingManager().beautifyTitle( m_wikiContext.getName() ) );
             }
         }
 
         return SKIP_BODY;
     }
+
 }

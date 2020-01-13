@@ -385,7 +385,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
             output.append( m_before );
 
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + m_engine.beautifyTitle(value) + "|" + value + "]" );
+            output.append( "[" + m_engine.getRenderingManager().beautifyTitle(value) + "|" + value + "]" );
             count++;
         }
 

@@ -46,32 +46,28 @@ import java.util.Map;
  *
  *  @since
  */
-public class Search implements WikiPlugin
-{
-    static Logger log = Logger.getLogger(Search.class);
+public class Search implements WikiPlugin {
+
+    private static final Logger log = Logger.getLogger(Search.class);
 
     /** Parameter name for setting the query string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_QUERY = "query";
 
-    /** Parameter name for setting the name of the set where the results are stored.
-     *  Value is <tt>{@value}</tt>.
-     */
+    /** Parameter name for setting the name of the set where the results are stored. Value is <tt>{@value}</tt>. */
     public static final String PARAM_SET   = "set";
 
     /** The default name of the result set. */
     public static final String DEFAULT_SETNAME = "_defaultSet";
 
-    /** The parameter name for setting the how many results will be fetched.
-     *  Value is <tt>{@value}</tt>.
-     */
+    /** The parameter name for setting the how many results will be fetched. Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX   = "max";
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map<String, String> params ) throws PluginException
-    {
+    @Override
+    public String execute( WikiContext context, Map<String, String> params ) throws PluginException {
         int maxItems = Integer.MAX_VALUE;
         Collection<SearchResult> results = null;
 
@@ -150,7 +146,7 @@ public class Search implements WikiPlugin
             name.setAttribute(XHTML.ATTR_width,"30%");
 
             name.addContent( XhtmlUtil.link(context.getURL( WikiContext.VIEW, sr.getPage().getName()),
-                    engine.beautifyTitle(sr.getPage().getName())) );
+                    engine.getRenderingManager().beautifyTitle(sr.getPage().getName())) );
 
             row.addContent(name);
 

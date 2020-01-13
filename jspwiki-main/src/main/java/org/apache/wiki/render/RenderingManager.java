@@ -44,13 +44,15 @@ import java.util.Properties;
 public interface RenderingManager extends WikiEventListener, InternalModule {
 
     /** markup parser property. */
-    String PROP_PARSER           = "jspwiki.renderingManager.markupParser";
+    String PROP_PARSER = "jspwiki.renderingManager.markupParser";
 
     /** default renderer property. */
-    String PROP_RENDERER         = "jspwiki.renderingManager.renderer";
+    String PROP_RENDERER = "jspwiki.renderingManager.renderer";
 
     /** default wysiwyg renderer property. */
     String PROP_WYSIWYG_RENDERER = "jspwiki.renderingManager.renderer.wysiwyg";
+
+    String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
 
     /** Name of the regular page cache. */
     String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
@@ -66,6 +68,26 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @throws WikiException If the manager could not be initialized.
      */
     void initialize( WikiEngine engine, Properties properties ) throws WikiException;
+
+    /**
+     *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when
+     *  constructing this WikiEngine.  However, attachment names are only beautified by the name.
+     *
+     *  @param title The title to beautify
+     *  @return A beautified title (or, if beautification is off, returns the title without modification)
+     *  @since 1.7.11, moved to PageManager on 2.11.0
+     */
+    String beautifyTitle( final String title );
+
+    /**
+     *  Beautifies the title of the page by appending non-breaking spaces in suitable places.  This is really suitable only for HTML output,
+     *  as it uses the &amp;nbsp; -character.
+     *
+     *  @param title The title to beautify
+     *  @return A beautified title.
+     *  @since 2.1.127
+     */
+    String beautifyTitleNoBreak( final String title );
 
     /**
      *  Returns the wiki Parser

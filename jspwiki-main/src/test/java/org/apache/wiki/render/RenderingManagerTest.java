@@ -40,6 +40,51 @@ public class RenderingManagerTest {
         CacheManager.getInstance().removeAllCaches();
     }
 
+    @Test
+    public void testBeautifyTitle() {
+        final String src = "WikiNameThingy";
+        Assertions.assertEquals("Wiki Name Thingy", m_engine.getRenderingManager().beautifyTitle( src ) );
+    }
+
+    /**
+     *  Acronyms should be treated wisely.
+     */
+    @Test
+    public void testBeautifyTitleAcronym() {
+        final String src = "JSPWikiPage";
+        Assertions.assertEquals("JSP Wiki Page", m_engine.getRenderingManager().beautifyTitle( src ) );
+    }
+
+    /**
+     *  Acronyms should be treated wisely.
+     */
+    @Test
+    public void testBeautifyTitleAcronym2() {
+        final String src = "DELETEME";
+        Assertions.assertEquals("DELETEME", m_engine.getRenderingManager().beautifyTitle( src ) );
+    }
+
+    @Test
+    public void testBeautifyTitleAcronym3() {
+        final String src = "JSPWikiFAQ";
+        Assertions.assertEquals("JSP Wiki FAQ", m_engine.getRenderingManager().beautifyTitle( src ) );
+    }
+
+    @Test
+    public void testBeautifyTitleNumbers() {
+        final String src = "TestPage12";
+        Assertions.assertEquals("Test Page 12", m_engine.getRenderingManager().beautifyTitle( src ) );
+    }
+
+    /**
+     *  English articles too.
+     */
+    @Test
+    public void testBeautifyTitleArticle() {
+        final String src = "ThisIsAPage";
+        Assertions.assertEquals("This Is A Page", m_engine.getRenderingManager().beautifyTitle( src ) );
+    }
+
     /**
      * Tests the relative speed of the DOM cache with respect to
      * page being parsed every single time.

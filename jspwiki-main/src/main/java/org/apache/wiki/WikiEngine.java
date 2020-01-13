@@ -28,7 +28,6 @@ import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -62,12 +61,6 @@ import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
-import org.apache.wiki.workflow.Decision;
-import org.apache.wiki.workflow.DecisionRequiredException;
-import org.apache.wiki.workflow.Fact;
-import org.apache.wiki.workflow.Step;
-import org.apache.wiki.workflow.Workflow;
-import org.apache.wiki.workflow.WorkflowBuilder;
 import org.apache.wiki.workflow.WorkflowManager;
 
 import javax.servlet.ServletConfig;
@@ -82,7 +75,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -148,9 +140,6 @@ public class WikiEngine  {
 
     /** The name for the property which allows you to set the current reference style.  The value is {@value}. */
     public static final String PROP_REFSTYLE     = "jspwiki.referenceStyle";
-
-    /** Property name for the "spaces in titles" -hack. */
-    public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
 
     /** Property name for where the jspwiki work directory should be.
         If not specified, reverts to ${java.tmpdir}. */
@@ -491,7 +480,6 @@ public class WikiEngine  {
 
         m_saveUserInfo   = TextUtil.getBooleanProperty( props, PROP_STOREUSERNAME, m_saveUserInfo );
         m_useUTF8        = StandardCharsets.UTF_8.name().equals( TextUtil.getStringProperty( props, PROP_ENCODING, StandardCharsets.ISO_8859_1.name() ) );
-        m_beautifyTitle  = TextUtil.getBooleanProperty( props, PROP_BEAUTIFYTITLE, m_beautifyTitle );
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         enforceValidTemplateDirectory();
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
@@ -872,48 +860,6 @@ public class WikiEngine  {
     public String getApplicationName() {
         String appName = TextUtil.getStringProperty( m_properties, PROP_APPNAME, Release.APPNAME );
         return MarkupParser.cleanLink( appName );
-    }
-
-    /**
-     *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when
-     *  constructing this WikiEngine.  However, attachment names are only beautified by the name.
-     *
-     *  @param title The title to beautify
-     *  @return A beautified title (or, if beautification is off, returns the title without modification)
-     *  @since 1.7.11
-     */
-    public String beautifyTitle( final String title ) {
-        if( m_beautifyTitle ) {
-            try {
-                final Attachment att = m_attachmentManager.getAttachmentInfo( title );
-                if( att == null ) {
-                    return TextUtil.beautifyString( title );
-                }
-
-                final String parent = TextUtil.beautifyString( att.getParentName() );
-                return parent + "/" + att.getFileName();
-            } catch( final ProviderException e ) {
-                return title;
-            }
-        }
-
-        return title;
-    }
-
-    /**
-     *  Beautifies the title of the page by appending non-breaking spaces in suitable places.  This is really suitable only for HTML output,
-     *  as it uses the &amp;nbsp; -character.
-     *
-     *  @param title The title to beautify
-     *  @return A beautified title.
-     *  @since 2.1.127
-     */
-    public String beautifyTitleNoBreak( final String title ) {
-        if( m_beautifyTitle ) {
-            return TextUtil.beautifyString( title, "&nbsp;" );
-        }
-
-        return title;
     }
 
     /**

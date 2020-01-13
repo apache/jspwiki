@@ -125,51 +125,6 @@ public class WikiEngineTest {
         Assertions.assertEquals( "A%E2%89%A2%CE%91.", engine.encodeName(name) );
     }
 
-    @Test
-    public void testBeautifyTitle() {
-        final String src = "WikiNameThingy";
-        Assertions.assertEquals("Wiki Name Thingy", m_engine.beautifyTitle( src ) );
-    }
-
-    /**
-     *  Acronyms should be treated wisely.
-     */
-    @Test
-    public void testBeautifyTitleAcronym() {
-        final String src = "JSPWikiPage";
-        Assertions.assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
-    }
-
-    /**
-     *  Acronyms should be treated wisely.
-     */
-    @Test
-    public void testBeautifyTitleAcronym2() {
-        final String src = "DELETEME";
-        Assertions.assertEquals("DELETEME", m_engine.beautifyTitle( src ) );
-    }
-
-    @Test
-    public void testBeautifyTitleAcronym3() {
-        final String src = "JSPWikiFAQ";
-        Assertions.assertEquals("JSP Wiki FAQ", m_engine.beautifyTitle( src ) );
-    }
-
-    @Test
-    public void testBeautifyTitleNumbers() {
-        final String src = "TestPage12";
-        Assertions.assertEquals("Test Page 12", m_engine.beautifyTitle( src ) );
-    }
-
-    /**
-     *  English articles too.
-     */
-    @Test
-    public void testBeautifyTitleArticle() {
-        final String src = "ThisIsAPage";
-        Assertions.assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
-    }
-
     /**
      *  Checks, if ReferenceManager is informed of new attachments.
      */

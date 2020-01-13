@@ -18,17 +18,7 @@
  */
 package org.apache.wiki.parser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -46,7 +36,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import javax.servlet.ServletException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Vector;
 
 public class JSPWikiMarkupParserTest
 {
@@ -806,7 +804,7 @@ public class JSPWikiMarkupParserTest
 
         testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
 
-        String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
+        String src = "["+testEngine2.getRenderingManager().beautifyTitle("TestPage/TestAtt.txt")+"]";
 
         Assertions.assertEquals( "<a class=\"attachment\" href=\"/test/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
                       "<a href=\"/test/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",

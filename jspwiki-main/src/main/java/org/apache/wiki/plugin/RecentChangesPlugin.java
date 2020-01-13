@@ -40,7 +40,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -75,26 +74,26 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params ) throws PluginException {
-        int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
-        String   spacing  = "4";
-        boolean  showAuthor = true;
-        boolean  showChangenote = true;
-        String   tablewidth = "4";
+    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
+        String spacing  = "4";
+        boolean showAuthor = true;
+        boolean showChangenote = true;
+        String tablewidth = "4";
         
-        WikiEngine engine = context.getEngine();
+        final WikiEngine engine = context.getEngine();
 
         //
         //  Which format we want to see?
         //
-        if( "compact".equals( params.get(PARAM_FORMAT) ) ) {
+        if( "compact".equals( params.get( PARAM_FORMAT ) ) ) {
             spacing  = "0";
             showAuthor = false;
             showChangenote = false;
             tablewidth = "2";
         }
 
-        Calendar sincedate = new GregorianCalendar();
+        final Calendar sincedate = new GregorianCalendar();
         sincedate.add( Calendar.DAY_OF_MONTH, -since );
 
         log.debug("Calculating recent changes from "+sincedate.getTime());
@@ -107,24 +106,23 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         if ( changes != null ) {
             Date olddate = new Date( 0 );
 
-            DateFormat fmt = getDateFormat( context, params );
-            DateFormat tfmt = getTimeFormat( context, params );
+            final DateFormat fmt = getDateFormat( context, params );
+            final DateFormat tfmt = getTimeFormat( context, params );
 
-            Element rt = XhtmlUtil.element( XHTML.table );
+            final Element rt = XhtmlUtil.element( XHTML.table );
             rt.setAttribute( XHTML.ATTR_class, "recentchanges" );
             rt.setAttribute( XHTML.ATTR_cellpadding, spacing );
-        
-            for( Iterator< WikiPage > i = changes.iterator(); i.hasNext(); ) {
-                WikiPage pageref = i.next();
-                Date lastmod = pageref.getLastModified();
+
+            for( final WikiPage pageref : changes ) {
+                final Date lastmod = pageref.getLastModified();
 
                 if( lastmod.before( sincedate.getTime() ) ) {
                     break;
                 }
-                
+
                 if( !isSameDay( lastmod, olddate ) ) {
-                    Element row = XhtmlUtil.element( XHTML.tr );
-                    Element col = XhtmlUtil.element( XHTML.td );
+                    final Element row = XhtmlUtil.element( XHTML.tr );
+                    final Element col = XhtmlUtil.element( XHTML.td );
                     col.setAttribute( XHTML.ATTR_colspan, tablewidth );
                     col.setAttribute( XHTML.ATTR_class, "date" );
                     col.addContent( XhtmlUtil.element( XHTML.b, fmt.format( lastmod ) ) );
@@ -134,16 +132,13 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                     olddate = lastmod;
                 }
 
-                String href = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, 
-                                              pageref.getName() ) ;
-
-                Element link = XhtmlUtil.link( href, engine.beautifyTitle( pageref.getName() ) );
-
-                Element row = XhtmlUtil.element( XHTML.tr );
-                Element col = XhtmlUtil.element( XHTML.td );
+                final String href = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, pageref.getName() );
+                Element link = XhtmlUtil.link( href, engine.getRenderingManager().beautifyTitle( pageref.getName() ) );
+                final Element row = XhtmlUtil.element( XHTML.tr );
+                final Element col = XhtmlUtil.element( XHTML.td );
                 col.setAttribute( XHTML.ATTR_width, "30%" );
                 col.addContent( link );
-                
+
                 //
                 //  Add the direct link to the attachment info.
                 //
@@ -151,7 +146,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                     link = XhtmlUtil.link( context.getURL( WikiContext.INFO, pageref.getName() ), null );
                     link.setAttribute( XHTML.ATTR_class, "infolink" );
 
-                    Element img = XhtmlUtil.img( context.getURL( WikiContext.NONE, "images/attachment_small.png" ), null );
+                    final Element img = XhtmlUtil.img( context.getURL( WikiContext.NONE, "images/attachment_small.png" ), null );
                     link.addContent( img );
 
                     col.addContent( link );
@@ -159,28 +154,28 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
 
                 row.addContent( col );
                 rt.addContent( row );
-                
+
                 if( pageref instanceof Attachment ) {
-                    Element td = XhtmlUtil.element( XHTML.td, tfmt.format( lastmod ) );
+                    final Element td = XhtmlUtil.element( XHTML.td, tfmt.format( lastmod ) );
                     td.setAttribute( XHTML.ATTR_class, "lastchange" );
                     row.addContent( td );
                 } else {
-                    Element infocol = XhtmlUtil.element( XHTML.td );
+                    final Element infocol = XhtmlUtil.element( XHTML.td );
                     infocol.setAttribute( XHTML.ATTR_class, "lastchange" );
-                    infocol.addContent( XhtmlUtil.link( context.getURL( WikiContext.DIFF, pageref.getName(), "r1=-1" ), tfmt.format( lastmod ) ) );
+                    infocol.addContent( XhtmlUtil.link( context.getURL( WikiContext.DIFF, pageref.getName(), "r1=-1" ),
+                                                        tfmt.format( lastmod ) ) );
                     row.addContent( infocol );
                 }
 
                 //
                 //  Display author information.
                 //
-
                 if( showAuthor ) {
-                    String author = pageref.getAuthor();
+                    final String author = pageref.getAuthor();
 
-                    Element authorinfo = XhtmlUtil.element( XHTML.td );
+                    final Element authorinfo = XhtmlUtil.element( XHTML.td );
                     authorinfo.setAttribute( XHTML.ATTR_class, "author" );
-                    
+
                     if( author != null ) {
                         if( engine.getPageManager().wikiPageExists( author ) ) {
                             authorinfo.addContent( XhtmlUtil.link( context.getURL( WikiContext.VIEW, author ), author ) );
@@ -189,7 +184,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                         }
                     } else {
                         authorinfo.addContent( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
-                                                          .getString( "common.unknownauthor" ) );
+                                .getString( "common.unknownauthor" ) );
                     }
 
                     row.addContent( authorinfo );
@@ -202,7 +197,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                     td_changenote.setAttribute( XHTML.ATTR_class, "changenote" );
                     row.addContent( td_changenote );
                 }
-                
+
                 //  Revert note
 /*                
                 if( context.hasAdminPermissions() )
@@ -217,9 +212,9 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     }
 
     
-    private boolean isSameDay( Date a, Date b ) {
-        Calendar aa = Calendar.getInstance(); aa.setTime( a );
-        Calendar bb = Calendar.getInstance(); bb.setTime( b );
+    private boolean isSameDay( final Date a, final Date b ) {
+        final Calendar aa = Calendar.getInstance(); aa.setTime( a );
+        final Calendar bb = Calendar.getInstance(); bb.setTime( b );
 
         return aa.get( Calendar.YEAR ) == bb.get( Calendar.YEAR ) 
             && aa.get( Calendar.DAY_OF_YEAR ) == bb.get( Calendar.DAY_OF_YEAR );
@@ -230,9 +225,8 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
-    private DateFormat getTimeFormat( WikiContext context, Map<String, String> params ) {
-        String formatString = get( params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT );
-
+    private DateFormat getTimeFormat( final WikiContext context, final Map< String, String > params ) {
+        final String formatString = get( params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT );
         if( StringUtils.isBlank( formatString ) ) {
             return Preferences.getDateFormat( context, TimeFormat.TIME );
         }
@@ -240,9 +234,8 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         return new SimpleDateFormat( formatString );
     }
 
-    private DateFormat getDateFormat( WikiContext context, Map< String, String > params ) {
-        String formatString = get( params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT );
-        
+    private DateFormat getDateFormat( final WikiContext context, final Map< String, String > params ) {
+        final String formatString = get( params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT );
         if( StringUtils.isBlank( formatString ) ) {
             return Preferences.getDateFormat( context, TimeFormat.DATE );
         }
@@ -250,8 +243,8 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         return new SimpleDateFormat( formatString );
     }
     
-    private String get( Map< String, String > params, String defaultValue, String paramName ) {
-        String value = params.get( paramName );
+    private String get( final Map< String, String > params, final String defaultValue, final String paramName ) {
+        final String value = params.get( paramName );
         return value == null ? defaultValue : value;
     }
     

@@ -24,7 +24,9 @@ import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -35,6 +37,7 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -62,6 +65,8 @@ public class DefaultRenderingManager implements RenderingManager {
 
     private WikiEngine m_engine;
     private boolean m_useCache = true;
+    /** If true, all titles will be cleaned. */
+    private boolean m_beautifyTitle = false;
 
     /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
     private static final int    DEFAULT_CACHESIZE     = 1_000;
@@ -95,6 +100,7 @@ public class DefaultRenderingManager implements RenderingManager {
         log.info( "Using " + m_markupParserClass + " as markup parser." );
 
         m_useCache = "true".equals( properties.getProperty( PageManager.PROP_USECACHE ) );
+        m_beautifyTitle  = TextUtil.getBooleanProperty( properties, PROP_BEAUTIFYTITLE, m_beautifyTitle );
 
         if( m_useCache ) {
             final String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;
@@ -135,6 +141,40 @@ public class DefaultRenderingManager implements RenderingManager {
             throw new WikiException( "Failed to get WikiRenderer '" + renderImplName + "'." );
         }
         return c;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String beautifyTitle( final String title ) {
+        if( m_beautifyTitle ) {
+            try {
+                final Attachment att = m_engine.getAttachmentManager().getAttachmentInfo( title );
+                if( att == null ) {
+                    return TextUtil.beautifyString( title );
+                }
+
+                final String parent = TextUtil.beautifyString( att.getParentName() );
+                return parent + "/" + att.getFileName();
+            } catch( final ProviderException e ) {
+                return title;
+            }
+        }
+
+        return title;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String beautifyTitleNoBreak( final String title ) {
+        if( m_beautifyTitle ) {
+            return TextUtil.beautifyString( title, "&nbsp;" );
+        }
+
+        return title;
     }
 
     /**
