@@ -848,11 +848,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
         try {
             final JSPWikiMarkupParser dtr = getCleanTranslator();
             dtr.setInputReader( new StringReader( title ) );
+            final WikiDocument doc = dtr.parse();
+            doc.setContext( m_context );
 
-            return XmlUtil.extractTextFromDocument( dtr.parse() );
+            return XmlUtil.extractTextFromDocument( doc );
         } catch( final IOException e ) {
-            log.fatal("CleanTranslator not working", e );
-            throw new InternalWikiException( "CleanTranslator not working as expected, when cleaning title"+ e.getMessage() , e );
+            log.fatal("Title parsing not working", e );
+            throw new InternalWikiException( "Xml text extraction not working as expected when cleaning title" + e.getMessage() , e );
         }
     }
 
