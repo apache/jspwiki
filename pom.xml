@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>21</version>
+    <version>22</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -39,6 +39,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.outputTimestamp>2019-01-13T19:30:00Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
     <jdk.version>1.8</jdk.version>
     <jdk.javadoc.doclet.version>1.1.4</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
@@ -78,7 +79,7 @@
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>1.8</plugin.antrun.version>
-    <plugin.assembly.version>3.1.1</plugin.assembly.version>
+    <plugin.assembly.version>3.2.0</plugin.assembly.version>
     <plugin.clean.version>3.1.0</plugin.clean.version>
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
     <plugin.dependency.version>3.1.1</plugin.dependency.version>
@@ -86,23 +87,23 @@
     <plugin.enforcer.version>1.4.1</plugin.enforcer.version>
     <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
-    <plugin.jar.version>3.1.2</plugin.jar.version>
+    <plugin.jar.version>3.2.0</plugin.jar.version>
     <plugin.javadoc.version>3.1.1</plugin.javadoc.version>
     <plugin.jxr.version>3.0.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.0.0</plugin.project-info-reports.version>
-    <plugin.release.version>2.5.3</plugin.release.version>
+    <plugin.release.version>3.0.0-M1</plugin.release.version>
     <plugin.resources.version>3.1.0</plugin.resources.version>
-    <plugin.source.version>3.1.0</plugin.source.version>
-    <plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
+    <plugin.source.version>3.2.1</plugin.source.version>
+    <plugin.surefire.version>3.0.0-M4</plugin.surefire.version>
     <plugin.war.version>3.2.3</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.1.0</plugin.jspc.version>
     <plugin.checksum.version>1.8</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.7.6</plugin.cargo.version>
+    <plugin.cargo.version>1.7.9</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
-    <plugin.sonar.version>3.6.0.1398</plugin.sonar.version>
+    <plugin.sonar.version>3.7.0.1746</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->
@@ -532,20 +533,6 @@
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <version>${plugin.release.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.scm</groupId>
-              <artifactId>maven-scm-api</artifactId>
-              <version>1.9.5</version>
-            </dependency>
-            <dependency>
-              <groupId>org.apache.maven.scm</groupId>
-              <artifactId>maven-scm-providers-standard</artifactId>
-              <version>1.9.5</version>
-              <type>pom</type>
-              <scope>runtime</scope>
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>
