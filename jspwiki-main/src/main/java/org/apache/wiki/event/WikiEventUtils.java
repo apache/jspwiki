@@ -20,7 +20,6 @@
 package org.apache.wiki.event;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.engine.FilterManager;
 
 /**
  *  A utility class that adds some JSPWiki-specific functionality to the
@@ -138,8 +137,7 @@ public class WikiEventUtils
                    || type == WikiPageEvent.POST_SAVE_END )
             {
                 // attach to FilterManager
-                FilterManager fm = ((WikiEngine)client).getFilterManager();
-                WikiEventManager.addWikiEventListener( fm, listener );
+                WikiEventManager.addWikiEventListener( ((WikiEngine)client).getFilterManager(), listener );
             }
             else //if (  type == WikiPageEvent.PRE_TRANSLATE
                  // || type == WikiPageEvent.POST_TRANSLATE

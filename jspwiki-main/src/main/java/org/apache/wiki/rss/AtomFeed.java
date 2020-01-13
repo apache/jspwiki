@@ -80,7 +80,7 @@ public class AtomFeed extends Feed
 
     private Collection<Element> getItems()
     {
-        ArrayList<Element> list = new ArrayList<Element>();
+        ArrayList<Element> list = new ArrayList<>();
 
         WikiEngine engine = m_wikiContext.getEngine();
         ServletContext servletContext = null;
@@ -88,59 +88,49 @@ public class AtomFeed extends Feed
         if( m_wikiContext.getHttpRequest() != null )
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
 
-        for( Iterator< Entry > i = m_entries.iterator(); i.hasNext(); )
-        {
-            Entry e = i.next();
-
+        for( Entry e : m_entries ) {
             WikiPage p = e.getPage();
 
-            Element entryEl = getElement("entry");
+            Element entryEl = getElement( "entry" );
 
             //
             //  Mandatory elements
             //
 
-            entryEl.addContent( getElement("id").setText( getEntryID(e)) );
-            entryEl.addContent( getElement("title").setAttribute("type","html").setText( e.getTitle() ));
-            entryEl.addContent( getElement("updated").setText( DateFormatUtils.formatUTC(p.getLastModified(),
-                                                                                         RFC3339FORMAT )));
+            entryEl.addContent( getElement( "id" ).setText( getEntryID( e ) ) );
+            entryEl.addContent( getElement( "title" ).setAttribute( "type", "html" ).setText( e.getTitle() ) );
+            entryEl.addContent( getElement( "updated" ).setText( DateFormatUtils.formatUTC( p.getLastModified(), RFC3339FORMAT ) ) );
             //
             //  Optional elements
             //
 
-            entryEl.addContent( getElement("author").addContent( getElement("name").setText( e.getAuthor() )));
-            entryEl.addContent( getElement("link").setAttribute("rel","alternate").setAttribute("href",e.getURL()));
-            entryEl.addContent( getElement("content").setAttribute("type","html").setText( e.getContent() ));
+            entryEl.addContent( getElement( "author" ).addContent( getElement( "name" ).setText( e.getAuthor() ) ) );
+            entryEl.addContent( getElement( "link" ).setAttribute( "rel", "alternate" ).setAttribute( "href", e.getURL() ) );
+            entryEl.addContent( getElement( "content" ).setAttribute( "type", "html" ).setText( e.getContent() ) );
 
             //
             //  Check for enclosures
             //
 
-            if( engine.getAttachmentManager().hasAttachments(p) && servletContext != null )
-            {
-                try
-                {
-                    List< Attachment > c = engine.getAttachmentManager().listAttachments(p);
+            if( engine.getAttachmentManager().hasAttachments( p ) && servletContext != null ) {
+                try {
+                    List<Attachment> c = engine.getAttachmentManager().listAttachments( p );
 
-                    for( Iterator< Attachment > a = c.iterator(); a.hasNext(); )
-                    {
+                    for( Iterator<Attachment> a = c.iterator(); a.hasNext(); ) {
                         Attachment att = a.next();
 
-                        Element attEl = getElement("link");
-                        attEl.setAttribute( "rel","enclosure" );
-                        attEl.setAttribute( "href", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
-                        attEl.setAttribute( "length", Long.toString(att.getSize()) );
+                        Element attEl = getElement( "link" );
+                        attEl.setAttribute( "rel", "enclosure" );
+                        attEl.setAttribute( "href", engine.getURL( WikiContext.ATTACH, att.getName(), null, true ) );
+                        attEl.setAttribute( "length", Long.toString( att.getSize() ) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 
                         entryEl.addContent( attEl );
                     }
-                }
-                catch( ProviderException ex )
-                {
+                } catch( ProviderException ex ) {
                     // FIXME: log.info("Can't get attachment data",ex);
                 }
             }
-
 
             list.add( entryEl );
         }
