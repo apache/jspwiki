@@ -18,15 +18,15 @@
  */
 package org.apache.wiki.parser;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -111,7 +111,7 @@ public class LinkParsingOperations {
      * @param link The link text
      * @return {@code true}, if this represents a variable link.
      */
-    public boolean isVariableLink( String link ) {
+    public boolean isVariableLink( final String link ) {
         return link.startsWith( "{$" );
     }
 
@@ -141,16 +141,10 @@ public class LinkParsingOperations {
      * @return true, if this is a link outside of this wiki.
      */
     public boolean isExternalLink( final String page ) {
-        int idx = Arrays.binarySearch( EXTERNAL_LINKS, page, new StartingComparator() );
+        final int idx = Arrays.binarySearch( EXTERNAL_LINKS, page, new StartingComparator() );
 
-        //
         // We need to check here once again; otherwise we might get a match for something like "h".
-        //
-        if( idx >= 0 && page.startsWith( EXTERNAL_LINKS[ idx ] ) ) {
-            return true;
-        }
-
-        return false;
+        return idx >= 0 && page.startsWith( EXTERNAL_LINKS[ idx ] );
     }
 
     /**
@@ -160,10 +154,10 @@ public class LinkParsingOperations {
     public boolean isImageLink( String link ) {
         if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link ).isImageInlining() ) {
             link = link.toLowerCase();
-            List< Pattern > inlineImagePatterns = wikiContext.getEngine().getRenderingManager()
-            		                                         .getParser( wikiContext, link ).getInlineImagePatterns();
+            final List< Pattern > inlineImagePatterns = wikiContext.getEngine().getRenderingManager()
+            	                                                   .getParser( wikiContext, link ).getInlineImagePatterns();
 
-            for( Pattern p : inlineImagePatterns ) {
+            for( final Pattern p : inlineImagePatterns ) {
                 if( new Perl5Matcher().matches( link, p ) ) {
                     return true;
                 }
@@ -185,7 +179,7 @@ public class LinkParsingOperations {
         }
         try {
             return wikiContext.getEngine().getFinalPageName( page ) != null;
-        } catch( ProviderException e ) {
+        } catch( final ProviderException e ) {
             log.warn( "TranslatorReader got a faulty page name [" + page + "]!", e );
             return false;
         }
@@ -203,23 +197,21 @@ public class LinkParsingOperations {
         }
         try {
             return wikiContext.getEngine().getFinalPageName( page );
-        } catch( ProviderException e ) {
+        } catch( final ProviderException e ) {
             log.warn( "TranslatorReader got a faulty page name [" + page + "]!", e );
             return null;
         }
     }
 
     /**
-     * Compares two Strings, and if one starts with the other, then returns null. Otherwise just like the normal Comparator for strings.
-     *
-     * @since
+     * Compares two Strings, and if one starts with the other, then returns 0. Otherwise just like the normal Comparator for strings.
      */
     private static class StartingComparator implements Comparator< String > {
 
         /**
          * {@inheritDoc}
          *
-         * @see Comparator#compare(String, String)
+         * @see Comparator#compare(Object, Object)
          */
         @Override
         public int compare( final String s1, final String s2 ) {

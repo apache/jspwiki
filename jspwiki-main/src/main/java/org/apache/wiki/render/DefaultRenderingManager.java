@@ -60,14 +60,6 @@ public class DefaultRenderingManager implements RenderingManager {
 
     private static final Logger log = Logger.getLogger( DefaultRenderingManager.class );
 
-    private final int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
-    private final CacheManager m_cacheManager = CacheManager.getInstance();
-
-    private WikiEngine m_engine;
-    private boolean m_useCache = true;
-    /** If true, all titles will be cleaned. */
-    private boolean m_beautifyTitle = false;
-
     /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
     private static final int    DEFAULT_CACHESIZE     = 1_000;
     private static final String VERSION_DELIMITER     = "::";
@@ -78,6 +70,15 @@ public class DefaultRenderingManager implements RenderingManager {
     private static final String DEFAULT_RENDERER = XHTMLRenderer.class.getName();
     /** The name of the default WYSIWYG renderer. */
     private static final String DEFAULT_WYSIWYG_RENDERER = WysiwygEditingRenderer.class.getName();
+
+    private WikiEngine m_engine;
+
+    private boolean m_useCache = true;
+    private final CacheManager m_cacheManager = CacheManager.getInstance();
+    private final int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
+
+    /** If true, all titles will be cleaned. */
+    private boolean m_beautifyTitle = false;
 
     /** Stores the WikiDocuments that have been cached. */
     private Cache m_documentCache;
@@ -99,8 +100,8 @@ public class DefaultRenderingManager implements RenderingManager {
         }
         log.info( "Using " + m_markupParserClass + " as markup parser." );
 
-        m_useCache = "true".equals( properties.getProperty( PageManager.PROP_USECACHE ) );
         m_beautifyTitle  = TextUtil.getBooleanProperty( properties, PROP_BEAUTIFYTITLE, m_beautifyTitle );
+        m_useCache = "true".equals( properties.getProperty( PageManager.PROP_USECACHE ) );
 
         if( m_useCache ) {
             final String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;

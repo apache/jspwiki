@@ -135,7 +135,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     log.debug("actionName="+actionName);
                     final Object params = req.getParameter("params");
                     log.debug("params="+params);
-                    List<String> paramValues = new ArrayList<String>();
+                    List<String> paramValues = new ArrayList<>();
                     if (params instanceof String) {
                         final String paramString = (String)params;
                         if (StringUtils.isNotBlank(paramString)) {

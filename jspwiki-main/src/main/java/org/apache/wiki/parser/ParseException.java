@@ -21,12 +21,10 @@ package org.apache.wiki.parser;
 import org.apache.wiki.api.exceptions.WikiException;
 
 /**
- *  This is an exception which gets thrown whenever the parser cannot
- *  parse the parsing things.
- *
+ *  This is an exception which gets thrown whenever the parser cannot parse the parsing things.
  */
-public class ParseException extends WikiException
-{
+public class ParseException extends WikiException {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -34,9 +32,9 @@ public class ParseException extends WikiException
      *
      *  @param msg the message exception.
      */
-    public ParseException(String msg)
+    public ParseException( final String msg )
     {
-        super(msg);
+        super( msg );
     }
 
 }

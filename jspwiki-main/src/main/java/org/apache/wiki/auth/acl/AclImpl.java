@@ -32,7 +32,7 @@ import java.util.Vector;
 public class AclImpl implements Acl, Serializable
 {
     private static final long serialVersionUID = 1L;
-    private final Vector<AclEntry> m_entries = new Vector<AclEntry>();
+    private final Vector<AclEntry> m_entries = new Vector<>();
 
     /**
      * Constructs a new AclImpl instance.
@@ -42,53 +42,44 @@ public class AclImpl implements Acl, Serializable
     }
     
     /**
-     * Returns all Principal objects assigned a given Permission in the access
-     * control list. The Principals returned are those that have been granted
-     * either the supplied permission, or a permission implied by the supplied
-     * permission. Principals are not "expanded" if they are a role or group.
+     * Returns all Principal objects assigned a given Permission in the access control list. The Principals returned are those that have
+     * been granted either the supplied permission, or a permission implied by the supplied permission. Principals are not "expanded" if
+     * they are a role or group.
+     *
      * @param permission the permission to search for
      * @return an array of Principals possessing the permission
      */
-    public Principal[] findPrincipals( Permission permission )
-    {
-        Vector<Principal> principals = new Vector<Principal>();
-        Enumeration<AclEntry> entries = entries();
+    public Principal[] findPrincipals( final Permission permission ) {
+        final Vector< Principal > principals = new Vector<>();
+        final Enumeration< AclEntry > entries = entries();
         
-        while (entries.hasMoreElements()) 
-        {
-            AclEntry entry = entries.nextElement();
-            Enumeration<Permission> permissions = entry.permissions();
-            while ( permissions.hasMoreElements() ) 
-            {
-                Permission perm = permissions.nextElement();
-                if ( perm.implies( permission ) ) 
-                {
+        while( entries.hasMoreElements() ) {
+            final AclEntry entry = entries.nextElement();
+            final Enumeration< Permission > permissions = entry.permissions();
+            while( permissions.hasMoreElements() ) {
+                final Permission perm = permissions.nextElement();
+                if ( perm.implies( permission ) ) {
                     principals.add( entry.getPrincipal() );
                 }
             }
         }
-        return principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[ principals.size() ] );
     }
   
-    private boolean hasEntry( AclEntry entry )
-    {
-        if( entry == null )
-        {
+    private boolean hasEntry( final AclEntry entry ) {
+        if( entry == null ) {
             return false;
         }
 
-        for( AclEntry e : m_entries )
-        {
-            Principal ep     = e.getPrincipal();
-            Principal entryp = entry.getPrincipal();
+        for( final AclEntry e : m_entries ) {
+            final Principal ep     = e.getPrincipal();
+            final Principal entryp = entry.getPrincipal();
 
-            if( ep == null || entryp == null )
-            {
+            if( ep == null || entryp == null ) {
                 throw new IllegalArgumentException( "Entry is null; check code, please (entry="+entry+"; e="+e+")" );
             }
             
-            if( ep.getName().equals( entryp.getName() ) )
-            {
+            if( ep.getName().equals( entryp.getName() ) ) {
                 return true;
             }
         }
@@ -97,24 +88,20 @@ public class AclImpl implements Acl, Serializable
     }
 
     /**
-     * Adds an ACL entry to this ACL. An entry associates a principal (e.g., an
-     * individual or a group) with a set of permissions. Each principal can have
-     * at most one positive ACL entry, specifying permissions to be granted to
-     * the principal. If there is already an ACL entry already in the ACL, false
-     * is returned.
+     * Adds an ACL entry to this ACL. An entry associates a principal (e.g., an individual or a group) with a set of permissions. Each
+     * principal can have at most one positive ACL entry, specifying permissions to be granted to the principal. If there is already an
+     * ACL entry already in the ACL, false is returned.
+     *
      * @param entry - the ACL entry to be added to this ACL
-     * @return true on success, false if an entry of the same type (positive or
-     *         negative) for the same principal is already present in this ACL
+     * @return true on success, false if an entry of the same type (positive or negative) for the same principal is already present in
+     * this ACL
      */
-    public synchronized boolean addEntry( AclEntry entry )
-    {
-        if( entry.getPrincipal() == null )
-        {
+    public synchronized boolean addEntry( final AclEntry entry ) {
+        if( entry.getPrincipal() == null ) {
             throw new IllegalArgumentException( "Entry principal cannot be null" );
         }
 
-        if( hasEntry( entry ) )
-        {
+        if( hasEntry( entry ) ) {
             return false;
         }
         
@@ -128,7 +115,7 @@ public class AclImpl implements Acl, Serializable
      * @param entry the ACL entry to be removed from this ACL
      * @return true on success, false if the entry is not part of this ACL
      */
-    public synchronized boolean removeEntry( AclEntry entry )
+    public synchronized boolean removeEntry( final AclEntry entry )
     {
         return m_entries.remove( entry );
     }
@@ -144,17 +131,14 @@ public class AclImpl implements Acl, Serializable
     }
 
     /**
-     * Returns an AclEntry for a supplied Principal, or <code>null</code> if
-     * the Principal does not have a matching AclEntry.
+     * Returns an AclEntry for a supplied Principal, or <code>null</code> if the Principal does not have a matching AclEntry.
+     *
      * @param principal the principal to search for
      * @return the AclEntry associated with the principal, or <code>null</code>
      */
-    public AclEntry getEntry( Principal principal )
-    {
-        for( AclEntry entry : m_entries )
-        {
-            if( entry.getPrincipal().getName().equals( principal.getName() ) )
-            {
+    public AclEntry getEntry( final Principal principal ) {
+        for( final AclEntry entry : m_entries ) {
+            if( entry.getPrincipal().getName().equals( principal.getName() ) ) {
                 return entry;
             }
         }
@@ -164,25 +148,21 @@ public class AclImpl implements Acl, Serializable
 
     /**
      * Returns a string representation of the contents of this Acl.
+     *
      * @return the string representation
      */
-    public String toString()
-    {
-    	StringBuilder sb = new StringBuilder();
-
-        for( AclEntry entry : m_entries )
-        {
-            Principal pal = entry.getPrincipal();
-
-            if( pal != null )
-                sb.append( "  user = "+pal.getName()+": " );
-            else
+    public String toString() {
+    	final StringBuilder sb = new StringBuilder();
+        for( final AclEntry entry : m_entries ) {
+            final Principal pal = entry.getPrincipal();
+            if( pal != null ) {
+                sb.append( "  user = " ).append( pal.getName() ).append( ": " );
+            } else {
                 sb.append( "  user = null: " );
-
+            }
             sb.append( "(" );
-            for( Enumeration<Permission> perms = entry.permissions(); perms.hasMoreElements(); )
-            {
-                Permission perm = perms.nextElement();
+            for( final Enumeration< Permission > perms = entry.permissions(); perms.hasMoreElements(); ) {
+                final Permission perm = perms.nextElement();
                 sb.append( perm.toString() );
             }
             sb.append( ")\n" );
@@ -193,11 +173,11 @@ public class AclImpl implements Acl, Serializable
 
     /**
      * Returns <code>true</code>, if this Acl is empty.
+     *
      * @return the result
      * @since 2.4.68
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return m_entries.isEmpty();
     }
 

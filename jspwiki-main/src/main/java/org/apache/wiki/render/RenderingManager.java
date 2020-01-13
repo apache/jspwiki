@@ -77,7 +77,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @return A beautified title (or, if beautification is off, returns the title without modification)
      *  @since 1.7.11, moved to PageManager on 2.11.0
      */
-    String beautifyTitle( final String title );
+    String beautifyTitle( String title );
 
     /**
      *  Beautifies the title of the page by appending non-breaking spaces in suitable places.  This is really suitable only for HTML output,
@@ -87,7 +87,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @return A beautified title.
      *  @since 2.1.127
      */
-    String beautifyTitleNoBreak( final String title );
+    String beautifyTitleNoBreak( String title );
 
     /**
      *  Returns the wiki Parser
