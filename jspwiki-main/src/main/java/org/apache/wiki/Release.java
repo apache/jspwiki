@@ -24,15 +24,14 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *  Contains release and version information.  You may also invoke this class directly, in which case it prints
- *  out the version string.  This is a handy way of checking which JSPWiki version you have - just type
- *  from a command line:
+ *  out the version string.  This is a handy way of checking which JSPWiki version you have - just type from a command line:
  *  <pre>
  *  % java -cp JSPWiki.jar org.apache.wiki.Release
  *  2.5.38
  *  </pre>
  *  <p>
- *  As a historical curiosity, this is the oldest JSPWiki file.  According to the CVS history, it dates from 6.7.2001,
- *  and it really hasn't changed much since.
+ *  As a historical curiosity, this is the oldest JSPWiki file.  According to the CVS history, it dates from 6.7.2001, and it really hasn't
+ *  changed much since.
  *  </p>
  *  @since  1.0
  */
@@ -46,9 +45,8 @@ public final class Release {
     public static final String     APPNAME       = "JSPWiki";
 
     /**
-     *  This should be empty when doing a release - otherwise keep it as "cvs" so that whenever someone checks
-     *  out the code, they know it is a bleeding-edge version.  Other possible values are "alpha" and "beta" for
-     *  alpha and beta versions, respectively.
+     *  This should be empty when doing a release - otherwise keep it as "cvs" so that whenever someone checks out the code, they know
+     *  it is a bleeding-edge version.  Other possible values are "alpha" and "beta" for alpha and beta versions, respectively.
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
@@ -63,9 +61,8 @@ public final class Release {
     /** The minor revision.  */
     public static final int        MINORREVISION = 0;
 
-    /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add
-     *  other identifiers to it.  The build number is incremented every time a committer checks in code, and reset
-     *  when the a release is made.
+    /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add other identifiers to it.
+     * The build number is incremented every time a committer checks in code, and reset when the a release is made.
      *  <p>
      *  If you are a person who likes to build his own releases, we recommend that you add your initials to this
      *  identifier (e.g. "13-jj", or 49-aj").
@@ -78,18 +75,18 @@ public final class Release {
      *  This is the generic version string you should use when printing out the version.  It is of
      *  the form "VERSION.REVISION.MINORREVISION[-POSTFIX][-BUILD]".
      */
-    public static final String     VERSTR        =
-        VERSION+"."+REVISION+"."+MINORREVISION+ ((POSTFIX.length() != 0 ) ? "-"+POSTFIX : "") + ((BUILD.length() != 0 ? "-"+BUILD : ""));
+    public static final String     VERSTR        = VERSION + "." +
+                                                   REVISION + "." +
+                                                   MINORREVISION +
+                                                   ( POSTFIX.length() != 0 ? "-" + POSTFIX : "" ) +
+                                                   ( BUILD.length() != 0 ? "-" + BUILD : "" );
 
-    /**
-     *  Private constructor prevents instantiation.
-     */
+    /** Private constructor prevents instantiation. */
     private Release() {
     }
 
     /**
-     *  This method is useful for templates, because hopefully it will
-     *  not be inlined, and thus any change to version number does not
+     *  This method is useful for templates, because hopefully it will not be inlined, and thus any change to version number does not
      *  need recompiling the pages.
      *
      *  @since 2.1.26.
@@ -101,32 +98,30 @@ public final class Release {
 
     /**
      *  Returns true, if this version of JSPWiki is newer or equal than what is requested.
+     *
      *  @param version A version parameter string (a.b.c-something). B and C are optional.
      *  @return A boolean value describing whether the given version is newer than the current JSPWiki.
      *  @since 2.4.57
      *  @throws IllegalArgumentException If the version string could not be parsed.
      */
-    public static boolean isNewerOrEqual( String version ) throws IllegalArgumentException {
+    public static boolean isNewerOrEqual( final String version ) throws IllegalArgumentException {
         if( version == null ) {
         	return true;
         }
-        String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
-        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
-        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
-        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
+        final String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
+        final int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
+        final int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
+        final int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
 
         if( VERSION == reqVersion ) {
             if( REVISION == reqRevision ) {
                 if( MINORREVISION == reqMinorRevision ) {
                     return true;
                 }
-
                 return MINORREVISION > reqMinorRevision;
             }
-
             return REVISION > reqRevision;
         }
-
         return VERSION > reqVersion;
     }
 
@@ -138,28 +133,25 @@ public final class Release {
      *  @since 2.4.57
      *  @throws IllegalArgumentException If the version string could not be parsed.
      */
-    public static boolean isOlderOrEqual( String version ) throws IllegalArgumentException {
+    public static boolean isOlderOrEqual( final String version ) throws IllegalArgumentException {
         if( version == null ) {
         	return true;
         }
 
-        String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
-        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
-        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
-        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
+        final String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
+        final int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
+        final int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
+        final int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
 
         if( VERSION == reqVersion ) {
             if( REVISION == reqRevision ) {
                 if( MINORREVISION == reqMinorRevision ) {
                     return true;
                 }
-
                 return MINORREVISION < reqMinorRevision;
             }
-
             return REVISION < reqRevision;
         }
-
         return VERSION < reqVersion;
     }
 
@@ -174,8 +166,8 @@ public final class Release {
      *
      *  @param argv The argument string.  This class takes in no arguments.
      */
-    public static void main( String[] argv ) {
-        System.out.println(VERSTR);
+    public static void main( final String[] argv ) {
+        System.out.println( VERSTR );
     }
 
 }
