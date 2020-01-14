@@ -18,24 +18,20 @@
  */
 package org.apache.wiki.modules;
 
+import org.apache.wiki.util.FileUtil;
+import org.jdom2.Element;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import org.jdom2.Element;
-
-import org.apache.wiki.util.FileUtil;
-
 /**
- *  A WikiModule describes whatever JSPWiki plugin there is: it can be a plugin,
- *  an editor, a filter, etc.
+ *  A WikiModule describes whatever JSPWiki plugin there is: it can be a plugin, an editor, a filter, etc.
  *
  *  @since 2.4
  */
-public class WikiModuleInfo
-    implements Comparable<WikiModuleInfo>
-{
+public class WikiModuleInfo implements Comparable< WikiModuleInfo > {
     protected String m_name;
     protected String m_description;
     protected String m_moduleUrl;
@@ -57,22 +53,20 @@ public class WikiModuleInfo
      *  
      *  @param name The name of the module.
      */
-    public WikiModuleInfo( String name ) {
+    public WikiModuleInfo( final String name ) {
         m_name = name;
     }
     
     /**
-     *  The WikiModuleInfo is equal to another WikiModuleInfo, if the name is equal.  All
-     *  objects are unique across JSPWiki.
+     *  The WikiModuleInfo is equal to another WikiModuleInfo, if the name is equal.  All objects are unique across JSPWiki.
      *  
      *  @param obj {@inheritDoc}
      *  @return {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if( obj instanceof WikiModuleInfo )
-        {
-            return ((WikiModuleInfo)obj).m_name.equals( m_name );
+    public boolean equals( final Object obj) {
+        if( obj instanceof WikiModuleInfo ) {
+            return ( ( WikiModuleInfo )obj ).m_name.equals( m_name );
         }
         
         return false;
@@ -87,12 +81,11 @@ public class WikiModuleInfo
     }
 
     /**
-     *  Initializes the ModuleInfo from some standard XML elements
-     *  which are under the given element.
+     *  Initializes the ModuleInfo from some standard XML elements which are under the given element.
      *  
      *  @param el The element to parse.
      */
-    protected void initializeFromXML( Element el ) {
+    protected void initializeFromXML( final Element el ) {
     	m_description        = el.getChildText("description");
     	m_moduleUrl          = el.getChildText("url");
     	m_moduleVersion      = el.getChildText("version");
@@ -116,9 +109,8 @@ public class WikiModuleInfo
     }
     
     /**
-     *  Returns the common name for this particular module.  Note that
-     *  this is not the class name, nor is it an alias.  For different modules
-     *  the name may have different meanings.
+     *  Returns the common name for this particular module.  Note that this is not the class name, nor is it an alias.
+     *  For different modules the name may have different meanings.
      *  <p>
      *  Every module defines a name, so this method should never return null.
      *  
@@ -223,11 +215,8 @@ public class WikiModuleInfo
      *  
      *  @throws IOException if the JAR file or the resource cannot be read
      */
-    protected String getTextResource(String resourceLocation) 
-        throws IOException
-    {
-        if(m_resource == null)
-        {
+    protected String getTextResource( final String resourceLocation ) throws IOException {
+        if( m_resource == null ) {
             return "";
         }
     
@@ -236,34 +225,27 @@ public class WikiModuleInfo
         //   could have the same name of the resourceLocation!
         //   (2 plugins could have their stylesheet-files in 'ini/jspwiki.css')
     
-        // So try to construct a resource that loads this resource from the
-        //   same jar-file.
+        // So try to construct a resource that loads this resource from the same jar-file.
         String spec = m_resource.toString();
     
-        // Replace the 'PLUGIN_RESOURCE_LOCATION' with the requested
-        //   resourceLocation.
-        int length = ModuleManager.PLUGIN_RESOURCE_LOCATION.length();
-        spec = spec.substring(0, spec.length() - length) + resourceLocation;
+        // Replace the 'PLUGIN_RESOURCE_LOCATION' with the requested resourceLocation.
+        final int length = ModuleManager.PLUGIN_RESOURCE_LOCATION.length();
+        spec = spec.substring( 0, spec.length() - length ) + resourceLocation;
     
-        URL url = new URL(spec);
-        BufferedInputStream   in  = new BufferedInputStream(url.openStream());
-        ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-        
-        FileUtil.copyContents( in, out );
-    
-        in.close();
-        String text = out.toString();
-        out.close();
-        
-        return text;
+        final URL url = new URL( spec );
+        try( final BufferedInputStream in = new BufferedInputStream( url.openStream() );
+             final ByteArrayOutputStream out = new ByteArrayOutputStream(1024) ) {
+            FileUtil.copyContents( in, out );
+            return out.toString();
+        }
     }
 
     /**
      *  {@inheritDoc}
      */
-    public int compareTo(WikiModuleInfo arg0)
+    public int compareTo( final WikiModuleInfo mod )
     {
-        return m_name.compareTo( arg0.getName() );
+        return m_name.compareTo( mod.getName() );
     }
 
 }
