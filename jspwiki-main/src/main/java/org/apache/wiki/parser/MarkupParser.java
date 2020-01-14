@@ -35,7 +35,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -67,7 +66,7 @@ public abstract class MarkupParser
     protected List< Pattern > m_inlineImagePatterns = null;
     protected LinkParsingOperations m_linkParsingOperations;
 
-    private static Logger log = Logger.getLogger( MarkupParser.class );
+    private static final Logger log = Logger.getLogger( MarkupParser.class );
 
     /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
         this is a VERY dangerous option to set - never turn this on in a publicly
@@ -290,12 +289,10 @@ public abstract class MarkupParser
             //
             //  Make them into Regexp Patterns.  Unknown patterns are ignored.
             //
-            for( Iterator< String > i = ptrns.iterator(); i.hasNext(); ) {
-            	String pattern = i.next();
+            for( final String pattern : ptrns ) {
                 try {
-                    compiledpatterns.add( compiler.compile( pattern,
-                                                            GlobCompiler.DEFAULT_MASK | GlobCompiler.READ_ONLY_MASK ) );
-                } catch( MalformedPatternException e ) {
+                    compiledpatterns.add( compiler.compile( pattern, GlobCompiler.DEFAULT_MASK | GlobCompiler.READ_ONLY_MASK ) );
+                } catch( final MalformedPatternException e ) {
                     log.error( "Malformed pattern [" + pattern + "] in properties: ", e );
                 }
             }
@@ -474,9 +471,9 @@ public abstract class MarkupParser
      *  @return A cleaned link.
      *  @since 2.6
      */
-    public static String wikifyLink(String link)
+    public static String wikifyLink( final String link )
     {
-        return MarkupParser.cleanLink(link, MarkupParser.LEGACY_CHARS_ALLOWED);
+        return MarkupParser.cleanLink(link, LEGACY_CHARS_ALLOWED);
     }
 
 }
