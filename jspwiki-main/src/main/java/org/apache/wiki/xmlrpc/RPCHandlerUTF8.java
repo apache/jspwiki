@@ -175,7 +175,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
         final WikiContext context = new WikiContext( m_engine, page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
-        m_engine.textToHTML( context, pagedata, localCollector, extCollector, attCollector );
+        m_engine.getRenderingManager().textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
         final Vector< Hashtable< String, String > > result = new Vector<>();
 

@@ -50,7 +50,7 @@ public class RPCHandler extends AbstractRPCHandler {
     /**
      *  Converts Java string into RPC string.
      */
-    private String toRPCString( String src )
+    private String toRPCString( final String src )
     {
         return TextUtil.urlEncodeUTF8( src );
     }
@@ -58,7 +58,7 @@ public class RPCHandler extends AbstractRPCHandler {
     /**
      *  Converts RPC string (UTF-8, url encoded) into Java string.
      */
-    private String fromRPCString( String src )
+    private String fromRPCString( final String src )
     {
         return TextUtil.urlDecodeUTF8( src );
     }
@@ -66,7 +66,7 @@ public class RPCHandler extends AbstractRPCHandler {
     /**
      *  Transforms a Java string into UTF-8.
      */
-    private byte[] toRPCBase64( String src )
+    private byte[] toRPCBase64( final String src )
     {
         return src.getBytes( StandardCharsets.UTF_8 );
     }
@@ -76,10 +76,10 @@ public class RPCHandler extends AbstractRPCHandler {
         return toRPCString(m_engine.getApplicationName());
     }
 
-    public Vector getAllPages() {
+    public Vector< String > getAllPages() {
         checkPermission( PagePermission.VIEW );
-        Collection< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
-        Vector<String> result = new Vector<>();
+        final Collection< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Vector< String > result = new Vector<>();
 
         for( final WikiPage p : pages ) {
             if( !( p instanceof Attachment ) ) {
@@ -94,13 +94,11 @@ public class RPCHandler extends AbstractRPCHandler {
      *  Encodes a single wiki page info into a Hashtable.
      */
     @Override
-    protected Hashtable<String,Object> encodeWikiPage( WikiPage page )
-    {
-        Hashtable<String, Object> ht = new Hashtable<>();
-
+    protected Hashtable<String,Object> encodeWikiPage( final WikiPage page ) {
+        final Hashtable<String, Object> ht = new Hashtable<>();
         ht.put( "name", toRPCString(page.getName()) );
 
-        Date d = page.getLastModified();
+        final Date d = page.getLastModified();
 
         //
         //  Here we reset the DST and TIMEZONE offsets of the
@@ -109,25 +107,27 @@ public class RPCHandler extends AbstractRPCHandler {
         //  from the XML-RPC thingy, except to manually adjust the date.
         //
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( d );
         cal.add( Calendar.MILLISECOND,
                  - (cal.get( Calendar.ZONE_OFFSET ) +
-                    (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
+                    (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
 
         ht.put( "lastModified", cal.getTime() );
         ht.put( "version", page.getVersion() );
 
-        if( page.getAuthor() != null )
-        {
-            ht.put( "author", toRPCString(page.getAuthor()) );
+        if( page.getAuthor() != null ) {
+            ht.put( "author", toRPCString( page.getAuthor() ) );
         }
 
         return ht;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector getRecentChanges( Date since ) {
+    public Vector< Hashtable< String, Object > > getRecentChanges( Date since ) {
         checkPermission( PagePermission.VIEW );
         final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
         final Vector< Hashtable< String, Object > > result = new Vector<>();
@@ -160,33 +160,26 @@ public class RPCHandler extends AbstractRPCHandler {
      *  @return Real page name, as Java string.
      *  @throws XmlRpcException, if there is something wrong with the page.
      */
-    private String parsePageCheckCondition( String pagename )
-        throws XmlRpcException
-    {
+    private String parsePageCheckCondition( String pagename ) throws XmlRpcException {
         pagename = fromRPCString( pagename );
 
-        if( !m_engine.getPageManager().wikiPageExists(pagename) )
-        {
+        if( !m_engine.getPageManager().wikiPageExists(pagename) ) {
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
-        WikiPage p = m_engine.getPageManager().getPage( pagename );
+        final WikiPage p = m_engine.getPageManager().getPage( pagename );
 
         checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
 
         return pagename;
     }
 
-    public Hashtable getPageInfo( String pagename )
-        throws XmlRpcException
-    {
+    public Hashtable getPageInfo( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
         return encodeWikiPage( m_engine.getPageManager().getPage(pagename) );
     }
 
-    public Hashtable getPageInfoVersion( String pagename, int version )
-        throws XmlRpcException
-    {
+    public Hashtable getPageInfoVersion( String pagename, int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
@@ -197,17 +190,13 @@ public class RPCHandler extends AbstractRPCHandler {
         return toRPCBase64( text );
     }
 
-    public byte[] getPageVersion( String pagename, int version )
-        throws XmlRpcException
-    {
+    public byte[] getPageVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return toRPCBase64( m_engine.getPageManager().getPureText( pagename, version ) );
     }
 
-    public byte[] getPageHTML( String pagename )
-        throws XmlRpcException
-    {
+    public byte[] getPageHTML( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return toRPCBase64( m_engine.getHTML( pagename ) );
@@ -219,28 +208,28 @@ public class RPCHandler extends AbstractRPCHandler {
         return toRPCBase64( m_engine.getHTML( pagename, version ) );
     }
 
-    public Vector listLinks( String pagename ) throws XmlRpcException {
+    public Vector< Hashtable< String, String > > listLinks( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        WikiPage page = m_engine.getPageManager().getPage( pagename );
-        String pagedata = m_engine.getPageManager().getPureText( page );
+        final WikiPage page = m_engine.getPageManager().getPage( pagename );
+        final String pagedata = m_engine.getPageManager().getPureText( page );
 
-        LinkCollector localCollector = new LinkCollector();
-        LinkCollector extCollector   = new LinkCollector();
-        LinkCollector attCollector   = new LinkCollector();
+        final LinkCollector localCollector = new LinkCollector();
+        final LinkCollector extCollector   = new LinkCollector();
+        final LinkCollector attCollector   = new LinkCollector();
 
-        WikiContext context = new WikiContext( m_engine, page );
+        final WikiContext context = new WikiContext( m_engine, page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
-        m_engine.textToHTML( context, pagedata, localCollector, extCollector, attCollector );
+        m_engine.getRenderingManager().textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
-        Vector<Hashtable<String, String>> result = new Vector<>();
+        final Vector< Hashtable< String, String > > result = new Vector<>();
 
         //
         //  Add local links.
         //
         for( final String link : localCollector.getLinks() ) {
-            Hashtable<String, String> ht = new Hashtable<>();
+            final Hashtable< String, String > ht = new Hashtable<>();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
 
@@ -266,8 +255,8 @@ public class RPCHandler extends AbstractRPCHandler {
         //
         // Add links to inline attachments
         //
-        for( String link : attCollector.getLinks() ) {
-            Hashtable<String, String> ht = new Hashtable<>();
+        for( final String link : attCollector.getLinks() ) {
+            final Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
             ht.put( "href", context.getURL( WikiContext.ATTACH, link ) );
@@ -277,8 +266,8 @@ public class RPCHandler extends AbstractRPCHandler {
         //
         // External links don't need to be changed into XML-RPC strings, simply because URLs are by definition ASCII.
         //
-        for( String link : extCollector.getLinks() ) {
-            Hashtable<String, String> ht = new Hashtable<>();
+        for( final String link : extCollector.getLinks() ) {
+            final Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );
             ht.put( "href", link );

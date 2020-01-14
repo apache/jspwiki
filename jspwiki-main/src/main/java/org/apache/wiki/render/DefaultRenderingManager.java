@@ -21,9 +21,12 @@ package org.apache.wiki.render;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
+import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
@@ -38,6 +41,7 @@ import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.variables.VariableManager;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -260,6 +264,69 @@ public class DefaultRenderingManager implements RenderingManager {
         }
 
         return rend.getString();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public String textToHTML( final WikiContext context,
+                              String pagedata,
+                              final StringTransmutator localLinkHook,
+                              final StringTransmutator extLinkHook,
+                              final StringTransmutator attLinkHook,
+                              final boolean parseAccessRules,
+                              final boolean justParse ) {
+        String result = "";
+
+        if( pagedata == null ) {
+            log.error("NULL pagedata to textToHTML()");
+            return null;
+        }
+
+        final boolean runFilters = "true".equals( m_engine.getVariableManager().getValue( context, VariableManager.VAR_RUNFILTERS,"true" ) );
+
+        try {
+            final StopWatch sw = new StopWatch();
+            sw.start();
+
+            if( runFilters && m_engine.getFilterManager() != null ) {
+                pagedata = m_engine.getFilterManager().doPreTranslateFiltering( context, pagedata );
+            }
+
+            final MarkupParser mp = getParser( context, pagedata );
+            mp.addLocalLinkHook( localLinkHook );
+            mp.addExternalLinkHook( extLinkHook );
+            mp.addAttachmentLinkHook( attLinkHook );
+
+            if( !parseAccessRules ) {
+                mp.disableAccessRules();
+            }
+
+            final WikiDocument doc = mp.parse();
+
+            //  In some cases it's better just to parse, not to render
+            if( !justParse ) {
+                result = getHTML( context, doc );
+
+                if( runFilters && m_engine.getFilterManager() != null ) {
+                    result = m_engine.getFilterManager().doPostTranslateFiltering( context, result );
+                }
+            }
+
+            sw.stop();
+
+            if( log.isDebugEnabled() ) {
+                log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
+            }
+        } catch( final IOException e ) {
+            log.error( "Failed to scan page data: ", e );
+        } catch( final FilterException e ) {
+            log.error( "page filter threw exception: ", e );
+            // FIXME: Don't yet know what to do
+        }
+
+        return result;
     }
 
     /**

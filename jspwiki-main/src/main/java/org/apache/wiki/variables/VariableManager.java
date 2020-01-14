@@ -32,6 +32,9 @@ public interface VariableManager {
     String VAR_ERROR = "error";
     String VAR_MSG   = "msg";
 
+    /** If this variable is set to false, all filters are disabled when translating. */
+    String VAR_RUNFILTERS   = "jspwiki.runFilters";
+
     /**
      *  Parses the link and finds a value.  This is essentially used once
      *  {@link org.apache.wiki.parser.LinkParsingOperations#isVariableLink(String) LinkParsingOperations#isVariableLink(String)}

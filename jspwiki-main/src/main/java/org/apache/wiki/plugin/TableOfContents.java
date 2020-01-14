@@ -31,6 +31,7 @@ import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.variables.VariableManager;
 
 import java.io.IOException;
 import java.util.Map;
@@ -216,7 +217,7 @@ public class TableOfContents
 
         try {
             String wikiText = engine.getPageManager().getPureText( page );
-            final boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, WikiEngine.PROP_RUNFILTERS, "true" ) );
+            final boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, VariableManager.VAR_RUNFILTERS, "true" ) );
 
             if( runFilters ) {
 				try {

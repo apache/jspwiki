@@ -43,7 +43,6 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
@@ -67,7 +66,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -159,9 +157,6 @@ public class WikiEngine  {
 
     /** Property name for setting the url generator instance */
     public static final String PROP_URLCONSTRUCTOR = "jspwiki.urlConstructor";
-
-    /** If this property is set to false, all filters are disabled when translating. */
-    public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
 
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
@@ -976,7 +971,7 @@ public class WikiEngine  {
     public String textToHTML( final WikiContext context, String pagedata ) {
         String result = "";
 
-        final boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
+        final boolean runFilters = "true".equals(m_variableManager.getValue(context,VariableManager.VAR_RUNFILTERS,"true"));
 
         final StopWatch sw = new StopWatch();
         sw.start();
@@ -1009,113 +1004,6 @@ public class WikiEngine  {
     protected void shutdown() {
         fireEvent( WikiEngineEvent.SHUTDOWN );
         m_filterManager.destroy();
-    }
-
-    /**
-     *  Just convert WikiText to HTML.
-     *
-     *  @param context The WikiContext in which to do the conversion
-     *  @param pagedata The data to render
-     *  @param localLinkHook Is called whenever a wiki link is found
-     *  @param extLinkHook   Is called whenever an external link is found
-     *
-     *  @return HTML-rendered page text.
-     */
-
-    public String textToHTML( final WikiContext context,
-                              final String pagedata,
-                              final StringTransmutator localLinkHook,
-                              final StringTransmutator extLinkHook ) {
-        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null, true, false );
-    }
-
-    /**
-     *  Just convert WikiText to HTML.
-     *
-     *  @param context The WikiContext in which to do the conversion
-     *  @param pagedata The data to render
-     *  @param localLinkHook Is called whenever a wiki link is found
-     *  @param extLinkHook   Is called whenever an external link is found
-     *  @param attLinkHook   Is called whenever an attachment link is found
-     *  @return HTML-rendered page text.
-     */
-
-    public String textToHTML( final WikiContext context,
-                              final String pagedata,
-                              final StringTransmutator localLinkHook,
-                              final StringTransmutator extLinkHook,
-                              final StringTransmutator attLinkHook ) {
-        return textToHTML( context, pagedata, localLinkHook, extLinkHook, attLinkHook, true, false );
-    }
-
-    /**
-     *  Helper method for doing the HTML translation.
-     *
-     *  @param context The WikiContext in which to do the conversion
-     *  @param pagedata The data to render
-     *  @param localLinkHook Is called whenever a wiki link is found
-     *  @param extLinkHook   Is called whenever an external link is found
-     *  @param parseAccessRules Parse the access rules if we encounter them
-     *  @param justParse Just parses the pagedata, does not actually render.  In this case, this methods an empty string.
-     *  @return HTML-rendered page text.
-     */
-    public String textToHTML( final WikiContext context,
-                              String pagedata,
-                              final StringTransmutator localLinkHook,
-                              final StringTransmutator extLinkHook,
-                              final StringTransmutator attLinkHook,
-                              final boolean            parseAccessRules,
-                              final boolean            justParse ) {
-        String result = "";
-
-        if( pagedata == null ) {
-            log.error("NULL pagedata to textToHTML()");
-            return null;
-        }
-
-        final boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
-
-        try {
-            final StopWatch sw = new StopWatch();
-            sw.start();
-
-            if( runFilters && m_filterManager != null ) {
-                pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
-            }
-
-            final MarkupParser mp = m_renderingManager.getParser( context, pagedata );
-            mp.addLocalLinkHook( localLinkHook );
-            mp.addExternalLinkHook( extLinkHook );
-            mp.addAttachmentLinkHook( attLinkHook );
-
-            if( !parseAccessRules ) {
-                mp.disableAccessRules();
-            }
-
-            final WikiDocument doc = mp.parse();
-
-            //  In some cases it's better just to parse, not to render
-            if( !justParse ) {
-                result = m_renderingManager.getHTML( context, doc );
-
-                if( runFilters && m_filterManager != null ) {
-                    result = m_filterManager.doPostTranslateFiltering( context, result );
-                }
-            }
-
-            sw.stop();
-
-            if( log.isDebugEnabled() ) {
-                log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
-            }
-        } catch( final IOException e ) {
-            log.error( "Failed to scan page data: ", e );
-        } catch( final FilterException e ) {
-        	log.error( "page filter threw exception: ", e );
-            // FIXME: Don't yet know what to do
-        }
-
-        return result;
     }
 
     /**

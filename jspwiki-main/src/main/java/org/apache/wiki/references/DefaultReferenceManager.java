@@ -428,14 +428,13 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      */
     public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
         final LinkCollector localCollector = new LinkCollector();
-
-        m_engine.textToHTML( new WikiContext( m_engine, page ),
-                pagedata,
-                localCollector,
-                null,
-                localCollector,
-                false,
-                true );
+        m_engine.getRenderingManager().textToHTML( new WikiContext( m_engine, page ),
+                                                   pagedata,
+                                                   localCollector,
+                                                   null,
+                                                   localCollector,
+                                                   false,
+                                                   true );
 
         return localCollector.getLinks();
     }

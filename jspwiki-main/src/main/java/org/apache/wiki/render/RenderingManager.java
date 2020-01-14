@@ -19,6 +19,7 @@
 package org.apache.wiki.render;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -158,6 +159,60 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
         }
 
         return null;
+    }
+
+    /**
+     *  Helper method for doing the HTML translation.
+     *
+     *  @param context The WikiContext in which to do the conversion
+     *  @param pagedata The data to render
+     *  @param localLinkHook Is called whenever a wiki link is found
+     *  @param extLinkHook   Is called whenever an external link is found
+     *  @param parseAccessRules Parse the access rules if we encounter them
+     *  @param justParse Just parses the pagedata, does not actually render.  In this case, this methods an empty string.
+     *  @return HTML-rendered page text.
+     */
+    String textToHTML( WikiContext context,
+                       String pagedata,
+                       StringTransmutator localLinkHook,
+                       StringTransmutator extLinkHook,
+                       StringTransmutator attLinkHook,
+                       boolean parseAccessRules,
+                       boolean justParse );
+
+    /**
+     *  Just convert WikiText to HTML.
+     *
+     *  @param context The WikiContext in which to do the conversion
+     *  @param pagedata The data to render
+     *  @param localLinkHook Is called whenever a wiki link is found
+     *  @param extLinkHook   Is called whenever an external link is found
+     *
+     *  @return HTML-rendered page text.
+     */
+    default String textToHTML( final WikiContext context,
+                               final String pagedata,
+                               final StringTransmutator localLinkHook,
+                               final StringTransmutator extLinkHook ) {
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null, true, false );
+    }
+
+    /**
+     *  Just convert WikiText to HTML.
+     *
+     *  @param context The WikiContext in which to do the conversion
+     *  @param pagedata The data to render
+     *  @param localLinkHook Is called whenever a wiki link is found
+     *  @param extLinkHook   Is called whenever an external link is found
+     *  @param attLinkHook   Is called whenever an attachment link is found
+     *  @return HTML-rendered page text.
+     */
+    default String textToHTML( final WikiContext context,
+                               final String pagedata,
+                               final StringTransmutator localLinkHook,
+                               final StringTransmutator extLinkHook,
+                               final StringTransmutator attLinkHook ) {
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, attLinkHook, true, false );
     }
 
 }
