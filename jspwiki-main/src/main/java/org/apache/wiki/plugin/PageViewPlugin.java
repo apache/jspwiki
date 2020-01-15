@@ -517,7 +517,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                         buf.append( footer );
 
                         // let the engine render the list
-                        result = engine.textToHTML( context, buf.toString() );
+                        result = engine.getRenderingManager().textToHTML( context, buf.toString() );
                     }
                 }
             }

@@ -270,6 +270,39 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
+    public String textToHTML( final WikiContext context, String pagedata ) {
+        String result = "";
+
+        final boolean runFilters = "true".equals( m_engine.getVariableManager().getValue( context,VariableManager.VAR_RUNFILTERS,"true" ) );
+
+        final StopWatch sw = new StopWatch();
+        sw.start();
+        try {
+            if( runFilters ) {
+                pagedata = m_engine.getFilterManager().doPreTranslateFiltering( context, pagedata );
+            }
+
+            result = getHTML( context, pagedata );
+
+            if( runFilters ) {
+                result = m_engine.getFilterManager().doPostTranslateFiltering( context, result );
+            }
+        } catch( final FilterException e ) {
+            log.error( "page filter threw exception: ", e );
+            // FIXME: Don't yet know what to do
+        }
+        sw.stop();
+        if( log.isDebugEnabled() ) {
+            log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
+        }
+
+        return result;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public String textToHTML( final WikiContext context,
                               String pagedata,
                               final StringTransmutator localLinkHook,

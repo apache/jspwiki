@@ -52,7 +52,7 @@ public class TranslateTag
 
             if( wikiText != null ) {
                 wikiText = wikiText.trim();
-                final String result = context.getEngine().textToHTML( context, wikiText );
+                final String result = context.getEngine().getRenderingManager().textToHTML( context, wikiText );
                 getPreviousOut().write( result );
             }
         } catch( final Exception e ) {

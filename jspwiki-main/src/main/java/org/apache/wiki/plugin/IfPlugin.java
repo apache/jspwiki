@@ -141,7 +141,7 @@ public class IfPlugin implements WikiPlugin
      */
     public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         return ifInclude( context,params )
-                ? context.getEngine().textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
+                ? context.getEngine().getRenderingManager().textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
                 : "" ;
     }
 

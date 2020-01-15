@@ -18,6 +18,11 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WorkflowEvent;
+
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -27,11 +32,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WorkflowEvent;
 
 /**
  * <p>
@@ -382,8 +382,7 @@ public class Workflow implements Serializable
      * Retrieves a named Object associated with this Workflow. If the Workflow
      * has completed or aborted, this method always returns <code>null</code>.
      *
-     * @param attr
-     *            the name of the attribute
+     * @param attr the name of the attribute
      * @return the value
      */
     public final synchronized Object getAttribute( String attr )

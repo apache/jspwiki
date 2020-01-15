@@ -533,9 +533,7 @@ public class RSSGenerator {
                 if( maxlen > MAX_CHARACTERS ) maxlen = MAX_CHARACTERS;
 
                 if( maxlen > 0 ) {
-                    pageText = m_engine.textToHTML( wikiContext,
-                                                    pageText.substring( firstLine+1,
-                                                                        maxlen ).trim() );
+                    pageText = m_engine.getRenderingManager().textToHTML( wikiContext, pageText.substring( firstLine + 1, maxlen ).trim() );
 
                     if( maxlen == MAX_CHARACTERS ) {
                         pageText += "...";

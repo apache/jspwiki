@@ -19,8 +19,7 @@
 
 package org.apache.wiki.plugin;
 
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -31,19 +30,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.util.Properties;
 
-public class UndefinedPagesPluginTest
-{
+
+public class UndefinedPagesPluginTest {
+
     Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
     WikiContext context;
     PluginManager manager;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         CacheManager.getInstance().removeAllCaches();
         testEngine = new TestEngine(props);
 
@@ -55,16 +53,14 @@ public class UndefinedPagesPluginTest
     }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         testEngine.deleteTestPage( "TestPage" );
         testEngine.deleteTestPage( "Foobar" );
         TestEngine.emptyWorkDir();
     }
 
-    private String wikitize( String s )
-    {
-        return testEngine.textToHTML( context, s );
+    private String wikitize( final String s ) {
+        return testEngine.getRenderingManager().textToHTML( context, s );
     }
 
     /**
@@ -73,39 +69,29 @@ public class UndefinedPagesPluginTest
      *  be listed as non-existent.
      */
     @Test
-    public void testSimpleUndefined()
-        throws Exception
-    {
-        WikiContext context2 = new WikiContext( testEngine, new WikiPage(testEngine, "Foobar") );
+    public void testSimpleUndefined() throws Exception {
+        final WikiContext context2 = new WikiContext( testEngine, new WikiPage( testEngine, "Foobar" ) );
+        final String res = manager.execute( context2,"{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin" );
+        final String exp = "[Foobar 2]\\\\";
 
-        String res = manager.execute( context2,
-                                      "{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin");
-
-        String exp = "[Foobar 2]\\\\";
-
-        Assertions.assertEquals( wikitize(exp), res );
+        Assertions.assertEquals( wikitize( exp ), res );
     }
 
     @Test
-    public void testCount() throws Exception
-    {
-        String result = null;
-        result = manager.execute(context, "{UndefinedPagesPlugin show=count}");
-        Assertions.assertEquals("1", result);
+    public void testCount() throws Exception {
+        final String result = manager.execute( context, "{UndefinedPagesPlugin show=count}");
+        Assertions.assertEquals("1", result );
 
         // test if the proper exception is thrown:
-        String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
+        final String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
         String exceptionString = null;
-        try
-        {
-            result = manager.execute(context, "{UndefinedPagesPlugin,show=count,showLastModified=true}");
-        }
-        catch (PluginException pe)
-        {
+        try {
+            manager.execute( context, "{UndefinedPagesPlugin,show=count,showLastModified=true}" );
+        } catch( final PluginException pe ) {
             exceptionString = pe.getMessage();
         }
 
-        Assertions.assertEquals(expectedExceptionString, exceptionString);
+        Assertions.assertEquals( expectedExceptionString, exceptionString );
     }
 
 }

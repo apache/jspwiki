@@ -48,19 +48,19 @@ public class SaveWikiPageTask extends Task {
     @Override
     public Outcome execute() throws WikiException {
         // Retrieve attributes
-        WikiContext context = (WikiContext) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
-        String proposedText = (String) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
+        final WikiContext context = ( WikiContext ) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
+        final String proposedText = (String) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
 
-        WikiEngine engine = context.getEngine();
-        WikiPage page = context.getPage();
+        final WikiEngine engine = context.getEngine();
+        final WikiPage page = context.getPage();
 
         // Let the rest of the engine handle actual saving.
-        engine.getPageManager().putPageText(page, proposedText);
+        engine.getPageManager().putPageText( page, proposedText );
 
         // Refresh the context for post save filtering.
-        engine.getPageManager().getPage(page.getName());
-        engine.textToHTML(context, proposedText);
-        engine.getFilterManager().doPostSaveFiltering(context, proposedText);
+        engine.getPageManager().getPage( page.getName() );
+        engine.getRenderingManager().textToHTML( context, proposedText );
+        engine.getFilterManager().doPostSaveFiltering( context, proposedText );
 
         return Outcome.STEP_COMPLETE;
     }

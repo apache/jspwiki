@@ -206,7 +206,7 @@ public class InsertPage
                 if( showOnce ) res.append("\" data-once=\""+cookieName );
                 res.append("\" >");
 
-                res.append( engine.textToHTML( includedContext, pageData ) );
+                res.append( engine.getRenderingManager().textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
 
                 res.append("</div>");

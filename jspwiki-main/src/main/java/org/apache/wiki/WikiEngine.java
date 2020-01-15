@@ -19,13 +19,11 @@
 package org.apache.wiki;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
-import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -932,7 +930,7 @@ public class WikiEngine  {
      */
     public String getHTML( final WikiContext context, final WikiPage page ) {
         final String pagedata = getPageManager().getPureText( page.getName(), page.getVersion() );
-        return textToHTML( context, pagedata );
+        return m_renderingManager.textToHTML( context, pagedata );
     }
 
     /**
@@ -959,42 +957,6 @@ public class WikiEngine  {
         final WikiContext context = new WikiContext( this, page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );
-    }
-
-    /**
-     *  Converts raw page data to HTML.
-     *
-     *  @param pagedata Raw page data to convert to HTML
-     *  @param context  The WikiContext in which the page is to be rendered
-     *  @return Rendered page text
-     */
-    public String textToHTML( final WikiContext context, String pagedata ) {
-        String result = "";
-
-        final boolean runFilters = "true".equals(m_variableManager.getValue(context,VariableManager.VAR_RUNFILTERS,"true"));
-
-        final StopWatch sw = new StopWatch();
-        sw.start();
-        try {
-            if( runFilters ) {
-                pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
-            }
-
-            result = m_renderingManager.getHTML( context, pagedata );
-
-            if( runFilters ) {
-                result = m_filterManager.doPostTranslateFiltering( context, result );
-            }
-        } catch( final FilterException e ) {
-            log.error( "page filter threw exception: ", e );
-            // FIXME: Don't yet know what to do
-        }
-        sw.stop();
-        if( log.isDebugEnabled() ) {
-            log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
-        }
-
-        return result;
     }
 
     /**

@@ -162,6 +162,15 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
     }
 
     /**
+     *  Converts raw page data to HTML.
+     *
+     *  @param pagedata Raw page data to convert to HTML
+     *  @param context  The WikiContext in which the page is to be rendered
+     *  @return Rendered page text
+     */
+    String textToHTML( WikiContext context, String pagedata );
+
+    /**
      *  Helper method for doing the HTML translation.
      *
      *  @param context The WikiContext in which to do the conversion
