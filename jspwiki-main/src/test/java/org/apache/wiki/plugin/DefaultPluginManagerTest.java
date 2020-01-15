@@ -147,7 +147,7 @@ public class DefaultPluginManagerTest {
     @Test
     public void testParserPlugin() throws Exception {
         engine.getPageManager().saveText(context, "[{SamplePlugin render=true}]");
-        engine.getHTML( "Testpage" );
+        engine.getRenderingManager().getHTML( "Testpage" );
         Assertions.assertTrue( SamplePlugin.c_rendered );
     }
 

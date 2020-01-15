@@ -85,6 +85,16 @@ public class RenderingManagerTest {
         Assertions.assertEquals("This Is A Page", m_engine.getRenderingManager().beautifyTitle( src ) );
     }
 
+    @Test
+    public void testGetHTML() throws Exception {
+        final String text = "''Foobar.''";
+        final String name = "Test1";
+        m_engine.saveText( name, text );
+
+        final String data = m_engine.getRenderingManager().getHTML( name );
+        Assertions.assertEquals( "<i>Foobar.</i>\n", data );
+    }
+
     /**
      * Tests the relative speed of the DOM cache with respect to
      * page being parsed every single time.

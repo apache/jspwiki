@@ -164,7 +164,7 @@ public class DefaultAclManager implements AclManager {
                 //  Or, try parsing the page
                 final WikiContext ctx = new WikiContext( m_engine, page );
                 ctx.setVariable( WikiContext.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
-                m_engine.getHTML(ctx, page);
+                m_engine.getRenderingManager().getHTML(ctx, page);
 
                 if (page.getAcl() == null) {
                     page.setAcl( new AclImpl() );

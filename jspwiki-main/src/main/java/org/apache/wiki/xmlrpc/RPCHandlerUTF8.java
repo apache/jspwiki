@@ -155,11 +155,11 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
     }
 
     public String getPageHTML( final String pagename ) throws XmlRpcException  {
-        return m_engine.getHTML( parsePageCheckCondition( pagename ) );
+        return m_engine.getRenderingManager().getHTML( parsePageCheckCondition( pagename ) );
     }
 
     public String getPageHTMLVersion( final String pagename, final int version ) throws XmlRpcException {
-        return m_engine.getHTML( parsePageCheckCondition( pagename ), version );
+        return m_engine.getRenderingManager().getHTML( parsePageCheckCondition( pagename ), version );
     }
 
     public Vector< Hashtable< String, String > > listLinks( String pagename ) throws XmlRpcException {

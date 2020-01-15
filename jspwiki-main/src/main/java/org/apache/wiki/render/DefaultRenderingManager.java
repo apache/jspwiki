@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -264,6 +265,30 @@ public class DefaultRenderingManager implements RenderingManager {
         }
 
         return rend.getString();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public String getHTML( final WikiContext context, final WikiPage page ) {
+        final String pagedata = m_engine.getPageManager().getPureText( page.getName(), page.getVersion() );
+        return textToHTML( context, pagedata );
+    }
+
+    /**
+     *  Returns the converted HTML of the page's specific version. The version must be a positive integer, otherwise the current
+     *  version is returned.
+     *
+     *  @param pagename WikiName of the page to convert.
+     *  @param version Version number to fetch
+     *  @return HTML-rendered page text.
+     */
+    public String getHTML( final String pagename, final int version ) {
+        final WikiPage page = m_engine.getPageManager().getPage( pagename, version );
+        final WikiContext context = new WikiContext( m_engine, page );
+        context.setRequestContext( WikiContext.NONE );
+        return getHTML( context, page );
     }
 
     /**

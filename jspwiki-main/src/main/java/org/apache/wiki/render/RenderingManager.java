@@ -22,11 +22,13 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.providers.WikiPageProvider;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -141,6 +143,25 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
     String getHTML( WikiContext context, WikiDocument doc ) throws IOException;
 
     /**
+     *  Returns the converted HTML of the page using a different context than the default context.
+     *
+     *  @param  context A WikiContext in which you wish to render this page in.
+     *  @param  page WikiPage reference.
+     *  @return HTML-rendered version of the page.
+     */
+    String getHTML( WikiContext context, WikiPage page );
+
+    /**
+     *  Returns the converted HTML of the page's specific version. The version must be a positive integer, otherwise the current
+     *  version is returned.
+     *
+     *  @param pagename WikiName of the page to convert.
+     *  @param version Version number to fetch
+     *  @return HTML-rendered page text.
+     */
+    String getHTML( String pagename, int version );
+
+    /**
      *   Convenience method for rendering, using the default parser and renderer.  Note that you can't use this method
      *   to do any arbitrary rendering, as the pagedata MUST be the data from the that the WikiContext refers to - this
      *   method caches the HTML internally, and will return the cached version.  If the pagedata is different from what
@@ -159,6 +180,16 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
         }
 
         return null;
+    }
+
+    /**
+     *  Returns the converted HTML of the page.
+     *
+     *  @param page WikiName of the page to convert.
+     *  @return HTML-rendered version of the page.
+     */
+    default String getHTML( final String page ) {
+        return getHTML( page, WikiPageProvider.LATEST_VERSION );
     }
 
     /**

@@ -101,16 +101,6 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testGetHTML() throws Exception {
-        final String text = "''Foobar.''";
-        final String name = NAME1;
-        m_engine.saveText( name, text );
-
-        final String data = m_engine.getHTML( name );
-        Assertions.assertEquals( "<i>Foobar.</i>\n", data );
-    }
-
-    @Test
     public void testEncodeNameLatin1() {
         final String name = "abc\u00e5\u00e4\u00f6";
         Assertions.assertEquals( "abc%E5%E4%F6", m_engine.encodeName(name) );
@@ -284,11 +274,10 @@ public class WikiEngineTest {
         Assertions.assertEquals( "puppaa", m_engine.getPageManager().getText("This is a test").trim(), "normal" );
     }
 
-
     @Test
     public void testParsedVariables() throws Exception {
         m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
-        final String res = m_engine.getHTML( "TestPage" );
+        final String res = m_engine.getRenderingManager().getHTML( "TestPage" );
 
         Assertions.assertEquals( "bar\n", res );
     }

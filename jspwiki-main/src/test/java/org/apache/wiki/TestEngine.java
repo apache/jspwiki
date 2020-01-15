@@ -395,7 +395,7 @@ public class TestEngine extends WikiEngine
         final WikiPage page = getPageManager().getPage( pagename, WikiPageProvider.LATEST_VERSION );
         final WikiContext context = new WikiContext( this, newHttpRequest(), page );
         context.setRequestContext( WikiContext.NONE );
-        return getHTML( context, page );
+        return getRenderingManager().getHTML( context, page );
     }
 
     public static void trace() {

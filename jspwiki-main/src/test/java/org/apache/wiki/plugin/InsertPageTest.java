@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 
 public class InsertPageTest
@@ -57,7 +57,7 @@ public class InsertPageTest
 
         // Just check that it contains a proper error message; don't bother do HTML
         // checking.
-        String res = testEngine.getHTML("ThisPage");
+        String res = testEngine.getRenderingManager().getHTML("ThisPage");
         Assertions.assertTrue( res.indexOf("Circular reference") != -1 );
     }
 
@@ -72,64 +72,56 @@ public class InsertPageTest
 
         // Just check that it contains a proper error message; don't bother do HTML
         // checking.
-        Assertions.assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") != -1 );
+        Assertions.assertTrue( testEngine.getRenderingManager().getHTML("ThisPage").indexOf("Circular reference") != -1 );
     }
 
     @Test
-    public void testMultiInvocation() throws Exception
-    {
+    public void testMultiInvocation() throws Exception {
         String src  = "[{InsertPage page='ThisPage2'}] [{InsertPage page='ThisPage2'}]";
         String src2 = "foo[{ALLOW view Anonymous}]";
 
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("ThisPage2",src2);
 
-        Assertions.assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
-
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div> <div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML("ThisPage"), "found != 2" );
-
+        Assertions.assertTrue( testEngine.getRenderingManager().getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div> <div class=\"inserted-page \" >foo\n</div>\n",
+                                 testEngine.getRenderingManager().getHTML("ThisPage"), "found != 2" );
     }
 
     @Test
-    public void testUnderscore() throws Exception
-    {
+    public void testUnderscore() throws Exception {
         String src  = "[{InsertPage page='Test_Page'}]";
         String src2 = "foo[{ALLOW view Anonymous}]";
 
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("Test_Page",src2);
 
-        Assertions.assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
-
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML("ThisPage"), "found != 1" );
+        Assertions.assertTrue( testEngine.getRenderingManager().getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getRenderingManager().getHTML("ThisPage"), "found != 1" );
     }
-
 
     /**
      * a link containing a blank should work if there is a page with exact the
      * same name ('Test Page')
      */
     @Test
-    public void testWithBlanks1() throws Exception
-    {
+    public void testWithBlanks1() throws Exception {
         testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
         testEngine.saveText( "Test Page", "foo[{ALLOW view Anonymous}]" );
 
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML( "ThisPage" ), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getRenderingManager().getHTML( "ThisPage" ), "found != 1" );
     }
 
     /**
-     * same as testWithBlanks1, but it should still work if the page does not
-     * have the blank in it ( 'Test Page' should work if the included page is
-     * called 'TestPage')
+     * same as testWithBlanks1, but it should still work if the page does not have the blank in it ( 'Test Page' should work if the
+     * included page is called 'TestPage')
      */
     @Test
-    public void testWithBlanks2() throws Exception
-    {
+    public void testWithBlanks2() throws Exception {
         testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
         testEngine.saveText( "TestPage", "foo[{ALLOW view Anonymous}]" );
 
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getHTML( "ThisPage" ), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getRenderingManager().getHTML( "ThisPage" ), "found != 1" );
     }
 
 }

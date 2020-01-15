@@ -41,7 +41,6 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
@@ -240,9 +239,6 @@ public class WikiEngine  {
     /** Store the ServletContext that we're in.  This may be null if WikiEngine
         is not running inside a servlet container (i.e. when testing). */
     private ServletContext   m_servletContext = null;
-
-    /** If true, all titles will be cleaned. */
-    private boolean          m_beautifyTitle = false;
 
     /** Stores the template path.  This is relative to "templates". */
     private String           m_templateDir;
@@ -618,7 +614,7 @@ public class WikiEngine  {
                     final URL url = m_servletContext.getResource( viewTemplate );
                     exists = url != null && StringUtils.isNotEmpty( url.getFile() );
                 } catch( final MalformedURLException e ) {
-                    exists = false;
+                    log.warn( "template not found with viewTemplate " + viewTemplate );
                 }
             }
             if( !exists ) {
@@ -851,7 +847,7 @@ public class WikiEngine  {
      */
     // FIXME: Should use servlet context as a default instead of a constant.
     public String getApplicationName() {
-        String appName = TextUtil.getStringProperty( m_properties, PROP_APPNAME, Release.APPNAME );
+        final String appName = TextUtil.getStringProperty( m_properties, PROP_APPNAME, Release.APPNAME );
         return MarkupParser.cleanLink( appName );
     }
 
@@ -919,44 +915,6 @@ public class WikiEngine  {
     public WorkflowManager getWorkflowManager()
     {
         return m_workflowMgr;
-    }
-
-    /**
-     *  Returns the converted HTML of the page using a different context than the default context.
-     *
-     *  @param  context A WikiContext in which you wish to render this page in.
-     *  @param  page WikiPage reference.
-     *  @return HTML-rendered version of the page.
-     */
-    public String getHTML( final WikiContext context, final WikiPage page ) {
-        final String pagedata = getPageManager().getPureText( page.getName(), page.getVersion() );
-        return m_renderingManager.textToHTML( context, pagedata );
-    }
-
-    /**
-     *  Returns the converted HTML of the page.
-     *
-     *  @param page WikiName of the page to convert.
-     *  @return HTML-rendered version of the page.
-     */
-    public String getHTML( final String page )
-    {
-        return getHTML( page, WikiPageProvider.LATEST_VERSION );
-    }
-
-    /**
-     *  Returns the converted HTML of the page's specific version. The version must be a positive integer, otherwise the current
-     *  version is returned.
-     *
-     *  @param pagename WikiName of the page to convert.
-     *  @param version Version number to fetch
-     *  @return HTML-rendered page text.
-     */
-    public String getHTML( final String pagename, final int version ) {
-        final WikiPage page = getPageManager().getPage( pagename, version );
-        final WikiContext context = new WikiContext( this, page );
-        context.setRequestContext( WikiContext.NONE );
-        return getHTML( context, page );
     }
 
     /**

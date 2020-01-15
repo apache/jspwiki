@@ -224,7 +224,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
-        final String p = engine.getHTML( "test", -1 );
+        final String p = engine.getRenderingManager().getHTML( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
@@ -238,7 +238,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "true" );
         final WikiEngine engine = new TestEngine( props );
-        final String p = engine.getHTML( VerySimpleProvider.PAGENAME, -1 );
+        final String p = engine.getRenderingManager().getHTML( VerySimpleProvider.PAGENAME, -1 );
         final CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
         final VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
 

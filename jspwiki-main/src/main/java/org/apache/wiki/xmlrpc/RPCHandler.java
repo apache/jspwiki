@@ -199,13 +199,13 @@ public class RPCHandler extends AbstractRPCHandler {
     public byte[] getPageHTML( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return toRPCBase64( m_engine.getHTML( pagename ) );
+        return toRPCBase64( m_engine.getRenderingManager().getHTML( pagename ) );
     }
 
     public byte[] getPageHTMLVersion( String pagename, int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return toRPCBase64( m_engine.getHTML( pagename, version ) );
+        return toRPCBase64( m_engine.getRenderingManager().getHTML( pagename, version ) );
     }
 
     public Vector< Hashtable< String, String > > listLinks( String pagename ) throws XmlRpcException {

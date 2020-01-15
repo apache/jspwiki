@@ -71,9 +71,9 @@ public class PageViewPluginTest
         WikiContext context2 = new WikiContext( testEngine, page2 );
 
         // generate counts:
-        testEngine.getHTML( context1, page1 );
-        testEngine.getHTML( context2, page2 );
-        testEngine.getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context1, page1 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
 
         // mind the double \n in the following string:
         String pageViewPageContent = "[{PageViewPlugin show='list''\n\n* {1} ({2} views)\n}]";
@@ -82,7 +82,7 @@ public class PageViewPluginTest
         WikiPage pageviews = testEngine.getPageManager().getPage( "PageViews" );
         WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
-        String result = testEngine.getHTML( contextPV, pageviews );
+        String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
         Assertions.assertTrue( result.contains( "Test Page 01 (2 views)" ) );
@@ -101,9 +101,9 @@ public class PageViewPluginTest
         WikiContext context2 = new WikiContext( testEngine, page2 );
 
         // generate counts:
-        testEngine.getHTML( context1, page1 );
-        testEngine.getHTML( context2, page2 );
-        testEngine.getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context1, page1 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
 
         // mind the double \n in the following string:
         String pageViewPageContent = "[{PageViewPlugin show='list' exclude='TestPageExcl*' '\n\n* {1} ({2} views)\n}]";
@@ -112,7 +112,7 @@ public class PageViewPluginTest
         WikiPage pageviews = testEngine.getPageManager().getPage( "PageViews" );
         WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
-        String result = testEngine.getHTML( contextPV, pageviews );
+        String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
         Assertions.assertTrue( result.contains( "Test Page 01" ) );
@@ -132,9 +132,9 @@ public class PageViewPluginTest
         WikiContext context2 = new WikiContext( testEngine, page2 );
 
         // generate counts:
-        testEngine.getHTML( context1, page1 );
-        testEngine.getHTML( context2, page2 );
-        testEngine.getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context1, page1 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
 
         // mind the double \n in the following string:
         String pageViewPageContent = "[{PageViewPlugin show='list' sort=count '\n\n* {1} ({2} views)\n}]";
@@ -143,7 +143,7 @@ public class PageViewPluginTest
         WikiPage pageviews = testEngine.getPageManager().getPage( "PageViews" );
         WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
-        String result = testEngine.getHTML( contextPV, pageviews );
+        String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
         int start1 = result.indexOf( "Test Page 01" );
@@ -170,11 +170,11 @@ public class PageViewPluginTest
         WikiContext context4 = new WikiContext( testEngine, page4 );
 
         // generate counts:
-        testEngine.getHTML( context1, page1 );
-        testEngine.getHTML( context2, page2 );
-        testEngine.getHTML( context2, page2 );
-        testEngine.getHTML( context3, page3 );
-        testEngine.getHTML( context4, page4 );
+        testEngine.getRenderingManager().getHTML( context1, page1 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context2, page2 );
+        testEngine.getRenderingManager().getHTML( context3, page3 );
+        testEngine.getRenderingManager().getHTML( context4, page4 );
 
         // mind the double \n in the following string:
         String pageViewPageContent = "[{PageViewPlugin show='list' entries=3'\n\n* {1} ({2} views)\n}]";
@@ -183,7 +183,7 @@ public class PageViewPluginTest
         WikiPage pageviews = testEngine.getPageManager().getPage( "PageViews" );
         WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
-        String result = testEngine.getHTML( contextPV, pageviews );
+        String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
 //        System.out.println( result );
 
         Assertions.assertTrue( result.contains( "Test Page 03" ) );

@@ -161,7 +161,7 @@ public class MassiveRepositoryTest {
         {
             String page = getName( random.nextInt( numPages ) );
             
-            String content = engine.getHTML( page, WikiProvider.LATEST_VERSION );
+            String content = engine.getRenderingManager().getHTML( page, WikiProvider.LATEST_VERSION );
               
             Assertions.assertNotNull(content);
             

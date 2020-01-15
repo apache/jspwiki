@@ -41,7 +41,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -82,10 +81,9 @@ import java.util.regex.Pattern;
 // FIXME: Add "entries" param as an alternative to "days".
 // FIXME: Entries arrive in wrong order.
 
-public class WeblogPlugin
-    implements WikiPlugin, ParserStagePlugin
-{
-    private static Logger     log = Logger.getLogger(WeblogPlugin.class);
+public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
+
+    private static final Logger     log = Logger.getLogger(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */
@@ -115,8 +113,7 @@ public class WeblogPlugin
      */
     public static final String  ATTR_ISWEBLOG      = "weblogplugin.isweblog";
 
-    static
-    {
+    static {
         // This is a pretty ugly, brute-force regex. But it will do for now...
         HEADINGPATTERN = Pattern.compile("(<h[1-4][^>]*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
     }
@@ -129,10 +126,7 @@ public class WeblogPlugin
      *  @param entryNum The entry number.
      *  @return A formatted page name.
      */
-    public static String makeEntryPage( String pageName,
-                                        String date,
-                                        String entryNum )
-    {
+    public static String makeEntryPage( final String pageName, final String date, final String entryNum ) {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date+"_"+entryNum;
     }
 
@@ -142,7 +136,7 @@ public class WeblogPlugin
      *  @param pageName The name of the blog.
      *  @return A formatted name.
      */
-    public static String makeEntryPage( String pageName )
+    public static String makeEntryPage( final String pageName )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName);
     }
@@ -154,96 +148,76 @@ public class WeblogPlugin
      *  @param date The date.
      *  @return A base name for the blog entries.
      */
-    public static String makeEntryPage( String pageName, String date )
-    {
+    public static String makeEntryPage( final String pageName, final String date ) {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        Calendar   startTime;
-        Calendar   stopTime;
+    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final Calendar   startTime;
+        final Calendar   stopTime;
         int        numDays = DEFAULT_DAYS;
-        WikiEngine engine = context.getEngine();
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+        final WikiEngine engine = context.getEngine();
+        final AuthorizationManager mgr = engine.getAuthorizationManager();
 
         //
         //  Parse parameters.
         //
-        String  days;
-        DateFormat entryFormat;
-        String  startDay = null;
+        String days;
+        final DateFormat entryFormat;
+        String startDay;
         boolean hasComments = false;
-        int     maxEntries;
-        String  weblogName;
+        int maxEntries;
+        String weblogName;
 
-        if( (weblogName = params.get(PARAM_PAGE)) == null )
-        {
+        if( (weblogName = params.get(PARAM_PAGE)) == null ) {
             weblogName = context.getPage().getName();
         }
 
-        if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null )
-        {
+        if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null ) {
             days = params.get( PARAM_DAYS );
         }
 
-        if( ( params.get(PARAM_ENTRYFORMAT)) == null )
-        {
+        if( ( params.get(PARAM_ENTRYFORMAT)) == null ) {
             entryFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
-        }
-        else
-        {
+        } else {
             entryFormat = new SimpleDateFormat( params.get(PARAM_ENTRYFORMAT) );
         }
 
-        if( days != null )
-        {
-            if( days.equalsIgnoreCase("all") )
-            {
+        if( days != null ) {
+            if( days.equalsIgnoreCase("all") ) {
                 numDays = Integer.MAX_VALUE;
-            }
-            else
-            {
+            } else {
                 numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
             }
         }
 
 
-        if( (startDay = params.get(PARAM_STARTDATE)) == null )
-        {
+        if( (startDay = params.get(PARAM_STARTDATE)) == null ) {
             startDay = context.getHttpParameter( "weblog."+PARAM_STARTDATE );
         }
 
-        if( TextUtil.isPositive( params.get(PARAM_ALLOWCOMMENTS) ) )
-        {
+        if( TextUtil.isPositive( params.get(PARAM_ALLOWCOMMENTS) ) ) {
             hasComments = true;
         }
 
-        maxEntries = TextUtil.parseIntParameter( params.get(PARAM_MAXENTRIES),
-                                                 Integer.MAX_VALUE );
+        maxEntries = TextUtil.parseIntParameter( params.get(PARAM_MAXENTRIES), Integer.MAX_VALUE );
 
         //
         //  Determine the date range which to include.
         //
-
         startTime = Calendar.getInstance();
         stopTime  = Calendar.getInstance();
 
-        if( startDay != null )
-        {
-            SimpleDateFormat fmt = new SimpleDateFormat( DEFAULT_DATEFORMAT );
-            try
-            {
-                Date d = fmt.parse( startDay );
+        if( startDay != null ) {
+            final SimpleDateFormat fmt = new SimpleDateFormat( DEFAULT_DATEFORMAT );
+            try {
+                final Date d = fmt.parse( startDay );
                 startTime.setTime( d );
                 stopTime.setTime( d );
-            }
-            catch( ParseException e )
-            {
+            } catch( final ParseException e ) {
                 return "Illegal time format: "+startDay;
             }
         }
@@ -251,12 +225,10 @@ public class WeblogPlugin
         //
         //  Mark this to be a weblog
         //
-
         context.getPage().setAttribute(ATTR_ISWEBLOG, "true");
 
         //
-        //  We make a wild guess here that nobody can do millisecond
-        //  accuracy here.
+        //  We make a wild guess here that nobody can do millisecond accuracy here.
         //
         startTime.add( Calendar.DAY_OF_MONTH, -numDays );
         startTime.set( Calendar.HOUR, 0 );
@@ -266,37 +238,20 @@ public class WeblogPlugin
         stopTime.set( Calendar.MINUTE, 59 );
         stopTime.set( Calendar.SECOND, 59 );
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
+        final List<WikiPage> blogEntries = findBlogEntries( engine, weblogName, startTime.getTime(), stopTime.getTime() );
+        blogEntries.sort( new PageDateComparator() );
 
-        try
-        {
-            List<WikiPage> blogEntries = findBlogEntries( engine,
-                                                          weblogName,
-                                                          startTime.getTime(),
-                                                          stopTime.getTime() );
+        sb.append("<div class=\"weblog\">\n");
 
-            Collections.sort( blogEntries, new PageDateComparator() );
-
-            sb.append("<div class=\"weblog\">\n");
-
-            for( Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
-            {
-                WikiPage p = i.next();
-
-                if( mgr.checkPermission( context.getWikiSession(),
-                                         new PagePermission(p, PagePermission.VIEW_ACTION) ) )
-                {
-                    addEntryHTML(context, entryFormat, hasComments, sb, p, params);
-                }
+        for( final Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; ) {
+            final WikiPage p = i.next();
+            if( mgr.checkPermission( context.getWikiSession(), new PagePermission(p, PagePermission.VIEW_ACTION) ) ) {
+                addEntryHTML( context, entryFormat, hasComments, sb, p, params );
             }
+        }
 
-            sb.append("</div>\n");
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Could not locate blog entries", e );
-            throw new PluginException( "Could not locate blog entries: "+e.getMessage() );
-        }
+        sb.append("</div>\n");
 
         return sb.toString();
     }
@@ -311,12 +266,10 @@ public class WeblogPlugin
      *  @param entry
      *  @throws ProviderException
      */
-    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments,
-            StringBuilder buffer, WikiPage entry, Map<String, String> params)
-            throws ProviderException
-    {
-        WikiEngine engine = context.getEngine();
-        ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+    private void addEntryHTML( final WikiContext context, final DateFormat entryFormat, final boolean hasComments,
+                               final StringBuilder buffer, final WikiPage entry, final Map< String, String > params) {
+        final WikiEngine engine = context.getEngine();
+        final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         buffer.append("<div class=\"weblogentry\">\n");
 
@@ -325,40 +278,33 @@ public class WeblogPlugin
         //
         buffer.append("<div class=\"weblogentryheading\">\n");
 
-        Date entryDate = entry.getLastModified();
-        buffer.append( entryFormat.format(entryDate) );
-
+        final Date entryDate = entry.getLastModified();
+        buffer.append( entryFormat != null ? entryFormat.format(entryDate) : entryDate );
         buffer.append("</div>\n");
 
         //
-        //  Append the text of the latest version.  Reset the
-        //  context to that page.
+        //  Append the text of the latest version.  Reset the context to that page.
         //
-
-        WikiContext entryCtx = (WikiContext) context.clone();
+        final WikiContext entryCtx = (WikiContext) context.clone();
         entryCtx.setPage( entry );
 
-        String html = engine.getHTML( entryCtx, engine.getPageManager().getPage( entry.getName() ) );
+        String html = engine.getRenderingManager().getHTML( entryCtx, engine.getPageManager().getPage( entry.getName() ) );
 
         // Extract the first h1/h2/h3 as title, and replace with null
         buffer.append("<div class=\"weblogentrytitle\">\n");
-        Matcher matcher = HEADINGPATTERN.matcher( html );
-        if ( matcher.find() )
-        {
-            String title = matcher.group(2);
+        final Matcher matcher = HEADINGPATTERN.matcher( html );
+        if ( matcher.find() ) {
+            final String title = matcher.group(2);
             html = matcher.replaceFirst("");
             buffer.append( title );
-        }
-        else
-        {
+        } else {
             buffer.append( entry.getName() );
         }
         buffer.append("</div>\n");
-
         buffer.append("<div class=\"weblogentrybody\">\n");
-        int preview = TextUtil.parseIntParameter(params.get(PARAM_PREVIEW), 0);
-        if (preview > 0)
-        {
+
+        final int preview = TextUtil.parseIntParameter(params.get(PARAM_PREVIEW), 0);
+        if (preview > 0) {
             //
             // We start with the first 'preview' number of characters from the text,
             // and then add characters to it until we get to a linebreak or a period.
@@ -367,15 +313,11 @@ public class WeblogPlugin
             //
             boolean hasBeenCutOff = false;
             int cutoff = Math.min(preview, html.length());
-            while (cutoff < html.length())
-            {
-                if (html.charAt(cutoff) == '\r' || html.charAt(cutoff) == '\n')
-                {
+            while (cutoff < html.length()) {
+                if (html.charAt(cutoff) == '\r' || html.charAt(cutoff) == '\n') {
                     hasBeenCutOff = true;
                     break;
-                }
-                else if (html.charAt(cutoff) == '.')
-                {
+                } else if (html.charAt(cutoff) == '.') {
                     // we do want the period
                     cutoff++;
                     hasBeenCutOff = true;
@@ -384,13 +326,10 @@ public class WeblogPlugin
                 cutoff++;
             }
             buffer.append(html.substring(0, cutoff));
-            if (hasBeenCutOff)
-            {
+            if (hasBeenCutOff) {
                 buffer.append(" <a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">"+rb.getString("weblogentryplugin.more")+"</a>\n");
             }
-        }
-        else
-        {
+        } else {
             buffer.append(html);
         }
         buffer.append("</div>\n");
@@ -402,44 +341,32 @@ public class WeblogPlugin
 
         String author = entry.getAuthor();
 
-        if( author != null )
-        {
-            if( engine.getPageManager().wikiPageExists(author) )
-            {
+        if( author != null ) {
+            if( engine.getPageManager().wikiPageExists(author) ) {
                 author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.getRenderingManager().beautifyTitle(author)+"</a>";
             }
-        }
-        else
-        {
+        } else {
             author = "AnonymousCoward";
         }
 
         buffer.append( MessageFormat.format( rb.getString("weblogentryplugin.postedby"), author));
-        buffer.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">"+rb.getString("weblogentryplugin.permalink")+"</a>" );
-        String commentPageName = TextUtil.replaceString( entry.getName(),
-                                                         "blogentry",
-                                                         "comments" );
+        buffer.append( "<a href=\"" + entryCtx.getURL( WikiContext.VIEW, entry.getName() ) + "\">" + rb.getString("weblogentryplugin.permalink") + "</a>" );
+        final String commentPageName = TextUtil.replaceString( entry.getName(), "blogentry", "comments" );
 
-        if( hasComments )
-        {
+        if( hasComments ) {
             int numComments = guessNumberOfComments( engine, commentPageName );
 
             //
-            //  We add the number of comments to the URL so that
-            //  the user's browsers would realize that the page
-            //  has changed.
+            //  We add the number of comments to the URL so that the user's browsers would realize that the page has changed.
             //
             buffer.append( "&nbsp;&nbsp;" );
 
-            String addcomment = rb.getString("weblogentryplugin.addcomment");
+            final String addcomment = rb.getString("weblogentryplugin.addcomment");
 
             buffer.append( "<a href=\""+
-                       entryCtx.getURL(WikiContext.COMMENT,
-                                       commentPageName,
-                                       "nc="+numComments)+
-                       "\">"+
-                       MessageFormat.format(addcomment, numComments)
-                       +"</a>" );
+                           entryCtx.getURL( WikiContext.COMMENT, commentPageName, "nc=" + numComments ) + "\">" +
+                           MessageFormat.format( addcomment, numComments ) +
+                           "</a>" );
         }
 
         buffer.append("</div>\n");
@@ -468,37 +395,25 @@ public class WeblogPlugin
      *  @param start The date which is the first to be considered
      *  @param end   The end date which is the last to be considered
      *  @return a list of pages with their FIRST revisions.
-     *  @throws ProviderException If something goes wrong
      */
-    public List< WikiPage > findBlogEntries( WikiEngine engine, String baseName, Date start, Date end )
-        throws ProviderException
-    {
-        PageManager mgr = engine.getPageManager();
-        Set< String > allPages = engine.getReferenceManager().findCreated();
-
-        ArrayList<WikiPage> result = new ArrayList<WikiPage>();
+    public List< WikiPage > findBlogEntries( final WikiEngine engine, String baseName, final Date start, final Date end ) {
+        final PageManager mgr = engine.getPageManager();
+        final Set< String > allPages = engine.getReferenceManager().findCreated();
+        final ArrayList<WikiPage> result = new ArrayList<>();
 
         baseName = makeEntryPage( baseName );
 
-        for( Iterator< String > i = allPages.iterator(); i.hasNext(); )
-        {
-            String pageName = i.next();
+        for( final String pageName : allPages ) {
+            if( pageName.startsWith( baseName ) ) {
+                try {
+                    final WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
+                    final Date d = firstVersion.getLastModified();
 
-            if( pageName.startsWith( baseName ) )
-            {
-                try
-                {
-                    WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
-                    Date d = firstVersion.getLastModified();
-
-                    if( d.after(start) && d.before(end) )
-                    {
+                    if( d.after( start ) && d.before( end ) ) {
                         result.add( firstVersion );
                     }
-                }
-                catch( Exception e )
-                {
-                    log.debug("Page name :"+pageName+" was suspected as a blog entry but it isn't because of parsing errors",e);
+                } catch( final Exception e ) {
+                    log.debug( "Page name :" + pageName + " was suspected as a blog entry but it isn't because of parsing errors", e );
                 }
             }
         }
@@ -509,25 +424,22 @@ public class WeblogPlugin
     /**
      *  Reverse comparison.
      */
-    private static class PageDateComparator implements Comparator<WikiPage>
-    {
-        public int compare( WikiPage page1, WikiPage page2 )
-        {
-            if( page1 == null || page2 == null )
-            {
+    private static class PageDateComparator implements Comparator< WikiPage > {
+
+        public int compare( final WikiPage page1, final WikiPage page2 ) {
+            if( page1 == null || page2 == null ) {
                 return 0;
             }
-
             return page2.getLastModified().compareTo( page1.getLastModified() );
         }
+
     }
 
     /**
      *  Mark us as being a real weblog.
      *  {@inheritDoc}
      */
-    public void executeParser(PluginContent element, WikiContext context, Map<String, String> params)
-    {
+    public void executeParser( final PluginContent element, final WikiContext context, final Map< String, String > params ) {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }
 }

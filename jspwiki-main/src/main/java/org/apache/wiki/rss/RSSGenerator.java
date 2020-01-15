@@ -204,7 +204,7 @@ public class RSSGenerator {
         else
         {
             buf.append(author+" created this page on "+page.getLastModified()+":<br /><hr /><br />" );
-            buf.append(m_engine.getHTML( page.getName() ));
+            buf.append(m_engine.getRenderingManager().getHTML( page.getName() ));
         }
 
         return buf.toString();

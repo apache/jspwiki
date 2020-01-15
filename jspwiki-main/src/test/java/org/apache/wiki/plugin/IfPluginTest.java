@@ -74,7 +74,7 @@ public class IfPluginTest {
         WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
-        String res = testEngine.getHTML( context, page );
+        String res = testEngine.getRenderingManager().getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 
@@ -95,7 +95,7 @@ public class IfPluginTest {
         WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
-        String res = testEngine.getHTML( context, page );
+        String res = testEngine.getRenderingManager().getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 
@@ -105,8 +105,7 @@ public class IfPluginTest {
      * @throws WikiException test Assertions.failing.
      */
     @Test
-    public void testIfPluginIPAllowed() throws WikiException
-    {
+    public void testIfPluginIPAllowed() throws WikiException {
         String src = "[{IfPlugin ip='127.0.0.1'\n" +
                      "\n" +
                      "Content visible for 127.0.0.1}]";
@@ -116,7 +115,7 @@ public class IfPluginTest {
         WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
-        String res = testEngine.getHTML( context, page );
+        String res = testEngine.getRenderingManager().getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 
@@ -126,8 +125,7 @@ public class IfPluginTest {
      * @throws WikiException test Assertions.failing.
      */
     @Test
-    public void testIfPluginIPNotAllowed() throws WikiException
-    {
+    public void testIfPluginIPNotAllowed() throws WikiException {
         String src = "[{IfPlugin ip='!127.0.0.1'\n" +
                      "\n" +
                      "Content NOT visible for 127.0.0.1}]";
@@ -137,7 +135,7 @@ public class IfPluginTest {
         WikiPage page = testEngine.getPageManager().getPage( "Test", WikiPageProvider.LATEST_VERSION );
         WikiContext context = getJanneBasedWikiContextFor( page );
 
-        String res = testEngine.getHTML( context, page );
+        String res = testEngine.getRenderingManager().getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 

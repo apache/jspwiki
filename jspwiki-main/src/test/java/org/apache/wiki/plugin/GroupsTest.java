@@ -40,7 +40,7 @@ public class GroupsTest {
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getHTML( "Test" );
+        String res = testEngine.getRenderingManager().getHTML( "Test" );
 
         Assertions.assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, "
                 + "<a href=\"/test/Group.jsp?group=Art\">Art</a>, "

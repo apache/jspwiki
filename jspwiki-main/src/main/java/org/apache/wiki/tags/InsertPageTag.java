@@ -109,7 +109,7 @@ public class InsertPageTag extends WikiTagBase {
             final WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
             
             switch( m_mode ) {
-              case HTML: out.print( engine.getHTML( m_wikiContext, insertedPage ) ); break;
+              case HTML: out.print( engine.getRenderingManager().getHTML( m_wikiContext, insertedPage ) ); break;
               case PLAIN: out.print( engine.getPageManager().getText( insertedPage ) ); break;
             }
             

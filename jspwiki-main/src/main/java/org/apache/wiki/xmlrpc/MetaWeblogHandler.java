@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -35,7 +34,6 @@ import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.xmlrpc.XmlRpcException;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -108,8 +106,7 @@ public class MetaWeblogHandler
     }
 
     /**
-     *  JSPWiki does not support categories, therefore JSPWiki
-     *  always returns an empty list for categories.
+     *  JSPWiki does not support categories, therefore JSPWiki always returns an empty list for categories.
      *
      *  @param blogid The id of the blog.
      *  @param username The username to use
@@ -117,36 +114,25 @@ public class MetaWeblogHandler
      *  @throws XmlRpcException If something goes wrong
      *  @return An empty hashtable.
      */
-    public Hashtable getCategories( String blogid,
-                                    String username,
-                                    String password )
-        throws XmlRpcException
-    {
-        WikiPage page = m_context.getEngine().getPageManager().getPage( blogid );
-
+    public Hashtable getCategories( String blogid, String username, String password )  throws XmlRpcException {
+        final WikiPage page = m_context.getEngine().getPageManager().getPage( blogid );
         checkPermissions( page, username, password, "view" );
-
-        Hashtable ht = new Hashtable();
+        final Hashtable ht = new Hashtable();
 
         return ht;
     }
 
-    private String getURL( String page )
-    {
-        return m_context.getEngine().getURL( WikiContext.VIEW,
-                                             page,
-                                             null,
-                                             true ); // Force absolute urls
+    private String getURL( String page ) {
+        return m_context.getEngine().getURL( WikiContext.VIEW, page,null, true ); // Force absolute urls
     }
 
     /**
-     *  Takes a wiki page, and creates a metaWeblog struct
-     *  out of it.
+     *  Takes a wiki page, and creates a metaWeblog struct out of it.
+     *
      *  @param page The actual entry page
      *  @return A metaWeblog entry struct.
      */
-    private Hashtable<String,Object> makeEntry( WikiPage page )
-    {
+    private Hashtable<String,Object> makeEntry( WikiPage page ) {
         Hashtable<String, Object> ht = new Hashtable<>();
 
         WikiPage firstVersion = m_context.getEngine().getPageManager().getPage( page.getName(), 1 );
@@ -157,19 +143,22 @@ public class MetaWeblogHandler
         ht.put("postid", page.getName());
         ht.put("userid", page.getAuthor());
 
-        String pageText = m_context.getEngine().getPageManager().getText(page.getName());
+        final String pageText = m_context.getEngine().getPageManager().getText(page.getName());
         String title = "";
-        int firstLine = pageText.indexOf('\n');
+        final int firstLine = pageText.indexOf('\n');
 
-        if( firstLine > 0 )
-        {
+        if( firstLine > 0 ) {
             title = pageText.substring( 0, firstLine );
         }
 
-        if( title.trim().length() == 0 ) title = page.getName();
+        if( title.trim().length() == 0 ) {
+            title = page.getName();
+        }
 
         // Remove wiki formatting
-        while( title.startsWith("!") ) title = title.substring(1);
+        while( title.startsWith("!") ) {
+            title = title.substring(1);
+        }
 
         ht.put("title", title);
         ht.put("description", pageText);
@@ -187,16 +176,8 @@ public class MetaWeblogHandler
      *  @throws XmlRpcException If something goes wrong
      *  @return As per MetaweblogAPI specification
      */
-
-    // FIXME: The implementation is suboptimal, as it
-    //        goes through all of the blog entries.
-
-    public Hashtable getRecentPosts( String blogid,
-                                     String username,
-                                     String password,
-                                     int numberOfPosts)
-        throws XmlRpcException
-    {
+    // FIXME: The implementation is suboptimal, as it goes through all of the blog entries.
+    public Hashtable getRecentPosts( String blogid, String username, String password, int numberOfPosts) throws XmlRpcException {
         Hashtable<String, Hashtable<String, Object>> result = new Hashtable<>();
 
         log.info( "metaWeblog.getRecentPosts() called");
@@ -205,28 +186,19 @@ public class MetaWeblogHandler
 
         checkPermissions( page, username, password, "view" );
 
-        try {
-            WeblogPlugin plugin = new WeblogPlugin();
+        final WeblogPlugin plugin = new WeblogPlugin();
+        final List<WikiPage> changed = plugin.findBlogEntries( m_context.getEngine(), blogid, new Date( 0L ), new Date() );
 
-            List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine(),
-                                                            blogid,
-                                                            new Date(0L),
-                                                            new Date());
+        changed.sort( new PageTimeComparator() );
 
-            Collections.sort( changed, new PageTimeComparator() );
+        int items = 0;
+        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ )
+        {
+            WikiPage p = i.next();
 
-            int items = 0;
-            for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ )
-            {
-                WikiPage p = i.next();
-
-                result.put( "entry", makeEntry( p ) );
-            }
-
-        } catch( final ProviderException e ) {
-            log.error( "Failed to list recent posts", e );
-            throw new XmlRpcException( 0, e.getMessage() );
+            result.put( "entry", makeEntry( p ) );
         }
+
 
         return result;
     }
