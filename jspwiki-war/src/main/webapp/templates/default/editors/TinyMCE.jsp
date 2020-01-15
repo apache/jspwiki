@@ -19,17 +19,16 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
+<%@ page import="org.apache.commons.lang3.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="org.apache.wiki.ui.*" %>
-
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-
-<%@ page import="org.apache.wiki.filters.*" %>
-<%@ page import="org.apache.commons.lang3.*" %>
+<%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -49,7 +48,7 @@
     WikiEngine engine = context.getEngine();
 
     context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
-    context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
+    context.setVariable( VariableManager.VAR_RUNFILTERS,  "false" );
 
     WikiPage wikiPage = context.getPage();
     String originalCCLOption = (String)wikiPage.getAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS );
@@ -116,7 +115,7 @@
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for TinyMCE has been rendered.
    context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
-   context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
+   context.setVariable( VariableManager.VAR_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
    /*FSS not used

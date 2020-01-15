@@ -19,17 +19,17 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
+<%@ page import="org.apache.commons.text.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="org.apache.wiki.ui.*" %>
-
 <%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.variables.VariableManager" %>
 
-<%@ page import="org.apache.wiki.filters.*" %>
-<%@ page import="org.apache.commons.text.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -51,7 +51,7 @@
     */
 
     context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
-    context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
+    context.setVariable( VariableManager.VAR_RUNFILTERS,  "false" );
 
     WikiPage wikiPage = context.getPage();
     String originalCCLOption = (String)wikiPage.getAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS );
@@ -110,7 +110,7 @@
    // after the XHTML for CKeditor has been rendered.
    context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
 
-   context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
+   context.setVariable( VariableManager.VAR_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
    /*not used
