@@ -330,4 +330,11 @@ public class TextUtilTest {
         Assertions.assertThrows( NoSuchElementException.class, () -> TextUtil.getRequiredProperty( props, "ber" ) );
     }
 
+    @Test
+    public void testCleanString() {
+        Assertions.assertNull( TextUtil.cleanString( null, TextUtil.PUNCTUATION_CHARS_ALLOWED ) );
+        Assertions.assertEquals( " This is a link ", TextUtil.cleanString( " [ This is a link ] ", TextUtil.PUNCTUATION_CHARS_ALLOWED ) );
+        Assertions.assertEquals( "ThisIsALink", TextUtil.cleanString( " [ This is a link ] ", TextUtil.LEGACY_CHARS_ALLOWED ) );
+    }
+
 }
