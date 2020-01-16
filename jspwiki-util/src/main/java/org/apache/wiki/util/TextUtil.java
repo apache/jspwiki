@@ -43,6 +43,13 @@ public final class TextUtil {
     /** Length of password. {@link #generateRandomPassword() */
     public static final int PASSWORD_LENGTH = 8;
 
+    /** Lists all punctuation characters allowed in WikiMarkup. These will not be cleaned away. This is for compatibility for older versions
+     of JSPWiki. */
+    public static final String LEGACY_CHARS_ALLOWED = "._";
+
+    /** Lists all punctuation characters allowed in page names. */
+    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+
     /** Private constructor prevents instantiation. */
     private TextUtil() {}
 
@@ -579,6 +586,61 @@ public final class TextUtil {
     }
 
     /**
+     *  Cleans a Wiki name based on a list of characters.  Also, any multiple whitespace is collapsed into a single space, and any
+     *  leading or trailing space is removed.
+     *
+     *  @param text text to be cleared. Null is safe, and causes this to return null.
+     *  @param allowedChars Characters which are allowed in the string.
+     *  @return A cleaned text.
+     *
+     *  @since 2.6
+     */
+    public static String cleanString( String text, final String allowedChars ) {
+        if( text == null ) {
+            return null;
+        }
+
+        text = text.trim();
+        final StringBuilder clean = new StringBuilder( text.length() );
+
+        //  Remove non-alphanumeric characters that should not be put inside WikiNames.  Note that all valid Unicode letters are
+        //  considered okay for WikiNames. It is the problem of the WikiPageProvider to take care of actually storing that information.
+        //
+        //  Also capitalize things, if necessary.
+
+        boolean isWord = true;  // If true, we've just crossed a word boundary
+        boolean wasSpace = false;
+        for( int i = 0; i < text.length(); i++ ) {
+            char ch = text.charAt( i );
+
+            //  Cleans away repetitive whitespace and only uses the first one.
+            if( Character.isWhitespace( ch ) ) {
+                if( wasSpace ) {
+                    continue;
+                }
+
+                wasSpace = true;
+            } else {
+                wasSpace = false;
+            }
+
+            //  Check if it is allowed to use this char, and capitalize, if necessary.
+            if( Character.isLetterOrDigit( ch ) || allowedChars.indexOf( ch ) != -1 ) {
+                // Is a letter
+                if( isWord ) {
+                    ch = Character.toUpperCase( ch );
+                }
+                clean.append( ch );
+                isWord = false;
+            } else {
+                isWord = true;
+            }
+        }
+
+        return clean.toString();
+    }
+
+    /**
      *  Creates a Properties object based on an array which contains alternatively a key and a value.  It is useful
      *  for generating default mappings. For example:
      *  <pre>
@@ -720,11 +782,11 @@ public final class TextUtil {
      * @return A String representation
      * @since 2.3.87
      */
-    public static String toHexString( byte[] bytes ) {
+    public static String toHexString( final byte[] bytes ) {
         final StringBuilder sb = new StringBuilder( bytes.length * 2 );
-        for( int i = 0; i < bytes.length; i++ ) {
-            sb.append( toHex( bytes[i] >> 4 ) );
-            sb.append( toHex( bytes[i] ) );
+        for( final byte aByte : bytes ) {
+            sb.append( toHex( aByte >> 4 ) );
+            sb.append( toHex( aByte ) );
         }
 
         return sb.toString();
@@ -766,7 +828,7 @@ public final class TextUtil {
     public static String generateRandomPassword() {
         String pw = "";
         for( int i = 0; i < PASSWORD_LENGTH; i++ ) {
-            int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
+            final int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
             pw += PWD_BASE.substring( index, index + 1 );
         }
         return pw;

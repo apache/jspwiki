@@ -40,7 +40,6 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
@@ -848,7 +847,7 @@ public class WikiEngine  {
     // FIXME: Should use servlet context as a default instead of a constant.
     public String getApplicationName() {
         final String appName = TextUtil.getStringProperty( m_properties, PROP_APPNAME, Release.APPNAME );
-        return MarkupParser.cleanLink( appName );
+        return TextUtil.cleanString( appName, TextUtil.PUNCTUATION_CHARS_ALLOWED );
     }
 
     /**

@@ -26,6 +26,7 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 
 import java.io.BufferedReader;
@@ -79,13 +80,6 @@ public abstract class MarkupParser {
 
     /** If set to "true", all external links are tagged with 'rel="nofollow"' */
     public static final String PROP_USERELNOFOLLOW = "jspwiki.translatorReader.useRelNofollow";
-
-    /** Lists all punctuation characters allowed in WikiMarkup. These will not be cleaned away. This is for compatibility for older versions
-        of JSPWiki. */
-    protected static final String LEGACY_CHARS_ALLOWED = "._";
-
-    /** Lists all punctuation characters allowed in page names. */
-    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
 
     public static final String HASHLINK = "hashlink";
 
@@ -341,7 +335,7 @@ public abstract class MarkupParser {
      *  @since 2.0
      */
     public static String cleanLink( final String link ) {
-        return cleanLink( link, PUNCTUATION_CHARS_ALLOWED );
+        return TextUtil.cleanString( link, TextUtil.PUNCTUATION_CHARS_ALLOWED );
     }
 
     /**
@@ -354,62 +348,7 @@ public abstract class MarkupParser {
      *  @since 2.6
      */
     public static String wikifyLink( final String link ) {
-        return cleanLink( link, LEGACY_CHARS_ALLOWED );
-    }
-
-    /**
-     *  Cleans a Wiki name based on a list of characters.  Also, any multiple whitespace is collapsed into a single space, and any
-     *  leading or trailing space is removed.
-     *
-     *  @param link Link to be cleared. Null is safe, and causes this to return null.
-     *  @param allowedChars Characters which are allowed in the string.
-     *  @return A cleaned link.
-     *
-     *  @since 2.6
-     */
-    public static String cleanLink( String link, final String allowedChars ) {
-        if( link == null ) {
-            return null;
-        }
-
-        link = link.trim();
-        final StringBuilder clean = new StringBuilder( link.length() );
-
-        //  Remove non-alphanumeric characters that should not be put inside WikiNames.  Note that all valid Unicode letters are
-        //  considered okay for WikiNames. It is the problem of the WikiPageProvider to take care of actually storing that information.
-        //
-        //  Also capitalize things, if necessary.
-
-        boolean isWord = true;  // If true, we've just crossed a word boundary
-        boolean wasSpace = false;
-        for( int i = 0; i < link.length(); i++ ) {
-            char ch = link.charAt(i);
-
-            //  Cleans away repetitive whitespace and only uses the first one.
-            if( Character.isWhitespace(ch) ) {
-                if( wasSpace ) {
-                    continue;
-                }
-
-                wasSpace = true;
-            } else {
-                wasSpace = false;
-            }
-
-            //  Check if it is allowed to use this char, and capitalize, if necessary.
-            if( Character.isLetterOrDigit( ch ) || allowedChars.indexOf( ch ) != -1 ) {
-                // Is a letter
-                if( isWord ) {
-                    ch = Character.toUpperCase( ch );
-                }
-                clean.append( ch );
-                isWord = false;
-            } else {
-                isWord = true;
-            }
-        }
-
-        return clean.toString();
+        return TextUtil.cleanString( link, TextUtil.LEGACY_CHARS_ALLOWED );
     }
 
 }
