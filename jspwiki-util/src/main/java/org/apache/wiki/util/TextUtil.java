@@ -35,45 +35,42 @@ import java.util.Random;
  */
 public final class TextUtil {
 
-    static final String   HEX_DIGITS = "0123456789ABCDEF";
+    static final String HEX_DIGITS = "0123456789ABCDEF";
 
-    /**
-     *  Private constructor prevents instantiation.
-     */
+    /** Pick from some letters that won't be easily mistaken for each other to compose passwords. So, for example, omit o O and 0, 1 l and L.*/
+    static final String PWD_BASE = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
+
+    /** Length of password. {@link #generateRandomPassword() */
+    public static final int PASSWORD_LENGTH = 8;
+
+    /** Private constructor prevents instantiation. */
     private TextUtil() {}
 
     /**
-     *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
-     *  its functionality.
+     *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates its functionality.
+     *
      *  @param rs the string to encode
      *  @return the URL-encoded string
      */
-    protected static String urlEncode( byte[] rs ) {
-    	StringBuilder result = new StringBuilder(rs.length*2);
+    protected static String urlEncode( final byte[] rs ) {
+    	final StringBuilder result = new StringBuilder( rs.length * 2 );
 
-        // Does the URLEncoding.  We could use the java.net one, but
-        // it does not eat byte[]s.
-
-        for( int i = 0; i < rs.length; i++ ) {
-            char c = ( char )rs[i];
-
+        // Does the URLEncoding.  We could use the java.net one, but it does not eat byte[]s.
+        for( final byte r : rs ) {
+            final char c = ( char )r;
             switch( c ) {
-              case '_':
-              case '.':
-              case '*':
-              case '-':
-              case '/':
+            case '_':
+            case '.':
+            case '*':
+            case '-':
+            case '/':
                 result.append( c );
                 break;
-
-              case ' ':
+            case ' ':
                 result.append( '+' );
                 break;
-
-              default:
-                if( ( c >= 'a' && c <= 'z' ) ||
-                    ( c >= 'A' && c <= 'Z' ) ||
-                    ( c >= '0' && c <= '9' ) ) {
+            default:
+                if( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) || ( c >= '0' && c <= '9' ) ) {
                     result.append( c );
                 } else {
                     result.append( '%' );
@@ -81,15 +78,13 @@ public final class TextUtil {
                     result.append( HEX_DIGITS.charAt( c & 0x0F ) );
                 }
             }
-
-        } // for
+        }
 
         return result.toString();
     }
 
     /**
-     *  URL encoder does not handle all characters correctly.
-     *  See <A HREF="http://developer.java.sun.com/developer/bugParade/bugs/4257115.html">
+     *  URL encoder does not handle all characters correctly. See <A HREF="http://developer.java.sun.com/developer/bugParade/bugs/4257115.html">
      *  Bug parade, bug #4257115</A> for more information.
      *  <P>
      *  Thanks to CJB for this fix.
@@ -100,12 +95,12 @@ public final class TextUtil {
      *
      *  @throws IllegalArgumentException If the byte array is not a valid string.
      */
-    protected static String urlDecode( byte[] bytes, String encoding ) throws  IllegalArgumentException {
+    protected static String urlDecode( final byte[] bytes, final String encoding ) throws  IllegalArgumentException {
         if( bytes == null ) {
             return null;
         }
 
-        byte[] decodeBytes   = new byte[bytes.length];
+        final byte[] decodeBytes = new byte[ bytes.length ];
         int decodedByteCount = 0;
 
         try {
@@ -125,7 +120,7 @@ public final class TextUtil {
                 }
             }
 
-        } catch( IndexOutOfBoundsException ae ) {
+        } catch( final IndexOutOfBoundsException ae ) {
             throw new IllegalArgumentException( "Malformed UTF-8 string?" );
         }
 
@@ -138,14 +133,13 @@ public final class TextUtil {
      *  @param text The text to decode
      *  @return An URLEncoded string.
      */
-    public static String urlEncodeUTF8( String text ) {
+    public static String urlEncodeUTF8( final String text ) {
         // If text is null, just return an empty string
         if ( text == null ) {
             return "";
         }
 
-        byte[] rs = text.getBytes( StandardCharsets.UTF_8 );
-        return urlEncode( rs );
+        return urlEncode( text.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     /**
@@ -154,7 +148,7 @@ public final class TextUtil {
      *  @param utf8 The UTF-8 encoded string
      *  @return A plain, normal string.
      */
-    public static String urlDecodeUTF8( String utf8 ) {
+    public static String urlDecodeUTF8( final String utf8 ) {
         if( utf8 == null ) {
             return null;
         }
@@ -171,9 +165,8 @@ public final class TextUtil {
      * @param encoding The encoding in which to encode
      * @return An URL encoded string.
      */
-    public static String urlEncode( String data, String encoding ) {
-        // Presumably, the same caveats apply as in FileSystemProvider.
-        // Don't see why it would be horribly kludgy, though.
+    public static String urlEncode( final String data, final String encoding ) {
+        // Presumably, the same caveats apply as in FileSystemProvider. Don't see why it would be horribly kludgy, though.
         if( StandardCharsets.UTF_8.toString().equals( encoding ) ) {
             return urlEncodeUTF8( data );
         }
@@ -191,9 +184,8 @@ public final class TextUtil {
      * @return A decoded string.
      * @throws IllegalArgumentException If the data cannot be decoded.
      */
-    public static String urlDecode( String data, String encoding ) throws IllegalArgumentException {
-        // Presumably, the same caveats apply as in FileSystemProvider.
-        // Don't see why it would be horribly kludgy, though.
+    public static String urlDecode( final String data, final String encoding ) throws IllegalArgumentException {
+        // Presumably, the same caveats apply as in FileSystemProvider. Don't see why it would be horribly kludgy, though.
         if( "UTF-8".equals( encoding ) ) {
             return urlDecodeUTF8( data );
         }
@@ -202,8 +194,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Replaces the relevant entities inside the String. All &amp; &gt;, &lt;, and &quot; are replaced by their
-     *  respective names.
+     *  Replaces the relevant entities inside the String. All &amp; &gt;, &lt;, and &quot; are replaced by their respective names.
      *
      *  @since 1.6.1
      *  @param src The source string.
@@ -226,13 +217,19 @@ public final class TextUtil {
      *  @param dest The string to replace <I>src</I> with.
      *  @return A string with the replacement done.
      */
-    public static String replaceString( String orig, String src, String dest ) {
-        if ( orig == null ) return null;
-        if ( src == null || dest == null ) throw new NullPointerException();
-        if ( src.length() == 0 ) return orig;
+    public static String replaceString( final String orig, final String src, final String dest ) {
+        if ( orig == null ) {
+            return null;
+        }
+        if ( src == null || dest == null ) {
+            throw new NullPointerException();
+        }
+        if ( src.length() == 0 ) {
+            return orig;
+        }
 
-        StringBuilder res = new StringBuilder( orig.length() + 20 ); // Pure guesswork
-        int start = 0;
+        final StringBuilder res = new StringBuilder( orig.length() + 20 ); // Pure guesswork
+        int start;
         int end = 0;
         int last = 0;
 
@@ -242,7 +239,6 @@ public final class TextUtil {
             end  = start + src.length();
             last = start + src.length();
         }
-
         res.append( orig.substring( end ) );
 
         return res.toString();
@@ -257,10 +253,12 @@ public final class TextUtil {
      *  @param text The new text to insert into the string.
      *  @return The string with the orig replaced with text.
      */
-    public static String replaceString( String orig, int start, int end, String text ) {
-        if( orig == null ) return null;
+    public static String replaceString( final String orig, final int start, final int end, final String text ) {
+        if( orig == null ) {
+            return null;
+        }
 
-        StringBuilder buf = new StringBuilder(orig);
+        final StringBuilder buf = new StringBuilder( orig );
         buf.replace( start, end, text );
         return buf.toString();
     }
@@ -273,24 +271,24 @@ public final class TextUtil {
      *  @param dest The string to replace <I>src</I> with.
      *  @return A string with all instances of src replaced with dest.
      */
-    public static String replaceStringCaseUnsensitive( String orig, String src, String dest ) {
-        if( orig == null ) return null;
+    public static String replaceStringCaseUnsensitive( final String orig, final String src, final String dest ) {
+        if( orig == null ) {
+            return null;
+        }
 
-        StringBuilder res = new StringBuilder();
-        int start        = 0;
-        int end          = 0;
-        int last         = 0;
+        final StringBuilder res = new StringBuilder();
+        int start;
+        int end = 0;
+        int last = 0;
 
-        String origCaseUnsn = orig.toLowerCase();
-        String srcCaseUnsn = src.toLowerCase();
-
+        final String origCaseUnsn = orig.toLowerCase();
+        final String srcCaseUnsn = src.toLowerCase();
         while( ( start = origCaseUnsn.indexOf( srcCaseUnsn, end ) ) != -1 ) {
             res.append( orig.substring( last, start ) );
             res.append( dest );
             end  = start + src.length();
             last = start + src.length();
         }
-
         res.append( orig.substring( end ) );
 
         return res.toString();
@@ -303,25 +301,21 @@ public final class TextUtil {
      *  @param defvalue A default value in case the value is not a number
      *  @return The parsed value (or defvalue).
      */
-    public static int parseIntParameter( String value, int defvalue ) {
-        int val = defvalue;
-
+    public static int parseIntParameter( final String value, final int defvalue ) {
         try {
-            val = Integer.parseInt( value.trim() );
-        } catch( Exception e ) {}
+            return Integer.parseInt( value.trim() );
+        } catch( final Exception e ) {}
 
-        return val;
+        return defvalue;
     }
 
     /**
      *  Gets an integer-valued property from a standard Properties list.
      *
-     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
-     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
-     *  dots with underscores.
+     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists we use that value,
+     *  if not we check an environment variable with that (almost) same name, almost meaning we replace dots with underscores.
      *
-     *  If the value does not exist, or is a
-     *  non-integer, returns defVal.
+     *  If the value does not exist, or is a non-integer, returns defVal.
      *
      *  @since 2.1.48.
      *  @param props The property set to look through
@@ -329,23 +323,22 @@ public final class TextUtil {
      *  @param defVal If the property is not found or is a non-integer, returns this value.
      *  @return The property value as an integer (or defVal).
      */
-    public static int getIntegerProperty( Properties props,  String key, int defVal ) {
-        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
-        if (val == null) {
-            val = props.getProperty(key);
+    public static int getIntegerProperty( final Properties props, final String key, final int defVal ) {
+        String val = System.getProperties().getProperty( key, System.getenv( StringUtils.replace( key,".","_" ) ) );
+        if( val == null ) {
+            val = props.getProperty( key );
         }
         return parseIntParameter( val, defVal );
     }
 
     /**
-     *  Gets a boolean property from a standard Properties list. Returns the default value, in case the key has not
-     *  been set.
+     *  Gets a boolean property from a standard Properties list. Returns the default value, in case the key has not been set.
      *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
      *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
      *  dots with underscores.
      *  <P>
-     *  The possible values for the property are "true"/"false", "yes"/"no", or "on"/"off".  Any value not
-     *  recognized is always defined as "false".
+     *  The possible values for the property are "true"/"false", "yes"/"no", or "on"/"off".  Any value not recognized is always defined
+     *  as "false".
      *
      *  @param props   A list of properties to search.
      *  @param key     The property key.
@@ -355,10 +348,10 @@ public final class TextUtil {
      *
      *  @since 2.0.11
      */
-    public static boolean getBooleanProperty( Properties props, String key, boolean defval ) {
-        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
-        if (val == null) {
-            val = props.getProperty(key);
+    public static boolean getBooleanProperty( final Properties props, final String key, final boolean defval ) {
+        String val = System.getProperties().getProperty( key, System.getenv( StringUtils.replace( key,".","_" ) ) );
+        if( val == null ) {
+            val = props.getProperty( key );
         }
         if( val == null ) {
             return defval;
@@ -381,12 +374,12 @@ public final class TextUtil {
      *  @return The property value.
      *  @since 2.1.151
      */
-    public static String getStringProperty(Properties props, String key, String defval) {
-        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
-        if (val == null) {
-            val = props.getProperty(key);
+    public static String getStringProperty( final Properties props, final String key, final String defval ) {
+        String val = System.getProperties().getProperty( key, System.getenv( StringUtils.replace( key,".","_" ) ) );
+        if( val == null ) {
+            val = props.getProperty( key );
         }
-        if (val == null) {
+        if( val == null ) {
             return defval;
         }
         return val.trim();
@@ -396,14 +389,14 @@ public final class TextUtil {
      *  Throws an exception if a property is not found.
      *
      *  @param props A set of properties to search the key in.
-     *  @param key   The key to look for.
+     *  @param key The key to look for.
      *  @return The required property
      *
      *  @throws NoSuchElementException If the search key is not in the property set.
      *  @since 2.0.26 (on TextUtils, moved To WikiEngine on 2.11.0-M1 and back to TextUtils on 2.11.0-M6)
      */
-    public static String getRequiredProperty( Properties props, String key ) throws NoSuchElementException {
-        String value = getStringProperty( props, key, null );
+    public static String getRequiredProperty( final Properties props, final String key ) throws NoSuchElementException {
+        final String value = getStringProperty( props, key, null );
         if( value == null ) {
             throw new NoSuchElementException( "Required property not found: " + key );
         }
@@ -413,12 +406,10 @@ public final class TextUtil {
     /**
      *  Fetches a file path property from the set of Properties.
      *
-     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
-     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
-     *  dots with underscores.
+     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists we use that value,
+     *  if not we check an environment variable with that (almost) same name, almost meaning we replace dots with underscores.
      *
-     *  If the implementation fails to create the canonical path it just returns
-     *  the original value of the property which is a bit doggy.
+     *  If the implementation fails to create the canonical path it just returns the original value of the property which is a bit doggy.
      *
      *  @param props The Properties to search through
      *  @param key   The property key
@@ -426,22 +417,20 @@ public final class TextUtil {
      *  @return the canonical path of the file or directory being referenced
      *  @since 2.10.1
      */
-    public static String getCanonicalFilePathProperty(Properties props, String key, String defval) {
-
-        String result;
-        String val = System.getProperties().getProperty(key, System.getenv(StringUtils.replace(key,".","_")));
-        if (val == null) {
-            val = props.getProperty(key);
+    public static String getCanonicalFilePathProperty( final Properties props, final String key, final String defval ) {
+        String val = System.getProperties().getProperty( key, System.getenv( StringUtils.replace( key,".","_" ) ) );
+        if( val == null ) {
+            val = props.getProperty( key );
         }
 
         if( val == null ) {
             val = defval;
         }
 
+        String result;
         try {
-            result = new File(new File(val.trim()).getCanonicalPath()).getAbsolutePath();
-        }
-        catch(IOException e) {
+            result = new File( new File( val.trim() ).getCanonicalPath() ).getAbsolutePath();
+        } catch( final IOException e ) {
             result = val.trim();
         }
         return result;
@@ -461,7 +450,9 @@ public final class TextUtil {
         	return false;
         }
         val = val.trim();
-        return val.equalsIgnoreCase( "true" ) || val.equalsIgnoreCase( "on" ) || val.equalsIgnoreCase( "yes" );
+        return val.equalsIgnoreCase( "true" )
+               || val.equalsIgnoreCase( "on" )
+               || val.equalsIgnoreCase( "yes" );
     }
 
     /**
@@ -472,15 +463,13 @@ public final class TextUtil {
      *  <LI>The CR/LF/CRLF mess is normalized to plain CRLF.
      *  </UL>
      *
-     *  The reason why we're using CRLF is that most browser already return CRLF since that is the closest thing to
-     *  a HTTP standard.
+     *  The reason why we're using CRLF is that most browser already return CRLF since that is the closest thing to a HTTP standard.
      *
      *  @param postData The data to normalize
      *  @return Normalized data
      */
-    public static String normalizePostData( String postData ) {
-        StringBuilder sb = new StringBuilder();
-
+    public static String normalizePostData( final String postData ) {
+        final StringBuilder sb = new StringBuilder();
         for( int i = 0; i < postData.length(); i++ ) {
             switch( postData.charAt(i) ) {
               case 0x0a: // LF, UNIX
@@ -496,7 +485,7 @@ public final class TextUtil {
                 break;
 
               default:
-                sb.append( postData.charAt(i) );
+                sb.append( postData.charAt( i ) );
                 break;
             }
         }
@@ -515,12 +504,12 @@ public final class TextUtil {
     private static final int OTHER = 4;
     private static final Random RANDOM = new SecureRandom();
 
-    private static int getCharKind( int c ) {
+    private static int getCharKind( final int c ) {
         if( c == -1 ) {
             return EOI;
         }
 
-        char ch = ( char )c;
+        final char ch = ( char )c;
 
         if( Character.isLowerCase( ch ) ) {
             return LOWER;
@@ -534,39 +523,36 @@ public final class TextUtil {
     }
 
     /**
-     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more
-     *  readable format.
+     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more readable format.
      *
      *  @param s String to be beautified.
      *  @return A beautified string.
      */
-    public static String beautifyString( String s ) {
+    public static String beautifyString( final String s ) {
         return beautifyString( s, " " );
     }
 
     /**
-     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more
-     *  readable format.
+     *  Adds spaces in suitable locations of the input string.  This is used to transform a WikiName into a more readable format.
      *
      *  @param s String to be beautified.
      *  @param space Use this string for the space character.
      *  @return A beautified string.
      *  @since 2.1.127
      */
-    public static String beautifyString( String s, String space ) {
+    public static String beautifyString( final String s, final String space ) {
         if( s == null || s.length() == 0 ) {
         	return "";
         }
 
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
 
-        int cur     = s.charAt( 0 );
+        int cur = s.charAt( 0 );
         int curKind = getCharKind( cur );
 
         int prevKind = LOWER;
-        int nextKind = -1;
-
-        int next = -1;
+        int nextKind;
+        int next;
         int nextPos = 1;
 
         while( curKind != EOI ) {
@@ -596,11 +582,8 @@ public final class TextUtil {
      *  Creates a Properties object based on an array which contains alternatively a key and a value.  It is useful
      *  for generating default mappings. For example:
      *  <pre>
-     *     String[] properties = { "jspwiki.property1", "value1",
-     *                             "jspwiki.property2", "value2 };
-     *
+     *     String[] properties = { "jspwiki.property1", "value1", "jspwiki.property2", "value2 };
      *     Properties props = TextUtil.createPropertes( values );
-     *
      *     System.out.println( props.getProperty("jspwiki.property1") );
      *  </pre>
      *  would output "value1".
@@ -611,12 +594,12 @@ public final class TextUtil {
      *  @throws IllegalArgumentException if the property array is missing a value for a key.
      *  @since 2.2.
      */
-    public static Properties createProperties( String[] values ) throws IllegalArgumentException {
+    public static Properties createProperties( final String[] values ) throws IllegalArgumentException {
         if( values.length % 2 != 0 ) {
         	throw new IllegalArgumentException( "One value is missing.");
         }
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         for( int i = 0; i < values.length; i += 2 ) {
             props.setProperty( values[i], values[i + 1] );
         }
@@ -631,7 +614,7 @@ public final class TextUtil {
      *  @return int Number of counted sections.
      *  @since 2.1.86.
      */
-    public static int countSections( String pagedata ) {
+    public static int countSections( final String pagedata ) {
         int tags  = 0;
         int start = 0;
 
@@ -640,16 +623,13 @@ public final class TextUtil {
             start += 4; // Skip this "----"
         }
 
-        //
         // The first section does not get the "----"
-        //
         return pagedata.length() > 0 ? tags + 1 : 0;
     }
 
     /**
-     *  Gets the given section (separated with "----") from the page text.
-     *  Note that the first section is always #1.  If a page has no section markers,
-     *  then there is only a single section, #1.
+     *  Gets the given section (separated with "----") from the page text. Note that the first section is always #1.  If a page has no
+     *  section markers, then there is only a single section, #1.
      *
      *  @param pagedata WikiText to parse.
      *  @param section  Which section to get.
@@ -657,7 +637,7 @@ public final class TextUtil {
      *  @throws IllegalArgumentException If the page does not contain this many sections.
      *  @since 2.1.86.
      */
-    public static String getSection( String pagedata, int section ) throws IllegalArgumentException {
+    public static String getSection( final String pagedata, final int section ) throws IllegalArgumentException {
         int tags  = 0;
         int start = 0;
         int previous = 0;
@@ -684,16 +664,15 @@ public final class TextUtil {
     }
 
     /**
-     *  A simple routine which just repeates the arguments.  This is useful for creating something like a line or
-     *  something.
+     *  A simple routine which just repeates the arguments.  This is useful for creating something like a line or something.
      *
      *  @param what String to repeat
      *  @param times How many times to repeat the string.
      *  @return Guess what?
      *  @since 2.1.98.
      */
-    public static String repeatString( String what, int times ) {
-    	StringBuilder sb = new StringBuilder();
+    public static String repeatString( final String what, final int times ) {
+        final StringBuilder sb = new StringBuilder();
         for( int i = 0; i < times; i++ ) {
             sb.append( what );
         }
@@ -708,10 +687,10 @@ public final class TextUtil {
      *  @param s The string to convert
      *  @return the ASCII string
      */
-    public static String native2Ascii( String s ) {
-    	StringBuilder sb = new StringBuilder();
+    public static String native2Ascii( final String s ) {
+        final StringBuilder sb = new StringBuilder();
         for( int i = 0; i < s.length(); i++ ) {
-            char aChar = s.charAt(i);
+            final char aChar = s.charAt(i);
             if( ( aChar < 0x0020 ) || ( aChar > 0x007e ) ) {
                 sb.append( '\\');
                 sb.append( 'u');
@@ -726,11 +705,11 @@ public final class TextUtil {
         return sb.toString();
     }
 
-    private static char toHex( int nibble ) {
+    private static char toHex( final int nibble ) {
         final char[] hexDigit = {
             '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
         };
-        return hexDigit[nibble & 0xF];
+        return hexDigit[ nibble & 0xF ];
     }
 
     /**
@@ -742,7 +721,7 @@ public final class TextUtil {
      * @since 2.3.87
      */
     public static String toHexString( byte[] bytes ) {
-    	StringBuilder sb = new StringBuilder( bytes.length * 2 );
+        final StringBuilder sb = new StringBuilder( bytes.length * 2 );
         for( int i = 0; i < bytes.length; i++ ) {
             sb.append( toHex( bytes[i] >> 4 ) );
             sb.append( toHex( bytes[i] ) );
@@ -766,7 +745,7 @@ public final class TextUtil {
         }
 
         if( s.length() > 1 && s.charAt(0) == '-' ) {
-        	s = s.substring(1);
+        	s = s.substring( 1 );
         }
 
         for( int i = 0; i < s.length(); i++ ) {
@@ -778,9 +757,6 @@ public final class TextUtil {
         return true;
     }
 
-    /** Length of password. @see #generateRandomPassword() */
-    public static final int PASSWORD_LENGTH = 8;
-
     /**
      * Generate a random String suitable for use as a temporary password.
      *
@@ -788,14 +764,10 @@ public final class TextUtil {
      * @since 2.4
      */
     public static String generateRandomPassword() {
-        // Pick from some letters that won't be easily mistaken for each
-        // other. So, for example, omit o O and 0, 1 l and L.
-        String letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
-
         String pw = "";
         for( int i = 0; i < PASSWORD_LENGTH; i++ ) {
-            int index = ( int )( RANDOM.nextDouble() * letters.length() );
-            pw += letters.substring( index, index + 1 );
+            int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
+            pw += PWD_BASE.substring( index, index + 1 );
         }
         return pw;
     }

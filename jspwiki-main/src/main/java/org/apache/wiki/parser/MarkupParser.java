@@ -42,92 +42,82 @@ import java.util.List;
  *
  *   @since  2.4
  */
-public abstract class MarkupParser
-{
-    /** Allow this many characters to be pushed back in the stream.  In effect,
-        this limits the size of a single line.  */
-    protected static final int              PUSHBACK_BUFFER_SIZE = 10*1024;
-    protected PushbackReader                m_in;
-    private int              m_pos = -1; // current position in reader stream
+public abstract class MarkupParser {
 
-    protected WikiEngine     m_engine;
-    protected WikiContext    m_context;
+    /** Allow this many characters to be pushed back in the stream.  In effect, this limits the size of a single line.  */
+    protected static final int PUSHBACK_BUFFER_SIZE = 10*1024;
+    protected PushbackReader m_in;
+    private int m_pos = -1; // current position in reader stream
+
+    protected WikiEngine m_engine;
+    protected WikiContext m_context;
 
     /** Optionally stores internal wikilinks */
-    protected ArrayList< StringTransmutator >      m_localLinkMutatorChain    = new ArrayList<>();
-    protected ArrayList< StringTransmutator >      m_externalLinkMutatorChain = new ArrayList<>();
-    protected ArrayList< StringTransmutator >      m_attachmentLinkMutatorChain = new ArrayList<>();
-    protected ArrayList< HeadingListener >         m_headingListenerChain     = new ArrayList<>();
-    protected ArrayList< StringTransmutator >      m_linkMutators             = new ArrayList<>();
+    protected ArrayList< StringTransmutator > m_localLinkMutatorChain = new ArrayList<>();
+    protected ArrayList< StringTransmutator > m_externalLinkMutatorChain = new ArrayList<>();
+    protected ArrayList< StringTransmutator > m_attachmentLinkMutatorChain = new ArrayList<>();
+    protected ArrayList< StringTransmutator > m_linkMutators = new ArrayList<>();
+    protected ArrayList< HeadingListener > m_headingListenerChain = new ArrayList<>();
 
-    protected boolean        m_inlineImages     = true;
-    protected boolean        m_parseAccessRules = true;
+    protected boolean m_inlineImages = true;
+    protected boolean m_parseAccessRules = true;
     /** Keeps image regexp Patterns */
     protected List< Pattern > m_inlineImagePatterns = null;
     protected LinkParsingOperations m_linkParsingOperations;
 
     private static final Logger log = Logger.getLogger( MarkupParser.class );
 
-    /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
-        this is a VERY dangerous option to set - never turn this on in a publicly
-        allowable Wiki, unless you are absolutely certain of what you're doing. */
-    public static final String     PROP_ALLOWHTML        = "jspwiki.translatorReader.allowHTML";
+    /** If set to "true", allows using raw HTML within Wiki text.  Be warned, this is a VERY dangerous option to set -
+       never turn this on in a publicly allowable Wiki, unless you are absolutely certain of what you're doing. */
+    public static final String PROP_ALLOWHTML = "jspwiki.translatorReader.allowHTML";
+
     /** If set to "true", enables plugins during parsing */
-    public static final String     PROP_RUNPLUGINS       = "jspwiki.translatorReader.runPlugins";
-
-    /** Lists all punctuation characters allowed in WikiMarkup. These
-        will not be cleaned away. This is for compatibility for older versions
-        of JSPWiki. */
-    protected static final String LEGACY_CHARS_ALLOWED      = "._";
-
-    /** Lists all punctuation characters allowed in page names. */
-    public    static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
-
-    public    static final String HASHLINK = "hashlink";
-
-    /** Name of the outlink image; relative path to the JSPWiki directory. */
-    public    static final String OUTLINK_IMAGE = "images/out.png";
-    /** Outlink css class. */
-    public    static final String OUTLINK = "outlink";
+    public static final String PROP_RUNPLUGINS = "jspwiki.translatorReader.runPlugins";
 
     /** If true, all outward links (external links) have a small link image appended. */
-    public    static final String PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
-
-    private   static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
+    public static final String PROP_USEOUTLINKIMAGE = "jspwiki.translatorReader.useOutlinkImage";
 
     /** If set to "true", all external links are tagged with 'rel="nofollow"' */
-    public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
+    public static final String PROP_USERELNOFOLLOW = "jspwiki.translatorReader.useRelNofollow";
 
-    /** The value for anchor element <tt>class</tt> attributes when used
-     * for wiki page (normal) links. The value is "wikipage". */
+    /** Lists all punctuation characters allowed in WikiMarkup. These will not be cleaned away. This is for compatibility for older versions
+        of JSPWiki. */
+    protected static final String LEGACY_CHARS_ALLOWED = "._";
+
+    /** Lists all punctuation characters allowed in page names. */
+    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+
+    public static final String HASHLINK = "hashlink";
+
+    /** Name of the outlink image; relative path to the JSPWiki directory. */
+    public static final String OUTLINK_IMAGE = "images/out.png";
+    /** Outlink css class. */
+    public static final String OUTLINK = "outlink";
+
+    private static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
+
+    /** The value for anchor element <tt>class</tt> attributes when used for wiki page (normal) links. The value is "wikipage". */
    public static final String CLASS_WIKIPAGE = "wikipage";
 
-   /** The value for anchor element <tt>class</tt> attributes when used
-     * for edit page links. The value is "createpage". */
+   /** The value for anchor element <tt>class</tt> attributes when used for edit page links. The value is "createpage". */
    public static final String CLASS_EDITPAGE = "createpage";
 
-   /** The value for anchor element <tt>class</tt> attributes when used
-     * for interwiki page links. The value is "interwiki". */
+   /** The value for anchor element <tt>class</tt> attributes when used for interwiki page links. The value is "interwiki". */
    public static final String CLASS_INTERWIKI = "interwiki";
 
-   /** The value for anchor element <tt>class</tt> attributes when used
-     * for footnote links. The value is "footnote". */
+   /** The value for anchor element <tt>class</tt> attributes when used for footnote links. The value is "footnote". */
    public static final String CLASS_FOOTNOTE = "footnote";
 
-   /** The value for anchor element <tt>class</tt> attributes when used
-     * for footnote links. The value is "footnote". */
+   /** The value for anchor element <tt>class</tt> attributes when used for footnote links. The value is "footnote". */
    public static final String CLASS_FOOTNOTE_REF = "footnoteref";
 
-   /** The value for anchor element <tt>class</tt> attributes when used
-     * for external links. The value is "external". */
+   /** The value for anchor element <tt>class</tt> attributes when used for external links. The value is "external". */
    public static final String CLASS_EXTERNAL = "external";
 
-   /** The value for anchor element <tt>class</tt> attributes when used
-     * for attachments. The value is "attachment". */
+   /** The value for anchor element <tt>class</tt> attributes when used for attachments. The value is "attachment". */
    public static final String CLASS_ATTACHMENT = "attachment";
 
-   public static final String[] CLASS_TYPES =
-   {
+   public static final String[] CLASS_TYPES = {
       CLASS_WIKIPAGE,
       CLASS_EDITPAGE,
       "",
@@ -355,6 +345,19 @@ public abstract class MarkupParser
     }
 
     /**
+     *  Cleans away extra legacy characters.  This method functions exactly like pre-2.6 cleanLink()
+     *  <P>
+     *  [ This is a link ] -&gt; ThisIsALink
+     *
+     *  @param link Link to be cleared. Null is safe, and causes this to return null.
+     *  @return A cleaned link.
+     *  @since 2.6
+     */
+    public static String wikifyLink( final String link ) {
+        return cleanLink( link, LEGACY_CHARS_ALLOWED );
+    }
+
+    /**
      *  Cleans a Wiki name based on a list of characters.  Also, any multiple whitespace is collapsed into a single space, and any
      *  leading or trailing space is removed.
      *
@@ -407,19 +410,6 @@ public abstract class MarkupParser
         }
 
         return clean.toString();
-    }
-
-    /**
-     *  Cleans away extra legacy characters.  This method functions exactly like pre-2.6 cleanLink()
-     *  <P>
-     *  [ This is a link ] -&gt; ThisIsALink
-     *
-     *  @param link Link to be cleared. Null is safe, and causes this to return null.
-     *  @return A cleaned link.
-     *  @since 2.6
-     */
-    public static String wikifyLink( final String link ) {
-        return MarkupParser.cleanLink(link, LEGACY_CHARS_ALLOWED);
     }
 
 }
