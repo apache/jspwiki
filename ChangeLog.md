@@ -17,6 +17,22 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-01-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-05_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): Separate rendering engine from core
+    * `RenderingManager` renamed as `org.apache.wiki.render.DefaultRenderingManager`, with new 
+       `org.apache.wiki.render.RenderingManager` extracted as interface of the latter
+    * moved `textToHtml(..)` methods from `WikiEngine` to `RenderingManager`
+    * moved `getHTML(..)` methods from `WikiEngine` to `RenderingManager`
+    * moved `beautifyTitle( String )` and `beautifyTitleNoBreak` methods from `WikiEngine` to `RenderingManager`__
+* `VAR_EXECUTE_PLUGINS` and `WYSIWYG_EDITOR_MODE` constants from `RenderingManager` moved to `WikiContext` (the latter 
+as `VAR_WYSIWYG_EDITOR_MODE`)
+* constant `PROP_RUNFILTERS` from `WikiEngine` moved to `VariableManager` as `VAR_RUNFILTERS`.
+* constants `PUNCTUATION_CHARS_ALLOWED` and `LEGACY_CHARS_ALLOWED` from `MarkupParser` moved to `TextUtil`.
+* Update ASF parent pom + plugin definitions to support, as far as possible, [reproducible builds](https://maven.apache.org/guides/mini/guide-reproducible-builds.html)
+
 **2020-01-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-04_
