@@ -54,11 +54,11 @@ public abstract class MarkupParser
     protected WikiContext    m_context;
 
     /** Optionally stores internal wikilinks */
-    protected ArrayList<StringTransmutator>      m_localLinkMutatorChain    = new ArrayList<>();
-    protected ArrayList<StringTransmutator>      m_externalLinkMutatorChain = new ArrayList<>();
-    protected ArrayList<StringTransmutator>      m_attachmentLinkMutatorChain = new ArrayList<>();
-    protected ArrayList<HeadingListener>         m_headingListenerChain     = new ArrayList<>();
-    protected ArrayList<StringTransmutator>      m_linkMutators             = new ArrayList<>();
+    protected ArrayList< StringTransmutator >      m_localLinkMutatorChain    = new ArrayList<>();
+    protected ArrayList< StringTransmutator >      m_externalLinkMutatorChain = new ArrayList<>();
+    protected ArrayList< StringTransmutator >      m_attachmentLinkMutatorChain = new ArrayList<>();
+    protected ArrayList< HeadingListener >         m_headingListenerChain     = new ArrayList<>();
+    protected ArrayList< StringTransmutator >      m_linkMutators             = new ArrayList<>();
 
     protected boolean        m_inlineImages     = true;
     protected boolean        m_parseAccessRules = true;
@@ -142,14 +142,12 @@ public abstract class MarkupParser
    };
 
     /**
-     *  Constructs a MarkupParser.  The subclass must call this constructor
-     *  to set up the necessary bits and pieces.
+     *  Constructs a MarkupParser.  The subclass must call this constructor to set up the necessary bits and pieces.
      *
      *  @param context The WikiContext.
      *  @param in The reader from which we are reading the bytes from.
      */
-    protected MarkupParser( WikiContext context, Reader in )
-    {
+    protected MarkupParser( final WikiContext context, final Reader in ) {
         m_engine = context.getEngine();
         m_context = context;
         m_linkParsingOperations = new LinkParsingOperations( m_context );
@@ -158,64 +156,45 @@ public abstract class MarkupParser
 
     /**
      *  Replaces the current input character stream with a new one.
+     *
      *  @param in New source for input.  If null, this method does nothing.
      *  @return the old stream
      */
-    public Reader setInputReader( Reader in )
-    {
-        Reader old = m_in;
-
-        if( in != null )
-        {
-            m_in = new PushbackReader( new BufferedReader( in ),
-                                       PUSHBACK_BUFFER_SIZE );
+    public Reader setInputReader( final Reader in ) {
+        final Reader old = m_in;
+        if( in != null ) {
+            m_in = new PushbackReader( new BufferedReader( in ), PUSHBACK_BUFFER_SIZE );
         }
 
         return old;
     }
 
     /**
-     *  Adds a hook for processing link texts.  This hook is called
-     *  when the link text is written into the output stream, and
-     *  you may use it to modify the text.  It does not affect the
-     *  actual link, only the user-visible text.
+     *  Adds a hook for processing link texts.  This hook is called when the link text is written into the output stream, and
+     *  you may use it to modify the text.  It does not affect the actual link, only the user-visible text.
      *
      *  @param mutator The hook to call.  Null is safe.
      */
-    public void addLinkTransmutator( StringTransmutator mutator )
-    {
-        if( mutator != null )
-        {
-            m_linkMutators.add( mutator );
-        }
+    public void addLinkTransmutator( final StringTransmutator mutator ) {
+        addLinkHook( m_linkMutators, mutator );
     }
 
     /**
-     *  Adds a hook for processing local links.  The engine
-     *  transforms both non-existing and existing page links.
+     *  Adds a hook for processing local links.  The engine transforms both non-existing and existing page links.
      *
      *  @param mutator The hook to call.  Null is safe.
      */
-    public void addLocalLinkHook( StringTransmutator mutator )
-    {
-        if( mutator != null )
-        {
-            m_localLinkMutatorChain.add( mutator );
-        }
+    public void addLocalLinkHook( final StringTransmutator mutator ) {
+        addLinkHook( m_localLinkMutatorChain, mutator );
     }
 
     /**
-     *  Adds a hook for processing external links.  This includes
-     *  all http:// ftp://, etc. links, including inlined images.
+     *  Adds a hook for processing external links.  This includes all http:// ftp://, etc. links, including inlined images.
      *
      *  @param mutator The hook to call.  Null is safe.
      */
-    public void addExternalLinkHook( StringTransmutator mutator )
-    {
-        if( mutator != null )
-        {
-            m_externalLinkMutatorChain.add( mutator );
-        }
+    public void addExternalLinkHook( final StringTransmutator mutator ) {
+        addLinkHook( m_externalLinkMutatorChain, mutator );
     }
 
     /**
@@ -223,24 +202,23 @@ public abstract class MarkupParser
      *
      *  @param mutator The hook to call.  Null is safe.
      */
-    public void addAttachmentLinkHook( StringTransmutator mutator )
-    {
-        if( mutator != null )
-        {
-            m_attachmentLinkMutatorChain.add( mutator );
+    public void addAttachmentLinkHook( final StringTransmutator mutator ) {
+        addLinkHook( m_attachmentLinkMutatorChain, mutator );
+    }
+
+    void addLinkHook( final List< StringTransmutator > mutatorChain, final StringTransmutator mutator ) {
+        if( mutator != null ) {
+            mutatorChain.add( mutator );
         }
     }
 
     /**
-     *  Adds a HeadingListener to the parser chain.  It will be called whenever
-     *  a parsed header is found.
+     *  Adds a HeadingListener to the parser chain.  It will be called whenever a parsed header is found.
      *
      *  @param listener The listener to add.
      */
-    public void addHeadingListener( HeadingListener listener )
-    {
-        if( listener != null )
-        {
+    public void addHeadingListener( final HeadingListener listener ) {
+        if( listener != null ) {
             m_headingListenerChain.add( listener );
         }
     }
@@ -260,12 +238,13 @@ public abstract class MarkupParser
 
     /**
      *  Use this to turn on or off image inlining.
+     *
      *  @param toggle If true, images are inlined (as per set in jspwiki.properties)
      *                If false, then images won't be inlined; instead, they will be
      *                treated as standard hyperlinks.
      *  @since 2.2.9
      */
-    public void enableImageInlining( boolean toggle )
+    public void enableImageInlining( final boolean toggle )
     {
         m_inlineImages = toggle;
     }
@@ -274,21 +253,17 @@ public abstract class MarkupParser
         return m_inlineImages;
     }
 
-    @SuppressWarnings( "unchecked" )
     protected final void initInlineImagePatterns() {
-		PatternCompiler compiler = new GlobCompiler();
-        //
+		final PatternCompiler compiler = new GlobCompiler();
+
         //  We cache compiled patterns in the engine, since their creation is really expensive
-        //
         List< Pattern > compiledpatterns = m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
 
         if( compiledpatterns == null ) {
             compiledpatterns = new ArrayList< >( 20 );
-            Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
+            final Collection< String > ptrns = m_engine.getAllInlinedImagePatterns();
 
-            //
             //  Make them into Regexp Patterns.  Unknown patterns are ignored.
-            //
             for( final String pattern : ptrns ) {
                 try {
                     compiledpatterns.add( compiler.compile( pattern, GlobCompiler.DEFAULT_MASK | GlobCompiler.READ_ONLY_MASK ) );
@@ -312,15 +287,15 @@ public abstract class MarkupParser
 
     /**
      *  Parses the document.
+     *
      *  @return the parsed document, as a WikiDocument
      *  @throws IOException If something goes wrong.
      */
-    public abstract WikiDocument parse()
-         throws IOException;
+    public abstract WikiDocument parse() throws IOException;
 
     /**
-     *  Return the current position in the reader stream.
-     *  The value will be -1 prior to reading.
+     *  Return the current position in the reader stream. The value will be -1 prior to reading.
+     *
      * @return the reader position as an int.
      */
     public int getPosition()
@@ -329,55 +304,44 @@ public abstract class MarkupParser
     }
 
     /**
-     * Returns the next token in the stream.  This is the most called method
-     * in the entire parser, so it needs to be lean and mean.
+     * Returns the next token in the stream.  This is the most called method in the entire parser, so it needs to be lean and mean.
      *
      * @return The next token in the stream; or, if the stream is ended, -1.
      * @throws IOException If something bad happens
      * @throws NullPointerException If you have not yet created an input document.
      */
-    protected final int nextToken()
-        throws IOException, NullPointerException
-    {
+    protected final int nextToken() throws IOException, NullPointerException {
         // if( m_in == null ) return -1;
         m_pos++;
         return m_in.read();
     }
 
     /**
-     *  Push back any character to the current input.  Does not
-     *  push back a read EOF, though.
+     *  Push back any character to the current input.  Does not push back a read EOF, though.
      *
      *  @param c Character to push back.
      *  @throws IOException In case the character cannot be pushed back.
      */
-    protected void pushBack( int c )
-        throws IOException
-    {
-        if( c != -1 && m_in != null )
-        {
+    protected void pushBack( final int c ) throws IOException {
+        if( c != -1 && m_in != null ) {
             m_pos--;
             m_in.unread( c );
         }
     }
 
     /**
-     *  Writes HTML for error message.  Does not add it to the document, you
-     *  have to do it yourself.
+     *  Writes HTML for error message.  Does not add it to the document, you have to do it yourself.
      *
      *  @param error The error string.
      *  @return An Element containing the error.
      */
-
-    public static Element makeError( String error )
-    {
-        return new Element("span").setAttribute("class","error").addContent(error);
+    public static Element makeError( final String error ) {
+        return new Element( "span" ).setAttribute( "class", "error" ).addContent( error );
     }
 
     /**
-     *  Cleans a Wiki name.  The functionality of this method was changed in 2.6
-     *  so that the list of allowed characters is much larger.  Use wikifyLink()
-     *  to get the legacy behaviour.
+     *  Cleans a Wiki name.  The functionality of this method was changed in 2.6 so that the list of allowed characters is much larger.
+     *  Use {@link #wikifyLink(String)} to get the legacy behaviour.
      *  <P>
      *  [ This is a link ] -&gt; This is a link
      *
@@ -386,15 +350,13 @@ public abstract class MarkupParser
      *
      *  @since 2.0
      */
-    public static String cleanLink( String link )
-    {
-        return cleanLink(link, PUNCTUATION_CHARS_ALLOWED);
+    public static String cleanLink( final String link ) {
+        return cleanLink( link, PUNCTUATION_CHARS_ALLOWED );
     }
 
     /**
-     *  Cleans a Wiki name based on a list of characters.  Also, any multiple
-     *  whitespace is collapsed into a single space, and any leading or trailing
-     *  space is removed.
+     *  Cleans a Wiki name based on a list of characters.  Also, any multiple whitespace is collapsed into a single space, and any
+     *  leading or trailing space is removed.
      *
      *  @param link Link to be cleared. Null is safe, and causes this to return null.
      *  @param allowedChars Characters which are allowed in the string.
@@ -402,58 +364,44 @@ public abstract class MarkupParser
      *
      *  @since 2.6
      */
-    public static String cleanLink( String link, String allowedChars )
-    {
-        if( link == null ) return null;
+    public static String cleanLink( String link, final String allowedChars ) {
+        if( link == null ) {
+            return null;
+        }
 
         link = link.trim();
-        StringBuilder clean = new StringBuilder(link.length());
+        final StringBuilder clean = new StringBuilder( link.length() );
 
-        //
-        //  Remove non-alphanumeric characters that should not
-        //  be put inside WikiNames.  Note that all valid
-        //  Unicode letters are considered okay for WikiNames.
-        //  It is the problem of the WikiPageProvider to take
-        //  care of actually storing that information.
+        //  Remove non-alphanumeric characters that should not be put inside WikiNames.  Note that all valid Unicode letters are
+        //  considered okay for WikiNames. It is the problem of the WikiPageProvider to take care of actually storing that information.
         //
         //  Also capitalize things, if necessary.
-        //
 
         boolean isWord = true;  // If true, we've just crossed a word boundary
         boolean wasSpace = false;
-
-        for( int i = 0; i < link.length(); i++ )
-        {
+        for( int i = 0; i < link.length(); i++ ) {
             char ch = link.charAt(i);
 
-            //
             //  Cleans away repetitive whitespace and only uses the first one.
-            //
-            if( Character.isWhitespace(ch) )
-            {
-                if( wasSpace )
+            if( Character.isWhitespace(ch) ) {
+                if( wasSpace ) {
                     continue;
+                }
 
                 wasSpace = true;
-            }
-            else
-            {
+            } else {
                 wasSpace = false;
             }
 
-            //
             //  Check if it is allowed to use this char, and capitalize, if necessary.
-            //
-            if( Character.isLetterOrDigit( ch ) || allowedChars.indexOf(ch) != -1 )
-            {
+            if( Character.isLetterOrDigit( ch ) || allowedChars.indexOf( ch ) != -1 ) {
                 // Is a letter
-
-                if( isWord ) ch = Character.toUpperCase( ch );
+                if( isWord ) {
+                    ch = Character.toUpperCase( ch );
+                }
                 clean.append( ch );
                 isWord = false;
-            }
-            else
-            {
+            } else {
                 isWord = true;
             }
         }
@@ -462,8 +410,7 @@ public abstract class MarkupParser
     }
 
     /**
-     *  Cleans away extra legacy characters.  This method functions exactly
-     *  like pre-2.6 cleanLink()
+     *  Cleans away extra legacy characters.  This method functions exactly like pre-2.6 cleanLink()
      *  <P>
      *  [ This is a link ] -&gt; ThisIsALink
      *
@@ -471,8 +418,7 @@ public abstract class MarkupParser
      *  @return A cleaned link.
      *  @since 2.6
      */
-    public static String wikifyLink( final String link )
-    {
+    public static String wikifyLink( final String link ) {
         return MarkupParser.cleanLink(link, LEGACY_CHARS_ALLOWED);
     }
 
