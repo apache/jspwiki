@@ -322,4 +322,9 @@ public class WikiEngineTest {
         Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
     }
 
+    @Test
+    public void testGetViewURL() {
+        Assertions.assertEquals( "/test/Wiki.jsp?page=" + NAME1, m_engine.getViewURL( NAME1 ) );
+    }
+
 }
