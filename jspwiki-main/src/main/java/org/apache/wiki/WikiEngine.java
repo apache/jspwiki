@@ -729,8 +729,9 @@ public class WikiEngine  {
         if( pageName == null ) {
             pageName = getFrontPage();
         }
-        //FIXME: final boolean absolute = getVariableManager().getVariable( this, WikiEngine.PROP_REFSTYLE );
-        return getURLConstructor().makeURL( WikiContext.VIEW, pageName, "absolute".equals( PROP_REFSTYLE ), null );
+        final WikiContext wc = new WikiContext( this, new WikiPage( this, pageName ) );
+        final boolean absolute = Boolean.parseBoolean( getVariableManager().getVariable( wc, WikiEngine.PROP_REFSTYLE ) );
+        return getURLConstructor().makeURL( WikiContext.VIEW, pageName, absolute, null );
     }
 
     /**
@@ -755,8 +756,7 @@ public class WikiEngine  {
      *  @return The front page name.
      */
 
-    public String getFrontPage()
-    {
+    public String getFrontPage() {
         return m_frontPage;
     }
 
@@ -769,8 +769,7 @@ public class WikiEngine  {
      *  @return ServletContext of the WikiEngine, or null.
      */
 
-    public ServletContext getServletContext()
-    {
+    public ServletContext getServletContext() {
         return m_servletContext;
     }
 
@@ -808,7 +807,7 @@ public class WikiEngine  {
      */
     public Collection< String > getAllInlinedImagePatterns() {
         final ArrayList< String > ptrnlist = new ArrayList<>();
-        for( Enumeration< ? > e = m_properties.propertyNames(); e.hasMoreElements(); ) {
+        for( final Enumeration< ? > e = m_properties.propertyNames(); e.hasMoreElements(); ) {
             final String name = ( String )e.nextElement();
             if( name.startsWith( PROP_INLINEIMAGEPTRN ) ) {
                 ptrnlist.add( TextUtil.getStringProperty( m_properties, name, null ) );
