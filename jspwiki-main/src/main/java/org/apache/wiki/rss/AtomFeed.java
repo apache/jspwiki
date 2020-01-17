@@ -36,20 +36,17 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  *  Provides an Atom 1.0 standard feed, with enclosures.
  *
  */
-public class AtomFeed extends Feed
-{
+public class AtomFeed extends Feed {
+
     private Namespace m_atomNameSpace = Namespace.getNamespace("http://www.w3.org/2005/Atom");
 
-    /**
-     *  Defines a SimpleDateFormat string for RFC3339-formatted dates.
-     */
+    /** Defines a SimpleDateFormat string for RFC3339-formatted dates. */
     public static final String RFC3339FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
 
     /**
@@ -57,14 +54,13 @@ public class AtomFeed extends Feed
      *  
      *  @param c A WikiContext.
      */
-    public AtomFeed( WikiContext c )
+    public AtomFeed( final WikiContext c )
     {
         super(c);
     }
 
     /**
-     *   This is a bit complicated right now, as there is no proper metadata
-     *   store in JSPWiki.
+     *   This is a bit complicated right now, as there is no proper metadata store in JSPWiki.
      *
      *   @return An unique feed ID.
      */
@@ -73,53 +69,39 @@ public class AtomFeed extends Feed
         return m_wikiContext.getEngine().getBaseURL(); // FIXME: This is not a feed id
     }
 
-    private String getEntryID( Entry e )
+    private String getEntryID( final Entry e )
     {
         return e.getURL(); // FIXME: Not really a feed id!
     }
 
-    private Collection<Element> getItems()
-    {
-        ArrayList<Element> list = new ArrayList<>();
-
-        WikiEngine engine = m_wikiContext.getEngine();
+    private Collection<Element> getItems() {
+        final ArrayList< Element > list = new ArrayList<>();
+        final WikiEngine engine = m_wikiContext.getEngine();
         ServletContext servletContext = null;
-
-        if( m_wikiContext.getHttpRequest() != null )
+        if( m_wikiContext.getHttpRequest() != null ) {
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
+        }
 
-        for( Entry e : m_entries ) {
-            WikiPage p = e.getPage();
+        for( final Entry e : m_entries ) {
+            final WikiPage p = e.getPage();
+            final Element entryEl = getElement( "entry" );
 
-            Element entryEl = getElement( "entry" );
-
-            //
             //  Mandatory elements
-            //
-
             entryEl.addContent( getElement( "id" ).setText( getEntryID( e ) ) );
             entryEl.addContent( getElement( "title" ).setAttribute( "type", "html" ).setText( e.getTitle() ) );
             entryEl.addContent( getElement( "updated" ).setText( DateFormatUtils.formatUTC( p.getLastModified(), RFC3339FORMAT ) ) );
-            //
-            //  Optional elements
-            //
 
+            //  Optional elements
             entryEl.addContent( getElement( "author" ).addContent( getElement( "name" ).setText( e.getAuthor() ) ) );
             entryEl.addContent( getElement( "link" ).setAttribute( "rel", "alternate" ).setAttribute( "href", e.getURL() ) );
             entryEl.addContent( getElement( "content" ).setAttribute( "type", "html" ).setText( e.getContent() ) );
 
-            //
             //  Check for enclosures
-            //
-
             if( engine.getAttachmentManager().hasAttachments( p ) && servletContext != null ) {
                 try {
-                    List<Attachment> c = engine.getAttachmentManager().listAttachments( p );
-
-                    for( Iterator<Attachment> a = c.iterator(); a.hasNext(); ) {
-                        Attachment att = a.next();
-
-                        Element attEl = getElement( "link" );
+                    final List< Attachment > c = engine.getAttachmentManager().listAttachments( p );
+                    for( final Attachment att : c ) {
+                        final Element attEl = getElement( "link" );
                         attEl.setAttribute( "rel", "enclosure" );
                         attEl.setAttribute( "href", engine.getURL( WikiContext.ATTACH, att.getName(), null, true ) );
                         attEl.setAttribute( "length", Long.toString( att.getSize() ) );
@@ -127,7 +109,7 @@ public class AtomFeed extends Feed
 
                         entryEl.addContent( attEl );
                     }
-                } catch( ProviderException ex ) {
+                } catch( final ProviderException ex ) {
                     // FIXME: log.info("Can't get attachment data",ex);
                 }
             }
@@ -142,73 +124,56 @@ public class AtomFeed extends Feed
      *  {@inheritDoc}
      */
     @Override
-    public String getString()
-    {
-        Element root = getElement("feed");
-        WikiEngine engine = m_wikiContext.getEngine();
+    public String getString() {
+        final Element root = getElement("feed");
+        final WikiEngine engine = m_wikiContext.getEngine();
 
         Date lastModified = new Date(0L);
 
-        for( Iterator< Entry > i = m_entries.iterator(); i.hasNext(); )
-        {
-            Entry e = i.next();
-
-            if( e.getPage().getLastModified().after(lastModified) )
+        for( final Entry e : m_entries ) {
+            if( e.getPage().getLastModified().after( lastModified ) )
                 lastModified = e.getPage().getLastModified();
         }
 
-        //
         //  Mandatory parts
-        //
         root.addContent( getElement("title").setText( getChannelTitle() ) );
         root.addContent( getElement("id").setText(getFeedID()) );
         root.addContent( getElement("updated").setText(DateFormatUtils.formatUTC( lastModified,
                                                                                   RFC3339FORMAT ) ));
 
-        //
         //  Optional
-        //
         // root.addContent( getElement("author").addContent(getElement("name").setText(format())))
         root.addContent( getElement("link").setAttribute("href",engine.getBaseURL()));
         root.addContent( getElement("generator").setText("JSPWiki "+Release.VERSTR));
 
-        String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp",
-                                           "page="+engine.encodeName(m_wikiContext.getPage().getName())+
-                                           "&mode="+m_mode+
-                                           "&type=atom",
+        final String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp",
+                                                 "page=" + engine.encodeName( m_wikiContext.getPage().getName() ) +
+                                                 "&mode=" + m_mode +
+                                                 "&type=atom",
                                            true );
-        Element self = getElement("link").setAttribute("rel","self");
-        self.setAttribute("href",rssFeedURL);
-        root.addContent(self);
+        final Element self = getElement( "link" ).setAttribute( "rel","self" );
+        self.setAttribute( "href", rssFeedURL );
+        root.addContent( self );
 
-        //
         //  Items
-        //
-
         root.addContent( getItems() );
 
-        //
         //  aaand output
-        //
-        XMLOutputter output = new XMLOutputter();
-
+        final XMLOutputter output = new XMLOutputter();
         output.setFormat( Format.getPrettyFormat() );
 
-        try
-        {
-            StringWriter res = new StringWriter();
+        try {
+            final StringWriter res = new StringWriter();
             output.output( root, res );
 
             return res.toString();
-        }
-        catch( IOException e )
-        {
+        } catch( final IOException e ) {
             return null;
         }
     }
 
-    private Element getElement( String name )
-    {
+    private Element getElement( final String name ) {
         return new Element( name, m_atomNameSpace );
     }
+
 }

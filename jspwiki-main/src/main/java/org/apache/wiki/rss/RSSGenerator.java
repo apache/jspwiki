@@ -24,14 +24,11 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.util.TextUtil;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -40,8 +37,7 @@ import java.util.Set;
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).
  *  <p>
- *  This class can produce quite a few different styles of feeds.  The following modes are
- *  available:
+ *  This class can produce quite a few different styles of feeds.  The following modes are available:
  *  
  *  <ul>
  *  <li><b>wiki</b> - All the changes to the given page are enumerated and announced as diffs.</li>
@@ -56,12 +52,12 @@ import java.util.Set;
 // FIXME3.0: This class would need a bit of refactoring.  Method names, e.g. are confusing.
 public class RSSGenerator {
 
-    static Logger              log = Logger.getLogger( RSSGenerator.class );
-    private WikiEngine         m_engine;
+    private static final Logger log = Logger.getLogger( RSSGenerator.class );
+    private WikiEngine m_engine;
 
-    private String             m_channelDescription = "";
-    private String             m_channelLanguage    = "en-us";
-    private boolean            m_enabled = true;
+    private String m_channelDescription = "";
+    private String m_channelLanguage = "en-us";
+    private boolean m_enabled = true;
 
     /** Parameter value to represent RSS 1.0 feeds.  Value is <tt>{@value}</tt>. */
     public static final String RSS10 = "rss10";
@@ -82,8 +78,7 @@ public class RSSGenerator {
     public static final String MODE_FULL = "full";
 
     /**
-     *  Defines the property name for the RSS channel description.  Default value for the
-     *  channel description is an empty string.
+     *  Defines the property name for the RSS channel description.  Default value for the channel description is an empty string.
      *  @since 1.7.6.
      */
     public static final String PROP_CHANNEL_DESCRIPTION = "jspwiki.rss.channelDescription";
@@ -92,48 +87,47 @@ public class RSSGenerator {
      *  Defines the property name for the RSS channel language.  Default value for the language is "en-us".
      *  @since 1.7.6.
      */
-    public static final String PROP_CHANNEL_LANGUAGE    = "jspwiki.rss.channelLanguage";
+    public static final String PROP_CHANNEL_LANGUAGE = "jspwiki.rss.channelLanguage";
 
     /** Defines the property name for the RSS channel title.  Value is <tt>{@value}</tt>. */
-    public static final String PROP_CHANNEL_TITLE       = "jspwiki.rss.channelTitle";
+    public static final String PROP_CHANNEL_TITLE = "jspwiki.rss.channelTitle";
 
     /**
      *  Defines the property name for the RSS generator main switch.
      *  @since 1.7.6.
      */
-    public static final String PROP_GENERATE_RSS        = "jspwiki.rss.generate";
+    public static final String PROP_GENERATE_RSS = "jspwiki.rss.generate";
 
     /**
      *  Defines the property name for the RSS file that the wiki should generate.
      *  @since 1.7.6.
      */
-    public static final String PROP_RSSFILE             = "jspwiki.rss.fileName";
+    public static final String PROP_RSSFILE = "jspwiki.rss.fileName";
 
     /**
      *  Defines the property name for the RSS generation interval in seconds.
      *  @since 1.7.6.
      */
-    public static final String PROP_INTERVAL            = "jspwiki.rss.interval";
+    public static final String PROP_INTERVAL = "jspwiki.rss.interval";
 
     /** Defines the property name for the RSS author.  Value is <tt>{@value}</tt>. */
-    public static final String PROP_RSS_AUTHOR          = "jspwiki.rss.author";
+    public static final String PROP_RSS_AUTHOR = "jspwiki.rss.author";
 
     /** Defines the property name for the RSS author email.  Value is <tt>{@value}</tt>. */
-    public static final String PROP_RSS_AUTHOREMAIL     = "jspwiki.rss.author.email";
+    public static final String PROP_RSS_AUTHOREMAIL = "jspwiki.rss.author.email";
 
-    private static final int MAX_CHARACTERS             = Integer.MAX_VALUE-1;
+    private static final int MAX_CHARACTERS = Integer.MAX_VALUE-1;
 
     /**
      *  Initialize the RSS generator for a given WikiEngine.
      *
      *  @param engine The WikiEngine.
      *  @param properties The properties.
-     *  @throws NoRequiredPropertyException If something is missing from the given property set.
      */
-    public RSSGenerator( WikiEngine engine, Properties properties ) {
+    public RSSGenerator( final WikiEngine engine, final Properties properties ) {
         m_engine = engine;
         m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, m_channelDescription );
-        m_channelLanguage    = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
+        m_channelLanguage = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
     }
 
     /**
@@ -143,8 +137,7 @@ public class RSSGenerator {
      *  @return A formatted string.
      */
     // FIXME: Replicates Feed.format().
-    public static String format( String s )
-    {
+    public static String format( String s ) {
         s = TextUtil.replaceString( s, "&", "&amp;" );
         s = TextUtil.replaceString( s, "<", "&lt;" );
         s = TextUtil.replaceString( s, "]]>", "]]&gt;" );
@@ -152,74 +145,60 @@ public class RSSGenerator {
         return s.trim();
     }
 
-    private String getAuthor( WikiPage page )
-    {
+    private String getAuthor( final WikiPage page ) {
         String author = page.getAuthor();
-
-        if( author == null ) author = "An unknown author";
+        if( author == null ) {
+            author = "An unknown author";
+        }
 
         return author;
     }
 
-    private String getAttachmentDescription( Attachment att )
-    {
-        String author = getAuthor(att);
-        StringBuilder sb = new StringBuilder();
+    private String getAttachmentDescription( final Attachment att ) {
+        final String author = getAuthor( att );
+        final StringBuilder sb = new StringBuilder();
 
-        if( att.getVersion() != 1 )
-        {
-            sb.append(author+" uploaded a new version of this attachment on "+att.getLastModified() );
-        }
-        else
-        {
-            sb.append(author+" created this attachment on "+att.getLastModified() );
+        if( att.getVersion() != 1 ) {
+            sb.append( author ).append( " uploaded a new version of this attachment on " ).append( att.getLastModified() );
+        } else {
+            sb.append( author ).append( " created this attachment on " ).append( att.getLastModified() );
         }
 
-        sb.append("<br /><hr /><br />");
-        sb.append( "Parent page: <a href=\""+
-                   m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) +
-                   "\">"+att.getParentName()+"</a><br />" );
-        sb.append( "Info page: <a href=\""+
-                   m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) +
-                   "\">"+att.getName()+"</a>" );
+        sb.append( "<br /><hr /><br />" )
+          .append( "Parent page: <a href=\"" )
+          .append( m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) )
+          .append( "\">" ).append( att.getParentName() ).append( "</a><br />" )
+          .append( "Info page: <a href=\"" )
+          .append( m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) )
+          .append( "\">" ).append( att.getName() ).append( "</a>" );
 
         return sb.toString();
     }
 
-    private String getPageDescription( WikiPage page )
-    {
-    	StringBuilder buf = new StringBuilder();
-        String author = getAuthor(page);
+    private String getPageDescription( final WikiPage page ) {
+        final StringBuilder buf = new StringBuilder();
+        final String author = getAuthor( page );
+        final WikiContext ctx = new WikiContext( m_engine, page );
+        if( page.getVersion() > 1 ) {
+            final String diff = m_engine.getDifferenceManager().getDiff( ctx,
+                                                                page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
+                                                                         page.getVersion() );
 
-        WikiContext ctx = new WikiContext( m_engine, page );
-        if( page.getVersion() > 1 )
-        {
-            String diff = m_engine.getDifferenceManager().getDiff( ctx,
-                                                          page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
-                                                                   page.getVersion() );
-
-            buf.append(author+" changed this page on "+page.getLastModified()+":<br /><hr /><br />" );
-            buf.append(diff);
-        }
-        else
-        {
-            buf.append(author+" created this page on "+page.getLastModified()+":<br /><hr /><br />" );
-            buf.append(m_engine.getRenderingManager().getHTML( page.getName() ));
+            buf.append( author ).append( " changed this page on " ).append( page.getLastModified() ).append( ":<br /><hr /><br />" );
+            buf.append( diff );
+        } else {
+            buf.append( author ).append( " created this page on " ).append( page.getLastModified() ).append( ":<br /><hr /><br />" );
+            buf.append( m_engine.getRenderingManager().getHTML( page.getName() ) );
         }
 
         return buf.toString();
     }
 
-    private String getEntryDescription( WikiPage page )
-    {
-        String res;
-
-        if( page instanceof Attachment )
-        {
+    private String getEntryDescription( final WikiPage page ) {
+        final String res;
+        if( page instanceof Attachment ) {
             res = getAttachmentDescription( (Attachment)page );
-        }
-        else
-        {
+        } else {
             res = getPageDescription( page );
         }
 
@@ -227,19 +206,18 @@ public class RSSGenerator {
     }
 
     // FIXME: This should probably return something more intelligent
-    private String getEntryTitle( WikiPage page )
+    private String getEntryTitle( final WikiPage page )
     {
-        return page.getName()+", version "+page.getVersion();
+        return page.getName() + ", version " + page.getVersion();
     }
 
     /**
-     *  Generates the RSS resource.  You probably want to output this
-     *  result into a file or something, or serve as output from a servlet.
+     *  Generates the RSS resource.  You probably want to output this result into a file or something, or serve as output from a servlet.
      *  
      *  @return A RSS 1.0 feed in the "full" mode.
      */
     public String generate() {
-        final WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
+        final WikiContext context = new WikiContext( m_engine, new WikiPage( m_engine, "__DUMMY" ) );
         context.setRequestContext( WikiContext.RSS );
         final Feed feed = new RSS10Feed( context );
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + generateFullWikiRSS( context, feed );
@@ -247,7 +225,8 @@ public class RSSGenerator {
 
     /**
      * Returns the content type of this RSS feed.
-     *  @since 2.3.15
+     *
+     * @since 2.3.15
      * @param mode the RSS mode: {@link #RSS10}, {@link #RSS20} or {@link #ATOM}.
      * @return the content type
      */
@@ -262,14 +241,13 @@ public class RSSGenerator {
     }
 
     /**
-     *  Generates a feed based on a context and list of changes.
+     * Generates a feed based on a context and list of changes.
+     *
      * @param wikiContext The WikiContext
      * @param changed A list of Entry objects
      * @param mode The mode (wiki/blog)
      * @param type The type (RSS10, RSS20, ATOM).  Default is RSS 1.0
      * @return Fully formed XML.
-     *
-     * @throws ProviderException If the underlying provider failed.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
     public String generateFeed( final WikiContext wikiContext, final List< WikiPage > changed, final String mode, final String type ) throws IllegalArgumentException {
@@ -301,6 +279,7 @@ public class RSSGenerator {
 
     /**
      * Returns <code>true</code> if RSS generation is enabled.
+     *
      * @return whether RSS generation is currently enabled
      */
     public boolean isEnabled()
@@ -309,11 +288,9 @@ public class RSSGenerator {
     }
 
     /**
-     * Turns RSS generation on or off. This setting is used to set
-     * the "enabled" flag only for use by callers, and does not
-     * actually affect whether the {@link #generate()} or
-     * {@link #generateFeed(WikiContext, List, String, String)}
-     * methods output anything.
+     * Turns RSS generation on or off. This setting is used to set the "enabled" flag only for use by callers, and does not
+     * actually affect whether the {@link #generate()} or {@link #generateFeed(WikiContext, List, String, String)} methods output anything.
+     *
      * @param enabled whether RSS generation is considered enabled.
      */
     public synchronized void setEnabled( final boolean enabled )
@@ -339,12 +316,9 @@ public class RSSGenerator {
         final WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;
         for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
-            WikiPage page = i.next();
+            final WikiPage page = i.next();
 
-            //
             //  Check if the anonymous user has view access to this page.
-            //
-
             if( !m_engine.getAuthorizationManager().checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
                 // No permission, skip to the next one.
                 continue;
@@ -371,64 +345,46 @@ public class RSSGenerator {
     }
 
     /**
-     *  Create RSS/Atom as if this page was a wikipage (in contrast to Blog mode).
+     * Create RSS/Atom as if this page was a wikipage (in contrast to Blog mode).
      *
      * @param wikiContext The WikiContext
      * @param changed A List of changed WikiPages.
      * @param feed A Feed object to fill.
      * @return the RSS representation of the wiki context
      */
-    protected String generateWikiPageRSS( WikiContext wikiContext, List< WikiPage > changed, Feed feed )
-    {
+    protected String generateWikiPageRSS( final WikiContext wikiContext, final List< WikiPage > changed, final Feed feed ) {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
-        String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
+        final String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
 
-        if( language != null )
+        if( language != null ) {
             feed.setChannelLanguage( language );
-        else
+        } else {
             feed.setChannelLanguage( m_channelLanguage );
+        }
+        final String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
 
-        String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
-
-        if( channelDescription != null )
-        {
+        if( channelDescription != null ) {
             feed.setChannelDescription( channelDescription );
         }
 
-        Collections.sort( changed, new PageTimeComparator() );
+        changed.sort( new PageTimeComparator() );
 
         int items = 0;
-        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ )
-        {
-            WikiPage page = i.next();
-
-            Entry e = new Entry();
-
+        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
+            final WikiPage page = i.next();
+            final Entry e = new Entry();
             e.setPage( page );
-
             String url;
 
-            if( page instanceof Attachment )
-            {
-                url = m_engine.getURL( WikiContext.ATTACH,
-                                       page.getName(),
-                                       "version="+page.getVersion(),
-                                       true );
-            }
-            else
-            {
-                url = m_engine.getURL( WikiContext.VIEW,
-                                       page.getName(),
-                                       "version="+page.getVersion(),
-                                       true );
+            if( page instanceof Attachment ) {
+                url = m_engine.getURL( WikiContext.ATTACH, page.getName(), "version=" + page.getVersion(),true );
+            } else {
+                url = m_engine.getURL( WikiContext.VIEW, page.getName(), "version=" + page.getVersion(), true );
             }
 
-            // Unfortunately, this is needed because the code will again go through
-            // replacement conversion
-
+            // Unfortunately, this is needed because the code will again go through replacement conversion
             url = TextUtil.replaceString( url, "&amp;", "&" );
-
             e.setURL( url );
             e.setTitle( getEntryTitle(page) );
             e.setContent( getEntryDescription(page) );
@@ -446,18 +402,15 @@ public class RSSGenerator {
      *
      *  @param wikiContext The WikiContext, as usual.
      *  @param changed A list of the changed pages.
-     *  @param feed A valid Feed object.  The feed will be used to create the RSS/Atom, depending
-     *              on which kind of an object you want to put in it.
+     *  @param feed A valid Feed object.  The feed will be used to create the RSS/Atom, depending on which kind of an object you want to put in it.
      *  @return A String of valid RSS or Atom.
-     *  @throws ProviderException If reading of pages was not possible.
      */
-    protected String generateBlogRSS( WikiContext wikiContext, List< WikiPage > changed, Feed feed ) {
+    protected String generateBlogRSS( final WikiContext wikiContext, final List< WikiPage > changed, final Feed feed ) {
         if( log.isDebugEnabled() ) {
             log.debug( "Generating RSS for blog, size=" + changed.size() );
         }
 
-        String ctitle = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_TITLE );
-
+        final String ctitle = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_TITLE );
         if( ctitle != null ) {
             feed.setChannelTitle( ctitle );
         } else {
@@ -466,31 +419,26 @@ public class RSSGenerator {
 
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
 
-        String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
-
+        final String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
         if( language != null ) {
             feed.setChannelLanguage( language );
         } else {
             feed.setChannelLanguage( m_channelLanguage );
         }
 
-        String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
-
+        final String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
         if( channelDescription != null ) {
             feed.setChannelDescription( channelDescription );
         }
 
-        Collections.sort( changed, new PageTimeComparator() );
+        changed.sort( new PageTimeComparator() );
 
         int items = 0;
-        for( Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
-            WikiPage page = i.next();
-
-            Entry e = new Entry();
-
+        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
+            final WikiPage page = i.next();
+            final Entry e = new Entry();
             e.setPage( page );
-
-            String url;
+            final String url;
 
             if( page instanceof Attachment ) {
                 url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null,true );
@@ -500,14 +448,11 @@ public class RSSGenerator {
 
             e.setURL( url );
 
-            //
             //  Title
-            //
-
-            String pageText = m_engine.getPageManager().getPureText(page.getName(), WikiProvider.LATEST_VERSION );
+            String pageText = m_engine.getPageManager().getPureText( page.getName(), WikiProvider.LATEST_VERSION );
 
             String title = "";
-            int firstLine = pageText.indexOf('\n');
+            final int firstLine = pageText.indexOf('\n');
 
             if( firstLine > 0 ) {
                 title = pageText.substring( 0, firstLine ).trim();
@@ -524,31 +469,21 @@ public class RSSGenerator {
 
             e.setTitle( title );
 
-            //
             //  Description
-            //
-
             if( firstLine > 0 ) {
                 int maxlen = pageText.length();
-                if( maxlen > MAX_CHARACTERS ) maxlen = MAX_CHARACTERS;
-
-                if( maxlen > 0 ) {
-                    pageText = m_engine.getRenderingManager().textToHTML( wikiContext, pageText.substring( firstLine + 1, maxlen ).trim() );
-
-                    if( maxlen == MAX_CHARACTERS ) {
-                        pageText += "...";
-                    }
-
-                    e.setContent( pageText );
-                } else {
-                    e.setContent( title );
+                if( maxlen > MAX_CHARACTERS ) {
+                    maxlen = MAX_CHARACTERS;
                 }
+                pageText = m_engine.getRenderingManager().textToHTML( wikiContext, pageText.substring( firstLine + 1, maxlen ).trim() );
+                if( maxlen == MAX_CHARACTERS ) {
+                    pageText += "...";
+                }
+                e.setContent( pageText );
             } else {
                 e.setContent( title );
             }
-
             e.setAuthor( getAuthor(page) );
-
             feed.addEntry( e );
         }
 

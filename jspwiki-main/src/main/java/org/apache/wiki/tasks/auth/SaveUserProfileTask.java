@@ -1,10 +1,5 @@
 package org.apache.wiki.tasks.auth;
 
-import java.util.Locale;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -16,6 +11,10 @@ import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.WorkflowManager;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import java.util.Locale;
 
 
 /**
@@ -32,7 +31,7 @@ public class SaveUserProfileTask extends Task {
      * Constructs a new Task for saving a user profile.
      * @param engine the wiki engine
      */
-    public SaveUserProfileTask( WikiEngine engine, Locale loc ) {
+    public SaveUserProfileTask( final WikiEngine engine, final Locale loc ) {
         super( TasksManager.USER_PROFILE_SAVE_TASK_MESSAGE_KEY );
         m_engine = engine;
         m_loc = loc;
