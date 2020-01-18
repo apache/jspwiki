@@ -36,9 +36,10 @@ import java.io.IOException;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * This provides a simple ajax servlet for handling /ajax/<ClassName> requests.
@@ -47,9 +48,10 @@ import java.util.Map;
  * @since 2.10.2-svn12
  */
 public class WikiAjaxDispatcherServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
-    private static Map<String,AjaxServletContainer> ajaxServlets = new HashMap<String,AjaxServletContainer>();
-    static final Logger log = Logger.getLogger(WikiAjaxDispatcherServlet.class.getName());
+    private static final Map< String, AjaxServletContainer > ajaxServlets = new ConcurrentHashMap<>();
+    private static final Logger log = Logger.getLogger( WikiAjaxDispatcherServlet.class.getName() );
     private String PATH_AJAX = "/ajax/";
     private WikiEngine m_engine;
 
@@ -60,95 +62,92 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * Note: Do not change this without also changing the web.xml file.
      */
     @Override
-    public void init(ServletConfig config)
-            throws ServletException {
-        super.init(config);
-        m_engine = WikiEngine.getInstance(config);
-        PATH_AJAX = "/"+TextUtil.getStringProperty(m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax")+"/";
-        log.info("WikiAjaxDispatcherServlet initialized.");
+    public void init( final ServletConfig config ) throws ServletException {
+        super.init( config );
+        m_engine = WikiEngine.getInstance( config );
+        PATH_AJAX = "/"+TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + "/";
+        log.info( "WikiAjaxDispatcherServlet initialized." );
     }
 
     /**
      * Register a {@link WikiAjaxServlet} using the servlet mapping as the alias
      */
-    public static void registerServlet(WikiAjaxServlet servlet) {
-        registerServlet(servlet.getServletMapping(),servlet);
+    public static void registerServlet( final WikiAjaxServlet servlet ) {
+        registerServlet( servlet.getServletMapping(), servlet );
     }
 
     /**
      * Register a {@link WikiAjaxServlet} with a specific alias, and default permission {@link PagePermission#VIEW}.
      */
-    public static void registerServlet(String alias, WikiAjaxServlet servlet) {
-        registerServlet(alias, servlet, PagePermission.VIEW);
+    public static void registerServlet( final String alias, final WikiAjaxServlet servlet ) {
+        registerServlet( alias, servlet, PagePermission.VIEW );
     }
 
     /**
      * Regster a {@link WikiAjaxServlet} given an alias, the servlet, and the permission.
      * This creates a temporary bundle object called {@link WikiAjaxDispatcherServlet.AjaxServletContainer}
+     *
      * @param alias the uri link to this servlet
      * @param servlet the servlet being registered
      * @param perm the permission required to execute the servlet.
      */
-    public static void registerServlet(String alias, WikiAjaxServlet servlet, Permission perm) {
-        log.info("WikiAjaxDispatcherServlet registering "+alias+"="+servlet+" perm="+perm);
-        ajaxServlets.put(alias,new AjaxServletContainer(alias, servlet, perm));
+    public static void registerServlet( final String alias, final WikiAjaxServlet servlet, final Permission perm ) {
+        log.info( "WikiAjaxDispatcherServlet registering " + alias + "=" + servlet + " perm=" + perm );
+        ajaxServlets.put( alias, new AjaxServletContainer( alias, servlet, perm ) );
     }
 
     /**
      * Calls {@link #performAction}
      */
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
-        performAction(req,res);
+    public void doPost( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
+        performAction( req, res );
     }
 
     /**
      * Calls {@link #performAction}
      */
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
-        performAction(req,res);
+    public void doGet( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
+        performAction( req, res );
     }
 
     /**
-     * The main method which get the requestURI "/ajax/<ServletName>", gets the
-     * {@link #getServletName} and finds the servlet using {@link #findServletByName}.
-     * It then calls {@link WikiAjaxServlet#service} method.
+     * The main method which get the requestURI "/ajax/<ServletName>", gets the {@link #getServletName} and finds the servlet using
+     * {@link #findServletByName}. It then calls {@link WikiAjaxServlet#service} method.
+     *
      * @param req the inbound request
      * @param res the outbound response
-     * @throws IOException
+     * @throws IOException if WikiEngine's content encoding is valid
      * @throws ServletException if no registered servlet can be found
      */
     private void performAction( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
         final String path = req.getRequestURI();
-        final String servletName = getServletName(path);
-        if (servletName!=null) {
-            final AjaxServletContainer container = findServletContainer(servletName);
-            if (container != null) {
+        final String servletName = getServletName( path );
+        if( servletName != null) {
+            final AjaxServletContainer container = findServletContainer( servletName );
+            if( container != null ) {
                 final WikiAjaxServlet servlet = container.servlet;
-                if ( validatePermission(req,container) ) {
-                    req.setCharacterEncoding(m_engine.getContentEncoding().displayName());
-                    res.setCharacterEncoding(m_engine.getContentEncoding().displayName());
-                    final String actionName = AjaxUtil.getNextPathPart(req.getRequestURI(), servlet.getServletMapping());
-                    log.debug("actionName="+actionName);
-                    final Object params = req.getParameter("params");
-                    log.debug("params="+params);
-                    List<String> paramValues = new ArrayList<>();
-                    if (params instanceof String) {
-                        final String paramString = (String)params;
-                        if (StringUtils.isNotBlank(paramString)) {
-                            paramValues = Arrays.asList(paramString.trim().split(","));
+                if ( validatePermission( req, container ) ) {
+                    req.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
+                    res.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
+                    final String actionName = AjaxUtil.getNextPathPart( req.getRequestURI(), servlet.getServletMapping() );
+                    log.debug( "actionName=" + actionName );
+                    final String params = req.getParameter( "params" );
+                    log.debug( "params=" + params );
+                    List< String > paramValues = new ArrayList<>();
+                    if( params != null ) {
+                        if( StringUtils.isNotBlank( params ) ) {
+                            paramValues = Arrays.asList( params.trim().split( "," ) );
                         }
                     }
-                    servlet.service(req, res, actionName, paramValues);
+                    servlet.service( req, res, actionName, paramValues );
                 } else {
-                    log.warn("Servlet container "+container+" not authorised. Permission required.");
+                    log.warn( "Servlet container " + container + " not authorised. Permission required." );
                 }
             } else {
-                log.error("No registered class for servletName=" + servletName + " in path=" + path);
-                throw new ServletException("No registered class for servletName=" + servletName);
+                log.error( "No registered class for servletName=" + servletName + " in path=" + path );
+                throw new ServletException( "No registered class for servletName=" + servletName );
             }
         }
     }
@@ -160,11 +159,11 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @param container the container info of the servlet
      * @return true if permission is valid
      */
-    private boolean validatePermission(HttpServletRequest req, AjaxServletContainer container) {
+    private boolean validatePermission( final HttpServletRequest req, final AjaxServletContainer container ) {
         final WikiEngine e = WikiEngine.getInstance(req.getSession().getServletContext(), null);
         boolean valid = false;
-        if (container != null) {
-            valid = e.getAuthorizationManager().checkPermission(WikiSession.getWikiSession(e, req), container.permission);
+        if( container != null ) {
+            valid = e.getAuthorizationManager().checkPermission( WikiSession.getWikiSession( e, req ), container.permission );
         }
         return valid;
     }
@@ -176,8 +175,8 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @return The ServletName for the requestURI, or null
      * @throws ServletException if the path is invalid
      */
-    public String getServletName(String path) throws ServletException {
-        return AjaxUtil.getNextPathPart(path, PATH_AJAX);
+    public String getServletName( final String path ) throws ServletException {
+        return AjaxUtil.getNextPathPart( path, PATH_AJAX );
     }
 
     /**
@@ -186,8 +185,8 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @param servletAlias the name of the servlet from {@link #getServletName}
      * @return The first servlet found, or null.
      */
-    private AjaxServletContainer findServletContainer(String servletAlias) {
-        return ajaxServlets.get(servletAlias);
+    private AjaxServletContainer findServletContainer( final String servletAlias ) {
+        return ajaxServlets.get( servletAlias );
     }
 
     /**
@@ -196,20 +195,21 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @param servletAlias the value provided to {@link #registerServlet}
      * @return the {@link WikiAjaxServlet} given the servletAlias that it was registered with.
      */
-    public WikiAjaxServlet findServletByName(String servletAlias) {
-        final AjaxServletContainer container = ajaxServlets.get(servletAlias);
-        if (container != null) {
+    public WikiAjaxServlet findServletByName( final String servletAlias ) {
+        final AjaxServletContainer container = ajaxServlets.get( servletAlias );
+        if( container != null ) {
             return container.servlet;
         }
         return null;
     }
 
     private static class AjaxServletContainer {
-        String alias;
-        WikiAjaxServlet servlet;
-        Permission permission;
 
-        public AjaxServletContainer(String alias, WikiAjaxServlet servlet, Permission permission) {
+        final String alias;
+        final WikiAjaxServlet servlet;
+        final Permission permission;
+
+        public AjaxServletContainer( final String alias, final WikiAjaxServlet servlet, final Permission permission ) {
             this.alias = alias;
             this.servlet = servlet;
             this.permission = permission;
@@ -217,8 +217,9 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
 
         @Override
         public String toString() {
-            return getClass().getSimpleName()+" "+alias+"="+servlet.getClass().getSimpleName()+" permission="+permission;
+            return getClass().getSimpleName() + " " + alias + "=" + servlet.getClass().getSimpleName() + " permission=" + permission;
         }
+
     }
 
 }
