@@ -35,15 +35,15 @@ public class AjaxUtil extends HttpServlet {
 
 	/**
 	 * Uses Google Gson (https://code.google.com/p/google-gson/) to convert to JSON
+	 *
 	 * @param input the object to be converted to JSON
 	 * @return the JSON string of the object
 	 */
-	public static String toJson(Object input) {
-		String result = "";
-		if (input != null) {
-			result = gson.toJson(input);
+	public static String toJson( final Object input ) {
+		if( input != null ) {
+			return gson.toJson( input );
 		}
-		return result;
+		return "";
 	}
 	
 	/**
@@ -56,37 +56,37 @@ public class AjaxUtil extends HttpServlet {
 	 * @param path the RequestURI to search usually done by calling request.getRequestUri().
 	 * @param lastPart the previousPart of the path to search after.
 	 * @return the next part of the path.
-	 * @throws ServletException
+	 * @throws ServletException if {@code path} does not contain {@code lastPart}
 	 */
-	public static String getNextPathPart(String path, String lastPart) throws ServletException {
-        String result = null;
-        if (StringUtils.isBlank(path)) {
-            return result;
-        }
-        if (!lastPart.endsWith("/")) {
-        	lastPart += "/";
-        }
-        int index = path.indexOf(lastPart);
-        if (index<0) {
-        	lastPart = lastPart.substring(0,lastPart.length()-1);
-        	index = path.indexOf(lastPart);
-        	if (index<0) {
-        		throw new ServletException("Invalid path provided " + path + " does not contain '" + lastPart + "'");
-        	}
-        }
-        path = path.substring(index+lastPart.length());
-        index = path.indexOf("/");
-        if (index == -1) {
-            index = path.indexOf("#");
-            if (index == -1) {
-                index = path.indexOf("?");
-            }
-        }
-        if (index == -1) {
-            result = path;
-        }
-        else {
-            result = path.substring(0,index);
+	public static String getNextPathPart( String path, String lastPart ) throws ServletException {
+        if( StringUtils.isBlank( path ) ) {
+			return null;
+		}
+		if( !lastPart.endsWith( "/" ) ) {
+			lastPart += "/";
+		}
+		int index = path.indexOf( lastPart );
+		if( index < 0 ) {
+			lastPart = lastPart.substring( 0, lastPart.length() - 1 );
+			index = path.indexOf( lastPart );
+			if( index < 0 ) {
+				throw new ServletException( "Invalid path provided " + path + " does not contain '" + lastPart + "'" );
+			}
+		}
+		path = path.substring( index + lastPart.length() );
+		index = path.indexOf( "/" );
+		if( index == -1 ) {
+			index = path.indexOf( "#" );
+			if( index == -1 ) {
+				index = path.indexOf( "?" );
+			}
+		}
+
+		final String result;
+		if( index == -1 ) {
+			result = path;
+        } else {
+            result = path.substring( 0, index );
         }
 
         return result;

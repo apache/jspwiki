@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProgressManager {
 
-    private Map< String,ProgressItem > m_progressingTasks = new ConcurrentHashMap<>();
+    private final Map< String,ProgressItem > m_progressingTasks = new ConcurrentHashMap<>();
 
     /** The name of the progress tracker JSON object.  The current value is "{@value}", */
     public static final String JSON_PROGRESSTRACKER = "progressTracker";

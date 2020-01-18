@@ -23,11 +23,9 @@ package org.apache.wiki.ui.progress;
  *
  *  @since  2.6
  */
-public abstract class ProgressItem
-{
-    /**
-     *  Status: The PI is created.
-     */
+public abstract class ProgressItem {
+
+    /** Status: The PI is created. */
     public static final int CREATED  = 0;
     
     /** Status: The PI is started. */
@@ -43,10 +41,10 @@ public abstract class ProgressItem
 
     /**
      *  Get the state of the ProgressItem.
+     *
      *  @return CREATED, STARTED, STOPPED or FINISHED.
      */
-    public int getState()
-    {
+    public int getState() {
         return m_state;
     }
 
@@ -55,14 +53,15 @@ public abstract class ProgressItem
      *  
      *  @param state One of the CREATED, STARTED, STOPPED or FINISHED.
      */
-    public void setState( int state )
-    {
+    public void setState( final int state ) {
         m_state = state;
     }
 
     /**
      *  Returns the progress in percents.
+     *
      *  @return An integer 0-100.
      */
     public abstract int getProgress();
+
 }

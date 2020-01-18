@@ -19,14 +19,13 @@
  */
 package org.apache.wiki.ajax;
 
-import java.io.IOException;
-import java.util.List;
+import org.apache.wiki.plugin.SampleAjaxPlugin;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.wiki.plugin.SampleAjaxPlugin;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * An interface for a servlet that wants to use Ajax functionality.
@@ -36,8 +35,8 @@ import org.apache.wiki.plugin.SampleAjaxPlugin;
  */
 public interface WikiAjaxServlet {
 
-	public String getServletMapping();
+	String getServletMapping();
 
-	public void service(HttpServletRequest request, HttpServletResponse response, String actionName, List<String> params) throws ServletException, IOException;
+	void service( HttpServletRequest request, HttpServletResponse response, String actionName, List< String > params ) throws ServletException, IOException;
 
 }
