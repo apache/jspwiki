@@ -711,12 +711,10 @@ public class WikiEngine  {
     }
 
     /**
-     * <p>
-     * Returns the basic absolute URL to a page, without any modifications. You may add any parameters to this.
-     * </p>
-     * <p>
-     * Since 2.3.90 it is safe to call this method with <code>null</code> pageName, in which case it will default to the front page.
-     * </p>
+     * <p>Returns the basic absolute (or relative, depending on the variable {@link WikiEngine#PROP_REFSTYLE}) URL to a page, without any
+     * modifications. You may add any parameters to this.</p>
+     * <p>Since 2.3.90 it is safe to call this method with {@code null} pageName, in which case it will default to the front page.</p>
+     *
      * @since 2.0.3
      * @param pageName The name of the page.  May be null, in which case defaults to the front page.
      * @return An absolute URL to the page.
