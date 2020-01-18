@@ -124,6 +124,10 @@
     <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.ui.progress.ProgressManager</requestedClass>
+    <mappedClass>org.apache.wiki.ui.progress.DefaultProgressManager</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.variables.VariableManager</requestedClass>
     <mappedClass>org.apache.wiki.variables.DefaultVariableManager</mappedClass>
   </mapping>

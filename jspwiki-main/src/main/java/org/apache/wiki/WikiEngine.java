@@ -473,12 +473,9 @@ public class WikiEngine  {
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
         //
-        //  Initialize the important modules.  Any exception thrown by the
-        //  managers means that we will not start up.
+        //  Initialize the important modules.  Any exception thrown by the managers means that we will not start up.
         //
-
-        // FIXME: This part of the code is getting unwieldy.  We must think
-        //        of a better way to do the startup-sequence.
+        // FIXME: This part of the code is getting unwieldy.  We must think of a better way to do the startup-sequence.
         try {
             final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                                                              TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
@@ -497,9 +494,8 @@ public class WikiEngine  {
             m_userManager           = ClassUtil.getMappedObject( UserManager.class.getName() );
             m_groupManager          = ClassUtil.getMappedObject( GroupManager.class.getName() );
             m_editorManager         = ClassUtil.getMappedObject( EditorManager.class.getName(), this );
+            m_progressManager       = ClassUtil.getMappedObject( ProgressManager.class.getName(), this );
             m_editorManager.initialize( props );
-
-            m_progressManager   = new ProgressManager();
 
             // Initialize the authentication, authorization, user and acl managers
             m_authenticationManager.initialize( this, props );
