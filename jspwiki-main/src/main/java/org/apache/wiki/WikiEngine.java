@@ -1280,8 +1280,9 @@ public class WikiEngine  {
      *  @param key the attribute name
      *  @return the value
      */
-    public <T> T getAttribute( final String key ) {
-        return (T)m_attributes.get( key );
+    @SuppressWarnings( "unchecked" )
+    public < T > T getAttribute( final String key ) {
+        return ( T )m_attributes.get( key );
     }
 
     /**
