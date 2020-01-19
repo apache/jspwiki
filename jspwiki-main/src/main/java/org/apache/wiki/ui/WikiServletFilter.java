@@ -154,18 +154,18 @@ public class WikiServletFilter implements Filter {
      */
     protected WikiContext getWikiContext( final ServletRequest request ) {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        return (WikiContext) httpRequest.getAttribute( WikiContext.ATTR_CONTEXT );
+        return ( WikiContext )httpRequest.getAttribute( WikiContext.ATTR_CONTEXT );
     }
 
     /** 
      * Determines whether the request has been previously wrapped with a WikiRequestWrapper. 
      * We find the wrapper by recursively unwrapping successive request wrappers, if they have been supplied.
+     *
      * @param request the current HTTP request
-     * @return <code>true</code> if the request has previously been wrapped;
-     * <code>false</code> otherwise
+     * @return <code>true</code> if the request has previously been wrapped; <code>false</code> otherwise
      */
     private boolean isWrapped( ServletRequest request ) {
-        while( !(request instanceof WikiRequestWrapper ) && request != null && request instanceof HttpServletRequestWrapper ) {
+        while( !(request instanceof WikiRequestWrapper ) && request instanceof HttpServletRequestWrapper ) {
             request = ( ( HttpServletRequestWrapper ) request ).getRequest();
         }
         return request instanceof WikiRequestWrapper;

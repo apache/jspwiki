@@ -22,15 +22,12 @@ import org.apache.wiki.WikiContext;
 
 /**
  *  Provides a generic HTTP handler interface.
- *  
  *
  */
-public interface GenericHTTPHandler
-{
+public interface GenericHTTPHandler {
     
     /**
-     *  Get an identifier for this particular AdminBean.  This id MUST
-     *  conform to URI rules.  The ID must also be unique across all HTTPHandlers.
+     *  Get an identifier for this particular AdminBean. This id MUST conform to URI rules. The ID must also be unique across all HTTPHandlers.
      *  
      *  @return the identifier for the bean
      */
@@ -39,15 +36,16 @@ public interface GenericHTTPHandler
     /**
      *  Return basic HTML.
      *  
-     *  @param context
+     *  @param context associated WikiContext
      *  @return the HTML for the bean
      */
     String doGet( WikiContext context );
     
     /**
      *  Handles a POST response.
-     *  @param context
+     *  @param context associated WikiContext
      *  @return the response string resulting from the POST
      */
     String doPost( WikiContext context );
+
 }

@@ -18,22 +18,19 @@
  */
 package org.apache.wiki.ui;
 
-import java.security.Permission;
-
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 
+import java.security.Permission;
+
 /**
- * <p>Defines Commands for editing, renaming, and viewing wiki pages.
- * PageCommands can be combined with WikiPages to produce
+ * <p>Defines Commands for editing, renaming, and viewing wiki pages. PageCommands can be combined with WikiPages to produce
  * targeted Commands.</p>
- * <p>This class is not <code>final</code>; it may be extended in
- * the future.</p>
+ *
  * @since 2.4.22
  */
-public final class PageCommand extends AbstractCommand
-{
+public final class PageCommand extends AbstractCommand {
 
     public static final Command ATTACH
         = new PageCommand( "att", "%uattach/%n", null, null, PagePermission.UPLOAD_ACTION );
@@ -81,66 +78,61 @@ public final class PageCommand extends AbstractCommand
     private final Permission m_permission;
     
     /**
-     * Constructs a new Command with a specified wiki context, URL pattern,
-     * type, and content template. The target for this command is initialized to
-     * <code>null</code>.
+     * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The target for this command is
+     * initialized to <code>null</code>.
+     *
      * @param requestContext the request context
      * @param urlPattern the URL pattern
      * @param target the target of the command (a WikiPage); may be <code>null</code>
      * @param action the action used to construct a suitable PagePermission
      * @param contentTemplate the content template; may be <code>null</code>
-     * @throws IllegalArgumentException if the request content, URL pattern, or
-     *         type is <code>null</code>
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
      */
-    private PageCommand( String requestContext, String urlPattern, String contentTemplate, WikiPage target, String action )
-    {
+    private PageCommand( final String requestContext,
+                         final String urlPattern,
+                         final String contentTemplate,
+                         final WikiPage target,
+                         final String action ) {
         super( requestContext, urlPattern, contentTemplate, target );
         m_action = action;
-        if( target == null || m_action == null )
-        {
+        if( target == null || m_action == null ) {
             m_permission = null;
-        }
-        else
-        {
+        } else {
             m_permission = PermissionFactory.getPagePermission( target, action );
         }
     }
 
     /**
-     * Creates and returns a targeted Command by combining a WikiPage 
-     * with this Command. The supplied <code>target</code> object 
+     * Creates and returns a targeted Command by combining a WikiPage with this Command. The supplied <code>target</code> object
      * must be non-<code>null</code> and of type WikiPage.
+     *
      * @param target the WikiPage to combine into the current Command
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public Command targetedCommand( Object target )
-    {
-        if( !( target != null && target instanceof WikiPage ) )
-        {
+    public Command targetedCommand( final Object target ) {
+        if( !( target instanceof WikiPage ) ) {
             throw new IllegalArgumentException( "Target must non-null and of type WikiPage." );
         }
-        return new PageCommand( getRequestContext(), getURLPattern(), getContentTemplate(), (WikiPage)target, m_action );
+        return new PageCommand( getRequestContext(), getURLPattern(), getContentTemplate(), ( WikiPage )target, m_action );
     }
 
     /**
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public String getName()
-    {
-        Object target = getTarget();
-        if( target == null )
-        {
+    public String getName() {
+        final Object target = getTarget();
+        if( target == null ) {
             return getJSPFriendlyName();
         }
-        return ( (WikiPage) target ).getName();
+        return ( ( WikiPage )target ).getName();
     }
 
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public Permission requiredPermission()
-    {
+    public Permission requiredPermission() {
         return m_permission;
     }
+
 }

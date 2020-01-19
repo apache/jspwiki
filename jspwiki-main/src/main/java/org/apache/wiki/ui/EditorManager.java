@@ -31,7 +31,6 @@ import org.jdom2.Element;
 import javax.servlet.jsp.PageContext;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -60,32 +59,30 @@ import java.util.Set;
  */
 public class EditorManager extends ModuleManager {
 
-    /** The property name for setting the editor.  Current value is "jspwiki.editor" */
-    /* not used anymore -- replaced by defaultpref.template.editor */
-    public static final String       PROP_EDITORTYPE = "jspwiki.editor";
+    /** The property name for setting the editor. Current value is "jspwiki.editor" - not used anymore: replaced by defaultpref.template.editor */
+    public static final String PROP_EDITORTYPE = "jspwiki.editor";
 
     /** Parameter for changing editors at run-time */
-    public static final String       PARA_EDITOR     = "editor";
+    public static final String PARA_EDITOR = "editor";
 
     /** Known name for the plain wikimarkup editor. */
-    public static final String       EDITOR_PLAIN    = "plain";
+    public static final String EDITOR_PLAIN = "plain";
 
     /** Known name for the preview editor component. */
-    public static final String       EDITOR_PREVIEW  = "preview";
+    public static final String EDITOR_PREVIEW = "preview";
 
     /** Known attribute name for storing the user edited text inside a HTTP parameter. */
-    public static final String       REQ_EDITEDTEXT  = "_editedtext";
+    public static final String REQ_EDITEDTEXT = "_editedtext";
 
     /** Known attribute name for storing the user edited text inside a session or a page context */
-    public static final String       ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
+    public static final String ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
 
-    private             Map<String, WikiEditorInfo>  m_editors;
+    private Map< String, WikiEditorInfo > m_editors;
 
-    private static      Logger       log             = Logger.getLogger( EditorManager.class );
+    private static final Logger log = Logger.getLogger( EditorManager.class );
 
-    public EditorManager( WikiEngine engine )
-    {
-        super(engine);
+    public EditorManager( final WikiEngine engine ) {
+        super( engine );
     }
 
     /**
@@ -93,8 +90,7 @@ public class EditorManager extends ModuleManager {
      *
      *  @param props  Properties for setup.
      */
-    public void initialize( Properties props )
-    {
+    public void initialize( final Properties props ) {
         registerEditors();
     }
 
@@ -112,14 +108,12 @@ public class EditorManager extends ModuleManager {
         //
         // Get all resources of all modules
         //
-        List< Element > editors = XmlUtil.parse( PLUGIN_RESOURCE_LOCATION, "/modules/editor" );
+        final List< Element > editors = XmlUtil.parse( PLUGIN_RESOURCE_LOCATION, "/modules/editor" );
+        for( final Element pluginEl : editors ) {
+            final String name = pluginEl.getAttributeValue( "name" );
+            final WikiEditorInfo info = WikiEditorInfo.newInstance( name, pluginEl );
 
-        for( Iterator< Element > i = editors.iterator(); i.hasNext(); ) {
-            Element pluginEl = i.next();
-            String name = pluginEl.getAttributeValue( "name" );
-            WikiEditorInfo info = WikiEditorInfo.newInstance( name, pluginEl );
-
-            if( checkCompatibility(info) ) {
+            if( checkCompatibility( info ) ) {
                 m_editors.put( name, info );
                 log.debug( "Registered editor " + name );
             } else {
@@ -129,10 +123,8 @@ public class EditorManager extends ModuleManager {
     }
 
     /**
-     *  Returns an editor for the current context.  The editor names are matched in
-     *  a case insensitive manner.  At the moment, the only place that this method
-     *  looks in is the property file, but in the future this will also look at
-     *  user preferences.
+     *  Returns an editor for the current context.  The editor names are matched in a case insensitive manner.  At the moment, the only
+     *  place that this method looks in is the property file, but in the future this will also look at user preferences.
      *  <p>
      *  Determines the editor to use by the following order of conditions:
      *  1. Editor set in User Preferences
@@ -141,41 +133,30 @@ public class EditorManager extends ModuleManager {
      *  For the PREVIEW context, this method returns the "preview" editor.
      *
      * @param context The context that is chosen.
-     * @return The name of the chosen editor.  If no match could be found, will
-     *         revert to the default "plain" editor.
+     * @return The name of the chosen editor. If no match could be found, will revert to the default "plain" editor.
      */
-    public String getEditorName( WikiContext context )
-    {
-        if( context.getRequestContext().equals(WikiContext.PREVIEW) )
+    public String getEditorName( final WikiContext context ) {
+        if( context.getRequestContext().equals( WikiContext.PREVIEW ) ) {
             return EDITOR_PREVIEW;
-
-        String editor = null;
-
-        // User has set an editor in preferences
-        editor = Preferences.getPreference( context, PARA_EDITOR );
-
-        /* FIXME: actual default 'editor' property is read by the Preferences class */
-        if (editor == null)
-        {
-            // or use the default editor in jspwiki.properties
-            try
-            {
-                editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );
-            }
-            catch( NoSuchVariableException e ) {} // This is fine
         }
 
-        if (editor != null)
-        {
-            String[] editorlist = getEditorList();
+        // User has set an editor in preferences
+        String editor = Preferences.getPreference( context, PARA_EDITOR );
 
+        /* FIXME: actual default 'editor' property is read by the Preferences class */
+        if( editor == null ) {
+            // or use the default editor in jspwiki.properties
+            try {
+                editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );
+            } catch( final NoSuchVariableException e ) {} // This is fine
+        }
+
+        if( editor != null ) {
+            final String[] editorlist = getEditorList();
             editor = editor.trim();
-
-            for( int i = 0; i < editorlist.length; i++ )
-            {
-                if( editorlist[i].equalsIgnoreCase(editor))
-                {
-                    return editorlist[i];
+            for( final String s : editorlist ) {
+                if( s.equalsIgnoreCase( editor ) ) {
+                    return s;
                 }
             }
         }
@@ -188,11 +169,9 @@ public class EditorManager extends ModuleManager {
      *
      *  @return the list of available editors
      */
-    public String[] getEditorList()
-    {
-        String[] editors = new String[m_editors.size()];
-
-        Set<String> keys = m_editors.keySet();
+    public String[] getEditorList() {
+        final String[] editors = new String[ m_editors.size() ];
+        final Set< String > keys = m_editors.keySet();
 
         return keys.toArray( editors );
     }
@@ -200,23 +179,16 @@ public class EditorManager extends ModuleManager {
     /**
      *  Convenience method for getting the path to the editor JSP file.
      *
-     *  @param context
+     *  @param context WikiContext from where the editor name is retrieved.
      *  @return e.g. "editors/plain.jsp"
      */
-    public String getEditorPath( WikiContext context )
-    {
-        String path = null;
-
-        String editor = getEditorName( context );
-
-        WikiEditorInfo ed = m_editors.get( editor );
-
-        if( ed != null )
-        {
+    public String getEditorPath( final WikiContext context ) {
+        final String editor = getEditorName( context );
+        final WikiEditorInfo ed = m_editors.get( editor );
+        final String path;
+        if( ed != null ) {
             path = ed.getPath();
-        }
-        else
-        {
+        } else {
             path = "editors/"+editor+".jsp";
         }
 
@@ -224,56 +196,44 @@ public class EditorManager extends ModuleManager {
     }
 
     /**
-     *  Convenience function which examines the current context and attempts to figure
-     *  out whether the edited text is in the HTTP request parameters or somewhere in
-     *  the session.
+     *  Convenience function which examines the current context and attempts to figure out whether the edited text is in the HTTP
+     *  request parameters or somewhere in the session.
      *
      *  @param ctx the JSP page context
      *  @return the edited text, if present in the session page context or as a parameter
      */
-    public static String getEditedText( PageContext ctx )
-    {
+    public static String getEditedText( final PageContext ctx ) {
         String usertext = ctx.getRequest().getParameter( REQ_EDITEDTEXT );
-
-        if( usertext == null )
-        {
-            usertext = (String)ctx.findAttribute( ATTR_EDITEDTEXT );
+        if( usertext == null ) {
+            usertext = ( String )ctx.findAttribute( ATTR_EDITEDTEXT );
         }
 
         return usertext;
     }
 
-    /**
-     *  Contains info about an editor.
-     *
-     */
-    private static final class WikiEditorInfo
-        extends WikiModuleInfo
-    {
+    /**  Contains info about an editor. */
+    private static final class WikiEditorInfo extends WikiModuleInfo {
         private String m_path;
 
-        protected static WikiEditorInfo newInstance( String name, Element el )
-        {
-            if( name == null || name.length() == 0 ) return null;
-            WikiEditorInfo info = new WikiEditorInfo( name );
-
+        protected static WikiEditorInfo newInstance( final String name, final Element el ) {
+            if( name == null || name.length() == 0 ) {
+                return null;
+            }
+            final WikiEditorInfo info = new WikiEditorInfo( name );
             info.initializeFromXML( el );
             return info;
         }
 
-        protected void initializeFromXML( Element el )
-        {
+        protected void initializeFromXML( final Element el ) {
             super.initializeFromXML( el );
             m_path = el.getChildText("path");
         }
 
-        private WikiEditorInfo( String name )
-        {
-            super(name);
+        private WikiEditorInfo( final String name ) {
+            super( name );
         }
 
-        public String getPath()
-        {
+        public String getPath() {
             return m_path;
         }
     }
@@ -290,8 +250,8 @@ public class EditorManager extends ModuleManager {
      *  {@inheritDoc}
      */
     @Override
-    public WikiEditorInfo getModuleInfo(String moduleName) {
-        return m_editors.get(moduleName);
+    public WikiEditorInfo getModuleInfo( final String moduleName ) {
+        return m_editors.get( moduleName );
     }
 
 }

@@ -531,8 +531,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param page The page to which to link.
      *  @return An URL to the page.  This honours the current absolute/relative setting.
      */
-    public String getViewURL( final String page )
-    {
+    public String getViewURL( final String page ) {
         return getURL( VIEW, page, null );
     }
 
@@ -569,8 +568,7 @@ public class WikiContext implements Cloneable, Command {
      *
      * @return the command
      */
-    public Command getCommand()
-    {
+    public Command getCommand() {
         return m_command;
     }
 

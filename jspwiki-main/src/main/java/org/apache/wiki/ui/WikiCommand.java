@@ -18,23 +18,19 @@
  */
 package org.apache.wiki.ui;
 
-import java.security.Permission;
-
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 
+import java.security.Permission;
+
 /**
- * <p>Defines Commands for wiki-wide operations such as creating groups, editing
- * preferences and profiles, and logging in/out. WikiCommands can be combined 
- * with Strings (representing the name of a wiki instance) to produce
- * targeted Commands.</p>
- * <p>This class is not <code>final</code>; it may be extended in
- * the future.</p>
+ * <p>Defines Commands for wiki-wide operations such as creating groups, editing preferences and profiles, and logging in/out.
+ * WikiCommands can be combined with Strings (representing the name of a wiki instance) to produce targeted Commands.</p>
+ *
  * @see org.apache.wiki.WikiEngine#getApplicationName()
  * @since 2.4.22
  */
-public final class WikiCommand extends AbstractCommand
-{
+public final class WikiCommand extends AbstractCommand {
 
     public static final Command CREATE_GROUP
         = new WikiCommand( "createGroup", "%uNewGroup.jsp", "NewGroupContent.jsp", null, WikiPermission.CREATE_GROUPS_ACTION );
@@ -71,31 +67,25 @@ public final class WikiCommand extends AbstractCommand
     private final Permission m_permission;
     
     /**
-     * Constructs a new Command with a specified wiki context, URL pattern,
-     * type, and content template. The WikiPage for this action is initialized
-     * to <code>null</code>.
+     * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this action is
+     * initialized to <code>null</code>.
+     *
      * @param requestContext the request context
      * @param urlPattern the URL pattern
-     * @param type the type
      * @param contentTemplate the content template; may be <code>null</code>
      * @param action The action
-     * @throws IllegalArgumentException if the request content, URL pattern, or
-     *         type is <code>null</code>
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
      */
-    private WikiCommand( String requestContext, 
-                         String urlPattern, 
-                         String contentTemplate, 
-                         String target, 
-                         String action )
-    {
+    private WikiCommand( final String requestContext,
+                         final String urlPattern,
+                         final String contentTemplate,
+                         final String target,
+                         final String action ) {
         super( requestContext, urlPattern, contentTemplate, target );
         m_action = action;
-        if ( target == null || m_action == null )
-        {
+        if ( target == null || m_action == null ) {
             m_permission = null;
-        }
-        else
-        {
+        } else {
             m_permission = new WikiPermission( target, action );
         }
     }
@@ -107,28 +97,22 @@ public final class WikiCommand extends AbstractCommand
      *  @param urlPattern
      *  @param contentTemplate
      */
-    private WikiCommand( String requestContext, 
-                         String urlPattern, 
-                         String contentTemplate,
-                         String target )
-    {
+    private WikiCommand( final String requestContext, final String urlPattern, final String contentTemplate, final String target ) {
         super( requestContext, urlPattern, contentTemplate, target );
         m_action = null;
-
         m_permission = new AllPermission( target );
     }
+
     /**
-     * Creates and returns a targeted Command by combining a wiki
-     * (a String) with this Command. The supplied <code>target</code>
+     * Creates and returns a targeted Command by combining a wiki (a String) with this Command. The supplied <code>target</code>
      * object must be non-<code>null</code> and of type String.
+     *
      * @param target the name of the wiki to combine into the current Command
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public Command targetedCommand( Object target )
-    {
-        if ( !( target != null && target instanceof String ) )
-        {
+    public Command targetedCommand( final Object target ) {
+        if ( !( target instanceof String ) ) {
             throw new IllegalArgumentException( "Target must non-null and of type String." );
         }
         return new WikiCommand( getRequestContext(), getURLPattern(), getContentTemplate(), (String)target, m_action );
@@ -136,18 +120,18 @@ public final class WikiCommand extends AbstractCommand
     
     /**
      * Always returns the "friendly" JSP name.
+     *
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public String getName()
-    {
+    public String getName() {
         return getJSPFriendlyName();
     }
 
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public Permission requiredPermission()
-    {
+    public Permission requiredPermission() {
         return m_permission;
     }
+
 }

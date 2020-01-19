@@ -18,34 +18,32 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.preferences.Preferences;
+
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.wiki.*;
-import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.preferences.Preferences;
-
 /**
- * Provides basic validation services for HTTP parameters. Three standard
- * validators are provided: email address, identifier and standard input. Standard input
- * validator will reject any HTML-like input, and any of a number of special
- * characters.  ID validator rejects HTML and quoted strings, and a couple of special characters.
+ * Provides basic validation services for HTTP parameters. Three standard validators are provided: email address, identifier and
+ * standard input. Standard input validator will reject any HTML-like input, and any of a number of special characters. ID validator
+ * rejects HTML and quoted strings, and a couple of special characters.
+ *
  * @since 2.3.54
  */
-public final class InputValidator
-{
+public final class InputValidator {
     /** Standard input validator. */
-    public static final int        STANDARD       = 0;
+    public static final int STANDARD       = 0;
 
     /** Input validator for e-mail addresses. **/
-    public static final int        EMAIL          = 1;
+    public static final int EMAIL          = 1;
 
-    /**
-     * @since 2.4.82
-     */
-    public static final int        ID             = 2;
+    /** @since 2.4.82 */
+    public static final int ID             = 2;
 
     protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
 
@@ -62,111 +60,94 @@ public final class InputValidator
     private final WikiContext      m_context;
 
     /**
-     * Constructs a new input validator for a specific form and wiki session.
-     * When validation errors are detected, they will be added to the wiki
-     * session's messages.
-     * @param form the ID or name of the form this validator should be
-     * associated with
+     * Constructs a new input validator for a specific form and wiki session. When validation errors are detected, they will be added to
+     * the wiki session's messages.
+     *
+     * @param form the ID or name of the form this validator should be associated with
      * @param context the wiki context
      */
-    public InputValidator( String form, WikiContext context )
-    {
+    public InputValidator( final String form, final WikiContext context ) {
         m_form = form;
         m_context = context;
         m_session = context.getWikiSession();
     }
 
     /**
-     * Validates a string against the {@link #STANDARD} validator and
-     * additionally checks that the value is not <code>null</code> or blank.
+     * Validates a string against the {@link #STANDARD} validator and additionally checks that the value is not <code>null</code> or blank.
+     *
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
-     * @return returns <code>true</code> if valid, <code>false</code>
-     * otherwise
+     * @return returns <code>true</code> if valid, <code>false</code> otherwise
      */
-    public boolean validateNotNull( String input, String label )
-    {
+    public boolean validateNotNull( final String input, final String label ) {
         return validateNotNull( input, label, STANDARD );
     }
 
     /**
-     * Validates a string against a particular pattern type and additionally
-     * checks that the value is not <code>null</code> or blank. Delegates to
-     * {@link #validate(String, String, int)}.
+     * Validates a string against a particular pattern type and additionally checks that the value is not <code>null</code> or blank.
+     * Delegates to {@link #validate(String, String, int)}.
+     *
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
      * @param type the pattern type to use (<em>e.g.</em>, {@link #STANDARD}, {@link #EMAIL}.
-     * @return returns <code>true</code> if valid, <code>false</code>
-     * otherwise
+     * @return returns <code>true</code> if valid, <code>false</code> otherwise
      */
-    public boolean validateNotNull( String input, String label, int type )
-    {
-        if ( isBlank( input ) )
-        {
-            ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
-
-            m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.cantbenull"),
-                                                                label ) );
+    public boolean validateNotNull( final String input, final String label, final int type ) {
+        if ( isBlank( input ) ) {
+            final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+            m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.cantbenull"), label ) );
             return false;
         }
         return validate( input, label, type ) && !isBlank( input );
     }
 
     /**
-     * Validates a string against a particular pattern type: e-mail address,
-     * standard HTML input, etc. Note that a blank or null string will
+     * Validates a string against a particular pattern type: e-mail address, standard HTML input, etc. Note that a blank or null string will
      * always validate.
+     *
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
-     * @param type the target pattern to validate against ({@link #STANDARD},
-     * {@link #EMAIL})
-     * @return returns <code>true</code> if valid, <code>false</code>
-     * otherwise
+     * @param type the target pattern to validate against ({@link #STANDARD}, {@link #EMAIL})
+     * @return returns <code>true</code> if valid, <code>false</code> otherwise
      */
-    public boolean validate( String input, String label, int type )
-    {
+    public boolean validate( final String input, final String label, final int type ) {
         // If blank, it's valid
-        if ( isBlank( input ) )
-        {
+        if ( isBlank( input ) ) {
             return true;
         }
 
-        ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
 
         // Otherwise, see if it matches the pattern for the target type
-        Matcher matcher;
-        boolean valid;
-        switch( type )
-        {
+        final Matcher matcher;
+        final boolean valid;
+        switch( type ) {
         case STANDARD:
             matcher = UNSAFE_PATTERN.matcher( input );
             valid = !matcher.find();
-            if ( !valid )
-            {
-                //MessageTag already invokes replaceEntities()
-                //Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;[]#\\@{}%$" };
-                Object[] args = { label, "\'\"<>;&[]#\\@{}%$" };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"), args ) );
+            if ( !valid ) {
+                // MessageTag already invokes replaceEntities()
+                // Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;[]#\\@{}%$" };
+                final Object[] args = { label, "\'\"<>;&[]#\\@{}%$" };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString( "validate.unsafechars" ), args ) );
             }
             return valid;
         case EMAIL:
             matcher = EMAIL_PATTERN.matcher( input );
             valid = matcher.matches();
-            if ( !valid )
-            {
-                Object[] args = { label };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.invalidemail"), args ) );
+            if ( !valid ) {
+                final Object[] args = { label };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString( "validate.invalidemail" ), args ) );
             }
             return valid;
         case ID:
             matcher = ID_PATTERN.matcher( input );
             valid = !matcher.find();
-            if ( !valid )
-            {
-                //MessageTag already invokes replaceEntities()
-                //Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
-                Object[] args = { label, "\'\"<>;&{}" };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"), args ) );
+            if ( !valid ) {
+                // MessageTag already invokes replaceEntities()
+                // Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
+                final Object[] args = { label, "\'\"<>;&{}" };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString( "validate.unsafechars" ), args ) );
             }
             return valid;
          default:
@@ -177,12 +158,12 @@ public final class InputValidator
 
     /**
      * Returns <code>true</code> if a supplied string is null or blank
+     *
      * @param input the string to check
-     * @return <code>true</code> if <code>null</code> or blank (zero-length);
-     * <code>false</code> otherwise
+     * @return <code>true</code> if <code>null</code> or blank (zero-length); <code>false</code> otherwise
      */
-    public static boolean isBlank( String input )
-    {
+    public static boolean isBlank( final String input ) {
         return input == null || input.trim().length() < 1;
     }
+
 }
