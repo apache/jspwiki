@@ -391,10 +391,9 @@ public class WikiEngine  {
         m_properties = props;
 
         //
-        //  Initialize log4j.  However, make sure that we don't initialize it multiple times.
-        //  By default we load the log4j config statements from jspwiki.properties, unless
-        //  the property jspwiki.use.external.logconfig=true, in that case we let log4j figure out the
-        //  logging configuration.
+        //  Initialize log4j.  However, make sure that we don't initialize it multiple times. By default we load the log4j config
+        //  statements from jspwiki.properties, unless the property jspwiki.use.external.logconfig=true, in that case we let log4j
+        //  figure out the logging configuration.
         //
         if( !c_configured ) {
             final String useExternalLogConfig = TextUtil.getStringProperty( props,"jspwiki.use.external.logconfig","false" );
@@ -409,30 +408,25 @@ public class WikiEngine  {
 
         fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
 
-        log.debug("Java version: "+System.getProperty("java.runtime.version"));
-        log.debug("Java vendor: "+System.getProperty("java.vm.vendor"));
-        log.debug("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version")+" "+System.getProperty("os.arch"));
-        log.debug("Default server locale: "+Locale.getDefault());
-        log.debug("Default server timezone: "+TimeZone.getDefault().getDisplayName(true, TimeZone.LONG));
+        log.debug( "Java version: " + System.getProperty( "java.runtime.version" ) );
+        log.debug( "Java vendor: " + System.getProperty( "java.vm.vendor" ) );
+        log.debug( "OS: " + System.getProperty( "os.name" ) + " " + System.getProperty( "os.version" ) + " " + System.getProperty( "os.arch" ) );
+        log.debug( "Default server locale: " + Locale.getDefault() );
+        log.debug( "Default server timezone: " + TimeZone.getDefault().getDisplayName( true, TimeZone.LONG ) );
 
-        if( m_servletContext != null )
-        {
-            log.info("Servlet container: "+m_servletContext.getServerInfo() );
-            if( m_servletContext.getMajorVersion() < 2 ||
-                (m_servletContext.getMajorVersion() == 2 && m_servletContext.getMinorVersion() < 4) )
-            {
-                throw new InternalWikiException("I require a container which supports at least version 2.4 of Servlet specification");
+        if( m_servletContext != null ) {
+            log.info( "Servlet container: " + m_servletContext.getServerInfo() );
+            if( m_servletContext.getMajorVersion() < 3 || ( m_servletContext.getMajorVersion() == 3 && m_servletContext.getMinorVersion() < 1 ) ) {
+                throw new InternalWikiException( "JSPWiki requires a container which supports at least version 3.1 of Servlet specification" );
             }
         }
 
-        log.debug("Configuring WikiEngine...");
+        log.debug( "Configuring WikiEngine..." );
 
         //  Initializes the CommandResolver
-        m_commandResolver  = new CommandResolver( this, props );
+        m_commandResolver = new CommandResolver( this, props );
 
-        //
         //  Create and find the default working directory.
-        //
         m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
 
         if( m_workDir == null ) {
@@ -512,10 +506,8 @@ public class WikiEngine  {
             m_internationalizationManager = ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
             m_templateManager = ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
 
-            // Since we want to use a page filters initilize() method
-            // as a engine startup listener where we can initialize global event listeners,
-            // it must be called lastly, so that all object references in the engine
-            // are availabe to the initialize() method
+            // Since we want to use a page filters initilize() method as a engine startup listener where we can initialize global event
+            // listeners, it must be called lastly, so that all object references in the engine are availabe to the initialize() method
             m_filterManager = ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
 
             m_adminBeanManager = ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
@@ -523,19 +515,11 @@ public class WikiEngine  {
             // RenderingManager depends on FilterManager events.
             m_renderingManager.initialize( this, props );
 
-            //
-            //  ReferenceManager has the side effect of loading all
-            //  pages.  Therefore after this point, all page attributes
-            //  are available.
-            //
-            //  initReferenceManager is indirectly using m_filterManager, therefore
-            //  it has to be called after it was initialized.
-            //
+            //  ReferenceManager has the side effect of loading all pages.  Therefore after this point, all page attributes are available.
+            //  initReferenceManager is indirectly using m_filterManager, therefore it has to be called after it was initialized.
             initReferenceManager();
 
-            //
             //  Hook the different manager routines into the system.
-            //
             m_filterManager.addPageFilter(m_referenceManager, -1001 );
             m_filterManager.addPageFilter(m_searchManager, -1002 );
         } catch( final RuntimeException e ) {
@@ -645,15 +629,12 @@ public class WikiEngine  {
     }
 
     /**
-     *  Returns the set of properties that the WikiEngine was initialized
-     *  with.  Note that this method returns a direct reference, so it's possible
-     *  to manipulate the properties.  However, this is not advised unless you
-     *  really know what you're doing.
+     *  Returns the set of properties that the WikiEngine was initialized with.  Note that this method returns a direct reference, so it's
+     *  possible to manipulate the properties.  However, this is not advised unless you really know what you're doing.
      *
      *  @return The wiki properties
      */
-    public Properties getWikiProperties()
-    {
+    public Properties getWikiProperties() {
         return m_properties;
     }
 
