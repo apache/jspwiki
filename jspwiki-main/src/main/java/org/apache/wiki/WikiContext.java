@@ -194,9 +194,6 @@ public class WikiContext implements Cloneable, Command {
         if ( engine == null || command == null ) {
             throw new IllegalArgumentException( "Parameter engine and command must not be null." );
         }
-        if( !engine.isConfigured() ) {
-            throw new InternalWikiException( "WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
-        }
 
         m_engine = engine;
         m_request = request;
@@ -263,6 +260,9 @@ public class WikiContext implements Cloneable, Command {
      */
     public WikiContext( final WikiEngine engine, final HttpServletRequest request, final String requestContext ) {
         this( engine, request, engine.getCommandResolver().findCommand( request, requestContext ) );
+        if( !engine.isConfigured() ) {
+            throw new InternalWikiException( "WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
+        }
     }
 
     /**
