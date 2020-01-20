@@ -27,8 +27,7 @@
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = wiki.createContext( request,
-                                                  WikiContext.ERROR );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.ERROR );
     String pagereq = wikiContext.getName();
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

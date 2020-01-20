@@ -36,7 +36,7 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.DELETE );
     if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );

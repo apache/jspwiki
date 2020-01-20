@@ -37,14 +37,13 @@
 <!doctype html>
 <html lang="en" name="top">
 <%
-  WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
+  WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.NONE );
   if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
 
   //
-  //  This is a security feature, so we will turn it off unless the
-  //  user really wants to.
+  //  This is a security feature, so we will turn it off unless the user really wants to.
   //
   if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.securityconfig.enable")) )
   {

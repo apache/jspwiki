@@ -104,7 +104,7 @@
 
     // If no context, it means we're using container auth.  So, create one anyway
     if( wikiContext == null ) {
-        wikiContext = wiki.createContext( request, WikiContext.LOGIN ); /* reuse login context ! */
+        wikiContext = new WikiContext( wiki, request, WikiContext.LOGIN ); /* reuse login context ! */
         pageContext.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
 

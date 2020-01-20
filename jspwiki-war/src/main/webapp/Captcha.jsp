@@ -37,7 +37,7 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 

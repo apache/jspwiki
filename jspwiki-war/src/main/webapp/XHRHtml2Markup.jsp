@@ -32,7 +32,7 @@
   WikiEngine wiki;
 %>
 <%
-  WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
+  WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
 
   if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
 

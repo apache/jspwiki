@@ -26,7 +26,7 @@
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.MESSAGE );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.MESSAGE );
 
     // Stash the wiki context and message text
     request.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext );

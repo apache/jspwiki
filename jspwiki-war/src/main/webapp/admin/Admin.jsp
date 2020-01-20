@@ -34,12 +34,11 @@
     String bean = request.getParameter("bean");
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.ADMIN );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.ADMIN );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
 
     //
-    //  This is an experimental feature, so we will turn it off unless the
-    //  user really wants to.
+    //  This is an experimental feature, so we will turn it off unless the user really wants to.
     //
     if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.adminui.enable")) )
     {

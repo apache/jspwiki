@@ -38,7 +38,7 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.WORKFLOW );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.WORKFLOW );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     // Extract the wiki session

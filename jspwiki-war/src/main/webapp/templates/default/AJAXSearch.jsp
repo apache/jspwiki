@@ -47,7 +47,7 @@
   /* ********************* actual start ********************* */
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
   /* Create wiki context and check for authorization */
-  WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
+  WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.FIND );
   if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
 
   String query = request.getParameter( "query");

@@ -36,7 +36,7 @@
 <%
 WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
 // Create wiki context and check for authorization
-WikiContext wikiContext = wiki.createContext( request, WikiContext.INSTALL );
+WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.INSTALL );
 if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
 
 Installer installer = new Installer( request, config );

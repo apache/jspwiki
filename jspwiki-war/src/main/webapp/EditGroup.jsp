@@ -32,7 +32,7 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT_GROUP );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.EDIT_GROUP );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members and action attributes

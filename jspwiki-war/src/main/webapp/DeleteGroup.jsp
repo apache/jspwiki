@@ -33,7 +33,7 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE_GROUP );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.DELETE_GROUP );
     if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
 
     WikiSession wikiSession = wikiContext.getWikiSession();

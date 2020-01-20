@@ -37,7 +37,7 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     AuthenticationManager mgr = wiki.getAuthenticationManager();
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
+    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.LOGIN );
     pageContext.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
