@@ -18,24 +18,22 @@
  */
 package org.apache.wiki;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockServletConfig;
-import net.sourceforge.stripes.mock.MockServletContext;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class WikiServletTest {
     
     @Test
     public void testDoGet() throws Exception {
-        MockHttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/wiki/Wiki.jsp" );
-        MockHttpServletResponse res = new MockHttpServletResponse();
-        WikiServlet wikiServlet = new WikiServlet();
-        MockServletConfig config = new MockServletConfig();
-        config.setServletContext( new MockServletContext( "/JSPWiki" ) );
+        final MockHttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/wiki/Wiki.jsp" );
+        final MockHttpServletResponse res = new MockHttpServletResponse();
+        final WikiServlet wikiServlet = new WikiServlet();
+        final MockServletConfig config = new MockServletConfig();
+        config.setServletContext( TestEngine.createServletContext( "/JSPWiki" ) );
         
         wikiServlet.init( config );
         wikiServlet.doGet( req, res );
@@ -46,11 +44,11 @@ public class WikiServletTest {
     
     @Test
     public void testNastyDoPost() throws Exception {
-        MockHttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/wiki/Edit.jsp" );
-        MockHttpServletResponse res = new MockHttpServletResponse();
-        WikiServlet wikiServlet = new WikiServlet();
-        MockServletConfig config = new MockServletConfig();
-        config.setServletContext( new MockServletContext( "/JSPWiki" ) );
+        final MockHttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/wiki/Edit.jsp" );
+        final MockHttpServletResponse res = new MockHttpServletResponse();
+        final WikiServlet wikiServlet = new WikiServlet();
+        final MockServletConfig config = new MockServletConfig();
+        config.setServletContext( TestEngine.createServletContext( "/JSPWiki" ) );
         
         wikiServlet.init( config );
         wikiServlet.doPost( req, res );

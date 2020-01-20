@@ -135,11 +135,26 @@ public class TestEngine extends WikiEngine
     }
 
     public TestEngine( Properties props ) throws WikiException {
-        super( new MockServletContext( "test" ), "test", cleanTestProps( props ) );
+        super( createServletContext( "test" ), "test", cleanTestProps( props ) );
 
         // Stash the WikiEngine in the servlet context
         ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
+    }
+
+    public static MockServletContext createServletContext( final String contextName ) {
+        return new MockServletContext( contextName ) {
+
+            @Override
+            public int getMajorVersion() {
+                return 3;
+            }
+
+            @Override
+            public int getMinorVersion() {
+                return 1;
+            }
+        };
     }
 
     /**
