@@ -46,7 +46,6 @@ import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.tasks.TasksManager;
-import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
@@ -60,7 +59,6 @@ import org.apache.wiki.workflow.WorkflowManager;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -563,6 +561,15 @@ public class WikiEngine  {
     }
 
     /**
+     * check if the WikiEngine has been configured.
+     *
+     * @return {@code true} if it has, {@code false} otherwise.
+     */
+    public boolean isConfigured() {
+        return m_isConfigured;
+    }
+
+    /**
      * Checks if the template directory specified in the wiki's properties actually exists. If it doesn't, then {@code m_templateDir} is
      * set to {@link #DEFAULT_TEMPLATE_NAME}.
      * <p>
@@ -1004,40 +1011,6 @@ public class WikiEngine  {
      */
     public ProgressManager getProgressManager() {
         return m_progressManager;
-    }
-
-    /**
-     *  Figure out to which page we are really going to.  Considers special page names from the jspwiki.properties, and possible aliases.
-     *  This method delgates requests to {@link org.apache.wiki.WikiContext#getRedirectURL()}.
-     *
-     *  @param context The Wiki Context in which the request is being made.
-     *  @return A complete URL to the new page to redirect to
-     *  @since 2.2
-     */
-    public String getRedirectURL( final WikiContext context ) {
-        return context.getRedirectURL();
-    }
-
-    /**
-     *  Shortcut to create a WikiContext from a supplied HTTP request, using a default wiki context.
-     *
-     *  @param request the HTTP request
-     *  @param requestContext the default context to use
-     *  @return a new WikiContext object.
-     *
-     *  @see org.apache.wiki.ui.CommandResolver
-     *  @see org.apache.wiki.ui.Command
-     *  @since 2.1.15.
-     */
-    // FIXME: We need to have a version which takes a fixed page name as well, or check it elsewhere.
-    public WikiContext createContext( final HttpServletRequest request, final String requestContext ) {
-        if( !m_isConfigured ) {
-            throw new InternalWikiException( "WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
-        }
-
-        // Build the wiki context
-        final Command command = m_commandResolver.findCommand( request, requestContext );
-        return new WikiContext( this, request, command );
     }
 
     /**

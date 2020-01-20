@@ -132,11 +132,11 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     				log.debug("Calling getSuggestions() DONE. "+callResults.size());
     				result = AjaxUtil.toJson(callResults);
     			} else if (actionName.equals(AJAX_ACTION_PAGES)) {
-    				List<Map<String,Object>> callResults = new ArrayList<>();
+    				final List< Map< String, Object > > callResults;
     				log.debug("Calling findPages() START");
-    				WikiContext wikiContext = m_engine.createContext(req, WikiContext.VIEW);
-    				if (wikiContext == null) {
-    					throw new ServletException("Could not create a WikiContext from the request "+req);
+    				final WikiContext wikiContext = new WikiContext( m_engine, req, WikiContext.VIEW );
+    				if( wikiContext == null ) {
+    					throw new ServletException( "Could not create a WikiContext from the request " + req );
     				}
     				callResults = findPages(itemId, maxResults, wikiContext);
     				log.debug("Calling findPages() DONE. "+callResults.size());
@@ -148,45 +148,37 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     	}
 
         /**
-         *  Provides a list of suggestions to use for a page name.
-         *  Currently the algorithm just looks into the value parameter,
+         *  Provides a list of suggestions to use for a page name. Currently the algorithm just looks into the value parameter,
          *  and returns all page names from that.
          *
          *  @param wikiName the page name
          *  @param maxLength maximum number of suggestions
          *  @return the suggestions
          */
-        public List<String> getSuggestions( String wikiName, int maxLength )
-        {
-            StopWatch sw = new StopWatch();
+        public List<String> getSuggestions( String wikiName, final int maxLength ) {
+            final StopWatch sw = new StopWatch();
             sw.start();
-            List<String> list = new ArrayList<>(maxLength);
+            final List< String > list = new ArrayList<>( maxLength );
 
-            if( wikiName.length() > 0 )
-            {
+            if( wikiName.length() > 0 ) {
 
                 // split pagename and attachment filename
                 String filename = "";
                 int pos = wikiName.indexOf("/");
-                if( pos >= 0 )
-                {
+                if( pos >= 0 ) {
                     filename = wikiName.substring( pos ).toLowerCase();
                     wikiName = wikiName.substring( 0, pos );
                 }
 
-                String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
-
-                String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
-
-                Set< String > allPages = m_engine.getReferenceManager().findCreated();
+                final String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
+                final String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
+                final Set< String > allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
-                for( Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; )
-                {
-                    String p = i.next();
-                    String pp = p.toLowerCase();
-                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) )
-                    {
+                for( Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; ) {
+                    final String p = i.next();
+                    final String pp = p.toLowerCase();
+                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) ) {
                         list.add( p );
                         counter++;
                     }
@@ -194,7 +186,9 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) log.debug("Suggestion request for "+wikiName+" done in "+sw);
+            if( log.isDebugEnabled() ) {
+                log.debug( "Suggestion request for " + wikiName + " done in " + sw );
+            }
             return list;
         }
 
@@ -252,23 +246,13 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      * @throws FilterException if the search provider failed to initialize
      */
     @Override
-    public void initialize(WikiEngine engine, Properties properties)
-        throws FilterException
-    {
+    public void initialize( final WikiEngine engine, final Properties properties ) throws FilterException {
         m_engine = engine;
-
         loadSearchProvider(properties);
 
-        try
-        {
-            m_searchProvider.initialize(engine, properties);
-        }
-        catch (NoRequiredPropertyException e)
-        {
-            log.error( e.getMessage(), e );
-        }
-        catch (IOException e)
-        {
+        try {
+            m_searchProvider.initialize( engine, properties );
+        } catch( final NoRequiredPropertyException | IOException e ) {
             log.error( e.getMessage(), e );
         }
     }
@@ -280,14 +264,13 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         final String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
 
         try {
-            Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
+            final Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
             m_searchProvider = (SearchProvider)providerClass.newInstance();
-        } catch( ClassNotFoundException | InstantiationException | IllegalAccessException e ) {
+        } catch( final ClassNotFoundException | InstantiationException | IllegalAccessException e ) {
             log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
         }
 
-        if( null == m_searchProvider )
-        {
+        if( null == m_searchProvider ) {
             // FIXME: Make a static with the default search provider
             m_searchProvider = new BasicSearchProvider();
         }

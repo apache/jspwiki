@@ -194,6 +194,9 @@ public class WikiContext implements Cloneable, Command {
         if ( engine == null || command == null ) {
             throw new IllegalArgumentException( "Parameter engine and command must not be null." );
         }
+        if( !engine.isConfigured() ) {
+            throw new InternalWikiException( "WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
+        }
 
         m_engine = engine;
         m_request = request;
@@ -244,6 +247,22 @@ public class WikiContext implements Cloneable, Command {
      */
     public WikiContext( final WikiEngine engine, final HttpServletRequest request, final WikiPage page ) {
         this( engine, request, findCommand( engine, request, page ) );
+    }
+
+    /**
+     *  Creates a new WikiContext from a supplied HTTP request, using a default wiki context.
+     *
+     *  @param engine The WikiEngine that is handling the request
+     *  @param request the HTTP request
+     *  @param requestContext the default context to use
+     *  @return a new WikiContext object.
+     *
+     *  @see org.apache.wiki.ui.CommandResolver
+     *  @see org.apache.wiki.ui.Command
+     *  @since 2.1.15.
+     */
+    public WikiContext( final WikiEngine engine, final HttpServletRequest request, final String requestContext ) {
+        this( engine, request, engine.getCommandResolver().findCommand( request, requestContext ) );
     }
 
     /**

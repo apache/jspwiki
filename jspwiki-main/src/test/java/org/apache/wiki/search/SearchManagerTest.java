@@ -78,7 +78,7 @@ public class SearchManagerTest {
     Callable< Boolean > findsResultsFor( final Collection< SearchResult > res, final String text ) {
         return () -> {
             final MockHttpServletRequest request = m_engine.newHttpRequest();
-            final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
+            final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
             final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
             if( search != null && search.size() > 0 ) {
                 // debugSearchResults( search );
@@ -121,7 +121,7 @@ public class SearchManagerTest {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
-        final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
+        final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
         m_engine.getPageManager().saveText( ctx, txt );
         m_engine.getPageManager().saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
 
@@ -143,7 +143,7 @@ public class SearchManagerTest {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
-        final WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
+        final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
         m_engine.getPageManager().saveText( ctx, txt );
 
         Collection< SearchResult > res = new ArrayList<>();

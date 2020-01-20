@@ -194,7 +194,7 @@ public class AttachmentServlet extends HttpServlet {
      */
     // FIXME: Messages would need to be localized somehow.
     public void doGet( final HttpServletRequest  req, final HttpServletResponse res ) throws IOException {
-        final WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+        final WikiContext context = new WikiContext( m_engine, req, WikiContext.ATTACH );
         final AttachmentManager mgr = m_engine.getAttachmentManager();
         final AuthorizationManager authmgr = m_engine.getAuthorizationManager();
 
@@ -373,15 +373,12 @@ public class AttachmentServlet extends HttpServlet {
      * content of the file.
      *
      */
-    public void doPost( HttpServletRequest  req, HttpServletResponse res ) throws IOException {
-        try
-        {
-            String nextPage = upload( req );
+    public void doPost( final HttpServletRequest req, final HttpServletResponse res ) throws IOException {
+        try {
+            final String nextPage = upload( req );
             req.getSession().removeAttribute("msg");
             res.sendRedirect( nextPage );
-        }
-        catch( RedirectException e )
-        {
+        } catch( final RedirectException e ) {
             WikiSession session = WikiSession.getWikiSession( m_engine, req );
             session.addMessage( e.getMessage() );
 
@@ -420,12 +417,12 @@ public class AttachmentServlet extends HttpServlet {
      *  @throws IOException If upload fails
      * @throws FileUploadException
      */
-    protected String upload( HttpServletRequest req ) throws RedirectException, IOException {
+    protected String upload( final HttpServletRequest req ) throws RedirectException, IOException {
         String msg     = "";
-        String attName = "(unknown)";
-        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
+        final String attName = "(unknown)";
+        final String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
-        String progressId = req.getParameter( "progressid" );
+        final String progressId = req.getParameter( "progressid" );
 
         // Check that we have a file upload request
         if( !ServletFileUpload.isMultipartContent(req) ) {
@@ -433,18 +430,16 @@ public class AttachmentServlet extends HttpServlet {
         }
 
         try {
-            FileItemFactory factory = new DiskFileItemFactory();
+            final FileItemFactory factory = new DiskFileItemFactory();
 
-            // Create the context _before_ Multipart operations, otherwise
-            // strict servlet containers may fail when setting encoding.
-            WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
-
-            UploadListener pl = new UploadListener();
+            // Create the context _before_ Multipart operations, otherwise strict servlet containers may fail when setting encoding.
+            final WikiContext context = new WikiContext( m_engine, req, WikiContext.ATTACH );
+            final UploadListener pl = new UploadListener();
 
             m_engine.getProgressManager().startProgress( pl, progressId );
 
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            upload.setHeaderEncoding("UTF-8");
+            final ServletFileUpload upload = new ServletFileUpload( factory );
+            upload.setHeaderEncoding( "UTF-8" );
             if( !context.hasAdminPermissions() ) {
                 upload.setFileSizeMax( m_maxSize );
             }
@@ -456,12 +451,11 @@ public class AttachmentServlet extends HttpServlet {
             //FileItem actualFile = null;
             List<FileItem> fileItems = new ArrayList<>();
 
-            for( FileItem item : items ) {
+            for( final FileItem item : items ) {
                 if( item.isFormField() ) {
                     if( item.getFieldName().equals("page") ) {
                         //
-                        // FIXME: Kludge alert.  We must end up with the parent page name,
-                        //        if this is an upload of a new revision
+                        // FIXME: Kludge alert.  We must end up with the parent page name, if this is an upload of a new revision
                         //
 
                         wikipage = item.getString("UTF-8");
@@ -494,18 +488,18 @@ public class AttachmentServlet extends HttpServlet {
                 }
             }
 
-        } catch( ProviderException e ) {
+        } catch( final ProviderException e ) {
             msg = "Upload failed because the provider failed: "+e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
-            throw new IOException(msg);
-        } catch( IOException e ) {
+            throw new IOException( msg );
+        } catch( final IOException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
 
             throw e;
-        } catch (FileUploadException e) {
+        } catch( final FileUploadException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             log.warn( msg + " (attachment: " + attName + ")", e );
@@ -543,12 +537,9 @@ public class AttachmentServlet extends HttpServlet {
     {
         boolean created = false;
 
-        try
-        {
+        try {
             filename = AttachmentManager.validateFileName( filename );
-        }
-        catch( WikiException e )
-        {
+        } catch( final WikiException e ) {
             // this is a kludge, the exception that is caught here contains the i18n key
             // here we have the context available, so we can internationalize it properly :
             throw new RedirectException (Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
@@ -561,34 +552,25 @@ public class AttachmentServlet extends HttpServlet {
         //  before we receive the file, due to the stupid constructor of MultipartRequest.
         //
 
-        if( !context.hasAdminPermissions() )
-        {
-            if( contentLength > m_maxSize )
-            {
+        if( !context.hasAdminPermissions() ) {
+            if( contentLength > m_maxSize ) {
                 // FIXME: Does not delete the received files.
-                throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
-                        errorPage );
+                throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)", errorPage );
             }
 
-            if( !isTypeAllowed(filename) )
-            {
-                throw new RedirectException( "Files of this type may not be uploaded to this wiki",
-                        errorPage );
+            if( !isTypeAllowed(filename) ) {
+                throw new RedirectException( "Files of this type may not be uploaded to this wiki", errorPage );
             }
         }
 
-        Principal user    = context.getCurrentUser();
-
-        AttachmentManager mgr = m_engine.getAttachmentManager();
+        final Principal user    = context.getCurrentUser();
+        final AttachmentManager mgr = m_engine.getAttachmentManager();
 
         log.debug("file="+filename);
 
-        if( data == null )
-        {
+        if( data == null ) {
             log.error("File could not be opened.");
-
-            throw new RedirectException("File could not be opened.",
-                    errorPage);
+            throw new RedirectException("File could not be opened.", errorPage);
         }
 
         //
@@ -604,8 +586,7 @@ public class AttachmentServlet extends HttpServlet {
 
         Attachment att = mgr.getAttachmentInfo( context.getPage().getName() );
 
-        if( att == null )
-        {
+        if( att == null ) {
             att = new Attachment( m_engine, parentPage, filename );
             created = true;
         }
@@ -615,37 +596,26 @@ public class AttachmentServlet extends HttpServlet {
         //  Check if we're allowed to do this?
         //
 
-        Permission permission = PermissionFactory.getPagePermission( att, "upload" );
-        if( m_engine.getAuthorizationManager().checkPermission( context.getWikiSession(),
-                permission ) )
-        {
-            if( user != null )
-            {
+        final Permission permission = PermissionFactory.getPagePermission( att, "upload" );
+        if( m_engine.getAuthorizationManager().checkPermission( context.getWikiSession(), permission ) ) {
+            if( user != null ) {
                 att.setAuthor( user.getName() );
             }
 
-            if( changenote != null && changenote.length() > 0 )
-            {
+            if( changenote != null && changenote.length() > 0 ) {
                 att.setAttribute( WikiPage.CHANGENOTE, changenote );
             }
 
-            try
-            {
+            try {
                 m_engine.getAttachmentManager().storeAttachment( att, data );
-            }
-            catch( ProviderException pe )
-            {
+            } catch( final ProviderException pe ) {
                 // this is a kludge, the exception that is caught here contains the i18n key
                 // here we have the context available, so we can internationalize it properly :
-                throw new ProviderException( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE )
-                        .getString( pe.getMessage() ) );
+                throw new ProviderException( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE ).getString( pe.getMessage() ) );
             }
 
-            log.info( "User " + user + " uploaded attachment to " + parentPage +
-                    " called "+filename+", size " + att.getSize() );
-        }
-        else
-        {
+            log.info( "User " + user + " uploaded attachment to " + parentPage + " called "+filename+", size " + att.getSize() );
+        } else {
             throw new RedirectException( "No permission to upload a file", errorPage );
         }
 
@@ -656,22 +626,17 @@ public class AttachmentServlet extends HttpServlet {
      *  Provides tracking for upload progress.
      *
      */
-    private static class UploadListener
-            extends    ProgressItem
-            implements ProgressListener
-    {
+    private static class UploadListener extends ProgressItem implements ProgressListener {
         public long m_currentBytes;
         public long m_totalBytes;
 
-        public void update(long recvdBytes, long totalBytes, int item)
-        {
+        public void update( final long recvdBytes, final long totalBytes, final int item) {
             m_currentBytes = recvdBytes;
             m_totalBytes   = totalBytes;
         }
 
-        public int getProgress()
-        {
-            return (int) (((float)m_currentBytes / m_totalBytes) * 100 + 0.5);
+        public int getProgress() {
+            return ( int )( ( ( float )m_currentBytes / m_totalBytes ) * 100 + 0.5 );
         }
     }
 
