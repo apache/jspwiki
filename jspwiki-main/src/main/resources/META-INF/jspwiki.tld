@@ -386,10 +386,6 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-       <name>absolute</name>
-       <rtexprvalue>true</rtexprvalue>
-    </attribute>
-    <attribute>
        <name>templatefile</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
