@@ -74,7 +74,7 @@
             session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
         }
 
-        response.sendRedirect( TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab"), false ),"&amp;","&" ));
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab") ),"&amp;","&" ));
         return;
     }
     else if( delete != null )
@@ -98,9 +98,7 @@
 
         response.sendRedirect(
             TextUtil.replaceString(
-                wiki.getURL(
-                    WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab"), false
-                ),"&amp;","&"
+                wiki.getURL( WikiContext.VIEW, redirTo, "tab=" + request.getParameter( "tab" ) ),"&amp;","&"
             )
         );
 
@@ -111,8 +109,6 @@
     // Set the content type and include the response content
     // FIXME: not so.
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "EditTemplate.jsp" );
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

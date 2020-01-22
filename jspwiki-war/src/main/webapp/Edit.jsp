@@ -133,7 +133,7 @@
             log.info("Page changed, warning user.");
 
             session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );
-            response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null, false) );
+            response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null ) );
             return;
         }
 
@@ -206,7 +206,7 @@
             return;
         }
 
-        response.sendRedirect(wiki.getViewURL(pagereq));
+        response.sendRedirect(wikiContext.getViewURL(pagereq));
         return;
     } else if( preview != null ) {
         log.debug("Previewing "+pagereq);
@@ -219,7 +219,7 @@
         }
 
         session.setAttribute("changenote", changenote != null ? changenote : "" );
-        response.sendRedirect( wiki.getURL(WikiContext.PREVIEW,pagereq,null,false) );
+        response.sendRedirect( wiki.getURL( WikiContext.PREVIEW, pagereq, null ) );
         return;
     } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);
@@ -228,7 +228,7 @@
             wiki.getPageManager().unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
-        response.sendRedirect( wiki.getViewURL(pagereq) );
+        response.sendRedirect( wikiContext.getViewURL(pagereq) );
         return;
     }
 

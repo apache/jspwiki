@@ -238,12 +238,12 @@
             response.sendRedirect( e.getRedirect() );
             return;
         }
-        response.sendRedirect(wiki.getViewURL(pagereq));
+        response.sendRedirect(wikiContext.getViewURL(pagereq));
         return;
     } else if( preview != null ) {
         log.debug("Previewing "+pagereq);
         session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
-        response.sendRedirect( TextUtil.replaceString( wiki.getURL(WikiContext.PREVIEW, pagereq, "action=comment", false),"&amp;","&") );
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL(WikiContext.PREVIEW, pagereq, "action=comment"),"&amp;","&") );
         return;
     } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);
@@ -253,7 +253,7 @@
             wiki.getPageManager().unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
-        response.sendRedirect( wiki.getViewURL(pagereq) );
+        response.sendRedirect( wikiContext.getViewURL(pagereq) );
         return;
     }
 

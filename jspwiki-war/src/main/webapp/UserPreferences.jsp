@@ -49,7 +49,7 @@
     UserManager userMgr = wiki.getUserManager();
     WikiSession wikiSession = wikiContext.getWikiSession();
 
-/* FIXME: Obsoslete 
+/* FIXME: Obsolete
     if( request.getParameter(EditorManager.PARA_EDITOR) != null )
     {
     	String editor = request.getParameter(EditorManager.PARA_EDITOR);
@@ -83,7 +83,7 @@
             }
             catch( DecisionRequiredException e )
             {
-                String redirect = wiki.getURL(WikiContext.VIEW,"ApprovalRequiredForUserProfiles",null,true);
+                String redirect = wiki.getURL( WikiContext.VIEW, "ApprovalRequiredForUserProfiles", null );
                 response.sendRedirect( redirect );
                 return;
             }
@@ -102,7 +102,7 @@
                redirectPage = wiki.getFrontPage();
             }
             
-            String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
+            String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
             log.info( "Redirecting user to " + viewUrl );
             response.sendRedirect( viewUrl );
             return;
@@ -120,7 +120,7 @@
         {
           redirectPage = wiki.getFrontPage();
         }
-        String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
+        String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
 
         log.info( "Redirecting user to " + viewUrl );
         response.sendRedirect( viewUrl );
@@ -133,8 +133,6 @@
         return;
     }
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

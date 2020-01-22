@@ -69,7 +69,7 @@
                 		                            		 Preferences.getLocale( wikiContext ), 
                 		                            		 due.getMessage(), due.getArgs() ) );
             } catch( DecisionRequiredException e ) {
-                String redirect = wiki.getURL(WikiContext.VIEW,"ApprovalRequiredForUserProfiles",null,true);
+                String redirect = wiki.getURL( WikiContext.VIEW, "ApprovalRequiredForUserProfiles", null );
                 response.sendRedirect( redirect );
                 return;
             } catch( WikiSecurityException e ) {
@@ -79,7 +79,7 @@
         }
         if ( wikiSession.getMessages( "profile" ).length == 0 ) {
             String redirectPage = request.getParameter( "redirect" );
-            response.sendRedirect( wiki.getViewURL(redirectPage) );
+            response.sendRedirect( wikiContext.getViewURL(redirectPage) );
             return;
         }
     }
@@ -153,7 +153,7 @@
         if( !wiki.getPageManager().wikiPageExists( redirectPage ) ) {
            redirectPage = wiki.getFrontPage();
         }
-        String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
+        String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
 
         // Redirect!
         log.info( "Redirecting user to " + viewUrl );

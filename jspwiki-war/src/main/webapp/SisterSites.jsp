@@ -49,7 +49,7 @@
         // TODO: This is a kludge and not forward-compatible.
         
         if( pageName.indexOf("/") != -1 ) continue; 
-        String url = wiki.getViewURL( pageName );
+        String url = wikiContext.getViewURL( pageName );
         
         out.write( url + " " + pageName + "\n" );
     }
