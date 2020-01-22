@@ -271,8 +271,7 @@ public final class CommandResolver {
     public String getSpecialPageReference( final String page ) {
         final Command command = m_specialPages.get( page );
         if ( command != null ) {
-            return m_engine.getURLConstructor()
-                           .makeURL( command.getRequestContext(), command.getURLPattern(), true, null );
+            return m_engine.getURLConstructor().makeURL( command.getRequestContext(), command.getURLPattern(), null );
         }
 
         return null;

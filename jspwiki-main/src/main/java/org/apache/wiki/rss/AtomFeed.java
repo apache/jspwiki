@@ -103,7 +103,7 @@ public class AtomFeed extends Feed {
                     for( final Attachment att : c ) {
                         final Element attEl = getElement( "link" );
                         attEl.setAttribute( "rel", "enclosure" );
-                        attEl.setAttribute( "href", engine.getURL( WikiContext.ATTACH, att.getName(), null, true ) );
+                        attEl.setAttribute( "href", engine.getURL( WikiContext.ATTACH, att.getName(), null ) );
                         attEl.setAttribute( "length", Long.toString( att.getSize() ) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 
@@ -149,8 +149,7 @@ public class AtomFeed extends Feed {
         final String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp",
                                                  "page=" + engine.encodeName( m_wikiContext.getPage().getName() ) +
                                                  "&mode=" + m_mode +
-                                                 "&type=atom",
-                                           true );
+                                                 "&type=atom" );
         final Element self = getElement( "link" ).setAttribute( "rel","self" );
         self.setAttribute( "href", rssFeedURL );
         root.addContent( self );

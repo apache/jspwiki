@@ -18,15 +18,15 @@
  */
 package org.apache.wiki.rss;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 /**
@@ -87,7 +87,7 @@ public class RSS10Feed extends Feed {
 
             if( p.getVersion() > 1 ) {
                 item.addContent( new Element( "diff", NS_WIKI )
-                                         .addContent( engine.getURL( WikiContext.DIFF, p.getName(), "r1=-1", true ) ) );
+                                         .addContent( engine.getURL( WikiContext.DIFF, p.getName(), "r1=-1" ) ) );
             }
 
             //
@@ -127,7 +127,7 @@ public class RSS10Feed extends Feed {
             //
             //  PageHistory
             item.addContent( new Element( "history", NS_WIKI )
-                                    .addContent( engine.getURL( WikiContext.INFO, p.getName(), null, true ) ) );
+                                    .addContent( engine.getURL( WikiContext.INFO, p.getName(), null ) ) );
 
             //
             // Add to root

@@ -96,7 +96,7 @@ public class RSS20Feed extends Feed
                         Attachment att = a.next();
 
                         Element attEl = new Element("enclosure");
-                        attEl.setAttribute( "url", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
+                        attEl.setAttribute( "url", engine.getURL( WikiContext.ATTACH, att.getName(), null ) );
                         attEl.setAttribute( "length", Long.toString(att.getSize()) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 

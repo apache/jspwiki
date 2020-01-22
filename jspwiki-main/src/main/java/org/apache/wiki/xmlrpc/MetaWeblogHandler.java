@@ -110,7 +110,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
     }
 
     private String getURL( final String page ) {
-        return m_context.getEngine().getURL( WikiContext.VIEW, page,null, true ); // Force absolute urls
+        return m_context.getEngine().getURL( WikiContext.VIEW, page,null );
     }
 
     /**
@@ -259,7 +259,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 
-            url = engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
+            url = engine.getURL( WikiContext.ATTACH, att.getName(), null );
         } catch( final Exception e ) {
             log.error( "Failed to upload attachment", e );
             throw new XmlRpcException( 0, "Failed to upload media object: "+e.getMessage() );

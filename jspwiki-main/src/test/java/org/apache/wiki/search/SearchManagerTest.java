@@ -131,7 +131,7 @@ public class SearchManagerTest {
 
         Assertions.assertEquals( 0, res.size(), "empty results" );
 
-        res = m_mgr.findPages( "Babylon", ctx );
+        Awaitility.await( "testSimpleSearch3" ).until( findsResultsFor( res,"Babylon" ) );
         Assertions.assertNotNull( res, "null result" );
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );

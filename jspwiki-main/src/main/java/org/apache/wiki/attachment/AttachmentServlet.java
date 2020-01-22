@@ -275,7 +275,7 @@ public class AttachmentServlet extends HttpServlet {
                     res.sendRedirect(
                         validateNextPage(
                             TextUtil.urlEncodeUTF8(nextPage),
-                            m_engine.getURL( WikiContext.ERROR, "", null, false )
+                            m_engine.getURL( WikiContext.ERROR, "", null )
                         )
                     );
                 }
@@ -420,7 +420,7 @@ public class AttachmentServlet extends HttpServlet {
     protected String upload( final HttpServletRequest req ) throws RedirectException, IOException {
         String msg     = "";
         final String attName = "(unknown)";
-        final String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
+        final String errorPage = m_engine.getURL( WikiContext.ERROR, "", null ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
         final String progressId = req.getParameter( "progressid" );
 

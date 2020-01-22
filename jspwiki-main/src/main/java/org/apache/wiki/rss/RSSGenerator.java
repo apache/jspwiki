@@ -166,10 +166,10 @@ public class RSSGenerator {
 
         sb.append( "<br /><hr /><br />" )
           .append( "Parent page: <a href=\"" )
-          .append( m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) )
+          .append( m_engine.getURL( WikiContext.VIEW, att.getParentName(), null ) )
           .append( "\">" ).append( att.getParentName() ).append( "</a><br />" )
           .append( "Info page: <a href=\"" )
-          .append( m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) )
+          .append( m_engine.getURL( WikiContext.INFO, att.getName(), null ) )
           .append( "\">" ).append( att.getName() ).append( "</a>" );
 
         return sb.toString();
@@ -326,9 +326,9 @@ public class RSSGenerator {
 
             final String url;
             if( page instanceof Attachment ) {
-                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null, true );
+                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null );
             } else {
-                url = m_engine.getURL( WikiContext.VIEW, page.getName(), null, true );
+                url = m_engine.getURL( WikiContext.VIEW, page.getName(), null );
             }
 
             final Entry e = new Entry();
@@ -378,9 +378,9 @@ public class RSSGenerator {
             String url;
 
             if( page instanceof Attachment ) {
-                url = m_engine.getURL( WikiContext.ATTACH, page.getName(), "version=" + page.getVersion(),true );
+                url = m_engine.getURL( WikiContext.ATTACH, page.getName(), "version=" + page.getVersion() );
             } else {
-                url = m_engine.getURL( WikiContext.VIEW, page.getName(), "version=" + page.getVersion(), true );
+                url = m_engine.getURL( WikiContext.VIEW, page.getName(), "version=" + page.getVersion() );
             }
 
             // Unfortunately, this is needed because the code will again go through replacement conversion
@@ -441,9 +441,9 @@ public class RSSGenerator {
             final String url;
 
             if( page instanceof Attachment ) {
-                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null,true );
+                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null );
             } else {
-                url = m_engine.getURL( WikiContext.VIEW, page.getName(),null, true );
+                url = m_engine.getURL( WikiContext.VIEW, page.getName(),null );
             }
 
             e.setURL( url );

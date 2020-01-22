@@ -65,7 +65,7 @@ public class SaveUserProfileTask extends Task {
                                                  profile.getLoginName(),
                                                  profile.getFullname(),
                                                  profile.getEmail(),
-                                                 m_engine.getURL( WikiContext.LOGIN, null, null, true ) );
+                                                 m_engine.getURL( WikiContext.LOGIN, null, null ) );
                 MailUtil.sendMessage( m_engine.getWikiProperties(), to, subject, content);
             } catch ( final AddressException e) {
                 LOG.debug( e.getMessage(), e );

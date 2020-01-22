@@ -432,7 +432,7 @@ public class AuthorizationManager {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + context.requiredPermission() + ")");
                 context.getWikiSession().addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), context.getName() ) );
             }
-            response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
+            response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null ) );
         }
         return allowed;
     }

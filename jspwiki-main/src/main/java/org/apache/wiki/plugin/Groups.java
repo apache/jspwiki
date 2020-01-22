@@ -18,11 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Map;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -30,41 +25,41 @@ import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.authorize.GroupManager;
 
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Map;
+
 /**
  *  <p>Prints the groups managed by this wiki, separated by commas.
  *  <br>The groups are sorted in ascending order, and are hyperlinked to the page that displays the group's members.
  *  </p>
  *  <p>Parameters : </p>
  *  NONE
- *  
- *  
+ *
  *  @since 2.4.19
  */
-public class Groups
-    implements WikiPlugin
-{
+public class Groups implements WikiPlugin {
+
     private static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
     
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
+    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
         // Retrieve groups, and sort by name
-        WikiEngine engine = context.getEngine();
-        GroupManager groupMgr = engine.getGroupManager();
-        Principal[] groups = groupMgr.getRoles();
+        final WikiEngine engine = context.getEngine();
+        final GroupManager groupMgr = engine.getGroupManager();
+        final Principal[] groups = groupMgr.getRoles();
         Arrays.sort( groups, COMPARATOR );
 
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder();
         
-        for ( int i = 0; i < groups.length; i++ )
-        {
-            String name = groups[i].getName();
+        for ( int i = 0; i < groups.length; i++ ) {
+            final String name = groups[ i ].getName();
             
             // Make URL
-            String url = engine.getURLConstructor().makeURL( WikiContext.VIEW_GROUP, name, false, null );
+            final String url = engine.getURLConstructor().makeURL( WikiContext.VIEW_GROUP, name,  null );
             
             // Create hyperlink
             s.append( "<a href=\"" );
@@ -74,8 +69,7 @@ public class Groups
             s.append( "</a>" );
             
             // If not the last one, add a comma and space
-            if ( i < ( groups.length - 1 ) )
-            {
+            if ( i < ( groups.length - 1 ) ) {
                 s.append( ',' );
                 s.append( ' ' );
             }
