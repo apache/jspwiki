@@ -706,34 +706,18 @@ public class WikiEngine  {
     }
 
     /**
-     * <p>Returns the basic absolute URL to a page, without any modifications. You may add any parameters to this.</p>
-     * <p>Since 2.3.90 it is safe to call this method with {@code null} pageName, in which case it will default to the front page.</p>
-     *
-     * @since 2.0.3
-     * @param pageName The name of the page.  May be null, in which case defaults to the front page.
-     * @return An absolute URL to the page.
-     */
-    public String getViewURL( String pageName ) {
-        if( pageName == null ) {
-            pageName = getFrontPage();
-        }
-        return getURLConstructor().makeURL( WikiContext.VIEW, pageName, true, null );
-    }
-
-    /**
      *  Returns an URL if a WikiContext is not available.
      *
      *  @param context The WikiContext (VIEW, EDIT, etc...)
      *  @param pageName Name of the page, as usual
      *  @param params List of parameters. May be null, if no parameters.
-     *  @param absolute If true, will generate an absolute URL regardless of properties setting.
      *  @return An URL (absolute or relative).
      */
-    public String getURL( final String context, String pageName, final String params, final boolean absolute ) {
+    public String getURL( final String context, String pageName, final String params ) {
         if( pageName == null ) {
             pageName = getFrontPage();
         }
-        return m_urlConstructor.makeURL( context, pageName, absolute, params );
+        return m_urlConstructor.makeURL( context, pageName, params );
     }
 
     /**

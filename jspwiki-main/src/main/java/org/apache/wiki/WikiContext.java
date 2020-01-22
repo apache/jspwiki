@@ -576,10 +576,8 @@ public class WikiContext implements Cloneable, Command {
      *  @return An URL to the given context and page.
      */
     public String getURL( final String context, final String page, final String params ) {
-        final boolean absolute = "absolute".equals(m_engine.getVariableManager().getVariable( this, WikiEngine.PROP_REFSTYLE ));
-
         // FIXME: is rather slow
-        return m_engine.getURL( context, page, params, absolute );
+        return m_engine.getURL( context, page, params );
     }
 
     /**

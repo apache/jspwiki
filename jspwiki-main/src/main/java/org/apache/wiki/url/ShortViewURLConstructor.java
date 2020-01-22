@@ -18,91 +18,67 @@
  */
 package org.apache.wiki.url;
 
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Properties;
+
 /**
- *  A specific URL constructor that returns easy-to-grok URLs for
- *  VIEW and ATTACH contexts, but goes through JSP pages otherwise.
+ *  A specific URL constructor that returns easy-to-grok URLs for VIEW and ATTACH contexts, but goes through JSP pages otherwise.
  * 
- *
  *  @since 2.2
  */
-public class ShortViewURLConstructor 
-    extends ShortURLConstructor
-{
+public class ShortViewURLConstructor extends ShortURLConstructor {
+
     /**
      *  {@inheritDoc}
      */
-    public void initialize( WikiEngine engine, 
-                            Properties properties )
-    {
+    public void initialize( final WikiEngine engine, final Properties properties ) {
         super.initialize( engine, properties );
     }
     
-    private String makeURL( String context,
-                            String name,
-                            boolean absolute )
-    {
-        String viewurl = "%p"+m_urlPrefix+"%n";
-
-        if( absolute ) 
-            viewurl = "%u"+m_urlPrefix+"%n";
-
-        if( context.equals(WikiContext.VIEW) )
-        {
-            if( name == null ) return doReplacement("%u","",absolute);
-            return doReplacement( viewurl, name, absolute );
+    private String makeURL( final String context, final String name ) {
+        final String viewurl = "%p" + m_urlPrefix + "%n";
+        if( context.equals( WikiContext.VIEW ) ) {
+            if( name == null ) {
+                return doReplacement("%u","" );
+            }
+            return doReplacement( viewurl, name );
         }
 
-        return doReplacement( DefaultURLConstructor.getURLPattern(context,name),
-                              name,
-                              absolute );
+        return doReplacement( DefaultURLConstructor.getURLPattern( context, name ), name );
     }
 
     /**
      * {@inheritDoc}
      */
-    public String makeURL( String context,
-                           String name,
-                           boolean absolute,
-                           String parameters )
-    {
-        if( parameters != null && parameters.length() > 0 )
-        {            
-            if( context.equals(WikiContext.ATTACH) || context.equals(WikiContext.VIEW) || name == null )
-            {
-                parameters = "?"+parameters;
-            }
-            else if( context.equals(WikiContext.NONE) )
-            {
+    @Override
+    public String makeURL( final String context, final String name, String parameters ) {
+        if( parameters != null && parameters.length() > 0 ) {
+            if( context.equals( WikiContext.ATTACH ) || context.equals( WikiContext.VIEW ) || name == null ) {
+                parameters = "?" + parameters;
+            } else if( context.equals(WikiContext.NONE) ) {
                 parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
+            } else {
+                parameters = "&amp;" + parameters;
             }
-            else
-            {
-                parameters = "&amp;"+parameters;
-            }
-        }
-        else
-        {
+        } else {
             parameters = "";
         }
-        return makeURL( context, name, absolute )+parameters;
+        return makeURL( context, name ) + parameters;
     }
     
     /**
-     *   Since we're only called from WikiServlet, where we get the VIEW requests,
-     *   we can safely return this.
+     *   Since we're only called from WikiServlet, where we get the VIEW requests, we can safely return this.
      *   
      * @param request The HTTP Request that was used to end up in this page.
      * @return always returns "Wiki.jsp"
      */
-    public String getForwardPage( HttpServletRequest request )
+    @Override
+    public String getForwardPage( final HttpServletRequest request )
     {        
         return "Wiki.jsp";
     }
+
 }

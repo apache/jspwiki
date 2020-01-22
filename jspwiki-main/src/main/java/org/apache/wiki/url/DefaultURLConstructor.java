@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+
 /**
- *  Implements the default URL constructor using links directly to the
- *  JSP pages.  This is what JSPWiki by default is using.  For example,
+ *  Implements the default URL constructor using links directly to the JSP pages.  This is what JSPWiki by default is using.  For example,
  *  WikiContext.VIEW points at "Wiki.jsp", etc.
  *
  *  @since 2.2
@@ -41,8 +41,7 @@ public class DefaultURLConstructor implements URLConstructor {
     protected WikiEngine m_engine;
 
     /**
-     *  Contains the absolute path of the JSPWiki Web application without the
-     *  actual servlet (which is the m_urlPrefix).
+     *  Contains the absolute path of the JSPWiki Web application without the actual servlet (which is the m_urlPrefix).
      */
     protected String m_pathPrefix = "";
 
@@ -59,8 +58,7 @@ public class DefaultURLConstructor implements URLConstructor {
      *  Does replacement of some particular variables.  The variables are:
      *
      *  <ul>
-     *  <li> "%u" - inserts either the base URL (when absolute is required), or the base path
-     *       (which is an absolute path without the host name).
+     *  <li> "%u" - inserts either the base URL (when absolute is required), or the base path (which is an absolute path without the host name).
      *  <li> "%U" - always inserts the base URL
      *  <li> "%p" - always inserts the base path
      *  <li> "%n" - inserts the page name
@@ -68,16 +66,10 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      * @param baseptrn  The pattern to use
      * @param name The page name
-     * @param absolute If true, %u is always the entire base URL, otherwise it depends on
-     *                 the setting in jspwiki.properties.
      * @return A replacement.
      */
-    protected final String doReplacement( String baseptrn, final String name, final boolean absolute ) {
-        String baseurl = m_pathPrefix;
-
-        if( absolute ) {
-            baseurl = m_engine.getBaseURL() + "/";
-        }
+    protected final String doReplacement( String baseptrn, final String name ) {
+        final String baseurl = m_pathPrefix;
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );
@@ -88,8 +80,7 @@ public class DefaultURLConstructor implements URLConstructor {
     }
 
     /**
-     *  URLEncoder returns pluses, when we want to have the percent
-     *  encoding.  See http://issues.apache.org/bugzilla/show_bug.cgi?id=39278
+     *  URLEncoder returns pluses, when we want to have the percent encoding.  See http://issues.apache.org/bugzilla/show_bug.cgi?id=39278
      *  for more info.
      *
      *  We also convert any %2F's back to slashes to make nicer-looking URLs.
@@ -124,8 +115,8 @@ public class DefaultURLConstructor implements URLConstructor {
     /**
      *  Constructs the actual URL based on the context.
      */
-    private String makeURL( final String context, final String name, final boolean absolute ) {
-        return doReplacement( getURLPattern(context,name), name, absolute );
+    private String makeURL( final String context, final String name ) {
+        return doReplacement( getURLPattern( context, name ), name );
     }
 
     /**
@@ -134,7 +125,7 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      *  {@inheritDoc}
      */
-    public String makeURL( final String context, final String name, final boolean absolute, String parameters ) {
+    public String makeURL( final String context, final String name, String parameters ) {
         if( parameters != null && parameters.length() > 0 ) {
             if( context.equals(WikiContext.ATTACH) ) {
                 parameters = "?"+parameters;
@@ -146,12 +137,11 @@ public class DefaultURLConstructor implements URLConstructor {
         } else {
             parameters = "";
         }
-        return makeURL( context, name, absolute ) + parameters;
+        return makeURL( context, name ) + parameters;
     }
 
     /**
-     *  Should parse the "page" parameter from the actual
-     *  request.
+     *  Should parse the "page" parameter from the actual request.
      *
      *  {@inheritDoc}
      */
@@ -165,9 +155,7 @@ public class DefaultURLConstructor implements URLConstructor {
     }
 
     /**
-     *  Takes the name of the page from the request URI.
-     *  The initial slash is also removed.  If there is no page,
-     *  returns null.
+     *  Takes the name of the page from the request URI. The initial slash is also removed.  If there is no page, returns null.
      *
      *  @param request The request to parse
      *  @param encoding The encoding to use

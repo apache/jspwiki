@@ -32,38 +32,30 @@ import java.util.Properties;
 /**
  *  Provides a way to do short URLs of the form /wiki/PageName.
  *
- *
  *  @since 2.2
  */
-public class ShortURLConstructor
-    extends DefaultURLConstructor
-{
-    private static final String DEFAULT_PREFIX = "wiki/";
-
-    static Logger log = Logger.getLogger( ShortURLConstructor.class );
+public class ShortURLConstructor extends DefaultURLConstructor {
     
-    /**
-     *  Contains the path part after the JSPWiki base URL
-     */
+    private static final String DEFAULT_PREFIX = "wiki/";
+    private static final Logger log = Logger.getLogger( ShortURLConstructor.class );
+    
+    /** Contains the path part after the JSPWiki base URL */
     protected String m_urlPrefix = "";
     
     /**
-     *  This corresponds to your WikiServlet path.  By default, it is assumed to
-     *  be "wiki/", but you can set it to whatever you like - including an empty
-     *  name.
+     *  This corresponds to your WikiServlet path.  By default, it is assumed to be "wiki/", but you can set it to whatever you
+     *  like - including an empty name.
      */
     public static final String PROP_PREFIX = "jspwiki.shortURLConstructor.prefix";
     
     /** {@inheritDoc} */
-    public void initialize( WikiEngine engine, 
-                            Properties properties )
-    {
+    @Override
+    public void initialize( final WikiEngine engine, final Properties properties ) {
         super.initialize( engine, properties );
         
         m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, null );
         
-        if( m_urlPrefix == null )
-        {
+        if( m_urlPrefix == null ) {
             m_urlPrefix = DEFAULT_PREFIX;
         }
 
@@ -73,131 +65,82 @@ public class ShortURLConstructor
     /**
      *  Constructs the actual URL based on the context.
      */
-    private String makeURL( String context,
-                            String name,
-                            boolean absolute )
-    {
-        String viewurl = "%p"+m_urlPrefix+"%n";
+    private String makeURL( final String context, final String name ) {
+        final String viewurl = "%p" + m_urlPrefix + "%n";
 
-        if( absolute ) 
-            viewurl = "%u"+m_urlPrefix+"%n";
-
-        if( context.equals(WikiContext.VIEW) )
-        {
-            if( name == null ) return doReplacement("%u","",absolute);
-            return doReplacement( viewurl, name, absolute );
-        }
-        else if( context.equals(WikiContext.PREVIEW) )
-        {
-            if( name == null ) return doReplacement("%u","",absolute);
-            return doReplacement( viewurl+"?do=Preview", name, absolute);
-        }
-        else if( context.equals(WikiContext.EDIT) )
-        {
-            return doReplacement( viewurl+"?do=Edit", name, absolute );
-        }
-        else if( context.equals(WikiContext.ATTACH) )
-        {
-            return doReplacement( "%uattach/%n", name, absolute );
-        }
-        else if( context.equals(WikiContext.INFO) )
-        {
-            return doReplacement( viewurl+"?do=PageInfo", name, absolute );
-        }
-        else if( context.equals(WikiContext.DIFF) )
-        {
-            return doReplacement( viewurl+"?do=Diff", name, absolute );
-        }
-        else if( context.equals(WikiContext.NONE) )
-        {
-            return doReplacement( "%u%n", name, absolute );
-        }
-        else if( context.equals(WikiContext.UPLOAD) )
-        {
-            return doReplacement( viewurl+"?do=Upload", name, absolute ); 
-        }
-        else if( context.equals(WikiContext.COMMENT) )
-        {
-            return doReplacement( viewurl+"?do=Comment", name, absolute ); 
-        }
-        else if( context.equals(WikiContext.LOGIN) )
-        {
-            String loginUrl = absolute ? "%uLogin.jsp?redirect=%n" : "%pLogin.jsp?redirect=%n";
-            return doReplacement( loginUrl, name, absolute ); 
-        }
-        else if( context.equals(WikiContext.DELETE) )
-        {
-            return doReplacement( viewurl+"?do=Delete", name, absolute ); 
-        }
-        else if( context.equals(WikiContext.CONFLICT) )
-        {
-            return doReplacement( viewurl+"?do=PageModified", name, absolute ); 
-        }
-        else if( context.equals(WikiContext.PREFS) )
-        {
-            return doReplacement( viewurl+"?do=UserPreferences", name, absolute ); 
-        }
-        else if( context.equals(WikiContext.FIND) )
-        {
-            return doReplacement( viewurl+"?do=Search", name, absolute ); 
-        }
-        else if( context.equals(WikiContext.ERROR) )
-        {
-            return doReplacement( "%uError.jsp", name, absolute );
-        }
-        else if( context.equals(WikiContext.CREATE_GROUP) )
-        {
-            return doReplacement( viewurl+"?do=NewGroup", name, absolute );
-        }
-        else if( context.equals(WikiContext.DELETE_GROUP) )
-        {
-            return doReplacement( viewurl+"?do=DeleteGroup", name, absolute );
-        }        
-        else if( context.equals(WikiContext.EDIT_GROUP) )
-        {
-            return doReplacement( viewurl+"?do=EditGroup", name, absolute );
-        }
-        else if( context.equals(WikiContext.VIEW_GROUP) )
-        {
-            return doReplacement( viewurl+"?do=Group&group=%n", name, absolute );
+        if( context.equals( WikiContext.VIEW ) ) {
+            if( name == null ) {
+                return doReplacement("%u","" );
+            }
+            return doReplacement( viewurl, name );
+        } else if( context.equals( WikiContext.PREVIEW ) ) {
+            if( name == null ) {
+                return doReplacement("%u","" );
+            }
+            return doReplacement( viewurl + "?do=Preview", name );
+        } else if( context.equals( WikiContext.EDIT ) ) {
+            return doReplacement( viewurl + "?do=Edit", name );
+        } else if( context.equals( WikiContext.ATTACH ) ) {
+            return doReplacement( "%uattach/%n", name );
+        } else if( context.equals( WikiContext.INFO ) ) {
+            return doReplacement( viewurl + "?do=PageInfo", name );
+        } else if( context.equals( WikiContext.DIFF ) ) {
+            return doReplacement( viewurl + "?do=Diff", name );
+        } else if( context.equals( WikiContext.NONE ) ) {
+            return doReplacement( "%u%n", name );
+        } else if( context.equals( WikiContext.UPLOAD ) ) {
+            return doReplacement( viewurl + "?do=Upload", name ); 
+        } else if( context.equals( WikiContext.COMMENT ) ) {
+            return doReplacement( viewurl + "?do=Comment", name ); 
+        } else if( context.equals( WikiContext.LOGIN ) ) {
+            final String loginUrl = "%pLogin.jsp?redirect=%n";
+            return doReplacement( loginUrl, name ); 
+        } else if( context.equals( WikiContext.DELETE ) ) {
+            return doReplacement( viewurl + "?do=Delete", name ); 
+        } else if( context.equals( WikiContext.CONFLICT ) ) {
+            return doReplacement( viewurl + "?do=PageModified", name ); 
+        } else if( context.equals( WikiContext.PREFS ) ) {
+            return doReplacement( viewurl + "?do=UserPreferences", name ); 
+        } else if( context.equals( WikiContext.FIND ) ) {
+            return doReplacement( viewurl + "?do=Search", name ); 
+        } else if( context.equals( WikiContext.ERROR ) ) {
+            return doReplacement( "%uError.jsp", name );
+        } else if( context.equals( WikiContext.CREATE_GROUP ) ) {
+            return doReplacement( viewurl + "?do=NewGroup", name );
+        } else if( context.equals( WikiContext.DELETE_GROUP ) ) {
+            return doReplacement( viewurl + "?do=DeleteGroup", name );
+        } else if( context.equals( WikiContext.EDIT_GROUP ) ) {
+            return doReplacement( viewurl + "?do=EditGroup", name );
+        } else if( context.equals( WikiContext.VIEW_GROUP ) ) {
+            return doReplacement( viewurl + "?do=Group&group=%n", name );
         }
         
-        throw new InternalWikiException("Requested unsupported context "+context);
+        throw new InternalWikiException( "Requested unsupported context " + context );
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String makeURL( String context,
-                           String name,
-                           boolean absolute,
-                           String parameters )
-    {
-        if( parameters != null && parameters.length() > 0 )
-        {            
-            if( context.equals(WikiContext.ATTACH) || context.equals(WikiContext.VIEW) )
-            {
-                parameters = "?"+parameters;
-            }
-            else if( context.equals(WikiContext.NONE) )
-            {
+    @Override
+    public String makeURL( final String context, final String name, String parameters ) {
+        if( parameters != null && parameters.length() > 0 ) {
+            if( context.equals( WikiContext.ATTACH ) || context.equals( WikiContext.VIEW ) ) {
+                parameters = "?" + parameters;
+            } else if( context.equals(WikiContext.NONE) ) {
                 parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
-            }
-            else
-            {
+            } else {
                 parameters = "&amp;"+parameters;
             }
-        }
-        else
-        {
+        } else {
             parameters = "";
         }
-        return makeURL( context, name, absolute )+parameters;
+        return makeURL( context, name )+parameters;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
         final String pagereq = request.getParameter( "page" );
         if( pagereq == null ) {
@@ -210,11 +153,14 @@ public class ShortURLConstructor
     /**
      *  {@inheritDoc}
      */
-    public String getForwardPage( HttpServletRequest req )
-    {
+    @Override
+    public String getForwardPage( final HttpServletRequest req ) {
         String jspPage = req.getParameter( "do" );
-        if( jspPage == null ) jspPage = "Wiki";
+        if( jspPage == null ) {
+            jspPage = "Wiki";
+        }
     
         return jspPage+".jsp";
     }
+
 }

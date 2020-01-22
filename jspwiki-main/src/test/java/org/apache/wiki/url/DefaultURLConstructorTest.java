@@ -22,13 +22,13 @@
  */
 package org.apache.wiki.url;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 
 public class DefaultURLConstructorTest
@@ -56,7 +56,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor("wiki/" );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -83,7 +83,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",false,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -92,7 +92,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( "" );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -101,7 +101,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -110,7 +110,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( "view/" );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
     }
 
     @Test
@@ -119,7 +119,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Edit.jsp?page=Main", c.makeURL(WikiContext.EDIT,"Main",true,null) );
+        Assertions.assertEquals( "/test/Edit.jsp?page=Main", c.makeURL(WikiContext.EDIT,"Main",null) );
     }
 
     @Test
@@ -128,7 +128,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",true,null) );
+        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",null) );
     }
 
     @Test
@@ -137,7 +137,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",false,null) );
+        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",null) );
     }
 
     @Test
@@ -146,7 +146,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",true,null) );
+        Assertions.assertEquals( "/test/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",null) );
     }
 
     @Test
@@ -155,7 +155,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp",true,"a=1&amp;b=2") );
+        Assertions.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp","a=1&amp;b=2") );
     }
 
     @Test
@@ -164,7 +164,7 @@ public class DefaultURLConstructorTest
     {
         URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=", c.makeURL(WikiContext.VIEW,"",true,null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=", c.makeURL(WikiContext.VIEW,"",null) );
     }
 
 }
