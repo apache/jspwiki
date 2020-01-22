@@ -280,7 +280,7 @@
   <h3><fmt:message key="info.uploadnew"/></h3>
 
   <wiki:Permission permission="upload">
-  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
          class="wikiform"
             id="uploadform"
       onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');"

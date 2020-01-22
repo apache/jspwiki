@@ -79,10 +79,6 @@
     if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20) || type.equals(RSSGenerator.ATOM)) ) 
     	   type = RSSGenerator.RSS20;
     
-    // Force the TranslatorReader to output absolute URLs
-    // regardless of the current settings.
-    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
-
     // Set the content type and include the response content
     response.setContentType( RSSGenerator.getContentType(type)+"; charset=UTF-8");
 

@@ -35,7 +35,7 @@
 <div id="addattachment">
 <h3><fmt:message key="attach.add"/></h3>
 <wiki:Permission permission="upload">
-  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
          class="wikiform"
             id="uploadform"
         method="post"
