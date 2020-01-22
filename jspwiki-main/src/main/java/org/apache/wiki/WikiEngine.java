@@ -128,9 +128,6 @@ public class WikiEngine  {
     Double negative, cause for most servers you don't need the property */
     public static final String PROP_NO_FILTER_ENCODING = "jspwiki.nofilterencoding";
 
-    /** The name for the property which allows you to set the current reference style.  The value is {@value}. */
-    public static final String PROP_REFSTYLE = "jspwiki.referenceStyle";
-
     /** Property name for where the jspwiki work directory should be.
         If not specified, reverts to ${java.tmpdir}. */
     public static final String PROP_WORKDIR = "jspwiki.workDir";

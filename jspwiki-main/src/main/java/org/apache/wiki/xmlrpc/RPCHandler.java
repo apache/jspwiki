@@ -21,7 +21,6 @@ package org.apache.wiki.xmlrpc;
 import org.apache.log4j.Logger;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -219,8 +218,6 @@ public class RPCHandler extends AbstractRPCHandler {
         final LinkCollector attCollector   = new LinkCollector();
 
         final WikiContext context = new WikiContext( m_engine, page );
-        context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
-
         m_engine.getRenderingManager().textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
         final Vector< Hashtable< String, String > > result = new Vector<>();

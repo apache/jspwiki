@@ -63,9 +63,6 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     private String m_tabindex = null;
     private String m_templatefile = null;
 
-    private boolean m_absolute = false;
-    private boolean m_overrideAbsolute = false;
-
     private Map<String, String> m_containedParams;
 
     private BodyContent m_bodyContent;
@@ -75,7 +72,6 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         m_version = m_cssClass = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
         m_context = WikiContext.VIEW;
         m_containedParams = new HashMap<>();
-        m_absolute = false;
     }
 
     public void setTemplatefile( final String key )
@@ -86,11 +82,6 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     public void setAccessKey( final String key )
     {
         m_accesskey = key;
-    }
-
-    public void setAbsolute( final String arg ) {
-        m_overrideAbsolute = true;
-        m_absolute = TextUtil.isPositive( arg );
     }
 
     public String getVersion()
@@ -235,10 +226,10 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                         matchedLink = reallink;
                     }
 
-                    url = makeBasicURL( m_context, matchedLink, parms, m_absolute ) + sectref;
+                    url = makeBasicURL( m_context, matchedLink, parms ) + sectref;
                 } else {
                     final String reallink = MarkupParser.cleanLink( m_ref );
-                    url = makeBasicURL( m_context, reallink, parms, m_absolute );
+                    url = makeBasicURL( m_context, reallink, parms );
                 }
             }
         } else if( m_pageName != null && m_pageName.length() > 0 ) {
@@ -258,11 +249,11 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 url = engine.getURL( ctx, m_pageName, parms );
                 //url = m_wikiContext.getURL( ctx, m_pageName, parms );
             } else {
-                url = makeBasicURL( m_context, m_pageName, parms, m_absolute );
+                url = makeBasicURL( m_context, m_pageName, parms );
             }
         } else {
             final String page = engine.getFrontPage();
-            url = makeBasicURL( m_context, page, null, m_absolute );
+            url = makeBasicURL( m_context, page, null );
         }
 
         return url;
@@ -294,7 +285,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         return addTo + buf.toString();
     }
 
-    private String makeBasicURL( final String context, final String page, String parms, final boolean absolute ) {
+    private String makeBasicURL( final String context, final String page, String parms ) {
         final WikiEngine engine = m_wikiContext.getEngine();
 
         if( context.equals( WikiContext.DIFF ) ) {
@@ -340,12 +331,6 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     public int doEndTag() {
         try {
             final WikiEngine engine = m_wikiContext.getEngine();
-
-            if( !m_overrideAbsolute ) {
-                // TODO: see WikiContext.getURL(); this check needs to be specified somewhere.
-                m_absolute = "absolute".equals( engine.getWikiProperties().getProperty( WikiEngine.PROP_REFSTYLE ) );
-            }
-
             final JspWriter out = pageContext.getOut();
             final String url = figureOutURL();
 
