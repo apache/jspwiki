@@ -26,8 +26,8 @@ import java.util.EventObject;
  *
  * @since 2.3.79
  */
-public abstract class WikiEvent extends EventObject
-{
+public abstract class WikiEvent extends EventObject {
+
     private static final long serialVersionUID = 1829433967558773960L;
 
     /** Indicates a exception or error state. */
@@ -42,14 +42,13 @@ public abstract class WikiEvent extends EventObject
 
     // ............
 
-
-   /**
+    /**
      * Constructs an instance of this event.
+     *
      * @param src the Object that is the source of the event.
-     * @param type   the event type.
+     * @param type the event type.
      */
-    public WikiEvent( Object src, int type )
-    {
+    public WikiEvent( final Object src, final int type ) {
         super( src );
         m_when = System.currentTimeMillis();
         setType( type );
@@ -61,108 +60,85 @@ public abstract class WikiEvent extends EventObject
      * @return the typed object to which the event applied.
      */
     @SuppressWarnings("unchecked")
-    public <T> T getSrc()
-    {
-        return (T) super.getSource();
+    public < T > T getSrc() {
+        return ( T )super.getSource();
     }
-
-
-    /**
-     *  Returns the timestamp of when this WikiEvent occurred.
-     *
-     * @return this event's timestamp
-     * @since 2.4.74
-     */
-    public long getWhen()
-    {
-        return m_when;
-    }
-
 
    /**
-     * Sets the type of this event. Validation of acceptable
-     * type values is the responsibility of each subclass.
+    *  Returns the timestamp of when this WikiEvent occurred.
+    *
+    * @return this event's timestamp
+    * @since 2.4.74
+    */
+   public long getWhen() {
+       return m_when;
+   }
+
+    /**
+     * Sets the type of this event. Validation of acceptable type values is the responsibility of each subclass.
      *
-     * @param type      the type of this WikiEvent.
+     * @param type the type of this WikiEvent.
      */
-    protected void setType( int type )
-    {
+    protected void setType( final int type ) {
         m_type = type;
     }
 
-
-   /**
+    /**
      * Returns the type of this event.
      *
-     * @return  the type of this WikiEvent. See the enumerated values
-     *          defined in {@link org.apache.wiki.event.WikiEvent}).
+     * @return the type of this WikiEvent. See the enumerated values defined in {@link org.apache.wiki.event.WikiEvent}).
      */
-    public int getType()
-    {
+    public int getType() {
         return m_type;
     }
 
-
-   /** Returns a String (human-readable) description of an event type.
-     * This should be subclassed as necessary.
+    /**
+     * Returns a String (human-readable) description of an event type. This should be subclassed as necessary.
+     *
      * @return the String description
      */
-    public String getTypeDescription()
-    {
-        switch ( m_type )
-        {
-            case ERROR:                return "exception or error event";
-            case UNDEFINED:            return "undefined event type";
-            default:                   return "unknown event type (" + m_type + ")";
+    public String getTypeDescription() {
+        switch( m_type ) {
+            case ERROR:     return "exception or error event";
+            case UNDEFINED: return "undefined event type";
+            default:        return "unknown event type (" + m_type + ")";
         }
     }
 
-
-   /**
-     * Returns true if the int value is a valid WikiEvent type.
-     * Because the WikiEvent class does not itself any event types,
-     * this method returns true if the event type is anything except
-     * {@link #ERROR} or {@link #UNDEFINED}. This method is meant to
+    /**
+     * Returns true if the int value is a valid WikiEvent type. Because the WikiEvent class does not itself any event types,
+     * this method returns true if the event type is anything except {@link #ERROR} or {@link #UNDEFINED}. This method is meant to
      * be subclassed as appropriate.
      * 
      * @param type The value to test.
      * @return true, if the value is a valid WikiEvent type.
      */
-    public static boolean isValidType( int type )
-    {
+    public static boolean isValidType( final int type ) {
         return type != ERROR && type != UNDEFINED;
     }
 
 
     /**
      * Returns a textual representation of an event type.
+     *
      * @return the String representation
      */
-    public String eventName()
-    {
-        switch( m_type )
-        {
-            case ERROR:                return "ERROR";
-            case UNDEFINED:            return "UNDEFINED";
-            default:                   return "UNKNOWN (" + m_type + ")";
+    public String eventName() {
+        switch( m_type ) {
+            case ERROR:     return "ERROR";
+            case UNDEFINED: return "UNDEFINED";
+            default:        return "UNKNOWN (" + m_type + ")";
         }
     }
 
     /**
-     * Prints a String (human-readable) representation of this object.
-     * This should be subclassed as necessary.
+     * Prints a String (human-readable) representation of this object. This should be subclassed as necessary.
+     *
      * @see java.lang.Object#toString()
      * @return the String representation
      */
-    public String toString()
-    {
-    	StringBuilder out = new StringBuilder();
-        out.append( "WikiEvent." );
-        out.append( eventName() );
-        out.append( " [source=" );
-        out.append( getSource().toString() );
-        out.append( "]" );
-        return out.toString();
+    public String toString() {
+        return "WikiEvent." + eventName() + " [source=" + getSource().toString() + "]";
     }
 
 }

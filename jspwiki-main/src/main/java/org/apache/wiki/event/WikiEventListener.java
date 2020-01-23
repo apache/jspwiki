@@ -29,7 +29,7 @@ import  java.util.EventListener;
   */
 public interface WikiEventListener extends EventListener {
 
-   /**
+    /**
      * Fired when a WikiEvent is triggered by an event source.
      *
      * @param event a WikiEvent object

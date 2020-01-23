@@ -63,11 +63,10 @@ public final class WorkflowEvent extends WikiEvent {
      * The <code>source</code> parameter is required, and may not be <code>null</code>. When the 
      * WikiSecurityEvent is constructed, the security logger {@link WikiSecurityEvent#log} is notified.
      * 
-     * @param src the source of the event, which can be any object: a wiki page, group or 
-     *            authentication/authentication/group manager.
+     * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
      * @param type the type of event
      */
-    public WorkflowEvent( Object src, int type ) {
+    public WorkflowEvent( final Object src, final int type ) {
         super( src, type );
         if( src == null ) {
             throw new IllegalArgumentException( "Argument(s) cannot be null." );
@@ -80,11 +79,11 @@ public final class WorkflowEvent extends WikiEvent {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-    	StringBuilder msg = new StringBuilder();
+        final StringBuilder msg = new StringBuilder();
         msg.append( "WorkflowEvent." );
         msg.append( eventName( getType() ) );
-        Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
-        msg.append( " [source=" + obj.toString() );
+        final Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
+        msg.append( " [source=" ).append( obj.toString() );
         msg.append( "]" );
         return msg.toString();
     }
@@ -95,7 +94,7 @@ public final class WorkflowEvent extends WikiEvent {
      * @param type the type
      * @return the string representation
      */
-    public String eventName( int type ) {
+    public String eventName( final int type ) {
         switch( type ) {
             case CREATED:   return "CREATED";
             case ABORTED:   return "ABORTED";

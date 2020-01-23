@@ -25,9 +25,8 @@ import org.apache.log4j.Logger;
 import java.security.Principal;
 
 /**
- * <p>Event class for security events: login/logout, wiki group adds/changes, and
- * authorization decisions. When a WikiSecurityEvent is constructed, the
- * security logger {@link #log} is notified.</p>
+ * <p>Event class for security events: login/logout, wiki group adds/changes, and authorization decisions. When a WikiSecurityEvent
+ * is constructed, the security logger {@link #log} is notified.</p>
  * <p>These events are logged with priority <code>ERROR</code>:</p>
  * <ul>
  *   <li>login failed - bad credential or password</li>
@@ -56,8 +55,7 @@ import java.security.Principal;
  * </ul>
  * @since 2.3.79
  */
-public final class WikiSecurityEvent extends WikiEvent
-{
+public final class WikiSecurityEvent extends WikiEvent {
 
     private static final long serialVersionUID    = -6751950399721334496L;
 
@@ -121,114 +119,97 @@ public final class WikiSecurityEvent extends WikiEvent
 
     private static final int[] ERROR_EVENTS = { LOGIN_FAILED };
     
-    private static final int[] WARN_EVENTS  = { LOGIN_ACCOUNT_EXPIRED,
-                                                LOGIN_CREDENTIAL_EXPIRED };
+    private static final int[] WARN_EVENTS  = { LOGIN_ACCOUNT_EXPIRED, LOGIN_CREDENTIAL_EXPIRED };
     
-    private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED,
-                                                SESSION_EXPIRED, LOGOUT, PROFILE_NAME_CHANGED };
+    private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED, SESSION_EXPIRED, LOGOUT, PROFILE_NAME_CHANGED };
     
     /**
-     * Constructs a new instance of this event type, which signals a security
-     * event has occurred. The <code>source</code> parameter is required, and
-     * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link #log} is notified.
-     * @param src the source of the event, which can be any object: a wiki
-     *            page, group or authentication/authentication/group manager.
+     * Constructs a new instance of this event type, which signals a security event has occurred. The <code>source</code> parameter is
+     * required, and may not be <code>null</code>. When the WikiSecurityEvent is constructed, the security logger {@link #log} is notified.
+     *
+     * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
      * @param type the type of event
      * @param principal the subject of the event, which may be <code>null</code>
      * @param target the changed Object, which may be <code>null</code>
      */
-    public WikiSecurityEvent( Object src, int type, Principal principal, Object target )
-    {
+    public WikiSecurityEvent( final Object src, final int type, final Principal principal, final Object target ) {
         super( src, type );
-        if ( src == null )
-        {
+        if( src == null ) {
             throw new IllegalArgumentException( "Argument(s) cannot be null." );
         }
         this.m_principal = principal;
         this.m_target = target;
-        if ( log.isEnabledFor( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
-        {
+        if( log.isEnabledFor( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) ) {
             log.error( this );
-        }
-        else if ( log.isEnabledFor( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
-        {
+        } else if( log.isEnabledFor( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) ) {
             log.warn( this );
-        }
-        else if ( log.isEnabledFor( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
-        {
+        } else if( log.isEnabledFor( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) ) {
             log.info( this );
         }
         log.debug( this );
     }
 
     /**
-     * Constructs a new instance of this event type, which signals a security
-     * event has occurred. The <code>source</code> parameter is required, and
-     * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link #log} is notified.
-     * @param src the source of the event, which can be any object: a wiki
-     *            page, group or authentication/authentication/group manager.
+     * Constructs a new instance of this event type, which signals a security event has occurred. The <code>source</code> parameter
+     * is required, and may not be <code>null</code>. When the WikiSecurityEvent is constructed, the security logger {@link #log}
+     * is notified.
+     *
+     * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
      * @param type the type of event
      * @param target the changed Object, which may be <code>null</code>.
      */
-    public WikiSecurityEvent( Object src, int type, Object target )
-    {
+    public WikiSecurityEvent( final Object src, final int type, final Object target ) {
         this( src, type, null, target );
     }
 
     /**
-     * Returns the principal to whom the opeation applied, if supplied. This
-     * method may return <code>null</code>
+     * Returns the principal to whom the opeation applied, if supplied. This method may return <code>null</code>
      * <em>&#8212; and calling methods should check for this condition</em>.
+     *
      * @return the changed object
      */
-    public Object getPrincipal()
-    {
+    public Object getPrincipal() {
         return m_principal;
     }
     
     /**
-     * Returns the object that was operated on, if supplied. This method may
-     * return <code>null</code>
+     * Returns the object that was operated on, if supplied. This method may return <code>null</code>
      * <em>&#8212; and calling methods should check for this condition</em>.
+     *
      * @return the changed object
      */
-    public Object getTarget()
-    {
+    public Object getTarget() {
         return m_target;
     }
 
     /**
      * Prints a String (human-readable) representation of this object.
+     *
      * @see java.lang.Object#toString()
      */
-    public String toString()
-    {
-    	StringBuilder msg = new StringBuilder();
+    public String toString() {
+        final StringBuilder msg = new StringBuilder();
         msg.append( "WikiSecurityEvent." );
         msg.append(  eventName( getType() ) );
-        Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
-        msg.append( " [source=" + obj.toString() );
-        if( m_principal != null )
-        {
-            msg.append( ", princpal=" + m_principal.getClass().getName() );
-            msg.append( " " + m_principal.getName() );
+        final Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
+        msg.append( " [source=" ).append( obj.toString() );
+        if( m_principal != null ) {
+            msg.append( ", princpal=" ).append( m_principal.getClass().getName() );
+            msg.append( " " ).append( m_principal.getName() );
         }
-        msg.append( ", target=" + m_target );
+        msg.append( ", target=" ).append( m_target );
         msg.append( "]" );
         return msg.toString();
     }
     
     /**
      * Returns a textual representation of an event type.
+     *
      * @param type the type
      * @return the string representation
      */
-    public String eventName( int type )
-    {
-        switch( type )
-        {
+    public String eventName( final int type ) {
+        switch( type ) {
             case LOGIN_AUTHENTICATED:       return "LOGIN_AUTHENTICATED";
             case LOGIN_ACCOUNT_EXPIRED:     return "LOGIN_ACCOUNT_EXPIRED";
             case LOGIN_CREDENTIAL_EXPIRED:  return "LOGIN_ACCOUNT_EXPIRED";
@@ -252,10 +233,8 @@ public final class WikiSecurityEvent extends WikiEvent
      *
      * @return a String description of the type
      */
-    public String getTypeDescription()
-    {
-        switch ( getType() )
-        {
+    public String getTypeDescription() {
+        switch ( getType() ) {
             case LOGIN_AUTHENTICATED:       return "login authenticated";
             case LOGIN_ACCOUNT_EXPIRED:     return "login failed: expired account";
             case LOGIN_CREDENTIAL_EXPIRED:  return "login failed: credential expired";
