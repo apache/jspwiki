@@ -405,9 +405,6 @@ public class WikiEngine  {
 
         log.debug( "Configuring WikiEngine..." );
 
-        //  Initializes the CommandResolver
-        m_commandResolver = new CommandResolver( this, props );
-
         //  Create and find the default working directory.
         m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
 
@@ -453,6 +450,8 @@ public class WikiEngine  {
         //
         // FIXME: This part of the code is getting unwieldy.  We must think of a better way to do the startup-sequence.
         try {
+            //  Initializes the CommandResolver
+            m_commandResolver = ClassUtil.getMappedObject( CommandResolver.class.getName(), this, props );
             final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                                                              TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = ( URLConstructor ) urlclass.getDeclaredConstructor().newInstance();
@@ -520,8 +519,7 @@ public class WikiEngine  {
         } catch( final Exception e ) {
             // Final catch-all for everything
             log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
-            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() +
-                                     "; please check log files for better information.", e );
+            throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + "; please check log files for better information.", e );
         }
 
         //

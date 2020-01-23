@@ -116,6 +116,10 @@
     <mappedClass>org.apache.wiki.tasks.DefaultTasksManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.ui.CommandResolver</requestedClass>
+    <mappedClass>org.apache.wiki.ui.DefaultCommandResolver</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.ui.EditorManager</requestedClass>
     <mappedClass>org.apache.wiki.ui.EditorManager</mappedClass>
   </mapping>
