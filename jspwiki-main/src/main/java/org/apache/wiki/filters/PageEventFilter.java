@@ -17,12 +17,16 @@
     under the License.  
  */
 
-package org.apache.wiki.event;
+package org.apache.wiki.filters;
 
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.api.exceptions.FilterException;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WikiPageEvent;
+
 import java.util.Properties;
 
 /**
