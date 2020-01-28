@@ -30,7 +30,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventUtils;
+import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.TextUtil;
@@ -234,7 +234,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
         sw.stop();
         log.info( "Cross reference scan done in "+sw );
 
-        WikiEventUtils.addWikiEventListener( m_engine.getPageManager(), WikiPageEvent.PAGE_DELETED, this );
+        WikiEventManager.getInstance().addWikiEventListener( m_engine.getPageManager(), this );
     }
 
     /**

@@ -33,7 +33,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventUtils;
+import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
@@ -59,18 +59,16 @@ import java.util.Set;
  */
 public class SearchManager extends BasicPageFilter implements InternalModule, WikiEventListener {
 
-    private static final Logger log = Logger.getLogger(SearchManager.class);
+    private static final Logger log = Logger.getLogger( SearchManager.class );
 
     private static final String DEFAULT_SEARCHPROVIDER  = "org.apache.wiki.search.LuceneSearchProvider";
 
     /** Property name for setting the search provider. Value is <tt>{@value}</tt>. */
-    public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
+    public static final String PROP_SEARCHPROVIDER      = "jspwiki.searchProvider";
 
     private SearchProvider    m_searchProvider;
 
-    /**
-     *  The name of the JSON object that manages search.
-     */
+    /** The name of the JSON object that manages search. */
     public static final String JSON_SEARCH = "search";
 
     /**
@@ -80,13 +78,9 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      *  @param properties The list of Properties.
      *  @throws FilterException If it cannot be instantiated.
      */
-    public SearchManager( WikiEngine engine, Properties properties )
-        throws FilterException
-    {
+    public SearchManager( final WikiEngine engine, final Properties properties ) throws FilterException {
         initialize( engine, properties );
-
-        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
-                                            WikiPageEvent.PAGE_DELETE_REQUEST, this);
+        WikiEventManager.getInstance().addWikiEventListener( m_engine.getPageManager(), this );
 
         //TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
@@ -95,57 +89,54 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     /**
      *  Provides a JSON RPC API to the JSPWiki Search Engine.
      */
-    public class JSONSearch implements WikiAjaxServlet
-    {
-		public static final String AJAX_ACTION_SUGGESTIONS = "suggestions";
-    	public static final String AJAX_ACTION_PAGES = "pages";
-    	public static final int DEFAULT_MAX_RESULTS = 20;
-    	public int maxResults = DEFAULT_MAX_RESULTS;
+    public class JSONSearch implements WikiAjaxServlet {
 
-		@Override
-		public String getServletMapping() {
-			return JSON_SEARCH;
-		}
+        public static final String AJAX_ACTION_SUGGESTIONS = "suggestions";
+        public static final String AJAX_ACTION_PAGES = "pages";
+        public static final int DEFAULT_MAX_RESULTS = 20;
+        public int maxResults = DEFAULT_MAX_RESULTS;
 
-    	@Override
-    	public void service(HttpServletRequest req, HttpServletResponse resp, String actionName, List<String> params)
-    			throws ServletException, IOException {
-    		String result = "";
-    		if (StringUtils.isNotBlank(actionName)) {
-    			if (params.size()<1) {
-    				return;
-    			}
-    			String itemId = params.get(0);
-    			log.debug("itemId="+itemId);
-    			if (params.size()>1) {
-    				String maxResultsParam  = params.get(1);
-    				log.debug("maxResultsParam="+maxResultsParam);
-    				if (StringUtils.isNotBlank(maxResultsParam) && StringUtils.isNumeric(maxResultsParam)) {
-    					maxResults = Integer.parseInt(maxResultsParam);
-    				}
-    			}
+        @Override
+        public String getServletMapping() {
+            return JSON_SEARCH;
+        }
 
-    			if (actionName.equals(AJAX_ACTION_SUGGESTIONS)) {
-    				List<String> callResults = new ArrayList<>();
-    				log.debug("Calling getSuggestions() START");
-    				callResults = getSuggestions(itemId, maxResults);
-    				log.debug("Calling getSuggestions() DONE. "+callResults.size());
-    				result = AjaxUtil.toJson(callResults);
-    			} else if (actionName.equals(AJAX_ACTION_PAGES)) {
-    				final List< Map< String, Object > > callResults;
-    				log.debug("Calling findPages() START");
-    				final WikiContext wikiContext = new WikiContext( m_engine, req, WikiContext.VIEW );
-    				if( wikiContext == null ) {
-    					throw new ServletException( "Could not create a WikiContext from the request " + req );
-    				}
-    				callResults = findPages(itemId, maxResults, wikiContext);
-    				log.debug("Calling findPages() DONE. "+callResults.size());
-    				result = AjaxUtil.toJson(callResults);
-    			}
-    		}
-    		log.debug("result="+result);
-    		resp.getWriter().write(result);
-    	}
+        @Override
+        public void service( final HttpServletRequest req,
+                             final HttpServletResponse resp,
+                             final String actionName,
+                             final List< String > params ) throws ServletException, IOException {
+            String result = "";
+            if( StringUtils.isNotBlank( actionName ) ) {
+                if( params.size() < 1 ) {
+                    return;
+                }
+                final String itemId = params.get( 0 );
+                log.debug( "itemId=" + itemId );
+                if( params.size() > 1 ) {
+                    final String maxResultsParam = params.get( 1 );
+                    log.debug( "maxResultsParam=" + maxResultsParam );
+                    if( StringUtils.isNotBlank( maxResultsParam ) && StringUtils.isNumeric( maxResultsParam ) ) {
+                        maxResults = Integer.parseInt( maxResultsParam );
+                    }
+                }
+
+                if( actionName.equals( AJAX_ACTION_SUGGESTIONS ) ) {
+                    log.debug( "Calling getSuggestions() START" );
+                    final List< String > callResults = getSuggestions( itemId, maxResults );
+                    log.debug( "Calling getSuggestions() DONE. " + callResults.size() );
+                    result = AjaxUtil.toJson( callResults );
+                } else if( actionName.equals( AJAX_ACTION_PAGES ) ) {
+                    log.debug("Calling findPages() START");
+                    final WikiContext wikiContext = new WikiContext( m_engine, req, WikiContext.VIEW );
+                    final List< Map< String, Object > > callResults = findPages( itemId, maxResults, wikiContext );
+                    log.debug( "Calling findPages() DONE. " + callResults.size() );
+                    result = AjaxUtil.toJson( callResults );
+                }
+            }
+            log.debug( "result=" + result );
+            resp.getWriter().write( result );
+        }
 
         /**
          *  Provides a list of suggestions to use for a page name. Currently the algorithm just looks into the value parameter,
@@ -155,16 +146,15 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
          *  @param maxLength maximum number of suggestions
          *  @return the suggestions
          */
-        public List<String> getSuggestions( String wikiName, final int maxLength ) {
+        public List< String > getSuggestions( String wikiName, final int maxLength ) {
             final StopWatch sw = new StopWatch();
             sw.start();
             final List< String > list = new ArrayList<>( maxLength );
 
             if( wikiName.length() > 0 ) {
-
                 // split pagename and attachment filename
                 String filename = "";
-                int pos = wikiName.indexOf("/");
+                final int pos = wikiName.indexOf("/");
                 if( pos >= 0 ) {
                     filename = wikiName.substring( pos ).toLowerCase();
                     wikiName = wikiName.substring( 0, pos );
@@ -175,7 +165,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
                 final Set< String > allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
-                for( Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; ) {
+                for( final Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; ) {
                     final String p = i.next();
                     final String pp = p.toLowerCase();
                     if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) ) {
@@ -199,39 +189,38 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List<Map<String,Object>> findPages( String searchString, int maxLength, WikiContext wikiContext )
-        {
-            StopWatch sw = new StopWatch();
+        public List< Map< String, Object > > findPages( final String searchString, final int maxLength, final WikiContext wikiContext ) {
+            final StopWatch sw = new StopWatch();
             sw.start();
 
-            List<Map<String,Object>> list = new ArrayList<>(maxLength);
-
+            final List< Map< String, Object > > list = new ArrayList<>( maxLength );
             if( searchString.length() > 0 ) {
                 try {
-                    Collection< SearchResult > c;
+                    final Collection< SearchResult > c;
 
                     if( m_searchProvider instanceof LuceneSearchProvider ) {
-                        c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0, wikiContext );
+                        c = ( ( LuceneSearchProvider )m_searchProvider ).findPages( searchString, 0, wikiContext );
                     } else {
                         c = m_searchProvider.findPages( searchString, wikiContext );
                     }
 
                     int count = 0;
-                    for( Iterator< SearchResult > i = c.iterator(); i.hasNext() && count < maxLength; count++ )
-                    {
-                        SearchResult sr = i.next();
-                        HashMap<String,Object> hm = new HashMap<>();
+                    for( final Iterator< SearchResult > i = c.iterator(); i.hasNext() && count < maxLength; count++ ) {
+                        final SearchResult sr = i.next();
+                        final HashMap< String, Object > hm = new HashMap<>();
                         hm.put( "page", sr.getPage().getName() );
                         hm.put( "score", sr.getScore() );
                         list.add( hm );
                     }
-                } catch(Exception e) {
-                    log.info("AJAX search failed; ",e);
+                } catch( final Exception e ) {
+                    log.info( "AJAX search failed; ", e );
                 }
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) log.debug("AJAX search complete in "+sw);
+            if( log.isDebugEnabled() ) {
+                log.debug( "AJAX search complete in " + sw );
+            }
             return list;
         }
     }

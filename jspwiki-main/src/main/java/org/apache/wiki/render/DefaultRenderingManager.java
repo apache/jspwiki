@@ -33,7 +33,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventUtils;
+import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
@@ -128,7 +128,7 @@ public class DefaultRenderingManager implements RenderingManager {
 
         log.info( "Rendering content with " + renderImplName + "." );
 
-        WikiEventUtils.addWikiEventListener(m_engine, WikiPageEvent.POST_SAVE_BEGIN, this);
+        WikiEventManager.getInstance().addWikiEventListener( m_engine.getFilterManager(),this );
     }
 
     private Constructor< ? > initRenderer( final String renderImplName, final Class< ? >[] rendererParams ) throws WikiException {
