@@ -17,6 +17,30 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-01-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-06_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): Separate rendering engine from core
+    * `CommandResolver` renamed as `org.apache.wiki.ui.DefaultCommandResolver`, with new 
+       `org.apache.wiki.ui.CommandResolver` extracted as interface of the latter
+    * `ProgressManager` renamed as `org.apache.wiki.ui.progress.DefaultProgressManager`, with new 
+      `org.apache.wiki.ui.progress.ProgressManager` extracted as interface of the latter
+    * removed `createContext(..)` method from `WikiEngine` use new constructor on `WikiContext` instead
+    * removed `WikiEngine#getRedirectURL(..)` use same method on `WikiContext`
+* Removed `WikiEventUtils` if relying on it use directly `WikiEventManager.getInstance().addWikiEventListener( client, listener )`
+* Fixed possible synchronization issues on `DefaultProgressManager` and `WikiAjaxDispatcherServlet`
+* `PageEventFilter` moved from `event` to `filters` package
+* `WikiEngine#init(..)` now enforces at least a 3.1 servlet api environment, inline with the servlet-api dependency version
+* [JSPWIKI-1127](https://issues.apache.org/jira/browse/JSPWIKI-1127): Get rid off jspwiki.referenceStyle
+* Dependency updates
+    * ASF parent pom to version 23
+    * Awaitility to 4.0.2
+    * Flexmark to 0.50.48
+    * JUnit to 5.6.0
+    * Lucene to 8.4.1
+    * SLF4J to 1.7.30
+
 **2020-01-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-05_
@@ -26,7 +50,7 @@ under the License.
        `org.apache.wiki.render.RenderingManager` extracted as interface of the latter
     * moved `textToHtml(..)` methods from `WikiEngine` to `RenderingManager`
     * moved `getHTML(..)` methods from `WikiEngine` to `RenderingManager`
-    * moved `beautifyTitle( String )` and `beautifyTitleNoBreak` methods from `WikiEngine` to `RenderingManager`__
+    * moved `beautifyTitle( String )` and `beautifyTitleNoBreak` methods from `WikiEngine` to `RenderingManager`
 * `VAR_EXECUTE_PLUGINS` and `WYSIWYG_EDITOR_MODE` constants from `RenderingManager` moved to `WikiContext` (the latter 
 as `VAR_WYSIWYG_EDITOR_MODE`)
 * constant `PROP_RUNFILTERS` from `WikiEngine` moved to `VariableManager` as `VAR_RUNFILTERS`.
