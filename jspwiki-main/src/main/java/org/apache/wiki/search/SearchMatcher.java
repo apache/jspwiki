@@ -18,19 +18,18 @@
  */
 package org.apache.wiki.search;
 
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.StringReader;
-
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
 
 /**
- * SearchMatcher performs the task of matching a search query to a page's
- * contents. This utility class is isolated to simplify WikiPageProvider
- * implementations and to offer an easy target for upgrades. The upcoming(?)
- * TranslatorReader rewrite will presumably invalidate this, among other things.
+ * SearchMatcher performs the task of matching a search query to a page's contents. This utility class is isolated to simplify
+ * WikiPageProvider implementations and to offer an easy target for upgrades. The upcoming(?) TranslatorReader rewrite will
+ * presumably invalidate this, among other things.
  *
  * @since 2.1.5
  */
@@ -45,15 +44,14 @@ public class SearchMatcher {
      *  @param engine The WikiEngine
      *  @param queries A list of queries
      */
-    public SearchMatcher( WikiEngine engine, QueryItem[] queries ) {
+    public SearchMatcher( final WikiEngine engine, final QueryItem[] queries ) {
         m_engine = engine;
         m_queries = queries != null ? queries.clone() : null;
     }
 
     /**
-     * Compares the page content, available through the given stream, to the
-     * query items of this matcher. Returns a search result object describing
-     * the quality of the match.
+     * Compares the page content, available through the given stream, to the query items of this matcher. Returns a search result
+     * object describing the quality of the match.
      *
      * <p>This method would benefit of regexps (1.4) and streaming. FIXME!
      * 
@@ -62,14 +60,14 @@ public class SearchMatcher {
      * @return A SearchResult item, or null, there are no queries
      * @throws IOException If reading page content fails
      */
-    public SearchResult matchPageContent( String wikiname, String pageText ) throws IOException {
+    public SearchResult matchPageContent( final String wikiname, final String pageText ) throws IOException {
         if( m_queries == null ) {
             return null;
         }
 
-        int[] scores = new int[ m_queries.length ];
-        BufferedReader in = new BufferedReader( new StringReader( pageText ) );
-        String line = null;
+        final int[] scores = new int[ m_queries.length ];
+        final BufferedReader in = new BufferedReader( new StringReader( pageText ) );
+        String line;
 
         while( (line = in.readLine() ) != null ) {
             line = line.toLowerCase();
@@ -88,29 +86,21 @@ public class SearchMatcher {
             }
         }
 
-        //
         //  Check that we have all required words.
-        //
         int totalscore = 0;
 
         for( int j = 0; j < scores.length; j++ ) {
-            // Give five points for each occurrence
-            // of the word in the wiki name.
-
-            if( wikiname.toLowerCase().indexOf( m_queries[j].word ) != -1 && m_queries[j].type != QueryItem.FORBIDDEN ) {
+            // Give five points for each occurrence of the word in the wiki name.
+            if( wikiname.toLowerCase().contains( m_queries[ j ].word ) && m_queries[j].type != QueryItem.FORBIDDEN ) {
                 scores[j] += 5;
             }
 
-            //  Filter out pages if the search word is marked 'required'
-            //  but they have no score.
-
+            //  Filter out pages if the search word is marked 'required' but they have no score.
             if( m_queries[j].type == QueryItem.REQUIRED && scores[j] == 0 ) {
                 return null;
             }
 
-            //
             //  Count the total score for this page.
-            //
             totalscore += scores[j];
         }
 
@@ -135,7 +125,7 @@ public class SearchMatcher {
          *  @param name Page Name
          *  @param score A score from 0+
          */
-        public SearchResultImpl( String name, int score ) {
+        public SearchResultImpl( final String name, final int score ) {
             m_page  = new WikiPage( m_engine, name );
             m_score = score;
         }
@@ -158,8 +148,7 @@ public class SearchMatcher {
         }
 
         /**
-         *  Returns an empty array, since BasicSearchProvider does not support
-         *  context matching.
+         *  Returns an empty array, since BasicSearchProvider does not support context matching.
          *  
          *  @return an empty array
          */

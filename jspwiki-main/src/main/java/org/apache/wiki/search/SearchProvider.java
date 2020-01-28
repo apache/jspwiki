@@ -18,26 +18,26 @@
  */
 package org.apache.wiki.search;
 
-import java.io.IOException;
-import java.util.Collection;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
+
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
  *
  *  @since 2.2.21.
  */
-public interface SearchProvider extends WikiProvider
-{
+public interface SearchProvider extends WikiProvider {
+
     /**
      * Delete a page from the search index
      * @param page Page to remove from search index
      */
-    void pageRemoved(WikiPage page);
+    void pageRemoved( WikiPage page );
 
     /**
      *  Adds a WikiPage for indexing queue. This is called a queue, since
@@ -46,7 +46,7 @@ public interface SearchProvider extends WikiProvider
      *
      *  @param page The WikiPage to be indexed.
      */
-    void reindexPage(WikiPage page);
+    void reindexPage( WikiPage page );
 
     /**
      * Search for pages matching a search query
@@ -56,5 +56,6 @@ public interface SearchProvider extends WikiProvider
      * @throws ProviderException if the search provider failed.
      * @throws IOException if for some reason the query could not be executed.
      */
-    Collection< SearchResult > findPages(String query, WikiContext wikiContext) throws ProviderException, IOException;
+    Collection< SearchResult > findPages( String query, WikiContext wikiContext ) throws ProviderException, IOException;
+
 }

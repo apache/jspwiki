@@ -42,30 +42,28 @@ import java.util.TreeSet;
  *
  *  @since 2.2.21.
  */
-public class BasicSearchProvider implements SearchProvider
-{
-    private static final Logger log = Logger.getLogger(BasicSearchProvider.class);
+public class BasicSearchProvider implements SearchProvider {
+
+    private static final Logger log = Logger.getLogger( BasicSearchProvider.class );
 
     private WikiEngine m_engine;
 
     /**
      *  {@inheritDoc}
      */
-    public void initialize(WikiEngine engine, Properties props)
-            throws NoRequiredPropertyException, IOException
-    {
+    public void initialize( final WikiEngine engine, final Properties props ) throws NoRequiredPropertyException, IOException {
         m_engine = engine;
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void pageRemoved(WikiPage page) {}
+    public void pageRemoved( final WikiPage page ) {}
 
     /**
      *  {@inheritDoc}
      */
-    public void reindexPage(WikiPage page) {}
+    public void reindexPage( final WikiPage page ) {}
 
     /**
      *  Parses a query into something that we can use.
@@ -73,74 +71,61 @@ public class BasicSearchProvider implements SearchProvider
      *  @param query A query string.
      *  @return A parsed array.
      */
-    public  QueryItem[] parseQuery(String query)
-    {
-        StringTokenizer st = new StringTokenizer( query, " \t," );
-
-        QueryItem[] items = new QueryItem[st.countTokens()];
+    public QueryItem[] parseQuery( final String query) {
+        final StringTokenizer st = new StringTokenizer( query, " \t," );
+        final QueryItem[] items = new QueryItem[st.countTokens()];
         int word = 0;
 
         log.debug("Expecting "+items.length+" items");
 
-        //
         //  Parse incoming search string
-        //
-
-        while( st.hasMoreTokens() )
-        {
-            log.debug("Item "+word);
+        while( st.hasMoreTokens() ) {
+            log.debug( "Item " + word );
             String token = st.nextToken().toLowerCase();
 
-            items[word] = new QueryItem();
+            items[ word ] = new QueryItem();
 
-            switch( token.charAt(0) )
-            {
-              case '+':
-                items[word].type = QueryItem.REQUIRED;
-                token = token.substring(1);
-                log.debug("Required word: "+token);
+            switch( token.charAt( 0 ) ) {
+            case '+':
+                items[ word ].type = QueryItem.REQUIRED;
+                token = token.substring( 1 );
+                log.debug( "Required word: " + token );
                 break;
 
-              case '-':
-                items[word].type = QueryItem.FORBIDDEN;
-                token = token.substring(1);
-                log.debug("Forbidden word: "+token);
+            case '-':
+                items[ word ].type = QueryItem.FORBIDDEN;
+                token = token.substring( 1 );
+                log.debug( "Forbidden word: " + token );
                 break;
 
-              default:
-                items[word].type = QueryItem.REQUESTED;
-                log.debug("Requested word: "+token);
+            default:
+                items[ word ].type = QueryItem.REQUESTED;
+                log.debug( "Requested word: " + token );
                 break;
             }
 
-            items[word++].word = token;
+            items[ word++ ].word = token;
         }
 
         return items;
     }
 
-    private String attachmentNames(WikiPage page, String separator)
-    {
-        if(m_engine.getAttachmentManager().hasAttachments(page))
-        {
-            List< Attachment > attachments;
-            try
-            {
-                attachments = m_engine.getAttachmentManager().listAttachments(page);
-            }
-            catch (ProviderException e)
-            {
-                log.error("Unable to get attachments for page", e);
+    private String attachmentNames( final WikiPage page ) {
+        if( m_engine.getAttachmentManager().hasAttachments( page ) ) {
+            final List< Attachment > attachments;
+            try {
+                attachments = m_engine.getAttachmentManager().listAttachments( page );
+            } catch( final ProviderException e ) {
+                log.error( "Unable to get attachments for page", e );
                 return "";
             }
 
-            StringBuilder attachmentNames = new StringBuilder();
-            for( Iterator< Attachment > it = attachments.iterator(); it.hasNext(); )
-            {
-                Attachment att = it.next();
-                attachmentNames.append(att.getName());
-                if(it.hasNext()) {
-                    attachmentNames.append(separator);
+            final StringBuilder attachmentNames = new StringBuilder();
+            for( final Iterator< Attachment > it = attachments.iterator(); it.hasNext(); ) {
+                final Attachment att = it.next();
+                attachmentNames.append( att.getName() );
+                if( it.hasNext() ) {
+                    attachmentNames.append( " " );
                 }
             }
             return attachmentNames.toString();
@@ -149,42 +134,36 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection< SearchResult > findPages( QueryItem[] query, WikiContext wikiContext )
-    {
-        TreeSet<SearchResult> res = new TreeSet<>( new SearchResultComparator() );
-        SearchMatcher matcher = new SearchMatcher( m_engine, query );
-
-        Collection< WikiPage > allPages = null;
+    private Collection< SearchResult > findPages( final QueryItem[] query, final WikiContext wikiContext ) {
+        final TreeSet< SearchResult > res = new TreeSet<>( new SearchResultComparator() );
+        final SearchMatcher matcher = new SearchMatcher( m_engine, query );
+        final Collection< WikiPage > allPages;
         try {
             allPages = m_engine.getPageManager().getAllPages();
-        } catch( ProviderException pe ) {
+        } catch( final ProviderException pe ) {
             log.error( "Unable to retrieve page list", pe );
             return null;
         }
 
-        AuthorizationManager mgr = m_engine.getAuthorizationManager();
+        final AuthorizationManager mgr = m_engine.getAuthorizationManager();
 
-        Iterator< WikiPage > it = allPages.iterator();
-        while( it.hasNext() ) {
+        for( final WikiPage page : allPages ) {
             try {
-                WikiPage page = it.next();
-                if (page != null) {
-                	
-                    PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
-                    if( wikiContext==null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
-	                    String pageName = page.getName();
-	                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
-	                                         attachmentNames(page, " ");
-	                    SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
-	
-	                    if( comparison != null ) {
-	                        res.add( comparison );
-	                    }
-	                }
-	            }
-            } catch( ProviderException pe ) {
+                if( page != null ) {
+                    final PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
+                    if( wikiContext == null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
+                        final String pageName = page.getName();
+                        final String pageContent =
+                                m_engine.getPageManager().getPageText( pageName, WikiPageProvider.LATEST_VERSION ) + attachmentNames( page );
+                        final SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
+                        if( comparison != null ) {
+                            res.add( comparison );
+                        }
+                    }
+                }
+            } catch( final ProviderException pe ) {
                 log.error( "Unable to retrieve page from cache", pe );
-            } catch( IOException ioe ) {
+            } catch( final IOException ioe ) {
                 log.error( "Failed to search page", ioe );
             }
         }
@@ -195,8 +174,8 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection< SearchResult > findPages(String query, WikiContext wikiContext) {
-        return findPages(parseQuery(query), wikiContext);
+    public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) {
+        return findPages( parseQuery( query ), wikiContext );
     }
 
     /**

@@ -20,8 +20,7 @@ package org.apache.wiki.search;
 
 
 /**
- * This simple class just fulfils the role of a container for searches.  It tells the word and whether it is 
- * requested or not.
+ * This simple class just fulfils the role of a container for searches.  It tells the word and whether it is requested or not.
  */
 public class QueryItem {
 	

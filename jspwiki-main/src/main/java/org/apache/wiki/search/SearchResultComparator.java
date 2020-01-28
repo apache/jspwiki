@@ -30,16 +30,13 @@ public class SearchResultComparator implements Comparator< SearchResult >, Seria
     private static final long serialVersionUID = 1L;
 
     /**
-     *  Compares two SearchResult objects, returning
-     *  the one that scored higher.
+     *  Compares two SearchResult objects, returning the one that scored higher.
      *  
      *  {@inheritDoc}
      */
-    public int compare( SearchResult s1, SearchResult s2 ) {
+    public int compare( final SearchResult s1, final SearchResult s2 ) {
         // Bigger scores are first.
-
         int res = s2.getScore() - s1.getScore();
-
         if( res == 0 ) {
             res = s1.getPage().getName().compareTo( s2.getPage().getName() );
         }

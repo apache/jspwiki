@@ -39,8 +39,7 @@ public interface SearchResult {
      *  @return A positive score value.  Note that there is no upper limit for the score.
      */
     int getScore();
-    
-    
+
     /**
      * Collection of XHTML fragments representing some contexts in which the match was made (a.k.a., "snippets").
      *
