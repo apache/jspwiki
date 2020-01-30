@@ -18,16 +18,15 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.LinkedList;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.LinkedList;
+import org.apache.wiki.WikiContext;
 
 /**
  * Implement a "breadcrumb" (most recently visited) trail.  This tag can be added to any view jsp page.
@@ -68,7 +67,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Returns the maxpages.  This may differ from what was set by setMaxpages().
-     *  
+     *
      *  @return The current size of the pages.
      */
     public int getMaxpages()
@@ -78,7 +77,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Sets how many pages to show.
-     *  
+     *
      *  @param maxpages The amount.
      */
     public void setMaxpages(int maxpages)
@@ -88,7 +87,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Get the separator string.
-     *  
+     *
      *  @return The string set in setSeparator()
      */
     public String getSeparator()
@@ -98,7 +97,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
     /**
      *  Set the separator string.
-     *  
+     *
      *  @param separator A string which separates the page names.
      */
     public void setSeparator(String separator)
@@ -210,7 +209,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
             return null;
         }
-        
+
         /**
          * @param pageName
          *            the page to be deleted from the breadcrumb
@@ -219,8 +218,10 @@ public class BreadcrumbsTag extends WikiTagBase
         {
             for (int i = 0; i < size(); i++)
             {
-                String page = get(i);
-                if (page != null && page.equals(pageName))
+                Object page = get(i);
+
+                //noinspection ConstantConditions
+                if (!(page instanceof String) || (page != null && page.equals(pageName)))
                 {
                     remove(page);
                 }
