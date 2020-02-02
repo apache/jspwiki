@@ -19,11 +19,8 @@
 package org.apache.wiki.ajax;
 
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.Assertions;
 
-import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
-import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.plugin.SampleAjaxPlugin;
 
 /**
