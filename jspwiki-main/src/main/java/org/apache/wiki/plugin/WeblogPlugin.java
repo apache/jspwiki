@@ -26,11 +26,11 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.TextUtil;
@@ -426,6 +426,8 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      */
     private static class PageDateComparator implements Comparator< WikiPage > {
 
+        /**{@inheritDoc}*/
+        @Override
         public int compare( final WikiPage page1, final WikiPage page2 ) {
             if( page1 == null || page2 == null ) {
                 return 0;
@@ -437,9 +439,11 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
 
     /**
      *  Mark us as being a real weblog.
+     *
      *  {@inheritDoc}
      */
-    public void executeParser( final PluginContent element, final WikiContext context, final Map< String, String > params ) {
+    public void executeParser( final PluginElement element, final WikiContext context, final Map< String, String > params ) {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }
+
 }
