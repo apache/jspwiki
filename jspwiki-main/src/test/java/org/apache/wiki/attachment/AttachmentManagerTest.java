@@ -31,14 +31,11 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Properties;
 
-public class AttachmentManagerTest
-{
+public class AttachmentManagerTest {
+
     public static final String NAME1 = "TestPage";
     public static final String NAMEU = "TestPage\u00e6";
-
-    Properties props = TestEngine.getTestProperties();
 
     TestEngine m_engine;
     AttachmentManager m_manager;
@@ -46,38 +43,26 @@ public class AttachmentManagerTest
     static String c_fileContents = "ABCDEFGHIJKLMNOPQRSTUVWxyz";
 
     @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        CacheManager m_cacheManager = CacheManager.getInstance();
-        m_cacheManager.clearAll();
-        m_cacheManager.removeAllCaches();
-
-        m_engine  = new TestEngine(props);
+    public void setUp() throws Exception {
+        m_engine  = TestEngine.build();
         m_manager = m_engine.getAttachmentManager();
 
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAMEU, "Foobar" );
     }
 
-    private File makeAttachmentFile()
-        throws Exception
-    {
-        File tmpFile = File.createTempFile("test","txt");
+    private File makeAttachmentFile() throws Exception {
+        final File tmpFile = File.createTempFile("test","txt");
         tmpFile.deleteOnExit();
-
-        FileWriter out = new FileWriter( tmpFile );
-
-        FileUtil.copyContents( new StringReader( c_fileContents ), out );
-
-        out.close();
+        try( final FileWriter out = new FileWriter( tmpFile ) ) {
+            FileUtil.copyContents( new StringReader( c_fileContents ), out );
+        }
 
         return tmpFile;
     }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         m_engine.deleteTestPage( NAME1 );
         m_engine.deleteTestPage( NAMEU );
 
@@ -85,6 +70,10 @@ public class AttachmentManagerTest
         TestEngine.deleteAttachments(NAMEU);
 
         TestEngine.emptyWorkDir();
+
+        final CacheManager m_cacheManager = CacheManager.getInstance();
+        m_cacheManager.clearAll();
+        m_cacheManager.removeAllCaches();
     }
 
     @Test
