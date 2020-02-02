@@ -1,0 +1,312 @@
+/*
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+ */
+package org.apache.wiki.api.core;
+
+import org.apache.wiki.WatchDog;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.event.WikiEventListener;
+
+import javax.servlet.ServletContext;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Properties;
+
+
+public interface Engine {
+
+    /** The default inlining pattern.  Currently "*.png" */
+    String DEFAULT_INLINEPATTERN = "*.png";
+
+    /** The name used for the default template. The value is {@value}. */
+    String DEFAULT_TEMPLATE_NAME = "default";
+
+    /** Property for application name */
+    String PROP_APPNAME = "jspwiki.applicationName";
+
+    /** This property defines the inline image pattern.  It's current value is {@value} */
+    String PROP_INLINEIMAGEPTRN = "jspwiki.translatorReader.inlinePattern";
+
+    /** Property start for any interwiki reference. */
+    String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
+
+    /** If true, then the user name will be stored with the page data.*/
+    String PROP_STOREUSERNAME= "jspwiki.storeUserName";
+
+    /** Define the used encoding.  Currently supported are ISO-8859-1 and UTF-8 */
+    String PROP_ENCODING = "jspwiki.encoding";
+
+    /** Do not use encoding in WikiJSPFilter, default is false for most servers.
+     Double negative, cause for most servers you don't need the property */
+    String PROP_NO_FILTER_ENCODING = "jspwiki.nofilterencoding";
+
+    /** Property name for where the jspwiki work directory should be.
+     If not specified, reverts to ${java.tmpdir}. */
+    String PROP_WORKDIR = "jspwiki.workDir";
+
+    /** The name of the cookie that gets stored to the user browser. */
+    String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
+
+    /** Property name for the "match english plurals" -hack. */
+    String PROP_MATCHPLURALS = "jspwiki.translatorReader.matchEnglishPlurals";
+
+    /** Property name for the template that is used. */
+    String PROP_TEMPLATEDIR = "jspwiki.templateDir";
+
+    /** Property name for the default front page. */
+    String PROP_FRONTPAGE = "jspwiki.frontPage";
+
+    /** Property name for setting the url generator instance */
+    String PROP_URLCONSTRUCTOR = "jspwiki.urlConstructor";
+
+    /** The name of the property containing the ACLManager implementing class. The value is {@value}. */
+    String PROP_ACL_MANAGER_IMPL = "jspwiki.aclManager";
+
+    /** If this property is set to false, we don't allow the creation of empty pages */
+    String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
+
+    /**
+     * Retrieves the requested object instantiated by the Engine.
+     *
+     * @param manager requested object instantiated by the Engine.
+     * @param <T> type of the requested object.
+     * @return requested object instantiated by the Engine, {@code null} if not available.
+     */
+    < T > T getManager( Class< T > manager );
+
+    /**
+     * check if the WikiEngine has been configured.
+     *
+     * @return {@code true} if it has, {@code false} otherwise.
+     */
+    boolean isConfigured();
+
+    /**
+     *  Returns the set of properties that the WikiEngine was initialized with.  Note that this method returns a direct reference, so it's
+     *  possible to manipulate the properties.  However, this is not advised unless you really know what you're doing.
+     *
+     *  @return The wiki properties
+     */
+    Properties getWikiProperties();
+
+    /**
+     *  Returns the JSPWiki working directory set with "jspwiki.workDir".
+     *
+     *  @since 2.1.100
+     *  @return The working directory.
+     */
+    String getWorkDir();
+
+    /**
+     *  Returns the current template directory.
+     *
+     *  @since 1.9.20
+     *  @return The template directory as initialized by the engine.
+     */
+    String getTemplateDir();
+
+    /**
+     *  Returns the moment when this engine was started.
+     *
+     *  @since 2.0.15.
+     *  @return The start time of this wiki.
+     */
+    Date getStartTime();
+
+    /**
+     *  Returns the base URL, telling where this Wiki actually lives.
+     *
+     *  @since 1.6.1
+     *  @return The Base URL.
+     */
+    String getBaseURL();
+
+    /**
+     *  Returns the URL of the global RSS file.  May be null, if the RSS file generation is not operational.
+     *
+     *  @since 1.7.10
+     *  @return The global RSS url
+     */
+    String getGlobalRSSURL();
+
+    /**
+     *  Returns an URL to some other Wiki that we know.
+     *
+     *  @param  wikiName The name of the other wiki.
+     *  @return null, if no such reference was found.
+     */
+    String getInterWikiURL( String wikiName );
+
+    /**
+     *  Returns an URL if a WikiContext is not available.
+     *
+     *  @param context The WikiContext (VIEW, EDIT, etc...)
+     *  @param pageName Name of the page, as usual
+     *  @param params List of parameters. May be null, if no parameters.
+     *  @return An URL (absolute or relative).
+     */
+    String getURL( String context, String pageName, String params );
+
+    /**
+     *  Returns the default front page, if no page is used.
+     *
+     *  @return The front page name.
+     */
+    String getFrontPage();
+
+    /**
+     *  Returns the ServletContext that this particular WikiEngine was initialized with. <strong>It may return {@code null}</strong>,
+     *  if the Engine is not running inside a servlet container!
+     *
+     *  @since 1.7.10
+     *  @return ServletContext of the Engine, or {@code null}.
+     */
+    ServletContext getServletContext();
+
+    /**
+     *  Returns a collection of all supported InterWiki links.
+     *
+     *  @return A Collection of Strings.
+     */
+    Collection< String > getAllInterWikiLinks();
+
+    /**
+     *  Returns a collection of all image types that get inlined.
+     *
+     *  @return A Collection of Strings with a regexp pattern.
+     */
+    Collection< String > getAllInlinedImagePatterns();
+
+    /**
+     *  <p>If the page is a special page, then returns a direct URL to that page. Otherwise returns <code>null</code>.
+     *  This method delegates requests to {@link org.apache.wiki.ui.CommandResolver#getSpecialPageReference(String)}.</p>
+     *  <p>Special pages are defined in jspwiki.properties using the jspwiki.specialPage setting. They're typically used to give Wiki page
+     *  names to e.g. custom JSP pages.</p>
+     *
+     *  @param original The page to check
+     *  @return A reference to the page, or null, if there's no special page.
+     */
+    String getSpecialPageReference( String original );
+
+    /**
+     *  Returns the name of the application.
+     *
+     *  @return A string describing the name of this application.
+     */
+    String getApplicationName();
+
+    /**
+     *  Returns the root path.  The root path is where the WikiEngine is located in the file system.
+     *
+     *  @since 2.2
+     *  @return A path to where the Wiki is installed in the local filesystem.
+     */
+    String getRootPath();
+
+    /**
+     *  Returns the correct page name, or null, if no such page can be found.  Aliases are considered. This method simply delegates to
+     *  {@link org.apache.wiki.ui.CommandResolver#getFinalPageName(String)}.
+     *
+     *  @since 2.0
+     *  @param page Page name.
+     *  @return The rewritten page name, or null, if the page does not exist.
+     *  @throws ProviderException If something goes wrong in the backend.
+     */
+    String getFinalPageName( String page ) throws ProviderException;
+
+    /**
+     *  Turns a WikiName into something that can be called through using an URL.
+     *
+     *  @since 1.4.1
+     *  @param pagename A name. Can be actually any string.
+     *  @return A properly encoded name.
+     *  @see #decodeName(String)
+     */
+    String encodeName( String pagename );
+
+    /**
+     *  Decodes a URL-encoded request back to regular life.  This properly heeds the encoding as defined in the settings file.
+     *
+     *  @param pagerequest The URL-encoded string to decode
+     *  @return A decoded string.
+     *  @see #encodeName(String)
+     */
+    String decodeName( String pagerequest );
+
+    /**
+     *  Returns the IANA name of the character set encoding we're supposed to be using right now.
+     *
+     *  @since 1.5.3
+     *  @return The content encoding (either UTF-8 or ISO-8859-1).
+     */
+    Charset getContentEncoding();
+
+    /**
+     * Registers a WikiEventListener with this instance.
+     *
+     * @param listener the event listener
+     */
+    void addWikiEventListener( WikiEventListener listener );
+
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     *
+     * @param listener the event listener
+     */
+    void removeWikiEventListener( WikiEventListener listener );
+
+    /**
+     * Adds an attribute to the engine for the duration of this engine.  The value is not persisted.
+     *
+     * @since 2.4.91
+     * @param key the attribute name
+     * @param value the value
+     */
+    void setAttribute( String key, Object value );
+
+    /**
+     *  Gets an attribute from the engine.
+     *
+     *  @param key the attribute name
+     *  @return the value
+     */
+    < T > T getAttribute( String key );
+
+    /**
+     *  Removes an attribute.
+     *
+     *  @param key The key of the attribute to remove.
+     *  @return The previous attribute, if it existed.
+     */
+    < T > T removeAttribute( String key );
+
+    /**
+     *  Returns a WatchDog for current thread.
+     *
+     *  @return The current thread WatchDog.
+     *  @since 2.4.92
+     */
+    WatchDog getCurrentWatchDog();
+
+    /**
+     * Signals that the Engine will be shut down by the servlet container.
+     */
+    void shutdown();
+
+}
