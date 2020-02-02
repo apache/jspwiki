@@ -18,17 +18,15 @@
  */
 package org.apache.wiki.api.plugin;
 
+import org.apache.wiki.WikiContext;
+
 import java.util.Map;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.parser.PluginContent;
-
 /**
- *  Implements a Plugin interface for the parser stage.  Please see org.apache.wiki.api.PluginManager
+ *  Implements a Plugin interface for the parser stage.  Please see {@link org.apache.wiki.api.engine.PluginManager}
  *  for further documentation.
  */
-public interface ParserStagePlugin
-{
+public interface ParserStagePlugin {
     
     /**
      *  Method which is executed during parsing.
@@ -37,6 +35,6 @@ public interface ParserStagePlugin
      *  @param context WikiContext, as usual.
      *  @param params  Parsed parameters for the plugin.
      */
-    void executeParser( PluginContent element, WikiContext context, Map< String, String > params );
+    void executeParser( PluginElement element, WikiContext context, Map< String, String > params );
     
 }

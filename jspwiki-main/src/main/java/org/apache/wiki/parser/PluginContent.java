@@ -27,6 +27,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
@@ -50,7 +51,7 @@ import java.util.ResourceBundle;
  *
  * @since 2.4
  */
-public class PluginContent extends Text {
+public class PluginContent extends Text implements PluginElement {
 
     private static final String BLANK = "";
     private static final String CMDLINE = "_cmdline";
@@ -62,11 +63,10 @@ public class PluginContent extends Text {
     private static final String SPACE = " ";
 
     private static final long serialVersionUID = 1L;
-
-    private static Logger log = Logger.getLogger(PluginContent.class);
+    private static final Logger log = Logger.getLogger(PluginContent.class);
 
     private String m_pluginName;
-    private Map<String, String> m_params;
+    private Map< String, String > m_params;
 
     /**
      * Creates a new DOM element with the given plugin name and a map of parameters.
@@ -79,51 +79,32 @@ public class PluginContent extends Text {
         m_params = parameters;
     }
 
-    /**
-     * Returns the name of the plugin invoked by the DOM element.
-     *
-     * @return Name of the plugin
-     * @since 2.5.7
-     */
+    /**{@inheritDoc}*/
+    @Override
     public String getPluginName() {
         return m_pluginName;
     }
 
-    /**
-     * Returns a parameter value from the parameter map.
-     *
-     * @param name the name of the parameter.
-     * @return The value from the map, or null, if no such parameter exists.
-     */
+    /**{@inheritDoc}*/
+    @Override
     public String getParameter( final String name) {
-        return m_params.get(name);
+        return m_params.get( name );
     }
 
-    /**
-     * Returns the parameter map given in the constructor.
-     *
-     * @return The parameter map.
-     */
+    /**{@inheritDoc}*/
+    @Override
     public Map< String, String > getParameters() {
         return m_params;
     }
 
-    /**
-     * Returns the rendered plugin.  Only calls getText().
-     *
-     * @return HTML
-     */
+    /**{@inheritDoc}*/
+    @Override
     public String getValue() {
         return getText();
     }
 
-    /**
-     * The main invocation for the plugin.  When the getText() is called, it
-     * invokes the plugin and returns its contents.  If there is no Document
-     * yet, only returns the plugin name itself.
-     *
-     * @return The plugin rendered according to the options set in the WikiContext.
-     */
+    /**{@inheritDoc}*/
+    @Override
     public String getText() {
         final WikiDocument doc = ( WikiDocument )getDocument();
         if( doc == null ) {
@@ -144,13 +125,9 @@ public class PluginContent extends Text {
         return invoke( context );
     }
 
-    /**
-     * Performs plugin invocation and return its contents.
-     * 
-     * @param context WikiContext in which the plugin is executed. Must NOT be null.
-     * @return plugin contents.
-     */
-	public String invoke( final WikiContext context ) {
+    /**{@inheritDoc}*/
+    @Override
+    public String invoke( final WikiContext context ) {
 		String result;
 		final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         boolean wysiwygEditorMode = false;
@@ -165,7 +142,7 @@ public class PluginContent extends Text {
             //  since they can be edited visually.
             //
             // FIXME: The plugin name matching should not be done here, but in a per-editor resource
-            if (wysiwygEditorMode && !m_pluginName.matches(EMITTABLE_PLUGINS)) {
+            if( wysiwygEditorMode && !m_pluginName.matches( EMITTABLE_PLUGINS ) ) {
                 result = PLUGIN_START + m_pluginName + SPACE;
 
                 // convert newlines to <br> in case the plugin has a body.
@@ -205,12 +182,8 @@ public class PluginContent extends Text {
         return result;
 	}
 
-    /**
-     * Executes the executeParse() method.
-     *
-     * @param context The WikiContext
-     * @throws PluginException If something goes wrong.
-     */
+    /**{@inheritDoc}*/
+    @Override
     public void executeParse( final WikiContext context ) throws PluginException {
         final PluginManager pm = context.getEngine().getPluginManager();
         if( pm.pluginsEnabled() ) {
