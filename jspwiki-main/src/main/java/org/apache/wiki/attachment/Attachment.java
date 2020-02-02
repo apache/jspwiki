@@ -22,13 +22,10 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 
 /**
- *  Describes an attachment.  Attachments are actually derivatives of
- *  a WikiPage, since they do actually have a WikiName as well.
- *
+ *  Describes an attachment.  Attachments are actually derivatives of a WikiPage, since they do actually have a WikiName as well.
  */
-public class Attachment
-    extends WikiPage
-{
+public class Attachment extends WikiPage {
+
     private String m_fileName;
     private String m_parentName;
     private boolean m_cacheable = true;
@@ -41,9 +38,8 @@ public class Attachment
      *  @param parentPage The page which will contain this attachment.
      *  @param fileName   The file name for the attachment.
      */
-    public Attachment( WikiEngine engine, String parentPage, String fileName )
-    {
-        super( engine, parentPage+"/"+fileName );
+    public Attachment( final WikiEngine engine, final String parentPage, final String fileName ) {
+        super( engine, parentPage + "/" + fileName );
 
         m_parentName = parentPage;
         m_fileName   = fileName;
@@ -54,9 +50,8 @@ public class Attachment
      *  
      *  @return A debugging string
      */
-    public String toString()
-    {
-        return "Attachment ["+getName()+";mod="+getLastModified()+"]";
+    public String toString() {
+        return "Attachment [" + getName() + ";mod=" + getLastModified() + "]";
     }
 
     /**
@@ -64,56 +59,48 @@ public class Attachment
      *  
      *  @return A String with the file name.
      */
-    public String getFileName()
-    {
+    public String getFileName() {
         return m_fileName;
     }
 
     /**
      *  Sets the file name of this attachment. 
      *  
-     *  @param name The name of the attachment.  Must be a legal file name without
-     *              the path.
+     *  @param name The name of the attachment.  Must be a legal file name without  the path.
      */
-    public void setFileName( String name )
+    public void setFileName( final String name )
     {
         m_fileName = name;
     }
 
     /**
-     *  Returns the name of the parent of this Attachment, i.e. the page
-     *  which contains this attachment.
+     *  Returns the name of the parent of this Attachment, i.e. the page which contains this attachment.
      *  
      *  @return String depicting the parent of the attachment.
      */
-    public String getParentName()
-    {
+    public String getParentName() {
         return m_parentName;
     }
 
     /**
-     *  Returns true, if this attachment can be cached by the user agent.  By default
-     *  attachments are cacheable.
+     *  Returns true, if this attachment can be cached by the user agent.  By default attachments are cacheable.
      *  
      *  @return False, if the attachment should not be cached by the user agent.
      *  @since 2.5.34
      */
-    public boolean isCacheable()
-    {
+    public boolean isCacheable() {
         return m_cacheable;
     }
 
     /**
-     *  Sets this attachment to be cacheable or not.  This mostly concerns things
-     *  like DynamicAttachments, but it may be useful for certain AttachmentProviders
-     *  as well.
+     *  Sets this attachment to be cacheable or not.  This mostly concerns things like DynamicAttachments, but it may be useful for
+     *  certain AttachmentProviders as well.
      *  
-     *  @param value True or false, depending on whether you want this attachment
-     *               to be cacheable or not.
+     *  @param value True or false, depending on whether you want this attachment to be cacheable or not.
      *  @since 2.5.34
      */
-    public void setCacheable(boolean value)
-    {
+    public void setCacheable( final boolean value ) {
         m_cacheable = value;
     }
+
 }
