@@ -18,6 +18,16 @@
  */
 package org.apache.wiki.auth;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WikiSecurityEvent;
+
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,17 +37,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiSecurityEvent;
-
 /**
  *  <p>Manages WikiSession's for different WikiEngine's.</p>
  *  <p>The WikiSession's are stored both in the remote user
@@ -46,8 +45,8 @@ import org.apache.wiki.event.WikiSecurityEvent;
  *  web.xml for the wiki web application.
  *  </p>
  */
-public class SessionMonitor implements HttpSessionListener
-{
+public class SessionMonitor implements HttpSessionListener {
+
     private static Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
