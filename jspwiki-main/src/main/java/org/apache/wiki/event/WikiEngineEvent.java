@@ -16,10 +16,7 @@
     specific language governing permissions and limitations
     under the License.  
  */
-
 package org.apache.wiki.event;
-
-import org.apache.wiki.WikiEngine;
 
 /**
   * WikiEngineEvent indicates a change in the state of the WikiEngine.
@@ -46,8 +43,6 @@ public class WikiEngineEvent extends WikiEvent {
      */
     public static final int STOPPED        = 2;
 
-    private WikiEngine m_engine;
-
      /**
       *  Constructs an instance of this event.
       *
@@ -57,7 +52,6 @@ public class WikiEngineEvent extends WikiEvent {
       */
     public WikiEngineEvent( final Object eventSource, final int type ) {
         super( eventSource, type );
-        m_engine = ( WikiEngine )eventSource;
     }
 
     /**
@@ -71,15 +65,6 @@ public class WikiEngineEvent extends WikiEvent {
         } else {
             super.setType( ERROR );
         }
-    }
-
-    /**
-     *  Returns the WikiEngine that spawned this event.
-     *
-     * @return  the WikiEngine that spawned this event.
-     */
-    public WikiEngine getEngine() {
-        return m_engine;
     }
 
     /**
