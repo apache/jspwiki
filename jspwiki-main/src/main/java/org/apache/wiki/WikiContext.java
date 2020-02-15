@@ -741,11 +741,12 @@ public class WikiContext implements Cloneable, Command {
         //  Figure out which template we should be using for this page.
         String template = null;
         if ( request != null ) {
-            template = request.getParameter( "skin" );
-
-            if( template != null ) {
-                template = template.replaceAll("\\p{Punct}", "");
+            String skin = request.getParameter( "skin" );
+            if( skin != null )
+            {
+                template = skin.replaceAll("\\p{Punct}", "");
             }
+
         }
 
         // If request doesn't supply the value, extract from wiki page

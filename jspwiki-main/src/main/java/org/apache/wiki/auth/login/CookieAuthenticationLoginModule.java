@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.
  */
 package org.apache.wiki.auth.login;
 
@@ -100,14 +100,13 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
-     * 
+     *
      * {@inheritDoc}
      */
     public boolean login() throws LoginException
     {
         // Otherwise, let's go and look for the cookie!
         HttpRequestCallback hcb = new HttpRequestCallback();
-        //UserDatabaseCallback ucb = new UserDatabaseCallback();
         WikiEngineCallback wcb  = new WikiEngineCallback();
 
         Callback[] callbacks = new Callback[]
@@ -127,11 +126,12 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
                 if( cookieFile != null && cookieFile.exists() && cookieFile.canRead() )
                 {
-                    Reader in = null;
 
                     try
+                    (
+                        Reader in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), "UTF-8" ) );
+                    )
                     {
-                        in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), "UTF-8" ) );
                         String username = FileUtil.readContents( in );
 
                         if ( log.isDebugEnabled() )
@@ -145,17 +145,12 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
                         //
                         //  Tag the file so that we know that it has been accessed recently.
                         //
-                        cookieFile.setLastModified( System.currentTimeMillis() );
+                        return cookieFile.setLastModified( System.currentTimeMillis() );
 
-                        return true;
                     }
                     catch( IOException e )
                     {
                         return false;
-                    }
-                    finally
-                    {
-                        if( in != null ) in.close();
                     }
                 }
             }
@@ -220,8 +215,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
         //
         //  Find the cookie file
         //
-        File cookieFile = new File( cookieDir, uid );
-        return cookieFile;
+        return new File( cookieDir, uid );
     }
 
     /**
@@ -232,9 +226,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
      */
     private static String getLoginCookie(HttpServletRequest request)
     {
-        String cookie = HttpUtil.retrieveCookieValue( request, LOGIN_COOKIE_NAME );
-
-        return cookie;
+        return HttpUtil.retrieveCookieValue( request, LOGIN_COOKIE_NAME );
     }
 
     /**
@@ -248,19 +240,23 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
     public static void setLoginCookie( final WikiEngine engine, final HttpServletResponse response, final String username ) {
         final UUID uid = UUID.randomUUID();
         final int days = TextUtil.getIntegerProperty( engine.getWikiProperties(), PROP_LOGIN_EXPIRY_DAYS, DEFAULT_EXPIRY_DAYS );
-        final Cookie userId = new Cookie( LOGIN_COOKIE_NAME, uid.toString() );
+        final Cookie userId = getLoginCookie( uid.toString() );
         userId.setMaxAge( days * 24 * 60 * 60 );
         response.addCookie( userId );
 
         final File cf = getCookieFile( engine, uid.toString() );
         if( cf != null ) {
             //  Write the cookie content to the cookie store file.
-            try( final Writer out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(cf), StandardCharsets.UTF_8 ) ) ) {
+            try(
+                final Writer out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(cf), StandardCharsets.UTF_8 ) )
+            )
+            {
                 FileUtil.copyContents( new StringReader(username), out );
 
                 if( log.isDebugEnabled() ) {
                     log.debug( "Created login cookie for user "+username+" for "+days+" days" );
                 }
+
             } catch( final IOException ex ) {
                 log.error( "Unable to create cookie file to store user id: " + uid );
             }
@@ -276,7 +272,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
      */
     public static void clearLoginCookie( WikiEngine engine, HttpServletRequest request, HttpServletResponse response )
     {
-        Cookie userId = new Cookie( LOGIN_COOKIE_NAME, "" );
+        Cookie userId = getLoginCookie( "" );
         userId.setMaxAge( 0 );
         response.addCookie( userId );
 
@@ -288,10 +284,27 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
             if( cf != null )
             {
-                cf.delete();
+                if( !cf.delete() )
+                {
+                    log.debug("Error deleting cookie login "+uid);
+                }
             }
         }
     }
+
+    /**
+     *  Helper function to get secure LOGIN cookie
+     *
+     * @param:  value of the cookie
+     */
+    private static Cookie getLoginCookie( String value )
+    {
+        Cookie c = new Cookie( LOGIN_COOKIE_NAME, value );
+        c.setHttpOnly(true);  //no browser access
+        c.setSecure(true); //only access via encrypted https allowed
+        return c;
+    }
+
 
     /**
      *  Goes through the cookie directory and removes any obsolete files.
@@ -320,8 +333,14 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
             if( lastModified < obsoleteDateLimit )
             {
-                f.delete();
-                deleteCount++;
+                if( f.delete() )
+                {
+                    deleteCount++;
+                }
+                else
+                {
+                    log.debug("Error deleting cookie login with index "+i);
+                }
             }
         }
 

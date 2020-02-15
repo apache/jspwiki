@@ -23,6 +23,8 @@ under the License.
 
 * AttachmentManager:  fix the order of processing.  Added a few extra unit tests.
 
+* Few minor SonarCloud fixes
+
 **2020-01-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-06_
