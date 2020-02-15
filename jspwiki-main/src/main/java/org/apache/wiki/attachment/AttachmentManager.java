@@ -649,6 +649,14 @@ public class AttachmentManager
         }
 
         //
+        //  Some browser send the full path info with the filename, so we need
+        //  to remove it here by simply splitting along slashes and then taking the path.
+        //
+
+        String[] splitpath = filename.split( "[/\\\\]" );
+        filename = splitpath[splitpath.length-1];
+
+        //
         //  Should help with IE 5.22 on OSX
         //
         filename = filename.trim();
@@ -662,14 +670,6 @@ public class AttachmentManager
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.unwanted.file"  );
         }
-
-        //
-        //  Some browser send the full path info with the filename, so we need
-        //  to remove it here by simply splitting along slashes and then taking the path.
-        //
-
-        String[] splitpath = filename.split( "[/\\\\]" );
-        filename = splitpath[splitpath.length-1];
 
         //
         //  Remove any characters that might be a problem. Most

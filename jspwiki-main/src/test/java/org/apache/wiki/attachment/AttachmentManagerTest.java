@@ -17,6 +17,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -370,6 +371,21 @@ public class AttachmentManagerTest
         Assertions.assertEquals( "foo.jpg", AttachmentManager.validateFileName( "foo.jpg" ), "foo.jpg" );
 
         Assertions.assertEquals( "test.jpg", AttachmentManager.validateFileName( "C:\\Windows\\test.jpg" ), "C:\\Windows\\test.jpg" );
+
+        WikiException thrown1 =
+        Assertions.assertThrows( WikiException.class, () -> {
+            AttachmentManager.validateFileName( "C:\\Windows\\test.jsp" );
+        });
+        Assertions.assertTrue(thrown1.getMessage().contains("attach.unwanted.file"), thrown1.getMessage());
+
+        WikiException thrown2 =
+        Assertions.assertThrows( WikiException.class, () -> {
+            AttachmentManager.validateFileName( "C:\\Windows\\test.jsp\\" );
+        });
+        Assertions.assertTrue(thrown2.getMessage().contains("attach.unwanted.file"), thrown2.getMessage());
+
+        Assertions.assertEquals( "test__test.jpg", AttachmentManager.validateFileName( "C:\\Windows\\test#?test.jpg" ), "test#?test.jpg" );
+
     }
 
 }
