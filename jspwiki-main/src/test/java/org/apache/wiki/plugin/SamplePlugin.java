@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Map;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.parser.PluginContent;
+
+import java.util.Map;
 
 /**
  *  Implements a simple plugin that just returns its text.
@@ -54,7 +54,7 @@ public class SamplePlugin implements WikiPlugin, ParserStagePlugin {
         return sb.toString();
     }
 
-    public void executeParser(PluginContent element, WikiContext context, Map< String, String > params) {
+    public void executeParser( PluginElement element, WikiContext context, Map< String, String > params) {
         if( element.getParameter("render") != null ) c_rendered = true;
     }
 
