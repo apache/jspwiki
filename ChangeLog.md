@@ -17,6 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-08_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): finally, extracted `Engine` interface from
+`WikiEngine`. It will be part of JSPWiki public API later on.
+    * removed direct reference to `WikiEngine` on `WikiEngineEvent`, in order to break package cycle between 
+    `o.a.wiki` and `o.a.w.event`. To obtain the `WikiEngine` reference from the event just use `getSrc()`
+    * extract new `PluginElement` interface from `PluginContent` in order to break a package/class cycle between 
+    `PluginContent` and `ParserStagePlugin`
+
+* Merged [PR #13](https://github.com/apache/jspwiki/pull/13) from [Kideath](https://github.com/kideath) in order 
+to fix russian translation. Thanks!
+
+* Dependency updates
+    * Flexmark to 0.50.50
+    * Selenide to 5.7.0
+    * Tomcat to 8.5.51
+
 **2002-02-14  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.11.0-M7-git-07_
