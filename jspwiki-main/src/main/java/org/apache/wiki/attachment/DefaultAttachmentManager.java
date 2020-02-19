@@ -47,10 +47,9 @@ import java.util.Properties;
 
 
 /**
- *  Provides facilities for handling attachments.  All attachment handling goes through this class.
- *  <p>
- *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider that is in use.
- *  It is created by the WikiEngine as a singleton object, and can be requested through the WikiEngine.
+ *  Default implementation for {@link AttachmentManager}
+ *
+ * {@inheritDoc}
  *
  *  @since 1.9.28
  */
