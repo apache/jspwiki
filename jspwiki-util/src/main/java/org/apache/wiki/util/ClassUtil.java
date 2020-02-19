@@ -48,37 +48,32 @@ import java.util.jar.JarFile;
 public final class ClassUtil {
 
     private static final Logger log = Logger.getLogger(ClassUtil.class);
-    /**
-     *  The location of the classmappings.xml document. It will be searched for
-     *  in the classpath.  It's value is "{@value}".
-     */
+
+    /** The location of the classmappings.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
     public  static final String MAPPINGS = "ini/classmappings.xml";
-    
-    private static Map<String, String> c_classMappings = new ConcurrentHashMap<>();
+
+    private static Map< String, String > c_classMappings = new ConcurrentHashMap<>();
 
     private static boolean classLoaderSetup = false;
     private static ClassLoader loader = null;
 
 
-    /**
+    /*
      *  Initialize the class mappings document.
      */
     static {
-        List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
+        final List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
 
         if( nodes.size() > 0 ) {
-            for( Iterator< Element > i = nodes.iterator(); i.hasNext(); ) {
-                Element f = i.next();
-            
-                String key = f.getChildText("requestedClass");
-                String className = f.getChildText("mappedClass");
-                
+            for( final Element f : nodes ) {
+                final String key = f.getChildText( "requestedClass" );
+                final String className = f.getChildText( "mappedClass" );
+
                 c_classMappings.put( key, className );
-                
-                log.debug("Mapped class '"+key+"' to class '"+className+"'");
+                log.debug( "Mapped class '" + key + "' to class '" + className + "'" );
             }
         } else {
-            log.info("Didn't find class mapping document in "+MAPPINGS);
+            log.info( "Didn't find class mapping document in " + MAPPINGS );
         }
     }
 
@@ -97,22 +92,20 @@ public final class ClassUtil {
      * @param packages A List of Strings, containing different package names.
      *  @param className The name of the class to find.
      * @return The class, if it was found.
-     *  @throws ClassNotFoundException if this particular class cannot be found
-     *          from the list.
+     *  @throws ClassNotFoundException if this particular class cannot be found from the list.
      */
-    public static Class<?> findClass( List< String > packages,  List< String > externaljars, String className ) throws ClassNotFoundException {
+    public static Class<?> findClass( final List< String > packages,  final List< String > externaljars, final String className ) throws ClassNotFoundException {
         if (!classLoaderSetup) {
             loader = setupClassLoader(externaljars);
         }
 
         try {
             return loader.loadClass( className );
-        } catch( ClassNotFoundException e ) {
-            for( Iterator< String > i = packages.iterator(); i.hasNext(); ) {
-                String packageName = i.next();
+        } catch( final ClassNotFoundException e ) {
+            for( final String packageName : packages ) {
                 try {
                     return loader.loadClass( packageName + "." + className );
-                } catch( ClassNotFoundException ex ) {
+                } catch( final ClassNotFoundException ex ) {
                     // This is okay, we go to the next package.
                 }
             }
@@ -128,23 +121,23 @@ public final class ClassUtil {
      * @param externaljars external jars to load into the classloader.
      * @return the classloader that can load classes from the configured external jars or, if not specified, the classloader that loaded this class.
      */
-    private static ClassLoader setupClassLoader(List<String> externaljars) {
+    private static ClassLoader setupClassLoader( final List< String > externaljars) {
         classLoaderSetup = true;
-        log.info("setting up classloaders for external (plugin) jars");
-        if (externaljars.size() == 0) {
-            log.info("no external jars configured, using standard classloading");
+        log.info( "setting up classloaders for external (plugin) jars" );
+        if( externaljars.size() == 0 ) {
+            log.info( "no external jars configured, using standard classloading" );
             return ClassUtil.class.getClassLoader();
         }
-        URL[] urls = new URL[externaljars.size()];
+        final URL[] urls = new URL[externaljars.size()];
         int i = 0;
-        for( String externaljar : externaljars ) {
+        for( final String externaljar : externaljars ) {
             try {
-                File jarFile = new File( externaljar );
-                URL ucl = jarFile.toURI().toURL();
-                urls[i++] = ucl;
-                log.info("added " + ucl + " to list of external jars");
-            } catch (MalformedURLException e) {
-                log.error("exception (" + e.getMessage() +") while setting up classloaders for external jar:" + externaljar + ", continuing without external jars.");
+                final File jarFile = new File( externaljar );
+                final URL ucl = jarFile.toURI().toURL();
+                urls[ i++ ] = ucl;
+                log.info( "added " + ucl + " to list of external jars" );
+            } catch( final MalformedURLException e ) {
+                log.error( "exception (" + e.getMessage() + ") while setting up classloaders for external jar:" + externaljar + ", continuing without external jars." );
             }
         }
         
@@ -159,20 +152,18 @@ public final class ClassUtil {
 
     /**
      *
-     *  It will first attempt to instantiate the class directly from the className,
-     *  and will then try to prefix it with the packageName.
+     *  It will first attempt to instantiate the class directly from the className, and will then try to prefix it with the packageName.
      *
      *  @param packageName A package name (such as "org.apache.wiki.plugins").
      *  @param className The class name to find.
      *  @return The class, if it was found.
      *  @throws ClassNotFoundException if this particular class cannot be found.
      */
-
-    public static Class<?> findClass(String packageName, String className) throws ClassNotFoundException {
+    public static Class< ? > findClass( final String packageName, final String className ) throws ClassNotFoundException {
         try {
-            return ClassUtil.class.getClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
-            return ClassUtil.class.getClassLoader().loadClass(packageName + "." + className);
+            return ClassUtil.class.getClassLoader().loadClass( className );
+        } catch( final ClassNotFoundException e ) {
+            return ClassUtil.class.getClassLoader().loadClass( packageName + "." + className );
         }
     }
     
@@ -182,38 +173,27 @@ public final class ClassUtil {
      * @param rootPackage the base package. Can be {code null}.
      * @return all files entries in classpath under the given package
      */
-    public static List< String > classpathEntriesUnder( final String rootPackage ) 
-    {
-        List< String > results = new ArrayList< >();
+    public static List< String > classpathEntriesUnder( final String rootPackage ) {
+        final List< String > results = new ArrayList<>();
         Enumeration< URL > en = null;
         if( StringUtils.isNotEmpty( rootPackage ) ) {
-            try
-            {
+            try {
                 en = ClassUtil.class.getClassLoader().getResources( rootPackage );
-            }
-            catch( IOException e )
-            {
+            } catch( final IOException e ) {
                 log.error( e.getMessage(), e );
             }
         }
         
-        while( en != null && en.hasMoreElements() )
-        {
-            URL url = en.nextElement();
-            try
-            {
-                if( "jar".equals( url.getProtocol() ) ) 
-                {
+        while( en != null && en.hasMoreElements() ) {
+            final URL url = en.nextElement();
+            try {
+                if( "jar".equals( url.getProtocol() ) ) {
                     jarEntriesUnder( results, ( JarURLConnection )url.openConnection(), rootPackage );
-                } 
-                else if( "file".equals( url.getProtocol() ) ) 
-                {
+                } else if( "file".equals( url.getProtocol() ) ) {
                     fileEntriesUnder( results, new File( url.getFile() ), rootPackage );
                 }
                 
-            }
-            catch (IOException ioe)
-            {
+            } catch( final IOException ioe ) {
                 log.error( ioe.getMessage(), ioe );
             }
         }
@@ -229,16 +209,14 @@ public final class ClassUtil {
      * @param file given {@link File} to search in.
      * @param rootPackage base package.
      */
-    static void fileEntriesUnder( List< String > results, File file, String rootPackage ) 
-    {
-        log.debug( "scanning [" + file.getName() +"]" );
+    static void fileEntriesUnder( final List< String > results, final File file, final String rootPackage ) {
+        log.debug( "scanning [" + file.getName() + "]" );
         if( file.isDirectory() ) {
-            Iterator< File > files = FileUtils.iterateFiles( file, null, true );
-            while( files.hasNext() ) 
-            {
-                File subfile = files.next();
+            final Iterator< File > files = FileUtils.iterateFiles( file, null, true );
+            while( files.hasNext() ) {
+                final File subfile = files.next();
                 // store an entry similar to the jarSearch(..) below ones
-                String entry = StringUtils.replace( subfile.getAbsolutePath(), file.getAbsolutePath() + File.separatorChar, StringUtils.EMPTY );
+                final String entry = StringUtils.replace( subfile.getAbsolutePath(), file.getAbsolutePath() + File.separatorChar, StringUtils.EMPTY );
                 results.add( rootPackage + "/" + entry );
             }
         } else {
@@ -253,17 +231,17 @@ public final class ClassUtil {
      * @param jurlcon given {@link JarURLConnection} to search in.
      * @param rootPackage base package.
      */
-    static void jarEntriesUnder( List< String > results, JarURLConnection jurlcon, String rootPackage ) {
-        try( JarFile jar = jurlcon.getJarFile() ) {
+    static void jarEntriesUnder( final List< String > results, final JarURLConnection jurlcon, final String rootPackage ) {
+        try( final JarFile jar = jurlcon.getJarFile() ) {
             log.debug( "scanning [" + jar.getName() +"]" );
-            Enumeration< JarEntry > entries = jar.entries();
+            final Enumeration< JarEntry > entries = jar.entries();
             while( entries.hasMoreElements() ) {
-                JarEntry entry = entries.nextElement();
+                final JarEntry entry = entries.nextElement();
                 if( entry.getName().startsWith( rootPackage ) && !entry.isDirectory() ) {
                     results.add( entry.getName() );
                 }
             }
-        } catch( IOException ioe ) {
+        } catch( final IOException ioe ) {
             log.error( ioe.getMessage(), ioe );
         }
     }
@@ -285,10 +263,8 @@ public final class ClassUtil {
      *  @since 2.5.40
      */
     @SuppressWarnings("unchecked")
-    public static < T > T getMappedObject( String requestedClass )
-        throws ReflectiveOperationException, IllegalArgumentException
-    {
-        Object[] initargs = {};
+    public static < T > T getMappedObject( final String requestedClass ) throws ReflectiveOperationException, IllegalArgumentException {
+        final Object[] initargs = {};
         return ( T )getMappedObject(requestedClass, initargs );
     }
 
@@ -313,60 +289,41 @@ public final class ClassUtil {
      *  @since 2.5.40
      */
     @SuppressWarnings( "unchecked" )
-    public static < T > T getMappedObject( String requestedClass, Object... initargs )
-        throws ReflectiveOperationException, IllegalArgumentException
-    {
-        Class<?> cl = getMappedClass( requestedClass );
-        Constructor<?>[] ctors = cl.getConstructors();
+    public static < T > T getMappedObject( final String requestedClass, final Object... initargs ) throws ReflectiveOperationException, IllegalArgumentException {
+        final Class< ? > cl = getMappedClass( requestedClass );
+        final Constructor< ? >[] ctors = cl.getConstructors();
         
-        //
-        //  Try to find the proper constructor by comparing the
-        //  initargs array classes and the constructor types.
-        //
-        for( int c = 0; c < ctors.length; c++ )
-        {
-            Class<?>[] params = ctors[c].getParameterTypes();
-            
-            if( params.length == initargs.length )
-            {
-                for( int arg = 0; arg < initargs.length; arg++ )
-                {
-                    if( params[arg].isAssignableFrom(initargs[arg].getClass()))
-                    {
-                        //
+        //  Try to find the proper constructor by comparing the initargs array classes and the constructor types.
+        for( final Constructor< ? > ctor : ctors ) {
+            final Class< ? >[] params = ctor.getParameterTypes();
+            if( params.length == initargs.length ) {
+                for( int arg = 0; arg < initargs.length; arg++ ) {
+                    if( params[ arg ].isAssignableFrom( initargs[ arg ].getClass() ) ) {
                         //  Ha, found it!  Instantiating and returning...
-                        //
-                        return ( T )ctors[c].newInstance(initargs);
+                        return ( T )ctor.newInstance( initargs );
                     }
                 }
             }
         }
         
-        //
         //  No arguments, so we can just call a default constructor and ignore the arguments.
-        //
         return ( T )cl.getDeclaredConstructor().newInstance();
     }
 
     /**
-     *  Finds a mapped class from the c_classMappings list.  If there is no
-     *  mappped class, will use the requestedClass.
+     *  Finds a mapped class from the c_classMappings list.  If there is no mappped class, will use the requestedClass.
      *  
-     *  @param requestedClass
+     *  @param requestedClass requested class.
      *  @return A Class object which you can then instantiate.
-     *  @throws ClassNotFoundException
+     *  @throws ClassNotFoundException if the class is not found.
      */
-    public static Class< ? > getMappedClass( String requestedClass ) throws ClassNotFoundException {
+    public static Class< ? > getMappedClass( final String requestedClass ) throws ClassNotFoundException {
         String mappedClass = c_classMappings.get( requestedClass );
-        
-        if( mappedClass == null )
-        {
+        if( mappedClass == null ) {
             mappedClass = requestedClass;
         }
         
-        Class< ? > cl = Class.forName(mappedClass);
-        
-        return cl;
+        return Class.forName( mappedClass );
     }
     
     /**
@@ -376,12 +333,12 @@ public final class ClassUtil {
      * @param parentClassName expected parent class.
      * @return {@code true} if {@code srcClassName} is a subclass of {@code parentClassname}, {@code false} otherwise.
      */
-    public static boolean assignable( String srcClassName, String parentClassName ) {
+    public static boolean assignable( final String srcClassName, final String parentClassName ) {
         try {
-            Class< ? > src = Class.forName( srcClassName );
-            Class< ? > parent = Class.forName( parentClassName );
+            final Class< ? > src = Class.forName( srcClassName );
+            final Class< ? > parent = Class.forName( parentClassName );
             return parent.isAssignableFrom( src );
-        } catch( Exception e ) {
+        } catch( final Exception e ) {
             log.error( e.getMessage(), e );
         }
         return false;
