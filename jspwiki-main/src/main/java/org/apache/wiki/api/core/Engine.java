@@ -82,6 +82,17 @@ public interface Engine {
     String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
     /**
+     * Adapt Engine to a concrete type.
+     *
+     * @param cls class denoting the type to adapt to.
+     * @param <E> type to adapt to.
+     * @return engine instance adapted to the requested type. Might throw an unchecked exception if the instance cannot be adapted to requested type!
+     */
+    default < E extends Engine > E adapt( Class< E > cls ) {
+        return ( E )this;
+    }
+
+    /**
      * Retrieves the requested object instantiated by the Engine.
      *
      * @param manager requested object instantiated by the Engine.
