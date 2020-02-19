@@ -65,11 +65,11 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.attachment.AttachmentManager</requestedClass>
-    <mappedClass>org.apache.wiki.attachment.AttachmentManager</mappedClass>
+    <mappedClass>org.apache.wiki.attachment.DefaultAttachmentManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.AuthenticationManager</requestedClass>
-    <mappedClass>org.apache.wiki.auth.AuthenticationManager</mappedClass>
+    <mappedClass>org.apache.wiki.auth.DefaultAuthenticationManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.AuthorizationManager</requestedClass>
