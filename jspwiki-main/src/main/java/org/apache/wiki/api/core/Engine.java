@@ -88,7 +88,8 @@ public interface Engine {
      * @param <E> type to adapt to.
      * @return engine instance adapted to the requested type. Might throw an unchecked exception if the instance cannot be adapted to requested type!
      */
-    default < E extends Engine > E adapt( Class< E > cls ) {
+    @SuppressWarnings( "unchecked" )
+    default < E extends Engine > E adapt( final Class< E > cls ) {
         return ( E )this;
     }
 
