@@ -19,6 +19,12 @@
 package org.apache.wiki.rss;
 
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WatchDog;
+import org.apache.wiki.WikiBackgroundThread;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.util.FileUtil;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,12 +33,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WatchDog;
-import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.util.FileUtil;
 
 /**
  *  Runs the RSS generation thread.
@@ -54,7 +54,7 @@ public class RSSThread extends WikiBackgroundThread
      *  @param rssFile A File to write the RSS data to.
      *  @param rssInterval How often the RSS should be generated.
      */
-    public RSSThread( WikiEngine engine, File rssFile, int rssInterval )
+    public RSSThread( final WikiEngine engine, final File rssFile, final int rssInterval )
     {
         super( engine, rssInterval );
         m_generator = engine.getRSSGenerator();
@@ -68,9 +68,8 @@ public class RSSThread extends WikiBackgroundThread
      *  {@inheritDoc}
      */
     @Override
-    public void startupTask() throws Exception
-    {
-        m_watchdog = getEngine().getCurrentWatchDog();
+    public void startupTask() {
+        m_watchdog = WatchDog.getCurrentWatchDog( getEngine() );
     }
     
     /**
@@ -99,14 +98,14 @@ public class RSSThread extends WikiBackgroundThread
                 //
                 log.debug("Regenerating RSS feed to "+m_rssFile);
 
-                String feed = m_generator.generate();
+                final String feed = m_generator.generate();
 
                 in  = new StringReader(feed);
                 out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( m_rssFile ), "UTF-8") );
 
                 FileUtil.copyContents( in, out );
             }
-            catch( IOException e )
+            catch( final IOException e )
             {
                 log.error("Cannot generate RSS feed to "+m_rssFile.getAbsolutePath(), e );
                 m_generator.setEnabled( false );
@@ -118,7 +117,7 @@ public class RSSThread extends WikiBackgroundThread
                     if( in != null )  in.close();
                     if( out != null ) out.close();
                 }
-                catch( IOException e )
+                catch( final IOException e )
                 {
                     log.fatal("Could not close I/O for RSS", e );
                     m_generator.setEnabled( false );

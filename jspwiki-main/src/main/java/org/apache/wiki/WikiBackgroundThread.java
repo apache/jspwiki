@@ -19,6 +19,7 @@
 package org.apache.wiki;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -34,7 +35,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
 	
     private static final Logger LOG = Logger.getLogger( WikiBackgroundThread.class );
     private volatile boolean m_killMe = false;
-    private final WikiEngine m_engine;
+    private final Engine m_engine;
     private final int m_interval;
     private static final long POLLING_INTERVAL = 1_000L;
     
@@ -46,7 +47,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * @param sleepInterval the interval between invocations of
      * the thread's {@link Thread#run()} method, in seconds
      */
-    public WikiBackgroundThread( final WikiEngine engine, final int sleepInterval ) {
+    public WikiBackgroundThread( final Engine engine, final int sleepInterval ) {
         super();
         m_engine = engine;
         m_interval = sleepInterval;
@@ -60,7 +61,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * @param event {@inheritDoc}
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      */
-    public final void actionPerformed( final WikiEvent event ) {
+    @Override public final void actionPerformed( final WikiEvent event ) {
         if ( event instanceof WikiEngineEvent ) {
             if ( event.getType() == WikiEngineEvent.SHUTDOWN ) {
                 LOG.warn( "Detected wiki engine shutdown: killing " + getName() + "." );
@@ -81,7 +82,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * 
      * @return the wiki engine
      */
-    public WikiEngine getEngine() {
+    public Engine getEngine() {
         return m_engine;
     }
     
@@ -103,7 +104,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * 
      * @see java.lang.Thread#run()
      */
-    public final void run() {
+    @Override public final void run() {
         try {
             // Perform the initial startup task
             final String name = getName();

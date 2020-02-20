@@ -564,7 +564,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
         @Override
         public void startupTask() throws Exception {
-            m_watchdog = getEngine().getCurrentWatchDog();
+            m_watchdog = WatchDog.getCurrentWatchDog( getEngine() );
 
             // Sleep initially...
             try {

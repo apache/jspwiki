@@ -19,7 +19,6 @@
 package org.apache.wiki.api.core;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WatchDog;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.event.WikiEventListener;
 
@@ -379,14 +378,6 @@ public interface Engine {
      *  @return The previous attribute, if it existed.
      */
     < T > T removeAttribute( String key );
-
-    /**
-     *  Returns a WatchDog for current thread.
-     *
-     *  @return The current thread WatchDog.
-     *  @since 2.4.92
-     */
-    WatchDog getCurrentWatchDog();
 
     /**
      * Signals that the Engine will be shut down by the servlet container.

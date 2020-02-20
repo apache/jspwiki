@@ -18,6 +18,9 @@
  */
 package org.apache.wiki;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Engine;
+
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,64 +28,53 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
-
 
 /**
- *  WatchDog is a general system watchdog.  You can attach any Watchable or a
- *  Thread object to it, and it will notify you if a timeout has been exceeded.
+ *  WatchDog is a general system watchdog.  You can attach any Watchable or a Thread object to it, and it will notify you
+ *  if a timeout has been exceeded.
  *  <p>
- *  The notification of the timeouts is done from a separate WatchDog thread,
- *  of which there is one per watched thread.  This Thread is named 'WatchDog for
- *  XXX', where XXX is your Thread name.
+ *  The notification of the timeouts is done from a separate WatchDog thread, of which there is one per watched thread.
+ *  This Thread is named 'WatchDog for XXX', where XXX is your Thread name.
  *  <p>
- *  The suggested method of obtaining a WatchDog is via the static factory
- *  method, since it will return you the correct watchdog for the current
- *  thread.  However, we do not prevent you from creating your own watchdogs
- *  either.
+ *  The suggested method of obtaining a WatchDog is via the static factory method, since it will return you the correct
+ *  watchdog for the current thread.  However, we do not prevent you from creating your own watchdogs either.
  *  <p>
- *  If you create a WatchDog for a Thread, the WatchDog will figure out when
- *  the Thread is dead, and will stop itself accordingly.  However, this object
- *  is not automatically released, so you might want to check it out after a while.
+ *  If you create a WatchDog for a Thread, the WatchDog will figure out when the Thread is dead, and will stop itself
+ *  accordingly. However, this object is not automatically released, so you might want to check it out after a while.
  *
  *  @since  2.4.92
  */
 public final class WatchDog {
 
     private Watchable m_watchable;
-    private Stack< State > m_stateStack = new Stack< State >();
+    private final Stack< State > m_stateStack = new Stack<>();
     private boolean m_enabled = true;
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     private static final Logger log = Logger.getLogger( WatchDog.class );
 
-    private static Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap< Integer, WeakReference< WatchDog > >();
-
+    private static Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
     private static WikiBackgroundThread c_watcherThread;
 
     /**
-     *  Returns the current watchdog for the current thread. This
-     *  is the preferred method of getting you a Watchdog, since it
-     *  keeps an internal list of Watchdogs for you so that there
-     *  won't be more than one watchdog per thread.
+     *  Returns the current watchdog for the current thread. This is the preferred method of getting you a Watchdog, since it
+     *  keeps an internal list of Watchdogs for you so that there won't be more than one watchdog per thread.
      *
      *  @param engine The WikiEngine to which the Watchdog should be bonded to.
      *  @return A usable WatchDog object.
      */
-    public static WatchDog getCurrentWatchDog( WikiEngine engine ) {
-        Thread t = Thread.currentThread();
-        WatchDog wd = null;
+    public static WatchDog getCurrentWatchDog( final Engine engine ) {
+        final Thread t = Thread.currentThread();
 
         WeakReference< WatchDog > w = c_kennel.get( t.hashCode() );
-
+        WatchDog wd = null;
         if( w != null ) {
         	wd = w.get();
         }
 
         if( w == null || wd == null ) {
             wd = new WatchDog( engine, t );
-            w = new WeakReference< WatchDog >( wd );
-
+            w = new WeakReference<>( wd );
             c_kennel.put( t.hashCode(), w );
         }
 
@@ -92,14 +84,14 @@ public final class WatchDog {
     /**
      *  Creates a new WatchDog for a Watchable.
      *
-     *  @param engine  The WikiEngine.
-     *  @param watch   A Watchable object.
+     *  @param engine The Engine.
+     *  @param watch A Watchable object.
      */
-    public WatchDog( WikiEngine engine, Watchable watch ) {
+    public WatchDog( final Engine engine, final Watchable watch ) {
         m_engine    = engine;
         m_watchable = watch;
 
-        synchronized( this.getClass() ) {
+        synchronized( WatchDog.class ) {
             if( c_watcherThread == null ) {
                 c_watcherThread = new WatchDogThread( engine );
                 c_watcherThread.start();
@@ -113,30 +105,24 @@ public final class WatchDog {
      *  @param engine The WikiEngine
      *  @param thread A Thread for watching.
      */
-    public WatchDog(WikiEngine engine, Thread thread) {
-        this( engine, new ThreadWrapper(thread) );
+    public WatchDog( final Engine engine, final Thread thread ) {
+        this( engine, new ThreadWrapper( thread ) );
     }
 
     /**
      *  Hopefully finalizes this properly.  This is rather untested for now...
      */
     private static void scrub() {
-        //
-        //  During finalization, the object may already be cleared (depending
-        //  on the finalization order).  Therefore, it's possible that this
-        //  method is called from another thread after the WatchDog itself
-        //  has been cleared.
-        //
+        //  During finalization, the object may already be cleared (depending on the finalization order). Therefore, it's
+        //  possible that this method is called from another thread after the WatchDog itself has been cleared.
         if( c_kennel == null ) {
         	return;
         }
 
-        for( Map.Entry< Integer, WeakReference< WatchDog > > e : c_kennel.entrySet() ) {
-            WeakReference< WatchDog > w = e.getValue();
+        for( final Map.Entry< Integer, WeakReference< WatchDog > > e : c_kennel.entrySet() ) {
+            final WeakReference< WatchDog > w = e.getValue();
 
-            //
             //  Remove expired as well
-            //
             if( w.get() == null ) {
                 c_kennel.remove( e.getKey() );
                 scrub();
@@ -149,7 +135,7 @@ public final class WatchDog {
      *  Can be used to enable the WatchDog.  Will cause a new Thread to be created, if none was existing previously.
      */
     public void enable() {
-        synchronized( this.getClass() ) {
+        synchronized( WatchDog.class ) {
             if( !m_enabled ) {
                 m_enabled = true;
                 c_watcherThread = new WatchDogThread( m_engine );
@@ -162,7 +148,7 @@ public final class WatchDog {
      *  Is used to disable a WatchDog.  The watchdog thread is shut down and resources released.
      */
     public void disable() {
-        synchronized( this.getClass() ) {
+        synchronized( WatchDog.class ) {
             if( m_enabled ) {
                 m_enabled = false;
                 c_watcherThread.shutdown();
@@ -177,7 +163,7 @@ public final class WatchDog {
      *
      *  @param state A free-form string description of your state.
      */
-    public void enterState( String state ) {
+    public void enterState( final String state ) {
         enterState( state, Integer.MAX_VALUE );
     }
 
@@ -197,14 +183,14 @@ public final class WatchDog {
      *  @param state A free-form string description of the state
      *  @param expectedCompletionTime The timeout in seconds.
      */
-    public void enterState( String state, int expectedCompletionTime ) {
+    public void enterState( final String state, final int expectedCompletionTime ) {
         if( log.isDebugEnabled() ){
         	log.debug( m_watchable.getName() + ": Entering state " + state +
         			                           ", expected completion in " + expectedCompletionTime + " s");
         }
 
         synchronized( m_stateStack ) {
-            State st = new State( state, expectedCompletionTime );
+            final State st = new State( state, expectedCompletionTime );
             m_stateStack.push( st );
         }
     }
@@ -223,10 +209,10 @@ public final class WatchDog {
      *
      *  @param state The state you wish to exit.
      */
-    public void exitState( String state ) {
+    public void exitState( final String state ) {
         if( !m_stateStack.empty() ) {
             synchronized( m_stateStack ) {
-                State st = m_stateStack.peek();
+                final State st = m_stateStack.peek();
                 if( state == null || st.getState().equals( state ) ) {
                     m_stateStack.pop();
 
@@ -249,7 +235,7 @@ public final class WatchDog {
      * @return {@code true} if not empty, {@code false} otherwise.
      */
     public boolean isStateStackNotEmpty() {
-		return m_stateStack != null && !m_stateStack.isEmpty();
+		return !m_stateStack.isEmpty();
 	}
 
     /**
@@ -268,8 +254,8 @@ public final class WatchDog {
 
         synchronized( m_stateStack ) {
             if( !m_stateStack.empty() ) {
-                State st = m_stateStack.peek();
-                long now = System.currentTimeMillis();
+                final State st = m_stateStack.peek();
+                final long now = System.currentTimeMillis();
 
                 if( now > st.getExpiryTime() ) {
                     log.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
@@ -277,7 +263,7 @@ public final class WatchDog {
                     		 ( log.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
                     dumpStackTraceForWatchable();
 
-                    m_watchable.timeoutExceeded(st.getState());
+                    m_watchable.timeoutExceeded( st.getState() );
                 }
             } else {
             	log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
@@ -293,22 +279,22 @@ public final class WatchDog {
         	return;
         }
 
-        Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
-        Set<Thread> threads = stackTraces.keySet();
-        Iterator<Thread> threadIterator = threads.iterator();
-        StringBuilder stacktrace = new StringBuilder();
+        final Map< Thread, StackTraceElement[] > stackTraces = Thread.getAllStackTraces();
+        final Set< Thread > threads = stackTraces.keySet();
+        final Iterator< Thread > threadIterator = threads.iterator();
+        final StringBuilder stacktrace = new StringBuilder();
 
         while ( threadIterator.hasNext() ) {
-            Thread t = threadIterator.next();
+            final Thread t = threadIterator.next();
             if( t.getName().equals( m_watchable.getName() ) ) {
                 if( t.getName().equals( m_watchable.getName() ) ) {
-                    stacktrace.append( "dumping stacktrace for too long running thread : " + t );
+                    stacktrace.append( "dumping stacktrace for too long running thread : " ).append( t );
                 } else {
-                    stacktrace.append( "dumping stacktrace for other running thread : " + t );
+                    stacktrace.append( "dumping stacktrace for other running thread : " ).append( t );
                 }
-                StackTraceElement[] ste = stackTraces.get( t );
-                for( int i = 0; i < ste.length; i++ ) {
-                    stacktrace.append( "\n" + ste[i] );
+                final StackTraceElement[] ste = stackTraces.get( t );
+                for( final StackTraceElement stackTraceElement : ste ) {
+                    stacktrace.append( "\n" ).append( stackTraceElement );
                 }
             }
         }
@@ -321,12 +307,13 @@ public final class WatchDog {
      *
      *  @return Random ramblings.
      */
+    @Override
     public String toString() {
         synchronized( m_stateStack ) {
             String state = "Idle";
 
             if( !m_stateStack.empty() ) {
-                State st = m_stateStack.peek();
+                final State st = m_stateStack.peek();
                 state = st.getState();
             }
             return "WatchDog state=" + state;
@@ -340,33 +327,34 @@ public final class WatchDog {
         /** How often the watchdog thread should wake up (in seconds) */
         private static final int CHECK_INTERVAL = 30;
 
-        public WatchDogThread( WikiEngine engine ) {
+        public WatchDogThread( final Engine engine ) {
             super( engine, CHECK_INTERVAL );
             setName( "WatchDog for '" + engine.getApplicationName() + "'" );
         }
 
+        @Override
         public void startupTask() {
         }
 
+        @Override
         public void shutdownTask() {
             WatchDog.scrub();
         }
 
         /**
-         *  Checks if the watchable is alive, and if it is, checks if
-         *  the stack is finished.
+         *  Checks if the watchable is alive, and if it is, checks if the stack is finished.
          *
-         *  If the watchable has been deleted in the mean time, will
-         *  simply shut down itself.
+         *  If the watchable has been deleted in the mean time, will simply shut down itself.
          */
-        public void backgroundTask() throws Exception {
+        @Override
+        public void backgroundTask() {
             if( c_kennel == null ) {
             	return;
             }
 
-            for( Map.Entry< Integer, WeakReference< WatchDog > > entry : c_kennel.entrySet() ) {
-                WeakReference< WatchDog > wr = entry.getValue();
-                WatchDog w = wr.get();
+            for( final Map.Entry< Integer, WeakReference< WatchDog > > entry : c_kennel.entrySet() ) {
+                final WeakReference< WatchDog > wr = entry.getValue();
+                final WatchDog w = wr.get();
                 if( w != null ) {
                     if( w.isWatchableAlive() && w.isStateStackNotEmpty() ) {
                         w.check();
@@ -391,10 +379,10 @@ public final class WatchDog {
         protected long   m_enterTime;
         protected long   m_expiryTime;
 
-        protected State( String state, int expiry ) {
+        protected State( final String state, final int expiry ) {
             m_state      = state;
             m_enterTime  = System.currentTimeMillis();
-            m_expiryTime = m_enterTime + (expiry * 1000L);
+            m_expiryTime = m_enterTime + ( expiry * 1_000L );
         }
 
         protected String getState() {
@@ -404,6 +392,7 @@ public final class WatchDog {
         protected long getExpiryTime() {
             return m_expiryTime;
         }
+
     }
 
     /**
@@ -412,18 +401,21 @@ public final class WatchDog {
     private static class ThreadWrapper implements Watchable {
         private Thread m_thread;
 
-        public ThreadWrapper( Thread thread ) {
+        public ThreadWrapper( final Thread thread ) {
             m_thread = thread;
         }
 
-        public void timeoutExceeded( String state ) {
+        @Override
+        public void timeoutExceeded( final String state ) {
             // TODO: Figure out something sane to do here.
         }
 
+        @Override
         public String getName() {
             return m_thread.getName();
         }
 
+        @Override
         public boolean isAlive() {
             return m_thread.isAlive();
         }

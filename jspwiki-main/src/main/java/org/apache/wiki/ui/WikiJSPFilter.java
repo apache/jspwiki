@@ -77,15 +77,15 @@ public class WikiJSPFilter extends WikiServletFilter {
     private boolean useEncoding;
 
     /** {@inheritDoc} */
-    public void init( final FilterConfig config ) throws ServletException {
+    @Override public void init( final FilterConfig config ) throws ServletException {
         super.init( config );
         m_wiki_encoding = m_engine.getWikiProperties().getProperty(WikiEngine.PROP_ENCODING);
 
         useEncoding = !( Boolean.valueOf( m_engine.getWikiProperties().getProperty( WikiEngine.PROP_NO_FILTER_ENCODING, "false" ).trim() ).booleanValue() );
     }
 
-    public void doFilter( final ServletRequest  request, final ServletResponse response, final FilterChain chain ) throws ServletException, IOException {
-        final WatchDog w = m_engine.getCurrentWatchDog();
+    @Override public void doFilter( final ServletRequest  request, final ServletResponse response, final FilterChain chain ) throws ServletException, IOException {
+        final WatchDog w = WatchDog.getCurrentWatchDog( m_engine );
         try {
             NDC.push( m_engine.getApplicationName()+":"+((HttpServletRequest)request).getRequestURI() );
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
@@ -229,15 +229,15 @@ public class WikiJSPFilter extends WikiServletFilter {
         /**
          *  Returns a writer for output; this wraps the internal buffer into a PrintWriter.
          */
-        public PrintWriter getWriter() {
+        @Override public PrintWriter getWriter() {
             return m_writer;
         }
 
-        public ServletOutputStream getOutputStream() {
+        @Override public ServletOutputStream getOutputStream() {
             return m_servletOut;
         }
 
-        public void flushBuffer() throws IOException {
+        @Override public void flushBuffer() throws IOException {
             m_writer.flush();
             super.flushBuffer();
         }
@@ -272,7 +272,7 @@ public class WikiJSPFilter extends WikiServletFilter {
         }
 
         /** Returns whatever was written so far into the Writer. */
-        public String toString() {
+        @Override public String toString() {
             try {
 				flushBuffer();
 			} catch( final IOException e ) {
