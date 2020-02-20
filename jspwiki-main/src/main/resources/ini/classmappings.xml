@@ -73,7 +73,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.AuthorizationManager</requestedClass>
-    <mappedClass>org.apache.wiki.auth.AuthorizationManager</mappedClass>
+    <mappedClass>org.apache.wiki.auth.DefaultAuthorizationManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.UserManager</requestedClass>

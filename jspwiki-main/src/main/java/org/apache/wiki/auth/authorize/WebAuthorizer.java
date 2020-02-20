@@ -18,29 +18,25 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import java.security.Principal;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wiki.auth.Authorizer;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+
+
 /**
- * Extends the {@link org.apache.wiki.auth.Authorizer} interface by
- * including a delgate method for 
+ * Extends the {@link org.apache.wiki.auth.Authorizer} interface by including a delgate method for
  * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
  */
-public interface WebAuthorizer extends Authorizer
-{
+public interface WebAuthorizer extends Authorizer {
     
     /**
-     * Determines whether a user associated with an HTTP request possesses
-     * a particular role. This method simply delegates to 
-     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}
-     * by converting the Principal's name to a String.
+     * Determines whether a user associated with an HTTP request possesses a particular role. This method simply delegates to
+     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)} by converting the Principal's name to a String.
+     *
      * @param request the HTTP request
      * @param role the role to check
-     * @return <code>true</code> if the user is considered to be in the role,
-     *         <code>false</code> otherwise
+     * @return <code>true</code> if the user is considered to be in the role, <code>false</code> otherwise
      */
     boolean isUserInRole( HttpServletRequest request, Principal role );
     

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiSecurityException;
 
@@ -50,7 +50,7 @@ public interface GroupDatabase {
      * @throws WikiSecurityException if the database could not be initialized successfully
      * @throws NoRequiredPropertyException if a required property is not present
      */
-    void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
+    void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Saves a Group to the group database. Note that this method <em>must</em>

@@ -18,24 +18,23 @@
  */
 package org.apache.wiki.auth;
 
-import java.security.Principal;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.Properties;
+
 /**
- * A very fast authorizer that does almost nothing. The WebContainerAuthorizer module
- * is very slow, as it parses the web.xml each time, so we use this for most of
- * the different tests.
+ * A very fast authorizer that does almost nothing. The WebContainerAuthorizer module is very slow, as it parses the web.xml each time,
+ * so we use this for most of the different tests.
+ *
  * @since 2.3
  */
-public class TestAuthorizer implements WebAuthorizer
-{
+public class TestAuthorizer implements WebAuthorizer {
+
     private Role[] m_roles = new Role[]{ 
             new Role( "Admin" ), 
             Role.AUTHENTICATED,
@@ -48,33 +47,28 @@ public class TestAuthorizer implements WebAuthorizer
         super();
     }
 
-    public Principal findRole( String role )
+    @Override public Principal findRole( final String role )
     {
         return null;
     }
 
-    public void initialize( WikiEngine engine, Properties props )
-    {
+    @Override public void initialize( final Engine engine, final Properties props ) {
     }
 
     /**
-     * Returns an array of Principal objects containing five elements:
-     * Role "Admin", Role.AUTHENTICATED, Role "IT", Role "Finance" and 
+     * Returns an array of Principal objects containing five elements: Role "Admin", Role.AUTHENTICATED, Role "IT", Role "Finance" and
      * Role "Engineering."
      */
-    public Principal[] getRoles()
+    @Override public Principal[] getRoles()
     {
         return m_roles;
     }
     
     /**
-     * Returns <code>true</code> if the WikiSession's Subject contains 
-     * a particular role principal.
+     * Returns <code>true</code> if the WikiSession's Subject contains a particular role principal.
      */
-    public boolean isUserInRole( WikiSession session, Principal role )
-    {
-        if ( session == null || role == null )
-        {
+    @Override public boolean isUserInRole( final WikiSession session, final Principal role ) {
+        if ( session == null || role == null ) {
             return false;
         }
         
@@ -87,7 +81,7 @@ public class TestAuthorizer implements WebAuthorizer
      * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
      * @see org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, java.security.Principal)
      */
-    public boolean isUserInRole( HttpServletRequest request, Principal role )
+    @Override public boolean isUserInRole( final HttpServletRequest request, final Principal role )
     {
         return request.isUserInRole( role.getName() );
     }

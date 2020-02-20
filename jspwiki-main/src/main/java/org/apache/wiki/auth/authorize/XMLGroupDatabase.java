@@ -20,7 +20,7 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -73,14 +73,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * </code></blockquote>
  * @since 2.4.17
  */
-public class XMLGroupDatabase implements GroupDatabase
-{
-    protected static final Logger log              = Logger.getLogger( XMLGroupDatabase.class );
+public class XMLGroupDatabase implements GroupDatabase {
 
-    /**
-     * The jspwiki.properties property specifying the file system location of
-     * the group database.
-     */
+    private static final Logger log              = Logger.getLogger( XMLGroupDatabase.class );
+
+    /** The jspwiki.properties property specifying the file system location of the group database. */
     public static final String    PROP_DATABASE    = "jspwiki.xmlGroupDatabaseFile";
 
     private static final String   DEFAULT_DATABASE = "groupdatabase.xml";
@@ -109,7 +106,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private File                  m_file           = null;
 
-    private WikiEngine            m_engine         = null;
+    private Engine                m_engine         = null;
 
     private Map<String, Group>    m_groups         = new ConcurrentHashMap<>();
 
@@ -124,10 +121,10 @@ public class XMLGroupDatabase implements GroupDatabase
      * the commit did not succeed
      */
     @Override
-    public void delete( Group group ) throws WikiSecurityException
+    public void delete( final Group group ) throws WikiSecurityException
     {
-        String index = group.getName();
-        boolean exists = m_groups.containsKey( index );
+        final String index = group.getName();
+        final boolean exists = m_groups.containsKey( index );
 
         if ( !exists )
         {
@@ -153,7 +150,7 @@ public class XMLGroupDatabase implements GroupDatabase
     public Group[] groups() throws WikiSecurityException
     {
         buildDOM();
-        Collection<Group> groups = m_groups.values();
+        final Collection<Group> groups = m_groups.values();
         return groups.toArray( new Group[groups.size()] );
     }
 
@@ -168,7 +165,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @throws WikiSecurityException if the database could not be initialized successfully
      */
     @Override
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
+    public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
         m_engine = engine;
 
@@ -184,7 +181,7 @@ public class XMLGroupDatabase implements GroupDatabase
         }
 
         // Get database file location
-        String file = TextUtil.getStringProperty(props, PROP_DATABASE , defaultFile.getAbsolutePath());
+        final String file = TextUtil.getStringProperty(props, PROP_DATABASE , defaultFile.getAbsolutePath());
         if ( file == null )
         {
             log.warn( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
@@ -213,16 +210,16 @@ public class XMLGroupDatabase implements GroupDatabase
      * @throws WikiSecurityException if the Group could not be saved successfully
      */
     @Override
-    public void save( Group group, Principal modifier ) throws WikiSecurityException {
+    public void save( final Group group, final Principal modifier ) throws WikiSecurityException {
         if ( group == null || modifier == null ) {
             throw new IllegalArgumentException( "Group or modifier cannot be null." );
         }
 
         checkForRefresh();
 
-        String index = group.getName();
-        boolean isNew = !( m_groups.containsKey( index ) );
-        Date modDate = new Date( System.currentTimeMillis() );
+        final String index = group.getName();
+        final boolean isNew = !( m_groups.containsKey( index ) );
+        final Date modDate = new Date( System.currentTimeMillis() );
         if ( isNew )
         {
             // If new, set created info

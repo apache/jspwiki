@@ -18,11 +18,12 @@
  */
 package org.apache.wiki.auth;
 
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
+
 import java.security.Principal;
 import java.util.Properties;
 
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 
 /**
  * Interface for service providers of authorization information. After a user
@@ -43,8 +44,7 @@ import org.apache.wiki.WikiSession;
  * 
  * @since 2.3
  */
-public interface Authorizer
-{
+public interface Authorizer {
 
     /**
      * Returns an array of role Principals this Authorizer knows about. This
@@ -74,7 +74,7 @@ public interface Authorizer
      * @param props the wiki engine initialization properties
      * @throws WikiSecurityException if the Authorizer could not be initialized
      */
-    void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException;
+    void initialize( Engine engine, Properties props ) throws WikiSecurityException;
 
     /**
      * Determines whether the Subject associated with a WikiSession is in a

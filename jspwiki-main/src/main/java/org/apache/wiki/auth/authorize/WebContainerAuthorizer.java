@@ -20,8 +20,8 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -56,9 +56,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
 
     private static final String J2EE_SCHEMA_25_NAMESPACE = "http://xmlns.jcp.org/xml/ns/javaee";
 
-    protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
+    private static final Logger log = Logger.getLogger( WebContainerAuthorizer.class );
 
-    protected WikiEngine          m_engine;
+    protected Engine m_engine;
 
     /**
      * A lazily-initialized array of Roles that the container knows about. These
@@ -68,15 +68,15 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * that we have no direct way of querying the web container about which
      * roles it manages.
      */
-    protected Role[]            m_containerRoles      = new Role[0];
+    protected Role[] m_containerRoles      = new Role[0];
 
     /**
      * Lazily-initialized boolean flag indicating whether the web container
      * protects JSPWiki resources.
      */
-    protected boolean           m_containerAuthorized = false;
+    protected boolean m_containerAuthorized = false;
 
-    private Document            m_webxml = null;
+    private Document m_webxml = null;
 
     /**
      * Constructs a new instance of the WebContainerAuthorizer class.
@@ -92,49 +92,36 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * @param props the wiki engine initialization properties
      */
     @Override
-    public void initialize( WikiEngine engine, Properties props )
-    {
+    public void initialize( final Engine engine, final Properties props ) {
         m_engine = engine;
         m_containerAuthorized = false;
 
         // FIXME: Error handling here is not very verbose
-        try
-        {
+        try {
             m_webxml = getWebXml();
-            if ( m_webxml != null )
-            {
+            if( m_webxml != null ) {
                 // Add the J2EE 2.4 schema namespace
                 m_webxml.getRootElement().setNamespace( Namespace.getNamespace( J2EE_SCHEMA_25_NAMESPACE ) );
 
-                m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL )
-                        && isConstrained( "/Login.jsp", Role.ALL );
+                m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL ) && isConstrained( "/Login.jsp", Role.ALL );
             }
-            if ( m_containerAuthorized )
-            {
+            if( m_containerAuthorized ) {
                 m_containerRoles = getRoles( m_webxml );
                 log.info( "JSPWiki is using container-managed authentication." );
-            }
-            else
-            {
+            } else {
                 log.info( "JSPWiki is using custom authentication." );
             }
-        }
-        catch ( IOException e )
-        {
-            log.error("Initialization failed: ",e);
-            throw new InternalWikiException( e.getClass().getName()+": "+e.getMessage() , e);
-        }
-        catch ( JDOMException e )
-        {
-            log.error("Malformed XML in web.xml",e);
-            throw new InternalWikiException( e.getClass().getName()+": "+e.getMessage() , e);
+        } catch( final IOException e ) {
+            log.error( "Initialization failed: ", e );
+            throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage(), e );
+        } catch( final JDOMException e ) {
+            log.error( "Malformed XML in web.xml", e );
+            throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage(), e );
         }
 
-        if ( m_containerRoles.length > 0 )
-        {
+        if( m_containerRoles.length > 0 ) {
             String roles = "";
-            for( Role containerRole : m_containerRoles )
-            {
+            for( final Role containerRole : m_containerRoles ) {
                 roles = roles + containerRole + " ";
             }
             log.info( " JSPWiki determined the web container manages these roles: " + roles );
@@ -153,7 +140,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      *         <code>false</code> otherwise
      */
     @Override
-    public boolean isUserInRole( HttpServletRequest request, Principal role )
+    public boolean isUserInRole( final HttpServletRequest request, final Principal role )
     {
         return request.isUserInRole( role.getName() );
     }
@@ -182,10 +169,8 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * @see org.apache.wiki.auth.Authorizer#isUserInRole(org.apache.wiki.WikiSession, java.security.Principal)
      */
     @Override
-    public boolean isUserInRole( WikiSession session, Principal role )
-    {
-        if ( session == null || role == null )
-        {
+    public boolean isUserInRole( final WikiSession session, final Principal role ) {
+        if ( session == null || role == null ) {
             return false;
         }
         return session.hasPrincipal( role );
@@ -197,15 +182,12 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * initialization, this method returns <code>null</code>.
      * @param role the name of the Role to retrieve
      * @return a Role Principal, or <code>null</code>
-     * @see org.apache.wiki.auth.Authorizer#initialize(WikiEngine, Properties)
+     * @see org.apache.wiki.auth.Authorizer#initialize(Engine, Properties)
      */
     @Override
-    public Principal findRole( String role )
-    {
-        for( Role containerRole : m_containerRoles )
-        {
-            if ( containerRole.getName().equals( role ) )
-            {
+    public Principal findRole( final String role ) {
+        for( final Role containerRole : m_containerRoles ) {
+            if ( containerRole.getName().equals( role ) ) {
                 return containerRole;
             }
         }
@@ -266,9 +248,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         // If a constraint is contained in both lists, we must be constrained
-        for ( Iterator< Element > c = constraints.iterator(); c.hasNext(); ) {
+        for ( final Iterator< Element > c = constraints.iterator(); c.hasNext(); ) {
             final Element constraint = c.next();
-            for ( Iterator< Element > r = roles.iterator(); r.hasNext(); ) {
+            for ( final Iterator< Element > r = roles.iterator(); r.hasNext(); ) {
                 final Element roleConstraint = r.next();
                 if ( constraint.equals( roleConstraint ) ) {
                     return true;
@@ -362,14 +344,14 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      */
     protected Document getWebXml() throws JDOMException, IOException
     {
-        URL url;
-        SAXBuilder builder = new SAXBuilder();
+        final URL url;
+        final SAXBuilder builder = new SAXBuilder();
         builder.setXMLReaderFactory( XMLReaders.NONVALIDATING );
         builder.setEntityResolver( new LocalEntityResolver() );
         Document doc = null;
         if ( m_engine.getServletContext() == null )
         {
-            ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
+            final ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
             url = cl.getResource( "WEB-INF/web.xml" );
             if( url != null )
                 log.info( "Examining " + url.toExternalForm() );
@@ -414,13 +396,13 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
          * @throws IOException if the resource cannot be opened
          */
         @Override
-        public InputSource resolveEntity( String publicId, String systemId ) throws SAXException, IOException
+        public InputSource resolveEntity( final String publicId, final String systemId ) throws SAXException, IOException
         {
-            String file = systemId.substring( systemId.lastIndexOf( '/' ) + 1 );
-            URL url;
+            final String file = systemId.substring( systemId.lastIndexOf( '/' ) + 1 );
+            final URL url;
             if ( m_engine.getServletContext() == null )
             {
-                ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
+                final ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
                 url = cl.getResource( "WEB-INF/dtd/" + file );
             }
             else
@@ -430,7 +412,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
 
             if( url != null )
             {
-                InputSource is = new InputSource( url.openStream() );
+                final InputSource is = new InputSource( url.openStream() );
                 log.debug( "Resolved systemID=" + systemId + " using local file " + url );
                 return is;
             }

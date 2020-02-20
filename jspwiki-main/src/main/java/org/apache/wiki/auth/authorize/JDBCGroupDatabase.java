@@ -18,22 +18,28 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import java.security.Principal;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
+import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.auth.NoSuchPrincipalException;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.WikiSecurityException;
+import java.security.Principal;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * <p>
@@ -121,13 +127,8 @@ import org.apache.wiki.auth.WikiSecurityException;
  * </p>
  * <p>
  * JDBCGroupDatabase commits changes as transactions if the back-end database
- * supports them. If the database supports transactions, group changes are saved
- * to permanent storage only when the {@link #commit()} method is called. If the
- * database does <em>not</em> support transactions, then changes are made
- * immediately (during the {@link #save(Group, Principal)} method), and the
- * {@linkplain #commit()} method no-ops. Thus, callers should always call the
- * {@linkplain #commit()} method after saving a profile to guarantee that
- * changes are applied.
+ * supports them. Changes are made
+ * immediately (during the {@link #save(Group, Principal)} method).
  * </p>
  * 
  * @since 2.3
@@ -222,7 +223,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
 
     private boolean m_supportsCommits = false;
 
-    private WikiEngine m_engine = null;
+    private Engine m_engine = null;
 
     /**
      * Looks up and deletes a {@link Group} from the group database. If the
@@ -235,14 +236,14 @@ public class JDBCGroupDatabase implements GroupDatabase {
      *             supplied group (thrown as {@link NoSuchPrincipalException})
      *             or if the commit did not succeed
      */
-    public void delete( Group group ) throws WikiSecurityException
+    @Override public void delete( final Group group ) throws WikiSecurityException
     {
         if( !exists( group ) )
         {
             throw new NoSuchPrincipalException( "Not in database: " + group.getName() );
         }
 
-        String groupName = group.getName();
+        final String groupName = group.getName();
         Connection conn = null;
         PreparedStatement ps = null;
         try
@@ -269,7 +270,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 conn.commit();
             }
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
         	closeQuietly( conn, ps, null );
             throw new WikiSecurityException( "Could not delete group " + groupName + ": " + e.getMessage(), e );
@@ -291,9 +292,9 @@ public class JDBCGroupDatabase implements GroupDatabase {
      * @throws WikiSecurityException if the groups cannot be returned by the
      *             back-end
      */
-    public Group[] groups() throws WikiSecurityException
+    @Override public Group[] groups() throws WikiSecurityException
     {
-        Set<Group> groups = new HashSet<Group>();
+        final Set<Group> groups = new HashSet<>();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -306,14 +307,14 @@ public class JDBCGroupDatabase implements GroupDatabase {
             rs = ps.executeQuery();
             while ( rs.next() )
             {
-                String groupName = rs.getString( m_name );
+                final String groupName = rs.getString( m_name );
                 if( groupName == null )
                 {
                     log.warn( "Detected null group name in JDBCGroupDataBase. Check your group database." );
                 }
                 else
                 {
-                    Group group = new Group( groupName, m_engine.getApplicationName() );
+                    final Group group = new Group( groupName, m_engine.getApplicationName() );
                     group.setCreated( rs.getTimestamp( m_created ) );
                     group.setCreator( rs.getString( m_creator ) );
                     group.setLastModified( rs.getTimestamp( m_modified ) );
@@ -323,7 +324,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 }
             }
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
         	closeQuietly( conn, ps, rs );
             throw new WikiSecurityException( e.getMessage(), e );
@@ -346,17 +347,16 @@ public class JDBCGroupDatabase implements GroupDatabase {
      * 
      * @param group the Group to save
      * @param modifier the user who saved the Group
-     * @throws WikiSecurityException if the Group could not be saved
-     *             successfully
+     * @throws WikiSecurityException if the Group could not be saved successfully
      */
-    public void save( Group group, Principal modifier ) throws WikiSecurityException
+    @Override public void save( final Group group, final Principal modifier ) throws WikiSecurityException
     {
         if( group == null || modifier == null )
         {
             throw new IllegalArgumentException( "Group or modifier cannot be null." );
         }
 
-        boolean exists = exists( group );
+        final boolean exists = exists( group );
         Connection conn = null;
         PreparedStatement ps = null;
         try
@@ -368,8 +368,8 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 conn.setAutoCommit( false );
             }
             
-            Timestamp ts = new Timestamp( System.currentTimeMillis() );
-            Date modDate = new Date( ts.getTime() );
+            final Timestamp ts = new Timestamp( System.currentTimeMillis() );
+            final Date modDate = new Date( ts.getTime() );
             if( !exists )
             {
                 // Group is new: insert new group record
@@ -410,10 +410,10 @@ public class JDBCGroupDatabase implements GroupDatabase {
 
             // Insert group member records
             ps = conn.prepareStatement( m_insertGroupMembers );
-            Principal[] members = group.members();
+            final Principal[] members = group.members();
             for( int i = 0; i < members.length; i++ )
             {
-                Principal member = members[i];
+                final Principal member = members[i];
                 ps.setString( 1, group.getName() );
                 ps.setString( 2, member.getName() );
                 ps.execute();
@@ -425,7 +425,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 conn.commit();
             }
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
         	closeQuietly(conn, ps, null );
             throw new WikiSecurityException( e.getMessage(), e );
@@ -445,18 +445,18 @@ public class JDBCGroupDatabase implements GroupDatabase {
      *             successfully
      * @throws NoRequiredPropertyException if a required property is not present
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
+    @Override public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
-        String table;
-        String memberTable;
+        final String table;
+        final String memberTable;
 
         m_engine = engine;
 
-        String jndiName = props.getProperty( PROP_GROUPDB_DATASOURCE, DEFAULT_GROUPDB_DATASOURCE );
+        final String jndiName = props.getProperty( PROP_GROUPDB_DATASOURCE, DEFAULT_GROUPDB_DATASOURCE );
         try
         {
-            Context initCtx = new InitialContext();
-            Context ctx = (Context) initCtx.lookup( "java:comp/env" );
+            final Context initCtx = new InitialContext();
+            final Context ctx = (Context) initCtx.lookup( "java:comp/env" );
             m_ds = (DataSource) ctx.lookup( jndiName );
 
             // Prepare the SQL selectors
@@ -485,7 +485,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
             m_deleteGroup = "DELETE FROM " + table + " WHERE " + m_name + "=?";
             m_deleteGroupMembers = "DELETE FROM " + memberTable + " WHERE " + m_name + "=?";
         }
-        catch( NamingException e )
+        catch( final NamingException e )
         {
             log.error( "JDBCGroupDatabase initialization error: " + e );
             throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e);
@@ -501,7 +501,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
             ps.executeQuery();
             ps.close();
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
         	closeQuietly( conn, ps, null );
             log.error( "DB connectivity error: " + e.getMessage() );
@@ -517,7 +517,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
         try
         {
             conn = m_ds.getConnection();
-            DatabaseMetaData dmd = conn.getMetaData();
+            final DatabaseMetaData dmd = conn.getMetaData();
             if( dmd.supportsTransactions() )
             {
                 m_supportsCommits = true;
@@ -525,7 +525,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 log.info( "JDBCGroupDatabase supports transactions. Good; we will use them." );
             }
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
         	closeQuietly( conn, null, null );
             log.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e);
@@ -542,15 +542,15 @@ public class JDBCGroupDatabase implements GroupDatabase {
      * @param group the Group to look for
      * @return the result of the search
      */
-    private boolean exists( Group group )
+    private boolean exists( final Group group )
     {
-        String index = group.getName();
+        final String index = group.getName();
         try
         {
             findGroup( index );
             return true;
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             return false;
         }
@@ -565,7 +565,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
      * @throws NoSuchPrincipalException if the Group cannot be found
      * @throws SQLException if the database query returns an error
      */
-    private Group findGroup( String index ) throws NoSuchPrincipalException
+    private Group findGroup( final String index ) throws NoSuchPrincipalException
     {
         Group group = null;
         boolean found = false;
@@ -597,7 +597,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 found = true;
             }
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
         	closeQuietly( conn, ps, rs );
             throw new NoSuchPrincipalException( e.getMessage() );
@@ -624,7 +624,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
      * @param group the group to populate
      * @return the populated Group
      */
-    private Group populateGroup( Group group )
+    private Group populateGroup( final Group group )
     {
     	ResultSet rs = null;
     	PreparedStatement ps = null;
@@ -639,15 +639,15 @@ public class JDBCGroupDatabase implements GroupDatabase {
             rs = ps.executeQuery();
             while ( rs.next() )
             {
-                String memberName = rs.getString( m_member );
+                final String memberName = rs.getString( m_member );
                 if( memberName != null )
                 {
-                    WikiPrincipal principal = new WikiPrincipal( memberName, WikiPrincipal.UNSPECIFIED );
+                    final WikiPrincipal principal = new WikiPrincipal( memberName, WikiPrincipal.UNSPECIFIED );
                     group.add( principal );
                 }
             }
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
             // I guess that means there aren't any principals...
         }
@@ -658,23 +658,23 @@ public class JDBCGroupDatabase implements GroupDatabase {
         return group;
     }
     
-    void closeQuietly( Connection conn, PreparedStatement ps, ResultSet rs ) {
+    void closeQuietly( final Connection conn, final PreparedStatement ps, final ResultSet rs ) {
     	if( conn != null ) {
     		try {
     		    conn.close();
-    		} catch( Exception e ) {
+    		} catch( final Exception e ) {
     		}
     	}
 		if( ps != null )  {
 			try {
 			    ps.close();
-			} catch( Exception e ) {
+			} catch( final Exception e ) {
 			}
 		}
 		if( rs != null )  {
 			try {
 			    rs.close();
-			} catch( Exception e ) {
+			} catch( final Exception e ) {
 			}
 		}
 	}

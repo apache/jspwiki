@@ -21,14 +21,15 @@ package org.apache.wiki.auth.authorize;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.user.UserProfile;
@@ -67,38 +68,33 @@ import java.util.StringTokenizer;
 public class GroupManager implements Authorizer, WikiEventListener {
 
     /** Key used for adding UI messages to a user's WikiSession. */
-    public static final String  MESSAGES_KEY       = "group";
+    public static final String  MESSAGES_KEY = "group";
 
     private static final String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
 
-    static final Logger         log                = Logger.getLogger( GroupManager.class );
+    private static final Logger log = Logger.getLogger( GroupManager.class );
 
-    protected WikiEngine        m_engine;
+    protected Engine m_engine;
 
     protected WikiEventListener m_groupListener;
 
     private GroupDatabase       m_groupDatabase    = null;
 
     /** Map with GroupPrincipals as keys, and Groups as values */
-    private final Map<Principal, Group>           m_groups           = new HashMap<Principal, Group>();
+    private final Map< Principal, Group > m_groups = new HashMap<>();
 
     /**
      * <p>
-     * Returns a GroupPrincipal matching a given name. If a group cannot be
-     * found, return <code>null</code>.
+     * Returns a GroupPrincipal matching a given name. If a group cannot be found, return <code>null</code>.
      * </p>
      * @param name Name of the group. This is case-sensitive.
      * @return A DefaultGroup instance.
      */
-    public Principal findRole( String name )
-    {
-        try
-        {
-            Group group = getGroup( name );
+    @Override public Principal findRole( final String name ) {
+        try {
+            final Group group = getGroup( name );
             return group.getPrincipal();
-        }
-        catch( NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             return null;
         }
     }
@@ -110,9 +106,9 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * @return the group
      * @throws NoSuchPrincipalException if the group cannot be found
      */
-    public Group getGroup( String name ) throws NoSuchPrincipalException
+    public Group getGroup( final String name ) throws NoSuchPrincipalException
     {
-        Group group = m_groups.get( new GroupPrincipal( name ) );
+        final Group group = m_groups.get( new GroupPrincipal( name ) );
         if ( group != null )
         {
             return group;
@@ -143,37 +139,37 @@ public class GroupManager implements Authorizer, WikiEventListener {
         Throwable cause = null;
         try
         {
-            Properties props = m_engine.getWikiProperties();
+            final Properties props = m_engine.getWikiProperties();
             dbClassName = props.getProperty( PROP_GROUPDATABASE );
             if ( dbClassName == null )
             {
                 dbClassName = XMLGroupDatabase.class.getName();
             }
             log.info( "Attempting to load group database class " + dbClassName );
-            Class<?> dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
+            final Class<?> dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
             m_groupDatabase = (GroupDatabase) dbClass.newInstance();
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
             log.info( "Group database initialized." );
         }
-        catch( ClassNotFoundException e )
+        catch( final ClassNotFoundException e )
         {
             log.error( "GroupDatabase class " + dbClassName + " cannot be found.", e );
             dbInstantiationError = "Failed to locate GroupDatabase class " + dbClassName;
             cause = e;
         }
-        catch( InstantiationException e )
+        catch( final InstantiationException e )
         {
             log.error( "GroupDatabase class " + dbClassName + " cannot be created.", e );
             dbInstantiationError = "Failed to create GroupDatabase class " + dbClassName;
             cause = e;
         }
-        catch( IllegalAccessException e )
+        catch( final IllegalAccessException e )
         {
             log.error( "You are not allowed to access group database class " + dbClassName + ".", e );
             dbInstantiationError = "Access GroupDatabase class " + dbClassName + " denied";
             cause = e;
         }
-        catch( NoRequiredPropertyException e )
+        catch( final NoRequiredPropertyException e )
         {
             log.error( "Missing property: " + e.getMessage() + "." );
             dbInstantiationError = "Missing property: " + e.getMessage();
@@ -195,7 +191,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * defensive copy of an internally stored hashmap.
      * @return an array of Principals representing the roles
      */
-    public Principal[] getRoles()
+    @Override public Principal[] getRoles()
     {
         return m_groups.keySet().toArray( new Principal[m_groups.size()] );
     }
@@ -205,12 +201,11 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * obtaining a list of all of the groups it stores.
      * @param engine the wiki engine
      * @param props the properties used to initialize the wiki engine
-     * @see GroupDatabase#initialize(org.apache.wiki.WikiEngine,
-     *      java.util.Properties)
+     * @see GroupDatabase#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      * @see GroupDatabase#groups()
      * @throws WikiSecurityException if GroupManager cannot be initialized
      */
-    public void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException
+    @Override public void initialize( final Engine engine, final Properties props ) throws WikiSecurityException
     {
         m_engine = engine;
 
@@ -218,16 +213,16 @@ public class GroupManager implements Authorizer, WikiEventListener {
         {
             m_groupDatabase = getGroupDatabase();
         }
-        catch ( WikiException e )
+        catch ( final WikiException e )
         {
             throw new WikiSecurityException( e.getMessage(), e );
         }
 
         // Load all groups from the database into the cache
-        Group[] groups = m_groupDatabase.groups();
+        final Group[] groups = m_groupDatabase.groups();
         synchronized( m_groups )
         {
-            for( Group group : groups )
+            for( final Group group : groups )
             {
                 // Add new group to cache; fire GROUP_ADD event
                 m_groups.put( group.getPrincipal(), group );
@@ -236,7 +231,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
         }
 
         // Make the GroupManager listen for WikiEvents (WikiSecurityEvents for changed user profiles)
-        engine.getUserManager().addWikiEventListener( this );
+        engine.getManager( UserManager.class ).addWikiEventListener( this );
 
         // Success!
         log.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
@@ -264,7 +259,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
      */
-    public boolean isUserInRole( WikiSession session, Principal role )
+    @Override public boolean isUserInRole( final WikiSession session, final Principal role )
     {
         // Always return false if session/role is null, or if
         // role isn't a GroupPrincipal
@@ -274,14 +269,14 @@ public class GroupManager implements Authorizer, WikiEventListener {
         }
 
         // Get the group we're examining
-        Group group = m_groups.get( role );
+        final Group group = m_groups.get( role );
         if ( group == null )
         {
             return false;
         }
 
         // Check each user principal to see if it belongs to the group
-        for ( Principal principal : session.getPrincipals() )
+        for ( final Principal principal : session.getPrincipals() )
         {
             if ( AuthenticationManager.isUserPrincipal( principal ) && group.isMember( principal ) )
             {
@@ -321,7 +316,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * <code>create</code> is <code>false</code>
      * and the Group named <code>name</code> does not exist
      */
-    public Group parseGroup( String name, String memberLine, boolean create ) throws WikiSecurityException
+    public Group parseGroup( String name, String memberLine, final boolean create ) throws WikiSecurityException
     {
         // If null name parameter, it's because someone's creating a new group
         if ( name == null )
@@ -350,22 +345,22 @@ public class GroupManager implements Authorizer, WikiEventListener {
         memberLine = memberLine.trim();
 
         // Create or retrieve the group (may have been previously cached)
-        Group group = new Group( name, m_engine.getApplicationName() );
+        final Group group = new Group( name, m_engine.getApplicationName() );
         try
         {
-            Group existingGroup = getGroup( name );
+            final Group existingGroup = getGroup( name );
 
             // If existing, clone it
             group.setCreator( existingGroup.getCreator() );
             group.setCreated( existingGroup.getCreated() );
             group.setModifier( existingGroup.getModifier() );
             group.setLastModified( existingGroup.getLastModified() );
-            for( Principal existingMember : existingGroup.members() )
+            for( final Principal existingMember : existingGroup.members() )
             {
                 group.add( existingMember );
             }
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             // It's a new group.... throw error if we don't create new ones
             if ( !create )
@@ -375,11 +370,11 @@ public class GroupManager implements Authorizer, WikiEventListener {
         }
 
         // If passed members not empty, overwrite
-        String[] members = extractMembers( memberLine );
+        final String[] members = extractMembers( memberLine );
         if ( members.length > 0 )
         {
             group.clear();
-            for( String member : members )
+            for( final String member : members )
             {
                 group.add( new WikiPrincipal( member ) );
             }
@@ -416,16 +411,16 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * <code>create</code> is <code>false</code>
      * and the Group does not exist
      */
-    public Group parseGroup( WikiContext context, boolean create ) throws WikiSecurityException
+    public Group parseGroup( final WikiContext context, final boolean create ) throws WikiSecurityException
     {
         // Extract parameters
-        HttpServletRequest request = context.getHttpRequest();
-        String name = request.getParameter( "group" );
-        String memberLine = request.getParameter( "members" );
+        final HttpServletRequest request = context.getHttpRequest();
+        final String name = request.getParameter( "group" );
+        final String memberLine = request.getParameter( "members" );
 
         // Create the named group; we pass on any NoSuchPrincipalExceptions
         // that may be thrown if create == false, or WikiSecurityExceptions
-        Group group = parseGroup( name, memberLine, create );
+        final Group group = parseGroup( name, memberLine, create );
 
         // If no members, add the current user by default
         if ( group.members().length == 0 )
@@ -449,14 +444,14 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * the back-end
      * @see org.apache.wiki.auth.authorize.GroupDatabase#delete(Group)
      */
-    public void removeGroup( String index ) throws WikiSecurityException
+    public void removeGroup( final String index ) throws WikiSecurityException
     {
         if ( index == null )
         {
             throw new IllegalArgumentException( "Group cannot be null." );
         }
 
-        Group group = m_groups.get( new GroupPrincipal( index ) );
+        final Group group = m_groups.get( new GroupPrincipal( index ) );
         if ( group == null )
         {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
@@ -512,12 +507,12 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * @param group the Group, which may not be <code>null</code>
      * @throws WikiSecurityException if the Group cannot be saved by the back-end
      */
-    public void setGroup( WikiSession session, Group group ) throws WikiSecurityException
+    public void setGroup( final WikiSession session, final Group group ) throws WikiSecurityException
     {
         // TODO: check for appropriate permissions
 
         // If group already exists, delete it; fire GROUP_REMOVE event
-        Group oldGroup = m_groups.get( group.getPrincipal() );
+        final Group oldGroup = m_groups.get( group.getPrincipal() );
         if ( oldGroup != null )
         {
             fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
@@ -552,7 +547,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
         }
 
         // We got an exception! Roll back...
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
             if ( oldGroup != null )
             {
@@ -577,22 +572,22 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * @param context the current wiki context
      * @param group the supplied Group
      */
-    public void validateGroup( WikiContext context, Group group )
+    public void validateGroup( final WikiContext context, final Group group )
     {
-        InputValidator validator = new InputValidator( MESSAGES_KEY, context );
+        final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
 
         // Name cannot be null or one of the restricted names
         try
         {
             checkGroupName( context, group.getName() );
         }
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
 
         }
 
         // Member names must be "safe" strings
-        Principal[] members = group.members();
+        final Principal[] members = group.members();
         for( int i = 0; i < members.length; i++ )
         {
             validator.validateNotNull( members[i].getName(), "Full name", InputValidator.ID );
@@ -604,15 +599,15 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * @param memberLine the list of members
      * @return the list of members
      */
-    protected String[] extractMembers( String memberLine )
+    protected String[] extractMembers( final String memberLine )
     {
-        Set<String> members = new HashSet<String>();
+        final Set<String> members = new HashSet<>();
         if ( memberLine != null )
         {
-            StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
+            final StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
             while( tok.hasMoreTokens() )
             {
-                String uid = tok.nextToken().trim();
+                final String uid = tok.nextToken().trim();
                 if ( uid != null && uid.length() > 0 )
                 {
                     members.add( uid );
@@ -631,12 +626,12 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * <code>null</code> or the Group name is illegal
      * @see Group#RESTRICTED_GROUPNAMES
      */
-    protected void checkGroupName( WikiContext context, String name ) throws WikiSecurityException
+    protected void checkGroupName( final WikiContext context, final String name ) throws WikiSecurityException
     {
         //TODO: groups cannot have the same name as a user
 
         // Name cannot be null
-        InputValidator validator = new InputValidator( MESSAGES_KEY, context );
+        final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
         validator.validateNotNull( name, "Group name" );
 
         // Name cannot be one of the restricted names either
@@ -654,7 +649,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * This is a convenience method.
      * @param listener the event listener
      */
-    public synchronized void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( final WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -664,7 +659,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * This is a convenience method.
      * @param listener the event listener
      */
-    public synchronized void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( final WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -677,7 +672,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * @param type       the event type to be fired
      * @param target     the changed Object, which may be <code>null</code>
      */
-    protected void fireEvent( int type, Object target )
+    protected void fireEvent( final int type, final Object target )
     {
         if ( WikiEventManager.isListening(this) )
         {
@@ -693,32 +688,32 @@ public class GroupManager implements Authorizer, WikiEventListener {
      * only the representations of the names within that are changing.
      * @param event the incoming event
      */
-    public void actionPerformed(WikiEvent event)
+    @Override public void actionPerformed( final WikiEvent event)
     {
         if (! ( event instanceof WikiSecurityEvent ) )
         {
             return;
         }
 
-        WikiSecurityEvent se = (WikiSecurityEvent)event;
+        final WikiSecurityEvent se = (WikiSecurityEvent)event;
         if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
         {
-            WikiSession session = se.getSrc();
-            UserProfile[] profiles = (UserProfile[])se.getTarget();
-            Principal[] oldPrincipals = new Principal[] {
+            final WikiSession session = se.getSrc();
+            final UserProfile[] profiles = (UserProfile[])se.getTarget();
+            final Principal[] oldPrincipals = new Principal[] {
                 new WikiPrincipal( profiles[0].getLoginName() ),
                 new WikiPrincipal( profiles[0].getFullname() ),
                 new WikiPrincipal( profiles[0].getWikiName() ) };
-            Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
+            final Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
 
             // Examine each group
             int groupsChanged = 0;
             try
             {
-                for ( Group group : m_groupDatabase.groups() )
+                for ( final Group group : m_groupDatabase.groups() )
                 {
                     boolean groupChanged = false;
-                    for ( Principal oldPrincipal : oldPrincipals )
+                    for ( final Principal oldPrincipal : oldPrincipals )
                     {
                         if ( group.isMember( oldPrincipal ) )
                         {
@@ -734,7 +729,7 @@ public class GroupManager implements Authorizer, WikiEventListener {
                     }
                 }
             }
-            catch ( WikiException e )
+            catch ( final WikiException e )
             {
                 // Oooo! This is really bad...
                 log.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
