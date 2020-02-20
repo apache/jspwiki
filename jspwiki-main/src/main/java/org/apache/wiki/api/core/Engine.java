@@ -21,7 +21,6 @@ package org.apache.wiki.api.core;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.event.WikiEventListener;
 
 import javax.servlet.ServletContext;
@@ -208,7 +207,7 @@ public interface Engine {
      * @return the URL to the file
      */
     default URL findConfigFile( final String name ) {
-        Logger.getLogger( AuthenticationManager.class ).info( "looking for " + name + " inside WEB-INF " );
+        Logger.getLogger( Engine.class ).info( "looking for " + name + " inside WEB-INF " );
         // Try creating an absolute path first
         File defaultFile = null;
         if( getRootPath() != null ) {
@@ -237,7 +236,7 @@ public interface Engine {
             tmpFile.deleteOnExit();
             Logger.getLogger( Engine.class ).info( "looking for /" + name + " on classpath" );
             //  create a tmp file of the policy loaded as an InputStream and return the URL to it
-            try( final InputStream is = AuthenticationManager.class.getResourceAsStream( "/" + name );
+            try( final InputStream is = Engine.class.getResourceAsStream( "/" + name );
                     final OutputStream os = new FileOutputStream( tmpFile ) ) {
                 if( is == null ) {
                     throw new FileNotFoundException( name + " not found" );
