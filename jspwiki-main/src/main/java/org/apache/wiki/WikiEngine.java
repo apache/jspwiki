@@ -80,17 +80,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- *  Provides Wiki services to the JSP page.
+ *  Main implementation for {@link Engine}.
  *
  *  <P>
- *  This is the main interface through which everything should go.
- *
- *  <P>
- *  Using this class:  Always get yourself an instance from JSP page by using the WikiEngine.getInstance() method.  Never create a new
- *  WikiEngine() from scratch, unless you're writing tests.
+ *  Using this class:  Always get yourself an instance from JSP page by using the {@code WikiEngine.getInstance(..)} method.  Never create
+ *  a new WikiEngine() from scratch, unless you're writing tests.
  *
  *  <p>
- *  There's basically only a single WikiEngine for each web application, and you should always get it using the WikiEngine.getInstance() method.
+ *  {@inheritDoc}
  */
 public class WikiEngine implements Engine {
 

@@ -37,6 +37,16 @@ import java.util.Date;
 import java.util.Properties;
 
 
+/**
+ *  Provides Wiki services to the JSP page.
+ *
+ *  <P>
+ *  This is the main interface through which everything should go.
+ *
+ *  <p>
+ *  There's basically only a single Engine for each web application, and you should always get it using the {@code WikiEngine.getInstance(..)}
+ *  method.
+ */
 public interface Engine {
 
     /** The default inlining pattern.  Currently "*.png" */
