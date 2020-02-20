@@ -18,11 +18,21 @@
  */
 package org.apache.wiki.api.core;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.event.WikiEventListener;
 
 import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Date;
@@ -190,6 +200,69 @@ public interface Engine {
      *  @return ServletContext of the Engine, or {@code null}.
      */
     ServletContext getServletContext();
+
+    /**
+     * Looks up and obtains a configuration file inside the WEB-INF folder of a wiki webapp.
+     *
+     * @param name the file to obtain, <em>e.g.</em>, <code>jspwiki.policy</code>
+     * @return the URL to the file
+     */
+    default URL findConfigFile( final String name ) {
+        Logger.getLogger( AuthenticationManager.class ).info( "looking for " + name + " inside WEB-INF " );
+        // Try creating an absolute path first
+        File defaultFile = null;
+        if( getRootPath() != null ) {
+            defaultFile = new File( getRootPath() + "/WEB-INF/" + name );
+        }
+        if ( defaultFile != null && defaultFile.exists() ) {
+            try {
+                return defaultFile.toURI().toURL();
+            } catch ( final MalformedURLException e ) {
+                // Shouldn't happen, but log it if it does
+                Logger.getLogger( Engine.class ).warn( "Malformed URL: " + e.getMessage() );
+            }
+        }
+
+        // Ok, the absolute path didn't work; try other methods
+        URL path = null;
+
+        if( getServletContext() != null ) {
+            final File tmpFile;
+            try {
+                tmpFile = File.createTempFile( "temp." + name, "" );
+            } catch( final IOException e ) {
+                Logger.getLogger( Engine.class ).error( "unable to create a temp file to load onto the policy", e );
+                return null;
+            }
+            tmpFile.deleteOnExit();
+            Logger.getLogger( Engine.class ).info( "looking for /" + name + " on classpath" );
+            //  create a tmp file of the policy loaded as an InputStream and return the URL to it
+            try( final InputStream is = AuthenticationManager.class.getResourceAsStream( "/" + name );
+                    final OutputStream os = new FileOutputStream( tmpFile ) ) {
+                if( is == null ) {
+                    throw new FileNotFoundException( name + " not found" );
+                }
+                final URL url = getServletContext().getResource( "/WEB-INF/" + name );
+                if( url != null ) {
+                    return url;
+                }
+
+                final byte[] buff = new byte[1024];
+                int bytes;
+                while( ( bytes = is.read( buff ) ) != -1 ) {
+                    os.write( buff, 0, bytes );
+                }
+
+                path = tmpFile.toURI().toURL();
+            } catch( final MalformedURLException e ) {
+                // This should never happen unless I screw up
+                Logger.getLogger( Engine.class ).fatal( "Your code is b0rked.  You are a bad person.", e );
+            } catch( final IOException e ) {
+                Logger.getLogger( Engine.class ).error( "failed to load security policy from file " + name + ",stacktrace follows", e );
+            }
+        }
+        return path;
+    }
 
     /**
      *  Returns a collection of all supported InterWiki links.

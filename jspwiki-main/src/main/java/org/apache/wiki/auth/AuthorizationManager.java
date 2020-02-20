@@ -115,7 +115,7 @@ public class AuthorizationManager {
     private Authorizer                        m_authorizer      = null;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
-    private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
+    private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<>();
 
     private WikiEngine                        m_engine          = null;
 
@@ -171,7 +171,7 @@ public class AuthorizationManager {
      * @see #hasRoleOrPrincipal(WikiSession, Principal)
      * @return the result of the Permission check
      */
-    public boolean checkPermission( WikiSession session, Permission permission )
+    public boolean checkPermission( final WikiSession session, final Permission permission )
     {
         //
         //  A slight sanity check.
@@ -182,11 +182,11 @@ public class AuthorizationManager {
             return false;
         }
 
-        Principal user = session.getLoginPrincipal();
+        final Principal user = session.getLoginPrincipal();
 
         // Always allow the action if user has AllPermission
-        Permission allPermission = new AllPermission( m_engine.getApplicationName() );
-        boolean hasAllPermission = checkStaticPermission( session, allPermission );
+        final Permission allPermission = new AllPermission( m_engine.getApplicationName() );
+        final boolean hasAllPermission = checkStaticPermission( session, allPermission );
         if ( hasAllPermission )
         {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
@@ -195,7 +195,7 @@ public class AuthorizationManager {
 
         // If the user doesn't have *at least* the permission
         // granted by policy, return false.
-        boolean hasPolicyPermission = checkStaticPermission( session, permission );
+        final boolean hasPolicyPermission = checkStaticPermission( session, permission );
         if ( !hasPolicyPermission )
         {
             fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
@@ -212,9 +212,9 @@ public class AuthorizationManager {
         //
         // If the page or ACL is null, it's allowed.
         //
-        String pageName = ((PagePermission)permission).getPage();
-        WikiPage page = m_engine.getPageManager().getPage( pageName );
-        Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
+        final String pageName = ((PagePermission)permission).getPage();
+        final WikiPage page = m_engine.getPageManager().getPage( pageName );
+        final Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
         if ( page == null ||  acl == null || acl.isEmpty() )
         {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
@@ -226,7 +226,7 @@ public class AuthorizationManager {
         //  this permission. If the context's subject possesses
         //  any of these, the action is allowed.
 
-        Principal[] aclPrincipals = acl.findPrincipals( permission );
+        final Principal[] aclPrincipals = acl.findPrincipals( permission );
 
         log.debug( "Checking ACL entries..." );
         log.debug( "Acl for this page is: " + acl );
@@ -239,7 +239,7 @@ public class AuthorizationManager {
             // try to resolve it here & correct the Acl
             if ( aclPrincipal instanceof UnresolvedPrincipal )
             {
-                AclEntry aclEntry = acl.getEntry( aclPrincipal );
+                final AclEntry aclEntry = acl.getEntry( aclPrincipal );
                 aclPrincipal = resolvePrincipal( aclPrincipal.getName() );
                 if ( aclEntry != null && !( aclPrincipal instanceof UnresolvedPrincipal ) )
                 {
@@ -279,7 +279,7 @@ public class AuthorizationManager {
      * @return <code>true</code> if the Subject supplied with the WikiContext
      *         posesses the Role or GroupPrincipal, <code>false</code> otherwise
      */
-    public boolean isUserInRole( WikiSession session, Principal principal )
+    public boolean isUserInRole( final WikiSession session, final Principal principal )
     {
         if ( session == null || principal == null ||
              AuthenticationManager.isUserPrincipal( principal ) )
@@ -343,7 +343,7 @@ public class AuthorizationManager {
      *         posesses the Role, GroupPrincipal or desired
      *         user Principal, <code>false</code> otherwise
      */
-    protected boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
+    protected boolean hasRoleOrPrincipal( final WikiSession session, final Principal principal )
     {
         // If either parameter is null, always deny
         if( session == null || principal == null )
@@ -362,9 +362,9 @@ public class AuthorizationManager {
         // So just look for a name match.
         if( session.isAuthenticated() && AuthenticationManager.isUserPrincipal( principal ) )
         {
-            String principalName = principal.getName();
-            Principal[] userPrincipals = session.getPrincipals();
-            for( Principal userPrincipal : userPrincipals )
+            final String principalName = principal.getName();
+            final Principal[] userPrincipals = session.getPrincipals();
+            for( final Principal userPrincipal : userPrincipals )
             {
                 if( userPrincipal.getName().equals( principalName ) )
                 {
@@ -392,7 +392,7 @@ public class AuthorizationManager {
      * @return the result of the access check
      * @throws IOException In case something goes wrong
      */
-    public boolean hasAccess( WikiContext context, HttpServletResponse response ) throws IOException
+    public boolean hasAccess( final WikiContext context, final HttpServletResponse response ) throws IOException
     {
         return hasAccess( context, response, true );
     }
@@ -457,7 +457,7 @@ public class AuthorizationManager {
         // Initialize local security policy
         try {
             final String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
-            final URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
+            final URL policyURL = engine.findConfigFile( policyFileName );
 
             if (policyURL != null) {
                 final File policyFile = new File( policyURL.toURI().getPath() );
@@ -489,7 +489,7 @@ public class AuthorizationManager {
      * @return a Authorizer used to get page authorization information
      * @throws WikiException
      */
-    private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException {
+    private Authorizer getAuthorizerImplementation( final Properties props ) throws WikiException {
         final String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
         return ( Authorizer )locateImplementation( authClassName );
     }
@@ -497,16 +497,16 @@ public class AuthorizationManager {
     private Object locateImplementation( final String clazz ) throws WikiException {
         if ( clazz != null ) {
             try {
-                Class< ? > authClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", clazz );
-                Object impl = authClass.newInstance();
+                final Class< ? > authClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", clazz );
+                final Object impl = authClass.newInstance();
                 return impl;
-            } catch( ClassNotFoundException e ) {
+            } catch( final ClassNotFoundException e ) {
                 log.fatal( "Authorizer " + clazz + " cannot be found", e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be found", e );
-            } catch( InstantiationException e ) {
+            } catch( final InstantiationException e ) {
                 log.fatal( "Authorizer " + clazz + " cannot be created", e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be created", e );
-            } catch( IllegalAccessException e ) {
+            } catch( final IllegalAccessException e ) {
                 log.fatal( "You are not allowed to access this authorizer class", e );
                 throw new WikiException( "You are not allowed to access this authorizer class", e );
             }
@@ -524,16 +524,16 @@ public class AuthorizationManager {
      * @param permission the Permission
      * @return the result
      */
-    protected boolean allowedByLocalPolicy( Principal[] principals, Permission permission )
+    protected boolean allowedByLocalPolicy( final Principal[] principals, final Permission permission )
     {
-        for ( Principal principal : principals )
+        for ( final Principal principal : principals )
         {
             // Get ProtectionDomain for this Principal from cache, or create new one
             ProtectionDomain pd = m_cachedPds.get( principal );
             if ( pd == null )
             {
-                ClassLoader cl = this.getClass().getClassLoader();
-                CodeSource cs = new CodeSource( null, (Certificate[])null );
+                final ClassLoader cl = this.getClass().getClassLoader();
+                final CodeSource cs = new CodeSource( null, (Certificate[])null );
                 pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principal } );
                 m_cachedPds.put( principal, pd );
             }
@@ -567,9 +567,9 @@ public class AuthorizationManager {
      */
     protected boolean checkStaticPermission( final WikiSession session, final Permission permission )
     {
-        Boolean allowed = (Boolean) WikiSession.doPrivileged( session, new PrivilegedAction<Boolean>()
+        final Boolean allowed = (Boolean) WikiSession.doPrivileged( session, new PrivilegedAction<Boolean>()
         {
-            public Boolean run()
+            @Override public Boolean run()
             {
                 try
                 {
@@ -577,7 +577,7 @@ public class AuthorizationManager {
                     AccessController.checkPermission( permission );
                     return Boolean.TRUE;
                 }
-                catch( AccessControlException e )
+                catch( final AccessControlException e )
                 {
                     // Global policy denied the permission
                 }
@@ -616,10 +616,10 @@ public class AuthorizationManager {
      * @param name the name of the Principal to resolve
      * @return the fully-resolved Principal
      */
-    public Principal resolvePrincipal( String name )
+    public Principal resolvePrincipal( final String name )
     {
         // Check built-in Roles first
-        Role role = new Role(name);
+        final Role role = new Role(name);
         if ( Role.isBuiltInRole( role ) )
         {
             return role;
@@ -642,7 +642,7 @@ public class AuthorizationManager {
         // Ok, no luck---this must be a user principal
         Principal[] principals = null;
         UserProfile profile = null;
-        UserDatabase db = m_engine.getUserManager().getUserDatabase();
+        final UserDatabase db = m_engine.getUserManager().getUserDatabase();
         try
         {
             profile = db.find( name );
@@ -656,7 +656,7 @@ public class AuthorizationManager {
                 }
             }
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             // We couldn't find the user...
         }
@@ -671,7 +671,7 @@ public class AuthorizationManager {
      * Registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public synchronized void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( final WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -680,7 +680,7 @@ public class AuthorizationManager {
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public synchronized void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( final WikiEventListener listener )
     {
         WikiEventManager.removeWikiEventListener( this, listener );
     }
@@ -694,7 +694,7 @@ public class AuthorizationManager {
      * @param user        the user associated with the event
      * @param permission  the permission the subject must possess
      */
-    protected void fireEvent( int type, Principal user, Object permission )
+    protected void fireEvent( final int type, final Principal user, final Object permission )
     {
         if ( WikiEventManager.isListening(this) )
         {

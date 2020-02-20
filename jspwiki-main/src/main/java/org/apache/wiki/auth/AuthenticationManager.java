@@ -20,8 +20,6 @@ package org.apache.wiki.auth;
 
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.authorize.Role;
-import org.apache.wiki.auth.login.CookieAssertionLoginModule;
-import org.apache.wiki.auth.login.CookieAuthenticationLoginModule;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
@@ -47,12 +45,6 @@ import java.util.Set;
  * @since 2.3
  */
 public interface AuthenticationManager {
-
-    /** The name of the built-in cookie assertion module */
-    String COOKIE_MODULE = CookieAssertionLoginModule.class.getName();
-
-    /** The name of the built-in cookie authentication module */
-    String COOKIE_AUTHENTICATION_MODULE = CookieAuthenticationLoginModule.class.getName();
 
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     String PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
@@ -165,7 +157,7 @@ public interface AuthenticationManager {
      * @return the set of Principals returned by the JAAS method {@link Subject#getPrincipals()}
      * @throws WikiSecurityException if the LoginModule could not be instantiated for any reason
      */
-    Set< Principal > doJAASLogin( Class<? extends LoginModule> clazz, CallbackHandler handler, Map< String, String > options) throws WikiSecurityException;
+    Set< Principal > doJAASLogin( Class< ? extends LoginModule > clazz, CallbackHandler handler, Map< String, String > options) throws WikiSecurityException;
     
     /**
      * Determines whether the supplied Principal is a "role principal".
