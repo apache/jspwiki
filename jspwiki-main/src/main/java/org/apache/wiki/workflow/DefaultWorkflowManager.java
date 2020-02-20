@@ -18,9 +18,10 @@
  */
 package org.apache.wiki.workflow;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WorkflowEvent;
@@ -44,10 +45,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DefaultWorkflowManager implements WorkflowManager {
 
     private final DecisionQueue m_queue = new DecisionQueue();
-    private final Set<Workflow> m_workflows;
-    private final Map<String, Principal> m_approvers;
-    private final List<Workflow> m_completed;
-    private WikiEngine m_engine = null;
+    private final Set< Workflow > m_workflows;
+    private final Map< String, Principal > m_approvers;
+    private final List< Workflow > m_completed;
+    private Engine m_engine = null;
 
     /**
      * Constructs a new WorkflowManager, with an empty workflow cache. New Workflows are automatically assigned unique identifiers,
@@ -93,7 +94,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
      * {@inheritDoc}
      */
     @Override
-    public void initialize( final WikiEngine engine, final Properties props ) {
+    public void initialize( final Engine engine, final Properties props ) {
         m_engine = engine;
 
         // Identify the workflows requiring approvals
@@ -134,7 +135,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
         // Try to resolve UnresolvedPrincipals
         if ( approver instanceof UnresolvedPrincipal ) {
             final String name = approver.getName();
-            approver = m_engine.getAuthorizationManager().resolvePrincipal( name );
+            approver = m_engine.getManager( AuthorizationManager.class ).resolvePrincipal( name );
 
             // If still unresolved, throw exception; otherwise, freshen our cache
             if ( approver instanceof UnresolvedPrincipal ) {
@@ -151,7 +152,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
      *
      * @return the wiki engine
      */
-    protected WikiEngine getEngine() {
+    protected Engine getEngine() {
         if ( m_engine == null ) {
             throw new IllegalStateException( "WikiEngine cannot be null; please initialize WorkflowManager first." );
         }
@@ -163,7 +164,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
      *
      * @return the decision queue
      */
-    public DecisionQueue getDecisionQueue()
+    @Override public DecisionQueue getDecisionQueue()
     {
         return m_queue;
     }

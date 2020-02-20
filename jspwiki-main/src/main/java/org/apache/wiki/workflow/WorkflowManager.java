@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.workflow;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 
@@ -108,7 +108,7 @@ public interface WorkflowManager extends WikiEventListener {
      * @param engine the wiki engine to associate with this WorkflowManager
      * @param props the wiki engine's properties
      */
-    void initialize( WikiEngine engine, Properties props );
+    void initialize( Engine engine, Properties props );
 
     /**
      * Returns <code>true</code> if a workflow matching a particular key contains an approval step.
