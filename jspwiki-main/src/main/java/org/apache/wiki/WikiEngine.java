@@ -1068,10 +1068,4 @@ public class WikiEngine implements Engine {
         return ( T )m_attributes.remove( key );
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public WatchDog getCurrentWatchDog() {
-        return WatchDog.getCurrentWatchDog( this );
-    }
-
 }
