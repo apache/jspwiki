@@ -103,14 +103,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     private TimedCounterList< String > m_lastLoginAttempts = new TimedCounterList<>();
 
     /**
-     * Creates an AuthenticationManager instance for the given WikiEngine and
-     * the specified set of properties. All initialization for the modules is
-     * done here.
-     * @param engine the wiki engine
-     * @param props the properties used to initialize the wiki engine
-     * @throws WikiException if the AuthenticationManager cannot be initialized
+     * {@inheritDoc}
      */
-    @SuppressWarnings( "unchecked" )
+    @Override
     public void initialize( final Engine engine, final Properties props ) throws WikiException {
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
