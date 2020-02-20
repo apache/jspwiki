@@ -18,26 +18,26 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.WikiException;
+
 import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.WikiException;
-
 /**
  * Factory class that creates common Workflow instances such as a standard approval workflow.
  */
-public final class WorkflowBuilder
-{
-    private static final Map<WikiEngine, WorkflowBuilder> BUILDERS = new ConcurrentHashMap<>();
-    private final WikiEngine m_engine;
+public final class WorkflowBuilder {
+
+    private static final Map< Engine, WorkflowBuilder > BUILDERS = new ConcurrentHashMap<>();
+    private final Engine m_engine;
 
     /**
      * Private constructor that creates a new WorkflowBuilder for the supplied WikiEngine.
      * @param engine the wiki engine
      */
-    private WorkflowBuilder( WikiEngine engine )
+    private WorkflowBuilder( final Engine engine )
     {
         m_engine = engine;
     }
@@ -48,11 +48,9 @@ public final class WorkflowBuilder
      * @param engine the wiki engine
      * @return the workflow builder
      */
-    public static WorkflowBuilder getBuilder( WikiEngine engine )
-    {
+    public static WorkflowBuilder getBuilder( final Engine engine ) {
         WorkflowBuilder builder = BUILDERS.get( engine );
-        if ( builder == null )
-        {
+        if ( builder == null ) {
             builder = new WorkflowBuilder( engine );
             BUILDERS.put( engine, builder );
         }
@@ -102,46 +100,40 @@ public final class WorkflowBuilder
      * @return the created workflow
      * @throws WikiException if the name of the approving user, Role or Group cannot be determined
      */
-    public Workflow buildApprovalWorkflow( Principal submitter,
-                                           String workflowApproverKey,
-                                           Step prepTask,
-                                           String decisionKey,
-                                           Fact[] facts,
-                                           Step completionTask,
-                                           String rejectedMessageKey ) throws WikiException
-    {
-        WorkflowManager mgr = m_engine.getWorkflowManager();
-        Workflow workflow = new Workflow( workflowApproverKey, submitter );
+    public Workflow buildApprovalWorkflow( final Principal submitter,
+                                           final String workflowApproverKey,
+                                           final Step prepTask,
+                                           final String decisionKey,
+                                           final Fact[] facts,
+                                           final Step completionTask,
+                                           final String rejectedMessageKey ) throws WikiException {
+        final WorkflowManager mgr = m_engine.getManager( WorkflowManager.class );
+        final Workflow workflow = new Workflow( workflowApproverKey, submitter );
 
         // Is a Decision required to run the approve task?
-        boolean decisionRequired = mgr.requiresApproval( workflowApproverKey );
+        final boolean decisionRequired = mgr.requiresApproval( workflowApproverKey );
 
         // If Decision required, create a simple approval workflow
-        if ( decisionRequired )
-        {
+        if ( decisionRequired ) {
             // Look up the name of the approver (user or group) listed in jspwiki.properties;
             // approvals go to the approver's decision cue
-            Principal approverPrincipal = mgr.getApprover( workflowApproverKey );
-            Decision decision = new SimpleDecision( workflow, decisionKey, approverPrincipal );
+            final Principal approverPrincipal = mgr.getApprover( workflowApproverKey );
+            final Decision decision = new SimpleDecision( workflow, decisionKey, approverPrincipal );
 
             // Add facts to the Decision, if any were supplied
-            if ( facts != null )
-            {
-                for ( Fact fact: facts )
-                {
+            if( facts != null ) {
+                for( final Fact fact : facts ) {
                     decision.addFact( fact );
                 }
                 // Add the first one as a message key
-                if ( facts.length > 0 )
-                {
-                    workflow.addMessageArgument( facts[0].getValue() );
+                if( facts.length > 0 ) {
+                    workflow.addMessageArgument( facts[ 0 ].getValue() );
                 }
             }
 
             // If rejected, sent a notification
-            if ( rejectedMessageKey != null )
-            {
-                SimpleNotification rejectNotification = new SimpleNotification( workflow, rejectedMessageKey, submitter );
+            if ( rejectedMessageKey != null ) {
+                final SimpleNotification rejectNotification = new SimpleNotification( workflow, rejectedMessageKey, submitter );
                 decision.addSuccessor( Outcome.DECISION_DENY, rejectNotification );
             }
 
@@ -149,35 +141,24 @@ public final class WorkflowBuilder
             decision.addSuccessor( Outcome.DECISION_APPROVE, completionTask );
 
             // Set the first step
-            if ( prepTask == null )
-            {
+            if( prepTask == null ) {
                 workflow.setFirstStep( decision );
-            }
-            else
-            {
+            } else {
                 workflow.setFirstStep( prepTask );
                 prepTask.addSuccessor( Outcome.STEP_COMPLETE, decision );
             }
-        }
-
-        // If Decision not required, just run the prep + approved tasks in succession
-        else
-        {
+        } else { // If Decision not required, just run the prep + approved tasks in succession
             // Set the first step
-            if ( prepTask == null )
-            {
+            if ( prepTask == null ) {
                 workflow.setFirstStep( completionTask );
-            }
-            else
-            {
+            } else {
                 workflow.setFirstStep( prepTask );
                 prepTask.addSuccessor( Outcome.STEP_COMPLETE, completionTask );
             }
         }
 
         // Make sure our tasks have this workflow as the parent, then return
-        if ( prepTask != null )
-        {
+        if( prepTask != null ) {
             prepTask.setWorkflow( workflow );
         }
         completionTask.setWorkflow( workflow );

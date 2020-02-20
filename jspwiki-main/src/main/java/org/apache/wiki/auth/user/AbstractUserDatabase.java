@@ -20,7 +20,7 @@ package org.apache.wiki.auth.user;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -37,12 +37,11 @@ import java.util.Properties;
 import java.util.UUID;
 
 /**
- * Abstract UserDatabase class that provides convenience methods for finding
- * profiles, building Principal collections and hashing passwords.
+ * Abstract UserDatabase class that provides convenience methods for finding profiles, building Principal collections and hashing passwords.
+ *
  * @since 2.3
  */
-public abstract class AbstractUserDatabase implements UserDatabase
-{
+public abstract class AbstractUserDatabase implements UserDatabase {
 
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
@@ -57,46 +56,33 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param index the login name, full name, or wiki name
      * @see org.apache.wiki.auth.user.UserDatabase#find(java.lang.String)
      */
-    public UserProfile find( String index ) throws NoSuchPrincipalException
-    {
+    @Override public UserProfile find( final String index ) throws NoSuchPrincipalException {
         UserProfile profile = null;
 
         // Try finding by full name
-        try
-        {
+        try {
             profile = findByFullName( index );
+        } catch( final NoSuchPrincipalException e ) {
         }
-        catch ( NoSuchPrincipalException e )
-        {
-        }
-        if ( profile != null )
-        {
+        if( profile != null ) {
             return profile;
         }
 
         // Try finding by wiki name
-        try
-        {
+        try {
             profile = findByWikiName( index );
+        } catch( final NoSuchPrincipalException e ) {
         }
-        catch ( NoSuchPrincipalException e )
-        {
-        }
-        if ( profile != null )
-        {
+        if( profile != null ) {
             return profile;
         }
 
         // Try finding by login name
-        try
-        {
+        try {
             profile = findByLoginName( index );
+        } catch( final NoSuchPrincipalException e ) {
         }
-        catch ( NoSuchPrincipalException e )
-        {
-        }
-        if ( profile != null )
-        {
+        if( profile != null ) {
             return profile;
         }
 
@@ -107,25 +93,25 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
-    public abstract UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
+    @Override public abstract UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByFullName(java.lang.String)
      */
-    public abstract UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
+    @Override public abstract UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByLoginName(java.lang.String)
      */
-    public abstract UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
+    @Override public abstract UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByWikiName(java.lang.String)
      */
-    public abstract UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
+    @Override public abstract UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
 
     /**
      * <p>Looks up the Principals representing a user from the user database. These
@@ -142,38 +128,31 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @see org.apache.wiki.auth.user.UserDatabase#getPrincipals(java.lang.String)
      * @throws NoSuchPrincipalException {@inheritDoc}
      */
-    public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException
+    @Override public Principal[] getPrincipals( final String identifier ) throws NoSuchPrincipalException
     {
-        try
-        {
-            UserProfile profile = findByLoginName( identifier );
-            ArrayList<Principal> principals = new ArrayList<Principal>();
-            if ( profile.getLoginName() != null && profile.getLoginName().length() > 0 )
-            {
+        try {
+            final UserProfile profile = findByLoginName( identifier );
+            final ArrayList< Principal > principals = new ArrayList<>();
+            if( profile.getLoginName() != null && profile.getLoginName().length() > 0 ) {
                 principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
             }
-            if ( profile.getFullname() != null && profile.getFullname().length() > 0 )
-            {
+            if( profile.getFullname() != null && profile.getFullname().length() > 0 ) {
                 principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
             }
-            if ( profile.getWikiName() != null && profile.getWikiName().length() > 0 )
-            {
+            if( profile.getWikiName() != null && profile.getWikiName().length() > 0 ) {
                 principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
             }
-            return principals.toArray( new Principal[principals.size()] );
-        }
-        catch( NoSuchPrincipalException e )
-        {
+            return principals.toArray( new Principal[ principals.size() ] );
+        } catch( final NoSuchPrincipalException e ) {
             throw e;
         }
     }
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
+     * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      */
-    public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException,
-            WikiSecurityException;
+    @Override public abstract void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Factory method that instantiates a new DefaultUserProfile with a new, distinct
@@ -181,7 +160,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * 
      * @return A new, empty profile.
      */
-    public UserProfile newProfile()
+    @Override public UserProfile newProfile()
     {
         return DefaultUserProfile.newProfile( this );
     }
@@ -190,66 +169,51 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#save(org.apache.wiki.auth.user.UserProfile)
      */
-    public abstract void save( UserProfile profile ) throws WikiSecurityException;
+    @Override public abstract void save( UserProfile profile ) throws WikiSecurityException;
 
     /**
-     * Validates the password for a given user. If the user does not exist in
-     * the user database, this method always returns <code>false</code>. If
-     * the user exists, the supplied password is compared to the stored
-     * password. Note that if the stored password's value starts with
-     * <code>{SHA}</code>, the supplied password is hashed prior to the
-     * comparison.
+     * Validates the password for a given user. If the user does not exist in the user database, this method always returns
+     * <code>false</code>. If the user exists, the supplied password is compared to the stored password. Note that if the stored password's
+     * value starts with <code>{SHA}</code>, the supplied password is hashed prior to the comparison.
+     *
      * @param loginName the user's login name
      * @param password the user's password (obtained from user input, e.g., a web form)
-     * @return <code>true</code> if the supplied user password matches the
-     * stored password
-     * @see org.apache.wiki.auth.user.UserDatabase#validatePassword(java.lang.String,
-     *      java.lang.String)
+     * @return <code>true</code> if the supplied user password matches the stored password
+     * @see org.apache.wiki.auth.user.UserDatabase#validatePassword(java.lang.String, java.lang.String)
      */
-    public boolean validatePassword( String loginName, String password )
-    {
-        String hashedPassword;
-        try
-        {
-            UserProfile profile = findByLoginName( loginName );
+    @Override public boolean validatePassword( final String loginName, final String password ) {
+        final String hashedPassword;
+        try {
+            final UserProfile profile = findByLoginName( loginName );
             String storedPassword = profile.getPassword();
-            
+
             // Is the password stored as a salted hash (the new 2.8 format?)
-            boolean newPasswordFormat = storedPassword.startsWith( SSHA_PREFIX );
-            
+            final boolean newPasswordFormat = storedPassword.startsWith( SSHA_PREFIX );
+
             // If new format, verify the hash
-            if ( newPasswordFormat )
-            {
+            if( newPasswordFormat ) {
                 hashedPassword = getHash( password );
                 return CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
             }
 
             // If old format, verify using the old SHA verification algorithm
-            if ( storedPassword.startsWith( SHA_PREFIX ) )
-            {
+            if( storedPassword.startsWith( SHA_PREFIX ) ) {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
             }
             hashedPassword = getOldHash( password );
-            boolean verified = hashedPassword.equals( storedPassword ); 
-            
+            final boolean verified = hashedPassword.equals( storedPassword );
+
             // If in the old format and password verified, upgrade the hash to SSHA
-            if ( verified )
-            {
+            if( verified ) {
                 profile.setPassword( password );
                 save( profile );
             }
-            
+
             return verified;
-        }
-        catch( NoSuchPrincipalException e )
-        {
-        }
-        catch( NoSuchAlgorithmException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
+        } catch( final NoSuchAlgorithmException e ) {
             log.error( "Unsupported algorithm: " + e.getMessage() );
-        }
-        catch( WikiSecurityException e )
-        {
+        } catch( final WikiSecurityException e ) {
             log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
         }
         return false;
@@ -261,21 +225,17 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param db The database for which the UID should be generated.
      * @return A random, unique UID.
      */
-    protected static String generateUid( UserDatabase db ) {
+    protected static String generateUid( final UserDatabase db ) {
         // Keep generating UUIDs until we find one that doesn't collide
-        String uid = null;
+        String uid;
         boolean collision;
         
-        do 
-        {
+        do {
             uid = UUID.randomUUID().toString();
             collision = true;
-            try
-            {
+            try {
                 db.findByUid( uid );
-            }
-            catch ( NoSuchPrincipalException e )
-            {
+            } catch ( final NoSuchPrincipalException e ) {
                 collision = false;
             }
         } 
@@ -284,9 +244,9 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
     
     /**
-     * Private method that calculates the salted SHA-1 hash of a given
-     * <code>String</code>. Note that as of JSPWiki 2.8, this method calculates
-     * a <em>salted</em> hash rather than a plain hash.
+     * Private method that calculates the salted SHA-1 hash of a given <code>String</code>. Note that as of JSPWiki 2.8, this method
+     * calculates a <em>salted</em> hash rather than a plain hash.
+     *
      * @param text the text to hash
      * @return the result hash
      */
@@ -300,8 +260,8 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
-     * Private method that calculates the SHA-1 hash of a given
-     * <code>String</code>
+     * Private method that calculates the SHA-1 hash of a given <code>String</code>
+     *
      * @param text the text to hash
      * @return the result hash
      * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
@@ -310,7 +270,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         try {
             final MessageDigest md = MessageDigest.getInstance( "SHA" );
             md.update( text.getBytes( StandardCharsets.UTF_8 ) );
-            byte[] digestedBytes = md.digest();
+            final byte[] digestedBytes = md.digest();
             return ByteUtils.bytes2hex( digestedBytes );
         } catch( final NoSuchAlgorithmException e ) {
             log.error( "Error creating SHA password hash:" + e.getMessage() );
@@ -320,6 +280,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
 
     /**
      * Parses a long integer from a supplied string, or returns 0 if not parsable.
+     *
      * @param value the string to parse
      * @return the value parsed
      */

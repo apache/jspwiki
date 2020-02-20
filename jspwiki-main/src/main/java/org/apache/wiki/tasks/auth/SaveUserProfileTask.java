@@ -2,8 +2,9 @@ package org.apache.wiki.tasks.auth;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.tasks.TasksManager;
@@ -24,14 +25,15 @@ public class SaveUserProfileTask extends Task {
 
     private static final long serialVersionUID = 6994297086560480285L;
     private static final Logger LOG = Logger.getLogger( SaveUserProfileTask.class );
-    private final WikiEngine m_engine;
+    private final Engine m_engine;
     private final Locale m_loc;
 
     /**
      * Constructs a new Task for saving a user profile.
+     *
      * @param engine the wiki engine
      */
-    public SaveUserProfileTask( final WikiEngine engine, final Locale loc ) {
+    public SaveUserProfileTask( final Engine engine, final Locale loc ) {
         super( TasksManager.USER_PROFILE_SAVE_TASK_MESSAGE_KEY );
         m_engine = engine;
         m_loc = loc;
@@ -39,8 +41,8 @@ public class SaveUserProfileTask extends Task {
 
     /**
      * Saves the user profile to the user database.
-     * @return {@link org.apache.wiki.workflow.Outcome#STEP_COMPLETE} if the
-     * task completed successfully
+     *
+     * @return {@link org.apache.wiki.workflow.Outcome#STEP_COMPLETE} if the task completed successfully
      * @throws WikiException if the save did not complete for some reason
      */
     @Override
@@ -49,12 +51,12 @@ public class SaveUserProfileTask extends Task {
         final UserProfile profile = ( UserProfile )getWorkflow().getAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE );
 
         // Save the profile (userdatabase will take care of timestamps for us)
-        m_engine.getUserManager().getUserDatabase().save( profile );
+        m_engine.getManager( UserManager.class ).getUserDatabase().save( profile );
 
         // Send e-mail if user supplied an e-mail address
-        if ( profile.getEmail() != null ) {
+        if ( profile != null && profile.getEmail() != null ) {
             try {
-                final InternationalizationManager i18n = m_engine.getInternationalizationManager();
+                final InternationalizationManager i18n = m_engine.getManager( InternationalizationManager.class );
                 final String app = m_engine.getApplicationName();
                 final String to = profile.getEmail();
                 final String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,

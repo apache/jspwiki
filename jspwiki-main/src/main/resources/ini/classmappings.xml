@@ -77,7 +77,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.UserManager</requestedClass>
-    <mappedClass>org.apache.wiki.auth.UserManager</mappedClass>
+    <mappedClass>org.apache.wiki.auth.DefaultUserManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.acl.AclManager</requestedClass>

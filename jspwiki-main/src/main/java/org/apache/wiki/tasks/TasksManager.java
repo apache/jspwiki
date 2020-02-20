@@ -19,7 +19,7 @@
 package org.apache.wiki.tasks;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.workflow.Step;
 
 import java.security.Principal;
@@ -64,6 +64,6 @@ public interface TasksManager {
      * @param loc text proposed to be saved on the wiki page.
      * @return a save user profile task.
      */
-    Step buildSaveUserProfileTask( WikiEngine engine, Locale loc );
+    Step buildSaveUserProfileTask( Engine engine, Locale loc );
     
 }
