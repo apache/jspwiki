@@ -21,7 +21,7 @@ package org.apache.wiki.diff;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
@@ -66,16 +66,16 @@ public class TraditionalDiffProvider implements DiffProvider {
      * {@inheritDoc}
      * @see org.apache.wiki.WikiProvider#getProviderInfo()
      */
-    public String getProviderInfo()
+    @Override public String getProviderInfo()
     {
         return "TraditionalDiffProvider";
     }
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
+     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      */
-    public void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
+    @Override public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
     }
 
     /**
@@ -88,7 +88,7 @@ public class TraditionalDiffProvider implements DiffProvider {
      * 
      * @return Full HTML diff.
      */
-    public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
+    @Override public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
         final String diffResult;
 
         try {
@@ -129,24 +129,24 @@ public class TraditionalDiffProvider implements DiffProvider {
             m_rb = Preferences.getBundle( ctx, InternationalizationManager.CORE_BUNDLE );
         }
 
-        public void visit( final Revision rev ) {
+        @Override public void visit( final Revision rev ) {
             // GNDN (Goes nowhere, does nothing)
         }
 
-        public void visit( final AddDelta delta ) {
+        @Override public void visit( final AddDelta delta ) {
             final Chunk changed = delta.getRevised();
             print( changed, m_rb.getString( "diff.traditional.added" ) );
             changed.toString( m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE );
         }
 
-        public void visit( final ChangeDelta delta ) {
+        @Override public void visit( final ChangeDelta delta ) {
             final Chunk changed = delta.getOriginal();
             print(changed, m_rb.getString( "diff.traditional.changed" ) );
             changed.toString( m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE );
             delta.getRevised().toString( m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE );
         }
 
-        public void visit( final DeleteDelta delta ) {
+        @Override public void visit( final DeleteDelta delta ) {
             final Chunk changed = delta.getOriginal();
             print( changed, m_rb.getString( "diff.traditional.removed" ) );
             changed.toString( m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE );

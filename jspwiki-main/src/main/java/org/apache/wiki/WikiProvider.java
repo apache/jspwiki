@@ -18,6 +18,7 @@
  */
 package org.apache.wiki;
 
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 
 import java.io.IOException;
@@ -25,15 +26,13 @@ import java.util.Properties;
 
 
 /**
- *  A generic Wiki provider for all sorts of things that the Wiki can
- *  store.
+ *  A generic Wiki provider for all sorts of things that the Wiki can store.
  *
  *  @since 2.0
  */
 public interface WikiProvider {
-    /**
-     *  Passing this to any method should get the latest version
-     */
+
+    /** Passing this to any method should get the latest version */
     int LATEST_VERSION = -1;
 
     /**
@@ -44,7 +43,7 @@ public interface WikiProvider {
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
      *  @throws IOException If there is an IO problem
      */
-    void initialize( WikiEngine engine, Properties properties ) throws NoRequiredPropertyException, IOException;
+    void initialize( Engine engine, Properties properties ) throws NoRequiredPropertyException, IOException;
 
     /**
      *  Return a valid HTML string for information.  May be anything.

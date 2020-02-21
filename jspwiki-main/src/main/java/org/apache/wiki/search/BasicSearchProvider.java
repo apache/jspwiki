@@ -20,13 +20,15 @@ package org.apache.wiki.search;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.WikiPageProvider;
 
 import java.io.IOException;
@@ -45,25 +47,24 @@ import java.util.TreeSet;
 public class BasicSearchProvider implements SearchProvider {
 
     private static final Logger log = Logger.getLogger( BasicSearchProvider.class );
-
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     /**
      *  {@inheritDoc}
      */
-    public void initialize( final WikiEngine engine, final Properties props ) throws NoRequiredPropertyException, IOException {
+    @Override public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, IOException {
         m_engine = engine;
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void pageRemoved( final WikiPage page ) {}
+    @Override public void pageRemoved( final WikiPage page ) {}
 
     /**
      *  {@inheritDoc}
      */
-    public void reindexPage( final WikiPage page ) {}
+    @Override public void reindexPage( final WikiPage page ) {}
 
     /**
      *  Parses a query into something that we can use.
@@ -111,10 +112,10 @@ public class BasicSearchProvider implements SearchProvider {
     }
 
     private String attachmentNames( final WikiPage page ) {
-        if( m_engine.getAttachmentManager().hasAttachments( page ) ) {
+        if( m_engine.getManager( AttachmentManager.class ).hasAttachments( page ) ) {
             final List< Attachment > attachments;
             try {
-                attachments = m_engine.getAttachmentManager().listAttachments( page );
+                attachments = m_engine.getManager( AttachmentManager.class ).listAttachments( page );
             } catch( final ProviderException e ) {
                 log.error( "Unable to get attachments for page", e );
                 return "";
@@ -139,13 +140,13 @@ public class BasicSearchProvider implements SearchProvider {
         final SearchMatcher matcher = new SearchMatcher( m_engine, query );
         final Collection< WikiPage > allPages;
         try {
-            allPages = m_engine.getPageManager().getAllPages();
+            allPages = m_engine.getManager( PageManager.class ).getAllPages();
         } catch( final ProviderException pe ) {
             log.error( "Unable to retrieve page list", pe );
             return null;
         }
 
-        final AuthorizationManager mgr = m_engine.getAuthorizationManager();
+        final AuthorizationManager mgr = m_engine.getManager( AuthorizationManager.class );
 
         for( final WikiPage page : allPages ) {
             try {
@@ -154,7 +155,7 @@ public class BasicSearchProvider implements SearchProvider {
                     if( wikiContext == null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
                         final String pageName = page.getName();
                         final String pageContent =
-                                m_engine.getPageManager().getPageText( pageName, WikiPageProvider.LATEST_VERSION ) + attachmentNames( page );
+                                m_engine.getManager( PageManager.class ).getPageText( pageName, WikiPageProvider.LATEST_VERSION ) + attachmentNames( page );
                         final SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
                         if( comparison != null ) {
                             res.add( comparison );
@@ -174,14 +175,14 @@ public class BasicSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
-    public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) {
+    @Override public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) {
         return findPages( parseQuery( query ), wikiContext );
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String getProviderInfo() {
+    @Override public String getProviderInfo() {
         return "BasicSearchProvider";
     }
 

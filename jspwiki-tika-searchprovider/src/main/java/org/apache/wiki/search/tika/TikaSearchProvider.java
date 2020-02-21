@@ -54,8 +54,8 @@ import java.util.Set;
 public class TikaSearchProvider extends LuceneSearchProvider {
 
     private static final Logger LOG = Logger.getLogger( TikaSearchProvider.class );
-    AutoDetectParser parser;
-    Set< String > textualMetadataFields;
+    final AutoDetectParser parser;
+    final Set< String > textualMetadataFields;
 
     public TikaSearchProvider() {
         parser = new AutoDetectParser();
@@ -91,8 +91,7 @@ public class TikaSearchProvider extends LuceneSearchProvider {
      */
     @Override
     protected String getAttachmentContent( final Attachment att ) {
-        // LOG.debug("indexing "+att.getFileName());
-        final AttachmentManager mgr = getEngine().getAttachmentManager();
+        final AttachmentManager mgr = getEngine().getManager( AttachmentManager.class );
         final StringBuilder out = new StringBuilder();
 
         try( final InputStream attStream = mgr.getAttachmentStream( att ) ) {
@@ -106,14 +105,14 @@ public class TikaSearchProvider extends LuceneSearchProvider {
             out.append( handler.toString() );
 
             final String[] names = metadata.names();
-            for( int j = 0; j < names.length; j++ ) {
-                if( textualMetadataFields.contains( names[ j ] ) ) {
-                    out.append( " " ).append( metadata.get( names[ j ] ) );
+            for( final String name : names ) {
+                if( textualMetadataFields.contains( name ) ) {
+                    out.append( " " ).append( metadata.get( name ) );
                 }
             }
-        } catch( TikaException | SAXException e ) {
+        } catch( final TikaException | SAXException e ) {
             LOG.error( "Attachment cannot be parsed", e );
-        } catch( ProviderException | IOException e ) {
+        } catch( final ProviderException | IOException e ) {
             LOG.error( "Attachment cannot be loaded", e );
         }
 

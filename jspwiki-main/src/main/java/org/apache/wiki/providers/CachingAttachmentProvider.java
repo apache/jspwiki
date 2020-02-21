@@ -22,9 +22,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
@@ -54,9 +54,8 @@ import java.util.Properties;
  */
 
 //        EntryRefreshPolicy for that.
-public class CachingAttachmentProvider
-    implements WikiAttachmentProvider
-{
+public class CachingAttachmentProvider implements WikiAttachmentProvider {
+
     private static final Logger log = Logger.getLogger(CachingAttachmentProvider.class);
 
     private WikiAttachmentProvider m_provider;
@@ -97,10 +96,10 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public void initialize( WikiEngine engine, Properties properties ) throws NoRequiredPropertyException, IOException {
+    public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         log.info("Initing CachingAttachmentProvider");
 
-        String attCollCacheName = engine.getApplicationName() + "." + ATTCOLLCACHE_NAME;
+        final String attCollCacheName = engine.getApplicationName() + "." + ATTCOLLCACHE_NAME;
         if (m_cacheManager.cacheExists(attCollCacheName)) {
             m_cache = m_cacheManager.getCache(attCollCacheName);
         } else {
@@ -111,7 +110,7 @@ public class CachingAttachmentProvider
         //
         // cache for the individual Attachment objects, attachment name is key, the Attachment object is the cached object
         //
-        String attCacheName = engine.getApplicationName() + "." + ATTCACHE_NAME;
+        final String attCacheName = engine.getApplicationName() + "." + ATTCACHE_NAME;
         if (m_cacheManager.cacheExists(attCacheName)) {
             m_attCache = m_cacheManager.getCache(attCacheName);
         } else {
@@ -130,24 +129,24 @@ public class CachingAttachmentProvider
 
         try
         {
-            Class<?> providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
+            final Class<?> providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname);
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
             log.debug("Initializing real provider class "+m_provider);
             m_provider.initialize( engine, properties );
         }
-        catch( ClassNotFoundException e )
+        catch( final ClassNotFoundException e )
         {
             log.error("Unable to locate provider class "+classname,e);
             throw new IllegalArgumentException("no provider class", e);
         }
-        catch( InstantiationException e )
+        catch( final InstantiationException e )
         {
             log.error("Unable to create provider class "+classname,e);
             throw new IllegalArgumentException("faulty provider class", e);
         }
-        catch( IllegalAccessException e )
+        catch( final IllegalAccessException e )
         {
             log.error("Illegal access to provider class "+classname,e);
             throw new IllegalArgumentException("illegal provider class", e);
@@ -159,7 +158,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public void putAttachmentData( Attachment att, InputStream data )
+    public void putAttachmentData( final Attachment att, final InputStream data )
         throws ProviderException, IOException {
         m_provider.putAttachmentData( att, data );
 
@@ -172,7 +171,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public InputStream getAttachmentData( Attachment att )
+    public InputStream getAttachmentData( final Attachment att )
         throws ProviderException, IOException {
         return m_provider.getAttachmentData( att );
     }
@@ -181,13 +180,12 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public List< Attachment > listAttachments(WikiPage page) throws ProviderException {
+    public List< Attachment > listAttachments( final WikiPage page) throws ProviderException {
         log.debug("Listing attachments for " + page);
-        Element element = m_cache.get(page.getName());
+        final Element element = m_cache.get(page.getName());
 
         if (element != null) {
-            @SuppressWarnings("unchecked") 
-            List< Attachment > c = ( List< Attachment > )element.getObjectValue();
+            @SuppressWarnings("unchecked") final List< Attachment > c = ( List< Attachment > )element.getObjectValue();
             log.debug("LIST from cache, " + page.getName() + ", size=" + c.size());
             return cloneCollection(c);
         }
@@ -197,9 +195,9 @@ public class CachingAttachmentProvider
         return refresh(page);
     }
 
-    private <T> List<T> cloneCollection( Collection<T> c )
+    private <T> List<T> cloneCollection( final Collection<T> c )
     {
-        ArrayList<T> list = new ArrayList<>();
+        final ArrayList<T> list = new ArrayList<>();
 
         list.addAll( c );
 
@@ -210,7 +208,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public Collection< Attachment > findAttachments( QueryItem[] query )
+    public Collection< Attachment > findAttachments( final QueryItem[] query )
     {
         return m_provider.findAttachments( query );
     }
@@ -219,7 +217,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public List<Attachment> listAllChanged(Date timestamp) throws ProviderException {
+    public List<Attachment> listAllChanged( final Date timestamp) throws ProviderException {
         List< Attachment > all = null;
         //
         // we do a one-time build up of the cache, after this the cache is updated for every attachment add/delete
@@ -229,19 +227,18 @@ public class CachingAttachmentProvider
             // Put all pages in the cache :
 
             synchronized (this) {
-                for (Iterator< Attachment > i = all.iterator(); i.hasNext(); ) {
-                    Attachment att = i.next();
+                for ( final Iterator< Attachment > i = all.iterator(); i.hasNext(); ) {
+                    final Attachment att = i.next();
                     m_attCache.put(new Element(att.getName(), att));
                 }
                 m_gotall = true;
             }
         } else {
-            @SuppressWarnings("unchecked")
-            List< String > keys = m_attCache.getKeysWithExpiryCheck();
+            @SuppressWarnings("unchecked") final List< String > keys = m_attCache.getKeysWithExpiryCheck();
             all = new ArrayList<>();
-            for (String key : keys) {
-                Element element = m_attCache.get(key);
-                Attachment cachedAttachment = ( Attachment )element.getObjectValue();
+            for ( final String key : keys) {
+                final Element element = m_attCache.get(key);
+                final Attachment cachedAttachment = ( Attachment )element.getObjectValue();
                 if (cachedAttachment != null) {
                     all.add(cachedAttachment);
                 }
@@ -257,8 +254,8 @@ public class CachingAttachmentProvider
      *
      *  @return null, if no such attachment was in this collection.
      */
-    private Attachment findAttachmentFromCollection( Collection< Attachment > c, String name ) {
-        for( Attachment att : new ArrayList< >( c ) ) {
+    private Attachment findAttachmentFromCollection( final Collection< Attachment > c, final String name ) {
+        for( final Attachment att : new ArrayList< >( c ) ) {
             if( name.equals( att.getFileName() ) ) {
                 return att;
             }
@@ -272,9 +269,9 @@ public class CachingAttachmentProvider
      *
      *  @return The newly fetched object from the provider.
      */
-    private List<Attachment> refresh( WikiPage page ) throws ProviderException
+    private List<Attachment> refresh( final WikiPage page ) throws ProviderException
     {
-        List<Attachment> c = m_provider.listAttachments( page );
+        final List<Attachment> c = m_provider.listAttachments( page );
         m_cache.put(new Element(page.getName(), c));
 
         return c;
@@ -285,7 +282,7 @@ public class CachingAttachmentProvider
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Attachment getAttachmentInfo(WikiPage page, String name, int version) throws ProviderException {
+    public Attachment getAttachmentInfo( final WikiPage page, final String name, final int version) throws ProviderException {
         if (log.isDebugEnabled()) {
             log.debug("Getting attachments for " + page + ", name=" + name + ", version=" + version);
         }
@@ -299,7 +296,7 @@ public class CachingAttachmentProvider
         }
 
         Collection<Attachment> c = null;
-        Element element =   m_cache.get(page.getName());
+        final Element element =   m_cache.get(page.getName());
 
         if (element == null) {
             log.debug(page.getName() + " wasn't in the cache");
@@ -320,7 +317,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public List<Attachment> getVersionHistory( Attachment att )
+    public List<Attachment> getVersionHistory( final Attachment att )
     {
         return m_provider.getVersionHistory( att );
     }
@@ -329,7 +326,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public void deleteVersion( Attachment att ) throws ProviderException
+    public void deleteVersion( final Attachment att ) throws ProviderException
     {
         // This isn't strictly speaking correct, but it does not really matter
         m_cache.remove(att.getParentName());
@@ -340,7 +337,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public void deleteAttachment( Attachment att ) throws ProviderException
+    public void deleteAttachment( final Attachment att ) throws ProviderException
     {
         m_cache.remove(att.getParentName());
         m_attCache.remove(att.getName());
@@ -375,7 +372,7 @@ public class CachingAttachmentProvider
      * {@inheritDoc}
      */
     @Override
-    public void moveAttachmentsForPage( String oldParent, String newParent ) throws ProviderException
+    public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException
     {
         m_provider.moveAttachmentsForPage(oldParent, newParent);
         m_cache.remove(newParent);
@@ -385,11 +382,10 @@ public class CachingAttachmentProvider
         //  This is a kludge to make sure that the pages are removed
         //  from the other cache as well.
         //
-        String checkName = oldParent + "/";
+        final String checkName = oldParent + "/";
 
-        @SuppressWarnings("unchecked")
-        List< String > names = m_cache.getKeysWithExpiryCheck();
-        for( String name : names )
+        @SuppressWarnings("unchecked") final List< String > names = m_cache.getKeysWithExpiryCheck();
+        for( final String name : names )
         {
             if( name.startsWith( checkName ) )
             {

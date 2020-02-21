@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.search;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.io.StringReader;
 public class SearchMatcher {
 	
     private QueryItem[] m_queries;
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     /**
      *  Creates a new SearchMatcher.
@@ -44,7 +44,7 @@ public class SearchMatcher {
      *  @param engine The WikiEngine
      *  @param queries A list of queries
      */
-    public SearchMatcher( final WikiEngine engine, final QueryItem[] queries ) {
+    public SearchMatcher( final Engine engine, final QueryItem[] queries ) {
         m_engine = engine;
         m_queries = queries != null ? queries.clone() : null;
     }
@@ -134,7 +134,7 @@ public class SearchMatcher {
          *  Returns Wikipage for this result.
          *  @return WikiPage
          */
-        public WikiPage getPage() {
+        @Override public WikiPage getPage() {
             return m_page;
         }
 
@@ -143,7 +143,7 @@ public class SearchMatcher {
          *  
          *  @return Score from 0+
          */
-        public int getScore() {
+        @Override public int getScore() {
             return m_score;
         }
 
@@ -152,7 +152,7 @@ public class SearchMatcher {
          *  
          *  @return an empty array
          */
-        public String[] getContexts() {
+        @Override public String[] getContexts() {
             // Unimplemented
             return new String[0];
         }

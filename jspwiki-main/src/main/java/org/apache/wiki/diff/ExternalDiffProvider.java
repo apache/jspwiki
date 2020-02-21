@@ -21,7 +21,7 @@ package org.apache.wiki.diff;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -75,16 +75,16 @@ public class ExternalDiffProvider implements DiffProvider {
      * @see org.apache.wiki.WikiProvider#getProviderInfo()
      * {@inheritDoc}
      */
-    public String getProviderInfo()
+    @Override public String getProviderInfo()
     {
         return "ExternalDiffProvider";
     }
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
+     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      */
-    public void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
+    @Override public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         m_diffCommand = properties.getProperty( PROP_DIFFCOMMAND );
         if( m_diffCommand == null || m_diffCommand.trim().equals( "" ) ) {
             throw new NoRequiredPropertyException( "ExternalDiffProvider missing required property", PROP_DIFFCOMMAND );
@@ -98,7 +98,7 @@ public class ExternalDiffProvider implements DiffProvider {
      * Makes the diff by calling "diff" program.
      * {@inheritDoc}
      */
-    public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
+    @Override public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
         File f1 = null;
         File f2 = null;
         String diff = null;

@@ -18,18 +18,18 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.search.SearchResult;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.search.QueryItem;
-import org.apache.wiki.search.SearchResult;
 
 /**
  *  This is a simple provider that is used by some of the tests.  It has some
@@ -53,10 +53,10 @@ public class VerySimpleProvider implements WikiPageProvider
      */
     public static final String AUTHOR   = "default-author";
     
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     @Override
-    public void initialize( WikiEngine engine, Properties props )
+    public void initialize( final Engine engine, final Properties props )
     {
         m_engine = engine;
     }
@@ -68,7 +68,7 @@ public class VerySimpleProvider implements WikiPageProvider
     }
 
     @Override
-    public void putPageText( WikiPage page, String text )
+    public void putPageText( final WikiPage page, final String text )
         throws ProviderException
     {
     }
@@ -77,7 +77,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Always returns true.
      */
     @Override
-    public boolean pageExists( String page )
+    public boolean pageExists( final String page )
     {
         return true;
     }
@@ -86,7 +86,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Always returns true.
      */
     @Override
-    public boolean pageExists( String page, int version )
+    public boolean pageExists( final String page, final int version )
     {
         return true;
     }
@@ -95,7 +95,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Always returns null.
      */
     @Override
-    public Collection< SearchResult > findPages( QueryItem[] query )
+    public Collection< SearchResult > findPages( final QueryItem[] query )
     {
         return null;
     }
@@ -104,12 +104,12 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Returns always a valid WikiPage.
      */
     @Override
-    public WikiPage getPageInfo( String page, int version )
+    public WikiPage getPageInfo( final String page, final int version )
     {
         m_latestReq  = page;
         m_latestVers = version;
 
-        WikiPage p = new WikiPage( m_engine, page );
+        final WikiPage p = new WikiPage( m_engine, page );
         p.setVersion( 5 );
         p.setAuthor( AUTHOR );
         p.setLastModified( new Date(0L) );
@@ -122,7 +122,7 @@ public class VerySimpleProvider implements WikiPageProvider
     @Override
     public Collection< WikiPage > getAllPages()
     {
-        List< WikiPage > l = new ArrayList<>();
+        final List< WikiPage > l = new ArrayList<>();
         l.add( getPageInfo( PAGENAME, 5 ) );
         return l;
     }
@@ -131,7 +131,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Returns the same as getAllPages().
      */
     @Override
-    public Collection< WikiPage > getAllChangedSince( Date date )
+    public Collection< WikiPage > getAllChangedSince( final Date date )
     {
         return getAllPages();
     }
@@ -149,7 +149,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  Always returns an empty list.
      */
     @Override
-    public List< WikiPage > getVersionHistory( String page )
+    public List< WikiPage > getVersionHistory( final String page )
     {
         return new Vector<>();
     }
@@ -159,7 +159,7 @@ public class VerySimpleProvider implements WikiPageProvider
      *  then returns an empty string.
      */
     @Override
-    public String getPageText( String page, int version )
+    public String getPageText( final String page, final int version )
     {
         m_latestReq  = page;
         m_latestVers = version;
@@ -168,12 +168,12 @@ public class VerySimpleProvider implements WikiPageProvider
     }
 
     @Override
-    public void deleteVersion( String page, int version )
+    public void deleteVersion( final String page, final int version )
     {
     }
 
     @Override
-    public void deletePage( String page )
+    public void deletePage( final String page )
     {
     }
 
@@ -181,7 +181,7 @@ public class VerySimpleProvider implements WikiPageProvider
      * @see org.apache.wiki.providers.WikiPageProvider#movePage(java.lang.String, java.lang.String)
      */
     @Override
-    public void movePage( String from, String to ) throws ProviderException
+    public void movePage( final String from, final String to ) throws ProviderException
     {
         // TODO Auto-generated method stub
         
