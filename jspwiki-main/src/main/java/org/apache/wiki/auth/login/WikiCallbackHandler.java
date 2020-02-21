@@ -18,42 +18,42 @@
  */
 package org.apache.wiki.auth.login;
 
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.auth.UserManager;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-import javax.security.auth.callback.*;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.wiki.WikiEngine;
 
 /**
- * Handles logins made from inside the wiki application, rather than via the web
- * container. This handler is instantiated in
+ * Handles logins made from inside the wiki application, rather than via the web container. This handler is instantiated in
  * {@link org.apache.wiki.auth.AuthenticationManager#login(org.apache.wiki.WikiSession,HttpServletRequest, String, String)}.
- * If container-managed authentication is used, the
- * {@link WebContainerCallbackHandler}is used instead. This callback handler is
+ * If container-managed authentication is used, the {@link WebContainerCallbackHandler}is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
+ *
  * @since 2.3
  */
-public class WikiCallbackHandler implements CallbackHandler
-{
+public class WikiCallbackHandler implements CallbackHandler {
+
     private final HttpServletRequest m_request;
-
-    private final WikiEngine m_engine;
-    
-    private final String       m_password;
-
-    private final String       m_username;
+    private final Engine m_engine;
+    private final String m_password;
+    private final String m_username;
 
     /**
      *  Create a new callback handler.
+     *
      * @param engine the WikiEngine
-     * @param request the user's HTTP request. If passed as <code>null</code>,
-     *  later requests for {@link HttpRequestCallback} will return an UnsupportedCallbackException
+     * @param request the user's HTTP request. If passed as <code>null</code>, later requests for {@link HttpRequestCallback} will return an UnsupportedCallbackException
      * @param username the username
      * @param password the password
      */
-    public WikiCallbackHandler( WikiEngine engine, HttpServletRequest request, String username, String password )
-    {
+    public WikiCallbackHandler( final Engine engine, final HttpServletRequest request, final String username, final String password ) {
         m_request = request;
         m_engine = engine;
         m_username = username;
@@ -65,33 +65,19 @@ public class WikiCallbackHandler implements CallbackHandler
      * 
      * {@inheritDoc}
      */
-    public void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
-    {
-        for( int i = 0; i < callbacks.length; i++ )
-        {
-            Callback callback = callbacks[i];
-            if ( callback instanceof HttpRequestCallback )
-            {
-                ( (HttpRequestCallback) callback ).setRequest( m_request );
-            }
-            else if( callback instanceof WikiEngineCallback )
-            {
-                ( (WikiEngineCallback) callback ).setEngine( m_engine );
-            }
-            else if ( callback instanceof UserDatabaseCallback )
-            {
-                ( (UserDatabaseCallback) callback ).setUserDatabase( m_engine.getUserManager().getUserDatabase() );
-            }
-            else if ( callback instanceof NameCallback )
-            {
-                ( (NameCallback) callback ).setName( m_username );
-            }
-            else if ( callback instanceof PasswordCallback )
-            {
-                ( (PasswordCallback) callback ).setPassword( m_password.toCharArray() );
-            }
-            else
-            {
+    @Override public void handle( final Callback[] callbacks ) throws IOException, UnsupportedCallbackException {
+        for( final Callback callback : callbacks ) {
+            if( callback instanceof HttpRequestCallback ) {
+                ( ( HttpRequestCallback )callback ).setRequest( m_request );
+            } else if( callback instanceof WikiEngineCallback ) {
+                ( ( WikiEngineCallback )callback ).setEngine( m_engine );
+            } else if( callback instanceof UserDatabaseCallback ) {
+                ( ( UserDatabaseCallback )callback ).setUserDatabase( m_engine.getManager( UserManager.class ).getUserDatabase() );
+            } else if( callback instanceof NameCallback ) {
+                ( ( NameCallback )callback ).setName( m_username );
+            } else if( callback instanceof PasswordCallback ) {
+                ( ( PasswordCallback )callback ).setPassword( m_password.toCharArray() );
+            } else {
                 throw new UnsupportedCallbackException( callback );
             }
         }

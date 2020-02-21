@@ -23,7 +23,6 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -106,7 +105,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
             final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
 
             m_provider = ( WikiAttachmentProvider )providerclass.newInstance();
-            m_provider.initialize( m_engine.adapt( WikiEngine.class ), props );
+            m_provider.initialize( m_engine, props );
         } catch( final ClassNotFoundException e ) {
             log.error( "Attachment provider class not found",e);
         } catch( final InstantiationException e ) {

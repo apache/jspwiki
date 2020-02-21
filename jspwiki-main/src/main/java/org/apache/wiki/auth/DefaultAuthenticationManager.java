@@ -19,7 +19,6 @@
 package org.apache.wiki.auth;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -154,7 +153,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     @Override
     public boolean login( final HttpServletRequest request ) throws WikiSecurityException {
         final HttpSession httpSession = request.getSession();
-        final WikiSession session = SessionMonitor.getInstance( m_engine.adapt( WikiEngine.class ) ).find( httpSession );
+        final WikiSession session = SessionMonitor.getInstance( m_engine ).find( httpSession );
         final AuthenticationManager authenticationMgr = m_engine.getManager( AuthenticationManager.class );
         final AuthorizationManager authorizationMgr = m_engine.getManager( AuthorizationManager.class );
         CallbackHandler handler = null;
@@ -163,7 +162,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // If user not authenticated, check if container logged them in, or if there's an authentication cookie
         if ( !session.isAuthenticated() ) {
             // Create a callback handler
-            handler = new WebContainerCallbackHandler( m_engine.adapt( WikiEngine.class ), request );
+            handler = new WebContainerCallbackHandler( m_engine, request );
 
             // Execute the container login module, then (if that fails) the cookie auth module
             Set< Principal > principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
@@ -220,7 +219,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             delayLogin( username );
         }
 
-        final CallbackHandler handler = new WikiCallbackHandler( m_engine.adapt( WikiEngine.class ), null, username, password );
+        final CallbackHandler handler = new WikiCallbackHandler( m_engine, null, username, password );
 
         // Execute the user's specified login module
         final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
@@ -277,12 +276,12 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             log.debug( "Invalidating WikiSession for session ID=" + sid );
         }
         // Retrieve the associated WikiSession and clear the Principal set
-        final WikiSession wikiSession = WikiSession.getWikiSession( m_engine.adapt( WikiEngine.class ), request );
+        final WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
 
         // Remove the wikiSession from the WikiSession cache
-        WikiSession.removeWikiSession( m_engine.adapt( WikiEngine.class ), request );
+        WikiSession.removeWikiSession( m_engine, request );
 
         // We need to flush the HTTP session too
         if ( session != null ) {

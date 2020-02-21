@@ -18,38 +18,37 @@
  */
 package org.apache.wiki.auth.login;
 
+import org.apache.wiki.api.core.Engine;
+
 import javax.security.auth.callback.Callback;
 
-import org.apache.wiki.WikiEngine;
 
 /**
- * Callback for requesting and supplying the WikiEngine object required by a
- * LoginModule. This Callback is used by LoginModules needing access to the
- * external authorizer or group manager.
+ * Callback for requesting and supplying the WikiEngine object required by a LoginModule. This Callback is used by LoginModules needing
+ * access to the external authorizer or group manager.
  *
  * @since 2.5
  */
-public class WikiEngineCallback implements Callback
-{
+public class WikiEngineCallback implements Callback {
 
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     /**
      * Sets the engine object. CallbackHandler objects call this method.
+     *
      * @param engine the engine
      */
-    public void setEngine( WikiEngine engine )
-    {
+    public void setEngine( final Engine engine ) {
         m_engine = engine;
     }
 
     /**
-     * Returns the engine. LoginModules call this method after a
-     * CallbackHandler sets the engine.
+     * Returns the engine. LoginModules call this method after a CallbackHandler sets the engine.
+     *
      * @return the engine
      */
-    public WikiEngine getEngine()
-    {
+    public Engine getEngine() {
         return m_engine;
     }
+
 }

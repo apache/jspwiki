@@ -18,35 +18,34 @@
  */
 package org.apache.wiki.auth.login;
 
-import java.io.IOException;
+import org.apache.wiki.api.core.Engine;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
-import org.apache.wiki.WikiEngine;
 
 /**
  * Handles logins made from within JSPWiki.
- * @see org.apache.wiki.WikiSession#getWikiSession(WikiEngine,HttpServletRequest)
+ *
+ * @see org.apache.wiki.WikiSession#getWikiSession(Engine,HttpServletRequest)
  * @since 2.3
  */
-public final class WebContainerCallbackHandler implements CallbackHandler
-{
-    private final HttpServletRequest m_request;
+public final class WebContainerCallbackHandler implements CallbackHandler {
 
-    private final WikiEngine         m_engine;
+    private final HttpServletRequest m_request;
+    private final Engine m_engine;
 
     /**
-     *  Create a new handler.
-     *  
-     *  @param engine The WikiEngine
-     *  @param request The request to look into
+     * Create a new handler.
+     *
+     * @param engine  The WikiEngine
+     * @param request The request to look into
      */
-    public WebContainerCallbackHandler( WikiEngine engine, HttpServletRequest request )
-    {
-        m_engine  = engine;
+    public WebContainerCallbackHandler( final Engine engine, final HttpServletRequest request ) {
+        m_engine = engine;
         m_request = request;
     }
 
@@ -55,21 +54,14 @@ public final class WebContainerCallbackHandler implements CallbackHandler
      * 
      * {@inheritDoc}
      */
-    public void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
-    {
-        for( int i = 0; i < callbacks.length; i++ )
-        {
-            Callback callback = callbacks[i];
-            if ( callback instanceof HttpRequestCallback )
-            {
-                ( (HttpRequestCallback) callback ).setRequest( m_request );
-            }
-            else if( callback instanceof WikiEngineCallback )
-            {
-                ( (WikiEngineCallback) callback ).setEngine( m_engine );
-            }
-            else
-            {
+    @Override
+    public void handle( final Callback[] callbacks ) throws IOException, UnsupportedCallbackException {
+        for( final Callback callback : callbacks ) {
+            if( callback instanceof HttpRequestCallback ) {
+                ( ( HttpRequestCallback )callback ).setRequest( m_request );
+            } else if( callback instanceof WikiEngineCallback ) {
+                ( ( WikiEngineCallback )callback ).setEngine( m_engine );
+            } else {
                 throw new UnsupportedCallbackException( callback );
             }
         }
